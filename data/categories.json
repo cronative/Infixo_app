@@ -1,0 +1,331 @@
+[
+  {
+    "category": "Entertainment",
+    "professions": [
+      "Vlogger",
+      "Comedian",
+      "Storyteller",
+      "Meme Creator",
+      "Short Video Creator",
+      "Sketch Artist",
+      "Prank Creator",
+      "Reaction Creator",
+      "Challenge Creator",
+      "Voice Artist",
+      "Dub Creator",
+      "Movie Reviewer",
+      "Anime Creator",
+      "TV Show Reviewer",
+      "Celebrity News Creator",
+      "Entertainment Reporter"
+    ]
+  },
+  {
+    "category": "Education",
+    "professions": [
+      "Teacher",
+      "Tutor",
+      "Coding Instructor",
+      "Language Coach",
+      "Career Mentor",
+      "UPSC Educator",
+      "SSC Educator",
+      "NEET Educator",
+      "JEE Educator",
+      "GK Creator",
+      "Science Educator",
+      "Math Educator",
+      "History Educator",
+      "Geography Educator",
+      "Economics Educator",
+      "Online Coach",
+      "Study Mentor"
+    ]
+  },
+  {
+    "category": "Technology",
+    "professions": [
+      "Tech Reviewer",
+      "AI Creator",
+      "App Developer",
+      "Web Developer",
+      "Software Engineer",
+      "Gadget Reviewer",
+      "Mobile Reviewer",
+      "Laptop Reviewer",
+      "Programming Creator",
+      "Cyber Security Creator",
+      "Cloud Engineer",
+      "DevOps Creator",
+      "UI/UX Designer",
+      "No-Code Creator",
+      "Automation Expert",
+      "Tech News Creator",
+      "Startup Creator"
+    ]
+  },
+  {
+    "category": "Lifestyle",
+    "professions": [
+      "Lifestyle Vlogger",
+      "Daily Vlogger",
+      "Family Creator",
+      "Couple Creator",
+      "Morning Routine Creator",
+      "Night Routine Creator",
+      "Minimalist Creator",
+      "Luxury Lifestyle Creator",
+      "College Creator",
+      "Student Creator",
+      "Host",
+      "Public Speaker"
+    ]
+  },
+  {
+    "category": "Gaming",
+    "professions": [
+      "Gamer",
+      "Game Streamer",
+      "Esports Creator",
+      "Mobile Gamer",
+      "PC Gamer",
+      "Console Gamer",
+      "Gaming Reviewer",
+      "Walkthrough Creator",
+      "Live Streamer",
+      "Game Coach"
+    ]
+  },
+  {
+    "category": "Business & Finance",
+    "professions": [
+      "Entrepreneur",
+      "Investor",
+      "Business Coach",
+      "Finance Creator",
+      "Stock Market Creator",
+      "Crypto Creator",
+      "Startup Founder",
+      "Side Hustle Creator",
+      "Marketing Expert",
+      "Sales Coach",
+      "Brand Consultant",
+      "Personal Finance Creator",
+      "Tax Expert",
+      "Business Reviewer"
+    ]
+  },
+  {
+    "category": "Health & Fitness",
+    "professions": [
+      "Fitness Coach",
+      "Gym Trainer",
+      "Yoga Instructor",
+      "Nutritionist",
+      "Dietitian",
+      "Calisthenics Coach",
+      "Weight Loss Coach",
+      "Bodybuilding Coach",
+      "Running Coach",
+      "Cycling Coach",
+      "Mental Wellness Creator",
+      "Meditation Coach"
+    ]
+  },
+  {
+    "category": "Travel",
+    "professions": [
+      "Travel Vlogger",
+      "Travel Guide",
+      "Bike Rider",
+      "Road Trip Creator",
+      "Backpacker",
+      "Luxury Traveler",
+      "Solo Traveler",
+      "Camping Creator",
+      "Adventure Creator",
+      "Travel Photographer"
+    ]
+  },
+  {
+    "category": "Food",
+    "professions": [
+      "Food Vlogger",
+      "Chef",
+      "Home Cook",
+      "Food Reviewer",
+      "Street Food Creator",
+      "Restaurant Reviewer",
+      "Baker",
+      "Coffee Creator",
+      "Healthy Recipe Creator",
+      "BBQ Creator",
+      "Dessert Creator",
+      "Kitchen Tips Creator"
+    ]
+  },
+  {
+    "category": "Fashion & Beauty",
+    "professions": [
+      "Fashion Creator",
+      "Makeup Artist",
+      "Beauty Creator",
+      "Skincare Creator",
+      "Hair Stylist",
+      "Nail Artist",
+      "Personal Stylist",
+      "Outfit Creator",
+      "Jewelry Creator",
+      "Luxury Fashion Creator",
+      "Model"
+    ]
+  },
+  {
+    "category": "Music",
+    "professions": [
+      "Singer",
+      "Music Producer",
+      "Guitarist",
+      "DJ",
+      "Pianist",
+      "Drummer",
+      "Rapper",
+      "Beatboxer",
+      "Music Reviewer",
+      "Songwriter",
+      "Music Teacher",
+      "Cover Artist"
+    ]
+  },
+  {
+    "category": "Sports",
+    "professions": [
+      "Sports Creator",
+      "Athlete",
+      "Coach",
+      "Cricket Creator",
+      "Football Creator",
+      "Basketball Creator",
+      "Tennis Creator",
+      "Badminton Creator",
+      "Kabaddi Creator",
+      "Sports Analyst",
+      "Sports Commentator"
+    ]
+  },
+  {
+    "category": "Photography",
+    "professions": [
+      "Photographer",
+      "Videographer",
+      "Drone Creator",
+      "Wedding Photographer",
+      "Portrait Photographer",
+      "Street Photographer",
+      "Nature Photographer",
+      "Travel Photographer",
+      "Photo Editor",
+      "Video Editor",
+      "Cinematographer"
+    ]
+  },
+  {
+    "category": "News",
+    "professions": [
+      "News Creator",
+      "Journalist",
+      "Political Analyst",
+      "Current Affairs Creator",
+      "Fact Checker",
+      "News Reporter",
+      "Breaking News Creator",
+      "World News Creator"
+    ]
+  },
+  {
+    "category": "Podcast",
+    "professions": [
+      "Podcast Host",
+      "Interview Creator",
+      "Business Podcast",
+      "Tech Podcast",
+      "Comedy Podcast",
+      "Motivational Podcast",
+      "News Podcast",
+      "Health Podcast"
+    ]
+  },
+  {
+    "category": "Art & Creativity",
+    "professions": [
+      "Digital Artist",
+      "Graphic Designer",
+      "UI Designer",
+      "Illustrator",
+      "Animator",
+      "3D Artist",
+      "Motion Designer",
+      "Painter",
+      "Sketch Artist",
+      "Calligraphy Artist",
+      "NFT Artist",
+      "Creative Director"
+    ]
+  },
+  {
+    "category": "Motivation & Self Growth",
+    "professions": [
+      "Motivational Speaker",
+      "Life Coach",
+      "Success Coach",
+      "Mindset Coach",
+      "Productivity Creator",
+      "Self Improvement Creator",
+      "Book Reviewer"
+    ]
+  },
+  {
+    "category": "Automobile",
+    "professions": [
+      "Car Reviewer",
+      "Bike Reviewer",
+      "EV Creator",
+      "Automobile Journalist",
+      "Modification Expert",
+      "Mechanic Creator"
+    ]
+  },
+  {
+    "category": "Pets & Animals",
+    "professions": [
+      "Pet Creator",
+      "Dog Trainer",
+      "Cat Creator",
+      "Wildlife Creator",
+      "Animal Rescuer",
+      "Pet Groomer"
+    ]
+  },
+  {
+    "category": "Parenting",
+    "professions": [
+      "Parenting Coach",
+      "Mom Creator",
+      "Dad Creator",
+      "Kids Activity Creator",
+      "Family Educator"
+    ]
+  },
+  {
+    "category": "Spirituality",
+    "professions": [
+      "Spiritual Creator",
+      "Meditation Teacher",
+      "Yoga Guru",
+      "Astrologer",
+      "Temple Vlogger",
+      "Religious Storyteller",
+      "Bhajan Singer"
+    ]
+  }
+]
