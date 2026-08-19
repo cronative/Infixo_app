@@ -26,6 +26,7 @@ import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { ThemeService } from "@/services/ThemeService";
 import { formatCount, formatSyncDate } from "@/utils/format";
+import { copyToClipboard } from "@/lib/copyToClipboard";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 import {
   getSeriesUsage,
@@ -81,10 +82,14 @@ export default function DashboardOverviewPage() {
 
   const profileUrl = `inflixo.com/${profile.username || "username"}`;
 
-  function handleCopyLink() {
-    if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText(`https://${profileUrl}`);
-      showToast("Link copied to clipboard! ✨");
+  async function handleCopyLink() {
+    const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
+    const fullLink = `${origin}/${profile.username || "username"}`;
+    const success = await copyToClipboard(fullLink);
+    if (success) {
+      showToast("Profile link copied to clipboard! ✨");
+    } else {
+      showToast("Could not copy link", "error");
     }
   }
 

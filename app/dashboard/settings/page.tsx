@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/Button";
 import { AuthService } from "@/services/AuthService";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
+import { copyToClipboard } from "@/lib/copyToClipboard";
 
 export default function DashboardSettingsPage() {
   const router = useRouter();
@@ -39,14 +40,17 @@ export default function DashboardSettingsPage() {
     router.push("/login");
   }
 
-  function handleCopyProfileLink() {
+  async function handleCopyProfileLink() {
     const handle = profile?.username || "username";
-    const url = `${window.location.origin}/${handle}`;
-    navigator.clipboard.writeText(url).then(() => {
+    const url = typeof window !== "undefined" ? `${window.location.origin}/${handle}` : `https://inflixo.com/${handle}`;
+    const success = await copyToClipboard(url);
+    if (success) {
       setCopiedLink(true);
       showToast("Profile link copied! ✨");
       setTimeout(() => setCopiedLink(false), 2000);
-    });
+    } else {
+      showToast("Could not copy link", "error");
+    }
   }
 
   const profileUrl = typeof window !== "undefined"

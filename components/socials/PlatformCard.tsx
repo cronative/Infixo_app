@@ -13,10 +13,10 @@ export function PlatformCard({
   children: ReactNode;
 }) {
   return (
-    <div className="rounded-3xl border border-inflixo-border bg-white p-5" style={{ boxShadow: "var(--shadow-soft)" }}>
+    <div className="rounded-[28px] border border-slate-200/80 bg-white p-6 shadow-xs transition-all hover:border-purple-200">
       <div className="mb-4 flex items-center gap-3">
-        <div className={`flex h-10 w-10 items-center justify-center rounded-2xl ${accentClass}`}>{icon}</div>
-        <p className="font-bold text-inflixo-navy">{name}</p>
+        <div className={`flex h-10 w-10 items-center justify-center rounded-2xl ${accentClass} shadow-2xs`}>{icon}</div>
+        <p className="font-display text-base font-black text-slate-900">{name}</p>
       </div>
       <div className="space-y-3">{children}</div>
     </div>

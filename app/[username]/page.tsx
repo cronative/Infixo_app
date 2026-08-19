@@ -13,6 +13,7 @@ import { ThemeCard } from "@/themes/registry";
 import { CreatorProfile, SocialAccounts, Series, ThemeKey, EMPTY_SOCIAL_ACCOUNTS } from "@/types";
 import { useToast } from "@/contexts/ToastContext";
 import { buildProfileUrl } from "@/utils/format";
+import { copyToClipboard } from "@/lib/copyToClipboard";
 
 const EMPTY_PROFILE: CreatorProfile = {
   photoDataUrl: null,
@@ -218,12 +219,12 @@ export default function PublicProfilePage() {
 
   async function handleCopy() {
     const shareText = `Check out ${profile.displayName ? `${profile.displayName}'s` : "my"} Inflixo profile to see fanbase stats, social channels & original series! 🎬✨`;
-    try {
-      await navigator.clipboard.writeText(`${shareText}\n${fullUrl}`);
+    const success = await copyToClipboard(`${shareText}\n${fullUrl}`);
+    if (success) {
       setCopied(true);
       showToast("Profile link & message copied! ✨");
       setTimeout(() => setCopied(false), 2000);
-    } catch {
+    } else {
       showToast("Couldn't copy link", "error");
     }
   }

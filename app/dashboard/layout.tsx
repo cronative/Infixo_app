@@ -10,6 +10,7 @@ import { DashboardMobileHeader } from "@/components/dashboard/DashboardMobileHea
 import { DashboardSideDrawer } from "@/components/dashboard/DashboardSideDrawer";
 import { LogOut, Copy, Menu } from "lucide-react";
 import { useToast } from "@/contexts/ToastContext";
+import { copyToClipboard } from "@/lib/copyToClipboard";
 
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
 
@@ -28,9 +29,15 @@ function DesktopTopHeader() {
       </div>
       <div className="flex items-center gap-2">
         <button
-          onClick={() => {
-            navigator.clipboard.writeText(`https://inflixo.com/${profile.username || "you"}`);
-            showToast("Link copied to clipboard");
+          onClick={async () => {
+            const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
+            const fullUrl = `${origin}/${profile.username || "you"}`;
+            const success = await copyToClipboard(fullUrl);
+            if (success) {
+              showToast("Profile link copied to clipboard! ✨");
+            } else {
+              showToast("Could not copy link", "error");
+            }
           }}
           className="flex items-center gap-2 rounded-xl border border-inflixo-border bg-white px-3.5 py-2 text-xs font-semibold text-inflixo-navy shadow-[var(--shadow-soft)] transition-all hover:-translate-y-px hover:shadow-[var(--shadow-hover)] cursor-pointer"
         >

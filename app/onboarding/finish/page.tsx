@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { initials } from "@/utils/format";
+import { copyToClipboard } from "@/lib/copyToClipboard";
 
 const CONFETTI_COLORS = ["#7c3aed", "#d946ef", "#f59e0b", "#3b82f6", "#10b981", "#e6c583"];
 
@@ -55,16 +56,17 @@ export default function FinishStepPage() {
   const { showToast } = useToast();
   const [copied, setCopied] = useState(false);
 
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
   const profileUrl = `inflixo.com/${profile.username || "you"}`;
-  const fullUrl = `https://${profileUrl}`;
+  const fullUrl = `${origin}/${profile.username || "you"}`;
 
   async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(fullUrl);
+    const success = await copyToClipboard(fullUrl);
+    if (success) {
       setCopied(true);
-      showToast("Profile link copied to clipboard! 📋");
+      showToast("Profile link copied to clipboard! 📋✨");
       setTimeout(() => setCopied(false), 2000);
-    } catch {
+    } else {
       showToast("Couldn't copy — copy it manually", "error");
     }
   }

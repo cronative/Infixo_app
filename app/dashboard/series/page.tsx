@@ -33,6 +33,7 @@ import { GenreMultiSelect } from "@/components/ui/GenreMultiSelect";
 import { LanguageSelect } from "@/components/ui/LanguageSelect";
 import { ShareSeriesModal } from "@/components/shared/ShareSeriesModal";
 import { SeriesPoster } from "@/components/shared/SeriesPoster";
+import { copyToClipboard } from "@/lib/copyToClipboard";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
 import {
@@ -353,15 +354,18 @@ function SeriesRow({
     window.open(previewUrl, "_blank");
   }
 
-  function handleCopySeriesLink() {
+  async function handleCopySeriesLink() {
     const handle = profile?.username || "creator";
-    const shareUrl = `${window.location.origin}/${handle}/series/${series.id}`;
+    const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/${handle}/series/${series.id}` : `https://inflixo.com/${handle}/series/${series.id}`;
     const shareText = `Check out my series "${series.title}" on Inflixo! Watch episodes and stream now! 🎬🔥`;
-    navigator.clipboard.writeText(`${shareText}\n${shareUrl}`).then(() => {
+    const success = await copyToClipboard(`${shareText}\n${shareUrl}`);
+    if (success) {
       setCopiedLink(true);
       showToast(`Series direct link & message copied for "${series.title}"! ✨`);
       setTimeout(() => setCopiedLink(false), 2500);
-    });
+    } else {
+      showToast("Could not copy series link", "error");
+    }
   }
 
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -422,7 +426,12 @@ function SeriesRow({
   }
 
   return (
-    <div className="rounded-3xl border border-slate-200/90 bg-white p-5 shadow-sm transition-all hover:shadow-md hover:border-purple-200 space-y-4 text-left">
+    <div
+      id={`series-${series.id}`}
+      className={`rounded-[28px] border border-slate-200/80 bg-white p-5 sm:p-6 transition-all shadow-xs hover:border-purple-200 ${
+        expanded ? "ring-2 ring-purple-500/20 shadow-md" : ""
+      }`}
+    >
       {/* Series Card Top Info Bar */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-4 min-w-0">

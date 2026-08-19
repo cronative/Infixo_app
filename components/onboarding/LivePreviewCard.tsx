@@ -8,6 +8,7 @@ import { useToast } from "@/contexts/ToastContext";
 import { ShareSeriesModal } from "@/components/shared/ShareSeriesModal";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { SeriesPoster } from "@/components/shared/SeriesPoster";
+import { copyToClipboard } from "@/lib/copyToClipboard";
 
 export interface ThemeStyleConfig {
   cardBg?: string;
@@ -23,6 +24,8 @@ export interface ThemeStyleConfig {
   nameColor: string;
   bioColor: string;
   handleColor: string;
+  isShimmerName?: boolean;
+  isShimmerFanbase?: boolean;
 }
 
 export const DEFAULT_THEME_STYLE: ThemeStyleConfig = {
@@ -297,6 +300,138 @@ const RETRO_SYNTH_STYLE: ThemeStyleConfig = {
   handleColor: "text-teal-300",
 };
 
+const MATCHA_CREAM_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-[#dcfce7] via-[#f0fdf4] to-[#fef3c7] text-[#14532d] border border-emerald-200/90 shadow-xl",
+  profBadgeBg: "bg-emerald-100/90",
+  profBadgeText: "text-emerald-900",
+  profBadgeBorder: "border-emerald-300",
+  fanbaseBg: "bg-emerald-100/90",
+  fanbaseText: "text-emerald-900",
+  socialItemBg: "bg-white/85 backdrop-blur-xs",
+  socialItemBorder: "border-emerald-200/80",
+  socialNameColor: "text-[#14532d]",
+  socialUnitColor: "text-emerald-800/70",
+  nameColor: "text-[#14532d]",
+  bioColor: "text-emerald-900/80",
+  handleColor: "text-emerald-700",
+};
+
+const CLOUD_FLUFF_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-[#e0f2fe] via-[#f0f9ff] to-[#e0e7ff] text-[#0369a1] border border-sky-200/90 shadow-xl",
+  profBadgeBg: "bg-sky-100/90",
+  profBadgeText: "text-sky-900",
+  profBadgeBorder: "border-sky-300",
+  fanbaseBg: "bg-sky-100/90",
+  fanbaseText: "text-sky-900",
+  socialItemBg: "bg-white/85 backdrop-blur-xs",
+  socialItemBorder: "border-sky-200/80",
+  socialNameColor: "text-[#0369a1]",
+  socialUnitColor: "text-sky-800/70",
+  nameColor: "text-[#0369a1]",
+  bioColor: "text-sky-900/80",
+  handleColor: "text-sky-700",
+};
+
+const BOBA_MILK_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-[#fef3c7] via-[#ffedd5] to-[#f5f5f4] text-[#78350f] border border-amber-300/80 shadow-xl",
+  profBadgeBg: "bg-amber-100",
+  profBadgeText: "text-amber-950",
+  profBadgeBorder: "border-amber-300",
+  fanbaseBg: "bg-amber-100",
+  fanbaseText: "text-amber-950",
+  socialItemBg: "bg-white/85 backdrop-blur-xs",
+  socialItemBorder: "border-amber-200",
+  socialNameColor: "text-[#78350f]",
+  socialUnitColor: "text-amber-900/70",
+  nameColor: "text-[#78350f]",
+  bioColor: "text-amber-900/80",
+  handleColor: "text-amber-800",
+};
+
+const SAKURA_BLOSSOM_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-[#fce7f3] via-[#fbcfe8] to-[#faf5ff] text-[#831843] border border-pink-200/90 shadow-xl",
+  profBadgeBg: "bg-pink-100",
+  profBadgeText: "text-pink-950",
+  profBadgeBorder: "border-pink-300",
+  fanbaseBg: "bg-pink-100",
+  fanbaseText: "text-pink-950",
+  socialItemBg: "bg-white/85 backdrop-blur-xs",
+  socialItemBorder: "border-pink-200",
+  socialNameColor: "text-[#831843]",
+  socialUnitColor: "text-pink-900/70",
+  nameColor: "text-[#831843]",
+  bioColor: "text-pink-900/80",
+  handleColor: "text-pink-700",
+};
+
+const SAND_DUNE_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-[#f5f5f4] via-[#fafaf9] to-[#fef3c7] text-[#44403c] border border-stone-300/80 shadow-xl",
+  profBadgeBg: "bg-stone-200/80",
+  profBadgeText: "text-stone-900",
+  profBadgeBorder: "border-stone-300",
+  fanbaseBg: "bg-stone-200/80",
+  fanbaseText: "text-stone-900",
+  socialItemBg: "bg-white/85 backdrop-blur-xs",
+  socialItemBorder: "border-stone-200",
+  socialNameColor: "text-[#44403c]",
+  socialUnitColor: "text-stone-700/70",
+  nameColor: "text-[#44403c]",
+  bioColor: "text-stone-800/80",
+  handleColor: "text-stone-700",
+};
+
+const SHIMMER_GOLD_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-[#fef3c7] via-[#fffbeb] to-[#fde68a] text-[#78350f] border border-amber-300 shadow-xl",
+  profBadgeBg: "bg-amber-200/80",
+  profBadgeText: "text-amber-950 font-black",
+  profBadgeBorder: "border-amber-400",
+  fanbaseBg: "bg-amber-200/80",
+  fanbaseText: "text-amber-950 font-black",
+  socialItemBg: "bg-white/90 backdrop-blur-xs",
+  socialItemBorder: "border-amber-300/90",
+  socialNameColor: "text-[#78350f]",
+  socialUnitColor: "text-amber-900/80",
+  nameColor: "text-[#78350f]",
+  bioColor: "text-amber-950/90",
+  handleColor: "text-amber-800",
+  isShimmerName: true,
+};
+
+const HOLOGRAPHIC_WAVE_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-[#e0e7ff] via-[#f3e8ff] to-[#fce7f3] text-[#4c1d95] border border-purple-200 shadow-xl",
+  profBadgeBg: "bg-purple-200/80",
+  profBadgeText: "text-purple-950 font-black",
+  profBadgeBorder: "border-purple-300",
+  fanbaseBg: "bg-purple-200/80",
+  fanbaseText: "text-purple-950 font-black",
+  socialItemBg: "bg-white/90 backdrop-blur-xs",
+  socialItemBorder: "border-purple-200",
+  socialNameColor: "text-[#4c1d95]",
+  socialUnitColor: "text-purple-900/80",
+  nameColor: "text-[#4c1d95]",
+  bioColor: "text-purple-950/90",
+  handleColor: "text-purple-700",
+  isShimmerName: true,
+};
+
+const LUMINOUS_PEARL_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-[#ffffff] via-[#f8fafc] to-[#f1f5f9] text-[#0f172a] border border-slate-200/90 shadow-xl",
+  profBadgeBg: "bg-slate-100",
+  profBadgeText: "text-slate-900 font-black",
+  profBadgeBorder: "border-slate-300",
+  fanbaseBg: "bg-slate-100",
+  fanbaseText: "text-slate-900 font-black",
+  socialItemBg: "bg-white/95 backdrop-blur-xs",
+  socialItemBorder: "border-slate-200",
+  socialNameColor: "text-[#0f172a]",
+  socialUnitColor: "text-slate-600",
+  nameColor: "text-[#0f172a]",
+  bioColor: "text-slate-700",
+  handleColor: "text-purple-600",
+  isShimmerName: true,
+  isShimmerFanbase: true,
+};
+
 export const THEME_STYLES: Record<string, ThemeStyleConfig> = {
   "minimal-white": DEFAULT_THEME_STYLE,
   "modern-purple": DARK_PURPLE_STYLE,
@@ -318,6 +453,20 @@ export const THEME_STYLES: Record<string, ThemeStyleConfig> = {
   "cosmic-galaxy": COSMIC_GALAXY_STYLE,
   "tokyo-drift": TOKYO_DRIFT_STYLE,
   "retro-synth": RETRO_SYNTH_STYLE,
+  "shimmer-gold": SHIMMER_GOLD_STYLE,
+  "holographic-wave": HOLOGRAPHIC_WAVE_STYLE,
+  "aurora-borealis": EMERALD_LUXE_STYLE,
+  "electric-cyber": NEON_PULSE_STYLE,
+  "luminous-pearl": LUMINOUS_PEARL_STYLE,
+  "cosmic-pulse": COSMIC_GALAXY_STYLE,
+  "matcha-cream": MATCHA_CREAM_STYLE,
+  "cloud-fluff": CLOUD_FLUFF_STYLE,
+  "boba-milk": BOBA_MILK_STYLE,
+  "signature-purple": LAVENDER_HAZE_STYLE,
+  "sakura-pink": SAKURA_BLOSSOM_STYLE,
+  "sand-linen": SAND_DUNE_STYLE,
+  "sakura-blossom": SAKURA_BLOSSOM_STYLE,
+  "sand-dune": SAND_DUNE_STYLE,
 };
 
 function getHandle(url: string): string {
@@ -439,12 +588,10 @@ export function LivePreviewCard({
   const handleCopyClick = async () => {
     const cleanUsername = profile.username || "username";
     const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/${cleanUsername}` : "";
-    try {
-      if (navigator.clipboard) {
-        await navigator.clipboard.writeText(shareUrl);
-        showToast("Profile link copied to clipboard! ✨");
-      }
-    } catch {
+    const success = await copyToClipboard(shareUrl);
+    if (success) {
+      showToast("Profile link copied to clipboard! ✨");
+    } else {
       showToast("Could not copy link", "error");
     }
   };
@@ -458,11 +605,11 @@ export function LivePreviewCard({
     const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/${cleanUsername}` : "";
     const title = `${profile.displayName || "Creator"} on Inflixo`;
     try {
-      if (navigator.share) {
+      if (typeof navigator !== "undefined" && navigator.share) {
         await navigator.share({ title, url: shareUrl });
-      } else if (navigator.clipboard) {
-        await navigator.clipboard.writeText(shareUrl);
-        showToast("Profile link copied to clipboard! ✨");
+      } else {
+        const success = await copyToClipboard(shareUrl);
+        if (success) showToast("Profile link copied to clipboard! ✨");
       }
     } catch {
       // User dismissed share sheet
@@ -520,19 +667,25 @@ export function LivePreviewCard({
             />
           </div>
 
-          <h3 className={`mt-3.5 text-lg font-extrabold tracking-tight sm:text-xl ${style.nameColor}`}>
+          <h3 className={`mt-3.5 text-lg font-extrabold tracking-tight sm:text-xl ${
+            style.isShimmerName
+              ? "bg-gradient-to-r from-amber-500 via-rose-500 to-purple-600 bg-clip-text text-transparent animate-pulse"
+              : style.nameColor
+          }`}>
             {profile.displayName || "Your Name"}
           </h3>
 
           {/* Username Link with Direct Copy Icon */}
           <button
             type="button"
-            onClick={() => {
+            onClick={async () => {
               const handle = profile.username || "username";
-              const profileUrl = `${window.location.origin}/${handle}`;
-              if (navigator.clipboard) {
-                navigator.clipboard.writeText(profileUrl);
+              const profileUrl = typeof window !== "undefined" ? `${window.location.origin}/${handle}` : `https://inflixo.com/${handle}`;
+              const success = await copyToClipboard(profileUrl);
+              if (success) {
                 showToast("Profile link copied to clipboard! ✨");
+              } else {
+                showToast("Could not copy link", "error");
               }
             }}
             className={`mt-1 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} ${style.handleColor}`}
@@ -592,7 +745,9 @@ export function LivePreviewCard({
           </p>
 
           {/* Clean Sober Fanbase Card */}
-          <div className={`mt-4 rounded-2xl border p-3.5 text-center w-full shadow-2xs ${style.socialItemBg} ${style.socialItemBorder}`}>
+          <div className={`mt-4 rounded-2xl border p-3.5 text-center w-full shadow-2xs ${style.socialItemBg} ${style.socialItemBorder} ${
+            style.isShimmerFanbase ? "ring-2 ring-purple-500/40 animate-pulse" : ""
+          }`}>
             <div className="flex items-center justify-center gap-2">
               <span className="text-base">❤️</span>
               <span className={`font-display text-lg sm:text-xl font-black ${style.nameColor}`}>
@@ -744,7 +899,7 @@ function PreviewSeriesItem({
   const allEpisodes = getSeriesEpisodes(series);
   const genresList = series.genre ? series.genre.split(",").map((g) => g.trim()).filter(Boolean) : [];
 
-  const handleShareSeriesLink = () => {
+  const handleShareSeriesLink = async () => {
     const handle = username || "creator";
     const shareUrl = typeof window !== "undefined"
       ? `${window.location.origin}/${handle}/series/${series.id}`
@@ -752,10 +907,13 @@ function PreviewSeriesItem({
     const title = `${series.title} on Inflixo`;
 
     if (typeof navigator !== "undefined" && navigator.share) {
-      navigator.share({ title, url: shareUrl }).catch(() => {});
-    } else if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText(shareUrl);
-      showToast("Series link copied to clipboard! 🎬");
+      navigator.share({ title, url: shareUrl }).catch(async () => {
+        const success = await copyToClipboard(shareUrl);
+        if (success) showToast("Series link copied to clipboard! 🎬");
+      });
+    } else {
+      const success = await copyToClipboard(shareUrl);
+      if (success) showToast("Series link copied to clipboard! 🎬");
     }
   };
 

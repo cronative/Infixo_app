@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Copy, Check, QrCode, Sparkles, ExternalLink } from "lucide-react";
 import { useToast } from "@/contexts/ToastContext";
+import { copyToClipboard } from "@/lib/copyToClipboard";
 
 interface QRCodeWidgetProps {
   username: string;
@@ -18,12 +19,12 @@ export function QRCodeWidget({ username, className = "" }: QRCodeWidgetProps) {
   const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(profileUrl)}&margin=10`;
 
   async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(profileUrl);
+    const success = await copyToClipboard(profileUrl);
+    if (success) {
       setCopied(true);
       showToast("Link copied to clipboard! ✨");
       setTimeout(() => setCopied(false), 2000);
-    } catch {
+    } else {
       showToast("Could not copy link", "error");
     }
   }

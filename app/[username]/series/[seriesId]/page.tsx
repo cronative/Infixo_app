@@ -15,6 +15,7 @@ import { THEME_STYLES, DEFAULT_THEME_STYLE } from "@/components/onboarding/LiveP
 import { formatCount, buildSeriesUrl } from "@/utils/format";
 import { ShareSeriesModal } from "@/components/shared/ShareSeriesModal";
 import { SeriesPoster } from "@/components/shared/SeriesPoster";
+import { copyToClipboard } from "@/lib/copyToClipboard";
 
 function getPlatformInfo(platformStr?: string, urlStr?: string) {
   const p = (platformStr || "").toLowerCase();
@@ -168,19 +169,22 @@ export default function SeriesDetailPage() {
   const style = THEME_STYLES[theme] || DEFAULT_THEME_STYLE;
   const isDark = style.nameColor.includes("white") || style.nameColor.includes("amber") || style.nameColor.includes("sky");
 
-  const handleShare = () => {
+  const handleShare = async () => {
     if (!series) return;
-    const handle = creator?.username || params.username || "creator";
+    const handle = username || "creator";
     const shareUrl = typeof window !== "undefined"
       ? `${window.location.origin}/${handle}/series/${series.id}`
       : `https://inflixo.com/${handle}/series/${series.id}`;
     const title = `${series.title} on Inflixo`;
 
     if (typeof navigator !== "undefined" && navigator.share) {
-      navigator.share({ title, url: shareUrl }).catch(() => {});
-    } else if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText(shareUrl);
-      showToast("Series link copied to clipboard! 🎬");
+      navigator.share({ title, url: shareUrl }).catch(async () => {
+        const success = await copyToClipboard(shareUrl);
+        if (success) showToast("Series link copied to clipboard! 🎬");
+      });
+    } else {
+      const success = await copyToClipboard(shareUrl);
+      if (success) showToast("Series link copied to clipboard! 🎬");
     }
   };
 

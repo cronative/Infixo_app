@@ -17,6 +17,7 @@ import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { AuthService } from "@/services/AuthService";
+import { copyToClipboard } from "@/lib/copyToClipboard";
 import { SIDEBAR_NAV } from "@/components/dashboard/navConfig";
 
 interface DashboardSideDrawerProps {
@@ -113,9 +114,13 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
             </a>
             <button
               type="button"
-              onClick={() => {
-                navigator.clipboard.writeText(liveUrl);
-                showToast("Profile link copied!");
+              onClick={async () => {
+                const success = await copyToClipboard(liveUrl);
+                if (success) {
+                  showToast("Profile link copied! ✨");
+                } else {
+                  showToast("Could not copy link", "error");
+                }
               }}
               className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/20 text-white hover:bg-white/30 transition-all"
               title="Copy Link"

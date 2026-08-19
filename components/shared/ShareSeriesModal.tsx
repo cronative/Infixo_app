@@ -5,6 +5,7 @@ import { Copy, Check, X, Share2, Sparkles, MessageSquare } from "lucide-react";
 import { FacebookIcon, XTwitterIcon } from "@/components/shared/BrandIcons";
 import { useToast } from "@/contexts/ToastContext";
 import { Series } from "@/types";
+import { copyToClipboard } from "@/lib/copyToClipboard";
 
 interface ShareSeriesModalProps {
   isOpen: boolean;
@@ -26,18 +27,26 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
 
   const reelCaption = `🎬 ${series.title}\n\nMissed a part? Watch all episodes in the correct order on Inflixo 👇\n${seriesUrl}`;
 
-  function handleCopyLink() {
-    navigator.clipboard.writeText(seriesUrl);
-    setCopiedLink(true);
-    showToast("Series link copied to clipboard! 🔗✨");
-    setTimeout(() => setCopiedLink(false), 2000);
+  async function handleCopyLink() {
+    const success = await copyToClipboard(seriesUrl);
+    if (success) {
+      setCopiedLink(true);
+      showToast("Series link copied to clipboard! 🔗✨");
+      setTimeout(() => setCopiedLink(false), 2000);
+    } else {
+      showToast("Could not copy link", "error");
+    }
   }
 
-  function handleCopyCaption() {
-    navigator.clipboard.writeText(reelCaption);
-    setCopiedCaption(true);
-    showToast("Reel caption copied! Ready to paste in your Reel/Short caption! 🎬🔥");
-    setTimeout(() => setCopiedCaption(false), 2000);
+  async function handleCopyCaption() {
+    const success = await copyToClipboard(reelCaption);
+    if (success) {
+      setCopiedCaption(true);
+      showToast("Reel caption copied! Ready to paste in your Reel/Short caption! 🎬🔥");
+      setTimeout(() => setCopiedCaption(false), 2000);
+    } else {
+      showToast("Could not copy caption", "error");
+    }
   }
 
   function handleWhatsAppShare() {

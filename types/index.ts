@@ -126,8 +126,19 @@ export const EMPTY_SOCIAL_ACCOUNTS: SocialAccounts = {
 // Themes
 // ---------------------------------------------------------------------------
 
+export type ThemeGroup = "light" | "shimmer" | "dark";
+
 export type ThemeKey =
   | "minimal-white"
+  | "signature-purple"
+  | "pastel-dream"
+  | "matcha-cream"
+  | "cloud-fluff"
+  | "boba-milk"
+  | "sakura-pink"
+  | "nordic-frost"
+  | "sand-linen"
+  | "golden-hour"
   | "modern-purple"
   | "midnight"
   | "ocean-blue"
@@ -136,23 +147,30 @@ export type ThemeKey =
   | "rose-gold"
   | "mono"
   | "neon-pulse"
-  | "pastel-dream"
   | "cyberpunk"
   | "emerald-luxe"
   | "crimson-velvet"
   | "solar-flare"
   | "lavender-haze"
-  | "nordic-frost"
-  | "golden-hour"
   | "cosmic-galaxy"
   | "tokyo-drift"
-  | "retro-synth";
+  | "retro-synth"
+  | "shimmer-gold"
+  | "holographic-wave"
+  | "aurora-borealis"
+  | "electric-cyber"
+  | "luminous-pearl"
+  | "cosmic-pulse"
+  | "sakura-blossom"
+  | "sand-dune";
 
 export interface ThemeMeta {
   key: ThemeKey;
   name: string;
   description: string;
   swatch: string[]; // preview colors
+  group: ThemeGroup;
+  isShimmer?: boolean;
 }
 
 // ---------------------------------------------------------------------------
