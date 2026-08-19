@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { QrCode, Play, UserX, Home, Sparkles, Film, Users } from "lucide-react";
+import { Play, UserX, Home, Sparkles, Film, Users } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 import { SkeletonProfileCard } from "@/components/ui/Skeleton";
 import { ProfileService } from "@/services/ProfileService";
@@ -363,37 +363,9 @@ export default function PublicProfilePage() {
           onShare={handleShare}
         />
 
-        {/* High-Contrast Theme-Aware QR Code & Profile Link Box */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-3xl border border-slate-700/80 bg-slate-900/95 backdrop-blur-xl p-4 sm:p-5 text-white shadow-2xl mt-4">
-          <div className="flex items-center gap-3.5 min-w-0">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-purple-600 text-white shadow-md">
-              <QrCode className="h-6 w-6" />
-            </div>
-            <div className="min-w-0 text-left">
-              <p className="truncate text-sm sm:text-base font-extrabold text-white">inflixo.com/{handleStr}</p>
-              <p className="text-xs text-slate-300 font-medium mt-0.5">Scan or copy to visit this creator profile</p>
-            </div>
-          </div>
-          <button
-            onClick={handleCopy}
-            className="tap-scale shrink-0 rounded-2xl bg-purple-600 hover:bg-purple-500 px-5 py-2.5 text-xs font-black text-white shadow-md transition-all border border-purple-400/30"
-          >
-            {copied ? "Copied ✓" : "Copy Link"}
-          </button>
-        </div>
 
-        {/* Viral Growth Engine: "Powered by Inflixo" Watermark Badge */}
-        <div className="text-center pt-2 pb-4">
-          <a
-            href={`/login?ref=${encodeURIComponent(handleStr)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="tap-scale inline-flex items-center gap-2 rounded-full border border-white/20 bg-slate-900/80 backdrop-blur-md px-4 py-1.5 text-xs font-extrabold text-white shadow-lg hover:bg-slate-900 transition-all hover:scale-105"
-          >
-            <Sparkles className="h-3.5 w-3.5 text-purple-400 fill-current animate-pulse" />
-            <span>Built with <strong className="text-purple-300 font-black">Inflixo</strong> • Build your Creator Home →</span>
-          </a>
-        </div>
+
+
       </main>
     </div>
   );

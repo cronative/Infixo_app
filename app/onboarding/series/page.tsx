@@ -196,9 +196,7 @@ export default function SeriesStepPage() {
 
             {/* Poster + Title & Platform Selector */}
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-              <div className="shrink-0">
-                <PhotoUpload value={poster} onChange={setPoster} shape="rounded" size={88} label="Series poster" />
-              </div>
+                <PhotoUpload value={poster} onChange={setPoster} shape="landscape" label="Upload Series Landscape Poster" />
               <div className="w-full space-y-3" id="title">
                 <Input
                   label="Series title"

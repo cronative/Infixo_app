@@ -211,11 +211,13 @@ export default function DashboardProfilePage() {
           <div className="mt-4 space-y-4 rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
             <CategorySelect
               value={profile.category}
-              onChange={(cat) => {
-                updateProfile({ category: cat as any, profession: null });
+              customValue={profile.customCategory}
+              onChange={(cat, customCat) => {
+                updateProfile({ category: cat as any, customCategory: customCat, profession: null });
                 setErrors((prev) => ({ ...prev, category: undefined }));
               }}
               error={errors.category}
+              max={3}
             />
 
             {profile.category && (
@@ -226,7 +228,7 @@ export default function DashboardProfilePage() {
                   onChange={(prof) => {
                     updateProfile({ profession: prof });
                   }}
-                  max={3}
+                  max={5}
                 />
               </div>
             )}

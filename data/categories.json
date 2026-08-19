@@ -1,373 +1,132 @@
 [
   {
     "category": "Entertainment",
-    "professions": [
-      "Vlogger",
-      "Comedian",
-      "Storyteller",
-      "Meme Creator",
-      "Short Video Creator",
-      "Sketch Artist",
-      "Prank Creator",
-      "Reaction Creator",
-      "Challenge Creator",
-      "Voice Artist",
-      "Dub Creator",
-      "Movie Reviewer",
-      "Anime Creator",
-      "TV Show Reviewer",
-      "Celebrity News Creator",
-      "Entertainment Reporter",
-      "Micro-Drama Creator"
-    ]
+    "emoji": "🎭",
+    "subtypes": ["Entertainer", "Sketch Creator", "Meme Creator", "Performer"]
   },
   {
-    "category": "Filmmaking & Web Series",
-    "professions": [
-      "Filmmaker",
-      "Web Series Director",
-      "Short Film Director",
-      "Screenwriter & Scriptwriter",
-      "Cinematographer",
-      "Video Editor",
-      "VFX & CGI Artist",
-      "Sound Designer",
-      "Indie Film Producer",
-      "Documentary Creator",
-      "OTT Content Creator"
-    ]
-  },
-  {
-    "category": "Technology & AI",
-    "professions": [
-      "Tech Reviewer",
-      "AI Creator & Prompt Specialist",
-      "App Developer",
-      "Web Developer",
-      "Software Engineer",
-      "Gadget Reviewer",
-      "Mobile Reviewer",
-      "Laptop Reviewer",
-      "Programming Creator",
-      "Cyber Security Creator",
-      "Cloud Engineer",
-      "DevOps Creator",
-      "UI/UX Designer",
-      "No-Code & Automation Expert",
-      "Tech News Creator",
-      "Startup Founder",
-      "SaaS Creator"
-    ]
-  },
-  {
-    "category": "Education & Career",
-    "professions": [
-      "Teacher",
-      "Tutor",
-      "Coding Instructor",
-      "Language Coach",
-      "Career Mentor",
-      "UPSC Educator",
-      "SSC Educator",
-      "NEET Educator",
-      "JEE Educator",
-      "GK & Trivia Creator",
-      "Science Educator",
-      "Math Educator",
-      "History Educator",
-      "Geography Educator",
-      "Economics Educator",
-      "Online Course Creator",
-      "Study & Exam Mentor"
-    ]
-  },
-  {
-    "category": "Business & Finance",
-    "professions": [
-      "Entrepreneur",
-      "Investor",
-      "Business Coach",
-      "Finance Creator",
-      "Stock Market Creator",
-      "Crypto Creator",
-      "Startup Founder",
-      "Side Hustle Creator",
-      "Marketing Expert",
-      "Sales Coach",
-      "Brand Consultant",
-      "Personal Finance Creator",
-      "Tax & CA Expert",
-      "Dropshipping & E-Commerce",
-      "Business Reviewer"
-    ]
-  },
-  {
-    "category": "Lifestyle",
-    "professions": [
-      "Lifestyle Vlogger",
-      "Daily Vlogger",
-      "Family Creator",
-      "Couple Creator",
-      "Morning Routine Creator",
-      "Night Routine Creator",
-      "Minimalist Creator",
-      "Luxury Lifestyle Creator",
-      "College Creator",
-      "Student Creator",
-      "Host & Anchor",
-      "Public Speaker"
-    ]
-  },
-  {
-    "category": "Gaming & Esports",
-    "professions": [
-      "Gamer",
-      "Game Streamer",
-      "Esports Creator",
-      "Mobile Gamer",
-      "PC Gamer",
-      "Console Gamer",
-      "Gaming Reviewer",
-      "Walkthrough Creator",
-      "Live Streamer",
-      "Game Coach & Analyst"
-    ]
-  },
-  {
-    "category": "Health & Fitness",
-    "professions": [
-      "Fitness Coach",
-      "Gym Trainer",
-      "Yoga Instructor",
-      "Nutritionist",
-      "Dietitian",
-      "Calisthenics Coach",
-      "Weight Loss Coach",
-      "Bodybuilding Coach",
-      "Running Coach",
-      "Cycling Coach",
-      "Mental Wellness Creator",
-      "Meditation Coach"
-    ]
-  },
-  {
-    "category": "Real Estate & Home",
-    "professions": [
-      "Real Estate Agent",
-      "Property Reviewer",
-      "Interior Designer",
-      "Home Tour Vlogger",
-      "Architect",
-      "Home Decor Creator",
-      "Landscape & Garden Creator"
-    ]
-  },
-  {
-    "category": "Travel & Adventure",
-    "professions": [
-      "Travel Vlogger",
-      "Travel Guide",
-      "Motovlogger & Rider",
-      "Road Trip Creator",
-      "Backpacker",
-      "Luxury Traveler",
-      "Solo Traveler",
-      "Camping Creator",
-      "Adventure Sports Creator",
-      "Travel Photographer"
-    ]
+    "category": "Comedy",
+    "emoji": "😂",
+    "subtypes": ["Stand-up", "Funny Reels", "Satire", "Pranks", "Mimicry"]
   },
   {
     "category": "Food & Cooking",
-    "professions": [
-      "Food Vlogger",
-      "Chef",
-      "Home Cook",
-      "Food Reviewer",
-      "Street Food Creator",
-      "Restaurant Reviewer",
-      "Baker",
-      "Coffee Creator & Barista",
-      "Healthy Recipe Creator",
-      "BBQ Creator",
-      "Dessert & Pastry Creator",
-      "Kitchen Tips Creator"
-    ]
+    "emoji": "🍔",
+    "subtypes": ["Food Reviewer", "Home Cook", "Chef", "Recipes", "Street Food"]
   },
   {
-    "category": "Fashion & Beauty",
-    "professions": [
-      "Fashion Creator",
-      "Makeup Artist",
-      "Beauty Creator",
-      "Skincare Creator",
-      "Hair Stylist",
-      "Nail Artist",
-      "Personal Stylist",
-      "Outfit Creator",
-      "Jewelry Creator",
-      "Luxury Fashion Creator",
-      "Model"
-    ]
+    "category": "Travel",
+    "emoji": "✈️",
+    "subtypes": ["Travel Vlogger", "Backpacker", "Luxury Travel", "Local Explorer"]
   },
   {
-    "category": "Music & Performing Arts",
-    "professions": [
-      "Singer",
-      "Music Producer",
-      "Guitarist",
-      "DJ",
-      "Pianist",
-      "Drummer",
-      "Rapper & Hip-Hop Artist",
-      "Beatboxer",
-      "Music Reviewer",
-      "Songwriter",
-      "Music Teacher",
-      "Cover Artist",
-      "Dancer & Choreographer"
-    ]
+    "category": "Fashion",
+    "emoji": "👗",
+    "subtypes": ["Fashion Creator", "Styling", "Streetwear", "Ethnic Wear", "Luxury Fashion"]
   },
   {
-    "category": "Sports & Athletics",
-    "professions": [
-      "Sports Creator",
-      "Athlete",
-      "Coach",
-      "Cricket Creator",
-      "Football Creator",
-      "Basketball Creator",
-      "Tennis Creator",
-      "Badminton Creator",
-      "Kabaddi Creator",
-      "Sports Analyst",
-      "Sports Commentator"
-    ]
+    "category": "Beauty & Skincare",
+    "emoji": "💄",
+    "subtypes": ["Makeup", "Skincare", "Haircare", "Nail Art", "Beauty Reviews"]
   },
   {
-    "category": "Photography & Video",
-    "professions": [
-      "Photographer",
-      "Videographer",
-      "Drone Pilot & Creator",
-      "Wedding Photographer",
-      "Portrait Photographer",
-      "Street Photographer",
-      "Nature & Wildlife Photographer",
-      "Photo Editor",
-      "Video Editor & Colorist",
-      "Cinematographer"
-    ]
+    "category": "Lifestyle",
+    "emoji": "🌿",
+    "subtypes": ["Daily Lifestyle", "Minimal Living", "Luxury Lifestyle", "Couple Lifestyle"]
   },
   {
-    "category": "DIY & Crafts",
-    "professions": [
-      "DIY Creator",
-      "Craft Artist",
-      "Woodworking Creator",
-      "Upcycling & Eco Creator",
-      "Paper Craft Artist",
-      "Handmade Product Creator"
-    ]
+    "category": "Gaming",
+    "emoji": "🎮",
+    "subtypes": ["Mobile Gaming", "PC Gaming", "Console Gaming", "Streaming", "Esports"]
   },
   {
-    "category": "News & Media",
-    "professions": [
-      "News Creator",
-      "Journalist",
-      "Political Analyst",
-      "Current Affairs Creator",
-      "Fact Checker",
-      "News Reporter",
-      "Breaking News Creator",
-      "World News Creator"
-    ]
+    "category": "Technology & AI",
+    "emoji": "💻",
+    "subtypes": ["Tech Reviews", "AI Tools", "Gadgets", "Apps", "Tech News"]
   },
   {
-    "category": "Podcast & Talk Shows",
-    "professions": [
-      "Podcast Host",
-      "Interview Creator",
-      "Business Podcast",
-      "Tech Podcast",
-      "Comedy Podcast",
-      "Motivational Podcast",
-      "True Crime Podcast",
-      "Health & Wellness Podcast"
-    ]
+    "category": "Coding & Development",
+    "emoji": "👨‍💻",
+    "subtypes": ["Web Dev", "Mobile Dev", "Programming", "Tutorials", "No-Code"]
   },
   {
-    "category": "Art & Design",
-    "professions": [
-      "Digital Artist",
-      "Graphic Designer",
-      "UI/UX Designer",
-      "Illustrator",
-      "Animator",
-      "3D & VFX Artist",
-      "Motion Designer",
-      "Painter",
-      "Sketch Artist",
-      "Calligraphy Artist",
-      "Creative Director"
-    ]
+    "category": "Education",
+    "emoji": "📚",
+    "subtypes": ["Teacher", "Tutorials", "Study Tips", "Exam Prep", "Learning"]
   },
   {
-    "category": "Motivation & Self Growth",
-    "professions": [
-      "Motivational Speaker",
-      "Life Coach",
-      "Success Coach",
-      "Mindset Coach",
-      "Productivity Creator",
-      "Self Improvement Creator",
-      "Book Reviewer & Summary Creator"
-    ]
+    "category": "Business & Entrepreneurship",
+    "emoji": "💼",
+    "subtypes": ["Founder", "Startup", "Business Tips", "Entrepreneurship"]
   },
   {
-    "category": "Automobile & EV",
-    "professions": [
-      "Car Reviewer",
-      "Bike & Motovlogger",
-      "EV & Clean Energy Creator",
-      "Automobile Journalist",
-      "Modification & Tuning Expert",
-      "Mechanic & Garage Creator"
-    ]
+    "category": "Finance",
+    "emoji": "💰",
+    "subtypes": ["Personal Finance", "Investing", "Stock Market", "Tax", "Money Tips"]
   },
   {
-    "category": "Pets & Animals",
-    "professions": [
-      "Pet Creator",
-      "Dog Trainer",
-      "Cat Creator",
-      "Wildlife Creator",
-      "Animal Rescuer",
-      "Pet Groomer & Vet Creator"
-    ]
+    "category": "Marketing & Social Media",
+    "emoji": "📈",
+    "subtypes": ["Digital Marketing", "Creator Growth", "SEO", "Branding", "Ads"]
   },
   {
-    "category": "Parenting & Family",
-    "professions": [
-      "Parenting Coach",
-      "Mom Creator",
-      "Dad Creator",
-      "Kids Activity Creator",
-      "Family Educator"
-    ]
+    "category": "Health & Fitness",
+    "emoji": "🏋️",
+    "subtypes": ["Fitness Coach", "Gym", "Yoga", "Nutrition", "Running"]
   },
   {
-    "category": "Spirituality & Astrology",
-    "professions": [
-      "Spiritual Creator",
-      "Meditation Teacher",
-      "Yoga Guru",
-      "Astrologer",
-      "Tarot Card Reader",
-      "Vastu Consultant",
-      "Temple Vlogger",
-      "Religious Storyteller",
-      "Bhajan Singer"
-    ]
+    "category": "Self Growth & Motivation",
+    "emoji": "🧠",
+    "subtypes": ["Motivation", "Productivity", "Career Growth", "Life Advice"]
+  },
+  {
+    "category": "Music",
+    "emoji": "🎵",
+    "subtypes": ["Singer", "Musician", "Rapper", "Composer", "Covers"]
+  },
+  {
+    "category": "Dance",
+    "emoji": "💃",
+    "subtypes": ["Dancer", "Choreographer", "Dance Tutorials", "Traditional Dance"]
+  },
+  {
+    "category": "Film & Filmmaking",
+    "emoji": "🎬",
+    "subtypes": ["Filmmaker", "Actor", "Director", "Cinematography", "Short Films"]
+  },
+  {
+    "category": "Photography",
+    "emoji": "📸",
+    "subtypes": ["Photographer", "Mobile Photography", "Editing", "Wildlife", "Portrait"]
+  },
+  {
+    "category": "Art & Creativity",
+    "emoji": "🎨",
+    "subtypes": ["Artist", "Illustration", "Graphic Design", "DIY", "Crafts"]
+  },
+  {
+    "category": "Sports",
+    "emoji": "⚽",
+    "subtypes": ["Cricket", "Football", "Sports Analysis", "Athlete", "Sports News"]
+  },
+  {
+    "category": "Family & Parenting",
+    "emoji": "👨‍👩‍👧",
+    "subtypes": ["Parenting", "Mom Creator", "Dad Creator", "Family Vlogs", "Kids"]
+  },
+  {
+    "category": "Spirituality & Devotional",
+    "emoji": "🕉️",
+    "subtypes": ["Spirituality", "Devotional", "Astrology", "Meditation", "Mythology"]
+  },
+  {
+    "category": "Podcast & Conversations",
+    "emoji": "🎙️",
+    "subtypes": ["Podcaster", "Interviews", "Talk Shows", "Discussions"]
+  },
+  {
+    "category": "Other",
+    "emoji": "✨",
+    "subtypes": []
   }
 ]

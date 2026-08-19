@@ -1,13 +1,324 @@
-import { useState, useEffect } from "react";
-import { Users, Sparkles, ExternalLink, Play, Film, Eye, ChevronDown, ChevronUp, Share2, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import { Users, Sparkles, ExternalLink, Play, Film, Share2, ChevronDown, ChevronUp, ChevronRight, Copy } from "lucide-react";
 import { CreatorProfile, SocialAccounts, ThemeKey, Series } from "@/types";
-import { formatCount, initials } from "@/utils/format";
+import { formatCount } from "@/utils/format";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
-import { Logo, InflixoLogoIcon } from "@/components/shared/Logo";
+import { InflixoLogoIcon } from "@/components/shared/Logo";
 import { useToast } from "@/contexts/ToastContext";
 import { ShareSeriesModal } from "@/components/shared/ShareSeriesModal";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { SeriesPoster } from "@/components/shared/SeriesPoster";
+
+export interface ThemeStyleConfig {
+  cardBg?: string;
+  profBadgeBg: string;
+  profBadgeText: string;
+  profBadgeBorder: string;
+  fanbaseBg: string;
+  fanbaseText: string;
+  socialItemBg: string;
+  socialItemBorder: string;
+  socialNameColor: string;
+  socialUnitColor: string;
+  nameColor: string;
+  bioColor: string;
+  handleColor: string;
+}
+
+export const DEFAULT_THEME_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-white/95 backdrop-blur-xl border border-slate-200/80 text-slate-900 shadow-xl",
+  profBadgeBg: "bg-[#782BFB]/10",
+  profBadgeText: "text-[#782BFB]",
+  profBadgeBorder: "border-[#782BFB]/30",
+  fanbaseBg: "bg-[#782BFB]/10",
+  fanbaseText: "text-[#782BFB]",
+  socialItemBg: "bg-white/80 backdrop-blur-xs",
+  socialItemBorder: "border-slate-200/80",
+  socialNameColor: "text-slate-800",
+  socialUnitColor: "text-slate-500",
+  nameColor: "text-slate-900",
+  bioColor: "text-slate-600",
+  handleColor: "text-purple-600",
+};
+
+const DARK_PURPLE_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-slate-950/90 backdrop-blur-xl border border-purple-500/30 text-white shadow-2xl",
+  profBadgeBg: "bg-purple-500/20",
+  profBadgeText: "text-purple-300",
+  profBadgeBorder: "border-purple-500/30",
+  fanbaseBg: "bg-purple-500/20",
+  fanbaseText: "text-purple-300",
+  socialItemBg: "bg-slate-900/80 backdrop-blur-md",
+  socialItemBorder: "border-purple-500/20",
+  socialNameColor: "text-white",
+  socialUnitColor: "text-purple-200/70",
+  nameColor: "text-white",
+  bioColor: "text-purple-100/80",
+  handleColor: "text-purple-400",
+};
+
+const OCEAN_BLUE_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-slate-950/90 backdrop-blur-xl border border-blue-500/30 text-white shadow-2xl",
+  profBadgeBg: "bg-blue-500/20",
+  profBadgeText: "text-blue-300",
+  profBadgeBorder: "border-blue-500/30",
+  fanbaseBg: "bg-blue-500/20",
+  fanbaseText: "text-blue-300",
+  socialItemBg: "bg-slate-900/80 backdrop-blur-md",
+  socialItemBorder: "border-blue-500/20",
+  socialNameColor: "text-white",
+  socialUnitColor: "text-blue-200/70",
+  nameColor: "text-white",
+  bioColor: "text-blue-100/80",
+  handleColor: "text-blue-400",
+};
+
+const EMERALD_LUXE_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-emerald-950/90 backdrop-blur-xl border border-emerald-500/30 text-white shadow-2xl",
+  profBadgeBg: "bg-emerald-500/20",
+  profBadgeText: "text-emerald-300",
+  profBadgeBorder: "border-emerald-500/30",
+  fanbaseBg: "bg-emerald-500/20",
+  fanbaseText: "text-emerald-300",
+  socialItemBg: "bg-emerald-900/80 backdrop-blur-md",
+  socialItemBorder: "border-emerald-500/20",
+  socialNameColor: "text-white",
+  socialUnitColor: "text-emerald-200/70",
+  nameColor: "text-white",
+  bioColor: "text-emerald-100/80",
+  handleColor: "text-emerald-400",
+};
+
+const CRIMSON_VELVET_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-rose-950/90 backdrop-blur-xl border border-rose-500/30 text-white shadow-2xl",
+  profBadgeBg: "bg-rose-500/20",
+  profBadgeText: "text-rose-300",
+  profBadgeBorder: "border-rose-500/30",
+  fanbaseBg: "bg-rose-500/20",
+  fanbaseText: "text-rose-300",
+  socialItemBg: "bg-rose-900/80 backdrop-blur-md",
+  socialItemBorder: "border-rose-500/20",
+  socialNameColor: "text-white",
+  socialUnitColor: "text-rose-200/70",
+  nameColor: "text-white",
+  bioColor: "text-rose-100/80",
+  handleColor: "text-rose-400",
+};
+
+const NEON_PULSE_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-zinc-950/90 backdrop-blur-xl border border-cyan-500/30 text-white shadow-2xl",
+  profBadgeBg: "bg-cyan-500/20",
+  profBadgeText: "text-cyan-300",
+  profBadgeBorder: "border-cyan-500/30",
+  fanbaseBg: "bg-cyan-500/20",
+  fanbaseText: "text-cyan-300",
+  socialItemBg: "bg-zinc-900/80 backdrop-blur-md",
+  socialItemBorder: "border-cyan-500/20",
+  socialNameColor: "text-white",
+  socialUnitColor: "text-cyan-200/70",
+  nameColor: "text-white",
+  bioColor: "text-cyan-100/80",
+  handleColor: "text-cyan-400",
+};
+
+const SUNSET_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-orange-600 via-rose-600 to-purple-700 text-white border border-orange-400/30 shadow-2xl",
+  profBadgeBg: "bg-white/20",
+  profBadgeText: "text-white",
+  profBadgeBorder: "border-white/30",
+  fanbaseBg: "bg-white/20",
+  fanbaseText: "text-white",
+  socialItemBg: "bg-black/20 backdrop-blur-md",
+  socialItemBorder: "border-white/20",
+  socialNameColor: "text-white",
+  socialUnitColor: "text-rose-100/80",
+  nameColor: "text-white",
+  bioColor: "text-orange-50",
+  handleColor: "text-amber-200",
+};
+
+const ROSE_GOLD_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-[#fbe9ec] via-pink-50 to-amber-50 text-[#3a1f24] border border-rose-200 shadow-xl",
+  profBadgeBg: "bg-rose-100/80",
+  profBadgeText: "text-rose-900",
+  profBadgeBorder: "border-rose-200",
+  fanbaseBg: "bg-rose-100/80",
+  fanbaseText: "text-rose-900",
+  socialItemBg: "bg-white/80 backdrop-blur-xs",
+  socialItemBorder: "border-rose-200/80",
+  socialNameColor: "text-[#3a1f24]",
+  socialUnitColor: "text-rose-700/70",
+  nameColor: "text-[#3a1f24]",
+  bioColor: "text-rose-900/80",
+  handleColor: "text-rose-700",
+};
+
+const MONO_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-black text-white border border-zinc-800 shadow-2xl",
+  profBadgeBg: "bg-zinc-900",
+  profBadgeText: "text-white",
+  profBadgeBorder: "border-zinc-700",
+  fanbaseBg: "bg-zinc-900",
+  fanbaseText: "text-white",
+  socialItemBg: "bg-zinc-900/90 backdrop-blur-md",
+  socialItemBorder: "border-zinc-800",
+  socialNameColor: "text-white",
+  socialUnitColor: "text-zinc-400",
+  nameColor: "text-white",
+  bioColor: "text-zinc-300",
+  handleColor: "text-zinc-400",
+};
+
+const PASTEL_DREAM_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-purple-100 via-pink-100 to-amber-100 text-slate-900 border border-purple-200 shadow-xl",
+  profBadgeBg: "bg-white/70",
+  profBadgeText: "text-purple-900",
+  profBadgeBorder: "border-purple-200",
+  fanbaseBg: "bg-white/70",
+  fanbaseText: "text-purple-900",
+  socialItemBg: "bg-white/80 backdrop-blur-xs",
+  socialItemBorder: "border-purple-200/80",
+  socialNameColor: "text-slate-900",
+  socialUnitColor: "text-slate-600",
+  nameColor: "text-slate-900",
+  bioColor: "text-slate-700",
+  handleColor: "text-purple-700",
+};
+
+const SOLAR_FLARE_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-amber-500 via-orange-600 to-red-600 text-white border border-amber-300/40 shadow-2xl",
+  profBadgeBg: "bg-white/20",
+  profBadgeText: "text-white",
+  profBadgeBorder: "border-white/30",
+  fanbaseBg: "bg-white/20",
+  fanbaseText: "text-white",
+  socialItemBg: "bg-black/20 backdrop-blur-md",
+  socialItemBorder: "border-white/20",
+  socialNameColor: "text-white",
+  socialUnitColor: "text-amber-100/90",
+  nameColor: "text-white",
+  bioColor: "text-amber-50",
+  handleColor: "text-amber-200",
+};
+
+const LAVENDER_HAZE_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-[#faf5ff] via-purple-50 to-indigo-50 text-slate-900 border border-purple-200 shadow-xl",
+  profBadgeBg: "bg-purple-100",
+  profBadgeText: "text-purple-800",
+  profBadgeBorder: "border-purple-300",
+  fanbaseBg: "bg-purple-100",
+  fanbaseText: "text-purple-800",
+  socialItemBg: "bg-white/80 backdrop-blur-xs",
+  socialItemBorder: "border-purple-200",
+  socialNameColor: "text-slate-900",
+  socialUnitColor: "text-purple-700/70",
+  nameColor: "text-slate-900",
+  bioColor: "text-slate-700",
+  handleColor: "text-purple-600",
+};
+
+const NORDIC_FROST_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-[#0c4a6e] via-sky-950 to-slate-950 text-white border border-sky-400/30 shadow-2xl",
+  profBadgeBg: "bg-sky-500/20",
+  profBadgeText: "text-sky-300",
+  profBadgeBorder: "border-sky-400/30",
+  fanbaseBg: "bg-sky-500/20",
+  fanbaseText: "text-sky-300",
+  socialItemBg: "bg-sky-950/70 backdrop-blur-md",
+  socialItemBorder: "border-sky-400/20",
+  socialNameColor: "text-white",
+  socialUnitColor: "text-sky-200/70",
+  nameColor: "text-white",
+  bioColor: "text-sky-100/80",
+  handleColor: "text-sky-300",
+};
+
+const GOLDEN_HOUR_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-[#fef3c7] via-amber-100 to-orange-100 text-[#78350f] border border-amber-300 shadow-xl",
+  profBadgeBg: "bg-amber-200/70",
+  profBadgeText: "text-amber-900",
+  profBadgeBorder: "border-amber-300",
+  fanbaseBg: "bg-amber-200/70",
+  fanbaseText: "text-amber-900",
+  socialItemBg: "bg-white/80 backdrop-blur-xs",
+  socialItemBorder: "border-amber-200",
+  socialNameColor: "text-[#78350f]",
+  socialUnitColor: "text-amber-800/70",
+  nameColor: "text-[#78350f]",
+  bioColor: "text-amber-900/80",
+  handleColor: "text-amber-700",
+};
+
+const COSMIC_GALAXY_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-[#1e1b4b] via-indigo-950 to-purple-950 text-white border border-purple-400/30 shadow-2xl",
+  profBadgeBg: "bg-purple-500/20",
+  profBadgeText: "text-purple-300",
+  profBadgeBorder: "border-purple-400/30",
+  fanbaseBg: "bg-purple-500/20",
+  fanbaseText: "text-purple-300",
+  socialItemBg: "bg-indigo-950/70 backdrop-blur-md",
+  socialItemBorder: "border-purple-400/20",
+  socialNameColor: "text-white",
+  socialUnitColor: "text-purple-200/70",
+  nameColor: "text-white",
+  bioColor: "text-purple-100/80",
+  handleColor: "text-purple-300",
+};
+
+const TOKYO_DRIFT_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-[#030712] via-slate-950 to-rose-950 text-white border border-rose-500/40 shadow-2xl",
+  profBadgeBg: "bg-rose-500/20",
+  profBadgeText: "text-rose-300",
+  profBadgeBorder: "border-rose-500/40",
+  fanbaseBg: "bg-purple-500/20",
+  fanbaseText: "text-purple-300",
+  socialItemBg: "bg-slate-900/90 backdrop-blur-md",
+  socialItemBorder: "border-rose-500/30",
+  socialNameColor: "text-white",
+  socialUnitColor: "text-rose-200/70",
+  nameColor: "text-white",
+  bioColor: "text-rose-100/80",
+  handleColor: "text-rose-400",
+};
+
+const RETRO_SYNTH_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-[#581c87] via-purple-950 to-slate-950 text-white border border-teal-400/40 shadow-2xl",
+  profBadgeBg: "bg-teal-500/20",
+  profBadgeText: "text-teal-300",
+  profBadgeBorder: "border-teal-400/40",
+  fanbaseBg: "bg-rose-500/20",
+  fanbaseText: "text-rose-300",
+  socialItemBg: "bg-purple-950/70 backdrop-blur-md",
+  socialItemBorder: "border-teal-400/30",
+  socialNameColor: "text-white",
+  socialUnitColor: "text-teal-200/70",
+  nameColor: "text-white",
+  bioColor: "text-teal-100/80",
+  handleColor: "text-teal-300",
+};
+
+export const THEME_STYLES: Record<string, ThemeStyleConfig> = {
+  "minimal-white": DEFAULT_THEME_STYLE,
+  "modern-purple": DARK_PURPLE_STYLE,
+  midnight: DARK_PURPLE_STYLE,
+  "ocean-blue": OCEAN_BLUE_STYLE,
+  sunset: SUNSET_STYLE,
+  forest: EMERALD_LUXE_STYLE,
+  "rose-gold": ROSE_GOLD_STYLE,
+  mono: MONO_STYLE,
+  "neon-pulse": NEON_PULSE_STYLE,
+  "pastel-dream": PASTEL_DREAM_STYLE,
+  cyberpunk: NEON_PULSE_STYLE,
+  "emerald-luxe": EMERALD_LUXE_STYLE,
+  "crimson-velvet": CRIMSON_VELVET_STYLE,
+  "solar-flare": SOLAR_FLARE_STYLE,
+  "lavender-haze": LAVENDER_HAZE_STYLE,
+  "nordic-frost": NORDIC_FROST_STYLE,
+  "golden-hour": GOLDEN_HOUR_STYLE,
+  "cosmic-galaxy": COSMIC_GALAXY_STYLE,
+  "tokyo-drift": TOKYO_DRIFT_STYLE,
+  "retro-synth": RETRO_SYNTH_STYLE,
+};
 
 function getHandle(url: string): string {
   if (!url) return "";
@@ -23,467 +334,66 @@ function getHandle(url: string): string {
 export function buildSocialUrl(platform: "instagram" | "youtube" | "facebook", rawUrlOrHandle?: string): string {
   if (!rawUrlOrHandle || !rawUrlOrHandle.trim()) return "#";
   const raw = rawUrlOrHandle.trim();
-
-  if (raw.startsWith("http://") || raw.startsWith("https://")) {
-    return raw;
-  }
-
+  if (raw.startsWith("http://") || raw.startsWith("https://")) return raw;
   const clean = raw.replace(/^@/, "");
 
-  if (platform === "instagram") {
-    if (clean.toLowerCase().includes("instagram.com/")) {
-      return `https://${clean.replace(/^https?:\/\//i, "")}`;
-    }
-    return `https://instagram.com/${clean}`;
+  switch (platform) {
+    case "instagram":
+      return `https://instagram.com/${clean}`;
+    case "youtube":
+      return clean.startsWith("channel/") || clean.startsWith("c/") || clean.startsWith("@")
+        ? `https://youtube.com/${clean}`
+        : `https://youtube.com/@${clean}`;
+    case "facebook":
+      return `https://facebook.com/${clean}`;
   }
-
-  if (platform === "youtube") {
-    if (clean.toLowerCase().includes("youtube.com/")) {
-      return `https://${clean.replace(/^https?:\/\//i, "")}`;
-    }
-    if (clean.startsWith("UC") || clean.startsWith("channel/")) {
-      return `https://youtube.com/${clean.startsWith("channel/") ? clean : `channel/${clean}`}`;
-    }
-    return `https://youtube.com/@${clean}`;
-  }
-
-  if (platform === "facebook") {
-    if (clean.toLowerCase().includes("facebook.com/")) {
-      return `https://${clean.replace(/^https?:\/\//i, "")}`;
-    }
-    return `https://facebook.com/${clean}`;
-  }
-
-  return `https://${clean}`;
 }
 
-interface ThemeStyleConfig {
-  cardBg: string;
-  nameColor: string;
-  handleColor: string;
-  bioColor: string;
-  catBadgeBg: string;
-  catBadgeText: string;
-  profBadgeBg: string;
-  profBadgeText: string;
-  profBadgeBorder: string;
-  fanbaseBg: string;
-  fanbaseText: string;
-  socialItemBg: string;
-  socialItemBorder: string;
-  socialNameColor: string;
-  socialUnitColor: string;
+export interface LivePreviewCardProps {
+  profile: CreatorProfile;
+  socials: SocialAccounts;
+  series?: Series[];
+  totalAudience?: number;
+  themeKey?: ThemeKey;
+  compact?: boolean;
+  variant?: "compact" | "full";
+  onShare?: () => void;
 }
-
-export const DEFAULT_THEME_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-white border-slate-200/90 shadow-xl shadow-slate-200/50",
-  nameColor: "text-slate-900",
-  handleColor: "text-purple-600",
-  bioColor: "text-slate-500",
-  catBadgeBg: "bg-slate-900",
-  catBadgeText: "text-white",
-  profBadgeBg: "bg-purple-50",
-  profBadgeText: "text-purple-700",
-  profBadgeBorder: "border-purple-200/70",
-  fanbaseBg: "bg-slate-50/90 border-slate-200/80",
-  fanbaseText: "text-slate-900",
-  socialItemBg: "bg-white",
-  socialItemBorder: "border-slate-200/70",
-  socialNameColor: "text-slate-900",
-  socialUnitColor: "text-slate-500",
-};
-
-export const THEME_STYLES: Record<string, ThemeStyleConfig> = {
-  "minimal-white": DEFAULT_THEME_STYLE,
-  "modern-purple": {
-    cardBg: "bg-gradient-to-br from-purple-900 via-indigo-900 to-slate-900 border-purple-500/30 text-white shadow-xl shadow-purple-900/30",
-    nameColor: "text-white",
-    handleColor: "text-purple-200",
-    bioColor: "text-purple-200/80",
-    catBadgeBg: "bg-white/20 backdrop-blur-md",
-    catBadgeText: "text-white",
-    profBadgeBg: "bg-purple-500/20 backdrop-blur-md",
-    profBadgeText: "text-purple-200",
-    profBadgeBorder: "border-purple-400/40",
-    fanbaseBg: "bg-white/10 border-white/20 backdrop-blur-md",
-    fanbaseText: "text-white",
-    socialItemBg: "bg-white/10 backdrop-blur-md",
-    socialItemBorder: "border-white/15",
-    socialNameColor: "text-white",
-    socialUnitColor: "text-purple-200/70",
-  },
-  midnight: {
-    cardBg: "bg-slate-950 border-slate-800 text-white shadow-2xl shadow-slate-950",
-    nameColor: "text-white",
-    handleColor: "text-indigo-400",
-    bioColor: "text-slate-400",
-    catBadgeBg: "bg-indigo-600",
-    catBadgeText: "text-white",
-    profBadgeBg: "bg-slate-800",
-    profBadgeText: "text-indigo-300",
-    profBadgeBorder: "border-indigo-500/30",
-    fanbaseBg: "bg-slate-900 border-slate-800",
-    fanbaseText: "text-white",
-    socialItemBg: "bg-slate-900/80",
-    socialItemBorder: "border-slate-800",
-    socialNameColor: "text-white",
-    socialUnitColor: "text-slate-400",
-  },
-  "ocean-blue": {
-    cardBg: "bg-gradient-to-br from-blue-900 via-sky-900 to-slate-900 border-blue-500/30 text-white shadow-xl shadow-blue-900/30",
-    nameColor: "text-white",
-    handleColor: "text-sky-300",
-    bioColor: "text-blue-100/80",
-    catBadgeBg: "bg-sky-500/30 backdrop-blur-md",
-    catBadgeText: "text-white",
-    profBadgeBg: "bg-blue-500/20 backdrop-blur-md",
-    profBadgeText: "text-sky-200",
-    profBadgeBorder: "border-sky-400/40",
-    fanbaseBg: "bg-white/10 border-white/20 backdrop-blur-md",
-    fanbaseText: "text-white",
-    socialItemBg: "bg-white/10 backdrop-blur-md",
-    socialItemBorder: "border-white/15",
-    socialNameColor: "text-white",
-    socialUnitColor: "text-sky-200/70",
-  },
-  sunset: {
-    cardBg: "bg-gradient-to-br from-orange-600 via-rose-600 to-purple-700 border-rose-400/30 text-white shadow-xl shadow-rose-900/30",
-    nameColor: "text-white",
-    handleColor: "text-amber-200",
-    bioColor: "text-orange-100/90",
-    catBadgeBg: "bg-white/20 backdrop-blur-md",
-    catBadgeText: "text-white",
-    profBadgeBg: "bg-amber-400/20 backdrop-blur-md",
-    profBadgeText: "text-amber-100",
-    profBadgeBorder: "border-amber-300/40",
-    fanbaseBg: "bg-white/15 border-white/25 backdrop-blur-md",
-    fanbaseText: "text-white",
-    socialItemBg: "bg-white/15 backdrop-blur-md",
-    socialItemBorder: "border-white/20",
-    socialNameColor: "text-white",
-    socialUnitColor: "text-orange-100/80",
-  },
-  forest: {
-    cardBg: "bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 border-emerald-500/30 text-white shadow-xl",
-    nameColor: "text-white",
-    handleColor: "text-emerald-300",
-    bioColor: "text-emerald-100/80",
-    catBadgeBg: "bg-emerald-600/40 backdrop-blur-md",
-    catBadgeText: "text-white",
-    profBadgeBg: "bg-teal-500/20 backdrop-blur-md",
-    profBadgeText: "text-emerald-200",
-    profBadgeBorder: "border-emerald-400/40",
-    fanbaseBg: "bg-white/10 border-white/20 backdrop-blur-md",
-    fanbaseText: "text-white",
-    socialItemBg: "bg-white/10 backdrop-blur-md",
-    socialItemBorder: "border-white/15",
-    socialNameColor: "text-white",
-    socialUnitColor: "text-emerald-200/70",
-  },
-  "rose-gold": {
-    cardBg: "bg-gradient-to-br from-rose-100 via-pink-50 to-amber-50 border-rose-200 text-slate-900 shadow-xl",
-    nameColor: "text-slate-900",
-    handleColor: "text-rose-700",
-    bioColor: "text-rose-900/70",
-    catBadgeBg: "bg-rose-900",
-    catBadgeText: "text-white",
-    profBadgeBg: "bg-rose-200/60",
-    profBadgeText: "text-rose-900",
-    profBadgeBorder: "border-rose-300",
-    fanbaseBg: "bg-white/80 border-rose-200",
-    fanbaseText: "text-slate-900",
-    socialItemBg: "bg-white",
-    socialItemBorder: "border-rose-200/70",
-    socialNameColor: "text-slate-900",
-    socialUnitColor: "text-rose-700/70",
-  },
-  mono: {
-    cardBg: "bg-black border-zinc-800 text-white shadow-2xl",
-    nameColor: "text-white",
-    handleColor: "text-zinc-400",
-    bioColor: "text-zinc-400",
-    catBadgeBg: "bg-white",
-    catBadgeText: "text-black",
-    profBadgeBg: "bg-zinc-900",
-    profBadgeText: "text-zinc-200",
-    profBadgeBorder: "border-zinc-700",
-    fanbaseBg: "bg-zinc-900 border-zinc-800",
-    fanbaseText: "text-white",
-    socialItemBg: "bg-zinc-900",
-    socialItemBorder: "border-zinc-800",
-    socialNameColor: "text-white",
-    socialUnitColor: "text-zinc-400",
-  },
-  "neon-pulse": {
-    cardBg: "bg-slate-950 border-cyan-500/40 text-white shadow-2xl shadow-cyan-950/50",
-    nameColor: "text-white",
-    handleColor: "text-cyan-400",
-    bioColor: "text-cyan-100/70",
-    catBadgeBg: "bg-cyan-500",
-    catBadgeText: "text-slate-950",
-    profBadgeBg: "bg-fuchsia-500/20",
-    profBadgeText: "text-fuchsia-300",
-    profBadgeBorder: "border-fuchsia-500/40",
-    fanbaseBg: "bg-slate-900 border-cyan-500/30",
-    fanbaseText: "text-white",
-    socialItemBg: "bg-slate-900/90",
-    socialItemBorder: "border-cyan-500/20",
-    socialNameColor: "text-white",
-    socialUnitColor: "text-cyan-300/70",
-  },
-  "pastel-dream": {
-    cardBg: "bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 border-pink-200 text-slate-800 shadow-xl",
-    nameColor: "text-slate-900",
-    handleColor: "text-purple-600",
-    bioColor: "text-slate-600",
-    catBadgeBg: "bg-purple-600",
-    catBadgeText: "text-white",
-    profBadgeBg: "bg-white/70 backdrop-blur-md",
-    profBadgeText: "text-purple-800",
-    profBadgeBorder: "border-purple-200",
-    fanbaseBg: "bg-white/70 border-pink-200/80 backdrop-blur-md",
-    fanbaseText: "text-slate-900",
-    socialItemBg: "bg-white/80 backdrop-blur-md",
-    socialItemBorder: "border-pink-200/60",
-    socialNameColor: "text-slate-900",
-    socialUnitColor: "text-purple-600/70",
-  },
-  cyberpunk: {
-    cardBg: "bg-zinc-950 border-pink-500/50 text-white shadow-2xl shadow-pink-950/60",
-    nameColor: "text-white",
-    handleColor: "text-cyan-400",
-    bioColor: "text-pink-100/70",
-    catBadgeBg: "bg-pink-600",
-    catBadgeText: "text-white",
-    profBadgeBg: "bg-cyan-500/20",
-    profBadgeText: "text-cyan-300",
-    profBadgeBorder: "border-cyan-500/50",
-    fanbaseBg: "bg-zinc-900 border-pink-500/40",
-    fanbaseText: "text-white",
-    socialItemBg: "bg-zinc-900/90",
-    socialItemBorder: "border-pink-500/30",
-    socialNameColor: "text-white",
-    socialUnitColor: "text-cyan-400/80",
-  },
-  "emerald-luxe": {
-    cardBg: "bg-gradient-to-br from-emerald-950 via-teal-950 to-slate-950 border-amber-500/40 text-amber-100 shadow-2xl",
-    nameColor: "text-amber-200",
-    handleColor: "text-amber-300",
-    bioColor: "text-emerald-100/80",
-    catBadgeBg: "bg-amber-500 text-slate-950 font-black",
-    catBadgeText: "text-slate-950",
-    profBadgeBg: "bg-emerald-900/60",
-    profBadgeText: "text-amber-200",
-    profBadgeBorder: "border-amber-400/40",
-    fanbaseBg: "bg-emerald-900/40 border-amber-500/30",
-    fanbaseText: "text-amber-100",
-    socialItemBg: "bg-emerald-950/80",
-    socialItemBorder: "border-amber-500/20",
-    socialNameColor: "text-amber-100",
-    socialUnitColor: "text-amber-300/70",
-  },
-  "crimson-velvet": {
-    cardBg: "bg-gradient-to-br from-rose-950 via-red-950 to-slate-950 border-rose-500/30 text-rose-100 shadow-2xl",
-    nameColor: "text-white",
-    handleColor: "text-rose-300",
-    bioColor: "text-rose-200/80",
-    catBadgeBg: "bg-rose-600",
-    catBadgeText: "text-white",
-    profBadgeBg: "bg-rose-900/50",
-    profBadgeText: "text-rose-200",
-    profBadgeBorder: "border-rose-400/40",
-    fanbaseBg: "bg-rose-900/30 border-rose-500/30",
-    fanbaseText: "text-white",
-    socialItemBg: "bg-rose-950/80",
-    socialItemBorder: "border-rose-500/20",
-    socialNameColor: "text-white",
-    socialUnitColor: "text-rose-300/70",
-  },
-  "solar-flare": {
-    cardBg: "bg-gradient-to-br from-amber-500 via-orange-600 to-red-600 border-amber-300/40 text-white shadow-xl",
-    nameColor: "text-white",
-    handleColor: "text-amber-100",
-    bioColor: "text-amber-50/90",
-    catBadgeBg: "bg-white/20 backdrop-blur-md",
-    catBadgeText: "text-white",
-    profBadgeBg: "bg-black/20 backdrop-blur-md",
-    profBadgeText: "text-amber-100",
-    profBadgeBorder: "border-white/30",
-    fanbaseBg: "bg-white/15 border-white/25 backdrop-blur-md",
-    fanbaseText: "text-white",
-    socialItemBg: "bg-white/15 backdrop-blur-md",
-    socialItemBorder: "border-white/20",
-    socialNameColor: "text-white",
-    socialUnitColor: "text-amber-100/80",
-  },
-  "lavender-haze": {
-    cardBg: "bg-gradient-to-br from-purple-200 via-indigo-100 to-pink-100 border-purple-300 text-slate-900 shadow-xl",
-    nameColor: "text-purple-950",
-    handleColor: "text-purple-700",
-    bioColor: "text-purple-900/75",
-    catBadgeBg: "bg-purple-900",
-    catBadgeText: "text-white",
-    profBadgeBg: "bg-white/80 backdrop-blur-md",
-    profBadgeText: "text-purple-900",
-    profBadgeBorder: "border-purple-300",
-    fanbaseBg: "bg-white/80 border-purple-200 backdrop-blur-md",
-    fanbaseText: "text-purple-950",
-    socialItemBg: "bg-white/85 backdrop-blur-md",
-    socialItemBorder: "border-purple-200/80",
-    socialNameColor: "text-purple-950",
-    socialUnitColor: "text-purple-700/70",
-  },
-  "nordic-frost": {
-    cardBg: "bg-gradient-to-br from-sky-900 via-slate-900 to-blue-950 border-sky-400/30 text-sky-100 shadow-xl",
-    nameColor: "text-white",
-    handleColor: "text-sky-300",
-    bioColor: "text-sky-200/80",
-    catBadgeBg: "bg-sky-500",
-    catBadgeText: "text-slate-950",
-    profBadgeBg: "bg-sky-900/50",
-    profBadgeText: "text-sky-200",
-    profBadgeBorder: "border-sky-400/40",
-    fanbaseBg: "bg-sky-950/60 border-sky-400/30",
-    fanbaseText: "text-white",
-    socialItemBg: "bg-slate-900/80",
-    socialItemBorder: "border-sky-400/20",
-    socialNameColor: "text-white",
-    socialUnitColor: "text-sky-300/70",
-  },
-  "golden-hour": {
-    cardBg: "bg-gradient-to-br from-amber-100 via-orange-50 to-yellow-100 border-amber-300 text-amber-950 shadow-xl",
-    nameColor: "text-amber-950",
-    handleColor: "text-amber-700",
-    bioColor: "text-amber-900/80",
-    catBadgeBg: "bg-amber-900",
-    catBadgeText: "text-amber-50",
-    profBadgeBg: "bg-amber-200/70",
-    profBadgeText: "text-amber-950",
-    profBadgeBorder: "border-amber-400",
-    fanbaseBg: "bg-white/85 border-amber-300/80",
-    fanbaseText: "text-amber-950",
-    socialItemBg: "bg-white",
-    socialItemBorder: "border-amber-200",
-    socialNameColor: "text-amber-950",
-    socialUnitColor: "text-amber-700/70",
-  },
-  "cosmic-galaxy": {
-    cardBg: "bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-950 border-purple-500/40 text-purple-100 shadow-2xl",
-    nameColor: "text-white",
-    handleColor: "text-purple-300",
-    bioColor: "text-purple-200/80",
-    catBadgeBg: "bg-purple-600",
-    catBadgeText: "text-white",
-    profBadgeBg: "bg-indigo-900/60",
-    profBadgeText: "text-purple-200",
-    profBadgeBorder: "border-purple-400/40",
-    fanbaseBg: "bg-purple-950/60 border-purple-500/30",
-    fanbaseText: "text-white",
-    socialItemBg: "bg-indigo-950/80",
-    socialItemBorder: "border-purple-500/20",
-    socialNameColor: "text-white",
-    socialUnitColor: "text-purple-300/70",
-  },
-  "tokyo-drift": {
-    cardBg: "bg-gray-950 border-rose-500/40 text-white shadow-2xl shadow-rose-950/50",
-    nameColor: "text-white",
-    handleColor: "text-rose-400",
-    bioColor: "text-rose-100/70",
-    catBadgeBg: "bg-rose-600",
-    catBadgeText: "text-white",
-    profBadgeBg: "bg-purple-900/50",
-    profBadgeText: "text-purple-300",
-    profBadgeBorder: "border-purple-500/40",
-    fanbaseBg: "bg-gray-900 border-rose-500/30",
-    fanbaseText: "text-white",
-    socialItemBg: "bg-gray-900/90",
-    socialItemBorder: "border-rose-500/20",
-    socialNameColor: "text-white",
-    socialUnitColor: "text-rose-300/70",
-  },
-  "retro-synth": {
-    cardBg: "bg-gradient-to-br from-purple-950 via-fuchsia-950 to-slate-950 border-teal-400/40 text-white shadow-2xl",
-    nameColor: "text-white",
-    handleColor: "text-teal-300",
-    bioColor: "text-fuchsia-100/75",
-    catBadgeBg: "bg-fuchsia-600",
-    catBadgeText: "text-white",
-    profBadgeBg: "bg-teal-500/20",
-    profBadgeText: "text-teal-300",
-    profBadgeBorder: "border-teal-400/40",
-    fanbaseBg: "bg-purple-900/50 border-teal-400/30",
-    fanbaseText: "text-white",
-    socialItemBg: "bg-purple-950/80",
-    socialItemBorder: "border-teal-400/20",
-    socialNameColor: "text-white",
-    socialUnitColor: "text-teal-300/70",
-  },
-};
 
 export function LivePreviewCard({
   profile,
   socials,
-  series,
-  totalAudience,
-  compact = false,
+  series = [],
+  totalAudience: passedTotalAudience,
   themeKey = "minimal-white",
+  compact = false,
+  variant,
   onShare,
-}: {
-  profile: CreatorProfile;
-  socials: SocialAccounts;
-  series?: Series[];
-  totalAudience: number;
-  compact?: boolean;
-  themeKey?: ThemeKey;
-  onShare?: () => void;
-}) {
-  const instaHandle = getHandle(socials.instagram.url);
-  const ytHandle = getHandle(socials.youtube.url);
-  const fbHandle = getHandle(socials.facebook.url);
-
+}: LivePreviewCardProps) {
   const { showToast } = useToast();
-  const style = THEME_STYLES[themeKey] || THEME_STYLES["minimal-white"] || DEFAULT_THEME_STYLE;
+  const [expandedSeriesId, setExpandedSeriesId] = useState<string | null>(null);
 
-  async function handleShareClick(e?: React.MouseEvent) {
-    if (e) e.stopPropagation();
-    if (onShare) {
-      onShare();
-      return;
-    }
-    const shareUrl = profile.username
-      ? `${window.location.origin}/${profile.username}`
-      : typeof window !== "undefined"
-      ? window.location.href
-      : "https://inflixo.com";
-    const shareText = `Check out ${profile.displayName ? `${profile.displayName}'s` : "my"} Inflixo profile to see fanbase stats, social channels & original series! 🎬✨`;
-    if (typeof navigator !== "undefined" && navigator.share) {
-      try {
-        await navigator.share({
-          title: `${profile.displayName || "Creator"} on Inflixo`,
-          text: shareText,
-          url: shareUrl,
-        });
-      } catch {
-        if (navigator.clipboard) {
-          await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
-          showToast("Profile link & message copied to clipboard! ✨");
-        }
-      }
-    } else if (typeof navigator !== "undefined" && navigator.clipboard) {
-      await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
-      showToast("Profile link & message copied to clipboard! ✨");
-    }
-  }
+  const style = THEME_STYLES[themeKey] || DEFAULT_THEME_STYLE;
 
-  // Filter ONLY added/linked social accounts with solid high-contrast brand badges
+  const calculatedTotal =
+    (socials.instagram.followers || 0) +
+    (socials.youtube.subscribers || 0) +
+    (socials.facebook.followers || 0);
+
+  const totalAudience = passedTotalAudience !== undefined ? passedTotalAudience : calculatedTotal;
+
+  const instaHandle = socials.instagram.username || getHandle(socials.instagram.url || "");
+  const ytHandle = socials.youtube.username || getHandle(socials.youtube.url || "");
+  const fbHandle = socials.facebook.username || getHandle(socials.facebook.url || "");
+
   const activeSocialList = [
     {
       platform: "instagram",
       label: "Instagram",
       name: socials.instagram.name,
       icon: <InstagramIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-sm",
-      handle: instaHandle || socials.instagram.username,
+      badgeBg: "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-xs",
+      handle: instaHandle,
       count: socials.instagram.followers,
       unit: "Followers",
       url: buildSocialUrl("instagram", socials.instagram.url || socials.instagram.username || instaHandle),
@@ -494,8 +404,8 @@ export function LivePreviewCard({
       label: "YouTube",
       name: socials.youtube.channelTitle,
       icon: <YoutubeIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-red-600 shadow-sm",
-      handle: ytHandle || socials.youtube.username,
+      badgeBg: "bg-red-600 shadow-xs",
+      handle: ytHandle,
       count: socials.youtube.subscribers,
       unit: "Subscribers",
       url: buildSocialUrl("youtube", socials.youtube.url || socials.youtube.username || ytHandle),
@@ -506,22 +416,53 @@ export function LivePreviewCard({
       label: "Facebook",
       name: socials.facebook.name,
       icon: <FacebookIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-blue-600 shadow-sm",
-      handle: fbHandle || socials.facebook.username,
+      badgeBg: "bg-blue-600 shadow-xs",
+      handle: fbHandle,
       count: socials.facebook.followers,
       unit: "Followers",
       url: buildSocialUrl("facebook", socials.facebook.url || socials.facebook.username || fbHandle),
       hasAccount: Boolean(fbHandle || socials.facebook.followers > 0 || socials.facebook.url || socials.facebook.username),
     },
-  ].filter((item) => item.hasAccount);
+  ].filter((item) => item.hasAccount || item.count > 0 || (item.url && item.url !== "#"));
 
-  const [expandedSeriesId, setExpandedSeriesId] = useState<string | null>(null);
+  const handleCopyClick = async () => {
+    const cleanUsername = profile.username || "username";
+    const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/${cleanUsername}` : "";
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(shareUrl);
+        showToast("Profile link copied to clipboard! ✨");
+      }
+    } catch {
+      showToast("Could not copy link", "error");
+    }
+  };
+
+  const handleShareClick = async () => {
+    if (onShare) {
+      onShare();
+      return;
+    }
+    const cleanUsername = profile.username || "username";
+    const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/${cleanUsername}` : "";
+    const title = `${profile.displayName || "Creator"} on Inflixo`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title, url: shareUrl });
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(shareUrl);
+        showToast("Profile link copied to clipboard! ✨");
+      }
+    } catch {
+      // User dismissed share sheet
+    }
+  };
 
   return (
-    <div className="w-full">
-      <div
-        className={`relative w-full overflow-hidden rounded-2xl sm:rounded-[28px] border p-4 sm:p-6 transition-all duration-300 hover:shadow-2xl ${style.cardBg}`}
-      >
+    <div className={`relative w-full mx-auto transition-all ${variant === "full" ? "max-w-4xl" : "max-w-xl sm:max-w-[540px]"}`}>
+
+      <div className={`relative overflow-hidden rounded-[32px] p-4 sm:p-6 transition-all ${style.cardBg || DEFAULT_THEME_STYLE.cardBg}`}>
+        {/* Top Header Bar */}
         <div className="relative z-10 flex items-center justify-between w-full mb-4 px-1">
           <div
             className={`tap-scale flex items-center gap-2 rounded-full border px-3 py-1.5 shadow-2xs transition-all ${style.socialItemBg} ${style.socialItemBorder}`}
@@ -534,15 +475,27 @@ export function LivePreviewCard({
             </span>
           </div>
 
-          <button
-            type="button"
-            onClick={handleShareClick}
-            className={`tap-scale flex h-9 w-9 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} ${style.nameColor}`}
-            title="Share Profile"
-            aria-label="Share Profile"
-          >
-            <Share2 className="h-4 w-4" />
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={handleCopyClick}
+              className={`tap-scale flex h-9 w-9 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} ${style.nameColor}`}
+              title="Copy Profile Link"
+              aria-label="Copy Profile Link"
+            >
+              <Copy className="h-4 w-4" />
+            </button>
+
+            <button
+              type="button"
+              onClick={handleShareClick}
+              className={`tap-scale flex h-9 w-9 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} ${style.nameColor}`}
+              title="Share Profile"
+              aria-label="Share Profile"
+            >
+              <Share2 className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         <div className="relative z-10 flex flex-col items-center text-center">
@@ -550,7 +503,7 @@ export function LivePreviewCard({
             <CreatorAvatar
               src={profile.photoDataUrl}
               name={profile.displayName || "Creator"}
-              className="h-24 w-24 rounded-full shadow-lg border-2 border-white/20"
+              className="h-24 w-24 rounded-full shadow-lg border-2 border-white"
               textClassName="text-3xl font-extrabold text-white"
               fallbackBgClass="bg-gradient-to-br from-[#782BFB] to-[#500CD6]"
             />
@@ -560,42 +513,65 @@ export function LivePreviewCard({
             {profile.displayName || "Your Name"}
           </h3>
 
+          {/* Username Link with Direct Copy Icon */}
           <button
             type="button"
             onClick={() => {
               const handle = profile.username || "username";
               const profileUrl = `${window.location.origin}/${handle}`;
-              navigator.clipboard.writeText(profileUrl);
-              showToast("Profile link copied to clipboard! ✨");
+              if (navigator.clipboard) {
+                navigator.clipboard.writeText(profileUrl);
+                showToast("Profile link copied to clipboard! ✨");
+              }
             }}
-            className={`mt-0.5 text-xs font-semibold hover:underline inline-flex items-center gap-1 opacity-90 transition-opacity hover:opacity-100 ${style.handleColor}`}
+            className={`mt-1 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} ${style.handleColor}`}
             title="Click to copy profile link"
           >
             <span>{profile.username ? `inflixo.com/${profile.username}` : "inflixo.com/username"}</span>
-            <ExternalLink className="h-3 w-3 opacity-60" />
+            <Copy className="h-3 w-3 opacity-70" />
           </button>
 
+          {/* Uniform Soft-Chip Category & Sub-type Pills */}
           {(() => {
-            const rawItems: string[] = [];
-            if (profile.category) rawItems.push(profile.category);
-            if ((profile as any).profession) {
-              const profs = (profile as any).profession.split(",").map((s: string) => s.trim()).filter(Boolean);
-              rawItems.push(...profs);
+            const allChips: string[] = [];
+            if (profile.category) {
+              profile.category.split(",").forEach((c) => {
+                const trimmed = c.trim();
+                if (trimmed.toLowerCase() === "other") {
+                  if (profile.customCategory?.trim()) allChips.push(profile.customCategory.trim());
+                } else if (trimmed) {
+                  allChips.push(trimmed);
+                }
+              });
             }
-            if (rawItems.length === 0) return null;
+            if (profile.profession) {
+              profile.profession.split(",").forEach((p) => {
+                const trimmed = p.trim();
+                if (trimmed) allChips.push(trimmed);
+              });
+            }
+            if (allChips.length === 0) return null;
+
+            const visibleChips = allChips.slice(0, 4);
+            const remainingCount = allChips.length - 4;
 
             return (
-              <div className="mt-2.5">
-                <span
-                  className={`inline-flex flex-wrap items-center justify-center gap-1.5 rounded-full border px-4 py-1.5 text-xs font-extrabold shadow-2xs ${style.profBadgeBg} ${style.profBadgeText} ${style.profBadgeBorder}`}
-                >
-                  {rawItems.map((item, idx) => (
-                    <span key={idx} className="inline-flex items-center gap-1.5">
-                      {idx > 0 && <span className="opacity-50 text-[10px]">·</span>}
-                      <span>{item}</span>
-                    </span>
-                  ))}
-                </span>
+              <div className="mt-3 flex flex-wrap items-center justify-center gap-1.5 max-w-sm">
+                {visibleChips.map((chip, idx) => (
+                  <span
+                    key={idx}
+                    className={`rounded-full border px-3 py-1 text-[11px] font-extrabold shadow-2xs transition-all ${style.profBadgeBg} ${style.profBadgeText} ${style.profBadgeBorder}`}
+                  >
+                    {chip}
+                  </span>
+                ))}
+                {remainingCount > 0 && (
+                  <span
+                    className={`rounded-full border px-2.5 py-1 text-[11px] font-extrabold shadow-2xs ${style.profBadgeBg} ${style.profBadgeText} ${style.profBadgeBorder}`}
+                  >
+                    +{remainingCount}
+                  </span>
+                )}
               </div>
             );
           })()}
@@ -604,52 +580,23 @@ export function LivePreviewCard({
             {profile.bio || "Your bio will appear here. Share your story with your audience."}
           </p>
 
-          <div className={`mt-4 flex items-center justify-between rounded-2xl border p-3.5 sm:p-4 w-full ${style.fanbaseBg}`}>
-            <div className="flex items-center gap-2">
+          {/* Clean Sober Fanbase Card */}
+          <div className={`mt-4 rounded-2xl border p-3.5 text-center w-full shadow-2xs ${style.socialItemBg} ${style.socialItemBorder}`}>
+            <div className="flex items-center justify-center gap-2">
               <span className="text-base">❤️</span>
-              <span className={`text-xs sm:text-sm font-extrabold ${style.fanbaseText}`}>Total Fanbase</span>
-            </div>
-
-            <div className="flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5 text-amber-400" />
-              <span className={`font-display text-base sm:text-lg font-black ${style.fanbaseText}`}>
+              <span className={`font-display text-lg sm:text-xl font-black ${style.nameColor}`}>
                 {formatCount(totalAudience)}
               </span>
             </div>
-          </div>
-
-          <div className="mt-2.5 grid grid-cols-2 gap-2 w-full">
-            <div className={`flex items-center gap-2.5 rounded-xl border p-2.5 text-left ${style.socialItemBg} ${style.socialItemBorder}`}>
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-purple-500/20 text-purple-400">
-                <Film className="h-4 w-4" />
-              </div>
-              <div className="min-w-0">
-                <p className={`text-[10px] font-extrabold uppercase tracking-wider opacity-60 ${style.socialNameColor}`}>Series</p>
-                <p className={`text-xs font-black truncate ${style.socialNameColor}`}>
-                  {series ? series.length : 0}
-                </p>
-              </div>
-            </div>
-
-            <div className={`flex items-center gap-2.5 rounded-xl border p-2.5 text-left ${style.socialItemBg} ${style.socialItemBorder}`}>
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-purple-500/20 text-purple-400">
-                <Play className="h-4 w-4 fill-current" />
-              </div>
-              <div className="min-w-0">
-                <p className={`text-[10px] font-extrabold uppercase tracking-wider opacity-60 ${style.socialNameColor}`}>Episodes</p>
-                <p className={`text-xs font-black truncate ${style.socialNameColor}`}>
-                  {series ? series.reduce((acc, s) => acc + s.seasons.reduce((ea, sn) => ea + sn.episodes.length, 0), 0) : 0}
-                </p>
-              </div>
-            </div>
+            <p className={`text-[10px] font-extrabold uppercase tracking-widest mt-0.5 opacity-60 ${style.socialNameColor}`}>
+              TOTAL FANBASE
+            </p>
           </div>
         </div>
 
+        {/* Social Connection Link Cards (Touch-Friendly 44px min tap target) */}
         {activeSocialList.length > 0 && (
-          <div className="relative z-10 mt-3.5 space-y-2 w-full">
-            <p className="text-[10px] font-extrabold uppercase tracking-wider opacity-60 text-left px-1">
-              Social Connections
-            </p>
+          <div className="relative z-10 mt-4 space-y-2 w-full">
             <div className="grid grid-cols-1 gap-2.5 w-full">
               {activeSocialList.map((item) => (
                 <a
@@ -657,31 +604,24 @@ export function LivePreviewCard({
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`group flex items-center justify-between rounded-xl border p-3 transition-all hover:scale-[1.01] ${style.socialItemBg} ${style.socialItemBorder}`}
+                  className={`group flex items-center justify-between rounded-2xl border p-3 transition-all hover:scale-[1.01] ${style.socialItemBg} ${style.socialItemBorder}`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${item.badgeBg}`}>
+                    <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${item.badgeBg}`}>
                       {item.icon}
                     </span>
-                    {/* Vertical Stack: Account Name -> Username -> Platform */}
                     <div className="min-w-0 text-left space-y-0.5">
-                      {/* 1. Account Name */}
-                      <p className={`truncate text-sm font-black leading-tight ${style.socialNameColor}`}>
-                        {item.name || profile.displayName || "Account Name"}
+                      <p className={`truncate text-xs font-black leading-tight ${style.socialNameColor}`}>
+                        {item.label}
                       </p>
-                      {/* 2. Username / Handle */}
                       {item.handle && (
-                        <p className={`truncate text-xs font-semibold opacity-90 leading-snug ${style.socialUnitColor}`}>
+                        <p className={`truncate text-[11px] font-semibold opacity-80 leading-snug ${style.socialUnitColor}`}>
                           @{item.handle.replace(/^@/, "")}
                         </p>
                       )}
-                      {/* 3. Platform Name Tag */}
-                      <p className={`truncate text-[10px] font-extrabold uppercase tracking-wider opacity-75 leading-none ${style.socialUnitColor}`}>
-                        {item.label}
-                      </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0">
                     <div className="text-right">
                       <p className={`font-display text-xs font-black leading-tight ${style.socialNameColor}`}>
                         {formatCount(item.count)}
@@ -690,7 +630,10 @@ export function LivePreviewCard({
                         {item.unit}
                       </p>
                     </div>
-                    <ExternalLink className="h-3 w-3 opacity-40 group-hover:opacity-100 transition-opacity" />
+                    {/* Touch-Friendly Action Button Target */}
+                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 transition-colors group-hover:bg-purple-600 group-hover:text-white">
+                      <ExternalLink className="h-4 w-4" />
+                    </span>
                   </div>
                 </a>
               ))}
@@ -699,12 +642,12 @@ export function LivePreviewCard({
         )}
 
         {series && series.length > 0 && (
-          <div className="relative z-10 mt-5 space-y-2.5 w-full sm:w-[95%] mx-auto text-left">
-            <p className="text-[10px] font-extrabold uppercase tracking-wider opacity-60 px-1">
-              Series ({series.length})
+          <div className="relative z-10 mt-6 space-y-3 w-full text-left">
+            <p className="text-xs font-black uppercase tracking-wider text-center opacity-60">
+              SERIES
             </p>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               {series.map((s) => (
                 <PreviewSeriesItem
                   key={s.id}
@@ -720,17 +663,13 @@ export function LivePreviewCard({
           </div>
         )}
 
-        {/* Viral Growth Engine: "Powered by Inflixo" Watermark Badge */}
-        <div className="relative z-10 mt-6 pt-3 text-center">
-          <a
-            href={profile.username ? `/login?ref=${encodeURIComponent(profile.username)}` : "/login"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="tap-scale inline-flex items-center gap-1.5 rounded-full border border-purple-200/60 bg-gradient-to-r from-purple-50 via-white to-purple-50 px-3.5 py-1 text-[11px] font-black text-purple-700 shadow-2xs hover:border-purple-400 hover:shadow-xs transition-all"
-          >
-            <Sparkles className="h-3 w-3 text-purple-600 fill-current animate-pulse" />
-            <span>Built with <strong className="font-black text-purple-900">Inflixo</strong> • Build your Creator Home →</span>
-          </a>
+        {/* Footer */}
+        <div className="relative z-10 mt-6 pt-3 text-center space-y-2.5">
+          <div className="flex flex-col items-center justify-center gap-1.5">
+            <span className={`text-xs font-bold opacity-80 ${style.handleColor}`}>
+              inflixo.com/{profile.username || "username"}
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -772,49 +711,37 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
 function PreviewSeriesItem({
   series,
   style,
-  themeKey,
   username,
   expanded = false,
   onToggle,
+  onShareSeries,
 }: {
   series: Series;
-  style: ThemeStyleConfig;
+  style: any;
   themeKey?: ThemeKey;
   username?: string;
   expanded?: boolean;
   onToggle?: () => void;
+  onShareSeries?: (series: Series) => void;
 }) {
   const { showToast } = useToast();
   const allEpisodes = series.seasons.flatMap((sn) => sn.episodes);
-  const firstEp = allEpisodes[0];
-  const seriesPlatform =
-    (series as any).platform ||
-    firstEp?.platform ||
-    (firstEp?.externalUrl ? getPlatformInfo(undefined, firstEp.externalUrl).name : "YouTube");
+  const genresList = series.genre ? series.genre.split(",").map((g) => g.trim()).filter(Boolean) : [];
 
-  const isDark =
-    style.nameColor.includes("white") ||
-    themeKey === "neon-pulse" ||
-    themeKey === "emerald-luxe" ||
-    themeKey === "crimson-velvet" ||
-    themeKey === "solar-flare" ||
-    themeKey === "cosmic-galaxy" ||
-    themeKey === "tokyo-drift" ||
-    themeKey === "retro-synth";
+  const handleShareSeriesLink = () => {
+    const handle = username || "creator";
+    const shareUrl = typeof window !== "undefined"
+      ? `${window.location.origin}/${handle}/series/${series.id}`
+      : `https://inflixo.com/${handle}/series/${series.id}`;
+    const title = `${series.title} on Inflixo`;
 
-  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-
-  function handleShareSeriesLink() {
-    setIsShareModalOpen(true);
-  }
-
-  // Single line compact metadata string: Genre • Language • Episodes Count
-  const metaParts = [
-    series.genre || "General",
-    series.language || "Hindi",
-    `${allEpisodes.length} ${allEpisodes.length === 1 ? "Episode" : "Episodes"}`,
-  ].filter(Boolean);
-  const metaStr = metaParts.join(" • ");
+    if (typeof navigator !== "undefined" && navigator.share) {
+      navigator.share({ title, url: shareUrl }).catch(() => {});
+    } else if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(shareUrl);
+      showToast("Series link copied to clipboard! 🎬");
+    }
+  };
 
   return (
     <div
@@ -822,8 +749,8 @@ function PreviewSeriesItem({
       className={`overflow-hidden rounded-2xl border transition-all duration-200 shadow-xs ${style.socialItemBg} ${style.socialItemBorder}`}
     >
       <div onClick={onToggle} className="cursor-pointer select-none">
-        {/* Ultra-sleek Widescreen Cover Image Container with Share & Expand Overlay */}
-        <div className="relative w-full aspect-[2.2/1] overflow-hidden bg-slate-950 flex items-center justify-center border-b border-slate-500/20">
+        {/* Clean 16:9 Widescreen Cover Image Container (No Text Overlap Conflict) */}
+        <div className="relative w-full aspect-[16/9] overflow-hidden bg-slate-950 flex items-center justify-center border-b border-slate-500/20">
           <SeriesPoster
             src={series.posterDataUrl}
             title={series.title}
@@ -831,7 +758,7 @@ function PreviewSeriesItem({
             textClassName="text-xs font-black text-purple-200"
           />
 
-          {/* Top-Right Compact Overlay Buttons */}
+          {/* Top-Right Share Button */}
           <div className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5">
             <button
               type="button"
@@ -839,47 +766,59 @@ function PreviewSeriesItem({
                 e.stopPropagation();
                 handleShareSeriesLink();
               }}
-              className="flex h-7 w-7 items-center justify-center rounded-xl bg-black/60 hover:bg-black/80 text-white backdrop-blur-md transition-all border border-white/20 shadow-xs"
+              className="flex h-8 w-8 items-center justify-center rounded-xl bg-black/60 hover:bg-black/80 text-white backdrop-blur-md transition-all border border-white/20 shadow-xs"
               title="Share Series Link"
               aria-label="Share Series"
             >
-              <Share2 className="h-3.5 w-3.5 stroke-[2.5]" />
+              <Share2 className="h-4 w-4 stroke-[2.5]" />
             </button>
+          </div>
+        </div>
+
+        {/* Details Container Below Poster */}
+        <div className="p-3.5 sm:p-4 space-y-2 text-left">
+          {/* Title */}
+          <h3 className={`text-base sm:text-lg font-black leading-snug break-words ${style.nameColor}`}>
+            {series.title}
+          </h3>
+
+          {/* Micro-Badge Genre Chips */}
+          {genresList.length > 0 && (
+            <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+              {genresList.map((g, idx) => (
+                <span
+                  key={idx}
+                  className="inline-flex items-center rounded-md border border-purple-200/60 bg-purple-50/60 px-2 py-0.5 text-[10px] font-extrabold text-purple-700"
+                >
+                  {g}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Description if present */}
+          {series.description && (
+            <p className={`text-xs font-medium leading-relaxed break-words opacity-75 ${expanded ? "" : "line-clamp-2"} ${style.bioColor}`}>
+              {series.description}
+            </p>
+          )}
+
+          {/* Bottom Row: Episode Count + Prominent Primary Watch Series CTA Button */}
+          <div className="pt-2 flex items-center justify-between border-t border-slate-200/20">
+            <span className={`text-xs font-black ${style.handleColor}`}>
+              🎬 {allEpisodes.length} {allEpisodes.length === 1 ? "Episode" : "Episodes"}
+            </span>
+
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onToggle?.();
               }}
-              className="flex h-7 w-7 items-center justify-center rounded-xl bg-black/60 hover:bg-black/80 text-white backdrop-blur-md transition-all border border-white/20 shadow-xs"
-              title={expanded ? "Collapse Episodes" : "Expand Episodes"}
-              aria-label="Toggle Episodes"
+              className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 px-3.5 py-1.5 text-xs font-extrabold text-white shadow-xs transition-all"
             >
-              {expanded ? <ChevronUp className="h-3.5 w-3.5 stroke-[2.5]" /> : <ChevronDown className="h-3.5 w-3.5 stroke-[2.5]" />}
+              <span>{expanded ? "Hide Episodes ↑" : "Watch Series →"}</span>
             </button>
-          </div>
-        </div>
-
-        {/* Details Container Below Poster */}
-        <div className="p-3.5 sm:p-4 space-y-1.5 text-left">
-          {/* Title */}
-          <h3 className={`text-base sm:text-lg font-black leading-snug break-words ${style.nameColor}`}>
-            {series.title}
-          </h3>
-
-          {/* Single Line Stacked Metadata: Genre • Language • Episodes */}
-          <p className={`text-xs font-bold opacity-90 ${style.bioColor}`}>
-            {metaStr}
-          </p>
-
-          {/* Description if present or rich creator fallback */}
-          <p className={`text-xs font-medium leading-relaxed break-words pt-0.5 opacity-80 ${expanded ? "" : "line-clamp-2"} ${style.bioColor}`}>
-            {series.description || "Explore our Farali food collection, recipes & specials."}
-          </p>
-
-          {/* Expand / Collapse Indicator Prompt */}
-          <div className={`pt-1 flex items-center gap-1 text-[11px] font-black transition-colors ${style.handleColor}`}>
-            <span>{expanded ? "Hide Episodes ↑" : `View Episodes (${allEpisodes.length}) ↓`}</span>
           </div>
         </div>
       </div>
@@ -887,12 +826,6 @@ function PreviewSeriesItem({
       {/* Episodes Section */}
       {expanded && allEpisodes.length > 0 && (
         <div className={`p-3.5 sm:p-4 space-y-2.5 animate-in fade-in duration-200 border-t ${style.socialItemBorder}`}>
-          <div className="flex items-center justify-between">
-            <p className={`text-xs font-black ${style.handleColor}`}>
-              Episodes ({allEpisodes.length})
-            </p>
-          </div>
-
           <div className="space-y-2">
             {allEpisodes.map((ep) => {
               const plat = getPlatformInfo(ep.platform, ep.externalUrl);
@@ -927,30 +860,8 @@ function PreviewSeriesItem({
               );
             })}
           </div>
-
-          {/* View Full Series Link CTA - Only rendered if > 3 episodes exist */}
-          {allEpisodes.length > 3 && username && (
-            <div className="pt-2 text-center">
-              <a
-                href={`/${username}/series/${series.id}`}
-                className={`inline-flex items-center gap-1 text-xs font-black transition-colors ${style.handleColor}`}
-              >
-                <span>View Full Series →</span>
-              </a>
-            </div>
-          )}
         </div>
       )}
-
-      {/* Share Series Modal */}
-      <ShareSeriesModal
-        isOpen={isShareModalOpen}
-        onClose={() => setIsShareModalOpen(false)}
-        series={series}
-        username={username || "creator"}
-      />
     </div>
   );
 }
-
-

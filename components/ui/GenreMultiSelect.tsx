@@ -1,34 +1,46 @@
 "use client";
 
-import { useState } from "react";
-import { Check, ChevronDown, X, Tag } from "lucide-react";
+import { Check, Tag } from "lucide-react";
 
 export const ALL_SERIES_GENRES = [
-  "Travel & Vlogs",
-  "Technology & Gadgets",
-  "Gaming & Esports",
-  "Comedy & Satire",
-  "Fashion & Beauty",
-  "Lifestyle",
-  "Education & Learning",
-  "Business & Finance",
-  "Fitness & Health",
-  "Music & Audio",
-  "Movies & Drama",
-  "Food & Cooking",
-  "Automotive & Cars",
-  "Podcast & Talks",
-  "Short Film",
-  "Documentary",
-  "Anime & Animation",
-  "Science",
-  "Art & Photography",
-  "Sports & Outdoors",
-  "Reality Show",
-  "Action & Adventure",
-  "Horror & Thriller",
+  "Action",
+  "Adventure",
+  "Comedy",
+  "Drama",
+  "Love",
   "Romance",
-  "Sci-Fi & Fantasy",
+  "Romantic Comedy",
+  "Romantic Drama",
+  "Horror",
+  "Thriller",
+  "Suspense",
+  "Mystery",
+  "Crime",
+  "Sci-Fi",
+  "Fantasy",
+  "Supernatural",
+  "Psychological",
+  "Emotional",
+  "Family",
+  "Friendship",
+  "Kids",
+  "Animation",
+  "Documentary",
+  "Biography",
+  "History",
+  "Mythology",
+  "Spiritual",
+  "Musical",
+  "Sports",
+  "Reality",
+  "Slice of Life",
+  "Survival",
+  "Personal Vlogs",
+  "Daily Life",
+  "Lifestyle",
+  "Travel Diaries",
+  "Behind the Scenes",
+  "Other",
 ];
 
 interface GenreMultiSelectProps {
@@ -62,17 +74,17 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-2">
-        <label className="block text-sm font-bold text-inflixo-navy flex items-center gap-1.5">
-          <Tag className="h-4 w-4 text-inflixo-purple" />
+        <label className="block text-sm font-bold text-slate-900 flex items-center gap-1.5">
+          <Tag className="h-4 w-4 text-[#651FFF]" />
           Series Genres
         </label>
-        <span className={`text-xs font-semibold ${selectedGenres.length >= max ? "text-amber-600 font-bold" : "text-muted"}`}>
+        <span className={`text-xs font-semibold ${selectedGenres.length >= max ? "text-amber-600 font-bold" : "text-slate-400"}`}>
           {selectedGenres.length} / {max} selected
         </span>
       </div>
 
-      {/* Direct Interactive Chips List — No Dropdown Needed */}
-      <div className="flex flex-wrap gap-2 rounded-2xl border border-inflixo-border bg-slate-50/60 p-3.5">
+      {/* Direct Interactive Chips List */}
+      <div className="flex flex-wrap gap-2 rounded-2xl border border-purple-200 bg-slate-50/60 p-3.5 max-h-60 overflow-y-auto">
         {ALL_SERIES_GENRES.map((g) => {
           const isSelected = selectedGenres.includes(g);
           const isMaxReached = !isSelected && selectedGenres.length >= max;
@@ -83,12 +95,12 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
               type="button"
               disabled={isMaxReached}
               onClick={() => toggleGenre(g)}
-              className={`tap-scale flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition-all ${
+              className={`tap-scale flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
                 isSelected
-                  ? "bg-inflixo-purple text-white shadow-sm ring-2 ring-inflixo-purple/30"
+                  ? "bg-[#651FFF] text-white shadow-sm ring-2 ring-purple-400/30"
                   : isMaxReached
                   ? "opacity-40 cursor-not-allowed bg-white border border-slate-200 text-slate-400"
-                  : "bg-white border border-slate-200 text-slate-700 hover:border-inflixo-purple/40 hover:bg-purple-50/50 hover:text-inflixo-purple"
+                  : "bg-white border border-slate-200 text-slate-700 hover:border-purple-300 hover:bg-purple-50/50 hover:text-[#651FFF]"
               }`}
             >
               {isSelected ? (
@@ -98,7 +110,7 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
                 </>
               ) : (
                 <>
-                  <span className="text-slate-400 font-normal">+</span>
+                  <span className="text-slate-400 text-sm leading-none">+</span>
                   <span>{g}</span>
                 </>
               )}

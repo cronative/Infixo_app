@@ -168,7 +168,7 @@ function NewSeriesForm({
 
       <div className="space-y-4">
         <div className="flex justify-center sm:justify-start">
-          <PhotoUpload value={poster} onChange={setPoster} shape="rounded" size={100} label="Upload poster preview" />
+          <PhotoUpload value={poster} onChange={setPoster} shape="landscape" label="Upload Series Landscape Poster" />
         </div>
         <Input label="Series Title" placeholder="e.g. Kashmir Diaries or Tech Masterclass" value={title} onChange={(e) => setTitle(e.target.value)} />
         <Textarea label="Short Description" placeholder="Tell your audience what this series is about..." rows={2} value={description} onChange={(e) => setDescription(e.target.value)} />

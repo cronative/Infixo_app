@@ -57,6 +57,7 @@ export interface CreatorProfile {
   displayName: string;
   username: string;
   category: CreatorCategory | null;
+  customCategory?: string | null;
   profession?: string | null;
   bio: string;
   city?: string;

@@ -1,153 +1,115 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { ChevronDown, Tag, Search, Check } from "lucide-react";
-import { BROAD_CATEGORIES } from "@/data/categories";
-
-export const CATEGORY_EMOJIS: Record<string, string> = {
-  Gaming: "🎮",
-  Technology: "💻",
-  Entertainment: "🎬",
-  Travel: "✈️",
-  Food: "🍔",
-  "Fashion & Beauty": "🎨",
-  "Health & Fitness": "🏋️",
-  "Business & Finance": "🚀",
-  Music: "🎵",
-  Education: "📚",
-  Lifestyle: "🌿",
-  Photography: "📸",
-  News: "📰",
-  Podcast: "🎙️",
-  "Art & Creativity": "🎨",
-  "Motivation & Self Growth": "🔥",
-  Automobile: "🏎️",
-  "Pets & Animals": "🐶",
-  Parenting: "👶",
-  Spirituality: "🕉️",
-  Sports: "⚽",
-};
+import { Check, Tag, Sparkles } from "lucide-react";
+import { CREATOR_TAXONOMY } from "@/data/categories";
 
 interface CategorySelectProps {
-  value: string | null;
-  onChange: (category: string) => void;
+  value: string | null; // Comma separated string e.g. "Food & Cooking, Travel"
+  customValue?: string | null; // Custom category text if "Other" is selected
+  onChange: (categoryString: string, customCategory?: string) => void;
   error?: string;
-  label?: string;
+  max?: number;
 }
 
 export function CategorySelect({
   value,
+  customValue = "",
   onChange,
   error,
-  label = "Content Category",
+  max = 3,
 }: CategorySelectProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [search, setSearch] = useState("");
-  const containerRef = useRef<HTMLDivElement>(null);
+  const selectedCategories = value
+    ? value.split(",").map((c) => c.trim()).filter(Boolean)
+    : [];
 
-  const categories = BROAD_CATEGORIES;
+  const isOtherSelected = selectedCategories.includes("Other");
 
-  const filtered = categories.filter((c) =>
-    c.toLowerCase().includes(search.toLowerCase().trim())
-  );
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
+  function toggleCategory(catName: string) {
+    let updated: string[];
+    if (selectedCategories.includes(catName)) {
+      updated = selectedCategories.filter((c) => c !== catName);
+    } else {
+      if (selectedCategories.length >= max) return; // Limit max 3
+      updated = [...selectedCategories, catName];
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    const updatedCustom = updated.includes("Other") ? customValue || "" : "";
+    onChange(updated.join(", "), updatedCustom);
+  }
 
-  const selectedEmoji = value ? CATEGORY_EMOJIS[value] || "✨" : "";
+  function handleCustomChange(newCustomText: string) {
+    const trimmed = newCustomText.slice(0, 40); // Max 40 chars
+    onChange(selectedCategories.join(", "), trimmed);
+  }
 
   return (
-    <div className="relative w-full" ref={containerRef}>
-      <div className="flex items-center justify-between mb-1.5">
-        <label className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-          <Tag className="h-3.5 w-3.5 text-purple-600" />
-          <span>{label}</span>
-        </label>
-        {error && <span className="text-xs font-bold text-rose-500">{error}</span>}
+    <div className="w-full space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-1.5">
+        <div>
+          <label className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+            <Tag className="h-4 w-4 text-[#651FFF]" />
+            What do you create?
+          </label>
+          <p className="text-xs text-slate-500">Choose up to {max} categories that best describe your content.</p>
+        </div>
+        <span
+          className={`text-xs font-bold px-2 py-0.5 rounded-full border transition-all shrink-0 ${
+            selectedCategories.length >= max
+              ? "bg-amber-50 text-amber-700 border-amber-200"
+              : "bg-purple-50 text-purple-700 border-purple-200"
+          }`}
+        >
+          {selectedCategories.length} / {max} selected
+        </span>
       </div>
 
-      {/* Select Trigger Box */}
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className={`flex h-12 w-full items-center justify-between rounded-2xl border bg-white px-4 text-left shadow-2xs transition-all focus:outline-none ${
-          isOpen
-            ? "border-purple-600 ring-4 ring-purple-100"
-            : error
-            ? "border-rose-400"
-            : "border-slate-200 hover:border-purple-300"
-        }`}
-      >
-        <div className="flex items-center gap-2.5 min-w-0">
-          {value ? (
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="text-base">{selectedEmoji}</span>
-              <span className="truncate text-sm font-bold text-slate-900">{value}</span>
-            </div>
-          ) : (
-            <span className="text-sm text-slate-400">Select content category...</span>
-          )}
-        </div>
-        <ChevronDown
-          className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${
-            isOpen ? "rotate-180 text-purple-600" : ""
-          }`}
-        />
-      </button>
+      {error && <p className="text-xs font-bold text-rose-500">{error}</p>}
 
-      {/* Dropdown Popover */}
-      {isOpen && (
-        <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-72 w-full overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-xl ring-1 ring-black/5 animate-in fade-in-50 slide-in-from-top-2">
-          <div className="relative mb-2 px-1">
-            <Search className="absolute left-3.5 top-3 h-3.5 w-3.5 text-slate-400" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search category..."
-              className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:border-purple-500 focus:bg-white focus:outline-none"
-              autoFocus
-            />
-          </div>
+      {/* Grid of 26 Categories */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-64 overflow-y-auto rounded-2xl border border-slate-200 bg-slate-50/60 p-3">
+        {CREATOR_TAXONOMY.map((item) => {
+          const isSelected = selectedCategories.includes(item.category);
+          const isMaxReached = !isSelected && selectedCategories.length >= max;
 
-          <div className="max-h-52 overflow-y-auto space-y-0.5 pr-1">
-            {filtered.length === 0 ? (
-              <div className="p-4 text-center text-xs text-slate-400">No categories found</div>
-            ) : (
-              filtered.map((cat) => {
-                const isSelected = value === cat;
-                const emoji = CATEGORY_EMOJIS[cat] || "✨";
-                return (
-                  <button
-                    key={cat}
-                    type="button"
-                    onClick={() => {
-                      onChange(cat);
-                      setIsOpen(false);
-                      setSearch("");
-                    }}
-                    className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-xs transition-all ${
-                      isSelected
-                        ? "bg-purple-50 text-purple-700 font-extrabold"
-                        : "text-slate-700 hover:bg-slate-50 hover:text-slate-900 font-medium"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="text-base">{emoji}</span>
-                      <span>{cat}</span>
-                    </div>
-                    {isSelected && <Check className="h-4 w-4 text-purple-600 stroke-[3]" />}
-                  </button>
-                );
-              })
-            )}
+          return (
+            <button
+              key={item.category}
+              type="button"
+              disabled={isMaxReached}
+              onClick={() => toggleCategory(item.category)}
+              className={`tap-scale flex items-center gap-2 rounded-xl p-2.5 text-left text-xs font-bold transition-all cursor-pointer ${
+                isSelected
+                  ? "bg-[#651FFF] text-white shadow-sm ring-2 ring-purple-400/30"
+                  : isMaxReached
+                  ? "opacity-40 cursor-not-allowed bg-white border border-slate-200 text-slate-400"
+                  : "bg-white border border-slate-200 text-slate-700 hover:border-purple-300 hover:bg-purple-50/50 hover:text-[#651FFF]"
+              }`}
+            >
+              <span className="text-base shrink-0">{item.emoji}</span>
+              <span className="truncate flex-1">{item.category}</span>
+              {isSelected && <Check className="h-3.5 w-3.5 stroke-[3] text-white shrink-0" />}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Custom input field when "Other" is selected */}
+      {isOtherSelected && (
+        <div className="animate-fade-in space-y-1.5 rounded-2xl border border-purple-200 bg-purple-50/60 p-3.5">
+          <label className="block text-xs font-extrabold uppercase tracking-wider text-purple-900 flex items-center gap-1.5">
+            <Sparkles className="h-3.5 w-3.5 text-[#651FFF]" />
+            What type of content do you create? <span className="text-rose-500">*</span>
+          </label>
+          <input
+            type="text"
+            maxLength={40}
+            placeholder="e.g. Magic, Farming, ASMR, Collectibles, Local Culture"
+            value={customValue || ""}
+            onChange={(e) => handleCustomChange(e.target.value)}
+            className="w-full rounded-xl border border-purple-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-900 placeholder:text-slate-400 focus:border-[#651FFF] focus:outline-none focus:ring-2 focus:ring-purple-200"
+          />
+          <div className="flex justify-between text-[10px] text-slate-500">
+            <span>Will be displayed on your public profile instead of "Other".</span>
+            <span>{(customValue || "").length} / 40</span>
           </div>
         </div>
       )}

@@ -196,26 +196,7 @@ export const ThemeService = {
   },
 
   checkThemeChangeLimit(): { allowed: boolean; isPro: boolean; remaining: number; count: number } {
-    const sub = subscriptionRepository.get();
-    // Paid active subscriptions (pro, starter, unlimited) get unlimited theme changes.
-    // Early Access plan ("early_access" or "free") is capped at max 3 theme changes in Dashboard!
-    const isPro = Boolean(
-      sub?.status === "active" &&
-        sub?.planKey &&
-        sub.planKey !== "early_access" &&
-        sub.planKey !== "free"
-    );
-    const count = this.getThemeChangesCount();
-    if (isPro) {
-      return { allowed: true, isPro: true, remaining: Infinity, count };
-    }
-    const remaining = Math.max(0, 3 - count);
-    return {
-      allowed: count < 3,
-      isPro: false,
-      remaining,
-      count,
-    };
+    return { allowed: true, isPro: true, remaining: Infinity, count: 0 };
   },
 
   getThemeMeta(themeKey: ThemeKey): ThemeMeta {

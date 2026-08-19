@@ -115,7 +115,7 @@ export function DashboardSidebar() {
       </nav>
 
       {/* Footer: Early Access Status & Logout */}
-      <div className="pt-3 border-t border-slate-100 space-y-2">
+      <div className="pt-4 border-t border-slate-100 space-y-3.5">
         <div className="flex items-center justify-between rounded-2xl border border-purple-200 bg-purple-50/80 px-3 py-2 text-[11px] font-extrabold text-[#651FFF]">
           <div className="flex items-center gap-1.5">
             <Sparkles className="h-3.5 w-3.5 text-[#651FFF] shrink-0" />

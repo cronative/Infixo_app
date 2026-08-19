@@ -43,6 +43,7 @@ export async function GET(req: Request) {
         username: creator.username,
         photoDataUrl: creator.photo_url,
         category: creator.category,
+        customCategory: creator.custom_category || "",
         profession: creator.profession || "",
         bio: creator.bio,
         city: creator.city || "",
@@ -64,7 +65,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email, displayName, username, category, profession, bio, photoDataUrl, city, state, country, themeKey, incrementThemeCount } = body;
+    const { email, displayName, username, category, customCategory, profession, bio, photoDataUrl, city, state, country, themeKey, incrementThemeCount } = body;
 
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
@@ -73,6 +74,9 @@ export async function POST(req: Request) {
     // Ensure new columns exist in MySQL table dynamically
     try {
       await db.query("ALTER TABLE creators ADD COLUMN profession VARCHAR(100) DEFAULT NULL");
+    } catch {}
+    try {
+      await db.query("ALTER TABLE creators ADD COLUMN custom_category VARCHAR(150) DEFAULT NULL");
     } catch {}
     try {
       await db.query("ALTER TABLE creators ADD COLUMN city VARCHAR(100) DEFAULT NULL");
@@ -106,6 +110,7 @@ export async function POST(req: Request) {
          SET display_name = COALESCE(?, display_name),
              username = ?,
              category = COALESCE(?, category),
+             custom_category = COALESCE(?, custom_category),
              profession = COALESCE(?, profession),
              bio = COALESCE(?, bio),
              photo_url = COALESCE(?, photo_url),
@@ -113,8 +118,8 @@ export async function POST(req: Request) {
              state = COALESCE(?, state),
              country = COALESCE(?, country),
              theme_key = ?
-         WHERE id = ?`,
-        [displayName, finalUsername, category, profession, bio, photoDataUrl, city, state, country, safeThemeKey, creatorId]
+          WHERE id = ?`,
+        [displayName, finalUsername, category, customCategory, profession, bio, photoDataUrl, city, state, country, safeThemeKey, creatorId]
       );
 
       if (incrementThemeCount) {

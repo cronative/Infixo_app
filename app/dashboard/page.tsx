@@ -15,16 +15,17 @@ import {
   ChevronRight,
   Film,
   Play,
-  Check,
   Sparkles,
   ArrowRight,
   CircleCheck,
   Circle,
+  RefreshCw,
+  Share2,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { ThemeService } from "@/services/ThemeService";
-import { formatCount } from "@/utils/format";
+import { formatCount, formatSyncDate } from "@/utils/format";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 import {
   getSeriesUsage,
@@ -49,9 +50,20 @@ function extractHandle(handleOrUrl?: string): string | null {
 
 export default function DashboardOverviewPage() {
   const router = useRouter();
-  const { profile, socials, series, theme, totalAudience } = useCreator();
+  const { profile, socials, series, theme, totalAudience, updateSocials } = useCreator();
   const { showToast } = useToast();
   const themeMeta = ThemeService.getThemeMeta(theme);
+
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  function handleRefreshStats() {
+    setIsSyncing(true);
+    updateSocials({});
+    showToast("Audience stats refreshed! ✨");
+    setTimeout(() => {
+      setIsSyncing(false);
+    }, 400);
+  }
 
   // Early Access Limit calculations
   const seriesUsage = getSeriesUsage(series);
@@ -109,7 +121,7 @@ export default function DashboardOverviewPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-3 sm:px-8 py-4 sm:py-8 space-y-5">
-      {/* 1. TOP WELCOME HEADER (Compact & Merged with Page Live Status & Actions) */}
+      {/* 1. TOP WELCOME HEADER (Clean Punctuation & Actions) */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-3xl border border-purple-200/80 bg-white p-5 shadow-xs">
         <div className="space-y-1">
           <h1 className="font-display text-2xl font-black text-slate-900 tracking-tight">
@@ -144,49 +156,56 @@ export default function DashboardOverviewPage() {
         </div>
       </div>
 
-      {/* 2. HERO CARD = TOTAL FANBASE (Inflixo's #1 USP in Solid Brand Purple #651FFF) */}
-      <div className="relative overflow-hidden rounded-3xl border border-purple-200 bg-[#651FFF] p-6 text-white shadow-md shadow-purple-600/25">
+      {/* 2. HERO CARD = TOTAL FANBASE (Light Theme) */}
+      <div className="relative overflow-hidden rounded-3xl border border-purple-200/90 bg-gradient-to-br from-purple-50/90 via-indigo-50/60 to-purple-100/70 p-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
           <div>
             <div className="flex items-baseline gap-3">
-              <h2 className="font-display text-4xl sm:text-5xl font-black tracking-tight text-white">
+              <h2 className="font-display text-4xl sm:text-5xl font-black tracking-tight text-[#0F172A]">
                 {formatCount(totalAudience)}
               </h2>
-              <span className="font-display text-lg sm:text-2xl font-black uppercase tracking-wider text-purple-100">
+              <span className="font-display text-lg sm:text-2xl font-black uppercase tracking-wider text-[#651FFF]">
                 Total Fanbase
               </span>
             </div>
-            <p className="mt-1 text-xs sm:text-sm font-semibold text-purple-200">
+            <p className="mt-1 text-xs sm:text-sm font-semibold text-slate-600">
               Your combined audience across all socials added to Inflixo.
             </p>
           </div>
 
-          {/* Handle Badge */}
-          <div className="flex items-center gap-2.5 rounded-2xl bg-white/20 border border-white/30 p-3.5 backdrop-blur-md self-start sm:self-auto">
-            <Users className="h-5 w-5 text-white" />
-            <div>
-              <p className="text-[10px] font-extrabold uppercase tracking-wider text-purple-100">
-                Creator Handle
+          {/* Refresh Stats Button */}
+          <button
+            type="button"
+            onClick={handleRefreshStats}
+            className="tap-scale flex items-center gap-2.5 rounded-2xl bg-white hover:bg-purple-50/80 border border-purple-200/90 p-3 shadow-2xs self-start sm:self-auto transition-all cursor-pointer"
+            title="Refresh Social Stats"
+          >
+            <RefreshCw className={`h-4 w-4 text-[#651FFF] ${isSyncing ? "animate-spin" : ""}`} />
+            <div className="text-left">
+              <p className="text-[10px] font-extrabold uppercase tracking-wider text-purple-700">
+                Last Synced
               </p>
-              <p className="text-xs font-black text-white">@{profile.username || "username"}</p>
+              <p className="text-xs font-black text-slate-900">
+                {formatSyncDate(socials.updatedAt)}
+              </p>
             </div>
-          </div>
+          </button>
         </div>
 
-        {/* Compact Connected Socials Row (Account Display Name / Platform Name on top line + Username handle underneath when connected) */}
-        <div className="mt-6 pt-4 border-t border-white/20 grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {/* Connected Socials Cards */}
+        <div className="mt-6 pt-4 border-t border-purple-200/80 grid grid-cols-1 sm:grid-cols-3 gap-3">
           {/* Instagram */}
-          <div className="flex items-center justify-between rounded-2xl bg-white/15 border border-white/25 px-3.5 py-3 shadow-2xs backdrop-blur-md">
+          <div className="flex items-center justify-between rounded-2xl bg-white/90 border border-purple-100 px-3.5 py-3 shadow-2xs hover:border-purple-300/80 transition-all">
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white shadow-2xs shrink-0">
                 <InstagramIcon className="h-4 w-4" />
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-black text-white leading-none truncate">
+                <p className="text-xs font-black text-slate-900 leading-none truncate">
                   {socials.instagram.name || "Instagram"}
                 </p>
                 {isInstagramDone && (
-                  <p className="text-[10px] font-bold text-purple-100/90 truncate mt-0.5">
+                  <p className="text-[10px] font-bold text-slate-500 truncate mt-0.5">
                     {extractHandle(socials.instagram.username || socials.instagram.url) || `@${profile.username}`}
                   </p>
                 )}
@@ -196,17 +215,17 @@ export default function DashboardOverviewPage() {
             <div className="text-right shrink-0">
               {isInstagramDone ? (
                 <>
-                  <p className="text-sm font-black text-white leading-none">
+                  <p className="text-sm font-black text-[#651FFF] leading-none">
                     {formatCount(socials.instagram.followers)}
                   </p>
-                  <p className="text-[9px] font-extrabold text-purple-200 uppercase tracking-wider mt-0.5">
+                  <p className="text-[9px] font-extrabold text-slate-500 uppercase tracking-wider mt-0.5">
                     Followers
                   </p>
                 </>
               ) : (
                 <Link
                   href="/dashboard/socials"
-                  className="text-[11px] font-black text-white hover:text-purple-100 bg-white/20 hover:bg-white/30 border border-white/30 rounded-xl px-2.5 py-1 transition-all flex items-center gap-0.5"
+                  className="text-[11px] font-black text-[#651FFF] hover:text-[#500CD6] bg-purple-100/80 hover:bg-purple-200/80 border border-purple-200 rounded-xl px-2.5 py-1 transition-all flex items-center gap-0.5"
                 >
                   Connect <ArrowRight className="h-3 w-3" />
                 </Link>
@@ -215,17 +234,17 @@ export default function DashboardOverviewPage() {
           </div>
 
           {/* YouTube */}
-          <div className="flex items-center justify-between rounded-2xl bg-white/15 border border-white/25 px-3.5 py-3 shadow-2xs backdrop-blur-md">
+          <div className="flex items-center justify-between rounded-2xl bg-white/90 border border-purple-100 px-3.5 py-3 shadow-2xs hover:border-purple-300/80 transition-all">
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-red-600 text-white shadow-2xs shrink-0">
                 <YoutubeIcon className="h-4 w-4" />
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-black text-white leading-none truncate">
+                <p className="text-xs font-black text-slate-900 leading-none truncate">
                   {socials.youtube.channelTitle || "YouTube"}
                 </p>
                 {isYoutubeDone && (
-                  <p className="text-[10px] font-bold text-purple-100/90 truncate mt-0.5">
+                  <p className="text-[10px] font-bold text-slate-500 truncate mt-0.5">
                     {extractHandle(socials.youtube.username || socials.youtube.url) || `@${profile.username}`}
                   </p>
                 )}
@@ -235,17 +254,17 @@ export default function DashboardOverviewPage() {
             <div className="text-right shrink-0">
               {isYoutubeDone ? (
                 <>
-                  <p className="text-sm font-black text-white leading-none">
+                  <p className="text-sm font-black text-[#651FFF] leading-none">
                     {formatCount(socials.youtube.subscribers)}
                   </p>
-                  <p className="text-[9px] font-extrabold text-purple-200 uppercase tracking-wider mt-0.5">
+                  <p className="text-[9px] font-extrabold text-slate-500 uppercase tracking-wider mt-0.5">
                     Subscribers
                   </p>
                 </>
               ) : (
                 <Link
                   href="/dashboard/socials"
-                  className="text-[11px] font-black text-white hover:text-purple-100 bg-white/20 hover:bg-white/30 border border-white/30 rounded-xl px-2.5 py-1 transition-all flex items-center gap-0.5"
+                  className="text-[11px] font-black text-[#651FFF] hover:text-[#500CD6] bg-purple-100/80 hover:bg-purple-200/80 border border-purple-200 rounded-xl px-2.5 py-1 transition-all flex items-center gap-0.5"
                 >
                   Connect <ArrowRight className="h-3 w-3" />
                 </Link>
@@ -254,17 +273,17 @@ export default function DashboardOverviewPage() {
           </div>
 
           {/* Facebook */}
-          <div className="flex items-center justify-between rounded-2xl bg-white/15 border border-white/25 px-3.5 py-3 shadow-2xs backdrop-blur-md">
+          <div className="flex items-center justify-between rounded-2xl bg-white/90 border border-purple-100 px-3.5 py-3 shadow-2xs hover:border-purple-300/80 transition-all">
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-600 text-white shadow-2xs shrink-0">
                 <FacebookIcon className="h-4 w-4" />
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-black text-white leading-none truncate">
+                <p className="text-xs font-black text-slate-900 leading-none truncate">
                   {socials.facebook.name || "Facebook"}
                 </p>
                 {isFacebookDone && (
-                  <p className="text-[10px] font-bold text-purple-100/90 truncate mt-0.5">
+                  <p className="text-[10px] font-bold text-slate-500 truncate mt-0.5">
                     {extractHandle(socials.facebook.username || socials.facebook.url) || `@${profile.username}`}
                   </p>
                 )}
@@ -274,17 +293,17 @@ export default function DashboardOverviewPage() {
             <div className="text-right shrink-0">
               {isFacebookDone ? (
                 <>
-                  <p className="text-sm font-black text-white leading-none">
+                  <p className="text-sm font-black text-[#651FFF] leading-none">
                     {formatCount(socials.facebook.followers)}
                   </p>
-                  <p className="text-[9px] font-extrabold text-purple-200 uppercase tracking-wider mt-0.5">
+                  <p className="text-[9px] font-extrabold text-slate-500 uppercase tracking-wider mt-0.5">
                     Followers
                   </p>
                 </>
               ) : (
                 <Link
                   href="/dashboard/socials"
-                  className="text-[11px] font-black text-white hover:text-purple-100 bg-white/20 hover:bg-white/30 border border-white/30 rounded-xl px-2.5 py-1 transition-all flex items-center gap-0.5"
+                  className="text-[11px] font-black text-[#651FFF] hover:text-[#500CD6] bg-purple-100/80 hover:bg-purple-200/80 border border-purple-200 rounded-xl px-2.5 py-1 transition-all flex items-center gap-0.5"
                 >
                   Connect <ArrowRight className="h-3 w-3" />
                 </Link>
@@ -343,7 +362,6 @@ export default function DashboardOverviewPage() {
             </Link>
           </div>
 
-          {/* Progress Bar */}
           <div className="h-2 w-full rounded-full bg-purple-100 overflow-hidden">
             <div
               className="h-full bg-[#651FFF] transition-all duration-500 rounded-full"
@@ -351,7 +369,6 @@ export default function DashboardOverviewPage() {
             />
           </div>
 
-          {/* Checklist Items */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 pt-1">
             {tasks.map((task, idx) => (
               <Link
@@ -376,78 +393,76 @@ export default function DashboardOverviewPage() {
         </div>
       )}
 
-      {/* 5. MAIN QUICK ACTIONS (With Primary Purple + Create Series CTA) */}
+      {/* 5. MAIN QUICK ACTIONS (4 Equal Columns Single Row Grid) */}
       <div className="space-y-3">
         <p className="font-display text-xs font-black text-slate-900 uppercase tracking-wider">
           Quick actions
         </p>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-          {/* PRIMARY PURPLE CTA: + Create Series */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {/* Action 1: Create Series */}
           <button
             type="button"
             onClick={handleCreateSeriesClick}
-            className="col-span-2 sm:col-span-2 tap-scale flex items-center justify-center gap-2.5 rounded-2xl bg-[#651FFF] px-5 py-3.5 text-center text-white shadow-md shadow-purple-600/20 hover:bg-[#500CD6] transition-all hover:scale-[1.01] cursor-pointer"
+            className="tap-scale flex items-center gap-2.5 rounded-2xl bg-[#651FFF] p-3.5 text-white shadow-md shadow-purple-600/20 hover:bg-[#500CD6] transition-all hover:scale-[1.01] cursor-pointer"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/20 text-white">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/20 text-white shrink-0">
               <Plus className="h-5 w-5 stroke-[3]" />
             </div>
-            <div className="text-left">
-              <span className="font-display text-sm font-black text-white block">
-                + Create Series
+            <div className="text-left min-w-0">
+              <span className="font-display text-xs font-black text-white block truncate">
+                Create Series
               </span>
-              <span className="text-[10px] font-bold text-purple-100">
-                Turn your content into parts
+              <span className="text-[10px] font-bold text-purple-100 truncate block">
+                Add new multi-part series
               </span>
             </div>
           </button>
 
-          {/* SECONDARY ACTIONS */}
+          {/* Action 2: Add Episode */}
+          <Link
+            href="/dashboard/series"
+            className="tap-scale flex items-center gap-2.5 rounded-2xl border border-purple-100 bg-white p-3.5 text-left transition-all hover:border-purple-300 hover:bg-purple-50/50 shadow-2xs"
+          >
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-50 text-[#651FFF] shrink-0">
+              <Play className="h-4 w-4" />
+            </div>
+            <div className="min-w-0">
+              <span className="text-xs font-bold text-slate-900 block truncate">Add Episode</span>
+              <span className="text-[10px] font-bold text-slate-500 truncate block">Upload part link</span>
+            </div>
+          </Link>
+
+          {/* Action 3: Edit Profile */}
           <Link
             href="/dashboard/profile"
-            className="tap-scale flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-purple-100 bg-white p-3 text-center transition-all hover:border-purple-300 hover:bg-purple-50/50 shadow-2xs"
+            className="tap-scale flex items-center gap-2.5 rounded-2xl border border-purple-100 bg-white p-3.5 text-left transition-all hover:border-purple-300 hover:bg-purple-50/50 shadow-2xs"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-50 text-[#651FFF]">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-50 text-[#651FFF] shrink-0">
               <UserRound className="h-4 w-4" />
             </div>
-            <span className="text-xs font-bold text-slate-800">Edit Profile</span>
-          </Link>
-
-          <Link
-            href="/dashboard/themes"
-            className="tap-scale flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-purple-100 bg-white p-3 text-center transition-all hover:border-purple-300 hover:bg-purple-50/50 shadow-2xs"
-          >
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-50 text-[#651FFF]">
-              <Palette className="h-4 w-4" />
+            <div className="min-w-0">
+              <span className="text-xs font-bold text-slate-900 block truncate">Edit Profile</span>
+              <span className="text-[10px] font-bold text-slate-500 truncate block">Bio & category</span>
             </div>
-            <span className="text-xs font-bold text-slate-800">Change Theme</span>
           </Link>
 
+          {/* Action 4: Preview & Share */}
           <Link
             href="/dashboard/preview"
-            className="tap-scale flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-purple-100 bg-white p-3 text-center transition-all hover:border-purple-300 hover:bg-purple-50/50 shadow-2xs"
+            className="tap-scale flex items-center gap-2.5 rounded-2xl border border-purple-100 bg-white p-3.5 text-left transition-all hover:border-purple-300 hover:bg-purple-50/50 shadow-2xs"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-50 text-[#651FFF]">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-50 text-[#651FFF] shrink-0">
               <Eye className="h-4 w-4" />
             </div>
-            <span className="text-xs font-bold text-slate-800">Preview</span>
+            <div className="min-w-0">
+              <span className="text-xs font-bold text-slate-900 block truncate">Preview & Share</span>
+              <span className="text-[10px] font-bold text-slate-500 truncate block">View live page</span>
+            </div>
           </Link>
-
-          {/* Add Episode Action (Hidden / Disabled if no series exists yet) */}
-          {isSeriesDone && (
-            <Link
-              href="/dashboard/series"
-              className="tap-scale flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-purple-100 bg-white p-3 text-center transition-all hover:border-purple-300 hover:bg-purple-50/50 shadow-2xs col-span-2 sm:col-span-1"
-            >
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-50 text-[#651FFF]">
-                <Play className="h-4 w-4" />
-              </div>
-              <span className="text-xs font-bold text-slate-800">Add Episode</span>
-            </Link>
-          )}
         </div>
       </div>
 
-      {/* 6. YOUR SERIES WORKING AREA (Creator-centric Problem-Solution Copy) */}
+      {/* 6. YOUR SERIES WORKING AREA */}
       <div className="space-y-3">
         <div className="flex items-center justify-between px-1">
           <div>
@@ -462,7 +477,6 @@ export default function DashboardOverviewPage() {
         </div>
 
         {series.length === 0 ? (
-          /* Creator-Centric Problem Copy Empty State */
           <div className="rounded-3xl border border-dashed border-purple-200 bg-white p-8 text-center shadow-xs">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-100 text-[#651FFF] shadow-2xs">
               <Layers className="h-7 w-7" />
@@ -487,7 +501,6 @@ export default function DashboardOverviewPage() {
             </div>
           </div>
         ) : (
-          /* Populated Series Cards */
           <div className="grid gap-4 sm:grid-cols-3">
             {series.map((s) => {
               const epUsage = getEpisodeUsage(s);
@@ -513,18 +526,18 @@ export default function DashboardOverviewPage() {
                       {s.title}
                     </h4>
 
-                    {/* Episode Usage Bar */}
+                    {/* Creator Episode Status */}
                     <div className="mt-2 space-y-1">
                       <div className="flex items-center justify-between text-[11px] font-bold text-slate-600">
-                        <span>{epUsage.current} / 5 Episodes</span>
+                        <span>{epUsage.current} / 5 Episodes Uploaded</span>
                         <span
                           className={
                             epUsage.isLimitReached
                               ? "text-amber-600 font-extrabold"
-                              : "text-[#651FFF] font-extrabold"
+                              : "text-emerald-600 font-extrabold"
                           }
                         >
-                          {epUsage.isLimitReached ? "Limit Reached" : `${epUsage.percentage}%`}
+                          {epUsage.isLimitReached ? "Limit Reached" : "Published"}
                         </span>
                       </div>
                       <div className="h-1.5 w-full rounded-full bg-purple-100 overflow-hidden">
@@ -569,22 +582,32 @@ export default function DashboardOverviewPage() {
         )}
       </div>
 
-      {/* 7. SELECTED THEME CARD */}
+      {/* 7. SELECTED THEME CARD (With Theme Swatch Preview) */}
       <div className="flex items-center justify-between gap-4 rounded-3xl border border-purple-200/80 bg-white p-5 shadow-xs">
-        <div className="flex items-center gap-3 min-w-0">
+        <div className="flex items-center gap-3.5 min-w-0">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-purple-50 text-[#651FFF] border border-purple-100 shadow-2xs">
             <Palette className="h-5 w-5" />
           </div>
           <div className="min-w-0">
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Selected theme</p>
-            <p className="font-display font-black text-slate-900 truncate mt-0.5">{themeMeta.name}</p>
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Selected Theme</p>
+            <div className="flex items-center gap-2 mt-0.5">
+              <p className="font-display font-black text-slate-900 truncate">{themeMeta.name}</p>
+              {themeMeta.swatch && themeMeta.swatch.length > 0 && (
+                <div className="flex items-center gap-1 shrink-0">
+                  {themeMeta.swatch.map((c, i) => (
+                    <span key={i} className="h-3 w-3 rounded-full border border-slate-200 shadow-2xs" style={{ backgroundColor: c }} />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
+
         <Link
           href="/dashboard/themes"
-          className="tap-scale shrink-0 rounded-xl bg-slate-100 hover:bg-slate-200 px-4 py-2 text-xs font-bold text-slate-700 transition-colors"
+          className="tap-scale shrink-0 rounded-xl bg-purple-50 hover:bg-purple-100 border border-purple-200 px-4 py-2 text-xs font-extrabold text-[#651FFF] transition-colors"
         >
-          Change
+          Change Theme →
         </Link>
       </div>
 

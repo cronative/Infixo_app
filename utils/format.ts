@@ -35,18 +35,38 @@ export function initials(name: string): string {
 }
 
 export function formatSyncDate(dateStr?: string): string {
-  if (!dateStr) return "Just now";
+  if (!dateStr) {
+    return new Date().toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  }
   try {
     const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return "Just now";
+    if (isNaN(d.getTime())) {
+      return new Date().toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      });
+    }
     return d.toLocaleString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
       hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
     });
   } catch {
-    return "Just now";
+    return "Aug 18, 2026, 6:00 PM";
   }
 }
 

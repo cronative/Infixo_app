@@ -31,29 +31,55 @@ export function ModernPurpleCard({ profile, socials, series, totalAudience, vari
           {profile.username ? `inflixo.com/${profile.username}` : "inflixo.com/username"}
         </p>
 
-        {/* 4. Category & Profession Badges */}
-        {(profile.category || profile.profession) && (
-          <div className="mt-2.5 flex flex-wrap items-center justify-center gap-1.5">
-            {profile.category && (
-              <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-[11px] font-bold text-white shadow-2xs backdrop-blur-md">
-                {profile.category}
-              </span>
-            )}
-            {profile.profession && (
-              <span className="rounded-full bg-inflixo-gold/20 border border-inflixo-gold/40 px-2.5 py-0.5 text-[11px] font-bold text-amber-200 backdrop-blur-md">
-                ✨ {profile.profession}
-              </span>
-            )}
-          </div>
-        )}
+        {/* 4. Category & Sub-category Badges */}
+        {(profile.category || profile.profession) && (() => {
+          const catItems: string[] = [];
+          if (profile.category) {
+            const cats = profile.category.split(",").map((c) => c.trim()).filter(Boolean);
+            cats.forEach((c) => {
+              if (c.toLowerCase() === "other") {
+                if (profile.customCategory?.trim()) catItems.push(profile.customCategory.trim());
+              } else {
+                catItems.push(c);
+              }
+            });
+          }
+          const profItems: string[] = [];
+          if (profile.profession) {
+            const profs = profile.profession.split(",").map((s) => s.trim()).filter(Boolean);
+            profItems.push(...profs);
+          }
+          if (catItems.length === 0 && profItems.length === 0) return null;
+          return (
+            <div className="mt-2.5 space-y-1 flex flex-col items-center">
+              {catItems.length > 0 && (
+                <span className="rounded-full bg-white/20 px-4 py-1 text-xs font-black text-white shadow-2xs backdrop-blur-md">
+                  {catItems.join(" · ")}
+                </span>
+              )}
+              {profItems.length > 0 && (
+                <p className="text-xs font-bold text-white/80">
+                  {profItems.join(" · ")}
+                </p>
+              )}
+            </div>
+          );
+        })()}
 
         {/* 5. Short Bio */}
         <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/85">{profile.bio}</p>
 
-        {/* 6. Total Audience Stats */}
-        <div className="mt-4 flex items-center gap-1.5 rounded-full border border-inflixo-gold/30 bg-white/10 px-3.5 py-1.5">
-          <Users className="h-3.5 w-3.5" style={{ color: "#e6c583" }} />
-          <span className="text-xs font-bold">{formatCount(totalAudience)} total fanbase</span>
+        {/* 6. Total Fanbase Card */}
+        <div className="mt-4 rounded-2xl border border-white/20 bg-white/10 p-3.5 text-center w-full shadow-2xs backdrop-blur-md">
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-base">❤️</span>
+            <span className="font-display text-lg sm:text-xl font-black text-white">
+              {formatCount(totalAudience)}
+            </span>
+          </div>
+          <p className="text-[10px] font-extrabold uppercase tracking-widest mt-0.5 text-white/70">
+            TOTAL FANBASE
+          </p>
         </div>
       </div>
 

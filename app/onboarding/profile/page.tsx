@@ -223,19 +223,21 @@ export default function ProfileStepPage() {
           )}
         </div>
 
-        {/* 4. Content Category Selection (Single Select Dropdown) */}
+        {/* 4. Content Category Selection (Multi-select Up to 3 Categories) */}
         <div id="category" data-field="category">
           <CategorySelect
             value={profile.category}
-            onChange={(cat) => {
-              updateProfile({ category: cat as any, profession: null });
+            customValue={profile.customCategory}
+            onChange={(cat, customCat) => {
+              updateProfile({ category: cat as any, customCategory: customCat, profession: null });
               setErrors((prev) => ({ ...prev, category: undefined }));
             }}
             error={errors.category}
+            max={3}
           />
         </div>
 
-        {/* 5. Sub-types Selection (Multi Select Dropdown, Max 3) */}
+        {/* 5. Dynamic Sub-types Selection (Multi-select Up to 5 Subtypes) */}
         {profile.category && (
           <div id="profession" data-field="profession" className="animate-fade-in">
             <SubtypeMultiSelect
@@ -244,7 +246,7 @@ export default function ProfileStepPage() {
               onChange={(prof) => {
                 updateProfile({ profession: prof });
               }}
-              max={3}
+              max={5}
             />
           </div>
         )}

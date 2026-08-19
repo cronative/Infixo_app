@@ -164,35 +164,28 @@ export default function LandingHomePage() {
             </a>
           </nav>
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-3">
-            {isLoggedIn ? (
-              <button
-                type="button"
-                onClick={() => router.push("/dashboard")}
-                className="inline-flex items-center gap-2 rounded-full bg-[#651FFF] px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple-600/20 hover:bg-[#500CD6] hover:scale-105 transition-all cursor-pointer"
-              >
-                Dashboard
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            ) : (
-              <>
-                <Link
-                  href="/login"
-                  className="px-3.5 py-2 text-sm font-semibold text-[#0F172A] hover:text-[#651FFF] transition-colors"
+            {/* Action Button */}
+            <div className="flex items-center gap-3">
+              {isLoggedIn ? (
+                <button
+                  type="button"
+                  onClick={() => router.push("/dashboard")}
+                  className="inline-flex items-center gap-2 rounded-full bg-[#651FFF] px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-md shadow-purple-600/20 hover:bg-[#500CD6] hover:scale-105 active:scale-95 transition-all cursor-pointer"
                 >
-                  Log in
-                </Link>
+                  Dashboard
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              ) : (
                 <button
                   type="button"
                   onClick={() => router.push("/login")}
-                  className="inline-flex items-center gap-2 rounded-full bg-[#651FFF] px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple-600/20 hover:bg-[#500CD6] hover:scale-105 transition-all cursor-pointer"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#651FFF] px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-md shadow-purple-600/20 hover:bg-[#500CD6] hover:scale-105 active:scale-95 transition-all cursor-pointer"
                 >
-                  Create Your Free Page
+                  <span>Get Started</span>
+                  <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </button>
-              </>
-            )}
-          </div>
+              )}
+            </div>
         </div>
       </header>
 
@@ -201,7 +194,7 @@ export default function LandingHomePage() {
         <div className="mx-auto max-w-[1200px] px-5 sm:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             {/* Left Hero Column */}
-            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+            <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
               {/* Main H1 Big Headline */}
               <h1 className="font-display text-[40px] sm:text-[58px] font-bold leading-[1.12] tracking-normal text-[#0F172A]">
                 ARE YOU A CONTENT CREATOR?
@@ -239,9 +232,10 @@ export default function LandingHomePage() {
                   />
                   <button
                     type="submit"
-                    className="inline-flex items-center gap-2 shrink-0 rounded-full bg-[#651FFF] px-6 py-3 text-sm font-bold text-white shadow-md hover:bg-[#500CD6] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+                    className="inline-flex items-center gap-1.5 shrink-0 rounded-full bg-[#651FFF] px-5 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-bold text-white shadow-md hover:bg-[#500CD6] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
                   >
-                    <span>Create Free Page</span>
+                    <span>Get Started</span>
+                    <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </button>
                 </form>
 
@@ -344,11 +338,24 @@ export default function LandingHomePage() {
               </div>
             </div>
 
-            {/* Right Hero: 100% REAL TONY STARK LIVE PREVIEW CARD WITH 10S AUTO THEME SWITCH */}
-            <div className="lg:col-span-5 flex flex-col items-center justify-center">
-              <div className="w-full max-w-[360px] rounded-[36px] border-4 border-slate-900 bg-white p-3.5 shadow-2xl relative animate-float-slow transition-all duration-700">
-                {/* Phone Speaker Notch */}
-                <div className="w-16 h-1 bg-slate-300 rounded-full mx-auto mb-3" />
+            {/* Right Hero: REAL LIVE CREATOR PAGE PREVIEW CARD WITH WEBBROWSER FRAME */}
+            <div className="lg:col-span-6 flex flex-col items-center justify-center w-full">
+              <div className="w-full max-w-[540px] rounded-3xl border border-slate-200/80 bg-slate-900/5 p-2.5 sm:p-3 shadow-2xl relative animate-float-slow transition-all duration-700">
+                {/* Sleek Browser Bar Header */}
+                <div className="flex items-center justify-between bg-white/80 backdrop-blur-md px-4 py-2 rounded-2xl mb-2.5 border border-slate-200/60 shadow-2xs">
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+                  </div>
+                  <div className="flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold text-slate-600 border border-slate-200/80">
+                    <span className="text-emerald-500 font-extrabold">🔒</span>
+                    <span>inflixo.com/tonystark</span>
+                  </div>
+                  <div className="text-[10px] font-extrabold text-inflixo-purple uppercase tracking-wider hidden sm:block">
+                    Live Web Preview
+                  </div>
+                </div>
 
                 {/* REAL LIVE PREVIEW CARD COMPONENT WITH DYNAMIC THEME */}
                 <LivePreviewCard
@@ -595,7 +602,8 @@ export default function LandingHomePage() {
                 onClick={() => router.push("/login")}
                 className="inline-flex items-center gap-2 rounded-full bg-[#651FFF] px-9 py-4 text-base sm:text-lg font-bold text-white shadow-xl shadow-purple-600/30 hover:bg-[#500CD6] hover:scale-105 transition-all cursor-pointer"
               >
-                <span>Create Your Inflixo</span>
+                <span>Get Started</span>
+                <ArrowRight className="h-5 w-5" />
               </button>
             </div>
 
