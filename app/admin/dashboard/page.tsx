@@ -22,6 +22,13 @@ import {
   Filter,
   ArrowUpRight,
   Check,
+  Mail,
+  Send,
+  Loader2,
+  FileText,
+  AtSign,
+  AlertCircle,
+  Plus,
 } from "lucide-react";
 import { AdminService, AdminUser } from "@/services/AdminService";
 import { Logo } from "@/components/shared/Logo";
@@ -78,12 +85,63 @@ interface AdminSeries {
   }[];
 }
 
+const EMAIL_TEMPLATES = [
+  {
+    id: "welcome",
+    name: "🎉 Welcome Creator Template",
+    subject: "Welcome to Inflixo! Set up your creator page 🚀",
+    body: `<h2 style="color: #6512FA; margin-top: 0;">Welcome to Inflixo Creator Home! 🎉</h2>
+<p>Hi Creator,</p>
+<p>Thank you for joining <strong>Inflixo</strong> — the single link platform built for video creators to organize series, showcase seasons, and feature their total fanbase.</p>
+<p style="background-color: #F1F5F9; padding: 16px; border-radius: 12px; border-left: 4px solid #6512FA;">
+<strong>Next Steps:</strong> Add your Instagram, YouTube & Facebook handles, upload your OTT series, and pick from 20 aesthetic design themes.
+</p>
+<p>Log in to your dashboard to complete your page setup!</p>
+<p>Best regards,<br/><strong>The Inflixo Team</strong></p>`,
+  },
+  {
+    id: "update",
+    name: "✨ New Feature Release Template",
+    subject: "New on Inflixo: OTT Series & 20 Aesthetic Themes 🎬",
+    body: `<h2 style="color: #6512FA; margin-top: 0;">Exciting New Feature Release! ✨</h2>
+<p>Hello Creator,</p>
+<p>We've just launched major enhancements to your Inflixo Creator Page:</p>
+<ul>
+  <li><strong>20 Design Themes:</strong> Choose between Minimal, Cyberpunk, Midnight, Emerald Luxe & 16 more styles.</li>
+  <li><strong>OTT Series Accordion:</strong> Organize your YouTube/Instagram videos into seasons & parts.</li>
+  <li><strong>Timezone Sync Stats:</strong> Combined audience counters across all your connected socials.</li>
+</ul>
+<p>Check out your updated dashboard today!</p>
+<p>Cheers,<br/><strong>Inflixo Product Team</strong></p>`,
+  },
+  {
+    id: "early_access",
+    name: "👑 Pro Plan Early Access Invite",
+    subject: "Special Invitation: Unlock Early Access Features 👑",
+    body: `<h2 style="color: #6512FA; margin-top: 0;">You're Invited to Early Access Pro Features 👑</h2>
+<p>Dear Creator,</p>
+<p>As one of our early Inflixo creators, you get exclusive access to unlimited series creation, custom domain deeplinking, and priority sync stats.</p>
+<p style="text-align: center; margin: 24px 0;">
+  <a href="https://inflixo.com/dashboard" style="background-color: #6512FA; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 12px; font-weight: bold; display: inline-block;">Go to Dashboard</a>
+</p>
+<p>Keep creating,<br/><strong>Inflixo Team</strong></p>`,
+  },
+  {
+    id: "custom",
+    name: "📝 Custom Broadcast Message",
+    subject: "Important update from Inflixo",
+    body: `<p>Hi Creator,</p>
+<p>Write your custom email announcement or message here...</p>
+<p>Best regards,<br/><strong>Inflixo Team</strong></p>`,
+  },
+];
+
 export default function AdminDashboardPage() {
   const router = useRouter();
   const { showToast } = useToast();
 
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
-  const [activeTab, setActiveTab] = useState<"creators" | "series">("creators");
+  const [activeTab, setActiveTab] = useState<"creators" | "series" | "email">("creators");
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -92,6 +150,13 @@ export default function AdminDashboardPage() {
 
   // Selected Series Modal State
   const [selectedSeries, setSelectedSeries] = useState<AdminSeries | null>(null);
+
+  // Email Broadcast State
+  const [selectedTemplateId, setSelectedTemplateId] = useState("welcome");
+  const [emailSubject, setEmailSubject] = useState(EMAIL_TEMPLATES[0].subject);
+  const [emailBody, setEmailBody] = useState(EMAIL_TEMPLATES[0].body);
+  const [recipientsInput, setRecipientsInput] = useState("");
+  const [sendingEmail, setSendingEmail] = useState(false);
 
   // Authenticate Admin
   useEffect(() => {
@@ -179,6 +244,77 @@ export default function AdminDashboardPage() {
     AdminService.logout();
     showToast("Admin logged out successfully 👋");
     router.push("/admin/login");
+  }
+
+  function handleTemplateSelect(tmplId: string) {
+    setSelectedTemplateId(tmplId);
+    const tmpl = EMAIL_TEMPLATES.find((t) => t.id === tmplId);
+    if (tmpl) {
+      setEmailSubject(tmpl.subject);
+      setEmailBody(tmpl.body);
+    }
+  }
+
+  function handleAddAllCreatorsToRecipients() {
+    const allEmails = Array.from(
+      new Set(creators.map((c) => c.email?.trim().toLowerCase()).filter(Boolean))
+    );
+    if (allEmails.length === 0) {
+      showToast("No creator email addresses available", "error");
+      return;
+    }
+    setRecipientsInput(allEmails.join(", "));
+    showToast(`Added ${allEmails.length} registered creator emails! 📧`);
+  }
+
+  async function handleSendMail() {
+    const emailsList = recipientsInput
+      .split(/[\n,]+/)
+      .map((e) => e.trim().toLowerCase())
+      .filter((e) => e && e.includes("@"));
+
+    if (emailsList.length === 0) {
+      showToast("Please enter at least 1 valid recipient email ID", "error");
+      return;
+    }
+
+    if (!emailSubject.trim()) {
+      showToast("Please enter an email subject line", "error");
+      return;
+    }
+
+    if (!emailBody.trim()) {
+      showToast("Please enter email message content", "error");
+      return;
+    }
+
+    setSendingEmail(true);
+    try {
+      const res = await fetch("/api/admin/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          recipients: emailsList,
+          subject: emailSubject,
+          bodyHtml: emailBody,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        showToast(`Sent ${data.sentCount} ${data.sentCount === 1 ? "email" : "emails"} successfully from inflixoapp@gmail.com! ✉️`);
+        if (data.failedCount > 0) {
+          showToast(`Warning: ${data.failedCount} failed to deliver`, "info");
+        }
+      } else {
+        showToast(data.error || "Could not send emails", "error");
+      }
+    } catch (err: any) {
+      console.error("Send mail error:", err);
+      showToast("Failed to send broadcast emails. Try again!", "error");
+    } finally {
+      setSendingEmail(false);
+    }
   }
 
   // Filtered lists
@@ -285,19 +421,19 @@ export default function AdminDashboardPage() {
             </p>
           </div>
 
-          {/* Card 3: Early Access Plan */}
+          {/* Card 3: Email Broadcast Status */}
           <div className="rounded-3xl border border-purple-200/80 bg-white p-5 shadow-sm space-y-2">
             <div className="flex items-center justify-between text-slate-500">
               <span className="text-xs font-extrabold uppercase tracking-wider text-purple-700">
-                Early Access Plan
+                Email Dispatcher
               </span>
               <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-purple-50 text-[#651FFF]">
-                <Sparkles className="h-4 w-4" />
+                <Mail className="h-4 w-4" />
               </div>
             </div>
-            <p className="font-display text-3xl font-black text-slate-900">Active</p>
+            <p className="font-display text-2xl font-black text-slate-900 truncate">inflixoapp@gmail.com</p>
             <p className="text-[11px] font-semibold text-slate-500">
-              Early Access Unlimited Features
+              Official Admin SMTP Mailer
             </p>
           </div>
 
@@ -350,30 +486,45 @@ export default function AdminDashboardPage() {
               <Film className="h-3.5 w-3.5" />
               <span>All Series ({seriesList.length})</span>
             </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("email")}
+              className={`tap-scale flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black transition-all cursor-pointer ${
+                activeTab === "email"
+                  ? "bg-[#651FFF] text-white shadow-md shadow-purple-600/20"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <Mail className="h-3.5 w-3.5" />
+              <span>Send Mails</span>
+            </button>
           </div>
 
           {/* Search Box */}
-          <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={`Search ${activeTab}...`}
-              className="w-full rounded-2xl border border-purple-100 bg-white pl-10 pr-4 py-2.5 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#651FFF] focus:outline-none focus:ring-2 focus:ring-purple-600/20 transition-all shadow-2xs"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </div>
+          {activeTab !== "email" && (
+            <div className="relative w-full sm:w-80">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={`Search ${activeTab}...`}
+                className="w-full rounded-2xl border border-purple-100 bg-white pl-10 pr-4 py-2.5 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#651FFF] focus:outline-none focus:ring-2 focus:ring-purple-600/20 transition-all shadow-2xs"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* 4. TAB 1: CREATORS LISTING (Light Theme Table) */}
+        {/* 4. TAB 1: CREATORS LISTING */}
         {activeTab === "creators" && (
           <div className="space-y-4">
             <div className="overflow-x-auto rounded-3xl border border-purple-100 bg-white shadow-sm">
@@ -455,7 +606,7 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        {/* 5. TAB 2: SERIES LISTING (Light Theme Cards) */}
+        {/* 5. TAB 2: SERIES LISTING */}
         {activeTab === "series" && (
           <div className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -512,9 +663,151 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         )}
+
+        {/* 6. TAB 3: EMAIL BROADCAST & MAIL SENDER TOOL */}
+        {activeTab === "email" && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* Left Column: Email Composer Form */}
+            <div className="lg:col-span-7 rounded-3xl border border-purple-100 bg-white p-6 sm:p-8 shadow-sm space-y-5">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div>
+                  <h2 className="font-display text-lg font-black text-slate-900 flex items-center gap-2">
+                    <Mail className="h-5 w-5 text-[#651FFF]" />
+                    Send Admin Email Broadcast
+                  </h2>
+                  <p className="text-xs text-slate-500 font-semibold">
+                    Sends real HTML emails from <span className="font-mono text-[#651FFF]">inflixoapp@gmail.com</span>
+                  </p>
+                </div>
+              </div>
+
+              {/* Template Selector */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-black uppercase tracking-wider text-slate-700">
+                  Select Email Template
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {EMAIL_TEMPLATES.map((tmpl) => (
+                    <button
+                      key={tmpl.id}
+                      type="button"
+                      onClick={() => handleTemplateSelect(tmpl.id)}
+                      className={`tap-scale p-3 rounded-2xl border text-left transition-all ${
+                        selectedTemplateId === tmpl.id
+                          ? "border-[#651FFF] bg-purple-50/80 text-[#651FFF] font-black shadow-2xs"
+                          : "border-slate-200 bg-slate-50/50 text-slate-700 hover:bg-slate-100 font-semibold"
+                      }`}
+                    >
+                      <p className="text-xs">{tmpl.name}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Recipients Box */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-black uppercase tracking-wider text-slate-700">
+                    Recipient Email Addresses
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleAddAllCreatorsToRecipients}
+                    className="text-[11px] font-extrabold text-[#651FFF] hover:underline flex items-center gap-1"
+                  >
+                    <Plus className="h-3 w-3" /> Select All Registered Creators ({creators.length})
+                  </button>
+                </div>
+                <textarea
+                  rows={3}
+                  value={recipientsInput}
+                  onChange={(e) => setRecipientsInput(e.target.value)}
+                  placeholder="Enter email addresses separated by commas or new lines (e.g. creator@gmail.com, test@inflixo.com)"
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50/60 p-3 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#651FFF] focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600/20 transition-all"
+                />
+              </div>
+
+              {/* Email Subject Line */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-black uppercase tracking-wider text-slate-700">
+                  Email Subject Line
+                </label>
+                <input
+                  type="text"
+                  value={emailSubject}
+                  onChange={(e) => setEmailSubject(e.target.value)}
+                  placeholder="Enter email subject line"
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#651FFF] focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600/20 transition-all"
+                />
+              </div>
+
+              {/* Email Message Content (HTML) */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-black uppercase tracking-wider text-slate-700">
+                  Email Message Body (HTML / Text)
+                </label>
+                <textarea
+                  rows={7}
+                  value={emailBody}
+                  onChange={(e) => setEmailBody(e.target.value)}
+                  placeholder="Write your email body HTML..."
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50/60 p-3.5 text-xs font-mono text-slate-900 placeholder-slate-400 focus:border-[#651FFF] focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600/20 transition-all"
+                />
+              </div>
+
+              {/* Submit Action Button */}
+              <button
+                type="button"
+                disabled={sendingEmail}
+                onClick={handleSendMail}
+                className="tap-scale flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#782BFB] via-[#6512FA] to-[#500CD6] py-3.5 text-xs font-black text-white shadow-md shadow-purple-600/20 hover:bg-[#500CD6] transition-all disabled:opacity-50 cursor-pointer"
+              >
+                {sendingEmail ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin text-white" />
+                    <span>Sending Mails from inflixoapp@gmail.com...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-4 w-4" />
+                    <span>Send Broadcast Email</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Right Column: Live Email HTML Preview */}
+            <div className="lg:col-span-5 rounded-3xl border border-purple-100 bg-white p-6 shadow-sm space-y-4 lg:sticky lg:top-24">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                <p className="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                  <Eye className="h-3.5 w-3.5 text-[#651FFF]" /> Live Email HTML Preview
+                </p>
+                <span className="rounded-full bg-purple-50 px-2.5 py-0.5 text-[10px] font-extrabold text-[#651FFF]">
+                  Sender: inflixoapp@gmail.com
+                </span>
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-[#FAFAFC] p-4 text-left space-y-3 max-h-[500px] overflow-y-auto">
+                <div className="border-b border-slate-200 pb-2">
+                  <p className="text-[11px] text-slate-500 font-bold">
+                    From: <span className="text-slate-900 font-semibold">&quot;Inflixo App&quot; &lt;inflixoapp@gmail.com&gt;</span>
+                  </p>
+                  <p className="text-[11px] text-slate-500 font-bold mt-0.5">
+                    Subject: <span className="text-[#651FFF] font-black">{emailSubject || "No Subject"}</span>
+                  </p>
+                </div>
+
+                <div
+                  className="prose prose-purple max-w-none text-xs text-slate-800 leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: emailBody }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
-      {/* 6. LIGHT THEME SERIES DETAILS MODAL */}
+      {/* 7. LIGHT THEME SERIES DETAILS MODAL */}
       {selectedSeries && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 animate-fade-in">
           <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-[32px] border border-purple-100 bg-white text-slate-900 p-6 sm:p-8 shadow-2xl space-y-6 text-left">

@@ -136,3 +136,71 @@ export async function sendOtpEmail(toEmail: string, otpCode: string): Promise<bo
     return false;
   }
 }
+
+export async function sendBroadcastEmail(
+  toEmail: string,
+  subject: string,
+  messageBodyHtml: string
+): Promise<boolean> {
+  const from = process.env.EMAIL_FROM || '"Inflixo App" <inflixoapp@gmail.com>';
+
+  const html = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>${subject}</title>
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #FAFAFC; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0F172A;">
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #FAFAFC; padding: 32px 16px;">
+        <tr>
+          <td align="center">
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 540px; background-color: #FFFFFF; border-radius: 24px; overflow: hidden; border: 1px solid #E2E8F0; box-shadow: 0 10px 30px rgba(108, 43, 255, 0.06);">
+              
+              <!-- Inflixo Header -->
+              <tr>
+                <td style="background: linear-gradient(135deg, #782BFB 0%, #6512FA 50%, #500CD6 100%); padding: 28px 24px; text-align: center;">
+                  <h1 style="color: #FFFFFF; font-size: 22px; font-weight: 800; margin: 0; letter-spacing: -0.5px;">Inflixo</h1>
+                  <p style="color: rgba(255, 255, 255, 0.85); font-size: 12px; font-weight: 600; margin: 4px 0 0 0;">Official Creator Broadcast</p>
+                </td>
+              </tr>
+
+              <!-- Content Body -->
+              <tr>
+                <td style="padding: 32px 28px; color: #1E293B; font-size: 14px; line-height: 1.6;">
+                  ${messageBodyHtml}
+                </td>
+              </tr>
+
+              <!-- Footer Signature -->
+              <tr>
+                <td style="background-color: #F8FAFC; border-top: 1px solid #E2E8F0; padding: 16px 24px; text-align: center;">
+                  <p style="color: #94A3B8; font-size: 11px; font-weight: 600; margin: 0;">
+                    © ${new Date().getFullYear()} Inflixo · TrustIQ Labs • Sent from inflixoapp@gmail.com
+                  </p>
+                </td>
+              </tr>
+
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
+  `;
+
+  try {
+    await transporter.sendMail({
+      from,
+      to: toEmail,
+      subject,
+      html,
+    });
+    console.log(`✉️ Broadcast Email sent from inflixoapp@gmail.com to ${toEmail}`);
+    return true;
+  } catch (err: any) {
+    console.error(`❌ Failed to send broadcast email to ${toEmail}:`, err.message || err);
+    return false;
+  }
+}
