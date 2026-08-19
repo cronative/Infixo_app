@@ -834,13 +834,17 @@ export function LivePreviewCard({
           </div>
         )}
 
-        {/* Footer */}
-        <div className="relative z-10 mt-6 pt-3 text-center space-y-2.5">
-          <div className="flex flex-col items-center justify-center gap-1.5">
-            <span className={`text-xs font-bold opacity-80 ${style.handleColor}`}>
-              inflixo.com/{profile.username || "username"}
-            </span>
-          </div>
+        {/* Clean Official Footer Badge */}
+        <div className="relative z-10 mt-6 pt-4 text-center border-t border-slate-500/10">
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`tap-scale inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1 text-[11px] font-bold shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} ${style.handleColor}`}
+          >
+            <InflixoLogoIcon className="h-3.5 w-3.5 text-purple-600" />
+            <span>Profile managed by <strong className="font-black">Inflixo</strong> — India's Premier Creator Platform 🚀</span>
+          </a>
         </div>
       </div>
     </div>

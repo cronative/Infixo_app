@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/sync-socials?token=inflixo_cron_secret_1111",
+      "schedule": "11 11,23 * * *"
+    }
+  ]
+}
