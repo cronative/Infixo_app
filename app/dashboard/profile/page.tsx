@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { User, AtSign, Tag, FileText, MapPin, Globe, Check, Loader2, AlertCircle, Sparkles, Lock } from "lucide-react";
+import { User, AtSign, Tag, FileText, Check, Loader2, AlertCircle, Sparkles, Lock } from "lucide-react";
 import { PhotoUpload } from "@/components/ui/PhotoUpload";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
@@ -13,8 +13,9 @@ import { slugifyUsername } from "@/utils/format";
 import { useToast } from "@/contexts/ToastContext";
 import { ProfileService } from "@/services/ProfileService";
 import { authRepository } from "@/repositories/localRepository";
+import { CategorySelect } from "@/components/ui/CategorySelect";
+import { SubtypeMultiSelect } from "@/components/ui/SubtypeMultiSelect";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
-import { LocationSearchModal } from "@/components/ui/LocationSearchModal";
 
 const BIO_SUGGESTIONS = [
   "🎬 Creating cinematic vlogs & travel stories",
@@ -26,10 +27,8 @@ const BIO_SUGGESTIONS = [
 export default function DashboardProfilePage() {
   const { profile, updateProfile } = useCreator();
   const { showToast } = useToast();
-  const [initialUsername] = useState(() => profile.username?.trim() || "");
-  const isUsernameLocked = Boolean(initialUsername.length >= 3);
+  const isUsernameLocked = true;
 
-  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<{
@@ -128,7 +127,7 @@ export default function DashboardProfilePage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-5 py-6 sm:px-8 sm:py-8 space-y-6">
+    <div className="mx-auto max-w-3xl px-3 sm:px-8 py-4 sm:py-8 space-y-5">
       <div>
         <h1 className="font-display text-2xl font-black text-inflixo-navy sm:text-3xl">Edit Profile</h1>
         <p className="mt-1 text-sm text-muted">
@@ -207,126 +206,34 @@ export default function DashboardProfilePage() {
               Live link: <span className="font-semibold text-rose-600 underline">https://inflixo.com/{profile.username}</span>
             </p>
           ) : null}
-        </div>
 
-        {/* Category & Profession Selectors */}
-        <div className="space-y-4 rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
-          <div>
-            <label className="block text-sm font-bold text-inflixo-navy flex items-center gap-1.5 mb-2">
-              <Tag className="h-4 w-4 text-inflixo-purple" />
-              Content Category (Broad)
-            </label>
-            <div className="mb-3 flex flex-wrap gap-2">
-              {BROAD_CATEGORIES.slice(0, 6).map((cat) => {
-                const isSelected = profile.category === cat;
-                return (
-                  <button
-                    key={cat}
-                    type="button"
-                    onClick={() => {
-                      const newProfs = getProfessionsForCategory(cat);
-                      updateProfile({ category: cat as any, profession: newProfs[0] || null });
-                    }}
-                    className={`rounded-full px-3 py-1 text-xs font-bold transition-all ${
-                      isSelected
-                        ? "bg-inflixo-purple text-white shadow-xs"
-                        : "bg-white border border-slate-200 text-slate-600 hover:border-inflixo-purple/40"
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                );
-              })}
-            </div>
-            <Select
-              placeholder="Select broad category..."
-              value={profile.category ?? ""}
-              onChange={(e) => {
-                const selectedCat = e.target.value;
-                const newProfs = getProfessionsForCategory(selectedCat);
-                updateProfile({ category: selectedCat as any, profession: newProfs[0] || null });
+          {/* Category & Profession Selectors */}
+          <div className="mt-4 space-y-4 rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+            <CategorySelect
+              value={profile.category}
+              onChange={(cat) => {
+                updateProfile({ category: cat as any, profession: null });
+                setErrors((prev) => ({ ...prev, category: undefined }));
               }}
-              options={BROAD_CATEGORIES.map((c) => ({ value: c, label: c }))}
               error={errors.category}
             />
+
+            {profile.category && (
+              <div className="pt-3 border-t border-slate-200/60">
+                <SubtypeMultiSelect
+                  category={profile.category}
+                  value={profile.profession || null}
+                  onChange={(prof) => {
+                    updateProfile({ profession: prof });
+                  }}
+                  max={3}
+                />
+              </div>
+            )}
           </div>
-
-          {/* Profession / Creator Types Dynamic Multi-Select */}
-          {profile.category && (
-            <div className="pt-3 border-t border-slate-200/60 space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="block text-xs font-bold uppercase tracking-wider text-inflixo-purple flex items-center gap-1">
-                  <Sparkles className="h-3.5 w-3.5" />
-                  Profession / Creator Type (Max 3)
-                </label>
-                <span className="text-[11px] font-bold text-slate-500 bg-white px-2 py-0.5 rounded-full border border-slate-200">
-                  {profile.profession ? profile.profession.split(",").map((s) => s.trim()).filter(Boolean).length : 0}/3 selected
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-2 pt-1">
-                {getProfessionsForCategory(profile.category).map((prof) => {
-                  const currentSelected = profile.profession
-                    ? profile.profession.split(",").map((s) => s.trim()).filter(Boolean)
-                    : [];
-                  const isSelected = currentSelected.includes(prof);
-
-                  function handleToggle() {
-                    if (isSelected) {
-                      const updated = currentSelected.filter((p) => p !== prof).join(", ");
-                      updateProfile({ profession: updated || null });
-                    } else {
-                      if (currentSelected.length >= 3) {
-                        showToast("You can select max 3 creator types", "info");
-                        return;
-                      }
-                      const updated = [...currentSelected, prof].join(", ");
-                      updateProfile({ profession: updated });
-                    }
-                  }
-
-                  return (
-                    <button
-                      key={prof}
-                      type="button"
-                      onClick={handleToggle}
-                      className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold transition-all ${
-                        isSelected
-                          ? "bg-purple-700 text-white border border-purple-700"
-                          : "bg-white text-purple-700 border border-purple-200 hover:bg-purple-50"
-                      }`}
-                    >
-                      {isSelected && <Check className="h-3 w-3 stroke-[3]" />}
-                      <span>{prof}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
 
-        {/* Location Selector Button */}
-        <div>
-          <label className="block text-sm font-bold text-inflixo-navy mb-1.5 flex items-center gap-1.5">
-            <MapPin className="h-4 w-4 text-inflixo-purple" />
-            Location (City / Country)
-          </label>
-          <button
-            type="button"
-            onClick={() => setIsLocationModalOpen(true)}
-            className="flex w-full items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-semibold text-slate-800 hover:border-inflixo-purple/40 hover:bg-white transition-all"
-          >
-            <span className="flex items-center gap-2">
-              <Globe className="h-4 w-4 text-inflixo-purple" />
-              {profile.city || profile.country
-                ? `${profile.city || ""}${profile.state ? `, ${profile.state}` : ""}${profile.country ? `, ${profile.country}` : ""}`
-                : "Select City / Country..."}
-            </span>
-            <span className="rounded-full bg-purple-100 px-2.5 py-1 text-[10px] font-bold text-inflixo-purple">
-              {profile.city ? "Change Location" : "+ Add Location"}
-            </span>
-          </button>
-        </div>
+
 
         {/* Bio Textarea */}
         <div>
@@ -386,24 +293,7 @@ export default function DashboardProfilePage() {
         cancelText="Keep Editing"
       />
 
-      {/* Location Search Modal */}
-      <LocationSearchModal
-        isOpen={isLocationModalOpen}
-        onClose={() => setIsLocationModalOpen(false)}
-        initialLocation={{
-          city: profile.city || "",
-          state: profile.state || "",
-          country: profile.country || "",
-        }}
-        onSelectLocation={(loc) => {
-          updateProfile({
-            city: loc.city,
-            state: loc.state,
-            country: loc.country,
-          });
-          showToast(`Location set to ${loc.city}, ${loc.country} 📍`);
-        }}
-      />
+
     </div>
   );
 }

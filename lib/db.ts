@@ -13,6 +13,9 @@ export const db =
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 10000,
+    connectTimeout: 15000,
   });
 
 if (process.env.NODE_ENV !== "production") {

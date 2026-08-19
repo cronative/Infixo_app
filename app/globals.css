@@ -1,35 +1,37 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fcfaff;
+  /* Primary Soft Light Purple Background matching logo hue */
+  --background: #FAF8FF;
   --surface: #ffffff;
-  --surface-muted: #f5f0ff;
+  --surface-muted: #faf8ff;
   --foreground: #0f172a;
   --muted: #64748b;
 
-  /* Inflixo brand palette — Electric Purple / Vivid Violet Theme matching new logo */
-  --inflixo-purple: #6d28d9;          /* Electric Vivid Purple Primary */
-  --inflixo-purple-dark: #4c1d95;     /* Deep Royal Purple Shadow */
-  --inflixo-purple-light: #f3e8ff;    /* Soft Lavender Wash */
-  --inflixo-lavender: #fcfaff;        /* Ultra Soft Violet Wash */
-  --inflixo-blue: #7c3aed;            /* Electric Purple Accent */
-  --inflixo-lime: #10b981;
-  --inflixo-navy: #0f172a;
-  --inflixo-border: #e9d5ff;          /* Soft Purple Border */
+  /* Inflixo Official Solid Logo Primary Theme Colors */
+  --inflixo-purple: #651FFF;          /* Primary Solid Brand Purple */
+  --inflixo-purple-dark: #500CD6;     /* Deep Purple Accent */
+  --inflixo-purple-secondary: #8B5CF6;/* Secondary Purple */
+  --inflixo-purple-light: #F3E8FF;    /* Light Purple Accent */
+  --inflixo-lavender: #FAF8FF;        /* Soft Theme Page Background */
+  --inflixo-blue: #651FFF;            /* Primary Accent */
+  --inflixo-lime: #10b981;            /* Success Green */
+  --inflixo-navy: #0f172a;            /* Primary Text */
+  --inflixo-border: #E9E3F5;          /* Global Border */
   --inflixo-gold: #f59e0b;
   --inflixo-gold-light: #fef3c7;
 
-  --radius-card: 24px;
+  --radius-card: 20px;
   --radius-input: 16px;
 
-  --shadow-soft: 0 1px 2px rgba(15, 23, 42, 0.04), 0 10px 26px -14px rgba(109, 40, 217, 0.15);
-  --shadow-elevated: 0 24px 48px -18px rgba(109, 40, 217, 0.25), 0 8px 20px -10px rgba(15, 23, 42, 0.08);
-  --shadow-premium: 0 1px 1px rgba(109, 40, 217, 0.18), 0 20px 40px -16px rgba(109, 40, 217, 0.28);
-  --shadow-hover: 0 1px 2px rgba(15, 23, 42, 0.05), 0 16px 32px -14px rgba(109, 40, 217, 0.22);
+  --shadow-soft: 0 1px 3px rgba(15, 23, 42, 0.03), 0 8px 20px -12px rgba(101, 31, 255, 0.12);
+  --shadow-elevated: 0 20px 40px -16px rgba(101, 31, 255, 0.2), 0 4px 12px -4px rgba(15, 23, 42, 0.05);
+  --shadow-premium: 0 1px 1px rgba(101, 31, 255, 0.15), 0 16px 32px -12px rgba(101, 31, 255, 0.22);
+  --shadow-hover: 0 1px 3px rgba(15, 23, 42, 0.05), 0 12px 24px -10px rgba(101, 31, 255, 0.2);
 
-  --gradient-premium: linear-gradient(135deg, #7c3aed 0%, #6d28d9 50%, #4c1d95 100%);
+  --gradient-premium: linear-gradient(135deg, #651FFF 0%, #8B5CF6 100%);
   --gradient-gold: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  --gradient-energy: linear-gradient(90deg, #8b5cf6 0%, #6d28d9 50%, #ec4899 100%);
+  --gradient-energy: linear-gradient(90deg, #651FFF 0%, #8B5CF6 100%);
 }
 
 @theme inline {
@@ -55,12 +57,12 @@
   --color-inflixo-gold-light: var(--inflixo-gold-light);
 
   --font-sans: var(--font-inter), "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --font-display: var(--font-plus-jakarta), "Plus Jakarta Sans", "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-display: var(--font-plus-jakarta), "Plus Jakarta Sans", var(--font-inter), sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6, .font-display {
   font-family: var(--font-display);
-  letter-spacing: -0.025em;
+  letter-spacing: -0.005em;
 }
 
 @theme inline {
@@ -90,180 +92,75 @@ h1, h2, h3, h4, h5, h6, .font-display {
   to { background-position: 200% 0; }
 }
 
-@keyframes step-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pop-in {
-  0% { opacity: 0; transform: scale(0.9); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
-@keyframes float {
+@keyframes float-slow {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-8px); }
 }
 
-@keyframes float-reverse {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(8px); }
+@keyframes float-medium {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-5px) rotate(1deg); }
 }
 
-@keyframes blob-float {
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.04); }
+}
+
+@keyframes orb-float-1 {
   0%, 100% { transform: translate(0px, 0px) scale(1); }
-  33% { transform: translate(25px, -20px) scale(1.08); }
-  66% { transform: translate(-20px, 15px) scale(0.95); }
+  50% { transform: translate(40px, -30px) scale(1.12); }
 }
 
-.animate-float {
-  animation: float 4s ease-in-out infinite;
+@keyframes orb-float-2 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(-35px, 35px) scale(1.08); }
 }
 
-.animate-float-reverse {
-  animation: float-reverse 4.5s ease-in-out infinite;
+.animate-float-slow {
+  animation: float-slow 4s ease-in-out infinite;
 }
 
-.animate-blob {
-  animation: blob-float 10s ease-in-out infinite;
+.animate-float-medium {
+  animation: float-medium 3s ease-in-out infinite;
 }
 
-@keyframes confetti-fall {
-  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(220px) rotate(340deg); opacity: 0; }
+.animate-pulse-glow {
+  animation: pulse-glow 3.5s ease-in-out infinite;
 }
 
-* {
-  -webkit-tap-highlight-color: transparent;
+.animate-orb-1 {
+  animation: orb-float-1 9s ease-in-out infinite;
 }
 
-html {
-  scroll-behavior: smooth;
+.animate-orb-2 {
+  animation: orb-float-2 11s ease-in-out infinite;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  overscroll-behavior-y: none;
-  position: relative;
-}
-
-/* Soft ambient wash for a warmer, more premium canvas */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    radial-gradient(60rem 34rem at -8% -12%, rgba(109, 40, 217, 0.07), transparent 60%),
-    radial-gradient(46rem 30rem at 108% 8%, rgba(184, 147, 76, 0.06), transparent 55%),
-    radial-gradient(50rem 36rem at 50% 118%, rgba(59, 130, 246, 0.05), transparent 60%);
-}
-
-.font-display {
-  font-family: var(--font-display);
-  letter-spacing: -0.01em;
-}
-
-.text-gradient-premium {
-  background: var(--gradient-premium);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.text-gradient-energy {
-  background: var(--gradient-energy);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Snappy per-step entrance for the onboarding flow */
-.onboarding-step-enter {
-  animation: step-in 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.pop-in {
-  animation: pop-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-
-/* Tactile press feedback for GenZ-style interactive cards & buttons */
-.tap-scale {
-  transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.15s ease;
-}
-.tap-scale:active {
-  transform: scale(0.96);
-}
-
-.confetti-piece {
-  position: absolute;
-  top: 0;
-  width: 8px;
-  height: 8px;
-  border-radius: 2px;
-  animation: confetti-fall 1.6s ease-in forwards;
-}
-
-::selection {
-  background: var(--inflixo-purple-light);
-  color: var(--inflixo-purple-dark);
-}
-
-/* Refined focus ring for a crafted, accessible feel */
-:focus-visible {
-  outline: 2px solid rgba(109, 40, 217, 0.45);
-  outline-offset: 2px;
-  border-radius: 6px;
-}
-
-/* Thin, understated scrollbar */
+/* Custom scrollbars */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(23, 20, 31, 0.14);
-  border-radius: 999px;
-  border: 2.5px solid var(--background);
+  background: #cbd5e1;
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(23, 20, 31, 0.24);
+  background: #94a3b8;
 }
 
-/* Hide scrollbar for horizontally scrollable rows, keep it functional */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.text-gradient-premium {
+  background: linear-gradient(135deg, #651FFF 0%, #8B5CF6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-/* Elevate every standard bordered white card app-wide with a soft, layered shadow
-   and a gentle hover response — without needing to touch every call site. */
-.rounded-3xl.border.border-inflixo-border.bg-white,
-.rounded-2xl.border.border-inflixo-border.bg-white {
-  box-shadow: var(--shadow-soft);
-  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
-}
-
-a.rounded-3xl.border.border-inflixo-border.bg-white:hover,
-a.rounded-3xl.border.border-inflixo-border.bg-white:focus-visible,
-button.rounded-3xl.border.border-inflixo-border.bg-white:hover,
-button.rounded-3xl.border.border-inflixo-border.bg-white:focus-visible {
-  box-shadow: var(--shadow-hover);
-  border-color: rgba(109, 40, 217, 0.22);
-}
-
-.safe-bottom {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-.safe-top {
-  padding-top: env(safe-area-inset-top);
+.text-gradient-gold {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }

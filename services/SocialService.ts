@@ -73,6 +73,64 @@ export const SocialService = {
     return updated;
   },
 
+  async fetchFromDb(): Promise<SocialAccounts | null> {
+    const email = authRepository.getPendingEmail();
+    if (!email) return null;
+
+    try {
+      const res = await fetch(`/api/creator/socials?email=${encodeURIComponent(email)}`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.socials) && data.socials.length > 0) {
+        const current = this.getAccounts();
+        const updated: SocialAccounts = { ...current };
+
+        data.socials.forEach((s: any) => {
+          const handle = s.username || s.accountName || "";
+          if (s.platform === "instagram" && s.username) {
+            updated.instagram = {
+              ...updated.instagram,
+              username: s.username,
+              name: s.accountName || s.username,
+              followers: s.followerCount || updated.instagram.followers || 0,
+              posts: s.mediaCount || updated.instagram.posts || 0,
+              isVerified: Boolean(s.isVerified),
+              url: `https://instagram.com/${s.username.replace(/^@/, "")}`,
+              lastSyncedAt: s.lastSyncedAt || new Date().toISOString(),
+            };
+          } else if (s.platform === "youtube" && s.username) {
+            updated.youtube = {
+              ...updated.youtube,
+              username: s.username,
+              channelTitle: s.accountName || s.username,
+              subscribers: s.followerCount || updated.youtube.subscribers || 0,
+              videos: s.mediaCount || updated.youtube.videos || 0,
+              isVerified: Boolean(s.isVerified),
+              url: `https://youtube.com/@${s.username.replace(/^@/, "")}`,
+              lastSyncedAt: s.lastSyncedAt || new Date().toISOString(),
+            };
+          } else if (s.platform === "facebook" && s.username) {
+            updated.facebook = {
+              ...updated.facebook,
+              username: s.username,
+              name: s.accountName || s.username,
+              followers: s.followerCount || updated.facebook.followers || 0,
+              posts: s.mediaCount || updated.facebook.posts || 0,
+              isVerified: Boolean(s.isVerified),
+              url: `https://facebook.com/${s.username.replace(/^@/, "")}`,
+              lastSyncedAt: s.lastSyncedAt || new Date().toISOString(),
+            };
+          }
+        });
+
+        socialRepository.save(updated);
+        return updated;
+      }
+    } catch (err) {
+      console.warn("Failed to fetch socials from DB:", err);
+    }
+    return null;
+  },
+
   calculateTotalAudience(accounts: SocialAccounts): number {
     return (
       (accounts.instagram?.followers ?? 0) +

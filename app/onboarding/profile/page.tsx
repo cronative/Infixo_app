@@ -2,43 +2,62 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Sparkles, User, AtSign, Tag, FileText, MapPin, Globe, Building, Loader2, AlertCircle } from "lucide-react";
+import { Check, Sparkles, User, AtSign, Tag, FileText, Search, Loader2, AlertCircle } from "lucide-react";
 import { OnboardingLayout } from "@/layouts/OnboardingLayout";
 import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
 import { PhotoUpload } from "@/components/ui/PhotoUpload";
 import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
 import { useCreator } from "@/contexts/CreatorContext";
-import { CREATOR_CATEGORIES } from "@/types";
-import { BROAD_CATEGORIES, getProfessionsForCategory } from "@/data/categories";
+import { CategorySelect } from "@/components/ui/CategorySelect";
+import { SubtypeMultiSelect } from "@/components/ui/SubtypeMultiSelect";
 import { slugifyUsername } from "@/utils/format";
 import { OnboardingService } from "@/services/OnboardingService";
 import { ProfileService } from "@/services/ProfileService";
 import { authRepository } from "@/repositories/localRepository";
 import { useToast } from "@/contexts/ToastContext";
 import { scrollToFirstError } from "@/utils/scroll";
-import { LocationSearchModal } from "@/components/ui/LocationSearchModal";
 
-const BIO_SUGGESTIONS = [
-  "🎬 Creating cinematic vlogs & travel stories",
-  "💡 Tech reviews, gadget teardowns & coding tips",
-  "🌿 Mindful living, wellness & everyday routines",
-  "🍳 Authentic recipes & street food explorations",
+const BIO_SUGGESTIONS_MAP: Record<string, string[]> = {
+  Gaming: [
+    "🎮 Streaming high-rank gameplay, walkthroughs & gaming setup reviews.",
+    "👾 Daily gaming clips, esports tactics & live multiplayer streams.",
+  ],
+  Technology: [
+    "💻 Tech reviews, gadget unboxings & software tutorials for devs.",
+    "🚀 Exploring AI, mobile tech & building futuristic software products.",
+  ],
+  Entertainment: [
+    "🎬 Creating cinematic vlogs, comedy sketches & storytelling videos.",
+    "🍿 Movie reviews, pop culture commentary & daily fun shorts.",
+  ],
+  Food: [
+    "🍳 Authentic street food explorations & easy home-cooked recipes.",
+    "🍔 Foodie adventures, restaurant reviews & dessert tutorials.",
+  ],
+  Travel: [
+    "✈️ Traveling the world, backpacker guides & cinematic travel vlogs.",
+    "🏔️ Road trips, hidden gems & adventure travel stories.",
+  ],
+};
+
+const DEFAULT_BIO_SUGGESTIONS = [
+  "✨ Creating inspiring video content, series & daily stories.",
+  "🎥 Welcome to my official Inflixo creator home! Watch my series below.",
+  "🚀 Sharing my journey, original series & exclusive content updates.",
 ];
 
 export default function ProfileStepPage() {
   const router = useRouter();
   const { showToast } = useToast();
   const { profile, socials, totalAudience, updateProfile, theme } = useCreator();
-  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [bioSuggestionIndex, setBioSuggestionIndex] = useState(0);
+
   const [errors, setErrors] = useState<{
     displayName?: string;
     username?: string;
     category?: string;
-    city?: string;
-    country?: string;
   }>({});
   const [submitting, setSubmitting] = useState(false);
   const [checkingUsername, setCheckingUsername] = useState(false);
@@ -74,6 +93,14 @@ export default function ProfileStepPage() {
     return () => clearTimeout(timer);
   }, [profile.username]);
 
+  function handleSuggestBio() {
+    const suggestions = (profile.category && BIO_SUGGESTIONS_MAP[profile.category]) || DEFAULT_BIO_SUGGESTIONS;
+    const nextText = suggestions[bioSuggestionIndex % suggestions.length];
+    updateProfile({ bio: nextText });
+    setBioSuggestionIndex((prev) => prev + 1);
+    showToast("Bio suggestion applied! ✨");
+  }
+
   async function handleNext() {
     const newErrors: typeof errors = {};
     if (!profile.displayName.trim()) newErrors.displayName = "Display name is required";
@@ -81,40 +108,37 @@ export default function ProfileStepPage() {
     else if (profile.username.trim().length < 3) newErrors.username = "Username must be at least 3 characters";
     if (!profile.category) newErrors.category = "Select a category";
     
-    // Check if live DB check marked username as taken
     if (usernameStatus && !usernameStatus.available) {
       newErrors.username = usernameStatus.message || `@${profile.username} is already taken`;
     }
 
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
-      showToast("Please fix the highlighted fields to continue 💡", "error");
+      showToast("Please fix highlighted fields to continue 💡", "error");
       scrollToFirstError(newErrors);
       return;
     }
 
     setSubmitting(true);
     try {
-      // Final live DB check before proceeding
       const email = authRepository.getPendingEmail() || "";
       const checkRes = await fetch(`/api/creator/check-username?username=${encodeURIComponent(profile.username)}&email=${encodeURIComponent(email)}`);
       const checkData = await checkRes.json();
 
       if (!checkData.available) {
-        setErrors((prev) => ({ ...prev, username: checkData.error || `@${profile.username} is already taken by another creator` }));
-        showToast(checkData.error || "This handle is already taken by another creator — pick another cool one! ✨", "error");
+        setErrors((prev) => ({ ...prev, username: checkData.error || `@${profile.username} is already taken` }));
+        showToast(checkData.error || "This handle is already taken — pick another one! ✨", "error");
         setSubmitting(false);
         return;
       }
 
-      // Validation passed! Save profile directly to Live MySQL DB
       await ProfileService.saveToDb(profile);
       OnboardingService.setStep("socials");
-      showToast("Your profile looks awesome! Next: Connect your social handles 🚀");
+      showToast("Profile saved! Next: Connect your social handles 🚀");
       router.push("/onboarding/socials");
     } catch (err: any) {
       console.error("Failed to save profile:", err);
-      showToast("Oops, couldn't save your profile details. Let's try again! 💡", "error");
+      showToast("Couldn't save profile details. Let's try again! 💡", "error");
     } finally {
       setSubmitting(false);
     }
@@ -125,52 +149,53 @@ export default function ProfileStepPage() {
       step="profile"
       preview={<LivePreviewCard profile={profile} socials={socials} totalAudience={totalAudience} themeKey={theme} />}
     >
-      <div className="mb-4 inline-flex items-center gap-2 rounded-2xl border border-inflixo-purple/20 bg-inflixo-purple-light/50 px-3.5 py-1.5 text-xs font-bold text-inflixo-purple-dark">
-        <Sparkles className="h-4 w-4 text-inflixo-purple shrink-0" />
-        <span>OTP Verified • Creator Onboarding Setup (Step 1 of 5)</span>
+      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-bold text-purple-700">
+        <Sparkles className="h-3.5 w-3.5 text-purple-600 shrink-0" />
+        <span>Step 1 of 5 • Profile Setup</span>
       </div>
-      <h1 className="text-3xl font-extrabold leading-[1.15] tracking-tight text-inflixo-navy sm:text-4xl">
-        Create your <span className="text-gradient-premium">creator profile</span>
+
+      <h1 className="text-2xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-3xl">
+        Create your <span className="text-gradient-premium">Inflixo Creator Page</span>
       </h1>
-      <p className="mt-2 text-[15px] text-muted leading-relaxed">
-        Your email is verified! Now enter your profile details below to set up your custom Inflixo page.
+      <p className="mt-1.5 text-xs sm:text-sm text-slate-500 leading-relaxed">
+        Set up your public creator profile details below.
       </p>
 
-      <div className="mt-8 space-y-6">
-        {/* Photo Upload Section with Helper Text */}
-        <div className="rounded-3xl border border-inflixo-border bg-white p-5 shadow-xs transition-all hover:border-inflixo-purple/30">
-          <label className="mb-3 block text-sm font-bold text-inflixo-navy">
-            Profile Picture
-          </label>
-          <div className="flex items-center gap-5">
-            <PhotoUpload value={profile.photoDataUrl} onChange={(v) => updateProfile({ photoDataUrl: v })} />
-            <div className="text-xs text-muted space-y-1">
-              <p className="font-semibold text-inflixo-navy">Upload high-res photo</p>
-              <p>Recommended square JPG or PNG</p>
-              <p className="text-[11px] text-inflixo-purple font-medium">Shows on your link-in-bio page</p>
+      <div className="mt-6 space-y-5">
+        {/* 1. Compact Profile Photo Upload */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs transition-all hover:border-slate-300">
+          <div className="flex items-center gap-4">
+            <PhotoUpload
+              value={profile.photoDataUrl}
+              onChange={(v) => updateProfile({ photoDataUrl: v })}
+              size={64}
+            />
+            <div className="text-xs space-y-0.5">
+              <p className="font-bold text-slate-900">Add profile photo</p>
+              <p className="text-slate-500">Recommended square JPG or PNG</p>
             </div>
           </div>
         </div>
 
-        {/* Display Name */}
+        {/* 2. Display Name */}
         <Input
           label="Display name"
           name="displayName"
           placeholder="e.g. Tony Stark"
-          leftIcon={<User className="h-4 w-4" />}
+          leftIcon={<User className="h-4 w-4 text-slate-400" />}
           value={profile.displayName}
           onChange={(e) => updateProfile({ displayName: e.target.value })}
           error={errors.displayName}
         />
 
-        {/* Username */}
+        {/* 3. Username Handle */}
         <div>
           <Input
             label="Unique handle / username"
             name="username"
             placeholder="username"
             prefix="inflixo.com/"
-            leftIcon={<AtSign className="h-4 w-4" />}
+            leftIcon={<AtSign className="h-4 w-4 text-slate-400" />}
             value={profile.username}
             onChange={(e) => updateProfile({ username: slugifyUsername(e.target.value) })}
             error={errors.username}
@@ -186,190 +211,84 @@ export default function ProfileStepPage() {
               ) : usernameStatus && !usernameStatus.available ? (
                 <span className="flex items-center gap-1 rounded-full bg-rose-50 px-2.5 py-1 text-[11px] font-bold text-rose-600">
                   <AlertCircle className="h-3.5 w-3.5" />
-                  Already Taken
+                  Taken
                 </span>
               ) : null
             }
           />
           {profile.username && usernameStatus?.available && (
-            <p className="mt-1.5 text-xs text-muted flex items-center gap-1">
-              Your public URL: <span className="font-semibold text-rose-600 underline">https://inflixo.com/{profile.username}</span>
+            <p className="mt-1 text-xs text-slate-500">
+              Your public handle: <span className="font-bold text-purple-600">@{profile.username}</span>
             </p>
           )}
         </div>
 
-        {/* Category (Broad) & Profession / Creator Type (Specific) Selectors */}
-        <div className="space-y-4 rounded-3xl border border-inflixo-border bg-white p-5 shadow-xs">
-          {/* Main Category Selector */}
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-sm font-bold text-inflixo-navy flex items-center gap-1.5">
-                <Tag className="h-4 w-4 text-inflixo-purple" />
-                Content Category (Broad)
-              </label>
-            </div>
-            
-            {/* Quick Broad Category Pills */}
-            <div className="mb-3 flex flex-wrap gap-2">
-              {BROAD_CATEGORIES.slice(0, 6).map((cat) => {
-                const isSelected = profile.category === cat;
-                return (
-                  <button
-                    key={cat}
-                    type="button"
-                    onClick={() => {
-                      const newProfs = getProfessionsForCategory(cat);
-                      updateProfile({ category: cat as any, profession: newProfs[0] || null });
-                    }}
-                    className={`rounded-full px-3 py-1.5 text-xs font-bold transition-all ${
-                      isSelected
-                        ? "bg-inflixo-purple text-white shadow-xs"
-                        : "bg-surface-muted border border-inflixo-border text-muted hover:border-inflixo-purple/40 hover:text-inflixo-navy"
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                );
-              })}
-            </div>
-
-            <Select
-              placeholder="Select or search broad category..."
-              value={profile.category ?? ""}
-              onChange={(e) => {
-                const selectedCat = e.target.value;
-                const newProfs = getProfessionsForCategory(selectedCat);
-                updateProfile({ category: selectedCat as any, profession: newProfs[0] || null });
-              }}
-              options={BROAD_CATEGORIES.map((c) => ({ value: c, label: c }))}
-              error={errors.category}
-            />
-          </div>
-
-          {/* Profession / Creator Type (Specific) - Dynamic based on Category (Max 3) */}
-          {profile.category && (
-            <div className="pt-3 border-t border-slate-100 animate-fade-in space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="block text-xs font-bold uppercase tracking-wider text-inflixo-purple flex items-center gap-1.5">
-                  <Sparkles className="h-3.5 w-3.5" />
-                  Profession / Creator Type (Specific to {profile.category})
-                </label>
-                <span className="text-[11px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200">
-                  Select max 3 ({profile.profession ? profile.profession.split(",").map((s) => s.trim()).filter(Boolean).length : 0}/3)
-                </span>
-              </div>
-
-              {/* Dynamic Profession Pills - Multi-select up to 3 */}
-              <div className="flex flex-wrap gap-2 pt-1">
-                {getProfessionsForCategory(profile.category).map((prof) => {
-                  const currentSelected = profile.profession
-                    ? profile.profession.split(",").map((s) => s.trim()).filter(Boolean)
-                    : [];
-                  const isSelected = currentSelected.includes(prof);
-
-                  function handleToggle() {
-                    if (isSelected) {
-                      const updated = currentSelected.filter((p) => p !== prof).join(", ");
-                      updateProfile({ profession: updated || null });
-                    } else {
-                      if (currentSelected.length >= 3) {
-                        showToast("You can select max 3 creator types", "info");
-                        return;
-                      }
-                      const updated = [...currentSelected, prof].join(", ");
-                      updateProfile({ profession: updated });
-                    }
-                  }
-
-                  return (
-                    <button
-                      key={prof}
-                      type="button"
-                      onClick={handleToggle}
-                      className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold transition-all ${
-                        isSelected
-                          ? "bg-purple-700 text-white shadow-2xs border border-purple-700"
-                          : "bg-purple-50 text-purple-700 border border-purple-200/60 hover:bg-purple-100"
-                      }`}
-                    >
-                      {isSelected && <Check className="h-3 w-3 stroke-[3]" />}
-                      <span>{prof}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+        {/* 4. Content Category Selection (Single Select Dropdown) */}
+        <div id="category" data-field="category">
+          <CategorySelect
+            value={profile.category}
+            onChange={(cat) => {
+              updateProfile({ category: cat as any, profession: null });
+              setErrors((prev) => ({ ...prev, category: undefined }));
+            }}
+            error={errors.category}
+          />
         </div>
 
+        {/* 5. Sub-types Selection (Multi Select Dropdown, Max 3) */}
+        {profile.category && (
+          <div id="profession" data-field="profession" className="animate-fade-in">
+            <SubtypeMultiSelect
+              category={profile.category}
+              value={profile.profession || null}
+              onChange={(prof) => {
+                updateProfile({ profession: prof });
+              }}
+              max={3}
+            />
+          </div>
+        )}
 
-
-        {/* Bio Textarea */}
-        <div>
-          <div className="flex items-center justify-between mb-1.5">
-            <label className="block text-sm font-bold text-inflixo-navy flex items-center gap-1.5">
-              <FileText className="h-4 w-4 text-inflixo-purple" />
-              Short Bio
+        {/* 6. Short Bio + Compact Suggest Action */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs space-y-2">
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+              <FileText className="h-3.5 w-3.5 text-purple-600" />
+              <span>Short Bio</span>
             </label>
-            <span className="text-xs font-medium text-muted">
-              {profile.bio.length} / 160
-            </span>
+
+            {/* Inline Action ✨ Suggest Bio */}
+            <button
+              type="button"
+              onClick={handleSuggestBio}
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-purple-600 hover:text-purple-700 bg-purple-50 hover:bg-purple-100 px-2.5 py-1 rounded-full border border-purple-200 transition-all active:scale-95"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-purple-600" />
+              <span>Suggest bio</span>
+            </button>
           </div>
 
           <Textarea
             name="bio"
-            placeholder="Tell your audience what you create..."
+            placeholder="Your short bio appears here..."
             rows={3}
             maxLength={160}
             value={profile.bio}
             onChange={(e) => updateProfile({ bio: e.target.value })}
           />
 
-          {/* Quick Suggestion Chips */}
-          <div className="mt-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted mb-2">Need inspiration? Tap to use:</p>
-            <div className="space-y-1.5">
-              {BIO_SUGGESTIONS.map((sug, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => updateProfile({ bio: sug })}
-                  className="block w-full text-left rounded-xl border border-inflixo-border/60 bg-surface-muted/50 px-3 py-1.5 text-xs text-muted hover:border-inflixo-purple/40 hover:bg-white hover:text-inflixo-navy transition-all"
-                >
-                  {sug}
-                </button>
-              ))}
-            </div>
+          <div className="flex justify-end text-[11px] text-slate-400">
+            {profile.bio.length} / 160
           </div>
         </div>
 
-        {/* Step 1 Sticky Form Bottom Action (Next Only) */}
-        <div className="sticky bottom-0 z-30 bg-white/95 backdrop-blur-md py-4 border-t border-slate-200/80 mt-8">
+        {/* Sticky Mobile/Desktop Bottom CTA */}
+        <div className="sticky bottom-0 z-30 bg-white/95 backdrop-blur-md py-3.5 border-t border-slate-200 -mx-5 sm:-mx-8 px-5 sm:px-8 mt-8 shadow-lg">
           <Button fullWidth size="lg" loading={submitting} onClick={handleNext}>
             Save &amp; Next →
           </Button>
         </div>
       </div>
-
-      {/* Location Searchable Popup Modal */}
-      <LocationSearchModal
-        isOpen={isLocationModalOpen}
-        onClose={() => setIsLocationModalOpen(false)}
-        initialLocation={{
-          city: profile.city || "",
-          state: profile.state || "",
-          country: profile.country || "",
-        }}
-        onSelectLocation={(loc) => {
-          updateProfile({
-            city: loc.city,
-            state: loc.state,
-            country: loc.country,
-          });
-          showToast(`Location set to ${loc.city}, ${loc.country} 📍`);
-        }}
-      />
     </OnboardingLayout>
   );
 }
-

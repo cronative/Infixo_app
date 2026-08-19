@@ -87,17 +87,14 @@ export const SeriesService = {
     if (posterUrl && posterUrl.startsWith("data:image/")) {
       posterUrl = await this.uploadPoster(posterUrl);
     }
-    const seasonsList: Season[] =
-      input.episodes && input.episodes.length > 0
-        ? [
-            {
-              id: generateId("season"),
-              title: "Season 1",
-              seasonNumber: 1,
-              episodes: input.episodes.map((ep) => ({ ...ep, id: generateId("ep") })),
-            },
-          ]
-        : [];
+    const seasonsList: Season[] = [
+      {
+        id: generateId("season"),
+        title: "Season 1",
+        seasonNumber: 1,
+        episodes: input.episodes ? input.episodes.map((ep) => ({ ...ep, id: generateId("ep") })) : [],
+      },
+    ];
 
     const newSeries: Series = {
       id: newSeriesId,
@@ -172,7 +169,7 @@ export const SeriesService = {
 
   async addEpisode(
     seriesId: string,
-    seasonId: string,
+    seasonId: string | null | undefined,
     input: Omit<Episode, "id">
   ): Promise<Episode> {
     const email = getTargetEmail();
@@ -181,18 +178,25 @@ export const SeriesService = {
     const all = seriesRepository.getAll();
     
     seriesRepository.saveAll(
-      all.map((s) =>
-        s.id === seriesId
-          ? {
-              ...s,
-              seasons: s.seasons.map((season) =>
-                season.id === seasonId
-                  ? { ...season, episodes: [...season.episodes, newEpisode] }
-                  : season
-              ),
-            }
-          : s
-      )
+      all.map((s) => {
+        if (s.id !== seriesId) return s;
+
+        let seasons = s.seasons && s.seasons.length > 0 ? [...s.seasons] : [];
+        if (seasons.length === 0) {
+          seasons = [{ id: generateId("season"), title: "Season 1", seasonNumber: 1, episodes: [] }];
+        }
+
+        const targetSeasonId = seasonId && seasons.some((sn) => sn.id === seasonId) ? seasonId : seasons[0].id;
+
+        return {
+          ...s,
+          seasons: seasons.map((season) =>
+            season.id === targetSeasonId
+              ? { ...season, episodes: [...season.episodes, newEpisode] }
+              : season
+          ),
+        };
+      })
     );
 
     // Save episode to MySQL DB (isEpisodeOnly prevents series title overwrite)

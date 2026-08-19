@@ -117,8 +117,8 @@ export const DEMO_SERIES: Series[] = [
 ];
 
 export const DEMO_SUBSCRIPTION: Subscription = {
-  planKey: "pro",
-  planName: "Pro Plan",
+  planKey: "early_access",
+  planName: "Early Access",
   billingCycle: "yearly",
   status: "active",
   activatedAt: new Date().toISOString(),

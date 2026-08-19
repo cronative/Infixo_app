@@ -33,3 +33,42 @@ export function initials(name: string): string {
     .map((p) => p[0]?.toUpperCase() ?? "")
     .join("");
 }
+
+export function formatSyncDate(dateStr?: string): string {
+  if (!dateStr) return "Just now";
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return "Just now";
+    return d.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+    });
+  } catch {
+    return "Just now";
+  }
+}
+
+export function getBaseUrl(): string {
+  if (typeof window !== "undefined") {
+    return window.location.origin;
+  }
+  if (process.env.NEXT_PUBLIC_APP_URL) {
+    return process.env.NEXT_PUBLIC_APP_URL;
+  }
+  return "https://inflixo.com";
+}
+
+export function buildProfileUrl(username: string): string {
+  const base = getBaseUrl();
+  const handle = username ? username.replace(/^@/, "") : "username";
+  return `${base}/${handle}`;
+}
+
+export function buildSeriesUrl(username: string, seriesId: string): string {
+  const base = getBaseUrl();
+  const handle = username ? username.replace(/^@/, "") : "creator";
+  return `${base}/${handle}/series/${seriesId}`;
+}
+

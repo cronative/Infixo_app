@@ -16,23 +16,19 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "text-white shadow-[0_1px_1px_rgba(255,255,255,0.15)_inset,0_10px_24px_-10px_rgba(109,40,217,0.55)] hover:shadow-[0_1px_1px_rgba(255,255,255,0.2)_inset,0_16px_32px_-12px_rgba(109,40,217,0.65)] hover:-translate-y-px active:translate-y-0 active:scale-[0.98] disabled:opacity-50",
+    "bg-[#651FFF] text-white shadow-md shadow-purple-600/20 hover:bg-[#500CD6] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed",
   secondary:
-    "bg-inflixo-lavender text-inflixo-purple-dark hover:bg-inflixo-purple-light active:scale-[0.98]",
+    "bg-[#FAF9FF] text-[#0F172A] border border-[#E9E3F5] hover:bg-[#F6F0FF] hover:border-purple-300 active:scale-[0.98]",
   outline:
-    "bg-white text-inflixo-navy border border-inflixo-border hover:border-inflixo-purple/40 hover:bg-surface-muted active:scale-[0.98]",
-  ghost: "bg-transparent text-inflixo-navy hover:bg-surface-muted active:scale-[0.98]",
+    "bg-white text-[#0F172A] border border-[#E9E3F5] hover:border-[#651FFF]/40 hover:bg-[#FAF9FF] active:scale-[0.98]",
+  ghost: "bg-transparent text-[#651FFF] hover:bg-[#F6F0FF] active:scale-[0.98]",
   danger: "bg-rose-50 text-rose-600 hover:bg-rose-100 active:scale-[0.98]",
 };
 
-const variantStyle: Partial<Record<Variant, React.CSSProperties>> = {
-  primary: { backgroundImage: "var(--gradient-premium)" },
-};
-
 const sizeClasses: Record<Size, string> = {
-  sm: "h-9 px-3.5 text-sm rounded-xl gap-1.5",
-  md: "h-12 px-5 text-[15px] rounded-2xl gap-2",
-  lg: "h-14 px-6 text-base rounded-2xl gap-2",
+  sm: "h-10 px-4 text-xs font-bold rounded-xl gap-1.5 active:scale-[0.98]",
+  md: "h-[52px] px-5 text-sm font-bold rounded-2xl gap-2 active:scale-[0.98]",
+  lg: "h-[52px] px-6 text-sm sm:text-base font-bold rounded-full gap-2 active:scale-[0.98]",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -44,11 +40,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         disabled={disabled || loading}
-        style={{ ...variantStyle[variant], ...style }}
-        className={`inline-flex items-center justify-center font-semibold tracking-tight transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-70 ${variantClasses[variant]} ${sizeClasses[size]} ${fullWidth ? "w-full" : ""} ${className}`}
+        style={style}
+        className={`inline-flex items-center justify-center font-bold tracking-tight transition-all duration-150 cursor-pointer ${variantClasses[variant]} ${sizeClasses[size]} ${fullWidth ? "w-full" : ""} ${className}`}
         {...rest}
       >
-        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : icon}
+        {loading ? <Loader2 className="h-4 w-4 animate-spin shrink-0" /> : icon}
         {children}
       </button>
     );

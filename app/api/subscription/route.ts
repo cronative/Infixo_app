@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 
 // GET /api/subscription?email=...
 export async function GET(req: Request) {
@@ -10,11 +11,11 @@ export async function GET(req: Request) {
     if (!email) {
       return NextResponse.json({
         subscription: {
-          planKey: "pro",
-          planName: "Pro Plan",
+          planKey: "early_access",
+          planName: "Early Access",
           billingCycle: "yearly",
-          status: "trial",
-          activatedAt: null,
+          status: "active",
+          activatedAt: new Date().toISOString(),
         },
       });
     }
@@ -29,11 +30,11 @@ export async function GET(req: Request) {
     if (!rows || rows.length === 0) {
       return NextResponse.json({
         subscription: {
-          planKey: "pro",
-          planName: "Pro Plan",
+          planKey: "early_access",
+          planName: "Early Access",
           billingCycle: "yearly",
-          status: "trial",
-          activatedAt: null,
+          status: "active",
+          activatedAt: new Date().toISOString(),
         },
       });
     }
@@ -42,11 +43,11 @@ export async function GET(req: Request) {
     return NextResponse.json({
       success: true,
       subscription: {
-        planKey: s.plan_key || "pro",
-        planName: s.plan_name || "Pro Plan",
+        planKey: s.plan_key || "early_access",
+        planName: s.plan_name || "Early Access",
         billingCycle: s.billing_cycle || "yearly",
-        status: s.status || "trial",
-        activatedAt: s.activated_at,
+        status: s.status || "active",
+        activatedAt: s.activated_at || s.created_at,
       },
     });
   } catch (err: any) {
@@ -92,16 +93,7 @@ export async function POST(req: Request) {
     );
 
     // Record / Update current step in creator_onboarding_steps table (1 row per email)
-    try {
-      await db.query(
-        `INSERT INTO creator_onboarding_steps (email, creator_id, step_name, is_completed, completed_at)
-         VALUES (?, ?, 'finish', TRUE, NOW())
-         ON DUPLICATE KEY UPDATE creator_id = VALUES(creator_id), step_name = 'finish', is_completed = TRUE, completed_at = NOW()`,
-        [email, creatorId]
-      );
-    } catch (e: any) {
-      console.warn("⚠️ Could not record subscription finish step:", e.message);
-    }
+    await recordOnboardingStep(email, "finish", creatorId);
 
     return NextResponse.json({ success: true, message: "Subscription activated in MySQL" });
   } catch (err: any) {

@@ -3,59 +3,23 @@ import { BillingCycle, PlanKey, PlanMeta, Subscription } from "@/types";
 
 export const INFLIXO_PLANS: PlanMeta[] = [
   {
-    key: "starter",
-    name: "Starter",
+    key: "creator",
+    name: "Creator",
     badge: "7 DAYS FREE",
-    description: "7-Day Free Trial, then ₹99/mo. Includes 1 series, default theme & 24h fanbase sync.",
-    monthlyPrice: 99,
-    yearlyPrice: 99,
-    yearlySavings: 0,
-    freeTrialDays: 7,
-    publicProfile: true,
-    instagram: true,
-    youtube: true,
-    facebook: true,
-    ottSeriesLimit: "1 Series",
-    autoDataRefresh: "Every 24 Hours",
-    removeBranding: false,
-    support: "Standard",
-  },
-  {
-    key: "pro",
-    name: "Pro",
     isPopular: true,
-    badge: "7 DAYS FREE",
-    description: "7-Day Free Trial, best for active creators wanting 30 series & 12h fanbase sync.",
+    description: "Everything you need to build your Creator Home.",
     monthlyPrice: 199,
-    yearlyPrice: 149,
-    yearlySavings: 600,
+    yearlyPrice: 1999,
+    yearlySavings: 389,
     freeTrialDays: 7,
     publicProfile: true,
     instagram: true,
     youtube: true,
     facebook: true,
-    ottSeriesLimit: "30 Series",
+    ottSeriesLimit: "Unlimited Series (3 Free during Early Access)",
     autoDataRefresh: "Every 12 Hours",
     removeBranding: true,
     support: "Priority",
-  },
-  {
-    key: "unlimited",
-    name: "VIP Unlimited",
-    badge: "7 DAYS FREE",
-    description: "7-Day Free Trial, ultimate plan with unlimited series & 6h data sync.",
-    monthlyPrice: 299,
-    yearlyPrice: 249,
-    yearlySavings: 600,
-    freeTrialDays: 7,
-    publicProfile: true,
-    instagram: true,
-    youtube: true,
-    facebook: true,
-    ottSeriesLimit: "Unlimited Series",
-    autoDataRefresh: "Every 6 Hours",
-    removeBranding: true,
-    support: "VIP Dedicated",
   },
 ];
 
@@ -68,16 +32,16 @@ export const SubscriptionService = {
     return INFLIXO_PLANS;
   },
 
-  getPlan(key: PlanKey): PlanMeta {
-    return INFLIXO_PLANS.find((p) => p.key === key) || INFLIXO_PLANS[2];
+  getPlan(key?: PlanKey): PlanMeta {
+    if (!key) return INFLIXO_PLANS[0];
+    return INFLIXO_PLANS.find((p) => p.key === key) || INFLIXO_PLANS[0];
   },
 
-  activate(planKey: PlanKey, billingCycle: BillingCycle): Subscription {
+  activate(planKey: PlanKey = "early_access", billingCycle: BillingCycle = "yearly"): Subscription {
     const email = authRepository.getPendingEmail();
-    const plan = this.getPlan(planKey);
     const sub: Subscription = {
-      planKey: plan.key,
-      planName: `${plan.name} Plan`,
+      planKey: "early_access",
+      planName: "Early Access",
       billingCycle,
       status: "active",
       activatedAt: new Date().toISOString(),
@@ -92,8 +56,8 @@ export const SubscriptionService = {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email,
-          planKey: plan.key,
-          planName: `${plan.name} Plan`,
+          planKey: "early_access",
+          planName: "Early Access",
           billingCycle,
         }),
       }).catch((e) => console.error("Failed to save Subscription to MySQL DB:", e));
@@ -102,14 +66,35 @@ export const SubscriptionService = {
     return sub;
   },
 
+  async fetchFromDb(): Promise<Subscription | null> {
+    const email = authRepository.getPendingEmail();
+    if (!email) return null;
+
+    try {
+      const res = await fetch(`/api/subscription?email=${encodeURIComponent(email)}`);
+      const data = await res.json();
+      if (data.subscription) {
+        const sub: Subscription = {
+          planKey: data.subscription.planKey || "early_access",
+          planName: data.subscription.planName || "Early Access",
+          billingCycle: data.subscription.billingCycle || "yearly",
+          status: data.subscription.status || "active",
+          activatedAt: data.subscription.activatedAt || new Date().toISOString(),
+        };
+        subscriptionRepository.save(sub);
+        return sub;
+      }
+    } catch (e) {
+      console.warn("Failed to fetch subscription from DB:", e);
+    }
+    return null;
+  },
+
   cancel(): Subscription {
     const current = subscriptionRepository.get();
     const sub: Subscription = { ...current, status: "cancelled" };
     subscriptionRepository.save(sub);
 
-    // Cancel the underlying Razorpay mandate too (no-op server-side if the
-    // creator is on Free Basic / has no live subscription), so they actually
-    // stop being billed instead of just changing local UI state.
     const email = authRepository.getPendingEmail();
     if (email) {
       fetch("/api/razorpay/cancel-subscription", {

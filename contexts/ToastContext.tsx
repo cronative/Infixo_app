@@ -19,7 +19,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setToasts((prev) => [...prev, { id, message, type }]);
     window.setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 3200);
+    }, 3800);
   }, []);
 
   const dismiss = (id: string) => setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -27,26 +27,42 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="fixed inset-x-0 bottom-4 z-[100] flex flex-col items-center gap-2 px-4 sm:bottom-6">
-        {toasts.map((t) => (
-          <div
-            key={t.id}
-            className="animate-toast-in flex w-full max-w-sm items-center gap-2.5 rounded-2xl border border-inflixo-border bg-white/95 px-4 py-3 shadow-elevated backdrop-blur"
-            style={{ boxShadow: "var(--shadow-elevated)" }}
-          >
-            {t.type === "success" && <CheckCircle2 className="h-5 w-5 shrink-0 text-inflixo-purple" />}
-            {t.type === "error" && <XCircle className="h-5 w-5 shrink-0 text-rose-500" />}
-            {t.type === "info" && <Info className="h-5 w-5 shrink-0 text-blue-500" />}
-            <p className="flex-1 text-sm font-medium text-inflixo-navy">{t.message}</p>
-            <button
-              onClick={() => dismiss(t.id)}
-              className="shrink-0 rounded-full p-1 text-muted hover:bg-surface-muted"
-              aria-label="Dismiss"
+      {/* Top Floating Toast Notification Layer */}
+      <div className="fixed inset-x-0 top-4 sm:top-6 z-[100] flex flex-col items-center gap-2.5 px-4 pointer-events-none">
+        {toasts.map((t) => {
+          let bgClass = "bg-gradient-to-r from-slate-950 via-purple-950 to-indigo-950 text-white border-purple-400/40";
+          let icon = <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-400" />;
+
+          if (t.type === "error") {
+            bgClass = "bg-gradient-to-r from-rose-950 via-rose-900 to-slate-950 text-white border-rose-400/40";
+            icon = <XCircle className="h-5 w-5 shrink-0 text-rose-300" />;
+          } else if (t.type === "info") {
+            bgClass = "bg-gradient-to-r from-slate-950 via-indigo-950 to-purple-950 text-white border-indigo-400/40";
+            icon = <Info className="h-5 w-5 shrink-0 text-sky-400" />;
+          }
+
+          return (
+            <div
+              key={t.id}
+              className={`pointer-events-auto animate-in slide-in-from-top-5 fade-in duration-300 flex w-full max-w-md items-center gap-3.5 rounded-2xl border p-4 shadow-2xl backdrop-blur-xl ${bgClass}`}
+              style={{ boxShadow: "0 25px 50px -12px rgba(15, 23, 42, 0.45)" }}
             >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          </div>
-        ))}
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 border border-white/15 shadow-2xs">
+                {icon}
+              </div>
+              <p className="flex-1 text-xs sm:text-sm font-extrabold text-white leading-relaxed">
+                {t.message}
+              </p>
+              <button
+                onClick={() => dismiss(t.id)}
+                className="shrink-0 rounded-full p-1.5 text-white/60 hover:bg-white/20 hover:text-white transition-all"
+                aria-label="Dismiss"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          );
+        })}
       </div>
     </ToastContext.Provider>
   );

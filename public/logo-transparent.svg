@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#782BFB" />
+      <stop offset="50%" stop-color="#6512FA" />
+      <stop offset="100%" stop-color="#500CD6" />
+    </linearGradient>
+  </defs>
+
+  <!-- Transparent 1:1 Square Background with Electric Purple Logo -->
+  <g transform="translate(112, 112) scale(8)">
+    <g stroke="url(#purpleGrad)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <path d="M 28 42 L 28 24 C 28 14 38 10 50 10 C 62 10 72 14 72 24 L 72 42" />
+      <path d="M 28 58 L 28 76 C 28 86 38 90 50 90 C 62 90 72 86 72 76 L 72 58" />
+      <path d="M 28 34 C 28 38 34 42 40 42" />
+      <path d="M 72 34 C 72 38 66 42 60 42" />
+      <path d="M 28 66 C 28 62 34 58 40 58" />
+      <path d="M 72 66 C 72 62 66 58 60 58" />
+    </g>
+
+    <g fill="url(#purpleGrad)">
+      <rect x="33" y="22" width="34" height="8.5" rx="4.25" />
+      <rect x="44" y="30.5" width="12" height="39" rx="6" />
+      <rect x="33" y="69.5" width="34" height="8.5" rx="4.25" />
+    </g>
+  </g>
+</svg>

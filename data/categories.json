@@ -17,36 +17,31 @@
       "Anime Creator",
       "TV Show Reviewer",
       "Celebrity News Creator",
-      "Entertainment Reporter"
+      "Entertainment Reporter",
+      "Micro-Drama Creator"
     ]
   },
   {
-    "category": "Education",
+    "category": "Filmmaking & Web Series",
     "professions": [
-      "Teacher",
-      "Tutor",
-      "Coding Instructor",
-      "Language Coach",
-      "Career Mentor",
-      "UPSC Educator",
-      "SSC Educator",
-      "NEET Educator",
-      "JEE Educator",
-      "GK Creator",
-      "Science Educator",
-      "Math Educator",
-      "History Educator",
-      "Geography Educator",
-      "Economics Educator",
-      "Online Coach",
-      "Study Mentor"
+      "Filmmaker",
+      "Web Series Director",
+      "Short Film Director",
+      "Screenwriter & Scriptwriter",
+      "Cinematographer",
+      "Video Editor",
+      "VFX & CGI Artist",
+      "Sound Designer",
+      "Indie Film Producer",
+      "Documentary Creator",
+      "OTT Content Creator"
     ]
   },
   {
-    "category": "Technology",
+    "category": "Technology & AI",
     "professions": [
       "Tech Reviewer",
-      "AI Creator",
+      "AI Creator & Prompt Specialist",
       "App Developer",
       "Web Developer",
       "Software Engineer",
@@ -58,42 +53,32 @@
       "Cloud Engineer",
       "DevOps Creator",
       "UI/UX Designer",
-      "No-Code Creator",
-      "Automation Expert",
+      "No-Code & Automation Expert",
       "Tech News Creator",
-      "Startup Creator"
+      "Startup Founder",
+      "SaaS Creator"
     ]
   },
   {
-    "category": "Lifestyle",
+    "category": "Education & Career",
     "professions": [
-      "Lifestyle Vlogger",
-      "Daily Vlogger",
-      "Family Creator",
-      "Couple Creator",
-      "Morning Routine Creator",
-      "Night Routine Creator",
-      "Minimalist Creator",
-      "Luxury Lifestyle Creator",
-      "College Creator",
-      "Student Creator",
-      "Host",
-      "Public Speaker"
-    ]
-  },
-  {
-    "category": "Gaming",
-    "professions": [
-      "Gamer",
-      "Game Streamer",
-      "Esports Creator",
-      "Mobile Gamer",
-      "PC Gamer",
-      "Console Gamer",
-      "Gaming Reviewer",
-      "Walkthrough Creator",
-      "Live Streamer",
-      "Game Coach"
+      "Teacher",
+      "Tutor",
+      "Coding Instructor",
+      "Language Coach",
+      "Career Mentor",
+      "UPSC Educator",
+      "SSC Educator",
+      "NEET Educator",
+      "JEE Educator",
+      "GK & Trivia Creator",
+      "Science Educator",
+      "Math Educator",
+      "History Educator",
+      "Geography Educator",
+      "Economics Educator",
+      "Online Course Creator",
+      "Study & Exam Mentor"
     ]
   },
   {
@@ -111,8 +96,41 @@
       "Sales Coach",
       "Brand Consultant",
       "Personal Finance Creator",
-      "Tax Expert",
+      "Tax & CA Expert",
+      "Dropshipping & E-Commerce",
       "Business Reviewer"
+    ]
+  },
+  {
+    "category": "Lifestyle",
+    "professions": [
+      "Lifestyle Vlogger",
+      "Daily Vlogger",
+      "Family Creator",
+      "Couple Creator",
+      "Morning Routine Creator",
+      "Night Routine Creator",
+      "Minimalist Creator",
+      "Luxury Lifestyle Creator",
+      "College Creator",
+      "Student Creator",
+      "Host & Anchor",
+      "Public Speaker"
+    ]
+  },
+  {
+    "category": "Gaming & Esports",
+    "professions": [
+      "Gamer",
+      "Game Streamer",
+      "Esports Creator",
+      "Mobile Gamer",
+      "PC Gamer",
+      "Console Gamer",
+      "Gaming Reviewer",
+      "Walkthrough Creator",
+      "Live Streamer",
+      "Game Coach & Analyst"
     ]
   },
   {
@@ -133,22 +151,34 @@
     ]
   },
   {
-    "category": "Travel",
+    "category": "Real Estate & Home",
+    "professions": [
+      "Real Estate Agent",
+      "Property Reviewer",
+      "Interior Designer",
+      "Home Tour Vlogger",
+      "Architect",
+      "Home Decor Creator",
+      "Landscape & Garden Creator"
+    ]
+  },
+  {
+    "category": "Travel & Adventure",
     "professions": [
       "Travel Vlogger",
       "Travel Guide",
-      "Bike Rider",
+      "Motovlogger & Rider",
       "Road Trip Creator",
       "Backpacker",
       "Luxury Traveler",
       "Solo Traveler",
       "Camping Creator",
-      "Adventure Creator",
+      "Adventure Sports Creator",
       "Travel Photographer"
     ]
   },
   {
-    "category": "Food",
+    "category": "Food & Cooking",
     "professions": [
       "Food Vlogger",
       "Chef",
@@ -157,10 +187,10 @@
       "Street Food Creator",
       "Restaurant Reviewer",
       "Baker",
-      "Coffee Creator",
+      "Coffee Creator & Barista",
       "Healthy Recipe Creator",
       "BBQ Creator",
-      "Dessert Creator",
+      "Dessert & Pastry Creator",
       "Kitchen Tips Creator"
     ]
   },
@@ -181,7 +211,7 @@
     ]
   },
   {
-    "category": "Music",
+    "category": "Music & Performing Arts",
     "professions": [
       "Singer",
       "Music Producer",
@@ -189,16 +219,17 @@
       "DJ",
       "Pianist",
       "Drummer",
-      "Rapper",
+      "Rapper & Hip-Hop Artist",
       "Beatboxer",
       "Music Reviewer",
       "Songwriter",
       "Music Teacher",
-      "Cover Artist"
+      "Cover Artist",
+      "Dancer & Choreographer"
     ]
   },
   {
-    "category": "Sports",
+    "category": "Sports & Athletics",
     "professions": [
       "Sports Creator",
       "Athlete",
@@ -214,23 +245,33 @@
     ]
   },
   {
-    "category": "Photography",
+    "category": "Photography & Video",
     "professions": [
       "Photographer",
       "Videographer",
-      "Drone Creator",
+      "Drone Pilot & Creator",
       "Wedding Photographer",
       "Portrait Photographer",
       "Street Photographer",
-      "Nature Photographer",
-      "Travel Photographer",
+      "Nature & Wildlife Photographer",
       "Photo Editor",
-      "Video Editor",
+      "Video Editor & Colorist",
       "Cinematographer"
     ]
   },
   {
-    "category": "News",
+    "category": "DIY & Crafts",
+    "professions": [
+      "DIY Creator",
+      "Craft Artist",
+      "Woodworking Creator",
+      "Upcycling & Eco Creator",
+      "Paper Craft Artist",
+      "Handmade Product Creator"
+    ]
+  },
+  {
+    "category": "News & Media",
     "professions": [
       "News Creator",
       "Journalist",
@@ -243,7 +284,7 @@
     ]
   },
   {
-    "category": "Podcast",
+    "category": "Podcast & Talk Shows",
     "professions": [
       "Podcast Host",
       "Interview Creator",
@@ -251,24 +292,23 @@
       "Tech Podcast",
       "Comedy Podcast",
       "Motivational Podcast",
-      "News Podcast",
-      "Health Podcast"
+      "True Crime Podcast",
+      "Health & Wellness Podcast"
     ]
   },
   {
-    "category": "Art & Creativity",
+    "category": "Art & Design",
     "professions": [
       "Digital Artist",
       "Graphic Designer",
-      "UI Designer",
+      "UI/UX Designer",
       "Illustrator",
       "Animator",
-      "3D Artist",
+      "3D & VFX Artist",
       "Motion Designer",
       "Painter",
       "Sketch Artist",
       "Calligraphy Artist",
-      "NFT Artist",
       "Creative Director"
     ]
   },
@@ -281,18 +321,18 @@
       "Mindset Coach",
       "Productivity Creator",
       "Self Improvement Creator",
-      "Book Reviewer"
+      "Book Reviewer & Summary Creator"
     ]
   },
   {
-    "category": "Automobile",
+    "category": "Automobile & EV",
     "professions": [
       "Car Reviewer",
-      "Bike Reviewer",
-      "EV Creator",
+      "Bike & Motovlogger",
+      "EV & Clean Energy Creator",
       "Automobile Journalist",
-      "Modification Expert",
-      "Mechanic Creator"
+      "Modification & Tuning Expert",
+      "Mechanic & Garage Creator"
     ]
   },
   {
@@ -303,11 +343,11 @@
       "Cat Creator",
       "Wildlife Creator",
       "Animal Rescuer",
-      "Pet Groomer"
+      "Pet Groomer & Vet Creator"
     ]
   },
   {
-    "category": "Parenting",
+    "category": "Parenting & Family",
     "professions": [
       "Parenting Coach",
       "Mom Creator",
@@ -317,12 +357,14 @@
     ]
   },
   {
-    "category": "Spirituality",
+    "category": "Spirituality & Astrology",
     "professions": [
       "Spiritual Creator",
       "Meditation Teacher",
       "Yoga Guru",
       "Astrologer",
+      "Tarot Card Reader",
+      "Vastu Consultant",
       "Temple Vlogger",
       "Religious Storyteller",
       "Bhajan Singer"

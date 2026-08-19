@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 
 // GET /api/creator/socials?email=... or ?username=...
 export async function GET(req: Request) {
@@ -88,16 +89,7 @@ export async function POST(req: Request) {
     );
 
     // Record / Update current step in creator_onboarding_steps table (1 row per email)
-    try {
-      await db.query(
-        `INSERT INTO creator_onboarding_steps (email, creator_id, step_name, is_completed, completed_at)
-         VALUES (?, ?, 'socials', TRUE, NOW())
-         ON DUPLICATE KEY UPDATE creator_id = VALUES(creator_id), step_name = 'socials', is_completed = TRUE, completed_at = NOW()`,
-        [email, creatorId]
-      );
-    } catch (e: any) {
-      console.warn("⚠️ Could not record socials step:", e.message);
-    }
+    await recordOnboardingStep(email, "socials", creatorId);
 
     return NextResponse.json({ success: true, message: `Saved ${platform} account to MySQL` });
   } catch (err: any) {

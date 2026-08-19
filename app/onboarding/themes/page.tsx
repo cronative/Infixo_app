@@ -63,7 +63,7 @@ export default function ThemeStepPage() {
         Pick your <span className="text-gradient-premium">page vibe</span>
       </h1>
       <p className="mt-2 text-[15px] text-muted leading-relaxed">
-        Choose a visual design theme for your public Inflixo link-in-bio page. You can change this anytime.
+        Choose a visual design theme for your public Inflixo Creator Page. You can change this anytime.
       </p>
 
       {/* Mobile: Horizontal snap carousel */}

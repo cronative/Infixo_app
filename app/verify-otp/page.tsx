@@ -2,15 +2,14 @@
 
 import { useEffect, useRef, useState, KeyboardEvent, ClipboardEvent } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Mail, Lock } from "lucide-react";
 import { AuthSplitLayout } from "@/layouts/AuthSplitLayout";
 import { Button } from "@/components/ui/Button";
 import { AuthService } from "@/services/AuthService";
-import { OnboardingService } from "@/services/OnboardingService";
 import { useToast } from "@/contexts/ToastContext";
 
 const OTP_LENGTH = 4;
-const COUNTDOWN_SECONDS = 30;
+const COUNTDOWN_SECONDS = 28;
 
 export default function VerifyOtpPage() {
   const router = useRouter();
@@ -19,27 +18,38 @@ export default function VerifyOtpPage() {
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
   const [submitting, setSubmitting] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [codeSent, setCodeSent] = useState(false);
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
+  // Focus first input on mount & retrieve pending email
   useEffect(() => {
     const pending = AuthService.getPendingEmail();
     if (!pending) {
       router.replace("/login");
       return;
     }
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time hydration from localStorage
     setEmail(pending);
+
+    const timer = setTimeout(() => {
+      inputsRef.current[0]?.focus();
+    }, 150);
+    return () => clearTimeout(timer);
   }, [router]);
 
+  // Countdown timer effect
   useEffect(() => {
     if (countdown <= 0) return;
-    const t = setTimeout(() => setCountdown((c) => c - 1), 1000);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
   }, [countdown]);
 
   const submit = async (code: string) => {
-    if (submitting) return;
+    if (submitting || code.length !== OTP_LENGTH) return;
     setSubmitting(true);
+    setErrorMessage("");
+
     try {
       const { isExistingProfile, onboardingStep } = await AuthService.verifyOtp(code);
       setSubmitting(false);
@@ -57,12 +67,12 @@ export default function VerifyOtpPage() {
         };
 
         const targetRoute = stepRoutes[onboardingStep] || "/onboarding/profile";
-        showToast(`Email verified! Resuming setup at ${onboardingStep} ✨`);
+        showToast("Email verified! Resuming setup ✨");
         router.push(targetRoute);
       }
-    } catch (err: any) {
+    } catch {
       setSubmitting(false);
-      showToast(err.message || "OTP verification failed", "error");
+      setErrorMessage("That code doesn't look right. Try again.");
     }
   };
 
@@ -71,6 +81,8 @@ export default function VerifyOtpPage() {
     const next = [...digits];
     next[index] = clean;
     setDigits(next);
+    setErrorMessage("");
+
     if (clean && index < OTP_LENGTH - 1) {
       inputsRef.current[index + 1]?.focus();
     }
@@ -92,75 +104,158 @@ export default function VerifyOtpPage() {
     const next = Array(OTP_LENGTH).fill("");
     pasted.split("").forEach((d, i) => (next[i] = d));
     setDigits(next);
+    setErrorMessage("");
     const lastIndex = Math.min(pasted.length, OTP_LENGTH) - 1;
     inputsRef.current[lastIndex]?.focus();
-    if (pasted.length === OTP_LENGTH) submit(pasted);
+    if (pasted.length === OTP_LENGTH) {
+      submit(pasted);
+    }
   }
 
-  function handleResend() {
-    setCountdown(COUNTDOWN_SECONDS);
-    setDigits(Array(OTP_LENGTH).fill(""));
-    inputsRef.current[0]?.focus();
-    showToast("A new 4-digit code was sent", "info");
+  async function handleResend() {
+    if (countdown > 0 || resending) return;
+    setResending(true);
+    try {
+      if (email) {
+        await AuthService.requestOtp(email);
+      }
+      setCountdown(COUNTDOWN_SECONDS);
+      setDigits(Array(OTP_LENGTH).fill(""));
+      setErrorMessage("");
+      setCodeSent(true);
+      setTimeout(() => setCodeSent(false), 3000);
+      inputsRef.current[0]?.focus();
+    } catch (err: any) {
+      showToast(err?.message || "Failed to resend code", "error");
+    } finally {
+      setResending(false);
+    }
   }
+
+  const isOtpComplete = digits.every((d) => d !== "");
 
   return (
     <AuthSplitLayout>
-      <button
-        onClick={() => router.push("/login")}
-        className="mb-6 flex h-9 w-9 items-center justify-center rounded-full border border-inflixo-border text-inflixo-navy hover:bg-surface-muted"
-        aria-label="Back"
-      >
-        <ArrowLeft className="h-4 w-4" />
-      </button>
-
-      <h1 className="font-display text-3xl font-medium tracking-tight text-inflixo-navy sm:text-[36px]">
-        Check your inbox
-      </h1>
-      <p className="mt-2 text-[15px] text-muted">
-        We sent a temporary 4-digit code to <span className="font-semibold text-inflixo-navy">{email || "your email"}</span>.
-      </p>
-
-      <div className="mt-8 flex justify-center gap-3 sm:gap-4">
-        {digits.map((d, i) => (
-          <input
-            key={i}
-            ref={(el) => {
-              inputsRef.current[i] = el;
-            }}
-            type="text"
-            inputMode="numeric"
-            maxLength={1}
-            value={d}
-            onChange={(e) => handleChange(i, e.target.value)}
-            onKeyDown={(e) => handleKeyDown(i, e)}
-            onPaste={handlePaste}
-            className="h-16 w-16 rounded-2xl border-2 border-inflixo-border bg-white text-center text-2xl font-black text-inflixo-navy shadow-sm outline-none transition-all focus:border-inflixo-purple focus:shadow-[0_0_0_4px_rgba(109,40,217,0.15)]"
-          />
-        ))}
-      </div>
-
-      <Button
-        fullWidth
-        size="lg"
-        className="mt-6"
-        loading={submitting}
-        disabled={digits.some((d) => !d)}
-        onClick={() => submit(digits.join(""))}
-      >
-        Submit
-      </Button>
-
-      <div className="mt-6 text-center">
-        {countdown > 0 ? (
-          <p className="text-sm text-muted">
-            Resend code in <span className="font-semibold text-inflixo-navy">0:{countdown.toString().padStart(2, "0")}</span>
-          </p>
-        ) : (
-          <button onClick={handleResend} className="text-sm font-semibold text-inflixo-purple hover:text-inflixo-purple-dark">
-            Resend Code
+      <div className="space-y-6 text-left">
+        {/* Back Button */}
+        <div>
+          <button
+            type="button"
+            onClick={() => router.push("/login")}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-purple-100 hover:text-[#651FFF] transition-colors cursor-pointer"
+            aria-label="Back to login"
+          >
+            <ArrowLeft className="h-4 w-4" />
           </button>
-        )}
+        </div>
+
+        {/* Heading & Email Description */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <h1 className="font-display text-2xl sm:text-3xl font-black tracking-tight text-[#0F172A]">
+              Check your email
+            </h1>
+            <Mail className="h-6 w-6 text-[#651FFF] shrink-0" />
+          </div>
+
+          <div className="text-sm font-medium text-[#475569]">
+            <p>We sent a 4-digit code to</p>
+            <p className="font-bold text-[#0F172A] mt-0.5 truncate">{email || "your email"}</p>
+          </div>
+        </div>
+
+        {/* 4-Digit OTP Input Boxes */}
+        <div className="space-y-2 pt-1">
+          <div className="flex justify-center gap-3 sm:gap-3.5">
+            {digits.map((d, i) => (
+              <input
+                key={i}
+                ref={(el) => {
+                  inputsRef.current[i] = el;
+                }}
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                autoComplete="one-time-code"
+                maxLength={1}
+                value={d}
+                onChange={(e) => handleChange(i, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(i, e)}
+                onPaste={handlePaste}
+                aria-label={`Digit ${i + 1}`}
+                className={`h-14 w-14 sm:h-16 sm:w-16 rounded-2xl border text-center text-2xl font-black text-[#0F172A] bg-white shadow-xs outline-none transition-all duration-150 ${
+                  errorMessage
+                    ? "border-red-400 bg-red-50/20 text-red-600"
+                    : d
+                    ? "border-[#651FFF] ring-2 ring-purple-500/20 bg-purple-50/30"
+                    : "border-slate-200 focus:border-[#651FFF] focus:ring-4 focus:ring-purple-500/15"
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* Invalid OTP Error Message */}
+          {errorMessage && (
+            <p className="text-xs font-semibold text-red-500 text-center animate-fade-in pt-1">
+              {errorMessage}
+            </p>
+          )}
+
+          {/* Code Sent Toast Banner */}
+          {codeSent && (
+            <p className="text-xs font-bold text-emerald-600 text-center animate-fade-in pt-1">
+              New code sent ✓
+            </p>
+          )}
+        </div>
+
+        {/* Verify & Continue Button */}
+        <Button
+          fullWidth
+          size="lg"
+          loading={submitting}
+          disabled={!isOtpComplete || submitting}
+          onClick={() => submit(digits.join(""))}
+          className={`font-bold transition-all py-3.5 text-sm rounded-full cursor-pointer ${
+            isOtpComplete && !submitting
+              ? "bg-[#651FFF] text-white shadow-md shadow-purple-600/20 hover:bg-[#500CD6] hover:scale-[1.01]"
+              : "bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed"
+          }`}
+        >
+          {submitting ? "Verifying..." : "Verify & Continue →"}
+        </Button>
+
+        {/* Resend Code Section */}
+        <div className="text-center text-xs font-semibold text-slate-500">
+          {countdown > 0 ? (
+            <p>
+              Didn&apos;t get it? Resend in{" "}
+              <span className="font-mono font-bold text-slate-700">
+                00:{countdown.toString().padStart(2, "0")}
+              </span>
+            </p>
+          ) : (
+            <p>
+              Didn&apos;t get it?{" "}
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={resending}
+                className="font-bold text-[#651FFF] hover:underline cursor-pointer"
+              >
+                {resending ? "Sending..." : "Resend code"}
+              </button>
+            </p>
+          )}
+        </div>
+
+        {/* Muted Security Badge */}
+        <div className="pt-4 border-t border-slate-100 text-center">
+          <p className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400">
+            <Lock className="h-3.5 w-3.5 text-slate-400" />
+            <span>Secure password-free sign in</span>
+          </p>
+        </div>
       </div>
     </AuthSplitLayout>
   );

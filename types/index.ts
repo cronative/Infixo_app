@@ -5,52 +5,33 @@
 // and the future Node.js/MySQL API layer.
 // ---------------------------------------------------------------------------
 
-export type CreatorCategory =
-  | "Technology"
-  | "Gaming"
-  | "Finance"
-  | "Education"
-  | "Food"
-  | "Travel"
-  | "Fashion"
-  | "Beauty"
-  | "Fitness"
-  | "Comedy"
-  | "Lifestyle"
-  | "Photography"
-  | "Business"
-  | "Music"
-  | "Sports"
-  | "Health"
-  | "News"
-  | "Entertainment"
-  | "Parenting"
-  | "Automotive"
-  | "Podcast"
-  | "Other";
+export type CreatorCategory = string;
 
-export const CREATOR_CATEGORIES: CreatorCategory[] = [
-  "Technology",
-  "Gaming",
-  "Finance",
-  "Education",
-  "Food",
-  "Travel",
-  "Fashion",
-  "Beauty",
-  "Fitness",
-  "Comedy",
-  "Lifestyle",
-  "Photography",
-  "Business",
-  "Music",
-  "Sports",
-  "Health",
-  "News",
+export const CREATOR_CATEGORIES: string[] = [
   "Entertainment",
-  "Parenting",
-  "Automotive",
-  "Podcast",
+  "Filmmaking & Web Series",
+  "Technology & AI",
+  "Education & Career",
+  "Business & Finance",
+  "Lifestyle",
+  "Gaming & Esports",
+  "Health & Fitness",
+  "Real Estate & Home",
+  "Travel & Adventure",
+  "Food & Cooking",
+  "Fashion & Beauty",
+  "Music & Performing Arts",
+  "Sports & Athletics",
+  "Photography & Video",
+  "DIY & Crafts",
+  "News & Media",
+  "Podcast & Talk Shows",
+  "Art & Design",
+  "Motivation & Self Growth",
+  "Automobile & EV",
+  "Pets & Animals",
+  "Parenting & Family",
+  "Spirituality & Astrology",
   "Other",
 ];
 
@@ -81,6 +62,7 @@ export interface CreatorProfile {
   city?: string;
   state?: string;
   country?: string;
+  isVerified?: boolean;
   updatedAt: string;
 }
 
@@ -95,6 +77,9 @@ export interface InstagramStats {
   username?: string;
   name?: string;
   isVerified?: boolean;
+  avatarUrl?: string;
+  biography?: string;
+  lastSyncedAt?: string;
 }
 
 export interface YoutubeStats {
@@ -105,6 +90,9 @@ export interface YoutubeStats {
   username?: string;
   channelTitle?: string;
   isVerified?: boolean;
+  avatarUrl?: string;
+  description?: string;
+  lastSyncedAt?: string;
 }
 
 export interface FacebookPageStats {
@@ -114,6 +102,9 @@ export interface FacebookPageStats {
   username?: string;
   name?: string;
   isVerified?: boolean;
+  avatarUrl?: string;
+  intro?: string;
+  lastSyncedAt?: string;
 }
 
 export interface SocialAccounts {
@@ -201,7 +192,7 @@ export interface Series {
 // Subscription
 // ---------------------------------------------------------------------------
 
-export type PlanKey = "free" | "starter" | "pro" | "unlimited";
+export type PlanKey = "creator" | "pro" | "free" | "starter" | "unlimited" | "early_access";
 export type BillingCycle = "monthly" | "yearly";
 export type SubscriptionStatus = "trial" | "active" | "expired" | "cancelled";
 

@@ -1,7 +1,8 @@
 import { Users, Play } from "lucide-react";
 import { ThemeCardProps } from "@/themes/types";
-import { formatCount, initials } from "@/utils/format";
+import { formatCount } from "@/utils/format";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
+import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 
 export function ModernPurpleCard({ profile, socials, series, totalAudience, variant = "compact" }: ThemeCardProps) {
   const full = variant === "full";
@@ -14,14 +15,13 @@ export function ModernPurpleCard({ profile, socials, series, totalAudience, vari
       <div className="pointer-events-none absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-inflixo-gold/15 blur-3xl" />
       <div className="relative flex flex-col items-center text-center">
         {/* 1. Profile Picture */}
-        {profile.photoDataUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={profile.photoDataUrl} alt={profile.displayName} className={`${full ? "h-28 w-28" : "h-20 w-20"} rounded-full border-4 border-white/25 object-cover shadow-md`} />
-        ) : (
-          <div className={`flex ${full ? "h-28 w-28 text-2xl" : "h-20 w-20 text-lg"} items-center justify-center rounded-full border-4 border-white/25 bg-white/10 font-bold shadow-md`}>
-            {initials(profile.displayName) || "IN"}
-          </div>
-        )}
+        <CreatorAvatar
+          src={profile.photoDataUrl}
+          name={profile.displayName || "Creator"}
+          className={`${full ? "h-28 w-28" : "h-20 w-20"} rounded-full border-4 border-white/25 shadow-md`}
+          textClassName={`${full ? "text-3xl" : "text-xl"} font-extrabold text-white`}
+          fallbackBgClass="bg-purple-900/60"
+        />
 
         {/* 2. Name */}
         <p className={`font-display mt-4 ${full ? "text-2xl" : "text-lg"} font-bold tracking-tight`}>{profile.displayName || "Your name"}</p>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <!-- Background Badge -->
+  <rect width="100" height="100" rx="28" fill="#651FFF"/>
+
+  <g fill="#FFFFFF">
+    <!-- Left Outer Link Loop -->
+    <path d="M 38 26 C 25 26 16 36.5 16 50 C 16 63.5 25 74 38 74 L 43 74 C 45.2 74 47 72.2 47 70 C 47 67.8 45.2 66 43 66 L 38 66 C 30 66 24 58.5 24 50 C 24 41.5 30 34 38 34 L 43 34 C 45.2 34 47 32.2 47 30 C 47 27.8 45.2 26 43 26 Z" />
+
+    <!-- Right Outer Link Loop -->
+    <path d="M 62 26 C 75 26 84 36.5 84 50 C 84 63.5 75 74 62 74 L 57 74 C 54.8 74 53 72.2 53 70 C 53 67.8 54.8 66 57 66 L 62 66 C 70 66 76 58.5 76 50 C 76 41.5 70 34 62 34 L 57 34 C 54.8 34 53 32.2 53 30 C 53 27.8 54.8 26 57 26 Z" />
+
+    <!-- Center Top Dot of 'i' -->
+    <circle cx="50" cy="19" r="5.5" />
+
+    <!-- Center 'i' Stem with Integrated Play Triangle (Series Motif) -->
+    <path d="M 45 31 C 45 29.34 46.34 28 48 28 L 52 28 C 53.66 28 55 29.34 55 31 L 55 41.5 L 68 50 L 55 58.5 L 55 69 C 55 70.66 53.66 72 52 72 L 48 72 C 46.34 72 45 70.66 45 69 Z" />
+  </g>
+</svg>

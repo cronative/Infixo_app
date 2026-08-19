@@ -1,8 +1,13 @@
-import { useState } from "react";
-import { Users, Sparkles, ExternalLink, Play, Film, Eye, ChevronDown, ChevronUp } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Users, Sparkles, ExternalLink, Play, Film, Eye, ChevronDown, ChevronUp, Share2, ChevronRight } from "lucide-react";
 import { CreatorProfile, SocialAccounts, ThemeKey, Series } from "@/types";
 import { formatCount, initials } from "@/utils/format";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
+import { Logo, InflixoLogoIcon } from "@/components/shared/Logo";
+import { useToast } from "@/contexts/ToastContext";
+import { ShareSeriesModal } from "@/components/shared/ShareSeriesModal";
+import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
+import { SeriesPoster } from "@/components/shared/SeriesPoster";
 
 function getHandle(url: string): string {
   if (!url) return "";
@@ -13,6 +18,43 @@ function getHandle(url: string): string {
     return last.replace(/^@/, "");
   }
   return cleaned.replace(/^@/, "");
+}
+
+export function buildSocialUrl(platform: "instagram" | "youtube" | "facebook", rawUrlOrHandle?: string): string {
+  if (!rawUrlOrHandle || !rawUrlOrHandle.trim()) return "#";
+  const raw = rawUrlOrHandle.trim();
+
+  if (raw.startsWith("http://") || raw.startsWith("https://")) {
+    return raw;
+  }
+
+  const clean = raw.replace(/^@/, "");
+
+  if (platform === "instagram") {
+    if (clean.toLowerCase().includes("instagram.com/")) {
+      return `https://${clean.replace(/^https?:\/\//i, "")}`;
+    }
+    return `https://instagram.com/${clean}`;
+  }
+
+  if (platform === "youtube") {
+    if (clean.toLowerCase().includes("youtube.com/")) {
+      return `https://${clean.replace(/^https?:\/\//i, "")}`;
+    }
+    if (clean.startsWith("UC") || clean.startsWith("channel/")) {
+      return `https://youtube.com/${clean.startsWith("channel/") ? clean : `channel/${clean}`}`;
+    }
+    return `https://youtube.com/@${clean}`;
+  }
+
+  if (platform === "facebook") {
+    if (clean.toLowerCase().includes("facebook.com/")) {
+      return `https://${clean.replace(/^https?:\/\//i, "")}`;
+    }
+    return `https://facebook.com/${clean}`;
+  }
+
+  return `https://${clean}`;
 }
 
 interface ThemeStyleConfig {
@@ -33,7 +75,7 @@ interface ThemeStyleConfig {
   socialUnitColor: string;
 }
 
-const DEFAULT_THEME_STYLE: ThemeStyleConfig = {
+export const DEFAULT_THEME_STYLE: ThemeStyleConfig = {
   cardBg: "bg-white border-slate-200/90 shadow-xl shadow-slate-200/50",
   nameColor: "text-slate-900",
   handleColor: "text-purple-600",
@@ -51,7 +93,7 @@ const DEFAULT_THEME_STYLE: ThemeStyleConfig = {
   socialUnitColor: "text-slate-500",
 };
 
-const THEME_STYLES: Record<string, ThemeStyleConfig> = {
+export const THEME_STYLES: Record<string, ThemeStyleConfig> = {
   "minimal-white": DEFAULT_THEME_STYLE,
   "modern-purple": {
     cardBg: "bg-gradient-to-br from-purple-900 via-indigo-900 to-slate-900 border-purple-500/30 text-white shadow-xl shadow-purple-900/30",
@@ -384,7 +426,8 @@ export function LivePreviewCard({
   series,
   totalAudience,
   compact = false,
-  themeKey = "modern-purple",
+  themeKey = "minimal-white",
+  onShare,
 }: {
   profile: CreatorProfile;
   socials: SocialAccounts;
@@ -392,182 +435,209 @@ export function LivePreviewCard({
   totalAudience: number;
   compact?: boolean;
   themeKey?: ThemeKey;
+  onShare?: () => void;
 }) {
   const instaHandle = getHandle(socials.instagram.url);
   const ytHandle = getHandle(socials.youtube.url);
   const fbHandle = getHandle(socials.facebook.url);
 
-  const style = THEME_STYLES[themeKey] || THEME_STYLES["modern-purple"] || DEFAULT_THEME_STYLE;
+  const { showToast } = useToast();
+  const style = THEME_STYLES[themeKey] || THEME_STYLES["minimal-white"] || DEFAULT_THEME_STYLE;
 
-  // Filter ONLY added/linked social accounts
+  async function handleShareClick(e?: React.MouseEvent) {
+    if (e) e.stopPropagation();
+    if (onShare) {
+      onShare();
+      return;
+    }
+    const shareUrl = profile.username
+      ? `${window.location.origin}/${profile.username}`
+      : typeof window !== "undefined"
+      ? window.location.href
+      : "https://inflixo.com";
+    const shareText = `Check out ${profile.displayName ? `${profile.displayName}'s` : "my"} Inflixo profile to see fanbase stats, social channels & original series! 🎬✨`;
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({
+          title: `${profile.displayName || "Creator"} on Inflixo`,
+          text: shareText,
+          url: shareUrl,
+        });
+      } catch {
+        if (navigator.clipboard) {
+          await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+          showToast("Profile link & message copied to clipboard! ✨");
+        }
+      }
+    } else if (typeof navigator !== "undefined" && navigator.clipboard) {
+      await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+      showToast("Profile link & message copied to clipboard! ✨");
+    }
+  }
+
+  // Filter ONLY added/linked social accounts with solid high-contrast brand badges
   const activeSocialList = [
     {
       platform: "instagram",
       label: "Instagram",
-      icon: <InstagramIcon className="h-4 w-4 text-pink-500" />,
-      handle: instaHandle,
+      name: socials.instagram.name,
+      icon: <InstagramIcon className="h-4 w-4 text-white" />,
+      badgeBg: "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-sm",
+      handle: instaHandle || socials.instagram.username,
       count: socials.instagram.followers,
       unit: "Followers",
-      url: socials.instagram.url
-        ? socials.instagram.url.startsWith("http")
-          ? socials.instagram.url
-          : `https://${socials.instagram.url}`
-        : instaHandle
-        ? `https://instagram.com/${instaHandle}`
-        : "",
-      hasAccount: Boolean(instaHandle || socials.instagram.followers > 0 || socials.instagram.url),
+      url: buildSocialUrl("instagram", socials.instagram.url || socials.instagram.username || instaHandle),
+      hasAccount: Boolean(instaHandle || socials.instagram.followers > 0 || socials.instagram.url || socials.instagram.username),
     },
     {
       platform: "youtube",
       label: "YouTube",
-      icon: <YoutubeIcon className="h-4 w-4 text-red-500" />,
-      handle: ytHandle,
+      name: socials.youtube.channelTitle,
+      icon: <YoutubeIcon className="h-4 w-4 text-white" />,
+      badgeBg: "bg-red-600 shadow-sm",
+      handle: ytHandle || socials.youtube.username,
       count: socials.youtube.subscribers,
       unit: "Subscribers",
-      url: socials.youtube.url
-        ? socials.youtube.url.startsWith("http")
-          ? socials.youtube.url
-          : `https://${socials.youtube.url}`
-        : ytHandle
-        ? `https://youtube.com/@${ytHandle}`
-        : "",
-      hasAccount: Boolean(ytHandle || socials.youtube.subscribers > 0 || socials.youtube.url),
+      url: buildSocialUrl("youtube", socials.youtube.url || socials.youtube.username || ytHandle),
+      hasAccount: Boolean(ytHandle || socials.youtube.subscribers > 0 || socials.youtube.url || socials.youtube.username),
     },
     {
       platform: "facebook",
       label: "Facebook",
-      icon: <FacebookIcon className="h-4 w-4 text-blue-600" />,
-      handle: fbHandle,
+      name: socials.facebook.name,
+      icon: <FacebookIcon className="h-4 w-4 text-white" />,
+      badgeBg: "bg-blue-600 shadow-sm",
+      handle: fbHandle || socials.facebook.username,
       count: socials.facebook.followers,
       unit: "Followers",
-      url: socials.facebook.url
-        ? socials.facebook.url.startsWith("http")
-          ? socials.facebook.url
-          : `https://${socials.facebook.url}`
-        : fbHandle
-        ? `https://facebook.com/${fbHandle}`
-        : "",
-      hasAccount: Boolean(fbHandle || socials.facebook.followers > 0 || socials.facebook.url),
+      url: buildSocialUrl("facebook", socials.facebook.url || socials.facebook.username || fbHandle),
+      hasAccount: Boolean(fbHandle || socials.facebook.followers > 0 || socials.facebook.url || socials.facebook.username),
     },
   ].filter((item) => item.hasAccount);
 
-  return (
-    <div className="w-full max-w-[95%] mx-auto">
-      {/* Top Header Badge Bar — Always Shown Throughout Onboarding */}
-      <div className="mb-3 flex items-center justify-between px-1">
-        <p className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-          </span>
-          Live Profile Card
-        </p>
-        <span className="inline-flex items-center gap-1 rounded-full bg-purple-50 px-2.5 py-0.5 text-[10px] font-bold text-purple-700 border border-purple-200/60">
-          <Sparkles className="h-3 w-3 text-purple-600" />
-          Real-time
-        </span>
-      </div>
+  const [expandedSeriesId, setExpandedSeriesId] = useState<string | null>(null);
 
-      {/* Main Theme-Aware Card Container */}
+  return (
+    <div className="w-full">
       <div
-        className={`relative w-full overflow-hidden rounded-[28px] border p-6 sm:p-7 transition-all duration-300 hover:shadow-2xl ${style.cardBg}`}
+        className={`relative w-full overflow-hidden rounded-2xl sm:rounded-[28px] border p-4 sm:p-6 transition-all duration-300 hover:shadow-2xl ${style.cardBg}`}
       >
-        <div className="relative z-10 flex flex-col items-center text-center">
-          {/* 1. Profile Avatar */}
-          <div className="relative">
-            {profile.photoDataUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={profile.photoDataUrl}
-                alt={profile.displayName || "Profile"}
-                className="h-20 w-20 rounded-full object-cover ring-4 ring-purple-100/90 shadow-sm"
-              />
-            ) : (
-              <div
-                className="flex h-20 w-20 items-center justify-center rounded-full text-xl font-bold text-white ring-4 ring-purple-100/90 shadow-sm"
-                style={{ backgroundImage: "var(--gradient-premium)" }}
-              >
-                {initials(profile.displayName) || "IN"}
-              </div>
-            )}
+        <div className="relative z-10 flex items-center justify-between w-full mb-4 px-1">
+          <div
+            className={`tap-scale flex items-center gap-2 rounded-full border px-3 py-1.5 shadow-2xs transition-all ${style.socialItemBg} ${style.socialItemBorder}`}
+          >
+            <div className="flex h-6 w-6 items-center justify-center rounded-xl bg-gradient-to-br from-[#782BFB] via-[#6512FA] to-[#500CD6] text-white shadow-2xs">
+              <InflixoLogoIcon className="h-3.5 w-3.5" />
+            </div>
+            <span className={`font-display text-sm font-black tracking-tight ${style.nameColor}`}>
+              Inflixo
+            </span>
           </div>
 
-          {/* 2. Creator Display Name */}
+          <button
+            type="button"
+            onClick={handleShareClick}
+            className={`tap-scale flex h-9 w-9 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} ${style.nameColor}`}
+            title="Share Profile"
+            aria-label="Share Profile"
+          >
+            <Share2 className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="relative z-10 flex flex-col items-center text-center">
+          <div className="relative">
+            <CreatorAvatar
+              src={profile.photoDataUrl}
+              name={profile.displayName || "Creator"}
+              className="h-24 w-24 rounded-full shadow-lg border-2 border-white/20"
+              textClassName="text-3xl font-extrabold text-white"
+              fallbackBgClass="bg-gradient-to-br from-[#782BFB] to-[#500CD6]"
+            />
+          </div>
+
           <h3 className={`mt-3.5 text-lg font-extrabold tracking-tight sm:text-xl ${style.nameColor}`}>
             {profile.displayName || "Your Name"}
           </h3>
 
-          {/* 3. Official Link of Inflixo */}
-          <p className={`mt-0.5 text-xs font-semibold ${style.handleColor}`}>
-            {profile.username ? `inflixo.com/${profile.username}` : "inflixo.com/username"}
-          </p>
+          <button
+            type="button"
+            onClick={() => {
+              const handle = profile.username || "username";
+              const profileUrl = `${window.location.origin}/${handle}`;
+              navigator.clipboard.writeText(profileUrl);
+              showToast("Profile link copied to clipboard! ✨");
+            }}
+            className={`mt-0.5 text-xs font-semibold hover:underline inline-flex items-center gap-1 opacity-90 transition-opacity hover:opacity-100 ${style.handleColor}`}
+            title="Click to copy profile link"
+          >
+            <span>{profile.username ? `inflixo.com/${profile.username}` : "inflixo.com/username"}</span>
+            <ExternalLink className="h-3 w-3 opacity-60" />
+          </button>
 
-          {/* 4. Content Category & Profession Badges */}
-          {(profile.category || profile.profession) && (
-            <div className="mt-2.5 flex flex-wrap items-center justify-center gap-1.5">
-              {profile.category && (
-                <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-extrabold shadow-2xs ${style.catBadgeBg} ${style.catBadgeText}`}>
-                  {profile.category}
-                </span>
-              )}
-              {profile.profession &&
-                profile.profession
-                  .split(",")
-                  .map((s) => s.trim())
-                  .filter(Boolean)
-                  .map((prof, idx) => (
-                    <span
-                      key={idx}
-                      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-bold ${style.profBadgeBg} ${style.profBadgeText} ${style.profBadgeBorder}`}
-                    >
-                      ✨ {prof}
+          {(() => {
+            const rawItems: string[] = [];
+            if (profile.category) rawItems.push(profile.category);
+            if ((profile as any).profession) {
+              const profs = (profile as any).profession.split(",").map((s: string) => s.trim()).filter(Boolean);
+              rawItems.push(...profs);
+            }
+            if (rawItems.length === 0) return null;
+
+            return (
+              <div className="mt-2.5">
+                <span
+                  className={`inline-flex flex-wrap items-center justify-center gap-1.5 rounded-full border px-4 py-1.5 text-xs font-extrabold shadow-2xs ${style.profBadgeBg} ${style.profBadgeText} ${style.profBadgeBorder}`}
+                >
+                  {rawItems.map((item, idx) => (
+                    <span key={idx} className="inline-flex items-center gap-1.5">
+                      {idx > 0 && <span className="opacity-50 text-[10px]">·</span>}
+                      <span>{item}</span>
                     </span>
                   ))}
-            </div>
-          )}
+                </span>
+              </div>
+            );
+          })()}
 
-          {/* 5. Short Bio */}
-          <p className={`mt-2.5 text-xs leading-relaxed font-medium line-clamp-3 px-1 ${style.bioColor}`}>
+          <p className={`mt-3 text-xs sm:text-sm leading-relaxed font-medium line-clamp-3 px-1 ${style.bioColor}`}>
             {profile.bio || "Your bio will appear here. Share your story with your audience."}
           </p>
 
-          {/* 6. Clean ❤️ Fanbase Total Reach Box */}
-          <div className={`mt-4 flex items-center justify-between rounded-2xl border p-3.5 w-[95%] mx-auto ${style.fanbaseBg}`}>
-            <div className="text-left">
-              <p className="text-[10px] font-extrabold uppercase tracking-wider opacity-80 flex items-center gap-1">
-                <span className="text-xs">❤️</span> Total Fanbase
-              </p>
-              <p className={`text-xl font-black tracking-tight mt-0.5 ${style.fanbaseText}`}>
-                {formatCount(totalAudience)}
-              </p>
+          <div className={`mt-4 flex items-center justify-between rounded-2xl border p-3.5 sm:p-4 w-full ${style.fanbaseBg}`}>
+            <div className="flex items-center gap-2">
+              <span className="text-base">❤️</span>
+              <span className={`text-xs sm:text-sm font-extrabold ${style.fanbaseText}`}>Total Fanbase</span>
             </div>
-            <div className="flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-600 border border-emerald-200/60">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Live Reach
+
+            <div className="flex items-center gap-1.5">
+              <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+              <span className={`font-display text-base sm:text-lg font-black ${style.fanbaseText}`}>
+                {formatCount(totalAudience)}
+              </span>
             </div>
           </div>
 
-          {/* 6b. Separate Total Series & Total Episodes Counts Bar */}
-          <div className="mt-2.5 grid grid-cols-2 gap-2 w-[95%] mx-auto">
+          <div className="mt-2.5 grid grid-cols-2 gap-2 w-full">
             <div className={`flex items-center gap-2.5 rounded-xl border p-2.5 text-left ${style.socialItemBg} ${style.socialItemBorder}`}>
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-purple-500/20 text-purple-400">
                 <Film className="h-4 w-4" />
               </div>
-              <div>
-                <p className="text-[10px] font-extrabold uppercase tracking-wider opacity-70">Total Series</p>
-                <p className={`text-sm font-black ${style.socialNameColor}`}>
+              <div className="min-w-0">
+                <p className={`text-[10px] font-extrabold uppercase tracking-wider opacity-60 ${style.socialNameColor}`}>Series</p>
+                <p className={`text-xs font-black truncate ${style.socialNameColor}`}>
                   {series ? series.length : 0}
                 </p>
               </div>
             </div>
 
             <div className={`flex items-center gap-2.5 rounded-xl border p-2.5 text-left ${style.socialItemBg} ${style.socialItemBorder}`}>
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-pink-500/20 text-pink-400">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-purple-500/20 text-purple-400">
                 <Play className="h-4 w-4 fill-current" />
               </div>
-              <div>
-                <p className="text-[10px] font-extrabold uppercase tracking-wider opacity-70">Total Episodes</p>
-                <p className={`text-sm font-black ${style.socialNameColor}`}>
+              <div className="min-w-0">
+                <p className={`text-[10px] font-extrabold uppercase tracking-wider opacity-60 ${style.socialNameColor}`}>Episodes</p>
+                <p className={`text-xs font-black truncate ${style.socialNameColor}`}>
                   {series ? series.reduce((acc, s) => acc + s.seasons.reduce((ea, sn) => ea + sn.episodes.length, 0), 0) : 0}
                 </p>
               </div>
@@ -575,45 +645,52 @@ export function LivePreviewCard({
           </div>
         </div>
 
-        {/* 7. Clean Connected Social Accounts List (SHOW ONLY ADDED PLATFORMS) */}
         {activeSocialList.length > 0 && (
-          <div className="relative z-10 mt-3.5 space-y-1.5 w-[95%] mx-auto">
+          <div className="relative z-10 mt-3.5 space-y-2 w-full">
             <p className="text-[10px] font-extrabold uppercase tracking-wider opacity-60 text-left px-1">
-              Connected Socials
+              Social Connections
             </p>
-            <div className="space-y-1.5">
+            <div className="grid grid-cols-1 gap-2.5 w-full">
               {activeSocialList.map((item) => (
                 <a
                   key={item.platform}
-                  href={item.url || "#"}
+                  href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={(e) => {
-                    if (!item.url) e.preventDefault();
-                  }}
-                  className={`group flex items-center justify-between rounded-xl border p-2.5 transition-all duration-200 hover:scale-[1.01] hover:shadow-md cursor-pointer ${style.socialItemBg} ${style.socialItemBorder}`}
+                  className={`group flex items-center justify-between rounded-xl border p-3 transition-all hover:scale-[1.01] ${style.socialItemBg} ${style.socialItemBorder}`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-50/20 border border-slate-100/20 group-hover:scale-110 transition-transform">
+                    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${item.badgeBg}`}>
                       {item.icon}
-                    </div>
-                    <div className="text-left min-w-0">
-                      <p className={`text-xs font-bold truncate ${style.socialNameColor} flex items-center gap-1`}>
-                        <span>{item.label}</span>
-                        <ExternalLink className="h-3 w-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+                    </span>
+                    {/* Vertical Stack: Account Name -> Username -> Platform */}
+                    <div className="min-w-0 text-left space-y-0.5">
+                      {/* 1. Account Name */}
+                      <p className={`truncate text-sm font-black leading-tight ${style.socialNameColor}`}>
+                        {item.name || profile.displayName || "Account Name"}
                       </p>
+                      {/* 2. Username / Handle */}
                       {item.handle && (
-                        <p className={`text-[10px] font-semibold truncate ${style.handleColor}`}>@{item.handle}</p>
+                        <p className={`truncate text-xs font-semibold opacity-90 leading-snug ${style.socialUnitColor}`}>
+                          @{item.handle.replace(/^@/, "")}
+                        </p>
                       )}
+                      {/* 3. Platform Name Tag */}
+                      <p className={`truncate text-[10px] font-extrabold uppercase tracking-wider opacity-75 leading-none ${style.socialUnitColor}`}>
+                        {item.label}
+                      </p>
                     </div>
                   </div>
-                  <div className="text-right shrink-0">
-                    <p className={`text-xs font-black leading-none ${style.socialNameColor}`}>
-                      {formatCount(item.count)}
-                    </p>
-                    <p className={`text-[10px] font-semibold mt-0.5 ${style.socialUnitColor}`}>
-                      {item.unit}
-                    </p>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <div className="text-right">
+                      <p className={`font-display text-xs font-black leading-tight ${style.socialNameColor}`}>
+                        {formatCount(item.count)}
+                      </p>
+                      <p className={`text-[9px] font-extrabold tracking-tight opacity-75 ${style.socialUnitColor}`}>
+                        {item.unit}
+                      </p>
+                    </div>
+                    <ExternalLink className="h-3 w-3 opacity-40 group-hover:opacity-100 transition-opacity" />
                   </div>
                 </a>
               ))}
@@ -621,126 +698,257 @@ export function LivePreviewCard({
           </div>
         )}
 
-        {/* 8. Theme-Styled OTT Series & Episodes Section */}
         {series && series.length > 0 && (
-          <div className="relative z-10 mt-5 space-y-2.5 w-[95%] mx-auto text-left">
+          <div className="relative z-10 mt-5 space-y-2.5 w-full sm:w-[95%] mx-auto text-left">
             <p className="text-[10px] font-extrabold uppercase tracking-wider opacity-60 px-1">
-              🎬 Series &amp; Episodes ({series.length})
+              Series ({series.length})
             </p>
 
             <div className="space-y-3">
-              {series.map((s, idx) => (
-                <PreviewSeriesItem key={s.id} series={s} style={style} defaultExpanded={idx === 0} />
+              {series.map((s) => (
+                <PreviewSeriesItem
+                  key={s.id}
+                  series={s}
+                  style={style}
+                  themeKey={themeKey}
+                  username={profile.username}
+                  expanded={expandedSeriesId === s.id}
+                  onToggle={() => setExpandedSeriesId(expandedSeriesId === s.id ? null : s.id)}
+                />
               ))}
             </div>
           </div>
         )}
+
+        {/* Viral Growth Engine: "Powered by Inflixo" Watermark Badge */}
+        <div className="relative z-10 mt-6 pt-3 text-center">
+          <a
+            href={profile.username ? `/login?ref=${encodeURIComponent(profile.username)}` : "/login"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="tap-scale inline-flex items-center gap-1.5 rounded-full border border-purple-200/60 bg-gradient-to-r from-purple-50 via-white to-purple-50 px-3.5 py-1 text-[11px] font-black text-purple-700 shadow-2xs hover:border-purple-400 hover:shadow-xs transition-all"
+          >
+            <Sparkles className="h-3 w-3 text-purple-600 fill-current animate-pulse" />
+            <span>Built with <strong className="font-black text-purple-900">Inflixo</strong> • Build your Creator Home →</span>
+          </a>
+        </div>
       </div>
     </div>
   );
 }
 
+function getPlatformInfo(platformStr?: string, urlStr?: string) {
+  const p = (platformStr || "").toLowerCase();
+  const u = (urlStr || "").toLowerCase();
+
+  if (p.includes("youtube") || u.includes("youtube.com") || u.includes("youtu.be")) {
+    return {
+      name: "YouTube",
+      icon: <YoutubeIcon className="h-4 w-4 text-white" />,
+      badgeClass: "bg-red-600 text-white shadow-xs",
+    };
+  }
+  if (p.includes("instagram") || u.includes("instagram.com")) {
+    return {
+      name: "Instagram",
+      icon: <InstagramIcon className="h-4 w-4 text-white" />,
+      badgeClass: "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white shadow-xs",
+    };
+  }
+  if (p.includes("facebook") || u.includes("facebook.com")) {
+    return {
+      name: "Facebook",
+      icon: <FacebookIcon className="h-4 w-4 text-white" />,
+      badgeClass: "bg-blue-600 text-white shadow-xs",
+    };
+  }
+  return {
+    name: platformStr || "Web",
+    icon: <Film className="h-4 w-4 text-white" />,
+    badgeClass: "bg-purple-600 text-white shadow-xs",
+  };
+}
+
 function PreviewSeriesItem({
   series,
   style,
-  defaultExpanded = false,
+  themeKey,
+  username,
+  expanded = false,
+  onToggle,
 }: {
   series: Series;
   style: ThemeStyleConfig;
-  defaultExpanded?: boolean;
+  themeKey?: ThemeKey;
+  username?: string;
+  expanded?: boolean;
+  onToggle?: () => void;
 }) {
-  const [expanded, setExpanded] = useState(defaultExpanded);
+  const { showToast } = useToast();
   const allEpisodes = series.seasons.flatMap((sn) => sn.episodes);
+  const firstEp = allEpisodes[0];
+  const seriesPlatform =
+    (series as any).platform ||
+    firstEp?.platform ||
+    (firstEp?.externalUrl ? getPlatformInfo(undefined, firstEp.externalUrl).name : "YouTube");
+
+  const isDark =
+    style.nameColor.includes("white") ||
+    themeKey === "neon-pulse" ||
+    themeKey === "emerald-luxe" ||
+    themeKey === "crimson-velvet" ||
+    themeKey === "solar-flare" ||
+    themeKey === "cosmic-galaxy" ||
+    themeKey === "tokyo-drift" ||
+    themeKey === "retro-synth";
+
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
+  function handleShareSeriesLink() {
+    setIsShareModalOpen(true);
+  }
+
+  // Single line compact metadata string: Genre • Language • Episodes Count
+  const metaParts = [
+    series.genre || "General",
+    series.language || "Hindi",
+    `${allEpisodes.length} ${allEpisodes.length === 1 ? "Episode" : "Episodes"}`,
+  ].filter(Boolean);
+  const metaStr = metaParts.join(" • ");
 
   return (
-    <div className={`rounded-2xl border p-3.5 transition-all ${style.socialItemBg} ${style.socialItemBorder}`}>
-      {/* Series Header Row — Click anywhere or Chevron to toggle expand/collapse */}
-      <div
-        onClick={() => setExpanded(!expanded)}
-        className="flex items-center justify-between gap-3 cursor-pointer select-none"
-      >
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="relative h-14 w-10 shrink-0 overflow-hidden rounded-xl bg-slate-900/40 border border-white/20 flex items-center justify-center">
-            {series.posterDataUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={series.posterDataUrl} alt={series.title} className="h-full w-full object-cover" />
-            ) : (
-              <Film className="h-5 w-5 opacity-70" />
-            )}
-          </div>
+    <div
+      id={`series-${series.id}`}
+      className={`overflow-hidden rounded-2xl border transition-all duration-200 shadow-xs ${style.socialItemBg} ${style.socialItemBorder}`}
+    >
+      <div onClick={onToggle} className="cursor-pointer select-none">
+        {/* Ultra-sleek Widescreen Cover Image Container with Share & Expand Overlay */}
+        <div className="relative w-full aspect-[2.2/1] overflow-hidden bg-slate-950 flex items-center justify-center border-b border-slate-500/20">
+          <SeriesPoster
+            src={series.posterDataUrl}
+            title={series.title}
+            className="h-full w-full object-cover"
+            textClassName="text-xs font-black text-purple-200"
+          />
 
-          <div className="min-w-0 flex-1">
-            <p className={`text-sm font-extrabold truncate ${style.socialNameColor}`}>{series.title}</p>
-            <div className="flex flex-wrap items-center gap-1 mt-1">
-              {/* Platform Badge */}
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/20 backdrop-blur-xs px-2 py-0.5 text-[10px] font-extrabold shadow-2xs">
-                {allEpisodes[0]?.platform || "YouTube"}
-              </span>
-
-              {/* Genres Chips */}
-              {series.genre &&
-                series.genre
-                  .split(",")
-                  .map((g) => g.trim())
-                  .filter(Boolean)
-                  .map((g) => (
-                    <span key={g} className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-bold">
-                      {g}
-                    </span>
-                  ))}
-
-              {series.language && (
-                <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-semibold opacity-80">
-                  {series.language}
-                </span>
-              )}
-
-              <span className="text-[10px] font-bold opacity-85 ml-0.5">
-                <strong>{allEpisodes.length} Ep{allEpisodes.length !== 1 ? "s" : ""}</strong>
-              </span>
-            </div>
+          {/* Top-Right Compact Overlay Buttons */}
+          <div className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleShareSeriesLink();
+              }}
+              className="flex h-7 w-7 items-center justify-center rounded-xl bg-black/60 hover:bg-black/80 text-white backdrop-blur-md transition-all border border-white/20 shadow-xs"
+              title="Share Series Link"
+              aria-label="Share Series"
+            >
+              <Share2 className="h-3.5 w-3.5 stroke-[2.5]" />
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggle?.();
+              }}
+              className="flex h-7 w-7 items-center justify-center rounded-xl bg-black/60 hover:bg-black/80 text-white backdrop-blur-md transition-all border border-white/20 shadow-xs"
+              title={expanded ? "Collapse Episodes" : "Expand Episodes"}
+              aria-label="Toggle Episodes"
+            >
+              {expanded ? <ChevronUp className="h-3.5 w-3.5 stroke-[2.5]" /> : <ChevronDown className="h-3.5 w-3.5 stroke-[2.5]" />}
+            </button>
           </div>
         </div>
 
-        {/* Chevron Expand/Collapse Toggle Button */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setExpanded(!expanded);
-          }}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/15 hover:bg-white/25 transition-all text-current"
-          title={expanded ? "Collapse Episodes" : "Expand Episodes"}
-        >
-          {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-        </button>
+        {/* Details Container Below Poster */}
+        <div className="p-3.5 sm:p-4 space-y-1.5 text-left">
+          {/* Title */}
+          <h3 className={`text-base sm:text-lg font-black leading-snug break-words ${style.nameColor}`}>
+            {series.title}
+          </h3>
+
+          {/* Single Line Stacked Metadata: Genre • Language • Episodes */}
+          <p className={`text-xs font-bold opacity-90 ${style.bioColor}`}>
+            {metaStr}
+          </p>
+
+          {/* Description if present or rich creator fallback */}
+          <p className={`text-xs font-medium leading-relaxed break-words pt-0.5 opacity-80 ${expanded ? "" : "line-clamp-2"} ${style.bioColor}`}>
+            {series.description || "Explore our Farali food collection, recipes & specials."}
+          </p>
+
+          {/* Expand / Collapse Indicator Prompt */}
+          <div className={`pt-1 flex items-center gap-1 text-[11px] font-black transition-colors ${style.handleColor}`}>
+            <span>{expanded ? "Hide Episodes ↑" : `View Episodes (${allEpisodes.length}) ↓`}</span>
+          </div>
+        </div>
       </div>
 
-      {/* Expanded Episodes List */}
+      {/* Episodes Section */}
       {expanded && allEpisodes.length > 0 && (
-        <div className="mt-3 pt-2.5 border-t border-white/10 space-y-1.5 animate-in fade-in duration-150">
-          {allEpisodes.map((ep) => (
-            <a
-              key={ep.id}
-              href={ep.externalUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`flex items-center justify-between gap-3 rounded-xl border p-2.5 transition-all hover:scale-[1.01] ${style.socialItemBg} ${style.socialItemBorder}`}
-            >
-              <div className="flex items-center gap-2.5 min-w-0">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/15 text-[11px] font-black">
-                  E{ep.episodeNumber}
-                </span>
-                <p className={`truncate text-xs font-bold ${style.socialNameColor}`}>{ep.title}</p>
-              </div>
-              <div className="flex items-center gap-1 text-[11px] font-extrabold opacity-90 shrink-0">
-                <Eye className="h-3.5 w-3.5 text-purple-400" />
-                <ExternalLink className="h-3 w-3 opacity-60" />
-              </div>
-            </a>
-          ))}
+        <div className={`p-3.5 sm:p-4 space-y-2.5 animate-in fade-in duration-200 border-t ${style.socialItemBorder}`}>
+          <div className="flex items-center justify-between">
+            <p className={`text-xs font-black ${style.handleColor}`}>
+              Episodes ({allEpisodes.length})
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            {allEpisodes.map((ep) => {
+              const plat = getPlatformInfo(ep.platform, ep.externalUrl);
+              const epNumStr = ep.episodeNumber < 10 ? `E0${ep.episodeNumber}` : `E${ep.episodeNumber}`;
+              const epTitleStr = ep.title && ep.title.trim() ? ep.title : `Part ${ep.episodeNumber}`;
+
+              return (
+                <a
+                  key={ep.id}
+                  href={ep.externalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`group flex items-center justify-between rounded-xl border p-2.5 transition-all hover:scale-[1.01] ${style.socialItemBg} ${style.socialItemBorder}`}
+                >
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg shadow-2xs ${plat.badgeClass}`}>
+                      {plat.icon}
+                    </span>
+                    <div className="min-w-0 text-left">
+                      <p className={`truncate text-xs font-extrabold ${style.socialNameColor}`}>
+                        {epNumStr} • {epTitleStr}
+                      </p>
+                      <p className={`truncate text-[10px] font-medium opacity-75 ${style.socialUnitColor}`}>
+                        {plat.name}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                    <ExternalLink className={`h-3.5 w-3.5 opacity-75 group-hover:opacity-100 transition-opacity ${style.socialNameColor}`} />
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+
+          {/* View Full Series Link CTA - Only rendered if > 3 episodes exist */}
+          {allEpisodes.length > 3 && username && (
+            <div className="pt-2 text-center">
+              <a
+                href={`/${username}/series/${series.id}`}
+                className={`inline-flex items-center gap-1 text-xs font-black transition-colors ${style.handleColor}`}
+              >
+                <span>View Full Series →</span>
+              </a>
+            </div>
+          )}
         </div>
       )}
+
+      {/* Share Series Modal */}
+      <ShareSeriesModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        series={series}
+        username={username || "creator"}
+      />
     </div>
   );
 }

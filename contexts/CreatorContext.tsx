@@ -42,28 +42,42 @@ const EMPTY_PROFILE: CreatorProfile = {
 export function CreatorProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<CreatorProfile>(EMPTY_PROFILE);
   const [socials, setSocials] = useState<SocialAccounts>(EMPTY_SOCIAL_ACCOUNTS);
-  const [theme, setThemeState] = useState<ThemeKey>("modern-purple");
+  const [theme, setThemeState] = useState<ThemeKey>("minimal-white");
   const [series, setSeries] = useState<Series[]>([]);
   const [subscription, setSubscription] = useState<Subscription>(SubscriptionService.get());
   const [hydrated, setHydrated] = useState(false);
 
   const refresh = useCallback(async () => {
+    // 1. Instant local storage state
     setProfile(ProfileService.getProfile());
     setSocials(SocialService.getAccounts());
     setThemeState(ThemeService.getSelectedTheme());
     setSubscription(SubscriptionService.get());
-
-    // Instant local state
     setSeries(SeriesService.getAllLocal());
 
-    // Live MySQL DB sync
+    // 2. Live DB sync (Profile, Social Accounts, Series & Subscription)
     try {
-      const dbSeries = await SeriesService.fetchFromDb();
+      const [dbProfile, dbSocials, dbSeries, dbSub] = await Promise.all([
+        ProfileService.fetchFromDb().catch(() => null),
+        SocialService.fetchFromDb().catch(() => null),
+        SeriesService.fetchFromDb().catch(() => null),
+        SubscriptionService.fetchFromDb().catch(() => null),
+      ]);
+
+      if (dbProfile) {
+        setProfile(dbProfile);
+      }
+      if (dbSocials) {
+        setSocials(dbSocials);
+      }
       if (dbSeries && Array.isArray(dbSeries)) {
         setSeries(dbSeries);
       }
+      if (dbSub) {
+        setSubscription(dbSub);
+      }
     } catch (e) {
-      console.warn("Failed to sync series in CreatorContext:", e);
+      console.warn("Failed to sync DB in CreatorContext:", e);
     }
   }, []);
 

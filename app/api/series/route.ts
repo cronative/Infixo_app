@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 
 // GET /api/series?email=... or ?username=...
 export async function GET(req: Request) {
@@ -7,6 +8,61 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const email = searchParams.get("email");
     const username = searchParams.get("username");
+    const seriesId = searchParams.get("seriesId") || searchParams.get("id");
+
+    if (seriesId && seriesId.trim() !== "") {
+      const [seriesRows]: any = await db.query("SELECT * FROM series WHERE id = ?", [seriesId]);
+      if (!seriesRows || seriesRows.length === 0) {
+        return NextResponse.json({ success: false, error: "Series not found" }, { status: 404 });
+      }
+      const s = seriesRows[0];
+      const [epRows]: any = await db.query("SELECT * FROM episodes WHERE series_id = ? ORDER BY episode_number ASC", [s.id]);
+      const [creatorRows]: any = await db.query("SELECT * FROM creators WHERE id = ?", [s.creator_id]);
+      const creator = creatorRows[0] || null;
+
+      let totalFanbase = 0;
+      if (creator) {
+        const [socRows]: any = await db.query(
+          "SELECT SUM(follower_count) as total FROM social_accounts WHERE creator_id = ?",
+          [creator.id]
+        );
+        totalFanbase = Number(socRows[0]?.total || 0);
+      }
+
+      const singleSeries = {
+        id: s.id,
+        title: s.title,
+        posterDataUrl: s.poster_url,
+        description: s.description,
+        genre: s.genres || "",
+        language: s.language || "Hindi",
+        createdAt: s.created_at,
+        creator: creator ? {
+          displayName: creator.display_name,
+          username: creator.username,
+          photoDataUrl: creator.photo_url,
+          themeKey: creator.theme_key,
+          totalFanbase,
+        } : null,
+        seasons: [
+          {
+            id: `sn_1_${s.id}`,
+            title: "Season 1",
+            seasonNumber: 1,
+            episodes: epRows.map((ep: any) => ({
+              id: ep.id,
+              episodeNumber: ep.episode_number,
+              title: ep.title,
+              thumbnailDataUrl: null,
+              platform: ep.platform,
+              externalUrl: ep.external_url,
+              description: "",
+            })),
+          },
+        ],
+      };
+      return NextResponse.json({ success: true, series: singleSeries });
+    }
 
     console.log("📥 [GET /api/series] Received query for email/username:", { email, username });
 
@@ -33,15 +89,7 @@ export async function GET(req: Request) {
     }
 
     if (!creatorId) {
-      const [allCreators]: any = await db.query("SELECT id FROM creators ORDER BY updated_at DESC LIMIT 1");
-      if (allCreators.length > 0) {
-        creatorId = allCreators[0].id;
-        console.log("⚠️ [GET /api/series] Matched active creatorId from DB fallback:", creatorId);
-      }
-    }
-
-    if (!creatorId) {
-      console.log("ℹ️ [GET /api/series] No creator found in DB, returning empty series list.");
+      console.log("ℹ️ [GET /api/series] No matching creator found for query, returning empty series list.");
       return NextResponse.json({ success: true, series: [] });
     }
 
@@ -51,41 +99,52 @@ export async function GET(req: Request) {
       [creatorId]
     );
 
-    // Fetch episodes for all series
-    const seriesList = await Promise.all(
-      seriesRows.map(async (s: any) => {
-        const [epRows]: any = await db.query(
-          "SELECT * FROM episodes WHERE series_id = ? ORDER BY episode_number ASC",
-          [s.id]
-        );
+    if (seriesRows.length === 0) {
+      return NextResponse.json({ success: true, series: [] });
+    }
 
-        return {
-          id: s.id,
-          title: s.title,
-          posterDataUrl: s.poster_url,
-          description: s.description,
-          genre: s.genres || "",
-          language: s.language || "Hindi",
-          createdAt: s.created_at,
-          seasons: [
-            {
-              id: `sn_1_${s.id}`,
-              title: "Season 1",
-              seasonNumber: 1,
-              episodes: epRows.map((ep: any) => ({
-                id: ep.id,
-                episodeNumber: ep.episode_number,
-                title: ep.title,
-                thumbnailDataUrl: null,
-                platform: ep.platform,
-                externalUrl: ep.external_url,
-                description: "",
-              })),
-            },
-          ],
-        };
-      })
+    const seriesIds = seriesRows.map((s: any) => s.id);
+    const [epRows]: any = await db.query(
+      "SELECT * FROM episodes WHERE series_id IN (?) ORDER BY episode_number ASC",
+      [seriesIds]
     );
+
+    // Group episodes by series_id
+    const episodesBySeries = new Map<string, any[]>();
+    epRows.forEach((ep: any) => {
+      const list = episodesBySeries.get(ep.series_id) || [];
+      list.push(ep);
+      episodesBySeries.set(ep.series_id, list);
+    });
+
+    const seriesList = seriesRows.map((s: any) => {
+      const eps = episodesBySeries.get(s.id) || [];
+      return {
+        id: s.id,
+        title: s.title,
+        posterDataUrl: s.poster_url,
+        description: s.description,
+        genre: s.genres || "",
+        language: s.language || "Hindi",
+        createdAt: s.created_at,
+        seasons: [
+          {
+            id: `sn_1_${s.id}`,
+            title: "Season 1",
+            seasonNumber: 1,
+            episodes: eps.map((ep: any) => ({
+              id: ep.id,
+              episodeNumber: ep.episode_number,
+              title: ep.title,
+              thumbnailDataUrl: null,
+              platform: ep.platform,
+              externalUrl: ep.external_url,
+              description: "",
+            })),
+          },
+        ],
+      };
+    });
 
     console.log(`✅ [GET /api/series] Returning ${seriesList.length} series for creatorId ${creatorId}`);
     return NextResponse.json({ success: true, series: seriesList });
@@ -101,9 +160,9 @@ export async function POST(req: Request) {
     const body = await req.json();
     console.log("📥 [POST /api/series] Request payload:", body);
 
-    let { email, title, posterDataUrl, description, genre, language, episodes } = body;
+    let { email, title, posterDataUrl, description, genre, language, episodes, isEpisodeOnly } = body;
 
-    if (!title) {
+    if (!isEpisodeOnly && !title) {
       console.error("❌ [POST /api/series] Missing series title!");
       return NextResponse.json({ error: "Series Title is required" }, { status: 400 });
     }
@@ -129,12 +188,6 @@ export async function POST(req: Request) {
       }
     }
 
-    if (!creatorId) {
-      const [allCreators]: any = await db.query("SELECT id FROM creators ORDER BY updated_at DESC LIMIT 1");
-      if (allCreators.length > 0) {
-        creatorId = allCreators[0].id;
-      }
-    }
 
     if (!creatorId) {
       creatorId = `cr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
@@ -147,9 +200,9 @@ export async function POST(req: Request) {
     }
 
     const seriesId = body.seriesId || `ser_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
-    const isEpisodeOnly = Boolean(body.isEpisodeOnly || body.title === "Update" || !title);
+    const isEpisodeOnlyFlag = Boolean(isEpisodeOnly || body.title === "Update" || !title);
 
-    if (!isEpisodeOnly) {
+    if (!isEpisodeOnlyFlag) {
       let finalPosterUrl = posterDataUrl || null;
       if (finalPosterUrl && typeof finalPosterUrl === "string" && finalPosterUrl.startsWith("data:image/")) {
         try {
@@ -216,16 +269,7 @@ export async function POST(req: Request) {
     }
 
     // Record / Update current step in creator_onboarding_steps table (1 row per email)
-    try {
-      await db.query(
-        `INSERT INTO creator_onboarding_steps (email, creator_id, step_name, is_completed, completed_at)
-         VALUES (?, ?, 'series', TRUE, NOW())
-         ON DUPLICATE KEY UPDATE creator_id = VALUES(creator_id), step_name = 'series', is_completed = TRUE, completed_at = NOW()`,
-        [email, creatorId]
-      );
-    } catch (e: any) {
-      console.warn("⚠️ Could not record series step:", e.message);
-    }
+    await recordOnboardingStep(email, "series", creatorId);
 
     return NextResponse.json({ success: true, message: "Series created in MySQL", seriesId });
   } catch (err: any) {

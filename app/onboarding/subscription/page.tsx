@@ -6,7 +6,6 @@ import { Sparkles, ShieldCheck } from "lucide-react";
 import { OnboardingLayout } from "@/layouts/OnboardingLayout";
 import { Button } from "@/components/ui/Button";
 import { SubscriptionService } from "@/services/SubscriptionService";
-import { PaidCheckoutService } from "@/services/PaidCheckoutService";
 import { OnboardingService } from "@/services/OnboardingService";
 import { BillingCycle, PlanKey } from "@/types";
 import { useToast } from "@/contexts/ToastContext";
@@ -15,84 +14,43 @@ import { PricingTable } from "@/components/subscription/PricingTable";
 export default function SubscriptionStepPage() {
   const router = useRouter();
   const { showToast } = useToast();
-  const [selectedPlan, setSelectedPlan] = useState<PlanKey>("pro");
-  const [cycle, setCycle] = useState<BillingCycle>("yearly");
+  const [selectedPlan, setSelectedPlan] = useState<PlanKey>("creator");
+  const [cycle, setCycle] = useState<BillingCycle>("monthly");
   const [activating, setActivating] = useState(false);
-
-  const planMeta = SubscriptionService.getPlan(selectedPlan);
 
   function handleActivate() {
     setActivating(true);
 
-    // Starter Free Plan activates instantly — no payment required.
-    if (selectedPlan === "starter") {
-      setTimeout(() => {
-        SubscriptionService.activate(selectedPlan, cycle);
-        OnboardingService.setStep("finish");
-        setActivating(false);
-        showToast("Starter Free Plan activated — you're all set! 🎉");
-        router.push("/onboarding/finish");
-      }, 200);
-      return;
-    }
-
-    // Paid plans open Razorpay Checkout to authorize payment/subscription;
-    // if Razorpay keys aren't configured in environment, fallback to direct trial activation.
-    PaidCheckoutService.start(selectedPlan, cycle, {
-      onActivated: (sub) => {
-        OnboardingService.setStep("finish");
-        setActivating(false);
-        const plan = SubscriptionService.getPlan(sub.planKey);
-        showToast(`${plan.name} Plan added! Your 7-Day Free Trial has started 🎉`);
-        router.push("/onboarding/finish");
-      },
-      onError: (message) => {
-        console.warn("Razorpay checkout fallback to direct trial activation:", message);
-        SubscriptionService.activate(selectedPlan, cycle);
-        OnboardingService.setStep("finish");
-        setActivating(false);
-        const plan = SubscriptionService.getPlan(selectedPlan);
-        showToast(`${plan.name} Plan activated! Start your 7-Day Free Trial 🎉`);
-        router.push("/onboarding/finish");
-      },
-      onDismiss: () => setActivating(false),
-    });
+    // Direct activation for Early Access phase (No payment/subscription required today).
+    setTimeout(() => {
+      SubscriptionService.activate(selectedPlan, cycle);
+      OnboardingService.setStep("finish");
+      setActivating(false);
+      showToast("Inflixo Early Access Pass Activated! 100% Free 🚀");
+      router.push("/onboarding/finish");
+    }, 250);
   }
 
   return (
     <OnboardingLayout step="subscription">
-      <div className="flex items-center gap-2 text-xs font-bold text-inflixo-purple uppercase tracking-wider mb-1">
+      <div className="flex items-center gap-2 text-xs font-bold text-purple-600 uppercase tracking-wider mb-1">
         <Sparkles className="h-3.5 w-3.5" />
-        Step 5 • Select Subscription Plan
+        Step 5 • Select Creator Plan
       </div>
-      <h1 className="text-3xl font-extrabold leading-[1.15] tracking-tight text-inflixo-navy sm:text-4xl">
+      <h1 className="text-3xl font-extrabold leading-[1.15] tracking-tight text-slate-900 sm:text-4xl">
         Pick your <span className="text-gradient-premium">creator plan</span>
       </h1>
-      <p className="mt-2 text-[15px] text-muted leading-relaxed">
-        Choose the best plan for your content goals. All plans include a 7-day free trial.
+      <p className="mt-2 text-[15px] text-slate-500 leading-relaxed font-medium">
+        Build your official Creator Home. Free Early Access active — no subscription or credit card needed today.
       </p>
 
       <div className="mt-6">
-        <PricingTable
-          selectedPlan={selectedPlan}
-          onSelectPlan={setSelectedPlan}
-          billingCycle={cycle}
-          onBillingCycleChange={setCycle}
-          onConfirm={handleActivate}
-          confirmLoading={activating}
-          ctaText={
-            selectedPlan === "free"
-              ? `Get Started Free (${planMeta.name})`
-              : `Pay & Start Free Trial (${planMeta.name})`
-          }
-        />
+        <PricingTable />
       </div>
 
-      <div className="mt-6 flex items-center justify-center gap-1.5 text-xs text-muted font-medium">
+      <div className="mt-6 flex items-center justify-center gap-1.5 text-xs text-slate-500 font-medium">
         <ShieldCheck className="h-4 w-4 text-emerald-500" />
-        {selectedPlan === "free"
-          ? "Free Basic — No card or payment needed"
-          : "Paid plans authorize your card via Razorpay now; first charge is after the 7-day trial"}
+        <span>Early Access Active — Free Profile &amp; up to 3 Series Listing</span>
       </div>
 
       {/* Step 5 Sticky Bottom Navigation Actions (Back + Activate) */}
@@ -101,10 +59,9 @@ export default function SubscriptionStepPage() {
           Back
         </Button>
         <Button fullWidth size="lg" loading={activating} onClick={handleActivate}>
-          {selectedPlan === "free" ? `Get Started Free (${planMeta.name})` : `Pay & Start Free Trial (${planMeta.name})`} →
+          Join Free Early Access →
         </Button>
       </div>
     </OnboardingLayout>
   );
 }
-

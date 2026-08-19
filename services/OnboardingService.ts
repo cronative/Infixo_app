@@ -7,15 +7,7 @@ import {
   seriesRepository,
   socialRepository,
   subscriptionRepository,
-  themeRepository,
 } from "@/repositories/localRepository";
-import {
-  DEMO_PROFILE,
-  DEMO_SOCIALS,
-  DEMO_THEME,
-  DEMO_SERIES,
-  DEMO_SUBSCRIPTION,
-} from "@/data/demoCreator";
 import { OnboardingStep } from "@/types";
 
 export const OnboardingService = {
@@ -30,15 +22,6 @@ export const OnboardingService = {
     return SubscriptionService.get().status === "active" && ProfileService.hasProfile();
   },
 
-  /** Seeds the entire app with the demo creator (used by "View demo" / first run). */
-  seedDemoData(): void {
-    profileRepository.save(DEMO_PROFILE);
-    socialRepository.save(DEMO_SOCIALS);
-    themeRepository.save(DEMO_THEME);
-    seriesRepository.saveAll(DEMO_SERIES);
-    subscriptionRepository.save(DEMO_SUBSCRIPTION);
-  },
-
   reset(): void {
     profileRepository.save({
       photoDataUrl: null,
@@ -49,14 +32,14 @@ export const OnboardingService = {
       updatedAt: new Date().toISOString(),
     });
     SocialService.reset();
-    ThemeService.setSelectedTheme("modern-purple");
+    ThemeService.setSelectedTheme("minimal-white");
     seriesRepository.saveAll([]);
     subscriptionRepository.save({
-      planKey: "pro",
-      planName: "Pro Plan",
+      planKey: "early_access",
+      planName: "Early Access",
       billingCycle: "yearly",
-      status: "trial",
-      activatedAt: null,
+      status: "active",
+      activatedAt: new Date().toISOString(),
     });
     onboardingRepository.saveStep("profile");
   },

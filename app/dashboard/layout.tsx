@@ -7,7 +7,8 @@ import { AuthService } from "@/services/AuthService";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { DashboardBottomNav } from "@/components/dashboard/DashboardBottomNav";
 import { DashboardMobileHeader } from "@/components/dashboard/DashboardMobileHeader";
-import { LogOut, Copy } from "lucide-react";
+import { DashboardSideDrawer } from "@/components/dashboard/DashboardSideDrawer";
+import { LogOut, Copy, Menu } from "lucide-react";
 import { useToast } from "@/contexts/ToastContext";
 
 function DesktopTopHeader() {
@@ -29,7 +30,7 @@ function DesktopTopHeader() {
             navigator.clipboard.writeText(`https://inflixo.com/${profile.username || "you"}`);
             showToast("Link copied to clipboard");
           }}
-          className="flex items-center gap-2 rounded-xl border border-inflixo-border bg-white px-3.5 py-2 text-xs font-semibold text-inflixo-navy shadow-[var(--shadow-soft)] transition-all hover:-translate-y-px hover:shadow-[var(--shadow-hover)]"
+          className="flex items-center gap-2 rounded-xl border border-inflixo-border bg-white px-3.5 py-2 text-xs font-semibold text-inflixo-navy shadow-[var(--shadow-soft)] transition-all hover:-translate-y-px hover:shadow-[var(--shadow-hover)] cursor-pointer"
         >
           <Copy className="h-3.5 w-3.5" /> Copy Link
         </button>
@@ -38,7 +39,7 @@ function DesktopTopHeader() {
             AuthService.logout();
             router.push("/login");
           }}
-          className="flex items-center gap-2 rounded-xl border border-inflixo-border px-3.5 py-2 text-xs font-semibold text-muted transition-colors hover:bg-rose-50 hover:text-rose-600"
+          className="flex items-center gap-2 rounded-xl border border-inflixo-border px-3.5 py-2 text-xs font-semibold text-muted transition-colors hover:bg-rose-50 hover:text-rose-600 cursor-pointer"
         >
           <LogOut className="h-3.5 w-3.5" /> Logout
         </button>
@@ -48,6 +49,8 @@ function DesktopTopHeader() {
 }
 
 function Shell({ children }: { children: ReactNode }) {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-background">
       {/* Desktop Sidebar (Static / Fixed Left Side) */}
@@ -59,16 +62,19 @@ function Shell({ children }: { children: ReactNode }) {
         <DesktopTopHeader />
 
         {/* Mobile Navigation Header (Fixed Top) */}
-        <DashboardMobileHeader />
+        <DashboardMobileHeader onOpenDrawer={() => setDrawerOpen(true)} />
 
-        {/* Scrollable Content Viewport (Only inner area scrolls) */}
-        <main className="flex-1 overflow-y-auto pb-24 lg:pb-8">
+        {/* Scrollable Content Viewport (Only inner area scrolls with full bottom clearance above fixed nav) */}
+        <main className="flex-1 overflow-y-auto pb-32 lg:pb-8">
           {children}
         </main>
       </div>
 
       {/* Mobile Fixed Bottom Navigation Bar */}
       <DashboardBottomNav />
+
+      {/* Side Drawer Overlay Menu */}
+      <DashboardSideDrawer isOpen={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </div>
   );
 }

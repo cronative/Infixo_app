@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { verifySubscriptionPaymentSignature, getRazorpayKeys } from "@/lib/razorpay";
+import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 
 // POST /api/razorpay/verify-subscription
 // Called by the client right after Razorpay Checkout's `handler` callback
@@ -68,16 +69,7 @@ export async function POST(req: Request) {
       [status, creatorId]
     );
 
-    try {
-      await db.query(
-        `INSERT INTO creator_onboarding_steps (email, creator_id, step_name, is_completed, completed_at)
-         VALUES (?, ?, 'finish', TRUE, NOW())
-         ON DUPLICATE KEY UPDATE creator_id = VALUES(creator_id), step_name = 'finish', is_completed = TRUE, completed_at = NOW()`,
-        [email, creatorId]
-      );
-    } catch (e: any) {
-      console.warn("⚠️ Could not record subscription finish step:", e.message);
-    }
+    await recordOnboardingStep(email, "finish", creatorId);
 
     return NextResponse.json({
       success: true,

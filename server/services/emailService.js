@@ -12,40 +12,68 @@ const transporter = nodemailer.createTransport({
 });
 
 async function sendOtpEmail(toEmail, otpCode) {
-  const from = process.env.EMAIL_FROM || '"Inflixo App" <inflixoapp@gmail.com>';
+  const from = process.env.EMAIL_FROM || '"Inflixo" <inflixoapp@gmail.com>';
 
   const html = `
-    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 520px; margin: 0 auto; padding: 32px; border-radius: 24px; background-color: #ffffff; border: 1px solid #e9e5f5; box-shadow: 0 10px 30px rgba(109,40,217,0.08);">
-      <div style="text-align: center; margin-bottom: 24px;">
-        <span style="font-size: 24px; font-weight: 900; background: linear-gradient(135deg, #6d28d9, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-          ✨ INFLIXO
-        </span>
-      </div>
-      
-      <h2 style="color: #17141f; font-size: 20px; font-weight: 800; text-align: center; margin-bottom: 8px;">
-        Verify Your Creator Email
-      </h2>
-      <p style="color: #646077; font-size: 14px; text-align: center; line-height: 1.5; margin-bottom: 28px;">
-        Use the verification code below to log in to your Inflixo account. This code expires in 10 minutes.
-      </p>
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="margin:0; padding:32px 16px; background-color:#ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+        <div style="max-width: 440px; margin: 0 auto; padding: 32px 24px; border-radius: 20px; background-color: #ffffff; border: 1px solid #E9E3F5; text-align: center;">
+          <!-- Inflixo Logo -->
+          <div style="margin-bottom: 24px;">
+            <span style="font-size: 22px; font-weight: 900; color: #651FFF; letter-spacing: -0.5px;">
+              Inflixo
+            </span>
+          </div>
 
-      <div style="background: linear-gradient(135deg, #f5f1fb, #fdf2f8); border: 2px dashed #d8b4fe; border-radius: 18px; padding: 20px; text-align: center; margin-bottom: 28px;">
-        <span style="font-size: 38px; font-weight: 900; letter-spacing: 12px; color: #6d28d9; font-family: monospace;">
-          ${otpCode}
-        </span>
-      </div>
+          <!-- Heading -->
+          <h1 style="margin: 0 0 8px 0; color: #0F172A; font-size: 20px; font-weight: 800; tracking-tight: -0.5px;">
+            Your sign-in code
+          </h1>
 
-      <p style="color: #948fa8; font-size: 12px; text-align: center; line-height: 1.4;">
-        If you didn't request this email, you can safely ignore it.
-      </p>
-    </div>
+          <!-- Subtitle -->
+          <p style="margin: 0 0 24px 0; color: #64748B; font-size: 14px; font-weight: 500; line-height: 1.4;">
+            Use this code to sign in to Inflixo.
+          </p>
+
+          <!-- 4-Digit Code Box -->
+          <div style="background-color: #FAF9FF; border: 1px solid #E9E3F5; border-radius: 16px; padding: 18px; margin-bottom: 20px;">
+            <span style="font-size: 36px; font-weight: 900; letter-spacing: 12px; color: #651FFF; font-family: monospace;">
+              ${otpCode}
+            </span>
+          </div>
+
+          <!-- Expiry Notice -->
+          <p style="margin: 0 0 20px 0; color: #64748B; font-size: 13px; font-weight: 600;">
+            Expires in 10 minutes.
+          </p>
+
+          <!-- Disclaimer -->
+          <p style="margin: 0 0 24px 0; color: #94A3B8; font-size: 12px; line-height: 1.4;">
+            Didn't request this?<br />
+            You can safely ignore this email.
+          </p>
+
+          <!-- Divider -->
+          <div style="border-top: 1px solid #E9E3F5; padding-top: 20px;">
+            <p style="margin: 0; color: #94A3B8; font-size: 11px; font-weight: 500;">
+              &copy; 2026 Inflixo &middot; A product by TrustIQ Labs
+            </p>
+          </div>
+        </div>
+      </body>
+    </html>
   `;
 
   try {
     await transporter.sendMail({
       from,
       to: toEmail,
-      subject: `Your Inflixo Login OTP: ${otpCode}`,
+      subject: `${otpCode} is your Inflixo sign-in code`,
       html,
     });
     console.log(`✉️ OTP Email sent successfully to ${toEmail}`);

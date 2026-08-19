@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 
 export async function POST(req: Request) {
   try {
@@ -43,16 +44,7 @@ export async function POST(req: Request) {
     await db.query("UPDATE otps SET is_used = TRUE WHERE id = ?", [otpRows[0].id]);
 
     // Record / Update current step in creator_onboarding_steps table (1 row per email)
-    try {
-      await db.query(
-        `INSERT INTO creator_onboarding_steps (email, step_name, is_completed, completed_at)
-         VALUES (?, 'otp_verified', TRUE, NOW())
-         ON DUPLICATE KEY UPDATE step_name = 'otp_verified', is_completed = TRUE, completed_at = NOW()`,
-        [email]
-      );
-    } catch (e: any) {
-      console.warn("⚠️ Could not record otp_verified step:", e.message);
-    }
+    await recordOnboardingStep(email, "otp_verified");
 
     // 3. Fetch Creator details from MySQL database
     const [rows]: any = await db.query(
@@ -68,6 +60,18 @@ export async function POST(req: Request) {
     let socialRows: any[] = [];
 
     if (creator) {
+      // Ensure Early Access subscription is active in MySQL
+      try {
+        await db.query(
+          `INSERT INTO subscriptions (creator_id, plan_key, plan_name, billing_cycle, status, activated_at)
+           VALUES (?, 'early_access', 'Early Access', 'yearly', 'active', NOW())
+           ON DUPLICATE KEY UPDATE plan_key = 'early_access', plan_name = 'Early Access', status = 'active'`,
+          [creator.id]
+        );
+      } catch (e: any) {
+        console.warn("⚠️ Subscription upsert error in verify-otp:", e.message);
+      }
+
       const [sRows]: any = await db.query(
         `SELECT * FROM social_accounts WHERE creator_id = ?`,
         [creator.id]
@@ -116,14 +120,14 @@ export async function POST(req: Request) {
             photoUrl: creator.photo_url,
             category: creator.category,
             bio: creator.bio,
-            themeKey: creator.theme_key,
+            themeKey: (!creator.theme_key || creator.theme_key === "modern-purple") ? "minimal-white" : creator.theme_key,
             onboardingStep: currentStep,
             isVerified: Boolean(creator.is_verified),
             subscription: {
-              planKey: creator.plan_key || "pro",
-              planName: creator.plan_name || "Pro Plan",
+              planKey: creator.plan_key || "early_access",
+              planName: creator.plan_name || "Early Access",
               billingCycle: creator.billing_cycle || "yearly",
-              status: creator.sub_status || "trial",
+              status: creator.sub_status || "active",
             },
             socials: socialRows,
           }

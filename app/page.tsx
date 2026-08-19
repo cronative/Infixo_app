@@ -4,558 +4,635 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  Sparkles,
   ArrowRight,
+  Sparkles,
   Play,
-  Tv,
-  Share2,
-  Palette,
-  CheckCircle2,
+  Film,
+  Check,
   Zap,
-  Heart,
-  UserCheck,
-  Clapperboard,
-  Flame,
-  Layers,
+  Sparkle,
+  ExternalLink,
   ChevronDown,
-  HelpCircle,
-  TrendingUp,
-  Eye,
-  Star,
-  ShieldCheck,
+  Palette,
 } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
-import { CreatorCollage } from "@/components/shared/CreatorCollage";
-import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
-import { Button } from "@/components/ui/Button";
-import { AuthService } from "@/services/AuthService";
-import { DEMO_PROFILE, DEMO_SOCIALS } from "@/data/demoCreator";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
+import { AuthService } from "@/services/AuthService";
+import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
+import { PricingTable } from "@/components/subscription/PricingTable";
+import { CreatorProfile, SocialAccounts, Series, ThemeKey } from "@/types";
 
-const HERO_TAGLINES = [
-  "✨ Give your videos a home your fans will actually love",
-  "🎬 Turn your multi-part reels into clean OTT show series",
-  "📈 Show your total combined reach across Instagram, YouTube & FB",
-  "👑 Match your creator brand with 20+ aesthetic light & dark themes",
-  "🚀 One simple bio link for all your videos, socials, and content",
-  "📊 Keep track of your growing audience in real time",
-  "🎥 Turn casual video viewers into loyal show subscribers",
-  "⚡ Instant cloud sync • fast, reliable & simple to manage",
-  "🌐 Set up your complete creator page in under 2 minutes",
-  "📺 A TV-style watching experience for your YouTube & Instagram content",
-  "💬 Share your bio, city location, socials, and series in one link",
-  "🎯 Built specifically for vloggers, sketch creators & video makers",
-];
+const DEMO_PROFILE: CreatorProfile = {
+  displayName: "Tony Stark",
+  username: "tonystark",
+  category: "Technology & AI",
+  bio: "🚀 Genius, Tech Creator & Founder of Stark Industries ✨ Building AI, Robotics & Armor Series",
+  photoDataUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
+  updatedAt: new Date().toISOString(),
+};
 
-const DEMO_THEMES = [
-  { key: "navy", label: "🌌 Midnight Navy", bg: "bg-gradient-to-r from-slate-900 via-[#081028] to-blue-950 text-white" },
-  { key: "purple", label: "💜 Glass Violet", bg: "bg-gradient-to-r from-purple-600 to-indigo-600 text-white" },
-  { key: "dark", label: "🌙 Dark Velvet", bg: "bg-slate-900 text-white" },
-  { key: "magenta", label: "💖 Hot Pink", bg: "bg-gradient-to-r from-rose-500 to-pink-600 text-white" },
-];
-
-function HeroTaglineRotator() {
-  const [index, setIndex] = useState(0);
-  const [visible, setVisible] = useState(true);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setVisible(false);
-      setTimeout(() => {
-        setIndex((prev) => (prev + 1) % HERO_TAGLINES.length);
-        setVisible(true);
-      }, 300);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <div className="inline-flex items-center gap-2 rounded-full border border-slate-300/80 bg-white/95 px-4 py-2 text-xs sm:text-sm font-bold text-slate-800 shadow-md shadow-slate-900/10 backdrop-blur-md min-h-[38px] transition-all hover:scale-105">
-      <Sparkles className="h-4 w-4 text-blue-600 animate-pulse shrink-0" />
-      <span
-        className={`transition-all duration-300 transform ${visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
-          }`}
-      >
-        {HERO_TAGLINES[index]}
-      </span>
-    </div>
-  );
-}
-
-const FAQS = [
-  {
-    q: "Is Inflixo free to use for creators?",
-    a: "Yes! Creating your Inflixo page is 100% free. You can add your profile, connect your Instagram, YouTube & Facebook handles, organize video series into seasons & episodes, and share your link without any credit card.",
+const DEMO_SOCIALS: SocialAccounts = {
+  instagram: {
+    url: "https://instagram.com/tonystark",
+    followers: 4800000,
+    posts: 420,
+    username: "tonystark",
+    name: "Tony Stark",
   },
-  {
-    q: "How does Inflixo help me organize multi-part video series?",
-    a: "On social media feeds, Part 1, Part 2, & Part 3 of your comedy sketch or travel vlog get separated by algorithm recommendations. Inflixo lets you group those videos into clean Season & Episode cards so your fans can binge your full series in exact order.",
+  youtube: {
+    url: "https://youtube.com/tonystark",
+    subscribers: 12500000,
+    videos: 150,
+    totalViews: 85000000,
+    username: "tonystark",
+    channelTitle: "Stark Tech Vlogs",
   },
-  {
-    q: "Can I connect Instagram, YouTube, and Facebook to show my total reach?",
-    a: "Yes! Inflixo automatically fetches your follower counts and video view metrics across Instagram, YouTube, and Facebook to calculate your total combined creator audience.",
+  facebook: {
+    url: "https://facebook.com/tonystark",
+    followers: 3200000,
+    posts: 310,
+    username: "tonystark",
+    name: "Tony Stark Official",
   },
+  updatedAt: new Date().toISOString(),
+};
+
+const DEMO_SERIES: Series[] = [
   {
-    q: "Where do I share my Inflixo link?",
-    a: "Once you set up your page, you get a custom link like inflixo.com/yourname. Place this single link in your Instagram bio, YouTube video descriptions, TikTok bio, or Twitter profile!",
-  },
-  {
-    q: "Can I customize the design and theme of my page?",
-    a: "Absolutely! You can choose from over 20+ aesthetic designs—including Midnight Navy, Glassmorphism, Soft Violet, Cyberpunk, and Dark Mode themes—and switch between them anytime in a single tap.",
-  },
-  {
-    q: "How long does it take to set up my page?",
-    a: "It takes less than 2 minutes! Just log in with your email OTP, enter your name and category, link your social accounts, and your public creator page is live instantly.",
+    id: "demo-s1",
+    title: "Iron Tech Series",
+    posterDataUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=80",
+    description: "4-part tech breakdown of Arc Reactor & J.A.R.V.I.S",
+    genre: "Technology",
+    language: "English",
+    seasons: [
+      {
+        id: "s1",
+        seasonNumber: 1,
+        title: "Season 1",
+        episodes: [
+          { id: "e1", episodeNumber: 1, title: "Part 01: Arc Reactor Tech", thumbnailDataUrl: null, platform: "YouTube", externalUrl: "https://youtube.com", description: "" },
+          { id: "e2", episodeNumber: 2, title: "Part 02: Building Mark I", thumbnailDataUrl: null, platform: "YouTube", externalUrl: "https://youtube.com", description: "" },
+          { id: "e3", episodeNumber: 3, title: "Part 03: J.A.R.V.I.S AI System", thumbnailDataUrl: null, platform: "YouTube", externalUrl: "https://youtube.com", description: "" },
+          { id: "e4", episodeNumber: 4, title: "Part 04: Nanotech Flight Test", thumbnailDataUrl: null, platform: "YouTube", externalUrl: "https://youtube.com", description: "" },
+        ],
+      },
+    ],
+    createdAt: new Date().toISOString(),
   },
 ];
 
-function FaqAccordion() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
-
-  return (
-    <div className="space-y-4 max-w-3xl mx-auto">
-      {FAQS.map((faq, i) => {
-        const isOpen = openIndex === i;
-        return (
-          <div
-            key={i}
-            className="rounded-3xl border border-slate-200 bg-white shadow-xs overflow-hidden transition-all duration-300 hover:border-slate-400 hover:shadow-md"
-          >
-            <button
-              type="button"
-              onClick={() => setOpenIndex(isOpen ? null : i)}
-              className="w-full flex items-center justify-between p-6 text-left font-extrabold text-slate-900 text-base sm:text-lg gap-4"
-            >
-              <span>{faq.q}</span>
-              <ChevronDown
-                className={`h-5 w-5 text-blue-600 shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""
-                  }`}
-              />
-            </button>
-            {isOpen && (
-              <div className="px-6 pb-6 pt-0 text-sm text-slate-600 leading-relaxed border-t border-slate-100 mt-1 animate-fade-in">
-                {faq.a}
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
+const PREVIEW_THEMES: { key: ThemeKey; name: string }[] = [
+  { key: "minimal-white", name: "Soft Minimal" },
+  { key: "modern-purple", name: "Electric Purple" },
+  { key: "midnight", name: "Midnight Dark" },
+  { key: "cyberpunk", name: "Cyberpunk Neon" },
+  { key: "emerald-luxe", name: "Emerald Luxe" },
+  { key: "ocean-blue", name: "Ocean Blue" },
+];
 
 export default function LandingHomePage() {
   const router = useRouter();
   const isLoggedIn = AuthService.isLoggedIn();
-  const [activeTab, setActiveTab] = useState<"card" | "series">("card");
-  const [activeTheme, setActiveTheme] = useState("navy");
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [currentThemeIndex, setCurrentThemeIndex] = useState(0);
+
+  useEffect(() => {
+    if (AuthService.isLoggedIn()) {
+      router.replace("/dashboard");
+    } else {
+      setCheckingAuth(false);
+    }
+  }, [router]);
+
+  // 5-Second Auto-Theme Switcher for Hero Phone Mockup
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentThemeIndex((prev) => (prev + 1) % PREVIEW_THEMES.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const [username, setUsername] = useState("");
+  const activeTheme = PREVIEW_THEMES[currentThemeIndex];
+
+  function handleClaim(un: string) {
+    const trimmed = un.trim().toLowerCase().replace(/[^a-z0-9_]/g, "");
+    if (trimmed) {
+      router.push(`/login?claim=${trimmed}`);
+    } else {
+      router.push("/login");
+    }
+  }
+
+  if (checkingAuth && isLoggedIn) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center bg-[#FAF8FF]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-3 border-[#651FFF] border-t-transparent" />
+          <p className="text-xs font-bold text-slate-500">Redirecting to dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-dvh bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-slate-200 selection:text-slate-900 overflow-x-hidden">
-      {/* Sticky Top Navbar */}
-      <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl safe-top">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
+    <div className="min-h-dvh bg-[#FAF8FF] text-[#0F172A] flex flex-col font-sans selection:bg-purple-100 selection:text-[#651FFF] overflow-x-hidden relative">
+      {/* GLOBAL FLOATING BACKGROUND ANIMATED GRADIENT ORBS */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute -top-20 -right-20 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-[#651FFF]/15 via-purple-300/20 to-transparent blur-[90px] animate-orb-1" />
+        <div className="absolute top-[35%] -left-32 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-purple-200/40 via-[#651FFF]/10 to-transparent blur-[110px] animate-orb-2" />
+        <div className="absolute bottom-10 -right-32 w-[550px] h-[550px] rounded-full bg-gradient-to-bl from-[#651FFF]/12 via-indigo-200/30 to-transparent blur-[100px] animate-orb-1" />
+      </div>
+
+      {/* 1. NAVBAR */}
+      <header className="safe-top sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-purple-100/80 transition-all">
+        <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 sm:px-8">
           <Logo size="md" />
 
-          {/* Right Action Buttons */}
+          {/* Nav Links */}
+          <nav className="hidden md:flex items-center gap-7 text-sm font-semibold text-slate-600">
+            <a href="#total-fanbase" className="hover:text-[#651FFF] transition-colors">
+              Total Fanbase
+            </a>
+            <a href="#series-solution" className="hover:text-[#651FFF] transition-colors">
+              Series
+            </a>
+            <a href="#pricing" className="hover:text-[#651FFF] transition-colors">
+              Pricing
+            </a>
+          </nav>
+
+          {/* Action Buttons */}
           <div className="flex items-center gap-3">
             {isLoggedIn ? (
-              <Button
+              <button
+                type="button"
                 onClick={() => router.push("/dashboard")}
-                icon={<ArrowRight className="h-4 w-4" />}
-                className="bg-gradient-to-r from-[#7C3AED] via-[#6D28D9] to-[#5B21B6] text-white shadow-md shadow-purple-500/20 hover:shadow-lg hover:scale-105 transition-all"
+                className="inline-flex items-center gap-2 rounded-full bg-[#651FFF] px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple-600/20 hover:bg-[#500CD6] hover:scale-105 transition-all cursor-pointer"
               >
-                Go to Dashboard
-              </Button>
+                Dashboard
+                <ArrowRight className="h-4 w-4" />
+              </button>
             ) : (
               <>
                 <Link
                   href="/login"
-                  className="tap-scale px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-700 hover:text-purple-600 transition-colors"
+                  className="px-3.5 py-2 text-sm font-semibold text-[#0F172A] hover:text-[#651FFF] transition-colors"
                 >
-                  Log In
+                  Log in
                 </Link>
-                <Button
+                <button
+                  type="button"
                   onClick={() => router.push("/login")}
-                  icon={<Sparkles className="h-4 w-4" />}
-                  className="bg-gradient-to-r from-[#7C3AED] via-[#6D28D9] to-[#5B21B6] text-white shadow-md shadow-purple-500/20 hover:shadow-lg hover:scale-105 transition-all"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#651FFF] px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple-600/20 hover:bg-[#500CD6] hover:scale-105 transition-all cursor-pointer"
                 >
-                  Get Started Free
-                </Button>
+                  Create Your Free Page
+                </button>
               </>
             )}
           </div>
         </div>
       </header>
 
-      {/* High Energy Hero Section */}
-      <section className="relative overflow-hidden pt-12 pb-24 sm:pt-20 sm:pb-32 bg-gradient-to-b from-slate-100/80 via-white to-slate-50">
-        {/* Animated Background Blobs & Glowing Orbs */}
-        <div className="absolute top-10 left-1/2 -translate-x-1/2 h-[550px] w-[550px] rounded-full bg-gradient-to-tr from-blue-300/30 via-slate-200/50 to-indigo-200/30 blur-3xl pointer-events-none animate-blob" />
-        <div className="absolute -top-20 -right-20 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl pointer-events-none animate-blob" />
-
-        {/* Floating GenZ Emoji Particles */}
-        <div className="hidden sm:block absolute top-16 left-12 animate-float text-2xl pointer-events-none">🎬</div>
-        <div className="hidden sm:block absolute top-28 right-16 animate-float-reverse text-2xl pointer-events-none">🔥</div>
-        <div className="hidden sm:block absolute bottom-20 left-20 animate-float text-2xl pointer-events-none">🚀</div>
-        <div className="hidden sm:block absolute bottom-32 right-12 animate-float-reverse text-2xl pointer-events-none">🍿</div>
-
-        <div className="mx-auto max-w-6xl px-5 sm:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      {/* 2. HERO SECTION — DYNAMIC 10-SECOND AUTO THEME SWITCHER */}
+      <section className="relative overflow-hidden pt-12 pb-20 sm:pt-20 sm:pb-28 bg-[#FAF8FF] z-10">
+        <div className="mx-auto max-w-[1200px] px-5 sm:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             {/* Left Hero Column */}
-            <div className="lg:col-span-7 space-y-6 text-center lg:text-left animate-slide-up">
-              {/* Tagline Rotator Badge */}
-              <HeroTaglineRotator />
-
-              {/* Shimmer Headline */}
-              <h1 className="font-display text-4xl sm:text-6xl font-extrabold leading-[1.12] tracking-tight text-slate-900">
-                Give your videos a home <br />
-                <span className="bg-gradient-to-r from-[#7C3AED] via-[#6D28D9] to-purple-800 bg-clip-text text-transparent">
-                  your fans will actually love
-                </span>
+            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+              {/* Main H1 Big Headline */}
+              <h1 className="font-display text-[40px] sm:text-[58px] font-bold leading-[1.12] tracking-normal text-[#0F172A]">
+                ARE YOU A CONTENT CREATOR?
               </h1>
 
-              {/* Conversational Subheading */}
-              <p className="text-base sm:text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-medium">
-                Stop letting feed algorithms scatter your hard work. Put your YouTube videos, Instagram Reels, and social links into one clean, TV-style creator page.
+              {/* Sub-header */}
+              <p className="text-lg sm:text-[23px] font-semibold leading-relaxed tracking-normal text-[#651FFF]">
+                Your content is everywhere. <br className="hidden sm:inline" />
+                <span className="text-[#0F172A] italic font-normal">Your creator identity shouldn&apos;t be.</span>
               </p>
 
-              {/* High-Energy Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-3">
-                <Button
-                  size="lg"
-                  onClick={() => router.push("/login")}
-                  icon={<Sparkles className="h-5 w-5 animate-spin-slow" />}
-                  className="w-full sm:w-auto px-9 py-4 text-base bg-gradient-to-r from-[#7C3AED] via-[#6D28D9] to-[#5B21B6] text-white shadow-xl shadow-purple-500/25 hover:shadow-2xl hover:scale-105 transition-all"
+              {/* Single Clean Description */}
+              <p className="text-base sm:text-lg font-medium text-slate-600 leading-relaxed max-w-xl mx-auto lg:mx-0">
+                Bring your <strong className="text-[#0F172A] font-bold">Total Fanbase</strong>, socials, and organized content <span className="italic font-bold text-[#651FFF]">Series</span> together into one simple page.
+              </p>
+
+              {/* Username Claim Input & Primary CTA */}
+              <div className="max-w-md mx-auto lg:mx-0 space-y-2.5 pt-2">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleClaim(username);
+                  }}
+                  className="flex items-center rounded-full border-2 border-purple-200 bg-white p-1.5 shadow-xl shadow-purple-500/10 focus-within:border-[#651FFF] focus-within:ring-4 focus-within:ring-purple-100 transition-all"
                 >
-                  Create Your Free Page
-                </Button>
-                <Link
-                  href="/tonystark"
-                  className="w-full sm:w-auto tap-scale inline-flex items-center justify-center gap-2 rounded-full border border-purple-200 bg-white px-8 py-3.5 text-sm font-bold text-slate-800 shadow-md transition-all hover:border-purple-300 hover:bg-purple-50/70 hover:text-purple-600 hover:scale-105"
-                >
-                  <Play className="h-4 w-4 text-purple-600 fill-purple-600" />
-                  <span>See Live Demo Page</span>
-                </Link>
-              </div>
-
-              {/* Trust Points Badges */}
-              <div className="pt-6 flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs sm:text-sm font-semibold text-slate-600">
-                <div className="flex items-center gap-2 bg-white/90 px-4 py-2 rounded-full border border-slate-200 shadow-sm backdrop-blur-md hover:scale-105 transition-transform">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                  <span>100% Free to start</span>
-                </div>
-                <div className="flex items-center gap-2 bg-white/90 px-4 py-2 rounded-full border border-slate-200 shadow-sm backdrop-blur-md hover:scale-105 transition-transform">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                  <span>Automatic Cloud Sync</span>
-                </div>
-                <div className="flex items-center gap-2 bg-white/90 px-4 py-2 rounded-full border border-slate-200 shadow-sm backdrop-blur-md hover:scale-105 transition-transform">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                  <span>20+ Aesthetic Themes</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Interactive Live Preview Card Column */}
-            <div className="lg:col-span-5 flex flex-col items-center relative">
-              {/* Floating Instagram Badge */}
-              <div className="hidden sm:flex animate-float absolute -top-8 -left-8 z-30 items-center gap-2.5 rounded-2xl border border-pink-200 bg-white/95 px-4 py-2.5 shadow-xl backdrop-blur-md hover:scale-105 transition-transform">
-                <InstagramIcon className="h-5 w-5 text-pink-500" />
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Instagram</span>
-                  <span className="text-xs font-black text-slate-900">48.7K Followers</span>
-                </div>
-              </div>
-
-              {/* Floating YouTube Badge */}
-              <div className="hidden sm:flex animate-float-reverse absolute -bottom-8 -right-8 z-30 items-center gap-2.5 rounded-2xl border border-red-200 bg-white/95 px-4 py-2.5 shadow-xl backdrop-blur-md hover:scale-105 transition-transform">
-                <YoutubeIcon className="h-5 w-5 text-red-500" />
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">YouTube</span>
-                  <span className="text-xs font-black text-slate-900">62.3K Subs</span>
-                </div>
-              </div>
-
-              {/* Tab Switcher Pills */}
-              <div className="mb-4 inline-flex items-center rounded-full bg-white p-1.5 border border-slate-200 shadow-md relative z-10">
-                <button
-                  onClick={() => setActiveTab("card")}
-                  className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold transition-all ${activeTab === "card"
-                      ? "bg-gradient-to-r from-[#0B1536] to-[#081028] text-white shadow-xs"
-                      : "text-slate-600 hover:text-slate-900"
-                    }`}
-                >
-                  <UserCheck className="h-3.5 w-3.5" />
-                  <span>Creator Profile</span>
-                </button>
-                <button
-                  onClick={() => setActiveTab("series")}
-                  className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold transition-all ${activeTab === "series"
-                      ? "bg-gradient-to-r from-[#0B1536] to-[#081028] text-white shadow-xs"
-                      : "text-slate-600 hover:text-slate-900"
-                    }`}
-                >
-                  <Tv className="h-3.5 w-3.5" />
-                  <span>OTT Video Series</span>
-                </button>
-              </div>
-
-              {/* Live Theme Switcher Pills Bar */}
-              <div className="mb-3 flex items-center justify-center gap-1.5 relative z-10">
-                {DEMO_THEMES.map((t) => (
+                  <span className="pl-4 text-sm font-semibold text-slate-400 select-none shrink-0">
+                    inflixo.com/
+                  </span>
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="yourname"
+                    className="w-full bg-transparent px-1 py-2.5 text-sm sm:text-base font-semibold text-[#0F172A] focus:outline-none placeholder:text-slate-300 min-w-0"
+                  />
                   <button
-                    key={t.key}
-                    type="button"
-                    onClick={() => setActiveTheme(t.key)}
-                    className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all ${t.bg} ${activeTheme === t.key ? "ring-2 ring-slate-900 scale-105 shadow-xs" : "opacity-75 hover:opacity-100"
-                      }`}
+                    type="submit"
+                    className="inline-flex items-center gap-2 shrink-0 rounded-full bg-[#651FFF] px-6 py-3 text-sm font-bold text-white shadow-md hover:bg-[#500CD6] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
                   >
-                    {t.label}
+                    <span>Create Free Page</span>
                   </button>
-                ))}
+                </form>
+
+                <p className="text-xs font-semibold text-slate-500">
+                  Free Early Access • Setup in 2 minutes
+                </p>
               </div>
 
-              {/* Glowing Card Glass Container */}
-              <div className="w-full max-w-md rounded-3xl border border-slate-300/80 bg-white p-4 shadow-[0_25px_60px_-15px_rgba(8,16,40,0.18)] relative transform transition-all duration-500 hover:shadow-slate-900/30 hover:-translate-y-1.5">
-                {activeTab === "card" ? (
-                  <div className="animate-fade-in py-2">
-                    <LivePreviewCard
-                      profile={{
-                        ...DEMO_PROFILE,
-                        displayName: "Tony Stark",
-                        username: "tonystark",
-                        category: "Technology",
-                        bio: "Tech innovator creating video reviews, gadget teardowns, and series.",
-                      }}
-                      socials={DEMO_SOCIALS}
-                      totalAudience={126000}
+              {/* Advantages of Joining Inflixo */}
+              <div className="pt-6 border-t border-purple-200/80 space-y-4 max-w-xl mx-auto lg:mx-0 text-left">
+                <p className="text-xs font-bold uppercase tracking-wider text-[#651FFF]">
+                  ✨ <span className="italic font-normal">ADVANTAGES OF JOINING</span> INFLIXO
+                </p>
+
+                <div className="flex flex-col space-y-3.5 w-full">
+                  <div className="flex items-center gap-4 rounded-2xl bg-white border border-purple-100 p-4 shadow-xs hover:border-[#651FFF]/40 hover:shadow-md transition-all">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-[#651FFF] font-bold text-base">
+                      ⚡
+                    </span>
+                    <div>
+                      <h4 className="text-base font-bold text-slate-900 leading-snug">Total Fanbase Counter</h4>
+                      <p className="text-xs sm:text-sm font-medium text-slate-600 leading-relaxed mt-0.5">
+                        Combine YouTube, IG &amp; FB into one impressive <span className="italic font-semibold text-slate-800">total number.</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 rounded-2xl bg-white border border-purple-100 p-4 shadow-xs hover:border-[#651FFF]/40 hover:shadow-md transition-all">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-[#651FFF] font-bold text-base">
+                      🎬
+                    </span>
+                    <div>
+                      <h4 className="text-base font-bold text-slate-900 leading-snug">Ordered Content Series Flow</h4>
+                      <p className="text-xs sm:text-sm font-medium text-slate-600 leading-relaxed mt-0.5">
+                        Organize Part 1, Part 2, Part 3 so your fans watch <span className="italic font-semibold text-slate-800">every episode in order.</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 rounded-2xl bg-white border border-purple-100 p-4 shadow-xs hover:border-[#651FFF]/40 hover:shadow-md transition-all">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-[#651FFF] font-bold text-base">
+                      💼
+                    </span>
+                    <div>
+                      <h4 className="text-base font-bold text-slate-900 leading-snug">Brand &amp; Sponsorship Ready</h4>
+                      <p className="text-xs sm:text-sm font-medium text-slate-600 leading-relaxed mt-0.5">
+                        Share one professional link with brand sponsors to showcase your <span className="italic font-semibold text-slate-800">total fanbase &amp; series portfolio.</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 rounded-2xl bg-white border border-purple-100 p-4 shadow-xs hover:border-[#651FFF]/40 hover:shadow-md transition-all">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-[#651FFF] font-bold text-base">
+                      📈
+                    </span>
+                    <div>
+                      <h4 className="text-base font-bold text-slate-900 leading-snug">Binge Watching &amp; High Retention</h4>
+                      <p className="text-xs sm:text-sm font-medium text-slate-600 leading-relaxed mt-0.5">
+                        Keep fans hooked on your profile with <span className="italic font-semibold text-slate-800">seamless next-episode discovery</span> across all your series.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 rounded-2xl bg-white border border-purple-100 p-4 shadow-xs hover:border-[#651FFF]/40 hover:shadow-md transition-all">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-[#651FFF] font-bold text-base">
+                      🎯
+                    </span>
+                    <div>
+                      <h4 className="text-base font-bold text-slate-900 leading-snug">Single Master Bio Link</h4>
+                      <p className="text-xs sm:text-sm font-medium text-slate-600 leading-relaxed mt-0.5">
+                        Replace 5 messy links with <span className="italic font-semibold text-[#651FFF]">inflixo.com/yourname</span> on all your social bios.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 rounded-2xl bg-white border border-purple-100 p-4 shadow-xs hover:border-[#651FFF]/40 hover:shadow-md transition-all">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-[#651FFF] font-bold text-base">
+                      🚀
+                    </span>
+                    <div>
+                      <h4 className="text-base font-bold text-slate-900 leading-snug">Instant Creator Portfolio</h4>
+                      <p className="text-xs sm:text-sm font-medium text-slate-600 leading-relaxed mt-0.5">
+                        Get a polished, high-converting OTT-style creator profile page <span className="italic font-semibold text-slate-800">live in under 2 minutes.</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 rounded-2xl bg-white border border-purple-100 p-4 shadow-xs hover:border-[#651FFF]/40 hover:shadow-md transition-all">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-[#651FFF] font-bold text-base">
+                      🆓
+                    </span>
+                    <div>
+                      <h4 className="text-base font-bold text-slate-900 leading-snug">100% Free Early Access</h4>
+                      <p className="text-xs sm:text-sm font-medium text-slate-600 leading-relaxed mt-0.5">
+                        Zero monthly fees • Full creator features included during early launch.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Hero: 100% REAL TONY STARK LIVE PREVIEW CARD WITH 10S AUTO THEME SWITCH */}
+            <div className="lg:col-span-5 flex flex-col items-center justify-center">
+              <div className="w-full max-w-[360px] rounded-[36px] border-4 border-slate-900 bg-white p-3.5 shadow-2xl relative animate-float-slow transition-all duration-700">
+                {/* Phone Speaker Notch */}
+                <div className="w-16 h-1 bg-slate-300 rounded-full mx-auto mb-3" />
+
+                {/* REAL LIVE PREVIEW CARD COMPONENT WITH DYNAMIC THEME */}
+                <LivePreviewCard
+                  profile={DEMO_PROFILE}
+                  socials={DEMO_SOCIALS}
+                  series={DEMO_SERIES}
+                  totalAudience={20500000}
+                  themeKey={activeTheme.key}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. PROBLEM 1 → SOLUTION 1: REAL TOTAL FANBASE PREVIEW */}
+      <section id="total-fanbase" className="py-20 sm:py-28 bg-[#F6F1FF] border-y border-purple-200/70 z-10">
+        <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+            <div className="lg:col-span-6 space-y-4 text-center lg:text-left">
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-3 py-1 text-xs font-bold text-white uppercase tracking-wider shadow-2xs">
+                <span>PROBLEM 01</span>
+              </div>
+              <h2 className="font-display text-3xl sm:text-4xl font-bold text-slate-900 leading-snug">
+                Stop showing separate numbers.
+              </h2>
+              <p className="text-base sm:text-lg font-medium text-slate-600 leading-relaxed">
+                Instead of telling brands and fans about every social account separately:
+              </p>
+
+              <div className="pt-3 border-t border-purple-200">
+                <h3 className="font-display text-2xl sm:text-3xl font-bold text-[#651FFF] leading-snug">
+                  Show your <span className="italic font-normal text-slate-900">20.5M</span> Total Fanbase.
+                </h3>
+                <p className="text-xs sm:text-sm font-semibold text-slate-700 mt-1">
+                  Your combined audience from socials connected to Inflixo.
+                </p>
+              </div>
+            </div>
+
+            <div className="lg:col-span-6 flex flex-col items-center justify-center">
+              <div className="w-full max-w-md rounded-3xl border border-purple-200 bg-white p-6 shadow-xl space-y-4 text-left hover:scale-[1.01] transition-transform">
+                <div className="flex items-center justify-between rounded-2xl bg-[#651FFF] p-4 text-white shadow-md shadow-purple-600/20">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">❤️</span>
+                    <span className="text-sm font-bold text-white">Total Fanbase</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Sparkles className="h-4 w-4 text-amber-400" />
+                    <span className="font-display text-2xl font-bold text-white">20.5M</span>
+                  </div>
+                </div>
+
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1 pt-1">
+                  Connected Social Platforms
+                </p>
+
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between rounded-xl border border-slate-200 p-3 bg-slate-50/50">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-pink-100 text-pink-600">
+                        <InstagramIcon className="h-4 w-4 fill-current" />
+                      </span>
+                      <div className="min-w-0 text-left space-y-0.5">
+                        <p className="truncate text-sm font-bold text-slate-900 leading-tight">Tony Stark</p>
+                        <p className="truncate text-xs font-medium text-slate-500 leading-snug">@tonystark</p>
+                        <p className="truncate text-[10px] font-bold uppercase tracking-wider text-slate-400 leading-none">INSTAGRAM</p>
+                      </div>
+                    </div>
+                    <span className="text-xs font-bold text-slate-900 shrink-0">4.8M Followers</span>
+                  </div>
+
+                  <div className="flex items-center justify-between rounded-xl border border-slate-200 p-3 bg-slate-50/50">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-600">
+                        <YoutubeIcon className="h-4 w-4 fill-current" />
+                      </span>
+                      <div className="min-w-0 text-left space-y-0.5">
+                        <p className="truncate text-sm font-bold text-slate-900 leading-tight">Stark Tech Vlogs</p>
+                        <p className="truncate text-xs font-medium text-slate-500 leading-snug">@tonystark</p>
+                        <p className="truncate text-[10px] font-bold uppercase tracking-wider text-slate-400 leading-none">YOUTUBE</p>
+                      </div>
+                    </div>
+                    <span className="text-xs font-bold text-slate-900 shrink-0">12.5M Subscribers</span>
+                  </div>
+
+                  <div className="flex items-center justify-between rounded-xl border border-slate-200 p-3 bg-slate-50/50">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+                        <FacebookIcon className="h-4 w-4 fill-current" />
+                      </span>
+                      <div className="min-w-0 text-left space-y-0.5">
+                        <p className="truncate text-sm font-bold text-slate-900 leading-tight">Tony Stark Official</p>
+                        <p className="truncate text-xs font-medium text-slate-500 leading-snug">@tonystark</p>
+                        <p className="truncate text-[10px] font-bold uppercase tracking-wider text-slate-400 leading-none">FACEBOOK</p>
+                      </div>
+                    </div>
+                    <span className="text-xs font-bold text-slate-900 shrink-0">3.2M Followers</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. PROBLEM 2 → SOLUTION 2: REAL SERIES ACCORDION PREVIEW */}
+      <section id="series-solution" className="py-20 sm:py-32 bg-[#F3EEFF] text-slate-900 border-b border-purple-200/80 relative z-10">
+        <div className="mx-auto max-w-[1200px] px-5 sm:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            <div className="lg:col-span-6 space-y-4 text-center lg:text-left">
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-[#651FFF] px-3 py-1 text-xs font-bold text-white uppercase tracking-wider shadow-sm">
+                <span>PROBLEM 02</span>
+              </div>
+
+              <h2 className="font-display text-3xl sm:text-4xl font-bold text-slate-900 leading-snug">
+                Don&apos;t let Part 2 get lost.
+              </h2>
+
+              <p className="text-base sm:text-lg font-medium text-slate-600 leading-relaxed">
+                Your fans watched Part 1. Now they shouldn&apos;t have to search your feed for <span className="italic font-semibold text-slate-800">Part 2, Part 3 or Part 4.</span>
+              </p>
+
+              <div className="pt-3 border-t border-purple-200">
+                <h3 className="font-display text-2xl sm:text-3xl font-bold text-[#651FFF] leading-snug">
+                  Turn your content into an <span className="italic font-normal text-slate-900">organized</span> Series.
+                </h3>
+                <p className="text-xs sm:text-sm font-semibold text-slate-700 mt-1">
+                  Fans can find every part from one clean page and continue watching.
+                </p>
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => router.push("/login")}
+                  className="inline-flex items-center gap-2 rounded-full bg-[#651FFF] px-8 py-3.5 text-sm font-bold text-white shadow-xl shadow-purple-600/30 hover:bg-[#500CD6] hover:scale-105 transition-all cursor-pointer"
+                >
+                  <span>Create Your First Series →</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="lg:col-span-6 flex justify-center">
+              <div className="w-full max-w-md rounded-3xl border border-purple-200 bg-white p-6 space-y-4 shadow-xl text-left hover:scale-[1.01] transition-transform">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Public Series Portfolio</span>
+                  <span className="text-[10px] font-bold text-[#651FFF] bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200">1 Series Live</span>
+                </div>
+
+                <div className="rounded-2xl border border-purple-200 bg-slate-900 text-white p-4 space-y-3 shadow-md">
+                  <div className="flex items-center gap-3">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=120&q=80"
+                      alt="Iron Tech Series"
+                      className="h-12 w-12 rounded-xl object-cover ring-2 ring-white/20 shrink-0"
                     />
+                    <div className="min-w-0">
+                      <h4 className="text-base font-bold text-white truncate">Iron Tech Series</h4>
+                      <p className="text-xs text-slate-400 truncate">Season 1 • 4 Episodes • Technology</p>
+                    </div>
                   </div>
-                ) : (
-                  <div className="animate-fade-in">
-                    <CreatorCollage />
+
+                  <div className="space-y-2 pt-2 border-t border-slate-800">
+                    <div className="flex items-center justify-between rounded-xl bg-slate-800 p-2.5 border border-slate-700">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#651FFF] text-[10px] font-bold text-white shrink-0">01</span>
+                        <p className="text-xs font-bold text-white truncate">Part 01: Arc Reactor Tech</p>
+                      </div>
+                      <span className="text-[9px] font-bold text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800 shrink-0">Watched ✓</span>
+                    </div>
+
+                    <div className="flex items-center justify-between rounded-xl bg-[#651FFF] p-2.5 text-white shadow-md animate-pulse">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-white text-[10px] font-bold text-[#651FFF] shrink-0">02</span>
+                        <p className="text-xs font-bold text-white truncate">Part 02: Building Mark I</p>
+                      </div>
+                      <span className="text-[9px] font-bold text-amber-300 bg-amber-950 px-2 py-0.5 rounded border border-amber-500 shrink-0">Next Up →</span>
+                    </div>
+
+                    <div className="flex items-center justify-between rounded-xl bg-slate-800/60 p-2.5 border border-slate-800">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-700 text-[10px] font-bold text-slate-300 shrink-0">03</span>
+                        <p className="text-xs font-semibold text-slate-300 truncate">Part 03: J.A.R.V.I.S AI System</p>
+                      </div>
+                      <span className="text-[9px] font-semibold text-slate-400 shrink-0">Queued</span>
+                    </div>
+
+                    <div className="flex items-center justify-between rounded-xl bg-slate-800/60 p-2.5 border border-slate-800">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-700 text-[10px] font-bold text-slate-300 shrink-0">04</span>
+                        <p className="text-xs font-semibold text-slate-300 truncate">Part 04: Nanotech Flight Test</p>
+                      </div>
+                      <span className="text-[9px] font-semibold text-slate-400 shrink-0">Queued</span>
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Floating Animated Stats Bar */}
-      <section className="py-12 bg-white border-y border-slate-200/80 shadow-xs">
-        <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div className="space-y-1 transform hover:scale-105 transition-transform p-3 rounded-2xl bg-slate-50 border border-slate-200">
-              <p className="text-3xl sm:text-4xl font-black text-[#081028] font-display">1 Link</p>
-              <p className="text-xs font-bold text-slate-600 uppercase tracking-wider">For All Your Content</p>
+      {/* 5. PRICING & EARLY ACCESS SECTION */}
+      <section id="pricing" className="py-20 sm:py-28 bg-[#FAF8FF] border-b border-purple-200/70 z-10 relative">
+        <div className="mx-auto max-w-[1200px] px-5 sm:px-8 text-center space-y-8">
+          <div className="space-y-3 max-w-2xl mx-auto">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#651FFF] px-3 py-1 text-xs font-bold text-white uppercase tracking-wider">
+              <span>TRANSPARENT PRICING</span>
             </div>
-            <div className="space-y-1 transform hover:scale-105 transition-transform p-3 rounded-2xl bg-slate-50 border border-slate-200">
-              <p className="text-3xl sm:text-4xl font-black text-blue-600 font-display">20+</p>
-              <p className="text-xs font-bold text-slate-600 uppercase tracking-wider">Aesthetic Themes</p>
-            </div>
-            <div className="space-y-1 transform hover:scale-105 transition-transform p-3 rounded-2xl bg-slate-50 border border-slate-200">
-              <p className="text-3xl sm:text-4xl font-black text-[#081028] font-display">3 Platforms</p>
-              <p className="text-xs font-bold text-slate-600 uppercase tracking-wider">IG, YT &amp; FB Analytics</p>
-            </div>
-            <div className="space-y-1 transform hover:scale-105 transition-transform p-3 rounded-2xl bg-emerald-50/50 border border-emerald-100">
-              <p className="text-3xl sm:text-4xl font-black text-emerald-600 font-display">2 Mins</p>
-              <p className="text-xs font-bold text-slate-600 uppercase tracking-wider">Simple Setup</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Bento Grid Creator Story Section */}
-      <section className="py-24 bg-white border-b border-slate-200/80">
-        <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-            <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3.5 py-1 text-xs font-extrabold uppercase tracking-wider text-slate-800 shadow-2xs">
-              <Clapperboard className="h-3.5 w-3.5" />
-              <span>Real Creator Problem Solved</span>
-            </div>
-            <h2 className="font-display text-3xl sm:text-5xl font-extrabold text-slate-900">
-              Ever noticed how fans miss Part 2 of your series?
+            <h2 className="font-display text-3xl sm:text-5xl font-bold text-slate-900 leading-snug">
+              Free Early Access + <span className="italic font-normal text-[#651FFF]">Simple Creator Plans</span>
             </h2>
-            <p className="text-base sm:text-lg text-slate-600">
-              Social algorithms push multi-part reels out of order. Here is how Inflixo fixes it for your viewers.
+            <p className="text-base sm:text-lg font-medium text-slate-600">
+              Get 100% Free Early Access today. Paid monthly &amp; yearly plans will launch soon with extra creator power.
             </p>
           </div>
 
-          {/* Side-by-Side GenZ Bento Comparison Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-            {/* The Problem Card */}
-            <div className="rounded-3xl border border-slate-200 bg-slate-50/80 p-8 space-y-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
-              <div className="space-y-4">
-                <div className="inline-flex items-center gap-2 rounded-full bg-slate-200/80 px-3.5 py-1 text-xs font-black text-slate-800">
-                  <span>❌ Social Media Algorithm Feeds</span>
-                </div>
-                <h3 className="text-xl font-extrabold text-slate-900">
-                  You edit a 3-part series, but your feed scatters it
-                </h3>
-                <p className="text-sm text-slate-600 leading-relaxed font-medium">
-                  You upload Part 1, Part 2, and Part 3 of a comedy series or travel vlog. Your audience sees Part 1 today, but tomorrow the algorithm recommends random videos instead of Part 2.
-                </p>
-                <div className="rounded-2xl bg-white p-4 border border-slate-200 space-y-2 text-xs text-slate-700 shadow-xs">
-                  <div className="flex items-center justify-between font-extrabold text-slate-900">
-                    <span>Part 1: Uploaded</span>
-                    <span className="text-slate-500 font-normal">Watched by fans</span>
-                  </div>
-                  <div className="flex items-center justify-between text-slate-400 line-through pt-1">
-                    <span>Part 2 &amp; Part 3</span>
-                    <span>Buried under algorithm recommendations</span>
-                  </div>
-                </div>
-              </div>
-              <p className="text-xs font-extrabold text-slate-700">
-                Your fans comment: &quot;Where is Part 2?&quot; because feeds don&apos;t keep episodes together.
-              </p>
-            </div>
-
-            {/* The Inflixo Solution Card */}
-            <div className="rounded-3xl border border-emerald-300 bg-emerald-50/50 p-8 space-y-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
-              <div className="space-y-4">
-                <div className="inline-flex items-center gap-2 rounded-full bg-emerald-200/80 px-3.5 py-1 text-xs font-black text-emerald-800">
-                  <span>✨ The Inflixo OTT Solution</span>
-                </div>
-                <h3 className="text-xl font-extrabold text-slate-900">
-                  1 bio link lets fans binge your whole series in order
-                </h3>
-                <p className="text-sm text-slate-600 leading-relaxed font-medium">
-                  Group Part 1, Part 2, &amp; Part 3 into clean Season &amp; Episode cards. When followers open your link, they watch your entire series seamlessly from start to finish.
-                </p>
-                <div className="rounded-2xl bg-white p-4 border border-emerald-200 space-y-2 text-xs text-slate-700 shadow-xs">
-                  <div className="flex items-center justify-between font-extrabold text-emerald-600">
-                    <span>🎬 Season 1: Comedy Web Series</span>
-                    <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-md font-bold">3 Episodes</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-slate-600 pt-1 font-semibold">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
-                    <span>Episode 1 • Episode 2 • Episode 3 presented together</span>
-                  </div>
-                </div>
-              </div>
-              <p className="text-xs font-extrabold text-emerald-600">
-                Result: 100% video completion, higher fan engagement, and zero lost episodes!
-              </p>
-            </div>
-          </div>
+          <PricingTable showEarlyAccessBanner={false} />
         </div>
       </section>
 
-      {/* Feature Bento Grid Section */}
-      <section className="py-24 bg-slate-50">
-        <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-            <div className="inline-flex items-center gap-2 rounded-full bg-slate-200 px-3.5 py-1 text-xs font-extrabold uppercase tracking-wider text-slate-800 shadow-2xs">
-              <Zap className="h-3.5 w-3.5 fill-slate-800" />
-              <span>Features Creators Care About</span>
-            </div>
-            <h2 className="font-display text-3xl sm:text-5xl font-extrabold text-slate-900">
-              Everything built for how you create content
+      {/* 6. FINAL POSITIONING & CLOSING CTA */}
+      <section className="py-24 sm:py-32 bg-[#F3EEFF] text-center relative overflow-hidden z-10">
+        <div className="mx-auto max-w-4xl px-5 sm:px-8 relative z-10 space-y-8">
+          <div className="space-y-4">
+            <h2 className="font-display text-4xl sm:text-6xl font-bold text-[#0F172A] tracking-normal">
+              That&apos;s Inflixo.
             </h2>
-            <p className="text-base sm:text-lg text-slate-600">
-              Simple tools that make your link in bio look like a high-end creator portfolio.
+            <p className="text-lg sm:text-2xl font-semibold text-slate-600 max-w-2xl mx-auto leading-relaxed">
+              One creator page for your <strong className="text-[#651FFF] font-bold">Total Fanbase</strong>, socials and <span className="italic font-normal text-slate-800">organized content</span> <strong className="text-[#651FFF] font-bold">Series</strong>.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Feature 1 */}
-            <div className="group rounded-3xl border border-slate-200 bg-white p-8 shadow-sm hover:shadow-xl hover:border-slate-400 transition-all duration-300 hover:-translate-y-2 space-y-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-[#081028] font-bold group-hover:scale-110 transition-transform">
-                <Tv className="h-7 w-7" />
-              </div>
-              <h3 className="text-xl font-extrabold text-slate-900">Organized OTT Series</h3>
-              <p className="text-sm text-slate-600 leading-relaxed font-medium">
-                Group your reels, shorts, and full videos into seasons and episodes. Just like Netflix, but custom for your channel.
-              </p>
+          <div className="space-y-4 max-w-md mx-auto">
+            <div className="inline-block rounded-2xl bg-white border-2 border-purple-200 px-6 py-3.5 text-lg sm:text-2xl font-mono font-bold text-[#651FFF] shadow-md">
+              inflixo.com/yourname
             </div>
 
-            {/* Feature 2 */}
-            <div className="group rounded-3xl border border-slate-200 bg-white p-8 shadow-sm hover:shadow-xl hover:border-slate-400 transition-all duration-300 hover:-translate-y-2 space-y-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 font-bold group-hover:scale-110 transition-transform">
-                <Share2 className="h-7 w-7" />
-              </div>
-              <h3 className="text-xl font-extrabold text-slate-900">Combined Reach Counter</h3>
-              <p className="text-sm text-slate-600 leading-relaxed font-medium">
-                Stop counting followers separately. See your total combined audience across Instagram, YouTube, and Facebook in one place.
-              </p>
+            <div>
+              <button
+                type="button"
+                onClick={() => router.push("/login")}
+                className="inline-flex items-center gap-2 rounded-full bg-[#651FFF] px-9 py-4 text-base sm:text-lg font-bold text-white shadow-xl shadow-purple-600/30 hover:bg-[#500CD6] hover:scale-105 transition-all cursor-pointer"
+              >
+                <span>Create Your Inflixo</span>
+              </button>
             </div>
 
-            {/* Feature 3 */}
-            <div className="group rounded-3xl border border-slate-200 bg-white p-8 shadow-sm hover:shadow-xl hover:border-slate-400 transition-all duration-300 hover:-translate-y-2 space-y-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-[#081028] font-bold group-hover:scale-110 transition-transform">
-                <Palette className="h-7 w-7" />
-              </div>
-              <h3 className="text-xl font-extrabold text-slate-900">Themes That Fit Your Vibe</h3>
-              <p className="text-sm text-slate-600 leading-relaxed font-medium">
-                Choose from 20+ aesthetic designs — whether you prefer Midnight Navy, clean light tones, or dark cyber looks.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Interactive Accordion FAQs Section */}
-      <section className="py-24 bg-white border-t border-slate-200/80">
-        <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-            <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3.5 py-1 text-xs font-extrabold uppercase tracking-wider text-slate-800 shadow-2xs">
-              <HelpCircle className="h-3.5 w-3.5" />
-              <span>Got Questions?</span>
-            </div>
-            <h2 className="font-display text-3xl sm:text-5xl font-extrabold text-slate-900">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-base sm:text-lg text-slate-600">
-              Everything you need to know about Inflixo and setting up your creator page.
+            <p className="text-xs font-semibold text-slate-500">
+              Free Early Access • Setup in 2 minutes
             </p>
           </div>
-
-          <FaqAccordion />
         </div>
       </section>
 
-      {/* Deep Midnight Navy Call to Action Banner */}
-      <section className="py-24 bg-gradient-to-br from-[#0B1536] via-[#081028] to-[#040817] text-white relative overflow-hidden">
-        <div className="mx-auto max-w-4xl px-5 sm:px-8 text-center relative z-10 space-y-6">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-extrabold text-blue-300 backdrop-blur-md border border-white/10">
-            <Heart className="h-4 w-4 text-blue-400 fill-blue-400 animate-pulse" />
-            <span>Built For Video Creators</span>
-          </div>
-
-          <h2 className="font-display text-3xl sm:text-5xl font-extrabold text-white leading-tight">
-            Ready to give your audience <br />
-            <span className="bg-gradient-to-r from-blue-400 via-indigo-300 to-white bg-clip-text text-transparent">
-              a better watching experience?
-            </span>
-          </h2>
-
-          <p className="text-base sm:text-lg text-slate-300 max-w-xl mx-auto font-medium">
-            Set up your custom link page in under 2 minutes. Free forever to get started.
-          </p>
-
-          <div className="pt-4 flex justify-center">
-            <Button
-              size="lg"
-              onClick={() => router.push("/login")}
-              icon={<Sparkles className="h-5 w-5" />}
-              className="px-10 py-4 text-base bg-white text-[#081028] font-black shadow-xl hover:bg-slate-100 hover:scale-105 transition-all"
-            >
-              Build Your Page Now
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="mt-auto border-t border-slate-200/80 bg-white py-10">
-        <div className="mx-auto max-w-6xl px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      {/* 7. FOOTER */}
+      <footer className="mt-auto border-t border-purple-100 bg-white py-10 z-10 relative">
+        <div className="mx-auto max-w-[1200px] px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-xs font-semibold text-slate-600">
           <Logo size="sm" />
-          <p className="text-xs font-medium text-slate-500">
-            &copy; {new Date().getFullYear()} Inflixo. All rights reserved. Built for video creators &amp; show builders.
-          </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-6">
+            <Link href="/" className="hover:text-[#651FFF] transition-colors">
+              Creator Home
+            </Link>
+            <a href="#total-fanbase" className="hover:text-[#651FFF] transition-colors">
+              Total Fanbase
+            </a>
+            <a href="#series-solution" className="hover:text-[#651FFF] transition-colors">
+              Series
+            </a>
+            <a href="#pricing" className="hover:text-[#651FFF] transition-colors">
+              Pricing
+            </a>
+            <Link href="/privacy" className="hover:text-[#651FFF] transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="hover:text-[#651FFF] transition-colors">
+              Terms of Service
+            </Link>
+          </div>
+
+          <p className="text-slate-400 font-semibold">Built by TrustIQ Labs · &copy; 2026 Inflixo</p>
         </div>
       </footer>
     </div>

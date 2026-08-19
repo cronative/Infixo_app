@@ -1,25 +1,43 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Menu } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 
-export function DashboardMobileHeader({ title, showBack }: { title?: string; showBack?: boolean }) {
+export function DashboardMobileHeader({
+  title,
+  showBack,
+  onOpenDrawer,
+}: {
+  title?: string;
+  showBack?: boolean;
+  onOpenDrawer?: () => void;
+}) {
   const router = useRouter();
   return (
-    <header className="safe-top sticky top-0 z-20 flex items-center gap-3 border-b border-inflixo-border bg-white/95 px-5 py-4 shadow-[0_1px_0_rgba(23,20,31,0.02),0_8px_20px_-16px_rgba(23,20,31,0.15)] backdrop-blur-md lg:hidden">
-      {showBack ? (
-        <button
-          onClick={() => router.back()}
-          className="flex h-8 w-8 items-center justify-center rounded-full border border-inflixo-border"
-          aria-label="Back"
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </button>
-      ) : (
+    <header className="safe-top sticky top-0 z-20 flex items-center justify-between border-b border-[#E9E3F5] bg-white/95 px-4 py-3.5 backdrop-blur-md lg:hidden">
+      <div className="flex items-center gap-3">
+        {showBack ? (
+          <button
+            onClick={() => router.back()}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-[#E9E3F5] bg-slate-50 text-[#0F172A] active:scale-95 transition-transform cursor-pointer"
+            aria-label="Back"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+        ) : (
+          <button
+            onClick={onOpenDrawer}
+            className="flex h-9 w-9 items-center justify-center rounded-2xl border border-[#E9E3F5] bg-slate-50 text-[#0F172A] active:scale-95 transition-transform hover:bg-purple-50 hover:text-purple-700 cursor-pointer"
+            aria-label="Open menu drawer"
+          >
+            <Menu className="h-4 w-4" />
+          </button>
+        )}
         <Logo size="sm" />
-      )}
-      {title && <p className="text-[15px] font-bold text-inflixo-navy">{title}</p>}
+      </div>
+
+      {title && <p className="text-sm font-black text-[#0F172A] truncate">{title}</p>}
     </header>
   );
 }

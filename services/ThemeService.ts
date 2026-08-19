@@ -1,4 +1,4 @@
-import { themeRepository } from "@/repositories/localRepository";
+import { themeRepository, authRepository, subscriptionRepository } from "@/repositories/localRepository";
 import { ThemeKey, ThemeMeta } from "@/types";
 
 export const THEME_LIST: ThemeMeta[] = [
@@ -152,8 +152,70 @@ export const ThemeService = {
     return themeRepository.get();
   },
 
-  setSelectedTheme(themeKey: ThemeKey): void {
+  setSelectedTheme(themeKey: ThemeKey, isDashboardChange = false): void {
     themeRepository.save(themeKey);
+    const email = authRepository.getPendingEmail();
+    if (email) {
+      fetch("/api/creator/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          themeKey,
+          incrementThemeCount: isDashboardChange,
+        }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.success && typeof data.profile?.themeChangesCount === "number") {
+            this.syncThemeChangesCount(data.profile.themeChangesCount);
+          }
+        })
+        .catch((e) => console.error("Failed to save themeKey to MySQL DB:", e));
+    }
+  },
+
+  syncThemeChangesCount(count: number): void {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("inflixo_theme_changes_count", count.toString());
+    }
+  },
+
+  getThemeChangesCount(): number {
+    if (typeof window === "undefined") return 0;
+    const val = localStorage.getItem("inflixo_theme_changes_count");
+    return val ? parseInt(val, 10) || 0 : 0;
+  },
+
+  incrementThemeChangesCount(): number {
+    if (typeof window === "undefined") return 0;
+    const current = this.getThemeChangesCount();
+    const updated = current + 1;
+    localStorage.setItem("inflixo_theme_changes_count", updated.toString());
+    return updated;
+  },
+
+  checkThemeChangeLimit(): { allowed: boolean; isPro: boolean; remaining: number; count: number } {
+    const sub = subscriptionRepository.get();
+    // Paid active subscriptions (pro, starter, unlimited) get unlimited theme changes.
+    // Early Access plan ("early_access" or "free") is capped at max 3 theme changes in Dashboard!
+    const isPro = Boolean(
+      sub?.status === "active" &&
+        sub?.planKey &&
+        sub.planKey !== "early_access" &&
+        sub.planKey !== "free"
+    );
+    const count = this.getThemeChangesCount();
+    if (isPro) {
+      return { allowed: true, isPro: true, remaining: Infinity, count };
+    }
+    const remaining = Math.max(0, 3 - count);
+    return {
+      allowed: count < 3,
+      isPro: false,
+      remaining,
+      count,
+    };
   },
 
   getThemeMeta(themeKey: ThemeKey): ThemeMeta {

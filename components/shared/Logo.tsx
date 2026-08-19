@@ -1,6 +1,10 @@
 import Link from "next/link";
 
-export function InflixoLogoIcon({ className = "h-5 w-5" }: { className?: string }) {
+/**
+ * PRIMARY ACTIVE LOGO: Stadium Link Icon Arch Frame with Capital Letter 'I'
+ * (Top & bottom rounded stadium link arches framing the bold center letter 'I')
+ */
+export function LogoStadiumLinkI({ className = "h-6 w-6" }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 100 100"
@@ -8,54 +12,105 @@ export function InflixoLogoIcon({ className = "h-5 w-5" }: { className?: string 
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
-      {/* Top Dot of 'i' */}
-      <circle cx="40" cy="21" r="7.5" fill="currentColor" />
+      {/* Outer Stadium Link Icon (Rounded Top & Bottom Link Arches) */}
+      <g stroke="currentColor" strokeWidth="6.5" strokeLinecap="round" strokeLinejoin="round" fill="none">
+        {/* Top Stadium Link Arch */}
+        <path d="M 28 42 L 28 24 C 28 14 38 10 50 10 C 62 10 72 14 72 24 L 72 42" />
 
-      {/* Main Stem of 'i' */}
-      <path
-        d="M 32.5 42.5 C 32.5 38.36 35.86 35 40 35 C 44.14 35 47.5 38.36 47.5 42.5 L 47.5 73.5 C 47.5 76.54 45.04 79 42 79 C 36.75 79 32.5 74.75 32.5 69.5 Z"
-        fill="currentColor"
-      />
+        {/* Bottom Stadium Link Arch */}
+        <path d="M 28 58 L 28 76 C 28 86 38 90 50 90 C 62 90 72 86 72 76 L 72 58" />
 
-      {/* Ribbon Fold Curl at Bottom Left */}
-      <path
-        d="M 32.5 69.5 C 32.5 74.75 36.75 79 42 79 C 45.04 79 47.5 76.54 47.5 73.5 C 47.5 71.5 45.5 67 41.5 64.5 C 37.5 62 33 65 32.5 69.5 Z"
-        fill="currentColor"
-        fillOpacity="0.8"
-      />
+        {/* Inner Link Ring Sockets */}
+        <path d="M 28 34 C 28 38 34 42 40 42" />
+        <path d="M 72 34 C 72 38 66 42 60 42" />
+        <path d="M 28 66 C 28 62 34 58 40 58" />
+        <path d="M 72 66 C 72 62 66 58 60 58" />
+      </g>
 
-      {/* 3D Inner Shadow curve */}
-      <path
-        d="M 47.5 73.5 C 47.5 70 44 65.5 41 64.5 C 43.5 68 45.5 71 47.5 73.5 Z"
-        fill="black"
-        fillOpacity="0.25"
-      />
+      {/* Upright Center Capital Letter 'I' - 100% BOLD & CRYSTAL CLEAR */}
+      <g fill="currentColor">
+        {/* Bold Top Serif Bar */}
+        <rect x="33" y="22" width="34" height="8.5" rx="4.25" />
 
-      {/* Right Rounded Play Button Triangle */}
-      <path
-        d="M 52.5 43.5 C 52.5 41.19 55.02 39.76 57 40.94 L 77.5 53.44 C 79.45 54.63 79.45 57.44 77.5 58.63 L 57 71.13 C 55.02 72.31 52.5 70.88 52.5 68.57 Z"
-        fill="currentColor"
-      />
+        {/* Solid Vertical Stem */}
+        <rect x="44" y="30.5" width="12" height="39" rx="6" />
+
+        {/* Bold Bottom Serif Bar */}
+        <rect x="33" y="69.5" width="34" height="8.5" rx="4.25" />
+      </g>
     </svg>
   );
 }
 
-export function Logo({ size = "md", href = "/", light = false }: { size?: "sm" | "md" | "lg"; href?: string; light?: boolean }) {
-  const dims = { sm: "h-7 w-7", md: "h-9 w-9", lg: "h-11 w-11" }[size];
+/**
+ * BACKUP 1: Universal 45-Degree Tilted Link Icon
+ */
+export function LogoUniversalLinkI({ className = "h-6 w-6" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <g transform="rotate(-45 50 50)" stroke="currentColor" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" fill="none">
+        <path d="M 34 46 L 34 20 A 16 16 0 0 1 66 20 L 66 54 A 16 16 0 0 1 50 70 L 44 70" />
+        <path d="M 66 54 L 66 80 A 16 16 0 0 1 34 80 L 34 46 A 16 16 0 0 1 50 30 L 56 30" />
+      </g>
+      <g fill="currentColor">
+        <rect x="33" y="22" width="34" height="8.5" rx="4.25" />
+        <rect x="44" y="30.5" width="12" height="39" rx="6" />
+        <rect x="33" y="69.5" width="34" height="8.5" rx="4.25" />
+      </g>
+    </svg>
+  );
+}
+
+/**
+ * Primary Default Logo Icon Export -> Stadium Link Arch Frame + Center Letter 'I'
+ */
+export function InflixoLogoIcon({ className = "h-6 w-6" }: { className?: string }) {
+  return <LogoStadiumLinkI className={className} />;
+}
+
+export function Logo({
+  size = "md",
+  href = "/",
+  light = false,
+  variant = "gradient",
+  styleName = "stadium-link-i",
+}: {
+  size?: "sm" | "md" | "lg";
+  href?: string;
+  light?: boolean;
+  variant?: "gradient" | "black" | "white" | "brand";
+  styleName?: "stadium-link-i" | "universal-link-i";
+}) {
+  const dims = { sm: "h-8 w-8", md: "h-10 w-10", lg: "h-12 w-12" }[size];
   const text = { sm: "text-lg", md: "text-xl", lg: "text-2xl" }[size];
-  const iconSize = { sm: "h-4 w-4", md: "h-5.5 w-5.5", lg: "h-7 w-7" }[size];
+  const iconSize = { sm: "h-5 w-5", md: "h-6.5 w-6.5", lg: "h-8 w-8" }[size];
+
+  const badgeStyles = {
+    gradient:
+      "bg-gradient-to-br from-[#782BFB] via-[#6512FA] to-[#500CD6] text-white shadow-md shadow-purple-600/35",
+    black: "bg-slate-900 text-white shadow-md shadow-slate-900/20",
+    white: "bg-white border border-slate-200 text-[#0F172A] shadow-sm",
+    brand: "bg-purple-100 text-[#651FFF] border border-purple-200",
+  }[variant];
 
   return (
-    <Link href={href} className="flex items-center gap-2.5 group cursor-pointer select-none">
-      {/* Electric Vivid Purple Gradient Squircle Badge matching logo */}
+    <Link href={href} className="flex items-center gap-3 group cursor-pointer select-none">
+      {/* Badge Squircle Container */}
       <div
-        className={`flex ${dims} items-center justify-center rounded-2xl text-white shadow-md shadow-purple-600/30 group-hover:scale-105 transition-all duration-200 bg-gradient-to-br from-[#7C3AED] via-[#6D28D9] to-[#5B21B6]`}
+        className={`flex ${dims} items-center justify-center rounded-2xl ${badgeStyles} group-hover:scale-105 transition-all duration-200`}
       >
-        <InflixoLogoIcon className={iconSize} />
+        {styleName === "universal-link-i" ? (
+          <LogoUniversalLinkI className={iconSize} />
+        ) : (
+          <LogoStadiumLinkI className={iconSize} />
+        )}
       </div>
 
       {/* Brand Name Text */}
-      <span className={`font-display ${text} font-extrabold tracking-tight ${light ? "text-white" : "text-slate-900"} group-hover:text-purple-600 transition-colors`}>
+      <span
+        className={`font-display ${text} font-black tracking-tight ${light ? "text-white" : "text-slate-900"
+          } group-hover:text-[#6512FA] transition-colors`}
+      >
         Inflixo
       </span>
     </Link>

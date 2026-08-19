@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Loader2, CheckCircle2, BadgeCheck, Users, Sparkles } from "lucide-react";
-import { YoutubeIcon } from "@/components/shared/BrandIcons";
+import { Search, Loader2 } from "lucide-react";
 import { useToast } from "@/contexts/ToastContext";
 import { useCreator } from "@/contexts/CreatorContext";
+import { SocialService } from "@/services/SocialService";
+import { authRepository } from "@/repositories/localRepository";
+import { SocialPreviewModal, SocialPreviewCard, SocialPreviewData } from "./SocialPreviewModal";
 
 export interface FetchedYoutubeChannel {
   channel_id: string;
@@ -20,17 +22,24 @@ export interface FetchedYoutubeChannel {
 interface YoutubeFetcherProps {
   handle: string;
   onConfirmSync?: (fetched: FetchedYoutubeChannel) => void;
+  onBeforeFetch?: () => boolean;
+  variant?: "inline" | "modal";
 }
 
-export function YoutubeFetcher({ handle, onConfirmSync }: YoutubeFetcherProps) {
+export function YoutubeFetcher({ handle, onConfirmSync, onBeforeFetch, variant = "modal" }: YoutubeFetcherProps) {
   const { showToast } = useToast();
   const { updateProfile, updateSocials, socials, profile } = useCreator();
 
   const [loading, setLoading] = useState(false);
-  const [fetchedChannel, setFetchedChannel] = useState<FetchedYoutubeChannel | null>(null);
-  const [synced, setSynced] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [previewData, setPreviewData] = useState<SocialPreviewData | null>(null);
 
   async function fetchDetails() {
+    if (onBeforeFetch && !onBeforeFetch()) {
+      return;
+    }
+
     const cleanHandle = handle.trim().replace(/^@/, "");
     if (!cleanHandle) {
       showToast("Please enter a YouTube handle first", "error");
@@ -38,8 +47,6 @@ export function YoutubeFetcher({ handle, onConfirmSync }: YoutubeFetcherProps) {
     }
 
     setLoading(true);
-    setFetchedChannel(null);
-    setSynced(false);
 
     try {
       const res = await fetch("/api/youtube/channelInfo", {
@@ -54,8 +61,10 @@ export function YoutubeFetcher({ handle, onConfirmSync }: YoutubeFetcherProps) {
         throw new Error(data.error || "Could not fetch YouTube channel details");
       }
 
-      setFetchedChannel(data.channel);
-      showToast(`Fetched YouTube channel @${data.channel.channel_name}! 🎉`);
+      setPreviewData({ platform: "youtube", data: data.channel });
+      if (variant === "modal") {
+        setModalOpen(true);
+      }
     } catch (err: any) {
       showToast(err.message || "Failed to fetch YouTube channel info", "error");
     } finally {
@@ -63,150 +72,123 @@ export function YoutubeFetcher({ handle, onConfirmSync }: YoutubeFetcherProps) {
     }
   }
 
-  function handleConfirm() {
-    if (!fetchedChannel) return;
+  async function handleConfirmModal() {
+    if (!previewData || previewData.platform !== "youtube") return;
+    const fetchedChannel = previewData.data;
 
-    // 1. Update YouTube Social Stats & Handles
-    updateSocials({
-      youtube: {
-        ...socials.youtube,
-        url: `https://youtube.com/@${fetchedChannel.channel_name}`,
-        subscribers: fetchedChannel.subscribers,
-      },
-    });
+    setSaving(true);
+    const nowIso = new Date().toISOString();
 
-    // 2. Auto-fill Profile Name / Photo / Bio if currently default or empty
-    const patch: Partial<typeof profile> = {};
-    if (!profile.displayName || profile.displayName === "Your name") {
-      patch.displayName = fetchedChannel.title || fetchedChannel.channel_name;
-    }
-    if (!profile.bio && fetchedChannel.description) {
-      patch.bio = fetchedChannel.description.slice(0, 160);
-    }
-    if (!profile.photoDataUrl && fetchedChannel.avatar_url) {
-      patch.photoDataUrl = fetchedChannel.avatar_url;
-    }
+    try {
+      const updatedSocials = {
+        ...socials,
+        youtube: {
+          ...socials.youtube,
+          url: `https://youtube.com/@${fetchedChannel.channel_name}`,
+          username: fetchedChannel.channel_name,
+          channelTitle: fetchedChannel.title,
+          subscribers: fetchedChannel.subscribers,
+          isVerified: Boolean(fetchedChannel.verified),
+          avatarUrl: fetchedChannel.avatar_url,
+          description: fetchedChannel.description,
+          lastSyncedAt: nowIso,
+        },
+      };
 
-    if (Object.keys(patch).length > 0) {
-      updateProfile(patch);
-    }
+      updateSocials(updatedSocials);
+      SocialService.saveAccounts(updatedSocials);
 
-    setSynced(true);
-    showToast(`Linked YouTube channel @${fetchedChannel.channel_name}! ✨`);
-    if (onConfirmSync) onConfirmSync(fetchedChannel);
+      const email = authRepository.getPendingEmail();
+      if (email) {
+        await fetch("/api/creator/socials", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            platform: "youtube",
+            accountName: fetchedChannel.title || fetchedChannel.channel_name,
+            username: fetchedChannel.channel_name,
+            followerCount: fetchedChannel.subscribers || 0,
+            mediaCount: 0,
+            isVerified: Boolean(fetchedChannel.verified),
+          }),
+        }).catch((e) => console.error("Failed to save YouTube to DB:", e));
+      }
+
+      const patch: Partial<typeof profile> = {};
+      if (!profile.displayName || profile.displayName === "Your name") {
+        patch.displayName = fetchedChannel.title || fetchedChannel.channel_name;
+      }
+      if (!profile.bio && fetchedChannel.description) {
+        patch.bio = fetchedChannel.description.slice(0, 160);
+      }
+      if (!profile.photoDataUrl && fetchedChannel.avatar_url) {
+        patch.photoDataUrl = fetchedChannel.avatar_url;
+      }
+
+      if (Object.keys(patch).length > 0) {
+        updateProfile(patch);
+      }
+
+      showToast(`YouTube channel @${fetchedChannel.channel_name} linked successfully! ✨🎉`);
+
+      if (onConfirmSync) {
+        onConfirmSync(fetchedChannel);
+      }
+    } catch (err: any) {
+      console.error("YouTube confirm error:", err);
+      showToast("Failed to connect YouTube channel. Please try again.", "error");
+    } finally {
+      setSaving(false);
+      setModalOpen(false);
+      setPreviewData(null);
+    }
   }
 
   return (
-    <div className="mt-3 space-y-3">
-      {/* Fetch Button */}
+    <div className="mt-3">
+      {/* Fetch Action Button */}
       <div className="flex items-center justify-between">
         <button
           type="button"
           onClick={fetchDetails}
           disabled={loading || !handle.trim()}
-          className="tap-scale flex items-center gap-2 rounded-2xl bg-red-600 px-4 py-2 text-xs font-bold text-white shadow-md transition-all hover:bg-red-700 hover:shadow-lg disabled:opacity-50"
+          className="tap-scale flex items-center gap-2 rounded-2xl bg-red-600 px-4 py-2.5 text-xs font-extrabold text-white shadow-md transition-all hover:bg-red-700 hover:shadow-lg disabled:opacity-50"
         >
           {loading ? (
             <>
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" />
               Fetching YouTube Channel...
             </>
           ) : (
             <>
-              <Search className="h-3.5 w-3.5" />
+              <Search className="h-4 w-4" />
               Fetch Channel Details
             </>
           )}
         </button>
-
-        {synced && (
-          <span className="flex items-center gap-1 text-xs font-bold text-emerald-600">
-            <CheckCircle2 className="h-4 w-4 stroke-[2.5]" />
-            Synced &amp; Confirmed
-          </span>
-        )}
       </div>
 
-      {/* Fetched Result Card */}
-      {fetchedChannel && (
-        <div
-          className="relative overflow-hidden rounded-3xl border-2 border-red-500/30 bg-white p-4 shadow-lg transition-all"
-          style={{ backgroundImage: "linear-gradient(135deg, rgba(254,242,242,0.7), #ffffff 60%)" }}
-        >
-          <div className="flex items-start gap-3.5">
-            {/* Avatar Pic */}
-            <div className="relative">
-              {fetchedChannel.avatar_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={fetchedChannel.avatar_url}
-                  alt={fetchedChannel.title}
-                  className="h-16 w-16 rounded-full border-2 border-red-500 object-cover shadow-sm"
-                />
-              ) : (
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-100 font-bold text-red-600">
-                  YT
-                </div>
-              )}
-              {fetchedChannel.verified && (
-                <BadgeCheck className="absolute -bottom-1 -right-1 h-5 w-5 fill-slate-700 text-white" />
-              )}
-            </div>
+      {/* Inline Preview below fields */}
+      {variant === "inline" && previewData && (
+        <SocialPreviewCard
+          preview={previewData}
+          onConfirm={handleConfirmModal}
+          onClose={() => setPreviewData(null)}
+          loading={saving}
+          variant="inline"
+        />
+      )}
 
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5">
-                <p className="truncate text-base font-extrabold text-inflixo-navy">
-                  {fetchedChannel.title}
-                </p>
-                {fetchedChannel.verified && (
-                  <BadgeCheck className="h-4 w-4 shrink-0 fill-slate-700 text-white" />
-                )}
-              </div>
-              <p className="text-xs font-bold text-red-600">@{fetchedChannel.channel_name}</p>
-
-              <div className="mt-1 flex items-center gap-1.5 text-xs font-black text-inflixo-navy">
-                <Users className="h-3.5 w-3.5 text-red-500" />
-                <span>{fetchedChannel.subscriber_count_text}</span>
-              </div>
-
-              {fetchedChannel.description && (
-                <p className="mt-1.5 text-xs text-muted line-clamp-2 leading-relaxed">
-                  {fetchedChannel.description}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Mandatory Confirmation Banner & CTA */}
-          <div className="mt-3.5 pt-3 border-t border-red-100 flex flex-col gap-2">
-            {!synced && (
-              <p className="text-[11px] font-semibold text-red-700 text-center">
-                👉 Click below to confirm &amp; add this YouTube channel to your live preview &amp; profile!
-              </p>
-            )}
-            <button
-              type="button"
-              onClick={handleConfirm}
-              className={`tap-scale flex flex-1 items-center justify-center gap-1.5 rounded-2xl py-2.5 text-xs font-extrabold transition-all ${
-                synced
-                  ? "bg-emerald-600 text-white shadow-md ring-2 ring-emerald-200"
-                  : "bg-red-600 text-white shadow-md hover:bg-red-700 hover:shadow-lg animate-pulse hover:animate-none"
-              }`}
-            >
-              {synced ? (
-                <>
-                  <CheckCircle2 className="h-4 w-4 stroke-[2.5]" />
-                  Confirmed &amp; Added to Preview!
-                </>
-              ) : (
-                <>
-                  <Sparkles className="h-4 w-4" />
-                  Confirm &amp; Link YouTube Channel
-                </>
-              )}
-            </button>
-          </div>
-        </div>
+      {/* Popup Modal (for Dashboard) */}
+      {variant === "modal" && (
+        <SocialPreviewModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onConfirm={handleConfirmModal}
+          loading={saving}
+          preview={previewData}
+        />
       )}
     </div>
   );

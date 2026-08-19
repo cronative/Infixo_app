@@ -38,7 +38,7 @@ export const authRepository = {
     storage.set(STORAGE_KEYS.otpEmail, email);
   },
   clear() {
-    storage.remove(STORAGE_KEYS.auth);
+    storage.clearAll();
   },
 };
 
@@ -62,7 +62,7 @@ export const socialRepository = {
 
 export const themeRepository = {
   get(): ThemeKey {
-    return storage.get<ThemeKey>(STORAGE_KEYS.theme, "modern-purple");
+    return storage.get<ThemeKey>(STORAGE_KEYS.theme, "minimal-white");
   },
   save(theme: ThemeKey) {
     storage.set(STORAGE_KEYS.theme, theme);
@@ -81,11 +81,11 @@ export const seriesRepository = {
 export const subscriptionRepository = {
   get(): Subscription {
     return storage.get<Subscription>(STORAGE_KEYS.subscription, {
-      planKey: "pro",
-      planName: "Pro Plan",
+      planKey: "early_access",
+      planName: "Early Access",
       billingCycle: "yearly",
-      status: "trial",
-      activatedAt: null,
+      status: "active",
+      activatedAt: new Date().toISOString(),
     });
   },
   save(sub: Subscription) {

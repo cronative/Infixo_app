@@ -3,7 +3,7 @@ import { ThemeCardProps } from "@/themes/types";
 import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
 
 export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
-  const { themeKey, profile, socials, series, totalAudience, variant } = props;
+  const { themeKey, profile, socials, series, totalAudience, variant, onShare } = props;
   return (
     <LivePreviewCard
       profile={profile}
@@ -12,6 +12,7 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
       totalAudience={totalAudience}
       compact={variant === "compact"}
       themeKey={themeKey}
+      onShare={onShare}
     />
   );
 }

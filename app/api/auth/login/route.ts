@@ -60,8 +60,11 @@ export async function POST(req: Request) {
       console.warn("⚠️ MySQL error inserting OTP record:", dbErr.message);
     }
 
-    // 4. Send real OTP Email via Gmail SMTP
-    await sendOtpEmail(email, otpCode);
+    // 4. Send real OTP Email via Gmail SMTP (Awaited for guaranteed delivery)
+    const emailSent = await sendOtpEmail(email, otpCode);
+    if (!emailSent) {
+      console.warn("⚠️ sendOtpEmail returned false for email:", email);
+    }
 
     return NextResponse.json({
       success: true,

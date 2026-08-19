@@ -39,7 +39,7 @@ CREATE TABLE creators (
   city VARCHAR(100) DEFAULT NULL COMMENT 'Creator city',
   state VARCHAR(100) DEFAULT NULL COMMENT 'Creator state / region',
   country VARCHAR(100) DEFAULT NULL COMMENT 'Creator country',
-  theme_key VARCHAR(50) NOT NULL DEFAULT 'modern-purple' COMMENT 'Active visual theme key (1 of 20 themes)',
+  theme_key VARCHAR(50) NOT NULL DEFAULT 'minimal-white' COMMENT 'Active visual theme key (1 of 20 themes)',
   is_verified BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Verified creator badge status',
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
