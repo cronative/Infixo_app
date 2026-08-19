@@ -22,6 +22,7 @@ interface CreatorContextValue {
   series: Series[];
   subscription: Subscription;
   totalAudience: number;
+  loading: boolean;
   refresh: () => void;
   updateProfile: (patch: Partial<CreatorProfile>) => void;
   updateSocials: (patch: Partial<SocialAccounts>) => void;
@@ -46,8 +47,10 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
   const [series, setSeries] = useState<Series[]>([]);
   const [subscription, setSubscription] = useState<Subscription>(SubscriptionService.get());
   const [hydrated, setHydrated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
+    setLoading(true);
     // 1. Instant local storage state
     setProfile(ProfileService.getProfile());
     setSocials(SocialService.getAccounts());
@@ -78,6 +81,8 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
       }
     } catch (e) {
       console.warn("Failed to sync DB in CreatorContext:", e);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -121,6 +126,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         series,
         subscription,
         totalAudience,
+        loading,
         refresh,
         updateProfile,
         updateSocials,

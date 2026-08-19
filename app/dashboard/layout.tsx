@@ -11,6 +11,8 @@ import { DashboardSideDrawer } from "@/components/dashboard/DashboardSideDrawer"
 import { LogOut, Copy, Menu } from "lucide-react";
 import { useToast } from "@/contexts/ToastContext";
 
+import { SyncingLoader } from "@/components/shared/SyncingLoader";
+
 function DesktopTopHeader() {
   const { profile } = useCreator();
   const { showToast } = useToast();
@@ -50,6 +52,11 @@ function DesktopTopHeader() {
 
 function Shell({ children }: { children: ReactNode }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { loading } = useCreator();
+
+  if (loading) {
+    return <SyncingLoader message="Syncing your creator profile, series & stats..." fullScreen />;
+  }
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-background">
@@ -93,11 +100,7 @@ export default function DashboardRootLayout({ children }: { children: ReactNode 
   }, [router]);
 
   if (!checked) {
-    return (
-      <div className="flex min-h-dvh items-center justify-center bg-background">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-inflixo-purple-light border-t-inflixo-purple" />
-      </div>
-    );
+    return <SyncingLoader message="Authenticating account..." fullScreen />;
   }
 
   return (

@@ -195,6 +195,12 @@ export default function LandingHomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             {/* Left Hero Column */}
             <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
+              {/* Hero Pill Badge */}
+              <div className="inline-flex items-center gap-2 rounded-full border border-purple-200/80 bg-purple-100/70 px-4 py-1.5 text-xs font-black text-[#651FFF] shadow-2xs backdrop-blur-md">
+                <Sparkles className="h-3.5 w-3.5 text-[#651FFF]" />
+                <span>India&apos;s #1 OTT Creator Platform</span>
+              </div>
+
               {/* Main H1 Big Headline */}
               <h1 className="font-display text-[40px] sm:text-[58px] font-bold leading-[1.12] tracking-normal text-[#0F172A]">
                 ARE YOU A CONTENT CREATOR?
@@ -501,9 +507,9 @@ export default function LandingHomePage() {
 
             <div className="lg:col-span-6 flex justify-center">
               <div className="w-full max-w-md rounded-3xl border border-purple-200 bg-white p-6 space-y-4 shadow-xl text-left hover:scale-[1.01] transition-transform">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Public Series Portfolio</span>
-                  <span className="text-[10px] font-bold text-[#651FFF] bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200">1 Series Live</span>
+                <div className="flex flex-col items-center justify-center text-center border-b border-slate-100 pb-3 space-y-0.5">
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-400">SERIES</span>
+                  <span className="text-[11px] font-extrabold text-[#651FFF]">🎬 1 Series · 4 Episodes</span>
                 </div>
 
                 <div className="rounded-2xl border border-purple-200 bg-slate-900 text-white p-4 space-y-3 shadow-md">

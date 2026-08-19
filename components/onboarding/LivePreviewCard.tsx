@@ -360,6 +360,16 @@ export interface LivePreviewCardProps {
   onShare?: () => void;
 }
 
+function getSeriesEpisodes(s: Series): any[] {
+  if (s && Array.isArray(s.seasons) && s.seasons.length > 0) {
+    return s.seasons.flatMap((sn) => (sn && Array.isArray(sn.episodes)) ? sn.episodes : []);
+  }
+  if (s && Array.isArray((s as any).episodes)) {
+    return (s as any).episodes;
+  }
+  return [];
+}
+
 export function LivePreviewCard({
   profile,
   socials,
@@ -374,6 +384,7 @@ export function LivePreviewCard({
   const [expandedSeriesId, setExpandedSeriesId] = useState<string | null>(null);
 
   const style = THEME_STYLES[themeKey] || DEFAULT_THEME_STYLE;
+  const totalEpisodesCount = (series || []).reduce((acc, s) => acc + getSeriesEpisodes(s).length, 0);
 
   const calculatedTotal =
     (socials.instagram.followers || 0) +
@@ -643,9 +654,14 @@ export function LivePreviewCard({
 
         {series && series.length > 0 && (
           <div className="relative z-10 mt-6 space-y-3 w-full text-left">
-            <p className="text-xs font-black uppercase tracking-wider text-center opacity-60">
-              SERIES
-            </p>
+            <div className="text-center space-y-0.5">
+              <p className="text-xs font-black uppercase tracking-wider opacity-60">
+                SERIES
+              </p>
+              <p className={`text-[11px] font-extrabold ${style.handleColor}`}>
+                🎬 {series.length} {series.length === 1 ? "Series" : "Series"} · {totalEpisodesCount} {totalEpisodesCount === 1 ? "Episode" : "Episodes"}
+              </p>
+            </div>
 
             <div className="space-y-4">
               {series.map((s) => (
@@ -725,7 +741,7 @@ function PreviewSeriesItem({
   onShareSeries?: (series: Series) => void;
 }) {
   const { showToast } = useToast();
-  const allEpisodes = series.seasons.flatMap((sn) => sn.episodes);
+  const allEpisodes = getSeriesEpisodes(series);
   const genresList = series.genre ? series.genre.split(",").map((g) => g.trim()).filter(Boolean) : [];
 
   const handleShareSeriesLink = () => {

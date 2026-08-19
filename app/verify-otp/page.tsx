@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/Button";
 import { AuthService } from "@/services/AuthService";
 import { useToast } from "@/contexts/ToastContext";
 
+import { SyncingLoader } from "@/components/shared/SyncingLoader";
+
 const OTP_LENGTH = 4;
 const COUNTDOWN_SECONDS = 28;
 
@@ -52,10 +54,9 @@ export default function VerifyOtpPage() {
 
     try {
       const { isExistingProfile, onboardingStep } = await AuthService.verifyOtp(code);
-      setSubmitting(false);
 
       if (isExistingProfile || onboardingStep === "finish") {
-        showToast("Welcome back! Redirecting to Dashboard 🎉");
+        showToast("Welcome back! Syncing your profile 🎉");
         router.push("/dashboard");
       } else {
         const stepRoutes: Record<string, string> = {
@@ -133,6 +134,10 @@ export default function VerifyOtpPage() {
   }
 
   const isOtpComplete = digits.every((d) => d !== "");
+
+  if (submitting) {
+    return <SyncingLoader message="Verifying OTP & syncing your creator profile..." fullScreen />;
+  }
 
   return (
     <AuthSplitLayout>
