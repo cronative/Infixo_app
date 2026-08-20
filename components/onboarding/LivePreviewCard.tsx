@@ -861,9 +861,10 @@ export function LivePreviewCard({
           href="/"
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-gray-100 text-gray-600 hover:text-[#803D63] text-[11px] font-medium px-3.5 py-1.5 rounded-full border border-gray-200 transition-colors inline-flex items-center gap-1.5 shadow-2xs"
+          className="bg-white/90 hover:bg-white text-gray-700 hover:text-[#803D63] text-[11px] font-semibold px-3.5 py-1.5 rounded-full border border-gray-200 transition-colors inline-flex items-center gap-1.5 shadow-2xs cursor-pointer"
         >
-          <span>⚡ Create your own Inflixo</span>
+          <InflixoLogoIcon className="h-3.5 w-3.5 text-[#803D63]" />
+          <span>Create your own Inflixo</span>
         </a>
       </div>
     </div>
