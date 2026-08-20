@@ -56,21 +56,24 @@ export default function DashboardThemesPage() {
 
   return (
     <div className="min-h-dvh bg-[#FCF9FB] text-slate-900 pb-16">
-      <div className="mx-auto max-w-7xl px-3 sm:px-6 py-4 sm:py-6 space-y-5 text-left">
-        
-        {/* Consistent Top Navigation Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
-          <div className="flex items-center gap-2 min-w-0">
-            <div>
-              <h1 className="font-display text-lg font-black text-slate-900 truncate">
-                Themes &amp; Styling
-              </h1>
-              <p className="text-xs text-slate-500 font-medium">
-                Choose a visual design theme for your public profile. Changes update instantly.
-              </p>
-            </div>
+      {/* Sticky Page Subheader */}
+      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-200/80 px-4 sm:px-8 py-3.5 shadow-2xs text-left mb-6">
+        <div className="mx-auto max-w-7xl flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="font-display text-base font-extrabold text-slate-900 truncate">
+              Themes &amp; Styling
+            </h1>
+            <p className="text-xs text-slate-500 font-medium truncate">
+              Choose a visual design theme for your public profile. Changes update instantly.
+            </p>
           </div>
+          <span className="bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] text-xs font-semibold px-3 py-1 rounded-full shrink-0">
+            Active: {selectedThemeName}
+          </span>
         </div>
+      </div>
+
+      <div className="mx-auto max-w-7xl px-3 sm:px-6 space-y-5 text-left">
 
         {/* Main Grid: Left Theme Selector (5 cols) & Right Expanded Live Preview (7 cols) */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-start">

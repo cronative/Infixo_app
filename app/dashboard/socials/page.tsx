@@ -139,22 +139,21 @@ export default function DashboardSocialsPage() {
 
   return (
     <div className="min-h-dvh bg-[#F9FAFB] text-slate-900 pb-16">
-      <div className="mx-auto max-w-3xl px-3 sm:px-6 py-4 sm:py-6 space-y-5">
-        
-        {/* Consistent Top Navigation Action Group */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
-          <div className="flex items-center gap-2 min-w-0">
-            <div>
-              <h1 className="font-display text-lg font-black text-slate-900 truncate">
-                Social Accounts
-              </h1>
-              <p className="text-xs text-slate-500 font-medium">
-                Manage your connected social profiles and live sync metrics.
-              </p>
-            </div>
+      {/* Sticky Page Subheader */}
+      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-200/80 px-4 sm:px-8 py-3.5 shadow-2xs text-left mb-6">
+        <div className="mx-auto max-w-5xl flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="font-display text-base font-extrabold text-slate-900 truncate">
+              Social Accounts &amp; Reach
+            </h1>
+            <p className="text-xs text-slate-500 font-medium truncate">
+              Manage your connected social profiles and live sync metrics
+            </p>
           </div>
-
         </div>
+      </div>
+
+      <div className="mx-auto max-w-5xl px-3 sm:px-6 space-y-5">
 
         <div className="space-y-4">
           {/* INSTAGRAM PLATFORM */}

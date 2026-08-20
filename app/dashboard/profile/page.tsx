@@ -79,27 +79,27 @@ export default function DashboardProfilePage() {
 
   return (
     <div className="min-h-dvh bg-[#F9FAFB] text-slate-900 pb-16">
-      <div className="mx-auto max-w-3xl px-3 sm:px-6 py-4 sm:py-6 space-y-5">
-        
-        {/* Top Navigation Action Group */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
-          <div className="flex items-center gap-2 min-w-0">
-            <h1 className="font-display text-lg font-black text-slate-900 truncate">
-              Edit Profile
+      {/* Sticky Page Subheader */}
+      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-200/80 px-4 sm:px-8 py-3.5 shadow-2xs text-left mb-6">
+        <div className="mx-auto max-w-5xl flex items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2.5 min-w-0">
+            <h1 className="font-display text-base font-extrabold text-slate-900 truncate">
+              Edit Creator Profile
             </h1>
-            {/* Handle Copy Pill */}
             <button
               type="button"
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-bold text-[#803D63] hover:bg-indigo-100 transition-colors cursor-pointer shrink-0"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#E8DCE4] bg-[#F6EBF1] px-3 py-1 text-xs font-bold text-[#803D63] hover:bg-rose-100/70 transition-colors cursor-pointer shrink-0"
               title="Copy Profile Link"
             >
               <span>{profileUrl}</span>
-              <Copy className="h-3 w-3 opacity-70" />
+              <Copy className="h-3.5 w-3.5 opacity-70" />
             </button>
           </div>
-
         </div>
+      </div>
+
+      <div className="mx-auto max-w-5xl px-3 sm:px-6 space-y-5">
 
         {/* Main Form Container */}
         <div className="space-y-5 rounded-2xl border border-gray-200 bg-white p-5 sm:p-6 shadow-2xs">

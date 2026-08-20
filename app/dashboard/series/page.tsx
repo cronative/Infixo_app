@@ -789,23 +789,28 @@ export default function DashboardSeriesPage() {
 
   return (
     <div className="min-h-dvh bg-[#F9FAFB] text-slate-900 pb-16">
-      <div className="mx-auto max-w-3xl px-3 sm:px-6 py-4 sm:py-6 space-y-5 text-left">
-        
-        {/* Consistent Top Navigation Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
-          <div className="flex items-center gap-2 min-w-0">
-            <div>
-              <h1 className="font-display text-lg font-black text-slate-900 truncate">
-                Series &amp; Episodes
-              </h1>
-              <p className="text-xs text-slate-500 font-medium">
-                Organize your social videos into professional OTT episode playlists.
-              </p>
-            </div>
+      {/* Sticky Page Subheader */}
+      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-200/80 px-4 sm:px-8 py-3.5 shadow-2xs text-left mb-6">
+        <div className="mx-auto max-w-5xl flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="font-display text-base font-extrabold text-slate-900 truncate">
+              Series &amp; Episodes
+            </h1>
+            <p className="text-xs text-slate-500 font-medium truncate">
+              Organize your social videos into professional OTT episode playlists
+            </p>
           </div>
-
+          <a
+            href="#new-series-form"
+            className="bg-[#803D63] hover:bg-[#6D3254] text-white text-xs font-semibold px-3.5 py-1.5 rounded-xl transition-colors inline-flex items-center gap-1 shadow-2xs cursor-pointer shrink-0"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            <span>Create Series</span>
+          </a>
         </div>
+      </div>
 
+      <div className="mx-auto max-w-5xl px-3 sm:px-6 space-y-5">
         {/* Series Usage Strip */}
         <div className="rounded-xl border border-gray-200 bg-white p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs font-medium text-slate-700 shadow-2xs">
           <div className="flex items-center gap-2.5">
