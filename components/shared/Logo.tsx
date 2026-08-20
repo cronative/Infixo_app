@@ -12,51 +12,30 @@ export function LogoHyundaiLinkI({ className = "h-6 w-6" }: { className?: string
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
-      {/* Outer Slanted Oval Link Frame (Hyundai 22-degree Emblem Tilt) */}
-      <g transform="rotate(-22 50 50)">
-        {/* Tilted Oval Ring / Outer Link Chassis */}
+      {/* Outer Clean Vertical Slanted Oval Frame */}
+      <g transform="rotate(-12 50 50)">
         <ellipse
           cx="50"
           cy="50"
-          rx="39"
-          ry="23"
+          rx="23"
+          ry="39"
           stroke="currentColor"
           strokeWidth="7"
           strokeLinecap="round"
           fill="none"
         />
-
-        {/* Interlocking Link Node Notches (Bio-Link Chain Look) */}
-        <path
-          d="M 22 42 C 22 28 36 22 50 22 C 64 22 78 28 78 42"
-          stroke="currentColor"
-          strokeWidth="4.5"
-          strokeLinecap="round"
-          strokeDasharray="14 12"
-          fill="none"
-          opacity="0.4"
-        />
-        <path
-          d="M 22 58 C 22 72 36 78 50 78 C 64 78 78 72 78 58"
-          stroke="currentColor"
-          strokeWidth="4.5"
-          strokeLinecap="round"
-          strokeDasharray="14 12"
-          fill="none"
-          opacity="0.4"
-        />
       </g>
 
-      {/* Upright / Slanted Capital Letter 'I' (Hyundai Italic Match) */}
-      <g transform="translate(50 50) skewX(-14) translate(-50 -50)" fill="currentColor">
+      {/* Center Capital Letter 'I' */}
+      <g transform="translate(50 50) skewX(-8) translate(-50 -50)" fill="currentColor">
         {/* Top Serif Bar */}
-        <rect x="34" y="23" width="32" height="8" rx="4" />
+        <rect x="35" y="23" width="30" height="7.5" rx="3.75" />
 
         {/* Solid Vertical Stem */}
-        <rect x="44" y="31" width="12" height="38" rx="6" />
+        <rect x="44" y="30.5" width="12" height="39" rx="6" />
 
         {/* Bottom Serif Bar */}
-        <rect x="34" y="69" width="32" height="8" rx="4" />
+        <rect x="35" y="69.5" width="30" height="7.5" rx="3.75" />
       </g>
     </svg>
   );
