@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check, Sparkles, Eye, Copy, ExternalLink, LogOut } from "lucide-react";
+import { Check, Sparkles, Eye, Copy, ExternalLink, LogOut, Search, X } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { THEME_LIST, ThemeService } from "@/services/ThemeService";
@@ -18,6 +18,7 @@ export default function DashboardThemesPage() {
   const { showToast } = useToast();
 
   const [activeGroup, setActiveGroup] = useState<"all" | "light" | "shimmer" | "dark">("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleStr = profile.username || "nikzios30";
   const profileUrl = `inflixo.com/${handleStr}`;
@@ -42,15 +43,20 @@ export default function DashboardThemesPage() {
   }
 
   const filteredThemes = THEME_LIST.filter((t) => {
-    if (activeGroup === "all") return true;
-    return t.group === activeGroup;
+    const matchesGroup = activeGroup === "all" || t.group === activeGroup;
+    const q = searchQuery.toLowerCase().trim();
+    const matchesQuery =
+      !q ||
+      t.name.toLowerCase().includes(q) ||
+      t.description.toLowerCase().includes(q);
+    return matchesGroup && matchesQuery;
   });
 
   const selectedThemeName = THEME_LIST.find((t) => t.key === theme)?.name || "Minimal White";
 
   return (
-    <div className="min-h-dvh bg-[#F9FAFB] text-slate-900 pb-16">
-      <div className="mx-auto max-w-6xl px-3 sm:px-6 py-4 sm:py-6 space-y-5 text-left">
+    <div className="min-h-dvh bg-[#FCF9FB] text-slate-900 pb-16">
+      <div className="mx-auto max-w-7xl px-3 sm:px-6 py-4 sm:py-6 space-y-5 text-left">
         
         {/* Consistent Top Navigation Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
@@ -100,11 +106,33 @@ export default function DashboardThemesPage() {
           </div>
         </div>
 
-        {/* Main Grid: Left Theme Selector & Right Sticky Live Preview */}
+        {/* Main Grid: Left Theme Selector (5 cols) & Right Expanded Live Preview (7 cols) */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-start">
-          {/* Left Column: Filter Pills + Full-Bleed Theme Cards */}
-          <div className="lg:col-span-7 space-y-4 order-2 lg:order-1">
+          {/* Left Column: Search Bar + Filter Pills + 1-Column Theme List */}
+          <div className="lg:col-span-5 space-y-4 order-2 lg:order-1">
             
+            {/* Search Option at top of Theme Listing */}
+            <div className="relative w-full">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search themes by name or style..."
+                className="w-full pl-10 pr-9 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-medium text-slate-900 placeholder:text-gray-400 focus:outline-hidden focus:border-[#803D63] focus:ring-1 focus:ring-[#803D63] transition-all shadow-2xs"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5 rounded-full cursor-pointer"
+                  title="Clear search"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+
             {/* Category Filter Pills */}
             <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
               <button
@@ -116,7 +144,7 @@ export default function DashboardThemesPage() {
                     : "bg-white border border-[#E5E7EB] text-[#4B5563] hover:border-gray-300"
                 }`}
               >
-                All
+                All ({THEME_LIST.length})
               </button>
 
               <button
@@ -157,41 +185,59 @@ export default function DashboardThemesPage() {
               </button>
             </div>
 
-            {/* Theme Selection Grid: Full-Bleed Cards */}
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {filteredThemes.map((t) => {
-                const isSelected = theme === t.key;
-                return (
-                  <ThemeTile
-                    key={t.key}
-                    theme={t}
-                    isSelected={isSelected}
-                    onSelect={() => handleThemeSelect(t.key, t.name)}
-                  />
-                );
-              })}
+            {/* Theme Selection List: 1 Single Column Layout */}
+            <div className="grid grid-cols-1 gap-3">
+              {filteredThemes.length === 0 ? (
+                <div className="bg-white border border-gray-200 rounded-xl p-8 text-center space-y-2">
+                  <p className="text-sm font-bold text-slate-700">No themes found</p>
+                  <p className="text-xs text-gray-500">Try searching for a different keyword or select another group.</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery("");
+                      setActiveGroup("all");
+                    }}
+                    className="text-xs font-semibold text-[#803D63] hover:underline cursor-pointer"
+                  >
+                    Reset filters
+                  </button>
+                </div>
+              ) : (
+                filteredThemes.map((t) => {
+                  const isSelected = theme === t.key;
+                  return (
+                    <ThemeTile
+                      key={t.key}
+                      theme={t}
+                      isSelected={isSelected}
+                      onSelect={() => handleThemeSelect(t.key, t.name)}
+                    />
+                  );
+                })
+              )}
             </div>
           </div>
 
-          {/* Right Column: Sticky Live Mobile Preview Mockup */}
-          <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-2.5 order-1 lg:order-2 h-fit">
+          {/* Right Column: Widened Sticky Live Canvas Preview (7 cols) */}
+          <div className="lg:col-span-7 lg:sticky lg:top-24 space-y-2.5 order-1 lg:order-2 h-fit">
             <div className="flex items-center justify-between">
               <p className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
                 <Eye className="h-3.5 w-3.5 text-[#803D63]" />
-                <span>Live Phone Preview</span>
+                <span>Live Canvas Preview</span>
               </p>
               <span className="bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] text-xs font-semibold px-3 py-1 rounded-full">
                 Selected: {selectedThemeName}
               </span>
             </div>
 
-            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white p-2 shadow-2xs">
+            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white p-2.5 shadow-2xs">
               <LivePreviewCard
                 profile={profile}
                 socials={socials}
                 series={series}
                 totalAudience={totalAudience}
                 themeKey={theme}
+                variant="full"
               />
             </div>
           </div>
