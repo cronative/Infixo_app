@@ -12,8 +12,8 @@ export function LogoStadiumLinkI({ className = "h-6 w-6" }: { className?: string
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
-      {/* Outer Stadium Link Icon (Rounded Top & Bottom Link Arches) */}
-      <g stroke="currentColor" strokeWidth="6.5" strokeLinecap="round" strokeLinejoin="round" fill="none">
+      {/* Outer Stadium Link Icon (Refined 6px Stroke Arches) */}
+      <g stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none">
         {/* Top Stadium Link Arch */}
         <path d="M 28 42 L 28 24 C 28 14 38 10 50 10 C 62 10 72 14 72 24 L 72 42" />
 
@@ -27,16 +27,16 @@ export function LogoStadiumLinkI({ className = "h-6 w-6" }: { className?: string
         <path d="M 72 66 C 72 62 66 58 60 58" />
       </g>
 
-      {/* Upright Center Capital Letter 'I' - 100% BOLD & CRYSTAL CLEAR */}
+      {/* Elegant Center Capital Letter 'I' - Thinner & Shorter with Balanced Breathing Space */}
       <g fill="currentColor">
-        {/* Bold Top Serif Bar */}
-        <rect x="33" y="22" width="34" height="8.5" rx="4.25" />
+        {/* Sleek Top Serif Bar */}
+        <rect x="36" y="25" width="28" height="7" rx="3.5" />
 
-        {/* Solid Vertical Stem */}
-        <rect x="44" y="30.5" width="12" height="39" rx="6" />
+        {/* Thinner Vertical Stem */}
+        <rect x="45.5" y="32" width="9" height="36" rx="4.5" />
 
-        {/* Bold Bottom Serif Bar */}
-        <rect x="33" y="69.5" width="34" height="8.5" rx="4.25" />
+        {/* Sleek Bottom Serif Bar */}
+        <rect x="36" y="68" width="28" height="7" rx="3.5" />
       </g>
     </svg>
   );
