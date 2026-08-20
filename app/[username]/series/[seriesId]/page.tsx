@@ -292,7 +292,7 @@ export default function SeriesDetailPage() {
               {series.genre && (
                 <div className="flex flex-wrap items-center gap-1.5">
                   {series.genre.split(",").map((g, idx) => (
-                    <span key={idx} className="bg-[#F8EEF4] text-[#803D63] text-xs font-medium px-2.5 py-0.5 rounded-md border border-[#ECD3E2]">
+                    <span key={idx} className="bg-[#F6EBF1] text-[#803D63] text-xs font-medium px-2.5 py-0.5 rounded-md border border-[#E8DCE4]">
                       Genre: {g.trim()}
                     </span>
                   ))}
@@ -331,7 +331,7 @@ export default function SeriesDetailPage() {
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1 text-left">
                       {/* EP Number Indigo Chip */}
-                      <span className="bg-[#F8EEF4] text-[#803D63] font-bold text-xs px-2.5 py-1 rounded-md border border-[#ECD3E2] shrink-0">
+                      <span className="bg-[#F6EBF1] text-[#803D63] font-bold text-xs px-2.5 py-1 rounded-md border border-[#E8DCE4] shrink-0">
                         {epNumStr}
                       </span>
 
@@ -349,7 +349,7 @@ export default function SeriesDetailPage() {
                         <span>{plat.name}</span>
                       </span>
 
-                      <span className="bg-[#803D63] hover:bg-[#6B3252] text-white text-xs font-semibold px-4 py-2 rounded-lg inline-flex items-center gap-1.5 transition-all shadow-none">
+                      <span className="bg-[#803D63] hover:bg-[#6D3254] text-white text-xs font-semibold px-4 py-2 rounded-lg inline-flex items-center gap-1.5 transition-all shadow-none">
                         <span>Watch on {plat.name} ↗</span>
                       </span>
                     </div>
@@ -379,7 +379,7 @@ export default function SeriesDetailPage() {
 
           <Link
             href={`/${username}`}
-            className="shrink-0 rounded-xl bg-[#803D63] hover:bg-[#6B3252] px-5 py-2 text-xs font-semibold text-white transition-colors"
+            className="shrink-0 rounded-xl bg-[#803D63] hover:bg-[#6D3254] px-5 py-2 text-xs font-semibold text-white transition-colors"
           >
             Visit Creator Profile →
           </Link>

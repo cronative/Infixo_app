@@ -86,7 +86,7 @@ function NewSeriesForm({
         <button
           type="button"
           onClick={handleOpenClick}
-          className="w-full py-3.5 border-2 border-dashed border-[#E5E7EB] hover:border-[#803D63] hover:bg-[#F8EEF4]/30 rounded-xl text-sm font-semibold text-[#803D63] flex items-center justify-center gap-2 transition-all cursor-pointer"
+          className="w-full py-3.5 border-2 border-dashed border-[#E5E7EB] hover:border-[#803D63] hover:bg-[#F6EBF1]/30 rounded-xl text-sm font-semibold text-[#803D63] flex items-center justify-center gap-2 transition-all cursor-pointer"
         >
           <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-50 text-[#803D63]">
             <Plus className="h-4 w-4" />
@@ -205,7 +205,7 @@ function NewSeriesForm({
             type="button"
             disabled={submitting}
             onClick={submit}
-            className="tap-scale bg-[#803D63] hover:bg-[#6B3252] text-white px-5 py-2 rounded-lg text-xs font-medium shadow-none transition-colors cursor-pointer"
+            className="tap-scale bg-[#803D63] hover:bg-[#6D3254] text-white px-5 py-2 rounded-lg text-xs font-medium shadow-none transition-colors cursor-pointer"
           >
             {submitting ? "Creating..." : "Save & Create Series"}
           </button>
@@ -317,7 +317,7 @@ function EditEpisodeModal({
             type="button"
             disabled={saving}
             onClick={handleSave}
-            className="tap-scale bg-[#803D63] hover:bg-[#6B3252] text-white px-5 py-2 rounded-lg text-xs font-medium shadow-none transition-colors cursor-pointer"
+            className="tap-scale bg-[#803D63] hover:bg-[#6D3254] text-white px-5 py-2 rounded-lg text-xs font-medium shadow-none transition-colors cursor-pointer"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
@@ -462,7 +462,7 @@ function SeriesRow({
 
             {/* Genre & Language Micro-chips */}
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="bg-[#F8EEF4] text-[#803D63] text-xs font-medium px-2.5 py-0.5 rounded-md border border-[#ECD3E2]">
+              <span className="bg-[#F6EBF1] text-[#803D63] text-xs font-medium px-2.5 py-0.5 rounded-md border border-[#E8DCE4]">
                 Genre: {series.genre || "General"}
               </span>
               {series.language && (
@@ -492,7 +492,7 @@ function SeriesRow({
           <button
             type="button"
             onClick={handleViewPublicSeries}
-            className="w-8 h-8 rounded-lg border border-[#E5E7EB] bg-white text-gray-500 hover:text-[#803D63] hover:bg-[#F8EEF4] flex items-center justify-center cursor-pointer transition-colors"
+            className="w-8 h-8 rounded-lg border border-[#E5E7EB] bg-white text-gray-500 hover:text-[#803D63] hover:bg-[#F6EBF1] flex items-center justify-center cursor-pointer transition-colors"
             title="View Public Series Page"
           >
             <Eye className="h-4 w-4" />
@@ -504,7 +504,7 @@ function SeriesRow({
             className={`w-8 h-8 rounded-lg border flex items-center justify-center cursor-pointer transition-colors ${
               copiedLink
                 ? "bg-emerald-50 text-emerald-600 border-emerald-300"
-                : "border-[#E5E7EB] bg-white text-gray-500 hover:text-[#803D63] hover:bg-[#F8EEF4]"
+                : "border-[#E5E7EB] bg-white text-gray-500 hover:text-[#803D63] hover:bg-[#F6EBF1]"
             }`}
             title="Copy Series Link"
           >
@@ -514,7 +514,7 @@ function SeriesRow({
           <button
             type="button"
             onClick={handleShareSeries}
-            className="w-8 h-8 rounded-lg border border-[#E5E7EB] bg-white text-gray-500 hover:text-[#803D63] hover:bg-[#F8EEF4] flex items-center justify-center cursor-pointer transition-colors"
+            className="w-8 h-8 rounded-lg border border-[#E5E7EB] bg-white text-gray-500 hover:text-[#803D63] hover:bg-[#F6EBF1] flex items-center justify-center cursor-pointer transition-colors"
             title="Share Series"
           >
             <Share2 className="h-4 w-4" />
@@ -567,7 +567,7 @@ function SeriesRow({
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       {/* Light SaaS E1 Badge */}
-                      <div className="bg-[#F8EEF4] text-[#803D63] font-bold text-xs w-8 h-8 rounded-lg flex items-center justify-center border border-[#ECD3E2] shrink-0">
+                      <div className="bg-[#F6EBF1] text-[#803D63] font-bold text-xs w-8 h-8 rounded-lg flex items-center justify-center border border-[#E8DCE4] shrink-0">
                         E{ep.episodeNumber}
                       </div>
 
@@ -672,7 +672,7 @@ function SeriesRow({
                   type="button"
                   disabled={submittingEp}
                   onClick={ensureSeasonAndAdd}
-                  className="bg-[#803D63] hover:bg-[#6B3252] text-white px-5 py-2 rounded-lg text-xs font-medium shadow-none transition-colors cursor-pointer"
+                  className="bg-[#803D63] hover:bg-[#6D3254] text-white px-5 py-2 rounded-lg text-xs font-medium shadow-none transition-colors cursor-pointer"
                 >
                   {submittingEp ? "Saving..." : "Save & Add Episode"}
                 </button>
@@ -692,7 +692,7 @@ function SeriesRow({
                 <button
                   type="button"
                   onClick={handleStartAddEpisode}
-                  className="w-full py-2.5 bg-white border border-[#E5E7EB] hover:border-[#803D63] hover:bg-[#F8EEF4]/30 text-xs font-semibold text-[#803D63] rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                  className="w-full py-2.5 bg-white border border-[#E5E7EB] hover:border-[#803D63] hover:bg-[#F6EBF1]/30 text-xs font-semibold text-[#803D63] rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                 >
                   <Plus className="h-4 w-4" />
                   <span>+ Add Episode to {series.title}</span>

@@ -97,7 +97,7 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
               onClick={() => toggleGenre(g)}
               className={`tap-scale flex items-center gap-1.5 rounded-full px-3 py-1 text-xs transition-all cursor-pointer ${
                 isSelected
-                  ? "bg-[#F8EEF4] text-[#803D63] border border-[#803D63] font-semibold shadow-2xs"
+                  ? "bg-[#F6EBF1] text-[#803D63] border border-[#803D63] font-semibold shadow-2xs"
                   : isMaxReached
                   ? "opacity-40 cursor-not-allowed bg-white border border-slate-200 text-slate-400"
                   : "bg-white border border-slate-200 text-slate-700 hover:border-indigo-300 hover:bg-indigo-50/50 hover:text-[#803D63]"

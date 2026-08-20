@@ -51,7 +51,7 @@ export function CategorySelect({
           </label>
           <p className="text-xs text-slate-500">Choose up to {max} categories that best describe your content.</p>
         </div>
-        <span className="bg-[#F8EEF4] text-[#803D63] border border-[#ECD3E2] text-xs font-semibold px-2.5 py-0.5 rounded-full shrink-0">
+        <span className="bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] text-xs font-semibold px-2.5 py-0.5 rounded-full shrink-0">
           {selectedCategories.length} / {max} selected
         </span>
       </div>
@@ -72,7 +72,7 @@ export function CategorySelect({
               onClick={() => toggleCategory(item.category)}
               className={`tap-scale inline-flex items-center gap-1.5 text-xs py-1 px-3 rounded-full transition-all cursor-pointer ${
                 isSelected
-                  ? "bg-[#F8EEF4] border border-[#803D63] text-[#803D63] font-semibold shadow-2xs"
+                  ? "bg-[#F6EBF1] border border-[#803D63] text-[#803D63] font-semibold shadow-2xs"
                   : isMaxReached
                   ? "opacity-40 cursor-not-allowed bg-white border border-[#E5E7EB] text-gray-400"
                   : "bg-white border border-[#E5E7EB] text-[#4B5563] hover:border-gray-300"

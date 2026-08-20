@@ -1,30 +1,30 @@
 @import "tailwindcss";
 
 :root {
-  /* Clean Flat Neutral Backgrounds & Surfaces */
-  --background: #F8FAFC;
-  --surface: #ffffff;
-  --surface-muted: #f1f5f9;
-  --foreground: #0f172a;
-  --muted: #64748b;
+  /* Final Inflixo Brand Palette */
+  --background: #FCF9FB;             /* Main Background Canvas */
+  --surface: #ffffff;                /* Surface Cards & Modals */
+  --surface-muted: #F6EBF1;          /* Light Brand Background */
+  --foreground: #241A20;             /* Dark Primary Text */
+  --muted: #6F6269;                  /* Secondary Text */
 
-  /* Inflixo Official Solid Logo Primary Theme Colors */
-  --inflixo-purple: #803D63;          /* Primary Solid Brand Royal Purple Accent */
-  --inflixo-purple-dark: #6B3252;     /* Deep Royal Purple Accent */
-  --inflixo-purple-secondary: #803D63;/* Secondary Purple */
-  --inflixo-purple-light: #F8EEF4;    /* Light Indigo Accent */
-  --inflixo-lavender: #F8FAFC;        /* Flat Light Background */
-  --inflixo-blue: #803D63;            /* Primary Accent */
-  --inflixo-lime: #10b981;            /* Success Green */
-  --inflixo-navy: #0f172a;            /* Primary Text */
-  --inflixo-border: #E2E8F0;          /* Clean Minimal 1px Border */
+  /* Primary Brand Accent Tokens */
+  --inflixo-purple: #803D63;          /* Primary Brand Accent */
+  --inflixo-purple-dark: #6D3254;     /* CTA Hover State */
+  --inflixo-purple-secondary: #803D63;/* Primary Brand Accent */
+  --inflixo-purple-light: #F6EBF1;    /* Light Brand Background */
+  --inflixo-lavender: #FCF9FB;        /* Main Background Canvas */
+  --inflixo-blue: #803D63;            /* Primary Brand Accent */
+  --inflixo-lime: #0D9488;            /* Success / Connected Badge Teal */
+  --inflixo-navy: #241A20;            /* Dark Primary Text */
+  --inflixo-border: #E8DCE4;          /* Clean Minimal 1px Border */
   --inflixo-gold: #f59e0b;
   --inflixo-gold-light: #fef3c7;
 
   --radius-card: 16px;
   --radius-input: 12px;
 
-  /* Linktree-Style Flat Tokens: Zero Drop Shadows */
+  /* Flat Tokens: Zero Drop Shadows */
   --shadow-soft: none;
   --shadow-elevated: none;
   --shadow-premium: none;

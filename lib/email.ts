@@ -83,7 +83,7 @@ export async function sendOtpEmail(toEmail: string, otpCode: string): Promise<bo
                   </p>
 
                   <!-- High-Impact OTP Display Box -->
-                  <div style="background-color: #F8EEF4; border: 2px dashed #803D63; border-radius: 16px; padding: 20px 12px; text-align: center; margin-bottom: 20px;">
+                  <div style="background-color: #F6EBF1; border: 2px dashed #803D63; border-radius: 16px; padding: 20px 12px; text-align: center; margin-bottom: 20px;">
                     <div style="font-size: 40px; font-weight: 900; letter-spacing: 14px; color: #803D63; font-family: 'Courier New', Courier, monospace; line-height: 1; padding-left: 14px;">
                       ${otpCode}
                     </div>

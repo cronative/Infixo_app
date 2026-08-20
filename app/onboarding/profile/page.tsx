@@ -264,7 +264,7 @@ export default function ProfileStepPage() {
             <button
               type="button"
               onClick={handleSuggestBio}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#803D63] hover:text-[#6B3252] bg-purple-50 hover:bg-purple-100 px-2.5 py-1 rounded-full border border-purple-200 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#803D63] hover:text-[#6D3254] bg-purple-50 hover:bg-purple-100 px-2.5 py-1 rounded-full border border-purple-200 transition-colors cursor-pointer"
             >
               <Sparkles className="h-3.5 w-3.5 text-[#803D63]" />
               <span>✨ Suggest bio</span>
@@ -292,7 +292,7 @@ export default function ProfileStepPage() {
             size="lg"
             loading={submitting}
             onClick={handleNext}
-            className="bg-[#803D63] hover:bg-[#6B3252] text-white font-bold h-12 text-sm rounded-xl cursor-pointer shadow-none"
+            className="bg-[#803D63] hover:bg-[#6D3254] text-white font-bold h-12 text-sm rounded-xl cursor-pointer shadow-none"
           >
             Save &amp; Next →
           </Button>

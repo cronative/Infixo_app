@@ -265,7 +265,7 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* 3. SLIM EARLY ACCESS BANNER STRIP */}
-        <div className="bg-[#F8EEF4] border border-[#ECD3E2] rounded-xl px-4 py-2.5 flex items-center justify-between text-xs">
+        <div className="bg-[#F6EBF1] border border-[#E8DCE4] rounded-xl px-4 py-2.5 flex items-center justify-between text-xs">
           <div className="flex items-center gap-2 text-slate-900 font-medium">
             <Sparkles className="h-4 w-4 text-[#803D63] shrink-0" />
             <span>🎉 Early Access Active • <strong>{seriesUsage.current}/3 Series</strong> • <strong>{totalEpisodesUsage.current}/15 Episodes</strong></span>
@@ -285,7 +285,7 @@ export default function DashboardOverviewPage() {
             <button
               type="button"
               onClick={handleCreateSeriesClick}
-              className="tap-scale flex items-center gap-3 rounded-xl bg-[#803D63] hover:bg-[#6B3252] text-white font-bold p-3.5 shadow-xs transition-all cursor-pointer"
+              className="tap-scale flex items-center gap-3 rounded-xl bg-[#803D63] hover:bg-[#6D3254] text-white font-bold p-3.5 shadow-xs transition-all cursor-pointer"
             >
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 text-white shrink-0">
                 <Plus className="h-4 w-4" />
@@ -387,7 +387,7 @@ export default function DashboardOverviewPage() {
                     </Link>
                     <Link
                       href="/dashboard/series"
-                      className="bg-[#F8EEF4] text-[#803D63] font-medium text-xs px-3 py-1.5 rounded-lg border border-[#ECD3E2] hover:bg-indigo-100 transition-colors"
+                      className="bg-[#F6EBF1] text-[#803D63] font-medium text-xs px-3 py-1.5 rounded-lg border border-[#E8DCE4] hover:bg-indigo-100 transition-colors"
                     >
                       + Add Episode
                     </Link>

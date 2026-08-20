@@ -155,7 +155,7 @@ export default function LandingHomePage() {
             <button
               type="button"
               onClick={() => handleClaim("")}
-              className="inline-flex items-center gap-1.5 rounded-full bg-[#803D63] px-4 py-2 text-xs sm:text-sm font-bold text-white hover:bg-[#6B3252] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#803D63] px-4 py-2 text-xs sm:text-sm font-bold text-white hover:bg-[#6D3254] transition-colors cursor-pointer"
             >
               <span>Claim Handle</span>
               <ArrowRight className="h-3.5 w-3.5" />
@@ -207,7 +207,7 @@ export default function LandingHomePage() {
                   />
                   <button
                     type="submit"
-                    className="inline-flex items-center gap-1 shrink-0 rounded-lg bg-[#803D63] px-4 py-2 text-xs sm:text-sm font-bold text-white hover:bg-[#6B3252] transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1 shrink-0 rounded-lg bg-[#803D63] px-4 py-2 text-xs sm:text-sm font-bold text-white hover:bg-[#6D3254] transition-colors cursor-pointer"
                   >
                     <span>Claim Handle</span>
                   </button>
@@ -457,7 +457,7 @@ export default function LandingHomePage() {
               <button
                 type="button"
                 onClick={() => handleClaim("")}
-                className="inline-flex items-center gap-2 rounded-full bg-[#803D63] hover:bg-[#6B3252] px-7 py-3.5 text-xs sm:text-sm font-bold text-white transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-full bg-[#803D63] hover:bg-[#6D3254] px-7 py-3.5 text-xs sm:text-sm font-bold text-white transition-colors cursor-pointer"
               >
                 <span>Join the 10K Creator Collective</span>
                 <ArrowRight className="h-4 w-4" />
@@ -564,7 +564,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim("")}
-                  className="w-full rounded-lg bg-[#803D63] hover:bg-[#6B3252] py-2.5 px-4 text-xs font-bold text-white text-center transition-colors cursor-pointer"
+                  className="w-full rounded-lg bg-[#803D63] hover:bg-[#6D3254] py-2.5 px-4 text-xs font-bold text-white text-center transition-colors cursor-pointer"
                 >
                   Upgrade to Pro
                 </button>
@@ -651,7 +651,7 @@ export default function LandingHomePage() {
                 />
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-1 shrink-0 rounded-lg bg-[#803D63] px-4 py-2 text-xs sm:text-sm font-bold text-white hover:bg-[#6B3252] transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1 shrink-0 rounded-lg bg-[#803D63] px-4 py-2 text-xs sm:text-sm font-bold text-white hover:bg-[#6D3254] transition-colors cursor-pointer"
                 >
                   <span>Claim My Profile</span>
                 </button>

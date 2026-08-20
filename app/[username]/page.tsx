@@ -296,7 +296,7 @@ export default function PublicProfilePage() {
               {usernameAvailable === true ? (
                 <button
                   onClick={() => router.push(`/login`)}
-                  className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6B3252] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-indigo-900/20 transition-all border border-indigo-400/30 hover:scale-[1.02]"
+                  className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6D3254] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-indigo-900/20 transition-all border border-indigo-400/30 hover:scale-[1.02]"
                 >
                   <Sparkles className="h-4 w-4" />
                   <span>Claim @{handle}</span>
@@ -304,7 +304,7 @@ export default function PublicProfilePage() {
               ) : (
                 <button
                   onClick={() => router.push("/login")}
-                  className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6B3252] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-indigo-900/20 transition-all border border-indigo-400/30 hover:scale-[1.02]"
+                  className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6D3254] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-indigo-900/20 transition-all border border-indigo-400/30 hover:scale-[1.02]"
                 >
                   <Sparkles className="h-4 w-4" />
                   <span>Create Your Inflixo</span>

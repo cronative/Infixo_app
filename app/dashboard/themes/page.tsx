@@ -180,7 +180,7 @@ export default function DashboardThemesPage() {
                 <Eye className="h-3.5 w-3.5 text-[#803D63]" />
                 <span>Live Phone Preview</span>
               </p>
-              <span className="bg-[#F8EEF4] text-[#803D63] border border-[#ECD3E2] text-xs font-semibold px-3 py-1 rounded-full">
+              <span className="bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] text-xs font-semibold px-3 py-1 rounded-full">
                 Selected: {selectedThemeName}
               </span>
             </div>

@@ -250,7 +250,7 @@ export default function DashboardProfilePage() {
               type="button"
               onClick={handleSave}
               disabled={submitting}
-              className="tap-scale bg-[#803D63] hover:bg-[#6B3252] text-white font-medium text-xs px-8 py-2.5 rounded-xl transition-colors cursor-pointer shadow-none flex items-center gap-2"
+              className="tap-scale bg-[#803D63] hover:bg-[#6D3254] text-white font-medium text-xs px-8 py-2.5 rounded-xl transition-colors cursor-pointer shadow-none flex items-center gap-2"
             >
               {submitting ? "Saving Changes..." : "Save Changes"}
             </button>

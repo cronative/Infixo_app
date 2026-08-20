@@ -334,7 +334,7 @@ const MATCHA_CREAM_STYLE: ThemeStyleConfig = {
 };
 
 const CLOUD_FLUFF_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-br from-[#e0f2fe] via-[#f0f9ff] to-[#ECD3E2] text-[#0369a1] border border-sky-200/90 shadow-xl",
+  cardBg: "bg-gradient-to-br from-[#e0f2fe] via-[#f0f9ff] to-[#E8DCE4] text-[#0369a1] border border-sky-200/90 shadow-xl",
   profBadgeBg: "bg-sky-100/90",
   profBadgeText: "text-sky-900",
   profBadgeBorder: "border-sky-300",
@@ -415,7 +415,7 @@ const SHIMMER_GOLD_STYLE: ThemeStyleConfig = {
 };
 
 const HOLOGRAPHIC_WAVE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-br from-[#ECD3E2] via-[#f3e8ff] to-[#fce7f3] text-[#4c1d95] border border-purple-200 shadow-xl",
+  cardBg: "bg-gradient-to-br from-[#E8DCE4] via-[#f3e8ff] to-[#fce7f3] text-[#4c1d95] border border-purple-200 shadow-xl",
   profBadgeBg: "bg-purple-200/80",
   profBadgeText: "text-purple-950 font-black",
   profBadgeBorder: "border-purple-300",
@@ -713,7 +713,7 @@ export function LivePreviewCard({
               showToast("Could not copy link", "error");
             }
           }}
-          className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-[#F8EEF4] text-[#803D63] border border-[#ECD3E2] text-xs font-semibold px-3 py-1 hover:bg-indigo-100 transition-colors cursor-pointer"
+          className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] text-xs font-semibold px-3 py-1 hover:bg-indigo-100 transition-colors cursor-pointer"
           title="Click to copy profile link"
         >
           <span>{profile.username ? `inflixo.com/${profile.username}` : "inflixo.com/username"}</span>
@@ -834,7 +834,7 @@ export function LivePreviewCard({
             <p className="text-xs font-bold text-gray-400 uppercase tracking-widest text-left">
               Featured Series &amp; Shows
             </p>
-            <span className="text-[11px] font-semibold text-[#803D63] bg-[#F8EEF4] border border-[#ECD3E2] px-2.5 py-0.5 rounded-full shrink-0">
+            <span className="text-[11px] font-semibold text-[#803D63] bg-[#F6EBF1] border border-[#E8DCE4] px-2.5 py-0.5 rounded-full shrink-0">
               {series.length} {series.length === 1 ? "Series" : "Series"} • {totalEpisodesCount} {totalEpisodesCount === 1 ? "Episode" : "Episodes"}
             </span>
           </div>
@@ -1006,7 +1006,7 @@ function PreviewSeriesItem({
               {/* View Page Icon Button (Next to Share button -> Opens Series Detail Page) */}
               <Link
                 href={seriesLinkUrl}
-                className="flex h-7 w-7 items-center justify-center rounded-lg border border-indigo-200 bg-[#F8EEF4] hover:bg-indigo-100 text-[#803D63] transition-colors cursor-pointer"
+                className="flex h-7 w-7 items-center justify-center rounded-lg border border-indigo-200 bg-[#F6EBF1] hover:bg-indigo-100 text-[#803D63] transition-colors cursor-pointer"
                 title="View Series Details Page"
                 aria-label="View Series Page"
               >
@@ -1039,7 +1039,7 @@ function PreviewSeriesItem({
               {genresList.length > 0 && (
                 <div className="flex flex-wrap items-center gap-1">
                   {genresList.map((g, idx) => (
-                    <span key={idx} className="bg-[#F8EEF4] text-[#803D63] text-[10px] font-medium px-2 py-0.5 rounded-md border border-[#ECD3E2]">
+                    <span key={idx} className="bg-[#F6EBF1] text-[#803D63] text-[10px] font-medium px-2 py-0.5 rounded-md border border-[#E8DCE4]">
                       {g}
                     </span>
                   ))}
@@ -1051,7 +1051,7 @@ function PreviewSeriesItem({
             <button
               type="button"
               onClick={onToggle}
-              className="bg-[#803D63] hover:bg-[#6B3252] text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1 shadow-2xs shrink-0 cursor-pointer self-start sm:self-auto"
+              className="bg-[#803D63] hover:bg-[#6D3254] text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1 shadow-2xs shrink-0 cursor-pointer self-start sm:self-auto"
             >
               <span>{expanded ? "Hide Episodes ↑" : "View Episodes ↗"}</span>
             </button>
@@ -1081,7 +1081,7 @@ function PreviewSeriesItem({
                   className="group flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white p-2.5 sm:p-3 transition-all hover:border-[#803D63] shadow-2xs text-left"
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1 text-left">
-                    <span className="bg-[#F8EEF4] text-[#803D63] font-bold text-[11px] px-2 py-1 rounded-md border border-[#ECD3E2] shrink-0">
+                    <span className="bg-[#F6EBF1] text-[#803D63] font-bold text-[11px] px-2 py-1 rounded-md border border-[#E8DCE4] shrink-0">
                       {epNumStr}
                     </span>
                     <p className="truncate text-xs font-bold text-gray-900 group-hover:text-[#803D63] transition-colors text-left">
@@ -1098,7 +1098,7 @@ function PreviewSeriesItem({
                       <span>{plat.name}</span>
                     </span>
 
-                    <span className="text-xs font-bold text-[#803D63] group-hover:text-[#6B3252] inline-flex items-center gap-1 bg-[#F8EEF4] border border-[#ECD3E2] px-3 py-1 rounded-lg transition-colors">
+                    <span className="text-xs font-bold text-[#803D63] group-hover:text-[#6D3254] inline-flex items-center gap-1 bg-[#F6EBF1] border border-[#E8DCE4] px-3 py-1 rounded-lg transition-colors">
                       <span>Watch ↗</span>
                     </span>
                   </div>

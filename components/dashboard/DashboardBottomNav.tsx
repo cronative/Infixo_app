@@ -25,7 +25,7 @@ export function DashboardBottomNav() {
                 className={`flex h-11 w-11 items-center justify-center rounded-xl text-white transition-colors ${
                   active
                     ? "bg-[#803D63]"
-                    : "bg-[#803D63] hover:bg-[#6B3252]"
+                    : "bg-[#803D63] hover:bg-[#6D3254]"
                 }`}
               >
                 <Icon className="h-5 w-5 stroke-[2.5]" />

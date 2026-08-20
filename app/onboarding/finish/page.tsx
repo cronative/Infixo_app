@@ -131,7 +131,7 @@ export default function FinishStepPage() {
             <button
               type="button"
               onClick={handleCopy}
-              className="tap-scale flex items-center gap-1.5 rounded-lg bg-[#803D63] hover:bg-[#6B3252] px-4 py-2 text-xs font-bold text-white transition-all cursor-pointer shrink-0"
+              className="tap-scale flex items-center gap-1.5 rounded-lg bg-[#803D63] hover:bg-[#6D3254] px-4 py-2 text-xs font-bold text-white transition-all cursor-pointer shrink-0"
             >
               {copied ? (
                 <>
@@ -153,7 +153,7 @@ export default function FinishStepPage() {
             <button
               type="button"
               onClick={() => router.push("/dashboard")}
-              className="tap-scale w-full flex items-center justify-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6B3252] text-white font-medium py-3.5 px-4 text-sm shadow-md transition-all cursor-pointer"
+              className="tap-scale w-full flex items-center justify-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6D3254] text-white font-medium py-3.5 px-4 text-sm shadow-md transition-all cursor-pointer"
             >
               <LayoutDashboard className="h-4 w-4" />
               <span>Go to Creator Dashboard →</span>

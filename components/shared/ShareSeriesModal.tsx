@@ -108,7 +108,7 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
             />
             <button
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6B3252] px-4 py-2 text-xs font-black text-white shadow-md transition-all shrink-0"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6D3254] px-4 py-2 text-xs font-black text-white shadow-md transition-all shrink-0"
             >
               {copiedLink ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               <span>{copiedLink ? "Copied" : "Copy"}</span>

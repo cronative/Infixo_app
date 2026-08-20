@@ -1059,7 +1059,7 @@ export default function AdminDashboardPage() {
                 type="button"
                 disabled={sendingEmail}
                 onClick={handleSendMail}
-                className="tap-scale flex w-full items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6B3252] py-3.5 text-xs font-black text-white transition-all disabled:opacity-50 cursor-pointer shadow-none"
+                className="tap-scale flex w-full items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6D3254] py-3.5 text-xs font-black text-white transition-all disabled:opacity-50 cursor-pointer shadow-none"
               >
                 {sendingEmail ? (
                   <>

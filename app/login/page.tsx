@@ -69,7 +69,7 @@ export default function LoginPage() {
             fullWidth
             size="lg"
             loading={loading}
-            className="bg-[#803D63] text-white font-bold hover:bg-[#6B3252] transition-colors h-12 text-sm rounded-xl cursor-pointer shadow-none"
+            className="bg-[#803D63] text-white font-bold hover:bg-[#6D3254] transition-colors h-12 text-sm rounded-xl cursor-pointer shadow-none"
           >
             Send Secure Code →
           </Button>

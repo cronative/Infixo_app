@@ -272,7 +272,7 @@ export default function SocialsStepPage() {
           <Button variant="outline" size="lg" className="rounded-xl border-gray-200 text-gray-700 hover:bg-gray-50" onClick={() => router.push("/onboarding/profile")}>
             Back
           </Button>
-          <Button fullWidth size="lg" loading={submitting} onClick={handleNext} className="bg-[#803D63] hover:bg-[#6B3252] text-white font-medium py-3 rounded-xl shadow-none">
+          <Button fullWidth size="lg" loading={submitting} onClick={handleNext} className="bg-[#803D63] hover:bg-[#6D3254] text-white font-medium py-3 rounded-xl shadow-none">
             Save &amp; Next →
           </Button>
         </div>

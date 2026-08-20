@@ -233,7 +233,7 @@ export default function VerifyOtpPage() {
           onClick={() => submit(digits.join(""))}
           className={`font-bold transition-colors h-12 text-sm rounded-xl cursor-pointer shadow-none ${
             isOtpComplete && !submitting
-              ? "bg-[#803D63] text-white hover:bg-[#6B3252]"
+              ? "bg-[#803D63] text-white hover:bg-[#6D3254]"
               : "bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed"
           }`}
         >
