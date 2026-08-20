@@ -449,8 +449,24 @@ const LUMINOUS_PEARL_STYLE: ThemeStyleConfig = {
   isShimmerFanbase: true,
 };
 
+const MINIMAL_WHITE_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-[#F8FAFC] text-[#0F172A] border border-[#E5E7EB] shadow-2xs",
+  profBadgeBg: "bg-[#F3F4F6]",
+  profBadgeText: "text-[#0F172A] font-semibold",
+  profBadgeBorder: "border-[#E5E7EB]",
+  fanbaseBg: "bg-white",
+  fanbaseText: "text-[#0F172A] font-bold",
+  socialItemBg: "bg-white",
+  socialItemBorder: "border-[#E5E7EB]",
+  socialNameColor: "text-[#0F172A] font-bold",
+  socialUnitColor: "text-slate-500",
+  nameColor: "text-[#0F172A]",
+  bioColor: "text-[#4B5563]",
+  handleColor: "text-[#1F2937]",
+};
+
 export const THEME_STYLES: Record<string, ThemeStyleConfig> = {
-  "minimal-white": DEFAULT_THEME_STYLE,
+  "minimal-white": MINIMAL_WHITE_STYLE,
   "signature-purple": SIGNATURE_PURPLE_STYLE,
   "modern-purple": DARK_PURPLE_STYLE,
   midnight: DARK_PURPLE_STYLE,
@@ -695,7 +711,7 @@ export function LivePreviewCard({
             {profile.displayName || "Your Name"}
           </h3>
           {/* Verified SVG Checkmark Badge */}
-          <svg className="w-5 h-5 text-[#803D63] shrink-0" viewBox="0 0 24 24" fill="currentColor">
+          <svg className={`w-5 h-5 ${themeKey === "minimal-white" ? "text-[#0F172A]" : "text-[#803D63]"} shrink-0`} viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L9 14.17l9.59-9.59L20 6l-10 11z" />
           </svg>
         </div>
@@ -713,7 +729,11 @@ export function LivePreviewCard({
               showToast("Could not copy link", "error");
             }
           }}
-          className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] text-xs font-semibold px-3 py-1 hover:bg-indigo-100 transition-colors cursor-pointer"
+          className={`mt-1.5 inline-flex items-center gap-1.5 rounded-full text-xs font-semibold px-3 py-1.5 transition-colors cursor-pointer ${
+            themeKey === "minimal-white"
+              ? "bg-[#F3F4F6] text-[#1F2937] border border-[#E5E7EB] hover:bg-[#E5E7EB]"
+              : "bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] hover:bg-rose-100/60"
+          }`}
           title="Click to copy profile link"
         >
           <span>{profile.username ? `inflixo.com/${profile.username}` : "inflixo.com/username"}</span>
@@ -747,7 +767,7 @@ export function LivePreviewCard({
               {visibleChips.map((chip, idx) => (
                 <span
                   key={idx}
-                  className="bg-white/80 border border-gray-200 text-gray-700 text-[11px] font-medium px-2.5 py-0.5 rounded-full shadow-2xs"
+                  className="bg-white border border-gray-200 text-gray-700 text-xs font-medium px-3 py-1 rounded-full shadow-2xs"
                 >
                   {chip}
                 </span>
@@ -768,7 +788,7 @@ export function LivePreviewCard({
               <p className="text-2xl font-black text-[#111827]">
                 ❤️ {formatCount(totalAudience)}
               </p>
-              <p className="text-[11px] font-bold tracking-wider uppercase text-[#803D63]">
+              <p className={`text-[11px] font-bold tracking-wider uppercase ${themeKey === "minimal-white" ? "text-[#0F172A]" : "text-[#803D63]"}`}>
                 TOTAL FANBASE
               </p>
             </div>
@@ -777,7 +797,7 @@ export function LivePreviewCard({
               <p className="text-2xl font-black text-[#111827]">
                 ❤️ 0
               </p>
-              <p className="text-[11px] font-bold tracking-wider uppercase text-[#803D63]">
+              <p className={`text-[11px] font-bold tracking-wider uppercase ${themeKey === "minimal-white" ? "text-[#0F172A]" : "text-[#803D63]"}`}>
                 TOTAL FANBASE
               </p>
               <p className="text-[10px] font-medium text-gray-400">

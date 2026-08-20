@@ -175,7 +175,10 @@ function ThemeTile({
           : "border border-gray-200/80 hover:border-gray-400 hover:shadow-md"
       }`}
       style={{
-        background: `linear-gradient(135deg, ${bg} 0%, ${accent} 100%)`,
+        background:
+          theme.key === "minimal-white"
+            ? "linear-gradient(135deg, #FFFFFF 0%, #FAFAFA 100%)"
+            : `linear-gradient(135deg, ${bg} 0%, ${accent} 100%)`,
       }}
     >
       {/* Top Row: Glassmorphic Palette Dots & Checkmark Badge */}

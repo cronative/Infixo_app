@@ -9,7 +9,7 @@ export const THEME_LIST: ThemeMeta[] = [
     key: "minimal-white",
     name: "Minimal White",
     description: "Clean, crisp and distraction-free white canvas.",
-    swatch: ["#ffffff", "#14121a", "#ece9f4"],
+    swatch: ["#FFFFFF", "#F8FAFC", "#0F172A"],
     group: "light",
   },
   {
