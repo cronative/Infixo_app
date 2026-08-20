@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
   <!-- PURE 1:1 SHARP SQUARE BACKGROUND WITHOUT ROUNDED CORNERS -->
-  <rect width="1024" height="1024" fill="#6366F1"/>
+  <rect width="1024" height="1024" fill="#803D63"/>
 
   <!-- Logo Content Group Centered -->
   <g transform="translate(112, 112) scale(8)">

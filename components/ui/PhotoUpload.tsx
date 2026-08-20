@@ -34,7 +34,7 @@ export function PhotoUpload({
   return (
     <div className="flex flex-col items-center sm:items-start gap-2">
       <div
-        className={`group relative flex shrink-0 items-center justify-center overflow-hidden border border-[#E5E7EB] bg-slate-50 shadow-xs transition-colors hover:border-[#6366F1] ${
+        className={`group relative flex shrink-0 items-center justify-center overflow-hidden border border-[#E5E7EB] bg-slate-50 shadow-xs transition-colors hover:border-[#803D63] ${
           shape === "circle"
             ? "w-20 h-20 rounded-full aspect-square overflow-hidden shrink-0"
             : shape === "landscape"
@@ -50,11 +50,11 @@ export function PhotoUpload({
           <div className="flex flex-col items-center justify-center gap-1 p-2 text-center text-slate-400">
             {isLandscape ? (
               <>
-                <Film className="h-5 w-5 text-[#6366F1]" />
-                <span className="text-[10px] font-bold text-[#6366F1] leading-tight">Upload Landscape Poster (16:9)</span>
+                <Film className="h-5 w-5 text-[#803D63]" />
+                <span className="text-[10px] font-bold text-[#803D63] leading-tight">Upload Landscape Poster (16:9)</span>
               </>
             ) : (
-              <ImagePlus className="h-6 w-6 text-[#6366F1]" />
+              <ImagePlus className="h-6 w-6 text-[#803D63]" />
             )}
           </div>
         )}
@@ -70,7 +70,7 @@ export function PhotoUpload({
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="bg-[#EEF2FF] text-[#6366F1] hover:bg-[#E0E7FF] text-xs font-semibold px-3 py-1.5 rounded-lg border border-[#E0E7FF] transition-colors cursor-pointer"
+        className="bg-[#F8EEF4] text-[#803D63] hover:bg-[#ECD3E2] text-xs font-semibold px-3 py-1.5 rounded-lg border border-[#ECD3E2] transition-colors cursor-pointer"
       >
         {label ?? (value ? (isLandscape ? "Change poster" : "Change Profile Photo") : (isLandscape ? "Upload poster preview" : "Upload Profile Photo"))}
       </button>

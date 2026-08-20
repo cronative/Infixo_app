@@ -117,7 +117,7 @@ export default function DashboardOverviewPage() {
             <button
               type="button"
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-bold text-[#6366F1] hover:bg-indigo-100 transition-colors cursor-pointer shrink-0"
+              className="inline-flex items-center gap-1.5 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-bold text-[#803D63] hover:bg-indigo-100 transition-colors cursor-pointer shrink-0"
               title="Copy Profile Link"
             >
               <span>{profileUrl}</span>
@@ -133,7 +133,7 @@ export default function DashboardOverviewPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white hover:bg-slate-50 px-3.5 py-1.5 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
             >
-              <ExternalLink className="h-3.5 w-3.5 text-[#6366F1]" />
+              <ExternalLink className="h-3.5 w-3.5 text-[#803D63]" />
               <span>View Public Profile ↗</span>
             </a>
             <button
@@ -154,7 +154,7 @@ export default function DashboardOverviewPage() {
         <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-4 shadow-2xs">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#6366F1]">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#803D63]">
                 TOTAL FANBASE
               </p>
               <h2 className="font-display text-3xl sm:text-4xl font-black tracking-tight text-[#111827] mt-0.5">
@@ -169,10 +169,10 @@ export default function DashboardOverviewPage() {
             <button
               type="button"
               onClick={handleRefreshStats}
-              className="p-2 rounded-xl border border-gray-200 bg-white hover:bg-slate-50 text-slate-500 hover:text-[#6366F1] transition-colors cursor-pointer"
+              className="p-2 rounded-xl border border-gray-200 bg-white hover:bg-slate-50 text-slate-500 hover:text-[#803D63] transition-colors cursor-pointer"
               title={`Last synced: ${formatSyncDate(socials.updatedAt)}. Click to refresh.`}
             >
-              <RefreshCw className={`h-4 w-4 ${isSyncing ? "animate-spin text-[#6366F1]" : ""}`} />
+              <RefreshCw className={`h-4 w-4 ${isSyncing ? "animate-spin text-[#803D63]" : ""}`} />
             </button>
           </div>
 
@@ -199,7 +199,7 @@ export default function DashboardOverviewPage() {
                     {formatCount(socials.instagram.followers)}
                   </p>
                 ) : (
-                  <Link href="/dashboard/socials" className="text-xs font-bold text-[#6366F1] hover:underline">
+                  <Link href="/dashboard/socials" className="text-xs font-bold text-[#803D63] hover:underline">
                     Connect →
                   </Link>
                 )}
@@ -227,7 +227,7 @@ export default function DashboardOverviewPage() {
                     {formatCount(socials.youtube.subscribers)}
                   </p>
                 ) : (
-                  <Link href="/dashboard/socials" className="text-xs font-bold text-[#6366F1] hover:underline">
+                  <Link href="/dashboard/socials" className="text-xs font-bold text-[#803D63] hover:underline">
                     Connect →
                   </Link>
                 )}
@@ -255,7 +255,7 @@ export default function DashboardOverviewPage() {
                     {formatCount(socials.facebook.followers)}
                   </p>
                 ) : (
-                  <Link href="/dashboard/socials" className="text-xs font-bold text-[#6366F1] hover:underline">
+                  <Link href="/dashboard/socials" className="text-xs font-bold text-[#803D63] hover:underline">
                     Connect →
                   </Link>
                 )}
@@ -265,19 +265,19 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* 3. SLIM EARLY ACCESS BANNER STRIP */}
-        <div className="bg-[#EEF2FF] border border-[#E0E7FF] rounded-xl px-4 py-2.5 flex items-center justify-between text-xs">
+        <div className="bg-[#F8EEF4] border border-[#ECD3E2] rounded-xl px-4 py-2.5 flex items-center justify-between text-xs">
           <div className="flex items-center gap-2 text-slate-900 font-medium">
-            <Sparkles className="h-4 w-4 text-[#6366F1] shrink-0" />
+            <Sparkles className="h-4 w-4 text-[#803D63] shrink-0" />
             <span>🎉 Early Access Active • <strong>{seriesUsage.current}/3 Series</strong> • <strong>{totalEpisodesUsage.current}/15 Episodes</strong></span>
           </div>
-          <Link href="/dashboard/subscription" className="font-semibold text-[#6366F1] hover:underline shrink-0">
+          <Link href="/dashboard/subscription" className="font-semibold text-[#803D63] hover:underline shrink-0">
             Plan Benefits →
           </Link>
         </div>
 
         {/* 4. CLEAN 4-COLUMN QUICK ACTIONS GRID */}
         <div className="space-y-2">
-          <p className="text-xs font-bold text-[#6366F1] uppercase tracking-wider px-0.5">
+          <p className="text-xs font-bold text-[#803D63] uppercase tracking-wider px-0.5">
             Quick Actions
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -285,7 +285,7 @@ export default function DashboardOverviewPage() {
             <button
               type="button"
               onClick={handleCreateSeriesClick}
-              className="tap-scale flex items-center gap-3 rounded-xl bg-[#6366F1] hover:bg-[#4F46E5] text-white font-bold p-3.5 shadow-xs transition-all cursor-pointer"
+              className="tap-scale flex items-center gap-3 rounded-xl bg-[#803D63] hover:bg-[#6B3252] text-white font-bold p-3.5 shadow-xs transition-all cursor-pointer"
             >
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 text-white shrink-0">
                 <Plus className="h-4 w-4" />
@@ -381,13 +381,13 @@ export default function DashboardOverviewPage() {
                   <div className="p-3.5 pt-0 flex items-center justify-between border-t border-gray-100">
                     <Link
                       href="/dashboard/series"
-                      className="text-xs font-semibold text-slate-600 hover:text-[#6366F1] transition-colors"
+                      className="text-xs font-semibold text-slate-600 hover:text-[#803D63] transition-colors"
                     >
                       Edit
                     </Link>
                     <Link
                       href="/dashboard/series"
-                      className="bg-[#EEF2FF] text-[#6366F1] font-medium text-xs px-3 py-1.5 rounded-lg border border-[#E0E7FF] hover:bg-indigo-100 transition-colors"
+                      className="bg-[#F8EEF4] text-[#803D63] font-medium text-xs px-3 py-1.5 rounded-lg border border-[#ECD3E2] hover:bg-indigo-100 transition-colors"
                     >
                       + Add Episode
                     </Link>
@@ -403,7 +403,7 @@ export default function DashboardOverviewPage() {
                 onClick={handleCreateSeriesClick}
                 className="tap-scale flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 bg-white p-6 text-center hover:border-indigo-300 hover:bg-indigo-50/30 transition-all cursor-pointer min-h-[220px]"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-[#6366F1] mb-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-[#803D63] mb-2">
                   <Plus className="h-5 w-5" />
                 </div>
                 <p className="text-xs font-bold text-slate-900">+ Create Next Series</p>
@@ -415,7 +415,7 @@ export default function DashboardOverviewPage() {
 
         {/* 6. PHASE 2 ANALYTICS PREPARATION STRIP */}
         <div className="rounded-2xl border border-gray-200 bg-white p-6 text-center space-y-1 shadow-2xs">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#6366F1] bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full mb-1">
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#803D63] bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full mb-1">
             <Sparkles className="h-3.5 w-3.5" />
             <span>Phase 2 Feature</span>
           </div>
@@ -430,7 +430,7 @@ export default function DashboardOverviewPage() {
         {/* 7. ACTIVE CARD THEME STRIP */}
         <div className="flex items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-[#6366F1] border border-indigo-100">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-[#803D63] border border-indigo-100">
               <Palette className="h-4 w-4" />
             </div>
             <div className="min-w-0">
@@ -450,7 +450,7 @@ export default function DashboardOverviewPage() {
 
           <Link
             href="/dashboard/themes"
-            className="shrink-0 rounded-xl bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3.5 py-1.5 text-xs font-bold text-[#6366F1] transition-colors"
+            className="shrink-0 rounded-xl bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3.5 py-1.5 text-xs font-bold text-[#803D63] transition-colors"
           >
             Change Theme →
           </Link>

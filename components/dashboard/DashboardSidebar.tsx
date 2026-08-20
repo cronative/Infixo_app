@@ -74,13 +74,13 @@ export function DashboardSidebar() {
               href={item.href}
               className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-bold transition-colors ${
                 active
-                  ? "bg-indigo-50 text-[#6366F1] border border-indigo-200"
+                  ? "bg-indigo-50 text-[#803D63] border border-indigo-200"
                   : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
               }`}
             >
               <div
                 className={`flex h-6 w-6 items-center justify-center rounded-lg ${
-                  active ? "bg-[#6366F1] text-white" : "bg-slate-100 text-slate-500"
+                  active ? "bg-[#803D63] text-white" : "bg-slate-100 text-slate-500"
                 }`}
               >
                 <Icon className="h-3.5 w-3.5 shrink-0" />
@@ -95,7 +95,7 @@ export function DashboardSidebar() {
       <div className="pt-3 border-t border-slate-200 space-y-2">
         <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-bold text-slate-700">
           <div className="flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+            <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
             <span>Early Access Active</span>
           </div>
         </div>

@@ -71,7 +71,7 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/10 pb-4">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#6366F1] text-white shadow-md">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#803D63] text-white shadow-md">
               <Share2 className="h-4 w-4" />
             </div>
             <div>
@@ -104,11 +104,11 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
               type="text"
               readOnly
               value={seriesUrl}
-              className="flex-1 rounded-xl border border-white/15 bg-white/5 px-3.5 py-2 text-xs font-mono text-slate-200 select-all focus:outline-none focus:ring-2 focus:ring-[#6366F1]"
+              className="flex-1 rounded-xl border border-white/15 bg-white/5 px-3.5 py-2 text-xs font-mono text-slate-200 select-all focus:outline-none focus:ring-2 focus:ring-[#803D63]"
             />
             <button
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#6366F1] hover:bg-[#4F46E5] px-4 py-2 text-xs font-black text-white shadow-md transition-all shrink-0"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6B3252] px-4 py-2 text-xs font-black text-white shadow-md transition-all shrink-0"
             >
               {copiedLink ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               <span>{copiedLink ? "Copied" : "Copy"}</span>

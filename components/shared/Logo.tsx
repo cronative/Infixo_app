@@ -86,10 +86,10 @@ export function Logo({
   const iconSize = { sm: "h-5 w-5", md: "h-6.5 w-6.5", lg: "h-8 w-8" }[size];
 
   const badgeStyles = {
-    gradient: "bg-[#6366F1] text-white",
+    gradient: "bg-[#803D63] text-white",
     black: "bg-slate-900 text-white",
     white: "bg-white border border-slate-200 text-[#111827]",
-    brand: "bg-[#6366F1] text-white",
+    brand: "bg-[#803D63] text-white",
   }[variant];
 
   return (
@@ -109,7 +109,7 @@ export function Logo({
       <span
         className={`font-display ${text} font-bold tracking-tight ${
           light ? "text-white" : "text-slate-900"
-        } group-hover:text-[#6366F1] transition-colors`}
+        } group-hover:text-[#803D63] transition-colors`}
       >
         Inflixo
       </span>

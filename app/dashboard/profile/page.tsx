@@ -91,7 +91,7 @@ export default function DashboardProfilePage() {
             <button
               type="button"
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-bold text-[#6366F1] hover:bg-indigo-100 transition-colors cursor-pointer shrink-0"
+              className="inline-flex items-center gap-1.5 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-bold text-[#803D63] hover:bg-indigo-100 transition-colors cursor-pointer shrink-0"
               title="Copy Profile Link"
             >
               <span>{profileUrl}</span>
@@ -106,7 +106,7 @@ export default function DashboardProfilePage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white hover:bg-slate-50 px-3.5 py-1.5 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
             >
-              <ExternalLink className="h-3.5 w-3.5 text-[#6366F1]" />
+              <ExternalLink className="h-3.5 w-3.5 text-[#803D63]" />
               <span>View Live Profile ↗</span>
             </a>
             <button
@@ -141,7 +141,7 @@ export default function DashboardProfilePage() {
               <div className="text-xs text-slate-500 space-y-0.5">
                 <p className="font-bold text-[#111827]">Upload high-res profile photo</p>
                 <p>Square JPG or PNG, max 5MB</p>
-                <p className="text-[11px] text-[#6366F1] font-semibold">Displays across your public page &amp; mobile cards</p>
+                <p className="text-[11px] text-[#803D63] font-semibold">Displays across your public page &amp; mobile cards</p>
               </div>
             </div>
           </div>
@@ -153,11 +153,11 @@ export default function DashboardProfilePage() {
               label="Display Name"
               name="displayName"
               placeholder="e.g. Nikunj Munjiyasara"
-              leftIcon={<User className="h-4 w-4 text-[#6366F1]" />}
+              leftIcon={<User className="h-4 w-4 text-[#803D63]" />}
               value={profile.displayName}
               onChange={(e) => updateProfile({ displayName: e.target.value })}
               error={errors.displayName}
-              className="bg-white border-[#E5E7EB] font-semibold text-[#111827] focus:border-[#6366F1]"
+              className="bg-white border-[#E5E7EB] font-semibold text-[#111827] focus:border-[#803D63]"
             />
 
             {/* Locked Handle Field */}
@@ -206,7 +206,7 @@ export default function DashboardProfilePage() {
           <div className="pt-2">
             <div className="flex items-center justify-between mb-1.5">
               <label className="block text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                <FileText className="h-4 w-4 text-[#6366F1]" />
+                <FileText className="h-4 w-4 text-[#803D63]" />
                 <span>Short Bio</span>
               </label>
               
@@ -214,7 +214,7 @@ export default function DashboardProfilePage() {
                 <button
                   type="button"
                   onClick={handleSuggestBio}
-                  className="tap-scale inline-flex items-center gap-1 text-xs font-bold text-[#6366F1] bg-indigo-50 hover:bg-indigo-100 border border-indigo-100 px-2.5 py-0.5 rounded-full transition-colors cursor-pointer"
+                  className="tap-scale inline-flex items-center gap-1 text-xs font-bold text-[#803D63] bg-indigo-50 hover:bg-indigo-100 border border-indigo-100 px-2.5 py-0.5 rounded-full transition-colors cursor-pointer"
                 >
                   <Sparkles className="h-3 w-3" />
                   <span>Suggest Bio</span>
@@ -233,7 +233,7 @@ export default function DashboardProfilePage() {
               maxLength={160}
               value={profile.bio}
               onChange={(e) => updateProfile({ bio: e.target.value })}
-              className="bg-white border-[#E5E7EB] font-medium text-slate-900 focus:border-[#6366F1]"
+              className="bg-white border-[#E5E7EB] font-medium text-slate-900 focus:border-[#803D63]"
             />
           </div>
 
@@ -250,7 +250,7 @@ export default function DashboardProfilePage() {
               type="button"
               onClick={handleSave}
               disabled={submitting}
-              className="tap-scale bg-[#6366F1] hover:bg-[#4F46E5] text-white font-medium text-xs px-8 py-2.5 rounded-xl transition-colors cursor-pointer shadow-none flex items-center gap-2"
+              className="tap-scale bg-[#803D63] hover:bg-[#6B3252] text-white font-medium text-xs px-8 py-2.5 rounded-xl transition-colors cursor-pointer shadow-none flex items-center gap-2"
             >
               {submitting ? "Saving Changes..." : "Save Changes"}
             </button>

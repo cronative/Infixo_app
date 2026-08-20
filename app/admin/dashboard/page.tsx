@@ -90,7 +90,7 @@ const EMAIL_TEMPLATES = [
     id: "india_creators",
     name: "🇮🇳 India Creators 100K Mission",
     subject: "Thank you for creating content in India — Join the Inflixo 100K Mission 🚀",
-    body: `<h2 style="color: #6366F1; margin-top: 0; font-size: 20px;">Hello Content Creator,</h2>
+    body: `<h2 style="color: #803D63; margin-top: 0; font-size: 20px;">Hello Content Creator,</h2>
 <p>First of all, a massive <strong>THANK YOU</strong> for inspiring millions by creating amazing content in India! 🇮🇳✨</p>
 <p>As creators ourselves, we know how hard you work every day to script, shoot, and edit. But we also noticed the major challenges creators face today:</p>
 
@@ -112,7 +112,7 @@ const EMAIL_TEMPLATES = [
         <div style="display: inline-block; background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 20px; padding: 5px 14px 5px 8px;">
           <table role="presentation" cellspacing="0" cellpadding="0" border="0">
             <tr>
-              <td style="width: 24px; height: 24px; border-radius: 10px; background: #6366F1; color: #FFFFFF; font-weight: 800; font-size: 11px; text-align: center; line-height: 24px;">
+              <td style="width: 24px; height: 24px; border-radius: 10px; background: #803D63; color: #FFFFFF; font-weight: 800; font-size: 11px; text-align: center; line-height: 24px;">
                 I
               </td>
               <td style="padding-left: 8px; font-size: 13px; font-weight: 900; color: #0F172A;">
@@ -377,9 +377,9 @@ const EMAIL_TEMPLATES = [
 </div>
 
 <div style="text-align: center; margin: 28px 0;">
-  <a href="https://inflixo.com/login" style="background: #6366F1; color: #FFFFFF; padding: 14px 28px; text-decoration: none; border-radius: 14px; font-weight: 800; font-size: 14px; display: inline-block;">JOIN NOW — CREATE YOUR INFLIXO</a>
+  <a href="https://inflixo.com/login" style="background: #803D63; color: #FFFFFF; padding: 14px 28px; text-decoration: none; border-radius: 14px; font-weight: 800; font-size: 14px; display: inline-block;">JOIN NOW — CREATE YOUR INFLIXO</a>
 </div>
-<p style="background-color: #FAF5FF; border: 1px solid #E9D5FF; border-radius: 14px; padding: 16px; color: #6366F1; font-weight: 600; text-align: center;">
+<p style="background-color: #FAF5FF; border: 1px solid #E9D5FF; border-radius: 14px; padding: 16px; color: #803D63; font-weight: 600; text-align: center;">
   🚀 <strong>OUR MISSION:</strong> Empowering &amp; uniting over <strong>1,00,000+ Content Creators</strong> across India by <strong>March 2027</strong>!
 </p>
 <p>Let's build the future of creator economy together.</p>
@@ -647,14 +647,14 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-[#FAF8FF] text-[#0F172A] font-sans selection:bg-purple-100 selection:text-[#6366F1]">
+    <div className="min-h-dvh bg-[#FAF8FF] text-[#0F172A] font-sans selection:bg-purple-100 selection:text-[#803D63]">
       {/* 1. TOP LIGHT ADMIN NAVBAR */}
       <header className="safe-top sticky top-0 z-40 border-b border-purple-100 bg-white/95 backdrop-blur-md px-4 sm:px-8 py-3.5 shadow-2xs">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Logo size="sm" />
-            <div className="flex items-center gap-1.5 rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-black text-[#6366F1]">
-              <ShieldCheck className="h-3.5 w-3.5 text-[#6366F1]" />
+            <div className="flex items-center gap-1.5 rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-black text-[#803D63]">
+              <ShieldCheck className="h-3.5 w-3.5 text-[#803D63]" />
               <span>Admin Control Center</span>
             </div>
           </div>
@@ -1059,7 +1059,7 @@ export default function AdminDashboardPage() {
                 type="button"
                 disabled={sendingEmail}
                 onClick={handleSendMail}
-                className="tap-scale flex w-full items-center justify-center gap-2 rounded-2xl bg-[#6366F1] hover:bg-[#4F46E5] py-3.5 text-xs font-black text-white transition-all disabled:opacity-50 cursor-pointer shadow-none"
+                className="tap-scale flex w-full items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6B3252] py-3.5 text-xs font-black text-white transition-all disabled:opacity-50 cursor-pointer shadow-none"
               >
                 {sendingEmail ? (
                   <>

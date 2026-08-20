@@ -49,8 +49,8 @@ export function CreatorCollage() {
           {/* Total Fanbase Badge Pill */}
           <div className="flex items-center justify-between rounded-xl bg-indigo-50 px-3.5 py-2 border border-indigo-200">
             <div className="flex items-center gap-1.5">
-              <Users className="h-3.5 w-3.5 text-[#6366F1]" />
-              <span className="text-xs font-extrabold text-[#6366F1]">126K total fanbase</span>
+              <Users className="h-3.5 w-3.5 text-[#803D63]" />
+              <span className="text-xs font-extrabold text-[#803D63]">126K total fanbase</span>
             </div>
             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
           </div>
@@ -73,7 +73,7 @@ export function CreatorCollage() {
 
           {/* Creator Series Preview Card (Solid Dark Surface #0F172A) */}
           <div className="flex items-center gap-3 rounded-2xl bg-[#0F172A] text-white p-3 border border-slate-800">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#6366F1]">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#803D63]">
               <Play className="h-4 w-4 fill-white text-white" />
             </div>
             <div className="min-w-0">

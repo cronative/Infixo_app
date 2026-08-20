@@ -78,7 +78,7 @@ export function ConnectedAccountCard({
             <button
               type="button"
               onClick={() => {}}
-              className="text-xs font-semibold text-[#6366F1] hover:underline cursor-pointer inline-flex items-center gap-1"
+              className="text-xs font-semibold text-[#803D63] hover:underline cursor-pointer inline-flex items-center gap-1"
             >
               <span>Sync Now</span>
               <span>↻</span>

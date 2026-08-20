@@ -149,8 +149,8 @@ export default function ProfileStepPage() {
       step="profile"
       preview={<LivePreviewCard profile={profile} socials={socials} totalAudience={totalAudience} themeKey={theme} />}
     >
-      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-bold text-[#6366F1]">
-        <Sparkles className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-bold text-[#803D63]">
+        <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
         <span>Step 1 of 6 • Profile Setup</span>
       </div>
 
@@ -219,7 +219,7 @@ export default function ProfileStepPage() {
           />
           {profile.username && usernameStatus?.available && (
             <p className="mt-1 text-xs text-slate-500">
-              Your public handle: <span className="font-bold text-[#6366F1]">@{profile.username}</span>
+              Your public handle: <span className="font-bold text-[#803D63]">@{profile.username}</span>
             </p>
           )}
         </div>
@@ -256,7 +256,7 @@ export default function ProfileStepPage() {
         <div className="rounded-2xl border border-[#E5E7EB] bg-white p-4 space-y-2">
           <div className="flex items-center justify-between">
             <label className="text-xs font-bold uppercase tracking-wider text-[#64748B] flex items-center gap-1.5">
-              <FileText className="h-3.5 w-3.5 text-[#6366F1]" />
+              <FileText className="h-3.5 w-3.5 text-[#803D63]" />
               <span>Short Bio</span>
             </label>
 
@@ -264,9 +264,9 @@ export default function ProfileStepPage() {
             <button
               type="button"
               onClick={handleSuggestBio}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#6366F1] hover:text-[#4F46E5] bg-purple-50 hover:bg-purple-100 px-2.5 py-1 rounded-full border border-purple-200 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#803D63] hover:text-[#6B3252] bg-purple-50 hover:bg-purple-100 px-2.5 py-1 rounded-full border border-purple-200 transition-colors cursor-pointer"
             >
-              <Sparkles className="h-3.5 w-3.5 text-[#6366F1]" />
+              <Sparkles className="h-3.5 w-3.5 text-[#803D63]" />
               <span>✨ Suggest bio</span>
             </button>
           </div>
@@ -292,7 +292,7 @@ export default function ProfileStepPage() {
             size="lg"
             loading={submitting}
             onClick={handleNext}
-            className="bg-[#6366F1] hover:bg-[#4F46E5] text-white font-bold h-12 text-sm rounded-xl cursor-pointer shadow-none"
+            className="bg-[#803D63] hover:bg-[#6B3252] text-white font-bold h-12 text-sm rounded-xl cursor-pointer shadow-none"
           >
             Save &amp; Next →
           </Button>

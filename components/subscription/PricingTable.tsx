@@ -32,7 +32,7 @@ export function PricingTable({
       {/* Lightweight Informational Banner Strip */}
       {showEarlyAccessBanner && (
         <div className="rounded-xl border border-indigo-100 bg-indigo-50/60 p-4 text-sm text-indigo-900 flex items-center gap-2.5 shadow-2xs">
-          <Sparkles className="h-4 w-4 text-[#6366F1] shrink-0" />
+          <Sparkles className="h-4 w-4 text-[#803D63] shrink-0" />
           <p className="font-medium text-xs sm:text-sm">
             🎉 <strong>Early Creator Access Active</strong> — Enjoy full access free during our launch phase. Paid tiers will unlock later with extra power tools.
           </p>
@@ -42,7 +42,7 @@ export function PricingTable({
       {/* 3 PLAN CARDS: FREE EARLY ACCESS | CREATOR PRO (MONTHLY) | CREATOR PRO (YEARLY) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
         {/* CARD 1: PRIMARY ACTIVE CARD (FREE EARLY ACCESS) */}
-        <div className="flex flex-col justify-between rounded-xl border-2 border-[#6366F1] bg-white p-5 relative shadow-sm">
+        <div className="flex flex-col justify-between rounded-xl border-2 border-[#803D63] bg-white p-5 relative shadow-sm">
           <div className="absolute -top-3 left-4 inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-100 px-3 py-0.5 text-xs font-semibold text-indigo-700">
             Active Launch Plan
           </div>
@@ -74,27 +74,27 @@ export function PricingTable({
               </p>
               <ul className="space-y-2 text-xs font-medium text-slate-700">
                 <li className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 text-[#6366F1] shrink-0 stroke-[2.5]" />
+                  <Check className="h-3.5 w-3.5 text-[#803D63] shrink-0 stroke-[2.5]" />
                   <span>Public Inflixo Profile (Live immediately)</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 text-[#6366F1] shrink-0 stroke-[2.5]" />
+                  <Check className="h-3.5 w-3.5 text-[#803D63] shrink-0 stroke-[2.5]" />
                   <span>Unified Total Fanbase Counter</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 text-[#6366F1] shrink-0 stroke-[2.5]" />
+                  <Check className="h-3.5 w-3.5 text-[#803D63] shrink-0 stroke-[2.5]" />
                   <span>Instagram, YouTube &amp; Facebook Integration</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 text-[#6366F1] shrink-0 stroke-[2.5]" />
+                  <Check className="h-3.5 w-3.5 text-[#803D63] shrink-0 stroke-[2.5]" />
                   <span>Up to 3 OTT Video Series</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 text-[#6366F1] shrink-0 stroke-[2.5]" />
+                  <Check className="h-3.5 w-3.5 text-[#803D63] shrink-0 stroke-[2.5]" />
                   <span>Up to 5 Episodes per Series</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 text-[#6366F1] shrink-0 stroke-[2.5]" />
+                  <Check className="h-3.5 w-3.5 text-[#803D63] shrink-0 stroke-[2.5]" />
                   <span>All Core Profile Themes Included</span>
                 </li>
               </ul>
@@ -102,7 +102,7 @@ export function PricingTable({
           </div>
 
           <div className="mt-6 pt-3 border-t border-slate-100">
-            <div className="w-full rounded-xl bg-indigo-50 border border-indigo-200 py-2.5 px-4 text-xs font-bold text-[#6366F1] text-center">
+            <div className="w-full rounded-xl bg-indigo-50 border border-indigo-200 py-2.5 px-4 text-xs font-bold text-[#803D63] text-center">
               ✓ Active Plan (Current)
             </div>
           </div>

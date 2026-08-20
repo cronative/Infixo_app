@@ -122,8 +122,8 @@ export default function SeriesStepPage() {
 
   return (
     <OnboardingLayout step="series" preview={preview}>
-      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-bold text-[#6366F1]">
-        <Sparkles className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-bold text-[#803D63]">
+        <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
         <span>Step 4 of 6 • Series &amp; Episodes</span>
       </div>
 
@@ -139,13 +139,13 @@ export default function SeriesStepPage() {
           <div className="grid gap-4 sm:grid-cols-2">
             <button
               onClick={() => setMode("creating")}
-              className="tap-scale group relative flex flex-col items-start gap-4 rounded-3xl border-2 border-[#6366F1] bg-indigo-50/20 p-6 text-left shadow-md transition-all hover:-translate-y-1 hover:border-[#6366F1] hover:shadow-xl cursor-pointer"
+              className="tap-scale group relative flex flex-col items-start gap-4 rounded-3xl border-2 border-[#803D63] bg-indigo-50/20 p-6 text-left shadow-md transition-all hover:-translate-y-1 hover:border-[#803D63] hover:shadow-xl cursor-pointer"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 border border-indigo-100 text-[#6366F1] shadow-xs group-hover:scale-105 transition-transform">
-                <Film className="h-6 w-6 text-[#6366F1]" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 border border-indigo-100 text-[#803D63] shadow-xs group-hover:scale-105 transition-transform">
+                <Film className="h-6 w-6 text-[#803D63]" />
               </div>
               <div>
-                <span className="inline-block rounded-full bg-indigo-100 px-2.5 py-0.5 text-[10px] font-extrabold text-[#6366F1] mb-1">
+                <span className="inline-block rounded-full bg-indigo-100 px-2.5 py-0.5 text-[10px] font-extrabold text-[#803D63] mb-1">
                   RECOMMENDED
                 </span>
                 <p className="text-lg font-black text-slate-900">Create a Series</p>
@@ -182,10 +182,10 @@ export default function SeriesStepPage() {
           <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-xs space-y-5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <p className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                <Film className="h-4 w-4 text-[#6366F1]" />
+                <Film className="h-4 w-4 text-[#803D63]" />
                 Series Information
               </p>
-              <span className="text-[11px] font-bold text-[#6366F1] bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-100">
+              <span className="text-[11px] font-bold text-[#803D63] bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-100">
                 Step 4
               </span>
             </div>
@@ -220,7 +220,7 @@ export default function SeriesStepPage() {
                           onClick={() => setSeriesPlatform(p)}
                           className={`tap-scale flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition-all cursor-pointer ${
                             isSelected
-                              ? "border-[#6366F1] bg-[#6366F1] text-white shadow-xs"
+                              ? "border-[#803D63] bg-[#803D63] text-white shadow-xs"
                               : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
                           }`}
                         >
@@ -273,7 +273,7 @@ export default function SeriesStepPage() {
 
           {/* Bottom Early Access Note */}
           <div className="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4 text-left flex items-start gap-3 text-xs font-semibold text-indigo-950 shadow-2xs">
-            <Sparkles className="h-4 w-4 text-[#6366F1] shrink-0 mt-0.5" />
+            <Sparkles className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5" />
             <div>
               <strong>Note:</strong> Episodes can be added anytime from your <strong>Creator Dashboard</strong>. Early Access allows up to 3 Series &amp; 5 Episodes per Series.
             </div>

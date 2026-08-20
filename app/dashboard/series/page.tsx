@@ -86,9 +86,9 @@ function NewSeriesForm({
         <button
           type="button"
           onClick={handleOpenClick}
-          className="w-full py-3.5 border-2 border-dashed border-[#E5E7EB] hover:border-[#6366F1] hover:bg-[#EEF2FF]/30 rounded-xl text-sm font-semibold text-[#6366F1] flex items-center justify-center gap-2 transition-all cursor-pointer"
+          className="w-full py-3.5 border-2 border-dashed border-[#E5E7EB] hover:border-[#803D63] hover:bg-[#F8EEF4]/30 rounded-xl text-sm font-semibold text-[#803D63] flex items-center justify-center gap-2 transition-all cursor-pointer"
         >
-          <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-50 text-[#6366F1]">
+          <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-50 text-[#803D63]">
             <Plus className="h-4 w-4" />
           </div>
           <span>+ Create New Series ({3 - seriesList.length} slots remaining)</span>
@@ -138,7 +138,7 @@ function NewSeriesForm({
     <div className="rounded-2xl border border-gray-200 bg-white p-5 sm:p-6 shadow-2xs space-y-5 text-left">
       <div className="flex items-center justify-between pb-3 border-b border-gray-100">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50 text-[#6366F1]">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50 text-[#803D63]">
             <Film className="h-4 w-4" />
           </div>
           <div>
@@ -178,7 +178,7 @@ function NewSeriesForm({
                   onClick={() => setSeriesPlatform(p)}
                   className={`tap-scale flex items-center justify-center gap-2 rounded-xl border p-2.5 text-center transition-all cursor-pointer ${
                     isSelected
-                      ? "border-[#6366F1] bg-indigo-50 text-[#6366F1] font-bold"
+                      ? "border-[#803D63] bg-indigo-50 text-[#803D63] font-bold"
                       : "border-gray-200 bg-white font-medium text-slate-600 hover:border-gray-300"
                   }`}
                 >
@@ -205,7 +205,7 @@ function NewSeriesForm({
             type="button"
             disabled={submitting}
             onClick={submit}
-            className="tap-scale bg-[#6366F1] hover:bg-[#4F46E5] text-white px-5 py-2 rounded-lg text-xs font-medium shadow-none transition-colors cursor-pointer"
+            className="tap-scale bg-[#803D63] hover:bg-[#6B3252] text-white px-5 py-2 rounded-lg text-xs font-medium shadow-none transition-colors cursor-pointer"
           >
             {submitting ? "Creating..." : "Save & Create Series"}
           </button>
@@ -263,7 +263,7 @@ function EditEpisodeModal({
       <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-gray-200 animate-scale-up text-left space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-gray-100">
           <h3 className="font-display text-base font-bold text-slate-900 flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50 text-[#6366F1]">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50 text-[#803D63]">
               <Pencil className="h-4 w-4" />
             </div>
             <span>Edit Episode #{epNumber}</span>
@@ -317,7 +317,7 @@ function EditEpisodeModal({
             type="button"
             disabled={saving}
             onClick={handleSave}
-            className="tap-scale bg-[#6366F1] hover:bg-[#4F46E5] text-white px-5 py-2 rounded-lg text-xs font-medium shadow-none transition-colors cursor-pointer"
+            className="tap-scale bg-[#803D63] hover:bg-[#6B3252] text-white px-5 py-2 rounded-lg text-xs font-medium shadow-none transition-colors cursor-pointer"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
@@ -462,7 +462,7 @@ function SeriesRow({
 
             {/* Genre & Language Micro-chips */}
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="bg-[#EEF2FF] text-[#6366F1] text-xs font-medium px-2.5 py-0.5 rounded-md border border-[#E0E7FF]">
+              <span className="bg-[#F8EEF4] text-[#803D63] text-xs font-medium px-2.5 py-0.5 rounded-md border border-[#ECD3E2]">
                 Genre: {series.genre || "General"}
               </span>
               {series.language && (
@@ -476,7 +476,7 @@ function SeriesRow({
             <div className="pt-0.5 flex items-center gap-2.5 text-xs font-medium text-[#4B5563]">
               <div className="h-1.5 w-28 rounded-full bg-gray-100 overflow-hidden shrink-0">
                 <div
-                  className="h-full bg-[#6366F1] transition-all duration-300 rounded-full"
+                  className="h-full bg-[#803D63] transition-all duration-300 rounded-full"
                   style={{ width: `${epUsage.percentage}%` }}
                 />
               </div>
@@ -492,7 +492,7 @@ function SeriesRow({
           <button
             type="button"
             onClick={handleViewPublicSeries}
-            className="w-8 h-8 rounded-lg border border-[#E5E7EB] bg-white text-gray-500 hover:text-[#6366F1] hover:bg-[#EEF2FF] flex items-center justify-center cursor-pointer transition-colors"
+            className="w-8 h-8 rounded-lg border border-[#E5E7EB] bg-white text-gray-500 hover:text-[#803D63] hover:bg-[#F8EEF4] flex items-center justify-center cursor-pointer transition-colors"
             title="View Public Series Page"
           >
             <Eye className="h-4 w-4" />
@@ -504,7 +504,7 @@ function SeriesRow({
             className={`w-8 h-8 rounded-lg border flex items-center justify-center cursor-pointer transition-colors ${
               copiedLink
                 ? "bg-emerald-50 text-emerald-600 border-emerald-300"
-                : "border-[#E5E7EB] bg-white text-gray-500 hover:text-[#6366F1] hover:bg-[#EEF2FF]"
+                : "border-[#E5E7EB] bg-white text-gray-500 hover:text-[#803D63] hover:bg-[#F8EEF4]"
             }`}
             title="Copy Series Link"
           >
@@ -514,7 +514,7 @@ function SeriesRow({
           <button
             type="button"
             onClick={handleShareSeries}
-            className="w-8 h-8 rounded-lg border border-[#E5E7EB] bg-white text-gray-500 hover:text-[#6366F1] hover:bg-[#EEF2FF] flex items-center justify-center cursor-pointer transition-colors"
+            className="w-8 h-8 rounded-lg border border-[#E5E7EB] bg-white text-gray-500 hover:text-[#803D63] hover:bg-[#F8EEF4] flex items-center justify-center cursor-pointer transition-colors"
             title="Share Series"
           >
             <Share2 className="h-4 w-4" />
@@ -532,7 +532,7 @@ function SeriesRow({
           <button
             type="button"
             onClick={onToggle}
-            className="w-8 h-8 rounded-lg border border-[#E5E7EB] bg-white text-gray-500 hover:text-[#6366F1] hover:bg-gray-50 flex items-center justify-center cursor-pointer transition-colors"
+            className="w-8 h-8 rounded-lg border border-[#E5E7EB] bg-white text-gray-500 hover:text-[#803D63] hover:bg-gray-50 flex items-center justify-center cursor-pointer transition-colors"
             title={expanded ? "Collapse Episodes" : "Expand Episodes"}
           >
             {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
@@ -545,7 +545,7 @@ function SeriesRow({
         <div className="space-y-3 border-t border-gray-100 pt-4 mt-4">
           <div className="flex items-center justify-between">
             <p className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-              <Layers className="h-4 w-4 text-[#6366F1]" />
+              <Layers className="h-4 w-4 text-[#803D63]" />
               <span>Episodes List ({totalEpisodes} / {EARLY_ACCESS_LIMITS.maxEpisodesPerSeries})</span>
             </p>
           </div>
@@ -567,7 +567,7 @@ function SeriesRow({
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       {/* Light SaaS E1 Badge */}
-                      <div className="bg-[#EEF2FF] text-[#6366F1] font-bold text-xs w-8 h-8 rounded-lg flex items-center justify-center border border-[#E0E7FF] shrink-0">
+                      <div className="bg-[#F8EEF4] text-[#803D63] font-bold text-xs w-8 h-8 rounded-lg flex items-center justify-center border border-[#ECD3E2] shrink-0">
                         E{ep.episodeNumber}
                       </div>
 
@@ -588,7 +588,7 @@ function SeriesRow({
                         href={ep.externalUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-white border border-[#E5E7EB] text-[#4B5563] hover:border-[#6366F1] hover:text-[#6366F1] text-xs font-medium px-3 py-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5"
+                        className="bg-white border border-[#E5E7EB] text-[#4B5563] hover:border-[#803D63] hover:text-[#803D63] text-xs font-medium px-3 py-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5"
                         title="Watch Episode in New Tab"
                       >
                         <Eye className="h-3.5 w-3.5" />
@@ -625,7 +625,7 @@ function SeriesRow({
             <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-5 shadow-2xs space-y-4 animate-scale-up mt-3">
               <div className="flex items-center justify-between">
                 <p className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="h-4 w-4 text-[#6366F1]" />
+                  <Sparkles className="h-4 w-4 text-[#803D63]" />
                   <span>Add Episode #{epNumber} (Max {EARLY_ACCESS_LIMITS.maxEpisodesPerSeries})</span>
                 </p>
                 <button onClick={() => setAddingEpisode(null)} className="text-slate-400 hover:text-slate-600 text-xs font-semibold cursor-pointer">
@@ -647,7 +647,7 @@ function SeriesRow({
                   placeholder="e.g. Episode 1: The Beginning"
                   value={epTitle}
                   onChange={(e) => setEpTitle(e.target.value)}
-                  className="bg-white border-[#E5E7EB] h-10 px-3 text-sm text-gray-900 focus:border-[#6366F1]"
+                  className="bg-white border-[#E5E7EB] h-10 px-3 text-sm text-gray-900 focus:border-[#803D63]"
                 />
               </div>
 
@@ -657,7 +657,7 @@ function SeriesRow({
                 leftIcon={<YoutubeIcon className="h-4 w-4 text-red-500" />}
                 value={epUrl}
                 onChange={(e) => setEpUrl(e.target.value)}
-                className="bg-white border-[#E5E7EB] text-sm text-gray-900 focus:border-[#6366F1]"
+                className="bg-white border-[#E5E7EB] text-sm text-gray-900 focus:border-[#803D63]"
               />
 
               <div className="flex items-center justify-end gap-3 pt-1">
@@ -672,7 +672,7 @@ function SeriesRow({
                   type="button"
                   disabled={submittingEp}
                   onClick={ensureSeasonAndAdd}
-                  className="bg-[#6366F1] hover:bg-[#4F46E5] text-white px-5 py-2 rounded-lg text-xs font-medium shadow-none transition-colors cursor-pointer"
+                  className="bg-[#803D63] hover:bg-[#6B3252] text-white px-5 py-2 rounded-lg text-xs font-medium shadow-none transition-colors cursor-pointer"
                 >
                   {submittingEp ? "Saving..." : "Save & Add Episode"}
                 </button>
@@ -692,7 +692,7 @@ function SeriesRow({
                 <button
                   type="button"
                   onClick={handleStartAddEpisode}
-                  className="w-full py-2.5 bg-white border border-[#E5E7EB] hover:border-[#6366F1] hover:bg-[#EEF2FF]/30 text-xs font-semibold text-[#6366F1] rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                  className="w-full py-2.5 bg-white border border-[#E5E7EB] hover:border-[#803D63] hover:bg-[#F8EEF4]/30 text-xs font-semibold text-[#803D63] rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                 >
                   <Plus className="h-4 w-4" />
                   <span>+ Add Episode to {series.title}</span>
@@ -808,7 +808,7 @@ export default function DashboardSeriesPage() {
             <button
               type="button"
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-1.5 text-xs font-bold text-[#6366F1] hover:bg-indigo-100 transition-colors cursor-pointer shrink-0"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-1.5 text-xs font-bold text-[#803D63] hover:bg-indigo-100 transition-colors cursor-pointer shrink-0"
               title="Copy Profile Link"
             >
               <span>{profileUrl}</span>
@@ -821,7 +821,7 @@ export default function DashboardSeriesPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white hover:bg-slate-50 px-3.5 py-1.5 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
             >
-              <ExternalLink className="h-3.5 w-3.5 text-[#6366F1]" />
+              <ExternalLink className="h-3.5 w-3.5 text-[#803D63]" />
               <span>View Live Profile ↗</span>
             </a>
 
@@ -846,12 +846,12 @@ export default function DashboardSeriesPage() {
             <div className="h-1.5 w-32 rounded-full bg-gray-100 overflow-hidden">
               <div
                 className={`h-full transition-all duration-300 ${
-                  seriesUsage.isLimitReached ? "bg-amber-500" : "bg-[#6366F1]"
+                  seriesUsage.isLimitReached ? "bg-amber-500" : "bg-[#803D63]"
                 }`}
                 style={{ width: `${seriesUsage.percentage}%` }}
               />
             </div>
-            <span className="font-bold text-[#6366F1]">{seriesUsage.current} of {seriesUsage.max}</span>
+            <span className="font-bold text-[#803D63]">{seriesUsage.current} of {seriesUsage.max}</span>
           </div>
 
           <span className="text-xs text-[#9CA3AF] font-medium">
@@ -866,7 +866,7 @@ export default function DashboardSeriesPage() {
         <div className="space-y-4">
           {series.length === 0 ? (
             <EmptyState
-              icon={<Layers className="h-6 w-6 text-[#6366F1]" />}
+              icon={<Layers className="h-6 w-6 text-[#803D63]" />}
               title="Turn your content into a Series"
               description="Organize your Instagram, YouTube and Facebook content part by part — all in one place. Early Access includes up to 3 series."
             />

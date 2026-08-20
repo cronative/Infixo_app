@@ -61,8 +61,8 @@ export default function ThemeStepPage() {
       step="theme"
       preview={<ThemeCard themeKey={theme} {...cardProps} />}
     >
-      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-bold text-[#6366F1]">
-        <Sparkles className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-bold text-[#803D63]">
+        <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
         <span>Step 3 of 6 • Theme Selection</span>
       </div>
 
@@ -80,7 +80,7 @@ export default function ThemeStepPage() {
           onClick={() => setActiveGroup("all")}
           className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
             activeGroup === "all"
-              ? "bg-[#6366F1] text-white shadow-none"
+              ? "bg-[#803D63] text-white shadow-none"
               : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
           }`}
         >
@@ -92,7 +92,7 @@ export default function ThemeStepPage() {
           onClick={() => setActiveGroup("light")}
           className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
             activeGroup === "light"
-              ? "bg-[#6366F1] text-white shadow-none"
+              ? "bg-[#803D63] text-white shadow-none"
               : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
           }`}
         >
@@ -104,11 +104,11 @@ export default function ThemeStepPage() {
           onClick={() => setActiveGroup("shimmer")}
           className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition-colors cursor-pointer flex items-center gap-1 ${
             activeGroup === "shimmer"
-              ? "bg-[#6366F1] text-white shadow-none"
+              ? "bg-[#803D63] text-white shadow-none"
               : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
           }`}
         >
-          <Sparkles className="h-3.5 w-3.5 text-[#6366F1]" />
+          <Sparkles className="h-3.5 w-3.5 text-[#803D63]" />
           Shimmer
         </button>
 
@@ -117,7 +117,7 @@ export default function ThemeStepPage() {
           onClick={() => setActiveGroup("dark")}
           className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
             activeGroup === "dark"
-              ? "bg-[#6366F1] text-white shadow-none"
+              ? "bg-[#803D63] text-white shadow-none"
               : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
           }`}
         >
@@ -145,7 +145,7 @@ export default function ThemeStepPage() {
         <Button variant="outline" size="lg" className="rounded-xl border-gray-200 text-gray-700 hover:bg-gray-50" onClick={() => router.push("/onboarding/socials")}>
           Back
         </Button>
-        <Button fullWidth size="lg" loading={submitting} onClick={handleNext} className="bg-[#6366F1] hover:bg-[#4F46E5] text-white font-medium py-3 rounded-xl shadow-none">
+        <Button fullWidth size="lg" loading={submitting} onClick={handleNext} className="bg-[#803D63] hover:bg-[#6B3252] text-white font-medium py-3 rounded-xl shadow-none">
           Save &amp; Next →
         </Button>
       </div>
@@ -171,7 +171,7 @@ function ThemeTile({
       onClick={onSelect}
       className={`tap-scale relative w-full h-32 rounded-2xl overflow-hidden p-3.5 flex flex-col justify-between text-left transition-all cursor-pointer shadow-xs ${
         isSelected
-          ? "ring-2 ring-offset-2 ring-[#6366F1]"
+          ? "ring-2 ring-offset-2 ring-[#803D63]"
           : "border border-gray-200/80 hover:border-gray-400 hover:shadow-md"
       }`}
       style={{
@@ -189,7 +189,7 @@ function ThemeTile({
 
         {/* Selected Checkmark Badge */}
         {isSelected && (
-          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#6366F1] text-white shadow-md border-2 border-white">
+          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#803D63] text-white shadow-md border-2 border-white">
             <Check className="h-3.5 w-3.5 stroke-[3]" />
           </div>
         )}

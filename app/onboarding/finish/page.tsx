@@ -10,7 +10,7 @@ import { copyToClipboard } from "@/lib/copyToClipboard";
 import { OnboardingLayout } from "@/layouts/OnboardingLayout";
 import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
 
-const CONFETTI_COLORS = ["#6366F1", "#d946ef", "#f59e0b", "#3b82f6", "#10b981", "#e6c583"];
+const CONFETTI_COLORS = ["#803D63", "#d946ef", "#f59e0b", "#3b82f6", "#10b981", "#e6c583"];
 
 function ConfettiBurst() {
   const [pieces, setPieces] = useState<{ left: number; color: string; delay: number; rotate: number; scale: number }[]>([]);
@@ -101,7 +101,7 @@ export default function FinishStepPage() {
               />
             ) : (
               <div
-                className="flex w-20 h-20 items-center justify-center rounded-full text-xl font-extrabold text-white border-2 border-white shadow-md bg-[#6366F1]"
+                className="flex w-20 h-20 items-center justify-center rounded-full text-xl font-extrabold text-white border-2 border-white shadow-md bg-[#803D63]"
               >
                 {initials(profile.displayName) || "IN"}
               </div>
@@ -123,7 +123,7 @@ export default function FinishStepPage() {
           {/* Clean Handle Box */}
           <div className="mt-6 flex w-full items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white p-3.5 shadow-sm">
             <div className="flex items-center gap-2 min-w-0">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-[#6366F1]">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-[#803D63]">
                 <Sparkles className="h-4 w-4" />
               </span>
               <span className="truncate text-sm font-bold text-slate-900">{profileUrl}</span>
@@ -131,7 +131,7 @@ export default function FinishStepPage() {
             <button
               type="button"
               onClick={handleCopy}
-              className="tap-scale flex items-center gap-1.5 rounded-lg bg-[#6366F1] hover:bg-[#4F46E5] px-4 py-2 text-xs font-bold text-white transition-all cursor-pointer shrink-0"
+              className="tap-scale flex items-center gap-1.5 rounded-lg bg-[#803D63] hover:bg-[#6B3252] px-4 py-2 text-xs font-bold text-white transition-all cursor-pointer shrink-0"
             >
               {copied ? (
                 <>
@@ -153,7 +153,7 @@ export default function FinishStepPage() {
             <button
               type="button"
               onClick={() => router.push("/dashboard")}
-              className="tap-scale w-full flex items-center justify-center gap-2 rounded-xl bg-[#6366F1] hover:bg-[#4F46E5] text-white font-medium py-3.5 px-4 text-sm shadow-md transition-all cursor-pointer"
+              className="tap-scale w-full flex items-center justify-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6B3252] text-white font-medium py-3.5 px-4 text-sm shadow-md transition-all cursor-pointer"
             >
               <LayoutDashboard className="h-4 w-4" />
               <span>Go to Creator Dashboard →</span>

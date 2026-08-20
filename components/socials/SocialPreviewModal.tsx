@@ -129,7 +129,7 @@ export function SocialPreviewCard({
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#6366F1] hover:bg-[#4F46E5] py-2.5 text-xs font-medium text-white transition-colors disabled:opacity-50 cursor-pointer text-center shadow-none"
+          className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6B3252] py-2.5 text-xs font-medium text-white transition-colors disabled:opacity-50 cursor-pointer text-center shadow-none"
         >
           {loading ? (
             <Loader2 className="h-4 w-4 animate-spin" />

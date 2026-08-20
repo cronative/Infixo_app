@@ -31,18 +31,18 @@ export interface ThemeStyleConfig {
 
 export const DEFAULT_THEME_STYLE: ThemeStyleConfig = {
   cardBg: "bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0] border border-slate-200 text-slate-900 shadow-xl",
-  profBadgeBg: "bg-[#6366F1]/10",
-  profBadgeText: "text-[#6366F1]",
-  profBadgeBorder: "border-[#6366F1]/30",
-  fanbaseBg: "bg-[#6366F1]/10",
-  fanbaseText: "text-[#6366F1]",
+  profBadgeBg: "bg-[#803D63]/10",
+  profBadgeText: "text-[#803D63]",
+  profBadgeBorder: "border-[#803D63]/30",
+  fanbaseBg: "bg-[#803D63]/10",
+  fanbaseText: "text-[#803D63]",
   socialItemBg: "bg-white/80 backdrop-blur-xs",
   socialItemBorder: "border-slate-200/80",
   socialNameColor: "text-slate-800",
   socialUnitColor: "text-slate-500",
   nameColor: "text-slate-900",
   bioColor: "text-slate-600",
-  handleColor: "text-[#6366F1]",
+  handleColor: "text-[#803D63]",
 };
 
 const SIGNATURE_PURPLE_STYLE: ThemeStyleConfig = {
@@ -334,7 +334,7 @@ const MATCHA_CREAM_STYLE: ThemeStyleConfig = {
 };
 
 const CLOUD_FLUFF_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-br from-[#e0f2fe] via-[#f0f9ff] to-[#e0e7ff] text-[#0369a1] border border-sky-200/90 shadow-xl",
+  cardBg: "bg-gradient-to-br from-[#e0f2fe] via-[#f0f9ff] to-[#ECD3E2] text-[#0369a1] border border-sky-200/90 shadow-xl",
   profBadgeBg: "bg-sky-100/90",
   profBadgeText: "text-sky-900",
   profBadgeBorder: "border-sky-300",
@@ -415,7 +415,7 @@ const SHIMMER_GOLD_STYLE: ThemeStyleConfig = {
 };
 
 const HOLOGRAPHIC_WAVE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-br from-[#e0e7ff] via-[#f3e8ff] to-[#fce7f3] text-[#4c1d95] border border-purple-200 shadow-xl",
+  cardBg: "bg-gradient-to-br from-[#ECD3E2] via-[#f3e8ff] to-[#fce7f3] text-[#4c1d95] border border-purple-200 shadow-xl",
   profBadgeBg: "bg-purple-200/80",
   profBadgeText: "text-purple-950 font-black",
   profBadgeBorder: "border-purple-300",
@@ -642,10 +642,10 @@ export function LivePreviewCard({
         <div
           className={`tap-scale flex items-center gap-2 rounded-full border px-3 py-1.5 shadow-2xs transition-all ${style.socialItemBg} ${style.socialItemBorder}`}
         >
-          <div className="flex h-6 w-6 items-center justify-center rounded-xl bg-[#6366F1] text-white">
+          <div className="flex h-6 w-6 items-center justify-center rounded-xl bg-[#803D63] text-white">
             <InflixoLogoIcon className="h-3.5 w-3.5" />
           </div>
-          <span className="font-display text-sm font-bold text-[#6366F1] tracking-tight">
+          <span className="font-display text-sm font-bold text-[#803D63] tracking-tight">
             Inflixo
           </span>
         </div>
@@ -654,7 +654,7 @@ export function LivePreviewCard({
           <button
             type="button"
             onClick={handleCopyClick}
-            className={`tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} text-slate-600 hover:text-[#6366F1]`}
+            className={`tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} text-slate-600 hover:text-[#803D63]`}
             title="Copy Profile Link"
             aria-label="Copy Profile Link"
           >
@@ -664,7 +664,7 @@ export function LivePreviewCard({
           <button
             type="button"
             onClick={handleShareClick}
-            className={`tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} text-slate-600 hover:text-[#6366F1]`}
+            className={`tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} text-slate-600 hover:text-[#803D63]`}
             title="Share Profile"
             aria-label="Share Profile"
           >
@@ -681,7 +681,7 @@ export function LivePreviewCard({
             name={profile.displayName || "Creator"}
             className="w-24 h-24 rounded-full aspect-square object-cover overflow-hidden border-2 border-white shadow-md mx-auto"
             textClassName="text-2xl font-extrabold text-white"
-            fallbackBgClass="bg-[#6366F1]"
+            fallbackBgClass="bg-[#803D63]"
           />
         </div>
 
@@ -695,7 +695,7 @@ export function LivePreviewCard({
             {profile.displayName || "Your Name"}
           </h3>
           {/* Verified SVG Checkmark Badge */}
-          <svg className="w-5 h-5 text-[#6366F1] shrink-0" viewBox="0 0 24 24" fill="currentColor">
+          <svg className="w-5 h-5 text-[#803D63] shrink-0" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L9 14.17l9.59-9.59L20 6l-10 11z" />
           </svg>
         </div>
@@ -713,7 +713,7 @@ export function LivePreviewCard({
               showToast("Could not copy link", "error");
             }
           }}
-          className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-[#EEF2FF] text-[#6366F1] border border-[#E0E7FF] text-xs font-semibold px-3 py-1 hover:bg-indigo-100 transition-colors cursor-pointer"
+          className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-[#F8EEF4] text-[#803D63] border border-[#ECD3E2] text-xs font-semibold px-3 py-1 hover:bg-indigo-100 transition-colors cursor-pointer"
           title="Click to copy profile link"
         >
           <span>{profile.username ? `inflixo.com/${profile.username}` : "inflixo.com/username"}</span>
@@ -768,7 +768,7 @@ export function LivePreviewCard({
               <p className="text-2xl font-black text-[#111827]">
                 ❤️ {formatCount(totalAudience)}
               </p>
-              <p className="text-[11px] font-bold tracking-wider uppercase text-[#6366F1]">
+              <p className="text-[11px] font-bold tracking-wider uppercase text-[#803D63]">
                 TOTAL FANBASE
               </p>
             </div>
@@ -777,7 +777,7 @@ export function LivePreviewCard({
               <p className="text-2xl font-black text-[#111827]">
                 ❤️ 0
               </p>
-              <p className="text-[11px] font-bold tracking-wider uppercase text-[#6366F1]">
+              <p className="text-[11px] font-bold tracking-wider uppercase text-[#803D63]">
                 TOTAL FANBASE
               </p>
               <p className="text-[10px] font-medium text-gray-400">
@@ -798,7 +798,7 @@ export function LivePreviewCard({
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group bg-white hover:bg-gray-50/80 border border-[#E5E7EB] hover:border-[#6366F1] rounded-xl p-3.5 transition-all flex items-center justify-between shadow-2xs"
+                className="group bg-white hover:bg-gray-50/80 border border-[#E5E7EB] hover:border-[#803D63] rounded-xl p-3.5 transition-all flex items-center justify-between shadow-2xs"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${item.badgeBg}`}>
@@ -819,7 +819,7 @@ export function LivePreviewCard({
                   <span className="text-sm font-bold text-gray-900">
                     {formatCount(item.count)}
                   </span>
-                  <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-[#6366F1] transition-colors" />
+                  <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-[#803D63] transition-colors" />
                 </div>
               </a>
             ))}
@@ -834,7 +834,7 @@ export function LivePreviewCard({
             <p className="text-xs font-bold text-gray-400 uppercase tracking-widest text-left">
               Featured Series &amp; Shows
             </p>
-            <span className="text-[11px] font-semibold text-[#6366F1] bg-[#EEF2FF] border border-[#E0E7FF] px-2.5 py-0.5 rounded-full shrink-0">
+            <span className="text-[11px] font-semibold text-[#803D63] bg-[#F8EEF4] border border-[#ECD3E2] px-2.5 py-0.5 rounded-full shrink-0">
               {series.length} {series.length === 1 ? "Series" : "Series"} • {totalEpisodesCount} {totalEpisodesCount === 1 ? "Episode" : "Episodes"}
             </span>
           </div>
@@ -861,7 +861,7 @@ export function LivePreviewCard({
           href="/"
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-gray-100 text-gray-600 hover:text-[#6366F1] text-[11px] font-medium px-3.5 py-1.5 rounded-full border border-gray-200 transition-colors inline-flex items-center gap-1.5 shadow-2xs"
+          className="bg-gray-100 text-gray-600 hover:text-[#803D63] text-[11px] font-medium px-3.5 py-1.5 rounded-full border border-gray-200 transition-colors inline-flex items-center gap-1.5 shadow-2xs"
         >
           <span>⚡ Create your own Inflixo</span>
         </a>
@@ -910,9 +910,9 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   return {
     name: platformStr || "Web",
     icon: <Film className="h-3 w-3 text-white" />,
-    badgeClass: "bg-[#6366F1] text-white shadow-2xs",
+    badgeClass: "bg-[#803D63] text-white shadow-2xs",
     chipClass: "bg-indigo-50 text-indigo-700 border-indigo-200/80",
-    textColor: "text-[#6366F1]",
+    textColor: "text-[#803D63]",
   };
 }
 
@@ -963,7 +963,7 @@ function PreviewSeriesItem({
   return (
     <div
       id={`series-${series.id}`}
-      className="bg-white border border-[#E5E7EB] hover:border-[#6366F1] rounded-2xl p-3.5 sm:p-4 transition-all shadow-2xs text-left"
+      className="bg-white border border-[#E5E7EB] hover:border-[#803D63] rounded-2xl p-3.5 sm:p-4 transition-all shadow-2xs text-left"
     >
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3.5 sm:gap-4 w-full text-left">
         {/* Compact 16:9 Landscape Poster Thumbnail (No Video Play Icon) */}
@@ -996,7 +996,7 @@ function PreviewSeriesItem({
               <button
                 type="button"
                 onClick={handleShareSeriesLink}
-                className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 bg-white hover:bg-slate-50 text-gray-500 hover:text-[#6366F1] transition-colors cursor-pointer"
+                className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 bg-white hover:bg-slate-50 text-gray-500 hover:text-[#803D63] transition-colors cursor-pointer"
                 title="Share Series Link"
                 aria-label="Share Series"
               >
@@ -1006,7 +1006,7 @@ function PreviewSeriesItem({
               {/* View Page Icon Button (Next to Share button -> Opens Series Detail Page) */}
               <Link
                 href={seriesLinkUrl}
-                className="flex h-7 w-7 items-center justify-center rounded-lg border border-indigo-200 bg-[#EEF2FF] hover:bg-indigo-100 text-[#6366F1] transition-colors cursor-pointer"
+                className="flex h-7 w-7 items-center justify-center rounded-lg border border-indigo-200 bg-[#F8EEF4] hover:bg-indigo-100 text-[#803D63] transition-colors cursor-pointer"
                 title="View Series Details Page"
                 aria-label="View Series Page"
               >
@@ -1039,7 +1039,7 @@ function PreviewSeriesItem({
               {genresList.length > 0 && (
                 <div className="flex flex-wrap items-center gap-1">
                   {genresList.map((g, idx) => (
-                    <span key={idx} className="bg-[#EEF2FF] text-[#6366F1] text-[10px] font-medium px-2 py-0.5 rounded-md border border-[#E0E7FF]">
+                    <span key={idx} className="bg-[#F8EEF4] text-[#803D63] text-[10px] font-medium px-2 py-0.5 rounded-md border border-[#ECD3E2]">
                       {g}
                     </span>
                   ))}
@@ -1051,7 +1051,7 @@ function PreviewSeriesItem({
             <button
               type="button"
               onClick={onToggle}
-              className="bg-[#6366F1] hover:bg-[#4F46E5] text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1 shadow-2xs shrink-0 cursor-pointer self-start sm:self-auto"
+              className="bg-[#803D63] hover:bg-[#6B3252] text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1 shadow-2xs shrink-0 cursor-pointer self-start sm:self-auto"
             >
               <span>{expanded ? "Hide Episodes ↑" : "View Episodes ↗"}</span>
             </button>
@@ -1078,13 +1078,13 @@ function PreviewSeriesItem({
                   href={ep.externalUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white p-2.5 sm:p-3 transition-all hover:border-[#6366F1] shadow-2xs text-left"
+                  className="group flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white p-2.5 sm:p-3 transition-all hover:border-[#803D63] shadow-2xs text-left"
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1 text-left">
-                    <span className="bg-[#EEF2FF] text-[#6366F1] font-bold text-[11px] px-2 py-1 rounded-md border border-[#E0E7FF] shrink-0">
+                    <span className="bg-[#F8EEF4] text-[#803D63] font-bold text-[11px] px-2 py-1 rounded-md border border-[#ECD3E2] shrink-0">
                       {epNumStr}
                     </span>
-                    <p className="truncate text-xs font-bold text-gray-900 group-hover:text-[#6366F1] transition-colors text-left">
+                    <p className="truncate text-xs font-bold text-gray-900 group-hover:text-[#803D63] transition-colors text-left">
                       {epTitleStr}
                     </p>
                   </div>
@@ -1098,7 +1098,7 @@ function PreviewSeriesItem({
                       <span>{plat.name}</span>
                     </span>
 
-                    <span className="text-xs font-bold text-[#6366F1] group-hover:text-[#4F46E5] inline-flex items-center gap-1 bg-[#EEF2FF] border border-[#E0E7FF] px-3 py-1 rounded-lg transition-colors">
+                    <span className="text-xs font-bold text-[#803D63] group-hover:text-[#6B3252] inline-flex items-center gap-1 bg-[#F8EEF4] border border-[#ECD3E2] px-3 py-1 rounded-lg transition-colors">
                       <span>Watch ↗</span>
                     </span>
                   </div>

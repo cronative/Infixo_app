@@ -48,7 +48,7 @@ export default function LoginPage() {
         {/* Email Form */}
         <form onSubmit={handleSubmit} className="space-y-4 pt-1">
           {/* Trust Badge Above Input */}
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-purple-50 border border-purple-200 px-3 py-1 text-[11px] font-bold text-[#6366F1]">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-purple-50 border border-purple-200 px-3 py-1 text-[11px] font-bold text-[#803D63]">
             <span>⚡ Password-free login • New here? We’ll set up your profile next.</span>
           </div>
 
@@ -69,7 +69,7 @@ export default function LoginPage() {
             fullWidth
             size="lg"
             loading={loading}
-            className="bg-[#6366F1] text-white font-bold hover:bg-[#4F46E5] transition-colors h-12 text-sm rounded-xl cursor-pointer shadow-none"
+            className="bg-[#803D63] text-white font-bold hover:bg-[#6B3252] transition-colors h-12 text-sm rounded-xl cursor-pointer shadow-none"
           >
             Send Secure Code →
           </Button>
@@ -78,15 +78,15 @@ export default function LoginPage() {
         {/* Clean Checklist Section */}
         <div className="pt-5 border-t border-[#E5E7EB] space-y-2.5 text-sm font-medium text-gray-600">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+            <CheckCircle2 className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
             <span>Manage your live Total Fanbase</span>
           </div>
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+            <CheckCircle2 className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
             <span>Organize OTT series &amp; episodes</span>
           </div>
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+            <CheckCircle2 className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
             <span>Instant 60-second setup for new creators</span>
           </div>
         </div>
@@ -107,7 +107,7 @@ export default function LoginPage() {
                   <p className="text-[10px] font-medium text-purple-200">@maya · Travel Creator</p>
                 </div>
               </div>
-              <span className="text-[10px] font-bold bg-[#6366F1] px-2 py-0.5 rounded-full text-white">
+              <span className="text-[10px] font-bold bg-[#803D63] px-2 py-0.5 rounded-full text-white">
                 126K Fanbase
               </span>
             </div>

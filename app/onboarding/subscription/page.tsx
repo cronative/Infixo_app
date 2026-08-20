@@ -33,8 +33,8 @@ export default function SubscriptionStepPage() {
 
   return (
     <OnboardingLayout step="subscription">
-      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-bold text-[#6366F1]">
-        <Sparkles className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-bold text-[#803D63]">
+        <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
         <span>Step 5 of 6 • Creator Plan</span>
       </div>
       <h1 className="text-3xl font-extrabold leading-[1.15] tracking-tight text-slate-900 sm:text-4xl">

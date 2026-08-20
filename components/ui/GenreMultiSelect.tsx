@@ -75,7 +75,7 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
     <div className="w-full">
       <div className="flex items-center justify-between mb-2">
         <label className="block text-sm font-bold text-slate-900 flex items-center gap-1.5">
-          <Tag className="h-4 w-4 text-[#6366F1]" />
+          <Tag className="h-4 w-4 text-[#803D63]" />
           Series Genres
         </label>
         <span className={`text-xs font-semibold ${selectedGenres.length >= max ? "text-amber-600 font-bold" : "text-slate-400"}`}>
@@ -97,15 +97,15 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
               onClick={() => toggleGenre(g)}
               className={`tap-scale flex items-center gap-1.5 rounded-full px-3 py-1 text-xs transition-all cursor-pointer ${
                 isSelected
-                  ? "bg-[#EEF2FF] text-[#6366F1] border border-[#6366F1] font-semibold shadow-2xs"
+                  ? "bg-[#F8EEF4] text-[#803D63] border border-[#803D63] font-semibold shadow-2xs"
                   : isMaxReached
                   ? "opacity-40 cursor-not-allowed bg-white border border-slate-200 text-slate-400"
-                  : "bg-white border border-slate-200 text-slate-700 hover:border-indigo-300 hover:bg-indigo-50/50 hover:text-[#6366F1]"
+                  : "bg-white border border-slate-200 text-slate-700 hover:border-indigo-300 hover:bg-indigo-50/50 hover:text-[#803D63]"
               }`}
             >
               {isSelected ? (
                 <>
-                  <Check className="h-3 w-3 stroke-[3] text-[#6366F1] shrink-0" />
+                  <Check className="h-3 w-3 stroke-[3] text-[#803D63] shrink-0" />
                   <span>{g}</span>
                 </>
               ) : (

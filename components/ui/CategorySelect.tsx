@@ -46,12 +46,12 @@ export function CategorySelect({
       <div className="flex flex-wrap items-center justify-between gap-1.5">
         <div>
           <label className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
-            <Tag className="h-4 w-4 text-[#6366F1]" />
+            <Tag className="h-4 w-4 text-[#803D63]" />
             What do you create?
           </label>
           <p className="text-xs text-slate-500">Choose up to {max} categories that best describe your content.</p>
         </div>
-        <span className="bg-[#EEF2FF] text-[#6366F1] border border-[#E0E7FF] text-xs font-semibold px-2.5 py-0.5 rounded-full shrink-0">
+        <span className="bg-[#F8EEF4] text-[#803D63] border border-[#ECD3E2] text-xs font-semibold px-2.5 py-0.5 rounded-full shrink-0">
           {selectedCategories.length} / {max} selected
         </span>
       </div>
@@ -72,7 +72,7 @@ export function CategorySelect({
               onClick={() => toggleCategory(item.category)}
               className={`tap-scale inline-flex items-center gap-1.5 text-xs py-1 px-3 rounded-full transition-all cursor-pointer ${
                 isSelected
-                  ? "bg-[#EEF2FF] border border-[#6366F1] text-[#6366F1] font-semibold shadow-2xs"
+                  ? "bg-[#F8EEF4] border border-[#803D63] text-[#803D63] font-semibold shadow-2xs"
                   : isMaxReached
                   ? "opacity-40 cursor-not-allowed bg-white border border-[#E5E7EB] text-gray-400"
                   : "bg-white border border-[#E5E7EB] text-[#4B5563] hover:border-gray-300"
@@ -80,7 +80,7 @@ export function CategorySelect({
             >
               <span className="text-xs shrink-0">{item.emoji}</span>
               <span className="truncate">{item.category}</span>
-              {isSelected && <Check className="h-3 w-3 stroke-[3] text-[#6366F1] shrink-0" />}
+              {isSelected && <Check className="h-3 w-3 stroke-[3] text-[#803D63] shrink-0" />}
             </button>
           );
         })}
@@ -90,7 +90,7 @@ export function CategorySelect({
       {isOtherSelected && (
         <div className="animate-fade-in space-y-1.5 rounded-2xl border border-indigo-200 bg-indigo-50/60 p-3.5">
           <label className="block text-xs font-extrabold uppercase tracking-wider text-indigo-900 flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-[#6366F1]" />
+            <Sparkles className="h-3.5 w-3.5 text-[#803D63]" />
             What type of content do you create? <span className="text-rose-500">*</span>
           </label>
           <input
@@ -99,7 +99,7 @@ export function CategorySelect({
             placeholder="e.g. Magic, Farming, ASMR, Collectibles, Local Culture"
             value={customValue || ""}
             onChange={(e) => handleCustomChange(e.target.value)}
-            className="w-full rounded-xl border border-indigo-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-900 placeholder:text-slate-400 focus:border-[#6366F1] focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            className="w-full rounded-xl border border-indigo-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-900 placeholder:text-slate-400 focus:border-[#803D63] focus:outline-none focus:ring-2 focus:ring-indigo-200"
           />
           <div className="flex justify-between text-[10px] text-slate-500">
             <span>Will be displayed on your public profile instead of "Other".</span>

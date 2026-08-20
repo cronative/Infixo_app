@@ -29,7 +29,7 @@ export function SyncingLoader({
         {/* Animated Brand Logo Container */}
         <div className="relative flex h-16 w-16 items-center justify-center">
           {/* Core Inflixo Logo Badge */}
-          <div className="relative flex h-14 w-14 items-center justify-center rounded-xl bg-[#6366F1] text-white border border-[#6366F1]">
+          <div className="relative flex h-14 w-14 items-center justify-center rounded-xl bg-[#803D63] text-white border border-[#803D63]">
             <InflixoLogoIcon className="h-8 w-8 text-white" />
           </div>
         </div>
@@ -40,7 +40,7 @@ export function SyncingLoader({
             <h3 className="font-display text-base font-bold text-slate-900">
               Inflixo
             </h3>
-            <span className="rounded-full bg-purple-50 border border-purple-200 px-2.5 py-0.5 text-[10px] font-bold text-[#6366F1] uppercase tracking-wider">
+            <span className="rounded-full bg-purple-50 border border-purple-200 px-2.5 py-0.5 text-[10px] font-bold text-[#803D63] uppercase tracking-wider">
               Syncing
             </span>
           </div>
@@ -52,7 +52,7 @@ export function SyncingLoader({
 
         {/* Subtle Horizontal Progress Pulse Bar */}
         <div className="h-1 w-44 overflow-hidden rounded-full bg-slate-100 border border-slate-200">
-          <div className="h-full w-full bg-[#6366F1] animate-pulse" />
+          <div className="h-full w-full bg-[#803D63] animate-pulse" />
         </div>
       </div>
     </div>

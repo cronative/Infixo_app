@@ -69,7 +69,7 @@ export default function DashboardThemesPage() {
             <button
               type="button"
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-1.5 text-xs font-bold text-[#6366F1] hover:bg-indigo-100 transition-colors cursor-pointer shrink-0"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-1.5 text-xs font-bold text-[#803D63] hover:bg-indigo-100 transition-colors cursor-pointer shrink-0"
               title="Copy Profile Link"
             >
               <span>{profileUrl}</span>
@@ -82,7 +82,7 @@ export default function DashboardThemesPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white hover:bg-slate-50 px-3.5 py-1.5 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
             >
-              <ExternalLink className="h-3.5 w-3.5 text-[#6366F1]" />
+              <ExternalLink className="h-3.5 w-3.5 text-[#803D63]" />
               <span>View Live Profile ↗</span>
             </a>
 
@@ -112,7 +112,7 @@ export default function DashboardThemesPage() {
                 onClick={() => setActiveGroup("all")}
                 className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
                   activeGroup === "all"
-                    ? "bg-[#6366F1] text-white shadow-none"
+                    ? "bg-[#803D63] text-white shadow-none"
                     : "bg-white border border-[#E5E7EB] text-[#4B5563] hover:border-gray-300"
                 }`}
               >
@@ -124,7 +124,7 @@ export default function DashboardThemesPage() {
                 onClick={() => setActiveGroup("light")}
                 className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
                   activeGroup === "light"
-                    ? "bg-[#6366F1] text-white shadow-none"
+                    ? "bg-[#803D63] text-white shadow-none"
                     : "bg-white border border-[#E5E7EB] text-[#4B5563] hover:border-gray-300"
                 }`}
               >
@@ -136,11 +136,11 @@ export default function DashboardThemesPage() {
                 onClick={() => setActiveGroup("shimmer")}
                 className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 ${
                   activeGroup === "shimmer"
-                    ? "bg-[#6366F1] text-white shadow-none"
+                    ? "bg-[#803D63] text-white shadow-none"
                     : "bg-white border border-[#E5E7EB] text-[#4B5563] hover:border-gray-300"
                 }`}
               >
-                <Sparkles className="h-3.5 w-3.5 text-[#6366F1]" />
+                <Sparkles className="h-3.5 w-3.5 text-[#803D63]" />
                 Shimmer
               </button>
 
@@ -149,7 +149,7 @@ export default function DashboardThemesPage() {
                 onClick={() => setActiveGroup("dark")}
                 className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
                   activeGroup === "dark"
-                    ? "bg-[#6366F1] text-white shadow-none"
+                    ? "bg-[#803D63] text-white shadow-none"
                     : "bg-white border border-[#E5E7EB] text-[#4B5563] hover:border-gray-300"
                 }`}
               >
@@ -177,10 +177,10 @@ export default function DashboardThemesPage() {
           <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-2.5 order-1 lg:order-2 h-fit">
             <div className="flex items-center justify-between">
               <p className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                <Eye className="h-3.5 w-3.5 text-[#6366F1]" />
+                <Eye className="h-3.5 w-3.5 text-[#803D63]" />
                 <span>Live Phone Preview</span>
               </p>
-              <span className="bg-[#EEF2FF] text-[#6366F1] border border-[#E0E7FF] text-xs font-semibold px-3 py-1 rounded-full">
+              <span className="bg-[#F8EEF4] text-[#803D63] border border-[#ECD3E2] text-xs font-semibold px-3 py-1 rounded-full">
                 Selected: {selectedThemeName}
               </span>
             </div>
@@ -219,7 +219,7 @@ function ThemeTile({
       onClick={onSelect}
       className={`tap-scale relative w-full h-32 rounded-2xl overflow-hidden p-3.5 flex flex-col justify-between text-left transition-all cursor-pointer shadow-2xs ${
         isSelected
-          ? "ring-2 ring-offset-2 ring-[#6366F1]"
+          ? "ring-2 ring-offset-2 ring-[#803D63]"
           : "border border-gray-200/80 hover:border-gray-400 hover:shadow-md"
       }`}
       style={{
@@ -237,7 +237,7 @@ function ThemeTile({
 
         {/* Selected Checkmark Badge */}
         {isSelected && (
-          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#6366F1] text-white shadow-md border-2 border-white">
+          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#803D63] text-white shadow-md border-2 border-white">
             <Check className="h-3.5 w-3.5 stroke-[3]" />
           </div>
         )}

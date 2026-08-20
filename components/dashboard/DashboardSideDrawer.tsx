@@ -75,8 +75,8 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
           </button>
         </div>
 
-        {/* Creator Info Banner (Solid Logo Brand Purple #6366F1) */}
-        <div className="mx-4 mt-4 rounded-2xl bg-[#6366F1] p-4 text-white">
+        {/* Creator Info Banner (Solid Logo Brand Purple #803D63) */}
+        <div className="mx-4 mt-4 rounded-2xl bg-[#803D63] p-4 text-white">
           <div className="flex items-center gap-3">
             <CreatorAvatar
               src={profile.photoDataUrl}
@@ -147,14 +147,14 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                   onClick={onClose}
                   className={`flex items-center justify-between rounded-2xl px-3.5 py-3 text-xs font-extrabold transition-all ${
                     active
-                      ? "bg-purple-50 text-[#6366F1] shadow-2xs border border-purple-200"
+                      ? "bg-purple-50 text-[#803D63] shadow-2xs border border-purple-200"
                       : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <div
                       className={`flex h-8 w-8 items-center justify-center rounded-xl transition-colors ${
-                        active ? "bg-[#6366F1] text-white shadow-2xs" : "bg-slate-100 text-slate-600"
+                        active ? "bg-[#803D63] text-white shadow-2xs" : "bg-slate-100 text-slate-600"
                       }`}
                     >
                       <Icon className="h-4 w-4" />
@@ -164,7 +164,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
 
                   <ChevronRight
                     className={`h-4 w-4 transition-transform ${
-                      active ? "text-[#6366F1] translate-x-0.5" : "text-slate-300"
+                      active ? "text-[#803D63] translate-x-0.5" : "text-slate-300"
                     }`}
                   />
                 </Link>
@@ -176,9 +176,9 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
         {/* Drawer Bottom Footer */}
         <div className="border-t border-slate-100 p-4 bg-slate-50/50 space-y-2">
           {/* Subscription Status Badge */}
-          <div className="flex items-center justify-between rounded-2xl border border-purple-200 bg-purple-50/80 px-3.5 py-2.5 text-xs font-extrabold text-[#6366F1]">
+          <div className="flex items-center justify-between rounded-2xl border border-purple-200 bg-purple-50/80 px-3.5 py-2.5 text-xs font-extrabold text-[#803D63]">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-[#6366F1] shrink-0" />
+              <Sparkles className="h-4 w-4 text-[#803D63] shrink-0" />
               <span>Early Access Active</span>
             </div>
           </div>

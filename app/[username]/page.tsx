@@ -257,7 +257,7 @@ export default function PublicProfilePage() {
           {/* Main 404 Light Theme Card */}
           <div className="rounded-[32px] border border-indigo-100 bg-white/90 p-8 sm:p-12 shadow-2xl shadow-indigo-500/10 backdrop-blur-xl space-y-6 text-center">
             {/* Animated Icon Badge */}
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-[#6366F1] text-white shadow-xl shadow-indigo-600/30 ring-4 ring-indigo-100">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-[#803D63] text-white shadow-xl shadow-indigo-600/30 ring-4 ring-indigo-100">
               <UserX className="h-10 w-10 stroke-[2.2]" />
             </div>
 
@@ -296,7 +296,7 @@ export default function PublicProfilePage() {
               {usernameAvailable === true ? (
                 <button
                   onClick={() => router.push(`/login`)}
-                  className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#6366F1] hover:bg-[#4F46E5] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-indigo-900/20 transition-all border border-indigo-400/30 hover:scale-[1.02]"
+                  className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6B3252] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-indigo-900/20 transition-all border border-indigo-400/30 hover:scale-[1.02]"
                 >
                   <Sparkles className="h-4 w-4" />
                   <span>Claim @{handle}</span>
@@ -304,7 +304,7 @@ export default function PublicProfilePage() {
               ) : (
                 <button
                   onClick={() => router.push("/login")}
-                  className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#6366F1] hover:bg-[#4F46E5] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-indigo-900/20 transition-all border border-indigo-400/30 hover:scale-[1.02]"
+                  className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6B3252] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-indigo-900/20 transition-all border border-indigo-400/30 hover:scale-[1.02]"
                 >
                   <Sparkles className="h-4 w-4" />
                   <span>Create Your Inflixo</span>
@@ -323,19 +323,19 @@ export default function PublicProfilePage() {
             {/* Value Highlights Grid */}
             <div className="mt-8 border-t border-indigo-100 pt-6 grid grid-cols-3 gap-2 text-left">
               <div className="rounded-2xl bg-indigo-50/60 border border-indigo-100 p-3">
-                <Film className="h-4 w-4 text-[#6366F1] mb-1" />
+                <Film className="h-4 w-4 text-[#803D63] mb-1" />
                 <p className="text-[11px] font-black text-slate-900">Series &amp; Parts</p>
                 <p className="text-[9px] text-slate-500 font-medium">Keep content in order</p>
               </div>
 
               <div className="rounded-2xl bg-indigo-50/60 border border-indigo-100 p-3">
-                <Users className="h-4 w-4 text-[#6366F1] mb-1" />
+                <Users className="h-4 w-4 text-[#803D63] mb-1" />
                 <p className="text-[11px] font-black text-slate-900">Total Fanbase</p>
                 <p className="text-[9px] text-slate-500 font-medium">Bring your audience together</p>
               </div>
 
               <div className="rounded-2xl bg-indigo-50/60 border border-indigo-100 p-3">
-                <Sparkles className="h-4 w-4 text-[#6366F1] mb-1" />
+                <Sparkles className="h-4 w-4 text-[#803D63] mb-1" />
                 <p className="text-[11px] font-black text-slate-900">Creator Themes</p>
                 <p className="text-[9px] text-slate-500 font-medium">Make it yours</p>
               </div>

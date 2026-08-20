@@ -9,12 +9,12 @@
   --muted: #64748b;
 
   /* Inflixo Official Solid Logo Primary Theme Colors */
-  --inflixo-purple: #6366F1;          /* Primary Solid Brand Royal Purple Accent */
-  --inflixo-purple-dark: #4F46E5;     /* Deep Royal Purple Accent */
-  --inflixo-purple-secondary: #6366F1;/* Secondary Purple */
-  --inflixo-purple-light: #EEF2FF;    /* Light Indigo Accent */
+  --inflixo-purple: #803D63;          /* Primary Solid Brand Royal Purple Accent */
+  --inflixo-purple-dark: #6B3252;     /* Deep Royal Purple Accent */
+  --inflixo-purple-secondary: #803D63;/* Secondary Purple */
+  --inflixo-purple-light: #F8EEF4;    /* Light Indigo Accent */
   --inflixo-lavender: #F8FAFC;        /* Flat Light Background */
-  --inflixo-blue: #6366F1;            /* Primary Accent */
+  --inflixo-blue: #803D63;            /* Primary Accent */
   --inflixo-lime: #10b981;            /* Success Green */
   --inflixo-navy: #0f172a;            /* Primary Text */
   --inflixo-border: #E2E8F0;          /* Clean Minimal 1px Border */
@@ -30,9 +30,9 @@
   --shadow-premium: none;
   --shadow-hover: none;
 
-  --gradient-premium: #6366F1;
+  --gradient-premium: #803D63;
   --gradient-gold: #f59e0b;
-  --gradient-energy: #6366F1;
+  --gradient-energy: #803D63;
 }
 
 @theme inline {
@@ -110,7 +110,7 @@ h1, h2, h3, h4, h5, h6, .font-display {
 }
 
 .text-gradient-premium {
-  color: #6366F1;
+  color: #803D63;
 }
 
 .text-gradient-gold {
@@ -136,7 +136,7 @@ h1, h2, h3, h4, h5, h6, .font-display {
   transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 .hover-glow:hover {
-  border-color: #6366F1;
+  border-color: #803D63;
 }
 
 .tap-scale {

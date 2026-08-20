@@ -35,10 +35,10 @@ export function SocialDataConsentCard({
           onClick={() => !disabled && onToggle(!accepted)}
           className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-colors ${
             disabled || accepted
-              ? "border-[#6366F1] bg-[#6366F1] text-white cursor-default"
+              ? "border-[#803D63] bg-[#803D63] text-white cursor-default"
               : error
               ? "border-rose-400 bg-white"
-              : "border-slate-300 bg-white hover:border-[#6366F1]"
+              : "border-slate-300 bg-white hover:border-[#803D63]"
           }`}
         >
           {(accepted || disabled) && <Check className="h-3.5 w-3.5" />}
@@ -86,10 +86,10 @@ export function SocialDataConsentCard({
           onClick={() => !disabled && onToggle(!accepted)}
           className={`mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-md border transition-colors ${
             disabled || accepted
-              ? "border-[#6366F1] bg-[#6366F1] text-white cursor-default"
+              ? "border-[#803D63] bg-[#803D63] text-white cursor-default"
               : error
               ? "border-rose-400 bg-white"
-              : "border-slate-300 bg-white hover:border-[#6366F1]"
+              : "border-slate-300 bg-white hover:border-[#803D63]"
           }`}
         >
           {(accepted || disabled) && <Check className="h-3 w-3 stroke-[3]" />}

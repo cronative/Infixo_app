@@ -158,7 +158,7 @@ export default function DashboardSocialsPage() {
             <button
               type="button"
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-1.5 text-xs font-bold text-[#6366F1] hover:bg-indigo-100 transition-colors cursor-pointer shrink-0"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-1.5 text-xs font-bold text-[#803D63] hover:bg-indigo-100 transition-colors cursor-pointer shrink-0"
               title="Copy Profile Link"
             >
               <span>{profileUrl}</span>
@@ -171,7 +171,7 @@ export default function DashboardSocialsPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white hover:bg-slate-50 px-3.5 py-1.5 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
             >
-              <ExternalLink className="h-3.5 w-3.5 text-[#6366F1]" />
+              <ExternalLink className="h-3.5 w-3.5 text-[#803D63]" />
               <span>View Live Profile ↗</span>
             </a>
 

@@ -24,15 +24,15 @@ export function DashboardBottomNav() {
               <div
                 className={`flex h-11 w-11 items-center justify-center rounded-xl text-white transition-colors ${
                   active
-                    ? "bg-[#6366F1]"
-                    : "bg-[#6366F1] hover:bg-[#4F46E5]"
+                    ? "bg-[#803D63]"
+                    : "bg-[#803D63] hover:bg-[#6B3252]"
                 }`}
               >
                 <Icon className="h-5 w-5 stroke-[2.5]" />
               </div>
               <span
                 className={`text-[10px] font-bold mt-1 ${
-                  active ? "text-[#6366F1]" : "text-slate-700"
+                  active ? "text-[#803D63]" : "text-slate-700"
                 }`}
               >
                 {item.label}
@@ -46,10 +46,10 @@ export function DashboardBottomNav() {
             key={item.href}
             href={item.href}
             className={`flex flex-1 flex-col items-center justify-center gap-1 pt-3 pb-2 text-[10px] font-bold transition-colors ${
-              active ? "text-[#6366F1]" : "text-slate-500 hover:text-slate-900"
+              active ? "text-[#803D63]" : "text-slate-500 hover:text-slate-900"
             }`}
           >
-            <Icon className={`h-5 w-5 transition-colors ${active ? "text-[#6366F1]" : ""}`} />
+            <Icon className={`h-5 w-5 transition-colors ${active ? "text-[#803D63]" : ""}`} />
             <span>{item.label}</span>
           </Link>
         );

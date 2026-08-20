@@ -51,9 +51,9 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   return {
     name: platformStr || "Web",
     icon: <Film className="h-3.5 w-3.5 text-white" />,
-    badgeClass: "bg-[#6366F1] text-white shadow-2xs",
+    badgeClass: "bg-[#803D63] text-white shadow-2xs",
     chipClass: "bg-indigo-50 text-indigo-700 border-indigo-200/80",
-    textColor: "text-[#6366F1]",
+    textColor: "text-[#803D63]",
   };
 }
 
@@ -241,13 +241,13 @@ export default function SeriesDetailPage() {
             href={`/${username}`}
             className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white hover:bg-slate-50 px-4 py-2 text-xs sm:text-sm font-semibold text-slate-700 shadow-2xs transition-colors"
           >
-            <ArrowLeft className="h-4 w-4 text-[#6366F1]" />
+            <ArrowLeft className="h-4 w-4 text-[#803D63]" />
             <span>← Back to Creator Profile</span>
           </Link>
 
           <button
             onClick={handleShare}
-            className="inline-flex items-center gap-2 rounded-xl border border-indigo-100 bg-indigo-50 hover:bg-indigo-100 px-4 py-2 text-xs sm:text-sm font-bold text-[#6366F1] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 rounded-xl border border-indigo-100 bg-indigo-50 hover:bg-indigo-100 px-4 py-2 text-xs sm:text-sm font-bold text-[#803D63] transition-colors cursor-pointer"
           >
             <Share2 className="h-4 w-4" />
             <span>Share Series</span>
@@ -292,7 +292,7 @@ export default function SeriesDetailPage() {
               {series.genre && (
                 <div className="flex flex-wrap items-center gap-1.5">
                   {series.genre.split(",").map((g, idx) => (
-                    <span key={idx} className="bg-[#EEF2FF] text-[#6366F1] text-xs font-medium px-2.5 py-0.5 rounded-md border border-[#E0E7FF]">
+                    <span key={idx} className="bg-[#F8EEF4] text-[#803D63] text-xs font-medium px-2.5 py-0.5 rounded-md border border-[#ECD3E2]">
                       Genre: {g.trim()}
                     </span>
                   ))}
@@ -306,7 +306,7 @@ export default function SeriesDetailPage() {
         <div className="bg-white border border-gray-200 rounded-2xl p-5 sm:p-6 shadow-2xs space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-gray-100">
             <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <Layers className="h-4 w-4 text-[#6366F1]" />
+              <Layers className="h-4 w-4 text-[#803D63]" />
               <span>Episodes Playlist ({allEpisodes.length})</span>
             </h2>
             <span className="text-xs text-slate-500 font-medium">Click Watch to open video in new tab</span>
@@ -327,15 +327,15 @@ export default function SeriesDetailPage() {
                     href={ep.externalUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white p-3.5 transition-all hover:border-[#6366F1] shadow-2xs hover:bg-slate-50/50 text-left"
+                    className="group flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white p-3.5 transition-all hover:border-[#803D63] shadow-2xs hover:bg-slate-50/50 text-left"
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1 text-left">
                       {/* EP Number Indigo Chip */}
-                      <span className="bg-[#EEF2FF] text-[#6366F1] font-bold text-xs px-2.5 py-1 rounded-md border border-[#E0E7FF] shrink-0">
+                      <span className="bg-[#F8EEF4] text-[#803D63] font-bold text-xs px-2.5 py-1 rounded-md border border-[#ECD3E2] shrink-0">
                         {epNumStr}
                       </span>
 
-                      <p className="truncate text-xs sm:text-sm font-bold text-slate-900 group-hover:text-[#6366F1] transition-colors text-left">
+                      <p className="truncate text-xs sm:text-sm font-bold text-slate-900 group-hover:text-[#803D63] transition-colors text-left">
                         {epTitleStr}
                       </p>
                     </div>
@@ -349,7 +349,7 @@ export default function SeriesDetailPage() {
                         <span>{plat.name}</span>
                       </span>
 
-                      <span className="bg-[#6366F1] hover:bg-[#4F46E5] text-white text-xs font-semibold px-4 py-2 rounded-lg inline-flex items-center gap-1.5 transition-all shadow-none">
+                      <span className="bg-[#803D63] hover:bg-[#6B3252] text-white text-xs font-semibold px-4 py-2 rounded-lg inline-flex items-center gap-1.5 transition-all shadow-none">
                         <span>Watch on {plat.name} ↗</span>
                       </span>
                     </div>
@@ -367,7 +367,7 @@ export default function SeriesDetailPage() {
               // eslint-disable-next-line @next/next/no-img-element
               <img src={creator.photoDataUrl} alt={creator.displayName} className="h-12 w-12 rounded-full object-cover border border-gray-200" />
             ) : (
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#6366F1] text-white font-bold text-base">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#803D63] text-white font-bold text-base">
                 {creator?.displayName ? creator.displayName[0].toUpperCase() : "C"}
               </div>
             )}
@@ -379,7 +379,7 @@ export default function SeriesDetailPage() {
 
           <Link
             href={`/${username}`}
-            className="shrink-0 rounded-xl bg-[#6366F1] hover:bg-[#4F46E5] px-5 py-2 text-xs font-semibold text-white transition-colors"
+            className="shrink-0 rounded-xl bg-[#803D63] hover:bg-[#6B3252] px-5 py-2 text-xs font-semibold text-white transition-colors"
           >
             Visit Creator Profile →
           </Link>

@@ -49,13 +49,13 @@ export default function DashboardSubscriptionPage() {
           <div className="flex flex-col sm:items-end gap-1 shrink-0">
             <div className="flex items-center gap-2.5 text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-lg p-2.5">
               <div className="flex items-center gap-1">
-                <Layers className="h-3.5 w-3.5 text-[#6366F1]" />
-                <span>Series: <strong className="text-[#6366F1]">{seriesUsage.current} / {EARLY_ACCESS_LIMITS.maxSeries}</strong></span>
+                <Layers className="h-3.5 w-3.5 text-[#803D63]" />
+                <span>Series: <strong className="text-[#803D63]">{seriesUsage.current} / {EARLY_ACCESS_LIMITS.maxSeries}</strong></span>
               </div>
               <span className="text-slate-300">•</span>
               <div className="flex items-center gap-1">
-                <Film className="h-3.5 w-3.5 text-[#6366F1]" />
-                <span>Episodes: <strong className="text-[#6366F1]">{episodeUsage.current} / {episodeUsage.theoreticalMax}</strong></span>
+                <Film className="h-3.5 w-3.5 text-[#803D63]" />
+                <span>Episodes: <strong className="text-[#803D63]">{episodeUsage.current} / {episodeUsage.theoreticalMax}</strong></span>
               </div>
             </div>
           </div>

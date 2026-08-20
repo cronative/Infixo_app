@@ -147,7 +147,7 @@ export default function VerifyOtpPage() {
           <button
             type="button"
             onClick={() => router.push("/login")}
-            className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-600 hover:border-purple-200 hover:bg-purple-50 hover:text-[#6366F1] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-600 hover:border-purple-200 hover:bg-purple-50 hover:text-[#803D63] transition-colors cursor-pointer"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             <span>← Change email</span>
@@ -160,7 +160,7 @@ export default function VerifyOtpPage() {
             <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-[#111827]">
               Check your email
             </h1>
-            <Mail className="h-5 w-5 text-[#6366F1] shrink-0" />
+            <Mail className="h-5 w-5 text-[#803D63] shrink-0" />
           </div>
 
           <div className="text-xs sm:text-sm font-medium text-[#4B5563]">
@@ -170,7 +170,7 @@ export default function VerifyOtpPage() {
               <button
                 type="button"
                 onClick={() => router.push("/login")}
-                className="text-xs font-bold text-[#6366F1] hover:underline shrink-0"
+                className="text-xs font-bold text-[#803D63] hover:underline shrink-0"
               >
                 (Change)
               </button>
@@ -202,8 +202,8 @@ export default function VerifyOtpPage() {
                   errorMessage
                     ? "border-red-400 bg-red-50/20 text-red-600"
                     : d
-                    ? "border-[#6366F1] ring-2 ring-[#6366F1]/20 bg-purple-50/30"
-                    : "border-[#E5E7EB] focus:border-[#6366F1] focus:ring-2 focus:ring-[#6366F1]/20"
+                    ? "border-[#803D63] ring-2 ring-[#803D63]/20 bg-purple-50/30"
+                    : "border-[#E5E7EB] focus:border-[#803D63] focus:ring-2 focus:ring-[#803D63]/20"
                 }`}
               />
             ))}
@@ -233,7 +233,7 @@ export default function VerifyOtpPage() {
           onClick={() => submit(digits.join(""))}
           className={`font-bold transition-colors h-12 text-sm rounded-xl cursor-pointer shadow-none ${
             isOtpComplete && !submitting
-              ? "bg-[#6366F1] text-white hover:bg-[#4F46E5]"
+              ? "bg-[#803D63] text-white hover:bg-[#6B3252]"
               : "bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed"
           }`}
         >
@@ -256,7 +256,7 @@ export default function VerifyOtpPage() {
                 type="button"
                 onClick={handleResend}
                 disabled={resending}
-                className="font-bold text-[#6366F1] hover:underline cursor-pointer"
+                className="font-bold text-[#803D63] hover:underline cursor-pointer"
               >
                 {resending ? "Sending..." : "Resend Code"}
               </button>
