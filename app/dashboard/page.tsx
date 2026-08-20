@@ -109,7 +109,24 @@ export default function DashboardOverviewPage() {
     <div className="min-h-dvh bg-[#F9FAFB] text-slate-900 pb-12">
       <div className="mx-auto max-w-5xl px-3 sm:px-6 py-4 sm:py-6 space-y-5">
         
-
+        {/* 1. CLEAN TOP HEADER */}
+        <div className="flex items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
+          <div className="flex flex-wrap items-center gap-2.5 min-w-0">
+            <h1 className="font-display text-lg font-black text-slate-900 truncate">
+              Welcome back, {profile.displayName ? profile.displayName.split(" ")[0] : "Creator"} 👋
+            </h1>
+            {/* Handle Copy Pill */}
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#E8DCE4] bg-[#F6EBF1] px-3 py-1 text-xs font-bold text-[#803D63] hover:bg-rose-100/70 transition-colors cursor-pointer shrink-0"
+              title="Copy Profile Link"
+            >
+              <span>{profileUrl}</span>
+              <Copy className="h-3 w-3 opacity-70" />
+            </button>
+          </div>
+        </div>
 
         {/* 2. HERO CARD: TOTAL FANBASE & SOCIAL CHANNELS */}
         <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-4 shadow-2xs">
