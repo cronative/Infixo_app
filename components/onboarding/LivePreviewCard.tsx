@@ -937,7 +937,7 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   };
 }
 
-function PreviewSeriesItem({
+export function PreviewSeriesItem({
   series,
   style,
   username,

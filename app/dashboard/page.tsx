@@ -32,6 +32,7 @@ import {
   canCreateSeries,
 } from "@/services/subscriptionLimits";
 import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
+import { PreviewSeriesItem, THEME_STYLES, DEFAULT_THEME_STYLE } from "@/components/onboarding/LivePreviewCard";
 
 function extractHandle(handleOrUrl?: string): string | null {
   if (!handleOrUrl) return null;
@@ -53,6 +54,7 @@ export default function DashboardOverviewPage() {
   const themeMeta = ThemeService.getThemeMeta(theme);
 
   const [isSyncing, setIsSyncing] = useState(false);
+  const [expandedSeriesId, setExpandedSeriesId] = useState<string | null>(null);
 
   function handleRefreshStats() {
     setIsSyncing(true);
@@ -305,86 +307,63 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* 5. SERIES & EPISODES SECTION */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between px-0.5">
+        <div className="space-y-4 text-left">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-0.5 border-b border-gray-200 pb-3">
             <div>
-              <h3 className="font-display text-sm font-bold text-slate-900">Your OTT Series</h3>
-              <p className="text-xs text-slate-500 font-medium">Organized multi-part video series</p>
+              <h3 className="font-display text-base font-bold text-slate-900 flex items-center gap-2">
+                <Film className="h-4 w-4 text-[#803D63]" />
+                <span>Your OTT Series ({series.length})</span>
+              </h3>
+              <p className="text-xs text-slate-500 font-medium mt-0.5">
+                Organized multi-part video series &amp; episode playlists
+              </p>
             </div>
-            <span className="rounded-full bg-gray-100 text-gray-700 border border-gray-200 px-2.5 py-0.5 text-xs font-bold">
-              {seriesUsage.current} / {seriesUsage.max} Series
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {/* Existing Series Cards */}
-            {series.map((s) => {
-              const epCount = s.seasons?.reduce((acc, season) => acc + (season.episodes?.length || 0), 0) || 0;
-              return (
-                <div
-                  key={s.id}
-                  className="flex flex-col justify-between rounded-2xl border border-gray-200 bg-white shadow-2xs overflow-hidden hover:border-gray-300 transition-colors"
-                >
-                  <div>
-                    {/* 16:9 Landscape Card Poster */}
-                    <div className="relative w-full aspect-video rounded-t-xl overflow-hidden bg-slate-950 flex items-center justify-center">
-                      {s.posterDataUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={s.posterDataUrl} alt={s.title} className="h-full w-full object-cover" />
-                      ) : (
-                        <Film className="h-8 w-8 text-slate-600" />
-                      )}
-                      {/* Crisp Neutral Counter Badge */}
-                      <span className="absolute top-2 right-2 rounded-full bg-gray-100 text-gray-700 border border-gray-200 text-xs px-2.5 py-0.5 font-bold shadow-xs">
-                        {epCount}/5 Eps
-                      </span>
-                    </div>
-
-                    <div className="p-3.5 space-y-1">
-                      <div className="flex items-center gap-1.5">
-                        <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
-                        <h4 className="font-display text-sm font-semibold text-[#111827] truncate">
-                          {s.title}
-                        </h4>
-                      </div>
-                      <p className="text-xs text-slate-500 font-medium line-clamp-1">
-                        {s.genre || "Entertainment"} • {s.language || "English"}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Micro-Actions Pair */}
-                  <div className="p-3.5 pt-0 flex items-center justify-between border-t border-gray-100">
-                    <Link
-                      href="/dashboard/series"
-                      className="text-xs font-semibold text-slate-600 hover:text-[#803D63] transition-colors"
-                    >
-                      Edit
-                    </Link>
-                    <Link
-                      href="/dashboard/series"
-                      className="bg-[#F6EBF1] text-[#803D63] font-medium text-xs px-3 py-1.5 rounded-lg border border-[#E8DCE4] hover:bg-indigo-100 transition-colors"
-                    >
-                      + Add Episode
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
-
-            {/* Dashed Empty Slot Placeholder */}
-            {series.length < 3 && (
+            
+            <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+              <span className="rounded-full bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] px-3 py-1 text-xs font-bold shadow-2xs">
+                🎬 {seriesUsage.current} Series • {totalEpisodesUsage.current} Episodes Created
+              </span>
               <button
                 type="button"
                 onClick={handleCreateSeriesClick}
-                className="tap-scale flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 bg-white p-6 text-center hover:border-indigo-300 hover:bg-indigo-50/30 transition-all cursor-pointer min-h-[220px]"
+                className="bg-[#803D63] hover:bg-[#6D3254] text-white text-xs font-semibold px-3.5 py-1.5 rounded-xl transition-colors inline-flex items-center gap-1 shadow-2xs cursor-pointer"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-[#803D63] mb-2">
-                  <Plus className="h-5 w-5" />
-                </div>
-                <p className="text-xs font-bold text-slate-900">+ Create Next Series</p>
-                <p className="text-[11px] text-slate-500 font-medium mt-0.5">({3 - series.length} slots remaining)</p>
+                <Plus className="h-3.5 w-3.5" />
+                <span>Create Series</span>
               </button>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {series.length === 0 ? (
+              <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center space-y-3 shadow-2xs">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-[#803D63] mx-auto">
+                  <Film className="h-6 w-6" />
+                </div>
+                <p className="text-sm font-bold text-slate-900">No series created yet</p>
+                <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                  Create your first multi-part series to showcase your YouTube, Instagram, or Facebook videos.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleCreateSeriesClick}
+                  className="bg-[#803D63] hover:bg-[#6D3254] text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Create First Series</span>
+                </button>
+              </div>
+            ) : (
+              series.map((s) => (
+                <PreviewSeriesItem
+                  key={s.id}
+                  series={s}
+                  style={THEME_STYLES[theme] || DEFAULT_THEME_STYLE}
+                  username={profile.username || "username"}
+                  expanded={expandedSeriesId === s.id}
+                  onToggle={() => setExpandedSeriesId(expandedSeriesId === s.id ? null : s.id)}
+                />
+              ))
             )}
           </div>
         </div>
