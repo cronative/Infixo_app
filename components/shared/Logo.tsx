@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 /**
- * PRIMARY ACTIVE LOGO: Hyundai-Style Slanted Link Oval with Italic Letter 'I'
- * (Slanted horizontal link chain oval framing a bold italicized letter 'I')
+ * PRIMARY ACTIVE LOGO: Authentic Web Link Chain Icon with Capital Letter 'I'
+ * (Interlocking Web Link chain loops framing a bold center letter 'I')
  */
-export function LogoHyundaiLinkI({ className = "h-6 w-6" }: { className?: string }) {
+export function LogoWebLinkI({ className = "h-6 w-6" }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 100 100"
@@ -12,22 +12,17 @@ export function LogoHyundaiLinkI({ className = "h-6 w-6" }: { className?: string
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
-      {/* Outer Clean Vertical Slanted Oval Frame */}
-      <g transform="rotate(-12 50 50)">
-        <ellipse
-          cx="50"
-          cy="50"
-          rx="23"
-          ry="39"
-          stroke="currentColor"
-          strokeWidth="7"
-          strokeLinecap="round"
-          fill="none"
-        />
+      {/* Outer Web Link Chain Loops (Universal Bio-Link Icon) */}
+      <g stroke="currentColor" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" fill="none">
+        {/* Top-Right Link Loop */}
+        <path d="M 44 20 L 62 20 C 74 20 83 29 83 41 C 83 53 74 62 62 62 L 50 62" />
+
+        {/* Bottom-Left Link Loop */}
+        <path d="M 56 80 L 38 80 C 26 80 17 71 17 59 C 17 47 26 38 38 38 L 50 38" />
       </g>
 
-      {/* Center Capital Letter 'I' */}
-      <g transform="translate(50 50) skewX(-8) translate(-50 -50)" fill="currentColor">
+      {/* Upright Center Capital Letter 'I' - 100% Bold & Crisp */}
+      <g fill="currentColor">
         {/* Top Serif Bar */}
         <rect x="35" y="23" width="30" height="7.5" rx="3.75" />
 
@@ -42,38 +37,10 @@ export function LogoHyundaiLinkI({ className = "h-6 w-6" }: { className?: string
 }
 
 /**
- * BACKUP: Stadium Link Arch Frame with Center Letter 'I'
- */
-export function LogoStadiumLinkI({ className = "h-6 w-6" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 100 100"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-    >
-      <g stroke="currentColor" strokeWidth="6.5" strokeLinecap="round" strokeLinejoin="round" fill="none">
-        <path d="M 28 42 L 28 24 C 28 14 38 10 50 10 C 62 10 72 14 72 24 L 72 42" />
-        <path d="M 28 58 L 28 76 C 28 86 38 90 50 90 C 62 90 72 86 72 76 L 72 58" />
-        <path d="M 28 34 C 28 38 34 42 40 42" />
-        <path d="M 72 34 C 72 38 66 42 60 42" />
-        <path d="M 28 66 C 28 62 34 58 40 58" />
-        <path d="M 72 66 C 72 62 66 58 60 58" />
-      </g>
-      <g fill="currentColor">
-        <rect x="33" y="22" width="34" height="8.5" rx="4.25" />
-        <rect x="44" y="30.5" width="12" height="39" rx="6" />
-        <rect x="33" y="69.5" width="34" height="8.5" rx="4.25" />
-      </g>
-    </svg>
-  );
-}
-
-/**
- * Primary Default Logo Icon Export -> Hyundai Slanted Link Oval + Italic Letter 'I'
+ * Primary Default Logo Icon Export -> Web Link Chain Icon + Letter 'I'
  */
 export function InflixoLogoIcon({ className = "h-6 w-6" }: { className?: string }) {
-  return <LogoHyundaiLinkI className={className} />;
+  return <LogoWebLinkI className={className} />;
 }
 
 export function Logo({
@@ -106,11 +73,7 @@ export function Logo({
       <div
         className={`flex ${dims} items-center justify-center rounded-xl ${badgeStyles} transition-colors duration-200`}
       >
-        {styleName === "stadium-link-i" ? (
-          <LogoStadiumLinkI className={iconSize} />
-        ) : (
-          <LogoHyundaiLinkI className={iconSize} />
-        )}
+        <LogoWebLinkI className={iconSize} />
       </div>
 
       {/* Brand Name Text */}
