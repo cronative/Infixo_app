@@ -8,7 +8,7 @@ import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { DashboardBottomNav } from "@/components/dashboard/DashboardBottomNav";
 import { DashboardMobileHeader } from "@/components/dashboard/DashboardMobileHeader";
 import { DashboardSideDrawer } from "@/components/dashboard/DashboardSideDrawer";
-import { LogOut, Copy, Menu } from "lucide-react";
+import { LogOut, Copy, Menu, ExternalLink } from "lucide-react";
 import { useToast } from "@/contexts/ToastContext";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 
@@ -19,19 +19,21 @@ function DesktopTopHeader() {
   const { showToast } = useToast();
   const router = useRouter();
 
+  const handleStr = profile.username || "you";
+
   return (
     <header className="hidden items-center justify-between border-b border-slate-200 bg-white px-8 py-3.5 lg:flex">
       <div>
         <p className="font-display text-sm font-bold text-slate-900">
           {profile.displayName ? `Welcome, ${profile.displayName.split(" ")[0]}` : "Welcome"}
         </p>
-        <p className="text-xs text-slate-500 font-medium">inflixo.com/{profile.username || "you"}</p>
+        <p className="text-xs text-slate-500 font-medium">inflixo.com/{handleStr}</p>
       </div>
       <div className="flex items-center gap-2">
         <button
           onClick={async () => {
             const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
-            const fullUrl = `${origin}/${profile.username || "you"}`;
+            const fullUrl = `${origin}/${handleStr}`;
             const success = await copyToClipboard(fullUrl);
             if (success) {
               showToast("Profile link copied to clipboard! ✨");
@@ -43,6 +45,16 @@ function DesktopTopHeader() {
         >
           <Copy className="h-3.5 w-3.5 text-slate-500" /> Copy Link
         </button>
+
+        <a
+          href={`/${handleStr}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-800 hover:bg-slate-50 cursor-pointer"
+        >
+          <ExternalLink className="h-3.5 w-3.5 text-[#803D63]" /> View Public Profile ↗
+        </a>
+
         <button
           onClick={() => {
             AuthService.logout();

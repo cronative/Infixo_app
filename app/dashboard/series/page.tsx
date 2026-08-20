@@ -804,39 +804,6 @@ export default function DashboardSeriesPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
-            <button
-              type="button"
-              onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-1.5 text-xs font-bold text-[#803D63] hover:bg-indigo-100 transition-colors cursor-pointer shrink-0"
-              title="Copy Profile Link"
-            >
-              <span>{profileUrl}</span>
-              <Copy className="h-3 w-3 opacity-70" />
-            </button>
-
-            <a
-              href={`/${handleStr}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white hover:bg-slate-50 px-3.5 py-1.5 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
-            >
-              <ExternalLink className="h-3.5 w-3.5 text-[#803D63]" />
-              <span>View Live Profile ↗</span>
-            </a>
-
-            <button
-              type="button"
-              onClick={() => {
-                AuthService.logout();
-                router.push("/login");
-              }}
-              className="inline-flex items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-            >
-              <LogOut className="h-3.5 w-3.5" />
-              <span>Logout</span>
-            </button>
-          </div>
         </div>
 
         {/* Series Usage Strip */}
