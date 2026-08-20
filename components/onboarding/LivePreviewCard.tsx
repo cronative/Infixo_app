@@ -1023,10 +1023,10 @@ function PreviewSeriesItem({
           )}
 
           {/* Bottom Platform Tag & Multiple Genre Micro-Chips Next to Platform Info */}
-          <div className="pt-1.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-gray-100 text-left w-full">
-            <div className="flex flex-wrap items-center gap-1.5 min-w-0 text-left">
+          <div className="pt-2 mt-1 flex flex-wrap items-center justify-between gap-2.5 border-t border-gray-100 text-left w-full">
+            <div className="flex flex-wrap items-center gap-1.5 min-w-0 text-left flex-1">
               {/* Official Brand Color Platform Pill */}
-              <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[11px] font-bold ${mainPlatform.chipClass}`}>
+              <span className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-[11px] font-bold ${mainPlatform.chipClass}`}>
                 <span className={`flex h-4 w-4 items-center justify-center rounded ${mainPlatform.badgeClass}`}>
                   {mainPlatform.icon}
                 </span>
@@ -1048,11 +1048,11 @@ function PreviewSeriesItem({
               )}
             </div>
 
-            {/* Expand / Collapse Episode List Toggle Button */}
+            {/* Expand / Collapse Episode List Toggle Button (Non-Overlapping Flex Item) */}
             <button
               type="button"
               onClick={onToggle}
-              className="bg-[#803D63] hover:bg-[#6D3254] text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1 shadow-2xs shrink-0 cursor-pointer self-start sm:self-auto"
+              className="bg-[#803D63] hover:bg-[#6D3254] text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors inline-flex items-center justify-center gap-1 shadow-2xs shrink-0 cursor-pointer relative z-10 ml-auto sm:ml-0"
             >
               <span>{expanded ? "Hide Episodes ↑" : "View Episodes ↗"}</span>
             </button>
