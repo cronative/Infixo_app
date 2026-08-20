@@ -46,26 +46,20 @@ export function CategorySelect({
       <div className="flex flex-wrap items-center justify-between gap-1.5">
         <div>
           <label className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
-            <Tag className="h-4 w-4 text-[#651FFF]" />
+            <Tag className="h-4 w-4 text-[#6366F1]" />
             What do you create?
           </label>
           <p className="text-xs text-slate-500">Choose up to {max} categories that best describe your content.</p>
         </div>
-        <span
-          className={`text-xs font-bold px-2 py-0.5 rounded-full border transition-all shrink-0 ${
-            selectedCategories.length >= max
-              ? "bg-amber-50 text-amber-700 border-amber-200"
-              : "bg-purple-50 text-purple-700 border-purple-200"
-          }`}
-        >
+        <span className="bg-[#EEF2FF] text-[#6366F1] border border-[#E0E7FF] text-xs font-semibold px-2.5 py-0.5 rounded-full shrink-0">
           {selectedCategories.length} / {max} selected
         </span>
       </div>
 
       {error && <p className="text-xs font-bold text-rose-500">{error}</p>}
 
-      {/* Grid of 26 Categories */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-64 overflow-y-auto rounded-2xl border border-slate-200 bg-slate-50/60 p-3">
+      {/* Compact Chip Pills of Categories */}
+      <div className="flex flex-wrap gap-1.5 rounded-2xl border border-[#E5E7EB] bg-slate-50/50 p-3">
         {CREATOR_TAXONOMY.map((item) => {
           const isSelected = selectedCategories.includes(item.category);
           const isMaxReached = !isSelected && selectedCategories.length >= max;
@@ -76,17 +70,17 @@ export function CategorySelect({
               type="button"
               disabled={isMaxReached}
               onClick={() => toggleCategory(item.category)}
-              className={`tap-scale flex items-center gap-2 rounded-xl p-2.5 text-left text-xs font-bold transition-all cursor-pointer ${
+              className={`tap-scale inline-flex items-center gap-1.5 text-xs py-1 px-3 rounded-full transition-all cursor-pointer ${
                 isSelected
-                  ? "bg-[#651FFF] text-white shadow-sm ring-2 ring-purple-400/30"
+                  ? "bg-[#EEF2FF] border border-[#6366F1] text-[#6366F1] font-semibold shadow-2xs"
                   : isMaxReached
-                  ? "opacity-40 cursor-not-allowed bg-white border border-slate-200 text-slate-400"
-                  : "bg-white border border-slate-200 text-slate-700 hover:border-purple-300 hover:bg-purple-50/50 hover:text-[#651FFF]"
+                  ? "opacity-40 cursor-not-allowed bg-white border border-[#E5E7EB] text-gray-400"
+                  : "bg-white border border-[#E5E7EB] text-[#4B5563] hover:border-gray-300"
               }`}
             >
-              <span className="text-base shrink-0">{item.emoji}</span>
-              <span className="truncate flex-1">{item.category}</span>
-              {isSelected && <Check className="h-3.5 w-3.5 stroke-[3] text-white shrink-0" />}
+              <span className="text-xs shrink-0">{item.emoji}</span>
+              <span className="truncate">{item.category}</span>
+              {isSelected && <Check className="h-3 w-3 stroke-[3] text-[#6366F1] shrink-0" />}
             </button>
           );
         })}
@@ -94,9 +88,9 @@ export function CategorySelect({
 
       {/* Custom input field when "Other" is selected */}
       {isOtherSelected && (
-        <div className="animate-fade-in space-y-1.5 rounded-2xl border border-purple-200 bg-purple-50/60 p-3.5">
-          <label className="block text-xs font-extrabold uppercase tracking-wider text-purple-900 flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-[#651FFF]" />
+        <div className="animate-fade-in space-y-1.5 rounded-2xl border border-indigo-200 bg-indigo-50/60 p-3.5">
+          <label className="block text-xs font-extrabold uppercase tracking-wider text-indigo-900 flex items-center gap-1.5">
+            <Sparkles className="h-3.5 w-3.5 text-[#6366F1]" />
             What type of content do you create? <span className="text-rose-500">*</span>
           </label>
           <input
@@ -105,7 +99,7 @@ export function CategorySelect({
             placeholder="e.g. Magic, Farming, ASMR, Collectibles, Local Culture"
             value={customValue || ""}
             onChange={(e) => handleCustomChange(e.target.value)}
-            className="w-full rounded-xl border border-purple-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-900 placeholder:text-slate-400 focus:border-[#651FFF] focus:outline-none focus:ring-2 focus:ring-purple-200"
+            className="w-full rounded-xl border border-indigo-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-900 placeholder:text-slate-400 focus:border-[#6366F1] focus:outline-none focus:ring-2 focus:ring-indigo-200"
           />
           <div className="flex justify-between text-[10px] text-slate-500">
             <span>Will be displayed on your public profile instead of "Other".</span>

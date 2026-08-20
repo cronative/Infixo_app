@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Layers,
   Plus,
@@ -13,14 +15,12 @@ import {
   Sparkles,
   Film,
   ExternalLink,
-  Globe,
-  AlertCircle,
   Check,
   Share2,
   Copy,
+  LogOut,
 } from "lucide-react";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { PhotoUpload } from "@/components/ui/PhotoUpload";
@@ -36,6 +36,7 @@ import { SeriesPoster } from "@/components/shared/SeriesPoster";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
+import { AuthService } from "@/services/AuthService";
 import {
   getSeriesUsage,
   getEpisodeUsage,
@@ -85,24 +86,12 @@ function NewSeriesForm({
         <button
           type="button"
           onClick={handleOpenClick}
-          className={`group tap-scale flex w-full items-center justify-center gap-2.5 rounded-3xl border-2 border-dashed p-5 text-sm font-extrabold shadow-xs transition-all ${
-            seriesUsage.isLimitReached
-              ? "border-amber-300 bg-amber-50/70 text-amber-800 hover:border-amber-400"
-              : "border-purple-200 bg-white text-[#651FFF] hover:border-[#651FFF] hover:shadow-md shadow-purple-600/10"
-          }`}
+          className="w-full py-3.5 border-2 border-dashed border-[#E5E7EB] hover:border-[#6366F1] hover:bg-[#EEF2FF]/30 rounded-xl text-sm font-semibold text-[#6366F1] flex items-center justify-center gap-2 transition-all cursor-pointer"
         >
-          <div
-            className={`flex h-9 w-9 items-center justify-center rounded-2xl text-white shadow-sm group-hover:scale-110 transition-transform ${
-              seriesUsage.isLimitReached ? "bg-amber-600" : "bg-[#651FFF]"
-            }`}
-          >
-            <Plus className="h-5 w-5 stroke-[3]" />
+          <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-50 text-[#6366F1]">
+            <Plus className="h-4 w-4" />
           </div>
-          <span>
-            {seriesUsage.isLimitReached
-              ? "Early Access Series Limit Reached (3/3)"
-              : "+ Create New OTT Series"}
-          </span>
+          <span>+ Create New Series ({3 - seriesList.length} slots remaining)</span>
         </button>
 
         {seriesUsage.isLimitReached && (
@@ -146,22 +135,22 @@ function NewSeriesForm({
   }
 
   return (
-    <div className="rounded-3xl border border-purple-200/80 bg-white p-6 shadow-md space-y-5 animate-scale-up text-left">
-      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+    <div className="rounded-2xl border border-gray-200 bg-white p-5 sm:p-6 shadow-2xs space-y-5 text-left">
+      <div className="flex items-center justify-between pb-3 border-b border-gray-100">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-purple-100 text-purple-700">
-            <Film className="h-5 w-5" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50 text-[#6366F1]">
+            <Film className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="font-display text-base font-black text-slate-900">Create New Series</h3>
-            <p className="text-xs font-bold text-slate-500">
+            <h3 className="font-display text-base font-bold text-slate-900">Create New Series</h3>
+            <p className="text-xs font-medium text-slate-500">
               Series {seriesUsage.current + 1} of {EARLY_ACCESS_LIMITS.maxSeries} allowed in Early Access
             </p>
           </div>
         </div>
         <button
           onClick={() => setOpen(false)}
-          className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:bg-slate-200 transition-colors"
+          className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:bg-slate-200 transition-colors cursor-pointer"
         >
           <X className="h-4 w-4" />
         </button>
@@ -176,7 +165,7 @@ function NewSeriesForm({
 
         {/* Primary Social Platform Selector */}
         <div>
-          <label className="mb-2 block text-xs font-extrabold uppercase tracking-wider text-slate-700">
+          <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-700">
             Primary Social Platform
           </label>
           <div className="grid grid-cols-3 gap-3">
@@ -187,10 +176,10 @@ function NewSeriesForm({
                   key={p}
                   type="button"
                   onClick={() => setSeriesPlatform(p)}
-                  className={`tap-scale flex items-center justify-center gap-2 rounded-2xl border-2 p-3 text-center transition-all ${
+                  className={`tap-scale flex items-center justify-center gap-2 rounded-xl border p-2.5 text-center transition-all cursor-pointer ${
                     isSelected
-                      ? "border-purple-600 bg-purple-50/80 text-purple-700 font-black shadow-xs"
-                      : "border-slate-200 bg-white font-bold text-slate-600 hover:border-purple-200 hover:bg-slate-50"
+                      ? "border-[#6366F1] bg-indigo-50 text-[#6366F1] font-bold"
+                      : "border-gray-200 bg-white font-medium text-slate-600 hover:border-gray-300"
                   }`}
                 >
                   {PLATFORM_ICONS[p]}
@@ -204,13 +193,22 @@ function NewSeriesForm({
         <GenreMultiSelect value={genre} onChange={setGenre} max={5} />
         <LanguageSelect value={language} onChange={setLanguage} />
 
-        <div className="flex gap-3 pt-3 border-t border-slate-100">
-          <Button variant="outline" onClick={() => setOpen(false)}>
+        <div className="flex items-center justify-end gap-3 pt-3 border-t border-gray-100">
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="px-4 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-200 transition-colors cursor-pointer"
+          >
             Cancel
-          </Button>
-          <Button fullWidth loading={submitting} onClick={submit}>
-            Save &amp; Create Series
-          </Button>
+          </button>
+          <button
+            type="button"
+            disabled={submitting}
+            onClick={submit}
+            className="tap-scale bg-[#6366F1] hover:bg-[#4F46E5] text-white px-5 py-2 rounded-lg text-xs font-medium shadow-none transition-colors cursor-pointer"
+          >
+            {submitting ? "Creating..." : "Save & Create Series"}
+          </button>
         </div>
       </div>
     </div>
@@ -261,55 +259,68 @@ function EditEpisodeModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-      <div className="relative w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl border border-purple-100 animate-scale-up text-left space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-          <h3 className="font-display text-lg font-black text-slate-900 flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-purple-100 text-purple-700">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in">
+      <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-gray-200 animate-scale-up text-left space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+          <h3 className="font-display text-base font-bold text-slate-900 flex items-center gap-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50 text-[#6366F1]">
               <Pencil className="h-4 w-4" />
             </div>
-            Edit Episode #{epNumber}
+            <span>Edit Episode #{epNumber}</span>
           </h3>
           <button
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors"
+            className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors cursor-pointer"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
         <div className="space-y-4">
-          <div className="grid grid-cols-[100px_1fr] gap-3">
+          <div className="grid grid-cols-[80px_1fr] gap-3">
             <Input
-              label="Ep No."
+              label="EP NO."
               type="number"
               min={1}
               value={epNumber}
               onChange={(e) => setEpNumber(Number(e.target.value) || 1)}
+              className="bg-white border-[#E5E7EB] text-center font-bold text-gray-900"
             />
             <Input
               label="Episode Title"
               placeholder="e.g. Arrival in Kashmir"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              className="bg-white border-[#E5E7EB] h-10 px-3 text-sm text-gray-900"
             />
           </div>
 
           <Input
             label="Video Link / External URL"
             placeholder="https://youtube.com/watch?v=..."
+            leftIcon={<YoutubeIcon className="h-4 w-4 text-red-500" />}
             value={url}
             onChange={(e) => setUrl(e.target.value)}
+            className="bg-white border-[#E5E7EB] text-sm text-gray-900"
           />
         </div>
 
-        <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
-          <Button variant="outline" size="sm" onClick={onClose}>
+        <div className="flex items-center justify-end gap-3 pt-3 border-t border-gray-100">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-200 transition-colors cursor-pointer"
+          >
             Cancel
-          </Button>
-          <Button size="sm" loading={saving} onClick={handleSave}>
-            Save Changes
-          </Button>
+          </button>
+          <button
+            type="button"
+            disabled={saving}
+            onClick={handleSave}
+            className="tap-scale bg-[#6366F1] hover:bg-[#4F46E5] text-white px-5 py-2 rounded-lg text-xs font-medium shadow-none transition-colors cursor-pointer"
+          >
+            {saving ? "Saving..." : "Save Changes"}
+          </button>
         </div>
       </div>
     </div>
@@ -428,106 +439,100 @@ function SeriesRow({
   return (
     <div
       id={`series-${series.id}`}
-      className={`rounded-[28px] border border-slate-200/80 bg-white p-5 sm:p-6 transition-all shadow-xs hover:border-purple-200 ${
-        expanded ? "ring-2 ring-purple-500/20 shadow-md" : ""
+      className={`rounded-2xl border border-gray-200 bg-white p-5 transition-all shadow-2xs hover:border-gray-300 ${
+        expanded ? "ring-2 ring-indigo-500/10 shadow-xs" : ""
       }`}
     >
       {/* Series Card Top Info Bar */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-4 min-w-0">
-          {/* Clean Flat Poster Container */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-start sm:items-center gap-4 min-w-0">
+          {/* 16:9 Landscape Poster Thumbnail */}
           <SeriesPoster
             src={series.posterDataUrl}
             title={series.title}
-            className="h-28 w-20 rounded-2xl border border-slate-200"
-            textClassName="text-[10px] font-black text-purple-200"
+            className="w-40 aspect-video rounded-lg border border-[#E5E7EB] shrink-0 object-cover"
+            textClassName="text-xs font-bold text-white"
           />
 
-          {/* Right Side Info */}
-          <div className="min-w-0 flex-1 space-y-1 text-left">
-            {/* Title */}
-            <h3 className="truncate font-display text-lg font-black text-slate-900">{series.title}</h3>
+          {/* Series Info & Typography */}
+          <div className="min-w-0 flex-1 space-y-1.5 text-left">
+            <h3 className="truncate font-display text-base sm:text-lg font-bold text-[#111827]">
+              {series.title}
+            </h3>
 
-            {/* Below Title: Description */}
-            {series.description && (
-              <p className="text-xs font-medium text-slate-600 line-clamp-2 leading-snug">
-                {series.description}
-              </p>
-            )}
-
-            {/* Below Description: Genre (left) & Language (right) without chips */}
-            <div className="pt-1 flex flex-wrap items-center justify-between gap-x-3 gap-y-0.5 text-xs font-bold text-slate-700">
-              <div>
-                <span className="font-extrabold text-slate-400">Genre:</span>{" "}
-                <span className="text-slate-900 font-extrabold">{series.genre || "General"}</span>
-              </div>
+            {/* Genre & Language Micro-chips */}
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="bg-[#EEF2FF] text-[#6366F1] text-xs font-medium px-2.5 py-0.5 rounded-md border border-[#E0E7FF]">
+                Genre: {series.genre || "General"}
+              </span>
               {series.language && (
-                <div>
-                  <span className="font-extrabold text-slate-400">Language:</span>{" "}
-                  <span className="text-slate-900 font-extrabold">{series.language}</span>
-                </div>
+                <span className="bg-gray-100 text-gray-700 text-xs font-medium px-2.5 py-0.5 rounded-md border border-gray-200">
+                  Language: {series.language}
+                </span>
               )}
             </div>
 
-            {/* Below Both: Episode Count & Usage Indicator */}
-            <div className="pt-1 flex items-center gap-2 text-xs font-bold text-slate-600">
-              <span className="font-black text-slate-900">Episodes: {epUsage.current} / 5</span>
-              <div className="h-1.5 w-24 rounded-full bg-slate-100 overflow-hidden">
+            {/* Episode Progress Bar */}
+            <div className="pt-0.5 flex items-center gap-2.5 text-xs font-medium text-[#4B5563]">
+              <div className="h-1.5 w-28 rounded-full bg-gray-100 overflow-hidden shrink-0">
                 <div
-                  className={`h-full transition-all duration-300 ${
-                    epUsage.isLimitReached ? "bg-amber-500" : "bg-purple-600"
-                  }`}
+                  className="h-full bg-[#6366F1] transition-all duration-300 rounded-full"
                   style={{ width: `${epUsage.percentage}%` }}
                 />
               </div>
-              <span className={epUsage.isLimitReached ? "text-amber-600 font-extrabold text-[11px]" : "text-purple-700 font-extrabold text-[11px]"}>
-                {epUsage.isLimitReached ? "5/5 Limit Reached" : `${epUsage.percentage}%`}
+              <span>
+                {epUsage.current} / 5 Episodes ({epUsage.percentage}%)
               </span>
             </div>
           </div>
         </div>
 
-        {/* Action Controls */}
-        <div className="flex items-center gap-2 shrink-0">
+        {/* Clean Square Icon Action Buttons */}
+        <div className="flex items-center gap-1.5 shrink-0 self-start sm:self-center">
           <button
+            type="button"
             onClick={handleViewPublicSeries}
-            className="tap-scale flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 border border-blue-200/80 hover:bg-blue-100 transition-all"
+            className="w-8 h-8 rounded-lg border border-[#E5E7EB] bg-white text-gray-500 hover:text-[#6366F1] hover:bg-[#EEF2FF] flex items-center justify-center cursor-pointer transition-colors"
             title="View Public Series Page"
           >
             <Eye className="h-4 w-4" />
           </button>
 
           <button
+            type="button"
             onClick={handleCopySeriesLink}
-            className={`tap-scale flex h-9 w-9 items-center justify-center rounded-2xl border transition-all ${
+            className={`w-8 h-8 rounded-lg border flex items-center justify-center cursor-pointer transition-colors ${
               copiedLink
                 ? "bg-emerald-50 text-emerald-600 border-emerald-300"
-                : "bg-indigo-50 text-indigo-700 border-indigo-200/80 hover:bg-indigo-100"
+                : "border-[#E5E7EB] bg-white text-gray-500 hover:text-[#6366F1] hover:bg-[#EEF2FF]"
             }`}
-            title="Copy Direct Series Page Link"
+            title="Copy Series Link"
           >
             {copiedLink ? <Check className="h-4 w-4 stroke-[3]" /> : <Copy className="h-4 w-4" />}
           </button>
 
           <button
+            type="button"
             onClick={handleShareSeries}
-            className="tap-scale flex h-9 w-9 items-center justify-center rounded-2xl bg-purple-50 text-purple-700 border border-purple-200/80 hover:bg-purple-100 transition-all"
-            title="Share Direct Series Page Link"
+            className="w-8 h-8 rounded-lg border border-[#E5E7EB] bg-white text-gray-500 hover:text-[#6366F1] hover:bg-[#EEF2FF] flex items-center justify-center cursor-pointer transition-colors"
+            title="Share Series"
           >
             <Share2 className="h-4 w-4" />
           </button>
 
           <button
+            type="button"
             onClick={() => onDeleteSeries(series)}
-            className="tap-scale flex h-9 w-9 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 border border-rose-200/80 hover:bg-rose-100 transition-all"
+            className="w-8 h-8 rounded-lg border border-red-100 bg-white text-red-500 hover:bg-red-50 flex items-center justify-center cursor-pointer transition-colors"
             title="Delete Series"
           >
             <Trash2 className="h-4 w-4" />
           </button>
 
           <button
+            type="button"
             onClick={onToggle}
-            className="tap-scale flex h-9 w-9 items-center justify-center rounded-2xl bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 transition-all"
+            className="w-8 h-8 rounded-lg border border-[#E5E7EB] bg-white text-gray-500 hover:text-[#6366F1] hover:bg-gray-50 flex items-center justify-center cursor-pointer transition-colors"
             title={expanded ? "Collapse Episodes" : "Expand Episodes"}
           >
             {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
@@ -537,51 +542,53 @@ function SeriesRow({
 
       {/* Expanded Episodes List */}
       {expanded && (
-        <div className="space-y-3 border-t border-slate-100 pt-4">
+        <div className="space-y-3 border-t border-gray-100 pt-4 mt-4">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-              <Layers className="h-4 w-4 text-purple-600" />
-              Episodes List ({totalEpisodes} / {EARLY_ACCESS_LIMITS.maxEpisodesPerSeries})
+            <p className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+              <Layers className="h-4 w-4 text-[#6366F1]" />
+              <span>Episodes List ({totalEpisodes} / {EARLY_ACCESS_LIMITS.maxEpisodesPerSeries})</span>
             </p>
           </div>
 
           {totalEpisodes === 0 ? (
-            <div className="py-6 text-center bg-slate-50/80 rounded-2xl border border-slate-100 space-y-1">
-              <p className="text-sm font-bold text-slate-600">No episodes added yet</p>
+            <div className="py-6 text-center bg-slate-50/80 rounded-xl border border-gray-100 space-y-1">
+              <p className="text-xs font-bold text-slate-700">No episodes added yet</p>
               <p className="text-xs text-slate-400">
                 Click &ldquo;Add Episode&rdquo; below to attach YouTube, Reels, or video links. (Max 5 per series)
               </p>
             </div>
           ) : (
-            <div className="space-y-2.5">
+            <div className="space-y-2">
               {series.seasons.flatMap((season) =>
                 season.episodes.map((ep) => (
                   <div
                     key={ep.id}
-                    className="group flex items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/60 p-3.5 transition-all hover:bg-white hover:border-purple-200 hover:shadow-xs"
+                    className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white p-3 transition-all hover:border-gray-300"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      {/* Episode Number Pill */}
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-900 text-xs font-black text-white shadow-2xs group-hover:bg-purple-600 transition-colors">
+                      {/* Light SaaS E1 Badge */}
+                      <div className="bg-[#EEF2FF] text-[#6366F1] font-bold text-xs w-8 h-8 rounded-lg flex items-center justify-center border border-[#E0E7FF] shrink-0">
                         E{ep.episodeNumber}
                       </div>
 
-                      {/* Episode Title & URL */}
+                      {/* Episode Title & Truncated URL */}
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-extrabold text-slate-900">
+                        <p className="truncate text-xs font-bold text-slate-900">
                           {ep.title}
                         </p>
-                        <p className="truncate text-xs font-medium text-slate-400 mt-0.5">{ep.externalUrl}</p>
+                        <p className="max-w-xs truncate text-[11px] font-medium text-slate-400 mt-0.5">
+                          {ep.externalUrl}
+                        </p>
                       </div>
                     </div>
 
-                    {/* Episode Action Toolbar */}
-                    <div className="flex items-center gap-2 shrink-0">
+                    {/* Episode Action Controls */}
+                    <div className="flex items-center gap-1.5 shrink-0">
                       <a
                         href={ep.externalUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="tap-scale flex h-8 px-2.5 items-center gap-1.5 rounded-xl bg-purple-50 text-purple-700 border border-purple-200/80 hover:bg-purple-100 text-xs font-bold transition-all"
+                        className="bg-white border border-[#E5E7EB] text-[#4B5563] hover:border-[#6366F1] hover:text-[#6366F1] text-xs font-medium px-3 py-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5"
                         title="Watch Episode in New Tab"
                       >
                         <Eye className="h-3.5 w-3.5" />
@@ -592,16 +599,16 @@ function SeriesRow({
                       <button
                         type="button"
                         onClick={() => onEditEpisode(series.id, season.id, ep)}
-                        className="tap-scale flex h-8 w-8 items-center justify-center rounded-xl bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 transition-all shadow-2xs"
+                        className="w-8 h-8 rounded-lg border border-[#E5E7EB] bg-white flex items-center justify-center text-gray-500 hover:bg-gray-50 hover:text-slate-900 transition-colors cursor-pointer"
                         title="Edit Episode Details"
                       >
-                        <Pencil className="h-3.5 w-3.5 text-slate-600" />
+                        <Pencil className="h-3.5 w-3.5" />
                       </button>
 
                       <button
                         type="button"
                         onClick={() => onDeleteEpisode(series.id, season.id, ep)}
-                        className="tap-scale flex h-8 w-8 items-center justify-center rounded-xl bg-rose-50 text-rose-600 border border-rose-200/80 hover:bg-rose-100 transition-all"
+                        className="w-8 h-8 rounded-lg border border-red-100 bg-white flex items-center justify-center text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
                         title="Delete Episode"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -613,33 +620,62 @@ function SeriesRow({
             </div>
           )}
 
-          {/* Add Episode Form Box or Limit Reached Indicator */}
+          {/* Add Episode Form Box (Flat Surface bg-[#F9FAFB]) */}
           {addingEpisode === series.id ? (
-            <div className="space-y-4 rounded-2xl border-2 border-dashed border-purple-300 bg-gradient-to-br from-purple-50/60 to-pink-50/40 p-4 animate-scale-up">
+            <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-5 shadow-2xs space-y-4 animate-scale-up mt-3">
               <div className="flex items-center justify-between">
-                <p className="text-xs font-extrabold text-purple-700 uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="h-4 w-4" />
-                  Add Episode #{epNumber} (Max {EARLY_ACCESS_LIMITS.maxEpisodesPerSeries})
+                <p className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkles className="h-4 w-4 text-[#6366F1]" />
+                  <span>Add Episode #{epNumber} (Max {EARLY_ACCESS_LIMITS.maxEpisodesPerSeries})</span>
                 </p>
-                <button onClick={() => setAddingEpisode(null)} className="text-slate-400 hover:text-slate-600 text-xs font-bold">
+                <button onClick={() => setAddingEpisode(null)} className="text-slate-400 hover:text-slate-600 text-xs font-semibold cursor-pointer">
                   Close
                 </button>
               </div>
 
-              <div className="grid grid-cols-[100px_1fr] gap-3">
-                <Input label="Ep No." type="number" min={1} value={epNumber} onChange={(e) => setEpNumber(Number(e.target.value) || 1)} />
-                <Input label="Episode Title" placeholder="e.g. Episode 1: The Beginning" value={epTitle} onChange={(e) => setEpTitle(e.target.value)} />
+              <div className="grid grid-cols-[80px_1fr] gap-3">
+                <Input
+                  label="EP NO."
+                  type="number"
+                  min={1}
+                  value={epNumber}
+                  onChange={(e) => setEpNumber(Number(e.target.value) || 1)}
+                  className="bg-white border-[#E5E7EB] text-center font-bold text-gray-900"
+                />
+                <Input
+                  label="Episode Title"
+                  placeholder="e.g. Episode 1: The Beginning"
+                  value={epTitle}
+                  onChange={(e) => setEpTitle(e.target.value)}
+                  className="bg-white border-[#E5E7EB] h-10 px-3 text-sm text-gray-900 focus:border-[#6366F1]"
+                />
               </div>
 
-              <Input label="Video Link / External URL" placeholder="https://youtube.com/watch?v=... or Reel URL" value={epUrl} onChange={(e) => setEpUrl(e.target.value)} />
+              <Input
+                label="Video Link / External URL"
+                placeholder="https://youtube.com/watch?v=... or Reel URL"
+                leftIcon={<YoutubeIcon className="h-4 w-4 text-red-500" />}
+                value={epUrl}
+                onChange={(e) => setEpUrl(e.target.value)}
+                className="bg-white border-[#E5E7EB] text-sm text-gray-900 focus:border-[#6366F1]"
+              />
 
               <div className="flex items-center justify-end gap-3 pt-1">
-                <Button variant="outline" size="sm" onClick={() => setAddingEpisode(null)}>
+                <button
+                  type="button"
+                  onClick={() => setAddingEpisode(null)}
+                  className="bg-white border border-[#E5E7EB] text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg text-xs font-medium cursor-pointer"
+                >
                   Cancel
-                </Button>
-                <Button size="sm" loading={submittingEp} onClick={ensureSeasonAndAdd}>
-                  Save &amp; Add Episode
-                </Button>
+                </button>
+                <button
+                  type="button"
+                  disabled={submittingEp}
+                  onClick={ensureSeasonAndAdd}
+                  className="bg-[#6366F1] hover:bg-[#4F46E5] text-white px-5 py-2 rounded-lg text-xs font-medium shadow-none transition-colors cursor-pointer"
+                >
+                  {submittingEp ? "Saving..." : "Save & Add Episode"}
+                </button>
               </div>
             </div>
           ) : (
@@ -648,15 +684,19 @@ function SeriesRow({
                 <button
                   type="button"
                   onClick={() => onEpisodeLimitTrigger(series.title)}
-                  className="tap-scale flex items-center gap-1.5 rounded-2xl bg-amber-50 border border-amber-200 px-4 py-2.5 text-xs font-extrabold text-amber-800 hover:bg-amber-100 transition-all"
+                  className="w-full py-2.5 bg-amber-50 border border-amber-200 text-xs font-semibold text-amber-800 rounded-xl flex items-center justify-center gap-1.5 cursor-pointer"
                 >
-                  <AlertCircle className="h-4 w-4 text-amber-600" />
-                  <span>Episode Limit Reached ({epUsage.current}/5) — Click for Creator Plan Info</span>
+                  <span>Episode Limit Reached ({epUsage.current}/5) — Click for Info</span>
                 </button>
               ) : (
-                <Button variant="secondary" size="sm" icon={<Plus className="h-4 w-4" />} onClick={handleStartAddEpisode}>
-                  Add Episode to {series.title}
-                </Button>
+                <button
+                  type="button"
+                  onClick={handleStartAddEpisode}
+                  className="w-full py-2.5 bg-white border border-[#E5E7EB] hover:border-[#6366F1] hover:bg-[#EEF2FF]/30 text-xs font-semibold text-[#6366F1] rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>+ Add Episode to {series.title}</span>
+                </button>
               )}
             </div>
           )}
@@ -675,7 +715,8 @@ function SeriesRow({
 }
 
 export default function DashboardSeriesPage() {
-  const { series, refresh } = useCreator();
+  const router = useRouter();
+  const { profile, series, refresh } = useCreator();
   const { showToast } = useToast();
 
   const seriesUsage = getSeriesUsage(series);
@@ -696,6 +737,20 @@ export default function DashboardSeriesPage() {
     isOpen: false,
     type: "series",
   });
+
+  const handleStr = profile.username || "nikzios30";
+  const profileUrl = `inflixo.com/${handleStr}`;
+
+  async function handleCopyLink() {
+    const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
+    const fullLink = `${origin}/${handleStr}`;
+    const success = await copyToClipboard(fullLink);
+    if (success) {
+      showToast("Profile link copied! ✨");
+    } else {
+      showToast("Could not copy link", "error");
+    }
+  }
 
   async function handleSaveEditedEpisode(seriesId: string, seasonId: string, episodeId: string, patch: Partial<Episode>) {
     await SeriesService.updateEpisode(seriesId, seasonId, episodeId, patch);
@@ -733,107 +788,142 @@ export default function DashboardSeriesPage() {
   const [expandedSeriesId, setExpandedSeriesId] = useState<string | null>(null);
 
   return (
-    <div className="mx-auto max-w-3xl px-3 sm:px-8 py-4 sm:py-8 space-y-5 text-left">
-      {/* Header */}
-      <div>
-        <div className="inline-flex items-center gap-2 rounded-full bg-purple-50 px-3 py-1 text-xs font-black text-purple-700 border border-purple-200/60 mb-2">
-          <Film className="h-3.5 w-3.5" />
-          OTT Content Manager
-        </div>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <h1 className="font-display text-2xl font-black text-slate-900 sm:text-3xl">Series &amp; Episodes</h1>
-          <span className="rounded-full bg-purple-100 text-purple-800 border border-purple-200 px-3.5 py-1 text-xs font-black self-start sm:self-auto">
-            {seriesUsage.current} of {seriesUsage.max} Series Used
-          </span>
-        </div>
-        <p className="mt-1 text-sm font-medium text-slate-500">
-          Organize your social videos into professional OTT-style series &amp; episodes for your fans.
-        </p>
+    <div className="min-h-dvh bg-[#F9FAFB] text-slate-900 pb-16">
+      <div className="mx-auto max-w-3xl px-3 sm:px-6 py-4 sm:py-6 space-y-5 text-left">
+        
+        {/* Consistent Top Navigation Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
+          <div className="flex items-center gap-2 min-w-0">
+            <div>
+              <h1 className="font-display text-lg font-black text-slate-900 truncate">
+                Series &amp; Episodes
+              </h1>
+              <p className="text-xs text-slate-500 font-medium">
+                Organize your social videos into professional OTT episode playlists.
+              </p>
+            </div>
+          </div>
 
-        {/* Series Usage Indicator Bar */}
-        <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-bold text-slate-700">
+          <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-1.5 text-xs font-bold text-[#6366F1] hover:bg-indigo-100 transition-colors cursor-pointer shrink-0"
+              title="Copy Profile Link"
+            >
+              <span>{profileUrl}</span>
+              <Copy className="h-3 w-3 opacity-70" />
+            </button>
+
+            <a
+              href={`/${handleStr}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white hover:bg-slate-50 px-3.5 py-1.5 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
+            >
+              <ExternalLink className="h-3.5 w-3.5 text-[#6366F1]" />
+              <span>View Live Profile ↗</span>
+            </a>
+
+            <button
+              type="button"
+              onClick={() => {
+                AuthService.logout();
+                router.push("/login");
+              }}
+              className="inline-flex items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              <span>Logout</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Series Usage Strip */}
+        <div className="rounded-xl border border-gray-200 bg-white p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs font-medium text-slate-700 shadow-2xs">
           <div className="flex items-center gap-2.5">
-            <span>Series Usage</span>
-            <div className="h-2 w-36 rounded-full bg-slate-200 overflow-hidden">
+            <span className="font-bold text-slate-900">Series Usage:</span>
+            <div className="h-1.5 w-32 rounded-full bg-gray-100 overflow-hidden">
               <div
                 className={`h-full transition-all duration-300 ${
-                  seriesUsage.isLimitReached ? "bg-amber-500" : "bg-purple-600"
+                  seriesUsage.isLimitReached ? "bg-amber-500" : "bg-[#6366F1]"
                 }`}
                 style={{ width: `${seriesUsage.percentage}%` }}
               />
             </div>
-            <span className="font-black">{seriesUsage.current} of {seriesUsage.max}</span>
+            <span className="font-bold text-[#6366F1]">{seriesUsage.current} of {seriesUsage.max}</span>
           </div>
 
-          <span className="text-[11px] font-semibold text-slate-500">
+          <span className="text-xs text-[#9CA3AF] font-medium">
             {seriesUsage.isLimitReached ? (
-              <span className="text-amber-700 font-extrabold">Early Access series limit reached (3/3)</span>
+              <span className="text-amber-700 font-bold">Early Access series limit reached (3/3)</span>
             ) : (
               <span>Max 5 episodes per series allowed in Early Access</span>
             )}
           </span>
         </div>
-      </div>
 
-      <div className="space-y-4">
-        {series.length === 0 ? (
-          <EmptyState
-            icon={<Layers className="h-6 w-6 text-purple-600" />}
-            title="Turn your content into a Series"
-            description="Organize your Instagram, YouTube and Facebook content part by part — all in one place. Early Access includes up to 3 series."
-          />
-        ) : (
-          series.map((s) => (
-            <SeriesRow
-              key={s.id}
-              series={s}
-              expanded={expandedSeriesId === s.id}
-              onToggle={() => setExpandedSeriesId(expandedSeriesId === s.id ? null : s.id)}
-              onChange={refresh}
-              onEditEpisode={(seriesId, seasonId, ep) => setEditingEpisode({ seriesId, seasonId, episode: ep })}
-              onDeleteEpisode={promptDeleteEpisode}
-              onDeleteSeries={promptDeleteSeries}
-              onEpisodeLimitTrigger={(seriesTitle) => setLimitModalState({ isOpen: true, type: "episode", seriesTitle })}
+        <div className="space-y-4">
+          {series.length === 0 ? (
+            <EmptyState
+              icon={<Layers className="h-6 w-6 text-[#6366F1]" />}
+              title="Turn your content into a Series"
+              description="Organize your Instagram, YouTube and Facebook content part by part — all in one place. Early Access includes up to 3 series."
             />
-          ))
-        )}
+          ) : (
+            series.map((s) => (
+              <SeriesRow
+                key={s.id}
+                series={s}
+                expanded={expandedSeriesId === s.id}
+                onToggle={() => setExpandedSeriesId(expandedSeriesId === s.id ? null : s.id)}
+                onChange={refresh}
+                onEditEpisode={(seriesId, seasonId, ep) => setEditingEpisode({ seriesId, seasonId, episode: ep })}
+                onDeleteEpisode={promptDeleteEpisode}
+                onDeleteSeries={promptDeleteSeries}
+                onEpisodeLimitTrigger={(seriesTitle) => setLimitModalState({ isOpen: true, type: "episode", seriesTitle })}
+              />
+            ))
+          )}
 
-        <NewSeriesForm
-          seriesList={series}
-          onCreated={refresh}
-          onLimitTrigger={() => setLimitModalState({ isOpen: true, type: "series" })}
+          <NewSeriesForm
+            seriesList={series}
+            onCreated={refresh}
+            onLimitTrigger={() => setLimitModalState({ isOpen: true, type: "series" })}
+          />
+        </div>
+
+        {/* Limit Reached Modal Popup */}
+        <LimitReachedModal
+          isOpen={limitModalState.isOpen}
+          onClose={() => setLimitModalState({ ...limitModalState, isOpen: false })}
+          type={limitModalState.type}
+          seriesTitle={limitModalState.seriesTitle}
+        />
+
+        {/* Edit Episode Modal Popup */}
+        <EditEpisodeModal
+          isOpen={Boolean(editingEpisode)}
+          episode={editingEpisode}
+          onClose={() => setEditingEpisode(null)}
+          onSave={handleSaveEditedEpisode}
+        />
+
+        {/* Confirmation Modal for Delete */}
+        <ConfirmModal
+          isOpen={Boolean(confirmModal)}
+          onClose={() => setConfirmModal(null)}
+          onConfirm={() => {
+            if (confirmModal) confirmModal.action();
+            setConfirmModal(null);
+          }}
+          title={confirmModal?.title || "Delete Item?"}
+          description={confirmModal?.description || ""}
+          confirmText="Yes, Delete"
+          cancelText="Cancel"
         />
       </div>
-
-      {/* Limit Reached Modal Popup */}
-      <LimitReachedModal
-        isOpen={limitModalState.isOpen}
-        onClose={() => setLimitModalState({ ...limitModalState, isOpen: false })}
-        type={limitModalState.type}
-        seriesTitle={limitModalState.seriesTitle}
-      />
-
-      {/* Edit Episode Modal Popup */}
-      <EditEpisodeModal
-        isOpen={Boolean(editingEpisode)}
-        episode={editingEpisode}
-        onClose={() => setEditingEpisode(null)}
-        onSave={handleSaveEditedEpisode}
-      />
-
-      {/* Confirmation Modal for Delete */}
-      <ConfirmModal
-        isOpen={Boolean(confirmModal)}
-        onClose={() => setConfirmModal(null)}
-        onConfirm={() => {
-          if (confirmModal) confirmModal.action();
-          setConfirmModal(null);
-        }}
-        title={confirmModal?.title || "Delete Item?"}
-        description={confirmModal?.description || ""}
-        confirmText="Yes, Delete"
-        cancelText="Cancel"
-      />
     </div>
   );
 }
+

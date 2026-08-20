@@ -1,37 +1,38 @@
 @import "tailwindcss";
 
 :root {
-  /* Primary Soft Light Purple Background matching logo hue */
-  --background: #FAF8FF;
+  /* Clean Flat Neutral Backgrounds & Surfaces */
+  --background: #F8FAFC;
   --surface: #ffffff;
-  --surface-muted: #faf8ff;
+  --surface-muted: #f1f5f9;
   --foreground: #0f172a;
   --muted: #64748b;
 
   /* Inflixo Official Solid Logo Primary Theme Colors */
-  --inflixo-purple: #651FFF;          /* Primary Solid Brand Purple */
-  --inflixo-purple-dark: #500CD6;     /* Deep Purple Accent */
-  --inflixo-purple-secondary: #8B5CF6;/* Secondary Purple */
-  --inflixo-purple-light: #F3E8FF;    /* Light Purple Accent */
-  --inflixo-lavender: #FAF8FF;        /* Soft Theme Page Background */
-  --inflixo-blue: #651FFF;            /* Primary Accent */
+  --inflixo-purple: #6366F1;          /* Primary Solid Brand Royal Purple Accent */
+  --inflixo-purple-dark: #4F46E5;     /* Deep Royal Purple Accent */
+  --inflixo-purple-secondary: #6366F1;/* Secondary Purple */
+  --inflixo-purple-light: #EEF2FF;    /* Light Indigo Accent */
+  --inflixo-lavender: #F8FAFC;        /* Flat Light Background */
+  --inflixo-blue: #6366F1;            /* Primary Accent */
   --inflixo-lime: #10b981;            /* Success Green */
   --inflixo-navy: #0f172a;            /* Primary Text */
-  --inflixo-border: #E9E3F5;          /* Global Border */
+  --inflixo-border: #E2E8F0;          /* Clean Minimal 1px Border */
   --inflixo-gold: #f59e0b;
   --inflixo-gold-light: #fef3c7;
 
-  --radius-card: 20px;
-  --radius-input: 16px;
+  --radius-card: 16px;
+  --radius-input: 12px;
 
-  --shadow-soft: 0 1px 3px rgba(15, 23, 42, 0.03), 0 8px 20px -12px rgba(101, 31, 255, 0.12);
-  --shadow-elevated: 0 20px 40px -16px rgba(101, 31, 255, 0.2), 0 4px 12px -4px rgba(15, 23, 42, 0.05);
-  --shadow-premium: 0 1px 1px rgba(101, 31, 255, 0.15), 0 16px 32px -12px rgba(101, 31, 255, 0.22);
-  --shadow-hover: 0 1px 3px rgba(15, 23, 42, 0.05), 0 12px 24px -10px rgba(101, 31, 255, 0.2);
+  /* Linktree-Style Flat Tokens: Zero Drop Shadows */
+  --shadow-soft: none;
+  --shadow-elevated: none;
+  --shadow-premium: none;
+  --shadow-hover: none;
 
-  --gradient-premium: linear-gradient(135deg, #651FFF 0%, #8B5CF6 100%);
-  --gradient-gold: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  --gradient-energy: linear-gradient(90deg, #651FFF 0%, #8B5CF6 100%);
+  --gradient-premium: #6366F1;
+  --gradient-gold: #f59e0b;
+  --gradient-energy: #6366F1;
 }
 
 @theme inline {
@@ -92,51 +93,6 @@ h1, h2, h3, h4, h5, h6, .font-display {
   to { background-position: 200% 0; }
 }
 
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-}
-
-@keyframes float-medium {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-5px) rotate(1deg); }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.35; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.04); }
-}
-
-@keyframes orb-float-1 {
-  0%, 100% { transform: translate(0px, 0px) scale(1); }
-  50% { transform: translate(40px, -30px) scale(1.12); }
-}
-
-@keyframes orb-float-2 {
-  0%, 100% { transform: translate(0px, 0px) scale(1); }
-  50% { transform: translate(-35px, 35px) scale(1.08); }
-}
-
-.animate-float-slow {
-  animation: float-slow 4s ease-in-out infinite;
-}
-
-.animate-float-medium {
-  animation: float-medium 3s ease-in-out infinite;
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 3.5s ease-in-out infinite;
-}
-
-.animate-orb-1 {
-  animation: orb-float-1 9s ease-in-out infinite;
-}
-
-.animate-orb-2 {
-  animation: orb-float-2 11s ease-in-out infinite;
-}
-
 /* Custom scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
@@ -154,47 +110,47 @@ h1, h2, h3, h4, h5, h6, .font-display {
 }
 
 .text-gradient-premium {
-  background: linear-gradient(135deg, #6C2BFF 0%, #4F14E6 50%, #9333EA 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #6366F1;
 }
 
 .text-gradient-gold {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #d97706;
 }
 
-/* Glassmorphism & Ambient Light Effects */
+/* Clean Flat Cards & Surfaces */
 .bg-ambient-purple {
-  background: radial-gradient(circle at 50% -20%, rgba(108, 43, 255, 0.12) 0%, rgba(250, 248, 255, 0.5) 45%, #FAFAFC 100%);
+  background: #F8FAFC;
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(233, 227, 245, 0.8);
+  background: #ffffff;
+  border: 1px solid #E2E8F0;
 }
 
 .glass-card-dark {
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #0f172a;
+  border: 1px solid #334155;
 }
 
 .hover-glow {
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 .hover-glow:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 16px 36px -10px rgba(108, 43, 255, 0.2);
+  border-color: #6366F1;
 }
 
 .tap-scale {
-  transition: transform 0.15s ease, opacity 0.15s ease;
+  transition: opacity 0.15s ease;
 }
 .tap-scale:active {
-  transform: scale(0.97);
+  opacity: 0.9;
+}
+
+@keyframes toastProgress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
 }

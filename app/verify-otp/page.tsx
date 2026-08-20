@@ -11,7 +11,7 @@ import { useToast } from "@/contexts/ToastContext";
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
 
 const OTP_LENGTH = 4;
-const COUNTDOWN_SECONDS = 28;
+const COUNTDOWN_SECONDS = 30;
 
 export default function VerifyOtpPage() {
   const router = useRouter();
@@ -36,7 +36,7 @@ export default function VerifyOtpPage() {
 
     const timer = setTimeout(() => {
       inputsRef.current[0]?.focus();
-    }, 150);
+    }, 100);
     return () => clearTimeout(timer);
   }, [router]);
 
@@ -142,30 +142,39 @@ export default function VerifyOtpPage() {
   return (
     <AuthSplitLayout>
       <div className="space-y-6 text-left">
-        {/* Back Button */}
+        {/* Back / Change Email Button */}
         <div>
           <button
             type="button"
             onClick={() => router.push("/login")}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-purple-100 hover:text-[#651FFF] transition-colors cursor-pointer"
-            aria-label="Back to login"
+            className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-600 hover:border-purple-200 hover:bg-purple-50 hover:text-[#6366F1] transition-colors cursor-pointer"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <span>← Change email</span>
           </button>
         </div>
 
         {/* Heading & Email Description */}
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <h1 className="font-display text-2xl sm:text-3xl font-black tracking-tight text-[#0F172A]">
+            <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-[#111827]">
               Check your email
             </h1>
-            <Mail className="h-6 w-6 text-[#651FFF] shrink-0" />
+            <Mail className="h-5 w-5 text-[#6366F1] shrink-0" />
           </div>
 
-          <div className="text-sm font-medium text-[#475569]">
+          <div className="text-xs sm:text-sm font-medium text-[#4B5563]">
             <p>We sent a 4-digit code to</p>
-            <p className="font-bold text-[#0F172A] mt-0.5 truncate">{email || "your email"}</p>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className="font-bold text-[#111827] truncate">{email || "your email"}</span>
+              <button
+                type="button"
+                onClick={() => router.push("/login")}
+                className="text-xs font-bold text-[#6366F1] hover:underline shrink-0"
+              >
+                (Change)
+              </button>
+            </div>
           </div>
         </div>
 
@@ -183,17 +192,18 @@ export default function VerifyOtpPage() {
                 pattern="[0-9]*"
                 autoComplete="one-time-code"
                 maxLength={1}
+                autoFocus={i === 0}
                 value={d}
                 onChange={(e) => handleChange(i, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(i, e)}
                 onPaste={handlePaste}
                 aria-label={`Digit ${i + 1}`}
-                className={`h-14 w-14 sm:h-16 sm:w-16 rounded-2xl border text-center text-2xl font-black text-[#0F172A] bg-white shadow-xs outline-none transition-all duration-150 ${
+                className={`h-14 w-14 sm:h-16 sm:w-16 rounded-xl border text-center text-2xl font-bold text-[#111827] bg-white outline-none transition-all duration-150 ${
                   errorMessage
                     ? "border-red-400 bg-red-50/20 text-red-600"
                     : d
-                    ? "border-[#651FFF] ring-2 ring-purple-500/20 bg-purple-50/30"
-                    : "border-slate-200 focus:border-[#651FFF] focus:ring-4 focus:ring-purple-500/15"
+                    ? "border-[#6366F1] ring-2 ring-[#6366F1]/20 bg-purple-50/30"
+                    : "border-[#E5E7EB] focus:border-[#6366F1] focus:ring-2 focus:ring-[#6366F1]/20"
                 }`}
               />
             ))}
@@ -221,44 +231,44 @@ export default function VerifyOtpPage() {
           loading={submitting}
           disabled={!isOtpComplete || submitting}
           onClick={() => submit(digits.join(""))}
-          className={`font-bold transition-all py-3.5 text-sm rounded-full cursor-pointer ${
+          className={`font-bold transition-colors h-12 text-sm rounded-xl cursor-pointer shadow-none ${
             isOtpComplete && !submitting
-              ? "bg-[#651FFF] text-white shadow-md shadow-purple-600/20 hover:bg-[#500CD6] hover:scale-[1.01]"
+              ? "bg-[#6366F1] text-white hover:bg-[#4F46E5]"
               : "bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed"
           }`}
         >
           {submitting ? "Verifying..." : "Verify & Continue →"}
         </Button>
 
-        {/* Resend Code Section */}
-        <div className="text-center text-xs font-semibold text-slate-500">
+        {/* Resend Code 30-Second Countdown Timer Section */}
+        <div className="text-center text-xs font-medium text-[#4B5563]">
           {countdown > 0 ? (
             <p>
-              Didn&apos;t get it? Resend in{" "}
-              <span className="font-mono font-bold text-slate-700">
+              Didn&apos;t receive code? Resend in{" "}
+              <span className="font-mono font-bold text-[#111827]">
                 00:{countdown.toString().padStart(2, "0")}
               </span>
             </p>
           ) : (
             <p>
-              Didn&apos;t get it?{" "}
+              Didn&apos;t receive code?{" "}
               <button
                 type="button"
                 onClick={handleResend}
                 disabled={resending}
-                className="font-bold text-[#651FFF] hover:underline cursor-pointer"
+                className="font-bold text-[#6366F1] hover:underline cursor-pointer"
               >
-                {resending ? "Sending..." : "Resend code"}
+                {resending ? "Sending..." : "Resend Code"}
               </button>
             </p>
           )}
         </div>
 
         {/* Muted Security Badge */}
-        <div className="pt-4 border-t border-slate-100 text-center">
-          <p className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400">
-            <Lock className="h-3.5 w-3.5 text-slate-400" />
-            <span>Secure password-free sign in</span>
+        <div className="pt-4 border-t border-[#E5E7EB] text-center">
+          <p className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-400">
+            <Lock className="h-3.5 w-3.5 text-gray-400" />
+            <span>Secure passwordless 1-click sign in</span>
           </p>
         </div>
       </div>

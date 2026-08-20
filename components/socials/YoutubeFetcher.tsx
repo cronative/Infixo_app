@@ -153,7 +153,7 @@ export function YoutubeFetcher({ handle, onConfirmSync, onBeforeFetch, variant =
           type="button"
           onClick={fetchDetails}
           disabled={loading || !handle.trim()}
-          className="tap-scale flex items-center gap-2 rounded-2xl bg-red-600 px-4 py-2.5 text-xs font-extrabold text-white shadow-md transition-all hover:bg-red-700 hover:shadow-lg disabled:opacity-50"
+          className="tap-scale flex items-center gap-2 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 px-4 py-2.5 text-xs font-bold transition-all disabled:opacity-50 cursor-pointer"
         >
           {loading ? (
             <>

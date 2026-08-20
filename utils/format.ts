@@ -35,39 +35,15 @@ export function initials(name: string): string {
 }
 
 export function formatSyncDate(dateStr?: string): string {
-  if (!dateStr) {
-    return new Date().toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
-  }
-  try {
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) {
-      return new Date().toLocaleString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      });
-    }
-    return d.toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
-  } catch {
-    return "Aug 18, 2026, 6:00 PM";
-  }
+  const d = dateStr ? new Date(dateStr) : new Date();
+  if (isNaN(d.getTime())) return "Aug 20, 12:36 PM";
+  return d.toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
 }
 
 export function getBaseUrl(): string {

@@ -6,20 +6,18 @@ import { useRouter } from "next/navigation";
 import {
   ArrowRight,
   Sparkles,
+  Check,
   Play,
   Film,
-  Check,
-  Zap,
-  Sparkle,
-  ExternalLink,
-  ChevronDown,
-  Palette,
+  ShieldCheck,
+  Users,
+  Layers,
+  ChevronRight,
 } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 import { AuthService } from "@/services/AuthService";
 import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
-import { PricingTable } from "@/components/subscription/PricingTable";
 import { CreatorProfile, SocialAccounts, Series, ThemeKey } from "@/types";
 
 const DEMO_PROFILE: CreatorProfile = {
@@ -95,6 +93,8 @@ export default function LandingHomePage() {
   const router = useRouter();
   const isLoggedIn = AuthService.isLoggedIn();
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [username, setUsername] = useState("");
+  const [bottomUsername, setBottomUsername] = useState("");
   const [currentThemeIndex, setCurrentThemeIndex] = useState(0);
 
   useEffect(() => {
@@ -114,7 +114,6 @@ export default function LandingHomePage() {
     return () => clearInterval(timer);
   }, []);
 
-  const [username, setUsername] = useState("");
   const activeTheme = PREVIEW_THEMES[currentThemeIndex];
 
   function handleClaim(un: string) {
@@ -128,105 +127,75 @@ export default function LandingHomePage() {
 
   if (checkingAuth && isLoggedIn) {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-[#FAF8FF]">
+      <div className="flex min-h-dvh items-center justify-center bg-[#F9FAFB]">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-3 border-[#651FFF] border-t-transparent" />
-          <p className="text-xs font-bold text-slate-500">Redirecting to dashboard...</p>
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#6366F1] border-t-transparent" />
+          <p className="text-xs font-medium text-[#4B5563]">Redirecting to dashboard...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-dvh bg-[#FAF8FF] text-[#0F172A] flex flex-col font-sans selection:bg-purple-100 selection:text-[#651FFF] overflow-x-hidden relative">
-      {/* GLOBAL FLOATING BACKGROUND ANIMATED GRADIENT ORBS */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute -top-20 -right-20 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-[#651FFF]/15 via-purple-300/20 to-transparent blur-[90px] animate-orb-1" />
-        <div className="absolute top-[35%] -left-32 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-purple-200/40 via-[#651FFF]/10 to-transparent blur-[110px] animate-orb-2" />
-        <div className="absolute bottom-10 -right-32 w-[550px] h-[550px] rounded-full bg-gradient-to-bl from-[#651FFF]/12 via-indigo-200/30 to-transparent blur-[100px] animate-orb-1" />
-      </div>
-
-      {/* 1. NAVBAR */}
-      <header className="safe-top sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-purple-100/80 transition-all">
-        <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 sm:px-8">
+    <div className="min-h-dvh bg-[#FFFFFF] text-[#111827] flex flex-col font-sans selection:bg-purple-100 selection:text-[#6366F1]">
+      {/* 1. NAVIGATION BAR */}
+      <header className="sticky top-0 z-50 bg-[#FFFFFF]/95 backdrop-blur-sm border-b border-[#E5E7EB]">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5 sm:px-6">
+          {/* Left: Inflixo Logo */}
           <Logo size="md" />
 
-          {/* Nav Links */}
-          <nav className="hidden md:flex items-center gap-7 text-sm font-semibold text-slate-600">
-            <a href="#total-fanbase" className="hover:text-[#651FFF] transition-colors">
-              Total Fanbase
-            </a>
-            <a href="#series-solution" className="hover:text-[#651FFF] transition-colors">
-              Series
-            </a>
-            <a href="#pricing" className="hover:text-[#651FFF] transition-colors">
-              Pricing
-            </a>
-          </nav>
-
-            {/* Action Button */}
-            <div className="flex items-center gap-3">
-              {isLoggedIn ? (
-                <button
-                  type="button"
-                  onClick={() => router.push("/dashboard")}
-                  className="inline-flex items-center gap-2 rounded-full bg-[#651FFF] px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-md shadow-purple-600/20 hover:bg-[#500CD6] hover:scale-105 active:scale-95 transition-all cursor-pointer"
-                >
-                  Dashboard
-                  <ArrowRight className="h-4 w-4" />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => router.push("/login")}
-                  className="inline-flex items-center gap-2 rounded-full bg-[#651FFF] px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-md shadow-purple-600/20 hover:bg-[#500CD6] hover:scale-105 active:scale-95 transition-all cursor-pointer"
-                >
-                  <span>Get Started</span>
-                  <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                </button>
-              )}
-            </div>
+          {/* Right: Actions */}
+          <div className="flex items-center gap-3">
+            <Link
+              href="/login"
+              className="text-xs sm:text-sm font-semibold text-[#4B5563] hover:text-[#111827] px-3 py-1.5 transition-colors"
+            >
+              Log In
+            </Link>
+            <button
+              type="button"
+              onClick={() => handleClaim("")}
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#6366F1] px-4 py-2 text-xs sm:text-sm font-bold text-white hover:bg-[#4F46E5] transition-colors cursor-pointer"
+            >
+              <span>Claim Handle</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* 2. HERO SECTION — DYNAMIC 10-SECOND AUTO THEME SWITCHER */}
-      <section className="relative overflow-hidden pt-12 pb-20 sm:pt-20 sm:pb-28 bg-[#FAF8FF] z-10">
-        <div className="mx-auto max-w-[1200px] px-5 sm:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-            {/* Left Hero Column */}
-            <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
-              {/* Hero Pill Badge */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-purple-200/80 bg-purple-100/70 px-4 py-1.5 text-xs font-black text-[#651FFF] shadow-2xs backdrop-blur-md">
-                <Sparkles className="h-3.5 w-3.5 text-[#651FFF]" />
-                <span>India&apos;s #1 OTT Creator Platform</span>
+      {/* 2. HERO SECTION */}
+      <section className="bg-[#F9FAFB] pt-8 pb-12 sm:pt-12 sm:pb-16 border-b border-[#E5E7EB]">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+            {/* Left Hero Column: Hero Copy + Brand Outreach Block */}
+            <div className="lg:col-span-6 space-y-6 text-left pt-1">
+              {/* Top Pill Badge */}
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-purple-200 bg-purple-50 px-3.5 py-1 text-xs font-semibold text-[#6366F1]">
+                <Sparkles className="h-3.5 w-3.5 text-[#6366F1]" />
+                <span>🚀 Early Access for India&apos;s Top Creators</span>
               </div>
 
-              {/* Main H1 Big Headline */}
-              <h1 className="font-display text-[40px] sm:text-[58px] font-bold leading-[1.12] tracking-normal text-[#0F172A]">
-                ARE YOU A CONTENT CREATOR?
+              {/* Heading */}
+              <h1 className="font-display text-3xl sm:text-5xl font-bold leading-tight tracking-tight text-[#111827]">
+                Your content is everywhere. Your creator identity shouldn&apos;t be scattered.
               </h1>
 
-              {/* Sub-header */}
-              <p className="text-lg sm:text-[23px] font-semibold leading-relaxed tracking-normal text-[#651FFF]">
-                Your content is everywhere. <br className="hidden sm:inline" />
-                <span className="text-[#0F172A] italic font-normal">Your creator identity shouldn&apos;t be.</span>
+              {/* Sub-headline */}
+              <p className="text-base sm:text-lg font-medium text-[#4B5563] leading-relaxed">
+                Stop sending brands five different links and losing viewers between video parts. Unify your real fanbase across platforms and turn your uploads into bingeable OTT series—in one clean profile.
               </p>
 
-              {/* Single Clean Description */}
-              <p className="text-base sm:text-lg font-medium text-slate-600 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                Bring your <strong className="text-[#0F172A] font-bold">Total Fanbase</strong>, socials, and organized content <span className="italic font-bold text-[#651FFF]">Series</span> together into one simple page.
-              </p>
-
-              {/* Username Claim Input & Primary CTA */}
-              <div className="max-w-md mx-auto lg:mx-0 space-y-2.5 pt-2">
+              {/* Handle Claim Input */}
+              <div className="space-y-3 pt-1">
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
                     handleClaim(username);
                   }}
-                  className="flex items-center rounded-full border-2 border-purple-200 bg-white p-1.5 shadow-xl shadow-purple-500/10 focus-within:border-[#651FFF] focus-within:ring-4 focus-within:ring-purple-100 transition-all"
+                  className="flex items-center rounded-xl border border-[#E5E7EB] bg-white p-1.5 focus-within:border-[#6366F1] focus-within:ring-1 focus-within:ring-[#6366F1] transition-all max-w-md"
                 >
-                  <span className="pl-4 text-sm font-semibold text-slate-400 select-none shrink-0">
+                  <span className="pl-3.5 text-xs sm:text-sm font-semibold text-[#9CA3AF] select-none shrink-0">
                     inflixo.com/
                   </span>
                   <input
@@ -234,132 +203,75 @@ export default function LandingHomePage() {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="yourname"
-                    className="w-full bg-transparent px-1 py-2.5 text-sm sm:text-base font-semibold text-[#0F172A] focus:outline-none placeholder:text-slate-300 min-w-0"
+                    className="w-full bg-transparent px-1 py-2 text-xs sm:text-sm font-bold text-[#111827] outline-none placeholder:text-[#9CA3AF] placeholder:font-normal min-w-0"
                   />
                   <button
                     type="submit"
-                    className="inline-flex items-center gap-1.5 shrink-0 rounded-full bg-[#651FFF] px-5 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-bold text-white shadow-md hover:bg-[#500CD6] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+                    className="inline-flex items-center gap-1 shrink-0 rounded-lg bg-[#6366F1] px-4 py-2 text-xs sm:text-sm font-bold text-white hover:bg-[#4F46E5] transition-colors cursor-pointer"
                   >
-                    <span>Get Started</span>
-                    <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    <span>Claim Handle</span>
                   </button>
                 </form>
 
-                <p className="text-xs font-semibold text-slate-500">
-                  Free Early Access • Setup in 2 minutes
-                </p>
+                {/* Micro-Trust Proof */}
+                <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-[#4B5563] pt-1">
+                  <span className="flex items-center gap-1">
+                    <Check className="h-3.5 w-3.5 text-emerald-600 stroke-[3]" /> 100% Free Setup
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Check className="h-3.5 w-3.5 text-emerald-600 stroke-[3]" /> Connects in 60s
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Check className="h-3.5 w-3.5 text-emerald-600 stroke-[3]" /> No credit card needed
+                  </span>
+                </div>
               </div>
 
-              {/* Advantages of Joining Inflixo */}
-              <div className="pt-6 border-t border-purple-200/80 space-y-4 max-w-xl mx-auto lg:mx-0 text-left">
-                <p className="text-xs font-bold uppercase tracking-wider text-[#651FFF]">
-                  ✨ <span className="italic font-normal">ADVANTAGES OF JOINING</span> INFLIXO
+              {/* INTEGRATED BRAND OUTREACH & MEDIA KIT FEATURE BLOCK */}
+              <div className="border-t border-[#E5E7EB] pt-8 mt-8 sm:mt-12 lg:mt-16 space-y-4">
+                <span className="inline-block rounded-full bg-purple-50 text-[#6366F1] border border-purple-200 px-3 py-0.5 text-xs font-bold uppercase tracking-wider">
+                  Brand Outreach &amp; Media Kit
+                </span>
+                <h2 className="font-display text-2xl sm:text-3xl font-bold text-[#111827] leading-tight">
+                  Brands don&apos;t want 5 links. They want your true reach.
+                </h2>
+                <p className="text-xs sm:text-sm font-medium text-[#4B5563] leading-relaxed">
+                  You have 400K subscribers on YouTube, 250K on Instagram, and 150K on Facebook. Sharing separate profiles under-reports your scale. Inflixo aggregates your verified accounts into a live <strong className="text-[#111827] font-bold">Total Fanbase Counter</strong> so brands see you as an <strong className="text-[#6366F1] font-bold">800K+ powerhouse</strong>.
                 </p>
 
-                <div className="flex flex-col space-y-3.5 w-full">
-                  <div className="flex items-center gap-4 rounded-2xl bg-white border border-purple-100 p-4 shadow-xs hover:border-[#651FFF]/40 hover:shadow-md transition-all">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-[#651FFF] font-bold text-base">
-                      ⚡
-                    </span>
+                <div className="space-y-2 pt-1 text-xs font-semibold text-[#111827]">
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-[#6366F1] shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="text-base font-bold text-slate-900 leading-snug">Total Fanbase Counter</h4>
-                      <p className="text-xs sm:text-sm font-medium text-slate-600 leading-relaxed mt-0.5">
-                        Combine YouTube, IG &amp; FB into one impressive <span className="italic font-semibold text-slate-800">total number.</span>
-                      </p>
+                      <strong className="text-[#111827]">Automated Multi-Platform Sync:</strong> Real-time follower and subscriber tracking.
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-4 rounded-2xl bg-white border border-purple-100 p-4 shadow-xs hover:border-[#651FFF]/40 hover:shadow-md transition-all">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-[#651FFF] font-bold text-base">
-                      🎬
-                    </span>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-[#6366F1] shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="text-base font-bold text-slate-900 leading-snug">Ordered Content Series Flow</h4>
-                      <p className="text-xs sm:text-sm font-medium text-slate-600 leading-relaxed mt-0.5">
-                        Organize Part 1, Part 2, Part 3 so your fans watch <span className="italic font-semibold text-slate-800">every episode in order.</span>
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4 rounded-2xl bg-white border border-purple-100 p-4 shadow-xs hover:border-[#651FFF]/40 hover:shadow-md transition-all">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-[#651FFF] font-bold text-base">
-                      💼
-                    </span>
-                    <div>
-                      <h4 className="text-base font-bold text-slate-900 leading-snug">Brand &amp; Sponsorship Ready</h4>
-                      <p className="text-xs sm:text-sm font-medium text-slate-600 leading-relaxed mt-0.5">
-                        Share one professional link with brand sponsors to showcase your <span className="italic font-semibold text-slate-800">total fanbase &amp; series portfolio.</span>
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4 rounded-2xl bg-white border border-purple-100 p-4 shadow-xs hover:border-[#651FFF]/40 hover:shadow-md transition-all">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-[#651FFF] font-bold text-base">
-                      📈
-                    </span>
-                    <div>
-                      <h4 className="text-base font-bold text-slate-900 leading-snug">Binge Watching &amp; High Retention</h4>
-                      <p className="text-xs sm:text-sm font-medium text-slate-600 leading-relaxed mt-0.5">
-                        Keep fans hooked on your profile with <span className="italic font-semibold text-slate-800">seamless next-episode discovery</span> across all your series.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4 rounded-2xl bg-white border border-purple-100 p-4 shadow-xs hover:border-[#651FFF]/40 hover:shadow-md transition-all">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-[#651FFF] font-bold text-base">
-                      🎯
-                    </span>
-                    <div>
-                      <h4 className="text-base font-bold text-slate-900 leading-snug">Single Master Bio Link</h4>
-                      <p className="text-xs sm:text-sm font-medium text-slate-600 leading-relaxed mt-0.5">
-                        Replace 5 messy links with <span className="italic font-semibold text-[#651FFF]">inflixo.com/yourname</span> on all your social bios.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4 rounded-2xl bg-white border border-purple-100 p-4 shadow-xs hover:border-[#651FFF]/40 hover:shadow-md transition-all">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-[#651FFF] font-bold text-base">
-                      🚀
-                    </span>
-                    <div>
-                      <h4 className="text-base font-bold text-slate-900 leading-snug">Instant Creator Portfolio</h4>
-                      <p className="text-xs sm:text-sm font-medium text-slate-600 leading-relaxed mt-0.5">
-                        Get a polished, high-converting OTT-style creator profile page <span className="italic font-semibold text-slate-800">live in under 2 minutes.</span>
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4 rounded-2xl bg-white border border-purple-100 p-4 shadow-xs hover:border-[#651FFF]/40 hover:shadow-md transition-all">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-[#651FFF] font-bold text-base">
-                      🆓
-                    </span>
-                    <div>
-                      <h4 className="text-base font-bold text-slate-900 leading-snug">100% Free Early Access</h4>
-                      <p className="text-xs sm:text-sm font-medium text-slate-600 leading-relaxed mt-0.5">
-                        Zero monthly fees • Full creator features included during early launch.
-                      </p>
+                      <strong className="text-[#111827]">One-Click Media Kit:</strong> Send brands a single verified link instead of screenshots.
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Right Hero: REAL LIVE CREATOR PAGE PREVIEW CARD WITH WEBBROWSER FRAME */}
-            <div className="lg:col-span-6 flex flex-col items-center justify-center w-full">
-              <div className="w-full max-w-[540px] rounded-3xl border border-slate-200/80 bg-slate-900/5 p-2.5 sm:p-3 shadow-2xl relative animate-float-slow transition-all duration-700">
+            {/* Right Hero: ORIGINAL LIVE PREVIEW CARD WITH AUTO THEME SWITCHER & WEBBROWSER FRAME */}
+            <div className="lg:col-span-6 flex flex-col items-center justify-start w-full">
+              <div className="w-full max-w-[520px] rounded-2xl border border-slate-200 bg-white p-2.5 sm:p-3 relative transition-all duration-700">
                 {/* Sleek Browser Bar Header */}
-                <div className="flex items-center justify-between bg-white/80 backdrop-blur-md px-4 py-2 rounded-2xl mb-2.5 border border-slate-200/60 shadow-2xs">
+                <div className="flex items-center justify-between bg-slate-50 px-4 py-2 rounded-xl mb-2.5 border border-slate-200">
                   <div className="flex items-center gap-1.5">
                     <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
                     <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
                     <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
                   </div>
-                  <div className="flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold text-slate-600 border border-slate-200/80">
+                  <div className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-[11px] font-bold text-slate-700 border border-slate-200">
                     <span className="text-emerald-500 font-extrabold">🔒</span>
                     <span>inflixo.com/tonystark</span>
                   </div>
-                  <div className="text-[10px] font-extrabold text-inflixo-purple uppercase tracking-wider hidden sm:block">
-                    Live Web Preview
+                  <div className="text-[10px] font-bold text-[#6366F1] uppercase tracking-wider hidden sm:block">
+                    {activeTheme.name}
                   </div>
                 </div>
 
@@ -377,89 +289,61 @@ export default function LandingHomePage() {
         </div>
       </section>
 
-      {/* 3. PROBLEM 1 → SOLUTION 1: REAL TOTAL FANBASE PREVIEW */}
-      <section id="total-fanbase" className="py-20 sm:py-28 bg-[#F6F1FF] border-y border-purple-200/70 z-10">
-        <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-            <div className="lg:col-span-6 space-y-4 text-center lg:text-left">
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-3 py-1 text-xs font-bold text-white uppercase tracking-wider shadow-2xs">
-                <span>PROBLEM 01</span>
-              </div>
-              <h2 className="font-display text-3xl sm:text-4xl font-bold text-slate-900 leading-snug">
-                Stop showing separate numbers.
-              </h2>
-              <p className="text-base sm:text-lg font-medium text-slate-600 leading-relaxed">
-                Instead of telling brands and fans about every social account separately:
-              </p>
+      {/* 3. SECTION 1 VISUAL: TOTAL FANBASE ENGINE AGGREGATOR CARD */}
+      <section className="py-12 sm:py-16 bg-[#FFFFFF] border-b border-[#E5E7EB]">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="mx-auto max-w-2xl text-center space-y-3">
+            <span className="inline-block rounded-full bg-purple-50 text-[#6366F1] border border-purple-200 px-3 py-0.5 text-xs font-bold uppercase tracking-wider">
+              Real-Time Aggregator Engine
+            </span>
+            <h3 className="font-display text-2xl sm:text-3xl font-bold text-[#111827]">
+              Unified Reach Across YouTube, Instagram &amp; Facebook
+            </h3>
+            <p className="text-xs sm:text-sm font-medium text-[#4B5563]">
+              Your verified audience metrics automatically aggregate into a sponsor-ready metric.
+            </p>
 
-              <div className="pt-3 border-t border-purple-200">
-                <h3 className="font-display text-2xl sm:text-3xl font-bold text-[#651FFF] leading-snug">
-                  Show your <span className="italic font-normal text-slate-900">20.5M</span> Total Fanbase.
-                </h3>
-                <p className="text-xs sm:text-sm font-semibold text-slate-700 mt-1">
-                  Your combined audience from socials connected to Inflixo.
-                </p>
-              </div>
-            </div>
-
-            <div className="lg:col-span-6 flex flex-col items-center justify-center">
-              <div className="w-full max-w-md rounded-3xl border border-purple-200 bg-white p-6 shadow-xl space-y-4 text-left hover:scale-[1.01] transition-transform">
-                <div className="flex items-center justify-between rounded-2xl bg-[#651FFF] p-4 text-white shadow-md shadow-purple-600/20">
-                  <div className="flex items-center gap-2">
-                    <span className="text-base">❤️</span>
-                    <span className="text-sm font-bold text-white">Total Fanbase</span>
+            <div className="pt-4 flex justify-center">
+              <div className="w-full max-w-lg rounded-xl border border-[#E5E7EB] bg-white p-5 space-y-3 text-left">
+                {/* Total Reach Header */}
+                <div className="flex items-center justify-between rounded-xl bg-[#6366F1] p-4 text-white">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-purple-200">Unified Metric</p>
+                    <p className="text-xs font-medium text-purple-100">Total Fanbase</p>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <Sparkles className="h-4 w-4 text-amber-400" />
-                    <span className="font-display text-2xl font-bold text-white">20.5M</span>
-                  </div>
+                  <p className="font-display text-3xl font-bold text-white">800,000</p>
                 </div>
 
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1 pt-1">
-                  Connected Social Platforms
-                </p>
-
-                <div className="space-y-2.5">
-                  <div className="flex items-center justify-between rounded-xl border border-slate-200 p-3 bg-slate-50/50">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-pink-100 text-pink-600">
-                        <InstagramIcon className="h-4 w-4 fill-current" />
-                      </span>
-                      <div className="min-w-0 text-left space-y-0.5">
-                        <p className="truncate text-sm font-bold text-slate-900 leading-tight">Tony Stark</p>
-                        <p className="truncate text-xs font-medium text-slate-500 leading-snug">@tonystark</p>
-                        <p className="truncate text-[10px] font-bold uppercase tracking-wider text-slate-400 leading-none">INSTAGRAM</p>
+                {/* Feeding Platform Rows */}
+                <div className="space-y-2 pt-1">
+                  <div className="flex items-center justify-between rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] p-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-600 text-white shrink-0">
+                        <YoutubeIcon className="h-3.5 w-3.5" />
                       </div>
+                      <span className="text-xs font-bold text-[#111827]">YouTube Channel</span>
                     </div>
-                    <span className="text-xs font-bold text-slate-900 shrink-0">4.8M Followers</span>
+                    <span className="text-xs font-bold text-[#111827]">400,000 Subscribers</span>
                   </div>
 
-                  <div className="flex items-center justify-between rounded-xl border border-slate-200 p-3 bg-slate-50/50">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-600">
-                        <YoutubeIcon className="h-4 w-4 fill-current" />
-                      </span>
-                      <div className="min-w-0 text-left space-y-0.5">
-                        <p className="truncate text-sm font-bold text-slate-900 leading-tight">Stark Tech Vlogs</p>
-                        <p className="truncate text-xs font-medium text-slate-500 leading-snug">@tonystark</p>
-                        <p className="truncate text-[10px] font-bold uppercase tracking-wider text-slate-400 leading-none">YOUTUBE</p>
+                  <div className="flex items-center justify-between rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] p-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-500 text-white shrink-0">
+                        <InstagramIcon className="h-3.5 w-3.5" />
                       </div>
+                      <span className="text-xs font-bold text-[#111827]">Instagram Handle</span>
                     </div>
-                    <span className="text-xs font-bold text-slate-900 shrink-0">12.5M Subscribers</span>
+                    <span className="text-xs font-bold text-[#111827]">250,000 Followers</span>
                   </div>
 
-                  <div className="flex items-center justify-between rounded-xl border border-slate-200 p-3 bg-slate-50/50">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
-                        <FacebookIcon className="h-4 w-4 fill-current" />
-                      </span>
-                      <div className="min-w-0 text-left space-y-0.5">
-                        <p className="truncate text-sm font-bold text-slate-900 leading-tight">Tony Stark Official</p>
-                        <p className="truncate text-xs font-medium text-slate-500 leading-snug">@tonystark</p>
-                        <p className="truncate text-[10px] font-bold uppercase tracking-wider text-slate-400 leading-none">FACEBOOK</p>
+                  <div className="flex items-center justify-between rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] p-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-white shrink-0">
+                        <FacebookIcon className="h-3.5 w-3.5" />
                       </div>
+                      <span className="text-xs font-bold text-[#111827]">Facebook Page</span>
                     </div>
-                    <span className="text-xs font-bold text-slate-900 shrink-0">3.2M Followers</span>
+                    <span className="text-xs font-bold text-[#111827]">150,000 Followers</span>
                   </div>
                 </div>
               </div>
@@ -468,185 +352,331 @@ export default function LandingHomePage() {
         </div>
       </section>
 
-      {/* 4. PROBLEM 2 → SOLUTION 2: REAL SERIES ACCORDION PREVIEW */}
-      <section id="series-solution" className="py-20 sm:py-32 bg-[#F3EEFF] text-slate-900 border-b border-purple-200/80 relative z-10">
-        <div className="mx-auto max-w-[1200px] px-5 sm:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-            <div className="lg:col-span-6 space-y-4 text-center lg:text-left">
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-[#651FFF] px-3 py-1 text-xs font-bold text-white uppercase tracking-wider shadow-sm">
-                <span>PROBLEM 02</span>
+      {/* 4. SECTION 2: OTT SERIES & EPISODE BUILDER */}
+      <section className="py-16 sm:py-24 bg-[#F9FAFB] border-b border-[#E5E7EB]">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            {/* Left Visual Asset: Series Card Mockup */}
+            <div className="lg:col-span-6 flex justify-center order-2 lg:order-1">
+              <div className="w-full max-w-md rounded-xl border border-[#E5E7EB] bg-[#111827] text-white p-5 space-y-4 text-left">
+                <div className="flex items-center justify-between">
+                  <span className="rounded bg-[#6366F1] px-2.5 py-0.5 text-[10px] font-bold text-white">
+                    Season 1 • 5 Episodes
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-400">Filmmaking Series</span>
+                </div>
+
+                <div className="relative h-40 w-full overflow-hidden rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80"
+                    alt="Travel Series"
+                    className="h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <button
+                      type="button"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-[#6366F1] text-white"
+                    >
+                      <Play className="h-5 w-5 fill-current ml-0.5" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <h4 className="font-display text-base font-bold text-white">Spiti Valley Expedition</h4>
+                  <p className="text-xs text-slate-400">4-part docuseries on high-altitude road trips</p>
+                </div>
+
+                <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                    <span className="text-xs text-slate-300 font-medium">Auto-Numbered</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-1.5 text-xs font-bold text-white transition-colors"
+                  >
+                    Watch Ep 1 →
+                  </button>
+                </div>
               </div>
+            </div>
 
-              <h2 className="font-display text-3xl sm:text-4xl font-bold text-slate-900 leading-snug">
-                Don&apos;t let Part 2 get lost.
+            {/* Right Copy */}
+            <div className="lg:col-span-6 space-y-4 text-left order-1 lg:order-2">
+              <span className="inline-block rounded-full bg-purple-50 text-[#6366F1] border border-purple-200 px-3 py-0.5 text-xs font-bold uppercase tracking-wider">
+                Zero Algorithm Drop-off
+              </span>
+              <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#111827] leading-tight">
+                Don&apos;t let Episode 2 get buried in social feeds.
               </h2>
-
-              <p className="text-base sm:text-lg font-medium text-slate-600 leading-relaxed">
-                Your fans watched Part 1. Now they shouldn&apos;t have to search your feed for <span className="italic font-semibold text-slate-800">Part 2, Part 3 or Part 4.</span>
+              <p className="text-sm sm:text-base font-medium text-[#4B5563] leading-relaxed">
+                You spent weeks producing a 4-part travel series, finance course, or filmmaking vlog, but social feeds scatter your episodes. Inflixo lets you build structured, multi-season web series with custom posters and numbered episodes. Fans binge your content sequentially without switching apps.
               </p>
 
-              <div className="pt-3 border-t border-purple-200">
-                <h3 className="font-display text-2xl sm:text-3xl font-bold text-[#651FFF] leading-snug">
-                  Turn your content into an <span className="italic font-normal text-slate-900">organized</span> Series.
-                </h3>
-                <p className="text-xs sm:text-sm font-semibold text-slate-700 mt-1">
-                  Fans can find every part from one clean page and continue watching.
-                </p>
+              <div className="space-y-2 pt-2 text-xs sm:text-sm font-semibold text-[#111827]">
+                <div className="flex items-start gap-2">
+                  <Check className="h-4 w-4 text-[#6366F1] shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-[#111827]">Auto-Sequenced Episodes:</strong> Auto-numbered chapters with direct video embeds.
+                  </div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <Check className="h-4 w-4 text-[#6366F1] shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-[#111827]">Cross-Platform Support:</strong> Combine YouTube videos, Reels, and Facebook content in one series.
+                  </div>
+                </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-              <div className="pt-2">
+      {/* 5. SECTION 3: THE 2027 VISION & CREATOR COLLECTIVE */}
+      <section className="py-16 sm:py-24 bg-[#FFFFFF] border-b border-[#E5E7EB]">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 text-center">
+          <div className="rounded-2xl border border-[#E5E7EB] bg-[#F9FAFB] p-8 sm:p-12 text-[#111827] space-y-6">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-purple-50 border border-purple-200 px-3.5 py-1 text-xs font-bold text-[#6366F1]">
+              <Sparkles className="h-3.5 w-3.5 text-[#6366F1]" />
+              <span>Community &amp; Future Road</span>
+            </div>
+
+            <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#111827] leading-tight">
+              The 10,000 Creator Mission • Summit 2027
+            </h2>
+
+            <p className="text-xs sm:text-sm text-[#4B5563] font-medium leading-relaxed max-w-2xl mx-auto">
+              Inflixo is built to empower India&apos;s serious digital creators. We are selecting <strong className="text-[#111827] font-bold">10,000 genuine, professional creators</strong> across tech, filmmaking, comedy, travel, and education to build our core ecosystem.
+              <br className="hidden sm:inline" />
+              Every verified creator joining our early access cohort receives a foundational membership and a direct invitation to the <strong className="text-[#6366F1] font-bold">Inflixo Creator Summit 2027</strong>—a private, high-impact gathering uniting India&apos;s top creators, production houses, and global brand sponsors in one room.
+            </p>
+
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => handleClaim("")}
+                className="inline-flex items-center gap-2 rounded-full bg-[#6366F1] hover:bg-[#4F46E5] px-7 py-3.5 text-xs sm:text-sm font-bold text-white transition-colors cursor-pointer"
+              >
+                <span>Join the 10K Creator Collective</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. SECTION 4: TRANSPARENT, CREATOR-FIRST PRICING */}
+      <section className="py-16 sm:py-24 bg-[#F9FAFB] border-b border-[#E5E7EB]">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 text-center space-y-8">
+          <div className="space-y-2 max-w-xl mx-auto">
+            <span className="inline-block rounded-full bg-purple-50 text-[#6366F1] border border-purple-200 px-3 py-0.5 text-xs font-bold uppercase tracking-wider">
+              Transparent Pricing
+            </span>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#111827]">
+              Simple, Creator-First Plans
+            </h2>
+            <p className="text-xs sm:text-sm font-medium text-[#4B5563]">
+              Start free during Early Access. Upgrade whenever you need unlimited OTT power.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left items-stretch">
+            {/* TIER 1: EARLY ACCESS FREE */}
+            <div className="rounded-xl border-2 border-emerald-500 bg-white p-6 flex flex-col justify-between relative">
+              <div className="absolute -top-3 left-5 rounded-full bg-emerald-600 px-3 py-0.5 text-[11px] font-bold text-white">
+                Active Free Tier
+              </div>
+              <div className="space-y-4">
+                <div className="mt-1">
+                  <h3 className="font-display text-lg font-bold text-[#111827]">Tier 1: Early Access</h3>
+                  <p className="text-xs font-medium text-[#4B5563]">Essential Identity</p>
+                </div>
+                <div className="rounded-lg bg-[#F9FAFB] p-3 border border-[#E5E7EB]">
+                  <p className="font-display text-3xl font-bold text-[#111827]">₹0</p>
+                  <p className="text-xs font-medium text-[#4B5563]">/ Lifetime free</p>
+                </div>
+                <ul className="space-y-2 text-xs font-medium text-[#111827] pt-2">
+                  <li className="flex items-center gap-2">
+                    <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                    <span>Live Fanbase Counter (YT, IG, FB)</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                    <span>1 Active OTT Web Series</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                    <span>Standard Profile Themes</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                    <span>Public inflixo.com/username</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="pt-6">
                 <button
                   type="button"
-                  onClick={() => router.push("/login")}
-                  className="inline-flex items-center gap-2 rounded-full bg-[#651FFF] px-8 py-3.5 text-sm font-bold text-white shadow-xl shadow-purple-600/30 hover:bg-[#500CD6] hover:scale-105 transition-all cursor-pointer"
+                  onClick={() => handleClaim("")}
+                  className="w-full rounded-lg bg-emerald-100 py-2.5 px-4 text-xs font-bold text-emerald-800 text-center cursor-pointer"
                 >
-                  <span>Create Your First Series →</span>
+                  Get Started Free
                 </button>
               </div>
             </div>
 
-            <div className="lg:col-span-6 flex justify-center">
-              <div className="w-full max-w-md rounded-3xl border border-purple-200 bg-white p-6 space-y-4 shadow-xl text-left hover:scale-[1.01] transition-transform">
-                <div className="flex flex-col items-center justify-center text-center border-b border-slate-100 pb-3 space-y-0.5">
-                  <span className="text-xs font-black uppercase tracking-wider text-slate-400">SERIES</span>
-                  <span className="text-[11px] font-extrabold text-[#651FFF]">🎬 1 Series · 4 Episodes</span>
+            {/* TIER 2: CREATOR PRO */}
+            <div className="rounded-xl border-2 border-[#6366F1] bg-white p-6 flex flex-col justify-between relative">
+              <div className="absolute -top-3 left-5 rounded-full bg-[#6366F1] px-3 py-0.5 text-[11px] font-bold text-white">
+                Most Popular
+              </div>
+              <div className="space-y-4">
+                <div className="mt-1">
+                  <h3 className="font-display text-lg font-bold text-[#111827]">Tier 2: Creator Pro</h3>
+                  <p className="text-xs font-medium text-[#4B5563]">Serious Growth</p>
                 </div>
-
-                <div className="rounded-2xl border border-purple-200 bg-slate-900 text-white p-4 space-y-3 shadow-md">
-                  <div className="flex items-center gap-3">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=120&q=80"
-                      alt="Iron Tech Series"
-                      className="h-12 w-12 rounded-xl object-cover ring-2 ring-white/20 shrink-0"
-                    />
-                    <div className="min-w-0">
-                      <h4 className="text-base font-bold text-white truncate">Iron Tech Series</h4>
-                      <p className="text-xs text-slate-400 truncate">Season 1 • 4 Episodes • Technology</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 pt-2 border-t border-slate-800">
-                    <div className="flex items-center justify-between rounded-xl bg-slate-800 p-2.5 border border-slate-700">
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#651FFF] text-[10px] font-bold text-white shrink-0">01</span>
-                        <p className="text-xs font-bold text-white truncate">Part 01: Arc Reactor Tech</p>
-                      </div>
-                      <span className="text-[9px] font-bold text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800 shrink-0">Watched ✓</span>
-                    </div>
-
-                    <div className="flex items-center justify-between rounded-xl bg-[#651FFF] p-2.5 text-white shadow-md animate-pulse">
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-white text-[10px] font-bold text-[#651FFF] shrink-0">02</span>
-                        <p className="text-xs font-bold text-white truncate">Part 02: Building Mark I</p>
-                      </div>
-                      <span className="text-[9px] font-bold text-amber-300 bg-amber-950 px-2 py-0.5 rounded border border-amber-500 shrink-0">Next Up →</span>
-                    </div>
-
-                    <div className="flex items-center justify-between rounded-xl bg-slate-800/60 p-2.5 border border-slate-800">
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-700 text-[10px] font-bold text-slate-300 shrink-0">03</span>
-                        <p className="text-xs font-semibold text-slate-300 truncate">Part 03: J.A.R.V.I.S AI System</p>
-                      </div>
-                      <span className="text-[9px] font-semibold text-slate-400 shrink-0">Queued</span>
-                    </div>
-
-                    <div className="flex items-center justify-between rounded-xl bg-slate-800/60 p-2.5 border border-slate-800">
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-700 text-[10px] font-bold text-slate-300 shrink-0">04</span>
-                        <p className="text-xs font-semibold text-slate-300 truncate">Part 04: Nanotech Flight Test</p>
-                      </div>
-                      <span className="text-[9px] font-semibold text-slate-400 shrink-0">Queued</span>
-                    </div>
-                  </div>
+                <div className="rounded-lg bg-purple-50 p-3 border border-purple-100">
+                  <p className="font-display text-3xl font-bold text-[#111827]">₹199</p>
+                  <p className="text-xs font-medium text-[#4B5563]">/ month</p>
                 </div>
+                <ul className="space-y-2 text-xs font-medium text-[#111827] pt-2">
+                  <li className="flex items-center gap-2 font-bold text-[#111827]">
+                    <Check className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+                    <span>Unlimited Series &amp; Episodes</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+                    <span>Fast 3-Hour Metrics Sync</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+                    <span>All 20+ Designer Card Themes</span>
+                  </li>
+                  <li className="flex items-center gap-2 font-bold text-[#6366F1]">
+                    <Check className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+                    <span>Priority Invite: Summit 2027</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="pt-6">
+                <button
+                  type="button"
+                  onClick={() => handleClaim("")}
+                  className="w-full rounded-lg bg-[#6366F1] hover:bg-[#4F46E5] py-2.5 px-4 text-xs font-bold text-white text-center transition-colors cursor-pointer"
+                >
+                  Upgrade to Pro
+                </button>
+              </div>
+            </div>
+
+            {/* TIER 3: STUDIO / AGENCY */}
+            <div className="rounded-xl border border-[#E5E7EB] bg-white p-6 flex flex-col justify-between relative hover:border-slate-300 transition-colors">
+              <div className="absolute -top-3 left-5 rounded-full bg-slate-900 px-3 py-0.5 text-[11px] font-bold text-white">
+                Best Value Annual
+              </div>
+              <div className="space-y-4">
+                <div className="mt-1">
+                  <h3 className="font-display text-lg font-bold text-[#111827]">Tier 3: Studio / Agency</h3>
+                  <p className="text-xs font-medium text-[#4B5563]">Power Creators &amp; Teams</p>
+                </div>
+                <div className="rounded-lg bg-[#F9FAFB] p-3 border border-[#E5E7EB]">
+                  <p className="font-display text-3xl font-bold text-[#111827]">₹1,999</p>
+                  <p className="text-xs font-medium text-[#4B5563]">/ year</p>
+                </div>
+                <ul className="space-y-2 text-xs font-medium text-[#111827] pt-2">
+                  <li className="flex items-center gap-2 font-bold text-[#111827]">
+                    <Check className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+                    <span>Real-Time Instant Sync</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+                    <span>Custom Domain Support</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+                    <span>Priority Media Kit Analytics</span>
+                  </li>
+                  <li className="flex items-center gap-2 font-bold text-[#6366F1]">
+                    <Check className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+                    <span>VIP Access: Summit 2027</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="pt-6">
+                <button
+                  type="button"
+                  onClick={() => handleClaim("")}
+                  className="w-full rounded-lg bg-[#111827] hover:bg-black py-2.5 px-4 text-xs font-bold text-white text-center transition-colors cursor-pointer"
+                >
+                  Get Annual VIP
+                </button>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 5. PRICING & EARLY ACCESS SECTION */}
-      <section id="pricing" className="py-20 sm:py-28 bg-[#FAF8FF] border-b border-purple-200/70 z-10 relative">
-        <div className="mx-auto max-w-[1200px] px-5 sm:px-8 text-center space-y-8">
-          <div className="space-y-3 max-w-2xl mx-auto">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#651FFF] px-3 py-1 text-xs font-bold text-white uppercase tracking-wider">
-              <span>TRANSPARENT PRICING</span>
-            </div>
-            <h2 className="font-display text-3xl sm:text-5xl font-bold text-slate-900 leading-snug">
-              Free Early Access + <span className="italic font-normal text-[#651FFF]">Simple Creator Plans</span>
-            </h2>
-            <p className="text-base sm:text-lg font-medium text-slate-600">
-              Get 100% Free Early Access today. Paid monthly &amp; yearly plans will launch soon with extra creator power.
-            </p>
-          </div>
-
-          <PricingTable showEarlyAccessBanner={false} />
-        </div>
-      </section>
-
-      {/* 6. FINAL POSITIONING & CLOSING CTA */}
-      <section className="py-24 sm:py-32 bg-[#F3EEFF] text-center relative overflow-hidden z-10">
-        <div className="mx-auto max-w-4xl px-5 sm:px-8 relative z-10 space-y-8">
-          <div className="space-y-4">
-            <h2 className="font-display text-4xl sm:text-6xl font-bold text-[#0F172A] tracking-normal">
-              That&apos;s Inflixo.
-            </h2>
-            <p className="text-lg sm:text-2xl font-semibold text-slate-600 max-w-2xl mx-auto leading-relaxed">
-              One creator page for your <strong className="text-[#651FFF] font-bold">Total Fanbase</strong>, socials and <span className="italic font-normal text-slate-800">organized content</span> <strong className="text-[#651FFF] font-bold">Series</strong>.
-            </p>
-          </div>
-
-          <div className="space-y-4 max-w-md mx-auto">
-            <div className="inline-block rounded-2xl bg-white border-2 border-purple-200 px-6 py-3.5 text-lg sm:text-2xl font-mono font-bold text-[#651FFF] shadow-md">
-              inflixo.com/yourname
+      {/* 7. FINAL BOTTOM CONVERSION BANNER */}
+      <section className="py-16 sm:py-20 bg-[#FFFFFF]">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6">
+          <div className="rounded-2xl border border-[#E5E7EB] bg-[#F9FAFB] p-8 sm:p-12 text-center space-y-6">
+            <div className="space-y-2">
+              <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#111827]">
+                Ready to build your creator OTT hub?
+              </h2>
+              <p className="text-sm sm:text-base font-medium text-[#4B5563]">
+                Join thousands of creators showcasing their total reach in one link.
+              </p>
             </div>
 
-            <div>
-              <button
-                type="button"
-                onClick={() => router.push("/login")}
-                className="inline-flex items-center gap-2 rounded-full bg-[#651FFF] px-9 py-4 text-base sm:text-lg font-bold text-white shadow-xl shadow-purple-600/30 hover:bg-[#500CD6] hover:scale-105 transition-all cursor-pointer"
+            <div className="max-w-md mx-auto space-y-3 pt-2">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleClaim(bottomUsername);
+                }}
+                className="flex items-center rounded-xl border border-[#E5E7EB] bg-white p-1.5 focus-within:border-[#6366F1] focus-within:ring-1 focus-within:ring-[#6366F1] transition-all"
               >
-                <span>Get Started</span>
-                <ArrowRight className="h-5 w-5" />
-              </button>
+                <span className="pl-3.5 text-xs sm:text-sm font-semibold text-[#9CA3AF] select-none shrink-0">
+                  inflixo.com/
+                </span>
+                <input
+                  type="text"
+                  value={bottomUsername}
+                  onChange={(e) => setBottomUsername(e.target.value)}
+                  placeholder="yourname"
+                  className="w-full bg-transparent px-1 py-2 text-xs sm:text-sm font-bold text-[#111827] outline-none placeholder:text-[#9CA3AF] placeholder:font-normal min-w-0"
+                />
+                <button
+                  type="submit"
+                  className="inline-flex items-center gap-1 shrink-0 rounded-lg bg-[#6366F1] px-4 py-2 text-xs sm:text-sm font-bold text-white hover:bg-[#4F46E5] transition-colors cursor-pointer"
+                >
+                  <span>Claim My Profile</span>
+                </button>
+              </form>
             </div>
-
-            <p className="text-xs font-semibold text-slate-500">
-              Free Early Access • Setup in 2 minutes
-            </p>
           </div>
         </div>
       </section>
 
-      {/* 7. FOOTER */}
-      <footer className="mt-auto border-t border-purple-100 bg-white py-10 z-10 relative">
-        <div className="mx-auto max-w-[1200px] px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-xs font-semibold text-slate-600">
+      {/* FOOTER */}
+      <footer className="mt-auto border-t border-[#E5E7EB] bg-[#FFFFFF] py-8">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-[#4B5563]">
           <Logo size="sm" />
-
-          <div className="flex flex-wrap items-center justify-center gap-6">
-            <Link href="/" className="hover:text-[#651FFF] transition-colors">
+          <div className="flex flex-wrap items-center gap-5">
+            <Link href="/" className="hover:text-[#111827] transition-colors">
               Creator Home
             </Link>
-            <a href="#total-fanbase" className="hover:text-[#651FFF] transition-colors">
-              Total Fanbase
-            </a>
-            <a href="#series-solution" className="hover:text-[#651FFF] transition-colors">
-              Series
-            </a>
-            <a href="#pricing" className="hover:text-[#651FFF] transition-colors">
-              Pricing
-            </a>
-            <Link href="/privacy" className="hover:text-[#651FFF] transition-colors">
+            <Link href="/privacy" className="hover:text-[#111827] transition-colors">
               Privacy Policy
             </Link>
-            <Link href="/terms" className="hover:text-[#651FFF] transition-colors">
+            <Link href="/terms" className="hover:text-[#111827] transition-colors">
               Terms of Service
             </Link>
           </div>
-
-          <p className="text-slate-400 font-semibold">Built by TrustIQ Labs · &copy; 2026 Inflixo</p>
+          <p className="text-[#9CA3AF]">Built by TrustIQ Labs &copy; 2026 Inflixo</p>
         </div>
       </footer>
     </div>

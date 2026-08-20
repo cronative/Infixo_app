@@ -35,25 +35,28 @@ export default function LoginPage() {
   return (
     <AuthSplitLayout>
       <div className="space-y-6 text-left">
-        {/* Heading */}
-        <div className="space-y-2">
-          <h1 className="font-display text-3xl font-black tracking-tight text-[#0F172A] sm:text-4xl">
-            Create your Inflixo.
+        {/* Headline & Subtitle */}
+        <div className="space-y-1.5">
+          <h1 className="font-display text-3xl font-extrabold tracking-tight text-[#111827] sm:text-4xl leading-tight">
+            Create your Inflixo
           </h1>
-          <p className="text-base font-bold text-slate-800">
-            Your content. Your fanbase. <span className="text-[#651FFF]">One link.</span>
-          </p>
-          <p className="text-xs font-medium text-slate-500">
+          <p className="text-sm font-medium text-[#4B5563] leading-snug">
             One beautiful home for everything you create.
           </p>
         </div>
 
         {/* Email Form */}
-        <form onSubmit={handleSubmit} className="space-y-3.5 pt-1">
+        <form onSubmit={handleSubmit} className="space-y-4 pt-1">
+          {/* Trust Badge Above Input */}
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-purple-50 border border-purple-200 px-3 py-1 text-[11px] font-bold text-[#6366F1]">
+            <span>⚡ Password-free login • New here? We’ll set up your profile next.</span>
+          </div>
+
           <Input
             type="email"
             name="email"
-            placeholder="Enter your email"
+            label="Creator Email"
+            placeholder="name@gmail.com"
             leftIcon={<Mail className="h-4 w-4 text-slate-400" />}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -66,54 +69,50 @@ export default function LoginPage() {
             fullWidth
             size="lg"
             loading={loading}
-            className="bg-[#651FFF] text-white font-bold shadow-md shadow-purple-600/20 hover:bg-[#500CD6] hover:scale-[1.01] active:scale-[0.99] transition-all py-3.5 text-sm rounded-full cursor-pointer"
+            className="bg-[#6366F1] text-white font-bold hover:bg-[#4F46E5] transition-colors h-12 text-sm rounded-xl cursor-pointer shadow-none"
           >
-            Continue with email →
+            Send Secure Code →
           </Button>
-
-          <p className="text-[11px] text-center font-medium text-slate-400">
-            No password needed. We&apos;ll email you a secure code.
-          </p>
         </form>
 
-        {/* Short Benefit Checklist */}
-        <div className="pt-5 border-t border-slate-100 space-y-2.5 text-xs font-bold text-slate-700">
+        {/* Clean Checklist Section */}
+        <div className="pt-5 border-t border-[#E5E7EB] space-y-2.5 text-sm font-medium text-gray-600">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-            <span>One link for everything</span>
+            <CheckCircle2 className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+            <span>Manage your live Total Fanbase</span>
           </div>
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-            <span>Show your total fanbase</span>
+            <CheckCircle2 className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+            <span>Organize OTT series &amp; episodes</span>
           </div>
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-            <span>Turn your content into Series</span>
+            <CheckCircle2 className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+            <span>Instant 60-second setup for new creators</span>
           </div>
         </div>
 
         {/* Compact Mobile Creator Preview (Visible on Mobile only) */}
-        <div className="lg:hidden mt-8 pt-4 border-t border-slate-100">
-          <div className="rounded-2xl bg-gradient-to-br from-[#651FFF] to-[#500CD6] p-4 text-white space-y-3 shadow-lg">
+        <div className="lg:hidden mt-8 pt-4 border-t border-[#E5E7EB]">
+          <div className="rounded-2xl bg-[#0F172A] p-4 text-white space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
                   alt="Maya"
-                  className="h-9 w-9 rounded-full object-cover ring-2 ring-white/30"
+                  className="h-9 w-9 rounded-full object-cover border border-white/20"
                 />
                 <div>
-                  <p className="text-xs font-black text-white">Maya</p>
+                  <p className="text-xs font-bold text-white">Maya</p>
                   <p className="text-[10px] font-medium text-purple-200">@maya · Travel Creator</p>
                 </div>
               </div>
-              <span className="text-[10px] font-black bg-white/20 px-2 py-0.5 rounded-full text-white backdrop-blur-xs">
-                126K Total Fanbase
+              <span className="text-[10px] font-bold bg-[#6366F1] px-2 py-0.5 rounded-full text-white">
+                126K Fanbase
               </span>
             </div>
 
-            <div className="flex items-center justify-between rounded-xl bg-white/10 p-2 text-[11px] font-bold backdrop-blur-xs">
+            <div className="flex items-center justify-between rounded-xl bg-slate-800/80 p-2 text-[11px] font-bold">
               <div className="flex items-center gap-1.5">
                 <Play className="h-3.5 w-3.5 fill-white text-white" />
                 <span>Kashmir Diaries</span>

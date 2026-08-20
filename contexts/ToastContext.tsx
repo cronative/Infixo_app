@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useState, ReactNode } from "react";
-import { CheckCircle2, XCircle, Info, X } from "lucide-react";
+import { Check, Sparkles, AlertCircle, X } from "lucide-react";
 import { ToastMessage } from "@/types";
 import { generateId } from "@/utils/format";
 
@@ -11,6 +11,60 @@ interface ToastContextValue {
 
 const ToastContext = createContext<ToastContextValue | null>(null);
 
+function ToastItem({ toast, onDismiss }: { toast: ToastMessage; onDismiss: (id: string) => void }) {
+  let chipClass = "bg-emerald-50 text-emerald-600 border-emerald-100";
+  let borderClass = "border-gray-200";
+  let progressClass = "bg-emerald-500";
+  let icon = <Check className="h-4 w-4 stroke-[3]" />;
+
+  if (toast.type === "error") {
+    chipClass = "bg-rose-50 text-rose-600 border-rose-100";
+    borderClass = "border-rose-200";
+    progressClass = "bg-rose-500";
+    icon = <AlertCircle className="h-4 w-4 stroke-[2.5]" />;
+  } else if (toast.type === "info") {
+    chipClass = "bg-indigo-50 text-[#6366F1] border-indigo-100";
+    borderClass = "border-indigo-100";
+    progressClass = "bg-[#6366F1]";
+    icon = <Sparkles className="h-4 w-4 text-[#6366F1]" />;
+  }
+
+  return (
+    <div
+      className={`pointer-events-auto relative overflow-hidden flex w-full max-w-sm items-center gap-3 rounded-xl border bg-white p-3.5 shadow-lg shadow-gray-200/50 transition-all animate-in fade-in slide-in-from-bottom-5 duration-300 ${borderClass}`}
+    >
+      {/* Icon Chip */}
+      <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border ${chipClass}`}>
+        {icon}
+      </div>
+
+      {/* Message */}
+      <p className="flex-1 text-sm font-medium text-[#111827] leading-snug text-left">
+        {toast.message}
+      </p>
+
+      {/* Close Button */}
+      <button
+        onClick={() => onDismiss(toast.id)}
+        className="shrink-0 rounded-lg p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
+        aria-label="Dismiss Toast"
+      >
+        <X className="h-4 w-4" />
+      </button>
+
+      {/* Bottom Thin Countdown Progress Line */}
+      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gray-100 overflow-hidden rounded-b-xl">
+        <div
+          className={`h-full ${progressClass}`}
+          style={{
+            animation: "toastProgress 3.5s linear forwards",
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
@@ -19,50 +73,21 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setToasts((prev) => [...prev, { id, message, type }]);
     window.setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 3800);
+    }, 3500);
   }, []);
 
-  const dismiss = (id: string) => setToasts((prev) => prev.filter((t) => t.id !== id));
+  const dismiss = useCallback((id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  }, []);
 
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      {/* Top Floating Toast Notification Layer */}
-      <div className="fixed inset-x-0 top-4 sm:top-6 z-[100] flex flex-col items-center gap-2.5 px-4 pointer-events-none">
-        {toasts.map((t) => {
-          let bgClass = "bg-gradient-to-r from-slate-950 via-purple-950 to-indigo-950 text-white border-purple-400/40";
-          let icon = <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-400" />;
-
-          if (t.type === "error") {
-            bgClass = "bg-gradient-to-r from-rose-950 via-rose-900 to-slate-950 text-white border-rose-400/40";
-            icon = <XCircle className="h-5 w-5 shrink-0 text-rose-300" />;
-          } else if (t.type === "info") {
-            bgClass = "bg-gradient-to-r from-slate-950 via-indigo-950 to-purple-950 text-white border-indigo-400/40";
-            icon = <Info className="h-5 w-5 shrink-0 text-sky-400" />;
-          }
-
-          return (
-            <div
-              key={t.id}
-              className={`pointer-events-auto animate-in slide-in-from-top-5 fade-in duration-300 flex w-full max-w-md items-center gap-3.5 rounded-2xl border p-4 shadow-2xl backdrop-blur-xl ${bgClass}`}
-              style={{ boxShadow: "0 25px 50px -12px rgba(15, 23, 42, 0.45)" }}
-            >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 border border-white/15 shadow-2xs">
-                {icon}
-              </div>
-              <p className="flex-1 text-xs sm:text-sm font-extrabold text-white leading-relaxed">
-                {t.message}
-              </p>
-              <button
-                onClick={() => dismiss(t.id)}
-                className="shrink-0 rounded-full p-1.5 text-white/60 hover:bg-white/20 hover:text-white transition-all"
-                aria-label="Dismiss"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          );
-        })}
+      {/* Fixed Bottom-Right Toast Viewport Container */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2.5 max-w-sm w-full pointer-events-none px-4 sm:px-0">
+        {toasts.map((t) => (
+          <ToastItem key={t.id} toast={t} onDismiss={dismiss} />
+        ))}
       </div>
     </ToastContext.Provider>
   );

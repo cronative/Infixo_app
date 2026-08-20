@@ -42,7 +42,7 @@ export async function sendOtpEmail(toEmail: string, otpCode: string): Promise<bo
               
               <!-- Vivid Electric Violet Gradient Header Banner -->
               <tr>
-                <td style="background: linear-gradient(135deg, #782BFB 0%, #6512FA 50%, #500CD6 100%); padding: 36px 24px 28px 24px; text-align: center;">
+                <td style="background-color: #6366F1; padding: 36px 24px 28px 24px; text-align: center;">
                   
                   <!-- Clean Glassmorphic Squircle Badge with Inline SVG Logo -->
                   <div style="display: inline-block; background-color: rgba(255, 255, 255, 0.2); border: 1.5px solid rgba(255, 255, 255, 0.4); border-radius: 16px; width: 50px; height: 50px; text-align: center; margin: 0 auto 12px auto;">
@@ -83,8 +83,8 @@ export async function sendOtpEmail(toEmail: string, otpCode: string): Promise<bo
                   </p>
 
                   <!-- High-Impact OTP Display Box -->
-                  <div style="background-color: #F3E8FF; border: 2px dashed #A855F7; border-radius: 16px; padding: 20px 12px; text-align: center; margin-bottom: 20px;">
-                    <div style="font-size: 40px; font-weight: 900; letter-spacing: 14px; color: #6512FA; font-family: 'Courier New', Courier, monospace; line-height: 1; padding-left: 14px;">
+                  <div style="background-color: #EEF2FF; border: 2px dashed #6366F1; border-radius: 16px; padding: 20px 12px; text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 40px; font-weight: 900; letter-spacing: 14px; color: #6366F1; font-family: 'Courier New', Courier, monospace; line-height: 1; padding-left: 14px;">
                       ${otpCode}
                     </div>
                   </div>
@@ -160,7 +160,7 @@ export async function sendBroadcastEmail(
               
               <!-- Inflixo Header -->
               <tr>
-                <td style="background: linear-gradient(135deg, #782BFB 0%, #6512FA 50%, #500CD6 100%); padding: 28px 24px; text-align: center;">
+                <td style="background-color: #6366F1; padding: 28px 24px; text-align: center;">
                   <h1 style="color: #FFFFFF; font-size: 22px; font-weight: 800; margin: 0; letter-spacing: -0.5px;">Inflixo</h1>
                   <p style="color: rgba(255, 255, 255, 0.85); font-size: 12px; font-weight: 600; margin: 4px 0 0 0;">Official Creator Broadcast</p>
                 </td>

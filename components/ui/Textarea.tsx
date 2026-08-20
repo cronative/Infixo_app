@@ -25,8 +25,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={inputId}
           value={value}
           maxLength={maxLength}
-          className={`w-full resize-none rounded-2xl border bg-white px-4 py-3 text-[15px] text-inflixo-navy shadow-[0_1px_2px_rgba(23,20,31,0.03)] outline-none transition-all placeholder:text-muted/70 focus:border-inflixo-purple focus:shadow-[0_0_0_4px_rgba(109,40,217,0.10)] ${
-            error ? "border-rose-400" : "border-inflixo-border"
+          className={`w-full resize-none rounded-xl border bg-white px-3.5 py-2.5 text-xs sm:text-sm font-bold text-[#0F172A] outline-none transition-colors placeholder:text-slate-400 placeholder:font-normal focus:border-[#6366F1] focus:ring-1 focus:ring-[#6366F1] ${
+            error ? "border-red-400 bg-red-50/10" : "border-[#E5E7EB]"
           } ${className}`}
           {...rest}
         />

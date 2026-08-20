@@ -240,24 +240,24 @@ export default function PublicProfilePage() {
   if (notFound) {
     const handle = decodeURIComponent(params.username ?? "");
     return (
-      <div className="relative flex min-h-dvh flex-col items-center justify-center bg-gradient-to-b from-purple-50/90 via-slate-50 to-white px-4 py-12 text-center text-slate-900 overflow-hidden">
+      <div className="relative flex min-h-dvh flex-col items-center justify-center bg-gradient-to-b from-indigo-50/90 via-slate-50 to-white px-4 py-12 text-center text-slate-900 overflow-hidden">
         {/* Ambient Light Background Glow Orbs */}
-        <div className="pointer-events-none absolute -top-24 -left-20 h-96 w-96 rounded-full bg-purple-300/40 blur-3xl" />
+        <div className="pointer-events-none absolute -top-24 -left-20 h-96 w-96 rounded-full bg-indigo-300/40 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 -right-20 h-96 w-96 rounded-full bg-pink-300/30 blur-3xl" />
 
         <main className="relative z-10 w-full max-w-xl space-y-6">
           {/* Header Branding */}
           <div className="flex items-center justify-between px-2">
             <Logo />
-            <span className="rounded-full bg-purple-100 border border-purple-200/80 px-3.5 py-1 text-xs font-black text-purple-700 shadow-2xs">
+            <span className="rounded-full bg-indigo-100 border border-indigo-200/80 px-3.5 py-1 text-xs font-black text-indigo-700 shadow-2xs">
               Creator Home by Inflixo
             </span>
           </div>
 
           {/* Main 404 Light Theme Card */}
-          <div className="rounded-[32px] border border-purple-100 bg-white/90 p-8 sm:p-12 shadow-2xl shadow-purple-500/10 backdrop-blur-xl space-y-6 text-center">
+          <div className="rounded-[32px] border border-indigo-100 bg-white/90 p-8 sm:p-12 shadow-2xl shadow-indigo-500/10 backdrop-blur-xl space-y-6 text-center">
             {/* Animated Icon Badge */}
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-purple-600 via-indigo-600 to-purple-700 text-white shadow-xl shadow-purple-600/30 ring-4 ring-purple-100">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-[#6366F1] text-white shadow-xl shadow-indigo-600/30 ring-4 ring-indigo-100">
               <UserX className="h-10 w-10 stroke-[2.2]" />
             </div>
 
@@ -296,7 +296,7 @@ export default function PublicProfilePage() {
               {usernameAvailable === true ? (
                 <button
                   onClick={() => router.push(`/login`)}
-                  className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-purple-900/20 transition-all border border-purple-400/30 hover:scale-[1.02]"
+                  className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#6366F1] hover:bg-[#4F46E5] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-indigo-900/20 transition-all border border-indigo-400/30 hover:scale-[1.02]"
                 >
                   <Sparkles className="h-4 w-4" />
                   <span>Claim @{handle}</span>
@@ -304,7 +304,7 @@ export default function PublicProfilePage() {
               ) : (
                 <button
                   onClick={() => router.push("/login")}
-                  className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-purple-900/20 transition-all border border-purple-400/30 hover:scale-[1.02]"
+                  className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#6366F1] hover:bg-[#4F46E5] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-indigo-900/20 transition-all border border-indigo-400/30 hover:scale-[1.02]"
                 >
                   <Sparkles className="h-4 w-4" />
                   <span>Create Your Inflixo</span>
@@ -321,21 +321,21 @@ export default function PublicProfilePage() {
             </div>
 
             {/* Value Highlights Grid */}
-            <div className="mt-8 border-t border-purple-100 pt-6 grid grid-cols-3 gap-2 text-left">
-              <div className="rounded-2xl bg-purple-50/60 border border-purple-100 p-3">
-                <Film className="h-4 w-4 text-purple-600 mb-1" />
+            <div className="mt-8 border-t border-indigo-100 pt-6 grid grid-cols-3 gap-2 text-left">
+              <div className="rounded-2xl bg-indigo-50/60 border border-indigo-100 p-3">
+                <Film className="h-4 w-4 text-[#6366F1] mb-1" />
                 <p className="text-[11px] font-black text-slate-900">Series &amp; Parts</p>
                 <p className="text-[9px] text-slate-500 font-medium">Keep content in order</p>
               </div>
 
-              <div className="rounded-2xl bg-purple-50/60 border border-purple-100 p-3">
-                <Users className="h-4 w-4 text-purple-600 mb-1" />
+              <div className="rounded-2xl bg-indigo-50/60 border border-indigo-100 p-3">
+                <Users className="h-4 w-4 text-[#6366F1] mb-1" />
                 <p className="text-[11px] font-black text-slate-900">Total Fanbase</p>
                 <p className="text-[9px] text-slate-500 font-medium">Bring your audience together</p>
               </div>
 
-              <div className="rounded-2xl bg-purple-50/60 border border-purple-100 p-3">
-                <Sparkles className="h-4 w-4 text-purple-600 mb-1" />
+              <div className="rounded-2xl bg-indigo-50/60 border border-indigo-100 p-3">
+                <Sparkles className="h-4 w-4 text-[#6366F1] mb-1" />
                 <p className="text-[11px] font-black text-slate-900">Creator Themes</p>
                 <p className="text-[9px] text-slate-500 font-medium">Make it yours</p>
               </div>

@@ -79,8 +79,8 @@ export function OnboardingLayout({
 
   return (
     <div className="min-h-dvh bg-background">
-      {/* Header section with Top Navbar + Step Navigation */}
-      <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/95 backdrop-blur-md safe-top">
+      {/* Fixed Header section with Top Navbar + Step Navigation */}
+      <header className="fixed top-0 left-0 w-full z-50 border-b border-gray-200 bg-white safe-top shadow-2xs">
         {/* Top Navbar Row */}
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-3.5 py-2.5 sm:px-8 border-b border-slate-100">
           {/* Left: Logo */}
@@ -108,36 +108,39 @@ export function OnboardingLayout({
         </div>
 
         {/* Subheader bar below Top Navbar containing step progress */}
-        <div className="bg-surface-muted/60 px-3.5 py-2.5 sm:px-8 border-b border-inflixo-border/60">
+        <div className="bg-white px-3.5 py-2.5 sm:px-8">
           <div className="mx-auto max-w-6xl flex items-center justify-between">
             <ProgressSteps current={step} />
           </div>
         </div>
       </header>
 
-      {isFullWidthStep ? (
-        /* Full Screen / Full Width Layout for Subscription & Finish steps */
-        <div className="mx-auto max-w-full sm:max-w-[95%] w-full px-3 pb-16 pt-4 sm:px-8 sm:pb-20 sm:pt-8">
-          <main key={step} className="onboarding-step-enter w-full">
-            {children}
-          </main>
-        </div>
-      ) : (
-        /* Split Layout with 50-50 wide desktop split */
-        <div className="mx-auto flex max-w-7xl w-full flex-col lg:flex-row gap-8">
-          {/* Form column */}
-          <main className="flex-1 px-3 pb-16 pt-4 sm:px-8 sm:pb-20 sm:pt-8 lg:w-[50%]">
-            <div key={step} className="onboarding-step-enter">{children}</div>
-          </main>
+      {/* Main Content Area with Top Padding for Fixed Header */}
+      <div className="pt-28 sm:pt-32">
+        {isFullWidthStep ? (
+          /* Full Screen / Full Width Layout for Subscription & Finish steps */
+          <div className="mx-auto max-w-full sm:max-w-[95%] w-full px-3 pb-16 pt-4 sm:px-8 sm:pb-20 sm:pt-4">
+            <main key={step} className="onboarding-step-enter w-full">
+              {children}
+            </main>
+          </div>
+        ) : (
+          /* Split Layout with 50-50 wide desktop split */
+          <div className="mx-auto flex max-w-7xl w-full flex-col lg:flex-row gap-8">
+            {/* Form column */}
+            <main className="flex-1 px-3 pb-16 pt-4 sm:px-8 sm:pb-20 sm:pt-4 lg:w-[50%]">
+              <div key={step} className="onboarding-step-enter">{children}</div>
+            </main>
 
-          {/* Live preview column (desktop only, sticky & wide) */}
-          {preview && (
-            <aside className="hidden flex-1 border-l border-slate-200/80 bg-slate-50/50 px-6 py-10 lg:block pb-20 lg:w-[50%] min-w-[440px]">
-              <div className="sticky top-28 w-full flex flex-col items-center">{preview}</div>
-            </aside>
-          )}
-        </div>
-      )}
+            {/* Live preview column (desktop only, sticky top-32 h-fit) */}
+            {preview && (
+              <aside className="hidden flex-1 border-l border-slate-200/80 bg-slate-50/50 px-6 py-8 lg:block pb-20 lg:w-[50%] min-w-[440px]">
+                <div className="sticky top-32 h-fit w-full flex flex-col items-center">{preview}</div>
+              </aside>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Mobile compact preview */}
       {!isFullWidthStep && preview && (

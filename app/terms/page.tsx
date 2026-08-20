@@ -9,14 +9,14 @@ export const metadata = {
 
 export default function TermsOfServicePage() {
   return (
-    <div className="min-h-dvh bg-[#FAF8FF] text-[#0F172A] flex flex-col font-sans selection:bg-purple-100 selection:text-[#651FFF]">
+    <div className="min-h-dvh bg-[#FAF8FF] text-[#0F172A] flex flex-col font-sans selection:bg-purple-100 selection:text-[#6366F1]">
       {/* Navbar */}
       <header className="safe-top sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-purple-100/80">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 sm:px-8">
           <Logo size="md" />
           <Link
             href="/"
-            className="inline-flex items-center gap-2 rounded-full border border-purple-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:text-[#651FFF] hover:border-purple-300 transition-all"
+            className="inline-flex items-center gap-2 rounded-full border border-purple-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:text-[#6366F1] hover:border-purple-300 transition-all"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Back to Home
@@ -28,7 +28,7 @@ export default function TermsOfServicePage() {
       <main className="mx-auto max-w-4xl px-5 sm:px-8 py-12 sm:py-16 flex-1 text-left space-y-10">
         {/* Header Banner */}
         <div className="space-y-3 border-b border-purple-200/80 pb-8">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-purple-100 px-3 py-1 text-xs font-bold text-[#651FFF]">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-purple-100 px-3 py-1 text-xs font-bold text-[#6366F1]">
             <FileText className="h-4 w-4" />
             <span>TERMS &amp; CONDITIONS</span>
           </div>
@@ -109,7 +109,7 @@ export default function TermsOfServicePage() {
             </p>
             <div className="rounded-2xl bg-white border border-purple-200 p-4 space-y-1 text-xs sm:text-sm font-semibold text-slate-800">
               <p>TrustIQ Labs — Inflixo Terms &amp; Compliance</p>
-              <p className="text-[#651FFF]">Email: legal@inflixo.com</p>
+              <p className="text-[#6366F1]">Email: legal@inflixo.com</p>
             </div>
           </section>
         </div>
@@ -120,10 +120,10 @@ export default function TermsOfServicePage() {
         <div className="mx-auto max-w-[1200px] px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-slate-600">
           <Logo size="sm" />
           <div className="flex items-center gap-6">
-            <Link href="/" className="hover:text-[#651FFF] transition-colors">Home</Link>
-            <Link href="/#pricing" className="hover:text-[#651FFF] transition-colors">Pricing</Link>
-            <Link href="/privacy" className="hover:text-[#651FFF] transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="text-[#651FFF] font-bold">Terms of Service</Link>
+            <Link href="/" className="hover:text-[#6366F1] transition-colors">Home</Link>
+            <Link href="/#pricing" className="hover:text-[#6366F1] transition-colors">Pricing</Link>
+            <Link href="/privacy" className="hover:text-[#6366F1] transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="text-[#6366F1] font-bold">Terms of Service</Link>
           </div>
           <p className="text-slate-400">&copy; 2026 Inflixo · TrustIQ Labs</p>
         </div>

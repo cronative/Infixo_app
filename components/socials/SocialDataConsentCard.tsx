@@ -20,12 +20,12 @@ export function SocialDataConsentCard({
   if (variant === "one-line") {
     return (
       <div
-        className={`rounded-2xl border px-3.5 py-3 transition-all text-left flex items-center gap-3 ${
+        className={`rounded-xl border p-4 transition-colors text-left flex items-center gap-3 ${
           error
-            ? "border-rose-300 bg-rose-50/70 ring-2 ring-rose-200"
+            ? "border-rose-300 bg-rose-50"
             : disabled || accepted
-            ? "border-purple-300/90 bg-purple-50/60"
-            : "border-slate-200 bg-slate-50/80 hover:border-purple-300"
+            ? "border-indigo-100 bg-indigo-50/60"
+            : "border-gray-200 bg-white hover:border-gray-300"
         }`}
       >
         {/* Custom Interactive / Read-Only Checkbox */}
@@ -33,35 +33,35 @@ export function SocialDataConsentCard({
           type="button"
           disabled={disabled}
           onClick={() => !disabled && onToggle(!accepted)}
-          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-lg border transition-all ${
+          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-colors ${
             disabled || accepted
-              ? "border-purple-600 bg-purple-600 text-white shadow-2xs cursor-default"
+              ? "border-[#6366F1] bg-[#6366F1] text-white cursor-default"
               : error
               ? "border-rose-400 bg-white"
-              : "border-slate-300 bg-white hover:border-purple-400"
+              : "border-slate-300 bg-white hover:border-[#6366F1]"
           }`}
         >
-          {(accepted || disabled) && <Check className="h-3.5 w-3.5 stroke-[3]" />}
+          {(accepted || disabled) && <Check className="h-3.5 w-3.5" />}
         </button>
 
         <div className="flex-1 flex flex-wrap items-center justify-between gap-2 min-w-0">
           <label
             onClick={() => !disabled && onToggle(!accepted)}
-            className={`text-xs sm:text-sm font-extrabold text-slate-900 leading-snug select-none ${
+            className={`text-xs sm:text-sm font-bold text-slate-900 leading-snug select-none ${
               disabled ? "cursor-default" : "cursor-pointer"
             }`}
           >
             I authorize Inflixo to fetch public stats (followers, subscribers &amp; metadata) for my social accounts.
           </label>
 
-          <div className="flex items-center gap-2 text-[11px] font-bold shrink-0">
+          <div className="flex items-center gap-2 text-[11px] font-medium shrink-0">
             {disabled ? (
-              <span className="inline-flex items-center gap-1 text-emerald-800 font-black bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full">
-                <Check className="h-3 w-3 text-emerald-700 stroke-[3] shrink-0" />
+              <span className="inline-flex items-center gap-1 text-emerald-700 font-medium bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                <Check className="h-3 w-3 text-emerald-600 shrink-0" />
                 Authorized
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-emerald-700 font-extrabold bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+              <span className="inline-flex items-center gap-1 text-emerald-700 font-medium bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
                 <ShieldCheck className="h-3 w-3 text-emerald-600 shrink-0" />
                 100% Public Data
               </span>
@@ -74,12 +74,8 @@ export function SocialDataConsentCard({
 
   return (
     <div
-      className={`rounded-2xl sm:rounded-3xl border p-4 sm:p-5 transition-all text-left ${
-        error
-          ? "border-rose-300 bg-rose-50/50 ring-4 ring-rose-100"
-          : disabled || accepted
-          ? "border-purple-300/90 bg-purple-50/40"
-          : "border-slate-200/90 bg-slate-50/70"
+      className={`bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-4 transition-colors text-left ${
+        error ? "border-rose-300 bg-rose-50" : ""
       }`}
     >
       <div className="flex items-start gap-3">
@@ -88,46 +84,46 @@ export function SocialDataConsentCard({
           type="button"
           disabled={disabled}
           onClick={() => !disabled && onToggle(!accepted)}
-          className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-lg border transition-all ${
+          className={`mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-md border transition-colors ${
             disabled || accepted
-              ? "border-purple-600 bg-purple-600 text-white shadow-2xs cursor-default"
+              ? "border-[#6366F1] bg-[#6366F1] text-white cursor-default"
               : error
               ? "border-rose-400 bg-white"
-              : "border-slate-300 bg-white hover:border-purple-400"
+              : "border-slate-300 bg-white hover:border-[#6366F1]"
           }`}
         >
-          {(accepted || disabled) && <Check className="h-3.5 w-3.5 stroke-[3]" />}
+          {(accepted || disabled) && <Check className="h-3 w-3 stroke-[3]" />}
         </button>
 
         <div className="space-y-1.5 min-w-0 flex-1">
           <label
             onClick={() => !disabled && onToggle(!accepted)}
-            className={`text-xs sm:text-sm font-extrabold text-slate-900 leading-snug block select-none ${
+            className={`text-xs font-bold text-slate-900 leading-snug block select-none ${
               disabled ? "cursor-default" : "cursor-pointer"
             }`}
           >
             I authorize Inflixo to fetch public profile stats (followers, subscribers &amp; metadata) for my social accounts.
           </label>
 
-          <p className="text-[11px] sm:text-xs text-slate-500 font-medium leading-relaxed">
+          <p className="text-xs text-slate-500 font-medium leading-relaxed">
             {disabled
               ? "Authorization is active and locked while social accounts are connected to your profile."
               : "By checking this box, you confirm that you own or manage these social handles and grant permission to aggregate public numbers for your live Inflixo creator page."}
           </p>
 
-          <div className="pt-1 flex flex-wrap items-center gap-2 text-[11px] font-bold text-slate-600">
+          <div className="pt-1 flex flex-wrap items-center gap-2 text-xs font-medium text-gray-700">
             {disabled && (
-              <span className="inline-flex items-center gap-1 text-emerald-800 font-black bg-emerald-100 border border-emerald-300 px-2.5 py-0.5 rounded-full shadow-2xs">
-                <Check className="h-3 w-3 text-emerald-700 stroke-[3] shrink-0" />
-                Authorization Active &amp; Locked
+              <span className="bg-gray-100 text-gray-700 border border-gray-200 text-xs font-medium px-2.5 py-0.5 rounded-full inline-flex items-center gap-1">
+                <Check className="h-3 w-3 text-emerald-600 shrink-0" />
+                Authorization Active
               </span>
             )}
-            <span className="inline-flex items-center gap-1 text-emerald-700 font-extrabold bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
-              <ShieldCheck className="h-3 w-3 text-emerald-600 shrink-0" />
+            <span className="bg-gray-100 text-gray-700 border border-gray-200 text-xs font-medium px-2.5 py-0.5 rounded-full inline-flex items-center gap-1">
+              <ShieldCheck className="h-3 w-3 text-indigo-600 shrink-0" />
               100% Public Data Only
             </span>
-            <span className="inline-flex items-center gap-1 text-purple-700 font-extrabold bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-full">
-              <Lock className="h-3 w-3 text-purple-600 shrink-0" />
+            <span className="bg-gray-100 text-gray-700 border border-gray-200 text-xs font-medium px-2.5 py-0.5 rounded-full inline-flex items-center gap-1">
+              <Lock className="h-3 w-3 text-indigo-600 shrink-0" />
               No Passwords Required
             </span>
           </div>

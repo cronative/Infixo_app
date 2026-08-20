@@ -154,7 +154,7 @@ export function InstagramFetcher({ username, onConfirmSync, onBeforeFetch, varia
           type="button"
           onClick={fetchDetails}
           disabled={loading || !username.trim()}
-          className="tap-scale flex items-center gap-2 rounded-2xl bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 px-4 py-2.5 text-xs font-extrabold text-white shadow-md transition-all hover:shadow-lg disabled:opacity-50"
+          className="tap-scale flex items-center gap-2 rounded-xl bg-pink-50 text-pink-700 hover:bg-pink-100 border border-pink-200 px-4 py-2.5 text-xs font-bold transition-all disabled:opacity-50 cursor-pointer"
         >
           {loading ? (
             <>

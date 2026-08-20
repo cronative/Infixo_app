@@ -20,12 +20,12 @@ function DesktopTopHeader() {
   const router = useRouter();
 
   return (
-    <header className="hidden items-center justify-between border-b border-inflixo-border bg-white/90 px-8 py-4 shadow-[0_1px_0_rgba(23,20,31,0.02),0_8px_20px_-16px_rgba(23,20,31,0.15)] backdrop-blur-md lg:flex">
+    <header className="hidden items-center justify-between border-b border-slate-200 bg-white px-8 py-3.5 lg:flex">
       <div>
-        <p className="font-display text-sm font-semibold text-inflixo-navy">
+        <p className="font-display text-sm font-bold text-slate-900">
           {profile.displayName ? `Welcome, ${profile.displayName.split(" ")[0]}` : "Welcome"}
         </p>
-        <p className="text-xs text-muted">inflixo.com/{profile.username || "you"}</p>
+        <p className="text-xs text-slate-500 font-medium">inflixo.com/{profile.username || "you"}</p>
       </div>
       <div className="flex items-center gap-2">
         <button
@@ -39,16 +39,16 @@ function DesktopTopHeader() {
               showToast("Could not copy link", "error");
             }
           }}
-          className="flex items-center gap-2 rounded-xl border border-inflixo-border bg-white px-3.5 py-2 text-xs font-semibold text-inflixo-navy shadow-[var(--shadow-soft)] transition-all hover:-translate-y-px hover:shadow-[var(--shadow-hover)] cursor-pointer"
+          className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-800 hover:bg-slate-50 cursor-pointer"
         >
-          <Copy className="h-3.5 w-3.5" /> Copy Link
+          <Copy className="h-3.5 w-3.5 text-slate-500" /> Copy Link
         </button>
         <button
           onClick={() => {
             AuthService.logout();
             router.push("/login");
           }}
-          className="flex items-center gap-2 rounded-xl border border-inflixo-border px-3.5 py-2 text-xs font-semibold text-muted transition-colors hover:bg-rose-50 hover:text-rose-600 cursor-pointer"
+          className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 cursor-pointer"
         >
           <LogOut className="h-3.5 w-3.5" /> Logout
         </button>

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Users, Sparkles, ExternalLink, Play, Film, Share2, ChevronDown, ChevronUp, ChevronRight, Copy } from "lucide-react";
+import Link from "next/link";
+import { Users, Sparkles, ExternalLink, Play, Film, Share2, ChevronDown, ChevronUp, ChevronRight, Copy, Eye } from "lucide-react";
 import { CreatorProfile, SocialAccounts, ThemeKey, Series } from "@/types";
 import { formatCount } from "@/utils/format";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
@@ -29,23 +30,39 @@ export interface ThemeStyleConfig {
 }
 
 export const DEFAULT_THEME_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-white/95 backdrop-blur-xl border border-slate-200/80 text-slate-900 shadow-xl",
-  profBadgeBg: "bg-[#782BFB]/10",
-  profBadgeText: "text-[#782BFB]",
-  profBadgeBorder: "border-[#782BFB]/30",
-  fanbaseBg: "bg-[#782BFB]/10",
-  fanbaseText: "text-[#782BFB]",
+  cardBg: "bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0] border border-slate-200 text-slate-900 shadow-xl",
+  profBadgeBg: "bg-[#6366F1]/10",
+  profBadgeText: "text-[#6366F1]",
+  profBadgeBorder: "border-[#6366F1]/30",
+  fanbaseBg: "bg-[#6366F1]/10",
+  fanbaseText: "text-[#6366F1]",
   socialItemBg: "bg-white/80 backdrop-blur-xs",
   socialItemBorder: "border-slate-200/80",
   socialNameColor: "text-slate-800",
   socialUnitColor: "text-slate-500",
   nameColor: "text-slate-900",
   bioColor: "text-slate-600",
+  handleColor: "text-[#6366F1]",
+};
+
+const SIGNATURE_PURPLE_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-[#faf5ff] via-[#f3e8ff] to-[#e9d5ff] text-slate-900 border border-purple-200 shadow-xl",
+  profBadgeBg: "bg-purple-100",
+  profBadgeText: "text-purple-800",
+  profBadgeBorder: "border-purple-300",
+  fanbaseBg: "bg-purple-100",
+  fanbaseText: "text-purple-800",
+  socialItemBg: "bg-white/80 backdrop-blur-xs",
+  socialItemBorder: "border-purple-200",
+  socialNameColor: "text-slate-900",
+  socialUnitColor: "text-purple-700/70",
+  nameColor: "text-slate-900",
+  bioColor: "text-slate-700",
   handleColor: "text-purple-600",
 };
 
 const DARK_PURPLE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-slate-950/90 backdrop-blur-xl border border-purple-500/30 text-white shadow-2xl",
+  cardBg: "bg-gradient-to-br from-[#1e1b4b] via-[#4c1d95] to-[#0f172a] text-white border border-purple-500/30 shadow-2xl",
   profBadgeBg: "bg-purple-500/20",
   profBadgeText: "text-purple-300",
   profBadgeBorder: "border-purple-500/30",
@@ -61,7 +78,7 @@ const DARK_PURPLE_STYLE: ThemeStyleConfig = {
 };
 
 const OCEAN_BLUE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-slate-950/90 backdrop-blur-xl border border-blue-500/30 text-white shadow-2xl",
+  cardBg: "bg-gradient-to-br from-[#0c4a6e] via-[#0f172a] to-[#0284c7] text-white border border-blue-500/30 shadow-2xl",
   profBadgeBg: "bg-blue-500/20",
   profBadgeText: "text-blue-300",
   profBadgeBorder: "border-blue-500/30",
@@ -77,7 +94,7 @@ const OCEAN_BLUE_STYLE: ThemeStyleConfig = {
 };
 
 const EMERALD_LUXE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-emerald-950/90 backdrop-blur-xl border border-emerald-500/30 text-white shadow-2xl",
+  cardBg: "bg-gradient-to-br from-[#064e3b] via-[#022c22] to-[#047857] text-white border border-emerald-500/30 shadow-2xl",
   profBadgeBg: "bg-emerald-500/20",
   profBadgeText: "text-emerald-300",
   profBadgeBorder: "border-emerald-500/30",
@@ -93,7 +110,7 @@ const EMERALD_LUXE_STYLE: ThemeStyleConfig = {
 };
 
 const CRIMSON_VELVET_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-rose-950/90 backdrop-blur-xl border border-rose-500/30 text-white shadow-2xl",
+  cardBg: "bg-gradient-to-br from-[#881337] via-[#4c0519] to-[#9f1239] text-white border border-rose-500/30 shadow-2xl",
   profBadgeBg: "bg-rose-500/20",
   profBadgeText: "text-rose-300",
   profBadgeBorder: "border-rose-500/30",
@@ -109,7 +126,7 @@ const CRIMSON_VELVET_STYLE: ThemeStyleConfig = {
 };
 
 const NEON_PULSE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-zinc-950/90 backdrop-blur-xl border border-cyan-500/30 text-white shadow-2xl",
+  cardBg: "bg-gradient-to-br from-[#09090b] via-[#0f172a] to-[#164e63] text-white border border-cyan-500/30 shadow-2xl",
   profBadgeBg: "bg-cyan-500/20",
   profBadgeText: "text-cyan-300",
   profBadgeBorder: "border-cyan-500/30",
@@ -173,7 +190,7 @@ const MONO_STYLE: ThemeStyleConfig = {
 };
 
 const PASTEL_DREAM_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-br from-purple-100 via-pink-100 to-amber-100 text-slate-900 border border-purple-200 shadow-xl",
+  cardBg: "bg-gradient-to-br from-[#f5f3ff] via-[#fce7f3] to-[#fed7aa] text-slate-900 border border-purple-200 shadow-xl",
   profBadgeBg: "bg-white/70",
   profBadgeText: "text-purple-900",
   profBadgeBorder: "border-purple-200",
@@ -221,19 +238,19 @@ const LAVENDER_HAZE_STYLE: ThemeStyleConfig = {
 };
 
 const NORDIC_FROST_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-br from-[#0c4a6e] via-sky-950 to-slate-950 text-white border border-sky-400/30 shadow-2xl",
-  profBadgeBg: "bg-sky-500/20",
-  profBadgeText: "text-sky-300",
-  profBadgeBorder: "border-sky-400/30",
-  fanbaseBg: "bg-sky-500/20",
-  fanbaseText: "text-sky-300",
-  socialItemBg: "bg-sky-950/70 backdrop-blur-md",
-  socialItemBorder: "border-sky-400/20",
-  socialNameColor: "text-white",
-  socialUnitColor: "text-sky-200/70",
-  nameColor: "text-white",
-  bioColor: "text-sky-100/80",
-  handleColor: "text-sky-300",
+  cardBg: "bg-gradient-to-br from-[#f0f9ff] via-[#e0f2fe] to-[#f1f5f9] text-[#0284c7] border border-sky-200/90 shadow-xl",
+  profBadgeBg: "bg-sky-100/90",
+  profBadgeText: "text-sky-900",
+  profBadgeBorder: "border-sky-300",
+  fanbaseBg: "bg-sky-100/90",
+  fanbaseText: "text-sky-900",
+  socialItemBg: "bg-white/85 backdrop-blur-xs",
+  socialItemBorder: "border-sky-200/80",
+  socialNameColor: "text-[#0284c7]",
+  socialUnitColor: "text-sky-800/70",
+  nameColor: "text-[#0284c7]",
+  bioColor: "text-sky-900/80",
+  handleColor: "text-sky-700",
 };
 
 const GOLDEN_HOUR_STYLE: ThemeStyleConfig = {
@@ -434,6 +451,7 @@ const LUMINOUS_PEARL_STYLE: ThemeStyleConfig = {
 
 export const THEME_STYLES: Record<string, ThemeStyleConfig> = {
   "minimal-white": DEFAULT_THEME_STYLE,
+  "signature-purple": SIGNATURE_PURPLE_STYLE,
   "modern-purple": DARK_PURPLE_STYLE,
   midnight: DARK_PURPLE_STYLE,
   "ocean-blue": OCEAN_BLUE_STYLE,
@@ -462,7 +480,6 @@ export const THEME_STYLES: Record<string, ThemeStyleConfig> = {
   "matcha-cream": MATCHA_CREAM_STYLE,
   "cloud-fluff": CLOUD_FLUFF_STYLE,
   "boba-milk": BOBA_MILK_STYLE,
-  "signature-purple": LAVENDER_HAZE_STYLE,
   "sakura-pink": SAKURA_BLOSSOM_STYLE,
   "sand-linen": SAND_DUNE_STYLE,
   "sakura-blossom": SAKURA_BLOSSOM_STYLE,
@@ -616,237 +633,245 @@ export function LivePreviewCard({
     }
   };
 
-  return (
-    <div className={`relative w-full mx-auto transition-all ${variant === "full" ? "max-w-4xl" : "max-w-xl sm:max-w-[540px]"}`}>
+  const isFull = variant === "full";
 
-      <div className={`relative overflow-hidden rounded-[32px] p-4 sm:p-6 transition-all ${style.cardBg || DEFAULT_THEME_STYLE.cardBg}`}>
-        {/* Top Header Bar */}
-        <div className="relative z-10 flex items-center justify-between w-full mb-4 px-1">
-          <div
-            className={`tap-scale flex items-center gap-2 rounded-full border px-3 py-1.5 shadow-2xs transition-all ${style.socialItemBg} ${style.socialItemBorder}`}
-          >
-            <div className="flex h-6 w-6 items-center justify-center rounded-xl bg-gradient-to-br from-[#782BFB] via-[#6512FA] to-[#500CD6] text-white shadow-2xs">
-              <InflixoLogoIcon className="h-3.5 w-3.5" />
-            </div>
-            <span className={`font-display text-sm font-black tracking-tight ${style.nameColor}`}>
-              Inflixo
-            </span>
+  const cardContent = (
+    <div className={`relative overflow-hidden ${isFull ? "rounded-3xl p-5 sm:p-8" : "rounded-[28px] p-4 sm:p-6"} transition-all ${style.cardBg || DEFAULT_THEME_STYLE.cardBg}`}>
+      {/* Top Header Bar */}
+      <div className="relative z-10 flex items-center justify-between w-full mb-4 px-1">
+        <div
+          className={`tap-scale flex items-center gap-2 rounded-full border px-3 py-1.5 shadow-2xs transition-all ${style.socialItemBg} ${style.socialItemBorder}`}
+        >
+          <div className="flex h-6 w-6 items-center justify-center rounded-xl bg-[#6366F1] text-white">
+            <InflixoLogoIcon className="h-3.5 w-3.5" />
           </div>
-
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={handleCopyClick}
-              className={`tap-scale flex h-9 w-9 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} ${style.nameColor}`}
-              title="Copy Profile Link"
-              aria-label="Copy Profile Link"
-            >
-              <Copy className="h-4 w-4" />
-            </button>
-
-            <button
-              type="button"
-              onClick={handleShareClick}
-              className={`tap-scale flex h-9 w-9 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} ${style.nameColor}`}
-              title="Share Profile"
-              aria-label="Share Profile"
-            >
-              <Share2 className="h-4 w-4" />
-            </button>
-          </div>
+          <span className="font-display text-sm font-bold text-[#6366F1] tracking-tight">
+            Inflixo
+          </span>
         </div>
 
-        <div className="relative z-10 flex flex-col items-center text-center">
-          <div className="relative">
-            <CreatorAvatar
-              src={profile.photoDataUrl}
-              name={profile.displayName || "Creator"}
-              className="h-24 w-24 rounded-full shadow-lg border-2 border-white"
-              textClassName="text-3xl font-extrabold text-white"
-              fallbackBgClass="bg-gradient-to-br from-[#782BFB] to-[#500CD6]"
-            />
-          </div>
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={handleCopyClick}
+            className={`tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} text-slate-600 hover:text-[#6366F1]`}
+            title="Copy Profile Link"
+            aria-label="Copy Profile Link"
+          >
+            <Copy className="h-3.5 w-3.5" />
+          </button>
 
-          <h3 className={`mt-3.5 text-lg font-extrabold tracking-tight sm:text-xl ${
+          <button
+            type="button"
+            onClick={handleShareClick}
+            className={`tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} text-slate-600 hover:text-[#6366F1]`}
+            title="Share Profile"
+            aria-label="Share Profile"
+          >
+            <Share2 className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      </div>
+
+      <div className="relative z-10 flex flex-col items-center text-center">
+        {/* Circular Profile Avatar (Fix vertical slicing bug) */}
+        <div className="relative">
+          <CreatorAvatar
+            src={profile.photoDataUrl}
+            name={profile.displayName || "Creator"}
+            className="w-24 h-24 rounded-full aspect-square object-cover overflow-hidden border-2 border-white shadow-md mx-auto"
+            textClassName="text-2xl font-extrabold text-white"
+            fallbackBgClass="bg-[#6366F1]"
+          />
+        </div>
+
+        {/* Name & Verified Creator Badge */}
+        <div className="mt-3 flex items-center justify-center gap-1.5 max-w-full">
+          <h3 className={`text-lg sm:text-xl font-bold tracking-tight ${
             style.isShimmerName
               ? "bg-gradient-to-r from-amber-500 via-rose-500 to-purple-600 bg-clip-text text-transparent animate-pulse"
               : style.nameColor
           }`}>
             {profile.displayName || "Your Name"}
           </h3>
-
-          {/* Username Link with Direct Copy Icon */}
-          <button
-            type="button"
-            onClick={async () => {
-              const handle = profile.username || "username";
-              const profileUrl = typeof window !== "undefined" ? `${window.location.origin}/${handle}` : `https://inflixo.com/${handle}`;
-              const success = await copyToClipboard(profileUrl);
-              if (success) {
-                showToast("Profile link copied to clipboard! ✨");
-              } else {
-                showToast("Could not copy link", "error");
-              }
-            }}
-            className={`mt-1 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} ${style.handleColor}`}
-            title="Click to copy profile link"
-          >
-            <span>{profile.username ? `inflixo.com/${profile.username}` : "inflixo.com/username"}</span>
-            <Copy className="h-3 w-3 opacity-70" />
-          </button>
-
-          {/* Uniform Soft-Chip Category & Sub-type Pills */}
-          {(() => {
-            const allChips: string[] = [];
-            if (profile.category) {
-              profile.category.split(",").forEach((c) => {
-                const trimmed = c.trim();
-                if (trimmed.toLowerCase() === "other") {
-                  if (profile.customCategory?.trim()) allChips.push(profile.customCategory.trim());
-                } else if (trimmed) {
-                  allChips.push(trimmed);
-                }
-              });
-            }
-            if (profile.profession) {
-              profile.profession.split(",").forEach((p) => {
-                const trimmed = p.trim();
-                if (trimmed) allChips.push(trimmed);
-              });
-            }
-            if (allChips.length === 0) return null;
-
-            const visibleChips = allChips.slice(0, 4);
-            const remainingCount = allChips.length - 4;
-
-            return (
-              <div className="mt-3 flex flex-wrap items-center justify-center gap-1.5 max-w-sm">
-                {visibleChips.map((chip, idx) => (
-                  <span
-                    key={idx}
-                    className={`rounded-full border px-3 py-1 text-[11px] font-extrabold shadow-2xs transition-all ${style.profBadgeBg} ${style.profBadgeText} ${style.profBadgeBorder}`}
-                  >
-                    {chip}
-                  </span>
-                ))}
-                {remainingCount > 0 && (
-                  <span
-                    className={`rounded-full border px-2.5 py-1 text-[11px] font-extrabold shadow-2xs ${style.profBadgeBg} ${style.profBadgeText} ${style.profBadgeBorder}`}
-                  >
-                    +{remainingCount}
-                  </span>
-                )}
-              </div>
-            );
-          })()}
-
-          <p className={`mt-3 text-xs sm:text-sm leading-relaxed font-medium line-clamp-3 px-1 ${style.bioColor}`}>
-            {profile.bio || "Your bio will appear here. Share your story with your audience."}
-          </p>
-
-          {/* Clean Sober Fanbase Card */}
-          <div className={`mt-4 rounded-2xl border p-3.5 text-center w-full shadow-2xs ${style.socialItemBg} ${style.socialItemBorder} ${
-            style.isShimmerFanbase ? "ring-2 ring-purple-500/40 animate-pulse" : ""
-          }`}>
-            <div className="flex items-center justify-center gap-2">
-              <span className="text-base">❤️</span>
-              <span className={`font-display text-lg sm:text-xl font-black ${style.nameColor}`}>
-                {formatCount(totalAudience)}
-              </span>
-            </div>
-            <p className={`text-[10px] font-extrabold uppercase tracking-widest mt-0.5 opacity-60 ${style.socialNameColor}`}>
-              TOTAL FANBASE
-            </p>
-          </div>
+          {/* Verified SVG Checkmark Badge */}
+          <svg className="w-5 h-5 text-[#6366F1] shrink-0" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L9 14.17l9.59-9.59L20 6l-10 11z" />
+          </svg>
         </div>
 
-        {/* Social Connection Link Cards (Touch-Friendly 44px min tap target) */}
-        {activeSocialList.length > 0 && (
-          <div className="relative z-10 mt-4 space-y-2 w-full">
-            <div className="grid grid-cols-1 gap-2.5 w-full">
-              {activeSocialList.map((item) => (
-                <a
-                  key={item.platform}
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`group flex items-center justify-between rounded-2xl border p-3 transition-all hover:scale-[1.01] ${style.socialItemBg} ${style.socialItemBorder}`}
+        {/* Clean Interactive Handle Chip */}
+        <button
+          type="button"
+          onClick={async () => {
+            const handle = profile.username || "username";
+            const profileUrl = typeof window !== "undefined" ? `${window.location.origin}/${handle}` : `https://inflixo.com/${handle}`;
+            const success = await copyToClipboard(profileUrl);
+            if (success) {
+              showToast("Profile link copied to clipboard! ✨");
+            } else {
+              showToast("Could not copy link", "error");
+            }
+          }}
+          className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-[#EEF2FF] text-[#6366F1] border border-[#E0E7FF] text-xs font-semibold px-3 py-1 hover:bg-indigo-100 transition-colors cursor-pointer"
+          title="Click to copy profile link"
+        >
+          <span>{profile.username ? `inflixo.com/${profile.username}` : "inflixo.com/username"}</span>
+          <Copy className="h-3 w-3 opacity-70" />
+        </button>
+
+        {/* Category Chips (Max 3 prominent chips) */}
+        {(() => {
+          const allChips: string[] = [];
+          if (profile.category) {
+            profile.category.split(",").forEach((c) => {
+              const trimmed = c.trim();
+              if (trimmed.toLowerCase() === "other") {
+                if (profile.customCategory?.trim()) allChips.push(profile.customCategory.trim());
+              } else if (trimmed) {
+                allChips.push(trimmed);
+              }
+            });
+          }
+          if (profile.profession) {
+            profile.profession.split(",").forEach((p) => {
+              const trimmed = p.trim();
+              if (trimmed) allChips.push(trimmed);
+            });
+          }
+          if (allChips.length === 0) return null;
+          const visibleChips = allChips.slice(0, 3);
+
+          return (
+            <div className="mt-2.5 flex flex-wrap items-center justify-center gap-1.5 max-w-xs">
+              {visibleChips.map((chip, idx) => (
+                <span
+                  key={idx}
+                  className="bg-white/80 border border-gray-200 text-gray-700 text-[11px] font-medium px-2.5 py-0.5 rounded-full shadow-2xs"
                 >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${item.badgeBg}`}>
-                      {item.icon}
-                    </span>
-                    <div className="min-w-0 text-left space-y-0.5">
-                      <p className={`truncate text-xs font-black leading-tight ${style.socialNameColor}`}>
-                        {item.label}
-                      </p>
-                      {item.handle && (
-                        <p className={`truncate text-[11px] font-semibold opacity-80 leading-snug ${style.socialUnitColor}`}>
-                          @{item.handle.replace(/^@/, "")}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <div className="text-right">
-                      <p className={`font-display text-xs font-black leading-tight ${style.socialNameColor}`}>
-                        {formatCount(item.count)}
-                      </p>
-                      <p className={`text-[9px] font-extrabold tracking-tight opacity-75 ${style.socialUnitColor}`}>
-                        {item.unit}
-                      </p>
-                    </div>
-                    {/* Touch-Friendly Action Button Target */}
-                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 transition-colors group-hover:bg-purple-600 group-hover:text-white">
-                      <ExternalLink className="h-4 w-4" />
-                    </span>
-                  </div>
-                </a>
+                  {chip}
+                </span>
               ))}
             </div>
-          </div>
-        )}
+          );
+        })()}
 
-        {series && series.length > 0 && (
-          <div className="relative z-10 mt-6 space-y-3 w-full text-left">
-            <div className="text-center space-y-0.5">
-              <p className="text-xs font-black uppercase tracking-wider opacity-60">
-                SERIES
+        {/* Bio Formatting */}
+        <p className="mt-2.5 text-xs text-[#4B5563] leading-relaxed max-w-sm mx-auto font-medium px-1">
+          {profile.bio || "Sharing my journey & content. Stream original series and connect across all platforms."}
+        </p>
+
+        {/* "Total Fanbase" Authority Card */}
+        <div className="mt-4 rounded-2xl bg-white border border-[#E5E7EB] p-4 shadow-2xs text-center w-full space-y-1">
+          {totalAudience > 0 ? (
+            <div className="space-y-1">
+              <p className="text-2xl font-black text-[#111827]">
+                ❤️ {formatCount(totalAudience)}
               </p>
-              <p className={`text-[11px] font-extrabold ${style.handleColor}`}>
-                🎬 {series.length} {series.length === 1 ? "Series" : "Series"} · {totalEpisodesCount} {totalEpisodesCount === 1 ? "Episode" : "Episodes"}
+              <p className="text-[11px] font-bold tracking-wider uppercase text-[#6366F1]">
+                TOTAL FANBASE
               </p>
             </div>
-
-            <div className="space-y-4">
-              {series.map((s) => (
-                <PreviewSeriesItem
-                  key={s.id}
-                  series={s}
-                  style={style}
-                  themeKey={themeKey}
-                  username={profile.username}
-                  expanded={expandedSeriesId === s.id}
-                  onToggle={() => setExpandedSeriesId(expandedSeriesId === s.id ? null : s.id)}
-                />
-              ))}
+          ) : (
+            <div className="space-y-1">
+              <p className="text-2xl font-black text-[#111827]">
+                ❤️ 0
+              </p>
+              <p className="text-[11px] font-bold tracking-wider uppercase text-[#6366F1]">
+                TOTAL FANBASE
+              </p>
+              <p className="text-[10px] font-medium text-gray-400">
+                Connect socials to display total reach
+              </p>
             </div>
-          </div>
-        )}
-
-        {/* Clean Official Footer Badge */}
-        <div className="relative z-10 mt-6 pt-4 text-center border-t border-slate-500/10">
-          <a
-            href="/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`tap-scale inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1 text-[11px] font-bold shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} ${style.handleColor}`}
-          >
-            <InflixoLogoIcon className="h-3.5 w-3.5 text-purple-600" />
-            <span>Profile managed by <strong className="font-black">Inflixo</strong> — India's Premier Creator Platform 🚀</span>
-          </a>
+          )}
         </div>
       </div>
+
+      {/* Direct Social Platform Link Tiles */}
+      {activeSocialList.length > 0 && (
+        <div className="relative z-10 mt-4 space-y-2 w-full">
+          <div className="grid grid-cols-1 gap-2.5 w-full">
+            {activeSocialList.map((item) => (
+              <a
+                key={item.platform}
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-white hover:bg-gray-50/80 border border-[#E5E7EB] hover:border-[#6366F1] rounded-xl p-3.5 transition-all flex items-center justify-between shadow-2xs"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${item.badgeBg}`}>
+                    {item.icon}
+                  </span>
+                  <div className="min-w-0 text-left space-y-0.5">
+                    <p className="truncate text-xs font-bold text-gray-900">
+                      {item.label}
+                    </p>
+                    {item.handle && (
+                      <p className="truncate text-xs font-medium text-[#4B5563]">
+                        @{item.handle.replace(/^@/, "")}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-sm font-bold text-gray-900">
+                    {formatCount(item.count)}
+                  </span>
+                  <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-[#6366F1] transition-colors" />
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* OTT Web Series & Playlists Section */}
+      {series && series.length > 0 && (
+        <div className="relative z-10 mt-6 space-y-3 w-full text-left">
+          <div className="flex items-center justify-between px-1 mb-2 gap-2">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest text-left">
+              Featured Series &amp; Shows
+            </p>
+            <span className="text-[11px] font-semibold text-[#6366F1] bg-[#EEF2FF] border border-[#E0E7FF] px-2.5 py-0.5 rounded-full shrink-0">
+              {series.length} {series.length === 1 ? "Series" : "Series"} • {totalEpisodesCount} {totalEpisodesCount === 1 ? "Episode" : "Episodes"}
+            </span>
+          </div>
+
+          <div className="space-y-4">
+            {series.map((s) => (
+              <PreviewSeriesItem
+                key={s.id}
+                series={s}
+                style={style}
+                themeKey={themeKey}
+                username={profile.username}
+                expanded={expandedSeriesId === s.id}
+                onToggle={() => setExpandedSeriesId(expandedSeriesId === s.id ? null : s.id)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Bottom Conversion Watermark */}
+      <div className="relative z-10 mt-6 pt-4 text-center border-t border-gray-200/50">
+        <a
+          href="/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-gray-100 text-gray-600 hover:text-[#6366F1] text-[11px] font-medium px-3.5 py-1.5 rounded-full border border-gray-200 transition-colors inline-flex items-center gap-1.5 shadow-2xs"
+        >
+          <span>⚡ Create your own Inflixo</span>
+        </a>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className={`relative w-full mx-auto transition-all ${isFull ? "max-w-4xl" : "max-w-xl sm:max-w-[540px]"}`}>
+      {cardContent}
     </div>
   );
 }
@@ -858,28 +883,36 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   if (p.includes("youtube") || u.includes("youtube.com") || u.includes("youtu.be")) {
     return {
       name: "YouTube",
-      icon: <YoutubeIcon className="h-4 w-4 text-white" />,
-      badgeClass: "bg-red-600 text-white shadow-xs",
+      icon: <YoutubeIcon className="h-3 w-3 text-white" />,
+      badgeClass: "bg-red-600 text-white shadow-2xs",
+      chipClass: "bg-red-50 text-red-700 border-red-200/80",
+      textColor: "text-red-600",
     };
   }
   if (p.includes("instagram") || u.includes("instagram.com")) {
     return {
       name: "Instagram",
-      icon: <InstagramIcon className="h-4 w-4 text-white" />,
-      badgeClass: "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white shadow-xs",
+      icon: <InstagramIcon className="h-3 w-3 text-white" />,
+      badgeClass: "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white shadow-2xs",
+      chipClass: "bg-rose-50 text-rose-700 border-rose-200/80",
+      textColor: "text-rose-600",
     };
   }
   if (p.includes("facebook") || u.includes("facebook.com")) {
     return {
       name: "Facebook",
-      icon: <FacebookIcon className="h-4 w-4 text-white" />,
-      badgeClass: "bg-blue-600 text-white shadow-xs",
+      icon: <FacebookIcon className="h-3 w-3 text-white" />,
+      badgeClass: "bg-blue-600 text-white shadow-2xs",
+      chipClass: "bg-blue-50 text-blue-700 border-blue-200/80",
+      textColor: "text-blue-600",
     };
   }
   return {
     name: platformStr || "Web",
-    icon: <Film className="h-4 w-4 text-white" />,
-    badgeClass: "bg-purple-600 text-white shadow-xs",
+    icon: <Film className="h-3 w-3 text-white" />,
+    badgeClass: "bg-[#6366F1] text-white shadow-2xs",
+    chipClass: "bg-indigo-50 text-indigo-700 border-indigo-200/80",
+    textColor: "text-[#6366F1]",
   };
 }
 
@@ -903,7 +936,9 @@ function PreviewSeriesItem({
   const allEpisodes = getSeriesEpisodes(series);
   const genresList = series.genre ? series.genre.split(",").map((g) => g.trim()).filter(Boolean) : [];
 
-  const handleShareSeriesLink = async () => {
+  const handleShareSeriesLink = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     const handle = username || "creator";
     const shareUrl = typeof window !== "undefined"
       ? `${window.location.origin}/${handle}/series/${series.id}`
@@ -921,93 +956,120 @@ function PreviewSeriesItem({
     }
   };
 
+  const firstEp = allEpisodes[0];
+  const mainPlatform = firstEp ? getPlatformInfo(firstEp.platform, firstEp.externalUrl) : getPlatformInfo("YouTube");
+  const seriesLinkUrl = username ? `/${username}/series/${series.id}` : `#`;
+
   return (
     <div
       id={`series-${series.id}`}
-      className={`overflow-hidden rounded-2xl border transition-all duration-200 shadow-xs ${style.socialItemBg} ${style.socialItemBorder}`}
+      className="bg-white border border-[#E5E7EB] hover:border-[#6366F1] rounded-2xl p-3.5 sm:p-4 transition-all shadow-2xs text-left"
     >
-      <div onClick={onToggle} className="cursor-pointer select-none">
-        {/* Clean 16:9 Widescreen Cover Image Container (No Text Overlap Conflict) */}
-        <div className="relative w-full aspect-[16/9] overflow-hidden bg-slate-950 flex items-center justify-center border-b border-slate-500/20">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3.5 sm:gap-4 w-full text-left">
+        {/* Compact 16:9 Landscape Poster Thumbnail (No Video Play Icon) */}
+        <div className="relative w-full sm:w-40 aspect-video rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center border border-gray-200 shrink-0">
           <SeriesPoster
             src={series.posterDataUrl}
             title={series.title}
-            className="h-full w-full object-cover"
-            textClassName="text-xs font-black text-purple-200"
+            className="h-full w-full object-cover transition-transform duration-300"
+            textClassName="text-[11px] font-bold text-indigo-200"
           />
 
-          {/* Top-Right Share Button */}
-          <div className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleShareSeriesLink();
-              }}
-              className="flex h-8 w-8 items-center justify-center rounded-xl bg-black/60 hover:bg-black/80 text-white backdrop-blur-md transition-all border border-white/20 shadow-xs"
-              title="Share Series Link"
-              aria-label="Share Series"
-            >
-              <Share2 className="h-4 w-4 stroke-[2.5]" />
-            </button>
+          {/* Episode Count Badge inside Thumbnail */}
+          <div className="absolute bottom-1.5 right-1.5 z-10">
+            <span className="bg-black/70 text-white text-[10px] font-medium px-2 py-0.5 rounded-md backdrop-blur-xs border border-white/10">
+              {allEpisodes.length} {allEpisodes.length === 1 ? "Ep" : "Eps"}
+            </span>
           </div>
         </div>
 
-        {/* Details Container Below Poster */}
-        <div className="p-3.5 sm:p-4 space-y-2 text-left">
-          {/* Title */}
-          <h3 className={`text-base sm:text-lg font-black leading-snug break-words ${style.nameColor}`}>
-            {series.title}
-          </h3>
+        {/* Series Info & Details on Right (Clean Left Alignment) */}
+        <div className="min-w-0 flex-1 space-y-1.5 text-left w-full">
+          <div className="flex items-center justify-between gap-2 text-left">
+            <h3 className="text-sm sm:text-base font-bold text-[#111827] leading-snug break-words text-left">
+              {series.title}
+            </h3>
 
-          {/* Micro-Badge Genre Chips */}
-          {genresList.length > 0 && (
-            <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
-              {genresList.map((g, idx) => (
-                <span
-                  key={idx}
-                  className="inline-flex items-center rounded-md border border-purple-200/60 bg-purple-50/60 px-2 py-0.5 text-[10px] font-extrabold text-purple-700"
-                >
-                  {g}
-                </span>
-              ))}
+            {/* Action Icon Group: Share + View Page Icon Button */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              {/* Share Icon Button */}
+              <button
+                type="button"
+                onClick={handleShareSeriesLink}
+                className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 bg-white hover:bg-slate-50 text-gray-500 hover:text-[#6366F1] transition-colors cursor-pointer"
+                title="Share Series Link"
+                aria-label="Share Series"
+              >
+                <Share2 className="h-3.5 w-3.5" />
+              </button>
+
+              {/* View Page Icon Button (Next to Share button -> Opens Series Detail Page) */}
+              <Link
+                href={seriesLinkUrl}
+                className="flex h-7 w-7 items-center justify-center rounded-lg border border-indigo-200 bg-[#EEF2FF] hover:bg-indigo-100 text-[#6366F1] transition-colors cursor-pointer"
+                title="View Series Details Page"
+                aria-label="View Series Page"
+              >
+                <Eye className="h-3.5 w-3.5" />
+              </Link>
             </div>
-          )}
+          </div>
 
-          {/* Description if present */}
           {series.description && (
-            <p className={`text-xs font-medium leading-relaxed break-words opacity-75 ${expanded ? "" : "line-clamp-2"} ${style.bioColor}`}>
+            <p className="text-xs text-[#4B5563] font-medium leading-relaxed line-clamp-2 text-left">
               {series.description}
             </p>
           )}
 
-          {/* Bottom Row: Episode Count + Prominent Primary Watch Series CTA Button */}
-          <div className="pt-2 flex items-center justify-between border-t border-slate-200/20">
-            <span className={`text-xs font-black ${style.handleColor}`}>
-              🎬 {allEpisodes.length} {allEpisodes.length === 1 ? "Episode" : "Episodes"}
-            </span>
+          {/* Bottom Platform Tag & Multiple Genre Micro-Chips Next to Platform Info */}
+          <div className="pt-1.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-gray-100 text-left w-full">
+            <div className="flex flex-wrap items-center gap-1.5 min-w-0 text-left">
+              {/* Official Brand Color Platform Pill */}
+              <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[11px] font-bold ${mainPlatform.chipClass}`}>
+                <span className={`flex h-4 w-4 items-center justify-center rounded ${mainPlatform.badgeClass}`}>
+                  {mainPlatform.icon}
+                </span>
+                <span>{mainPlatform.name}</span>
+              </span>
 
+              <span className="text-[11px] text-gray-500 font-medium">
+                • {allEpisodes.length} {allEpisodes.length === 1 ? "Episode" : "Episodes"}
+              </span>
+
+              {genresList.length > 0 && (
+                <div className="flex flex-wrap items-center gap-1">
+                  {genresList.map((g, idx) => (
+                    <span key={idx} className="bg-[#EEF2FF] text-[#6366F1] text-[10px] font-medium px-2 py-0.5 rounded-md border border-[#E0E7FF]">
+                      {g}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Expand / Collapse Episode List Toggle Button */}
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggle?.();
-              }}
-              className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 px-3.5 py-1.5 text-xs font-extrabold text-white shadow-xs transition-all"
+              onClick={onToggle}
+              className="bg-[#6366F1] hover:bg-[#4F46E5] text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1 shadow-2xs shrink-0 cursor-pointer self-start sm:self-auto"
             >
-              <span>{expanded ? "Hide Episodes ↑" : "Watch Series →"}</span>
+              <span>{expanded ? "Hide Episodes ↑" : "View Episodes ↗"}</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Episodes Section */}
+      {/* Expanded Episodes List Drawer (In-line List Below Card) */}
       {expanded && allEpisodes.length > 0 && (
-        <div className={`p-3.5 sm:p-4 space-y-2.5 animate-in fade-in duration-200 border-t ${style.socialItemBorder}`}>
+        <div className="mt-3 pt-3 border-t border-gray-100 space-y-2 bg-[#F9FAFB] rounded-xl p-3 text-left">
+          <div className="flex items-center justify-between pb-1 text-left">
+            <span className="text-xs font-bold text-gray-700">Episodes Playlist ({allEpisodes.length})</span>
+            <span className="text-[10px] text-gray-500 font-medium">Click Watch to open video</span>
+          </div>
           <div className="space-y-2">
             {allEpisodes.map((ep) => {
               const plat = getPlatformInfo(ep.platform, ep.externalUrl);
-              const epNumStr = ep.episodeNumber < 10 ? `E0${ep.episodeNumber}` : `E${ep.episodeNumber}`;
+              const epNumStr = ep.episodeNumber < 10 ? `EP 0${ep.episodeNumber}` : `EP ${ep.episodeNumber}`;
               const epTitleStr = ep.title && ep.title.trim() ? ep.title : `Part ${ep.episodeNumber}`;
 
               return (
@@ -1016,23 +1078,29 @@ function PreviewSeriesItem({
                   href={ep.externalUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`group flex items-center justify-between rounded-xl border p-2.5 transition-all hover:scale-[1.01] ${style.socialItemBg} ${style.socialItemBorder}`}
+                  className="group flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white p-2.5 sm:p-3 transition-all hover:border-[#6366F1] shadow-2xs text-left"
                 >
-                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                    <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg shadow-2xs ${plat.badgeClass}`}>
-                      {plat.icon}
+                  <div className="flex items-center gap-3 min-w-0 flex-1 text-left">
+                    <span className="bg-[#EEF2FF] text-[#6366F1] font-bold text-[11px] px-2 py-1 rounded-md border border-[#E0E7FF] shrink-0">
+                      {epNumStr}
                     </span>
-                    <div className="min-w-0 text-left">
-                      <p className={`truncate text-xs font-extrabold ${style.socialNameColor}`}>
-                        {epNumStr} • {epTitleStr}
-                      </p>
-                      <p className={`truncate text-[10px] font-medium opacity-75 ${style.socialUnitColor}`}>
-                        {plat.name}
-                      </p>
-                    </div>
+                    <p className="truncate text-xs font-bold text-gray-900 group-hover:text-[#6366F1] transition-colors text-left">
+                      {epTitleStr}
+                    </p>
                   </div>
-                  <div className="flex items-center gap-1.5 shrink-0 ml-2">
-                    <ExternalLink className={`h-3.5 w-3.5 opacity-75 group-hover:opacity-100 transition-opacity ${style.socialNameColor}`} />
+
+                  {/* Right Side: Platform Brand Pill + Watch Button */}
+                  <div className="flex items-center gap-2 shrink-0 ml-2">
+                    <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[11px] font-bold ${plat.chipClass}`}>
+                      <span className={`flex h-3.5 w-3.5 items-center justify-center rounded ${plat.badgeClass}`}>
+                        {plat.icon}
+                      </span>
+                      <span>{plat.name}</span>
+                    </span>
+
+                    <span className="text-xs font-bold text-[#6366F1] group-hover:text-[#4F46E5] inline-flex items-center gap-1 bg-[#EEF2FF] border border-[#E0E7FF] px-3 py-1 rounded-lg transition-colors">
+                      <span>Watch ↗</span>
+                    </span>
                   </div>
                 </a>
               );

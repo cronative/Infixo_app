@@ -22,9 +22,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           </label>
         )}
         <div
-          className={`flex h-[52px] items-center rounded-2xl border px-4 shadow-xs transition-all focus-within:border-[#651FFF] focus-within:ring-4 focus-within:ring-purple-500/15 ${
-            rest.disabled ? "bg-slate-100/80 cursor-not-allowed text-slate-400 border-slate-200" : "bg-white"
-          } ${error ? "border-red-400 bg-red-50/10" : "border-[#E9E3F5]"}`}
+          className={`flex h-11 items-center rounded-xl border px-3.5 transition-colors focus-within:border-[#6366F1] focus-within:ring-1 focus-within:ring-[#6366F1] ${
+            rest.disabled ? "bg-slate-100 cursor-not-allowed text-slate-400 border-slate-200" : "bg-white"
+          } ${error ? "border-red-400 bg-red-50/10" : "border-slate-200"}`}
         >
           {leftIcon && <span className="mr-2 shrink-0 text-slate-400">{leftIcon}</span>}
           {prefix && (

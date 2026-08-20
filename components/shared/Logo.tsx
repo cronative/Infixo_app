@@ -86,18 +86,17 @@ export function Logo({
   const iconSize = { sm: "h-5 w-5", md: "h-6.5 w-6.5", lg: "h-8 w-8" }[size];
 
   const badgeStyles = {
-    gradient:
-      "bg-gradient-to-br from-[#782BFB] via-[#6512FA] to-[#500CD6] text-white shadow-md shadow-purple-600/35",
-    black: "bg-slate-900 text-white shadow-md shadow-slate-900/20",
-    white: "bg-white border border-slate-200 text-[#0F172A] shadow-sm",
-    brand: "bg-purple-100 text-[#651FFF] border border-purple-200",
+    gradient: "bg-[#6366F1] text-white",
+    black: "bg-slate-900 text-white",
+    white: "bg-white border border-slate-200 text-[#111827]",
+    brand: "bg-[#6366F1] text-white",
   }[variant];
 
   return (
-    <Link href={href} className="flex items-center gap-3 group cursor-pointer select-none">
+    <Link href={href} className="flex items-center gap-2.5 group cursor-pointer select-none">
       {/* Badge Squircle Container */}
       <div
-        className={`flex ${dims} items-center justify-center rounded-2xl ${badgeStyles} group-hover:scale-105 transition-all duration-200`}
+        className={`flex ${dims} items-center justify-center rounded-xl ${badgeStyles} transition-colors duration-200`}
       >
         {styleName === "universal-link-i" ? (
           <LogoUniversalLinkI className={iconSize} />
@@ -108,8 +107,9 @@ export function Logo({
 
       {/* Brand Name Text */}
       <span
-        className={`font-display ${text} font-black tracking-tight ${light ? "text-white" : "text-slate-900"
-          } group-hover:text-[#6512FA] transition-colors`}
+        className={`font-display ${text} font-bold tracking-tight ${
+          light ? "text-white" : "text-slate-900"
+        } group-hover:text-[#6366F1] transition-colors`}
       >
         Inflixo
       </span>

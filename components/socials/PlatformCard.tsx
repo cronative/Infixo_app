@@ -13,11 +13,7 @@ export function PlatformCard({
   children: ReactNode;
 }) {
   return (
-    <div className="rounded-[28px] border border-slate-200/80 bg-white p-6 shadow-xs transition-all hover:border-purple-200">
-      <div className="mb-4 flex items-center gap-3">
-        <div className={`flex h-10 w-10 items-center justify-center rounded-2xl ${accentClass} shadow-2xs`}>{icon}</div>
-        <p className="font-display text-base font-black text-slate-900">{name}</p>
-      </div>
+    <div className="bg-white border border-[#E5E7EB] rounded-xl p-5 shadow-2xs">
       <div className="space-y-3">{children}</div>
     </div>
   );

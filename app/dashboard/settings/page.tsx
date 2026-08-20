@@ -131,7 +131,7 @@ export default function DashboardSettingsPage() {
               href={`/${profile?.username}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-purple-200 bg-purple-600 px-3 py-1.5 text-xs font-black text-white hover:bg-purple-500 transition-all shadow-2xs"
+              className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-purple-200 bg-[#6366F1] px-3 py-1.5 text-xs font-black text-white hover:bg-[#4F46E5] transition-all shadow-2xs"
             >
               <span>Visit</span>
               <ExternalLink className="h-3.5 w-3.5" />

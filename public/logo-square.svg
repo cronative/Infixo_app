@@ -1,14 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-  <defs>
-    <linearGradient id="violetGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#782BFB" />
-      <stop offset="50%" stop-color="#6512FA" />
-      <stop offset="100%" stop-color="#500CD6" />
-    </linearGradient>
-  </defs>
-
   <!-- PURE 1:1 SHARP SQUARE BACKGROUND WITHOUT ROUNDED CORNERS -->
-  <rect width="1024" height="1024" fill="url(#violetGradient)"/>
+  <rect width="1024" height="1024" fill="#6366F1"/>
 
   <!-- Logo Content Group Centered -->
   <g transform="translate(112, 112) scale(8)">

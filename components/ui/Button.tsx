@@ -16,19 +16,19 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-[#651FFF] text-white shadow-md shadow-purple-600/20 hover:bg-[#500CD6] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed",
+    "bg-[#6366F1] text-white hover:bg-[#4F46E5] disabled:opacity-50 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed",
   secondary:
-    "bg-[#FAF9FF] text-[#0F172A] border border-[#E9E3F5] hover:bg-[#F6F0FF] hover:border-purple-300 active:scale-[0.98]",
+    "bg-slate-100 text-slate-900 border border-slate-200 hover:bg-slate-200",
   outline:
-    "bg-white text-[#0F172A] border border-[#E9E3F5] hover:border-[#651FFF]/40 hover:bg-[#FAF9FF] active:scale-[0.98]",
-  ghost: "bg-transparent text-[#651FFF] hover:bg-[#F6F0FF] active:scale-[0.98]",
-  danger: "bg-rose-50 text-rose-600 hover:bg-rose-100 active:scale-[0.98]",
+    "bg-white text-slate-900 border border-slate-200 hover:border-slate-300 hover:bg-slate-50",
+  ghost: "bg-transparent text-[#6366F1] hover:bg-purple-50",
+  danger: "bg-rose-50 text-rose-600 hover:bg-rose-100",
 };
 
 const sizeClasses: Record<Size, string> = {
-  sm: "h-10 px-4 text-xs font-bold rounded-xl gap-1.5 active:scale-[0.98]",
-  md: "h-[52px] px-5 text-sm font-bold rounded-2xl gap-2 active:scale-[0.98]",
-  lg: "h-[52px] px-6 text-sm sm:text-base font-bold rounded-full gap-2 active:scale-[0.98]",
+  sm: "h-9 px-3.5 text-xs font-bold rounded-xl gap-1.5",
+  md: "h-11 px-4.5 text-sm font-bold rounded-xl gap-2",
+  lg: "h-12 px-6 text-sm font-bold rounded-xl gap-2",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(

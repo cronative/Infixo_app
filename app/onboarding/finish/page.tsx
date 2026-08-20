@@ -2,15 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { PartyPopper, Copy, Share2, LayoutDashboard, ExternalLink, QrCode, Check, Sparkles } from "lucide-react";
-import { Logo } from "@/components/shared/Logo";
-import { Button } from "@/components/ui/Button";
+import { PartyPopper, Copy, Share2, LayoutDashboard, ExternalLink, Check, Sparkles } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { initials } from "@/utils/format";
 import { copyToClipboard } from "@/lib/copyToClipboard";
+import { OnboardingLayout } from "@/layouts/OnboardingLayout";
+import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
 
-const CONFETTI_COLORS = ["#7c3aed", "#d946ef", "#f59e0b", "#3b82f6", "#10b981", "#e6c583"];
+const CONFETTI_COLORS = ["#6366F1", "#d946ef", "#f59e0b", "#3b82f6", "#10b981", "#e6c583"];
 
 function ConfettiBurst() {
   const [pieces, setPieces] = useState<{ left: number; color: string; delay: number; rotate: number; scale: number }[]>([]);
@@ -47,18 +47,16 @@ function ConfettiBurst() {
   );
 }
 
-import { OnboardingLayout } from "@/layouts/OnboardingLayout";
-import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
-
 export default function FinishStepPage() {
   const router = useRouter();
-  const { profile, socials, totalAudience, theme } = useCreator();
+  const { profile, socials, totalAudience, theme, series } = useCreator();
   const { showToast } = useToast();
   const [copied, setCopied] = useState(false);
 
   const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
-  const profileUrl = `inflixo.com/${profile.username || "you"}`;
-  const fullUrl = `${origin}/${profile.username || "you"}`;
+  const handleStr = profile.username || "nikzios30";
+  const profileUrl = `inflixo.com/${handleStr}`;
+  const fullUrl = `${origin}/${handleStr}`;
 
   async function handleCopy() {
     const success = await copyToClipboard(fullUrl);
@@ -72,7 +70,7 @@ export default function FinishStepPage() {
   }
 
   async function handleShare() {
-    if (navigator.share) {
+    if (typeof navigator !== "undefined" && navigator.share) {
       try {
         await navigator.share({ title: profile.displayName || "Inflixo Profile", url: fullUrl });
       } catch {
@@ -86,87 +84,112 @@ export default function FinishStepPage() {
   return (
     <OnboardingLayout
       step="finish"
-      preview={<LivePreviewCard profile={profile} socials={socials} totalAudience={totalAudience} themeKey={theme} />}
+      preview={<LivePreviewCard profile={profile} socials={socials} totalAudience={totalAudience} themeKey={theme} series={series} />}
     >
       <div className="relative flex flex-col items-center justify-center overflow-hidden py-4">
         <ConfettiBurst />
 
         <div className="pop-in relative z-10 flex w-full max-w-md flex-col items-center text-center">
-          {/* Animated Celebration Icon / Avatar */}
+          {/* Circular Avatar Rendering */}
           <div className="relative mb-3">
             {profile.photoDataUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={profile.photoDataUrl}
                 alt={profile.displayName || "Creator"}
-                className="h-24 w-24 rounded-full object-cover ring-4 ring-inflixo-purple/30 shadow-xl"
+                className="w-20 h-20 rounded-full overflow-hidden object-cover aspect-square border-2 border-white shadow-md"
               />
             ) : (
               <div
-                className="flex h-24 w-24 items-center justify-center rounded-full text-2xl font-black text-white ring-4 ring-inflixo-purple/30 shadow-xl"
-                style={{ backgroundImage: "var(--gradient-premium)" }}
+                className="flex w-20 h-20 items-center justify-center rounded-full text-xl font-extrabold text-white border-2 border-white shadow-md bg-[#6366F1]"
               >
                 {initials(profile.displayName) || "IN"}
               </div>
             )}
             <div
-              className="absolute -bottom-1 -right-1 flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 text-white ring-4 ring-white shadow-md"
+              className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-white ring-2 ring-white shadow-md"
             >
-              <PartyPopper className="h-5 w-5" />
+              <PartyPopper className="h-4 w-4" />
             </div>
           </div>
 
-          <h1 className="mt-2 text-3xl font-extrabold leading-[1.15] tracking-tight text-inflixo-navy sm:text-4xl">
+          <h1 className="mt-2 text-3xl font-extrabold leading-[1.15] tracking-tight text-slate-900 sm:text-4xl">
             You&apos;re <span className="text-gradient-premium">Live on Inflixo</span> 🎉
           </h1>
-          <p className="mt-2 text-[15px] text-muted leading-relaxed">
-            Your creator profile is ready! Share your custom link in your bio across Instagram, YouTube, and TikTok.
+          <p className="mt-2 text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
+            Your creator profile is ready! Share your custom link across Instagram, YouTube, and WhatsApp.
           </p>
 
-          {/* Public Handle Box */}
-          <div 
-            className="mt-6 flex w-full items-center justify-between gap-3 rounded-2xl border border-inflixo-purple/30 bg-white p-3.5 shadow-sm transition-all hover:border-inflixo-purple/60"
-          >
+          {/* Clean Handle Box */}
+          <div className="mt-6 flex w-full items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white p-3.5 shadow-sm">
             <div className="flex items-center gap-2 min-w-0">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-inflixo-purple-light text-inflixo-purple">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-[#6366F1]">
                 <Sparkles className="h-4 w-4" />
               </span>
-              <span className="truncate text-sm font-extrabold text-inflixo-purple">{profileUrl}</span>
+              <span className="truncate text-sm font-bold text-slate-900">{profileUrl}</span>
             </div>
             <button
+              type="button"
               onClick={handleCopy}
-              className="tap-scale flex items-center gap-1.5 rounded-xl bg-inflixo-purple px-3 py-1.5 text-xs font-bold text-white hover:bg-inflixo-purple-dark transition-all"
+              className="tap-scale flex items-center gap-1.5 rounded-lg bg-[#6366F1] hover:bg-[#4F46E5] px-4 py-2 text-xs font-bold text-white transition-all cursor-pointer shrink-0"
             >
               {copied ? (
                 <>
                   <Check className="h-3.5 w-3.5 stroke-[3]" />
-                  Copied
+                  <span>Copied</span>
                 </>
               ) : (
                 <>
                   <Copy className="h-3.5 w-3.5" />
-                  Copy
+                  <span>Copy</span>
                 </>
               )}
             </button>
           </div>
 
-          {/* Action Buttons */}
-          <div className="mt-6 grid w-full grid-cols-2 gap-3">
-            <Button variant="outline" icon={<ExternalLink className="h-4 w-4" />} onClick={() => router.push(`/${profile.username || "you"}`)}>
-              View Profile
-            </Button>
-            <Button variant="secondary" icon={<Share2 className="h-4 w-4" />} onClick={handleShare}>
-              Share Profile
-            </Button>
+          {/* Action Buttons Hierarchy */}
+          <div className="mt-6 w-full space-y-3">
+            {/* Primary Action Button */}
+            <button
+              type="button"
+              onClick={() => router.push("/dashboard")}
+              className="tap-scale w-full flex items-center justify-center gap-2 rounded-xl bg-[#6366F1] hover:bg-[#4F46E5] text-white font-medium py-3.5 px-4 text-sm shadow-md transition-all cursor-pointer"
+            >
+              <LayoutDashboard className="h-4 w-4" />
+              <span>Go to Creator Dashboard →</span>
+            </button>
+
+            {/* Secondary Action Buttons Side-by-Side */}
+            <div className="grid grid-cols-2 gap-3 w-full">
+              <a
+                href={`/${handleStr}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-3 text-xs transition-colors cursor-pointer"
+              >
+                <ExternalLink className="h-3.5 w-3.5" />
+                <span>View Public Profile</span>
+              </a>
+
+              <button
+                type="button"
+                onClick={handleShare}
+                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-3 text-xs transition-colors cursor-pointer"
+              >
+                <Share2 className="h-3.5 w-3.5" />
+                <span>Share Profile</span>
+              </button>
+            </div>
           </div>
 
-          <Button fullWidth size="lg" className="mt-4 shadow-lg" icon={<LayoutDashboard className="h-4 w-4" />} onClick={() => router.push("/dashboard")}>
-            Go to Creator Dashboard
-          </Button>
+          {/* Summit 2027 Welcome Badge */}
+          <div className="mt-5 w-full rounded-xl border border-indigo-100 bg-indigo-50/60 p-3 text-center text-xs font-semibold text-indigo-950 shadow-2xs">
+            🎉 Creator Summit 2027 Mission: You are creator #4,821 of 10,000 on early access.
+          </div>
         </div>
       </div>
     </OnboardingLayout>
   );
 }
+
 

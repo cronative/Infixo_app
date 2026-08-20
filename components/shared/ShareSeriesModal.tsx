@@ -71,12 +71,12 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/10 pb-4">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white shadow-md">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#6366F1] text-white shadow-md">
               <Share2 className="h-4 w-4" />
             </div>
             <div>
               <h3 className="text-lg font-black text-white leading-tight">Share Series</h3>
-              <p className="text-xs text-slate-400 font-medium">Direct public URL for Reel captions & bio</p>
+              <p className="text-xs text-slate-400 font-medium">Direct public URL for Reel captions &amp; bio</p>
             </div>
           </div>
           <button
@@ -88,11 +88,11 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
         </div>
 
         {/* Series Title Badge */}
-        <div className="rounded-2xl border border-purple-500/30 bg-purple-950/40 p-3 flex items-center gap-3">
+        <div className="rounded-2xl border border-indigo-500/30 bg-indigo-950/40 p-3 flex items-center gap-3">
           <span className="text-lg">🎬</span>
           <div className="min-w-0 text-left">
-            <p className="text-xs font-black text-purple-200 truncate">{series.title}</p>
-            <p className="text-[10px] text-purple-300/80 font-medium truncate">inflixo.com/{handleStr}/series/{series.id}</p>
+            <p className="text-xs font-black text-indigo-200 truncate">{series.title}</p>
+            <p className="text-[10px] text-indigo-300/80 font-medium truncate">inflixo.com/{handleStr}/series/{series.id}</p>
           </div>
         </div>
 
@@ -104,11 +104,11 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
               type="text"
               readOnly
               value={seriesUrl}
-              className="flex-1 rounded-xl border border-white/15 bg-white/5 px-3.5 py-2 text-xs font-mono text-slate-200 select-all focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="flex-1 rounded-xl border border-white/15 bg-white/5 px-3.5 py-2 text-xs font-mono text-slate-200 select-all focus:outline-none focus:ring-2 focus:ring-[#6366F1]"
             />
             <button
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 px-4 py-2 text-xs font-black text-white shadow-md transition-all shrink-0"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#6366F1] hover:bg-[#4F46E5] px-4 py-2 text-xs font-black text-white shadow-md transition-all shrink-0"
             >
               {copiedLink ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               <span>{copiedLink ? "Copied" : "Copy"}</span>

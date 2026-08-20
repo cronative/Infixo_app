@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { AtSign } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { AtSign, Copy, ExternalLink, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { PlatformCard } from "@/components/socials/PlatformCard";
 import { ConnectedAccountCard } from "@/components/socials/ConnectedAccountCard";
@@ -14,6 +16,8 @@ import { FacebookFetcher } from "@/components/socials/FacebookFetcher";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { SocialDataConsentCard } from "@/components/socials/SocialDataConsentCard";
 import { authRepository } from "@/repositories/localRepository";
+import { AuthService } from "@/services/AuthService";
+import { copyToClipboard } from "@/lib/copyToClipboard";
 
 function extractUsername(url: string): string {
   if (!url) return "";
@@ -33,7 +37,8 @@ type ConfirmDisconnectModal = {
 } | null;
 
 export default function DashboardSocialsPage() {
-  const { socials, updateSocials } = useCreator();
+  const router = useRouter();
+  const { profile, socials, updateSocials } = useCreator();
   const { showToast } = useToast();
   const [submitting, setSubmitting] = useState(false);
   const [consentAccepted, setConsentAccepted] = useState(true);
@@ -51,6 +56,20 @@ export default function DashboardSocialsPage() {
   const isInstaConnected = Boolean(socials.instagram.url || socials.instagram.followers > 0 || instaConnectedHandle);
   const isYtConnected = Boolean(socials.youtube.url || socials.youtube.subscribers > 0 || ytConnectedHandle);
   const isFbConnected = Boolean(socials.facebook.url || socials.facebook.followers > 0 || fbConnectedHandle);
+
+  const handleStr = profile.username || "nikzios30";
+  const profileUrl = `inflixo.com/${handleStr}`;
+
+  async function handleCopyLink() {
+    const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
+    const fullLink = `${origin}/${handleStr}`;
+    const success = await copyToClipboard(fullLink);
+    if (success) {
+      showToast("Profile link copied! ✨");
+    } else {
+      showToast("Could not copy link", "error");
+    }
+  }
 
   function requireConsentBeforeAction(): boolean {
     if (!consentAccepted) {
@@ -75,7 +94,6 @@ export default function DashboardSocialsPage() {
     }
   }
 
-  // Triggered when user clicks "Remove Connection" on connected card
   function promptDisconnect(platform: "instagram" | "youtube" | "facebook") {
     const nameMap = { instagram: "Instagram", youtube: "YouTube", facebook: "Facebook" };
     const handleMap = { instagram: instaConnectedHandle, youtube: ytConnectedHandle, facebook: fbConnectedHandle };
@@ -104,7 +122,6 @@ export default function DashboardSocialsPage() {
         setDraftFb("");
       }
 
-      // Send DELETE to MySQL DB API
       if (email) {
         await fetch(`/api/creator/socials?email=${encodeURIComponent(email)}&platform=${platform}`, {
           method: "DELETE",
@@ -121,127 +138,190 @@ export default function DashboardSocialsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-3 sm:px-8 py-4 sm:py-8 space-y-5">
-      <div>
-        <h1 className="font-display text-2xl font-black text-inflixo-navy sm:text-3xl">Social Accounts</h1>
-        <p className="mt-1 text-sm text-muted">
-          Type your username, preview profile details, and confirm to link your social accounts to your live profile.
-        </p>
-      </div>
+    <div className="min-h-dvh bg-[#F9FAFB] text-slate-900 pb-16">
+      <div className="mx-auto max-w-3xl px-3 sm:px-6 py-4 sm:py-6 space-y-5">
+        
+        {/* Consistent Top Navigation Action Group */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
+          <div className="flex items-center gap-2 min-w-0">
+            <div>
+              <h1 className="font-display text-lg font-black text-slate-900 truncate">
+                Social Accounts
+              </h1>
+              <p className="text-xs text-slate-500 font-medium">
+                Manage your connected social profiles and live sync metrics.
+              </p>
+            </div>
+          </div>
 
-      <div className="space-y-6">
-        {/* INSTAGRAM PLATFORM */}
-        <PlatformCard icon={<InstagramIcon className="h-5 w-5 text-white" />} accentClass="bg-gradient-to-br from-pink-500 via-rose-500 to-orange-400" name="Instagram">
-          {isInstaConnected ? (
-            <ConnectedAccountCard
-              platform="instagram"
-              icon={<InstagramIcon className="h-5 w-5 text-white" />}
-              accentClass="bg-gradient-to-br from-pink-500 to-orange-400"
-              name="Instagram Profile"
-              handle={instaConnectedHandle}
-              displayName={socials.instagram.name}
-              isVerified={socials.instagram.isVerified}
-              count={socials.instagram.followers}
-              countLabel="Followers"
-              lastSyncedAt={socials.instagram.lastSyncedAt || socials.updatedAt}
-              onDisconnect={() => promptDisconnect("instagram")}
-            />
-          ) : (
-            <>
-              <Input
-                label="Instagram Username"
-                placeholder="e.g. username"
-                prefix="instagram.com/"
-                leftIcon={<AtSign className="h-4 w-4 text-pink-500" />}
-                value={draftInsta}
-                onChange={(e) => setDraftInsta(e.target.value.trim().replace(/^@/, ""))}
+          <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-1.5 text-xs font-bold text-[#6366F1] hover:bg-indigo-100 transition-colors cursor-pointer shrink-0"
+              title="Copy Profile Link"
+            >
+              <span>{profileUrl}</span>
+              <Copy className="h-3 w-3 opacity-70" />
+            </button>
+
+            <a
+              href={`/${handleStr}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white hover:bg-slate-50 px-3.5 py-1.5 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
+            >
+              <ExternalLink className="h-3.5 w-3.5 text-[#6366F1]" />
+              <span>View Live Profile ↗</span>
+            </a>
+
+            <button
+              type="button"
+              onClick={() => {
+                AuthService.logout();
+                router.push("/login");
+              }}
+              className="inline-flex items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              <span>Logout</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          {/* INSTAGRAM PLATFORM */}
+          <PlatformCard icon={<InstagramIcon className="h-5 w-5 text-white" />} accentClass="bg-gradient-to-br from-pink-500 via-rose-500 to-orange-400" name="Instagram">
+            {isInstaConnected ? (
+              <ConnectedAccountCard
+                platform="instagram"
+                icon={<InstagramIcon className="h-5 w-5 text-white" />}
+                accentClass="bg-gradient-to-br from-pink-500 to-orange-400"
+                name="Instagram Profile"
+                handle={instaConnectedHandle}
+                displayName={socials.instagram.name}
+                isVerified={socials.instagram.isVerified}
+                count={socials.instagram.followers}
+                countLabel="Followers"
+                lastSyncedAt={socials.instagram.lastSyncedAt || socials.updatedAt}
+                onDisconnect={() => promptDisconnect("instagram")}
               />
-              <InstagramFetcher username={draftInsta} onBeforeFetch={requireConsentBeforeAction} />
-            </>
-          )}
-        </PlatformCard>
+            ) : (
+              <>
+                <div className="mb-2 flex items-center gap-2.5">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 via-rose-500 to-orange-400 text-white">
+                    <InstagramIcon className="h-4 w-4" />
+                  </div>
+                  <p className="font-display text-sm font-bold text-slate-900">Instagram</p>
+                </div>
+                <Input
+                  label="Instagram Username"
+                  placeholder="e.g. username"
+                  prefix="instagram.com/"
+                  leftIcon={<AtSign className="h-4 w-4 text-pink-500" />}
+                  value={draftInsta}
+                  onChange={(e) => setDraftInsta(e.target.value.trim().replace(/^@/, ""))}
+                />
+                <InstagramFetcher username={draftInsta} onBeforeFetch={requireConsentBeforeAction} />
+              </>
+            )}
+          </PlatformCard>
 
-        {/* YOUTUBE PLATFORM */}
-        <PlatformCard icon={<YoutubeIcon className="h-5 w-5 text-white" />} accentClass="bg-red-600" name="YouTube Channel">
-          {isYtConnected ? (
-            <ConnectedAccountCard
-              platform="youtube"
-              icon={<YoutubeIcon className="h-5 w-5 text-white" />}
-              accentClass="bg-red-600"
-              name="YouTube Channel"
-              handle={ytConnectedHandle}
-              displayName={socials.youtube.channelTitle}
-              isVerified={socials.youtube.isVerified}
-              count={socials.youtube.subscribers}
-              countLabel="Subscribers"
-              lastSyncedAt={socials.youtube.lastSyncedAt || socials.updatedAt}
-              onDisconnect={() => promptDisconnect("youtube")}
-            />
-          ) : (
-            <>
-              <Input
-                label="YouTube Channel Handle"
-                placeholder="e.g. channelname"
-                prefix="youtube.com/@"
-                leftIcon={<AtSign className="h-4 w-4 text-red-500" />}
-                value={draftYt}
-                onChange={(e) => setDraftYt(e.target.value.trim().replace(/^@/, ""))}
+          {/* YOUTUBE PLATFORM */}
+          <PlatformCard icon={<YoutubeIcon className="h-5 w-5 text-white" />} accentClass="bg-red-600" name="YouTube Channel">
+            {isYtConnected ? (
+              <ConnectedAccountCard
+                platform="youtube"
+                icon={<YoutubeIcon className="h-5 w-5 text-white" />}
+                accentClass="bg-red-600"
+                name="YouTube Channel"
+                handle={ytConnectedHandle}
+                displayName={socials.youtube.channelTitle}
+                isVerified={socials.youtube.isVerified}
+                count={socials.youtube.subscribers}
+                countLabel="Subscribers"
+                lastSyncedAt={socials.youtube.lastSyncedAt || socials.updatedAt}
+                onDisconnect={() => promptDisconnect("youtube")}
               />
-              <YoutubeFetcher handle={draftYt} onBeforeFetch={requireConsentBeforeAction} />
-            </>
-          )}
-        </PlatformCard>
+            ) : (
+              <>
+                <div className="mb-2 flex items-center gap-2.5">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-red-600 text-white">
+                    <YoutubeIcon className="h-4 w-4" />
+                  </div>
+                  <p className="font-display text-sm font-bold text-slate-900">YouTube Channel</p>
+                </div>
+                <Input
+                  label="YouTube Channel Handle"
+                  placeholder="e.g. channelname"
+                  prefix="youtube.com/@"
+                  leftIcon={<AtSign className="h-4 w-4 text-red-500" />}
+                  value={draftYt}
+                  onChange={(e) => setDraftYt(e.target.value.trim().replace(/^@/, ""))}
+                />
+                <YoutubeFetcher handle={draftYt} onBeforeFetch={requireConsentBeforeAction} />
+              </>
+            )}
+          </PlatformCard>
 
-        {/* FACEBOOK PLATFORM */}
-        <PlatformCard icon={<FacebookIcon className="h-5 w-5 text-white" />} accentClass="bg-blue-600" name="Facebook Page">
-          {isFbConnected ? (
-            <ConnectedAccountCard
-              platform="facebook"
-              icon={<FacebookIcon className="h-5 w-5 text-white" />}
-              accentClass="bg-blue-600"
-              name="Facebook Page"
-              handle={fbConnectedHandle}
-              displayName={socials.facebook.name}
-              isVerified={socials.facebook.isVerified}
-              count={socials.facebook.followers}
-              countLabel="Page Followers"
-              lastSyncedAt={socials.facebook.lastSyncedAt || socials.updatedAt}
-              onDisconnect={() => promptDisconnect("facebook")}
-            />
-          ) : (
-            <>
-              <Input
-                label="Facebook Page Username"
-                placeholder="e.g. pagename"
-                prefix="facebook.com/"
-                leftIcon={<AtSign className="h-4 w-4 text-blue-600" />}
-                value={draftFb}
-                onChange={(e) => setDraftFb(e.target.value.trim().replace(/^@/, ""))}
+          {/* FACEBOOK PLATFORM */}
+          <PlatformCard icon={<FacebookIcon className="h-5 w-5 text-white" />} accentClass="bg-blue-600" name="Facebook Page">
+            {isFbConnected ? (
+              <ConnectedAccountCard
+                platform="facebook"
+                icon={<FacebookIcon className="h-5 w-5 text-white" />}
+                accentClass="bg-blue-600"
+                name="Facebook Page"
+                handle={fbConnectedHandle}
+                displayName={socials.facebook.name}
+                isVerified={socials.facebook.isVerified}
+                count={socials.facebook.followers}
+                countLabel="Page Followers"
+                lastSyncedAt={socials.facebook.lastSyncedAt || socials.updatedAt}
+                onDisconnect={() => promptDisconnect("facebook")}
               />
-              <FacebookFetcher username={draftFb} onBeforeFetch={requireConsentBeforeAction} />
-            </>
-          )}
-        </PlatformCard>
+            ) : (
+              <>
+                <div className="mb-2 flex items-center gap-2.5">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-600 text-white">
+                    <FacebookIcon className="h-4 w-4" />
+                  </div>
+                  <p className="font-display text-sm font-bold text-slate-900">Facebook Page</p>
+                </div>
+                <Input
+                  label="Facebook Page Username"
+                  placeholder="e.g. pagename"
+                  prefix="facebook.com/"
+                  leftIcon={<AtSign className="h-4 w-4 text-blue-600" />}
+                  value={draftFb}
+                  onChange={(e) => setDraftFb(e.target.value.trim().replace(/^@/, ""))}
+                />
+                <FacebookFetcher username={draftFb} onBeforeFetch={requireConsentBeforeAction} />
+              </>
+            )}
+          </PlatformCard>
 
-        {/* Public Data Scraping Consent Notice Card */}
-        <SocialDataConsentCard
-          accepted={consentAccepted || isInstaConnected || isYtConnected || isFbConnected}
-          onToggle={handleConsentToggle}
-          disabled={isInstaConnected || isYtConnected || isFbConnected}
+          {/* Authorization Consent Card */}
+          <SocialDataConsentCard
+            accepted={consentAccepted || isInstaConnected || isYtConnected || isFbConnected}
+            onToggle={handleConsentToggle}
+            disabled={isInstaConnected || isYtConnected || isFbConnected}
+          />
+        </div>
+
+        {/* Disconnect Confirmation Modal */}
+        <ConfirmModal
+          isOpen={Boolean(disconnectModal)}
+          onClose={() => setDisconnectModal(null)}
+          onConfirm={executeDisconnect}
+          loading={submitting}
+          title={disconnectModal?.title || "Remove Connection"}
+          description={disconnectModal?.description || ""}
+          confirmText="Yes, Remove Connection"
+          cancelText="Cancel"
         />
       </div>
-
-      {/* Disconnect Confirmation Modal */}
-      <ConfirmModal
-        isOpen={Boolean(disconnectModal)}
-        onClose={() => setDisconnectModal(null)}
-        onConfirm={executeDisconnect}
-        loading={submitting}
-        title={disconnectModal?.title || "Remove Connection"}
-        description={disconnectModal?.description || ""}
-        confirmText="Yes, Remove Connection"
-        cancelText="Cancel"
-      />
     </div>
   );
 }
+

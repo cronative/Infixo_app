@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Layers, SkipForward, Sparkles } from "lucide-react";
+import { Layers, SkipForward, Sparkles, Film, Play, ArrowRight } from "lucide-react";
 import { OnboardingLayout } from "@/layouts/OnboardingLayout";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { PhotoUpload } from "@/components/ui/PhotoUpload";
 import { SeriesService } from "@/services/SeriesService";
 import { OnboardingService } from "@/services/OnboardingService";
-import { EpisodePlatform } from "@/types";
+import { EpisodePlatform, Series } from "@/types";
 import { useToast } from "@/contexts/ToastContext";
 import { scrollToFirstError } from "@/utils/scroll";
 import { useCreator } from "@/contexts/CreatorContext";
@@ -20,12 +20,6 @@ import { LanguageSelect } from "@/components/ui/LanguageSelect";
 import { YoutubeIcon, InstagramIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 
 type Mode = "choice" | "creating" | "skipped";
-
-const PLATFORM_ICONS: Record<EpisodePlatform, React.ReactNode> = {
-  YouTube: <YoutubeIcon className="h-3.5 w-3.5 text-red-500" />,
-  Instagram: <InstagramIcon className="h-3.5 w-3.5 text-pink-500" />,
-  Facebook: <FacebookIcon className="h-3.5 w-3.5 text-blue-600" />,
-};
 
 export default function SeriesStepPage() {
   const router = useRouter();
@@ -85,47 +79,52 @@ export default function SeriesStepPage() {
     }
   }
 
-  const { profile, socials, totalAudience, theme } = useCreator();
+  const { profile, socials, totalAudience, theme, series } = useCreator();
+
+  // Create active draft series array for live phone preview sync
+  const draftSeries: Series[] = title.trim() || poster
+    ? [
+        {
+          id: "draft-1",
+          title: title.trim() || "My New Series",
+          posterDataUrl: poster,
+          description: description.trim() || "Series description preview",
+          genre: genre || "Entertainment",
+          language: language || "English",
+          seasons: [],
+          createdAt: new Date().toISOString(),
+        },
+      ]
+    : series && series.length > 0
+    ? series
+    : [
+        {
+          id: "preview-1",
+          title: "My First Series",
+          posterDataUrl: null,
+          description: "Add your episodes anytime after setup!",
+          genre: "Entertainment",
+          language: "English",
+          seasons: [],
+          createdAt: new Date().toISOString(),
+        },
+      ];
 
   const preview = (
-    <div className="w-full flex flex-col items-center space-y-4">
-      <LivePreviewCard profile={profile} socials={socials} totalAudience={totalAudience} themeKey={theme} />
-      {title.trim() && (
-        <div className="w-[95%] mx-auto rounded-3xl border border-inflixo-border bg-white p-5 shadow-md">
-          <div className="flex gap-3">
-            {poster && (
-              <div className="h-24 w-16 shrink-0 overflow-hidden rounded-xl bg-inflixo-navy shadow-xs">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={poster} alt={title} className="h-full w-full object-cover" />
-              </div>
-            )}
-            <div className="min-w-0">
-              <p className="truncate font-bold text-inflixo-navy">{title}</p>
-              <p className="text-xs text-muted">{genre || "Genre"} · {language || "Language"}</p>
-              <p className="mt-1 line-clamp-2 text-xs text-muted">{description}</p>
-              <div className="mt-2 flex items-center gap-2">
-                <span className="inline-flex items-center gap-1 rounded-full bg-inflixo-purple-light px-2.5 py-0.5 text-[10px] font-bold text-inflixo-purple">
-                  {PLATFORM_ICONS[seriesPlatform]}
-                  {seriesPlatform}
-                </span>
-                <span className="text-xs font-semibold text-slate-500">
-                  Episodes added in Dashboard
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+    <LivePreviewCard
+      profile={profile}
+      socials={socials}
+      totalAudience={totalAudience}
+      themeKey={theme}
+      series={draftSeries}
+    />
   );
 
   return (
     <OnboardingLayout step="series" preview={preview}>
-      <div className="flex items-center justify-between mb-1">
-        <div className="flex items-center gap-2 text-xs font-bold text-inflixo-purple uppercase tracking-wider">
-          <Sparkles className="h-3.5 w-3.5 text-inflixo-purple" />
-          Step 4 • Show &amp; OTT Series
-        </div>
+      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-bold text-[#6366F1]">
+        <Sparkles className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+        <span>Step 4 of 6 • Series &amp; Episodes</span>
       </div>
 
       <h1 className="text-3xl font-extrabold leading-[1.15] tracking-tight text-inflixo-navy sm:text-4xl">
@@ -140,20 +139,17 @@ export default function SeriesStepPage() {
           <div className="grid gap-4 sm:grid-cols-2">
             <button
               onClick={() => setMode("creating")}
-              className="tap-scale group relative flex flex-col items-start gap-4 rounded-3xl border-2 border-inflixo-purple/40 bg-white p-6 text-left shadow-md transition-all hover:-translate-y-1 hover:border-inflixo-purple hover:shadow-xl"
+              className="tap-scale group relative flex flex-col items-start gap-4 rounded-3xl border-2 border-[#6366F1] bg-indigo-50/20 p-6 text-left shadow-md transition-all hover:-translate-y-1 hover:border-[#6366F1] hover:shadow-xl cursor-pointer"
             >
-              <div
-                className="flex h-12 w-12 items-center justify-center rounded-2xl text-white shadow-md transition-transform group-hover:scale-110"
-                style={{ backgroundImage: "var(--gradient-premium)" }}
-              >
-                <Layers className="h-6 w-6" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 border border-indigo-100 text-[#6366F1] shadow-xs group-hover:scale-105 transition-transform">
+                <Film className="h-6 w-6 text-[#6366F1]" />
               </div>
               <div>
-                <span className="inline-block rounded-full bg-inflixo-purple-light px-2.5 py-0.5 text-[10px] font-extrabold text-inflixo-purple mb-1">
+                <span className="inline-block rounded-full bg-indigo-100 px-2.5 py-0.5 text-[10px] font-extrabold text-[#6366F1] mb-1">
                   RECOMMENDED
                 </span>
-                <p className="text-lg font-black text-inflixo-navy">Create a Series</p>
-                <p className="mt-1 text-xs text-muted leading-relaxed">
+                <p className="text-lg font-black text-slate-900">Create a Series</p>
+                <p className="mt-1 text-xs text-slate-500 leading-relaxed">
                   Set up your series title, genres &amp; poster. You can add episodes anytime from your dashboard.
                 </p>
               </div>
@@ -161,17 +157,17 @@ export default function SeriesStepPage() {
 
             <button
               onClick={handleSkip}
-              className="tap-scale flex flex-col items-start gap-4 rounded-3xl border-2 border-inflixo-border bg-white p-6 text-left transition-all hover:-translate-y-1 hover:border-inflixo-purple/40"
+              className="tap-scale flex flex-col items-start gap-4 rounded-3xl border-2 border-slate-200 bg-white p-6 text-left transition-all hover:-translate-y-1 hover:border-slate-300 cursor-pointer"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-muted text-muted">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-500">
                 <SkipForward className="h-6 w-6" />
               </div>
               <div>
-                <span className="inline-block rounded-full bg-surface-muted px-2.5 py-0.5 text-[10px] font-extrabold text-muted mb-1">
+                <span className="inline-block rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-extrabold text-slate-500 mb-1">
                   OPTIONAL
                 </span>
-                <p className="text-lg font-black text-inflixo-navy">Skip for Now</p>
-                <p className="mt-1 text-xs text-muted leading-relaxed">
+                <p className="text-lg font-black text-slate-900">Skip for Now</p>
+                <p className="mt-1 text-xs text-slate-500 leading-relaxed">
                   You can create and manage series anytime later from your creator dashboard.
                 </p>
               </div>
@@ -183,20 +179,20 @@ export default function SeriesStepPage() {
       {mode === "creating" && (
         <div className="mt-6 space-y-6">
           {/* Card 1: Series Information */}
-          <div className="rounded-3xl border border-inflixo-border bg-white p-6 shadow-xs space-y-5">
+          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-xs space-y-5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <p className="text-sm font-extrabold text-inflixo-navy flex items-center gap-2">
-                <Layers className="h-4 w-4 text-inflixo-purple" />
+              <p className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                <Film className="h-4 w-4 text-[#6366F1]" />
                 Series Information
               </p>
-              <span className="text-[11px] font-bold text-inflixo-purple bg-inflixo-purple-light px-2.5 py-0.5 rounded-full">
+              <span className="text-[11px] font-bold text-[#6366F1] bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-100">
                 Step 4
               </span>
             </div>
 
             {/* Poster + Title & Platform Selector */}
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-                <PhotoUpload value={poster} onChange={setPoster} shape="landscape" label="Upload Series Landscape Poster" />
+              <PhotoUpload value={poster} onChange={setPoster} shape="landscape" label="Upload Series Landscape Poster" />
               <div className="w-full space-y-3" id="title">
                 <Input
                   label="Series title"
@@ -211,7 +207,7 @@ export default function SeriesStepPage() {
 
                 {/* Platform Selector Pills */}
                 <div>
-                  <label className="mb-1.5 block text-xs font-bold text-inflixo-navy">
+                  <label className="mb-1.5 block text-xs font-bold text-slate-900">
                     Social Platform for Series
                   </label>
                   <div className="grid grid-cols-3 gap-2">
@@ -222,13 +218,15 @@ export default function SeriesStepPage() {
                           key={p}
                           type="button"
                           onClick={() => setSeriesPlatform(p)}
-                          className={`tap-scale flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition-all ${
+                          className={`tap-scale flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition-all cursor-pointer ${
                             isSelected
-                              ? "border-inflixo-purple bg-inflixo-purple text-white shadow-xs"
-                              : "border-inflixo-border bg-slate-50 text-inflixo-navy hover:bg-slate-100"
+                              ? "border-[#6366F1] bg-[#6366F1] text-white shadow-xs"
+                              : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
                           }`}
                         >
-                          {PLATFORM_ICONS[p]}
+                          {p === "YouTube" && <YoutubeIcon className={`h-3.5 w-3.5 ${isSelected ? "text-white" : "text-red-500"}`} />}
+                          {p === "Instagram" && <InstagramIcon className={`h-3.5 w-3.5 ${isSelected ? "text-white" : "text-pink-500"}`} />}
+                          {p === "Facebook" && <FacebookIcon className={`h-3.5 w-3.5 ${isSelected ? "text-white" : "text-blue-600"}`} />}
                           <span>{p}</span>
                         </button>
                       );
@@ -273,9 +271,9 @@ export default function SeriesStepPage() {
             />
           </div>
 
-          {/* Info note regarding adding episodes later in Dashboard */}
-          <div className="rounded-2xl border border-purple-200/80 bg-gradient-to-r from-purple-50/60 to-indigo-50/60 p-4 text-left flex items-start gap-3 text-xs font-semibold text-purple-900 shadow-2xs">
-            <Sparkles className="h-4 w-4 text-purple-600 shrink-0 mt-0.5" />
+          {/* Bottom Early Access Note */}
+          <div className="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4 text-left flex items-start gap-3 text-xs font-semibold text-indigo-950 shadow-2xs">
+            <Sparkles className="h-4 w-4 text-[#6366F1] shrink-0 mt-0.5" />
             <div>
               <strong>Note:</strong> Episodes can be added anytime from your <strong>Creator Dashboard</strong>. Early Access allows up to 3 Series &amp; 5 Episodes per Series.
             </div>
@@ -284,7 +282,7 @@ export default function SeriesStepPage() {
       )}
 
       {/* Sticky Form Bottom Actions */}
-      <div className="sticky bottom-0 z-30 bg-white/95 backdrop-blur-md py-4 border-t border-slate-200/80 mt-8">
+      <div className="sticky bottom-0 z-30 bg-white/95 backdrop-blur-md py-3.5 border-t border-gray-100 -mx-4 sm:-mx-6 px-4 sm:px-6 mt-8">
         {mode === "creating" ? (
           <div className="flex items-center gap-3 w-full">
             <Button variant="outline" size="lg" onClick={() => setMode("choice")}>
@@ -299,8 +297,8 @@ export default function SeriesStepPage() {
             <Button variant="outline" size="lg" onClick={() => router.push("/onboarding/themes")}>
               Back
             </Button>
-            <Button fullWidth size="lg" variant="secondary" icon={<SkipForward className="h-4 w-4" />} onClick={handleSkip}>
-              Skip for Now →
+            <Button fullWidth size="lg" onClick={() => setMode("creating")} icon={<ArrowRight className="h-4 w-4" />}>
+              Continue to Series Setup →
             </Button>
           </div>
         )}
@@ -308,3 +306,4 @@ export default function SeriesStepPage() {
     </OnboardingLayout>
   );
 }
+

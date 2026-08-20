@@ -1,9 +1,9 @@
 "use client";
 
-import { Check, User, Share2, Palette, Tv, CreditCard } from "lucide-react";
+import { Check, User, Share2, Palette, Tv, CreditCard, CheckCircle2 } from "lucide-react";
 import { ONBOARDING_STEPS, OnboardingStep } from "@/types";
 
-const STEP_ICONS = [User, Share2, Palette, Tv, CreditCard];
+const STEP_ICONS = [User, Share2, Palette, Tv, CreditCard, CheckCircle2];
 
 export function ProgressSteps({ current }: { current: OnboardingStep }) {
   const currentIndex = ONBOARDING_STEPS.findIndex((s) => s.key === current);
@@ -14,7 +14,7 @@ export function ProgressSteps({ current }: { current: OnboardingStep }) {
       {/* Desktop: full step row with icons & smooth progress bar */}
       <div className="hidden items-center sm:flex">
         {ONBOARDING_STEPS.map((step, i) => {
-          const isDone = i < currentIndex;
+          const isDone = i < currentIndex || (current === "finish" && i === currentIndex);
           const isActive = i === currentIndex;
           const Icon = STEP_ICONS[i] || User;
 
@@ -26,7 +26,7 @@ export function ProgressSteps({ current }: { current: OnboardingStep }) {
                     isDone
                       ? "bg-inflixo-purple text-white shadow-sm"
                       : isActive
-                      ? "scale-110 text-white shadow-[0_0_16px_rgba(124,58,237,0.45)] ring-4 ring-inflixo-purple-light"
+                      ? "scale-110 text-white shadow-[0_0_16px_rgba(99,102,241,0.45)] ring-4 ring-inflixo-purple-light"
                       : "border border-inflixo-border bg-surface-muted text-muted"
                   }`}
                   style={isDone || isActive ? { backgroundImage: "var(--gradient-premium)" } : undefined}

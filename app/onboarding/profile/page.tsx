@@ -149,9 +149,9 @@ export default function ProfileStepPage() {
       step="profile"
       preview={<LivePreviewCard profile={profile} socials={socials} totalAudience={totalAudience} themeKey={theme} />}
     >
-      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-bold text-purple-700">
-        <Sparkles className="h-3.5 w-3.5 text-purple-600 shrink-0" />
-        <span>Step 1 of 5 • Profile Setup</span>
+      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-bold text-[#6366F1]">
+        <Sparkles className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+        <span>Step 1 of 6 • Profile Setup</span>
       </div>
 
       <h1 className="text-2xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-3xl">
@@ -162,16 +162,17 @@ export default function ProfileStepPage() {
       </p>
 
       <div className="mt-6 space-y-5">
-        {/* 1. Compact Profile Photo Upload */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs transition-all hover:border-slate-300">
+        {/* 1. Compact Profile Photo Upload Card */}
+        <div className="rounded-2xl border border-[#E5E7EB] bg-white p-4 transition-all">
           <div className="flex items-center gap-4">
             <PhotoUpload
               value={profile.photoDataUrl}
               onChange={(v) => updateProfile({ photoDataUrl: v })}
               size={64}
+              label={profile.photoDataUrl ? "Change Profile Photo" : "Upload Profile Photo"}
             />
             <div className="text-xs space-y-0.5">
-              <p className="font-bold text-slate-900">Add profile photo</p>
+              <p className="font-bold text-slate-900">Upload Profile Photo</p>
               <p className="text-slate-500">Recommended square JPG or PNG</p>
             </div>
           </div>
@@ -218,7 +219,7 @@ export default function ProfileStepPage() {
           />
           {profile.username && usernameStatus?.available && (
             <p className="mt-1 text-xs text-slate-500">
-              Your public handle: <span className="font-bold text-purple-600">@{profile.username}</span>
+              Your public handle: <span className="font-bold text-[#6366F1]">@{profile.username}</span>
             </p>
           )}
         </div>
@@ -252,21 +253,21 @@ export default function ProfileStepPage() {
         )}
 
         {/* 6. Short Bio + Compact Suggest Action */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs space-y-2">
+        <div className="rounded-2xl border border-[#E5E7EB] bg-white p-4 space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-              <FileText className="h-3.5 w-3.5 text-purple-600" />
+            <label className="text-xs font-bold uppercase tracking-wider text-[#64748B] flex items-center gap-1.5">
+              <FileText className="h-3.5 w-3.5 text-[#6366F1]" />
               <span>Short Bio</span>
             </label>
 
-            {/* Inline Action ✨ Suggest Bio */}
+            {/* Flat Lightweight Pill Button for ✨ Suggest Bio */}
             <button
               type="button"
               onClick={handleSuggestBio}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-purple-600 hover:text-purple-700 bg-purple-50 hover:bg-purple-100 px-2.5 py-1 rounded-full border border-purple-200 transition-all active:scale-95"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#6366F1] hover:text-[#4F46E5] bg-purple-50 hover:bg-purple-100 px-2.5 py-1 rounded-full border border-purple-200 transition-colors cursor-pointer"
             >
-              <Sparkles className="h-3.5 w-3.5 text-purple-600" />
-              <span>Suggest bio</span>
+              <Sparkles className="h-3.5 w-3.5 text-[#6366F1]" />
+              <span>✨ Suggest bio</span>
             </button>
           </div>
 
@@ -279,14 +280,20 @@ export default function ProfileStepPage() {
             onChange={(e) => updateProfile({ bio: e.target.value })}
           />
 
-          <div className="flex justify-end text-[11px] text-slate-400">
+          <div className="flex justify-end text-[11px] text-slate-400 font-medium">
             {profile.bio.length} / 160
           </div>
         </div>
 
-        {/* Sticky Mobile/Desktop Bottom CTA */}
-        <div className="sticky bottom-0 z-30 bg-white/95 backdrop-blur-md py-3.5 border-t border-slate-200 -mx-5 sm:-mx-8 px-5 sm:px-8 mt-8 shadow-lg">
-          <Button fullWidth size="lg" loading={submitting} onClick={handleNext}>
+        {/* Form Bottom CTA Button Flow (Inline & Non-overlapping) */}
+        <div className="pt-4 border-t border-[#E5E7EB] mt-8">
+          <Button
+            fullWidth
+            size="lg"
+            loading={submitting}
+            onClick={handleNext}
+            className="bg-[#6366F1] hover:bg-[#4F46E5] text-white font-bold h-12 text-sm rounded-xl cursor-pointer shadow-none"
+          >
             Save &amp; Next →
           </Button>
         </div>

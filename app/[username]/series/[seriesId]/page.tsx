@@ -24,28 +24,36 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   if (p.includes("youtube") || u.includes("youtube.com") || u.includes("youtu.be")) {
     return {
       name: "YouTube",
-      icon: <YoutubeIcon className="h-4 w-4 text-white" />,
-      badgeClass: "bg-red-600 text-white shadow-xs",
+      icon: <YoutubeIcon className="h-3.5 w-3.5 text-white" />,
+      badgeClass: "bg-red-600 text-white shadow-2xs",
+      chipClass: "bg-red-50 text-red-700 border-red-200/80",
+      textColor: "text-red-600",
     };
   }
   if (p.includes("instagram") || u.includes("instagram.com")) {
     return {
       name: "Instagram",
-      icon: <InstagramIcon className="h-4 w-4 text-white" />,
-      badgeClass: "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white shadow-xs",
+      icon: <InstagramIcon className="h-3.5 w-3.5 text-white" />,
+      badgeClass: "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white shadow-2xs",
+      chipClass: "bg-rose-50 text-rose-700 border-rose-200/80",
+      textColor: "text-rose-600",
     };
   }
   if (p.includes("facebook") || u.includes("facebook.com")) {
     return {
       name: "Facebook",
-      icon: <FacebookIcon className="h-4 w-4 text-white" />,
-      badgeClass: "bg-blue-600 text-white shadow-xs",
+      icon: <FacebookIcon className="h-3.5 w-3.5 text-white" />,
+      badgeClass: "bg-blue-600 text-white shadow-2xs",
+      chipClass: "bg-blue-50 text-blue-700 border-blue-200/80",
+      textColor: "text-blue-600",
     };
   }
   return {
     name: platformStr || "Web",
-    icon: <Film className="h-4 w-4 text-white" />,
-    badgeClass: "bg-purple-600 text-white shadow-xs",
+    icon: <Film className="h-3.5 w-3.5 text-white" />,
+    badgeClass: "bg-[#6366F1] text-white shadow-2xs",
+    chipClass: "bg-indigo-50 text-indigo-700 border-indigo-200/80",
+    textColor: "text-[#6366F1]",
   };
 }
 
@@ -220,195 +228,158 @@ export default function SeriesDetailPage() {
   return (
     <div className={`min-h-dvh transition-colors duration-300 relative overflow-hidden ${pageBgStyle}`}>
       {series.posterDataUrl && (
-        <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-20 blur-3xl transition-opacity duration-700">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-15 blur-3xl transition-opacity duration-700">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={series.posterDataUrl} alt="" className="h-full w-full object-cover scale-150 transform" />
         </div>
       )}
 
-      <main className="relative z-10 mx-auto max-w-3xl px-2.5 sm:px-8 py-4 sm:py-10 space-y-5">
+      <main className="relative z-10 mx-auto max-w-3xl px-3 sm:px-8 py-6 sm:py-10 space-y-6 text-left">
+        {/* Navigation Header */}
         <div className="flex items-center justify-between gap-4">
           <Link
             href={`/${username}`}
-            className={`tap-scale inline-flex items-center gap-2 rounded-2xl border px-4 py-2 text-xs sm:text-sm font-black backdrop-blur-xl shadow-lg transition-all ${style.socialItemBg} ${style.socialItemBorder} ${style.nameColor}`}
+            className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white hover:bg-slate-50 px-4 py-2 text-xs sm:text-sm font-semibold text-slate-700 shadow-2xs transition-colors"
           >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Profile</span>
+            <ArrowLeft className="h-4 w-4 text-[#6366F1]" />
+            <span>← Back to Creator Profile</span>
           </Link>
 
           <button
             onClick={handleShare}
-            className="tap-scale inline-flex items-center gap-2 rounded-2xl border border-purple-400/40 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 px-4 py-2 text-xs sm:text-sm font-black text-white shadow-xl shadow-purple-950/50 transition-all"
+            className="inline-flex items-center gap-2 rounded-xl border border-indigo-100 bg-indigo-50 hover:bg-indigo-100 px-4 py-2 text-xs sm:text-sm font-bold text-[#6366F1] transition-colors cursor-pointer"
           >
             <Share2 className="h-4 w-4" />
             <span>Share Series</span>
           </button>
         </div>
 
-        {/* Cinema Showcase Card (Cover Image Starts Full Width at Top) */}
-        <div className={`relative overflow-hidden rounded-2xl sm:rounded-[32px] border shadow-2xl backdrop-blur-2xl transition-all duration-300 ${style.cardBg}`}>
-          
-          {/* Master 16:9 Full-Width Cinema Poster Banner Starting Right at Top */}
-          <div className="relative w-full aspect-[16/9] sm:aspect-[2.2/1] overflow-hidden bg-slate-950 flex items-center justify-center border-b border-white/10">
+        {/* 16:9 Landscape Cover Banner Header */}
+        <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-2xs space-y-4">
+          <div className="relative w-full aspect-video overflow-hidden bg-slate-950 flex items-center justify-center border-b border-gray-100">
             <SeriesPoster
               src={series.posterDataUrl}
               title={series.title}
               className="h-full w-full object-cover"
-              textClassName="text-sm font-black text-purple-200"
+              textClassName="text-sm font-bold text-indigo-200"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
-            
-            {/* Play Icon Overlay & Episode Count Badge */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md border border-white/30 shadow-2xl">
-                <Play className="h-6 w-6 fill-current text-white ml-1" />
-              </div>
-            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
-            <div className="absolute bottom-3 right-3 z-10">
-              <div className="flex items-center gap-1.5 rounded-full bg-black/70 backdrop-blur-md px-3 py-1 text-xs font-black text-white border border-white/20 shadow-md">
-                <Layers className="h-3.5 w-3.5 text-purple-400" />
-                <span>{allEpisodes.length} {allEpisodes.length === 1 ? "Episode" : "Episodes"}</span>
-              </div>
+            <div className="absolute top-3 left-3 z-10">
+              <span className="bg-black/60 text-white text-xs font-medium px-3 py-1 rounded-full backdrop-blur-sm border border-white/10 shadow-xs">
+                🎬 {allEpisodes.length} {allEpisodes.length === 1 ? "Episode" : "Episodes"}
+              </span>
             </div>
           </div>
 
-          {/* Card Body Details Padding */}
-          <div className="p-4 sm:p-8">
-            {/* Series Title & Unified Micro-Badges */}
-            <div className="space-y-3 text-left">
-              <h1 className={`font-display text-2xl sm:text-4xl font-black tracking-tight leading-tight ${style.nameColor}`}>
-                {series.title}
-              </h1>
+          <div className="p-5 sm:p-6 space-y-3 text-left">
+            <h1 className="font-display text-xl sm:text-3xl font-bold text-slate-900 leading-tight text-left">
+              {series.title}
+            </h1>
 
-              {/* Micro Badges: Genre • Language • Season Count • Content Rating */}
-              <div className="flex flex-wrap items-center gap-2 text-xs font-extrabold opacity-90">
-                {series.genre && (
-                  <span className={`rounded-lg border px-2.5 py-1 ${style.socialItemBg} ${style.socialItemBorder} ${style.nameColor}`}>
-                    🎬 {series.genre.split(",")[0].trim()}
-                  </span>
-                )}
-                <span className={`rounded-lg border px-2.5 py-1 ${style.socialItemBg} ${style.socialItemBorder} ${style.nameColor}`}>
-                  🗣️ {series.language || "Hindi"}
-                </span>
-                <span className={`rounded-lg border px-2.5 py-1 ${style.socialItemBg} ${style.socialItemBorder} ${style.nameColor}`}>
-                  📺 {series.seasons.length} {series.seasons.length === 1 ? "Season" : "Seasons"} • {allEpisodes.length} {allEpisodes.length === 1 ? "Episode" : "Episodes"}
-                </span>
-                <span className={`rounded-lg border px-2.5 py-1 ${style.socialItemBg} ${style.socialItemBorder} ${style.nameColor}`}>
-                  🏷️ U/A 13+
-                </span>
-              </div>
+            {series.description && (
+              <p className="text-xs sm:text-sm font-medium text-slate-600 leading-relaxed text-left">
+                {series.description}
+              </p>
+            )}
 
-              {/* Full Story Synopsis / Description */}
-              {series.description && (
-                <p className={`text-sm sm:text-base font-medium leading-relaxed pt-1.5 opacity-85 ${style.bioColor}`}>
-                  {series.description}
-                </p>
-              )}
-            </div>
+            {/* Platform, Language & Multiple Genre Chips together on bottom line */}
+            <div className="pt-2 flex flex-wrap items-center gap-1.5 border-t border-gray-100 text-left">
+              <span className="bg-gray-100 text-gray-700 text-xs font-medium px-2.5 py-0.5 rounded-md border border-gray-200">
+                Language: {series.language || "Hindi"}
+              </span>
 
-            {/* Consistent Divider & Episodes Playlist Stream */}
-            <div className="my-6 pt-6 border-t border-slate-500/20 space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className={`text-base sm:text-lg font-black flex items-center gap-2 ${style.nameColor}`}>
-                  <Play className="h-4 w-4 text-purple-500 fill-current" />
-                  <span>Watch Episodes ({allEpisodes.length})</span>
-                </h2>
-              </div>
-
-              {allEpisodes.length === 0 ? (
-                <p className={`text-xs font-semibold opacity-75 ${style.bioColor}`}>No episodes added to this series yet.</p>
-              ) : (
-                <div className="space-y-3">
-                  {allEpisodes.map((ep) => {
-                    const plat = getPlatformInfo(ep.platform, ep.externalUrl);
-                    const epNumStr = ep.episodeNumber < 10 ? `E0${ep.episodeNumber}` : `E${ep.episodeNumber}`;
-                    const epTitleStr = ep.title && ep.title.trim() ? ep.title : `Part ${ep.episodeNumber}`;
-
-                    return (
-                      <a
-                        key={ep.id}
-                        href={ep.externalUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`group flex items-center justify-between rounded-2xl border p-3.5 transition-all hover:scale-[1.01] hover:border-purple-400/60 ${style.socialItemBg} ${style.socialItemBorder}`}
-                      >
-                        <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                          {ep.thumbnailDataUrl ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={ep.thumbnailDataUrl}
-                              alt={epTitleStr}
-                              className="h-12 w-20 shrink-0 rounded-xl object-cover border border-white/20 shadow-xs"
-                            />
-                          ) : (
-                            <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-md ${plat.badgeClass}`}>
-                              {plat.icon}
-                            </span>
-                          )}
-
-                          <div className="min-w-0 text-left">
-                            <p className={`truncate text-sm font-black ${style.socialNameColor}`}>
-                              {epNumStr} • {epTitleStr}
-                            </p>
-                            {ep.description ? (
-                              <p className={`truncate text-xs font-medium opacity-75 mt-0.5 ${style.socialUnitColor}`}>
-                                {ep.description}
-                              </p>
-                            ) : (
-                              <p className={`truncate text-[10px] font-bold opacity-60 mt-0.5 ${style.socialUnitColor}`}>
-                                {plat.name} • Available to Stream
-                              </p>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 shrink-0 ml-3">
-                          <span className="tap-scale inline-flex items-center gap-1 rounded-xl bg-purple-600 hover:bg-purple-500 px-3.5 py-1.5 text-xs font-black text-white shadow-md transition-all">
-                            <Play className="h-3.5 w-3.5 fill-current" />
-                            <span>Watch</span>
-                          </span>
-                        </div>
-                      </a>
-                    );
-                  })}
+              {series.genre && (
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {series.genre.split(",").map((g, idx) => (
+                    <span key={idx} className="bg-[#EEF2FF] text-[#6366F1] text-xs font-medium px-2.5 py-0.5 rounded-md border border-[#E0E7FF]">
+                      Genre: {g.trim()}
+                    </span>
+                  ))}
                 </div>
               )}
             </div>
           </div>
         </div>
 
+        {/* Episode Playlist Stream (Direct External Redirection) */}
+        <div className="bg-white border border-gray-200 rounded-2xl p-5 sm:p-6 shadow-2xs space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+            <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <Layers className="h-4 w-4 text-[#6366F1]" />
+              <span>Episodes Playlist ({allEpisodes.length})</span>
+            </h2>
+            <span className="text-xs text-slate-500 font-medium">Click Watch to open video in new tab</span>
+          </div>
+
+          {allEpisodes.length === 0 ? (
+            <p className="text-xs font-medium text-slate-500 text-center py-6">No episodes added to this series yet.</p>
+          ) : (
+            <div className="space-y-3">
+              {allEpisodes.map((ep) => {
+                const plat = getPlatformInfo(ep.platform, ep.externalUrl);
+                const epNumStr = ep.episodeNumber < 10 ? `EP 0${ep.episodeNumber}` : `EP ${ep.episodeNumber}`;
+                const epTitleStr = ep.title && ep.title.trim() ? ep.title : `Part ${ep.episodeNumber}`;
+
+                return (
+                  <a
+                    key={ep.id}
+                    href={ep.externalUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white p-3.5 transition-all hover:border-[#6366F1] shadow-2xs hover:bg-slate-50/50 text-left"
+                  >
+                    <div className="flex items-center gap-3 min-w-0 flex-1 text-left">
+                      {/* EP Number Indigo Chip */}
+                      <span className="bg-[#EEF2FF] text-[#6366F1] font-bold text-xs px-2.5 py-1 rounded-md border border-[#E0E7FF] shrink-0">
+                        {epNumStr}
+                      </span>
+
+                      <p className="truncate text-xs sm:text-sm font-bold text-slate-900 group-hover:text-[#6366F1] transition-colors text-left">
+                        {epTitleStr}
+                      </p>
+                    </div>
+
+                    {/* Right Side: Platform Brand Pill + Watch Button */}
+                    <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+                      <span className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-bold ${plat.chipClass}`}>
+                        <span className={`flex h-4 w-4 items-center justify-center rounded ${plat.badgeClass}`}>
+                          {plat.icon}
+                        </span>
+                        <span>{plat.name}</span>
+                      </span>
+
+                      <span className="bg-[#6366F1] hover:bg-[#4F46E5] text-white text-xs font-semibold px-4 py-2 rounded-lg inline-flex items-center gap-1.5 transition-all shadow-none">
+                        <span>Watch on {plat.name} ↗</span>
+                      </span>
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
         {/* Creator Info Footer Card */}
-        <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 rounded-3xl border p-4 sm:p-6 shadow-xl backdrop-blur-xl ${style.cardBg}`}>
-          <div className="flex items-center gap-3.5 min-w-0">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl border border-gray-200 bg-white p-4 sm:p-5 shadow-2xs">
+          <div className="flex items-center gap-3 min-w-0">
             {creator?.photoDataUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={creator.photoDataUrl} alt={creator.displayName} className="h-12 w-12 rounded-full object-cover border-2 border-purple-400/40" />
+              <img src={creator.photoDataUrl} alt={creator.displayName} className="h-12 w-12 rounded-full object-cover border border-gray-200" />
             ) : (
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-white font-black text-lg">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#6366F1] text-white font-bold text-base">
                 {creator?.displayName ? creator.displayName[0].toUpperCase() : "C"}
               </div>
             )}
             <div className="min-w-0 text-left space-y-0.5">
-              <div className="flex items-center gap-2">
-                <p className={`truncate text-base font-black ${style.nameColor}`}>{creator?.displayName || username}</p>
-                <span className={`text-xs font-extrabold ${style.handleColor}`}>@{username}</span>
-              </div>
-              {Boolean(creator?.totalFanbase && creator.totalFanbase > 0) ? (
-                <div className={`flex items-center gap-1.5 text-xs font-bold ${style.bioColor}`}>
-                  <Users className="h-3.5 w-3.5 text-purple-400" />
-                  <span>Total Fanbase:</span>
-                  <span className={`font-extrabold ${style.nameColor}`}>{formatCount(creator!.totalFanbase!)}</span>
-                </div>
-              ) : (
-                <p className={`text-xs font-medium ${style.bioColor}`}>inflixo.com/{username}</p>
-              )}
+              <p className="truncate text-sm font-bold text-slate-900">{creator?.displayName || username}</p>
+              <p className="text-xs font-medium text-slate-500">inflixo.com/{username}</p>
             </div>
           </div>
 
           <Link
             href={`/${username}`}
-            className="tap-scale shrink-0 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 px-6 py-2.5 text-xs font-black text-white shadow-lg transition-all border border-purple-400/30"
+            className="shrink-0 rounded-xl bg-[#6366F1] hover:bg-[#4F46E5] px-5 py-2 text-xs font-semibold text-white transition-colors"
           >
             Visit Creator Profile →
           </Link>
@@ -417,3 +388,4 @@ export default function SeriesDetailPage() {
     </div>
   );
 }
+

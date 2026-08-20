@@ -152,9 +152,9 @@ export default function SocialsStepPage() {
       step="socials"
       preview={<LivePreviewCard profile={profile} socials={socials} totalAudience={totalAudience} themeKey={theme} />}
     >
-      <div className="flex items-center gap-2 text-xs font-bold text-inflixo-purple uppercase tracking-wider mb-1">
-        <Sparkles className="h-3.5 w-3.5" />
-        Step 2 • Social Handles
+      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-bold text-[#6366F1]">
+        <Sparkles className="h-3.5 w-3.5 text-[#6366F1] shrink-0" />
+        <span>Step 2 of 6 • Social Handles</span>
       </div>
 
       <h1 className="text-3xl font-extrabold leading-[1.15] tracking-tight text-inflixo-navy sm:text-4xl">
@@ -268,11 +268,11 @@ export default function SocialsStepPage() {
         </PlatformCard>
 
         {/* Step 2 Sticky Form Bottom Navigation (Back + Next) */}
-        <div className="sticky bottom-0 z-30 bg-white/95 backdrop-blur-md py-4 border-t border-slate-200/80 mt-6 flex items-center gap-3">
-          <Button variant="outline" size="lg" onClick={() => router.push("/onboarding/profile")}>
+        <div className="sticky bottom-0 z-40 bg-white py-4 border-t border-gray-100 mt-8 flex items-center gap-3">
+          <Button variant="outline" size="lg" className="rounded-xl border-gray-200 text-gray-700 hover:bg-gray-50" onClick={() => router.push("/onboarding/profile")}>
             Back
           </Button>
-          <Button fullWidth size="lg" loading={submitting} onClick={handleNext}>
+          <Button fullWidth size="lg" loading={submitting} onClick={handleNext} className="bg-[#6366F1] hover:bg-[#4F46E5] text-white font-medium py-3 rounded-xl shadow-none">
             Save &amp; Next →
           </Button>
         </div>

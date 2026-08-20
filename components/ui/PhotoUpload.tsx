@@ -16,7 +16,7 @@ export function PhotoUpload({
   value,
   onChange,
   shape = "circle",
-  size = 112,
+  size = 80,
   label,
   className = "",
 }: PhotoUploadProps) {
@@ -34,55 +34,45 @@ export function PhotoUpload({
   return (
     <div className="flex flex-col items-center sm:items-start gap-2">
       <div
-        className={`group relative flex shrink-0 items-center justify-center overflow-hidden border-2 border-dashed border-purple-300/80 bg-purple-50/50 shadow-xs transition-colors hover:border-purple-600 ${
+        className={`group relative flex shrink-0 items-center justify-center overflow-hidden border border-[#E5E7EB] bg-slate-50 shadow-xs transition-colors hover:border-[#6366F1] ${
           shape === "circle"
-            ? "rounded-full"
+            ? "w-20 h-20 rounded-full aspect-square overflow-hidden shrink-0"
             : shape === "landscape"
-            ? "w-48 sm:w-56 aspect-[2/1] rounded-2xl"
-            : "rounded-2xl"
+            ? "aspect-video w-44 rounded-xl"
+            : "w-20 h-20 rounded-2xl overflow-hidden"
         } ${className}`}
-        style={!isLandscape ? { width: size, height: size } : undefined}
+        style={!isLandscape && shape !== "circle" ? { width: size, height: size } : undefined}
       >
         {value ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={value} alt="Preview" className="h-full w-full object-cover" />
+          <img src={value} alt="Preview" className="w-full h-full object-cover aspect-square rounded-full overflow-hidden" />
         ) : (
           <div className="flex flex-col items-center justify-center gap-1 p-2 text-center text-slate-400">
             {isLandscape ? (
               <>
-                <Film className="h-6 w-6 text-purple-600" />
-                <span className="text-[10px] font-black text-purple-700 uppercase tracking-wider">Landscape Poster</span>
+                <Film className="h-5 w-5 text-[#6366F1]" />
+                <span className="text-[10px] font-bold text-[#6366F1] leading-tight">Upload Landscape Poster (16:9)</span>
               </>
             ) : (
-              <ImagePlus className="h-6 w-6 text-purple-600" />
+              <ImagePlus className="h-6 w-6 text-[#6366F1]" />
             )}
           </div>
         )}
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="absolute inset-0 flex items-center justify-center bg-slate-950/0 text-white opacity-0 transition-all group-hover:bg-slate-950/50 group-hover:opacity-100 cursor-pointer"
+          className="absolute inset-0 flex items-center justify-center bg-slate-950/40 text-white opacity-0 transition-all group-hover:opacity-100 cursor-pointer rounded-full"
           aria-label="Upload photo"
         >
           <Camera className="h-5 w-5" />
         </button>
-        {value && (
-          <button
-            type="button"
-            onClick={() => onChange(null)}
-            className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-slate-900/80 text-white shadow-md hover:bg-rose-600 transition-colors cursor-pointer"
-            aria-label="Remove photo"
-          >
-            <X className="h-3.5 w-3.5" />
-          </button>
-        )}
       </div>
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="text-xs font-extrabold text-purple-700 hover:text-purple-900 cursor-pointer"
+        className="bg-[#EEF2FF] text-[#6366F1] hover:bg-[#E0E7FF] text-xs font-semibold px-3 py-1.5 rounded-lg border border-[#E0E7FF] transition-colors cursor-pointer"
       >
-        {label ?? (value ? "Change poster" : "Upload poster preview")}
+        {label ?? (value ? (isLandscape ? "Change poster" : "Change Profile Photo") : (isLandscape ? "Upload poster preview" : "Upload Profile Photo"))}
       </button>
       <input
         ref={inputRef}
