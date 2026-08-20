@@ -16,17 +16,26 @@ export default function DashboardSubscriptionPage() {
   const episodeUsage = getTotalEpisodesUsage(series);
 
   return (
-    <div className="mx-auto max-w-5xl px-3 sm:px-6 py-4 sm:py-6 space-y-4 text-left">
-      <div>
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 px-2.5 py-0.5 text-xs font-bold mb-1.5">
-          <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
-          <span>EARLY ACCESS ACTIVE</span>
+    <div className="min-h-dvh bg-[#F9FAFB] text-slate-900 pb-16">
+      {/* Sticky Page Subheader */}
+      <div className="sticky top-0 z-30 bg-[#FAF8FA]/95 backdrop-blur-md border-b border-[#E8DCE4]/80 px-3 sm:px-6 py-3.5 shadow-2xs text-left mb-6">
+        <div className="mx-auto max-w-5xl flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="font-display text-base font-extrabold text-slate-900 truncate">
+              Subscription &amp; Plans
+            </h1>
+            <p className="text-xs text-slate-500 font-medium truncate">
+              Inflixo is currently in Early Access. All features and up to 3 Series are 100% free.
+            </p>
+          </div>
+          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 px-3 py-1 text-xs font-bold shrink-0">
+            <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
+            <span>EARLY ACCESS FREE</span>
+          </span>
         </div>
-        <h1 className="font-display text-xl font-bold text-slate-900">Subscription &amp; Plans</h1>
-        <p className="mt-0.5 text-xs text-slate-500 font-medium">
-          Inflixo is currently in Early Access. All features and up to 3 Series are 100% free.
-        </p>
       </div>
+
+      <div className="mx-auto max-w-5xl px-3 sm:px-6 space-y-5">
 
       {/* Current Active Plan Status Banner */}
       <div className="rounded-xl border border-slate-200 bg-white p-4">
@@ -67,5 +76,6 @@ export default function DashboardSubscriptionPage() {
         <PricingTable />
       </div>
     </div>
-  );
+  </div>
+);
 }

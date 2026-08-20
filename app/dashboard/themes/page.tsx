@@ -57,8 +57,8 @@ export default function DashboardThemesPage() {
   return (
     <div className="min-h-dvh bg-[#FCF9FB] text-slate-900 pb-16">
       {/* Sticky Page Subheader */}
-      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-200/80 px-4 sm:px-8 py-3.5 shadow-2xs text-left mb-6">
-        <div className="mx-auto max-w-7xl flex items-center justify-between gap-3">
+      <div className="sticky top-0 z-30 bg-[#FAF8FA]/95 backdrop-blur-md border-b border-[#E8DCE4]/80 px-3 sm:px-6 py-3.5 shadow-2xs text-left mb-6">
+        <div className="mx-auto max-w-5xl flex items-center justify-between gap-3">
           <div className="min-w-0">
             <h1 className="font-display text-base font-extrabold text-slate-900 truncate">
               Themes &amp; Styling
@@ -73,7 +73,7 @@ export default function DashboardThemesPage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-3 sm:px-6 space-y-5 text-left">
+      <div className="mx-auto max-w-5xl px-3 sm:px-6 space-y-5 text-left">
 
         {/* Main Grid: Left Theme Selector (5 cols) & Right Expanded Live Preview (7 cols) */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-start">

@@ -58,11 +58,22 @@ export default function DashboardSettingsPage() {
     : `https://inflixo.com/${profile?.username || "username"}`;
 
   return (
-    <div className="mx-auto max-w-2xl px-3 sm:px-8 py-4 sm:py-8 space-y-5 text-left">
-      <div>
-        <h1 className="font-display text-2xl font-black text-inflixo-navy">Account Settings</h1>
-        <p className="text-xs text-muted mt-1">Manage your account security, public profile URL, SEO preferences, and notification settings.</p>
+    <div className="min-h-dvh bg-[#F9FAFB] text-slate-900 pb-16">
+      {/* Sticky Page Subheader */}
+      <div className="sticky top-0 z-30 bg-[#FAF8FA]/95 backdrop-blur-md border-b border-[#E8DCE4]/80 px-3 sm:px-6 py-3.5 shadow-2xs text-left mb-6">
+        <div className="mx-auto max-w-5xl flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="font-display text-base font-extrabold text-slate-900 truncate">
+              Account Settings
+            </h1>
+            <p className="text-xs text-slate-500 font-medium truncate">
+              Manage your account security, public profile URL, SEO preferences, and notification settings
+            </p>
+          </div>
+        </div>
       </div>
+
+      <div className="mx-auto max-w-5xl px-3 sm:px-6 space-y-5 text-left">
 
       {/* 1. Account & Plan Summary Card */}
       <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-4">
@@ -299,6 +310,7 @@ export default function DashboardSettingsPage() {
           onClose={() => setActiveLegalModal(null)}
         />
       )}
+      </div>
     </div>
   );
 }
