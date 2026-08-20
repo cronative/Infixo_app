@@ -107,35 +107,46 @@ export default function DashboardOverviewPage() {
     <div className="min-h-dvh bg-[#F9FAFB] text-slate-900 pb-12">
       <div className="mx-auto max-w-5xl px-3 sm:px-6 py-4 sm:py-6 space-y-5">
         
-        {/* 1. Static Subheader (No heavy card border, direct canvas header) */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-[#E2E8F0] text-left">
-          {/* Left: Creator Greeting & Handle */}
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl font-extrabold text-[#0F172A] tracking-tight">
+        {/* 1. CLEAN TOP HEADER (No Duplicate Welcome Card) */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
+          <div className="flex items-center gap-2 min-w-0">
+            <h1 className="font-display text-lg font-black text-slate-900 truncate">
               Welcome back, {profile.displayName ? profile.displayName.split(" ")[0] : "Creator"} 👋
             </h1>
-            {/* Static Copy Handle Pill */}
+            {/* Handle Copy Pill */}
             <button
               type="button"
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#F6EBF1] hover:bg-rose-100/70 text-[#803D63] text-xs font-semibold rounded-full border border-[#E8DCE4] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-bold text-[#803D63] hover:bg-indigo-100 transition-colors cursor-pointer shrink-0"
               title="Copy Profile Link"
             >
               <span>{profileUrl}</span>
-              <Copy className="h-3.5 w-3.5 opacity-70" />
+              <Copy className="h-3 w-3 opacity-70" />
             </button>
           </div>
 
-          {/* Right: Direct Public Profile & Action Buttons */}
-          <div className="flex items-center gap-2.5 shrink-0 self-start sm:self-auto">
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
             <a
               href={`/${handleStr}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white hover:bg-slate-50 text-[#0F172A] text-xs font-semibold rounded-xl border border-[#E2E8F0] shadow-2xs transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white hover:bg-slate-50 px-3.5 py-1.5 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
             >
+              <ExternalLink className="h-3.5 w-3.5 text-[#803D63]" />
               <span>View Public Profile ↗</span>
             </a>
+            <button
+              type="button"
+              onClick={() => {
+                AuthService.logout();
+                router.push("/login");
+              }}
+              className="inline-flex items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              <span>Logout</span>
+            </button>
           </div>
         </div>
 

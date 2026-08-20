@@ -70,8 +70,11 @@ function Shell({ children }: { children: ReactNode }) {
       {/* Desktop Sidebar (Static / Fixed Left Side) */}
       <DashboardSidebar />
 
-      {/* Main Container (Independent Scrollable Main Viewport) */}
+      {/* Main Container (Static Header + Independent Scrollable Main) */}
       <div className="flex h-screen flex-1 flex-col overflow-hidden min-w-0">
+        {/* Desktop Top Header (Static / Fixed Top) */}
+        <DesktopTopHeader />
+
         {/* Mobile Navigation Header (Fixed Top) */}
         <DashboardMobileHeader onOpenDrawer={() => setDrawerOpen(true)} />
 
