@@ -1128,18 +1128,18 @@ export function PreviewSeriesItem({
       className="bg-white border border-[#E5E7EB] hover:border-[#803D63] rounded-2xl p-3.5 sm:p-4 transition-all shadow-2xs text-left"
     >
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3.5 sm:gap-4 w-full text-left">
-        {/* Compact 16:9 Landscape Poster Thumbnail (No Video Play Icon) */}
-        <div className="relative w-full sm:w-40 aspect-video rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center border border-gray-200 shrink-0">
+        {/* Widescreen 16:9 Netflix-Style Hero Poster Thumbnail */}
+        <div className="relative w-full sm:w-48 aspect-video rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center border border-gray-200 shrink-0 shadow-2xs">
           <SeriesPoster
             src={series.posterDataUrl}
             title={series.title}
-            className="h-full w-full object-cover transition-transform duration-300"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             textClassName="text-[11px] font-bold text-indigo-200"
           />
 
           {/* Episode Count Badge inside Thumbnail */}
           <div className="absolute bottom-1.5 right-1.5 z-10">
-            <span className="bg-black/70 text-white text-[10px] font-medium px-2 py-0.5 rounded-md backdrop-blur-xs border border-white/10">
+            <span className="bg-black/75 text-white text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-xs border border-white/10">
               {allEpisodes.length} {allEpisodes.length === 1 ? "Ep" : "Eps"}
             </span>
           </div>
@@ -1183,25 +1183,26 @@ export function PreviewSeriesItem({
             </p>
           )}
 
-          {/* Bottom Platform Tag & Multiple Genre Micro-Chips Next to Platform Info */}
-          <div className="pt-2 mt-1 flex flex-wrap items-center justify-between gap-2.5 border-t border-gray-100 text-left w-full">
-            <div className="flex flex-wrap items-center gap-1.5 min-w-0 text-left flex-1">
+          {/* Bottom Platform Tag & Single-Line Horizontal Genre Micro-Chips */}
+          <div className="pt-2 mt-1 flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 text-left w-full">
+            <div className="flex items-center gap-1.5 min-w-0 text-left flex-1 overflow-hidden">
               {/* Official Brand Color Platform Pill */}
-              <span className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-[11px] font-bold ${mainPlatform.chipClass}`}>
+              <span className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-[11px] font-bold shrink-0 ${mainPlatform.chipClass}`}>
                 <span className={`flex h-4 w-4 items-center justify-center rounded ${mainPlatform.badgeClass}`}>
                   {mainPlatform.icon}
                 </span>
                 <span>{mainPlatform.name}</span>
               </span>
 
-              <span className="text-[11px] text-gray-500 font-medium">
-                • {allEpisodes.length} {allEpisodes.length === 1 ? "Episode" : "Episodes"}
+              <span className="text-[11px] text-gray-500 font-medium shrink-0">
+                • {allEpisodes.length} {allEpisodes.length === 1 ? "Ep" : "Eps"}
               </span>
 
+              {/* Single Horizontal Line Wrapped Genre Chips */}
               {genresList.length > 0 && (
-                <div className="flex flex-wrap items-center gap-1">
+                <div className="flex items-center gap-1 overflow-x-auto no-scrollbar whitespace-nowrap max-w-full">
                   {genresList.map((g, idx) => (
-                    <span key={idx} className="bg-[#F6EBF1] text-[#803D63] text-[10px] font-medium px-2 py-0.5 rounded-md border border-[#E8DCE4]">
+                    <span key={idx} className="bg-[#F6EBF1] text-[#803D63] text-[10px] font-semibold px-2 py-0.5 rounded-md border border-[#E8DCE4] shrink-0">
                       {g}
                     </span>
                   ))}
@@ -1209,13 +1210,13 @@ export function PreviewSeriesItem({
               )}
             </div>
 
-            {/* Expand / Collapse Episode List Toggle Button (Non-Overlapping Flex Item) */}
+            {/* Compact Expand / Collapse Episode List Toggle Button */}
             <button
               type="button"
               onClick={onToggle}
-              className="bg-[#803D63] hover:bg-[#6D3254] text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors inline-flex items-center justify-center gap-1 shadow-2xs shrink-0 cursor-pointer relative z-10 ml-auto sm:ml-0"
+              className="bg-[#803D63] hover:bg-[#6D3254] text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition-colors inline-flex items-center justify-center gap-1 shadow-2xs shrink-0 cursor-pointer relative z-10 ml-auto sm:ml-0"
             >
-              <span>{expanded ? "Hide Episodes ↑" : "View Episodes ↗"}</span>
+              <span>{expanded ? "Hide Episodes ↑" : "View Episodes ↓"}</span>
             </button>
           </div>
         </div>
