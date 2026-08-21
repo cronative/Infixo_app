@@ -188,7 +188,7 @@ export default function LandingHomePage() {
 
               {/* Sub-headline */}
               <p className="text-base sm:text-lg font-medium text-[#4B5563] leading-relaxed">
-                Stop sending brands five different links and losing viewers between video parts. Unify your real fanbase across platforms and turn your uploads into bingeable OTT series—in one clean profile.
+                Your series parts are scattered across reels and uploads — viewers lose track after Part 1. Inflixo gives every series its own playlist-style page, and every brand deal one AI-synced link. Built for creators, not just links.
               </p>
 
               {/* Handle Claim & Interactive Generator Input */}
@@ -245,7 +245,7 @@ export default function LandingHomePage() {
                   Sharing separate links under-reports your scale. Inflixo aggregates your verified accounts into a live <strong className="text-[#111827] font-bold">Total Fanbase Counter</strong> and instant <strong className="text-[#803D63] font-bold">Rate Cards with Direct WhatsApp Lead Routing (0% Fee)</strong>.
                 </p>
 
-                <div className="space-y-2 pt-1 text-xs font-semibold text-[#111827]">
+                <div className="space-y-2 pt-1 text-xs sm:text-sm font-semibold text-[#111827]">
                   <div className="flex items-start gap-2">
                     <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5" />
                     <div>
@@ -255,7 +255,7 @@ export default function LandingHomePage() {
                   <div className="flex items-start gap-2">
                     <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5" />
                     <div>
-                      <strong className="text-[#111827]">Automated Multi-Platform Sync:</strong> Real-time follower and subscriber tracking.
+                      <strong className="text-[#111827]">AI-Powered Fanbase Sync:</strong> Add your accounts once — Inflixo&apos;s AI keeps your Instagram, YouTube, and Facebook numbers updated automatically, no manual entry.
                     </div>
                   </div>
                 </div>
@@ -445,23 +445,23 @@ export default function LandingHomePage() {
                 Zero Algorithm Drop-off
               </span>
               <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#111827] leading-tight">
-                Don&apos;t let Episode 2 get buried in social feeds.
+                Don&apos;t let Part 2 get lost in social feeds.
               </h2>
               <p className="text-sm sm:text-base font-medium text-[#4B5563] leading-relaxed">
-                You spent weeks producing a 4-part travel series, finance course, or filmmaking vlog, but social feeds scatter your episodes. Inflixo lets you build structured, multi-season web series with custom posters and numbered episodes. Fans binge your content sequentially without switching apps.
+                You spend weeks on a multi-part series — feeds scatter it into disconnected posts the moment you publish. Inflixo gives it one page, in order, like a playlist: Part 1 leads straight to Part 2, automatically. Custom posters, numbered episodes, and 1-tap playback keep viewers bingeing.
               </p>
 
               <div className="space-y-2 pt-2 text-xs sm:text-sm font-semibold text-[#111827]">
                 <div className="flex items-start gap-2">
                   <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5" />
                   <div>
-                    <strong className="text-[#111827]">Auto-Sequenced Episodes:</strong> Auto-numbered chapters with direct video embeds.
+                    <strong className="text-[#111827]">Playlist-Style Auto-Sequencing:</strong> Part 1 leads straight to Part 2 with 1-tap playback.
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5" />
                   <div>
-                    <strong className="text-[#111827]">Cross-Platform Support:</strong> Combine YouTube videos, Reels, and Facebook content in one series.
+                    <strong className="text-[#111827]">Cross-Platform Support:</strong> Unify YouTube videos, Instagram Reels, and Facebook episodes in one clean series.
                   </div>
                 </div>
               </div>
