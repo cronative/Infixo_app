@@ -37,8 +37,9 @@ export const EXPERT_DEMO_SOCIALS: SocialAccounts = {
   updatedAt: new Date().toISOString(),
 };
 
-export const EXPERT_DEMO_THEME: ThemeKey = "midnight";
+export const EXPERT_DEMO_THEME: ThemeKey = "minimal-white";
 
+// Strict Platform Monopoly: All episodes in a series strictly match that series's platform!
 export const EXPERT_DEMO_SERIES: Series[] = [
   {
     id: "ser_ai_revolution",
@@ -77,8 +78,8 @@ export const EXPERT_DEMO_SERIES: Series[] = [
             episodeNumber: 3,
             title: "Part 03: AI Hardware & NPU Smart Chips Breakdown",
             thumbnailDataUrl: null,
-            platform: "Instagram",
-            externalUrl: "https://www.instagram.com/reels/",
+            platform: "YouTube",
+            externalUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             description: "On-device AI chipsets vs cloud GPU clusters.",
           },
           {
@@ -86,8 +87,8 @@ export const EXPERT_DEMO_SERIES: Series[] = [
             episodeNumber: 4,
             title: "Part 04: The Future of Developer Workflows & IDEs",
             thumbnailDataUrl: null,
-            platform: "Facebook",
-            externalUrl: "https://www.facebook.com/watch/",
+            platform: "YouTube",
+            externalUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             description: "Where developer tooling is headed in 2026.",
           },
         ],
@@ -113,8 +114,8 @@ export const EXPERT_DEMO_SERIES: Series[] = [
             episodeNumber: 1,
             title: "Part 01: Cinema Lighting Rules You Must Know",
             thumbnailDataUrl: null,
-            platform: "YouTube",
-            externalUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            platform: "Instagram",
+            externalUrl: "https://www.instagram.com/reels/",
             description: "Key light, fill light, and backlight setups for dramatic contrast.",
           },
           {
@@ -131,8 +132,8 @@ export const EXPERT_DEMO_SERIES: Series[] = [
             episodeNumber: 3,
             title: "Part 03: Color Grading Log Footage in DaVinci Resolve",
             thumbnailDataUrl: null,
-            platform: "YouTube",
-            externalUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            platform: "Instagram",
+            externalUrl: "https://www.instagram.com/reels/",
             description: "Transforming flat S-Log3 and C-Log into cinema color.",
           },
           {
@@ -140,8 +141,8 @@ export const EXPERT_DEMO_SERIES: Series[] = [
             episodeNumber: 4,
             title: "Part 04: Budget Anamorphic Lens Stress Test",
             thumbnailDataUrl: null,
-            platform: "YouTube",
-            externalUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            platform: "Instagram",
+            externalUrl: "https://www.instagram.com/reels/",
             description: "Anamorphic oval bokeh and flare testing.",
           },
           {
@@ -149,8 +150,8 @@ export const EXPERT_DEMO_SERIES: Series[] = [
             episodeNumber: 5,
             title: "Part 05: Sound Design & Foley FX Essentials",
             thumbnailDataUrl: null,
-            platform: "Facebook",
-            externalUrl: "https://www.facebook.com/watch/",
+            platform: "Instagram",
+            externalUrl: "https://www.instagram.com/reels/",
             description: "Recording clean lavalier audio and ambient layers.",
           },
         ],
@@ -185,8 +186,8 @@ export const EXPERT_DEMO_SERIES: Series[] = [
             episodeNumber: 2,
             title: "Part 02: iPhone 16 Pro Max Camera vs Cinema Rig",
             thumbnailDataUrl: null,
-            platform: "Instagram",
-            externalUrl: "https://www.instagram.com/reels/",
+            platform: "YouTube",
+            externalUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             description: "ProRes Log video testing side-by-side.",
           },
           {
@@ -203,8 +204,8 @@ export const EXPERT_DEMO_SERIES: Series[] = [
             episodeNumber: 4,
             title: "Part 04: Wireless Mic Battle: Rode Wireless PRO vs DJI Mic 2",
             thumbnailDataUrl: null,
-            platform: "Instagram",
-            externalUrl: "https://www.instagram.com/reels/",
+            platform: "YouTube",
+            externalUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             description: "32-bit float audio outdoors test.",
           },
         ],
@@ -230,8 +231,8 @@ export const EXPERT_DEMO_SERIES: Series[] = [
             episodeNumber: 1,
             title: "Part 01: From 0 to $10k MRR in 90 Days",
             thumbnailDataUrl: null,
-            platform: "YouTube",
-            externalUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            platform: "Facebook",
+            externalUrl: "https://www.facebook.com/watch/",
             description: "Finding early customers without ad spend.",
           },
           {
@@ -239,8 +240,8 @@ export const EXPERT_DEMO_SERIES: Series[] = [
             episodeNumber: 2,
             title: "Part 02: Bootstrapping vs VC Funding Secrets",
             thumbnailDataUrl: null,
-            platform: "YouTube",
-            externalUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            platform: "Facebook",
+            externalUrl: "https://www.facebook.com/watch/",
             description: "Maintaining equity vs scaling fast.",
           },
           {
@@ -293,8 +294,8 @@ export const EXPERT_DEMO_SERIES: Series[] = [
             episodeNumber: 3,
             title: "Part 03: Database Migrations with Prisma & Supabase",
             thumbnailDataUrl: null,
-            platform: "Instagram",
-            externalUrl: "https://www.instagram.com/reels/",
+            platform: "YouTube",
+            externalUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             description: "Relational data modeling and indexes.",
           },
           {
