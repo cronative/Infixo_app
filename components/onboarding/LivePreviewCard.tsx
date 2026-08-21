@@ -1483,7 +1483,8 @@ export function PreviewSeriesItem({
                       : "bg-white/80 backdrop-blur-sm border-white/50 hover:border-[#803D63] text-slate-900 shadow-2xs"
                   }`}
                 >
-                  <div className="flex items-center gap-3 min-w-0 flex-1 text-left">
+                  {/* Left Side: EP Badge + Platform Logo + Multiline Title */}
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1 text-left">
                     <span className={`font-bold text-[11px] px-2 py-1 rounded-md border shrink-0 ${
                       isDark
                         ? "bg-purple-900/60 text-purple-200 border-purple-400/40"
@@ -1491,28 +1492,38 @@ export function PreviewSeriesItem({
                     }`}>
                       {epNumStr}
                     </span>
-                    <p className={`truncate text-xs font-bold transition-colors text-left ${
+
+                    {/* Logo-Only Platform Badge (No Text) */}
+                    <span
+                      className={`inline-flex items-center justify-center h-6 w-6 rounded-md border shrink-0 ${plat.chipClass}`}
+                      title={plat.name}
+                      aria-label={plat.name}
+                    >
+                      <span className={`flex h-4 w-4 items-center justify-center rounded ${plat.badgeClass}`}>
+                        {plat.icon}
+                      </span>
+                    </span>
+
+                    {/* Multiline Episode Title (No Truncation) */}
+                    <p className={`text-xs font-bold leading-normal break-words transition-colors text-left flex-1 min-w-0 ${
                       isDark ? "text-white group-hover:text-purple-300" : "text-gray-900 group-hover:text-[#803D63]"
                     }`}>
                       {epTitleStr}
                     </p>
                   </div>
 
-                  {/* Right Side: Platform Brand Pill + Watch Button */}
-                  <div className="flex items-center gap-2 shrink-0 ml-2">
-                    <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[11px] font-bold ${plat.chipClass}`}>
-                      <span className={`flex h-3.5 w-3.5 items-center justify-center rounded ${plat.badgeClass}`}>
-                        {plat.icon}
-                      </span>
-                      <span>{plat.name}</span>
-                    </span>
-
-                    <span className={`text-xs font-extrabold inline-flex items-center gap-1 px-3 py-1 rounded-lg transition-all ${
-                      isDark
-                        ? "bg-gradient-to-r from-purple-600 to-rose-600 text-white shadow-xs group-hover:from-purple-500 group-hover:to-rose-500"
-                        : "bg-[#F6EBF1] text-[#803D63] group-hover:text-[#6D3254] border border-[#E8DCE4]"
-                    }`}>
-                      <span>Watch ↗</span>
+                  {/* Right Side: Icon-Only Watch Button (40x40 Target) */}
+                  <div className="flex items-center shrink-0 ml-1">
+                    <span
+                      className={`h-9 w-9 sm:h-10 sm:w-10 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${
+                        isDark
+                          ? "bg-gradient-to-r from-purple-600 to-rose-600 text-white border-purple-400/40 group-hover:from-purple-500 group-hover:to-rose-500 shadow-2xs"
+                          : "bg-[#F6EBF1] text-[#803D63] border-[#E8DCE4] group-hover:bg-[#803D63] group-hover:text-white shadow-2xs"
+                      }`}
+                      aria-label="Watch episode"
+                      title="Watch episode"
+                    >
+                      <ExternalLink className="h-4 w-4 stroke-[2.5]" />
                     </span>
                   </div>
                 </a>
