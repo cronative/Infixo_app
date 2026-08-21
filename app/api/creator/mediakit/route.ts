@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// Auto-create & migrate dedicated MySQL tables for Media Kit with creator_id
+// Auto-create dedicated MySQL tables for Media Kit with creator_id
 async function ensureMediaKitTables() {
   try {
     await db.query(`
       CREATE TABLE IF NOT EXISTS mediakit_settings (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        creator_id VARCHAR(100) DEFAULT NULL,
+        creator_id VARCHAR(100) NOT NULL UNIQUE,
         email VARCHAR(255) DEFAULT NULL,
         whatsapp_number VARCHAR(50) DEFAULT NULL,
         sponsor_email VARCHAR(255) DEFAULT NULL,
@@ -16,7 +16,7 @@ async function ensureMediaKitTables() {
         accepting_sponsors TINYINT(1) DEFAULT 1,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        UNIQUE KEY uq_creator (creator_id),
+        INDEX idx_creator_id (creator_id),
         INDEX idx_email (email)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
@@ -24,7 +24,7 @@ async function ensureMediaKitTables() {
     await db.query(`
       CREATE TABLE IF NOT EXISTS mediakit_gigs (
         id VARCHAR(100) PRIMARY KEY,
-        creator_id VARCHAR(100) DEFAULT NULL,
+        creator_id VARCHAR(100) NOT NULL,
         email VARCHAR(255) DEFAULT NULL,
         title VARCHAR(255) NOT NULL,
         platform VARCHAR(100) NOT NULL,
