@@ -235,7 +235,7 @@ export default function DashboardMediaKitPage() {
       await MediaKitService.saveToDb(activeEmail, settings, packages);
     }
     setIsEditingSettings(false);
-    showToast("Media Kit sponsorship settings saved to DB! 💼");
+    showToast("Media Kit contact settings saved successfully! 💼");
   };
 
   const handleOpenAddModal = () => {
@@ -337,7 +337,7 @@ export default function DashboardMediaKitPage() {
     if (activeEmail) {
       await MediaKitService.saveToDb(activeEmail, settings, updatedPkgs);
     }
-    showToast(editingPkgId ? "Gig updated in MySQL database! ✨" : "New gig saved to MySQL database! 🚀");
+    showToast(editingPkgId ? "Gig rate card updated successfully! ✨" : "New gig package published successfully! 🚀");
     setIsModalOpen(false);
   };
 
@@ -347,7 +347,7 @@ export default function DashboardMediaKitPage() {
     if (activeEmail) {
       await MediaKitService.saveToDb(activeEmail, settings, updated);
     }
-    showToast(`Package ${!currentActive ? "activated" : "paused"} in MySQL DB!`);
+    showToast(`Package ${!currentActive ? "activated" : "paused"} successfully! ✨`);
   };
 
   const handleDeletePackage = async (id: string, title: string) => {
@@ -357,7 +357,7 @@ export default function DashboardMediaKitPage() {
       if (activeEmail) {
         await MediaKitService.saveToDb(activeEmail, settings, updated);
       }
-      showToast(`Package "${title}" removed from MySQL DB.`);
+      showToast(`Package "${title}" removed successfully.`);
     }
   };
 
@@ -366,7 +366,7 @@ export default function DashboardMediaKitPage() {
     if (activeEmail) {
       await MediaKitService.saveToDb(activeEmail, settings, SAMPLE_PACKAGES);
     }
-    showToast("Loaded sample micro-creator gigs to MySQL DB! ⚡");
+    showToast("Sample rate card packages loaded! ⚡");
   };
 
   const handleShareMediaKit = async () => {
