@@ -49,7 +49,7 @@ export default function DashboardMediaKitPage() {
 
   // Form inputs for package modal
   const [formTitle, setFormTitle] = useState("");
-  const [formPlatform, setFormPlatform] = useState<"YouTube" | "Instagram" | "Facebook" | "Multi-Platform">("YouTube");
+  const [formPlatform, setFormPlatform] = useState<string>("Instagram");
   const [formPrice, setFormPrice] = useState("");
   const [formTurnaround, setFormTurnaround] = useState<number>(7);
   const [formDeliverableInput, setFormDeliverableInput] = useState("");
@@ -316,7 +316,7 @@ export default function DashboardMediaKitPage() {
           </div>
 
           {/* Rate Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {packages.map((pkg) => (
               <div
                 key={pkg.id}
@@ -326,9 +326,9 @@ export default function DashboardMediaKitPage() {
                     : "border-gray-200 hover:border-gray-300"
                 } ${!pkg.isActive ? "opacity-60 bg-gray-50" : ""}`}
               >
-                {pkg.isPopular && (
-                  <span className="absolute -top-3 right-4 bg-[#803D63] text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-2xs">
-                    ⭐ MOST POPULAR
+                {(pkg.badge || pkg.isPopular) && (
+                  <span className="absolute -top-3 right-3 bg-[#803D63] text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-2xs tracking-tight">
+                    {pkg.badge || "⭐ MOST POPULAR"}
                   </span>
                 )}
 
@@ -566,8 +566,10 @@ export default function DashboardMediaKitPage() {
                     onChange={(e) => setFormPlatform(e.target.value as any)}
                     className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
                   >
-                    <option value="YouTube">YouTube</option>
                     <option value="Instagram">Instagram</option>
+                    <option value="Instagram Bundle">Instagram Bundle</option>
+                    <option value="Monthly Retainer">Monthly Retainer</option>
+                    <option value="YouTube">YouTube</option>
                     <option value="Facebook">Facebook</option>
                     <option value="Multi-Platform">Multi-Platform</option>
                   </select>

@@ -214,10 +214,11 @@ export interface Series {
 export interface MediaKitPackage {
   id: string;
   title: string;
-  platform: "YouTube" | "Instagram" | "Facebook" | "Multi-Platform";
+  platform: "YouTube" | "Instagram" | "Instagram Bundle" | "Monthly Retainer" | "Facebook" | "Multi-Platform" | string;
   deliverables: string[];
   price: string;
   turnaroundDays: number;
+  badge?: string;
   isPopular?: boolean;
   isActive: boolean;
 }
