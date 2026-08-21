@@ -55,8 +55,8 @@ export async function GET(req: Request) {
       success: true,
       settings: {
         whatsappNumber: creator.whatsapp_number || "",
-        sponsorEmail: creator.sponsor_email || creator.email || "",
-        minBudget: creator.min_budget || "₹0",
+        sponsorEmail: creator.sponsor_email || "",
+        minBudget: (creator.min_budget === "₹0" || !creator.min_budget) ? "" : creator.min_budget,
         bioHighlight: creator.mediakit_bio || "",
       },
       packages: parsedPackages,
@@ -81,8 +81,8 @@ export async function POST(req: Request) {
 
     const packagesJson = JSON.stringify(packages || []);
     const whatsapp = settings?.whatsappNumber || null;
-    const sponsorEmail = settings?.sponsorEmail || email;
-    const minBudget = settings?.minBudget || "₹0";
+    const sponsorEmail = settings?.sponsorEmail || null;
+    const minBudget = settings?.minBudget || null;
     const bioHighlight = settings?.bioHighlight || null;
 
     await db.query(

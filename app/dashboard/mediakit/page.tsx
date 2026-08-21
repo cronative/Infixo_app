@@ -686,7 +686,7 @@ export default function DashboardMediaKitPage() {
                     type="text"
                     value={settings.whatsappNumber || ""}
                     onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })}
-                    placeholder="+91 98765 43210"
+                    placeholder="+919876543210"
                     className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
                   />
                   <p className="text-[10px] text-slate-400 mt-1">Used for 1-click WhatsApp brand chat routing.</p>
@@ -700,7 +700,7 @@ export default function DashboardMediaKitPage() {
                     type="email"
                     value={settings.sponsorEmail || ""}
                     onChange={(e) => setSettings({ ...settings, sponsorEmail: e.target.value })}
-                    placeholder="business@inflixo.com"
+                    placeholder="nikunj.appz@gmail.com"
                     className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
                   />
                 </div>
@@ -714,7 +714,7 @@ export default function DashboardMediaKitPage() {
                   type="text"
                   value={settings.minBudget || ""}
                   onChange={(e) => setSettings({ ...settings, minBudget: e.target.value })}
-                  placeholder="₹0 (Accept All Deals) or ₹2,000"
+                  placeholder="₹0 (Accept All Deals)"
                   className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
                 />
               </div>
