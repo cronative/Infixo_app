@@ -64,20 +64,37 @@ export default function DashboardMediaKitPage() {
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
 
   useEffect(() => {
-    setPackages(MediaKitService.getPackages());
-    const savedSettings = MediaKitService.getSettings();
-    setSettings({
-      ...savedSettings,
-      sponsorEmail: savedSettings.sponsorEmail || profile.email || "business@inflixo.com",
-      whatsappNumber: savedSettings.whatsappNumber || "+919876543210",
-      minBudget: savedSettings.minBudget ?? "₹0",
-    });
+    async function initMediaKit() {
+      if (profile.email) {
+        const { settings: dbSettings, packages: dbPackages } = await MediaKitService.fetchFromDb(profile.email);
+        setPackages(dbPackages);
+        setSettings({
+          ...dbSettings,
+          sponsorEmail: dbSettings.sponsorEmail || profile.email || "business@inflixo.com",
+          whatsappNumber: dbSettings.whatsappNumber || "+919876543210",
+          minBudget: dbSettings.minBudget ?? "₹0",
+        });
+      } else {
+        setPackages(MediaKitService.getPackages());
+        const savedSettings = MediaKitService.getSettings();
+        setSettings({
+          ...savedSettings,
+          sponsorEmail: savedSettings.sponsorEmail || profile.email || "business@inflixo.com",
+          whatsappNumber: savedSettings.whatsappNumber || "+919876543210",
+          minBudget: savedSettings.minBudget ?? "₹0",
+        });
+      }
+    }
+    initMediaKit();
   }, [profile.email]);
 
-  const handleSaveSettings = () => {
+  const handleSaveSettings = async () => {
     MediaKitService.saveSettings(settings);
+    if (profile.email) {
+      await MediaKitService.saveToDb(profile.email, settings, packages);
+    }
     setIsEditingSettings(false);
-    showToast("Media Kit sponsorship settings saved! 💼");
+    showToast("Media Kit sponsorship settings saved to DB! 💼");
   };
 
   const handleOpenAddModal = () => {
@@ -129,7 +146,7 @@ export default function DashboardMediaKitPage() {
     setFormDeliverables(formDeliverables.filter((_, i) => i !== index));
   };
 
-  const handleSavePackage = (e: React.FormEvent) => {
+  const handleSavePackage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formTitle.trim() || !formPrice.trim()) {
       showToast("Please enter a package title and price", "error");
@@ -148,8 +165,9 @@ export default function DashboardMediaKitPage() {
       resolvedBadge = formCustomBadge.trim();
     }
 
+    let updatedPkgs: MediaKitPackage[] = [];
     if (editingPkgId) {
-      const updated = MediaKitService.updatePackage(editingPkgId, {
+      updatedPkgs = MediaKitService.updatePackage(editingPkgId, {
         title: formTitle.trim(),
         platform: formPlatform,
         price: formPrice.trim(),
@@ -158,8 +176,6 @@ export default function DashboardMediaKitPage() {
         badge: resolvedBadge,
         isPopular: resolvedIsPopular,
       });
-      setPackages(updated);
-      showToast("Collaboration package updated! ✨");
     } else {
       MediaKitService.addPackage({
         title: formTitle.trim(),
@@ -171,31 +187,44 @@ export default function DashboardMediaKitPage() {
         isPopular: resolvedIsPopular,
         isActive: true,
       });
-      setPackages(MediaKitService.getPackages());
-      showToast("New collaboration gig created! 🚀");
+      updatedPkgs = MediaKitService.getPackages();
     }
 
+    setPackages(updatedPkgs);
+    if (profile.email) {
+      await MediaKitService.saveToDb(profile.email, settings, updatedPkgs);
+    }
+    showToast(editingPkgId ? "Gig updated in MySQL database! ✨" : "New gig saved to MySQL database! 🚀");
     setIsModalOpen(false);
   };
 
-  const handleTogglePackageActive = (id: string, currentActive: boolean) => {
+  const handleTogglePackageActive = async (id: string, currentActive: boolean) => {
     const updated = MediaKitService.updatePackage(id, { isActive: !currentActive });
     setPackages(updated);
-    showToast(`Package ${!currentActive ? "activated" : "paused"}!`);
+    if (profile.email) {
+      await MediaKitService.saveToDb(profile.email, settings, updated);
+    }
+    showToast(`Package ${!currentActive ? "activated" : "paused"} in MySQL DB!`);
   };
 
-  const handleDeletePackage = (id: string, title: string) => {
+  const handleDeletePackage = async (id: string, title: string) => {
     if (confirm(`Are you sure you want to delete "${title}"?`)) {
       const updated = MediaKitService.deletePackage(id);
       setPackages(updated);
-      showToast(`Package "${title}" removed.`);
+      if (profile.email) {
+        await MediaKitService.saveToDb(profile.email, settings, updated);
+      }
+      showToast(`Package "${title}" removed from MySQL DB.`);
     }
   };
 
-  const handleLoadSampleGigs = () => {
+  const handleLoadSampleGigs = async () => {
     MediaKitService.savePackages(SAMPLE_PACKAGES);
     setPackages(SAMPLE_PACKAGES);
-    showToast("Loaded sample micro-creator gigs! ⚡");
+    if (profile.email) {
+      await MediaKitService.saveToDb(profile.email, settings, SAMPLE_PACKAGES);
+    }
+    showToast("Loaded sample micro-creator gigs to MySQL DB! ⚡");
   };
 
   const handleShareMediaKit = async () => {

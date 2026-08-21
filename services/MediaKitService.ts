@@ -179,4 +179,36 @@ export class MediaKitService {
       console.error("Error saving media kit settings to localStorage:", e);
     }
   }
+
+  static async fetchFromDb(email: string): Promise<{ settings: MediaKitSettings; packages: MediaKitPackage[] }> {
+    try {
+      const res = await fetch(`/api/creator/mediakit?email=${encodeURIComponent(email)}`);
+      if (!res.ok) throw new Error("DB fetch failed");
+      const data = await res.json();
+      if (data.success) {
+        if (data.packages) this.savePackages(data.packages);
+        if (data.settings) this.saveSettings(data.settings);
+        return { settings: data.settings, packages: data.packages || [] };
+      }
+    } catch (e) {
+      console.warn("MediaKit DB fetch fallback to localStorage:", e);
+    }
+    return { settings: this.getSettings(), packages: this.getPackages() };
+  }
+
+  static async saveToDb(email: string, settings: MediaKitSettings, packages: MediaKitPackage[]): Promise<boolean> {
+    this.saveSettings(settings);
+    this.savePackages(packages);
+    try {
+      const res = await fetch("/api/creator/mediakit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, settings, packages }),
+      });
+      return res.ok;
+    } catch (e) {
+      console.warn("MediaKit DB save error:", e);
+      return false;
+    }
+  }
 }
