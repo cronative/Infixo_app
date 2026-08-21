@@ -10,6 +10,8 @@ import {
   AuthSession,
   CreatorProfile,
   SocialAccounts,
+  CustomLink,
+  DEFAULT_CUSTOM_LINKS,
   Series,
   Subscription,
   ThemeKey,
@@ -57,6 +59,15 @@ export const socialRepository = {
   },
   save(socials: SocialAccounts) {
     storage.set(STORAGE_KEYS.socials, socials);
+  },
+};
+
+export const customLinksRepository = {
+  get(): CustomLink[] {
+    return storage.get<CustomLink[]>(STORAGE_KEYS.customLinks, DEFAULT_CUSTOM_LINKS);
+  },
+  save(links: CustomLink[]) {
+    storage.set(STORAGE_KEYS.customLinks, links);
   },
 };
 

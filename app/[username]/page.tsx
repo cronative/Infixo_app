@@ -33,6 +33,7 @@ export default function PublicProfilePage() {
   const [socials, setSocials] = useState<SocialAccounts>(EMPTY_SOCIAL_ACCOUNTS);
   const [theme, setTheme] = useState<ThemeKey>("minimal-white");
   const [series, setSeries] = useState<Series[]>([]);
+  const [customLinks, setCustomLinks] = useState<any[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -59,10 +60,11 @@ export default function PublicProfilePage() {
 
       // 2. Fetch Creator Profile by username from MySQL DB (Universal Deeplinking!)
       try {
-        const [profRes, socRes, serRes] = await Promise.all([
-          fetch(`/api/creator/profile?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()),
-          fetch(`/api/creator/socials?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()),
-          fetch(`/api/series?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()),
+        const [profRes, socRes, serRes, linkRes] = await Promise.all([
+          fetch(`/api/creator/profile?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
+          fetch(`/api/creator/socials?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
+          fetch(`/api/series?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
+          fetch(`/api/creator/custom-links?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
         ]);
 
         if (profRes.success && profRes.profile) {
@@ -73,6 +75,10 @@ export default function PublicProfilePage() {
           setNotFound(false);
         } else if (!localProfile.username || localProfile.username.toLowerCase() !== usernameParam) {
           setNotFound(true);
+        }
+
+        if (linkRes.success && Array.isArray(linkRes.links)) {
+          setCustomLinks(linkRes.links);
         }
 
         if (socRes.success && Array.isArray(socRes.socials)) {
@@ -359,6 +365,7 @@ export default function PublicProfilePage() {
           profile={profile}
           socials={socials}
           series={series}
+          customLinks={customLinks}
           totalAudience={totalAudience}
           variant="full"
           onShare={handleShare}

@@ -122,6 +122,31 @@ export const EMPTY_SOCIAL_ACCOUNTS: SocialAccounts = {
   updatedAt: new Date().toISOString(),
 };
 
+export interface CustomLink {
+  id: string;
+  title: string;
+  url: string;
+  icon?: string;
+  isEnabled?: boolean;
+}
+
+export const DEFAULT_CUSTOM_LINKS: CustomLink[] = [
+  {
+    id: "link_1",
+    title: "🎬 Watch Latest Episode",
+    url: "https://youtube.com",
+    icon: "link",
+    isEnabled: true,
+  },
+  {
+    id: "link_2",
+    title: "📅 Book 1-on-1 Consultation",
+    url: "https://cal.com",
+    icon: "calendar",
+    isEnabled: true,
+  },
+];
+
 // ---------------------------------------------------------------------------
 // Themes
 // ---------------------------------------------------------------------------

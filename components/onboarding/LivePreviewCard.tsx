@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Users, Sparkles, ExternalLink, Play, Film, Share2, ChevronDown, ChevronUp, ChevronRight, Copy, Eye, Briefcase, Clock, CheckCircle2, MessageCircle, Mail } from "lucide-react";
-import { CreatorProfile, SocialAccounts, ThemeKey, Series, MediaKitPackage, MediaKitSettings } from "@/types";
+import { Users, Sparkles, ExternalLink, Play, Film, Share2, ChevronDown, ChevronUp, ChevronRight, Copy, Eye, Briefcase, Clock, CheckCircle2, MessageCircle, Mail, Link as LinkIcon } from "lucide-react";
+import { CreatorProfile, SocialAccounts, ThemeKey, Series, MediaKitPackage, MediaKitSettings, CustomLink } from "@/types";
 import { formatCount } from "@/utils/format";
 import { MediaKitService, SAMPLE_PACKAGES } from "@/services/MediaKitService";
+import { customLinksRepository } from "@/repositories/localRepository";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 import { InflixoLogoIcon } from "@/components/shared/Logo";
 import { useToast } from "@/contexts/ToastContext";
@@ -536,6 +537,7 @@ export interface LivePreviewCardProps {
   profile: CreatorProfile;
   socials: SocialAccounts;
   series?: Series[];
+  customLinks?: CustomLink[];
   totalAudience?: number;
   themeKey?: ThemeKey;
   compact?: boolean;
@@ -580,6 +582,7 @@ export function LivePreviewCard({
   profile,
   socials,
   series = [],
+  customLinks: passedCustomLinks,
   totalAudience: passedTotalAudience,
   themeKey = "minimal-white",
   compact = false,
@@ -591,8 +594,17 @@ export function LivePreviewCard({
   const [activeContentTab, setActiveContentTab] = useState<"series" | "gigs">("series");
   const [mediaKitPackages, setMediaKitPackages] = useState<MediaKitPackage[]>([]);
   const [mediaKitSettings, setMediaKitSettings] = useState<MediaKitSettings>(MediaKitService.DEFAULT_SETTINGS);
+  const [customLinksList, setCustomLinksList] = useState<CustomLink[]>(passedCustomLinks || []);
 
   const isDark = isDarkTheme(themeKey);
+
+  useEffect(() => {
+    if (passedCustomLinks) {
+      setCustomLinksList(passedCustomLinks);
+    } else {
+      setCustomLinksList(customLinksRepository.get());
+    }
+  }, [passedCustomLinks]);
 
   useEffect(() => {
     async function loadMediaKit() {
@@ -910,6 +922,45 @@ export function LivePreviewCard({
                 </div>
               </a>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Dynamic Additional Custom Links (Linktree Style) */}
+      {customLinksList && customLinksList.filter((l) => l.isEnabled !== false && l.title && l.url).length > 0 && (
+        <div className="relative z-10 mt-3 space-y-2 w-full text-left">
+          <div className="grid grid-cols-1 gap-2 w-full">
+            {customLinksList
+              .filter((l) => l.isEnabled !== false && l.title && l.url)
+              .map((link) => (
+                <a
+                  key={link.id}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`group rounded-xl p-3 text-xs font-bold transition-all flex items-center justify-between shadow-2xs border ${
+                    isDark
+                      ? "bg-slate-900/60 hover:bg-slate-900/80 backdrop-blur-md border-white/15 hover:border-white/30 text-white"
+                      : "bg-white/80 hover:bg-white/95 backdrop-blur-md border-white/60 hover:border-[#803D63] text-slate-900"
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span
+                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
+                        isDark ? "bg-white/10 text-purple-300" : "bg-[#803D63]/10 text-[#803D63]"
+                      }`}
+                    >
+                      <LinkIcon className="h-3.5 w-3.5" />
+                    </span>
+                    <span className="truncate">{link.title}</span>
+                  </div>
+                  <ExternalLink
+                    className={`h-3.5 w-3.5 shrink-0 transition-transform group-hover:translate-x-0.5 ${
+                      isDark ? "text-slate-400 group-hover:text-purple-300" : "text-slate-400 group-hover:text-[#803D63]"
+                    }`}
+                  />
+                </a>
+              ))}
           </div>
         </div>
       )}

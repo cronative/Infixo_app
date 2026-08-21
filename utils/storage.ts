@@ -55,6 +55,7 @@ export const STORAGE_KEYS = {
   otpEmail: "otp_email",
   profile: "profile",
   socials: "socials",
+  customLinks: "custom_links",
   theme: "theme",
   series: "series",
   subscription: "subscription",

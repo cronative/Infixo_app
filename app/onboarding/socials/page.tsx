@@ -18,6 +18,9 @@ import { YoutubeFetcher } from "@/components/socials/YoutubeFetcher";
 import { FacebookFetcher } from "@/components/socials/FacebookFetcher";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { SocialDataConsentCard } from "@/components/socials/SocialDataConsentCard";
+import { CustomLinksManager } from "@/components/socials/CustomLinksManager";
+import { customLinksRepository } from "@/repositories/localRepository";
+import { CustomLink } from "@/types";
 import { authRepository } from "@/repositories/localRepository";
 import { useToast } from "@/contexts/ToastContext";
 
@@ -46,6 +49,7 @@ export default function SocialsStepPage() {
   const [consentAccepted, setConsentAccepted] = useState(true);
   const [consentError, setConsentError] = useState(false);
   const [disconnectModal, setDisconnectModal] = useState<ConfirmDisconnectModal>(null);
+  const [customLinks, setCustomLinks] = useState<CustomLink[]>(customLinksRepository.get());
 
   const [instaInput, setInstaInput] = useState(() => extractUsername(socials.instagram.url));
   const [ytInput, setYtInput] = useState(() => extractUsername(socials.youtube.url));
@@ -150,18 +154,18 @@ export default function SocialsStepPage() {
   return (
     <OnboardingLayout
       step="socials"
-      preview={<LivePreviewCard profile={profile} socials={socials} totalAudience={totalAudience} themeKey={theme} />}
+      preview={<LivePreviewCard profile={profile} socials={socials} customLinks={customLinks} totalAudience={totalAudience} themeKey={theme} />}
     >
       <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/20 bg-[#803D63]/10 px-3 py-1 text-xs font-bold text-[#803D63]">
         <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
-        <span>Step 2 of 6 • Social Handles</span>
+        <span>Step 2 of 6 • Social Handles &amp; Custom Links</span>
       </div>
 
       <h1 className="text-3xl font-extrabold leading-[1.15] tracking-tight text-inflixo-navy sm:text-4xl">
         Add your <span className="text-gradient-premium">social handles</span>
       </h1>
       <p className="mt-2 text-[15px] text-muted leading-relaxed">
-        Enter your handle for each platform, preview your profile details, and link them to your public page.
+        Enter your handle for each platform, preview your profile details, and add custom featured links.
       </p>
 
       {/* Public Data Scraping Permission (One-Line Top Layout) */}
@@ -266,6 +270,9 @@ export default function SocialsStepPage() {
             </>
           )}
         </PlatformCard>
+
+        {/* Dynamic Additional Custom Links (Linktree Style Manager) */}
+        <CustomLinksManager onChange={(links) => setCustomLinks(links)} />
 
         {/* Step 2 Sticky Form Bottom Navigation (Back + Next) */}
         <div className="sticky bottom-0 z-40 bg-white py-4 border-t border-gray-100 mt-8 flex items-center gap-3">
