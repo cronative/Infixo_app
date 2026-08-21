@@ -225,6 +225,7 @@ export interface MediaKitPackage {
 
 export interface MediaKitSettings {
   sponsorEmail?: string;
+  whatsappNumber?: string;
   bioHighlight?: string;
   acceptingSponsors: boolean;
   minBudget?: string;

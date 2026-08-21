@@ -72,11 +72,14 @@ export const DEFAULT_PACKAGES: MediaKitPackage[] = [
   },
 ];
 
+export const SAMPLE_PACKAGES: MediaKitPackage[] = DEFAULT_PACKAGES;
+
 export const DEFAULT_SETTINGS: MediaKitSettings = {
   sponsorEmail: "business@inflixo.com",
+  whatsappNumber: "+919876543210",
   bioHighlight: "Open for brand sponsorships, video integrations, and series placements.",
   acceptingSponsors: true,
-  minBudget: "₹2,000",
+  minBudget: "₹0",
   preferredCategories: ["Technology & AI", "Entertainment", "Lifestyle", "Gaming"],
 };
 
@@ -85,23 +88,24 @@ export class MediaKitService {
   static DEFAULT_SETTINGS = DEFAULT_SETTINGS;
 
   static getPackages(): MediaKitPackage[] {
-    if (typeof window === "undefined") return DEFAULT_PACKAGES;
+    if (typeof window === "undefined") return [];
     try {
       const stored = localStorage.getItem(PACKAGES_STORAGE_KEY);
-      if (!stored) {
-        localStorage.setItem(PACKAGES_STORAGE_KEY, JSON.stringify(DEFAULT_PACKAGES));
-        return DEFAULT_PACKAGES;
+      if (stored === null) {
+        // Zero-Default Empty State for fresh signups
+        localStorage.setItem(PACKAGES_STORAGE_KEY, JSON.stringify([]));
+        return [];
       }
       const parsed: MediaKitPackage[] = JSON.parse(stored);
       // Auto-migrate legacy packages if old package IDs exist
-      const hasOldPackage = parsed.some((p) => p.id === "pkg_yt_dedicated" || p.id === "pkg_insta_bundle" || p.id === "pkg_series_sponsor");
-      if (hasOldPackage || parsed.length === 0) {
-        localStorage.setItem(PACKAGES_STORAGE_KEY, JSON.stringify(DEFAULT_PACKAGES));
-        return DEFAULT_PACKAGES;
+      const hasOldPackage = parsed.some((p) => p.id === "pkg_yt_dedicated" || p.id === "pkg_series_sponsor");
+      if (hasOldPackage) {
+        localStorage.setItem(PACKAGES_STORAGE_KEY, JSON.stringify([]));
+        return [];
       }
       return parsed;
     } catch {
-      return DEFAULT_PACKAGES;
+      return [];
     }
   }
 
