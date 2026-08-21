@@ -117,7 +117,7 @@ export function PricingTable({
             <tr>
               <td className="py-3.5 px-5 font-bold text-slate-900">
                 Direct WhatsApp &amp; Email Leads
-                <span className="block text-[11px] font-normal text-slate-500">Pre-verified brand campaign briefs</span>
+                <span className="block text-[11px] font-normal text-slate-500">Brand&apos;s details sent straight to you</span>
               </td>
               <td className="py-3.5 px-5 text-center bg-purple-50/30 border-x border-purple-100/60 font-bold text-emerald-600">
                 <Check className="h-4 w-4 mx-auto text-emerald-600 stroke-[3]" />
@@ -133,7 +133,7 @@ export function PricingTable({
             {/* Row 3: OTT Web Series Limit */}
             <tr>
               <td className="py-3.5 px-5 font-bold text-slate-900">
-                OTT Web Series Quota
+                Series Limit
               </td>
               <td className="py-3.5 px-5 text-center bg-purple-50/30 border-x border-purple-100/60 font-bold text-slate-800">
                 2 Web Series
@@ -145,7 +145,7 @@ export function PricingTable({
             {/* Row 4: Total Episodes Quota */}
             <tr>
               <td className="py-3.5 px-5 font-bold text-slate-900">
-                Total Episodes Quota
+                Episode Limit
               </td>
               <td className="py-3.5 px-5 text-center bg-purple-50/30 border-x border-purple-100/60 font-bold text-slate-800">
                 10 Episodes
@@ -174,7 +174,7 @@ export function PricingTable({
             {/* Row 6: Remove Inflixo Branding Watermark */}
             <tr>
               <td className="py-3.5 px-5 font-bold text-slate-900">
-                Remove Inflixo Footer Branding
+                Remove Inflixo Logo from Your Page
               </td>
               <td className="py-3.5 px-5 text-center bg-purple-50/30 border-x border-purple-100/60 text-slate-400">
                 <X className="h-4 w-4 mx-auto text-slate-300" />

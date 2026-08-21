@@ -215,14 +215,14 @@ export default function LandingHomePage() {
                     className="inline-flex items-center gap-1.5 shrink-0 rounded-lg bg-[#803D63] px-4 py-2 text-xs sm:text-sm font-bold text-white hover:bg-[#6D3254] transition-colors cursor-pointer shadow-2xs"
                   >
                     <Sparkles className="h-3.5 w-3.5" />
-                    <span>Generate Page</span>
+                    <span>Create My Page</span>
                   </button>
                 </form>
 
                 {/* Micro-Trust Proof */}
                 <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-[#4B5563] pt-1">
                   <span className="flex items-center gap-1">
-                    <Check className="h-3.5 w-3.5 text-emerald-600 stroke-[3]" /> Live Real-Time Preview
+                    <Check className="h-3.5 w-3.5 text-emerald-600 stroke-[3]" /> Live Preview
                   </span>
                   <span className="flex items-center gap-1">
                     <Check className="h-3.5 w-3.5 text-emerald-600 stroke-[3]" /> Connects in 60s
@@ -258,20 +258,20 @@ export default function LandingHomePage() {
                   Brands don&apos;t want 5 links. They want your true reach.
                 </h2>
                 <p className="text-base sm:text-lg font-medium text-[#4B5563] leading-relaxed">
-                  Separate profiles under-report your real scale — Inflixo adds every platform into one live number.
+                  Showing just one platform makes you look smaller than you actually are. Inflixo adds every platform into one live number.
                 </p>
 
                 <div className="space-y-2 pt-1 text-xs sm:text-sm font-semibold text-[#111827]">
                   <div className="flex items-start gap-2">
                     <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
                     <div>
-                      <strong className="text-[#111827]">Unlimited Collab Gigs:</strong> Free rate card listing &amp; pre-qualified WhatsApp briefs.
+                      <strong className="text-[#111827]">Free Rate Card &amp; Briefs:</strong> List your gig and get brand messages on WhatsApp — free to start.
                     </div>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
                     <div>
-                      <strong className="text-[#111827]">AI-Synced Fanbase Count:</strong> Inflixo checks your connected accounts and updates your numbers automatically, no manual entry.
+                      <strong className="text-[#111827]">AI-Synced Fanbase Count:</strong> Inflixo checks your connected accounts and updates your numbers automatically — you never have to type them in yourself.
                     </div>
                   </div>
                 </div>
@@ -404,13 +404,13 @@ export default function LandingHomePage() {
                 <div className="flex items-start gap-2">
                   <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
                   <div>
-                    <strong className="text-[#111827]">Playlist-Style Auto-Sequencing:</strong> Part 1 leads straight to Part 2 with 1-tap playback.
+                    <strong className="text-[#111827]">In-Order Playlist:</strong> Part 1 leads straight to Part 2, one tap to watch.
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
                   <div>
-                    <strong className="text-[#111827]">Cross-Platform Support:</strong> Unify YouTube videos, Instagram Reels, and Facebook episodes in one clean series.
+                    <strong className="text-[#111827]">All Your Platforms, One Series:</strong> Mix YouTube videos, Instagram Reels, and Facebook clips together in order.
                   </div>
                 </div>
               </div>
@@ -432,15 +432,15 @@ export default function LandingHomePage() {
                 Get paid by brands without a middleman
               </h2>
               <p className="text-base sm:text-lg font-medium text-[#4B5563] leading-relaxed">
-                Stop losing leads in crowded DMs. Brands see your reach and rate card, and contact you directly — zero commission.
+                Stop losing brand deals in crowded DMs. Brands see your reach and rate card, and contact you directly — zero commission.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs font-medium text-[#111827]">
                 <div className="flex items-start gap-2.5 rounded-xl border border-gray-100 bg-[#F9FAFB] p-3">
                   <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
                   <div>
-                    <strong className="text-slate-900 block font-bold">Dynamic Rate Cards:</strong>
-                    List custom pricing for Reels, YouTube integrations &amp; retainers.
+                    <strong className="text-slate-900 block font-bold">Your Rate Card:</strong>
+                    Set your own prices for Reels, YouTube videos, and monthly deals.
                   </div>
                 </div>
 
@@ -455,16 +455,16 @@ export default function LandingHomePage() {
                 <div className="flex items-start gap-2.5 rounded-xl border border-gray-100 bg-[#F9FAFB] p-3">
                   <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
                   <div>
-                    <strong className="text-slate-900 block font-bold">Direct WhatsApp &amp; Email Leads:</strong>
-                    Pre-qualified campaign briefs sent directly to your WhatsApp or inbox.
+                    <strong className="text-slate-900 block font-bold">Brands Message You Directly:</strong>
+                    WhatsApp or Email, with the brand&apos;s details already filled in — no back-and-forth.
                   </div>
                 </div>
 
                 <div className="flex items-start gap-2.5 rounded-xl border border-gray-100 bg-[#F9FAFB] p-3">
                   <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
                   <div>
-                    <strong className="text-slate-900 block font-bold">1-Click PDF Media Kit Export:</strong>
-                    Generate a polished PDF proposal instantly for agencies and sponsors.
+                    <strong className="text-slate-900 block font-bold">Instant PDF:</strong>
+                    Turn your profile into a ready-to-send PDF for brands and agencies.
                   </div>
                 </div>
               </div>
@@ -547,7 +547,7 @@ export default function LandingHomePage() {
               Built with India&apos;s first 10,000 creators.
             </h2>
             <p className="text-base sm:text-lg text-[#4B5563] font-semibold leading-relaxed max-w-xl mx-auto">
-              Join early access to receive a foundational creator membership and an invite to the Inflixo Creator Summit 2027.
+              Join early access and get an invite to the Inflixo Creator Summit 2027.
             </p>
           </div>
         </div>
@@ -564,7 +564,7 @@ export default function LandingHomePage() {
               Simple, Transparent Pricing
             </h2>
             <p className="text-base sm:text-lg font-medium text-[#4B5563] leading-relaxed">
-              Transparent, creator-first plans with full media kit features.
+              Start free. Upgrade only when you outgrow your limit.
             </p>
           </div>
 
