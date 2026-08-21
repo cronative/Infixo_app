@@ -432,7 +432,7 @@ export default function LandingHomePage() {
                 Get paid by brands without a middleman
               </h2>
               <p className="text-sm sm:text-base font-medium text-[#4B5563] leading-relaxed">
-                Stop losing leads in crowded DMs. Brands see your reach and rate card, and contact you directly — zero commission. Inflixo takes 0% commission on any deal you close.
+                Stop losing leads in crowded DMs. Brands see your reach and rate card, and contact you directly — zero commission.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs font-medium text-[#111827]">
@@ -564,7 +564,7 @@ export default function LandingHomePage() {
               Simple, Transparent Pricing
             </h2>
             <p className="text-xs sm:text-sm font-medium text-[#4B5563]">
-              Free Creator Early Access is active automatically until further notice.
+              Transparent, creator-first plans with full media kit features.
             </p>
           </div>
 
