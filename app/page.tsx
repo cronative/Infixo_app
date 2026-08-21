@@ -178,7 +178,7 @@ export default function LandingHomePage() {
               {/* Top Pill Badge */}
               <div className="inline-flex items-center gap-1.5 rounded-full border border-purple-200 bg-purple-50 px-3.5 py-1 text-xs font-semibold text-[#803D63]">
                 <Sparkles className="h-3.5 w-3.5 text-[#803D63]" />
-                <span>Early Access for India&apos;s Top Creators</span>
+                <span>Early Access for India&apos;s Content Creators</span>
               </div>
 
               {/* Heading */}
