@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Users, Sparkles, ExternalLink, Play, Film, Share2, ChevronDown, ChevronUp, ChevronRight, Copy, Eye, Briefcase, Clock, CheckCircle2, MessageCircle, Mail, Link as LinkIcon } from "lucide-react";
@@ -540,6 +542,8 @@ export interface LivePreviewCardProps {
   socials: SocialAccounts;
   series?: Series[];
   customLinks?: CustomLink[];
+  mediaKitPackages?: MediaKitPackage[];
+  mediaKitSettings?: MediaKitSettings;
   totalAudience?: number;
   themeKey?: ThemeKey;
   compact?: boolean;
@@ -585,6 +589,8 @@ export function LivePreviewCard({
   socials,
   series = [],
   customLinks: passedCustomLinks,
+  mediaKitPackages: passedMediaKitPackages,
+  mediaKitSettings: passedMediaKitSettings,
   totalAudience: passedTotalAudience,
   themeKey = "minimal-white",
   compact = false,
@@ -594,8 +600,8 @@ export function LivePreviewCard({
   const { showToast } = useToast();
   const [expandedSeriesId, setExpandedSeriesId] = useState<string | null>(null);
   const [activeContentTab, setActiveContentTab] = useState<"series" | "gigs">("series");
-  const [mediaKitPackages, setMediaKitPackages] = useState<MediaKitPackage[]>([]);
-  const [mediaKitSettings, setMediaKitSettings] = useState<MediaKitSettings>(MediaKitService.DEFAULT_SETTINGS);
+  const [mediaKitPackages, setMediaKitPackages] = useState<MediaKitPackage[]>(passedMediaKitPackages || []);
+  const [mediaKitSettings, setMediaKitSettings] = useState<MediaKitSettings>(passedMediaKitSettings || MediaKitService.DEFAULT_SETTINGS);
   const [customLinksList, setCustomLinksList] = useState<CustomLink[]>(passedCustomLinks || []);
   const [selectedGigForWhatsApp, setSelectedGigForWhatsApp] = useState<MediaKitPackage | null>(null);
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
@@ -614,18 +620,23 @@ export function LivePreviewCard({
   }, [passedCustomLinks]);
 
   useEffect(() => {
-    async function loadMediaKit() {
-      const identifier = profile.id || profile.email || profile.username;
-      if (identifier) {
-        const data = await MediaKitService.fetchFromDb(identifier, profile.id);
-        if (data) {
-          setMediaKitPackages(data.packages || []);
-          setMediaKitSettings(data.settings || MediaKitService.DEFAULT_SETTINGS);
+    if (passedMediaKitPackages && passedMediaKitPackages.length > 0) {
+      setMediaKitPackages(passedMediaKitPackages);
+      if (passedMediaKitSettings) setMediaKitSettings(passedMediaKitSettings);
+    } else {
+      async function loadMediaKit() {
+        const identifier = profile.id || profile.email || profile.username;
+        if (identifier) {
+          const data = await MediaKitService.fetchFromDb(identifier, profile.id);
+          if (data) {
+            setMediaKitPackages(data.packages || []);
+            setMediaKitSettings(data.settings || MediaKitService.DEFAULT_SETTINGS);
+          }
         }
       }
+      loadMediaKit();
     }
-    loadMediaKit();
-  }, [profile.id, profile.email, profile.username]);
+  }, [profile.id, profile.email, profile.username, passedMediaKitPackages, passedMediaKitSettings]);
 
   const style = THEME_STYLES[themeKey] || DEFAULT_THEME_STYLE;
   const totalEpisodesCount = (series || []).reduce((acc, s) => acc + getSeriesEpisodes(s).length, 0);

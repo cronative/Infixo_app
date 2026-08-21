@@ -49,6 +49,24 @@ export default function PublicProfilePage() {
         return;
       }
 
+      if (usernameParam === "demo_creator") {
+        const {
+          EXPERT_DEMO_PROFILE,
+          EXPERT_DEMO_SOCIALS,
+          EXPERT_DEMO_SERIES,
+          EXPERT_DEMO_CUSTOM_LINKS,
+          EXPERT_DEMO_THEME,
+        } = await import("@/data/expertDemoCreator");
+        setProfile(EXPERT_DEMO_PROFILE);
+        setSocials(EXPERT_DEMO_SOCIALS);
+        setSeries(EXPERT_DEMO_SERIES);
+        setCustomLinks(EXPERT_DEMO_CUSTOM_LINKS);
+        setTheme(EXPERT_DEMO_THEME);
+        setNotFound(false);
+        setLoaded(true);
+        return;
+      }
+
       // 1. Initial check for local profile if logged in creator
       const localProfile = ProfileService.getProfile();
       if (localProfile.username && localProfile.username.toLowerCase() === usernameParam) {
