@@ -76,13 +76,13 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
         </div>
 
         {/* Creator Info Row (Flat Simple Style with Dividers) */}
-        <div className="px-4 my-3 py-2.5 border-y border-slate-200/80 flex items-center justify-between gap-2.5">
+        <div className="px-4 my-2.5 py-2 border-y border-slate-200/80 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <CreatorAvatar
               src={profile.photoDataUrl}
               name={profile.displayName || profile.email || "Creator"}
-              className="h-7 w-7 rounded-full border border-slate-200 overflow-hidden object-cover aspect-square shrink-0"
-              textClassName="text-[10px] font-extrabold text-slate-900"
+              className="h-6 w-6 rounded-full border border-slate-200 overflow-hidden object-cover aspect-square shrink-0"
+              textClassName="text-[9px] font-black text-slate-900"
               fallbackBgClass="bg-indigo-50"
             />
 

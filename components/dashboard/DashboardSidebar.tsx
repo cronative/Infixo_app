@@ -33,12 +33,12 @@ export function DashboardSidebar() {
       </div>
 
       {/* Simple Flat Creator Profile Row with Top & Bottom Dividers */}
-      <div className="my-3 py-2.5 px-2 border-y border-slate-200/80 flex items-center gap-2">
+      <div className="my-2.5 py-2 px-2 border-y border-slate-200/80 flex items-center gap-2">
         <CreatorAvatar
           src={profile.photoDataUrl}
           name={profile.displayName || profile.email || "Creator"}
-          className="w-7 h-7 rounded-full overflow-hidden object-cover aspect-square border border-slate-200 shrink-0"
-          textClassName="text-[10px] font-extrabold text-slate-900"
+          className="w-6 h-6 rounded-full overflow-hidden object-cover aspect-square border border-slate-200 shrink-0"
+          textClassName="text-[9px] font-black text-slate-900"
           fallbackBgClass="bg-indigo-50"
         />
 
