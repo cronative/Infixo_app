@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Users, Sparkles, ExternalLink, Play, Film, Share2, ChevronDown, ChevronUp, ChevronRight, Copy, Eye, Briefcase, Clock, CheckCircle2, MessageCircle, Mail } from "lucide-react";
 import { CreatorProfile, SocialAccounts, ThemeKey, Series, MediaKitPackage, MediaKitSettings } from "@/types";
 import { formatCount } from "@/utils/format";
-import { MediaKitService } from "@/services/MediaKitService";
+import { MediaKitService, SAMPLE_PACKAGES } from "@/services/MediaKitService";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 import { InflixoLogoIcon } from "@/components/shared/Logo";
 import { useToast } from "@/contexts/ToastContext";
@@ -991,9 +991,13 @@ export function LivePreviewCard({
         {/* TAB 2: 💼 COLLAB GIGS & RATE CARDS */}
         {activeContentTab === "gigs" && (
           <div className="space-y-3 animate-in fade-in duration-200">
-            {mediaKitPackages.filter((p) => p.isActive).length > 0 ? (
-              <div className="grid grid-cols-1 gap-3">
-                {mediaKitPackages.filter((p) => p.isActive).map((pkg) => {
+            {(() => {
+              const activePkgs = mediaKitPackages.filter((p) => p.isActive);
+              const displayPackages = activePkgs.length > 0 ? activePkgs : SAMPLE_PACKAGES;
+
+              return (
+                <div className="grid grid-cols-1 gap-3">
+                  {displayPackages.map((pkg) => {
                   const cleanPhone = mediaKitSettings.whatsappNumber
                     ? mediaKitSettings.whatsappNumber.replace(/[^0-9]/g, "")
                     : "";
@@ -1078,20 +1082,11 @@ export function LivePreviewCard({
                   );
                 })}
               </div>
-            ) : (
-              <div className={`rounded-2xl border-2 border-dashed p-6 text-center space-y-1.5 ${
-                isDark
-                  ? "bg-slate-900/60 backdrop-blur-md border-white/20 text-white"
-                  : "bg-white/70 backdrop-blur-md border-gray-200 text-slate-900"
-              }`}>
-                <Briefcase className="h-7 w-7 text-slate-400 mx-auto" />
-                <p className={`font-bold text-xs ${isDark ? "text-white" : "text-slate-800"}`}>No Active Collab Gigs Published</p>
-                <p className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>Creator has not published active rate card packages yet.</p>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+            );
+          })()}
+        </div>
+      )}
+    </div>
 
       {/* Bottom Conversion Watermark */}
       <div className="relative z-10 mt-6 pt-4 text-center border-t border-gray-200/30">

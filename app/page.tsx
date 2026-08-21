@@ -13,11 +13,17 @@ import {
   Users,
   Layers,
   ChevronRight,
+  Briefcase,
+  Clock,
+  CheckCircle2,
+  MessageCircle,
+  Mail,
 } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 import { AuthService } from "@/services/AuthService";
 import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
+import { PricingTable } from "@/components/subscription/PricingTable";
 import { CreatorProfile, SocialAccounts, Series, ThemeKey } from "@/types";
 
 const DEMO_PROFILE: CreatorProfile = {
@@ -434,6 +440,126 @@ export default function LandingHomePage() {
         </div>
       </section>
 
+      {/* 4.5. SECTION: INTERACTIVE CREATOR MEDIA KIT & BRAND COLLABS */}
+      <section className="py-16 sm:py-24 bg-white border-b border-[#E5E7EB]">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            {/* Left Copy */}
+            <div className="lg:col-span-6 space-y-4 text-left">
+              <span className="inline-block rounded-full bg-amber-100 text-amber-950 border border-amber-300 px-3 py-0.5 text-xs font-black uppercase tracking-wider">
+                💼 Brand Collaborations &amp; Rate Cards
+              </span>
+              <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#111827] leading-tight">
+                Turn Your Audience Into Direct Brand Revenue
+              </h2>
+              <p className="text-sm sm:text-base font-medium text-[#4B5563] leading-relaxed">
+                Stop losing sponsorship leads in crowded Instagram DMs and messy email threads. Inflixo provides an interactive, verified Media Kit &amp; Rate Card portal where brand managers can view your live total reach, package deliverables, and contact you directly via WhatsApp or Email.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs font-medium text-[#111827]">
+                <div className="flex items-start gap-2.5 rounded-xl border border-gray-100 bg-[#F9FAFB] p-3">
+                  <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
+                  <div>
+                    <strong className="text-slate-900 block font-bold">Dynamic Rate Cards:</strong>
+                    List custom pricing for Reels, YouTube integrations &amp; retainers (e.g. ₹2,000 / Reel).
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5 rounded-xl border border-gray-100 bg-[#F9FAFB] p-3">
+                  <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
+                  <div>
+                    <strong className="text-slate-900 block font-bold">Verified Reach Badge:</strong>
+                    Automatic total fanbase counter across Instagram, YouTube &amp; Facebook.
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5 rounded-xl border border-gray-100 bg-[#F9FAFB] p-3">
+                  <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
+                  <div>
+                    <strong className="text-slate-900 block font-bold">Direct WhatsApp &amp; Email Leads:</strong>
+                    1-tap contact buttons so brand managers reach out directly to your inbox.
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5 rounded-xl border border-gray-100 bg-[#F9FAFB] p-3">
+                  <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
+                  <div>
+                    <strong className="text-slate-900 block font-bold">1-Click PDF Media Kit Export:</strong>
+                    Generate a polished PDF proposal instantly for agencies and sponsors.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Visual Card Mockup: Media Kit Rate Card Preview */}
+            <div className="lg:col-span-6 flex justify-center">
+              <div className="w-full max-w-md rounded-2xl border-2 border-amber-400 bg-gradient-to-b from-amber-50/40 via-white to-white p-5 space-y-4 text-left shadow-lg relative">
+                <div className="flex items-center justify-between border-b border-amber-100 pb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-xs font-black text-slate-900 uppercase tracking-wider">VERIFIED MEDIA KIT</span>
+                  </div>
+                  <span className="rounded-full bg-amber-400 px-2.5 py-0.5 text-[10px] font-black text-amber-950">
+                    RATE CARD LIVE
+                  </span>
+                </div>
+
+                {/* Sample Gig Card 1 */}
+                <div className="rounded-xl border border-amber-200 bg-white p-4 space-y-2.5 shadow-2xs relative">
+                  <span className="absolute -top-2 right-3 bg-[#803D63] text-white text-[9px] font-black px-2 py-0.5 rounded-full">
+                    ⭐ MOST POPULAR
+                  </span>
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <span className="border text-[9px] font-extrabold px-2 py-0.5 rounded uppercase bg-[#F6EBF1] text-[#803D63] border-[#E8DCE4]">
+                        Instagram Reel
+                      </span>
+                      <h5 className="font-bold text-sm text-slate-900 mt-1">1x High-Engagement Dedicated Reel</h5>
+                    </div>
+                    <span className="font-extrabold text-base text-[#803D63]">₹2,000</span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 font-semibold">⚡ Turnaround: 2 Days</p>
+                  <ul className="text-xs space-y-1 pt-1 border-t border-slate-100 text-slate-600">
+                    <li className="flex items-center gap-1.5">
+                      <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                      <span>30–60s Dedicated Reel + Brand Tag</span>
+                    </li>
+                    <li className="flex items-center gap-1.5">
+                      <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                      <span>Direct Promo Code Link in Bio</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Sample Gig Card 2 */}
+                <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-2.5 shadow-2xs">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <span className="border text-[9px] font-extrabold px-2 py-0.5 rounded uppercase bg-indigo-50 text-indigo-700 border-indigo-100">
+                        Instagram Bundle
+                      </span>
+                      <h5 className="font-bold text-sm text-slate-900 mt-1">3x Reels Mini-Campaign Pack</h5>
+                    </div>
+                    <span className="font-extrabold text-base text-[#803D63]">₹5,400</span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 font-semibold">⚡ Turnaround: 5 Days • Save 10%</p>
+                </div>
+
+                {/* Direct WhatsApp & Email Contact Bar */}
+                <div className="pt-2 border-t border-amber-100 grid grid-cols-2 gap-2">
+                  <div className="bg-emerald-600 text-white text-xs font-bold py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-2xs">
+                    <span>💬 WhatsApp Chat</span>
+                  </div>
+                  <div className="bg-slate-900 text-white text-xs font-bold py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-2xs">
+                    <span>✉️ Send Email</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 5. SECTION 3: THE 2027 VISION & CREATOR COLLECTIVE */}
       <section className="py-16 sm:py-24 bg-[#FFFFFF] border-b border-[#E5E7EB]">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 text-center">
@@ -478,142 +604,12 @@ export default function LandingHomePage() {
               Simple, Creator-First Plans
             </h2>
             <p className="text-xs sm:text-sm font-medium text-[#4B5563]">
-              Start free during Early Access. Upgrade whenever you need unlimited OTT power.
+              Start free during Early Access. Upgrade whenever you need unlimited OTT &amp; Media Kit power.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left items-stretch">
-            {/* TIER 1: EARLY ACCESS FREE */}
-            <div className="rounded-xl border-2 border-emerald-500 bg-white p-6 flex flex-col justify-between relative">
-              <div className="absolute -top-3 left-5 rounded-full bg-emerald-600 px-3 py-0.5 text-[11px] font-bold text-white">
-                Active Free Tier
-              </div>
-              <div className="space-y-4">
-                <div className="mt-1">
-                  <h3 className="font-display text-lg font-bold text-[#111827]">Tier 1: Early Access</h3>
-                  <p className="text-xs font-medium text-[#4B5563]">Essential Identity</p>
-                </div>
-                <div className="rounded-lg bg-[#F9FAFB] p-3 border border-[#E5E7EB]">
-                  <p className="font-display text-3xl font-bold text-[#111827]">₹0</p>
-                  <p className="text-xs font-medium text-[#4B5563]">/ Lifetime free</p>
-                </div>
-                <ul className="space-y-2 text-xs font-medium text-[#111827] pt-2">
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                    <span>Live Fanbase Counter (YT, IG, FB)</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                    <span>1 Active OTT Web Series</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                    <span>Standard Profile Themes</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                    <span>Public inflixo.com/username</span>
-                  </li>
-                </ul>
-              </div>
-              <div className="pt-6">
-                <button
-                  type="button"
-                  onClick={() => handleClaim("")}
-                  className="w-full rounded-lg bg-emerald-100 py-2.5 px-4 text-xs font-bold text-emerald-800 text-center cursor-pointer"
-                >
-                  Get Started Free
-                </button>
-              </div>
-            </div>
-
-            {/* TIER 2: CREATOR PRO */}
-            <div className="rounded-xl border-2 border-[#803D63] bg-white p-6 flex flex-col justify-between relative">
-              <div className="absolute -top-3 left-5 rounded-full bg-[#803D63] px-3 py-0.5 text-[11px] font-bold text-white">
-                Most Popular
-              </div>
-              <div className="space-y-4">
-                <div className="mt-1">
-                  <h3 className="font-display text-lg font-bold text-[#111827]">Tier 2: Creator Pro</h3>
-                  <p className="text-xs font-medium text-[#4B5563]">Serious Growth</p>
-                </div>
-                <div className="rounded-lg bg-purple-50 p-3 border border-purple-100">
-                  <p className="font-display text-3xl font-bold text-[#111827]">₹199</p>
-                  <p className="text-xs font-medium text-[#4B5563]">/ month</p>
-                </div>
-                <ul className="space-y-2 text-xs font-medium text-[#111827] pt-2">
-                  <li className="flex items-center gap-2 font-bold text-[#111827]">
-                    <Check className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
-                    <span>Unlimited Series &amp; Episodes</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
-                    <span>Fast 3-Hour Metrics Sync</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
-                    <span>All 20+ Designer Card Themes</span>
-                  </li>
-                  <li className="flex items-center gap-2 font-bold text-[#803D63]">
-                    <Check className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
-                    <span>Priority Invite: Summit 2027</span>
-                  </li>
-                </ul>
-              </div>
-              <div className="pt-6">
-                <button
-                  type="button"
-                  onClick={() => handleClaim("")}
-                  className="w-full rounded-lg bg-[#803D63] hover:bg-[#6D3254] py-2.5 px-4 text-xs font-bold text-white text-center transition-colors cursor-pointer"
-                >
-                  Upgrade to Pro
-                </button>
-              </div>
-            </div>
-
-            {/* TIER 3: STUDIO / AGENCY */}
-            <div className="rounded-xl border border-[#E5E7EB] bg-white p-6 flex flex-col justify-between relative hover:border-slate-300 transition-colors">
-              <div className="absolute -top-3 left-5 rounded-full bg-slate-900 px-3 py-0.5 text-[11px] font-bold text-white">
-                Best Value Annual
-              </div>
-              <div className="space-y-4">
-                <div className="mt-1">
-                  <h3 className="font-display text-lg font-bold text-[#111827]">Tier 3: Studio / Agency</h3>
-                  <p className="text-xs font-medium text-[#4B5563]">Power Creators &amp; Teams</p>
-                </div>
-                <div className="rounded-lg bg-[#F9FAFB] p-3 border border-[#E5E7EB]">
-                  <p className="font-display text-3xl font-bold text-[#111827]">₹1,999</p>
-                  <p className="text-xs font-medium text-[#4B5563]">/ year</p>
-                </div>
-                <ul className="space-y-2 text-xs font-medium text-[#111827] pt-2">
-                  <li className="flex items-center gap-2 font-bold text-[#111827]">
-                    <Check className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
-                    <span>Real-Time Instant Sync</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
-                    <span>Custom Domain Support</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
-                    <span>Priority Media Kit Analytics</span>
-                  </li>
-                  <li className="flex items-center gap-2 font-bold text-[#803D63]">
-                    <Check className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
-                    <span>VIP Access: Summit 2027</span>
-                  </li>
-                </ul>
-              </div>
-              <div className="pt-6">
-                <button
-                  type="button"
-                  onClick={() => handleClaim("")}
-                  className="w-full rounded-lg bg-[#111827] hover:bg-black py-2.5 px-4 text-xs font-bold text-white text-center transition-colors cursor-pointer"
-                >
-                  Get Annual VIP
-                </button>
-              </div>
-            </div>
+          <div className="text-left">
+            <PricingTable showEarlyAccessBanner={true} />
           </div>
         </div>
       </section>
