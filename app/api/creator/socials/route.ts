@@ -23,10 +23,31 @@ export async function GET(req: Request) {
       return NextResponse.json({ socials: [] });
     }
 
+    const creatorId = creators[0].id;
+    const targetEmail = email || creators[0].email || "";
+
     const [rows]: any = await db.query(
       "SELECT * FROM social_accounts WHERE creator_id = ?",
-      [creators[0].id]
+      [creatorId]
     );
+
+    let customLinks: any[] = [];
+    try {
+      const [linkRows]: any = await db.query(
+        `SELECT id, title, url, icon, is_enabled AS isEnabled, sort_order AS sortOrder
+         FROM creator_custom_links 
+         WHERE creator_id = ? OR email = ?
+         ORDER BY sort_order ASC, created_at ASC`,
+        [creatorId, targetEmail]
+      );
+      customLinks = (linkRows || []).map((r: any) => ({
+        id: r.id,
+        title: r.title,
+        url: r.url,
+        icon: r.icon || "link",
+        isEnabled: Boolean(r.isEnabled),
+      }));
+    } catch {}
 
     return NextResponse.json({
       success: true,
@@ -41,6 +62,7 @@ export async function GET(req: Request) {
         isVerified: Boolean(r.is_verified),
         lastSyncedAt: r.last_synced_at,
       })),
+      customLinks,
     });
   } catch (err: any) {
     console.error("GET Socials Error:", err);
