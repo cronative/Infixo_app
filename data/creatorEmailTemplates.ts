@@ -18,7 +18,7 @@ First and foremost, a heartfelt Thank You for creating such incredible, high-val
 
 We wish you continued growth and immense success as you cement your name among the top creators in the country.
 
-Over the past few months, we reached out to more than 50 content creators across India to understand their day-to-day challenges. Three recurring problems stood out that existing bio-link tools fail to solve:
+Over the past few months, we reached out to more than 1000 content creators across India to understand their day-to-day challenges. Three recurring problems stood out that existing bio-link tools fail to solve:
 
 1. **"Tools let you list multiple social links, but no one shows our Total Fanbase in one place."**
 Creators want their YouTube subscribers, Instagram followers, and Facebook community unified into a single live metric (e.g., **500K+ Combined Fanbase**) so fans and brand partners can see their full reach instantly.
@@ -68,7 +68,7 @@ Sabse pehle, India ki content creation industry me itna lajawab aur valuable con
 
 Hum wish karte hain ki aapka channel aur page aur tezi se grow kare aur India ke top creators me aapka naam hamesha chamakta rahe.
 
-Humne pichle kuch mahino me India ke 50+ se zyada content creators se baat ki aur unse unke daily challenges samjhe. Creators ne hume 3 badi problems batayi jo aaj market ka koi bhi link tool solve nahi kar pa raha hai:
+Humne pichle kuch mahino me India ke 1000+ se zyada content creators se baat ki aur unse unke daily challenges samjhe. Creators ne hume 3 badi problems batayi jo aaj market ka koi bhi link tool solve nahi kar pa raha hai:
 
 1. **"Alag-alag platforms ke links toh sab dete hain, lekin Total Fanbase count ek jagah koi nahi dikhata."**
 Creators chahte hain ki unke YouTube subscribers, Instagram followers aur Facebook community ka total number ek single unified metric (e.g. **500K+ Combined Fanbase**) me fans aur brands ko ek sath dikhe.
