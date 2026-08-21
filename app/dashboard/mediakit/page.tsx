@@ -1,0 +1,764 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+  Briefcase,
+  Sparkles,
+  Plus,
+  Edit2,
+  Trash2,
+  Share2,
+  Download,
+  Eye,
+  CheckCircle2,
+  DollarSign,
+  Clock,
+  Building2,
+  Mail,
+  Copy,
+  ExternalLink,
+  ShieldCheck,
+  Zap,
+  Tag,
+  Check,
+  X,
+  FileSpreadsheet,
+} from "lucide-react";
+import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
+import { useCreator } from "@/contexts/CreatorContext";
+import { useToast } from "@/contexts/ToastContext";
+import { MediaKitService } from "@/services/MediaKitService";
+import { MediaKitPackage, MediaKitSettings } from "@/types";
+import { formatCount } from "@/utils/format";
+import { copyToClipboard } from "@/lib/copyToClipboard";
+
+export default function DashboardMediaKitPage() {
+  const router = useRouter();
+  const { profile, socials, totalAudience } = useCreator();
+  const { showToast } = useToast();
+
+  const [packages, setPackages] = useState<MediaKitPackage[]>([]);
+  const [settings, setSettings] = useState<MediaKitSettings>(MediaKitService.DEFAULT_SETTINGS);
+  const [isEditingSettings, setIsEditingSettings] = useState(false);
+
+  // Package Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingPkgId, setEditingPkgId] = useState<string | null>(null);
+
+  // Form inputs for package modal
+  const [formTitle, setFormTitle] = useState("");
+  const [formPlatform, setFormPlatform] = useState<"YouTube" | "Instagram" | "Facebook" | "Multi-Platform">("YouTube");
+  const [formPrice, setFormPrice] = useState("");
+  const [formTurnaround, setFormTurnaround] = useState<number>(7);
+  const [formDeliverableInput, setFormDeliverableInput] = useState("");
+  const [formDeliverables, setFormDeliverables] = useState<string[]>([]);
+  const [formIsPopular, setFormIsPopular] = useState(false);
+
+  // Public Preview Modal State
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
+
+  useEffect(() => {
+    setPackages(MediaKitService.getPackages());
+    const savedSettings = MediaKitService.getSettings();
+    setSettings({
+      ...savedSettings,
+      sponsorEmail: savedSettings.sponsorEmail || profile.email || "business@inflixo.com",
+    });
+  }, [profile.email]);
+
+  const handleSaveSettings = () => {
+    MediaKitService.saveSettings(settings);
+    setIsEditingSettings(false);
+    showToast("Media Kit sponsorship settings saved! 💼");
+  };
+
+  const handleOpenAddModal = () => {
+    setEditingPkgId(null);
+    setFormTitle("");
+    setFormPlatform("YouTube");
+    setFormPrice("₹25,000");
+    setFormTurnaround(7);
+    setFormDeliverableInput("");
+    setFormDeliverables([
+      "60-90s Dedicated Product Integration",
+      "Link in Description & Pinned Comment",
+      "Social Story Cross-Promotion",
+    ]);
+    setFormIsPopular(false);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEditModal = (pkg: MediaKitPackage) => {
+    setEditingPkgId(pkg.id);
+    setFormTitle(pkg.title);
+    setFormPlatform(pkg.platform);
+    setFormPrice(pkg.price);
+    setFormTurnaround(pkg.turnaroundDays);
+    setFormDeliverableInput("");
+    setFormDeliverables([...pkg.deliverables]);
+    setFormIsPopular(Boolean(pkg.isPopular));
+    setIsModalOpen(true);
+  };
+
+  const handleAddDeliverable = () => {
+    if (!formDeliverableInput.trim()) return;
+    setFormDeliverables([...formDeliverables, formDeliverableInput.trim()]);
+    setFormDeliverableInput("");
+  };
+
+  const handleRemoveDeliverable = (index: number) => {
+    setFormDeliverables(formDeliverables.filter((_, i) => i !== index));
+  };
+
+  const handleSavePackage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formTitle.trim() || !formPrice.trim()) {
+      showToast("Please enter a package title and price", "error");
+      return;
+    }
+
+    if (editingPkgId) {
+      const updated = MediaKitService.updatePackage(editingPkgId, {
+        title: formTitle.trim(),
+        platform: formPlatform,
+        price: formPrice.trim(),
+        turnaroundDays: Number(formTurnaround) || 5,
+        deliverables: formDeliverables.length > 0 ? formDeliverables : ["Product Integration"],
+        isPopular: formIsPopular,
+      });
+      setPackages(updated);
+      showToast("Collaboration package updated! ✨");
+    } else {
+      const newPkg = MediaKitService.addPackage({
+        title: formTitle.trim(),
+        platform: formPlatform,
+        price: formPrice.trim(),
+        turnaroundDays: Number(formTurnaround) || 5,
+        deliverables: formDeliverables.length > 0 ? formDeliverables : ["Product Integration"],
+        isPopular: formIsPopular,
+        isActive: true,
+      });
+      setPackages(MediaKitService.getPackages());
+      showToast("New collaboration package created! 🚀");
+    }
+
+    setIsModalOpen(false);
+  };
+
+  const handleTogglePackageActive = (id: string, currentActive: boolean) => {
+    const updated = MediaKitService.updatePackage(id, { isActive: !currentActive });
+    setPackages(updated);
+    showToast(`Package ${!currentActive ? "activated" : "hidden"} on rate card!`);
+  };
+
+  const handleDeletePackage = (id: string, title: string) => {
+    if (confirm(`Are you sure you want to delete "${title}"?`)) {
+      const updated = MediaKitService.deletePackage(id);
+      setPackages(updated);
+      showToast(`Package "${title}" removed.`);
+    }
+  };
+
+  const handleShareMediaKit = async () => {
+    const handle = profile.username || "creator";
+    const shareUrl = typeof window !== "undefined"
+      ? `${window.location.origin}/${handle}?view=mediakit`
+      : `https://inflixo.com/${handle}?view=mediakit`;
+    const success = await copyToClipboard(shareUrl);
+    if (success) {
+      showToast("Media Kit link copied to clipboard! 💼✨");
+    } else {
+      showToast("Could not copy link", "error");
+    }
+  };
+
+  const handleExportPDF = () => {
+    if (typeof window !== "undefined") {
+      window.print();
+    }
+  };
+
+  const handleStr = profile.username || "username";
+
+  return (
+    <div className="min-h-dvh bg-[#F9FAFB] text-slate-900 pb-16">
+      {/* Sticky Page Subheader */}
+      <div className="sticky top-0 z-30 bg-[#FAF8FA]/95 backdrop-blur-md border-b border-[#E8DCE4]/80 px-3 sm:px-6 py-3.5 shadow-2xs text-left mb-6">
+        <div className="mx-auto max-w-5xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <h1 className="font-display text-base font-extrabold text-slate-900 truncate">
+                Media Kit &amp; Brand Collaborations
+              </h1>
+              <span className="bg-[#803D63] text-white text-[10px] font-black px-2 py-0.5 rounded-md tracking-wider">
+                VIP PLAN
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 font-medium truncate">
+              Manage your rate card packages, brand inquiry settings &amp; verified reach metrics
+            </p>
+          </div>
+
+          {/* Top Quick Actions */}
+          <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={() => setIsPreviewModalOpen(true)}
+              className="bg-white hover:bg-slate-50 text-slate-800 border border-gray-200 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs cursor-pointer"
+            >
+              <Eye className="h-3.5 w-3.5 text-[#803D63]" />
+              <span>Preview Public View</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleShareMediaKit}
+              className="bg-[#803D63] hover:bg-[#6D3254] text-white text-xs font-semibold px-3.5 py-1.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs cursor-pointer"
+            >
+              <Share2 className="h-3.5 w-3.5" />
+              <span>Share Rate Card</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-5xl px-3 sm:px-6 space-y-6 text-left">
+        
+        {/* 1. VIP MEDIA KIT OVERVIEW HERO BANNER */}
+        <div className="rounded-2xl border border-[#E8DCE4] bg-gradient-to-r from-[#F6EBF1] via-white to-[#F6EBF1] p-5 sm:p-6 shadow-2xs relative overflow-hidden space-y-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="space-y-1 max-w-xl">
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-[#803D63] text-white px-3 py-0.5 text-xs font-black shadow-2xs">
+                <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+                <span>VERIFIED CREATOR MEDIA KIT</span>
+              </div>
+              <h2 className="font-display text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                Land Brand Deals with Live Verified Analytics 💼
+              </h2>
+              <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                Showcase your combined reach, audience demographics, and custom sponsorship packages directly to brand marketing managers.
+              </p>
+            </div>
+
+            {/* Total Combined Reach Badge */}
+            <div className="bg-white border border-[#E8DCE4] rounded-2xl p-4 text-center shrink-0 shadow-2xs w-full sm:w-auto">
+              <p className="text-[10px] font-extrabold uppercase tracking-wider text-[#803D63]">
+                TOTAL AUDIENCE REACH
+              </p>
+              <p className="font-display text-3xl font-black text-slate-900 mt-0.5">
+                {formatCount(totalAudience)}
+              </p>
+              <p className="text-[11px] font-semibold text-emerald-600 flex items-center justify-center gap-1 mt-1">
+                <ShieldCheck className="h-3.5 w-3.5" /> Live Synced Platforms
+              </p>
+            </div>
+          </div>
+
+          {/* Social Platforms Stats Breakdown Strip */}
+          <div className="pt-3 border-t border-[#E8DCE4]/60 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {/* Instagram */}
+            <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-3 shadow-2xs">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-pink-50 text-pink-600 border border-pink-100 shrink-0">
+                <InstagramIcon className="h-4 w-4" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-slate-900 truncate">Instagram Reach</p>
+                <p className="text-sm font-black text-[#803D63]">{formatCount(socials.instagram.followers)} Followers</p>
+              </div>
+            </div>
+
+            {/* YouTube */}
+            <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-3 shadow-2xs">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-red-600 border border-red-100 shrink-0">
+                <YoutubeIcon className="h-4 w-4" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-slate-900 truncate">YouTube Subscribers</p>
+                <p className="text-sm font-black text-[#803D63]">{formatCount(socials.youtube.subscribers)} Subs</p>
+              </div>
+            </div>
+
+            {/* Facebook */}
+            <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-3 shadow-2xs">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100 shrink-0">
+                <FacebookIcon className="h-4 w-4" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-slate-900 truncate">Facebook Audience</p>
+                <p className="text-sm font-black text-[#803D63]">{formatCount(socials.facebook.followers)} Followers</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 2. COLLABORATION PACKAGES & RATE CARD MANAGER */}
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-200 pb-3">
+            <div>
+              <h3 className="font-display text-base font-bold text-slate-900 flex items-center gap-2">
+                <FileSpreadsheet className="h-4 w-4 text-[#803D63]" />
+                <span>Collaboration Packages &amp; Rate Cards ({packages.length})</span>
+              </h3>
+              <p className="text-xs text-slate-500 font-medium mt-0.5">
+                Set custom prices and deliverables for dedicated videos, series sponsorships, and stories
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleOpenAddModal}
+              className="bg-[#803D63] hover:bg-[#6D3254] text-white text-xs font-semibold px-3.5 py-1.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs cursor-pointer shrink-0"
+            >
+              <Plus className="h-4 w-4" />
+              <span>+ Create Package</span>
+            </button>
+          </div>
+
+          {/* Rate Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {packages.map((pkg) => (
+              <div
+                key={pkg.id}
+                className={`flex flex-col justify-between rounded-2xl border bg-white p-5 shadow-2xs transition-all relative ${
+                  pkg.isPopular
+                    ? "border-[#803D63] ring-1 ring-[#803D63]/30"
+                    : "border-gray-200 hover:border-gray-300"
+                } ${!pkg.isActive ? "opacity-60 bg-gray-50" : ""}`}
+              >
+                {pkg.isPopular && (
+                  <span className="absolute -top-3 right-4 bg-[#803D63] text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-2xs">
+                    ⭐ MOST POPULAR
+                  </span>
+                )}
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#803D63] bg-[#F6EBF1] border border-[#E8DCE4] px-2.5 py-0.5 rounded-md">
+                      {pkg.platform}
+                    </span>
+                    <span className="text-xs text-slate-500 font-semibold flex items-center gap-1">
+                      <Clock className="h-3 w-3" /> {pkg.turnaroundDays} Days Turnaround
+                    </span>
+                  </div>
+
+                  <div>
+                    <h4 className="font-display text-base font-bold text-slate-900 leading-snug">
+                      {pkg.title}
+                    </h4>
+                    <p className="font-display text-2xl font-black text-[#803D63] mt-2">
+                      {pkg.price}
+                    </p>
+                  </div>
+
+                  {/* Deliverables Checklist */}
+                  <div className="pt-2 border-t border-gray-100 space-y-2">
+                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                      Included Deliverables:
+                    </p>
+                    <ul className="space-y-1.5 text-xs font-medium text-slate-700">
+                      {pkg.deliverables.map((item, idx) => (
+                        <li key={idx} className="flex items-start gap-2">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Package Controls */}
+                <div className="mt-5 pt-3 border-t border-gray-100 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={() => handleTogglePackageActive(pkg.id, pkg.isActive)}
+                    className={`text-xs font-bold px-2.5 py-1 rounded-lg border transition-colors cursor-pointer ${
+                      pkg.isActive
+                        ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                        : "bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200"
+                    }`}
+                  >
+                    {pkg.isActive ? "Active ✓" : "Hidden"}
+                  </button>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleOpenEditModal(pkg)}
+                      className="p-1.5 rounded-lg border border-gray-200 text-slate-600 hover:text-[#803D63] hover:bg-slate-50 transition-colors cursor-pointer"
+                      title="Edit Package"
+                    >
+                      <Edit2 className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDeletePackage(pkg.id, pkg.title)}
+                      className="p-1.5 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                      title="Delete Package"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 3. DIRECT SPONSOR & BRAND INQUIRY SETTINGS */}
+        <div className="rounded-2xl border border-gray-200 bg-white p-5 sm:p-6 space-y-4 shadow-2xs">
+          <div className="flex items-center justify-between gap-3 border-b border-gray-100 pb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4]">
+                <Building2 className="h-4 w-4" />
+              </div>
+              <div>
+                <h3 className="font-display text-sm font-bold text-slate-900">
+                  Brand Inquiry &amp; Direct Sponsorship Settings
+                </h3>
+                <p className="text-xs text-slate-500 font-medium">
+                  Configure your business email, minimum sponsorship budget, and brand tagline
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsEditingSettings(!isEditingSettings)}
+              className="text-xs font-bold text-[#803D63] hover:underline cursor-pointer"
+            >
+              {isEditingSettings ? "Cancel" : "Edit Settings"}
+            </button>
+          </div>
+
+          {isEditingSettings ? (
+            <div className="space-y-4 pt-1">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Business / Sponsor Inquiry Email
+                </label>
+                <input
+                  type="email"
+                  value={settings.sponsorEmail || ""}
+                  onChange={(e) => setSettings({ ...settings, sponsorEmail: e.target.value })}
+                  placeholder="business@yourname.com"
+                  className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Minimum Sponsorship Budget Filter
+                </label>
+                <input
+                  type="text"
+                  value={settings.minBudget || ""}
+                  onChange={(e) => setSettings({ ...settings, minBudget: e.target.value })}
+                  placeholder="e.g. ₹10,000 or $300"
+                  className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Media Kit Bio Tagline / Collaboration Highlight
+                </label>
+                <textarea
+                  value={settings.bioHighlight || ""}
+                  onChange={(e) => setSettings({ ...settings, bioHighlight: e.target.value })}
+                  rows={2}
+                  placeholder="Short pitch to brands explaining why they should sponsor your channel..."
+                  className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleSaveSettings}
+                  className="bg-[#803D63] hover:bg-[#6D3254] text-white text-xs font-semibold px-4 py-2 rounded-xl transition-all shadow-2xs cursor-pointer"
+                >
+                  Save Settings
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
+              <div className="bg-slate-50 border border-gray-200 rounded-xl p-3.5 space-y-1">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Business Inquiry Email</p>
+                <p className="text-xs font-bold text-slate-900 truncate">{settings.sponsorEmail}</p>
+              </div>
+
+              <div className="bg-slate-50 border border-gray-200 rounded-xl p-3.5 space-y-1">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Min. Budget Filter</p>
+                <p className="text-xs font-bold text-[#803D63]">{settings.minBudget || "Flexible"}</p>
+              </div>
+
+              <div className="bg-slate-50 border border-gray-200 rounded-xl p-3.5 space-y-1">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Sponsorship Status</p>
+                <p className="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                  <CheckCircle2 className="h-3.5 w-3.5" /> Open for Brand Deals
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* 4. EXPORT & PUBLIC VIEW STRIP */}
+        <div className="rounded-2xl border border-gray-200 bg-white p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-2xs">
+          <div className="space-y-0.5">
+            <h4 className="font-display text-sm font-bold text-slate-900">
+              Download One-Click Media Kit Document
+            </h4>
+            <p className="text-xs text-slate-500 font-medium">
+              Generate a clean, high-resolution PDF rate card to attach to agency emails
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={handleExportPDF}
+              className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs cursor-pointer"
+            >
+              <Download className="h-4 w-4" />
+              <span>Export PDF Media Kit</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* CREATE / EDIT PACKAGE MODAL */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white border border-gray-200 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 text-left">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <h3 className="font-display text-base font-bold text-slate-900">
+                {editingPkgId ? "Edit Collaboration Package" : "Create New Rate Card Package"}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSavePackage} className="space-y-3.5">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Package Title</label>
+                <input
+                  type="text"
+                  value={formTitle}
+                  onChange={(e) => setFormTitle(e.target.value)}
+                  placeholder="e.g. YouTube Dedicated Video Sponsor"
+                  className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Target Platform</label>
+                  <select
+                    value={formPlatform}
+                    onChange={(e) => setFormPlatform(e.target.value as any)}
+                    className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
+                  >
+                    <option value="YouTube">YouTube</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="Facebook">Facebook</option>
+                    <option value="Multi-Platform">Multi-Platform</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Pricing (Rate)</label>
+                  <input
+                    type="text"
+                    value={formPrice}
+                    onChange={(e) => setFormPrice(e.target.value)}
+                    placeholder="e.g. ₹25,000 or $500"
+                    className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Turnaround Days</label>
+                <input
+                  type="number"
+                  value={formTurnaround}
+                  onChange={(e) => setFormTurnaround(Number(e.target.value))}
+                  min={1}
+                  max={30}
+                  className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
+                />
+              </div>
+
+              {/* Deliverables Manager */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Included Deliverables</label>
+                <div className="flex items-center gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={formDeliverableInput}
+                    onChange={(e) => setFormDeliverableInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddDeliverable();
+                      }
+                    }}
+                    placeholder="Add deliverable (e.g. 60s Video Integration)"
+                    className="flex-1 rounded-xl border border-gray-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddDeliverable}
+                    className="bg-[#803D63] text-white text-xs font-semibold px-3 py-1.5 rounded-xl hover:bg-[#6D3254]"
+                  >
+                    Add
+                  </button>
+                </div>
+
+                <div className="space-y-1.5 max-h-32 overflow-y-auto">
+                  {formDeliverables.map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between bg-slate-50 border border-gray-200 rounded-lg px-2.5 py-1 text-xs text-slate-700">
+                      <span>• {item}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveDeliverable(idx)}
+                        className="text-rose-500 hover:text-rose-700 p-0.5"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 pt-1">
+                <input
+                  type="checkbox"
+                  id="formIsPopular"
+                  checked={formIsPopular}
+                  onChange={(e) => setFormIsPopular(e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300 text-[#803D63] focus:ring-[#803D63]"
+                />
+                <label htmlFor="formIsPopular" className="text-xs font-bold text-slate-800 cursor-pointer">
+                  Tag as "⭐ MOST POPULAR" package
+                </label>
+              </div>
+
+              <div className="pt-3 border-t border-gray-100 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-[#803D63] hover:bg-[#6D3254] text-white text-xs font-semibold px-4 py-2 rounded-xl transition-all shadow-2xs"
+                >
+                  {editingPkgId ? "Save Changes" : "Create Package"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* PUBLIC MEDIA KIT PREVIEW MODAL */}
+      {isPreviewModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white border border-gray-200 rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-5 text-left max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#F6EBF1] text-[#803D63]">
+                  <Briefcase className="h-4 w-4" />
+                </div>
+                <div>
+                  <h3 className="font-display text-base font-extrabold text-slate-900">
+                    Live Brand View — {profile.displayName || "Creator"} Media Kit
+                  </h3>
+                  <p className="text-[11px] text-slate-500 font-medium">This is how brand managers see your rate card &amp; sponsorship packages</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsPreviewModalOpen(false)}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Public Header Preview */}
+            <div className="rounded-2xl bg-slate-900 text-white p-5 space-y-3">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <h2 className="font-display text-xl font-black">{profile.displayName || "Creator"}</h2>
+                  <p className="text-xs text-indigo-200">@{handleStr} • Verified Inflixo Creator</p>
+                </div>
+                <div className="bg-white/10 backdrop-blur-xs px-3 py-1.5 rounded-xl text-right">
+                  <p className="text-[10px] text-slate-300 uppercase font-bold">Total Reach</p>
+                  <p className="text-lg font-black text-white">{formatCount(totalAudience)}</p>
+                </div>
+              </div>
+              {settings.bioHighlight && (
+                <p className="text-xs text-slate-300 font-medium pt-1 border-t border-white/10 leading-relaxed">
+                  "{settings.bioHighlight}"
+                </p>
+              )}
+            </div>
+
+            {/* Public Packages Preview */}
+            <div className="space-y-3">
+              <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider">
+                Official Collaboration Rate Cards ({packages.filter((p) => p.isActive).length})
+              </h4>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {packages.filter((p) => p.isActive).map((pkg) => (
+                  <div key={pkg.id} className="border border-gray-200 rounded-2xl p-4 space-y-2 bg-slate-50/50">
+                    <div className="flex items-center justify-between">
+                      <span className="bg-[#F6EBF1] text-[#803D63] text-[10px] font-bold px-2 py-0.5 rounded">
+                        {pkg.platform}
+                      </span>
+                      <span className="font-black text-[#803D63] text-base">{pkg.price}</span>
+                    </div>
+                    <h5 className="font-bold text-slate-900 text-sm">{pkg.title}</h5>
+                    <ul className="text-xs text-slate-600 space-y-1 pt-1">
+                      {pkg.deliverables.map((item, idx) => (
+                        <li key={idx}>• {item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Direct Contact Action */}
+            <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-bold text-slate-900">Direct Brand Inquiry Contact</p>
+                <p className="text-xs text-indigo-700 font-semibold">{settings.sponsorEmail}</p>
+              </div>
+              <a
+                href={`mailto:${settings.sponsorEmail}?subject=Brand%20Sponsorship%20Inquiry%20via%20Inflixo`}
+                className="bg-[#803D63] text-white text-xs font-semibold px-4 py-2 rounded-xl hover:bg-[#6D3254] shrink-0"
+              >
+                Send Sponsorship Inquiry ✉️
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

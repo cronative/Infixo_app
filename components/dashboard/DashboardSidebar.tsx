@@ -85,7 +85,12 @@ export function DashboardSidebar() {
               >
                 <Icon className="h-3.5 w-3.5 shrink-0" />
               </div>
-              {item.label}
+              <span className="flex-1">{item.label}</span>
+              {item.badge && (
+                <span className="bg-[#803D63] text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-md tracking-wider">
+                  {item.badge}
+                </span>
+              )}
             </Link>
           );
         })}

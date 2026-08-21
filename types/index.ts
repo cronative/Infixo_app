@@ -208,10 +208,33 @@ export interface Series {
 }
 
 // ---------------------------------------------------------------------------
+// Media Kit & Collaboration Packages
+// ---------------------------------------------------------------------------
+
+export interface MediaKitPackage {
+  id: string;
+  title: string;
+  platform: "YouTube" | "Instagram" | "Facebook" | "Multi-Platform";
+  deliverables: string[];
+  price: string;
+  turnaroundDays: number;
+  isPopular?: boolean;
+  isActive: boolean;
+}
+
+export interface MediaKitSettings {
+  sponsorEmail?: string;
+  bioHighlight?: string;
+  acceptingSponsors: boolean;
+  minBudget?: string;
+  preferredCategories?: string[];
+}
+
+// ---------------------------------------------------------------------------
 // Subscription
 // ---------------------------------------------------------------------------
 
-export type PlanKey = "creator" | "pro" | "free" | "starter" | "unlimited" | "early_access";
+export type PlanKey = "creator" | "pro" | "vip" | "free" | "starter" | "unlimited" | "early_access";
 export type BillingCycle = "monthly" | "yearly";
 export type SubscriptionStatus = "trial" | "active" | "expired" | "cancelled";
 
