@@ -217,6 +217,9 @@ export interface MediaKitPackage {
   platform: "YouTube" | "Instagram" | "Instagram Bundle" | "Monthly Retainer" | "Facebook" | "Multi-Platform" | string;
   deliverables: string[];
   price: string;
+  minPrice?: string;
+  maxPrice?: string;
+  packageName?: string;
   turnaroundDays: number;
   badge?: string;
   isPopular?: boolean;

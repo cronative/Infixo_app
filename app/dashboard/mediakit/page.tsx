@@ -53,7 +53,9 @@ export default function DashboardMediaKitPage() {
   // Form inputs for package modal
   const [formTitle, setFormTitle] = useState("");
   const [formPlatform, setFormPlatform] = useState<string>("Instagram Reel");
-  const [formPrice, setFormPrice] = useState("");
+  const [formMinPrice, setFormMinPrice] = useState("₹2,000");
+  const [formMaxPrice, setFormMaxPrice] = useState("");
+  const [formPackageName, setFormPackageName] = useState(""); // "Bronze Package" | "Silver Package" | "Gold Package" | custom
   const [formTurnaround, setFormTurnaround] = useState<number>(2);
   const [formDeliverableInput, setFormDeliverableInput] = useState("");
   const [formDeliverables, setFormDeliverables] = useState<string[]>([]);
@@ -101,7 +103,9 @@ export default function DashboardMediaKitPage() {
     setEditingPkgId(null);
     setFormTitle("1x High-Engagement Instagram Reel");
     setFormPlatform("Instagram Reel");
-    setFormPrice("₹2,000");
+    setFormMinPrice("₹2,000");
+    setFormMaxPrice("");
+    setFormPackageName("🥈 Silver Package");
     setFormTurnaround(2);
     setFormDeliverableInput("");
     setFormDeliverables([
@@ -110,8 +114,8 @@ export default function DashboardMediaKitPage() {
       "Direct Link/Promo Code in Bio (24 Hours)",
       "30 Days Digital Usage Rights",
     ]);
-    setFormBadgeOption("none");
-    setFormCustomBadge("");
+    setFormBadgeOption("custom");
+    setFormCustomBadge("🥈 Silver Package");
     setIsModalOpen(true);
   };
 
@@ -119,7 +123,18 @@ export default function DashboardMediaKitPage() {
     setEditingPkgId(pkg.id);
     setFormTitle(pkg.title);
     setFormPlatform(pkg.platform);
-    setFormPrice(pkg.price);
+    if (pkg.minPrice) {
+      setFormMinPrice(pkg.minPrice);
+      setFormMaxPrice(pkg.maxPrice || "");
+    } else if (pkg.price.includes("–")) {
+      const parts = pkg.price.split("–").map((s) => s.trim());
+      setFormMinPrice(parts[0] || "₹0");
+      setFormMaxPrice(parts[1] || "");
+    } else {
+      setFormMinPrice(pkg.price);
+      setFormMaxPrice("");
+    }
+    setFormPackageName(pkg.packageName || pkg.badge || "");
     setFormTurnaround(pkg.turnaroundDays);
     setFormDeliverableInput("");
     setFormDeliverables([...pkg.deliverables]);
@@ -127,9 +142,9 @@ export default function DashboardMediaKitPage() {
       setFormBadgeOption("popular");
     } else if (pkg.badge && pkg.badge.includes("BEST VALUE")) {
       setFormBadgeOption("value");
-    } else if (pkg.badge) {
+    } else if (pkg.badge || pkg.packageName) {
       setFormBadgeOption("custom");
-      setFormCustomBadge(pkg.badge);
+      setFormCustomBadge(pkg.packageName || pkg.badge || "");
     } else {
       setFormBadgeOption("none");
     }
@@ -148,10 +163,14 @@ export default function DashboardMediaKitPage() {
 
   const handleSavePackage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formTitle.trim() || !formPrice.trim()) {
-      showToast("Please enter a package title and price", "error");
+    if (!formTitle.trim() || !formMinPrice.trim()) {
+      showToast("Please enter a package title and minimum price", "error");
       return;
     }
+
+    const minStr = formMinPrice.trim();
+    const maxStr = formMaxPrice.trim();
+    const formattedPrice = maxStr ? `${minStr} – ${maxStr}` : minStr;
 
     let resolvedBadge: string | undefined = undefined;
     let resolvedIsPopular = false;
@@ -163,6 +182,8 @@ export default function DashboardMediaKitPage() {
       resolvedBadge = "🔥 BEST VALUE (25% OFF)";
     } else if (formBadgeOption === "custom" && formCustomBadge.trim()) {
       resolvedBadge = formCustomBadge.trim();
+    } else if (formPackageName.trim()) {
+      resolvedBadge = formPackageName.trim();
     }
 
     let updatedPkgs: MediaKitPackage[] = [];
@@ -170,7 +191,10 @@ export default function DashboardMediaKitPage() {
       updatedPkgs = MediaKitService.updatePackage(editingPkgId, {
         title: formTitle.trim(),
         platform: formPlatform,
-        price: formPrice.trim(),
+        price: formattedPrice,
+        minPrice: minStr,
+        maxPrice: maxStr || undefined,
+        packageName: formPackageName.trim() || undefined,
         turnaroundDays: Number(formTurnaround) || 2,
         deliverables: formDeliverables.length > 0 ? formDeliverables : ["Product Integration"],
         badge: resolvedBadge,
@@ -180,7 +204,10 @@ export default function DashboardMediaKitPage() {
       MediaKitService.addPackage({
         title: formTitle.trim(),
         platform: formPlatform,
-        price: formPrice.trim(),
+        price: formattedPrice,
+        minPrice: minStr,
+        maxPrice: maxStr || undefined,
+        packageName: formPackageName.trim() || undefined,
         turnaroundDays: Number(formTurnaround) || 2,
         deliverables: formDeliverables.length > 0 ? formDeliverables : ["Product Integration"],
         badge: resolvedBadge,
@@ -751,16 +778,35 @@ export default function DashboardMediaKitPage() {
                   </select>
                 </div>
 
+                {/* Min - Max Pricing Range Inputs */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Pricing (in INR)</label>
-                  <input
-                    type="text"
-                    value={formPrice}
-                    onChange={(e) => setFormPrice(e.target.value)}
-                    placeholder="e.g. ₹2,000 or ₹5,400"
-                    className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
-                    required
-                  />
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Pricing Range (in INR)
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <input
+                        type="text"
+                        value={formMinPrice}
+                        onChange={(e) => setFormMinPrice(e.target.value)}
+                        placeholder="Min Price (e.g. ₹2,000)"
+                        className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        value={formMaxPrice}
+                        onChange={(e) => setFormMaxPrice(e.target.value)}
+                        placeholder="Max Price (Optional)"
+                        className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-1">
+                    e.g. Min ₹2,000 – Max ₹5,000 (leave Max empty for fixed pricing)
+                  </p>
                 </div>
               </div>
 
@@ -818,27 +864,76 @@ export default function DashboardMediaKitPage() {
                 </div>
               </div>
 
-              {/* Optional Badge Selection */}
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Highlight Badge Tag</label>
+              {/* Package Tier Name & Highlight Badge Selection */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-slate-700">
+                  Package Name / Highlight Badge Tag
+                </label>
+
+                {/* 3 Package Name Tier Hints Chips */}
+                <div className="space-y-1">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Quick Tier Name Hints:</p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFormPackageName("🥉 Bronze Package");
+                        setFormBadgeOption("custom");
+                        setFormCustomBadge("🥉 Bronze Package");
+                      }}
+                      className="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 text-xs font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer"
+                    >
+                      🥉 Bronze Package
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFormPackageName("🥈 Silver Package");
+                        setFormBadgeOption("custom");
+                        setFormCustomBadge("🥈 Silver Package");
+                      }}
+                      className="bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300 text-xs font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer"
+                    >
+                      🥈 Silver Package
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFormPackageName("🥇 Gold Package");
+                        setFormBadgeOption("custom");
+                        setFormCustomBadge("🥇 Gold Package");
+                      }}
+                      className="bg-yellow-50 hover:bg-yellow-100 text-yellow-900 border border-yellow-300 text-xs font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer"
+                    >
+                      🥇 Gold Package
+                    </button>
+                  </div>
+                </div>
+
                 <select
                   value={formBadgeOption}
-                  onChange={(e) => setFormBadgeOption(e.target.value)}
+                  onChange={(e) => {
+                    setFormBadgeOption(e.target.value);
+                    if (e.target.value === "none") setFormPackageName("");
+                  }}
                   className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
                 >
-                  <option value="none">None (Standard Gig)</option>
+                  <option value="none">None (Standard Package)</option>
                   <option value="popular">⭐ MOST POPULAR</option>
                   <option value="value">🔥 BEST VALUE (25% OFF)</option>
-                  <option value="custom">Custom Badge Text</option>
+                  <option value="custom">Custom Package Name / Badge</option>
                 </select>
 
-                {formBadgeOption === "custom" && (
+                {(formBadgeOption === "custom" || formPackageName) && (
                   <input
                     type="text"
-                    value={formCustomBadge}
-                    onChange={(e) => setFormCustomBadge(e.target.value)}
-                    placeholder="e.g. ⚡ Save 10%"
-                    className="mt-2 w-full rounded-xl border border-gray-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-900"
+                    value={formCustomBadge || formPackageName}
+                    onChange={(e) => {
+                      setFormCustomBadge(e.target.value);
+                      setFormPackageName(e.target.value);
+                    }}
+                    placeholder="e.g. 🥈 Silver Package or ⚡ Save 10%"
+                    className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
                   />
                 )}
               </div>
