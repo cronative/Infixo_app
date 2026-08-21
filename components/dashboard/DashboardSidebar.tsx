@@ -33,12 +33,12 @@ export function DashboardSidebar() {
       </div>
 
       {/* Simple Flat Creator Profile Row (No Card Box) */}
-      <div className="mt-3 px-2 py-1.5 flex items-center gap-2.5">
+      <div className="mt-2.5 px-2 py-1 flex items-center gap-2">
         <CreatorAvatar
           src={profile.photoDataUrl}
           name={profile.displayName || profile.email || "Creator"}
-          className="w-8 h-8 rounded-full overflow-hidden object-cover aspect-square border border-slate-200 shrink-0"
-          textClassName="text-xs font-bold text-slate-900"
+          className="w-7 h-7 rounded-full overflow-hidden object-cover aspect-square border border-slate-200 shrink-0"
+          textClassName="text-[10px] font-extrabold text-slate-900"
           fallbackBgClass="bg-indigo-50"
         />
 
