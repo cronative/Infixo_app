@@ -5,19 +5,28 @@ import { Plus, Trash2, Edit3, Link as LinkIcon, ExternalLink, X, Sparkles, Check
 import { CustomLink } from "@/types";
 import { customLinksRepository, authRepository } from "@/repositories/localRepository";
 import { useToast } from "@/contexts/ToastContext";
+import { useCreator } from "@/contexts/CreatorContext";
 
 interface CustomLinksManagerProps {
   onChange?: (links: CustomLink[]) => void;
 }
 
+const MAX_FREE_LINKS = 3;
+
 export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
   const { showToast } = useToast();
+  const creatorCtx = useCreator();
+  const subscription = creatorCtx?.subscription;
   const [links, setLinks] = useState<CustomLink[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingLink, setEditingLink] = useState<CustomLink | null>(null);
   const [formTitle, setFormTitle] = useState("");
   const [formUrl, setFormUrl] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+
+  const planKey = (subscription?.planKey || "").toLowerCase();
+  const isVip = planKey.includes("vip") || planKey.includes("pro");
+  const isLimitReached = !isVip && links.length >= MAX_FREE_LINKS;
 
   useEffect(() => {
     const localLinks = customLinksRepository.get();
@@ -40,6 +49,13 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
   }, []);
 
   function handleOpenCreate() {
+    if (isLimitReached) {
+      showToast(
+        `Free / Early Access plan is limited to ${MAX_FREE_LINKS} custom links. Upgrade to VIP Plan for unlimited links! ⭐`,
+        "info"
+      );
+      return;
+    }
     setEditingLink(null);
     setFormTitle("");
     setFormUrl("");
@@ -127,12 +143,23 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
 
   return (
     <div className="space-y-4 rounded-3xl border border-rose-100 bg-white p-5 sm:p-6 shadow-sm text-left">
-      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 gap-2">
         <div>
-          <h3 className="font-display text-base font-extrabold text-slate-900 flex items-center gap-2">
-            <LinkIcon className="h-4 w-4 text-[#803D63]" />
-            Additional Custom Links
-          </h3>
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <h3 className="font-display text-base font-extrabold text-slate-900 flex items-center gap-2">
+              <LinkIcon className="h-4 w-4 text-[#803D63]" />
+              Additional Custom Links
+            </h3>
+            {!isVip ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200/80 px-2.5 py-0.5 text-[11px] font-bold text-amber-800">
+                ⚡ Free / Early Access ({links.length}/{MAX_FREE_LINKS} Links)
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 rounded-full bg-purple-50 border border-purple-200/80 px-2.5 py-0.5 text-[11px] font-bold text-[#803D63]">
+                ⭐ VIP Plan (Unlimited Links)
+              </span>
+            )}
+          </div>
           <p className="text-xs text-slate-500 font-medium mt-0.5">
             Add custom links for latest episodes, booking pages, merch store, or personal website.
           </p>
@@ -141,7 +168,12 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
         <button
           type="button"
           onClick={handleOpenCreate}
-          className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6D3254] px-3.5 py-2 text-xs font-bold text-white transition-all cursor-pointer shadow-2xs shrink-0"
+          className={`tap-scale inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all shrink-0 ${
+            isLimitReached
+              ? "bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed"
+              : "bg-[#803D63] hover:bg-[#6D3254] text-white cursor-pointer shadow-2xs"
+          }`}
+          title={isLimitReached ? "Free / Early Access plan limit reached (3 links max)" : "Add new custom link"}
         >
           <Plus className="h-3.5 w-3.5" />
           <span>Add Link</span>
