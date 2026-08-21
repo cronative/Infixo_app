@@ -99,19 +99,14 @@ export default function DashboardMediaKitPage() {
 
   const handleOpenAddModal = () => {
     setEditingPkgId(null);
-    setFormTitle("1x High-Engagement Instagram Reel");
+    setFormTitle("");
     setFormPlatform("Instagram Reel");
-    setFormMinPrice("₹2,000");
+    setFormMinPrice("");
     setFormMaxPrice("");
-    setFormPackageName("🥈 Silver Package");
+    setFormPackageName("");
     setFormTurnaround(2);
     setFormDeliverableInput("");
-    setFormDeliverables([
-      "1x 30–60s Dedicated/Integrated Reel",
-      "Brand Collaborator Tag & Co-authoring",
-      "Direct Link/Promo Code in Bio (24 Hours)",
-      "30 Days Digital Usage Rights",
-    ]);
+    setFormDeliverables([]);
     setIsModalOpen(true);
   };
 
