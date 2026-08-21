@@ -46,8 +46,8 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
   function handleAddLink() {
     const newLink: CustomLink = {
       id: `link_${Date.now()}`,
-      title: "🔗 New Featured Link",
-      url: "https://",
+      title: "",
+      url: "",
       isEnabled: true,
     };
     const updated = [...links, newLink];
@@ -55,7 +55,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
     customLinksRepository.save(updated);
     if (onChange) onChange(updated);
     syncToBackend(updated);
-    showToast("Added new custom link! 🔗");
+    showToast("Added new custom link field! 🔗");
   }
 
   function handleDeleteLink(id: string) {
@@ -94,7 +94,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
         <div>
           <h3 className="font-display text-base font-extrabold text-slate-900 flex items-center gap-2">
             <LinkIcon className="h-4 w-4 text-[#803D63]" />
-            Additional Custom Links (Linktree Style)
+            Additional Custom Links
           </h3>
           <p className="text-xs text-slate-500 font-medium mt-0.5">
             Add custom links for latest episodes, booking pages, merch store, or personal website.

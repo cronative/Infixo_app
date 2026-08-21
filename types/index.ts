@@ -130,22 +130,7 @@ export interface CustomLink {
   isEnabled?: boolean;
 }
 
-export const DEFAULT_CUSTOM_LINKS: CustomLink[] = [
-  {
-    id: "link_1",
-    title: "🎬 Watch Latest Episode",
-    url: "https://youtube.com",
-    icon: "link",
-    isEnabled: true,
-  },
-  {
-    id: "link_2",
-    title: "📅 Book 1-on-1 Consultation",
-    url: "https://cal.com",
-    icon: "calendar",
-    isEnabled: true,
-  },
-];
+export const DEFAULT_CUSTOM_LINKS: CustomLink[] = [];
 
 // ---------------------------------------------------------------------------
 // Themes
