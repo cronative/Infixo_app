@@ -298,20 +298,26 @@ export default function DashboardMediaKitPage() {
 
     let updatedPkgs: MediaKitPackage[] = [];
     if (editingPkgId) {
-      updatedPkgs = MediaKitService.updatePackage(editingPkgId, {
-        title: formTitle.trim(),
-        platform: formPlatform,
-        price: formattedPrice,
-        minPrice: minStr,
-        maxPrice: maxStr || undefined,
-        packageName: formPackageName.trim() || undefined,
-        turnaroundDays: Number(formTurnaround) || 2,
-        deliverables: formDeliverables.length > 0 ? formDeliverables : ["Product Integration"],
-        badge: resolvedBadge,
-        isPopular: resolvedIsPopular,
-      });
+      updatedPkgs = packages.map((p) =>
+        p.id === editingPkgId
+          ? {
+              ...p,
+              title: formTitle.trim(),
+              platform: formPlatform,
+              price: formattedPrice,
+              minPrice: minStr,
+              maxPrice: maxStr || undefined,
+              packageName: formPackageName.trim() || undefined,
+              turnaroundDays: Number(formTurnaround) || 2,
+              deliverables: formDeliverables.length > 0 ? formDeliverables : ["Product Integration"],
+              badge: resolvedBadge,
+              isPopular: resolvedIsPopular,
+            }
+          : p
+      );
     } else {
-      MediaKitService.addPackage({
+      const newPkg: MediaKitPackage = {
+        id: `pkg_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
         title: formTitle.trim(),
         platform: formPlatform,
         price: formattedPrice,
@@ -323,8 +329,8 @@ export default function DashboardMediaKitPage() {
         badge: resolvedBadge,
         isPopular: resolvedIsPopular,
         isActive: true,
-      });
-      updatedPkgs = MediaKitService.getPackages();
+      };
+      updatedPkgs = [newPkg, ...packages];
     }
 
     setPackages(updatedPkgs);
@@ -336,7 +342,7 @@ export default function DashboardMediaKitPage() {
   };
 
   const handleTogglePackageActive = async (id: string, currentActive: boolean) => {
-    const updated = MediaKitService.updatePackage(id, { isActive: !currentActive });
+    const updated = packages.map((p) => (p.id === id ? { ...p, isActive: !currentActive } : p));
     setPackages(updated);
     if (activeEmail) {
       await MediaKitService.saveToDb(activeEmail, settings, updated);
@@ -346,7 +352,7 @@ export default function DashboardMediaKitPage() {
 
   const handleDeletePackage = async (id: string, title: string) => {
     if (confirm(`Are you sure you want to delete "${title}"?`)) {
-      const updated = MediaKitService.deletePackage(id);
+      const updated = packages.filter((p) => p.id !== id);
       setPackages(updated);
       if (activeEmail) {
         await MediaKitService.saveToDb(activeEmail, settings, updated);
@@ -356,7 +362,6 @@ export default function DashboardMediaKitPage() {
   };
 
   const handleLoadSampleGigs = async () => {
-    MediaKitService.savePackages(SAMPLE_PACKAGES);
     setPackages(SAMPLE_PACKAGES);
     if (activeEmail) {
       await MediaKitService.saveToDb(activeEmail, settings, SAMPLE_PACKAGES);

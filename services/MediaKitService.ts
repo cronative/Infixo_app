@@ -173,33 +173,28 @@ export class MediaKitService {
     }
   }
 
-  static async fetchFromDb(email: string): Promise<{ settings: MediaKitSettings; packages: MediaKitPackage[] }> {
+  static async fetchFromDb(identifier: string): Promise<{ settings: MediaKitSettings; packages: MediaKitPackage[] }> {
     try {
-      const res = await fetch(`/api/creator/mediakit?email=${encodeURIComponent(email)}`);
+      const paramKey = identifier.includes("@") ? "email" : "username";
+      const res = await fetch(`/api/creator/mediakit?${paramKey}=${encodeURIComponent(identifier)}`);
       if (!res.ok) throw new Error("DB fetch failed");
       const data = await res.json();
       if (data.success) {
-        const seedIds = ["pkg_insta_single", "pkg_insta_3x_bundle", "pkg_insta_5x_bundle", "pkg_insta_10x_retainer", "pkg_yt_dedicated", "pkg_insta_bundle", "pkg_series_sponsor"];
-        const rawPackages: MediaKitPackage[] = data.packages || [];
-        const cleanedPackages = rawPackages.filter((p) => !seedIds.includes(p.id));
-        if (cleanedPackages.length !== rawPackages.length) {
-          // Sync cleaned empty packages list back to DB
-          await this.saveToDb(email, data.settings || this.getSettings(), cleanedPackages);
-        } else {
-          this.savePackages(cleanedPackages);
-        }
-        if (data.settings) this.saveSettings(data.settings);
-        return { settings: data.settings, packages: cleanedPackages };
+        return {
+          settings: data.settings || { sponsorEmail: "", whatsappNumber: "", minBudget: "", bioHighlight: "", acceptingSponsors: true, preferredCategories: [] },
+          packages: data.packages || [],
+        };
       }
     } catch (e) {
-      console.warn("MediaKit DB fetch fallback to localStorage:", e);
+      console.warn("MediaKit DB fetch error:", e);
     }
-    return { settings: this.getSettings(), packages: this.getPackages() };
+    return {
+      settings: { sponsorEmail: "", whatsappNumber: "", minBudget: "", bioHighlight: "", acceptingSponsors: true, preferredCategories: [] },
+      packages: [],
+    };
   }
 
   static async saveToDb(email: string, settings: MediaKitSettings, packages: MediaKitPackage[]): Promise<boolean> {
-    this.saveSettings(settings);
-    this.savePackages(packages);
     try {
       const res = await fetch("/api/creator/mediakit", {
         method: "POST",
