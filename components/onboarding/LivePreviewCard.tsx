@@ -701,10 +701,14 @@ export function LivePreviewCard({
         <div
           className={`tap-scale flex items-center gap-2 rounded-full border px-3 py-1.5 shadow-2xs transition-all ${style.socialItemBg} ${style.socialItemBorder}`}
         >
-          <div className="flex h-6 w-6 items-center justify-center rounded-xl bg-[#803D63] text-white">
+          <div className={`flex h-6 w-6 items-center justify-center rounded-xl text-white shadow-2xs ${
+            isDark ? "bg-gradient-to-tr from-purple-600 to-rose-600" : "bg-[#803D63]"
+          }`}>
             <InflixoLogoIcon className="h-3.5 w-3.5" />
           </div>
-          <span className="font-display text-sm font-bold text-[#803D63] tracking-tight">
+          <span className={`font-display text-sm font-black tracking-tight ${
+            isDark ? "text-white" : "text-[#803D63]"
+          }`}>
             Inflixo
           </span>
         </div>
@@ -713,7 +717,9 @@ export function LivePreviewCard({
           <button
             type="button"
             onClick={handleCopyClick}
-            className={`tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} text-slate-600 hover:text-[#803D63]`}
+            className={`tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} ${
+              isDark ? "text-slate-200 hover:text-white" : "text-slate-600 hover:text-[#803D63]"
+            }`}
             title="Copy Profile Link"
             aria-label="Copy Profile Link"
           >
@@ -723,7 +729,9 @@ export function LivePreviewCard({
           <button
             type="button"
             onClick={handleShareClick}
-            className={`tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} text-slate-600 hover:text-[#803D63]`}
+            className={`tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} ${
+              isDark ? "text-slate-200 hover:text-white" : "text-slate-600 hover:text-[#803D63]"
+            }`}
             title="Share Profile"
             aria-label="Share Profile"
           >
@@ -754,7 +762,7 @@ export function LivePreviewCard({
             {profile.displayName || "Your Name"}
           </h3>
           {/* Verified SVG Checkmark Badge */}
-          <svg className={`w-5 h-5 ${themeKey === "minimal-white" ? "text-[#0F172A]" : "text-[#803D63]"} shrink-0`} viewBox="0 0 24 24" fill="currentColor">
+          <svg className={`w-5 h-5 ${isDark ? "text-amber-400" : themeKey === "minimal-white" ? "text-[#0F172A]" : "text-[#803D63]"} shrink-0`} viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L9 14.17l9.59-9.59L20 6l-10 11z" />
           </svg>
         </div>
@@ -773,7 +781,9 @@ export function LivePreviewCard({
             }
           }}
           className={`mt-1.5 inline-flex items-center gap-1.5 rounded-full text-xs font-semibold px-3 py-1.5 transition-colors cursor-pointer ${
-            themeKey === "minimal-white"
+            isDark
+              ? "bg-white/10 text-indigo-200 border border-white/20 hover:bg-white/20"
+              : themeKey === "minimal-white"
               ? "bg-[#F3F4F6] text-[#1F2937] border border-[#E5E7EB] hover:bg-[#E5E7EB]"
               : "bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] hover:bg-rose-100/60"
           }`}
@@ -841,7 +851,7 @@ export function LivePreviewCard({
               <p className={`text-2xl font-black ${isDark ? "text-white" : "text-[#111827]"}`}>
                 ❤️ {formatCount(totalAudience)}
               </p>
-              <p className={`text-[11px] font-bold tracking-wider uppercase ${themeKey === "minimal-white" ? "text-[#0F172A]" : isDark ? "text-indigo-300" : "text-[#803D63]"}`}>
+              <p className={`text-[11px] font-bold tracking-wider uppercase ${themeKey === "minimal-white" ? "text-[#0F172A]" : isDark ? "text-amber-400 font-extrabold" : "text-[#803D63]"}`}>
                 TOTAL FANBASE
               </p>
             </div>
@@ -850,7 +860,7 @@ export function LivePreviewCard({
               <p className={`text-2xl font-black ${isDark ? "text-white" : "text-[#111827]"}`}>
                 ❤️ 0
               </p>
-              <p className={`text-[11px] font-bold tracking-wider uppercase ${themeKey === "minimal-white" ? "text-[#0F172A]" : isDark ? "text-indigo-300" : "text-[#803D63]"}`}>
+              <p className={`text-[11px] font-bold tracking-wider uppercase ${themeKey === "minimal-white" ? "text-[#0F172A]" : isDark ? "text-amber-400 font-extrabold" : "text-[#803D63]"}`}>
                 TOTAL FANBASE
               </p>
               <p className={`text-[10px] font-medium ${isDark ? "text-slate-400" : "text-gray-400"}`}>
@@ -917,7 +927,9 @@ export function LivePreviewCard({
             onClick={() => setActiveContentTab("series")}
             className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
               activeContentTab === "series"
-                ? "bg-[#803D63] text-white shadow-2xs"
+                ? isDark
+                  ? "bg-gradient-to-r from-purple-600 via-rose-600 to-amber-500 text-white shadow-md shadow-purple-900/50"
+                  : "bg-[#803D63] text-white shadow-2xs"
                 : isDark
                   ? "text-slate-300 hover:text-white hover:bg-white/10"
                   : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
@@ -932,7 +944,9 @@ export function LivePreviewCard({
             onClick={() => setActiveContentTab("gigs")}
             className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
               activeContentTab === "gigs"
-                ? "bg-[#803D63] text-white shadow-2xs"
+                ? isDark
+                  ? "bg-gradient-to-r from-purple-600 via-rose-600 to-amber-500 text-white shadow-md shadow-purple-900/50"
+                  : "bg-[#803D63] text-white shadow-2xs"
                 : isDark
                   ? "text-slate-300 hover:text-white hover:bg-white/10"
                   : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
@@ -1003,23 +1017,27 @@ export function LivePreviewCard({
                       }`}
                     >
                       {(pkg.badge || pkg.packageName || pkg.isPopular) && (
-                        <span className="absolute -top-2.5 right-3 bg-[#803D63] text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-2xs">
+                        <span className={`absolute -top-2.5 right-3 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-2xs ${
+                          isDark ? "bg-gradient-to-r from-amber-500 to-rose-600" : "bg-[#803D63]"
+                        }`}>
                           {pkg.badge || pkg.packageName || "⭐ MOST POPULAR"}
                         </span>
                       )}
 
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <span className="bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] text-[9px] font-extrabold px-2 py-0.5 rounded uppercase">
+                          <span className={`border text-[9px] font-extrabold px-2 py-0.5 rounded uppercase ${
+                            isDark ? "bg-purple-900/60 text-purple-200 border-purple-400/40" : "bg-[#F6EBF1] text-[#803D63] border-[#E8DCE4]"
+                          }`}>
                             {pkg.platform}
                           </span>
                           <h5 className={`font-bold text-sm mt-1 ${isDark ? "text-white" : "text-slate-900"}`}>{pkg.title}</h5>
                         </div>
-                        <span className="font-black text-[#803D63] text-base shrink-0">{pkg.price}</span>
+                        <span className={`font-black text-base shrink-0 ${isDark ? "text-amber-300 font-extrabold" : "text-[#803D63]"}`}>{pkg.price}</span>
                       </div>
 
                       <p className={`text-[11px] font-semibold flex items-center gap-1 ${isDark ? "text-slate-300" : "text-slate-500"}`}>
-                        <Clock className="h-3 w-3 text-[#803D63]" /> Turnaround: {pkg.turnaroundDays} Days
+                        <Clock className={`h-3 w-3 ${isDark ? "text-amber-400" : "text-[#803D63]"}`} /> Turnaround: {pkg.turnaroundDays} Days
                       </p>
 
                       {pkg.deliverables && pkg.deliverables.length > 0 && (
@@ -1245,7 +1263,11 @@ export function PreviewSeriesItem({
               {/* View Page Icon Button (Next to Share button -> Opens Series Detail Page) */}
               <Link
                 href={seriesLinkUrl}
-                className="flex h-7 w-7 items-center justify-center rounded-lg border border-indigo-200 bg-[#F6EBF1] hover:bg-indigo-100 text-[#803D63] transition-colors cursor-pointer"
+                className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-colors cursor-pointer ${
+                  isDark
+                    ? "border-purple-400/40 bg-purple-900/60 text-purple-200 hover:bg-purple-800/80"
+                    : "border-indigo-200 bg-[#F6EBF1] hover:bg-indigo-100 text-[#803D63]"
+                }`}
                 title="View Series Details Page"
                 aria-label="View Series Page"
               >
@@ -1283,7 +1305,11 @@ export function PreviewSeriesItem({
               {genresList.length > 0 && (
                 <div className="flex items-center gap-1 overflow-x-auto no-scrollbar whitespace-nowrap max-w-full">
                   {genresList.map((g, idx) => (
-                    <span key={idx} className="bg-[#F6EBF1] text-[#803D63] text-[10px] font-semibold px-2 py-0.5 rounded-md border border-[#E8DCE4] shrink-0">
+                    <span key={idx} className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border shrink-0 ${
+                      isDark
+                        ? "bg-purple-900/60 text-purple-200 border-purple-400/40"
+                        : "bg-[#F6EBF1] text-[#803D63] border-[#E8DCE4]"
+                    }`}>
                       {g}
                     </span>
                   ))}
@@ -1295,7 +1321,11 @@ export function PreviewSeriesItem({
             <button
               type="button"
               onClick={onToggle}
-              className="bg-[#803D63] hover:bg-[#6D3254] text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition-colors inline-flex items-center justify-center gap-1 shadow-2xs shrink-0 cursor-pointer relative z-10 ml-auto sm:ml-0"
+              className={`text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition-colors inline-flex items-center justify-center gap-1 shrink-0 cursor-pointer relative z-10 ml-auto sm:ml-0 ${
+                isDark
+                  ? "bg-gradient-to-r from-purple-600 to-rose-600 hover:from-purple-500 hover:to-rose-500 shadow-sm"
+                  : "bg-[#803D63] hover:bg-[#6D3254] shadow-2xs"
+              }`}
             >
               <span>{expanded ? "Hide Episodes ↑" : "View Episodes ↓"}</span>
             </button>
@@ -1337,7 +1367,11 @@ export function PreviewSeriesItem({
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1 text-left">
-                    <span className="bg-[#F6EBF1] text-[#803D63] font-bold text-[11px] px-2 py-1 rounded-md border border-[#E8DCE4] shrink-0">
+                    <span className={`font-bold text-[11px] px-2 py-1 rounded-md border shrink-0 ${
+                      isDark
+                        ? "bg-purple-900/60 text-purple-200 border-purple-400/40"
+                        : "bg-[#F6EBF1] text-[#803D63] border-[#E8DCE4]"
+                    }`}>
                       {epNumStr}
                     </span>
                     <p className={`truncate text-xs font-bold transition-colors text-left ${
@@ -1356,7 +1390,11 @@ export function PreviewSeriesItem({
                       <span>{plat.name}</span>
                     </span>
 
-                    <span className="text-xs font-bold text-[#803D63] group-hover:text-[#6D3254] inline-flex items-center gap-1 bg-[#F6EBF1] border border-[#E8DCE4] px-3 py-1 rounded-lg transition-colors">
+                    <span className={`text-xs font-extrabold inline-flex items-center gap-1 px-3 py-1 rounded-lg transition-all ${
+                      isDark
+                        ? "bg-gradient-to-r from-purple-600 to-rose-600 text-white shadow-xs group-hover:from-purple-500 group-hover:to-rose-500"
+                        : "bg-[#F6EBF1] text-[#803D63] group-hover:text-[#6D3254] border border-[#E8DCE4]"
+                    }`}>
                       <span>Watch ↗</span>
                     </span>
                   </div>
