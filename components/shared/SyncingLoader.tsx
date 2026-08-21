@@ -59,7 +59,7 @@ export function SyncingLoader({
 
   return (
     <div className={containerClass}>
-      <div className="relative z-10 flex flex-col items-center space-y-5 max-w-md w-full">
+      <div className="relative z-10 flex flex-col items-center space-y-6 max-w-5xl w-full">
         {/* Animated Brand Logo Container */}
         <div className="relative flex h-16 w-16 items-center justify-center">
           <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-[#803D63] text-white border border-[#803D63] shadow-md animate-bounce">
@@ -83,11 +83,10 @@ export function SyncingLoader({
           </p>
         </div>
 
-        {/* Horizontal Progress Bar with Percentage */}
+        {/* Horizontal Progress Bar (No Percentage Counter) */}
         <div className="w-56 space-y-1">
-          <div className="flex items-center justify-between text-[10px] font-bold text-slate-500">
+          <div className="flex items-center justify-center text-[10px] font-bold text-slate-500">
             <span>Syncing Creator Data...</span>
-            <span className="text-[#803D63] font-black">{progress}%</span>
           </div>
           <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100 border border-slate-200 shadow-2xs">
             <div
@@ -97,10 +96,10 @@ export function SyncingLoader({
           </div>
         </div>
 
-        {/* Big Italic Motivational Quote in Primary Brand Color (No Quotation Marks) */}
-        <div className="min-h-[72px] flex items-center justify-center px-4 pt-2">
+        {/* 100px Big Italic Motivational Quote in Primary Brand Color */}
+        <div className="min-h-[140px] flex items-center justify-center px-4 pt-4 w-full">
           <p
-            className={`font-display text-base sm:text-lg font-black italic text-[#803D63] leading-relaxed tracking-tight transition-opacity duration-400 ${
+            className={`font-display text-[32px] sm:text-[60px] md:text-[80px] lg:text-[100px] font-black italic text-[#803D63] leading-tight tracking-tight text-center transition-opacity duration-400 ${
               isFading ? "opacity-0" : "opacity-100"
             }`}
           >
