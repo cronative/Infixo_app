@@ -91,11 +91,18 @@ export class MediaKitService {
     if (typeof window === "undefined") return [];
     try {
       const stored = localStorage.getItem(PACKAGES_STORAGE_KEY);
-      if (stored === null) {
+      if (!stored) {
         localStorage.setItem(PACKAGES_STORAGE_KEY, JSON.stringify([]));
         return [];
       }
-      return JSON.parse(stored);
+      const parsed: MediaKitPackage[] = JSON.parse(stored);
+      // Strip out seed packages if present
+      const seedIds = ["pkg_insta_single", "pkg_insta_3x_bundle", "pkg_insta_5x_bundle", "pkg_insta_10x_retainer", "pkg_yt_dedicated", "pkg_insta_bundle", "pkg_series_sponsor"];
+      const cleaned = parsed.filter((p) => !seedIds.includes(p.id));
+      if (cleaned.length !== parsed.length) {
+        localStorage.setItem(PACKAGES_STORAGE_KEY, JSON.stringify(cleaned));
+      }
+      return cleaned;
     } catch {
       return [];
     }
@@ -151,13 +158,7 @@ export class MediaKitService {
         localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(DEFAULT_SETTINGS));
         return DEFAULT_SETTINGS;
       }
-      const parsed: MediaKitSettings = JSON.parse(stored);
-      // Auto-migrate legacy minBudget if old budget exists
-      if (parsed.minBudget === "₹10,000") {
-        parsed.minBudget = "₹2,000";
-        localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(parsed));
-      }
-      return parsed;
+      return JSON.parse(stored);
     } catch {
       return DEFAULT_SETTINGS;
     }
@@ -178,9 +179,17 @@ export class MediaKitService {
       if (!res.ok) throw new Error("DB fetch failed");
       const data = await res.json();
       if (data.success) {
-        if (data.packages) this.savePackages(data.packages);
+        const seedIds = ["pkg_insta_single", "pkg_insta_3x_bundle", "pkg_insta_5x_bundle", "pkg_insta_10x_retainer", "pkg_yt_dedicated", "pkg_insta_bundle", "pkg_series_sponsor"];
+        const rawPackages: MediaKitPackage[] = data.packages || [];
+        const cleanedPackages = rawPackages.filter((p) => !seedIds.includes(p.id));
+        if (cleanedPackages.length !== rawPackages.length) {
+          // Sync cleaned empty packages list back to DB
+          await this.saveToDb(email, data.settings || this.getSettings(), cleanedPackages);
+        } else {
+          this.savePackages(cleanedPackages);
+        }
         if (data.settings) this.saveSettings(data.settings);
-        return { settings: data.settings, packages: data.packages || [] };
+        return { settings: data.settings, packages: cleanedPackages };
       }
     } catch (e) {
       console.warn("MediaKit DB fetch fallback to localStorage:", e);
