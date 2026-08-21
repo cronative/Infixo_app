@@ -3,11 +3,13 @@ import { MediaKitPackage, MediaKitSettings } from "@/types";
 const PACKAGES_STORAGE_KEY = "inflixo_mediakit_packages";
 const SETTINGS_STORAGE_KEY = "inflixo_mediakit_settings";
 
-export const DEFAULT_PACKAGES: MediaKitPackage[] = [
+export const DEFAULT_PACKAGES: MediaKitPackage[] = [];
+
+export const SAMPLE_PACKAGES: MediaKitPackage[] = [
   {
     id: "pkg_insta_single",
     title: "1x High-Engagement Instagram Reel",
-    platform: "Instagram",
+    platform: "Instagram Reel",
     deliverables: [
       "1x 30–60s Dedicated/Integrated Reel",
       "Brand Collaborator Tag & Co-authoring",
@@ -72,8 +74,6 @@ export const DEFAULT_PACKAGES: MediaKitPackage[] = [
   },
 ];
 
-export const SAMPLE_PACKAGES: MediaKitPackage[] = DEFAULT_PACKAGES;
-
 export const DEFAULT_SETTINGS: MediaKitSettings = {
   sponsorEmail: "business@inflixo.com",
   whatsappNumber: "+919876543210",
@@ -92,18 +92,10 @@ export class MediaKitService {
     try {
       const stored = localStorage.getItem(PACKAGES_STORAGE_KEY);
       if (stored === null) {
-        // Zero-Default Empty State for fresh signups
         localStorage.setItem(PACKAGES_STORAGE_KEY, JSON.stringify([]));
         return [];
       }
-      const parsed: MediaKitPackage[] = JSON.parse(stored);
-      // Auto-migrate legacy packages if old package IDs exist
-      const hasOldPackage = parsed.some((p) => p.id === "pkg_yt_dedicated" || p.id === "pkg_series_sponsor");
-      if (hasOldPackage) {
-        localStorage.setItem(PACKAGES_STORAGE_KEY, JSON.stringify([]));
-        return [];
-      }
-      return parsed;
+      return JSON.parse(stored);
     } catch {
       return [];
     }
@@ -111,10 +103,10 @@ export class MediaKitService {
 
   static resetToDefaults(): MediaKitPackage[] {
     if (typeof window !== "undefined") {
-      localStorage.setItem(PACKAGES_STORAGE_KEY, JSON.stringify(DEFAULT_PACKAGES));
+      localStorage.setItem(PACKAGES_STORAGE_KEY, JSON.stringify([]));
       localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(DEFAULT_SETTINGS));
     }
-    return DEFAULT_PACKAGES;
+    return [];
   }
 
   static savePackages(packages: MediaKitPackage[]): void {

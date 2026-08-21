@@ -373,15 +373,6 @@ export default function DashboardMediaKitPage() {
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
-              {packages.length === 0 && (
-                <button
-                  type="button"
-                  onClick={handleLoadSampleGigs}
-                  className="bg-white hover:bg-slate-50 text-slate-700 border border-gray-200 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all shadow-2xs cursor-pointer"
-                >
-                  ⚡ Load Sample Gigs
-                </button>
-              )}
               <button
                 type="button"
                 onClick={handleOpenAddModal}
@@ -416,14 +407,6 @@ export default function DashboardMediaKitPage() {
                 >
                   <Plus className="h-4 w-4" />
                   <span>+ Create First Gig</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={handleLoadSampleGigs}
-                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-4 py-2 rounded-xl transition-all inline-flex items-center gap-1.5 cursor-pointer"
-                >
-                  <Zap className="h-3.5 w-3.5 text-[#803D63]" />
-                  <span>Load Template Micro-Gigs (₹2,000+)</span>
                 </button>
               </div>
             </div>
