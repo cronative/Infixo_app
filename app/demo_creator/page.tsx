@@ -89,13 +89,13 @@ export default function DemoCreatorPage() {
         <div className="mb-8 text-center space-y-2.5">
           <div className="inline-flex items-center gap-1.5 rounded-full bg-purple-100/80 border border-purple-200 px-3.5 py-1 text-xs font-bold text-[#803D63]">
             <Zap className="h-3.5 w-3.5 text-[#803D63]" />
-            <span>5 Light Themes • Auto-Switching Every 10s</span>
+            <span>AI-Synced Media Kit & OTT Series</span>
           </div>
           <h1 className="font-display text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
             See How Top Creators Showcase Their Work
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto font-medium leading-relaxed">
-            Live demo of @demo_creator with 5 Series, 1.3M+ AI-synced reach, and 5 Rate Card Gigs. Auto-rotating between 5 light themes every 10 seconds.
+            Explore Aarav Sharma&apos;s live creator profile — featuring 5 OTT Web Series playlists, 1.3M+ AI-synced reach, and 5 direct rate cards.
           </p>
 
           {/* Light Theme Manual Switcher Pills */}
