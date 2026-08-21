@@ -718,18 +718,11 @@ export function LivePreviewCard({
       {/* Top Header Bar */}
       <div className="relative z-10 flex items-center justify-between w-full mb-4 px-1">
         <div
-          className={`tap-scale flex items-center gap-2 rounded-full border px-3 py-1.5 shadow-2xs transition-all ${style.socialItemBg} ${style.socialItemBorder}`}
+          className={`tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-2xs transition-all ${style.socialItemBg} ${style.socialItemBorder}`}
+          title="Inflixo"
+          aria-label="Inflixo"
         >
-          <div className={`flex h-6 w-6 items-center justify-center rounded-xl text-white shadow-2xs ${
-            isDark ? "bg-gradient-to-tr from-purple-600 to-rose-600" : "bg-[#803D63]"
-          }`}>
-            <InflixoLogoIcon className="h-3.5 w-3.5" />
-          </div>
-          <span className={`font-display text-sm font-black tracking-tight ${
-            isDark ? "text-white" : "text-[#803D63]"
-          }`}>
-            Inflixo
-          </span>
+          <InflixoLogoIcon className={`h-4 w-4 ${isDark ? "text-white" : "text-[#803D63]"}`} />
         </div>
 
         <div className="flex items-center gap-1.5">
