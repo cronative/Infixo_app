@@ -13,6 +13,7 @@ import { ThemeCard } from "@/themes/registry";
 import { CreatorProfile, SocialAccounts, Series, ThemeKey, EMPTY_SOCIAL_ACCOUNTS } from "@/types";
 import { useToast } from "@/contexts/ToastContext";
 import { buildProfileUrl } from "@/utils/format";
+import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 
 const EMPTY_PROFILE: CreatorProfile = {
@@ -236,11 +237,9 @@ export default function PublicProfilePage() {
   }
 
   if (!loaded) {
-    return (
-      <div className="mx-auto max-w-lg px-5 py-10">
-        <SkeletonProfileCard />
-      </div>
-    );
+    const handle = decodeURIComponent(params.username ?? "").trim();
+    const syncMessage = handle ? `Syncing @${handle}'s creator page...` : "Syncing creator page & live reach...";
+    return <SyncingLoader message={syncMessage} fullScreen />;
   }
 
   if (notFound) {

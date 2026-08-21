@@ -15,6 +15,7 @@ import { THEME_STYLES, DEFAULT_THEME_STYLE } from "@/components/onboarding/LiveP
 import { formatCount, buildSeriesUrl } from "@/utils/format";
 import { ShareSeriesModal } from "@/components/shared/ShareSeriesModal";
 import { SeriesPoster } from "@/components/shared/SeriesPoster";
+import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 
 function getPlatformInfo(platformStr?: string, urlStr?: string) {
@@ -197,11 +198,9 @@ export default function SeriesDetailPage() {
   };
 
   if (loading) {
-    return (
-      <div className="flex min-h-dvh flex-col items-center justify-center p-4 bg-slate-950 text-white">
-        <SkeletonProfileCard />
-      </div>
-    );
+    const handle = decodeURIComponent(params.username ?? "").trim();
+    const syncMessage = handle ? `Syncing @${handle}'s OTT series playlist...` : "Syncing OTT series playlist...";
+    return <SyncingLoader message={syncMessage} fullScreen />;
   }
 
   if (notFound || !series) {

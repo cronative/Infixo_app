@@ -127,9 +127,9 @@ export function Logo({
         className={`flex ${dims} items-center justify-center rounded-xl ${badgeStyles} transition-colors duration-200`}
       >
         {styleName === "universal-link-i" ? (
-          <LogoUniversalLinkI className={`${iconSize} animate-[spin_12s_linear_infinite]`} />
+          <LogoUniversalLinkI className={iconSize} />
         ) : (
-          <LogoStadiumLinkI className={`${iconSize} animate-[spin_12s_linear_infinite]`} />
+          <LogoStadiumLinkI className={iconSize} />
         )}
       </div>
 
