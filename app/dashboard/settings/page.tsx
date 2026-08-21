@@ -79,7 +79,7 @@ export default function DashboardSettingsPage() {
       <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-4">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3.5 min-w-0">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-purple-100 text-purple-700 font-bold">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] font-bold">
               <ShieldCheck className="h-6 w-6" />
             </div>
             <div className="min-w-0">
@@ -97,7 +97,7 @@ export default function DashboardSettingsPage() {
         <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs">
           <div>
             <span className="text-muted font-medium">Plan Status:</span>{" "}
-            <span className="font-black text-purple-700">Inflixo Pro Creator</span>
+            <span className="font-black text-[#803D63]">Inflixo Pro Creator</span>
           </div>
 
           <Button
@@ -142,7 +142,7 @@ export default function DashboardSettingsPage() {
               href={`/${profile?.username}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-purple-200 bg-[#803D63] px-3 py-1.5 text-xs font-black text-white hover:bg-[#6D3254] transition-all shadow-2xs"
+              className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E8DCE4] bg-[#803D63] px-3 py-1.5 text-xs font-black text-white hover:bg-[#6D3254] transition-all shadow-2xs"
             >
               <span>Visit</span>
               <ExternalLink className="h-3.5 w-3.5" />
@@ -176,7 +176,7 @@ export default function DashboardSettingsPage() {
                 setSeoIndexing(e.target.checked);
                 showToast(`Search indexing ${e.target.checked ? "enabled" : "disabled"}`);
               }}
-              className="h-4 w-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500"
+              className="h-4 w-4 rounded border-slate-300 text-[#803D63] focus:ring-[#803D63]"
             />
           </label>
 
@@ -192,7 +192,7 @@ export default function DashboardSettingsPage() {
                 setRichShareMessage(e.target.checked);
                 showToast(`Social sharing message ${e.target.checked ? "enabled" : "disabled"}`);
               }}
-              className="h-4 w-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500"
+              className="h-4 w-4 rounded border-slate-300 text-[#803D63] focus:ring-[#803D63]"
             />
           </label>
         </div>
@@ -222,7 +222,7 @@ export default function DashboardSettingsPage() {
               setEmailNotifs(e.target.checked);
               showToast(`Email notifications ${e.target.checked ? "enabled" : "disabled"}`);
             }}
-            className="h-4 w-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500"
+            className="h-4 w-4 rounded border-slate-300 text-[#803D63] focus:ring-[#803D63]"
           />
         </label>
       </div>
@@ -230,7 +230,7 @@ export default function DashboardSettingsPage() {
       {/* 5. Legal Agreements, Terms & Privacy Policy */}
       <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-50 text-purple-700">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4]">
             <ShieldCheck className="h-4 w-4" />
           </div>
           <div>
@@ -243,25 +243,25 @@ export default function DashboardSettingsPage() {
           <button
             type="button"
             onClick={() => setActiveLegalModal("terms")}
-            className="tap-scale flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50/70 p-4 text-left hover:border-purple-300 hover:bg-purple-50/40 transition-all cursor-pointer group"
+            className="tap-scale flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50/70 p-4 text-left hover:border-[#E8DCE4] hover:bg-[#F6EBF1]/40 transition-all cursor-pointer group"
           >
             <div className="space-y-0.5">
-              <p className="text-xs font-black text-slate-900 group-hover:text-purple-900">Terms &amp; Conditions</p>
+              <p className="text-xs font-black text-slate-900 group-hover:text-[#803D63]">Terms &amp; Conditions</p>
               <p className="text-[11px] text-muted">Creator service agreement &amp; account terms</p>
             </div>
-            <ExternalLink className="h-4 w-4 text-slate-400 group-hover:text-purple-600 shrink-0" />
+            <ExternalLink className="h-4 w-4 text-slate-400 group-hover:text-[#803D63] shrink-0" />
           </button>
 
           <button
             type="button"
             onClick={() => setActiveLegalModal("privacy")}
-            className="tap-scale flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50/70 p-4 text-left hover:border-purple-300 hover:bg-purple-50/40 transition-all cursor-pointer group"
+            className="tap-scale flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50/70 p-4 text-left hover:border-[#E8DCE4] hover:bg-[#F6EBF1]/40 transition-all cursor-pointer group"
           >
             <div className="space-y-0.5">
-              <p className="text-xs font-black text-slate-900 group-hover:text-purple-900">Privacy Policy</p>
+              <p className="text-xs font-black text-slate-900 group-hover:text-[#803D63]">Privacy Policy</p>
               <p className="text-[11px] text-muted">Data collection, security &amp; public stats policy</p>
             </div>
-            <ExternalLink className="h-4 w-4 text-slate-400 group-hover:text-purple-600 shrink-0" />
+            <ExternalLink className="h-4 w-4 text-slate-400 group-hover:text-[#803D63] shrink-0" />
           </button>
         </div>
       </div>
@@ -330,7 +330,7 @@ function LegalDocumentModal({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4 bg-slate-50/80">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-100 text-purple-700 font-bold">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] font-bold">
               {isTerms ? <FileText className="h-5 w-5" /> : <Lock className="h-5 w-5" />}
             </div>
             <div>
@@ -356,9 +356,9 @@ function LegalDocumentModal({
         <div className="flex-1 overflow-y-auto px-6 py-5 text-xs text-slate-600 leading-relaxed space-y-4">
           {isTerms ? (
             <>
-              <div className="rounded-2xl border border-purple-100 bg-purple-50/60 p-4 space-y-1">
-                <p className="font-black text-purple-950 text-xs">📜 Inflixo Creator Service Agreement</p>
-                <p className="text-[11px] text-purple-800 font-medium">
+              <div className="rounded-2xl border border-[#E8DCE4] bg-[#F6EBF1]/60 p-4 space-y-1">
+                <p className="font-black text-[#803D63] text-xs">📜 Inflixo Creator Service Agreement</p>
+                <p className="text-[11px] text-slate-700 font-medium">
                   Welcome to Inflixo. By creating an account, linking social handles, or using our creator portfolio services, you agree to these Terms and Conditions.
                 </p>
               </div>
@@ -383,7 +383,7 @@ function LegalDocumentModal({
               <div className="space-y-2">
                 <h4 className="font-black text-slate-900 text-xs uppercase tracking-wider">3. Content Ownership &amp; Intellectual Property</h4>
                 <p>
-                  Creators retain full copyright ownership of all uploaded custom avatars, series posters, and video metadata. You grant Inflixo a non-exclusive license to host, display, and format your content for public portfolio presentation at <code className="bg-slate-100 px-1 py-0.5 rounded text-purple-700 font-mono">inflixo.com/your-username</code>.
+                  Creators retain full copyright ownership of all uploaded custom avatars, series posters, and video metadata. You grant Inflixo a non-exclusive license to host, display, and format your content for public portfolio presentation at <code className="bg-slate-100 px-1 py-0.5 rounded text-[#803D63] font-mono">inflixo.com/your-username</code>.
                 </p>
               </div>
 
@@ -451,7 +451,7 @@ function LegalDocumentModal({
               <div className="space-y-2">
                 <h4 className="font-black text-slate-900 text-xs uppercase tracking-wider">5. Account Deletion &amp; Data Rights</h4>
                 <p>
-                  You have the right to request deletion of your account and removal of all associated social metrics and series from Inflixo servers by contacting <code className="bg-slate-100 px-1 py-0.5 rounded text-purple-700 font-mono">support@inflixo.com</code>.
+                  You have the right to request deletion of your account and removal of all associated social metrics and series from Inflixo servers by contacting <code className="bg-slate-100 px-1 py-0.5 rounded text-[#803D63] font-mono">support@inflixo.com</code>.
                 </p>
               </div>
             </>

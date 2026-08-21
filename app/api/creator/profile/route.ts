@@ -71,25 +71,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
-    // Ensure new columns exist in MySQL table dynamically
-    try {
-      await db.query("ALTER TABLE creators ADD COLUMN profession VARCHAR(100) DEFAULT NULL");
-    } catch {}
-    try {
-      await db.query("ALTER TABLE creators ADD COLUMN custom_category VARCHAR(150) DEFAULT NULL");
-    } catch {}
-    try {
-      await db.query("ALTER TABLE creators ADD COLUMN city VARCHAR(100) DEFAULT NULL");
-    } catch {}
-    try {
-      await db.query("ALTER TABLE creators ADD COLUMN state VARCHAR(100) DEFAULT NULL");
-    } catch {}
-    try {
-      await db.query("ALTER TABLE creators ADD COLUMN country VARCHAR(100) DEFAULT NULL");
-    } catch {}
-    try {
-      await db.query("ALTER TABLE creators ADD COLUMN theme_changes_count INT DEFAULT 0");
-    } catch {}
+    // Ensure column types and capacities exist in MySQL table dynamically
+    try { await db.query("ALTER TABLE creators MODIFY COLUMN category VARCHAR(500) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE creators MODIFY COLUMN profession VARCHAR(500) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE creators MODIFY COLUMN bio TEXT DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE creators MODIFY COLUMN photo_url TEXT DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE creators MODIFY COLUMN custom_category VARCHAR(500) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE creators ADD COLUMN profession VARCHAR(500) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE creators ADD COLUMN custom_category VARCHAR(500) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE creators ADD COLUMN city VARCHAR(100) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE creators ADD COLUMN state VARCHAR(100) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE creators ADD COLUMN country VARCHAR(100) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE creators ADD COLUMN theme_changes_count INT DEFAULT 0"); } catch {}
 
     const cleanUsername = (username || email.split("@")[0]).replace(/[^a-z0-9_]/gi, "").toLowerCase();
 
@@ -97,6 +90,10 @@ export async function POST(req: Request) {
     const [rows]: any = await db.query("SELECT id, username FROM creators WHERE email = ?", [email]);
     let creatorId = rows[0]?.id;
     const existingUsername = rows[0]?.username;
+
+    const safeCategory = category ? String(category).substring(0, 490) : null;
+    const safeCustomCategory = customCategory ? String(customCategory).substring(0, 490) : "";
+    const safeProfession = profession ? String(profession).substring(0, 490) : null;
 
     if (creatorId) {
       // Username is permanently locked once created — do not overwrite existing handle
@@ -119,7 +116,7 @@ export async function POST(req: Request) {
              country = COALESCE(?, country),
              theme_key = ?
           WHERE id = ?`,
-        [displayName, finalUsername, category, customCategory, profession, bio, photoDataUrl, city, state, country, safeThemeKey, creatorId]
+        [displayName, finalUsername, safeCategory, safeCustomCategory, safeProfession, bio, photoDataUrl, city, state, country, safeThemeKey, creatorId]
       );
 
       if (incrementThemeCount) {
@@ -137,8 +134,8 @@ export async function POST(req: Request) {
           email,
           displayName || cleanUsername,
           cleanUsername,
-          category || null,
-          profession || null,
+          safeCategory,
+          safeProfession,
           bio || "",
           photoDataUrl || null,
           city || null,
