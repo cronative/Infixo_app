@@ -136,7 +136,7 @@ export function PricingTable({
                 Series Limit
               </td>
               <td className="py-3.5 px-5 text-center bg-purple-50/30 border-x border-purple-100/60 font-bold text-slate-800">
-                2 Web Series
+                3 Web Series
               </td>
               <td className="py-3.5 px-5 text-center font-bold text-slate-900">30 Web Series</td>
               <td className="py-3.5 px-5 text-center font-extrabold text-[#803D63]">Unlimited</td>
@@ -148,7 +148,7 @@ export function PricingTable({
                 Episode Limit
               </td>
               <td className="py-3.5 px-5 text-center bg-purple-50/30 border-x border-purple-100/60 font-bold text-slate-800">
-                10 Episodes
+                15 Episodes
               </td>
               <td className="py-3.5 px-5 text-center font-bold text-slate-900">300 Episodes</td>
               <td className="py-3.5 px-5 text-center font-extrabold text-[#803D63]">Unlimited</td>

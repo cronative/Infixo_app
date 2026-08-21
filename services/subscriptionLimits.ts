@@ -9,19 +9,19 @@ export interface PlanQuota {
 }
 
 export const EARLY_ACCESS_LIMITS = {
-  maxSeries: 2,
+  maxSeries: 3,
   maxEpisodesPerSeries: 5,
-  maxTotalEpisodes: 10,
+  maxTotalEpisodes: 15,
   maxGigs: 1,
 };
 
 export const PLAN_QUOTAS: Record<string, PlanQuota> = {
   early_access: {
     name: "Creator Early Access",
-    maxSeries: 2,
-    maxTotalEpisodes: 10,
+    maxSeries: 3,
+    maxTotalEpisodes: 15,
     maxGigs: 1,
-    description: "Free Early Access. 1 Collab Gig, Live Rate Cards, WhatsApp Lead Routing & 2 OTT Series.",
+    description: "Free Early Access. 1 Collab Gig, Live Rate Cards, WhatsApp Lead Routing & 3 OTT Series.",
   },
   creator_pro: {
     name: "Creator Pro",
