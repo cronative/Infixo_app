@@ -88,11 +88,10 @@ const DEMO_SERIES: Series[] = [
 
 const PREVIEW_THEMES: { key: ThemeKey; name: string }[] = [
   { key: "minimal-white", name: "Soft Minimal" },
-  { key: "modern-purple", name: "Electric Purple" },
-  { key: "midnight", name: "Midnight Dark" },
-  { key: "cyberpunk", name: "Cyberpunk Neon" },
-  { key: "emerald-luxe", name: "Emerald Luxe" },
-  { key: "ocean-blue", name: "Ocean Blue" },
+  { key: "sand-linen", name: "Warm Sand Linen" },
+  { key: "rose-gold", name: "Rose Gold Luxe" },
+  { key: "lavender-haze", name: "Lavender Haze" },
+  { key: "sakura-blossom", name: "Sakura Blossom" },
 ];
 
 export default function LandingHomePage() {
