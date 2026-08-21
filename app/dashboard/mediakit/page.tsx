@@ -652,16 +652,16 @@ export default function DashboardMediaKitPage() {
         {/* 3. DIRECT CONTACT & LEAD ROUTING SETTINGS */}
         <div className="rounded-2xl border border-gray-200 bg-white p-5 sm:p-6 space-y-4 shadow-2xs">
           <div className="flex items-center justify-between gap-3 border-b border-gray-100 pb-3">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4]">
-                <MessageCircle className="h-4 w-4 text-emerald-600" />
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] shrink-0">
+                <Briefcase className="h-5 w-5" />
               </div>
               <div>
                 <h3 className="font-display text-sm font-bold text-slate-900">
-                  Frictionless Lead Routing (WhatsApp &amp; Email)
+                  Direct Brand Inquiries &amp; Contact Routing
                 </h3>
-                <p className="text-xs text-slate-500 font-medium">
-                  Direct WhatsApp chat &amp; email inquiry links — zero payment gateway or bank KYC required
+                <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                  Receive collaboration inquiries directly on WhatsApp &amp; official business email with 0% platform commission.
                 </p>
               </div>
             </div>
@@ -669,7 +669,7 @@ export default function DashboardMediaKitPage() {
             <button
               type="button"
               onClick={() => setIsEditingSettings(!isEditingSettings)}
-              className="text-xs font-bold text-[#803D63] hover:underline cursor-pointer"
+              className="text-xs font-bold text-[#803D63] hover:underline cursor-pointer shrink-0"
             >
               {isEditingSettings ? "Cancel" : "Edit Settings"}
             </button>
@@ -680,13 +680,13 @@ export default function DashboardMediaKitPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Business WhatsApp Number (with Country Code)
+                    💬 Business WhatsApp Number (with Country Code)
                   </label>
                   <input
                     type="text"
                     value={settings.whatsappNumber || ""}
                     onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })}
-                    placeholder="+919876543210"
+                    placeholder="+91 98765 43210"
                     className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
                   />
                   <p className="text-[10px] text-slate-400 mt-1">Used for 1-click WhatsApp brand chat routing.</p>
@@ -694,13 +694,13 @@ export default function DashboardMediaKitPage() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Business / Sponsor Inquiry Email
+                    ✉️ Business / Sponsor Inquiry Email
                   </label>
                   <input
                     type="email"
                     value={settings.sponsorEmail || ""}
                     onChange={(e) => setSettings({ ...settings, sponsorEmail: e.target.value })}
-                    placeholder="business@yourname.com"
+                    placeholder="business@inflixo.com"
                     className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
                   />
                 </div>
@@ -708,13 +708,13 @@ export default function DashboardMediaKitPage() {
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Minimum Sponsorship Budget Filter
+                  🛡️ Minimum Sponsorship Budget Filter
                 </label>
                 <input
                   type="text"
                   value={settings.minBudget || ""}
                   onChange={(e) => setSettings({ ...settings, minBudget: e.target.value })}
-                  placeholder="₹0 or ₹2,000"
+                  placeholder="₹0 (Accept All Deals) or ₹2,000"
                   className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
                 />
               </div>
@@ -744,23 +744,68 @@ export default function DashboardMediaKitPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
-              <div className="bg-slate-50 border border-gray-200 rounded-xl p-3.5 space-y-1">
+              {/* WhatsApp Card */}
+              <div className="bg-slate-50 border border-gray-200 rounded-xl p-3.5 space-y-1 relative group">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1">
-                  <MessageCircle className="h-3 w-3 text-emerald-600" /> WhatsApp Routing
+                  <span>💬 OFFICIAL WHATSAPP</span>
                 </p>
-                <p className="text-xs font-bold text-slate-900 truncate">{settings.whatsappNumber || "Not Set"}</p>
+                {settings.whatsappNumber ? (
+                  <div className="flex items-center justify-between gap-1.5">
+                    <p className="text-xs font-bold text-slate-900 truncate">
+                      {settings.whatsappNumber}
+                    </p>
+                    <a
+                      href={`https://wa.me/${cleanPhone}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-emerald-600 hover:text-emerald-800 p-1 rounded-md hover:bg-emerald-50 transition-all cursor-pointer"
+                      title="Live Test WhatsApp Link ↗"
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </a>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingSettings(true)}
+                    className="text-xs font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 px-2 py-0.5 rounded-md transition-all cursor-pointer inline-flex items-center gap-1"
+                  >
+                    <span>⚠️ Not Connected (Click to Add)</span>
+                  </button>
+                )}
               </div>
 
+              {/* Email Card */}
               <div className="bg-slate-50 border border-gray-200 rounded-xl p-3.5 space-y-1">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1">
-                  <Mail className="h-3 w-3 text-indigo-600" /> Direct Email
+                  <span>✉️ BUSINESS EMAIL</span>
                 </p>
-                <p className="text-xs font-bold text-slate-900 truncate">{settings.sponsorEmail}</p>
+                <div className="flex items-center justify-between gap-1.5">
+                  <p className="text-xs font-bold text-slate-900 truncate">
+                    {settings.sponsorEmail || profile.email || "business@inflixo.com"}
+                  </p>
+                  <a
+                    href={`mailto:${settings.sponsorEmail || profile.email || "business@inflixo.com"}`}
+                    className="text-indigo-600 hover:text-indigo-800 p-1 rounded-md hover:bg-indigo-50 transition-all cursor-pointer"
+                    title="Live Test Email Link ↗"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                </div>
               </div>
 
+              {/* Min Budget Filter Card */}
               <div className="bg-slate-50 border border-gray-200 rounded-xl p-3.5 space-y-1">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Min. Budget Filter</p>
-                <p className="text-xs font-bold text-[#803D63]">{settings.minBudget || "₹0"}</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                  <span>🛡️ MIN. DEAL FILTER</span>
+                </p>
+                <p className="text-xs font-bold text-[#803D63]">
+                  {(!settings.minBudget || settings.minBudget === "₹0" || settings.minBudget === "0")
+                    ? "₹0 (Accept All Deals)"
+                    : settings.minBudget.includes("+")
+                    ? settings.minBudget
+                    : `${settings.minBudget}+`}
+                </p>
               </div>
             </div>
           )}
