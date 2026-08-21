@@ -34,6 +34,7 @@ import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { MediaKitService, SAMPLE_PACKAGES } from "@/services/MediaKitService";
 import { MediaKitPackage, MediaKitSettings } from "@/types";
+import { authRepository } from "@/repositories/localRepository";
 import { formatCount } from "@/utils/format";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 
@@ -201,10 +202,12 @@ export default function DashboardMediaKitPage() {
   // Public Preview Modal State
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
 
+  const activeEmail = profile.email || authRepository.getPendingEmail() || "nikunj.appz@gmail.com";
+
   useEffect(() => {
     async function initMediaKit() {
-      if (profile.email) {
-        const { settings: dbSettings, packages: dbPackages } = await MediaKitService.fetchFromDb(profile.email);
+      if (activeEmail) {
+        const { settings: dbSettings, packages: dbPackages } = await MediaKitService.fetchFromDb(activeEmail);
         setPackages(dbPackages);
         setSettings({
           ...dbSettings,
@@ -224,12 +227,12 @@ export default function DashboardMediaKitPage() {
       }
     }
     initMediaKit();
-  }, [profile.email]);
+  }, [activeEmail]);
 
   const handleSaveSettings = async () => {
     MediaKitService.saveSettings(settings);
-    if (profile.email) {
-      await MediaKitService.saveToDb(profile.email, settings, packages);
+    if (activeEmail) {
+      await MediaKitService.saveToDb(activeEmail, settings, packages);
     }
     setIsEditingSettings(false);
     showToast("Media Kit sponsorship settings saved to DB! 💼");
@@ -325,8 +328,8 @@ export default function DashboardMediaKitPage() {
     }
 
     setPackages(updatedPkgs);
-    if (profile.email) {
-      await MediaKitService.saveToDb(profile.email, settings, updatedPkgs);
+    if (activeEmail) {
+      await MediaKitService.saveToDb(activeEmail, settings, updatedPkgs);
     }
     showToast(editingPkgId ? "Gig updated in MySQL database! ✨" : "New gig saved to MySQL database! 🚀");
     setIsModalOpen(false);
@@ -335,8 +338,8 @@ export default function DashboardMediaKitPage() {
   const handleTogglePackageActive = async (id: string, currentActive: boolean) => {
     const updated = MediaKitService.updatePackage(id, { isActive: !currentActive });
     setPackages(updated);
-    if (profile.email) {
-      await MediaKitService.saveToDb(profile.email, settings, updated);
+    if (activeEmail) {
+      await MediaKitService.saveToDb(activeEmail, settings, updated);
     }
     showToast(`Package ${!currentActive ? "activated" : "paused"} in MySQL DB!`);
   };
@@ -345,8 +348,8 @@ export default function DashboardMediaKitPage() {
     if (confirm(`Are you sure you want to delete "${title}"?`)) {
       const updated = MediaKitService.deletePackage(id);
       setPackages(updated);
-      if (profile.email) {
-        await MediaKitService.saveToDb(profile.email, settings, updated);
+      if (activeEmail) {
+        await MediaKitService.saveToDb(activeEmail, settings, updated);
       }
       showToast(`Package "${title}" removed from MySQL DB.`);
     }
@@ -355,8 +358,8 @@ export default function DashboardMediaKitPage() {
   const handleLoadSampleGigs = async () => {
     MediaKitService.savePackages(SAMPLE_PACKAGES);
     setPackages(SAMPLE_PACKAGES);
-    if (profile.email) {
-      await MediaKitService.saveToDb(profile.email, settings, SAMPLE_PACKAGES);
+    if (activeEmail) {
+      await MediaKitService.saveToDb(activeEmail, settings, SAMPLE_PACKAGES);
     }
     showToast("Loaded sample micro-creator gigs to MySQL DB! ⚡");
   };
