@@ -105,13 +105,12 @@ export function PricingTable({
             <tr>
               <td className="py-3.5 px-5 font-bold text-slate-900">
                 Collab Gigs &amp; Rate Cards
-                <span className="block text-[11px] font-normal text-slate-500">0% Commission on closed deals</span>
               </td>
-              <td className="py-3.5 px-5 text-center bg-purple-50/30 border-x border-purple-100/60 font-extrabold text-[#803D63]">
-                Unlimited (0% Fee)
+              <td className="py-3.5 px-5 text-center bg-purple-50/30 border-x border-purple-100/60 font-bold text-slate-800">
+                1 Gig
               </td>
-              <td className="py-3.5 px-5 text-center font-bold text-slate-900">Unlimited (0% Fee)</td>
-              <td className="py-3.5 px-5 text-center font-bold text-slate-900">Unlimited (0% Fee)</td>
+              <td className="py-3.5 px-5 text-center font-bold text-slate-900">3 Gigs</td>
+              <td className="py-3.5 px-5 text-center font-extrabold text-[#803D63]">Unlimited</td>
             </tr>
 
             {/* Row 2: WhatsApp & Email Leads */}
@@ -139,7 +138,7 @@ export function PricingTable({
               <td className="py-3.5 px-5 text-center bg-purple-50/30 border-x border-purple-100/60 font-bold text-slate-800">
                 2 Web Series
               </td>
-              <td className="py-3.5 px-5 text-center font-extrabold text-[#803D63]">Unlimited</td>
+              <td className="py-3.5 px-5 text-center font-bold text-slate-900">30 Web Series</td>
               <td className="py-3.5 px-5 text-center font-extrabold text-[#803D63]">Unlimited</td>
             </tr>
 
@@ -151,7 +150,7 @@ export function PricingTable({
               <td className="py-3.5 px-5 text-center bg-purple-50/30 border-x border-purple-100/60 font-bold text-slate-800">
                 10 Episodes
               </td>
-              <td className="py-3.5 px-5 text-center font-extrabold text-[#803D63]">Unlimited</td>
+              <td className="py-3.5 px-5 text-center font-bold text-slate-900">300 Episodes</td>
               <td className="py-3.5 px-5 text-center font-extrabold text-[#803D63]">Unlimited</td>
             </tr>
 
@@ -182,23 +181,6 @@ export function PricingTable({
               </td>
               <td className="py-3.5 px-5 text-center font-bold text-emerald-600">
                 <Check className="h-4 w-4 mx-auto text-emerald-600 stroke-[3]" />
-              </td>
-              <td className="py-3.5 px-5 text-center font-bold text-emerald-600">
-                <Check className="h-4 w-4 mx-auto text-emerald-600 stroke-[3]" />
-              </td>
-            </tr>
-
-            {/* Row 7: Custom Domain */}
-            <tr>
-              <td className="py-3.5 px-5 font-bold text-slate-900">
-                Custom Domain Branding
-                <span className="block text-[11px] font-normal text-slate-500">links.yourname.com</span>
-              </td>
-              <td className="py-3.5 px-5 text-center bg-purple-50/30 border-x border-purple-100/60 text-slate-400">
-                <X className="h-4 w-4 mx-auto text-slate-300" />
-              </td>
-              <td className="py-3.5 px-5 text-center text-slate-400">
-                <X className="h-4 w-4 mx-auto text-slate-300" />
               </td>
               <td className="py-3.5 px-5 text-center font-bold text-emerald-600">
                 <Check className="h-4 w-4 mx-auto text-emerald-600 stroke-[3]" />

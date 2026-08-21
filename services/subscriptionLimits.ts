@@ -12,7 +12,7 @@ export const EARLY_ACCESS_LIMITS = {
   maxSeries: 2,
   maxEpisodesPerSeries: 5,
   maxTotalEpisodes: 10,
-  maxGigs: Infinity,
+  maxGigs: 1,
 };
 
 export const PLAN_QUOTAS: Record<string, PlanQuota> = {
@@ -20,22 +20,22 @@ export const PLAN_QUOTAS: Record<string, PlanQuota> = {
     name: "Creator Early Access",
     maxSeries: 2,
     maxTotalEpisodes: 10,
-    maxGigs: Infinity,
-    description: "Free Early Access. Unlimited Collab Gigs, Live Rate Cards, WhatsApp Lead Routing & 2 OTT Series.",
+    maxGigs: 1,
+    description: "Free Early Access. 1 Collab Gig, Live Rate Cards, WhatsApp Lead Routing & 2 OTT Series.",
   },
   creator_pro: {
     name: "Creator Pro",
-    maxSeries: Infinity,
-    maxTotalEpisodes: Infinity,
-    maxGigs: Infinity,
-    description: "Unlimited Series, Episodes, Collab Gigs & Zero Inflixo Branding.",
+    maxSeries: 30,
+    maxTotalEpisodes: 300,
+    maxGigs: 3,
+    description: "30 Series, 300 Episodes, 3 Collab Gigs & Zero Inflixo Branding.",
   },
   creator_VIP: {
     name: "Creator VIP",
     maxSeries: Infinity,
     maxTotalEpisodes: Infinity,
     maxGigs: Infinity,
-    description: "Unlimited Series, Episodes, Collab Gigs, Media Kit & Custom Domain branding.",
+    description: "Unlimited Series, Episodes, Collab Gigs & Media Kit.",
   },
 };
 
