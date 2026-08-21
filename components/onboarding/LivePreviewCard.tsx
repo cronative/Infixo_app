@@ -12,6 +12,8 @@ import { ShareSeriesModal } from "@/components/shared/ShareSeriesModal";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { SeriesPoster } from "@/components/shared/SeriesPoster";
 import { copyToClipboard } from "@/lib/copyToClipboard";
+import { BrandLeadQualifierModal } from "@/components/mediakit/BrandLeadQualifierModal";
+import { EpisodeQuickDrawer } from "@/components/series/EpisodeQuickDrawer";
 
 export interface ThemeStyleConfig {
   cardBg?: string;
@@ -595,6 +597,10 @@ export function LivePreviewCard({
   const [mediaKitPackages, setMediaKitPackages] = useState<MediaKitPackage[]>([]);
   const [mediaKitSettings, setMediaKitSettings] = useState<MediaKitSettings>(MediaKitService.DEFAULT_SETTINGS);
   const [customLinksList, setCustomLinksList] = useState<CustomLink[]>(passedCustomLinks || []);
+  const [selectedGigForWhatsApp, setSelectedGigForWhatsApp] = useState<MediaKitPackage | null>(null);
+  const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
+  const [drawerSeries, setDrawerSeries] = useState<Series | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const isDark = isDarkTheme(themeKey);
 
@@ -1138,17 +1144,18 @@ export function LivePreviewCard({
                             isDark ? "border-white/10" : "border-slate-100"
                           }`}
                         >
-                          {cleanPhone && (
-                            <a
-                              href={waUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
-                            >
-                              <MessageCircle className="h-3.5 w-3.5 fill-white" />
-                              <span>WhatsApp</span>
-                            </a>
-                          )}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedGigForWhatsApp(pkg);
+                              setIsLeadModalOpen(true);
+                            }}
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                          >
+                            <MessageCircle className="h-3.5 w-3.5 fill-white" />
+                            <span>Book WhatsApp</span>
+                          </button>
+
                           {mediaKitSettings.sponsorEmail && (
                             <a
                               href={mailUrl}
@@ -1156,10 +1163,10 @@ export function LivePreviewCard({
                                 isDark
                                   ? "bg-white text-slate-900 hover:bg-slate-100"
                                   : "bg-slate-900 text-white hover:bg-slate-800"
-                              } text-xs font-bold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs`}
+                              } text-xs font-bold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 shadow-2xs`}
                             >
                               <Mail className="h-3.5 w-3.5" />
-                              <span>Send Email</span>
+                              <span>Email Brief</span>
                             </a>
                           )}
                         </div>
@@ -1195,6 +1202,25 @@ export function LivePreviewCard({
   return (
     <div className={`relative w-full mx-auto transition-all ${isFull ? "max-w-4xl" : "max-w-xl sm:max-w-[540px]"}`}>
       {cardContent}
+
+      {/* Brand Lead Qualifier Anti-Spam Modal */}
+      <BrandLeadQualifierModal
+        isOpen={isLeadModalOpen}
+        onClose={() => setIsLeadModalOpen(false)}
+        creatorName={profile.displayName || "Creator"}
+        creatorUsername={profile.username || "creator"}
+        whatsappNumber={mediaKitSettings.whatsappNumber || ""}
+        packageName={selectedGigForWhatsApp?.title}
+        packagePrice={selectedGigForWhatsApp?.price}
+        deliverableText={selectedGigForWhatsApp?.deliverables?.join(", ")}
+      />
+
+      {/* Episode Quick Drawer */}
+      <EpisodeQuickDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        series={drawerSeries}
+      />
     </div>
   );
 }

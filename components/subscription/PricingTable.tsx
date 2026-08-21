@@ -107,32 +107,32 @@ export function PricingTable({
 
             <div className="mt-5 space-y-2.5">
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                Included Free Quotas:
+                Included Free Quotas &amp; Lead Tools:
               </p>
               <ul className="space-y-2 text-xs font-medium text-slate-700">
                 <li className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 text-[#803D63] shrink-0 stroke-[2.5]" />
-                  <span><strong>3 Web Series</strong> Limit</span>
+                  <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0 stroke-[2.5]" />
+                  <span><strong className="text-slate-900">Unlimited Collab Gigs &amp; Rate Cards ♾️</strong></span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0 stroke-[2.5]" />
+                  <span><strong className="text-slate-900">WhatsApp &amp; Email Lead Routing (0% Fee)</strong></span>
                 </li>
                 <li className="flex items-center gap-2">
                   <Check className="h-3.5 w-3.5 text-[#803D63] shrink-0 stroke-[2.5]" />
-                  <span><strong>15 Total Episodes</strong> Limit</span>
+                  <span>Verified Fanbase Reach Counter</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <Check className="h-3.5 w-3.5 text-[#803D63] shrink-0 stroke-[2.5]" />
-                  <span><strong>1 Active Collab Gig</strong> Package</span>
+                  <span><strong>2 OTT Web Series</strong> Limit</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <Check className="h-3.5 w-3.5 text-[#803D63] shrink-0 stroke-[2.5]" />
-                  <span>Public Inflixo Creator Profile</span>
+                  <span><strong>10 Total Episodes</strong> Limit</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <Check className="h-3.5 w-3.5 text-[#803D63] shrink-0 stroke-[2.5]" />
                   <span>Instagram, YouTube &amp; Facebook Sync</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 text-[#803D63] shrink-0 stroke-[2.5]" />
-                  <span>All Standard Profile Themes</span>
                 </li>
               </ul>
             </div>
@@ -189,8 +189,8 @@ export function PricingTable({
                   <span className="font-bold text-slate-900">Unlimited Episodes ♾️</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                  <span>Up to 5 Active Collab Gigs</span>
+                  <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                  <span>Unlimited Collab Gigs &amp; Rate Cards</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <Check className="h-3.5 w-3.5 text-slate-400 shrink-0" />
@@ -198,7 +198,7 @@ export function PricingTable({
                 </li>
                 <li className="flex items-center gap-2">
                   <Check className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                  <span>Priority Support &amp; Analytics</span>
+                  <span>CTR &amp; Click Analytics</span>
                 </li>
               </ul>
             </div>
@@ -258,7 +258,15 @@ export function PricingTable({
                 </li>
                 <li className="flex items-center gap-2">
                   <Check className="h-3.5 w-3.5 text-amber-600 shrink-0 stroke-[2.5]" />
-                  <span className="font-bold text-slate-900">Unlimited Collab Gigs &amp; Media Kit ♾️</span>
+                  <span className="font-bold text-slate-900">Zero Inflixo Branding Watermark</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-amber-600 shrink-0 stroke-[2.5]" />
+                  <span>Custom Domain (`links.yourname.com`)</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-amber-600 shrink-0 stroke-[2.5]" />
+                  <span>Advanced Lead &amp; CTR Analytics</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <Check className="h-3.5 w-3.5 text-amber-600 shrink-0 stroke-[2.5]" />

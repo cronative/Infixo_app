@@ -192,43 +192,44 @@ export default function LandingHomePage() {
                 Stop sending brands five different links and losing viewers between video parts. Unify your real fanbase across platforms and turn your uploads into bingeable OTT series—in one clean profile.
               </p>
 
-              {/* Handle Claim Input */}
+              {/* Handle Claim & Interactive Generator Input */}
               <div className="space-y-3 pt-1">
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
                     handleClaim(username);
                   }}
-                  className="flex items-center rounded-xl border border-[#E5E7EB] bg-white p-1.5 focus-within:border-[#803D63] focus-within:ring-1 focus-within:ring-[#803D63] transition-all max-w-md"
+                  className="flex items-center rounded-xl border border-[#E5E7EB] bg-white p-1.5 focus-within:border-[#803D63] focus-within:ring-2 focus-within:ring-[#803D63]/20 transition-all max-w-md shadow-xs"
                 >
-                  <span className="pl-3.5 text-xs sm:text-sm font-semibold text-[#9CA3AF] select-none shrink-0">
+                  <span className="pl-3.5 text-xs sm:text-sm font-bold text-[#803D63] select-none shrink-0">
                     inflixo.com/
                   </span>
                   <input
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="yourname"
+                    placeholder="yourname (e.g. techburners)"
                     className="w-full bg-transparent px-1 py-2 text-xs sm:text-sm font-bold text-[#111827] outline-none placeholder:text-[#9CA3AF] placeholder:font-normal min-w-0"
                   />
                   <button
                     type="submit"
-                    className="inline-flex items-center gap-1 shrink-0 rounded-lg bg-[#803D63] px-4 py-2 text-xs sm:text-sm font-bold text-white hover:bg-[#6D3254] transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1.5 shrink-0 rounded-lg bg-[#803D63] px-4 py-2 text-xs sm:text-sm font-bold text-white hover:bg-[#6D3254] transition-colors cursor-pointer shadow-2xs"
                   >
-                    <span>Claim Handle</span>
+                    <Sparkles className="h-3.5 w-3.5" />
+                    <span>Generate Page</span>
                   </button>
                 </form>
 
                 {/* Micro-Trust Proof */}
                 <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-[#4B5563] pt-1">
                   <span className="flex items-center gap-1">
-                    <Check className="h-3.5 w-3.5 text-emerald-600 stroke-[3]" /> 100% Free Setup
+                    <Check className="h-3.5 w-3.5 text-emerald-600 stroke-[3]" /> Live Real-Time Preview
                   </span>
                   <span className="flex items-center gap-1">
                     <Check className="h-3.5 w-3.5 text-emerald-600 stroke-[3]" /> Connects in 60s
                   </span>
                   <span className="flex items-center gap-1">
-                    <Check className="h-3.5 w-3.5 text-emerald-600 stroke-[3]" /> No credit card needed
+                    <Check className="h-3.5 w-3.5 text-emerald-600 stroke-[3]" /> 100% Free Setup
                   </span>
                 </div>
               </div>
@@ -242,31 +243,31 @@ export default function LandingHomePage() {
                   Brands don&apos;t want 5 links. They want your true reach.
                 </h2>
                 <p className="text-xs sm:text-sm font-medium text-[#4B5563] leading-relaxed">
-                  You have 400K subscribers on YouTube, 250K on Instagram, and 150K on Facebook. Sharing separate profiles under-reports your scale. Inflixo aggregates your verified accounts into a live <strong className="text-[#111827] font-bold">Total Fanbase Counter</strong> so brands see you as an <strong className="text-[#803D63] font-bold">800K+ powerhouse</strong>.
+                  Sharing separate links under-reports your scale. Inflixo aggregates your verified accounts into a live <strong className="text-[#111827] font-bold">Total Fanbase Counter</strong> and instant <strong className="text-[#803D63] font-bold">Rate Cards with Direct WhatsApp Lead Routing (0% Fee)</strong>.
                 </p>
 
                 <div className="space-y-2 pt-1 text-xs font-semibold text-[#111827]">
                   <div className="flex items-start gap-2">
                     <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5" />
                     <div>
-                      <strong className="text-[#111827]">Automated Multi-Platform Sync:</strong> Real-time follower and subscriber tracking.
+                      <strong className="text-[#111827]">Unlimited Collab Gigs:</strong> Free rate card listing &amp; pre-qualified WhatsApp briefs.
                     </div>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5" />
                     <div>
-                      <strong className="text-[#111827]">One-Click Media Kit:</strong> Send brands a single verified link instead of screenshots.
+                      <strong className="text-[#111827]">Automated Multi-Platform Sync:</strong> Real-time follower and subscriber tracking.
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Right Hero: ORIGINAL LIVE PREVIEW CARD WITH AUTO THEME SWITCHER & WEBBROWSER FRAME */}
+            {/* Right Hero: INTERACTIVE LIVE PREVIEW CARD WITH REAL-TIME HANDLE GENERATION */}
             <div className="lg:col-span-6 flex flex-col items-center justify-start w-full">
-              <div className="w-full max-w-[520px] rounded-2xl border border-slate-200 bg-white p-2.5 sm:p-3 relative transition-all duration-700">
+              <div className="w-full max-w-[520px] rounded-2xl border border-slate-200 bg-white p-2.5 sm:p-3 relative transition-all duration-700 space-y-3">
                 {/* Sleek Browser Bar Header */}
-                <div className="flex items-center justify-between bg-slate-50 px-4 py-2 rounded-xl mb-2.5 border border-slate-200">
+                <div className="flex items-center justify-between bg-slate-50 px-4 py-2 rounded-xl border border-slate-200">
                   <div className="flex items-center gap-1.5">
                     <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
                     <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
@@ -274,21 +275,51 @@ export default function LandingHomePage() {
                   </div>
                   <div className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-[11px] font-bold text-slate-700 border border-slate-200">
                     <span className="text-emerald-500 font-extrabold">🔒</span>
-                    <span>inflixo.com/tonystark</span>
+                    <span>inflixo.com/{username ? username.toLowerCase().replace(/[^a-z0-9_]/g, "") : "yourname"}</span>
                   </div>
                   <div className="text-[10px] font-bold text-[#803D63] uppercase tracking-wider hidden sm:block">
                     {activeTheme.name}
                   </div>
                 </div>
 
-                {/* REAL LIVE PREVIEW CARD COMPONENT WITH DYNAMIC THEME */}
+                {/* REAL LIVE PREVIEW CARD COMPONENT WITH DYNAMIC HANDLE */}
                 <LivePreviewCard
-                  profile={DEMO_PROFILE}
-                  socials={DEMO_SOCIALS}
+                  profile={
+                    username.trim()
+                      ? {
+                          displayName: username.trim().charAt(0).toUpperCase() + username.trim().slice(1),
+                          username: username.trim().toLowerCase().replace(/[^a-z0-9_]/g, ""),
+                          category: "Digital Creator",
+                          bio: `🚀 Official OTT Media Kit & Series Showcase of @${username.trim()}`,
+                          photoDataUrl: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(username.trim())}`,
+                          updatedAt: new Date().toISOString(),
+                        }
+                      : DEMO_PROFILE
+                  }
+                  socials={
+                    username.trim()
+                      ? {
+                          instagram: { url: `https://instagram.com/${username}`, followers: 450000, posts: 180, username: username.trim() },
+                          youtube: { url: `https://youtube.com/@${username}`, subscribers: 820000, videos: 95, totalViews: 45000000, username: username.trim() },
+                          facebook: { url: `https://facebook.com/${username}`, followers: 210000, posts: 120, username: username.trim() },
+                          updatedAt: new Date().toISOString(),
+                        }
+                      : DEMO_SOCIALS
+                  }
                   series={DEMO_SERIES}
-                  totalAudience={20500000}
+                  totalAudience={username.trim() ? 1480000 : 20500000}
                   themeKey={activeTheme.key}
                 />
+
+                {/* VIRAL CLAIM HANDLE CTA BUTTON BELOW PREVIEW CARD */}
+                <button
+                  type="button"
+                  onClick={() => handleClaim(username)}
+                  className="w-full tap-scale py-3 px-4 rounded-xl bg-[#803D63] hover:bg-[#6D3254] text-white font-extrabold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>Claim @{username.trim() || "yourname"} Profile Before Someone Else Does</span>
+                  <ArrowRight className="h-4 w-4" />
+                </button>
               </div>
             </div>
           </div>

@@ -9,33 +9,33 @@ export interface PlanQuota {
 }
 
 export const EARLY_ACCESS_LIMITS = {
-  maxSeries: 3,
+  maxSeries: 2,
   maxEpisodesPerSeries: 5,
-  maxTotalEpisodes: 15,
-  maxGigs: 1,
+  maxTotalEpisodes: 10,
+  maxGigs: Infinity,
 };
 
 export const PLAN_QUOTAS: Record<string, PlanQuota> = {
   early_access: {
     name: "Creator Early Access",
-    maxSeries: 3,
-    maxTotalEpisodes: 15,
-    maxGigs: 1,
-    description: "Free during Early Access. Up to 3 Series, 15 Episodes, 1 Collab Gig.",
+    maxSeries: 2,
+    maxTotalEpisodes: 10,
+    maxGigs: Infinity,
+    description: "Free Early Access. Unlimited Collab Gigs, Live Rate Cards, WhatsApp Lead Routing & 2 OTT Series.",
   },
   creator_pro: {
     name: "Creator Pro",
     maxSeries: Infinity,
     maxTotalEpisodes: Infinity,
-    maxGigs: 5,
-    description: "Unlimited Series & Episodes for growing creators.",
+    maxGigs: Infinity,
+    description: "Unlimited Series, Episodes, Collab Gigs & Zero Inflixo Branding.",
   },
   creator_VIP: {
     name: "Creator VIP",
     maxSeries: Infinity,
     maxTotalEpisodes: Infinity,
     maxGigs: Infinity,
-    description: "Unlimited Series, Episodes, Collab Gigs & Media Kit options.",
+    description: "Unlimited Series, Episodes, Collab Gigs, Media Kit & Custom Domain branding.",
   },
 };
 
