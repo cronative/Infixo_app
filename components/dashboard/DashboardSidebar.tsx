@@ -32,30 +32,28 @@ export function DashboardSidebar() {
         <Logo size="sm" />
       </div>
 
-      {/* Creator Profile Card Banner (Flat SaaS Light Style) */}
-      <div className="mt-4 rounded-xl bg-white p-3 text-slate-900 border border-gray-200 shadow-2xs">
-        <div className="flex items-center gap-2.5">
-          <CreatorAvatar
-            src={profile.photoDataUrl}
-            name={profile.displayName || profile.email || "Creator"}
-            className="w-12 h-12 rounded-full overflow-hidden object-cover aspect-square border border-gray-200 shrink-0"
-            textClassName="text-sm font-extrabold text-slate-900"
-            fallbackBgClass="bg-indigo-50"
-          />
+      {/* Simple Flat Creator Profile Row (No Card Box) */}
+      <div className="mt-3 px-2 py-1.5 flex items-center gap-2.5">
+        <CreatorAvatar
+          src={profile.photoDataUrl}
+          name={profile.displayName || profile.email || "Creator"}
+          className="w-8 h-8 rounded-full overflow-hidden object-cover aspect-square border border-slate-200 shrink-0"
+          textClassName="text-xs font-bold text-slate-900"
+          fallbackBgClass="bg-indigo-50"
+        />
 
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1">
-              <p className="truncate text-xs font-bold text-slate-900">
-                {profile.displayName || "Creator"}
-              </p>
-              {profile.isVerified && (
-                <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
-              )}
-            </div>
-            <p className="truncate text-[11px] font-medium text-slate-500">
-              @{handleStr}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1">
+            <p className="truncate text-xs font-bold text-slate-900">
+              {profile.displayName || "Creator"}
             </p>
+            {profile.isVerified && (
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
+            )}
           </div>
+          <p className="truncate text-[11px] font-medium text-slate-500">
+            @{handleStr}
+          </p>
         </div>
       </div>
 
