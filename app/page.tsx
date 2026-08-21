@@ -257,7 +257,7 @@ export default function LandingHomePage() {
                 <h2 className="font-display text-2xl sm:text-3xl font-bold text-[#111827] leading-tight">
                   Brands don&apos;t want 5 links. They want your true reach.
                 </h2>
-                <p className="text-xs sm:text-sm font-medium text-[#4B5563] leading-relaxed">
+                <p className="text-base sm:text-lg font-medium text-[#4B5563] leading-relaxed">
                   Separate profiles under-report your real scale — Inflixo adds every platform into one live number.
                 </p>
 
@@ -396,7 +396,7 @@ export default function LandingHomePage() {
               <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#111827] leading-tight">
                 Don&apos;t let Part 2 get lost in social feeds.
               </h2>
-              <p className="text-sm sm:text-base font-medium text-[#4B5563] leading-relaxed">
+              <p className="text-base sm:text-lg font-medium text-[#4B5563] leading-relaxed">
                 Feeds scatter your series into disconnected posts. Inflixo puts every part on one page, in order — like a playlist. Custom posters, numbered episodes, and 1-tap playback keep viewers watching.
               </p>
 
@@ -431,7 +431,7 @@ export default function LandingHomePage() {
               <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#111827] leading-tight">
                 Get paid by brands without a middleman
               </h2>
-              <p className="text-sm sm:text-base font-medium text-[#4B5563] leading-relaxed">
+              <p className="text-base sm:text-lg font-medium text-[#4B5563] leading-relaxed">
                 Stop losing leads in crowded DMs. Brands see your reach and rate card, and contact you directly — zero commission.
               </p>
 
@@ -495,7 +495,7 @@ export default function LandingHomePage() {
                       </span>
                       <h5 className="font-bold text-sm text-slate-900 mt-1">1x High-Engagement Dedicated Reel</h5>
                     </div>
-                    <span className="font-extrabold text-base text-[#803D63]">₹2,000</span>
+                    <span className="font-extrabold text-base text-[#803D63] tabular-nums">₹2,000</span>
                   </div>
                   <p className="text-[11px] text-slate-500 font-semibold">Turnaround: 2 Days</p>
                   <ul className="text-xs space-y-1 pt-1 border-t border-slate-100 text-slate-600">
@@ -519,7 +519,7 @@ export default function LandingHomePage() {
                       </span>
                       <h5 className="font-bold text-sm text-slate-900 mt-1">3x Reels Mini-Campaign Pack</h5>
                     </div>
-                    <span className="font-extrabold text-base text-[#803D63]">₹5,400</span>
+                    <span className="font-extrabold text-base text-[#803D63] tabular-nums">₹5,400</span>
                   </div>
                   <p className="text-[11px] text-slate-500 font-semibold">Turnaround: 5 Days • Save 10%</p>
                 </div>
@@ -546,7 +546,7 @@ export default function LandingHomePage() {
             <h2 className="font-display text-xl sm:text-2xl font-bold text-[#111827] leading-tight">
               Built with India&apos;s first 10,000 creators.
             </h2>
-            <p className="text-xs sm:text-sm text-[#4B5563] font-semibold max-w-xl mx-auto">
+            <p className="text-base sm:text-lg text-[#4B5563] font-semibold leading-relaxed max-w-xl mx-auto">
               Join early access to receive a foundational creator membership and an invite to the Inflixo Creator Summit 2027.
             </p>
           </div>
@@ -563,7 +563,7 @@ export default function LandingHomePage() {
             <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#111827]">
               Simple, Transparent Pricing
             </h2>
-            <p className="text-xs sm:text-sm font-medium text-[#4B5563]">
+            <p className="text-base sm:text-lg font-medium text-[#4B5563] leading-relaxed">
               Transparent, creator-first plans with full media kit features.
             </p>
           </div>
