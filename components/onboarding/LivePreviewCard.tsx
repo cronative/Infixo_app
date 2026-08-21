@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Users, Sparkles, ExternalLink, Play, Film, Share2, ChevronDown, ChevronUp, ChevronRight, Copy, Eye } from "lucide-react";
-import { CreatorProfile, SocialAccounts, ThemeKey, Series } from "@/types";
+import { Users, Sparkles, ExternalLink, Play, Film, Share2, ChevronDown, ChevronUp, ChevronRight, Copy, Eye, Briefcase, Clock, CheckCircle2, MessageCircle, Mail } from "lucide-react";
+import { CreatorProfile, SocialAccounts, ThemeKey, Series, MediaKitPackage, MediaKitSettings } from "@/types";
 import { formatCount } from "@/utils/format";
+import { MediaKitService } from "@/services/MediaKitService";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 import { InflixoLogoIcon } from "@/components/shared/Logo";
 import { useToast } from "@/contexts/ToastContext";
@@ -564,6 +565,23 @@ export function LivePreviewCard({
 }: LivePreviewCardProps) {
   const { showToast } = useToast();
   const [expandedSeriesId, setExpandedSeriesId] = useState<string | null>(null);
+  const [activeContentTab, setActiveContentTab] = useState<"series" | "gigs">("series");
+  const [mediaKitPackages, setMediaKitPackages] = useState<MediaKitPackage[]>([]);
+  const [mediaKitSettings, setMediaKitSettings] = useState<MediaKitSettings>(MediaKitService.DEFAULT_SETTINGS);
+
+  useEffect(() => {
+    async function loadMediaKit() {
+      const identifier = profile.id || profile.email || profile.username;
+      if (identifier) {
+        const data = await MediaKitService.fetchFromDb(identifier, profile.id);
+        if (data) {
+          setMediaKitPackages(data.packages || []);
+          setMediaKitSettings(data.settings || MediaKitService.DEFAULT_SETTINGS);
+        }
+      }
+    }
+    loadMediaKit();
+  }, [profile.id, profile.email, profile.username]);
 
   const style = THEME_STYLES[themeKey] || DEFAULT_THEME_STYLE;
   const totalEpisodesCount = (series || []).reduce((acc, s) => acc + getSeriesEpisodes(s).length, 0);
@@ -847,33 +865,156 @@ export function LivePreviewCard({
         </div>
       )}
 
-      {/* OTT Web Series & Playlists Section */}
-      {series && series.length > 0 && (
-        <div className="relative z-10 mt-6 space-y-3 w-full text-left">
-          <div className="flex items-center justify-between px-1 mb-2 gap-2">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest text-left">
-              Featured Series &amp; Shows
-            </p>
-            <span className="text-[11px] font-semibold text-[#803D63] bg-[#F6EBF1] border border-[#E8DCE4] px-2.5 py-0.5 rounded-full shrink-0">
-              {series.length} {series.length === 1 ? "Series" : "Series"} • {totalEpisodesCount} {totalEpisodesCount === 1 ? "Episode" : "Episodes"}
-            </span>
-          </div>
+      {/* Interactive 2-Tab Content Switcher (Series & Shows vs Collab Gigs) */}
+      <div className="relative z-10 mt-6 w-full text-left">
+        {/* 2-Tab Pill Switcher */}
+        <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-[#F3F4F6] border border-[#E5E7EB] mb-4">
+          <button
+            type="button"
+            onClick={() => setActiveContentTab("series")}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+              activeContentTab === "series"
+                ? "bg-[#803D63] text-white shadow-2xs"
+                : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
+            }`}
+          >
+            <Film className="h-3.5 w-3.5" />
+            <span>🎬 Series ({series ? series.length : 0})</span>
+          </button>
 
-          <div className="space-y-4">
-            {series.map((s) => (
-              <PreviewSeriesItem
-                key={s.id}
-                series={s}
-                style={style}
-                themeKey={themeKey}
-                username={profile.username}
-                expanded={expandedSeriesId === s.id}
-                onToggle={() => setExpandedSeriesId(expandedSeriesId === s.id ? null : s.id)}
-              />
-            ))}
-          </div>
+          <button
+            type="button"
+            onClick={() => setActiveContentTab("gigs")}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+              activeContentTab === "gigs"
+                ? "bg-[#803D63] text-white shadow-2xs"
+                : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
+            }`}
+          >
+            <Briefcase className="h-3.5 w-3.5" />
+            <span>💼 Collab Gigs ({mediaKitPackages.filter((p) => p.isActive).length})</span>
+          </button>
         </div>
-      )}
+
+        {/* TAB 1: 🎬 SERIES & SHOWS */}
+        {activeContentTab === "series" && (
+          <div className="space-y-3 animate-in fade-in duration-200">
+            {series && series.length > 0 ? (
+              <div className="space-y-4">
+                {series.map((s) => (
+                  <PreviewSeriesItem
+                    key={s.id}
+                    series={s}
+                    style={style}
+                    themeKey={themeKey}
+                    username={profile.username}
+                    expanded={expandedSeriesId === s.id}
+                    onToggle={() => setExpandedSeriesId(expandedSeriesId === s.id ? null : s.id)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-2xl border-2 border-dashed border-gray-200 bg-white p-6 text-center space-y-1.5">
+                <Film className="h-7 w-7 text-slate-400 mx-auto" />
+                <p className="font-bold text-slate-800 text-xs">No Series Published Yet</p>
+                <p className="text-[11px] text-slate-500">Check back soon for original web series &amp; trailers!</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB 2: 💼 COLLAB GIGS & RATE CARDS */}
+        {activeContentTab === "gigs" && (
+          <div className="space-y-3 animate-in fade-in duration-200">
+            {mediaKitPackages.filter((p) => p.isActive).length > 0 ? (
+              <div className="grid grid-cols-1 gap-3">
+                {mediaKitPackages.filter((p) => p.isActive).map((pkg) => {
+                  const cleanPhone = mediaKitSettings.whatsappNumber
+                    ? mediaKitSettings.whatsappNumber.replace(/[^0-9]/g, "")
+                    : "";
+                  const waText = encodeURIComponent(
+                    `Hi ${profile.displayName || "Creator"}, I saw your "${pkg.title}" (${pkg.price}) package on Inflixo and want to collaborate.`
+                  );
+                  const waUrl = `https://wa.me/${cleanPhone}?text=${waText}`;
+                  const mailSubject = encodeURIComponent(`[Inflixo Collab Inquiry] - ${pkg.title}`);
+                  const mailBody = encodeURIComponent(
+                    `Hi ${profile.displayName || "Creator"},\n\nI would like to inquire about collaborating on your "${pkg.title}" package listed on Inflixo.\n\nBest regards,\n[Brand Representative]`
+                  );
+                  const mailUrl = `mailto:${mediaKitSettings.sponsorEmail}?subject=${mailSubject}&body=${mailBody}`;
+
+                  return (
+                    <div
+                      key={pkg.id}
+                      className="bg-white border border-gray-200 rounded-2xl p-4 space-y-3 shadow-2xs hover:border-[#803D63] transition-all relative text-left"
+                    >
+                      {(pkg.badge || pkg.packageName || pkg.isPopular) && (
+                        <span className="absolute -top-2.5 right-3 bg-[#803D63] text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-2xs">
+                          {pkg.badge || pkg.packageName || "⭐ MOST POPULAR"}
+                        </span>
+                      )}
+
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <span className="bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] text-[9px] font-extrabold px-2 py-0.5 rounded uppercase">
+                            {pkg.platform}
+                          </span>
+                          <h5 className="font-bold text-slate-900 text-sm mt-1">{pkg.title}</h5>
+                        </div>
+                        <span className="font-black text-[#803D63] text-base shrink-0">{pkg.price}</span>
+                      </div>
+
+                      <p className="text-[11px] text-slate-500 font-semibold flex items-center gap-1">
+                        <Clock className="h-3 w-3 text-[#803D63]" /> Turnaround: {pkg.turnaroundDays} Days
+                      </p>
+
+                      {pkg.deliverables && pkg.deliverables.length > 0 && (
+                        <ul className="text-xs text-slate-600 space-y-1 pt-1 border-t border-gray-100">
+                          {pkg.deliverables.map((item, idx) => (
+                            <li key={idx} className="flex items-start gap-1.5">
+                              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+
+                      {/* Direct Frictionless Actions */}
+                      <div className="pt-2 border-t border-gray-100 grid grid-cols-2 gap-2">
+                        {cleanPhone && (
+                          <a
+                            href={waUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold py-2 px-2 rounded-xl transition-all inline-flex items-center justify-center gap-1 shadow-2xs"
+                          >
+                            <MessageCircle className="h-3.5 w-3.5 fill-white" />
+                            <span>WhatsApp</span>
+                          </a>
+                        )}
+                        {mediaKitSettings.sponsorEmail && (
+                          <a
+                            href={mailUrl}
+                            className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold py-2 px-2 rounded-xl transition-all inline-flex items-center justify-center gap-1 shadow-2xs"
+                          >
+                            <Mail className="h-3.5 w-3.5" />
+                            <span>Send Email</span>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="rounded-2xl border-2 border-dashed border-gray-200 bg-white p-6 text-center space-y-1.5">
+                <Briefcase className="h-7 w-7 text-slate-400 mx-auto" />
+                <p className="font-bold text-slate-800 text-xs">No Active Collab Gigs Published</p>
+                <p className="text-[11px] text-slate-500">Creator has not published active rate card packages yet.</p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Bottom Conversion Watermark */}
       <div className="relative z-10 mt-6 pt-4 text-center border-t border-gray-200/50">
