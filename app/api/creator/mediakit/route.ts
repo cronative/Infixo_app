@@ -92,11 +92,13 @@ export async function GET(req: Request) {
     const resolvedCreatorId = creatorRecord?.creatorId || creatorIdParam || lookupVal;
     const resolvedEmail = creatorRecord?.email || emailParam || lookupVal;
 
-    // 1. Fetch Settings by creator_id OR email
+    // 1. Fetch Contact & Lead Routing Settings for THIS Creator only
     const [settingsRows]: any = await db.query(
       `SELECT whatsapp_number, sponsor_email, min_budget, bio_highlight, accepting_sponsors 
-       FROM mediakit_settings WHERE creator_id = ? OR email = ? OR email = ? LIMIT 1`,
-      [resolvedCreatorId, resolvedEmail, lookupVal]
+       FROM mediakit_settings 
+       WHERE creator_id = ? OR email = ? OR email = ?
+       ORDER BY (creator_id = ?) DESC LIMIT 1`,
+      [resolvedCreatorId, resolvedEmail, lookupVal, resolvedCreatorId]
     );
 
     const s = settingsRows[0] || {};
@@ -108,13 +110,15 @@ export async function GET(req: Request) {
       acceptingSponsors: s.accepting_sponsors === 1 || s.accepting_sponsors === true,
     };
 
-    // 2. Fetch Gigs by creator_id OR email
+    // 2. Fetch Gigs created strictly by THIS Creator only
     const [gigsRows]: any = await db.query(
       `SELECT id, creator_id AS creatorId, email, title, platform, price, min_price AS minPrice, max_price AS maxPrice, 
               package_name AS packageName, turnaround_days AS turnaroundDays, 
               deliverables, badge, is_popular AS isPopular, is_active AS isActive 
-       FROM mediakit_gigs WHERE creator_id = ? OR email = ? OR email = ? ORDER BY created_at ASC`,
-      [resolvedCreatorId, resolvedEmail, lookupVal]
+       FROM mediakit_gigs 
+       WHERE creator_id = ? OR (email = ? AND (creator_id IS NULL OR creator_id = ''))
+       ORDER BY created_at ASC`,
+      [resolvedCreatorId, resolvedEmail]
     );
 
     const packages = (gigsRows || []).map((row: any) => {

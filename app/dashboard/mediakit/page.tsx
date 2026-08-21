@@ -202,13 +202,15 @@ export default function DashboardMediaKitPage() {
   // Public Preview Modal State
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
 
-  const activeEmail = profile.email || authRepository.getPendingEmail() || "nikunj.appz@gmail.com";
+  const activeEmail = profile.email || authRepository.getPendingEmail() || "";
   const activeCreatorId = profile.id;
+  const activeUsername = profile.username;
+  const creatorQueryKey = activeCreatorId || activeEmail || activeUsername || "";
 
   useEffect(() => {
     async function initMediaKit() {
-      if (activeEmail) {
-        const { settings: dbSettings, packages: dbPackages } = await MediaKitService.fetchFromDb(activeEmail, activeCreatorId);
+      if (creatorQueryKey) {
+        const { settings: dbSettings, packages: dbPackages } = await MediaKitService.fetchFromDb(creatorQueryKey, activeCreatorId);
         setPackages(dbPackages);
         setSettings({
           ...dbSettings,
@@ -216,19 +218,10 @@ export default function DashboardMediaKitPage() {
           whatsappNumber: dbSettings.whatsappNumber ?? "",
           minBudget: dbSettings.minBudget ?? "",
         });
-      } else {
-        setPackages(MediaKitService.getPackages());
-        const savedSettings = MediaKitService.getSettings();
-        setSettings({
-          ...savedSettings,
-          sponsorEmail: savedSettings.sponsorEmail ?? "",
-          whatsappNumber: savedSettings.whatsappNumber ?? "",
-          minBudget: savedSettings.minBudget ?? "",
-        });
       }
     }
     initMediaKit();
-  }, [activeEmail, activeCreatorId]);
+  }, [creatorQueryKey, activeCreatorId]);
 
   const handleSaveSettings = async () => {
     MediaKitService.saveSettings(settings);
