@@ -97,26 +97,14 @@ export function SyncingLoader({
           </div>
         </div>
 
-        {/* 🌟 100 MOTIVATIONAL CREATOR JOURNEY QUOTES CARD */}
-        <div className="w-full mt-3 rounded-2xl border border-[#E8DCE4] bg-gradient-to-b from-[#FAF8FA] to-white p-4 text-center shadow-2xs space-y-2">
-          <div className="flex items-center justify-center gap-1.5 text-[10px] font-black text-[#803D63] uppercase tracking-wider">
-            <Sparkles className="h-3.5 w-3.5 text-amber-500" />
-            <span>CREATOR WISDOM #{quoteIndex + 1}/100</span>
-          </div>
-
-          {/* Quote Text with Smooth Fade Transition */}
-          <div className="min-h-[54px] flex items-center justify-center px-2">
-            <p
-              className={`text-xs font-bold text-slate-800 leading-relaxed italic transition-opacity duration-400 ${
-                isFading ? "opacity-0" : "opacity-100"
-              }`}
-            >
-              "{currentQuote}"
-            </p>
-          </div>
-
-          <p className="text-[9px] font-medium text-slate-400">
-            Changes every 5s • Stay inspired while we prepare your dashboard ✨
+        {/* Big Italic Motivational Quote (No Background / No Badges) */}
+        <div className="min-h-[64px] flex items-center justify-center px-4 pt-2">
+          <p
+            className={`font-display text-sm sm:text-base font-black italic text-slate-800 leading-relaxed tracking-tight transition-opacity duration-400 ${
+              isFading ? "opacity-0" : "opacity-100"
+            }`}
+          >
+            "{currentQuote}"
           </p>
         </div>
       </div>
