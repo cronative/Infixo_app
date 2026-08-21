@@ -239,7 +239,16 @@ export interface MediaKitSettings {
 // Subscription
 // ---------------------------------------------------------------------------
 
-export type PlanKey = "creator" | "pro" | "vip" | "free" | "starter" | "unlimited" | "early_access";
+export type PlanKey =
+  | "early_access"
+  | "creator_pro"
+  | "creator_VIP"
+  | "creator"
+  | "pro"
+  | "vip"
+  | "free"
+  | "starter"
+  | "unlimited";
 export type BillingCycle = "monthly" | "yearly";
 export type SubscriptionStatus = "trial" | "active" | "expired" | "cancelled";
 

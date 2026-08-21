@@ -1,60 +1,127 @@
-import { Series } from "@/types";
+import { Series, PlanKey } from "@/types";
+
+export interface PlanQuota {
+  name: string;
+  maxSeries: number;
+  maxTotalEpisodes: number;
+  maxGigs: number;
+  description: string;
+}
 
 export const EARLY_ACCESS_LIMITS = {
   maxSeries: 3,
   maxEpisodesPerSeries: 5,
+  maxTotalEpisodes: 15,
+  maxGigs: 1,
 };
 
-export const CREATOR_PLAN_LIMITS = {
-  maxSeries: Infinity,
-  maxEpisodesPerSeries: Infinity,
+export const PLAN_QUOTAS: Record<string, PlanQuota> = {
+  early_access: {
+    name: "Creator Early Access",
+    maxSeries: 3,
+    maxTotalEpisodes: 15,
+    maxGigs: 1,
+    description: "Free during Early Access. Up to 3 Series, 15 Episodes, 1 Collab Gig.",
+  },
+  creator_pro: {
+    name: "Creator Pro",
+    maxSeries: Infinity,
+    maxTotalEpisodes: Infinity,
+    maxGigs: 5,
+    description: "Unlimited Series & Episodes for growing creators.",
+  },
+  creator_VIP: {
+    name: "Creator VIP",
+    maxSeries: Infinity,
+    maxTotalEpisodes: Infinity,
+    maxGigs: Infinity,
+    description: "Unlimited Series, Episodes, Collab Gigs & Media Kit options.",
+  },
 };
 
-export function getSeriesUsage(seriesList: Series[]) {
+export function getPlanQuota(planKey: string = "early_access"): PlanQuota {
+  return PLAN_QUOTAS[planKey] || PLAN_QUOTAS.early_access;
+}
+
+export function getSeriesUsage(seriesList: Series[], planKey: string = "early_access") {
   const current = seriesList ? seriesList.length : 0;
-  const max = EARLY_ACCESS_LIMITS.maxSeries;
+  const quota = getPlanQuota(planKey);
+  const max = quota.maxSeries;
   const isLimitReached = current >= max;
   return {
     current,
     max,
     isLimitReached,
-    percentage: Math.min(100, Math.round((current / max) * 100)),
+    percentage: max === Infinity ? 0 : Math.min(100, Math.round((current / max) * 100)),
   };
 }
 
-export function getEpisodeUsage(seriesItem: Series) {
+export function getTotalEpisodesCount(seriesList: Series[]): number {
+  if (!seriesList) return 0;
+  return seriesList.reduce(
+    (acc, s) => acc + (s.seasons ? s.seasons.reduce((a, b) => a + (b.episodes ? b.episodes.length : 0), 0) : 0),
+    0
+  );
+}
+
+export function getTotalEpisodesUsage(seriesList: Series[], planKey: string = "early_access") {
+  const current = getTotalEpisodesCount(seriesList);
+  const quota = getPlanQuota(planKey);
+  const max = quota.maxTotalEpisodes;
+  const isLimitReached = current >= max;
+  return {
+    current,
+    max,
+    theoreticalMax: max,
+    isLimitReached,
+    percentage: max === Infinity ? 0 : Math.min(100, Math.round((current / max) * 100)),
+  };
+}
+
+export function getEpisodeUsage(seriesItem: Series, planKey: string = "early_access") {
   const totalEpisodes = seriesItem && seriesItem.seasons
     ? seriesItem.seasons.reduce((acc, season) => acc + (season.episodes ? season.episodes.length : 0), 0)
     : 0;
-  const max = EARLY_ACCESS_LIMITS.maxEpisodesPerSeries;
+  const quota = getPlanQuota(planKey);
+  const max = quota.maxTotalEpisodes;
   const isLimitReached = totalEpisodes >= max;
   return {
     current: totalEpisodes,
     max,
     isLimitReached,
-    percentage: Math.min(100, Math.round((totalEpisodes / max) * 100)),
+    percentage: max === Infinity ? 0 : Math.min(100, Math.round((totalEpisodes / max) * 100)),
   };
 }
 
-export function getTotalEpisodesUsage(seriesList: Series[]) {
-  const totalEpisodes = seriesList
-    ? seriesList.reduce(
-        (acc, s) => acc + (s.seasons ? s.seasons.reduce((a, b) => a + (b.episodes ? b.episodes.length : 0), 0) : 0),
-        0
-      )
-    : 0;
-  const theoreticalMax = EARLY_ACCESS_LIMITS.maxSeries * EARLY_ACCESS_LIMITS.maxEpisodesPerSeries; // 15
+export function getGigUsage(currentGigsCount: number, planKey: string = "early_access") {
+  const quota = getPlanQuota(planKey);
+  const max = quota.maxGigs;
+  const isLimitReached = currentGigsCount >= max;
   return {
-    current: totalEpisodes,
-    theoreticalMax,
+    current: currentGigsCount,
+    max,
+    isLimitReached,
+    percentage: max === Infinity ? 0 : Math.min(100, Math.round((currentGigsCount / max) * 100)),
   };
 }
 
-export function canCreateSeries(seriesList: Series[]): boolean {
-  return (seriesList ? seriesList.length : 0) < EARLY_ACCESS_LIMITS.maxSeries;
+export function canCreateSeries(seriesList: Series[], planKey: string = "early_access"): boolean {
+  const usage = getSeriesUsage(seriesList, planKey);
+  return !usage.isLimitReached;
 }
 
-export function canCreateEpisode(seriesItem: Series): boolean {
-  const usage = getEpisodeUsage(seriesItem);
+export function canCreateEpisode(targetSeriesOrList?: Series | Series[], planKey: string = "early_access"): boolean {
+  if (!targetSeriesOrList) return true;
+  if (Array.isArray(targetSeriesOrList)) {
+    const usage = getTotalEpisodesUsage(targetSeriesOrList, planKey);
+    return !usage.isLimitReached;
+  } else {
+    const usage = getEpisodeUsage(targetSeriesOrList, planKey);
+    return !usage.isLimitReached;
+  }
+}
+
+export function canCreateGig(currentGigsCount: number, planKey: string = "early_access"): boolean {
+  const usage = getGigUsage(currentGigsCount, planKey);
   return !usage.isLimitReached;
 }

@@ -1,19 +1,29 @@
 "use client";
 
-import { useState } from "react";
-import { ShieldCheck, CheckCircle2, Sparkles, Layers, Film } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Sparkles, Layers, Film, Briefcase } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { BillingCycle, PlanKey } from "@/types";
 import { PricingTable } from "@/components/subscription/PricingTable";
-import { getSeriesUsage, getTotalEpisodesUsage, EARLY_ACCESS_LIMITS } from "@/services/subscriptionLimits";
+import { getSeriesUsage, getTotalEpisodesUsage, getGigUsage } from "@/services/subscriptionLimits";
+import { MediaKitService } from "@/services/MediaKitService";
 
 export default function DashboardSubscriptionPage() {
-  const { series, subscription } = useCreator();
-  const [selectedPlan, setSelectedPlan] = useState<PlanKey>("creator");
-  const [cycle, setCycle] = useState<BillingCycle>(subscription.billingCycle || "monthly");
+  const { profile, series, subscription } = useCreator();
+  const [activeGigsCount, setActiveGigsCount] = useState(0);
 
-  const seriesUsage = getSeriesUsage(series);
-  const episodeUsage = getTotalEpisodesUsage(series);
+  useEffect(() => {
+    async function loadGigs() {
+      const packages = MediaKitService.getPackages();
+      setActiveGigsCount(packages.filter((p) => p.isActive).length);
+    }
+    loadGigs();
+  }, [profile]);
+
+  const planKey = subscription?.planKey || "early_access";
+  const seriesUsage = getSeriesUsage(series, planKey);
+  const episodeUsage = getTotalEpisodesUsage(series, planKey);
+  const gigUsage = getGigUsage(activeGigsCount, planKey);
 
   return (
     <div className="min-h-dvh bg-[#F9FAFB] text-slate-900 pb-16">
@@ -25,7 +35,7 @@ export default function DashboardSubscriptionPage() {
               Subscription &amp; Plans
             </h1>
             <p className="text-xs text-slate-500 font-medium truncate">
-              Inflixo is currently in Early Access. All features and up to 3 Series are 100% free.
+              Inflixo Early Access is 100% free for all creators until Pro &amp; VIP plans launch.
             </p>
           </div>
           <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 px-3 py-1 text-xs font-bold shrink-0">
@@ -36,46 +46,47 @@ export default function DashboardSubscriptionPage() {
       </div>
 
       <div className="mx-auto max-w-5xl px-3 sm:px-6 space-y-5">
-
-      {/* Current Active Plan Status Banner */}
-      <div className="rounded-xl border border-slate-200 bg-white p-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-0.5">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800">Current Plan</span>
-              <span className="rounded border border-emerald-300 bg-emerald-100 px-2 py-0.2 text-[10px] font-bold text-emerald-900">
-                EARLY ACCESS • FREE
-              </span>
-            </div>
-            <p className="font-display text-lg font-bold text-slate-900">
-              Inflixo Early Access
-            </p>
-            <p className="text-xs text-slate-500 font-medium">
-              Free while Inflixo is in Early Access • No credit card required
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:items-end gap-1 shrink-0">
-            <div className="flex items-center gap-2.5 text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-lg p-2.5">
-              <div className="flex items-center gap-1">
-                <Layers className="h-3.5 w-3.5 text-[#803D63]" />
-                <span>Series: <strong className="text-[#803D63]">{seriesUsage.current} / {EARLY_ACCESS_LIMITS.maxSeries}</strong></span>
+        {/* Current Active Plan Status Banner */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-2xs">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-1 text-left">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800">Current Plan</span>
+                <span className="rounded-md border border-emerald-300 bg-emerald-100 px-2 py-0.5 text-[10px] font-extrabold text-emerald-900">
+                  EARLY ACCESS • FREE
+                </span>
               </div>
-              <span className="text-slate-300">•</span>
-              <div className="flex items-center gap-1">
-                <Film className="h-3.5 w-3.5 text-[#803D63]" />
-                <span>Episodes: <strong className="text-[#803D63]">{episodeUsage.current} / {episodeUsage.theoreticalMax}</strong></span>
+              <p className="font-display text-lg font-extrabold text-slate-900">
+                Inflixo Early Access
+              </p>
+              <p className="text-xs text-slate-500 font-medium">
+                Free for all creators until Creator Pro &amp; VIP plans are launched • No credit card required
+              </p>
+            </div>
+
+            {/* Real-time Usage Meter Pills */}
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
+                <Layers className="h-4 w-4 text-[#803D63]" />
+                <span>Series: <strong className="text-[#803D63]">{seriesUsage.current} / {seriesUsage.max === Infinity ? "∞" : seriesUsage.max}</strong></span>
+              </div>
+              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
+                <Film className="h-4 w-4 text-[#803D63]" />
+                <span>Episodes: <strong className="text-[#803D63]">{episodeUsage.current} / {episodeUsage.max === Infinity ? "∞" : episodeUsage.max}</strong></span>
+              </div>
+              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
+                <Briefcase className="h-4 w-4 text-[#803D63]" />
+                <span>Collab Gigs: <strong className="text-[#803D63]">{gigUsage.current} / {gigUsage.max === Infinity ? "∞" : gigUsage.max}</strong></span>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Pricing Table displaying Early Access (Free) vs Creator Plan (Coming Soon) */}
-      <div className="space-y-4">
-        <PricingTable />
+        {/* Pricing Table with Monthly/Yearly Toggle */}
+        <div className="space-y-4">
+          <PricingTable />
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 }

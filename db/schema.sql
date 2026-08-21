@@ -203,7 +203,7 @@ ALTER TABLE creators ADD COLUMN IF NOT EXISTS profession VARCHAR(100) DEFAULT NU
 -- ----------------------------------------------------------------------------
 -- 8a. Fix plan_key ENUM — was missing 'free' and had a stale 'growth' value
 --     that doesn't exist in the app's plan catalog (free/starter/pro/unlimited).
-ALTER TABLE subscriptions MODIFY COLUMN plan_key ENUM('free', 'starter', 'pro', 'unlimited') NOT NULL DEFAULT 'free';
+ALTER TABLE subscriptions MODIFY COLUMN plan_key ENUM('early_access', 'creator_pro', 'creator_VIP', 'free', 'starter', 'pro', 'unlimited') NOT NULL DEFAULT 'early_access';
 
 -- 8b. Track the Razorpay subscription/customer/plan behind each row.
 --     razorpay_status mirrors Razorpay's own subscription status vocabulary

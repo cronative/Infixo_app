@@ -39,6 +39,8 @@ import { MediaKitPackage, MediaKitSettings } from "@/types";
 import { authRepository } from "@/repositories/localRepository";
 import { formatCount } from "@/utils/format";
 import { copyToClipboard } from "@/lib/copyToClipboard";
+import { canCreateGig } from "@/services/subscriptionLimits";
+import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
 
 // 10 Tailored Deliverable Suggestion Chips per Platform Type
 const DELIVERABLE_SUGGESTIONS: Record<string, string[]> = {
@@ -175,7 +177,7 @@ function formatCurrencyString(rawStr: string): string {
 
 export default function DashboardMediaKitPage() {
   const router = useRouter();
-  const { profile, socials, totalAudience, series } = useCreator();
+  const { profile, socials, totalAudience, series, subscription } = useCreator();
   const { showToast } = useToast();
 
   const totalSeriesCount = series ? series.length : 0;
@@ -199,6 +201,7 @@ export default function DashboardMediaKitPage() {
 
   // Package Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
   const [editingPkgId, setEditingPkgId] = useState<string | null>(null);
 
   // Form inputs for package modal
@@ -246,6 +249,10 @@ export default function DashboardMediaKitPage() {
   };
 
   const handleOpenAddModal = () => {
+    if (!canCreateGig(packages.length, subscription?.planKey)) {
+      setIsLimitModalOpen(true);
+      return;
+    }
     setEditingPkgId(null);
     setFormTitle("");
     setFormPlatform("Instagram Reel");
@@ -1486,6 +1493,13 @@ export default function DashboardMediaKitPage() {
           </div>
         </div>
       )}
+
+      {/* Limit Reached Modal Popup for Collab Gig */}
+      <LimitReachedModal
+        isOpen={isLimitModalOpen}
+        onClose={() => setIsLimitModalOpen(false)}
+        type="gig"
+      />
     </div>
   );
 }
