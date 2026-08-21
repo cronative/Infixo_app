@@ -545,12 +545,12 @@ export default function DashboardMediaKitPage() {
               </div>
             </div>
           ) : (
-            /* Rate Cards Grid */
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            /* Rate Cards Grid (2 Gigs per Row for spacious layout) */
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
               {packages.map((pkg) => (
                 <div
                   key={pkg.id}
-                  className={`flex flex-col justify-between rounded-2xl border bg-white p-5 shadow-2xs transition-all relative ${
+                  className={`flex flex-col justify-between rounded-2xl border bg-white p-6 shadow-2xs transition-all relative ${
                     pkg.isPopular
                       ? "border-[#803D63] ring-1 ring-[#803D63]/30"
                       : "border-gray-200 hover:border-gray-300"
