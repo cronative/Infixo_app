@@ -928,8 +928,8 @@ export function LivePreviewCard({
             className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
               activeContentTab === "series"
                 ? isDark
-                  ? "bg-gradient-to-r from-purple-600 via-rose-600 to-amber-500 text-white shadow-md shadow-purple-900/50"
-                  : "bg-[#803D63] text-white shadow-2xs"
+                  ? "bg-[#803D63]/30 text-white border border-[#803D63]/40 shadow-sm"
+                  : "bg-[#803D63]/10 text-[#803D63] border border-[#803D63]/20 shadow-2xs"
                 : isDark
                   ? "text-slate-300 hover:text-white hover:bg-white/10"
                   : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
@@ -945,8 +945,8 @@ export function LivePreviewCard({
             className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
               activeContentTab === "gigs"
                 ? isDark
-                  ? "bg-gradient-to-r from-purple-600 via-rose-600 to-amber-500 text-white shadow-md shadow-purple-900/50"
-                  : "bg-[#803D63] text-white shadow-2xs"
+                  ? "bg-[#803D63]/30 text-white border border-[#803D63]/40 shadow-sm"
+                  : "bg-[#803D63]/10 text-[#803D63] border border-[#803D63]/20 shadow-2xs"
                 : isDark
                   ? "text-slate-300 hover:text-white hover:bg-white/10"
                   : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
