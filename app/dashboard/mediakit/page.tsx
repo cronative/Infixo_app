@@ -203,11 +203,12 @@ export default function DashboardMediaKitPage() {
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
 
   const activeEmail = profile.email || authRepository.getPendingEmail() || "nikunj.appz@gmail.com";
+  const activeCreatorId = profile.id;
 
   useEffect(() => {
     async function initMediaKit() {
       if (activeEmail) {
-        const { settings: dbSettings, packages: dbPackages } = await MediaKitService.fetchFromDb(activeEmail);
+        const { settings: dbSettings, packages: dbPackages } = await MediaKitService.fetchFromDb(activeEmail, activeCreatorId);
         setPackages(dbPackages);
         setSettings({
           ...dbSettings,
@@ -227,12 +228,12 @@ export default function DashboardMediaKitPage() {
       }
     }
     initMediaKit();
-  }, [activeEmail]);
+  }, [activeEmail, activeCreatorId]);
 
   const handleSaveSettings = async () => {
     MediaKitService.saveSettings(settings);
     if (activeEmail) {
-      await MediaKitService.saveToDb(activeEmail, settings, packages);
+      await MediaKitService.saveToDb(activeEmail, settings, packages, activeCreatorId);
     }
     setIsEditingSettings(false);
     showToast("Media Kit contact settings saved successfully! 💼");
@@ -335,7 +336,7 @@ export default function DashboardMediaKitPage() {
 
     setPackages(updatedPkgs);
     if (activeEmail) {
-      await MediaKitService.saveToDb(activeEmail, settings, updatedPkgs);
+      await MediaKitService.saveToDb(activeEmail, settings, updatedPkgs, activeCreatorId);
     }
     showToast(editingPkgId ? "Gig rate card updated successfully! ✨" : "New gig package published successfully! 🚀");
     setIsModalOpen(false);
@@ -345,7 +346,7 @@ export default function DashboardMediaKitPage() {
     const updated = packages.map((p) => (p.id === id ? { ...p, isActive: !currentActive } : p));
     setPackages(updated);
     if (activeEmail) {
-      await MediaKitService.saveToDb(activeEmail, settings, updated);
+      await MediaKitService.saveToDb(activeEmail, settings, updated, activeCreatorId);
     }
     showToast(`Package ${!currentActive ? "activated" : "paused"} successfully! ✨`);
   };
@@ -355,7 +356,7 @@ export default function DashboardMediaKitPage() {
       const updated = packages.filter((p) => p.id !== id);
       setPackages(updated);
       if (activeEmail) {
-        await MediaKitService.saveToDb(activeEmail, settings, updated);
+        await MediaKitService.saveToDb(activeEmail, settings, updated, activeCreatorId);
       }
       showToast(`Package "${title}" removed successfully.`);
     }
@@ -364,7 +365,7 @@ export default function DashboardMediaKitPage() {
   const handleLoadSampleGigs = async () => {
     setPackages(SAMPLE_PACKAGES);
     if (activeEmail) {
-      await MediaKitService.saveToDb(activeEmail, settings, SAMPLE_PACKAGES);
+      await MediaKitService.saveToDb(activeEmail, settings, SAMPLE_PACKAGES, activeCreatorId);
     }
     showToast("Sample rate card packages loaded! ⚡");
   };

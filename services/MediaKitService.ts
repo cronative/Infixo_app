@@ -173,10 +173,16 @@ export class MediaKitService {
     }
   }
 
-  static async fetchFromDb(identifier: string): Promise<{ settings: MediaKitSettings; packages: MediaKitPackage[] }> {
+  static async fetchFromDb(identifier: string, creatorId?: string): Promise<{ settings: MediaKitSettings; packages: MediaKitPackage[] }> {
     try {
+      let queryUrl = `/api/creator/mediakit?`;
+      if (creatorId) {
+        queryUrl += `creatorId=${encodeURIComponent(creatorId)}&`;
+      }
       const paramKey = identifier.includes("@") ? "email" : "username";
-      const res = await fetch(`/api/creator/mediakit?${paramKey}=${encodeURIComponent(identifier)}`);
+      queryUrl += `${paramKey}=${encodeURIComponent(identifier)}`;
+
+      const res = await fetch(queryUrl);
       if (!res.ok) throw new Error("DB fetch failed");
       const data = await res.json();
       if (data.success) {
@@ -194,12 +200,12 @@ export class MediaKitService {
     };
   }
 
-  static async saveToDb(email: string, settings: MediaKitSettings, packages: MediaKitPackage[]): Promise<boolean> {
+  static async saveToDb(email: string, settings: MediaKitSettings, packages: MediaKitPackage[], creatorId?: string): Promise<boolean> {
     try {
       const res = await fetch("/api/creator/mediakit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, settings, packages }),
+        body: JSON.stringify({ creatorId, email, settings, packages }),
       });
       return res.ok;
     } catch (e) {

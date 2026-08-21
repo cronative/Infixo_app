@@ -1,27 +1,31 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// Auto-create dedicated MySQL tables for Media Kit
+// Auto-create & migrate dedicated MySQL tables for Media Kit with creator_id
 async function ensureMediaKitTables() {
   try {
     await db.query(`
       CREATE TABLE IF NOT EXISTS mediakit_settings (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        email VARCHAR(255) NOT NULL UNIQUE,
+        creator_id VARCHAR(100) DEFAULT NULL,
+        email VARCHAR(255) DEFAULT NULL,
         whatsapp_number VARCHAR(50) DEFAULT NULL,
         sponsor_email VARCHAR(255) DEFAULT NULL,
         min_budget VARCHAR(50) DEFAULT NULL,
         bio_highlight TEXT DEFAULT NULL,
         accepting_sponsors TINYINT(1) DEFAULT 1,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        UNIQUE KEY uq_creator (creator_id),
+        INDEX idx_email (email)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
 
     await db.query(`
       CREATE TABLE IF NOT EXISTS mediakit_gigs (
         id VARCHAR(100) PRIMARY KEY,
-        email VARCHAR(255) NOT NULL,
+        creator_id VARCHAR(100) DEFAULT NULL,
+        email VARCHAR(255) DEFAULT NULL,
         title VARCHAR(255) NOT NULL,
         platform VARCHAR(100) NOT NULL,
         price VARCHAR(100) NOT NULL,
@@ -35,48 +39,64 @@ async function ensureMediaKitTables() {
         is_active TINYINT(1) DEFAULT 1,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_creator_id (creator_id),
         INDEX idx_email (email)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
+
+    // Ensure columns exist on existing tables if created previously
+    try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN creator_id VARCHAR(100) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN creator_id VARCHAR(100) DEFAULT NULL"); } catch {}
   } catch (e) {
     console.error("ensureMediaKitTables Error:", e);
   }
 }
 
-// GET /api/creator/mediakit?email=... or ?username=...
+// Helper: Resolve Creator Record from creators table by ID, Email, or Username
+async function resolveCreatorRecord(queryVal: string) {
+  if (!queryVal) return null;
+  try {
+    const [rows]: any = await db.query(
+      `SELECT id, email, username FROM creators WHERE id = ? OR email = ? OR username = ? LIMIT 1`,
+      [queryVal, queryVal, queryVal]
+    );
+    if (rows && rows.length > 0) {
+      return {
+        creatorId: rows[0].id,
+        email: rows[0].email,
+        username: rows[0].username,
+      };
+    }
+  } catch (e) {
+    console.warn("Error resolving creator record:", e);
+  }
+  return null;
+}
+
+// GET /api/creator/mediakit?creatorId=...&email=...&username=...
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
+    const creatorIdParam = searchParams.get("creatorId");
     const emailParam = searchParams.get("email");
     const usernameParam = searchParams.get("username");
 
-    if (!emailParam && !usernameParam) {
-      return NextResponse.json({ error: "Email or username query param required" }, { status: 400 });
+    const lookupVal = creatorIdParam || emailParam || usernameParam;
+    if (!lookupVal) {
+      return NextResponse.json({ error: "creatorId, email, or username query param required" }, { status: 400 });
     }
 
     await ensureMediaKitTables();
 
-    let targetEmail = emailParam;
+    const creatorRecord = await resolveCreatorRecord(lookupVal);
+    const resolvedCreatorId = creatorRecord?.creatorId || creatorIdParam || lookupVal;
+    const resolvedEmail = creatorRecord?.email || emailParam || lookupVal;
 
-    // If username supplied, resolve target email from creators table
-    if (!targetEmail && usernameParam) {
-      const [userRows]: any = await db.query(`SELECT email FROM creators WHERE username = ?`, [usernameParam]);
-      if (userRows && userRows.length > 0) {
-        targetEmail = userRows[0].email;
-      } else {
-        targetEmail = usernameParam; // fallback
-      }
-    }
-
-    if (!targetEmail) {
-      return NextResponse.json({ error: "Target email could not be resolved" }, { status: 404 });
-    }
-
-    // 1. Fetch Contact & Lead Routing Settings from `mediakit_settings` table
+    // 1. Fetch Settings by creator_id OR email
     const [settingsRows]: any = await db.query(
       `SELECT whatsapp_number, sponsor_email, min_budget, bio_highlight, accepting_sponsors 
-       FROM mediakit_settings WHERE email = ?`,
-      [targetEmail]
+       FROM mediakit_settings WHERE creator_id = ? OR email = ? OR email = ? LIMIT 1`,
+      [resolvedCreatorId, resolvedEmail, lookupVal]
     );
 
     const s = settingsRows[0] || {};
@@ -88,13 +108,13 @@ export async function GET(req: Request) {
       acceptingSponsors: s.accepting_sponsors === 1 || s.accepting_sponsors === true,
     };
 
-    // 2. Fetch Gigs / Rate Cards from `mediakit_gigs` table
+    // 2. Fetch Gigs by creator_id OR email
     const [gigsRows]: any = await db.query(
-      `SELECT id, title, platform, price, min_price AS minPrice, max_price AS maxPrice, 
+      `SELECT id, creator_id AS creatorId, email, title, platform, price, min_price AS minPrice, max_price AS maxPrice, 
               package_name AS packageName, turnaround_days AS turnaroundDays, 
               deliverables, badge, is_popular AS isPopular, is_active AS isActive 
-       FROM mediakit_gigs WHERE email = ? ORDER BY created_at ASC`,
-      [targetEmail]
+       FROM mediakit_gigs WHERE creator_id = ? OR email = ? OR email = ? ORDER BY created_at ASC`,
+      [resolvedCreatorId, resolvedEmail, lookupVal]
     );
 
     const packages = (gigsRows || []).map((row: any) => {
@@ -106,6 +126,7 @@ export async function GET(req: Request) {
       }
       return {
         id: row.id,
+        creatorId: row.creatorId || resolvedCreatorId,
         title: row.title,
         platform: row.platform,
         price: row.price,
@@ -122,6 +143,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({
       success: true,
+      creatorId: resolvedCreatorId,
       settings,
       packages,
     });
@@ -135,15 +157,20 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email, settings, packages } = body;
+    const { creatorId: inputCreatorId, email: inputEmail, settings, packages } = body;
 
-    if (!email) {
-      return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    const lookupVal = inputCreatorId || inputEmail;
+    if (!lookupVal) {
+      return NextResponse.json({ error: "creatorId or email is required" }, { status: 400 });
     }
 
     await ensureMediaKitTables();
 
-    // 1. Save Settings to `mediakit_settings` table
+    const creatorRecord = await resolveCreatorRecord(lookupVal);
+    const resolvedCreatorId = creatorRecord?.creatorId || inputCreatorId || lookupVal;
+    const resolvedEmail = creatorRecord?.email || inputEmail || lookupVal;
+
+    // 1. Save Settings tied to creator_id & email
     const whatsapp = settings?.whatsappNumber || null;
     const sponsorEmail = settings?.sponsorEmail || null;
     const minBudget = settings?.minBudget || null;
@@ -151,30 +178,34 @@ export async function POST(req: Request) {
     const accepting = settings?.acceptingSponsors !== false ? 1 : 0;
 
     await db.query(
-      `INSERT INTO mediakit_settings (email, whatsapp_number, sponsor_email, min_budget, bio_highlight, accepting_sponsors)
-       VALUES (?, ?, ?, ?, ?, ?)
+      `INSERT INTO mediakit_settings (creator_id, email, whatsapp_number, sponsor_email, min_budget, bio_highlight, accepting_sponsors)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
+         email = VALUES(email),
          whatsapp_number = VALUES(whatsapp_number),
          sponsor_email = VALUES(sponsor_email),
          min_budget = VALUES(min_budget),
          bio_highlight = VALUES(bio_highlight),
          accepting_sponsors = VALUES(accepting_sponsors)`,
-      [email, whatsapp, sponsorEmail, minBudget, bioHighlight, accepting]
+      [resolvedCreatorId, resolvedEmail, whatsapp, sponsorEmail, minBudget, bioHighlight, accepting]
     );
 
-    // 2. Synchronize Gigs to `mediakit_gigs` table
+    // 2. Synchronize Gigs tied to creator_id & email
     const incomingPackages: any[] = packages || [];
     const incomingIds = incomingPackages.map((p) => p.id);
 
-    // Delete removed gigs for this email
+    // Delete removed gigs for this creator_id/email
     if (incomingIds.length > 0) {
       const placeholders = incomingIds.map(() => "?").join(",");
-      await db.query(`DELETE FROM mediakit_gigs WHERE email = ? AND id NOT IN (${placeholders})`, [email, ...incomingIds]);
+      await db.query(
+        `DELETE FROM mediakit_gigs WHERE (creator_id = ? OR email = ?) AND id NOT IN (${placeholders})`,
+        [resolvedCreatorId, resolvedEmail, ...incomingIds]
+      );
     } else {
-      await db.query(`DELETE FROM mediakit_gigs WHERE email = ?`, [email]);
+      await db.query(`DELETE FROM mediakit_gigs WHERE creator_id = ? OR email = ?`, [resolvedCreatorId, resolvedEmail]);
     }
 
-    // Insert or Update each gig row
+    // Insert or Update each gig row with creator_id
     for (const pkg of incomingPackages) {
       const deliverablesJson = JSON.stringify(pkg.deliverables || []);
       const minPrice = pkg.minPrice || null;
@@ -187,9 +218,11 @@ export async function POST(req: Request) {
 
       await db.query(
         `INSERT INTO mediakit_gigs 
-           (id, email, title, platform, price, min_price, max_price, package_name, turnaround_days, deliverables, badge, is_popular, is_active)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+           (id, creator_id, email, title, platform, price, min_price, max_price, package_name, turnaround_days, deliverables, badge, is_popular, is_active)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
+           creator_id = VALUES(creator_id),
+           email = VALUES(email),
            title = VALUES(title),
            platform = VALUES(platform),
            price = VALUES(price),
@@ -203,7 +236,8 @@ export async function POST(req: Request) {
            is_active = VALUES(is_active)`,
         [
           pkg.id,
-          email,
+          resolvedCreatorId,
+          resolvedEmail,
           pkg.title,
           pkg.platform,
           pkg.price,
@@ -221,7 +255,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "Media Kit settings & gigs saved to dedicated MySQL tables successfully!",
+      creatorId: resolvedCreatorId,
+      message: "Media Kit settings & gigs saved to MySQL DB by creator_id successfully!",
     });
   } catch (err: any) {
     console.error("POST Media Kit Error:", err);
