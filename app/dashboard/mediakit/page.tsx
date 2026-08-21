@@ -37,6 +37,130 @@ import { MediaKitPackage, MediaKitSettings } from "@/types";
 import { formatCount } from "@/utils/format";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 
+// 10 Tailored Deliverable Suggestion Chips per Platform Type
+const DELIVERABLE_SUGGESTIONS: Record<string, string[]> = {
+  "Instagram Reel": [
+    "1x 30–60s Dedicated/Integrated Reel",
+    "Brand Collaborator Tag & Co-authoring",
+    "Direct Promo Link in Bio (24 Hours)",
+    "30 Days Digital Usage Rights",
+    "1x Companion Instagram Story with Link",
+    "Pinned Comment with Tracked Link",
+    "Product Placement in Opening Hook",
+    "Raw Video Footage Access for Brand Ads",
+    "Custom Audio / Sound Track Licensing",
+    "Detailed Impression & Reach Analytics",
+  ],
+  "Instagram Bundle": [
+    "3x Targeted Instagram Reels",
+    "3x Companion Stories with Direct Links",
+    "Collaborator Co-Author Tag on all posts",
+    "45 Days Digital Usage & Whitelisting Rights",
+    "Bio Promo Link for Full Campaign Duration",
+    "Product Tagging in Reel & Stories",
+    "Dedicated Unboxing / First Impression Reel",
+    "Pinned Comments with Promo Codes",
+    "RAW High-Res Footage for Performance Ads",
+    "Weekly Performance & Engagement Reporting",
+  ],
+  "Instagram Story": [
+    "3x Sequential Story Slides with Direct Swipe/Link",
+    "Brand Mention Tag @BrandName",
+    "Exclusive Discount Promo Code Display",
+    "Interactive Poll / Question Sticker Engagement",
+    "Story Saved to Creator's Profile Highlights",
+    "Raw Story Analytics Screenshot Delivery",
+    "Swipe-Up Link Tracking",
+    "Call-To-Action (CTA) Voiceover",
+    "High-Resolution Product Closeups",
+    "24-Hour Active Link Guarantee",
+  ],
+  "YouTube Dedicated Video": [
+    "1x Dedicated 8–15 Min Product Breakdown Video",
+    "First Link in Description & Pinned Comment",
+    "Verbal CTA with Discount Promo Code",
+    "Custom Logo Watermark & Graphic Overlay",
+    "YouTube Community Post & Story Shoutout",
+    "No Competitor Brand Mentions in Video",
+    "Permanent Video Listing (No Expiry)",
+    "Full Commercial Rights & Ad Whitelisting",
+    "Unboxing + In-Depth Feature Review",
+    "Full Audience Viewership Analytics",
+  ],
+  "YouTube Video Integration": [
+    "60–90s Dedicated Product Segment in Main Video",
+    "Description Top Link & Pinned Comment",
+    "Verbal Product Call-To-Action",
+    "On-Screen Brand Logo Overlay",
+    "Companion YouTube Shorts Clip",
+    "Permanent Placement in Video",
+    "No Category Competitor Sponsorship",
+    "Exclusive Discount Code for Viewers",
+    "High-CTR Thumbnail Feature Option",
+    "Full Commercial Usage Rights (60 Days)",
+  ],
+  "YouTube Shorts": [
+    "1x 30–60s High-Retention YouTube Short",
+    "Pinned Comment with Direct Website Link",
+    "Product Tagging & Shopping Link",
+    "Sound Licensing & Custom BGM",
+    "Cross-Promotion on Instagram Reels",
+    "30 Days Ad Usage & Whitelisting Rights",
+    "High-Impact Visual Hook Placement",
+    "Permanent Short Listing on Channel",
+    "Verbal CTA & Discount Code",
+    "Audience Demographic Report",
+  ],
+  "Multi-Platform Campaign": [
+    "Cross-Platform Campaign (Reels + Shorts + Stories)",
+    "Unified Brand Messaging across Platforms",
+    "Permanent Bio Link on Instagram & YouTube",
+    "60 Days Digital Usage & Ad Rights",
+    "Product Placement in 3+ Videos",
+    "Collaborator Co-Author Tag on Instagram",
+    "Dedicated Story Highlights & Posts",
+    "Raw Content Clips for Performance Ads",
+    "Comprehensive Cross-Platform Analytics Report",
+    "Priority Fast Turnaround Delivery",
+  ],
+  "Series Title Sponsorship": [
+    "Main Series Title Sponsor ('Presented by Brand')",
+    "15s Pre-Roll & Post-Roll Sponsor Billboard",
+    "Brand Logo on All Episode Posters & Cards",
+    "Product Integration inside Series Storyline",
+    "Dedicated Sponsored Finale / Special Episode",
+    "Custom Promo Link in Every Episode Description",
+    "Category Exclusivity (Zero Competitor Ads)",
+    "Social Media Co-Promotion across Reels & Shorts",
+    "Closing Credits Special Thanks & Logo",
+    "Full Rights to Series Stills & Promo Clips",
+  ],
+  "Podcast Episode Integration": [
+    "60s Host-Read Audio Segment & Shoutout",
+    "Logo & Link in Podcast Episode Notes",
+    "Video Podcast On-Screen Banner Overlay",
+    "Short Clip Excerpt for Reels & TikTok",
+    "Exclusive Viewer / Listener Discount Code",
+    "Permanent Audio Placement in Episode",
+    "Social Media Promo Post across Channels",
+    "Host Product Testimonial & Endorsement",
+    "Category Exclusivity for Podcast Episode",
+    "Listener Impression & Download Analytics",
+  ],
+  "Monthly Creator Retainer": [
+    "4x–8x Monthly Dedicated Content Deliverables",
+    "Exclusive Brand Ambassador Status & Tag",
+    "Permanent Bio Link Placement (30 Days)",
+    "Raw High-Res Footage Access for Performance Ads",
+    "Full Commercial & Whitelisting Rights (90 Days)",
+    "Monthly Strategy Sync & Campaign Reporting",
+    "First Rights to New Series / Feature Placements",
+    "Category Exclusivity across Creator's Channels",
+    "Co-Author Collaboration Tag on All Reels",
+    "Priority Content Turnaround & Fast Edits",
+  ],
+};
+
 export default function DashboardMediaKitPage() {
   const router = useRouter();
   const { profile, socials, totalAudience, series } = useCreator();
@@ -739,11 +863,15 @@ export default function DashboardMediaKitPage() {
                     className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
                   >
                     <option value="Instagram Reel">Instagram Reel</option>
-                    <option value="Instagram Bundle">Instagram Bundle</option>
-                    <option value="YouTube Video">YouTube Video</option>
-                    <option value="Multi-Platform Bundle">Multi-Platform Bundle</option>
-                    <option value="Series Sponsorship">Series Sponsorship</option>
-                    <option value="Monthly Retainer">Monthly Retainer</option>
+                    <option value="Instagram Bundle">Instagram Bundle (Reels + Stories)</option>
+                    <option value="Instagram Story">Instagram Story Sponsorship</option>
+                    <option value="YouTube Dedicated Video">YouTube Dedicated Video</option>
+                    <option value="YouTube Video Integration">YouTube Integration (60-90s)</option>
+                    <option value="YouTube Shorts">YouTube Shorts</option>
+                    <option value="Multi-Platform Campaign">Multi-Platform Campaign</option>
+                    <option value="Series Title Sponsorship">Series Title Sponsorship ("Presented by")</option>
+                    <option value="Podcast Episode Integration">Podcast Episode Integration</option>
+                    <option value="Monthly Creator Retainer">Monthly Creator Retainer</option>
                   </select>
                 </div>
 
@@ -791,10 +919,10 @@ export default function DashboardMediaKitPage() {
                 />
               </div>
 
-              {/* Dynamic Deliverables List */}
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Included Deliverables List</label>
-                <div className="flex items-center gap-2 mb-2">
+              {/* Dynamic Deliverables List & 10 Suggestions */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-slate-700">Included Deliverables List</label>
+                <div className="flex items-center gap-2 mb-1">
                   <input
                     type="text"
                     value={formDeliverableInput}
@@ -817,20 +945,56 @@ export default function DashboardMediaKitPage() {
                   </button>
                 </div>
 
-                <div className="space-y-1.5 max-h-32 overflow-y-auto">
-                  {formDeliverables.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between bg-slate-50 border border-gray-200 rounded-lg px-2.5 py-1 text-xs text-slate-700">
-                      <span>• {item}</span>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveDeliverable(idx)}
-                        className="text-rose-500 hover:text-rose-700 p-0.5"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ))}
+                {/* 10 Tailored Deliverable Suggestion Chips */}
+                <div className="space-y-1 bg-slate-50 border border-gray-200 rounded-xl p-2.5">
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center justify-between">
+                    <span>💡 10 Suggested Deliverables for {formPlatform}:</span>
+                    <span className="text-[9px] text-[#803D63] font-extrabold">Click chip to add +</span>
+                  </p>
+                  <div className="flex flex-wrap items-center gap-1.5 max-h-28 overflow-y-auto pt-1">
+                    {(DELIVERABLE_SUGGESTIONS[formPlatform] || DELIVERABLE_SUGGESTIONS["Instagram Reel"]).map((item, idx) => {
+                      const isAdded = formDeliverables.includes(item);
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            if (!isAdded) {
+                              setFormDeliverables([...formDeliverables, item]);
+                            }
+                          }}
+                          disabled={isAdded}
+                          className={`text-[11px] font-semibold px-2 py-0.5 rounded-lg border transition-all cursor-pointer ${
+                            isAdded
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-200 cursor-default opacity-70"
+                              : "bg-white hover:bg-[#F6EBF1] text-slate-700 hover:text-[#803D63] border-gray-200 hover:border-[#E8DCE4]"
+                          }`}
+                        >
+                          {isAdded ? `✓ ${item}` : `+ ${item}`}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
+
+                {/* Included Items Chips */}
+                {formDeliverables.length > 0 && (
+                  <div className="space-y-1.5 max-h-32 overflow-y-auto pt-1">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Added Deliverables ({formDeliverables.length}):</p>
+                    {formDeliverables.map((item, idx) => (
+                      <div key={idx} className="flex items-center justify-between bg-[#FAF8FA] border border-[#E8DCE4] rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-800">
+                        <span>• {item}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveDeliverable(idx)}
+                          className="text-rose-500 hover:text-rose-700 p-0.5 cursor-pointer"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Package Tier Name / Highlight Badge Input with Selectable Suggestions */}
