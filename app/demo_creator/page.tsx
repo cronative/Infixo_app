@@ -95,7 +95,7 @@ export default function DemoCreatorPage() {
             See How Top Creators Showcase Their Work
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto font-medium leading-relaxed">
-            Explore Aarav Sharma&apos;s live creator profile — featuring 5 OTT Web Series playlists, 1.3M+ AI-synced reach, and 5 direct rate cards.
+            Explore Devom Shah&apos;s live creator profile — featuring 5 OTT Web Series playlists, 1.3M+ AI-synced reach, and 5 direct rate cards.
           </p>
 
           {/* Light Theme Manual Switcher Pills */}

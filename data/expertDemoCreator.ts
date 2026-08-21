@@ -2,37 +2,37 @@ import { CreatorProfile, SocialAccounts, Series, MediaKitPackage, CustomLink, Th
 
 export const EXPERT_DEMO_PROFILE: CreatorProfile = {
   id: "cr_expert_demo_creator",
-  displayName: "Aarav Sharma",
+  displayName: "Devom Shah",
   username: "demo_creator",
   category: "Filmmaking & Web Series",
   bio: "Tech Reviewer, Indie Filmmaker & Web Series Director with 1.3M+ total fanbase. Creating cinematic tech stories & honest gadget breakdowns.",
   photoDataUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
-  email: "aarav@inflixo.com",
+  email: "devom@inflixo.com",
   updatedAt: new Date().toISOString(),
 };
 
 export const EXPERT_DEMO_SOCIALS: SocialAccounts = {
   youtube: {
-    username: "@aaravtechcinema",
-    channelTitle: "Aarav Tech & Cinema",
+    username: "@devomtechcinema",
+    channelTitle: "Devom Tech & Cinema",
     subscribers: 685000,
     videos: 340,
     totalViews: 42500000,
-    url: "https://youtube.com/@aaravtechcinema",
+    url: "https://youtube.com/@devomtechcinema",
   },
   instagram: {
-    username: "@aarav_tech",
-    name: "Aarav Sharma | Tech & Films",
+    username: "@devom_tech",
+    name: "Devom Shah | Tech & Films",
     followers: 450000,
     posts: 890,
-    url: "https://instagram.com/aarav_tech",
+    url: "https://instagram.com/devom_tech",
   },
   facebook: {
-    username: "aaravtechcinema",
-    name: "Aarav Tech & Cinema Official",
+    username: "devomtechcinema",
+    name: "Devom Tech & Cinema Official",
     followers: 210000,
     posts: 420,
-    url: "https://facebook.com/aaravtechcinema",
+    url: "https://facebook.com/devomtechcinema",
   },
   updatedAt: new Date().toISOString(),
 };
