@@ -75,27 +75,27 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
           </button>
         </div>
 
-        {/* Creator Info Row (Flat Simple Style with Full-Width Dividers) */}
-        <div className="px-4 my-3 py-2.5 border-y border-slate-200/80 flex items-center justify-between gap-2.5">
-          <div className="flex items-center gap-2 min-w-0">
+        {/* Creator Info Row (Flat Simple Style with 80x80px Profile Pic & Full-Width Dividers) */}
+        <div className="px-4 my-3 py-3 border-y border-slate-200/80 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <CreatorAvatar
               src={profile.photoDataUrl}
               name={profile.displayName || profile.email || "Creator"}
-              className="h-6 w-6 rounded-full border border-slate-200 overflow-hidden object-cover aspect-square shrink-0"
-              textClassName="text-[9px] font-black text-slate-900"
+              className="w-[80px] h-[80px] rounded-full border-2 border-slate-200 overflow-hidden object-cover aspect-square shrink-0 shadow-2xs"
+              textClassName="text-xl font-black text-slate-900"
               fallbackBgClass="bg-indigo-50"
             />
 
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1">
-                <p className="truncate text-xs font-bold text-slate-900">
+                <p className="truncate text-sm font-black text-slate-900">
                   {profile.displayName || "Creator"}
                 </p>
                 {profile.isVerified && (
-                  <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
+                  <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-500" />
                 )}
               </div>
-              <p className="truncate text-[11px] font-medium text-slate-500">
+              <p className="truncate text-xs font-semibold text-slate-500">
                 @{handleStr}
               </p>
             </div>

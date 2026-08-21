@@ -32,26 +32,26 @@ export function DashboardSidebar() {
         <Logo size="sm" />
       </div>
 
-      {/* Simple Flat Creator Profile Row with Full-Width Edge-to-Edge Dividers */}
-      <div className="my-3 -mx-4 px-4 py-2.5 border-y border-slate-200/80 flex items-center gap-2.5">
+      {/* Simple Flat Creator Profile Row with 80x80px Profile Pic & Full-Width Edge-to-Edge Dividers */}
+      <div className="my-3 -mx-4 px-4 py-3 border-y border-slate-200/80 flex items-center gap-3">
         <CreatorAvatar
           src={profile.photoDataUrl}
           name={profile.displayName || profile.email || "Creator"}
-          className="w-6 h-6 rounded-full overflow-hidden object-cover aspect-square border border-slate-200 shrink-0"
-          textClassName="text-[9px] font-black text-slate-900"
+          className="w-[80px] h-[80px] rounded-full overflow-hidden object-cover aspect-square border-2 border-slate-200 shrink-0 shadow-2xs"
+          textClassName="text-xl font-black text-slate-900"
           fallbackBgClass="bg-indigo-50"
         />
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1">
-            <p className="truncate text-xs font-bold text-slate-900">
+            <p className="truncate text-sm font-black text-slate-900">
               {profile.displayName || "Creator"}
             </p>
             {profile.isVerified && (
-              <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
+              <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-500" />
             )}
           </div>
-          <p className="truncate text-[11px] font-medium text-slate-500">
+          <p className="truncate text-xs font-semibold text-slate-500">
             @{handleStr}
           </p>
         </div>
