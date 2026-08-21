@@ -15,6 +15,7 @@ export function SyncingLoader({
   const [dots, setDots] = useState(".");
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [isFading, setIsFading] = useState(false);
+  const [progress, setProgress] = useState(15);
 
   // Pick a random starting quote on every mount / page load
   useEffect(() => {
@@ -27,6 +28,14 @@ export function SyncingLoader({
       setDots((prev) => (prev.length >= 3 ? "." : prev + "."));
     }, 450);
     return () => clearInterval(interval);
+  }, []);
+
+  // Smooth progress bar advancement
+  useEffect(() => {
+    const pInterval = setInterval(() => {
+      setProgress((prev) => (prev >= 92 ? 95 : prev + Math.floor(Math.random() * 8) + 3));
+    }, 400);
+    return () => clearInterval(pInterval);
   }, []);
 
   // 5-second smooth quote rotation timer with fade effect
@@ -74,9 +83,18 @@ export function SyncingLoader({
           </p>
         </div>
 
-        {/* Horizontal Progress Pulse Bar */}
-        <div className="h-1.5 w-52 overflow-hidden rounded-full bg-slate-100 border border-slate-200 shadow-2xs">
-          <div className="h-full w-full bg-[#803D63] animate-pulse" />
+        {/* Horizontal Progress Bar with Percentage */}
+        <div className="w-56 space-y-1">
+          <div className="flex items-center justify-between text-[10px] font-bold text-slate-500">
+            <span>Syncing Creator Data...</span>
+            <span className="text-[#803D63] font-black">{progress}%</span>
+          </div>
+          <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100 border border-slate-200 shadow-2xs">
+            <div
+              className="h-full bg-gradient-to-r from-[#803D63] to-[#6D3254] transition-all duration-300 ease-out"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
         </div>
 
         {/* 🌟 100 MOTIVATIONAL CREATOR JOURNEY QUOTES CARD */}
