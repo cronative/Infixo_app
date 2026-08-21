@@ -155,7 +155,8 @@ export async function POST(req: Request) {
     }
 
     // Record / Update current step in creator_onboarding_steps table (1 row per email)
-    await recordOnboardingStep(email, "profile", creatorId);
+    const stepToRecord = body.onboardingStep || "profile";
+    await recordOnboardingStep(email, stepToRecord, creatorId);
 
     // Re-fetch updated profile
     const [updatedRows]: any = await db.query("SELECT * FROM creators WHERE id = ?", [creatorId]);

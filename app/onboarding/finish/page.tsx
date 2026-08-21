@@ -10,6 +10,8 @@ import { copyToClipboard } from "@/lib/copyToClipboard";
 import { OnboardingLayout } from "@/layouts/OnboardingLayout";
 import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
 
+import { OnboardingService } from "@/services/OnboardingService";
+
 const CONFETTI_COLORS = ["#803D63", "#d946ef", "#f59e0b", "#3b82f6", "#10b981", "#e6c583"];
 
 function ConfettiBurst() {
@@ -52,6 +54,10 @@ export default function FinishStepPage() {
   const { profile, socials, totalAudience, theme, series } = useCreator();
   const { showToast } = useToast();
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    OnboardingService.setStep("finish");
+  }, []);
 
   const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
   const handleStr = profile.username || "nikzios30";

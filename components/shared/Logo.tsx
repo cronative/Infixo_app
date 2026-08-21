@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { authRepository, onboardingRepository } from "@/repositories/localRepository";
 
 /**
  * PRIMARY ACTIVE LOGO: Stadium Link Icon Arch Frame with Capital Letter 'I'
@@ -81,6 +85,30 @@ export function Logo({
   variant?: "gradient" | "black" | "white" | "brand";
   styleName?: "stadium-link-i" | "universal-link-i";
 }) {
+  const router = useRouter();
+
+  function handleClick(e: React.MouseEvent) {
+    const session = authRepository.get();
+    if (session && session.isLoggedIn) {
+      e.preventDefault();
+      const step = onboardingRepository.getStep();
+      if (step === "finish") {
+        router.push("/dashboard");
+      } else {
+        const stepRoutes: Record<string, string> = {
+          profile: "/onboarding/profile",
+          socials: "/onboarding/socials",
+          theme: "/onboarding/themes",
+          themes: "/onboarding/themes",
+          series: "/onboarding/series",
+          subscription: "/onboarding/subscription",
+        };
+        const targetRoute = stepRoutes[step] || "/onboarding/profile";
+        router.push(targetRoute);
+      }
+    }
+  }
+
   const dims = { sm: "h-8 w-8", md: "h-10 w-10", lg: "h-12 w-12" }[size];
   const text = { sm: "text-lg", md: "text-xl", lg: "text-2xl" }[size];
   const iconSize = { sm: "h-5 w-5", md: "h-6.5 w-6.5", lg: "h-8 w-8" }[size];
@@ -93,7 +121,7 @@ export function Logo({
   }[variant];
 
   return (
-    <Link href={href} className="flex items-center gap-2.5 group cursor-pointer select-none">
+    <Link href={href} onClick={handleClick} className="flex items-center gap-2.5 group cursor-pointer select-none">
       {/* Badge Squircle Container */}
       <div
         className={`flex ${dims} items-center justify-center rounded-xl ${badgeStyles} transition-colors duration-200`}
