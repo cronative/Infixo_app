@@ -101,6 +101,8 @@ export default function CreatorEmailSenderPage() {
       return;
     }
 
+    isDispatchingRef.current = true;
+    isPausedRef.current = false;
     setIsDispatching(true);
     setIsPaused(false);
     setCurrentIndex(0);
@@ -186,10 +188,19 @@ export default function CreatorEmailSenderPage() {
     showToast("Email queue dispatch completed! 🎉", "success");
   };
 
+  const handleTogglePause = () => {
+    setIsPaused((prev) => {
+      const next = !prev;
+      isPausedRef.current = next;
+      return next;
+    });
+  };
+
   const handleStopDispatch = () => {
+    isDispatchingRef.current = false;
+    isPausedRef.current = false;
     setIsDispatching(false);
     setIsPaused(false);
-    isDispatchingRef.current = false;
   };
 
   const successCount = dispatchLogs.filter((l) => l.status === "success").length;
@@ -370,7 +381,7 @@ export default function CreatorEmailSenderPage() {
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => setIsPaused(!isPaused)}
+                      onClick={handleTogglePause}
                       className="flex-1 rounded-xl bg-amber-600 hover:bg-amber-500 px-4 py-2.5 text-xs font-bold text-white transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
                     >
                       {isPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
