@@ -1421,31 +1421,35 @@ export function PreviewSeriesItem({
             isDark ? "border-white/10" : "border-gray-100"
           }`}>
             <div className="flex items-center gap-2 min-w-0 text-left shrink-0">
-              {/* Official Brand Color Platform Pill */}
-              <span className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-[11px] font-bold shrink-0 whitespace-nowrap ${mainPlatform.chipClass}`}>
+              {/* Logo-Only Platform Badge (No Text) */}
+              <span
+                className={`inline-flex items-center justify-center h-6.5 w-6.5 rounded-md border shrink-0 ${mainPlatform.chipClass}`}
+                title={mainPlatform.name}
+                aria-label={mainPlatform.name}
+              >
                 <span className={`flex h-4 w-4 items-center justify-center rounded ${mainPlatform.badgeClass}`}>
                   {mainPlatform.icon}
                 </span>
-                <span className="inline">{mainPlatform.name}</span>
               </span>
 
-              <span className={`text-[11px] font-medium shrink-0 whitespace-nowrap ${isDark ? "text-slate-400" : "text-gray-500"}`}>
-                • {allEpisodes.length} {allEpisodes.length === 1 ? "Ep" : "Eps"}
-              </span>
+              {/* Highlighted Interactive Episodes Count Link Button */}
+              <button
+                type="button"
+                onClick={onToggle}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shadow-2xs border ${
+                  expanded
+                    ? "bg-[#803D63] text-white border-[#803D63] ring-2 ring-[#803D63]/30 shadow-xs"
+                    : isDark
+                    ? "bg-purple-900/60 text-purple-200 border-purple-400/40 hover:bg-purple-800/80"
+                    : "bg-[#F6EBF1] text-[#803D63] border-[#E8DCE4] hover:bg-[#803D63] hover:text-white"
+                }`}
+                title="Click to view episode playlist"
+              >
+                <Film className="h-3.5 w-3.5" />
+                <span>{allEpisodes.length} {allEpisodes.length === 1 ? "Episode" : "Episodes"}</span>
+                <span className="font-extrabold">{expanded ? "↑" : "↓"}</span>
+              </button>
             </div>
-
-            {/* Compact Expand / Collapse Episode List Toggle Button */}
-            <button
-              type="button"
-              onClick={onToggle}
-              className={`text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition-colors inline-flex items-center justify-center gap-1 shrink-0 cursor-pointer relative z-10 ml-auto ${
-                isDark
-                  ? "bg-gradient-to-r from-purple-600 to-rose-600 hover:from-purple-500 hover:to-rose-500 shadow-sm"
-                  : "bg-[#803D63] hover:bg-[#6D3254] shadow-2xs"
-              }`}
-            >
-              <span>{expanded ? "Hide Episodes ↑" : "View Episodes ↓"}</span>
-            </button>
           </div>
         </div>
       </div>
