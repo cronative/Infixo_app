@@ -145,10 +145,10 @@ export default function DashboardSocialsPage() {
         <div className="mx-auto max-w-5xl flex items-center justify-between gap-3">
           <div className="min-w-0">
             <h1 className="font-display text-base font-extrabold text-slate-900 truncate">
-              Social Accounts &amp; Reach
+              Social Accounts &amp; Custom Links
             </h1>
             <p className="text-xs text-slate-500 font-medium truncate">
-              Manage your connected social profiles and live sync metrics
+              Manage your connected social profiles, custom links, and fanbase reach
             </p>
           </div>
         </div>

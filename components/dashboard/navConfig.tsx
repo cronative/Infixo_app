@@ -14,7 +14,7 @@ import {
 export const SIDEBAR_NAV = [
   { href: "/dashboard", label: "Overview", icon: LayoutGrid },
   { href: "/dashboard/profile", label: "Profile", icon: UserRound },
-  { href: "/dashboard/socials", label: "Social Accounts", icon: Share2 },
+  { href: "/dashboard/socials", label: "Social Accounts & Custom Links", icon: Share2 },
   { href: "/dashboard/series", label: "Series & Episodes", icon: Layers },
   { href: "/dashboard/mediakit", label: "Media Kit", icon: Briefcase, badge: "VIP" },
   { href: "/dashboard/themes", label: "Themes", icon: Palette },
