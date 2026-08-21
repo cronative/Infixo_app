@@ -32,8 +32,8 @@ export function DashboardSidebar() {
         <Logo size="sm" />
       </div>
 
-      {/* Simple Flat Creator Profile Row (No Card Box) */}
-      <div className="mt-2.5 px-2 py-1 flex items-center gap-2">
+      {/* Simple Flat Creator Profile Row with Top & Bottom Dividers */}
+      <div className="my-3 py-2.5 px-2 border-y border-slate-200/80 flex items-center gap-2">
         <CreatorAvatar
           src={profile.photoDataUrl}
           name={profile.displayName || profile.email || "Creator"}

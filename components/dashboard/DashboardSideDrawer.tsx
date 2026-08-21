@@ -75,8 +75,8 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
           </button>
         </div>
 
-        {/* Creator Info Row (Flat Simple Style) */}
-        <div className="px-4 mt-2.5 flex items-center justify-between gap-2.5">
+        {/* Creator Info Row (Flat Simple Style with Dividers) */}
+        <div className="px-4 my-3 py-2.5 border-y border-slate-200/80 flex items-center justify-between gap-2.5">
           <div className="flex items-center gap-2 min-w-0">
             <CreatorAvatar
               src={profile.photoDataUrl}
