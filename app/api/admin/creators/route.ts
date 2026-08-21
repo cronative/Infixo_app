@@ -1,6 +1,35 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
+async function ensureMediaKitTables() {
+  try {
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS mediakit_gigs (
+        id VARCHAR(100) PRIMARY KEY,
+        creator_id VARCHAR(100) NOT NULL,
+        email VARCHAR(255) DEFAULT NULL,
+        title VARCHAR(255) NOT NULL,
+        platform VARCHAR(100) NOT NULL,
+        price VARCHAR(100) NOT NULL,
+        min_price VARCHAR(100) DEFAULT NULL,
+        max_price VARCHAR(100) DEFAULT NULL,
+        package_name VARCHAR(100) DEFAULT NULL,
+        turnaround_days INT DEFAULT 2,
+        deliverables JSON NOT NULL,
+        badge VARCHAR(100) DEFAULT NULL,
+        is_popular TINYINT(1) DEFAULT 0,
+        is_active TINYINT(1) DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_creator_id (creator_id),
+        INDEX idx_email (email)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+  } catch (e) {
+    console.warn("ensureMediaKitTables warn:", e);
+  }
+}
+
 export async function GET() {
   try {
     let creators: any[] = [];
@@ -11,6 +40,8 @@ export async function GET() {
       totalActiveGigs: 0,
       vipSubscribers: 0,
     };
+
+    await ensureMediaKitTables();
 
     try {
       // Ensure status column exists on creators table
@@ -43,9 +74,9 @@ export async function GET() {
           s.billing_cycle AS billingCycle,
           s.status AS planStatus,
           (SELECT COUNT(*) FROM series WHERE creator_id = c.id) AS seriesCount,
-          (SELECT COUNT(*) FROM media_kit_packages WHERE creator_id = c.id AND is_active = 1) AS gigsCount,
-          (SELECT MIN(price) FROM media_kit_packages WHERE creator_id = c.id AND is_active = 1) AS minGigPrice,
-          (SELECT MAX(price) FROM media_kit_packages WHERE creator_id = c.id AND is_active = 1) AS maxGigPrice
+          (SELECT COUNT(*) FROM mediakit_gigs WHERE (creator_id = c.id OR email = c.email) AND is_active = 1) AS gigsCount,
+          (SELECT MIN(price) FROM mediakit_gigs WHERE (creator_id = c.id OR email = c.email) AND is_active = 1) AS minGigPrice,
+          (SELECT MAX(price) FROM mediakit_gigs WHERE (creator_id = c.id OR email = c.email) AND is_active = 1) AS maxGigPrice
         FROM creators c
         LEFT JOIN subscriptions s ON c.id = s.creator_id
         ORDER BY c.id DESC
@@ -68,7 +99,7 @@ export async function GET() {
         stats.totalEpisodes = 0;
       }
     } catch (dbErr) {
-      console.warn("Admin creators DB fetch error:", dbErr);
+      console.warn("Admin creators DB fetch fallback:", dbErr);
     }
 
     return NextResponse.json({
