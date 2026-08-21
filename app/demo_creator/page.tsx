@@ -73,7 +73,7 @@ export default function DemoCreatorPage() {
             </div>
 
             <Link
-              href="/#hero-input"
+              href="/login"
               className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6d3354] px-3.5 py-1.5 text-xs font-bold text-white shadow-sm transition-all cursor-pointer"
             >
               <span>Create My Page</span>
@@ -147,7 +147,7 @@ export default function DemoCreatorPage() {
 
           <div className="pt-2">
             <Link
-              href="/#hero-input"
+              href="/login"
               className="inline-flex items-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6d3354] px-6 py-3.5 text-sm sm:text-base font-bold text-white shadow-lg transition-all cursor-pointer"
             >
               <span>Create Your Free Creator Page Now</span>
