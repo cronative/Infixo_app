@@ -95,20 +95,7 @@ export default function SeriesStepPage() {
           createdAt: new Date().toISOString(),
         },
       ]
-    : series && series.length > 0
-    ? series
-    : [
-        {
-          id: "preview-1",
-          title: "My First Series",
-          posterDataUrl: null,
-          description: "Add your episodes anytime after setup!",
-          genre: "Entertainment",
-          language: "English",
-          seasons: [],
-          createdAt: new Date().toISOString(),
-        },
-      ];
+    : series || [];
 
   const preview = (
     <LivePreviewCard
