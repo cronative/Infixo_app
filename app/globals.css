@@ -57,13 +57,22 @@
   --color-inflixo-gold: var(--inflixo-gold);
   --color-inflixo-gold-light: var(--inflixo-gold-light);
 
-  --font-sans: var(--font-inter), "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --font-display: var(--font-plus-jakarta), "Plus Jakarta Sans", var(--font-inter), sans-serif;
+  --font-sans: var(--font-plus-jakarta), "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-plus-jakarta), "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6, .font-display {
   font-family: var(--font-display);
-  letter-spacing: -0.005em;
+  letter-spacing: -0.01em;
+}
+
+/* Tabular Figures for lining numbers, prices & fanbase counters */
+.tabular-nums,
+[data-tabular-nums],
+.num-tabular {
+  font-variant-numeric: tabular-nums;
+  -webkit-font-feature-settings: "tnum";
+  font-feature-settings: "tnum";
 }
 
 @theme inline {

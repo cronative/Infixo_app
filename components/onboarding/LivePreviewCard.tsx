@@ -867,7 +867,7 @@ export function LivePreviewCard({
         }`}>
           {totalAudience > 0 ? (
             <div className="space-y-1">
-              <p className={`text-2xl font-black ${isDark ? "text-white" : "text-[#111827]"}`}>
+              <p className={`text-2xl font-black tabular-nums ${isDark ? "text-white" : "text-[#111827]"}`}>
                 ❤️ {formatCount(totalAudience)}
               </p>
               <p className={`text-[11px] font-bold tracking-wider uppercase ${themeKey === "minimal-white" ? "text-[#0F172A]" : isDark ? "text-amber-400 font-extrabold" : "text-[#803D63]"}`}>
@@ -876,7 +876,7 @@ export function LivePreviewCard({
             </div>
           ) : (
             <div className="space-y-1">
-              <p className={`text-2xl font-black ${isDark ? "text-white" : "text-[#111827]"}`}>
+              <p className={`text-2xl font-black tabular-nums ${isDark ? "text-white" : "text-[#111827]"}`}>
                 ❤️ 0
               </p>
               <p className={`text-[11px] font-bold tracking-wider uppercase ${themeKey === "minimal-white" ? "text-[#0F172A]" : isDark ? "text-amber-400 font-extrabold" : "text-[#803D63]"}`}>
@@ -922,7 +922,7 @@ export function LivePreviewCard({
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className={`text-sm font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
+                  <span className={`text-sm font-bold tabular-nums ${isDark ? "text-white" : "text-gray-900"}`}>
                     {formatCount(item.count)}
                   </span>
                   <ExternalLink className={`h-4 w-4 transition-colors ${isDark ? "text-slate-400 group-hover:text-purple-300" : "text-gray-400 group-hover:text-[#803D63]"}`} />
