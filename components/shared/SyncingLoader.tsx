@@ -96,10 +96,10 @@ export function SyncingLoader({
           </div>
         </div>
 
-        {/* 50px Big Italic Motivational Quote in Primary Brand Color */}
-        <div className="min-h-[100px] flex items-center justify-center px-4 pt-3 w-full">
+        {/* 40px Italic Motivational Quote in Primary Brand Color */}
+        <div className="min-h-[80px] flex items-center justify-center px-4 pt-3 w-full">
           <p
-            className={`font-display text-[22px] sm:text-[34px] md:text-[50px] font-black italic text-[#803D63] leading-tight tracking-tight text-center transition-opacity duration-400 ${
+            className={`font-display text-[20px] sm:text-[28px] md:text-[40px] font-black italic text-[#803D63] leading-snug tracking-tight text-center transition-opacity duration-400 ${
               isFading ? "opacity-0" : "opacity-100"
             }`}
           >
