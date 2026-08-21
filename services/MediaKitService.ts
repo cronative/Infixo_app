@@ -92,10 +92,25 @@ export class MediaKitService {
         localStorage.setItem(PACKAGES_STORAGE_KEY, JSON.stringify(DEFAULT_PACKAGES));
         return DEFAULT_PACKAGES;
       }
-      return JSON.parse(stored);
+      const parsed: MediaKitPackage[] = JSON.parse(stored);
+      // Auto-migrate legacy packages if old package IDs exist
+      const hasOldPackage = parsed.some((p) => p.id === "pkg_yt_dedicated" || p.id === "pkg_insta_bundle" || p.id === "pkg_series_sponsor");
+      if (hasOldPackage || parsed.length === 0) {
+        localStorage.setItem(PACKAGES_STORAGE_KEY, JSON.stringify(DEFAULT_PACKAGES));
+        return DEFAULT_PACKAGES;
+      }
+      return parsed;
     } catch {
       return DEFAULT_PACKAGES;
     }
+  }
+
+  static resetToDefaults(): MediaKitPackage[] {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(PACKAGES_STORAGE_KEY, JSON.stringify(DEFAULT_PACKAGES));
+      localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(DEFAULT_SETTINGS));
+    }
+    return DEFAULT_PACKAGES;
   }
 
   static savePackages(packages: MediaKitPackage[]): void {
@@ -140,7 +155,13 @@ export class MediaKitService {
         localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(DEFAULT_SETTINGS));
         return DEFAULT_SETTINGS;
       }
-      return JSON.parse(stored);
+      const parsed: MediaKitSettings = JSON.parse(stored);
+      // Auto-migrate legacy minBudget if old budget exists
+      if (parsed.minBudget === "₹10,000") {
+        parsed.minBudget = "₹2,000";
+        localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(parsed));
+      }
+      return parsed;
     } catch {
       return DEFAULT_SETTINGS;
     }
