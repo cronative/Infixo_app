@@ -97,14 +97,14 @@ export function SyncingLoader({
           </div>
         </div>
 
-        {/* Big Italic Motivational Quote (No Background / No Badges) */}
-        <div className="min-h-[64px] flex items-center justify-center px-4 pt-2">
+        {/* Big Italic Motivational Quote in Primary Brand Color (No Quotation Marks) */}
+        <div className="min-h-[72px] flex items-center justify-center px-4 pt-2">
           <p
-            className={`font-display text-sm sm:text-base font-black italic text-slate-800 leading-relaxed tracking-tight transition-opacity duration-400 ${
+            className={`font-display text-base sm:text-lg font-black italic text-[#803D63] leading-relaxed tracking-tight transition-opacity duration-400 ${
               isFading ? "opacity-0" : "opacity-100"
             }`}
           >
-            "{currentQuote}"
+            {currentQuote}
           </p>
         </div>
       </div>
