@@ -553,6 +553,29 @@ function getSeriesEpisodes(s: Series): any[] {
   return [];
 }
 
+const DARK_THEME_KEYS = new Set([
+  "modern-purple",
+  "midnight",
+  "ocean-blue",
+  "forest",
+  "emerald-luxe",
+  "crimson-velvet",
+  "neon-pulse",
+  "sunset",
+  "mono",
+  "solar-flare",
+  "cosmic-galaxy",
+  "tokyo-drift",
+  "retro-synth",
+  "aurora-borealis",
+  "electric-cyber",
+  "cosmic-pulse",
+]);
+
+export function isDarkTheme(themeKey: string = "minimal-white"): boolean {
+  return DARK_THEME_KEYS.has(themeKey);
+}
+
 export function LivePreviewCard({
   profile,
   socials,
@@ -568,6 +591,8 @@ export function LivePreviewCard({
   const [activeContentTab, setActiveContentTab] = useState<"series" | "gigs">("series");
   const [mediaKitPackages, setMediaKitPackages] = useState<MediaKitPackage[]>([]);
   const [mediaKitSettings, setMediaKitSettings] = useState<MediaKitSettings>(MediaKitService.DEFAULT_SETTINGS);
+
+  const isDark = isDarkTheme(themeKey);
 
   useEffect(() => {
     async function loadMediaKit() {
@@ -785,7 +810,11 @@ export function LivePreviewCard({
               {visibleChips.map((chip, idx) => (
                 <span
                   key={idx}
-                  className="bg-white border border-gray-200 text-gray-700 text-xs font-medium px-3 py-1 rounded-full shadow-2xs"
+                  className={`${
+                    isDark
+                      ? "bg-slate-900/60 text-slate-100 border-white/20"
+                      : "bg-white/80 text-slate-800 border-white/60"
+                  } backdrop-blur-md text-xs font-semibold px-3 py-1 rounded-full border shadow-2xs`}
                 >
                   {chip}
                 </span>
@@ -795,30 +824,36 @@ export function LivePreviewCard({
         })()}
 
         {/* Bio Formatting */}
-        <p className="mt-2.5 text-xs text-[#4B5563] leading-relaxed max-w-sm mx-auto font-medium px-1">
+        <p className={`mt-2.5 text-xs leading-relaxed max-w-sm mx-auto font-medium px-1 ${
+          isDark ? "text-slate-200" : "text-[#4B5563]"
+        }`}>
           {profile.bio || "Sharing my journey & content. Stream original series and connect across all platforms."}
         </p>
 
         {/* "Total Fanbase" Authority Card */}
-        <div className="mt-4 rounded-2xl bg-white border border-[#E5E7EB] p-4 shadow-2xs text-center w-full space-y-1">
+        <div className={`mt-4 rounded-2xl p-4 shadow-2xs text-center w-full space-y-1 ${
+          isDark
+            ? "bg-slate-900/60 backdrop-blur-md border border-white/15 text-white"
+            : "bg-white/75 backdrop-blur-md border border-white/60 text-slate-900"
+        }`}>
           {totalAudience > 0 ? (
             <div className="space-y-1">
-              <p className="text-2xl font-black text-[#111827]">
+              <p className={`text-2xl font-black ${isDark ? "text-white" : "text-[#111827]"}`}>
                 ❤️ {formatCount(totalAudience)}
               </p>
-              <p className={`text-[11px] font-bold tracking-wider uppercase ${themeKey === "minimal-white" ? "text-[#0F172A]" : "text-[#803D63]"}`}>
+              <p className={`text-[11px] font-bold tracking-wider uppercase ${themeKey === "minimal-white" ? "text-[#0F172A]" : isDark ? "text-indigo-300" : "text-[#803D63]"}`}>
                 TOTAL FANBASE
               </p>
             </div>
           ) : (
             <div className="space-y-1">
-              <p className="text-2xl font-black text-[#111827]">
+              <p className={`text-2xl font-black ${isDark ? "text-white" : "text-[#111827]"}`}>
                 ❤️ 0
               </p>
-              <p className={`text-[11px] font-bold tracking-wider uppercase ${themeKey === "minimal-white" ? "text-[#0F172A]" : "text-[#803D63]"}`}>
+              <p className={`text-[11px] font-bold tracking-wider uppercase ${themeKey === "minimal-white" ? "text-[#0F172A]" : isDark ? "text-indigo-300" : "text-[#803D63]"}`}>
                 TOTAL FANBASE
               </p>
-              <p className="text-[10px] font-medium text-gray-400">
+              <p className={`text-[10px] font-medium ${isDark ? "text-slate-400" : "text-gray-400"}`}>
                 Connect socials to display total reach
               </p>
             </div>
@@ -836,28 +871,32 @@ export function LivePreviewCard({
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group bg-white hover:bg-gray-50/80 border border-[#E5E7EB] hover:border-[#803D63] rounded-xl p-3.5 transition-all flex items-center justify-between shadow-2xs"
+                className={`group rounded-xl p-3.5 transition-all flex items-center justify-between shadow-2xs border ${
+                  isDark
+                    ? "bg-slate-900/60 hover:bg-slate-900/80 backdrop-blur-md border-white/15 hover:border-white/30 text-white"
+                    : "bg-white/80 hover:bg-white/95 backdrop-blur-md border-white/60 hover:border-[#803D63] text-slate-900"
+                }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${item.badgeBg}`}>
                     {item.icon}
                   </span>
                   <div className="min-w-0 text-left space-y-0.5">
-                    <p className="truncate text-xs font-bold text-gray-900">
+                    <p className={`truncate text-xs font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
                       {item.label}
                     </p>
                     {item.handle && (
-                      <p className="truncate text-xs font-medium text-[#4B5563]">
+                      <p className={`truncate text-xs font-medium ${isDark ? "text-slate-300" : "text-[#4B5563]"}`}>
                         @{item.handle.replace(/^@/, "")}
                       </p>
                     )}
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-sm font-bold text-gray-900">
+                  <span className={`text-sm font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
                     {formatCount(item.count)}
                   </span>
-                  <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-[#803D63] transition-colors" />
+                  <ExternalLink className={`h-4 w-4 transition-colors ${isDark ? "text-slate-400 group-hover:text-purple-300" : "text-gray-400 group-hover:text-[#803D63]"}`} />
                 </div>
               </a>
             ))}
@@ -868,14 +907,20 @@ export function LivePreviewCard({
       {/* Interactive 2-Tab Content Switcher (Series & Shows vs Collab Gigs) */}
       <div className="relative z-10 mt-6 w-full text-left">
         {/* 2-Tab Pill Switcher */}
-        <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-[#F3F4F6] border border-[#E5E7EB] mb-4">
+        <div className={`flex items-center gap-1.5 p-1 rounded-2xl border mb-4 ${
+          isDark
+            ? "bg-slate-950/60 backdrop-blur-md border-white/15"
+            : "bg-white/60 backdrop-blur-md border-white/60"
+        }`}>
           <button
             type="button"
             onClick={() => setActiveContentTab("series")}
             className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
               activeContentTab === "series"
                 ? "bg-[#803D63] text-white shadow-2xs"
-                : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
+                : isDark
+                  ? "text-slate-300 hover:text-white hover:bg-white/10"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
             }`}
           >
             <Film className="h-3.5 w-3.5" />
@@ -888,7 +933,9 @@ export function LivePreviewCard({
             className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
               activeContentTab === "gigs"
                 ? "bg-[#803D63] text-white shadow-2xs"
-                : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
+                : isDark
+                  ? "text-slate-300 hover:text-white hover:bg-white/10"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
             }`}
           >
             <Briefcase className="h-3.5 w-3.5" />
@@ -914,10 +961,14 @@ export function LivePreviewCard({
                 ))}
               </div>
             ) : (
-              <div className="rounded-2xl border-2 border-dashed border-gray-200 bg-white p-6 text-center space-y-1.5">
-                <Film className="h-7 w-7 text-slate-400 mx-auto" />
-                <p className="font-bold text-slate-800 text-xs">No Series Published Yet</p>
-                <p className="text-[11px] text-slate-500">Check back soon for original web series &amp; trailers!</p>
+              <div className={`rounded-2xl border-2 border-dashed p-6 text-center space-y-1.5 ${
+                isDark
+                  ? "bg-slate-900/60 backdrop-blur-md border-white/20 text-white"
+                  : "bg-white/70 backdrop-blur-md border-gray-200 text-slate-900"
+              }`}>
+                <Film className={`h-7 w-7 mx-auto ${isDark ? "text-slate-400" : "text-slate-400"}`} />
+                <p className={`font-bold text-xs ${isDark ? "text-white" : "text-slate-800"}`}>No Series Published Yet</p>
+                <p className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>Check back soon for original web series &amp; trailers!</p>
               </div>
             )}
           </div>
@@ -945,7 +996,11 @@ export function LivePreviewCard({
                   return (
                     <div
                       key={pkg.id}
-                      className="bg-white border border-gray-200 rounded-2xl p-4 space-y-3 shadow-2xs hover:border-[#803D63] transition-all relative text-left"
+                      className={`rounded-2xl p-4 space-y-3 transition-all relative text-left border ${
+                        isDark
+                          ? "bg-slate-900/70 backdrop-blur-md border-white/15 hover:border-purple-400 text-white"
+                          : "bg-white/80 backdrop-blur-md border-white/60 hover:border-[#803D63] hover:bg-white/95 text-slate-900 shadow-2xs"
+                      }`}
                     >
                       {(pkg.badge || pkg.packageName || pkg.isPopular) && (
                         <span className="absolute -top-2.5 right-3 bg-[#803D63] text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-2xs">
@@ -958,20 +1013,20 @@ export function LivePreviewCard({
                           <span className="bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] text-[9px] font-extrabold px-2 py-0.5 rounded uppercase">
                             {pkg.platform}
                           </span>
-                          <h5 className="font-bold text-slate-900 text-sm mt-1">{pkg.title}</h5>
+                          <h5 className={`font-bold text-sm mt-1 ${isDark ? "text-white" : "text-slate-900"}`}>{pkg.title}</h5>
                         </div>
                         <span className="font-black text-[#803D63] text-base shrink-0">{pkg.price}</span>
                       </div>
 
-                      <p className="text-[11px] text-slate-500 font-semibold flex items-center gap-1">
+                      <p className={`text-[11px] font-semibold flex items-center gap-1 ${isDark ? "text-slate-300" : "text-slate-500"}`}>
                         <Clock className="h-3 w-3 text-[#803D63]" /> Turnaround: {pkg.turnaroundDays} Days
                       </p>
 
                       {pkg.deliverables && pkg.deliverables.length > 0 && (
-                        <ul className="text-xs text-slate-600 space-y-1 pt-1 border-t border-gray-100">
+                        <ul className={`text-xs space-y-1 pt-1 border-t ${isDark ? "border-white/10 text-slate-300" : "border-gray-100 text-slate-600"}`}>
                           {pkg.deliverables.map((item, idx) => (
                             <li key={idx} className="flex items-start gap-1.5">
-                              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
                               <span>{item}</span>
                             </li>
                           ))}
@@ -979,7 +1034,7 @@ export function LivePreviewCard({
                       )}
 
                       {/* Direct Frictionless Actions */}
-                      <div className="pt-2 border-t border-gray-100 grid grid-cols-2 gap-2">
+                      <div className={`pt-2 border-t grid grid-cols-2 gap-2 ${isDark ? "border-white/10" : "border-gray-100"}`}>
                         {cleanPhone && (
                           <a
                             href={waUrl}
@@ -994,7 +1049,7 @@ export function LivePreviewCard({
                         {mediaKitSettings.sponsorEmail && (
                           <a
                             href={mailUrl}
-                            className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold py-2 px-2 rounded-xl transition-all inline-flex items-center justify-center gap-1 shadow-2xs"
+                            className={`${isDark ? "bg-white hover:bg-slate-100 text-slate-900" : "bg-slate-900 hover:bg-slate-800 text-white"} text-xs font-extrabold py-2 px-2 rounded-xl transition-all inline-flex items-center justify-center gap-1 shadow-2xs`}
                           >
                             <Mail className="h-3.5 w-3.5" />
                             <span>Send Email</span>
@@ -1006,10 +1061,14 @@ export function LivePreviewCard({
                 })}
               </div>
             ) : (
-              <div className="rounded-2xl border-2 border-dashed border-gray-200 bg-white p-6 text-center space-y-1.5">
+              <div className={`rounded-2xl border-2 border-dashed p-6 text-center space-y-1.5 ${
+                isDark
+                  ? "bg-slate-900/60 backdrop-blur-md border-white/20 text-white"
+                  : "bg-white/70 backdrop-blur-md border-gray-200 text-slate-900"
+              }`}>
                 <Briefcase className="h-7 w-7 text-slate-400 mx-auto" />
-                <p className="font-bold text-slate-800 text-xs">No Active Collab Gigs Published</p>
-                <p className="text-[11px] text-slate-500">Creator has not published active rate card packages yet.</p>
+                <p className={`font-bold text-xs ${isDark ? "text-white" : "text-slate-800"}`}>No Active Collab Gigs Published</p>
+                <p className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>Creator has not published active rate card packages yet.</p>
               </div>
             )}
           </div>
@@ -1017,12 +1076,16 @@ export function LivePreviewCard({
       </div>
 
       {/* Bottom Conversion Watermark */}
-      <div className="relative z-10 mt-6 pt-4 text-center border-t border-gray-200/50">
+      <div className="relative z-10 mt-6 pt-4 text-center border-t border-gray-200/30">
         <a
           href="/"
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-white/90 hover:bg-white text-gray-700 hover:text-[#803D63] text-[11px] font-semibold px-3.5 py-1.5 rounded-full border border-gray-200 transition-colors inline-flex items-center gap-1.5 shadow-2xs cursor-pointer"
+          className={`text-[11px] font-semibold px-3.5 py-1.5 rounded-full border transition-colors inline-flex items-center gap-1.5 cursor-pointer ${
+            isDark
+              ? "bg-slate-900/80 backdrop-blur-md border-white/20 text-slate-200 hover:bg-slate-900 hover:text-white"
+              : "bg-white/80 backdrop-blur-md border-white/60 text-slate-700 hover:bg-white hover:text-[#803D63]"
+          }`}
         >
           <InflixoLogoIcon className="h-3.5 w-3.5 text-[#803D63]" />
           <span>Create your own Inflixo</span>
@@ -1081,6 +1144,7 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
 export function PreviewSeriesItem({
   series,
   style,
+  themeKey = "minimal-white",
   username,
   expanded = false,
   onToggle,
@@ -1095,6 +1159,7 @@ export function PreviewSeriesItem({
   onShareSeries?: (series: Series) => void;
 }) {
   const { showToast } = useToast();
+  const isDark = isDarkTheme(themeKey);
   const allEpisodes = getSeriesEpisodes(series);
   const genresList = series.genre ? series.genre.split(",").map((g) => g.trim()).filter(Boolean) : [];
 
@@ -1125,11 +1190,17 @@ export function PreviewSeriesItem({
   return (
     <div
       id={`series-${series.id}`}
-      className="bg-white border border-[#E5E7EB] hover:border-[#803D63] rounded-2xl p-3.5 sm:p-4 transition-all shadow-2xs text-left"
+      className={`rounded-2xl p-3.5 sm:p-4 transition-all text-left border ${
+        isDark
+          ? "bg-slate-900/70 backdrop-blur-md border-white/15 hover:border-purple-400 text-white shadow-md"
+          : "bg-white/80 backdrop-blur-md border-white/60 hover:border-[#803D63] hover:bg-white/95 text-slate-900 shadow-2xs"
+      }`}
     >
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3.5 sm:gap-4 w-full text-left">
         {/* Widescreen 16:9 Netflix-Style Hero Poster Thumbnail */}
-        <div className="relative w-full sm:w-48 aspect-video rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center border border-gray-200 shrink-0 shadow-2xs">
+        <div className={`relative w-full sm:w-48 aspect-video rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center border shrink-0 shadow-2xs ${
+          isDark ? "border-white/15" : "border-gray-200"
+        }`}>
           <SeriesPoster
             src={series.posterDataUrl}
             title={series.title}
@@ -1148,7 +1219,9 @@ export function PreviewSeriesItem({
         {/* Series Info & Details on Right (Clean Left Alignment) */}
         <div className="min-w-0 flex-1 space-y-1.5 text-left w-full">
           <div className="flex items-center justify-between gap-2 text-left">
-            <h3 className="text-sm sm:text-base font-bold text-[#111827] leading-snug break-words text-left">
+            <h3 className={`text-sm sm:text-base font-bold leading-snug break-words text-left ${
+              isDark ? "text-white" : "text-[#111827]"
+            }`}>
               {series.title}
             </h3>
 
@@ -1158,7 +1231,11 @@ export function PreviewSeriesItem({
               <button
                 type="button"
                 onClick={handleShareSeriesLink}
-                className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 bg-white hover:bg-slate-50 text-gray-500 hover:text-[#803D63] transition-colors cursor-pointer"
+                className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-colors cursor-pointer ${
+                  isDark
+                    ? "border-white/15 bg-white/10 text-slate-300 hover:text-white hover:bg-white/20"
+                    : "border-gray-200 bg-white/80 text-gray-500 hover:text-[#803D63]"
+                }`}
                 title="Share Series Link"
                 aria-label="Share Series"
               >
@@ -1178,13 +1255,17 @@ export function PreviewSeriesItem({
           </div>
 
           {series.description && (
-            <p className="text-xs text-[#4B5563] font-medium leading-relaxed line-clamp-2 text-left">
+            <p className={`text-xs font-medium leading-relaxed line-clamp-2 text-left ${
+              isDark ? "text-slate-300" : "text-[#4B5563]"
+            }`}>
               {series.description}
             </p>
           )}
 
           {/* Bottom Platform Tag & Single-Line Horizontal Genre Micro-Chips */}
-          <div className="pt-2 mt-1 flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 text-left w-full">
+          <div className={`pt-2 mt-1 flex flex-wrap items-center justify-between gap-2 border-t text-left w-full ${
+            isDark ? "border-white/10" : "border-gray-100"
+          }`}>
             <div className="flex items-center gap-1.5 min-w-0 text-left flex-1 overflow-hidden">
               {/* Official Brand Color Platform Pill */}
               <span className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-[11px] font-bold shrink-0 ${mainPlatform.chipClass}`}>
@@ -1194,7 +1275,7 @@ export function PreviewSeriesItem({
                 <span>{mainPlatform.name}</span>
               </span>
 
-              <span className="text-[11px] text-gray-500 font-medium shrink-0">
+              <span className={`text-[11px] font-medium shrink-0 ${isDark ? "text-slate-400" : "text-gray-500"}`}>
                 • {allEpisodes.length} {allEpisodes.length === 1 ? "Ep" : "Eps"}
               </span>
 
@@ -1224,10 +1305,18 @@ export function PreviewSeriesItem({
 
       {/* Expanded Episodes List Drawer (In-line List Below Card) */}
       {expanded && allEpisodes.length > 0 && (
-        <div className="mt-3 pt-3 border-t border-gray-100 space-y-2 bg-[#F9FAFB] rounded-xl p-3 text-left">
+        <div className={`mt-3 pt-3 border-t space-y-2 rounded-xl p-3 text-left ${
+          isDark
+            ? "border-white/10 bg-slate-950/60 backdrop-blur-md"
+            : "border-gray-200/60 bg-white/50 backdrop-blur-md"
+        }`}>
           <div className="flex items-center justify-between pb-1 text-left">
-            <span className="text-xs font-bold text-gray-700">Episodes Playlist ({allEpisodes.length})</span>
-            <span className="text-[10px] text-gray-500 font-medium">Click Watch to open video</span>
+            <span className={`text-xs font-bold ${isDark ? "text-slate-200" : "text-gray-700"}`}>
+              Episodes Playlist ({allEpisodes.length})
+            </span>
+            <span className={`text-[10px] font-medium ${isDark ? "text-slate-400" : "text-gray-500"}`}>
+              Click Watch to open video
+            </span>
           </div>
           <div className="space-y-2">
             {allEpisodes.map((ep) => {
@@ -1241,13 +1330,19 @@ export function PreviewSeriesItem({
                   href={ep.externalUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white p-2.5 sm:p-3 transition-all hover:border-[#803D63] shadow-2xs text-left"
+                  className={`group flex items-center justify-between gap-3 rounded-xl p-2.5 sm:p-3 transition-all text-left border ${
+                    isDark
+                      ? "bg-slate-900/80 backdrop-blur-sm border-white/15 hover:border-purple-400 text-white"
+                      : "bg-white/80 backdrop-blur-sm border-white/50 hover:border-[#803D63] text-slate-900 shadow-2xs"
+                  }`}
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1 text-left">
                     <span className="bg-[#F6EBF1] text-[#803D63] font-bold text-[11px] px-2 py-1 rounded-md border border-[#E8DCE4] shrink-0">
                       {epNumStr}
                     </span>
-                    <p className="truncate text-xs font-bold text-gray-900 group-hover:text-[#803D63] transition-colors text-left">
+                    <p className={`truncate text-xs font-bold transition-colors text-left ${
+                      isDark ? "text-white group-hover:text-purple-300" : "text-gray-900 group-hover:text-[#803D63]"
+                    }`}>
                       {epTitleStr}
                     </p>
                   </div>
