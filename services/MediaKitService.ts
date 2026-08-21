@@ -75,11 +75,11 @@ export const SAMPLE_PACKAGES: MediaKitPackage[] = [
 ];
 
 export const DEFAULT_SETTINGS: MediaKitSettings = {
-  sponsorEmail: "business@inflixo.com",
-  whatsappNumber: "+919876543210",
-  bioHighlight: "Open for brand sponsorships, video integrations, and series placements.",
+  sponsorEmail: "",
+  whatsappNumber: "",
+  bioHighlight: "",
   acceptingSponsors: true,
-  minBudget: "₹0",
+  minBudget: "",
   preferredCategories: ["Technology & AI", "Entertainment", "Lifestyle", "Gaming"],
 };
 

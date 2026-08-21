@@ -208,18 +208,18 @@ export default function DashboardMediaKitPage() {
         setPackages(dbPackages);
         setSettings({
           ...dbSettings,
-          sponsorEmail: dbSettings.sponsorEmail || profile.email || "business@inflixo.com",
-          whatsappNumber: dbSettings.whatsappNumber || "+919876543210",
-          minBudget: dbSettings.minBudget ?? "₹0",
+          sponsorEmail: dbSettings.sponsorEmail ?? "",
+          whatsappNumber: dbSettings.whatsappNumber ?? "",
+          minBudget: dbSettings.minBudget ?? "",
         });
       } else {
         setPackages(MediaKitService.getPackages());
         const savedSettings = MediaKitService.getSettings();
         setSettings({
           ...savedSettings,
-          sponsorEmail: savedSettings.sponsorEmail || profile.email || "business@inflixo.com",
-          whatsappNumber: savedSettings.whatsappNumber || "+919876543210",
-          minBudget: savedSettings.minBudget ?? "₹0",
+          sponsorEmail: savedSettings.sponsorEmail ?? "",
+          whatsappNumber: savedSettings.whatsappNumber ?? "",
+          minBudget: savedSettings.minBudget ?? "",
         });
       }
     }
@@ -780,18 +780,28 @@ export default function DashboardMediaKitPage() {
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1">
                   <span>✉️ BUSINESS EMAIL</span>
                 </p>
-                <div className="flex items-center justify-between gap-1.5">
-                  <p className="text-xs font-bold text-slate-900 truncate">
-                    {settings.sponsorEmail || profile.email || "business@inflixo.com"}
-                  </p>
-                  <a
-                    href={`mailto:${settings.sponsorEmail || profile.email || "business@inflixo.com"}`}
-                    className="text-indigo-600 hover:text-indigo-800 p-1 rounded-md hover:bg-indigo-50 transition-all cursor-pointer"
-                    title="Live Test Email Link ↗"
+                {settings.sponsorEmail ? (
+                  <div className="flex items-center justify-between gap-1.5">
+                    <p className="text-xs font-bold text-slate-900 truncate">
+                      {settings.sponsorEmail}
+                    </p>
+                    <a
+                      href={`mailto:${settings.sponsorEmail}`}
+                      className="text-indigo-600 hover:text-indigo-800 p-1 rounded-md hover:bg-indigo-50 transition-all cursor-pointer"
+                      title="Live Test Email Link ↗"
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </a>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingSettings(true)}
+                    className="text-xs font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 px-2 py-0.5 rounded-md transition-all cursor-pointer inline-flex items-center gap-1"
                   >
-                    <ExternalLink className="h-3.5 w-3.5" />
-                  </a>
-                </div>
+                    <span>⚠️ Not Connected (Click to Add)</span>
+                  </button>
+                )}
               </div>
 
               {/* Min Budget Filter Card */}
@@ -799,13 +809,23 @@ export default function DashboardMediaKitPage() {
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
                   <span>🛡️ MIN. DEAL FILTER</span>
                 </p>
-                <p className="text-xs font-bold text-[#803D63]">
-                  {(!settings.minBudget || settings.minBudget === "₹0" || settings.minBudget === "0")
-                    ? "₹0 (Accept All Deals)"
-                    : settings.minBudget.includes("+")
-                    ? settings.minBudget
-                    : `${settings.minBudget}+`}
-                </p>
+                {settings.minBudget ? (
+                  <p className="text-xs font-bold text-[#803D63]">
+                    {(settings.minBudget === "₹0" || settings.minBudget === "0")
+                      ? "₹0 (Accept All Deals)"
+                      : settings.minBudget.includes("+")
+                      ? settings.minBudget
+                      : `${settings.minBudget}+`}
+                  </p>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingSettings(true)}
+                    className="text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 border border-slate-200 px-2 py-0.5 rounded-md transition-all cursor-pointer inline-flex items-center gap-1"
+                  >
+                    <span>⚠️ Not Set (Click to Add)</span>
+                  </button>
+                )}
               </div>
             </div>
           )}
