@@ -1349,7 +1349,16 @@ export function PreviewSeriesItem({
             textClassName="text-[11px] font-bold text-indigo-200"
           />
 
-          {/* Episode Count Badge inside Thumbnail */}
+          {/* Top-Left Genre Badge Overlay on Thumbnail */}
+          {genresList.length > 0 && (
+            <div className="absolute top-1.5 left-1.5 z-10 max-w-[75%]">
+              <span className="bg-black/75 text-white text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-xs border border-white/20 truncate inline-block">
+                {genresList[0]}
+              </span>
+            </div>
+          )}
+
+          {/* Episode Count Badge inside Thumbnail (Bottom-Right) */}
           <div className="absolute bottom-1.5 right-1.5 z-10">
             <span className="bg-black/75 text-white text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-xs border border-white/10">
               {allEpisodes.length} {allEpisodes.length === 1 ? "Ep" : "Eps"}
@@ -1407,44 +1416,29 @@ export function PreviewSeriesItem({
             </p>
           )}
 
-          {/* Bottom Platform Tag & Single-Line Horizontal Genre Micro-Chips */}
-          <div className={`pt-2 mt-1 flex flex-wrap items-center justify-between gap-2 border-t text-left w-full ${
+          {/* Bottom Platform Tag & Episode Count Meta Row */}
+          <div className={`pt-2 mt-1 flex items-center justify-between gap-2 border-t text-left w-full ${
             isDark ? "border-white/10" : "border-gray-100"
           }`}>
-            <div className="flex items-center gap-1.5 min-w-0 text-left flex-1 overflow-hidden">
+            <div className="flex items-center gap-2 min-w-0 text-left shrink-0">
               {/* Official Brand Color Platform Pill */}
-              <span className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-[11px] font-bold shrink-0 ${mainPlatform.chipClass}`}>
+              <span className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-[11px] font-bold shrink-0 whitespace-nowrap ${mainPlatform.chipClass}`}>
                 <span className={`flex h-4 w-4 items-center justify-center rounded ${mainPlatform.badgeClass}`}>
                   {mainPlatform.icon}
                 </span>
-                <span>{mainPlatform.name}</span>
+                <span className="inline">{mainPlatform.name}</span>
               </span>
 
-              <span className={`text-[11px] font-medium shrink-0 ${isDark ? "text-slate-400" : "text-gray-500"}`}>
+              <span className={`text-[11px] font-medium shrink-0 whitespace-nowrap ${isDark ? "text-slate-400" : "text-gray-500"}`}>
                 • {allEpisodes.length} {allEpisodes.length === 1 ? "Ep" : "Eps"}
               </span>
-
-              {/* Single Horizontal Line Wrapped Genre Chips */}
-              {genresList.length > 0 && (
-                <div className="flex items-center gap-1 overflow-x-auto no-scrollbar whitespace-nowrap max-w-full">
-                  {genresList.map((g, idx) => (
-                    <span key={idx} className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border shrink-0 ${
-                      isDark
-                        ? "bg-purple-900/60 text-purple-200 border-purple-400/40"
-                        : "bg-[#F6EBF1] text-[#803D63] border-[#E8DCE4]"
-                    }`}>
-                      {g}
-                    </span>
-                  ))}
-                </div>
-              )}
             </div>
 
             {/* Compact Expand / Collapse Episode List Toggle Button */}
             <button
               type="button"
               onClick={onToggle}
-              className={`text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition-colors inline-flex items-center justify-center gap-1 shrink-0 cursor-pointer relative z-10 ml-auto sm:ml-0 ${
+              className={`text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition-colors inline-flex items-center justify-center gap-1 shrink-0 cursor-pointer relative z-10 ml-auto ${
                 isDark
                   ? "bg-gradient-to-r from-purple-600 to-rose-600 hover:from-purple-500 hover:to-rose-500 shadow-sm"
                   : "bg-[#803D63] hover:bg-[#6D3254] shadow-2xs"
