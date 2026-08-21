@@ -410,7 +410,7 @@ export default function LandingHomePage() {
                 <div className="flex items-start gap-2">
                   <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
                   <div>
-                    <strong className="text-[#111827]">All Your Platforms, One Series:</strong> Mix YouTube videos, Instagram Reels, and Facebook clips together in order.
+                    <strong className="text-[#111827]">All Your Platforms, One Series:</strong> Add episodes from YouTube, Instagram, or Facebook, wherever you actually posted them — Inflixo verifies each link is from the right platform before it goes live.
                   </div>
                 </div>
               </div>
