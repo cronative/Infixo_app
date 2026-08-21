@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Sparkles, Quote } from "lucide-react";
 import { InflixoLogoIcon } from "@/components/shared/Logo";
+import { CREATOR_QUOTES, getRandomQuoteIndex } from "@/data/creatorQuotes";
 
 export function SyncingLoader({
   message = "Syncing your creator profile & content...",
@@ -11,7 +13,15 @@ export function SyncingLoader({
   fullScreen?: boolean;
 }) {
   const [dots, setDots] = useState(".");
+  const [quoteIndex, setQuoteIndex] = useState(0);
+  const [isFading, setIsFading] = useState(false);
 
+  // Pick a random starting quote on every mount / page load
+  useEffect(() => {
+    setQuoteIndex(getRandomQuoteIndex());
+  }, []);
+
+  // Syncing dots animation (every 450ms)
   useEffect(() => {
     const interval = setInterval(() => {
       setDots((prev) => (prev.length >= 3 ? "." : prev + "."));
@@ -19,17 +29,31 @@ export function SyncingLoader({
     return () => clearInterval(interval);
   }, []);
 
+  // 5-second smooth quote rotation timer with fade effect
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIsFading(true);
+      setTimeout(() => {
+        setQuoteIndex((prev) => (prev + 1) % CREATOR_QUOTES.length);
+        setIsFading(false);
+      }, 400);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   const containerClass = fullScreen
     ? "fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white/95 backdrop-blur-md px-4 text-center selection:bg-purple-100"
-    : "flex flex-col items-center justify-center p-12 text-center w-full min-h-[320px]";
+    : "flex flex-col items-center justify-center p-8 text-center w-full min-h-[360px]";
+
+  const currentQuote = CREATOR_QUOTES[quoteIndex] || CREATOR_QUOTES[0];
 
   return (
     <div className={containerClass}>
-      <div className="relative z-10 flex flex-col items-center space-y-5 max-w-sm">
+      <div className="relative z-10 flex flex-col items-center space-y-5 max-w-md w-full">
         {/* Animated Brand Logo Container */}
         <div className="relative flex h-16 w-16 items-center justify-center">
-          {/* Core Inflixo Logo Badge */}
-          <div className="relative flex h-14 w-14 items-center justify-center rounded-xl bg-[#803D63] text-white border border-[#803D63]">
+          <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-[#803D63] text-white border border-[#803D63] shadow-md animate-bounce">
             <InflixoLogoIcon className="h-8 w-8 text-white" />
           </div>
         </div>
@@ -50,9 +74,32 @@ export function SyncingLoader({
           </p>
         </div>
 
-        {/* Subtle Horizontal Progress Pulse Bar */}
-        <div className="h-1 w-44 overflow-hidden rounded-full bg-slate-100 border border-slate-200">
+        {/* Horizontal Progress Pulse Bar */}
+        <div className="h-1.5 w-52 overflow-hidden rounded-full bg-slate-100 border border-slate-200 shadow-2xs">
           <div className="h-full w-full bg-[#803D63] animate-pulse" />
+        </div>
+
+        {/* 🌟 100 MOTIVATIONAL CREATOR JOURNEY QUOTES CARD */}
+        <div className="w-full mt-3 rounded-2xl border border-[#E8DCE4] bg-gradient-to-b from-[#FAF8FA] to-white p-4 text-center shadow-2xs space-y-2">
+          <div className="flex items-center justify-center gap-1.5 text-[10px] font-black text-[#803D63] uppercase tracking-wider">
+            <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+            <span>CREATOR WISDOM #{quoteIndex + 1}/100</span>
+          </div>
+
+          {/* Quote Text with Smooth Fade Transition */}
+          <div className="min-h-[54px] flex items-center justify-center px-2">
+            <p
+              className={`text-xs font-bold text-slate-800 leading-relaxed italic transition-opacity duration-400 ${
+                isFading ? "opacity-0" : "opacity-100"
+              }`}
+            >
+              "{currentQuote}"
+            </p>
+          </div>
+
+          <p className="text-[9px] font-medium text-slate-400">
+            Changes every 5s • Stay inspired while we prepare your dashboard ✨
+          </p>
         </div>
       </div>
     </div>
