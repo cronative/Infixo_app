@@ -55,12 +55,10 @@ export default function DashboardMediaKitPage() {
   const [formPlatform, setFormPlatform] = useState<string>("Instagram Reel");
   const [formMinPrice, setFormMinPrice] = useState("₹2,000");
   const [formMaxPrice, setFormMaxPrice] = useState("");
-  const [formPackageName, setFormPackageName] = useState(""); // "Bronze Package" | "Silver Package" | "Gold Package" | custom
+  const [formPackageName, setFormPackageName] = useState(""); // "Bronze Package" | "Silver Package" | "Gold Package" | custom badge
   const [formTurnaround, setFormTurnaround] = useState<number>(2);
   const [formDeliverableInput, setFormDeliverableInput] = useState("");
   const [formDeliverables, setFormDeliverables] = useState<string[]>([]);
-  const [formBadgeOption, setFormBadgeOption] = useState<string>("none"); // "none" | "popular" | "value" | "custom"
-  const [formCustomBadge, setFormCustomBadge] = useState("");
 
   // Public Preview Modal State
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
@@ -114,8 +112,6 @@ export default function DashboardMediaKitPage() {
       "Direct Link/Promo Code in Bio (24 Hours)",
       "30 Days Digital Usage Rights",
     ]);
-    setFormBadgeOption("custom");
-    setFormCustomBadge("🥈 Silver Package");
     setIsModalOpen(true);
   };
 
@@ -138,16 +134,6 @@ export default function DashboardMediaKitPage() {
     setFormTurnaround(pkg.turnaroundDays);
     setFormDeliverableInput("");
     setFormDeliverables([...pkg.deliverables]);
-    if (pkg.isPopular) {
-      setFormBadgeOption("popular");
-    } else if (pkg.badge && pkg.badge.includes("BEST VALUE")) {
-      setFormBadgeOption("value");
-    } else if (pkg.badge || pkg.packageName) {
-      setFormBadgeOption("custom");
-      setFormCustomBadge(pkg.packageName || pkg.badge || "");
-    } else {
-      setFormBadgeOption("none");
-    }
     setIsModalOpen(true);
   };
 
@@ -171,20 +157,8 @@ export default function DashboardMediaKitPage() {
     const minStr = formMinPrice.trim();
     const maxStr = formMaxPrice.trim();
     const formattedPrice = maxStr ? `${minStr} – ${maxStr}` : minStr;
-
-    let resolvedBadge: string | undefined = undefined;
-    let resolvedIsPopular = false;
-
-    if (formBadgeOption === "popular") {
-      resolvedBadge = "⭐ MOST POPULAR";
-      resolvedIsPopular = true;
-    } else if (formBadgeOption === "value") {
-      resolvedBadge = "🔥 BEST VALUE (25% OFF)";
-    } else if (formBadgeOption === "custom" && formCustomBadge.trim()) {
-      resolvedBadge = formCustomBadge.trim();
-    } else if (formPackageName.trim()) {
-      resolvedBadge = formPackageName.trim();
-    }
+    const resolvedBadge = formPackageName.trim() || undefined;
+    const resolvedIsPopular = formPackageName.includes("POPULAR");
 
     let updatedPkgs: MediaKitPackage[] = [];
     if (editingPkgId) {
@@ -864,78 +838,61 @@ export default function DashboardMediaKitPage() {
                 </div>
               </div>
 
-              {/* Package Tier Name & Highlight Badge Selection */}
+              {/* Package Tier Name / Highlight Badge Input with Selectable Suggestions */}
               <div className="space-y-2">
                 <label className="block text-xs font-bold text-slate-700">
-                  Package Name / Highlight Badge Tag
+                  Package Name / Highlight Badge Tag (Optional)
                 </label>
 
-                {/* 3 Package Name Tier Hints Chips */}
-                <div className="space-y-1">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Quick Tier Name Hints:</p>
-                  <div className="flex flex-wrap items-center gap-2">
+                <input
+                  type="text"
+                  value={formPackageName}
+                  onChange={(e) => setFormPackageName(e.target.value)}
+                  placeholder="e.g. 🥈 Silver Package, ⭐ MOST POPULAR, 🔥 BEST VALUE..."
+                  className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
+                />
+
+                {/* Selectable Suggestions below input */}
+                <div className="space-y-1 pt-0.5">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Selectable Suggestions:</p>
+                  <div className="flex flex-wrap items-center gap-1.5">
                     <button
                       type="button"
-                      onClick={() => {
-                        setFormPackageName("🥉 Bronze Package");
-                        setFormBadgeOption("custom");
-                        setFormCustomBadge("🥉 Bronze Package");
-                      }}
+                      onClick={() => setFormPackageName("🥉 Bronze Package")}
                       className="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 text-xs font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer"
                     >
                       🥉 Bronze Package
                     </button>
                     <button
                       type="button"
-                      onClick={() => {
-                        setFormPackageName("🥈 Silver Package");
-                        setFormBadgeOption("custom");
-                        setFormCustomBadge("🥈 Silver Package");
-                      }}
+                      onClick={() => setFormPackageName("🥈 Silver Package")}
                       className="bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300 text-xs font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer"
                     >
                       🥈 Silver Package
                     </button>
                     <button
                       type="button"
-                      onClick={() => {
-                        setFormPackageName("🥇 Gold Package");
-                        setFormBadgeOption("custom");
-                        setFormCustomBadge("🥇 Gold Package");
-                      }}
+                      onClick={() => setFormPackageName("🥇 Gold Package")}
                       className="bg-yellow-50 hover:bg-yellow-100 text-yellow-900 border border-yellow-300 text-xs font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer"
                     >
                       🥇 Gold Package
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => setFormPackageName("⭐ MOST POPULAR")}
+                      className="bg-purple-50 hover:bg-purple-100 text-[#803D63] border border-purple-200 text-xs font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer"
+                    >
+                      ⭐ MOST POPULAR
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFormPackageName("🔥 BEST VALUE (25% OFF)")}
+                      className="bg-orange-50 hover:bg-orange-100 text-orange-900 border border-orange-200 text-xs font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer"
+                    >
+                      🔥 BEST VALUE
+                    </button>
                   </div>
                 </div>
-
-                <select
-                  value={formBadgeOption}
-                  onChange={(e) => {
-                    setFormBadgeOption(e.target.value);
-                    if (e.target.value === "none") setFormPackageName("");
-                  }}
-                  className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
-                >
-                  <option value="none">None (Standard Package)</option>
-                  <option value="popular">⭐ MOST POPULAR</option>
-                  <option value="value">🔥 BEST VALUE (25% OFF)</option>
-                  <option value="custom">Custom Package Name / Badge</option>
-                </select>
-
-                {(formBadgeOption === "custom" || formPackageName) && (
-                  <input
-                    type="text"
-                    value={formCustomBadge || formPackageName}
-                    onChange={(e) => {
-                      setFormCustomBadge(e.target.value);
-                      setFormPackageName(e.target.value);
-                    }}
-                    placeholder="e.g. 🥈 Silver Package or ⚡ Save 10%"
-                    className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
-                  />
-                )}
               </div>
 
               <div className="pt-3 border-t border-gray-100 flex items-center justify-end gap-2">
