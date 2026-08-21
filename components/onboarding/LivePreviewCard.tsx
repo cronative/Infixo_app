@@ -601,6 +601,7 @@ export function LivePreviewCard({
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
   const [drawerSeries, setDrawerSeries] = useState<Series | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [showAllGigs, setShowAllGigs] = useState(false);
 
   const isDark = isDarkTheme(themeKey);
 
@@ -1051,133 +1052,149 @@ export function LivePreviewCard({
             {(() => {
               const activePkgs = mediaKitPackages.filter((p) => p.isActive);
               const displayPackages = activePkgs.length > 0 ? activePkgs : SAMPLE_PACKAGES;
+              const visiblePackages = showAllGigs ? displayPackages : displayPackages.slice(0, 1);
+              const remainingCount = displayPackages.length - 1;
 
               return (
-                <div className="grid grid-cols-1 gap-3">
-                  {displayPackages.map((pkg) => {
-                  const cleanPhone = mediaKitSettings.whatsappNumber
-                    ? mediaKitSettings.whatsappNumber.replace(/[^0-9]/g, "")
-                    : "";
-                  const waText = encodeURIComponent(
-                    `Hi ${profile.displayName || "Creator"}, I saw your "${pkg.title}" (${pkg.price}) package on Inflixo and want to collaborate.`
-                  );
-                  const waUrl = `https://wa.me/${cleanPhone}?text=${waText}`;
-                  const mailSubject = encodeURIComponent(`[Inflixo Collab Inquiry] - ${pkg.title}`);
-                  const mailBody = encodeURIComponent(
-                    `Hi ${profile.displayName || "Creator"},\n\nI would like to inquire about collaborating on your "${pkg.title}" package listed on Inflixo.\n\nBest regards,\n[Brand Representative]`
-                  );
-                  const mailUrl = `mailto:${mediaKitSettings.sponsorEmail}?subject=${mailSubject}&body=${mailBody}`;
+                <div className="space-y-3">
+                  <div className="grid grid-cols-1 gap-3">
+                    {visiblePackages.map((pkg) => {
+                      const mailSubject = encodeURIComponent(`[Inflixo Collab Inquiry] - ${pkg.title}`);
+                      const mailBody = encodeURIComponent(
+                        `Hi ${profile.displayName || "Creator"},\n\nI would like to inquire about collaborating on your "${pkg.title}" package listed on Inflixo.\n\nBest regards,\n[Brand Representative]`
+                      );
+                      const mailUrl = `mailto:${mediaKitSettings.sponsorEmail}?subject=${mailSubject}&body=${mailBody}`;
 
-                    return (
-                      <div
-                        key={pkg.id}
-                        className={`rounded-2xl p-4 space-y-3 transition-all text-left border ${
-                          isDark
-                            ? "bg-slate-900/60 backdrop-blur-md border-white/10 text-white"
-                            : "bg-white/80 backdrop-blur-md border-slate-200/80 text-slate-900 shadow-2xs"
-                        }`}
-                      >
-                        {/* Header Row: Platform Pill + Badge + Price */}
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            <span
-                              className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
-                                isDark
-                                  ? "bg-purple-900/40 text-purple-300 border border-purple-500/30"
-                                  : "bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4]"
-                              }`}
-                            >
-                              {pkg.platform}
-                            </span>
-                            {(pkg.badge || pkg.packageName || pkg.isPopular) && (
-                              <span
-                                className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                                  isDark ? "bg-amber-400/20 text-amber-300" : "bg-amber-100 text-amber-900"
-                                }`}
-                              >
-                                {pkg.badge || pkg.packageName || "⭐ POPULAR"}
-                              </span>
-                            )}
-                          </div>
-                          <span
-                            className={`font-display text-base font-extrabold shrink-0 ${
-                              isDark ? "text-amber-400" : "text-[#803D63]"
-                            }`}
-                          >
-                            {pkg.price}
-                          </span>
-                        </div>
-
-                        {/* Title & Turnaround */}
-                        <div>
-                          <h5 className={`font-bold text-sm ${isDark ? "text-white" : "text-slate-900"}`}>
-                            {pkg.title}
-                          </h5>
-                          <p
-                            className={`text-[11px] font-medium mt-0.5 flex items-center gap-1 ${
-                              isDark ? "text-slate-400" : "text-slate-500"
-                            }`}
-                          >
-                            <Clock className="h-3 w-3 shrink-0" /> Turnaround: {pkg.turnaroundDays} Days
-                          </p>
-                        </div>
-
-                        {/* Deliverables List */}
-                        {pkg.deliverables && pkg.deliverables.length > 0 && (
-                          <ul
-                            className={`text-xs space-y-1.5 pt-2 border-t ${
-                              isDark ? "border-white/10 text-slate-300" : "border-slate-100 text-slate-600"
-                            }`}
-                          >
-                            {pkg.deliverables.map((item, idx) => (
-                              <li key={idx} className="flex items-start gap-2">
-                                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                                <span className="leading-snug">{item}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-
-                        {/* Direct Contact Actions */}
+                      return (
                         <div
-                          className={`pt-2.5 border-t grid grid-cols-2 gap-2 ${
-                            isDark ? "border-white/10" : "border-slate-100"
+                          key={pkg.id}
+                          className={`rounded-2xl p-4 space-y-3 transition-all text-left border ${
+                            isDark
+                              ? "bg-slate-900/60 backdrop-blur-md border-white/10 text-white"
+                              : "bg-white/80 backdrop-blur-md border-slate-200/80 text-slate-900 shadow-2xs"
                           }`}
                         >
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSelectedGigForWhatsApp(pkg);
-                              setIsLeadModalOpen(true);
-                            }}
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
-                          >
-                            <MessageCircle className="h-3.5 w-3.5 fill-white" />
-                            <span>Book WhatsApp</span>
-                          </button>
-
-                          {mediaKitSettings.sponsorEmail && (
-                            <a
-                              href={mailUrl}
-                              className={`${
-                                isDark
-                                  ? "bg-white text-slate-900 hover:bg-slate-100"
-                                  : "bg-slate-900 text-white hover:bg-slate-800"
-                              } text-xs font-bold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 shadow-2xs`}
+                          {/* Header Row: Platform Pill + Badge + Price */}
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span
+                                className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
+                                  isDark
+                                    ? "bg-purple-900/40 text-purple-300 border border-purple-500/30"
+                                    : "bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4]"
+                                }`}
+                              >
+                                {pkg.platform}
+                              </span>
+                              {(pkg.badge || pkg.packageName || pkg.isPopular) && (
+                                <span
+                                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                    isDark ? "bg-amber-400/20 text-amber-300" : "bg-amber-100 text-amber-900"
+                                  }`}
+                                >
+                                  {pkg.badge || pkg.packageName || "⭐ POPULAR"}
+                                </span>
+                              )}
+                            </div>
+                            <span
+                              className={`font-display text-base font-extrabold shrink-0 ${
+                                isDark ? "text-amber-400" : "text-[#803D63]"
+                              }`}
                             >
-                              <Mail className="h-3.5 w-3.5" />
-                              <span>Email Brief</span>
-                            </a>
+                              {pkg.price}
+                            </span>
+                          </div>
+
+                          {/* Title & Turnaround */}
+                          <div>
+                            <h5 className={`font-bold text-sm ${isDark ? "text-white" : "text-slate-900"}`}>
+                              {pkg.title}
+                            </h5>
+                            <p
+                              className={`text-[11px] font-medium mt-0.5 flex items-center gap-1 ${
+                                isDark ? "text-slate-400" : "text-slate-500"
+                              }`}
+                            >
+                              <Clock className="h-3 w-3 shrink-0" /> Turnaround: {pkg.turnaroundDays} Days
+                            </p>
+                          </div>
+
+                          {/* Deliverables List */}
+                          {pkg.deliverables && pkg.deliverables.length > 0 && (
+                            <ul
+                              className={`text-xs space-y-1.5 pt-2 border-t ${
+                                isDark ? "border-white/10 text-slate-300" : "border-slate-100 text-slate-600"
+                              }`}
+                            >
+                              {pkg.deliverables.map((item, idx) => (
+                                <li key={idx} className="flex items-start gap-2">
+                                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                                  <span className="leading-snug">{item}</span>
+                                </li>
+                              ))}
+                            </ul>
                           )}
+
+                          {/* Direct Contact Actions */}
+                          <div
+                            className={`pt-2.5 border-t grid grid-cols-2 gap-2 ${
+                              isDark ? "border-white/10" : "border-slate-100"
+                            }`}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedGigForWhatsApp(pkg);
+                                setIsLeadModalOpen(true);
+                              }}
+                              className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                            >
+                              <MessageCircle className="h-3.5 w-3.5 fill-white" />
+                              <span>Book WhatsApp</span>
+                            </button>
+
+                            {mediaKitSettings.sponsorEmail && (
+                              <a
+                                href={mailUrl}
+                                className={`${
+                                  isDark
+                                    ? "bg-white text-slate-900 hover:bg-slate-100"
+                                    : "bg-slate-900 text-white hover:bg-slate-800"
+                                } text-xs font-bold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 shadow-2xs`}
+                              >
+                                <Mail className="h-3.5 w-3.5" />
+                                <span>Email Brief</span>
+                              </a>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    );
-                })}
-              </div>
-            );
-          })()}
-        </div>
-      )}
+                      );
+                    })}
+                  </div>
+
+                  {/* Toggle / View All Gigs Pill Button */}
+                  {displayPackages.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowAllGigs(!showAllGigs)}
+                      className={`w-full py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer border ${
+                        isDark
+                          ? "bg-slate-900/80 text-purple-300 border-purple-500/30 hover:bg-slate-900"
+                          : "bg-[#F6EBF1] text-[#803D63] border-[#E8DCE4] hover:bg-[#ECD3E2]"
+                      }`}
+                    >
+                      <span>
+                        {showAllGigs
+                          ? "Show Fewer Gigs ↑"
+                          : `+ ${remainingCount} More Collab Gig${remainingCount > 1 ? "s" : ""} Available ↓`}
+                      </span>
+                    </button>
+                  )}
+                </div>
+              );
+            })()}
+          </div>
+        )}
     </div>
 
       {/* Bottom Conversion Watermark */}
