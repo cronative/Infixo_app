@@ -27,6 +27,7 @@ import {
   FileSpreadsheet,
   Film,
   Tv,
+  Play,
   Layers,
   Award,
 } from "lucide-react";
@@ -212,6 +213,7 @@ export default function DashboardMediaKitPage() {
 
   // Public Preview Modal State
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
+  const [activePreviewTab, setActivePreviewTab] = useState<"series" | "mediakit">("series");
 
   const activeEmail = profile.email || authRepository.getPendingEmail() || "";
   const activeCreatorId = profile.id;
@@ -1173,21 +1175,18 @@ export default function DashboardMediaKitPage() {
         </div>
       )}
 
-      {/* PUBLIC MEDIA KIT PREVIEW MODAL (LIVE BRAND VIEW) */}
+      {/* PUBLIC MEDIA KIT PREVIEW MODAL (LIVE BRAND & FAN VIEW) */}
       {isPreviewModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white border border-gray-200 rounded-3xl max-w-3xl w-full p-6 shadow-2xl space-y-6 text-left max-h-[90vh] overflow-y-auto">
+          <div className="bg-white border border-gray-200 rounded-3xl max-w-3xl w-full p-6 shadow-2xl space-y-5 text-left max-h-[90vh] overflow-y-auto">
+            
+            {/* Modal Header & Close Button */}
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#F6EBF1] text-[#803D63]">
-                  <Briefcase className="h-4 w-4" />
-                </div>
-                <div>
-                  <h3 className="font-display text-base font-extrabold text-slate-900">
-                    Live Brand View — {profile.displayName || "Creator"} Media Kit
-                  </h3>
-                  <p className="text-[11px] text-slate-500 font-medium">This is how brand marketing managers view your verified reach &amp; lead routing</p>
-                </div>
+              <div>
+                <h3 className="font-display text-base font-extrabold text-slate-900">
+                  Live Public Preview — {profile.displayName || "Creator"}
+                </h3>
+                <p className="text-[11px] text-slate-500 font-medium">Switch tabs to test both Fan Viewer experience and Brand Sponsor view</p>
               </div>
               <button
                 type="button"
@@ -1198,142 +1197,292 @@ export default function DashboardMediaKitPage() {
               </button>
             </div>
 
-            {/* Public Header Preview */}
-            <div className="rounded-2xl bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-white p-6 space-y-3 relative">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="font-display text-2xl font-black">{profile.displayName || "Creator"}</h2>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-0.5 text-[10px] font-black">
-                      <ShieldCheck className="h-3 w-3" /> Verified by Inflixo
-                    </span>
-                  </div>
-                  <p className="text-xs text-indigo-200 font-medium mt-0.5">
-                    @{handleStr} • {profile.category || "Digital Creator"}
-                  </p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-xs border border-white/15 px-4 py-2 rounded-xl text-left sm:text-right shrink-0">
-                  <p className="text-[10px] text-slate-300 uppercase font-extrabold tracking-wider">Total Aggregated Reach</p>
-                  <p className="text-2xl font-black text-white">{formatCount(totalAudience)}</p>
-                </div>
-              </div>
-              {settings.bioHighlight && (
-                <p className="text-xs text-slate-300 font-medium pt-2 border-t border-white/10 leading-relaxed">
-                  "{settings.bioHighlight}"
-                </p>
-              )}
+            {/* 2-Tab Navigation Bar */}
+            <div className="flex items-center gap-2 bg-slate-100/80 p-1.5 rounded-2xl border border-gray-200">
+              <button
+                type="button"
+                onClick={() => setActivePreviewTab("series")}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                  activePreviewTab === "series"
+                    ? "bg-[#803D63] text-white shadow-2xs"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
+                }`}
+              >
+                <Film className="h-4 w-4" />
+                <span>🎬 Series &amp; Shows</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActivePreviewTab("mediakit")}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                  activePreviewTab === "mediakit"
+                    ? "bg-[#803D63] text-white shadow-2xs"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
+                }`}
+              >
+                <Briefcase className="h-4 w-4" />
+                <span>💼 Media Kit &amp; Collabs</span>
+              </button>
             </div>
 
-            {/* Public Gigs Grid (Active Only) */}
-            <div className="space-y-3">
-              <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider">
-                Official Collaboration Rate Cards ({packages.filter((p) => p.isActive).length})
-              </h4>
-
-              {packages.filter((p) => p.isActive).length === 0 ? (
-                <div className="rounded-xl border border-dashed border-gray-200 bg-slate-50 p-6 text-center text-xs text-slate-500 font-medium">
-                  No active gigs currently published.
+            {/* TAB 1: 🎬 SERIES & SHOWS (FAN & VIEWER AUDIENCE VIEW) */}
+            {activePreviewTab === "series" && (
+              <div className="space-y-4 animate-in fade-in duration-200">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                    <Film className="h-4 w-4 text-[#803D63]" />
+                    <span>Featured Series &amp; Shows ({series ? series.length : 0})</span>
+                  </h4>
+                  <span className="text-[11px] font-semibold text-slate-500">
+                    Default Audience View
+                  </span>
                 </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {packages.filter((p) => p.isActive).map((pkg) => {
-                    const waText = encodeURIComponent(
-                      `Hi ${profile.displayName || "Creator"}, I saw your "${pkg.title}" (${pkg.price}) package on Inflixo and want to collaborate.`
-                    );
-                    const waUrl = `https://wa.me/${cleanPhone}?text=${waText}`;
-                    const mailSubject = encodeURIComponent(`[Inflixo Collab Inquiry] - ${pkg.title}`);
-                    const mailBody = encodeURIComponent(`Hi ${profile.displayName || "Creator"},\n\nI would like to inquire about collaborating on your "${pkg.title}" package listed on Inflixo.\n\nBest regards,\n[Brand Representative]`);
-                    const mailUrl = `mailto:${settings.sponsorEmail}?subject=${mailSubject}&body=${mailBody}`;
 
-                    return (
-                      <div key={pkg.id} className="border border-gray-200 rounded-2xl p-4 space-y-3 bg-slate-50/60 hover:border-gray-300 transition-all flex flex-col justify-between">
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] text-[10px] font-bold px-2 py-0.5 rounded">
-                              {pkg.platform}
+                {series && series.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {series.map((ser: any) => {
+                      const episodeCount = ser.seasons
+                        ? ser.seasons.reduce((acc: number, season: any) => acc + (season.episodes?.length || 0), 0)
+                        : (ser.episodesCount || 0);
+
+                      return (
+                        <div key={ser.id} className="rounded-2xl border border-gray-200 overflow-hidden bg-slate-950 text-white shadow-md flex flex-col justify-between group hover:border-[#803D63] transition-all">
+                          <div className="aspect-video relative bg-slate-900 flex items-center justify-center overflow-hidden">
+                            {ser.posterDataUrl ? (
+                              <img src={ser.posterDataUrl} alt={ser.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                            ) : (
+                              <div className="flex flex-col items-center gap-1 text-slate-500">
+                                <Film className="h-8 w-8 text-slate-600" />
+                                <span className="text-[10px] font-bold">16:9 WIDESCREEN POSTER</span>
+                              </div>
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
+                            <span className="absolute bottom-2 left-2 bg-[#803D63] text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-2xs">
+                              🎬 {ser.seasons?.length || 1} Season • {episodeCount} Episodes
                             </span>
-                            <span className="font-black text-[#803D63] text-lg">{pkg.price}</span>
                           </div>
-                          <h5 className="font-bold text-slate-900 text-sm leading-snug">{pkg.title}</h5>
-                          <p className="text-[11px] text-slate-500 font-semibold flex items-center gap-1">
-                            <Clock className="h-3 w-3" /> Turnaround: {pkg.turnaroundDays} Days
-                          </p>
-                          <ul className="text-xs text-slate-600 space-y-1.5 pt-1">
-                            {pkg.deliverables.map((item, idx) => (
-                              <li key={idx} className="flex items-start gap-1.5">
-                                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                                <span>{item}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
 
-                        {/* Frictionless Direct Lead Actions */}
-                        <div className="pt-3 border-t border-gray-200 grid grid-cols-2 gap-2">
-                          <a
-                            href={waUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-2 rounded-xl transition-all inline-flex items-center justify-center gap-1 shadow-2xs"
-                          >
-                            <MessageCircle className="h-3.5 w-3.5 fill-white" />
-                            <span>WhatsApp</span>
-                          </a>
-                          <a
-                            href={mailUrl}
-                            className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2 px-2 rounded-xl transition-all inline-flex items-center justify-center gap-1 shadow-2xs"
-                          >
-                            <Mail className="h-3.5 w-3.5" />
-                            <span>Send Email</span>
-                          </a>
+                          <div className="p-4 space-y-2">
+                            <div className="flex items-start justify-between gap-2">
+                              <div>
+                                <h5 className="font-bold text-sm text-white group-hover:text-amber-300 transition-colors line-clamp-1">{ser.title}</h5>
+                                <p className="text-[11px] text-slate-400 font-medium truncate">{ser.genre || "Web Series"} • {ser.language || "Hindi"}</p>
+                              </div>
+                              {ser.rating && (
+                                <span className="bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0">
+                                  ⭐ {ser.rating}
+                                </span>
+                              )}
+                            </div>
+                            {ser.description && (
+                              <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
+                                {ser.description}
+                              </p>
+                            )}
+
+                            <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px]">
+                              <span className="text-slate-400 font-medium flex items-center gap-1">
+                                <Play className="h-3 w-3 text-indigo-400 fill-indigo-400" /> Free Episode Playlist
+                              </span>
+                              <span className="text-[#803D63] font-bold">Watch Now →</span>
+                            </div>
+                          </div>
                         </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="rounded-2xl border-2 border-dashed border-gray-200 bg-slate-50 p-8 text-center space-y-2">
+                    <Film className="h-8 w-8 text-slate-400 mx-auto" />
+                    <h4 className="font-bold text-slate-800 text-sm">No Series Published Yet</h4>
+                    <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                      Create OTT Series in <Link href="/dashboard/series" className="text-[#803D63] font-bold underline">Series &amp; Episodes</Link> to show widescreen posters &amp; episode playlists to your fans!
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB 2: 💼 MEDIA KIT & COLLABS (BRAND MANAGER / SPONSOR VIEW) */}
+            {activePreviewTab === "mediakit" && (
+              <div className="space-y-5 animate-in fade-in duration-200">
+                {/* Public Header Preview */}
+                <div className="rounded-2xl bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-white p-6 space-y-4 relative">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h2 className="font-display text-2xl font-black">{profile.displayName || "Creator"}</h2>
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-0.5 text-[10px] font-black">
+                          <ShieldCheck className="h-3 w-3" /> Verified by Inflixo
+                        </span>
                       </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+                      <p className="text-xs text-indigo-200 font-medium mt-0.5">
+                        @{handleStr} • {profile.category || "Digital Creator"}
+                      </p>
+                    </div>
+                    <div className="bg-white/10 backdrop-blur-xs border border-white/15 px-4 py-2 rounded-xl text-left sm:text-right shrink-0">
+                      <p className="text-[10px] text-slate-300 uppercase font-extrabold tracking-wider">Total Aggregated Reach</p>
+                      <p className="text-2xl font-black text-white">{formatCount(totalAudience)}</p>
+                    </div>
+                  </div>
 
-            {/* OTT Series & Episodes Summary Section in Preview Modal */}
-            <div className="pt-2 border-t border-gray-100 space-y-2">
-              <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                <Film className="h-3.5 w-3.5 text-[#803D63]" /> Production Portfolio Track Record
-              </h4>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex items-center gap-2.5 bg-slate-50 border border-gray-200 rounded-xl p-2.5">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] shrink-0">
-                    <Film className="h-3.5 w-3.5" />
-                  </div>
-                  <div>
-                    <p className="text-[9px] font-bold text-slate-500 uppercase">Total Series</p>
-                    <p className="font-display text-sm font-black text-slate-900">{totalSeriesCount} Series</p>
+                  {settings.bioHighlight && (
+                    <p className="text-xs text-slate-300 font-medium pt-2 border-t border-white/10 leading-relaxed">
+                      "{settings.bioHighlight}"
+                    </p>
+                  )}
+
+                  {/* Direct Contact Routing Bar */}
+                  <div className="pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
+                    <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                      <Zap className="h-3.5 w-3.5 text-amber-400" /> Direct Brand Inquiry Routing (0% Commission):
+                    </span>
+                    <div className="flex items-center gap-2">
+                      {cleanPhone && (
+                        <a
+                          href={`https://wa.me/${cleanPhone}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs"
+                        >
+                          <MessageCircle className="h-3.5 w-3.5 fill-white" />
+                          <span>💬 WhatsApp Chat</span>
+                        </a>
+                      )}
+                      {settings.sponsorEmail && (
+                        <a
+                          href={`mailto:${settings.sponsorEmail}`}
+                          className="bg-white hover:bg-slate-100 text-slate-900 text-xs font-extrabold px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs"
+                        >
+                          <Mail className="h-3.5 w-3.5 text-[#803D63]" />
+                          <span>✉️ Send Email</span>
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 bg-slate-50 border border-gray-200 rounded-xl p-2.5">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100 shrink-0">
-                    <Tv className="h-3.5 w-3.5" />
+                {/* Public Gigs Grid (Active Only - 2 per row) */}
+                <div className="space-y-3">
+                  <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                    <FileSpreadsheet className="h-4 w-4 text-[#803D63]" />
+                    <span>Official Collaboration Rate Cards ({packages.filter((p) => p.isActive).length})</span>
+                  </h4>
+
+                  {packages.filter((p) => p.isActive).length === 0 ? (
+                    <div className="rounded-xl border border-dashed border-gray-200 bg-slate-50 p-6 text-center text-xs text-slate-500 font-medium">
+                      No active rate card packages published currently.
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {packages.filter((p) => p.isActive).map((pkg) => {
+                        const waText = encodeURIComponent(
+                          `Hi ${profile.displayName || "Creator"}, I saw your "${pkg.title}" (${pkg.price}) package on Inflixo and want to collaborate.`
+                        );
+                        const waUrl = `https://wa.me/${cleanPhone}?text=${waText}`;
+                        const mailSubject = encodeURIComponent(`[Inflixo Collab Inquiry] - ${pkg.title}`);
+                        const mailBody = encodeURIComponent(`Hi ${profile.displayName || "Creator"},\n\nI would like to inquire about collaborating on your "${pkg.title}" package listed on Inflixo.\n\nBest regards,\n[Brand Representative]`);
+                        const mailUrl = `mailto:${settings.sponsorEmail}?subject=${mailSubject}&body=${mailBody}`;
+
+                        return (
+                          <div key={pkg.id} className="border border-gray-200 rounded-2xl p-5 space-y-3 bg-white hover:border-[#803D63] transition-all flex flex-col justify-between shadow-2xs relative">
+                            {(pkg.badge || pkg.packageName || pkg.isPopular) && (
+                              <span className="absolute -top-2.5 right-3 bg-[#803D63] text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-2xs">
+                                {pkg.badge || pkg.packageName || "⭐ MOST POPULAR"}
+                              </span>
+                            )}
+
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span className="bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] text-[10px] font-extrabold px-2 py-0.5 rounded uppercase">
+                                  {pkg.platform}
+                                </span>
+                                <span className="font-black text-[#803D63] text-lg">{pkg.price}</span>
+                              </div>
+                              <h5 className="font-bold text-slate-900 text-sm leading-snug">{pkg.title}</h5>
+                              <p className="text-[11px] text-slate-500 font-semibold flex items-center gap-1">
+                                <Clock className="h-3 w-3 text-[#803D63]" /> Turnaround: {pkg.turnaroundDays} Days
+                              </p>
+                              <ul className="text-xs text-slate-600 space-y-1.5 pt-1">
+                                {pkg.deliverables.map((item, idx) => (
+                                  <li key={idx} className="flex items-start gap-1.5">
+                                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                                    <span>{item}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+
+                            {/* Frictionless Direct Lead Actions */}
+                            <div className="pt-3 border-t border-gray-100 grid grid-cols-2 gap-2">
+                              <a
+                                href={waUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-2 rounded-xl transition-all inline-flex items-center justify-center gap-1 shadow-2xs"
+                              >
+                                <MessageCircle className="h-3.5 w-3.5 fill-white" />
+                                <span>WhatsApp</span>
+                              </a>
+                              <a
+                                href={mailUrl}
+                                className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2 px-2 rounded-xl transition-all inline-flex items-center justify-center gap-1 shadow-2xs"
+                              >
+                                <Mail className="h-3.5 w-3.5" />
+                                <span>Send Email</span>
+                              </a>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* OTT Series & Episodes Track Record Summary */}
+                <div className="pt-2 border-t border-gray-100 space-y-2">
+                  <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                    <Film className="h-3.5 w-3.5 text-[#803D63]" /> Production Portfolio Track Record
+                  </h4>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="flex items-center gap-2.5 bg-slate-50 border border-gray-200 rounded-xl p-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] shrink-0">
+                        <Film className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="text-[9px] font-bold text-slate-500 uppercase">Total Series</p>
+                        <p className="font-display text-sm font-black text-slate-900">{totalSeriesCount} Series</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5 bg-slate-50 border border-gray-200 rounded-xl p-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100 shrink-0">
+                        <Tv className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="text-[9px] font-bold text-slate-500 uppercase">Total Episodes</p>
+                        <p className="font-display text-sm font-black text-slate-900">{totalEpisodesCount} Episodes</p>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-[9px] font-bold text-slate-500 uppercase">Total Episodes</p>
-                    <p className="font-display text-sm font-black text-slate-900">{totalEpisodesCount} Episodes</p>
+                </div>
+
+                {/* Past Brand Collaborations Grayscale Bar */}
+                <div className="pt-2 border-t border-gray-100 text-center space-y-1.5">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Past Brand Collaborations</p>
+                  <div className="flex flex-wrap items-center justify-center gap-5 text-xs font-black text-slate-400 grayscale opacity-75">
+                    <span>NIKE</span>
+                    <span>boAt</span>
+                    <span>MAMAEARTH</span>
+                    <span>SWIGGY</span>
+                    <span>ZOMATO</span>
+                    <span>SAMSUNG</span>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* Past Brand Collaborations Grayscale Bar */}
-            <div className="pt-2 border-t border-gray-100 text-center space-y-1.5">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Past Brand Collaborations</p>
-              <div className="flex flex-wrap items-center justify-center gap-5 text-xs font-black text-slate-400 grayscale opacity-75">
-                <span>NIKE</span>
-                <span>boAt</span>
-                <span>MAMAEARTH</span>
-                <span>SWIGGY</span>
-                <span>ZOMATO</span>
-                <span>SAMSUNG</span>
-              </div>
-            </div>
           </div>
         </div>
       )}
