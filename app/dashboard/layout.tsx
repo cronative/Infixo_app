@@ -13,6 +13,7 @@ import { useToast } from "@/contexts/ToastContext";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
+import { OnboardingService } from "@/services/OnboardingService";
 
 function DesktopTopHeader() {
   const { profile } = useCreator();
@@ -72,6 +73,25 @@ function DesktopTopHeader() {
 function Shell({ children }: { children: ReactNode }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { loading } = useCreator();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading) {
+      const step = OnboardingService.getStep();
+      if (step && step !== "finish") {
+        const stepRoutes: Record<string, string> = {
+          profile: "/onboarding/profile",
+          socials: "/onboarding/socials",
+          theme: "/onboarding/themes",
+          themes: "/onboarding/themes",
+          series: "/onboarding/series",
+          subscription: "/onboarding/subscription",
+        };
+        const targetRoute = stepRoutes[step] || "/onboarding/profile";
+        router.replace(targetRoute);
+      }
+    }
+  }, [loading, router]);
 
   if (loading) {
     return <SyncingLoader message="Syncing your creator profile, series & stats..." fullScreen />;

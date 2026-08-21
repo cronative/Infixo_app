@@ -55,7 +55,7 @@ export default function VerifyOtpPage() {
     try {
       const { isExistingProfile, onboardingStep } = await AuthService.verifyOtp(code);
 
-      if (isExistingProfile || onboardingStep === "finish") {
+      if (onboardingStep === "finish") {
         showToast("Welcome back! Syncing your profile 🎉");
         router.push("/dashboard");
       } else {

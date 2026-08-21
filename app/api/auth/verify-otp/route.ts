@@ -88,24 +88,28 @@ export async function POST(req: Request) {
       );
       if (stepRows && stepRows.length > 0) {
         const lastStep = stepRows[0].step_name;
-        if (lastStep === "finish" || lastStep === "subscription") {
+        if (lastStep === "finish") {
           currentStep = "finish";
-        } else if (lastStep === "series") {
+        } else if (lastStep === "subscription") {
           currentStep = "subscription";
-        } else if (lastStep === "socials") {
+        } else if (lastStep === "series") {
+          currentStep = "series";
+        } else if (lastStep === "theme" || lastStep === "themes") {
           currentStep = "theme";
-        } else if (lastStep === "profile") {
+        } else if (lastStep === "socials") {
           currentStep = "socials";
+        } else if (lastStep === "profile") {
+          currentStep = "profile";
+        } else {
+          currentStep = "profile";
         }
       }
     } catch (e: any) {
       console.warn("⚠️ Could not read completed step:", e.message);
     }
 
-    // Determine if creator has already finished onboarding or has display_name set
-    const isExistingProfile = Boolean(
-      currentStep === "finish" || (creator && creator.display_name && creator.display_name.trim().length > 0)
-    );
+    // Determine if creator has already finished onboarding
+    const isExistingProfile = Boolean(currentStep === "finish");
 
     return NextResponse.json({
       success: true,
