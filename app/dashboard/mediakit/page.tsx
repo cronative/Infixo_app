@@ -1393,48 +1393,54 @@ export default function DashboardMediaKitPage() {
                         const mailUrl = `mailto:${settings.sponsorEmail}?subject=${mailSubject}&body=${mailBody}`;
 
                         return (
-                          <div key={pkg.id} className="border border-gray-200 rounded-2xl p-5 space-y-3 bg-white hover:border-[#803D63] transition-all flex flex-col justify-between shadow-2xs relative">
-                            {(pkg.badge || pkg.packageName || pkg.isPopular) && (
-                              <span className="absolute -top-2.5 right-3 bg-[#803D63] text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-2xs">
-                                {pkg.badge || pkg.packageName || "⭐ MOST POPULAR"}
-                              </span>
-                            )}
-
-                            <div className="space-y-2">
-                              <div className="flex items-center justify-between">
-                                <span className="bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] text-[10px] font-extrabold px-2 py-0.5 rounded uppercase">
-                                  {pkg.platform}
-                                </span>
-                                <span className="font-black text-[#803D63] text-lg">{pkg.price}</span>
+                          <div key={pkg.id} className="border border-slate-200/80 rounded-2xl p-4 space-y-3 bg-white text-left transition-all flex flex-col justify-between shadow-2xs">
+                            <div className="space-y-3">
+                              {/* Header Row: Platform Pill + Badge + Price */}
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                                    {pkg.platform}
+                                  </span>
+                                  {(pkg.badge || pkg.packageName || pkg.isPopular) && (
+                                    <span className="bg-amber-100 text-amber-900 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                      {pkg.badge || pkg.packageName || "⭐ POPULAR"}
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="font-display text-base font-extrabold text-[#803D63] shrink-0">{pkg.price}</span>
                               </div>
-                              <h5 className="font-bold text-slate-900 text-sm leading-snug">{pkg.title}</h5>
-                              <p className="text-[11px] text-slate-500 font-semibold flex items-center gap-1">
-                                <Clock className="h-3 w-3 text-[#803D63]" /> Turnaround: {pkg.turnaroundDays} Days
-                              </p>
-                              <ul className="text-xs text-slate-600 space-y-1.5 pt-1">
+
+                              <div>
+                                <h5 className="font-bold text-slate-900 text-sm leading-snug">{pkg.title}</h5>
+                                <p className="text-[11px] text-slate-500 font-medium mt-0.5 flex items-center gap-1">
+                                  <Clock className="h-3 w-3 shrink-0" /> Turnaround: {pkg.turnaroundDays} Days
+                                </p>
+                              </div>
+
+                              <ul className="text-xs text-slate-600 space-y-1.5 pt-2 border-t border-slate-100">
                                 {pkg.deliverables.map((item, idx) => (
-                                  <li key={idx} className="flex items-start gap-1.5">
-                                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                                    <span>{item}</span>
+                                  <li key={idx} className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                                    <span className="leading-snug">{item}</span>
                                   </li>
                                 ))}
                               </ul>
                             </div>
 
                             {/* Frictionless Direct Lead Actions */}
-                            <div className="pt-3 border-t border-gray-100 grid grid-cols-2 gap-2">
+                            <div className="pt-2.5 border-t border-slate-100 grid grid-cols-2 gap-2">
                               <a
                                 href={waUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-2 rounded-xl transition-all inline-flex items-center justify-center gap-1 shadow-2xs"
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 shadow-2xs"
                               >
                                 <MessageCircle className="h-3.5 w-3.5 fill-white" />
                                 <span>WhatsApp</span>
                               </a>
                               <a
                                 href={mailUrl}
-                                className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2 px-2 rounded-xl transition-all inline-flex items-center justify-center gap-1 shadow-2xs"
+                                className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 shadow-2xs"
                               >
                                 <Mail className="h-3.5 w-3.5" />
                                 <span>Send Email</span>
