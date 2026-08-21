@@ -423,20 +423,28 @@ export default function CreatorEmailSenderPage() {
                 {/* Live Activity Logs Console */}
                 <div className="rounded-xl bg-slate-50 border border-slate-200 p-3 space-y-2 max-h-60 overflow-y-auto font-mono text-xs">
                   {dispatchLogs.map((log, idx) => (
-                    <div key={idx} className="flex items-start justify-between gap-2 border-b border-slate-200/80 pb-1.5 text-left">
-                      <div className="flex items-center gap-2 min-w-0">
-                        {log.status === "sending" && <div className="h-2 w-2 rounded-full bg-amber-500 animate-ping shrink-0" />}
-                        {log.status === "success" && <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />}
-                        {log.status === "failed" && <XCircle className="h-3.5 w-3.5 text-rose-600 shrink-0" />}
+                    <div key={idx} className="flex flex-col gap-1 border-b border-slate-200/80 pb-1.5 text-left">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                          {log.status === "sending" && <div className="h-2 w-2 rounded-full bg-amber-500 animate-ping shrink-0" />}
+                          {log.status === "success" && <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />}
+                          {log.status === "failed" && <XCircle className="h-3.5 w-3.5 text-rose-600 shrink-0" />}
 
-                        <span className="truncate font-semibold text-slate-800">{log.email}</span>
+                          <span className="truncate font-semibold text-slate-800">{log.email}</span>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0 text-[10px]">
+                          <span className="text-slate-400">{log.timestamp}</span>
+                          {log.status === "success" && <span className="text-emerald-700 font-bold">Sent</span>}
+                          {log.status === "failed" && <span className="text-rose-700 font-bold">Failed</span>}
+                        </div>
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0 text-[10px]">
-                        <span className="text-slate-400">{log.timestamp}</span>
-                        {log.status === "success" && <span className="text-emerald-700 font-bold">Sent</span>}
-                        {log.status === "failed" && <span className="text-rose-700 font-bold">Failed</span>}
-                      </div>
+                      {log.status === "failed" && log.error && (
+                        <p className="text-[10px] text-rose-600 font-mono bg-rose-50 border border-rose-200 rounded px-2 py-0.5 mt-0.5">
+                          Error: {log.error}
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>

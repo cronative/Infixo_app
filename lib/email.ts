@@ -141,7 +141,7 @@ export async function sendBroadcastEmail(
   toEmail: string,
   subject: string,
   messageBodyHtml: string
-): Promise<boolean> {
+): Promise<{ success: boolean; error?: string }> {
   const from = process.env.EMAIL_FROM || '"Inflixo App" <inflixoapp@gmail.com>';
 
   const html = `
@@ -190,6 +190,7 @@ export async function sendBroadcastEmail(
     </html>
   `;
 
+  // First Attempt: Primary Transporter (Port 465 SSL)
   try {
     await transporter.sendMail({
       from,
@@ -198,9 +199,37 @@ export async function sendBroadcastEmail(
       html,
     });
     console.log(`✉️ Broadcast Email sent from inflixoapp@gmail.com to ${toEmail}`);
-    return true;
-  } catch (err: any) {
-    console.error(`❌ Failed to send broadcast email to ${toEmail}:`, err.message || err);
-    return false;
+    return { success: true };
+  } catch (err1: any) {
+    const errorMsg1 = err1?.message || String(err1);
+    console.warn(`⚠️ Primary transport failed for ${toEmail}: ${errorMsg1}. Attempting port 587 fallback...`);
+
+    // Fallback Attempt: Port 587 STARTTLS
+    try {
+      const fallbackTransporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST || "smtp.gmail.com",
+        port: 587,
+        secure: false, // STARTTLS
+        auth: {
+          user: process.env.SMTP_USER || "inflixoapp@gmail.com",
+          pass: process.env.SMTP_PASS || "ftiddrjlspvjiodl",
+        },
+        tls: { rejectUnauthorized: false },
+      });
+
+      await fallbackTransporter.sendMail({
+        from,
+        to: toEmail,
+        subject,
+        html,
+      });
+
+      console.log(`✉️ Fallback Broadcast Email sent to ${toEmail} via Port 587`);
+      return { success: true };
+    } catch (err2: any) {
+      const finalError = err2?.message || errorMsg1;
+      console.error(`❌ Failed to send broadcast email to ${toEmail}:`, finalError);
+      return { success: false, error: finalError };
+    }
   }
 }

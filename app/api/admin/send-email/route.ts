@@ -27,23 +27,26 @@ export async function POST(req: Request) {
     }
 
     let successCount = 0;
-    const failedEmails: string[] = [];
+    const failedEmails: { email: string; error?: string }[] = [];
+    let lastError: string | undefined = undefined;
 
     // Send emails in sequence
     for (const email of validEmails) {
-      const ok = await sendBroadcastEmail(email, subject.trim(), bodyHtml.trim());
-      if (ok) {
+      const res = await sendBroadcastEmail(email, subject.trim(), bodyHtml.trim());
+      if (res.success) {
         successCount++;
       } else {
-        failedEmails.push(email);
+        lastError = res.error;
+        failedEmails.push({ email, error: res.error });
       }
     }
 
     return NextResponse.json({
-      success: true,
+      success: successCount > 0,
       sentCount: successCount,
       failedCount: failedEmails.length,
       failedEmails,
+      error: lastError,
     });
   } catch (err: any) {
     console.error("Admin Email Send Error:", err);
