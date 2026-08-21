@@ -17,7 +17,7 @@ import {
   X,
   Play,
   Copy,
-  Layers,
+  Briefcase,
   Crown,
   Filter,
   ArrowUpRight,
@@ -25,20 +25,20 @@ import {
   Mail,
   Send,
   Loader2,
-  FileText,
-  AtSign,
-  AlertCircle,
-  Plus,
+  MoreVertical,
+  UserCheck,
+  Ban,
+  Clock,
+  CheckCircle2,
 } from "lucide-react";
 import { AdminService, AdminUser } from "@/services/AdminService";
 import { Logo } from "@/components/shared/Logo";
-import { formatCount, formatSyncDate } from "@/utils/format";
-import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { SeriesPoster } from "@/components/shared/SeriesPoster";
 import { useToast } from "@/contexts/ToastContext";
 import { ProfileService } from "@/services/ProfileService";
 import { SeriesService } from "@/services/SeriesService";
+import { authRepository, profileRepository, onboardingRepository } from "@/repositories/localRepository";
 
 interface AdminCreator {
   id: number | string;
@@ -50,11 +50,15 @@ interface AdminCreator {
   bio: string;
   themeKey: string;
   isVerified: boolean;
+  accountStatus: "active" | "suspended" | string;
   createdAt: string;
+  planKey?: string;
   planName?: string;
   planStatus?: string;
-  totalFanbase?: number;
   seriesCount?: number;
+  gigsCount?: number;
+  minGigPrice?: string;
+  maxGigPrice?: string;
 }
 
 interface AdminSeries {
@@ -90,348 +94,21 @@ const EMAIL_TEMPLATES = [
     id: "india_creators",
     name: "🇮🇳 India Creators 100K Mission",
     subject: "Thank you for creating content in India — Join the Inflixo 100K Mission 🚀",
-    body: `<h2 style="color: #803D63; margin-top: 0; font-size: 20px;">Hello Content Creator,</h2>
+    body: `<h2 style="color: #7A1C3C; margin-top: 0; font-size: 20px;">Hello Content Creator,</h2>
 <p>First of all, a massive <strong>THANK YOU</strong> for inspiring millions by creating amazing content in India! 🇮🇳✨</p>
-<p>As creators ourselves, we know how hard you work every day to script, shoot, and edit. But we also noticed the major challenges creators face today:</p>
-
-<div style="background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 18px 20px; margin: 20px 0;">
-  <p style="margin: 0 0 10px 0;">🔴 <strong>Fragmented Audience:</strong> Your followers are scattered across Instagram, YouTube & Facebook with no single official home.</p>
-  <p style="margin: 0 0 10px 0;">🎬 <strong>Lost Video Series:</strong> Multi-part video series get buried deep inside social algorithms.</p>
-  <p style="margin: 0;">🔗 <strong>Outdated Link Tools:</strong> Generic link-in-bio tools that don't highlight your total reach or OTT content.</p>
-</div>
-
-<p>That's why we built <strong>Inflixo</strong> — your official creator home page to showcase your total combined fanbase, organize OTT series into seasons, and pick from 20 aesthetic design themes.</p>
-
-<!-- REAL INFLIXO LANDING PAGE LIVE PREVIEW CARD (100% IDENTICAL REPLICA) -->
-<div style="margin: 28px 0; background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 32px; padding: 24px; text-align: center; box-shadow: 0 12px 36px rgba(99, 102, 241, 0.12); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-  
-  <!-- Top Bar -->
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 20px;">
-    <tr>
-      <td align="left">
-        <div style="display: inline-block; background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 20px; padding: 5px 14px 5px 8px;">
-          <table role="presentation" cellspacing="0" cellpadding="0" border="0">
-            <tr>
-              <td style="width: 24px; height: 24px; border-radius: 10px; background: #803D63; color: #FFFFFF; font-weight: 800; font-size: 11px; text-align: center; line-height: 24px;">
-                I
-              </td>
-              <td style="padding-left: 8px; font-size: 13px; font-weight: 900; color: #0F172A;">
-                Inflixo
-              </td>
-            </tr>
-          </table>
-        </div>
-      </td>
-      <td align="right">
-        <div style="display: inline-block; background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 20px; padding: 4px 10px;">
-          <span style="font-size: 12px; color: #64748B;">🔗 ↗</span>
-        </div>
-      </td>
-    </tr>
-  </table>
-
-  <!-- Creator Avatar -->
-  <div style="margin: 0 auto; width: 96px; height: 96px;">
-    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80" alt="Tony Stark" width="96" height="96" style="border-radius: 50%; object-fit: cover; border: 3px solid #FFFFFF; box-shadow: 0 8px 20px rgba(0,0,0,0.15); display: block;" />
-  </div>
-
-  <!-- Name -->
-  <h3 style="margin: 14px 0 4px 0; font-size: 20px; font-weight: 900; color: #0F172A;">
-    Tony Stark
-  </h3>
-  
-  <!-- Handle Pill -->
-  <div style="display: inline-block; background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 20px; padding: 4px 14px; margin-top: 2px;">
-    <span style="font-size: 12px; font-weight: 800; color: #6512FA;">inflixo.com/tonystark 📋</span>
-  </div>
-
-  <!-- Category Badge -->
-  <div style="margin-top: 10px;">
-    <span style="display: inline-block; background-color: #F3E8FF; border: 1px solid #DDD6FE; color: #6512FA; font-size: 11px; font-weight: 800; padding: 4px 14px; border-radius: 16px;">
-      Technology &amp; AI
-    </span>
-  </div>
-
-  <!-- Bio -->
-  <p style="margin: 12px 0 16px 0; font-size: 13px; color: #475569; font-weight: 500; line-height: 1.5; padding: 0 12px;">
-    🚀 Genius, Tech Creator &amp; Founder of Stark Industries ✨ Building AI, Robotics &amp; Armor Series
-  </p>
-
-  <!-- Clean Sober Fanbase Card -->
-  <div style="background-color: #FAF5FF; border: 1px solid #E9D5FF; border-radius: 20px; padding: 14px; margin-bottom: 16px; text-align: center;">
-    <p style="margin: 0; font-size: 22px; font-weight: 900; color: #0F172A;">
-      ❤️ 20.5M
-    </p>
-    <p style="margin: 3px 0 0 0; font-size: 10px; font-weight: 900; color: #6512FA; text-transform: uppercase; letter-spacing: 1px;">
-      TOTAL FANBASE
-    </p>
-  </div>
-
-  <!-- Social Connection Link Cards (Touch-Friendly 44px) -->
-  <div style="margin-bottom: 24px;">
-    <!-- Instagram Card -->
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; padding: 12px 14px; margin-bottom: 10px;">
-      <tr>
-        <td width="38" style="vertical-align: middle;">
-          <div style="width: 36px; height: 36px; border-radius: 12px; background: linear-gradient(135deg, #F59E0B, #E11D48, #9333EA); color: #FFFFFF; text-align: center; line-height: 36px; font-size: 15px; font-weight: 800;">
-            📸
-          </div>
-        </td>
-        <td style="padding-left: 12px; text-align: left; vertical-align: middle;">
-          <p style="margin: 0; font-size: 13px; font-weight: 900; color: #0F172A;">Instagram</p>
-          <p style="margin: 1px 0 0 0; font-size: 11px; font-weight: 600; color: #64748B;">@tonystark</p>
-        </td>
-        <td align="right" style="vertical-align: middle;">
-          <div style="text-align: right; display: inline-block;">
-            <p style="margin: 0; font-size: 13px; font-weight: 900; color: #0F172A;">4.8M</p>
-            <p style="margin: 1px 0 0 0; font-size: 9px; font-weight: 800; color: #64748B; text-transform: uppercase;">Followers</p>
-          </div>
-          <div style="display: inline-block; vertical-align: middle; margin-left: 8px; width: 34px; height: 34px; border-radius: 10px; background-color: #F3E8FF; color: #6512FA; text-align: center; line-height: 34px; font-weight: 800; font-size: 13px;">
-            ↗
-          </div>
-        </td>
-      </tr>
-    </table>
-
-    <!-- YouTube Card -->
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; padding: 12px 14px; margin-bottom: 10px;">
-      <tr>
-        <td width="38" style="vertical-align: middle;">
-          <div style="width: 36px; height: 36px; border-radius: 12px; background-color: #DC2626; color: #FFFFFF; text-align: center; line-height: 36px; font-size: 15px; font-weight: 800;">
-            🎥
-          </div>
-        </td>
-        <td style="padding-left: 12px; text-align: left; vertical-align: middle;">
-          <p style="margin: 0; font-size: 13px; font-weight: 900; color: #0F172A;">YouTube</p>
-          <p style="margin: 1px 0 0 0; font-size: 11px; font-weight: 600; color: #64748B;">Stark Tech Vlogs</p>
-        </td>
-        <td align="right" style="vertical-align: middle;">
-          <div style="text-align: right; display: inline-block;">
-            <p style="margin: 0; font-size: 13px; font-weight: 900; color: #0F172A;">12.5M</p>
-            <p style="margin: 1px 0 0 0; font-size: 9px; font-weight: 800; color: #64748B; text-transform: uppercase;">Subscribers</p>
-          </div>
-          <div style="display: inline-block; vertical-align: middle; margin-left: 8px; width: 34px; height: 34px; border-radius: 10px; background-color: #F3E8FF; color: #6512FA; text-align: center; line-height: 34px; font-weight: 800; font-size: 13px;">
-            ↗
-          </div>
-        </td>
-      </tr>
-    </table>
-
-    <!-- Facebook Card -->
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; padding: 12px 14px;">
-      <tr>
-        <td width="38" style="vertical-align: middle;">
-          <div style="width: 36px; height: 36px; border-radius: 12px; background-color: #2563EB; color: #FFFFFF; text-align: center; line-height: 36px; font-size: 15px; font-weight: 800;">
-            📘
-          </div>
-        </td>
-        <td style="padding-left: 12px; text-align: left; vertical-align: middle;">
-          <p style="margin: 0; font-size: 13px; font-weight: 900; color: #0F172A;">Facebook</p>
-          <p style="margin: 1px 0 0 0; font-size: 11px; font-weight: 600; color: #64748B;">@tonystark</p>
-        </td>
-        <td align="right" style="vertical-align: middle;">
-          <div style="text-align: right; display: inline-block;">
-            <p style="margin: 0; font-size: 13px; font-weight: 900; color: #0F172A;">3.2M</p>
-            <p style="margin: 1px 0 0 0; font-size: 9px; font-weight: 800; color: #64748B; text-transform: uppercase;">Followers</p>
-          </div>
-          <div style="display: inline-block; vertical-align: middle; margin-left: 8px; width: 34px; height: 34px; border-radius: 10px; background-color: #F3E8FF; color: #6512FA; text-align: center; line-height: 34px; font-weight: 800; font-size: 13px;">
-            ↗
-          </div>
-        </td>
-      </tr>
-    </table>
-  </div>
-
-  <!-- OTT SERIES SECTION -->
-  <div style="text-align: left;">
-    <div style="text-align: center; margin-bottom: 12px;">
-      <p style="margin: 0 0 2px 0; font-size: 11px; font-weight: 900; color: #64748B; text-transform: uppercase; letter-spacing: 0.8px;">
-        SERIES
-      </p>
-      <p style="margin: 0; font-size: 11px; font-weight: 800; color: #6512FA;">
-        🎬 1 Series · 4 Episodes
-      </p>
-    </div>
-
-    <!-- PreviewSeriesItem Container -->
-    <div style="background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
-      
-      <!-- 16:9 Widescreen Series Poster Banner -->
-      <div style="position: relative; width: 100%; height: 180px; background-color: #0F172A; overflow: hidden; border-bottom: 1px solid #E2E8F0;">
-        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80" alt="Iron Tech Series Poster" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
-        <!-- Share button top right -->
-        <div style="position: absolute; top: 10px; right: 10px; background-color: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.3); border-radius: 10px; padding: 4px 10px; color: #FFFFFF; font-size: 11px; font-weight: 800;">
-          🔗 Share
-        </div>
-      </div>
-
-      <!-- Series Details Below Poster -->
-      <div style="padding: 16px;">
-        <h3 style="margin: 0 0 6px 0; font-size: 16px; font-weight: 900; color: #0F172A;">
-          Iron Tech Series
-        </h3>
-
-        <!-- Micro Badge Genre Chip -->
-        <div style="margin-bottom: 8px;">
-          <span style="display: inline-block; background-color: #F3E8FF; border: 1px solid #E9D5FF; color: #6512FA; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 6px;">
-            Technology
-          </span>
-        </div>
-
-        <p style="margin: 0 0 12px 0; font-size: 12px; color: #475569; font-weight: 500; line-height: 1.4;">
-          4-part tech breakdown of Arc Reactor &amp; J.A.R.V.I.S
-        </p>
-
-        <!-- Bottom Row: Episode Count + Watch Series Button -->
-        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-top: 1px solid #F1F5F9; padding-top: 12px; margin-bottom: 12px;">
-          <tr>
-            <td style="font-size: 12px; font-weight: 900; color: #6512FA;">
-              🎬 4 Episodes
-            </td>
-            <td align="right">
-              <div style="background-color: #6512FA; color: #FFFFFF; padding: 6px 14px; border-radius: 12px; font-size: 11px; font-weight: 900; display: inline-block;">
-                Watch Series →
-              </div>
-            </td>
-          </tr>
-        </table>
-
-        <!-- Episodes List Breakdown -->
-        <div>
-          <!-- Episode 1 -->
-          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 12px; margin-bottom: 6px;">
-            <tr>
-              <td width="26" style="vertical-align: middle;">
-                <div style="width: 22px; height: 22px; border-radius: 6px; background-color: #DC2626; color: #FFFFFF; font-size: 10px; font-weight: 800; text-align: center; line-height: 22px;">
-                  🎥
-                </div>
-              </td>
-              <td style="padding-left: 8px; vertical-align: middle; text-align: left;">
-                <p style="margin: 0; font-size: 11.5px; font-weight: 800; color: #0F172A;">E01 • Part 01: Arc Reactor Tech</p>
-                <p style="margin: 1px 0 0 0; font-size: 9.5px; font-weight: 600; color: #64748B;">YouTube</p>
-              </td>
-              <td align="right" style="vertical-align: middle; font-size: 11px; color: #64748B;">
-                ↗
-              </td>
-            </tr>
-          </table>
-
-          <!-- Episode 2 -->
-          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 12px; margin-bottom: 6px;">
-            <tr>
-              <td width="26" style="vertical-align: middle;">
-                <div style="width: 22px; height: 22px; border-radius: 6px; background-color: #DC2626; color: #FFFFFF; font-size: 10px; font-weight: 800; text-align: center; line-height: 22px;">
-                  🎥
-                </div>
-              </td>
-              <td style="padding-left: 8px; vertical-align: middle; text-align: left;">
-                <p style="margin: 0; font-size: 11.5px; font-weight: 800; color: #0F172A;">E02 • Part 02: Building Mark I</p>
-                <p style="margin: 1px 0 0 0; font-size: 9.5px; font-weight: 600; color: #64748B;">YouTube</p>
-              </td>
-              <td align="right" style="vertical-align: middle; font-size: 11px; color: #64748B;">
-                ↗
-              </td>
-            </tr>
-          </table>
-
-          <!-- Episode 3 -->
-          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 12px; margin-bottom: 6px;">
-            <tr>
-              <td width="26" style="vertical-align: middle;">
-                <div style="width: 22px; height: 22px; border-radius: 6px; background-color: #DC2626; color: #FFFFFF; font-size: 10px; font-weight: 800; text-align: center; line-height: 22px;">
-                  🎥
-                </div>
-              </td>
-              <td style="padding-left: 8px; vertical-align: middle; text-align: left;">
-                <p style="margin: 0; font-size: 11.5px; font-weight: 800; color: #0F172A;">E03 • Part 03: J.A.R.V.I.S AI System</p>
-                <p style="margin: 1px 0 0 0; font-size: 9.5px; font-weight: 600; color: #64748B;">YouTube</p>
-              </td>
-              <td align="right" style="vertical-align: middle; font-size: 11px; color: #64748B;">
-                ↗
-              </td>
-            </tr>
-          </table>
-
-          <!-- Episode 4 -->
-          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 12px;">
-            <tr>
-              <td width="26" style="vertical-align: middle;">
-                <div style="width: 22px; height: 22px; border-radius: 6px; background-color: #DC2626; color: #FFFFFF; font-size: 10px; font-weight: 800; text-align: center; line-height: 22px;">
-                  🎥
-                </div>
-              </td>
-              <td style="padding-left: 8px; vertical-align: middle; text-align: left;">
-                <p style="margin: 0; font-size: 11.5px; font-weight: 800; color: #0F172A;">E04 • Part 04: Nanotech Flight Test</p>
-                <p style="margin: 1px 0 0 0; font-size: 9.5px; font-weight: 600; color: #64748B;">YouTube</p>
-              </td>
-              <td align="right" style="vertical-align: middle; font-size: 11px; color: #64748B;">
-                ↗
-              </td>
-            </tr>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</div>
-
+<p>As creators ourselves, we know how hard you work every day to script, shoot, and edit. Inflixo helps you organize your OTT Series &amp; Media Kit Rate Cards in one home.</p>
 <div style="text-align: center; margin: 28px 0;">
-  <a href="https://inflixo.com/login" style="background: #803D63; color: #FFFFFF; padding: 14px 28px; text-decoration: none; border-radius: 14px; font-weight: 800; font-size: 14px; display: inline-block;">JOIN NOW — CREATE YOUR INFLIXO</a>
-</div>
-<p style="background-color: #FAF5FF; border: 1px solid #E9D5FF; border-radius: 14px; padding: 16px; color: #803D63; font-weight: 600; text-align: center;">
-  🚀 <strong>OUR MISSION:</strong> Empowering &amp; uniting over <strong>1,00,000+ Content Creators</strong> across India by <strong>March 2027</strong>!
-</p>
-<p>Let's build the future of creator economy together.</p>
-<p>With gratitude,<br/><strong>The Inflixo Team</strong></p>`,
+  <a href="https://inflixo.com/login" style="background: #7A1C3C; color: #FFFFFF; padding: 14px 28px; text-decoration: none; border-radius: 14px; font-weight: 800; font-size: 14px; display: inline-block;">JOIN NOW — CREATE YOUR INFLIXO</a>
+</div>`,
   },
   {
     id: "welcome",
     name: "🎉 Welcome Creator Template",
     subject: "Welcome to Inflixo! Set up your creator page 🚀",
-    body: `<h2 style="color: #6512FA; margin-top: 0;">Welcome to Inflixo Creator Home! 🎉</h2>
+    body: `<h2 style="color: #7A1C3C; margin-top: 0;">Welcome to Inflixo Creator Home! 🎉</h2>
 <p>Hi Creator,</p>
-<p>Thank you for joining <strong>Inflixo</strong> — the single link platform built for video creators to organize series, showcase seasons, and feature their total fanbase.</p>
-<p style="background-color: #F1F5F9; padding: 16px; border-radius: 12px; border-left: 4px solid #6512FA;">
-<strong>Next Steps:</strong> Add your Instagram, YouTube & Facebook handles, upload your OTT series, and pick from 20 aesthetic design themes.
-</p>
-<p>Log in to your dashboard to complete your page setup!</p>
-<p>Best regards,<br/><strong>The Inflixo Team</strong></p>`,
-  },
-  {
-    id: "update",
-    name: "✨ New Feature Release Template",
-    subject: "New on Inflixo: OTT Series & 20 Aesthetic Themes 🎬",
-    body: `<h2 style="color: #6512FA; margin-top: 0;">Exciting New Feature Release! ✨</h2>
-<p>Hello Creator,</p>
-<p>We've just launched major enhancements to your Inflixo Creator Page:</p>
-<ul>
-  <li><strong>20 Design Themes:</strong> Choose between Minimal, Cyberpunk, Midnight, Emerald Luxe & 16 more styles.</li>
-  <li><strong>OTT Series Accordion:</strong> Organize your YouTube/Instagram videos into seasons & parts.</li>
-  <li><strong>Timezone Sync Stats:</strong> Combined audience counters across all your connected socials.</li>
-</ul>
-<p>Check out your updated dashboard today!</p>
-<p>Cheers,<br/><strong>Inflixo Product Team</strong></p>`,
-  },
-  {
-    id: "early_access",
-    name: "👑 Pro Plan Early Access Invite",
-    subject: "Special Invitation: Unlock Early Access Features 👑",
-    body: `<h2 style="color: #6512FA; margin-top: 0;">You're Invited to Early Access Pro Features 👑</h2>
-<p>Dear Creator,</p>
-<p>As one of our early Inflixo creators, you get exclusive access to unlimited series creation, custom domain deeplinking, and priority sync stats.</p>
-<p style="text-align: center; margin: 24px 0;">
-  <a href="https://inflixo.com/dashboard" style="background-color: #6512FA; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 12px; font-weight: bold; display: inline-block;">Go to Dashboard</a>
-</p>
-<p>Keep creating,<br/><strong>Inflixo Team</strong></p>`,
-  },
-  {
-    id: "custom",
-    name: "📝 Custom Broadcast Message",
-    subject: "Important update from Inflixo",
-    body: `<p>Hi Creator,</p>
-<p>Write your custom email announcement or message here...</p>
-<p>Best regards,<br/><strong>Inflixo Team</strong></p>`,
+<p>Thank you for joining <strong>Inflixo</strong> — the single link platform built for video creators to organize series, showcase seasons, and feature their rate cards.</p>
+<p>Log in to your dashboard to complete your page setup!</p>`,
   },
 ];
 
@@ -441,14 +118,29 @@ export default function AdminDashboardPage() {
 
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
   const [activeTab, setActiveTab] = useState<"creators" | "series" | "email">("creators");
+  const [creatorFilter, setCreatorFilter] = useState<"all" | "vip" | "gigs" | "early">("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
 
   const [creators, setCreators] = useState<AdminCreator[]>([]);
   const [seriesList, setSeriesList] = useState<AdminSeries[]>([]);
+  const [stats, setStats] = useState({
+    totalCreators: 0,
+    totalSeries: 0,
+    totalEpisodes: 0,
+    totalActiveGigs: 0,
+    vipSubscribers: 0,
+  });
+
+  // Action Menu Dropdown State
+  const [openActionMenuId, setOpenActionMenuId] = useState<string | number | null>(null);
 
   // Selected Series Modal State
   const [selectedSeries, setSelectedSeries] = useState<AdminSeries | null>(null);
+
+  // Creator Gigs Preview Modal State
+  const [viewGigsCreator, setViewGigsCreator] = useState<AdminCreator | null>(null);
+  const [creatorGigs, setCreatorGigs] = useState<any[]>([]);
 
   // Email Broadcast State
   const [selectedTemplateId, setSelectedTemplateId] = useState("welcome");
@@ -471,7 +163,6 @@ export default function AdminDashboardPage() {
   async function loadAdminData() {
     setLoading(true);
     try {
-      // 1. Fetch DB records
       const [cRes, sRes] = await Promise.all([
         fetch("/api/admin/creators").then((r) => r.json()).catch(() => ({ success: false })),
         fetch("/api/admin/series").then((r) => r.json()).catch(() => ({ success: false })),
@@ -481,16 +172,21 @@ export default function AdminDashboardPage() {
       if (cRes.success && Array.isArray(cRes.creators)) {
         loadedCreators = cRes.creators;
       }
+      if (cRes.stats) {
+        setStats(cRes.stats);
+      }
 
       let loadedSeries: AdminSeries[] = [];
       if (sRes.success && Array.isArray(sRes.series)) {
         loadedSeries = sRes.series;
       }
 
-      // 2. Include local profile & local series if not already present
+      // Include local profile if missing
       const localProfile = ProfileService.getProfile();
       if (localProfile.username || localProfile.displayName) {
-        const exists = loadedCreators.some((c) => c.username?.toLowerCase() === localProfile.username?.toLowerCase());
+        const exists = loadedCreators.some(
+          (c) => c.username?.toLowerCase() === localProfile.username?.toLowerCase()
+        );
         if (!exists) {
           loadedCreators.unshift({
             id: "local_1",
@@ -498,35 +194,20 @@ export default function AdminDashboardPage() {
             displayName: localProfile.displayName || "Creator Profile",
             username: localProfile.username || "creator",
             photoDataUrl: localProfile.photoDataUrl,
-            category: localProfile.category || "Technology",
+            category: localProfile.category || "Technology & AI",
             bio: localProfile.bio || "",
             themeKey: "minimal-white",
             isVerified: true,
+            accountStatus: "active",
             createdAt: new Date().toISOString(),
+            planKey: "creator_VIP",
+            planName: "Creator VIP",
+            gigsCount: 2,
+            minGigPrice: "₹2,000",
+            maxGigPrice: "₹5,400",
+            seriesCount: 1,
           });
         }
-      }
-
-      const localSeries = SeriesService.getAllLocal();
-      if (Array.isArray(localSeries) && localSeries.length > 0) {
-        localSeries.forEach((ls) => {
-          const exists = loadedSeries.some((s) => s.id === ls.id);
-          if (!exists) {
-            loadedSeries.unshift({
-              id: ls.id,
-              creatorEmail: "nikunj.appz@gmail.com",
-              creatorName: localProfile.displayName || "Creator",
-              creatorUsername: localProfile.username || "creator",
-              title: ls.title,
-              posterDataUrl: ls.posterDataUrl,
-              description: ls.description || "",
-              genre: ls.genre || "General",
-              language: ls.language || "English",
-              createdAt: ls.createdAt || new Date().toISOString(),
-              seasons: ls.seasons || [],
-            });
-          }
-        });
       }
 
       setCreators(loadedCreators);
@@ -545,12 +226,84 @@ export default function AdminDashboardPage() {
     router.push("/admin/login");
   }
 
-  function handleTemplateSelect(tmplId: string) {
-    setSelectedTemplateId(tmplId);
-    const tmpl = EMAIL_TEMPLATES.find((t) => t.id === tmplId);
-    if (tmpl) {
-      setEmailSubject(tmpl.subject);
-      setEmailBody(tmpl.body);
+  async function handleGrantVIP(creator: AdminCreator) {
+    setOpenActionMenuId(null);
+    try {
+      const res = await fetch("/api/admin/creators", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "grant_vip", creatorId: creator.id, email: creator.email }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`VIP Plan granted to ${creator.displayName || creator.username}! ⭐`);
+        loadAdminData();
+      } else {
+        showToast(data.error || "Failed to grant VIP Plan", "error");
+      }
+    } catch {
+      showToast("Error granting VIP Plan", "error");
+    }
+  }
+
+  async function handleToggleStatus(creator: AdminCreator) {
+    setOpenActionMenuId(null);
+    try {
+      const res = await fetch("/api/admin/creators", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "toggle_status", creatorId: creator.id, email: creator.email }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`Account status updated to ${data.newStatus}`);
+        loadAdminData();
+      } else {
+        showToast(data.error || "Failed to update status", "error");
+      }
+    } catch {
+      showToast("Error updating account status", "error");
+    }
+  }
+
+  function handleImpersonate(creator: AdminCreator) {
+    setOpenActionMenuId(null);
+    authRepository.save({
+      email: creator.email,
+      isLoggedIn: true,
+      loggedInAt: new Date().toISOString(),
+      provider: "email",
+    });
+    profileRepository.save({
+      id: String(creator.id),
+      email: creator.email,
+      displayName: creator.displayName,
+      username: creator.username,
+      category: creator.category,
+      bio: creator.bio,
+      photoDataUrl: creator.photoDataUrl,
+      updatedAt: new Date().toISOString(),
+    });
+    onboardingRepository.saveStep("finish");
+    showToast(`Impersonating @${creator.username}... Redirecting to Dashboard 🚀`);
+    setTimeout(() => {
+      router.push("/dashboard");
+    }, 400);
+  }
+
+  async function handleViewGigs(creator: AdminCreator) {
+    setOpenActionMenuId(null);
+    setViewGigsCreator(creator);
+    try {
+      const res = await fetch(`/api/creator/mediakit?identifier=${encodeURIComponent(creator.email)}`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.packages)) {
+        setCreatorGigs(data.packages);
+      } else {
+        setCreatorGigs([]);
+      }
+    } catch {
+      setCreatorGigs([]);
     }
   }
 
@@ -577,13 +330,8 @@ export default function AdminDashboardPage() {
       return;
     }
 
-    if (!emailSubject.trim()) {
-      showToast("Please enter an email subject line", "error");
-      return;
-    }
-
-    if (!emailBody.trim()) {
-      showToast("Please enter email message content", "error");
+    if (!emailSubject.trim() || !emailBody.trim()) {
+      showToast("Please enter subject and message body", "error");
       return;
     }
 
@@ -601,29 +349,47 @@ export default function AdminDashboardPage() {
 
       const data = await res.json();
       if (data.success) {
-        showToast(`Sent ${data.sentCount} ${data.sentCount === 1 ? "email" : "emails"} successfully from inflixoapp@gmail.com! ✉️`);
-        if (data.failedCount > 0) {
-          showToast(`Warning: ${data.failedCount} failed to deliver`, "info");
-        }
+        showToast(`Sent ${data.sentCount} emails successfully! ✉️`);
       } else {
         showToast(data.error || "Could not send emails", "error");
       }
-    } catch (err: any) {
-      console.error("Send mail error:", err);
-      showToast("Failed to send broadcast emails. Try again!", "error");
+    } catch {
+      showToast("Failed to send broadcast emails", "error");
     } finally {
       setSendingEmail(false);
     }
   }
 
-  // Filtered lists
-  const filteredCreators = creators.filter(
-    (c) =>
+  // Filter calculations
+  const totalCreatorsCount = creators.length;
+  const vipCreatorsCount = creators.filter(
+    (c) => c.planKey === "creator_VIP" || (c.planName && c.planName.toLowerCase().includes("vip"))
+  ).length;
+  const gigsCreatorsCount = creators.filter((c) => Number(c.gigsCount || 0) > 0).length;
+  const earlyBirdCount = totalCreatorsCount - vipCreatorsCount;
+
+  // Filtered Creators based on tab & query
+  const filteredCreators = creators.filter((c) => {
+    const matchesSearch =
       c.displayName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.category?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+      c.category?.toLowerCase().includes(searchQuery.toLowerCase());
+
+    if (!matchesSearch) return false;
+
+    if (creatorFilter === "vip") {
+      return c.planKey === "creator_VIP" || (c.planName && c.planName.toLowerCase().includes("vip"));
+    }
+    if (creatorFilter === "gigs") {
+      return Number(c.gigsCount || 0) > 0;
+    }
+    if (creatorFilter === "early") {
+      return !(c.planKey === "creator_VIP" || (c.planName && c.planName.toLowerCase().includes("vip")));
+    }
+
+    return true;
+  });
 
   const filteredSeries = seriesList.filter(
     (s) =>
@@ -634,27 +400,27 @@ export default function AdminDashboardPage() {
       s.genre?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const totalEpisodesCount = seriesList.reduce((acc, s) => {
+  const totalEpisodesCount = stats.totalEpisodes || seriesList.reduce((acc, s) => {
     return acc + (s.seasons?.[0]?.episodes?.length || 0);
   }, 0);
 
   if (!adminUser) {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-[#FAF8FF]">
-        <div className="h-8 w-8 animate-spin rounded-full border-3 border-[#651FFF] border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-3 border-[#7A1C3C] border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-dvh bg-[#FAF8FF] text-[#0F172A] font-sans selection:bg-purple-100 selection:text-[#803D63]">
-      {/* 1. TOP LIGHT ADMIN NAVBAR */}
-      <header className="safe-top sticky top-0 z-40 border-b border-purple-100 bg-white/95 backdrop-blur-md px-4 sm:px-8 py-3.5 shadow-2xs">
+    <div className="min-h-dvh bg-[#FAF8FF] text-[#0F172A] font-sans selection:bg-rose-100 selection:text-[#7A1C3C]">
+      {/* 1. TOP MAROON ADMIN NAVBAR */}
+      <header className="safe-top sticky top-0 z-40 border-b border-rose-100 bg-white/95 backdrop-blur-md px-4 sm:px-8 py-3.5 shadow-2xs">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Logo size="sm" />
-            <div className="flex items-center gap-1.5 rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-black text-[#803D63]">
-              <ShieldCheck className="h-3.5 w-3.5 text-[#803D63]" />
+            <div className="flex items-center gap-1.5 rounded-full border border-[#7A1C3C]/20 bg-[#7A1C3C]/10 px-3.5 py-1 text-xs font-black text-[#7A1C3C]">
+              <ShieldCheck className="h-3.5 w-3.5 text-[#7A1C3C]" />
               <span>Admin Control Center</span>
             </div>
           </div>
@@ -665,7 +431,7 @@ export default function AdminDashboardPage() {
               className="tap-scale flex items-center gap-1.5 rounded-2xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-all cursor-pointer"
               title="Refresh Data"
             >
-              <RefreshCw className={`h-3.5 w-3.5 text-[#651FFF] ${loading ? "animate-spin" : ""}`} />
+              <RefreshCw className={`h-3.5 w-3.5 text-[#7A1C3C] ${loading ? "animate-spin" : ""}`} />
               <span className="hidden sm:inline">Refresh Data</span>
             </button>
 
@@ -684,88 +450,85 @@ export default function AdminDashboardPage() {
         </div>
       </header>
 
-      {/* 2. MAIN LIGHT CONTENT CONTAINER */}
+      {/* 2. MAIN CONTENT CONTAINER */}
       <main className="mx-auto max-w-7xl px-4 sm:px-8 py-6 space-y-6 text-left">
-        {/* KPI Analytics Cards (Light Theme) */}
+        {/* KPI Analytics Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {/* Card 1: Total Creators */}
-          <div className="rounded-3xl border border-purple-200/80 bg-white p-5 shadow-sm space-y-2">
+          <div className="rounded-3xl border border-rose-100 bg-white p-5 shadow-sm space-y-2">
             <div className="flex items-center justify-between text-slate-500">
-              <span className="text-xs font-extrabold uppercase tracking-wider text-purple-700">
-                Registered Creators
+              <span className="text-xs font-extrabold uppercase tracking-wider text-[#7A1C3C]">
+                Total Creators
               </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-purple-50 text-[#651FFF]">
+              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#7A1C3C]/10 text-[#7A1C3C]">
                 <Users className="h-4 w-4" />
               </div>
             </div>
-            <p className="font-display text-3xl font-black text-slate-900">{creators.length}</p>
+            <p className="font-display text-3xl font-black text-slate-900">{stats.totalCreators || creators.length}</p>
             <p className="text-[11px] font-semibold text-slate-500">
-              Active creator accounts
+              Registered Accounts
             </p>
           </div>
 
           {/* Card 2: Total OTT Series */}
-          <div className="rounded-3xl border border-purple-200/80 bg-white p-5 shadow-sm space-y-2">
+          <div className="rounded-3xl border border-rose-100 bg-white p-5 shadow-sm space-y-2">
             <div className="flex items-center justify-between text-slate-500">
-              <span className="text-xs font-extrabold uppercase tracking-wider text-purple-700">
+              <span className="text-xs font-extrabold uppercase tracking-wider text-[#7A1C3C]">
                 Total OTT Series
               </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-purple-50 text-[#651FFF]">
+              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#7A1C3C]/10 text-[#7A1C3C]">
                 <Film className="h-4 w-4" />
               </div>
             </div>
-            <p className="font-display text-3xl font-black text-slate-900">{seriesList.length}</p>
+            <p className="font-display text-3xl font-black text-slate-900">{stats.totalSeries || seriesList.length} <span className="text-sm font-bold text-slate-500">Shows</span></p>
             <p className="text-[11px] font-semibold text-slate-500">
-              Across {totalEpisodesCount} published episodes
+              {totalEpisodesCount} Published Episodes
             </p>
           </div>
 
-          {/* Card 3: Email Broadcast Status */}
-          <div className="rounded-3xl border border-purple-200/80 bg-white p-5 shadow-sm space-y-2">
+          {/* Card 3: Total Active Gigs */}
+          <div className="rounded-3xl border border-rose-100 bg-white p-5 shadow-sm space-y-2">
             <div className="flex items-center justify-between text-slate-500">
-              <span className="text-xs font-extrabold uppercase tracking-wider text-purple-700">
-                Email Dispatcher
+              <span className="text-xs font-extrabold uppercase tracking-wider text-[#7A1C3C]">
+                Total Active Gigs
               </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-purple-50 text-[#651FFF]">
-                <Mail className="h-4 w-4" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#7A1C3C]/10 text-[#7A1C3C]">
+                <Briefcase className="h-4 w-4" />
               </div>
             </div>
-            <p className="font-display text-2xl font-black text-slate-900 truncate">inflixoapp@gmail.com</p>
+            <p className="font-display text-3xl font-black text-slate-900">{stats.totalActiveGigs}</p>
             <p className="text-[11px] font-semibold text-slate-500">
-              Official Admin SMTP Mailer
+              Live Collab Gigs Published
             </p>
           </div>
 
-          {/* Card 4: System Health */}
-          <div className="rounded-3xl border border-purple-200/80 bg-white p-5 shadow-sm space-y-2">
+          {/* Card 4: VIP Subscribers */}
+          <div className="rounded-3xl border border-amber-200/80 bg-gradient-to-br from-amber-50/40 to-white p-5 shadow-sm space-y-2">
             <div className="flex items-center justify-between text-slate-500">
-              <span className="text-xs font-extrabold uppercase tracking-wider text-purple-700">
-                System Status
+              <span className="text-xs font-extrabold uppercase tracking-wider text-[#7A1C3C]">
+                VIP Subscribers
               </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
-                <ShieldCheck className="h-4 w-4" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#7A1C3C] text-white">
+                <Crown className="h-4 w-4 fill-amber-300 text-amber-300" />
               </div>
             </div>
-            <p className="font-display text-2xl font-black text-emerald-600 flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-ping" />
-              Operational
-            </p>
+            <p className="font-display text-3xl font-black text-[#7A1C3C]">{stats.vipSubscribers || vipCreatorsCount}</p>
             <p className="text-[11px] font-semibold text-slate-500">
-              Database &amp; APIs Online
+              Active VIP Creators
             </p>
           </div>
         </div>
 
         {/* 3. TABS AND SEARCH CONTROLS */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-b border-purple-100 pb-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-b border-rose-100 pb-4">
           {/* Tabs */}
-          <div className="flex items-center gap-2 rounded-2xl bg-white p-1.5 border border-purple-100 shadow-2xs">
+          <div className="flex items-center gap-2 rounded-2xl bg-white p-1.5 border border-rose-100 shadow-2xs">
             <button
               type="button"
               onClick={() => setActiveTab("creators")}
               className={`tap-scale flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black transition-all cursor-pointer ${
                 activeTab === "creators"
-                  ? "bg-[#651FFF] text-white shadow-md shadow-purple-600/20"
+                  ? "bg-[#7A1C3C] text-white shadow-md shadow-[#7A1C3C]/20"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -778,7 +541,7 @@ export default function AdminDashboardPage() {
               onClick={() => setActiveTab("series")}
               className={`tap-scale flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black transition-all cursor-pointer ${
                 activeTab === "series"
-                  ? "bg-[#651FFF] text-white shadow-md shadow-purple-600/20"
+                  ? "bg-[#7A1C3C] text-white shadow-md shadow-[#7A1C3C]/20"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -791,7 +554,7 @@ export default function AdminDashboardPage() {
               onClick={() => setActiveTab("email")}
               className={`tap-scale flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black transition-all cursor-pointer ${
                 activeTab === "email"
-                  ? "bg-[#651FFF] text-white shadow-md shadow-purple-600/20"
+                  ? "bg-[#7A1C3C] text-white shadow-md shadow-[#7A1C3C]/20"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -809,7 +572,7 @@ export default function AdminDashboardPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={`Search ${activeTab}...`}
-                className="w-full rounded-2xl border border-purple-100 bg-white pl-10 pr-4 py-2.5 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#651FFF] focus:outline-none focus:ring-2 focus:ring-purple-600/20 transition-all shadow-2xs"
+                className="w-full rounded-2xl border border-rose-100 bg-white pl-10 pr-4 py-2.5 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#7A1C3C] focus:outline-none focus:ring-2 focus:ring-[#7A1C3C]/20 transition-all shadow-2xs"
               />
               {searchQuery && (
                 <button
@@ -823,17 +586,70 @@ export default function AdminDashboardPage() {
           )}
         </div>
 
-        {/* 4. TAB 1: CREATORS LISTING */}
+        {/* 4. TAB 1: CREATORS LISTING & FILTER PILLS */}
         {activeTab === "creators" && (
           <div className="space-y-4">
-            <div className="overflow-x-auto rounded-3xl border border-purple-100 bg-white shadow-sm">
+            {/* Filter Pills */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1">
+              <button
+                type="button"
+                onClick={() => setCreatorFilter("all")}
+                className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors cursor-pointer border ${
+                  creatorFilter === "all"
+                    ? "bg-[#7A1C3C] text-white border-[#7A1C3C]"
+                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
+                }`}
+              >
+                All Creators ({totalCreatorsCount})
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCreatorFilter("vip")}
+                className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors cursor-pointer border ${
+                  creatorFilter === "vip"
+                    ? "bg-[#7A1C3C] text-white border-[#7A1C3C]"
+                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
+                }`}
+              >
+                ⭐ VIP Members ({vipCreatorsCount})
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCreatorFilter("gigs")}
+                className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors cursor-pointer border ${
+                  creatorFilter === "gigs"
+                    ? "bg-[#7A1C3C] text-white border-[#7A1C3C]"
+                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
+                }`}
+              >
+                💼 With Active Gigs ({gigsCreatorsCount})
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCreatorFilter("early")}
+                className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors cursor-pointer border ${
+                  creatorFilter === "early"
+                    ? "bg-[#7A1C3C] text-white border-[#7A1C3C]"
+                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
+                }`}
+              >
+                ⚡ Free / Early Bird ({earlyBirdCount})
+              </button>
+            </div>
+
+            <div className="overflow-x-auto rounded-3xl border border-rose-100 bg-white shadow-sm">
               <table className="w-full text-left text-xs text-slate-700">
-                <thead className="border-b border-purple-100 bg-purple-50/60 uppercase text-[10px] font-black text-purple-900 tracking-wider">
+                <thead className="border-b border-rose-100 bg-rose-50/50 text-[11px] font-bold text-[#7A1C3C] uppercase tracking-wider">
                   <tr>
                     <th className="px-5 py-4">Creator</th>
                     <th className="px-5 py-4">Handle</th>
+                    <th className="px-5 py-4">Subscription Plan</th>
+                    <th className="px-5 py-4">Active Gigs</th>
                     <th className="px-5 py-4">Category</th>
-                    <th className="px-5 py-4">Theme</th>
+                    <th className="px-5 py-4">Status</th>
                     <th className="px-5 py-4">Joined Date</th>
                     <th className="px-5 py-4 text-right">Actions</th>
                   </tr>
@@ -841,63 +657,172 @@ export default function AdminDashboardPage() {
                 <tbody className="divide-y divide-slate-100">
                   {filteredCreators.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="px-5 py-12 text-center text-slate-500 font-semibold">
-                        No creators found matching &quot;{searchQuery}&quot;
+                      <td colSpan={8} className="px-5 py-12 text-center text-slate-500 font-semibold">
+                        No creators found matching current filter &amp; search.
                       </td>
                     </tr>
                   ) : (
-                    filteredCreators.map((c) => (
-                      <tr key={c.id} className="hover:bg-purple-50/40 transition-colors">
-                        <td className="px-5 py-4">
-                          <div className="flex items-center gap-3">
-                            <CreatorAvatar
-                              src={c.photoDataUrl}
-                              name={c.displayName || c.email}
-                              className="h-9 w-9 rounded-2xl shrink-0 border border-purple-100"
-                            />
-                            <div className="min-w-0">
-                              <p className="font-black text-slate-900 text-sm truncate">
-                                {c.displayName || "Inflixo Creator"}
-                              </p>
-                              <p className="text-[11px] text-slate-500 font-medium truncate">{c.email}</p>
+                    filteredCreators.map((c) => {
+                      const isVip = c.planKey === "creator_VIP" || (c.planName && c.planName.toLowerCase().includes("vip"));
+                      const isSuspended = c.accountStatus === "suspended";
+                      const gigsCount = Number(c.gigsCount || 0);
+
+                      return (
+                        <tr key={c.id} className="hover:bg-rose-50/20 transition-colors">
+                          {/* CREATOR */}
+                          <td className="px-5 py-4">
+                            <div className="flex items-center gap-3">
+                              <CreatorAvatar
+                                src={c.photoDataUrl}
+                                name={c.displayName || c.email}
+                                className="h-9 w-9 rounded-2xl shrink-0 border border-slate-200"
+                              />
+                              <div className="min-w-0">
+                                <p className="font-black text-slate-900 text-sm truncate">
+                                  {c.displayName || "Inflixo Creator"}
+                                </p>
+                                <p className="text-[11px] text-slate-500 font-medium truncate">{c.email}</p>
+                              </div>
                             </div>
-                          </div>
-                        </td>
+                          </td>
 
-                        <td className="px-5 py-4">
-                          <span className="font-mono font-extrabold text-[#651FFF]">
-                            @{c.username || "username"}
-                          </span>
-                        </td>
+                          {/* HANDLE */}
+                          <td className="px-5 py-4">
+                            <Link
+                              href={`/${c.username || "username"}`}
+                              target="_blank"
+                              className="font-mono font-bold text-[#7A1C3C] hover:underline"
+                            >
+                              @{c.username || "username"}
+                            </Link>
+                          </td>
 
-                        <td className="px-5 py-4">
-                          <span className="inline-block rounded-full bg-purple-50 border border-purple-100 px-2.5 py-1 text-[11px] font-bold text-purple-900">
-                            {c.category || "General"}
-                          </span>
-                        </td>
+                          {/* SUBSCRIPTION PLAN */}
+                          <td className="px-5 py-4">
+                            {isVip ? (
+                              <span className="inline-flex items-center gap-1 bg-[#7A1C3C] text-white px-2.5 py-1 rounded-full text-xs font-semibold shadow-2xs">
+                                <span>⭐ VIP Plan</span>
+                              </span>
+                            ) : c.planStatus === "expired" ? (
+                              <span className="inline-flex items-center gap-1 bg-rose-50 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-full text-xs font-semibold">
+                                <span>⚠️ Expired</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-full text-xs font-semibold">
+                                <span>⚡ Early Bird</span>
+                              </span>
+                            )}
+                          </td>
 
-                        <td className="px-5 py-4">
-                          <span className="capitalize font-semibold text-slate-700">
-                            {c.themeKey || "minimal-white"}
-                          </span>
-                        </td>
+                          {/* ACTIVE GIGS */}
+                          <td className="px-5 py-4">
+                            {gigsCount > 0 ? (
+                              <span className="font-extrabold text-slate-900">
+                                {gigsCount} {gigsCount === 1 ? "Gig" : "Gigs"}{" "}
+                                {c.minGigPrice && (
+                                  <span className="text-slate-500 text-[11px] font-semibold">
+                                    ({c.minGigPrice} - {c.maxGigPrice || c.minGigPrice})
+                                  </span>
+                                )}
+                              </span>
+                            ) : (
+                              <span className="text-slate-400 font-medium text-xs">0 Gigs</span>
+                            )}
+                          </td>
 
-                        <td className="px-5 py-4 text-slate-500 font-medium">
-                          {c.createdAt ? new Date(c.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Recent"}
-                        </td>
+                          {/* CATEGORY */}
+                          <td className="px-5 py-4">
+                            <span className="inline-block rounded-full bg-slate-100 border border-slate-200 px-2.5 py-0.5 text-[11px] font-bold text-slate-700">
+                              {c.category || "General"}
+                            </span>
+                          </td>
 
-                        <td className="px-5 py-4 text-right">
-                          <Link
-                            href={`/${c.username || "username"}`}
-                            target="_blank"
-                            className="inline-flex items-center gap-1.5 rounded-xl border border-purple-200 bg-purple-50 px-3 py-1.5 text-[11px] font-black text-[#651FFF] hover:bg-purple-100 transition-all"
-                          >
-                            <span>View Page</span>
-                            <ExternalLink className="h-3 w-3" />
-                          </Link>
-                        </td>
-                      </tr>
-                    ))
+                          {/* STATUS */}
+                          <td className="px-5 py-4">
+                            {isSuspended ? (
+                              <span className="inline-flex items-center gap-1 bg-rose-50 text-rose-700 border border-rose-200 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
+                                <span>🔴 Suspended</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
+                                <span>🟢 Active</span>
+                              </span>
+                            )}
+                          </td>
+
+                          {/* JOINED DATE */}
+                          <td className="px-5 py-4 text-slate-500 font-medium">
+                            {c.createdAt ? new Date(c.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Recent"}
+                          </td>
+
+                          {/* ACTIONS COLUMN WITH THREE DOTS MENU */}
+                          <td className="px-5 py-4 text-right relative">
+                            <div className="flex items-center justify-end gap-1.5">
+                              <Link
+                                href={`/${c.username || "username"}`}
+                                target="_blank"
+                                className="inline-flex items-center gap-1 rounded-xl border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-[11px] font-bold text-[#7A1C3C] hover:bg-[#7A1C3C]/10 transition-colors"
+                              >
+                                <span>View Page</span>
+                                <ExternalLink className="h-3 w-3" />
+                              </Link>
+
+                              {/* Three Dots Button */}
+                              <button
+                                type="button"
+                                onClick={() => setOpenActionMenuId(openActionMenuId === c.id ? null : c.id)}
+                                className="h-7 w-7 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 flex items-center justify-center transition-colors cursor-pointer"
+                              >
+                                <MoreVertical className="h-4 w-4" />
+                              </button>
+                            </div>
+
+                            {/* Dropdown Popover */}
+                            {openActionMenuId === c.id && (
+                              <div className="absolute right-5 top-12 z-30 w-52 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl text-left space-y-0.5 animate-in fade-in duration-150">
+                                <button
+                                  type="button"
+                                  onClick={() => handleGrantVIP(c)}
+                                  className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-[#7A1C3C] hover:bg-rose-50 flex items-center gap-2 transition-colors cursor-pointer"
+                                >
+                                  <Crown className="h-3.5 w-3.5 text-[#7A1C3C]" />
+                                  <span>Grant / Extend VIP Plan</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleViewGigs(c)}
+                                  className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 flex items-center gap-2 transition-colors cursor-pointer"
+                                >
+                                  <Briefcase className="h-3.5 w-3.5 text-slate-500" />
+                                  <span>View Gigs &amp; Media Kit</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleImpersonate(c)}
+                                  className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 flex items-center gap-2 transition-colors cursor-pointer"
+                                >
+                                  <UserCheck className="h-3.5 w-3.5 text-slate-500" />
+                                  <span>Login as Creator</span>
+                                </button>
+
+                                <div className="my-1 border-t border-slate-100" />
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleToggleStatus(c)}
+                                  className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-rose-700 hover:bg-rose-50 flex items-center gap-2 transition-colors cursor-pointer"
+                                >
+                                  <Ban className="h-3.5 w-3.5 text-rose-600" />
+                                  <span>{isSuspended ? "Activate Account" : "Deactivate / Ban Account"}</span>
+                                </button>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>
@@ -910,7 +835,7 @@ export default function AdminDashboardPage() {
           <div className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {filteredSeries.length === 0 ? (
-                <div className="col-span-full rounded-3xl border border-purple-100 bg-white p-12 text-center text-slate-500 font-semibold">
+                <div className="col-span-full rounded-3xl border border-rose-100 bg-white p-12 text-center text-slate-500 font-semibold">
                   No series found matching &quot;{searchQuery}&quot;
                 </div>
               ) : (
@@ -920,7 +845,7 @@ export default function AdminDashboardPage() {
                     <div
                       key={s.id}
                       onClick={() => setSelectedSeries(s)}
-                      className="group tap-scale relative overflow-hidden rounded-3xl border border-purple-100 bg-white p-4 shadow-sm transition-all hover:border-purple-300 hover:shadow-md cursor-pointer text-left space-y-3"
+                      className="group tap-scale relative overflow-hidden rounded-3xl border border-rose-100 bg-white p-4 shadow-sm transition-all hover:border-rose-300 hover:shadow-md cursor-pointer text-left space-y-3"
                     >
                       <div className="flex gap-3">
                         <SeriesPoster
@@ -930,7 +855,7 @@ export default function AdminDashboardPage() {
                         />
                         <div className="flex-1 min-w-0 space-y-1">
                           <div className="flex items-center gap-1.5">
-                            <span className="rounded-full bg-purple-50 border border-purple-200 px-2 py-0.5 text-[10px] font-black text-purple-700 uppercase">
+                            <span className="rounded-full bg-rose-50 border border-rose-200 px-2 py-0.5 text-[10px] font-black text-[#7A1C3C] uppercase">
                               {s.genre || "Series"}
                             </span>
                             <span className="text-[10px] font-extrabold text-slate-500">
@@ -941,17 +866,17 @@ export default function AdminDashboardPage() {
                             {s.title}
                           </h3>
                           <p className="text-xs text-slate-500 font-semibold">
-                            By <span className="text-[#651FFF] font-extrabold">{s.creatorName || `@${s.creatorUsername}`}</span>
+                            By <span className="text-[#7A1C3C] font-extrabold">{s.creatorName || `@${s.creatorUsername}`}</span>
                           </p>
-                          <p className="text-[11px] font-extrabold text-purple-700">
+                          <p className="text-[11px] font-extrabold text-[#7A1C3C]">
                             {episodesCount} {episodesCount === 1 ? "Episode" : "Episodes"}
                           </p>
                         </div>
                       </div>
 
-                      <div className="pt-2 border-t border-purple-100 flex items-center justify-between text-xs">
+                      <div className="pt-2 border-t border-rose-100 flex items-center justify-between text-xs">
                         <span className="text-slate-500 font-semibold">Click to view full details</span>
-                        <span className="flex items-center gap-1 font-extrabold text-[#651FFF] group-hover:translate-x-1 transition-transform">
+                        <span className="flex items-center gap-1 font-extrabold text-[#7A1C3C] group-hover:translate-x-1 transition-transform">
                           View Details <ChevronRight className="h-3.5 w-3.5" />
                         </span>
                       </div>
@@ -967,15 +892,15 @@ export default function AdminDashboardPage() {
         {activeTab === "email" && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Left Column: Email Composer Form */}
-            <div className="lg:col-span-7 rounded-3xl border border-purple-100 bg-white p-6 sm:p-8 shadow-sm space-y-5">
+            <div className="lg:col-span-7 rounded-3xl border border-rose-100 bg-white p-6 sm:p-8 shadow-sm space-y-5">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div>
                   <h2 className="font-display text-lg font-black text-slate-900 flex items-center gap-2">
-                    <Mail className="h-5 w-5 text-[#651FFF]" />
+                    <Mail className="h-5 w-5 text-[#7A1C3C]" />
                     Send Admin Email Broadcast
                   </h2>
                   <p className="text-xs text-slate-500 font-semibold">
-                    Sends real HTML emails from <span className="font-mono text-[#651FFF]">inflixoapp@gmail.com</span>
+                    Sends real HTML emails from <span className="font-mono text-[#7A1C3C]">inflixoapp@gmail.com</span>
                   </p>
                 </div>
               </div>
@@ -990,10 +915,14 @@ export default function AdminDashboardPage() {
                     <button
                       key={tmpl.id}
                       type="button"
-                      onClick={() => handleTemplateSelect(tmpl.id)}
+                      onClick={() => {
+                        setSelectedTemplateId(tmpl.id);
+                        setEmailSubject(tmpl.subject);
+                        setEmailBody(tmpl.body);
+                      }}
                       className={`tap-scale p-3 rounded-2xl border text-left transition-all ${
                         selectedTemplateId === tmpl.id
-                          ? "border-[#651FFF] bg-purple-50/80 text-[#651FFF] font-black shadow-2xs"
+                          ? "border-[#7A1C3C] bg-rose-50/80 text-[#7A1C3C] font-black shadow-2xs"
                           : "border-slate-200 bg-slate-50/50 text-slate-700 hover:bg-slate-100 font-semibold"
                       }`}
                     >
@@ -1012,17 +941,17 @@ export default function AdminDashboardPage() {
                   <button
                     type="button"
                     onClick={handleAddAllCreatorsToRecipients}
-                    className="text-[11px] font-extrabold text-[#651FFF] hover:underline flex items-center gap-1"
+                    className="text-[11px] font-extrabold text-[#7A1C3C] hover:underline flex items-center gap-1"
                   >
-                    <Plus className="h-3 w-3" /> Select All Registered Creators ({creators.length})
+                    <span>Select All Registered Creators ({creators.length})</span>
                   </button>
                 </div>
                 <textarea
                   rows={3}
                   value={recipientsInput}
                   onChange={(e) => setRecipientsInput(e.target.value)}
-                  placeholder="Enter email addresses separated by commas or new lines (e.g. creator@gmail.com, test@inflixo.com)"
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50/60 p-3 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#651FFF] focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600/20 transition-all"
+                  placeholder="Enter email addresses separated by commas or new lines"
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50/60 p-3 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#7A1C3C] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#7A1C3C]/20 transition-all"
                 />
               </div>
 
@@ -1036,7 +965,7 @@ export default function AdminDashboardPage() {
                   value={emailSubject}
                   onChange={(e) => setEmailSubject(e.target.value)}
                   placeholder="Enter email subject line"
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#651FFF] focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600/20 transition-all"
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#7A1C3C] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#7A1C3C]/20 transition-all"
                 />
               </div>
 
@@ -1050,7 +979,7 @@ export default function AdminDashboardPage() {
                   value={emailBody}
                   onChange={(e) => setEmailBody(e.target.value)}
                   placeholder="Write your email body HTML..."
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50/60 p-3.5 text-xs font-mono text-slate-900 placeholder-slate-400 focus:border-[#651FFF] focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600/20 transition-all"
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50/60 p-3.5 text-xs font-mono text-slate-900 placeholder-slate-400 focus:border-[#7A1C3C] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#7A1C3C]/20 transition-all"
                 />
               </div>
 
@@ -1059,7 +988,7 @@ export default function AdminDashboardPage() {
                 type="button"
                 disabled={sendingEmail}
                 onClick={handleSendMail}
-                className="tap-scale flex w-full items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6D3254] py-3.5 text-xs font-black text-white transition-all disabled:opacity-50 cursor-pointer shadow-none"
+                className="tap-scale flex w-full items-center justify-center gap-2 rounded-2xl bg-[#7A1C3C] hover:bg-[#631430] py-3.5 text-xs font-black text-white transition-all disabled:opacity-50 cursor-pointer shadow-none"
               >
                 {sendingEmail ? (
                   <>
@@ -1076,12 +1005,12 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* Right Column: Live Email HTML Preview */}
-            <div className="lg:col-span-5 rounded-3xl border border-purple-100 bg-white p-6 shadow-sm space-y-4 lg:sticky lg:top-24">
+            <div className="lg:col-span-5 rounded-3xl border border-rose-100 bg-white p-6 shadow-sm space-y-4 lg:sticky lg:top-24">
               <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                 <p className="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-                  <Eye className="h-3.5 w-3.5 text-[#651FFF]" /> Live Email HTML Preview
+                  <Eye className="h-3.5 w-3.5 text-[#7A1C3C]" /> Live Email HTML Preview
                 </p>
-                <span className="rounded-full bg-purple-50 px-2.5 py-0.5 text-[10px] font-extrabold text-[#651FFF]">
+                <span className="rounded-full bg-rose-50 px-2.5 py-0.5 text-[10px] font-extrabold text-[#7A1C3C]">
                   Sender: inflixoapp@gmail.com
                 </span>
               </div>
@@ -1092,12 +1021,12 @@ export default function AdminDashboardPage() {
                     From: <span className="text-slate-900 font-semibold">&quot;Inflixo App&quot; &lt;inflixoapp@gmail.com&gt;</span>
                   </p>
                   <p className="text-[11px] text-slate-500 font-bold mt-0.5">
-                    Subject: <span className="text-[#651FFF] font-black">{emailSubject || "No Subject"}</span>
+                    Subject: <span className="text-[#7A1C3C] font-black">{emailSubject || "No Subject"}</span>
                   </p>
                 </div>
 
                 <div
-                  className="prose prose-purple max-w-none text-xs text-slate-800 leading-relaxed"
+                  className="prose max-w-none text-xs text-slate-800 leading-relaxed"
                   dangerouslySetInnerHTML={{ __html: emailBody }}
                 />
               </div>
@@ -1106,11 +1035,72 @@ export default function AdminDashboardPage() {
         )}
       </main>
 
-      {/* 7. LIGHT THEME SERIES DETAILS MODAL */}
+      {/* 7. VIEW GIGS PREVIEW MODAL */}
+      {viewGigsCreator && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 animate-fade-in">
+          <div className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[32px] border border-rose-100 bg-white text-slate-900 p-6 sm:p-8 shadow-2xl space-y-5 text-left">
+            <button
+              onClick={() => setViewGigsCreator(null)}
+              className="absolute top-5 right-5 flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            <div className="flex items-center gap-3">
+              <CreatorAvatar
+                src={viewGigsCreator.photoDataUrl}
+                name={viewGigsCreator.displayName || viewGigsCreator.email}
+                className="h-12 w-12 rounded-2xl border border-slate-200"
+              />
+              <div>
+                <h3 className="font-display text-lg font-bold text-slate-900">
+                  {viewGigsCreator.displayName || "Creator"}
+                </h3>
+                <p className="text-xs text-[#7A1C3C] font-bold">@{viewGigsCreator.username} &bull; Media Kit &amp; Rate Cards</p>
+              </div>
+            </div>
+
+            <div className="space-y-3 pt-2">
+              <p className="text-xs font-black uppercase tracking-wider text-slate-500">Active Collab Gigs ({creatorGigs.length})</p>
+              {creatorGigs.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-slate-200 p-6 text-center text-xs text-slate-500 font-semibold">
+                  No active collab packages published yet.
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {creatorGigs.map((pkg) => (
+                    <div key={pkg.id} className="rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4 space-y-2 text-left">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="bg-[#7A1C3C]/10 text-[#7A1C3C] border border-[#7A1C3C]/20 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase">
+                          {pkg.platform}
+                        </span>
+                        <span className="font-display text-base font-black text-[#7A1C3C]">{pkg.price}</span>
+                      </div>
+                      <h4 className="font-bold text-sm text-slate-900">{pkg.title}</h4>
+                      <p className="text-[11px] text-slate-500 font-medium">⚡ Turnaround: {pkg.turnaroundDays} Days</p>
+                      {pkg.deliverables && pkg.deliverables.length > 0 && (
+                        <ul className="text-xs space-y-1 pt-1.5 border-t border-slate-200 text-slate-700">
+                          {pkg.deliverables.map((item: string, idx: number) => (
+                            <li key={idx} className="flex items-center gap-1.5">
+                              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 8. SERIES DETAILS MODAL */}
       {selectedSeries && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 animate-fade-in">
-          <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-[32px] border border-purple-100 bg-white text-slate-900 p-6 sm:p-8 shadow-2xl space-y-6 text-left">
-            {/* Close Button */}
+          <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-[32px] border border-rose-100 bg-white text-slate-900 p-6 sm:p-8 shadow-2xl space-y-6 text-left">
             <button
               onClick={() => setSelectedSeries(null)}
               className="absolute top-5 right-5 flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors"
@@ -1118,7 +1108,6 @@ export default function AdminDashboardPage() {
               <X className="h-5 w-5" />
             </button>
 
-            {/* Modal Header */}
             <div className="flex flex-col sm:flex-row gap-5 items-start">
               <SeriesPoster
                 src={selectedSeries.posterDataUrl}
@@ -1127,7 +1116,7 @@ export default function AdminDashboardPage() {
               />
               <div className="space-y-2 flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="rounded-full bg-purple-50 border border-purple-200 px-3 py-1 text-xs font-black text-purple-700 uppercase">
+                  <span className="rounded-full bg-rose-50 border border-rose-200 px-3 py-1 text-xs font-black text-[#7A1C3C] uppercase">
                     {selectedSeries.genre || "OTT Series"}
                   </span>
                   <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700">
@@ -1140,11 +1129,10 @@ export default function AdminDashboardPage() {
                   {selectedSeries.description || "No description provided for this series."}
                 </p>
 
-                {/* Creator Attribution Box */}
-                <div className="pt-2 flex items-center justify-between border-t border-purple-100">
+                <div className="pt-2 flex items-center justify-between border-t border-rose-100">
                   <div>
                     <p className="text-[10px] uppercase font-extrabold text-slate-400">Creator Account</p>
-                    <p className="text-xs font-black text-[#651FFF]">
+                    <p className="text-xs font-black text-[#7A1C3C]">
                       {selectedSeries.creatorName || `@${selectedSeries.creatorUsername}`} ({selectedSeries.creatorEmail})
                     </p>
                   </div>
@@ -1152,7 +1140,7 @@ export default function AdminDashboardPage() {
                   <Link
                     href={`/${selectedSeries.creatorUsername || "username"}`}
                     target="_blank"
-                    className="tap-scale flex items-center gap-1.5 rounded-xl border border-purple-200 bg-purple-50 px-3.5 py-1.5 text-xs font-bold text-[#651FFF] hover:bg-purple-100 transition-all"
+                    className="tap-scale flex items-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-1.5 text-xs font-bold text-[#7A1C3C] hover:bg-rose-100 transition-all"
                   >
                     <span>Visit Profile</span>
                     <ArrowUpRight className="h-3.5 w-3.5" />
@@ -1161,10 +1149,9 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
-            {/* Episode List Section */}
-            <div className="space-y-3 pt-4 border-t border-purple-100">
+            <div className="space-y-3 pt-4 border-t border-rose-100">
               <h3 className="font-display text-base font-black text-slate-900 flex items-center gap-2">
-                <Film className="h-4 w-4 text-[#651FFF]" />
+                <Film className="h-4 w-4 text-[#7A1C3C]" />
                 Episodes ({selectedSeries.seasons?.[0]?.episodes?.length || 0})
               </h3>
 
@@ -1175,10 +1162,10 @@ export default function AdminDashboardPage() {
                   selectedSeries.seasons[0].episodes.map((ep) => (
                     <div
                       key={ep.id}
-                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-purple-100 bg-slate-50/60 p-3.5 hover:border-purple-300 transition-all"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-rose-100 bg-slate-50/60 p-3.5 hover:border-rose-300 transition-all"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-100 text-[#651FFF] text-xs font-black shrink-0">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-rose-100 text-[#7A1C3C] text-xs font-black shrink-0">
                           #{ep.episodeNumber}
                         </div>
                         <div className="min-w-0">
@@ -1192,7 +1179,7 @@ export default function AdminDashboardPage() {
                           href={ep.externalUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#651FFF] hover:bg-[#500CD6] px-3 py-1.5 text-xs font-bold text-white transition-all self-end sm:self-auto shadow-2xs"
+                          className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#7A1C3C] hover:bg-[#631430] px-3 py-1.5 text-xs font-bold text-white transition-all self-end sm:self-auto shadow-2xs"
                         >
                           <Play className="h-3 w-3 fill-current" />
                           <span>Watch Video</span>
