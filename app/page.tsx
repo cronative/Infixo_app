@@ -178,7 +178,7 @@ export default function LandingHomePage() {
               {/* Top Pill Badge */}
               <div className="inline-flex items-center gap-1.5 rounded-full border border-purple-200 bg-purple-50 px-3.5 py-1 text-xs font-semibold text-[#803D63]">
                 <Sparkles className="h-3.5 w-3.5 text-[#803D63]" />
-                <span>🚀 Early Access for India&apos;s Top Creators</span>
+                <span>Early Access for India&apos;s Top Creators</span>
               </div>
 
               {/* Heading */}
@@ -187,8 +187,8 @@ export default function LandingHomePage() {
               </h1>
 
               {/* Sub-headline */}
-              <p className="text-base sm:text-lg font-medium text-[#4B5563] leading-relaxed">
-                Your series parts are scattered across reels and uploads — viewers lose track after Part 1. Inflixo gives every series its own playlist-style page, and every brand deal one AI-synced link. Built for creators, not just links.
+              <p className="text-base sm:text-lg font-bold text-[#111827] leading-relaxed">
+                One page for your series. One live number for brands.
               </p>
 
               {/* Handle Claim & Interactive Generator Input */}
@@ -231,6 +231,22 @@ export default function LandingHomePage() {
                     <Check className="h-3.5 w-3.5 text-emerald-600 stroke-[3]" /> 100% Free Setup
                   </span>
                 </div>
+
+                {/* Plain 3-Step What You Get Strip */}
+                <div className="pt-4 border-t border-[#E5E7EB] grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs font-bold text-[#111827]">
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-[#803D63] shrink-0 stroke-[3]" />
+                    <span>1. One page for your series (in order)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-[#803D63] shrink-0 stroke-[3]" />
+                    <span>2. One live combined fanbase count</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-[#803D63] shrink-0 stroke-[3]" />
+                    <span>3. One rate card with direct brand contact</span>
+                  </div>
+                </div>
               </div>
 
               {/* INTEGRATED BRAND OUTREACH & MEDIA KIT FEATURE BLOCK */}
@@ -242,20 +258,20 @@ export default function LandingHomePage() {
                   Brands don&apos;t want 5 links. They want your true reach.
                 </h2>
                 <p className="text-xs sm:text-sm font-medium text-[#4B5563] leading-relaxed">
-                  Sharing separate links under-reports your scale. Inflixo aggregates your verified accounts into a live <strong className="text-[#111827] font-bold">Total Fanbase Counter</strong> and instant <strong className="text-[#803D63] font-bold">Rate Cards with Direct WhatsApp Lead Routing (0% Fee)</strong>.
+                  Separate profiles under-report your real scale — Inflixo adds every platform into one live number.
                 </p>
 
                 <div className="space-y-2 pt-1 text-xs sm:text-sm font-semibold text-[#111827]">
                   <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5" />
+                    <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
                     <div>
                       <strong className="text-[#111827]">Unlimited Collab Gigs:</strong> Free rate card listing &amp; pre-qualified WhatsApp briefs.
                     </div>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5" />
+                    <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
                     <div>
-                      <strong className="text-[#111827]">AI-Powered Fanbase Sync:</strong> Add your accounts once — Inflixo&apos;s AI keeps your Instagram, YouTube, and Facebook numbers updated automatically, no manual entry.
+                      <strong className="text-[#111827]">AI-Synced Fanbase Count:</strong> Inflixo checks your connected accounts and updates your numbers automatically, no manual entry.
                     </div>
                   </div>
                 </div>
@@ -273,11 +289,7 @@ export default function LandingHomePage() {
                     <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
                   </div>
                   <div className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-[11px] font-bold text-slate-700 border border-slate-200">
-                    <span className="text-emerald-500 font-extrabold">🔒</span>
                     <span>inflixo.com/{username ? username.toLowerCase().replace(/[^a-z0-9_]/g, "") : "yourname"}</span>
-                  </div>
-                  <div className="text-[10px] font-bold text-[#803D63] uppercase tracking-wider hidden sm:block">
-                    {activeTheme.name}
                   </div>
                 </div>
 
@@ -319,69 +331,6 @@ export default function LandingHomePage() {
                   <span>Claim @{username.trim() || "yourname"} Profile Before Someone Else Does</span>
                   <ArrowRight className="h-4 w-4" />
                 </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. SECTION 1 VISUAL: TOTAL FANBASE ENGINE AGGREGATOR CARD */}
-      <section className="py-12 sm:py-16 bg-[#FFFFFF] border-b border-[#E5E7EB]">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="mx-auto max-w-2xl text-center space-y-3">
-            <span className="inline-block rounded-full bg-purple-50 text-[#803D63] border border-purple-200 px-3 py-0.5 text-xs font-bold uppercase tracking-wider">
-              Real-Time Aggregator Engine
-            </span>
-            <h3 className="font-display text-2xl sm:text-3xl font-bold text-[#111827]">
-              Unified Reach Across YouTube, Instagram &amp; Facebook
-            </h3>
-            <p className="text-xs sm:text-sm font-medium text-[#4B5563]">
-              Your verified audience metrics automatically aggregate into a sponsor-ready metric.
-            </p>
-
-            <div className="pt-4 flex justify-center">
-              <div className="w-full max-w-lg rounded-xl border border-[#E5E7EB] bg-white p-5 space-y-3 text-left">
-                {/* Total Reach Header */}
-                <div className="flex items-center justify-between rounded-xl bg-[#803D63] p-4 text-white">
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-purple-200">Unified Metric</p>
-                    <p className="text-xs font-medium text-purple-100">Total Fanbase</p>
-                  </div>
-                  <p className="font-display text-3xl font-bold text-white">800,000</p>
-                </div>
-
-                {/* Feeding Platform Rows */}
-                <div className="space-y-2 pt-1">
-                  <div className="flex items-center justify-between rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] p-3">
-                    <div className="flex items-center gap-2.5">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-600 text-white shrink-0">
-                        <YoutubeIcon className="h-3.5 w-3.5" />
-                      </div>
-                      <span className="text-xs font-bold text-[#111827]">YouTube Channel</span>
-                    </div>
-                    <span className="text-xs font-bold text-[#111827]">400,000 Subscribers</span>
-                  </div>
-
-                  <div className="flex items-center justify-between rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] p-3">
-                    <div className="flex items-center gap-2.5">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-500 text-white shrink-0">
-                        <InstagramIcon className="h-3.5 w-3.5" />
-                      </div>
-                      <span className="text-xs font-bold text-[#111827]">Instagram Handle</span>
-                    </div>
-                    <span className="text-xs font-bold text-[#111827]">250,000 Followers</span>
-                  </div>
-
-                  <div className="flex items-center justify-between rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] p-3">
-                    <div className="flex items-center gap-2.5">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-white shrink-0">
-                        <FacebookIcon className="h-3.5 w-3.5" />
-                      </div>
-                      <span className="text-xs font-bold text-[#111827]">Facebook Page</span>
-                    </div>
-                    <span className="text-xs font-bold text-[#111827]">150,000 Followers</span>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -442,24 +391,24 @@ export default function LandingHomePage() {
             {/* Right Copy */}
             <div className="lg:col-span-6 space-y-4 text-left order-1 lg:order-2">
               <span className="inline-block rounded-full bg-purple-50 text-[#803D63] border border-purple-200 px-3 py-0.5 text-xs font-bold uppercase tracking-wider">
-                Zero Algorithm Drop-off
+                One page for your whole series
               </span>
               <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#111827] leading-tight">
                 Don&apos;t let Part 2 get lost in social feeds.
               </h2>
               <p className="text-sm sm:text-base font-medium text-[#4B5563] leading-relaxed">
-                You spend weeks on a multi-part series — feeds scatter it into disconnected posts the moment you publish. Inflixo gives it one page, in order, like a playlist: Part 1 leads straight to Part 2, automatically. Custom posters, numbered episodes, and 1-tap playback keep viewers bingeing.
+                Feeds scatter your series into disconnected posts. Inflixo puts every part on one page, in order — like a playlist. Custom posters, numbered episodes, and 1-tap playback keep viewers watching.
               </p>
 
               <div className="space-y-2 pt-2 text-xs sm:text-sm font-semibold text-[#111827]">
                 <div className="flex items-start gap-2">
-                  <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5" />
+                  <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
                   <div>
                     <strong className="text-[#111827]">Playlist-Style Auto-Sequencing:</strong> Part 1 leads straight to Part 2 with 1-tap playback.
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
-                  <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5" />
+                  <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
                   <div>
                     <strong className="text-[#111827]">Cross-Platform Support:</strong> Unify YouTube videos, Instagram Reels, and Facebook episodes in one clean series.
                   </div>
@@ -476,14 +425,14 @@ export default function LandingHomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Left Copy */}
             <div className="lg:col-span-6 space-y-4 text-left">
-              <span className="inline-block rounded-full bg-amber-100 text-amber-950 border border-amber-300 px-3 py-0.5 text-xs font-black uppercase tracking-wider">
-                💼 Brand Collaborations &amp; Rate Cards
+              <span className="inline-block rounded-full bg-purple-50 text-[#803D63] border border-purple-200 px-3 py-0.5 text-xs font-bold uppercase tracking-wider">
+                Direct Brand Deals
               </span>
               <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#111827] leading-tight">
-                Turn Your Audience Into Direct Brand Revenue
+                Get paid by brands without a middleman
               </h2>
               <p className="text-sm sm:text-base font-medium text-[#4B5563] leading-relaxed">
-                Stop losing sponsorship leads in crowded Instagram DMs and messy email threads. Inflixo provides an interactive, verified Media Kit &amp; Rate Card portal where brand managers can view your live total reach, package deliverables, and contact you directly via WhatsApp or Email.
+                Stop losing leads in crowded DMs. Brands see your reach and rate card, and contact you directly — zero commission. Inflixo takes 0% commission on any deal you close.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs font-medium text-[#111827]">
@@ -491,15 +440,15 @@ export default function LandingHomePage() {
                   <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
                   <div>
                     <strong className="text-slate-900 block font-bold">Dynamic Rate Cards:</strong>
-                    List custom pricing for Reels, YouTube integrations &amp; retainers (e.g. ₹2,000 / Reel).
+                    List custom pricing for Reels, YouTube integrations &amp; retainers.
                   </div>
                 </div>
 
                 <div className="flex items-start gap-2.5 rounded-xl border border-gray-100 bg-[#F9FAFB] p-3">
                   <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
                   <div>
-                    <strong className="text-slate-900 block font-bold">Verified Reach Badge:</strong>
-                    Automatic total fanbase counter across Instagram, YouTube &amp; Facebook.
+                    <strong className="text-slate-900 block font-bold">AI-Synced Fanbase Count:</strong>
+                    Automatically updated cross-platform reach across Instagram, YouTube &amp; Facebook.
                   </div>
                 </div>
 
@@ -507,7 +456,7 @@ export default function LandingHomePage() {
                   <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
                   <div>
                     <strong className="text-slate-900 block font-bold">Direct WhatsApp &amp; Email Leads:</strong>
-                    1-tap contact buttons so brand managers reach out directly to your inbox.
+                    Pre-qualified campaign briefs sent directly to your WhatsApp or inbox.
                   </div>
                 </div>
 
@@ -527,7 +476,7 @@ export default function LandingHomePage() {
                 <div className="flex items-center justify-between border-b border-amber-100 pb-3">
                   <div className="flex items-center gap-2">
                     <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-xs font-black text-slate-900 uppercase tracking-wider">VERIFIED MEDIA KIT</span>
+                    <span className="text-xs font-black text-slate-900 uppercase tracking-wider">LIVE MEDIA KIT</span>
                   </div>
                   <span className="rounded-full bg-amber-400 px-2.5 py-0.5 text-[10px] font-black text-amber-950">
                     RATE CARD LIVE
@@ -537,7 +486,7 @@ export default function LandingHomePage() {
                 {/* Sample Gig Card 1 */}
                 <div className="rounded-xl border border-amber-200 bg-white p-4 space-y-2.5 shadow-2xs relative">
                   <span className="absolute -top-2 right-3 bg-[#803D63] text-white text-[9px] font-black px-2 py-0.5 rounded-full">
-                    ⭐ MOST POPULAR
+                    MOST POPULAR
                   </span>
                   <div className="flex items-start justify-between gap-2">
                     <div>
@@ -548,14 +497,14 @@ export default function LandingHomePage() {
                     </div>
                     <span className="font-extrabold text-base text-[#803D63]">₹2,000</span>
                   </div>
-                  <p className="text-[11px] text-slate-500 font-semibold">⚡ Turnaround: 2 Days</p>
+                  <p className="text-[11px] text-slate-500 font-semibold">Turnaround: 2 Days</p>
                   <ul className="text-xs space-y-1 pt-1 border-t border-slate-100 text-slate-600">
                     <li className="flex items-center gap-1.5">
-                      <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                      <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0 stroke-[3]" />
                       <span>30–60s Dedicated Reel + Brand Tag</span>
                     </li>
                     <li className="flex items-center gap-1.5">
-                      <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                      <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0 stroke-[3]" />
                       <span>Direct Promo Code Link in Bio</span>
                     </li>
                   </ul>
@@ -572,16 +521,16 @@ export default function LandingHomePage() {
                     </div>
                     <span className="font-extrabold text-base text-[#803D63]">₹5,400</span>
                   </div>
-                  <p className="text-[11px] text-slate-500 font-semibold">⚡ Turnaround: 5 Days • Save 10%</p>
+                  <p className="text-[11px] text-slate-500 font-semibold">Turnaround: 5 Days • Save 10%</p>
                 </div>
 
                 {/* Direct WhatsApp & Email Contact Bar */}
                 <div className="pt-2 border-t border-amber-100 grid grid-cols-2 gap-2">
                   <div className="bg-emerald-600 text-white text-xs font-bold py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-2xs">
-                    <span>💬 WhatsApp Chat</span>
+                    <span>WhatsApp Brief</span>
                   </div>
                   <div className="bg-slate-900 text-white text-xs font-bold py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-2xs">
-                    <span>✉️ Send Email</span>
+                    <span>Email Brief</span>
                   </div>
                 </div>
               </div>
@@ -590,35 +539,16 @@ export default function LandingHomePage() {
         </div>
       </section>
 
-      {/* 5. SECTION 3: THE 2027 VISION & CREATOR COLLECTIVE */}
-      <section className="py-16 sm:py-24 bg-[#FFFFFF] border-b border-[#E5E7EB]">
+      {/* 5. SECTION 3: CREATOR COLLECTIVE */}
+      <section className="py-12 sm:py-16 bg-[#FFFFFF] border-b border-[#E5E7EB]">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 text-center">
-          <div className="rounded-2xl border border-[#E5E7EB] bg-[#F9FAFB] p-8 sm:p-12 text-[#111827] space-y-6">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-purple-50 border border-purple-200 px-3.5 py-1 text-xs font-bold text-[#803D63]">
-              <Sparkles className="h-3.5 w-3.5 text-[#803D63]" />
-              <span>Community &amp; Future Road</span>
-            </div>
-
-            <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#111827] leading-tight">
-              The 10,000 Creator Mission • Summit 2027
+          <div className="rounded-2xl border border-[#E5E7EB] bg-[#F9FAFB] p-6 sm:p-8 text-[#111827] space-y-4">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-[#111827] leading-tight">
+              Built with India&apos;s first 10,000 creators.
             </h2>
-
-            <p className="text-xs sm:text-sm text-[#4B5563] font-medium leading-relaxed max-w-2xl mx-auto">
-              Inflixo is built to empower India&apos;s serious digital creators. We are selecting <strong className="text-[#111827] font-bold">10,000 genuine, professional creators</strong> across tech, filmmaking, comedy, travel, and education to build our core ecosystem.
-              <br className="hidden sm:inline" />
-              Every verified creator joining our early access cohort receives a foundational membership and a direct invitation to the <strong className="text-[#803D63] font-bold">Inflixo Creator Summit 2027</strong>—a private, high-impact gathering uniting India&apos;s top creators, production houses, and global brand sponsors in one room.
+            <p className="text-xs sm:text-sm text-[#4B5563] font-semibold max-w-xl mx-auto">
+              Join early access to receive a foundational creator membership and an invite to the Inflixo Creator Summit 2027.
             </p>
-
-            <div className="pt-2">
-              <button
-                type="button"
-                onClick={() => handleClaim("")}
-                className="inline-flex items-center gap-2 rounded-full bg-[#803D63] hover:bg-[#6D3254] px-7 py-3.5 text-xs sm:text-sm font-bold text-white transition-colors cursor-pointer"
-              >
-                <span>Join the 10K Creator Collective</span>
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </div>
           </div>
         </div>
       </section>
@@ -628,13 +558,13 @@ export default function LandingHomePage() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6 text-center space-y-8">
           <div className="space-y-2 max-w-xl mx-auto">
             <span className="inline-block rounded-full bg-purple-50 text-[#803D63] border border-purple-200 px-3 py-0.5 text-xs font-bold uppercase tracking-wider">
-              Transparent Pricing
+              Pricing Plans
             </span>
             <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#111827]">
-              Simple, Creator-First Plans
+              Simple, Transparent Pricing
             </h2>
             <p className="text-xs sm:text-sm font-medium text-[#4B5563]">
-              Start free during Early Access. Upgrade whenever you need unlimited OTT &amp; Media Kit power.
+              Free Creator Early Access is active automatically until further notice.
             </p>
           </div>
 
@@ -650,11 +580,8 @@ export default function LandingHomePage() {
           <div className="rounded-2xl border border-[#E5E7EB] bg-[#F9FAFB] p-8 sm:p-12 text-center space-y-6">
             <div className="space-y-2">
               <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#111827]">
-                Ready to build your creator OTT hub?
+                Your fanbase, your series, one link.
               </h2>
-              <p className="text-sm sm:text-base font-medium text-[#4B5563]">
-                Join thousands of creators showcasing their total reach in one link.
-              </p>
             </div>
 
             <div className="max-w-md mx-auto space-y-3 pt-2">
@@ -663,9 +590,9 @@ export default function LandingHomePage() {
                   e.preventDefault();
                   handleClaim(bottomUsername);
                 }}
-                className="flex items-center rounded-xl border border-[#E5E7EB] bg-white p-1.5 focus-within:border-[#803D63] focus-within:ring-1 focus-within:ring-[#803D63] transition-all"
+                className="flex items-center rounded-xl border border-[#E5E7EB] bg-white p-1.5 focus-within:border-[#803D63] focus-within:ring-2 focus-within:ring-[#803D63]/20 transition-all shadow-xs"
               >
-                <span className="pl-3.5 text-xs sm:text-sm font-semibold text-[#9CA3AF] select-none shrink-0">
+                <span className="pl-3.5 text-xs sm:text-sm font-bold text-[#803D63] select-none shrink-0">
                   inflixo.com/
                 </span>
                 <input
@@ -677,9 +604,9 @@ export default function LandingHomePage() {
                 />
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-1 shrink-0 rounded-lg bg-[#803D63] px-4 py-2 text-xs sm:text-sm font-bold text-white hover:bg-[#6D3254] transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1 shrink-0 rounded-lg bg-[#803D63] px-4 py-2 text-xs sm:text-sm font-bold text-white hover:bg-[#6D3254] transition-colors cursor-pointer shadow-2xs"
                 >
-                  <span>Claim My Profile</span>
+                  <span>Claim Handle</span>
                 </button>
               </form>
             </div>
