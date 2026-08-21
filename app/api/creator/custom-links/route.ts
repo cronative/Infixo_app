@@ -20,7 +20,7 @@ async function ensureCustomLinksTable() {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
   } catch (e) {
-    console.warn("ensureCustomLinksTable warn:", e);
+    console.warn("ensureCustomLinksTable error:", e);
   }
 }
 
@@ -39,14 +39,20 @@ export async function GET(req: Request) {
 
     await ensureCustomLinksTable();
 
-    // Resolve creator ID & email
-    const [creators]: any = await db.query(
-      "SELECT id, email FROM creators WHERE id = ? OR email = ? OR username = ? LIMIT 1",
-      [lookupVal, lookupVal, lookupVal]
-    );
+    // Resolve creator ID & email from creators table
+    let targetCreatorId = creatorId || lookupVal;
+    let targetEmail = email || lookupVal;
 
-    const targetCreatorId = creators?.[0]?.id || creatorId || lookupVal;
-    const targetEmail = creators?.[0]?.email || email || lookupVal;
+    try {
+      const [creators]: any = await db.query(
+        "SELECT id, email FROM creators WHERE id = ? OR email = ? OR username = ? LIMIT 1",
+        [lookupVal, lookupVal, lookupVal]
+      );
+      if (creators && creators.length > 0) {
+        targetCreatorId = creators[0].id;
+        targetEmail = creators[0].email;
+      }
+    } catch {}
 
     const [rows]: any = await db.query(
       `SELECT id, title, url, icon, is_enabled AS isEnabled, sort_order AS sortOrder
@@ -74,7 +80,7 @@ export async function GET(req: Request) {
   }
 }
 
-// POST /api/creator/custom-links (Save all custom links for creator)
+// POST /api/creator/custom-links (Save custom links array to MySQL database table creator_custom_links)
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -86,19 +92,22 @@ export async function POST(req: Request) {
 
     await ensureCustomLinksTable();
 
-    const [creators]: any = await db.query("SELECT id FROM creators WHERE email = ?", [email]);
-    if (!creators || creators.length === 0) {
-      return NextResponse.json({ error: "Creator not found" }, { status: 404 });
-    }
+    let creatorId = email;
+    try {
+      const [creators]: any = await db.query("SELECT id FROM creators WHERE email = ?", [email]);
+      if (creators && creators.length > 0) {
+        creatorId = creators[0].id;
+      }
+    } catch {}
 
-    const creatorId = creators[0].id;
-
-    // Delete existing links and re-insert updated ordered list
+    // Delete existing links for this creator in creator_custom_links table and insert updated list
     await db.query("DELETE FROM creator_custom_links WHERE creator_id = ? OR email = ?", [creatorId, email]);
 
+    let savedCount = 0;
     for (let idx = 0; idx < links.length; idx++) {
       const item = links[idx];
-      if (item.title && item.url) {
+      // Save link row if title or URL provided
+      if (item.title || item.url) {
         const linkId = item.id || `link_${Date.now()}_${idx}`;
         await db.query(
           `INSERT INTO creator_custom_links (id, creator_id, email, title, url, icon, is_enabled, sort_order)
@@ -107,19 +116,21 @@ export async function POST(req: Request) {
             linkId,
             creatorId,
             email,
-            item.title.trim(),
-            item.url.trim(),
+            (item.title || "").trim(),
+            (item.url || "").trim(),
             item.icon || "link",
             item.isEnabled !== false ? 1 : 0,
             idx,
           ]
         );
+        savedCount++;
       }
     }
 
     return NextResponse.json({
       success: true,
-      message: "Saved custom links successfully!",
+      savedCount,
+      message: `Saved ${savedCount} custom link(s) to MySQL table creator_custom_links`,
     });
   } catch (err: any) {
     console.error("POST Custom Links Error:", err);
