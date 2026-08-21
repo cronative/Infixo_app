@@ -954,7 +954,7 @@ export default function DashboardMediaKitPage() {
                   <select
                     value={formPlatform}
                     onChange={(e) => setFormPlatform(e.target.value)}
-                    className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
+                    className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
                   >
                     <option value="Instagram Reel">Instagram Reel</option>
                     <option value="Instagram Bundle">Instagram Bundle (Reels + Stories)</option>
@@ -969,50 +969,50 @@ export default function DashboardMediaKitPage() {
                   </select>
                 </div>
 
-                {/* Min - Max Pricing Range Inputs */}
-                <div className="space-y-1">
-                  <label className="block text-xs font-bold text-slate-700">
-                    Pricing Range (in INR)
-                  </label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[10px] font-bold text-slate-500 mb-0.5">Min Price (₹)</label>
-                      <input
-                        type="text"
-                        value={formMinPrice}
-                        onChange={(e) => setFormMinPrice(e.target.value)}
-                        placeholder="₹2,000"
-                        className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-semibold text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-bold text-slate-500 mb-0.5">Max Price (Optional)</label>
-                      <input
-                        type="text"
-                        value={formMaxPrice}
-                        onChange={(e) => setFormMaxPrice(e.target.value)}
-                        placeholder="₹5,000"
-                        className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-semibold text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
-                      />
-                    </div>
-                  </div>
-                  <p className="text-[10px] text-slate-400 pt-0.5">
-                    e.g. Min ₹2,000 – Max ₹5,000 (leave Max empty for fixed pricing)
-                  </p>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Turnaround Time (TAT in Days)</label>
+                  <input
+                    type="number"
+                    value={formTurnaround}
+                    onChange={(e) => setFormTurnaround(Number(e.target.value))}
+                    min={1}
+                    max={30}
+                    className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
+                  />
                 </div>
               </div>
 
+              {/* Min - Max Pricing Range Inputs (Dedicated Row) */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Turnaround Time (TAT in Days)</label>
-                <input
-                  type="number"
-                  value={formTurnaround}
-                  onChange={(e) => setFormTurnaround(Number(e.target.value))}
-                  min={1}
-                  max={30}
-                  className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
-                />
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Pricing Range (in INR)
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-500 mb-0.5">Min Price (₹)</label>
+                    <input
+                      type="text"
+                      value={formMinPrice}
+                      onChange={(e) => setFormMinPrice(e.target.value)}
+                      placeholder="₹2,000"
+                      className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-semibold text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-500 mb-0.5">Max Price (Optional)</label>
+                    <input
+                      type="text"
+                      value={formMaxPrice}
+                      onChange={(e) => setFormMaxPrice(e.target.value)}
+                      placeholder="₹5,000"
+                      className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-semibold text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
+                    />
+                  </div>
+                </div>
+                <p className="text-[10px] text-slate-400 pt-0.5">
+                  e.g. Min ₹2,000 – Max ₹5,000 (leave Max empty for fixed pricing)
+                </p>
               </div>
 
               {/* Dynamic Deliverables List & 10 Suggestions */}
