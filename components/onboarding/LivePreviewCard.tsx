@@ -718,11 +718,11 @@ export function LivePreviewCard({
       {/* Top Header Bar */}
       <div className="relative z-10 flex items-center justify-between w-full mb-4 px-1">
         <div
-          className="tap-scale flex h-8 w-8 items-center justify-center rounded-full bg-[#803D63] text-white shadow-2xs transition-all shrink-0 cursor-pointer"
+          className="tap-scale flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-[#803D63] text-white shadow-md transition-all shrink-0 cursor-pointer border border-white/20"
           title="Inflixo"
           aria-label="Inflixo"
         >
-          <InflixoLogoIcon className="h-4 w-4 text-white" />
+          <InflixoLogoIcon className="h-5 w-5 sm:h-6 sm:w-6 text-white animate-[spin_8s_linear_infinite]" />
         </div>
 
         <div className="flex items-center gap-1.5">
