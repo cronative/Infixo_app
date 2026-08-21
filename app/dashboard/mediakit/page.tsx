@@ -26,6 +26,7 @@ import {
   X,
   FileSpreadsheet,
   Film,
+  Tv,
   Layers,
   Award,
 } from "lucide-react";
@@ -175,6 +176,16 @@ export default function DashboardMediaKitPage() {
   const router = useRouter();
   const { profile, socials, totalAudience, series } = useCreator();
   const { showToast } = useToast();
+
+  const totalSeriesCount = series ? series.length : 0;
+  const totalEpisodesCount = series
+    ? series.reduce((acc: number, ser: any) => {
+        const epCount = ser.seasons
+          ? ser.seasons.reduce((sAcc: number, season: any) => sAcc + (season.episodes?.length || 0), 0)
+          : (ser.episodesCount || 0);
+        return acc + epCount;
+      }, 0)
+    : 0;
 
   const [packages, setPackages] = useState<MediaKitPackage[]>([]);
   const [settings, setSettings] = useState<MediaKitSettings>(MediaKitService.DEFAULT_SETTINGS);
@@ -833,49 +844,41 @@ export default function DashboardMediaKitPage() {
           )}
         </div>
 
-        {/* 4. VISUAL PORTFOLIO & OTT SHOWCASE */}
+        {/* 4. OTT SERIES & EPISODES SUMMARY STATS */}
         <div className="rounded-2xl border border-gray-200 bg-white p-5 sm:p-6 space-y-4 shadow-2xs">
-          <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-3">
             <div className="flex items-center gap-2">
               <Film className="h-4 w-4 text-[#803D63]" />
               <h3 className="font-display text-sm font-bold text-slate-900">
-                Visual Portfolio &amp; OTT Series Showcase
+                OTT Series &amp; Episodes Track Record
               </h3>
             </div>
             <span className="text-[11px] font-semibold text-slate-500">
-              Rendered on Public Media Kit
+              Verified Production Portfolio
             </span>
           </div>
 
-          {series && series.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {series.slice(0, 3).map((ser: any) => (
-                <div key={ser.id} className="rounded-xl border border-gray-200 overflow-hidden bg-slate-900 text-white shadow-2xs group">
-                  <div className="aspect-video relative bg-slate-800 flex items-center justify-center">
-                    {ser.posterDataUrl ? (
-                      <img src={ser.posterDataUrl} alt={ser.title} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="flex flex-col items-center gap-1 text-slate-500">
-                        <Film className="h-6 w-6" />
-                        <span className="text-[10px] font-bold">16:9 OTT POSTER</span>
-                      </div>
-                    )}
-                    <span className="absolute bottom-2 left-2 bg-slate-950/80 backdrop-blur-xs text-[10px] font-bold px-2 py-0.5 rounded text-indigo-300">
-                      🎬 {ser.seasons?.[0]?.episodes?.length || 0} Episodes
-                    </span>
-                  </div>
-                  <div className="p-3">
-                    <p className="font-bold text-xs truncate">{ser.title}</p>
-                    <p className="text-[10px] text-slate-400 font-medium truncate">{ser.genre || "Web Series"}</p>
-                  </div>
-                </div>
-              ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="flex items-center gap-3.5 bg-slate-50 border border-gray-200 rounded-xl p-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] shrink-0">
+                <Film className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Created Series</p>
+                <p className="font-display text-xl font-black text-slate-900">{totalSeriesCount} {totalSeriesCount === 1 ? "Series" : "Series"}</p>
+              </div>
             </div>
-          ) : (
-            <div className="rounded-xl border border-dashed border-gray-200 bg-slate-50 p-4 text-center text-xs text-slate-500">
-              Create OTT Series in <Link href="/dashboard/series" className="text-[#803D63] font-bold underline">Series &amp; Episodes</Link> to automatically feature widescreen 16:9 production posters here for brand managers.
+
+            <div className="flex items-center gap-3.5 bg-slate-50 border border-gray-200 rounded-xl p-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-100 shrink-0">
+                <Tv className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Published Episodes</p>
+                <p className="font-display text-xl font-black text-slate-900">{totalEpisodesCount} {totalEpisodesCount === 1 ? "Episode" : "Episodes"}</p>
+              </div>
             </div>
-          )}
+          </div>
 
           {/* Past Brand Collaborations Grayscale Bar */}
           <div className="pt-3 border-t border-gray-100 space-y-2 text-center">
@@ -1291,36 +1294,33 @@ export default function DashboardMediaKitPage() {
               )}
             </div>
 
-            {/* Visual Portfolio Showcase Section in Modal */}
-            {series && series.length > 0 && (
-              <div className="pt-2 border-t border-gray-100 space-y-3">
-                <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                  <Film className="h-3.5 w-3.5 text-[#803D63]" /> Production Portfolio Showcase
-                </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {series.slice(0, 3).map((ser: any) => (
-                    <div key={ser.id} className="rounded-xl border border-gray-200 overflow-hidden bg-slate-900 text-white">
-                      <div className="aspect-video relative bg-slate-800 flex items-center justify-center">
-                        {ser.posterDataUrl ? (
-                          <img src={ser.posterDataUrl} alt={ser.title} className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="flex flex-col items-center gap-1 text-slate-500">
-                            <Film className="h-5 w-5" />
-                            <span className="text-[9px] font-bold">16:9 POSTER</span>
-                          </div>
-                        )}
-                        <span className="absolute bottom-1.5 left-1.5 bg-slate-950/80 backdrop-blur-xs text-[9px] font-bold px-1.5 py-0.5 rounded text-indigo-300">
-                          {ser.seasons?.[0]?.episodes?.length || 0} Episodes
-                        </span>
-                      </div>
-                      <div className="p-2">
-                        <p className="font-bold text-xs truncate">{ser.title}</p>
-                      </div>
-                    </div>
-                  ))}
+            {/* OTT Series & Episodes Summary Section in Preview Modal */}
+            <div className="pt-2 border-t border-gray-100 space-y-2">
+              <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                <Film className="h-3.5 w-3.5 text-[#803D63]" /> Production Portfolio Track Record
+              </h4>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex items-center gap-2.5 bg-slate-50 border border-gray-200 rounded-xl p-2.5">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] shrink-0">
+                    <Film className="h-3.5 w-3.5" />
+                  </div>
+                  <div>
+                    <p className="text-[9px] font-bold text-slate-500 uppercase">Total Series</p>
+                    <p className="font-display text-sm font-black text-slate-900">{totalSeriesCount} Series</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5 bg-slate-50 border border-gray-200 rounded-xl p-2.5">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100 shrink-0">
+                    <Tv className="h-3.5 w-3.5" />
+                  </div>
+                  <div>
+                    <p className="text-[9px] font-bold text-slate-500 uppercase">Total Episodes</p>
+                    <p className="font-display text-sm font-black text-slate-900">{totalEpisodesCount} Episodes</p>
+                  </div>
                 </div>
               </div>
-            )}
+            </div>
 
             {/* Past Brand Collaborations Grayscale Bar */}
             <div className="pt-2 border-t border-gray-100 text-center space-y-1.5">
