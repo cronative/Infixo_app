@@ -83,7 +83,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
               name={profile.displayName || profile.email || "Creator"}
               className="w-[40px] h-[40px] rounded-full border border-slate-200 overflow-hidden object-cover aspect-square shrink-0"
               textClassName="text-sm font-black text-slate-900"
-              fallbackBgClass="bg-indigo-50"
+              fallbackBgClass="bg-rose-50"
             />
 
             <div className="min-w-0 flex-1">
@@ -129,7 +129,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                   onClick={onClose}
                   className={`flex items-center justify-between rounded-2xl px-3.5 py-3 text-xs font-extrabold transition-all ${
                     active
-                      ? "bg-purple-50 text-[#803D63] shadow-2xs border border-purple-200"
+                      ? "bg-[#803D63]/10 text-[#803D63] shadow-2xs border border-[#803D63]/20"
                       : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
                   }`}
                 >

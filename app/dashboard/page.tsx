@@ -338,7 +338,7 @@ export default function DashboardOverviewPage() {
           <div className="space-y-3">
             {series.length === 0 ? (
               <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center space-y-3 shadow-2xs">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-[#803D63] mx-auto">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#803D63]/10 text-[#803D63] border border-[#803D63]/20 mx-auto">
                   <Film className="h-6 w-6" />
                 </div>
                 <p className="text-sm font-bold text-slate-900">No series created yet</p>
@@ -371,7 +371,7 @@ export default function DashboardOverviewPage() {
 
         {/* 6. PHASE 2 ANALYTICS PREPARATION STRIP */}
         <div className="rounded-2xl border border-gray-200 bg-white p-6 text-center space-y-1 shadow-2xs">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#803D63] bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full mb-1">
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#803D63] bg-[#803D63]/10 border border-[#803D63]/20 px-3 py-1 rounded-full mb-1">
             <Sparkles className="h-3.5 w-3.5" />
             <span>Phase 2 Feature</span>
           </div>
@@ -386,7 +386,7 @@ export default function DashboardOverviewPage() {
         {/* 7. ACTIVE CARD THEME STRIP */}
         <div className="flex items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-[#803D63] border border-indigo-100">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#803D63]/10 text-[#803D63] border border-[#803D63]/20">
               <Palette className="h-4 w-4" />
             </div>
             <div className="min-w-0">
@@ -406,7 +406,7 @@ export default function DashboardOverviewPage() {
 
           <Link
             href="/dashboard/themes"
-            className="shrink-0 rounded-xl bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3.5 py-1.5 text-xs font-bold text-[#803D63] transition-colors"
+            className="shrink-0 rounded-xl bg-[#803D63]/10 hover:bg-[#803D63]/20 border border-[#803D63]/20 px-3.5 py-1.5 text-xs font-bold text-[#803D63] transition-colors"
           >
             Change Theme →
           </Link>

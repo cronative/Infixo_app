@@ -61,7 +61,7 @@ export default function ThemeStepPage() {
       step="theme"
       preview={<ThemeCard themeKey={theme} {...cardProps} />}
     >
-      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-bold text-[#803D63]">
+      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/20 bg-[#803D63]/10 px-3 py-1 text-xs font-bold text-[#803D63]">
         <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
         <span>Step 3 of 6 • Theme Selection</span>
       </div>

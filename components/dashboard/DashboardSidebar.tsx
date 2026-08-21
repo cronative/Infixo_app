@@ -39,7 +39,7 @@ export function DashboardSidebar() {
           name={profile.displayName || profile.email || "Creator"}
           className="w-[40px] h-[40px] rounded-full overflow-hidden object-cover aspect-square border border-slate-200 shrink-0"
           textClassName="text-sm font-black text-slate-900"
-          fallbackBgClass="bg-indigo-50"
+          fallbackBgClass="bg-rose-50"
         />
 
         <div className="min-w-0 flex-1">
@@ -72,7 +72,7 @@ export function DashboardSidebar() {
               href={item.href}
               className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-bold transition-colors ${
                 active
-                  ? "bg-indigo-50 text-[#803D63] border border-indigo-200"
+                  ? "bg-[#803D63]/10 text-[#803D63] border border-[#803D63]/20"
                   : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
               }`}
             >
