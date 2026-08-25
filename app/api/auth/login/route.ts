@@ -1,9 +1,20 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { sendOtpEmail } from "@/lib/email";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 
 export async function POST(req: Request) {
   try {
+    // 0. Rate Limiting Protection (Max 5 requests per 5 minutes per IP)
+    const clientIp = getClientIp(req);
+    const rateCheck = checkRateLimit(`login_${clientIp}`, 5, 5 * 60 * 1000);
+    if (!rateCheck.success) {
+      return NextResponse.json(
+        { error: `Too many login attempts. Please wait ${rateCheck.retryAfterSec} seconds before trying again.` },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json();
     const email = (body.email || "").trim().toLowerCase();
 

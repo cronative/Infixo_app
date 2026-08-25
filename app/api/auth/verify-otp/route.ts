@@ -1,9 +1,20 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { recordOnboardingStep } from "@/lib/onboardingStepDb";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 
 export async function POST(req: Request) {
   try {
+    // 0. Rate Limiting Protection (Max 10 verify attempts per 5 minutes per IP)
+    const clientIp = getClientIp(req);
+    const rateCheck = checkRateLimit(`verify_${clientIp}`, 10, 5 * 60 * 1000);
+    if (!rateCheck.success) {
+      return NextResponse.json(
+        { error: `Too many attempts. Please wait ${rateCheck.retryAfterSec} seconds.` },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json();
     const email = (body.email || "").trim().toLowerCase();
     const otp = (body.otp || "").trim();
