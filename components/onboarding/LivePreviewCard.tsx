@@ -801,6 +801,15 @@ export function LivePreviewCard({
   const twiHandle = socials.twitch?.username || getHandle(socials.twitch?.url || "");
   const spHandle = socials.spotify?.username || getHandle(socials.spotify?.url || "");
 
+  const hasInsta = Boolean(instaHandle || (socials.instagram?.followers || 0) > 0 || socials.instagram?.url);
+  const instaUrl = buildSocialUrl("instagram", socials.instagram?.url || socials.instagram?.username || instaHandle);
+
+  const hasYt = Boolean(ytHandle || (socials.youtube?.subscribers || 0) > 0 || socials.youtube?.url);
+  const ytUrl = buildSocialUrl("youtube", socials.youtube?.url || socials.youtube?.username || ytHandle);
+
+  const hasFb = Boolean(fbHandle || (socials.facebook?.followers || 0) > 0 || socials.facebook?.url);
+  const fbUrl = buildSocialUrl("facebook", socials.facebook?.url || socials.facebook?.username || fbHandle);
+
   const activeSocialList = [
     {
       platform: "instagram",
@@ -1107,6 +1116,81 @@ export function LivePreviewCard({
         }`}>
           {profile.bio || "Sharing my journey & content. Stream original series and connect across all platforms."}
         </p>
+
+        {/* Prominent Social Redirect Icon Badges (Instagram, YouTube, Facebook) */}
+        <div className="mt-3.5 flex items-center justify-center gap-3">
+          {/* Instagram Icon */}
+          {hasInsta ? (
+            <a
+              href={instaUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="tap-scale flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white shadow-xs transition-all hover:scale-110 hover:shadow-md cursor-pointer"
+              title={`Instagram: ${instaHandle ? `@${instaHandle.replace(/^@/, "")}` : "Visit Profile"}`}
+              aria-label="Instagram Profile"
+            >
+              <InstagramIcon className="h-4 w-4 text-white" />
+            </a>
+          ) : (
+            <div
+              className={`flex h-9 w-9 items-center justify-center rounded-xl border border-dashed opacity-40 cursor-not-allowed ${
+                isDark ? "bg-slate-800/60 border-white/20 text-slate-400" : "bg-slate-100 border-slate-300 text-slate-400"
+              }`}
+              title="Instagram (Not connected)"
+              aria-label="Instagram (Not connected)"
+            >
+              <InstagramIcon className="h-4 w-4" />
+            </div>
+          )}
+
+          {/* YouTube Icon */}
+          {hasYt ? (
+            <a
+              href={ytUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="tap-scale flex h-9 w-9 items-center justify-center rounded-xl bg-red-600 text-white shadow-xs transition-all hover:scale-110 hover:shadow-md cursor-pointer"
+              title={`YouTube: ${ytHandle ? `@${ytHandle.replace(/^@/, "")}` : "Visit Channel"}`}
+              aria-label="YouTube Channel"
+            >
+              <YoutubeIcon className="h-4 w-4 text-white" />
+            </a>
+          ) : (
+            <div
+              className={`flex h-9 w-9 items-center justify-center rounded-xl border border-dashed opacity-40 cursor-not-allowed ${
+                isDark ? "bg-slate-800/60 border-white/20 text-slate-400" : "bg-slate-100 border-slate-300 text-slate-400"
+              }`}
+              title="YouTube (Not connected)"
+              aria-label="YouTube (Not connected)"
+            >
+              <YoutubeIcon className="h-4 w-4" />
+            </div>
+          )}
+
+          {/* Facebook Icon */}
+          {hasFb ? (
+            <a
+              href={fbUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="tap-scale flex h-9 w-9 items-center justify-center rounded-xl bg-[#1877F2] text-white shadow-xs transition-all hover:scale-110 hover:shadow-md cursor-pointer"
+              title={`Facebook: ${fbHandle ? `@${fbHandle.replace(/^@/, "")}` : "Visit Page"}`}
+              aria-label="Facebook Page"
+            >
+              <FacebookIcon className="h-4 w-4 text-white" />
+            </a>
+          ) : (
+            <div
+              className={`flex h-9 w-9 items-center justify-center rounded-xl border border-dashed opacity-40 cursor-not-allowed ${
+                isDark ? "bg-slate-800/60 border-white/20 text-slate-400" : "bg-slate-100 border-slate-300 text-slate-400"
+              }`}
+              title="Facebook (Not connected)"
+              aria-label="Facebook (Not connected)"
+            >
+              <FacebookIcon className="h-4 w-4" />
+            </div>
+          )}
+        </div>
 
         {/* "Total Fanbase" Authority Card */}
         {visibilitySettings.showFanbase !== false && (
