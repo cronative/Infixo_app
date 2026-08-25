@@ -1315,7 +1315,7 @@ export function LivePreviewCard({
               }`}>
                 <Film className={`h-7 w-7 mx-auto ${isDark ? "text-slate-400" : "text-slate-400"}`} />
                 <p className={`font-bold text-xs ${isDark ? "text-white" : "text-slate-800"}`}>No Series Published Yet</p>
-                <p className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>Check back soon for original web series &amp; trailers!</p>
+                <p className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>Check back soon for this creator&apos;s web series &amp; episode listings!</p>
               </div>
             )}
           </div>
