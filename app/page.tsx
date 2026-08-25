@@ -245,9 +245,14 @@ export default function LandingHomePage() {
   }
 
   return (
-    <div className="min-h-dvh bg-[#FFFFFF] text-[#111827] flex flex-col font-sans selection:bg-purple-100 selection:text-[#803D63]">
+    <div className="relative min-h-dvh bg-gradient-to-b from-[#F6EBF1]/60 via-slate-50 to-white text-[#111827] flex flex-col font-sans selection:bg-purple-100 selection:text-[#803D63] overflow-x-hidden">
+      {/* Ambient Maroon Background Glow Orbs */}
+      <div className="pointer-events-none fixed -top-24 -left-20 h-96 w-96 rounded-full bg-[#803D63]/10 blur-3xl z-0" />
+      <div className="pointer-events-none fixed top-1/3 -right-20 h-96 w-96 rounded-full bg-rose-200/40 blur-3xl z-0" />
+      <div className="pointer-events-none fixed bottom-1/4 -left-20 h-96 w-96 rounded-full bg-[#803D63]/5 blur-3xl z-0" />
+
       {/* 1. NAVIGATION BAR */}
-      <header className="sticky top-0 z-50 bg-[#FFFFFF]/95 backdrop-blur-sm border-b border-[#E5E7EB]">
+      <header className="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-[#E8DCE4]">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5 sm:px-6">
           {/* Left: Inflixo Logo */}
           <Logo size="md" />
@@ -273,7 +278,7 @@ export default function LandingHomePage() {
       </header>
 
       {/* 2. HERO SECTION */}
-      <section className="bg-gradient-to-b from-[#F9FAFB] via-[#FDF8FA] to-white pt-8 pb-16 sm:pt-14 sm:pb-20 border-b border-[#E5E7EB]">
+      <section className="relative z-10 bg-transparent pt-8 pb-16 sm:pt-14 sm:pb-20 border-b border-[#E8DCE4]">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center space-y-6">
           {/* HERO CAROUSEL CONTAINER */}
           <div
@@ -1305,7 +1310,7 @@ export default function LandingHomePage() {
               <div className="space-y-1">
                 <h3 className="font-display text-lg font-bold text-slate-900">Add Your Creator Details</h3>
                 <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-                  Connect your accounts and add content, links, gigs and reviews.
+                      Connect your accounts and add content, links, gigs and reviews.
                 </p>
               </div>
             </div>
@@ -1325,11 +1330,200 @@ export default function LandingHomePage() {
         </div>
       </section>
 
+      {/* 3. LIVE CREATOR PREVIEW SECTION (PRESERVED TONY STARK PROFILE) */}
+      <section id="live-preview" className="py-16 sm:py-24 bg-[#F6EBF1]/35 border-b border-[#E8DCE4] scroll-mt-12">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="text-center max-w-3xl mx-auto mb-10 space-y-3">
+            <span className="inline-block rounded-full bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] px-3.5 py-1 text-xs font-bold uppercase tracking-wider">
+              Interactive Live Preview
+            </span>
+            <h2 className="font-display text-3xl sm:text-4xl font-extrabold text-[#111827]">
+              See everything about a creator on one profile.
+            </h2>
+            <p className="text-base sm:text-lg font-medium text-[#4B5563] leading-relaxed">
+              Followers, social accounts, content series, collaboration services and reviews—presented in one professional place.
+            </p>
+          </div>
+
+          {/* Interactive Live Preview Component Wrapper */}
+          <div className="flex justify-center">
+            <div className="w-full max-w-[540px] rounded-3xl border border-[#E8DCE4] bg-white p-3 sm:p-4 relative transition-all duration-700 space-y-3 shadow-2xl shadow-[#803D63]/5">
+              {/* Browser Header Bar */}
+              <div className="flex items-center justify-between bg-slate-50 px-4 py-2 rounded-xl border border-slate-200">
+                <div className="flex items-center gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+                </div>
+                <div className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-[11px] font-bold text-slate-700 border border-slate-200">
+                  <span>inflixo.com/{username ? username.toLowerCase().replace(/[^a-z0-9_]/g, "") : "tonystark"}</span>
+                </div>
+              </div>
+
+              {/* Exact Live Preview Card Component */}
+              <LivePreviewCard
+                profile={
+                  username.trim()
+                    ? {
+                        displayName: username.trim().charAt(0).toUpperCase() + username.trim().slice(1),
+                        username: username.trim().toLowerCase().replace(/[^a-z0-9_]/g, ""),
+                        category: "Digital Creator",
+                        bio: `🚀 Official OTT Media Kit & Series Showcase of @${username.trim()}`,
+                        photoDataUrl: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(username.trim())}`,
+                        updatedAt: new Date().toISOString(),
+                      }
+                    : DEMO_PROFILE
+                }
+                socials={
+                  username.trim()
+                    ? {
+                        instagram: { url: `https://instagram.com/${username}`, followers: 450000, posts: 180, username: username.trim() },
+                        youtube: { url: `https://youtube.com/@${username}`, subscribers: 820000, videos: 95, totalViews: 45000000, username: username.trim() },
+                        facebook: { url: `https://facebook.com/${username}`, followers: 210000, posts: 120, username: username.trim() },
+                        updatedAt: new Date().toISOString(),
+                      }
+                    : DEMO_SOCIALS
+                }
+                series={DEMO_SERIES}
+                mediaKitPackages={DEMO_PACKAGES}
+                reviews={DEMO_REVIEWS}
+                totalAudience={username.trim() ? 1480000 : 20500000}
+                themeKey={activeTheme.key}
+              />
+
+              {/* CTA Button Below Preview */}
+              <button
+                type="button"
+                onClick={() => handleClaim(username)}
+                className="w-full tap-scale py-3.5 px-4 rounded-2xl bg-[#803D63] hover:bg-[#6D3254] text-white font-extrabold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span>Claim @{username.trim() || "yourname"} Profile Before Someone Else Does</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. FEATURE INTRODUCTION */}
+      <section className="py-16 sm:py-20 bg-white/70 border-b border-[#E8DCE4]">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 text-center space-y-4">
+          <span className="inline-block rounded-full bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] px-3.5 py-1 text-xs font-bold uppercase tracking-wider">
+            Creator Features
+          </span>
+          <h2 className="font-display text-3xl sm:text-5xl font-extrabold text-[#111827] leading-tight">
+            Everything you need to show your value as a creator.
+          </h2>
+          <p className="text-base sm:text-xl font-medium text-[#4B5563] leading-relaxed max-w-3xl mx-auto">
+            Inflixo brings your audience, content and professional work together, so fans and brands can understand who you are without opening multiple links.
+          </p>
+        </div>
+      </section>
+
+      {/* 5. 6 DETAILED FEATURE SECTIONS (ALTERNATING LAYOUT) */}
+
+      {/* FEATURE 1: TOTAL FANBASE */}
+      <section className="py-16 sm:py-24 bg-[#F6EBF1]/35 border-b border-[#E8DCE4]">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+            {/* Left Copy */}
+            <div className="lg:col-span-6 space-y-5 text-left">
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-[#E8DCE4] bg-[#F6EBF1] px-3 py-1 text-xs font-bold text-[#803D63]">
+                <Users className="h-3.5 w-3.5 text-[#803D63]" />
+                <span>Feature 01: Total Fanbase Reach</span>
+              </div>
+              <h3 className="font-display text-3xl sm:text-4xl font-extrabold text-[#111827] leading-tight">
+                One clear number for your total combined reach.
+              </h3>
+              <p className="text-base text-[#4B5563] font-medium leading-relaxed">
+                Connect your Instagram, YouTube and Facebook accounts. Inflixo calculates your total verified fanbase reach automatically in real time.
+              </p>
+
+              <div className="space-y-3 pt-2">
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="h-5 w-5 text-[#803D63] shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-bold text-[#111827]">Live Social Sync</h4>
+                    <p className="text-xs text-[#4B5563] font-medium">Auto-syncs follower counts from connected platforms.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="h-5 w-5 text-[#803D63] shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-bold text-[#111827]">Direct Platform Badges</h4>
+                    <p className="text-xs text-[#4B5563] font-medium">Clickable links that take followers directly to each of your social channels.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="h-5 w-5 text-[#803D63] shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-bold text-[#111827]">Sponsor-Ready Credibility</h4>
+                    <p className="text-xs text-[#4B5563] font-medium">Gives brands a single verified audience metric for sponsorship conversations.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Card */}
+            <div className="lg:col-span-6 flex justify-center">
+              <div className="w-full max-w-[440px] rounded-3xl border border-[#E8DCE4] bg-white p-6 sm:p-8 space-y-6 shadow-2xl shadow-[#803D63]/5">
+                <div className="text-center space-y-1">
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#803D63]">Total Combined Audience</p>
+                  <p className="font-display text-4xl sm:text-5xl font-black text-[#111827]">20,500,000</p>
+                  <p className="text-xs font-medium text-slate-500">Across 3 verified platforms</p>
+                </div>
+
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r from-pink-50/60 to-purple-50/60 border border-pink-200/80">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#E1306C] text-white">
+                        <InstagramIcon className="h-5 w-5 fill-current" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-900">Instagram</p>
+                        <p className="text-[11px] font-medium text-slate-500">@tonystark</p>
+                      </div>
+                    </div>
+                    <p className="text-sm font-black text-slate-900">4,800,000</p>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r from-red-50/60 to-orange-50/60 border border-red-200/80">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#FF0000] text-white">
+                        <YoutubeIcon className="h-5 w-5 fill-current" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-900">YouTube</p>
+                        <p className="text-[11px] font-medium text-slate-500">Stark Tech Vlogs</p>
+                      </div>
+                    </div>
+                    <p className="text-sm font-black text-slate-900">12,500,000</p>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r from-blue-50/60 to-indigo-50/60 border border-blue-200/80">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1877F2] text-white">
+                        <FacebookIcon className="h-5 w-5 fill-current" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-900">Facebook</p>
+                        <p className="text-[11px] font-medium text-slate-500">Tony Stark Official</p>
+                      </div>
+                    </div>
+                    <p className="text-sm font-black text-slate-900">3,200,000</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 8. PRICING SECTION */}
-      <section className="py-16 sm:py-24 bg-[#F9FAFB] border-b border-[#E5E7EB]">
+      <section className="py-16 sm:py-24 bg-[#F6EBF1]/35 border-b border-[#E8DCE4]">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 text-center space-y-8">
           <div className="space-y-3 max-w-2xl mx-auto">
-            <span className="inline-block rounded-full bg-purple-50 text-[#803D63] border border-purple-200 px-3.5 py-1 text-xs font-bold uppercase tracking-wider">
+            <span className="inline-block rounded-full bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] px-3.5 py-1 text-xs font-bold uppercase tracking-wider">
               Simple Plans
             </span>
             <h2 className="font-display text-3xl sm:text-4xl font-extrabold text-[#111827]">
@@ -1347,10 +1541,10 @@ export default function LandingHomePage() {
       </section>
 
       {/* 9. SOCIAL PROOF / EARLY ACCESS SECTION */}
-      <section className="py-14 sm:py-18 bg-white border-b border-[#E5E7EB]">
+      <section className="py-14 sm:py-18 bg-white/70 border-b border-[#E8DCE4]">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 text-center">
-          <div className="rounded-3xl border border-purple-200 bg-gradient-to-br from-purple-50/90 via-white to-pink-50/50 p-8 sm:p-12 text-[#111827] space-y-5 shadow-sm">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-purple-100 border border-purple-200 px-3.5 py-1 text-xs font-bold text-[#803D63]">
+          <div className="rounded-3xl border border-[#E8DCE4] bg-white p-8 sm:p-12 text-[#111827] space-y-5 shadow-2xl shadow-[#803D63]/5">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#F6EBF1] border border-[#E8DCE4] px-3.5 py-1 text-xs font-bold text-[#803D63]">
               <Sparkles className="h-3.5 w-3.5 text-[#803D63]" />
               <span>India&apos;s Creator Community</span>
             </div>
@@ -1364,7 +1558,7 @@ export default function LandingHomePage() {
               <button
                 type="button"
                 onClick={() => handleClaim("")}
-                className="inline-flex items-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6D3254] px-6 py-3 text-sm font-bold text-white transition-all shadow-md cursor-pointer tap-scale"
+                className="inline-flex items-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6D3254] px-6 py-3.5 text-sm font-bold text-white transition-all shadow-md cursor-pointer tap-scale"
               >
                 <span>Join Early Access Free</span>
                 <ArrowRight className="h-4 w-4" />
@@ -1375,9 +1569,9 @@ export default function LandingHomePage() {
       </section>
 
       {/* 10. FINAL CTA SECTION */}
-      <section className="py-16 sm:py-24 bg-[#F9FAFB]">
+      <section className="py-16 sm:py-24 bg-[#F6EBF1]/40">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
-          <div className="rounded-3xl border border-[#E5E7EB] bg-white p-8 sm:p-14 text-center space-y-6 shadow-xl">
+          <div className="rounded-3xl border border-[#E8DCE4] bg-white p-8 sm:p-14 text-center space-y-6 shadow-2xl shadow-[#803D63]/5">
             <div className="space-y-3">
               <h2 className="font-display text-3xl sm:text-5xl font-extrabold text-[#111827] leading-tight">
                 You&apos;re building more than followers. You&apos;re building your creator identity.
@@ -1397,7 +1591,7 @@ export default function LandingHomePage() {
                   e.preventDefault();
                   handleClaim(bottomUsername);
                 }}
-                className="flex items-center rounded-2xl border-2 border-purple-200 bg-white p-1.5 focus-within:border-[#803D63] focus-within:ring-4 focus-within:ring-[#803D63]/10 transition-all shadow-xs"
+                className="flex items-center rounded-2xl border-2 border-[#E8DCE4] bg-white p-1.5 focus-within:border-[#803D63] focus-within:ring-4 focus-within:ring-[#803D63]/10 transition-all shadow-xs"
               >
                 <span className="pl-3.5 text-xs sm:text-sm font-bold text-[#803D63] select-none shrink-0">
                   inflixo.com/
@@ -1423,7 +1617,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(bottomUsername)}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6D3254] px-6 py-3 text-sm font-bold text-white transition-all shadow-md cursor-pointer tap-scale"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6D3254] px-6 py-3.5 text-sm font-bold text-white transition-all shadow-md cursor-pointer tap-scale"
                 >
                   <Sparkles className="h-4 w-4" />
                   <span>Create My Free Profile</span>
@@ -1431,7 +1625,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(bottomUsername)}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 px-6 py-3 text-sm font-bold text-slate-800 transition-all shadow-xs cursor-pointer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#F6EBF1] hover:bg-[#ECD3E2] border border-[#E8DCE4] px-6 py-3.5 text-sm font-bold text-[#803D63] transition-all shadow-xs cursor-pointer"
                 >
                   <span>Claim My Handle</span>
                 </button>
@@ -1442,7 +1636,7 @@ export default function LandingHomePage() {
       </section>
 
       {/* FOOTER */}
-      <footer className="mt-auto border-t border-[#E5E7EB] bg-[#FFFFFF] py-8">
+      <footer className="mt-auto border-t border-[#E8DCE4] bg-white/80 py-8">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-[#4B5563]">
           <Logo size="sm" />
           <div className="flex flex-wrap items-center gap-5">
