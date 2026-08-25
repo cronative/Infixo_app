@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { sendOtpEmail } from "@/lib/email";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
+import { logDeviceLogin } from "@/lib/loginLogger";
 
 export async function POST(req: Request) {
   try {
@@ -59,16 +60,26 @@ export async function POST(req: Request) {
     const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
 
     try {
-      // Invalidate previous unused OTPs for this email
-      await db.query("UPDATE otps SET is_used = TRUE WHERE email = ? AND is_used = FALSE", [email]);
+      // 1. Delete all previous OTP entries for this email so there is only 1 clean active OTP row
+      await db.query("DELETE FROM otps WHERE email = ?", [email]);
 
-      // Insert new OTP with 5-minute expiration
+      // 2. Insert new single fresh OTP with 5-minute expiration
       await db.query(
         "INSERT INTO otps (email, otp_code, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 5 MINUTE))",
         [email, otpCode]
       );
+
+      // 3. Log login attempt & device metadata in creator_login_logs table
+      const userAgent = req.headers.get("user-agent");
+      await logDeviceLogin({
+        email,
+        creatorId: creator?.id || null,
+        ipAddress: clientIp,
+        userAgent,
+        status: "otp_sent",
+      });
     } catch (dbErr: any) {
-      console.warn("⚠️ MySQL error inserting OTP record:", dbErr.message);
+      console.warn("⚠️ MySQL error inserting OTP record / log:", dbErr.message);
     }
 
     // 4. Send real OTP Email via Gmail SMTP (Awaited for guaranteed delivery)
@@ -81,7 +92,7 @@ export async function POST(req: Request) {
       success: true,
       message: `OTP sent to ${email} (valid for 5 minutes)`,
       email: email,
-      username: creator?.username || email.split("@")[0],
+      username: creator?.username || "",
     });
   } catch (error: any) {
     console.error("Auth Login Error:", error);
