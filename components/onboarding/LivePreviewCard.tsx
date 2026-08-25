@@ -654,8 +654,8 @@ export function LivePreviewCard({
   }, [showSettingsIconProp]);
 
   useEffect(() => {
-    if (passedReviews && passedReviews.length > 0) {
-      setApprovedReviews(passedReviews);
+    if (passedReviews !== undefined) {
+      setApprovedReviews(passedReviews || []);
       return;
     }
     async function loadApprovedReviews() {
@@ -668,21 +668,24 @@ export function LivePreviewCard({
             `/api/creator/reviews?email=${encodeURIComponent(email)}&username=${encodeURIComponent(username)}&status=approved`
           ).then((r) => r.json());
 
-          if (res && res.success && Array.isArray(res.reviews) && res.reviews.length > 0) {
+          if (res && res.success && Array.isArray(res.reviews)) {
             setApprovedReviews(res.reviews);
             return;
           }
         }
       } catch (e) {}
 
-      const all = reviewsRepository.getAll();
-      const approved = all.filter((r) => r.status === "approved");
-      if (approved.length > 0) {
+      // Only fallback to local reviews in dashboard preview or onboarding mode
+      if (isDashboardPreview) {
+        const all = reviewsRepository.getAll();
+        const approved = all.filter((r) => r.status === "approved");
         setApprovedReviews(approved);
+      } else {
+        setApprovedReviews([]);
       }
     }
     loadApprovedReviews();
-  }, [profile.email, profile.username, passedReviews]);
+  }, [profile.email, profile.username, passedReviews, isDashboardPreview]);
   const [mediaKitPackages, setMediaKitPackages] = useState<MediaKitPackage[]>(passedMediaKitPackages || []);
   const [mediaKitSettings, setMediaKitSettings] = useState<MediaKitSettings>(passedMediaKitSettings || MediaKitService.DEFAULT_SETTINGS);
   const [customLinksList, setCustomLinksList] = useState<CustomLink[]>(passedCustomLinks || []);
@@ -752,22 +755,22 @@ export function LivePreviewCard({
   }, [passedCustomLinks]);
 
   useEffect(() => {
-    if (passedMediaKitPackages && passedMediaKitPackages.length > 0) {
-      setMediaKitPackages(passedMediaKitPackages);
+    if (passedMediaKitPackages !== undefined) {
+      setMediaKitPackages(passedMediaKitPackages || []);
       if (passedMediaKitSettings) setMediaKitSettings(passedMediaKitSettings);
-    } else {
-      async function loadMediaKit() {
-        const identifier = profile.id || profile.email || profile.username;
-        if (identifier) {
-          const data = await MediaKitService.fetchFromDb(identifier, profile.id);
-          if (data) {
-            setMediaKitPackages(data.packages || []);
-            setMediaKitSettings(data.settings || MediaKitService.DEFAULT_SETTINGS);
-          }
+      return;
+    }
+    async function loadMediaKit() {
+      const identifier = profile.id || profile.email || profile.username;
+      if (identifier) {
+        const data = await MediaKitService.fetchFromDb(identifier, profile.id);
+        if (data) {
+          setMediaKitPackages(data.packages || []);
+          setMediaKitSettings(data.settings || MediaKitService.DEFAULT_SETTINGS);
         }
       }
-      loadMediaKit();
     }
+    loadMediaKit();
   }, [profile.id, profile.email, profile.username, passedMediaKitPackages, passedMediaKitSettings]);
 
   const style = THEME_STYLES[themeKey] || DEFAULT_THEME_STYLE;
@@ -1323,9 +1326,27 @@ export function LivePreviewCard({
           <div className="space-y-3 animate-in fade-in duration-200">
             {(() => {
               const activePkgs = mediaKitPackages.filter((p) => p.isActive);
-              const displayPackages = activePkgs.length > 0 ? activePkgs : SAMPLE_PACKAGES;
-              const visiblePackages = showAllGigs ? displayPackages : displayPackages.slice(0, 1);
-              const remainingCount = displayPackages.length - 1;
+
+              if (activePkgs.length === 0) {
+                return (
+                  <div className={`rounded-2xl border-2 border-dashed p-6 text-center space-y-1.5 ${
+                    isDark
+                      ? "bg-slate-900/60 backdrop-blur-md border-white/20 text-white"
+                      : "bg-white/70 backdrop-blur-md border-gray-200 text-slate-900"
+                  }`}>
+                    <Briefcase className={`h-7 w-7 mx-auto ${isDark ? "text-purple-400" : "text-[#803D63]"}`} />
+                    <p className={`font-bold text-xs ${isDark ? "text-white" : "text-slate-800"}`}>
+                      No Collaboration Packages Added Yet
+                    </p>
+                    <p className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+                      This creator hasn&apos;t added any sponsorship rate cards or brand packages yet.
+                    </p>
+                  </div>
+                );
+              }
+
+              const visiblePackages = showAllGigs ? activePkgs : activePkgs.slice(0, 1);
+              const remainingCount = activePkgs.length - 1;
 
               return (
                 <div className="space-y-3">
@@ -1471,7 +1492,7 @@ export function LivePreviewCard({
                   </div>
 
                   {/* Toggle / View All Gigs Pill Button */}
-                  {displayPackages.length > 1 && (
+                  {activePkgs.length > 1 && (
                     <button
                       type="button"
                       onClick={() => setShowAllGigs(!showAllGigs)}
