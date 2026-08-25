@@ -424,7 +424,7 @@ export default function SeriesDetailPage() {
               <p className="text-xs text-slate-500 font-medium">inflixo.com/{username}</p>
               {creator?.totalFanbase && creator.totalFanbase > 0 && (
                 <p className="text-[11px] text-slate-400 font-bold mt-0.5">
-                  {formatCount(creator.totalFanbase)} total verified fanbase
+                  {formatCount(creator.totalFanbase)} Total Fanbase
                 </p>
               )}
             </div>
