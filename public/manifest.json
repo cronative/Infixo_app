@@ -1,0 +1,26 @@
+{
+  "name": "Inflixo — Creator OTT & Bio Platform",
+  "short_name": "Inflixo",
+  "description": "Stream original web series, discover creator analytics & collaborate with top creators on Inflixo.",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFFFFF",
+  "theme_color": "#803D63",
+  "categories": ["entertainment", "social", "productivity"],
+  "icons": [
+    {
+      "src": "/logo-square.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo-square.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
