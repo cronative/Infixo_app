@@ -70,17 +70,7 @@ export default function PublicProfilePage() {
         return;
       }
 
-      // 1. Initial check for local profile if logged in creator
-      const localProfile = ProfileService.getProfile();
-      if (localProfile.username && localProfile.username.toLowerCase() === usernameParam) {
-        setProfile(localProfile);
-        setSocials(SocialService.getAccounts());
-        setTheme(ThemeService.getSelectedTheme());
-        setSeries(SeriesService.getAllLocal());
-        setLoaded(true);
-      }
-
-      // 2. Fetch Creator Profile by username from MySQL DB (Universal Deeplinking & Server Data!)
+      // Fetch Creator Profile strictly from MySQL Database (100% Server DB Truth — Never uses browser localStorage)
       try {
         const [profRes, socRes, serRes, linkRes, mediakitRes, revRes] = await Promise.all([
           fetch(`/api/creator/profile?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
@@ -91,66 +81,79 @@ export default function PublicProfilePage() {
           fetch(`/api/creator/reviews?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
         ]);
 
-        if (profRes.success && profRes.profile) {
+        if (profRes.success && profRes.profile && profRes.profile.username) {
           setProfile(profRes.profile);
           if (profRes.profile.themeKey) {
             setTheme(profRes.profile.themeKey as ThemeKey);
           }
           setNotFound(false);
-        } else if (!localProfile.username || localProfile.username.toLowerCase() !== usernameParam) {
+
+          if (linkRes.success && Array.isArray(linkRes.links)) {
+            setCustomLinks(linkRes.links);
+          } else {
+            setCustomLinks([]);
+          }
+
+          if (socRes.success && Array.isArray(socRes.socials)) {
+            const accs: SocialAccounts = { ...EMPTY_SOCIAL_ACCOUNTS };
+            socRes.socials.forEach((s: any) => {
+              const handle = s.username || s.accountName || "";
+              if (s.platform === "instagram") {
+                accs.instagram = {
+                  ...accs.instagram,
+                  followers: s.followerCount || 0,
+                  username: handle,
+                  url: handle ? `https://instagram.com/${handle.replace(/^@/, "")}` : "",
+                };
+              } else if (s.platform === "youtube") {
+                accs.youtube = {
+                  ...accs.youtube,
+                  subscribers: s.followerCount || 0,
+                  username: handle,
+                  url: handle ? `https://youtube.com/@${handle.replace(/^@/, "")}` : "",
+                };
+              } else if (s.platform === "facebook") {
+                accs.facebook = {
+                  ...accs.facebook,
+                  followers: s.followerCount || 0,
+                  username: handle,
+                  url: handle ? `https://facebook.com/${handle.replace(/^@/, "")}` : "",
+                };
+              }
+            });
+            setSocials(accs);
+          } else {
+            setSocials(EMPTY_SOCIAL_ACCOUNTS);
+          }
+
+          if (serRes.success && Array.isArray(serRes.series)) {
+            setSeries(serRes.series);
+          } else {
+            setSeries([]);
+          }
+
+          if (mediakitRes.success && Array.isArray(mediakitRes.packages)) {
+            setMediaKitPackages(mediakitRes.packages);
+          } else {
+            setMediaKitPackages([]);
+          }
+
+          if (mediakitRes.success && mediakitRes.settings) {
+            setMediaKitSettings(mediakitRes.settings);
+          }
+
+          if (revRes.success && Array.isArray(revRes.reviews)) {
+            setReviews(revRes.reviews);
+          } else {
+            setReviews([]);
+          }
+        } else {
+          // If not found in MySQL DB, strictly show 404 (Never fallback to browser localStorage)
           setNotFound(true);
-        }
-
-        if (linkRes.success && Array.isArray(linkRes.links)) {
-          setCustomLinks(linkRes.links);
-        }
-
-        if (socRes.success && Array.isArray(socRes.socials)) {
-          const accs: SocialAccounts = { ...EMPTY_SOCIAL_ACCOUNTS };
-          socRes.socials.forEach((s: any) => {
-            const handle = s.username || s.accountName || "";
-            if (s.platform === "instagram") {
-              accs.instagram = {
-                ...accs.instagram,
-                followers: s.followerCount || 0,
-                username: handle,
-                url: handle ? `https://instagram.com/${handle.replace(/^@/, "")}` : "",
-              };
-            } else if (s.platform === "youtube") {
-              accs.youtube = {
-                ...accs.youtube,
-                subscribers: s.followerCount || 0,
-                username: handle,
-                url: handle ? `https://youtube.com/@${handle.replace(/^@/, "")}` : "",
-              };
-            } else if (s.platform === "facebook") {
-              accs.facebook = {
-                ...accs.facebook,
-                followers: s.followerCount || 0,
-                username: handle,
-                url: handle ? `https://facebook.com/${handle.replace(/^@/, "")}` : "",
-              };
-            }
-          });
-          setSocials(accs);
-        }
-
-        if (serRes.success && Array.isArray(serRes.series)) {
-          setSeries(serRes.series);
-        }
-
-        if (mediakitRes.success && Array.isArray(mediakitRes.packages)) {
-          setMediaKitPackages(mediakitRes.packages);
-        }
-        if (mediakitRes.success && mediakitRes.settings) {
-          setMediaKitSettings(mediakitRes.settings);
-        }
-
-        if (revRes.success && Array.isArray(revRes.reviews)) {
-          setReviews(revRes.reviews);
         }
       } catch (e) {
         console.warn("Failed to load creator profile from DB deeplink:", e);
+        setNotFound(true);
       } finally {
         setLoaded(true);
       }
