@@ -5,15 +5,11 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Share2, ArrowLeft, Play, Film, Layers, CheckCircle2,
-  Clock, Globe, ChevronRight, ExternalLink, Star
+  Clock, Globe, ChevronRight, ExternalLink, Sparkles
 } from "lucide-react";
-import { Logo } from "@/components/shared/Logo";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
-import { SkeletonProfileCard } from "@/components/ui/Skeleton";
-import { EmptyState } from "@/components/ui/EmptyState";
-import { Series, ThemeKey } from "@/types";
+import { Series } from "@/types";
 import { useToast } from "@/contexts/ToastContext";
-import { THEME_STYLES, DEFAULT_THEME_STYLE } from "@/components/onboarding/LivePreviewCard";
 import { formatCount, buildSeriesUrl } from "@/utils/format";
 import { SeriesPoster } from "@/components/shared/SeriesPoster";
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
@@ -27,36 +23,36 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   if (p.includes("youtube") || u.includes("youtube.com") || u.includes("youtu.be")) {
     return {
       name: "YouTube",
-      icon: <YoutubeIcon className="h-4 w-4 text-white" />,
+      icon: <YoutubeIcon className="h-3.5 w-3.5 text-white" />,
       gradient: "from-red-600 to-red-700",
-      glow: "shadow-red-500/30",
-      badge: "bg-red-600",
+      glow: "shadow-red-500/20",
+      badge: "bg-red-600 text-white",
     };
   }
   if (p.includes("instagram") || u.includes("instagram.com")) {
     return {
       name: "Instagram",
-      icon: <InstagramIcon className="h-4 w-4 text-white" />,
+      icon: <InstagramIcon className="h-3.5 w-3.5 text-white" />,
       gradient: "from-amber-500 via-rose-500 to-purple-600",
-      glow: "shadow-rose-500/30",
-      badge: "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600",
+      glow: "shadow-rose-500/20",
+      badge: "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white",
     };
   }
   if (p.includes("facebook") || u.includes("facebook.com")) {
     return {
       name: "Facebook",
-      icon: <FacebookIcon className="h-4 w-4 text-white" />,
+      icon: <FacebookIcon className="h-3.5 w-3.5 text-white" />,
       gradient: "from-blue-600 to-blue-700",
-      glow: "shadow-blue-500/30",
-      badge: "bg-blue-600",
+      glow: "shadow-blue-500/20",
+      badge: "bg-blue-600 text-white",
     };
   }
   return {
     name: platformStr || "Watch",
-    icon: <Film className="h-4 w-4 text-white" />,
+    icon: <Film className="h-3.5 w-3.5 text-white" />,
     gradient: "from-[#803D63] to-[#6D3254]",
-    glow: "shadow-purple-500/30",
-    badge: "bg-[#803D63]",
+    glow: "shadow-purple-500/20",
+    badge: "bg-[#803D63] text-white",
   };
 }
 
@@ -100,150 +96,92 @@ export default function SeriesDetailPage() {
               username: EXPERT_DEMO_PROFILE.username,
               photoDataUrl: EXPERT_DEMO_PROFILE.photoDataUrl,
               themeKey: "minimal-white",
-              totalFanbase: 1345000,
+              totalFanbase: 480000,
             });
-            setNotFound(false);
             setLoading(false);
             return;
           }
-        } catch (e) {
-          console.warn("Error loading demo creator series:", e);
+        } catch (err) {
+          console.warn("Could not load demo series:", err);
         }
       }
 
       try {
-        const res = await fetch(`/api/series?seriesId=${encodeURIComponent(seriesIdParam)}`).then((r) => r.json());
-        if (res.success && res.series) {
-          setSeries(res.series);
-          if (res.series.creator) {
-            setCreator(res.series.creator);
+        const res = await fetch(`/api/series?username=${encodeURIComponent(usernameParam)}`);
+        if (res.ok) {
+          const data = await res.json();
+          const list: Series[] = data.series || [];
+          const found = list.find((s) => s.id === seriesIdParam);
+          if (found) {
+            setSeries(found);
+            const profRes = await fetch(`/api/creator/profile?username=${encodeURIComponent(usernameParam)}`);
+            if (profRes.ok) {
+              const profData = await profRes.json();
+              if (profData.profile) {
+                setCreator({
+                  displayName: profData.profile.displayName || usernameParam,
+                  username: profData.profile.username || usernameParam,
+                  photoDataUrl: profData.profile.photoDataUrl,
+                  themeKey: profData.profile.themeKey || "minimal-white",
+                  totalFanbase: profData.profile.totalFanbase || 0,
+                });
+              }
+            }
           } else {
-            setCreator({ displayName: usernameParam, username: usernameParam, photoDataUrl: null });
+            setNotFound(true);
           }
-          setNotFound(false);
         } else {
           setNotFound(true);
         }
       } catch (err) {
-        console.error("Failed to load single series page:", err);
+        console.error("Failed to load series:", err);
         setNotFound(true);
       } finally {
         setLoading(false);
       }
     }
+
     loadSeriesData();
   }, [params.username, params.seriesId]);
 
-  useEffect(() => {
-    if (typeof document === "undefined" || !series) return;
+  const username = creator?.username || decodeURIComponent(params.username ?? "");
+  const profileUrl = `/${username}`;
 
-    const creatorName = creator?.displayName || params.username || "Creator";
-    const handle = creator?.username || params.username || "creator";
-    const pageTitle = `${series.title} by ${creatorName} (@${handle}) — Inflixo Series`;
-    const pageDesc = series.description || `Watch ${series.title} by @${handle} on Inflixo. ${series.genre || "Series"} • ${series.language || "Hindi"}.`;
-    const pageUrl = `https://inflixo.com/${handle}/series/${series.id}`;
-    const pageImg = series.posterDataUrl || creator?.photoDataUrl || "https://inflixo.com/apple-icon.png";
-
-    document.title = pageTitle;
-
-    const setMeta = (nameOrProp: string, content: string, isProp = false) => {
-      let el = document.querySelector(isProp ? `meta[property="${nameOrProp}"]` : `meta[name="${nameOrProp}"]`);
-      if (!el) {
-        el = document.createElement("meta");
-        if (isProp) el.setAttribute("property", nameOrProp);
-        else el.setAttribute("name", nameOrProp);
-        document.head.appendChild(el);
-      }
-      el.setAttribute("content", content);
-    };
-
-    setMeta("description", pageDesc);
-    setMeta("og:title", pageTitle, true);
-    setMeta("og:description", pageDesc, true);
-    setMeta("og:url", pageUrl, true);
-    setMeta("og:image", pageImg, true);
-    setMeta("twitter:card", "summary_large_image");
-    setMeta("twitter:title", pageTitle);
-    setMeta("twitter:description", pageDesc);
-    setMeta("twitter:image", pageImg);
-
-    let scriptEl = document.getElementById("json-ld-series");
-    if (!scriptEl) {
-      scriptEl = document.createElement("script");
-      scriptEl.id = "json-ld-series";
-      scriptEl.setAttribute("type", "application/ld+json");
-      document.head.appendChild(scriptEl);
-    }
-
-    scriptEl.textContent = JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "CreativeWorkSeries",
-      "name": series.title,
-      "description": pageDesc,
-      "genre": series.genre || "Video",
-      "inLanguage": series.language || "Hindi",
-      "image": pageImg,
-      "url": pageUrl,
-      "author": {
-        "@type": "Person",
-        "name": creatorName,
-        "url": `https://inflixo.com/${handle}`,
-      },
-    });
-  }, [series, creator, params.username]);
-
-  const username = creator?.username || params.username || "creator";
-  const profileUrl = username === "demo_creator" ? "/demo_creator" : `/${username}`;
-
-  const handleShare = async () => {
+  async function handleShare() {
     if (!series) return;
-    const shareUrl = typeof window !== "undefined"
-      ? `${window.location.origin}/${username}/series/${series.id}`
-      : `https://inflixo.com/${username}/series/${series.id}`;
-    const title = `${series.title} on Inflixo`;
-
-    if (typeof navigator !== "undefined" && navigator.share) {
-      navigator.share({ title, url: shareUrl }).catch(async () => {
-        const success = await copyToClipboard(shareUrl);
-        if (success) showToast("Series link copied! 🎬");
-      });
+    const url = buildSeriesUrl(username, series.id);
+    const success = await copyToClipboard(url);
+    if (success) {
+      showToast("Series link copied to clipboard! 📋✨");
     } else {
-      const success = await copyToClipboard(shareUrl);
-      if (success) showToast("Series link copied! 🎬");
+      showToast("Link: " + url, "info");
     }
-  };
+  }
 
   if (loading) {
-    const handle = decodeURIComponent(params.username ?? "").trim();
-    return <SyncingLoader message={handle ? `Loading ${handle}'s series...` : "Loading series..."} fullScreen hideProgressBar={true} />;
+    return (
+      <div className="min-h-dvh bg-slate-50 flex items-center justify-center">
+        <SyncingLoader message="Loading Series & Episodes..." />
+      </div>
+    );
   }
 
   if (notFound || !series) {
     return (
-      <div className="relative flex min-h-dvh flex-col items-center justify-center bg-gradient-to-b from-purple-50/80 via-slate-50 to-white px-4 py-12 text-center text-slate-900 overflow-hidden selection:bg-[#803D63]/20">
-        {/* Ambient Light Background Glow */}
-        <div className="pointer-events-none absolute -top-24 -left-20 h-96 w-96 rounded-full bg-purple-200/40 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -right-20 h-96 w-96 rounded-full bg-pink-200/30 blur-3xl" />
+      <div className="min-h-dvh bg-slate-50 text-slate-900 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+        {/* Subtle Ambient Background Light */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden flex items-center justify-center">
+          <div className="h-96 w-96 rounded-full bg-[#803D63]/5 blur-3xl" />
+        </div>
 
-        <main className="relative z-10 w-full max-w-lg space-y-6">
-          {/* Header Branding */}
-          <div className="flex items-center justify-between px-2">
-            <Logo />
-            <span className="rounded-full bg-purple-100 border border-purple-200 px-3.5 py-1 text-xs font-bold text-[#803D63] shadow-2xs">
-              Series Showcase • Inflixo
-            </span>
-          </div>
-
-          {/* Main Not Found Card */}
-          <div className="rounded-[32px] border border-purple-100 bg-white/95 p-8 sm:p-10 shadow-2xl shadow-purple-500/10 backdrop-blur-xl space-y-6 text-center">
-            {/* Animated Icon Badge */}
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-[#803D63] text-white shadow-xl shadow-purple-900/20 ring-4 ring-purple-100">
+        <main className="relative z-10 mx-auto max-w-lg text-center space-y-6">
+          <div className="rounded-3xl border border-gray-200/80 bg-white p-8 sm:p-10 shadow-lg space-y-6">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-[#803D63] text-white shadow-lg shadow-purple-900/10 ring-4 ring-purple-50">
               <Film className="h-10 w-10 stroke-[2.2]" />
             </div>
 
-            {/* Title & Description */}
             <div className="space-y-2.5">
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-purple-50 border border-purple-200 px-3 py-1 text-[11px] font-black text-[#803D63] uppercase tracking-wider mb-1">
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-purple-50 border border-purple-200 px-3 py-1 text-[11px] font-black text-[#803D63] uppercase tracking-wider">
                 <span>SERIES NOT FOUND</span>
               </div>
               <h1 className="font-display text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
@@ -254,11 +192,10 @@ export default function SeriesDetailPage() {
               </p>
             </div>
 
-            {/* Action Buttons in Inflixo Theme */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
               <button
                 onClick={() => router.push(profileUrl)}
-                className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6D3254] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-purple-900/20 transition-all border border-purple-400/30 hover:scale-[1.02] cursor-pointer"
+                className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6D3254] px-6 py-3.5 text-xs font-bold text-white shadow-md transition-all cursor-pointer"
               >
                 <ArrowLeft className="h-4 w-4" />
                 <span>Return to @{username}&apos;s Profile</span>
@@ -266,7 +203,7 @@ export default function SeriesDetailPage() {
 
               <button
                 onClick={() => router.push("/")}
-                className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-100 hover:bg-slate-200 px-6 py-3.5 text-xs font-black text-slate-700 transition-all hover:scale-[1.02] cursor-pointer"
+                className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 px-6 py-3.5 text-xs font-bold text-slate-700 transition-all cursor-pointer"
               >
                 <span>Explore Inflixo</span>
               </button>
@@ -282,84 +219,68 @@ export default function SeriesDetailPage() {
   }
 
   const allEpisodes = series.seasons.flatMap((sn) => sn.episodes);
-  const hasPoster = Boolean(series.posterDataUrl);
 
   return (
-    <div className="min-h-dvh bg-slate-950 text-white relative overflow-hidden">
-
-      {/* Ambient background glow from poster */}
-      {hasPoster && (
-        <div className="pointer-events-none fixed inset-0 overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={series.posterDataUrl!}
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover scale-150 opacity-10 blur-3xl"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/80 to-slate-950" />
-        </div>
-      )}
-
-      {/* Top Nav */}
-      <nav className="relative z-20 flex items-center justify-between px-4 sm:px-8 py-4 border-b border-white/5 backdrop-blur-sm">
-        <Link
-          href={`/${username}`}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-300 hover:text-white transition-colors group"
-        >
-          <ArrowLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
-          <span className="hidden sm:inline">Back to Profile</span>
-          <span className="sm:hidden">Back</span>
-        </Link>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleShare}
-            className="inline-flex items-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 px-3.5 py-2 text-xs font-semibold text-white transition-all cursor-pointer backdrop-blur-sm"
+    <div className="min-h-dvh bg-slate-50 text-slate-900 relative">
+      {/* Top Navbar */}
+      <header className="sticky top-0 z-40 border-b border-gray-200/80 bg-white/90 backdrop-blur-md px-4 sm:px-8 py-3 shadow-2xs">
+        <div className="mx-auto flex max-w-5xl items-center justify-between">
+          <Link
+            href={`/${username}`}
+            className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-700 hover:text-[#803D63] transition-colors group"
           >
-            <Share2 className="h-3.5 w-3.5" />
-            Share
-          </button>
+            <ArrowLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
+            <span>Back to @{username}</span>
+          </Link>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleShare}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 px-3.5 py-1.5 text-xs font-bold text-slate-700 shadow-2xs transition-all cursor-pointer"
+            >
+              <Share2 className="h-3.5 w-3.5" />
+              <span>Share</span>
+            </button>
+          </div>
         </div>
-      </nav>
+      </header>
 
-      <main className="relative z-10 mx-auto max-w-5xl px-4 sm:px-8 pb-16">
-
-        {/* ── HERO SECTION ── */}
-        <div className="relative mt-0">
-          {/* Full-bleed cinematic banner */}
-          <div className="relative w-full aspect-[16/7] sm:aspect-[21/8] overflow-hidden">
+      <main className="mx-auto max-w-5xl px-4 sm:px-8 py-6 sm:py-10 space-y-8">
+        {/* ── HERO BANNER CARD ── */}
+        <div className="relative overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
+          {/* Landscape Poster Cover */}
+          <div className="relative w-full aspect-[16/8] sm:aspect-[21/8] overflow-hidden bg-slate-900">
             <SeriesPoster
               src={series.posterDataUrl}
               title={series.title}
               className="h-full w-full object-cover"
-              textClassName="text-2xl font-black text-slate-300"
+              textClassName="text-2xl sm:text-3xl font-black text-white"
             />
-            {/* Multi-layer gradient for text legibility */}
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/50 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
+            {/* Cinematic Gradient Overlays */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-transparent hidden sm:block" />
 
-            {/* Top-right floating badges */}
-            <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
-              <span className="backdrop-blur-md bg-black/40 border border-white/15 text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+            {/* Top-Right Badges */}
+            <div className="absolute top-3.5 right-3.5 flex items-center gap-2 z-10">
+              <span className="backdrop-blur-md bg-black/60 border border-white/20 text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-sm">
                 {allEpisodes.length} {allEpisodes.length === 1 ? "Episode" : "Episodes"}
               </span>
               {series.language && (
-                <span className="backdrop-blur-md bg-black/40 border border-white/15 text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+                <span className="backdrop-blur-md bg-black/60 border border-white/20 text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-sm">
                   {series.language}
                 </span>
               )}
             </div>
 
-            {/* Hero content — bottom left */}
-            <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-10 z-10">
-              {/* Genre chips */}
+            {/* Banner Text Content */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-8 z-10 text-white space-y-2">
               {series.genre && (
-                <div className="flex flex-wrap gap-1.5 mb-3">
+                <div className="flex flex-wrap gap-1.5">
                   {series.genre.split(",").map((g, idx) => {
                     const cleanG = g.trim().replace(/^Genre:\s*/i, "");
                     if (!cleanG) return null;
                     return (
-                      <span key={idx} className="text-[11px] font-bold uppercase tracking-widest text-slate-300 bg-white/10 border border-white/15 px-2.5 py-0.5 rounded-full backdrop-blur-sm">
+                      <span key={idx} className="text-[10px] font-extrabold uppercase tracking-wider text-white bg-[#803D63] px-2.5 py-0.5 rounded-full shadow-xs">
                         {cleanG}
                       </span>
                     );
@@ -367,61 +288,63 @@ export default function SeriesDetailPage() {
                 </div>
               )}
 
-              <h1 className="font-display text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight mb-2 drop-shadow-lg">
+              <h1 className="font-display text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight text-white drop-shadow-md">
                 {series.title}
               </h1>
 
               {series.description && (
-                <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl line-clamp-2 mb-5">
+                <p className="text-xs sm:text-sm text-slate-200 leading-relaxed max-w-2xl line-clamp-2 drop-shadow-sm font-medium">
                   {series.description}
                 </p>
               )}
 
-              {/* CTA Row */}
-              <div className="flex flex-wrap items-center gap-3">
+              {/* Play / Action Buttons */}
+              <div className="pt-2 flex flex-wrap items-center gap-3">
                 {allEpisodes[0]?.externalUrl && (
                   <a
                     href={allEpisodes[0].externalUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2.5 bg-white hover:bg-slate-100 text-slate-900 font-extrabold text-sm px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-white/10 cursor-pointer"
+                    className="tap-scale inline-flex items-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6D3254] px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-md transition-all cursor-pointer"
                   >
-                    <Play className="h-4 w-4 fill-slate-900" />
-                    Play Episode 1
+                    <Play className="h-4 w-4 fill-white" />
+                    <span>Play Episode 1</span>
                   </a>
                 )}
                 <button
                   onClick={handleShare}
-                  className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/15 text-white font-semibold text-sm px-4 py-2.5 rounded-xl transition-all backdrop-blur-sm cursor-pointer"
+                  className="tap-scale inline-flex items-center gap-2 rounded-xl bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 px-4 py-2.5 text-xs sm:text-sm font-bold text-white transition-all cursor-pointer"
                 >
                   <Share2 className="h-4 w-4" />
-                  Share
+                  <span>Share Series</span>
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        {/* ── EPISODE LIST ── */}
-        <div className="mt-8 space-y-3">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="text-lg font-extrabold text-white flex items-center gap-2.5">
-              <Layers className="h-5 w-5 text-[#C87FAA]" />
-              Episodes
-              <span className="text-sm font-semibold text-slate-500">({allEpisodes.length})</span>
+        {/* ── EPISODES LIST SECTION ── */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between border-b border-gray-200 pb-3">
+            <h2 className="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2">
+              <Layers className="h-5 w-5 text-[#803D63]" />
+              <span>Episodes</span>
+              <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+                {allEpisodes.length}
+              </span>
             </h2>
           </div>
 
           {allEpisodes.length === 0 ? (
-            <div className="text-center py-16 text-slate-500">
-              <Film className="h-10 w-10 mx-auto mb-3 opacity-30" />
-              <p className="text-sm font-medium">No episodes added yet.</p>
+            <div className="text-center py-12 text-slate-400 bg-white rounded-2xl border border-gray-200">
+              <Film className="h-8 w-8 mx-auto mb-2 opacity-40 text-[#803D63]" />
+              <p className="text-xs font-semibold">No episodes added to this series yet.</p>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="grid grid-cols-1 gap-2.5">
               {allEpisodes.map((ep, index) => {
                 const plat = getPlatformInfo(ep.platform, ep.externalUrl);
-                const epNumStr = ep.episodeNumber < 10 ? `E${String(ep.episodeNumber).padStart(2,"0")}` : `E${ep.episodeNumber}`;
+                const epNumStr = ep.episodeNumber < 10 ? `E${String(ep.episodeNumber).padStart(2, "0")}` : `E${ep.episodeNumber}`;
                 const epTitleStr = ep.title?.trim() || `Episode ${ep.episodeNumber}`;
                 const isActive = activeEp === ep.id;
 
@@ -433,41 +356,46 @@ export default function SeriesDetailPage() {
                     rel="noopener noreferrer"
                     onMouseEnter={() => setActiveEp(ep.id)}
                     onMouseLeave={() => setActiveEp(null)}
-                    className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/15 px-4 py-4 transition-all duration-200 cursor-pointer backdrop-blur-sm"
+                    className="tap-scale group flex items-center justify-between gap-4 rounded-2xl border border-gray-200/90 bg-white hover:border-[#803D63]/40 hover:shadow-md p-4 transition-all duration-200 cursor-pointer shadow-2xs"
                   >
-                    {/* Episode number */}
-                    <div className="shrink-0 w-10 text-center">
-                      {isActive ? (
-                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${plat.gradient} flex items-center justify-center shadow-lg ${plat.glow}`}>
-                          <Play className="h-4 w-4 fill-white text-white" />
-                        </div>
-                      ) : (
-                        <span className="text-lg font-black text-slate-600 group-hover:text-slate-400 transition-colors tabular-nums">
-                          {String(index + 1).padStart(2, "0")}
-                        </span>
-                      )}
-                    </div>
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      {/* Episode Number or Play Icon */}
+                      <div className="shrink-0">
+                        {isActive ? (
+                          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#803D63] text-white shadow-sm">
+                            <Play className="h-4 w-4 fill-white" />
+                          </div>
+                        ) : (
+                          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-700 text-xs font-black group-hover:bg-purple-50 group-hover:text-[#803D63] transition-colors">
+                            {String(index + 1).padStart(2, "0")}
+                          </div>
+                        )}
+                      </div>
 
-                    {/* Title + subtitle */}
-                    <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm text-slate-200 group-hover:text-white transition-colors truncate">
-                        {epTitleStr}
-                      </p>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-1.5 py-0.5 rounded-md ${plat.badge} bg-opacity-80`}>
-                          {plat.icon}
-                          <span>{plat.name}</span>
-                        </span>
-                        <span className="text-[11px] text-slate-600 font-medium">{epNumStr}</span>
+                      {/* Episode Title & Metadata */}
+                      <div className="min-w-0 space-y-1">
+                        <p className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-[#803D63] transition-colors truncate">
+                          {epTitleStr}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md ${plat.badge}`}>
+                            {plat.icon}
+                            <span>{plat.name}</span>
+                          </span>
+                          <span className="text-[11px] font-semibold text-slate-400">{epNumStr}</span>
+                          {ep.description && (
+                            <span className="text-[11px] text-slate-500 font-medium truncate hidden md:inline max-w-sm">
+                              • {ep.description}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
 
-                    {/* Watch CTA */}
-                    <div className="shrink-0 flex items-center gap-2 text-slate-500 group-hover:text-white transition-colors">
-                      <span className="hidden sm:inline text-xs font-semibold text-slate-500 group-hover:text-slate-300">
-                        Watch
-                      </span>
-                      <ExternalLink className="h-4 w-4" />
+                    {/* Right Watch CTA */}
+                    <div className="shrink-0 flex items-center gap-1.5 text-slate-400 group-hover:text-[#803D63] transition-colors text-xs font-bold">
+                      <span className="hidden sm:inline">Watch</span>
+                      <ExternalLink className="h-3.5 w-3.5" />
                     </div>
                   </a>
                 );
@@ -476,49 +404,50 @@ export default function SeriesDetailPage() {
           )}
         </div>
 
-        {/* ── CREATOR CARD ── */}
-        <div className="mt-10 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-5 flex flex-col sm:flex-row items-center sm:items-start gap-5">
-          <CreatorAvatar
-            src={creator?.photoDataUrl}
-            name={creator?.displayName || username}
-            className="w-16 h-16 rounded-2xl object-cover shrink-0"
-            textClassName="text-xl font-black text-white"
-            fallbackBgClass="bg-[#803D63]"
-          />
-          <div className="flex-1 min-w-0 text-center sm:text-left">
-            <div className="flex items-center gap-2 justify-center sm:justify-start">
-              <h3 className="font-extrabold text-base text-white truncate">
-                {creator?.displayName || username}
-              </h3>
-              <CheckCircle2 className="h-4 w-4 text-[#C87FAA] shrink-0" />
+        {/* ── CREATOR PROFILE FOOTER CARD ── */}
+        <div className="rounded-3xl border border-gray-200 bg-white p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4 text-center sm:text-left">
+          <div className="flex flex-col sm:flex-row items-center gap-4 min-w-0">
+            <CreatorAvatar
+              src={creator?.photoDataUrl}
+              name={creator?.displayName || username}
+              className="w-14 h-14 rounded-2xl object-cover shrink-0"
+              textClassName="text-lg font-black text-white"
+              fallbackBgClass="bg-[#803D63]"
+            />
+            <div className="min-w-0">
+              <div className="flex items-center justify-center sm:justify-start gap-1.5">
+                <h3 className="font-extrabold text-sm sm:text-base text-slate-900 truncate">
+                  {creator?.displayName || username}
+                </h3>
+                <CheckCircle2 className="h-4 w-4 text-[#803D63] shrink-0" />
+              </div>
+              <p className="text-xs text-slate-500 font-medium">inflixo.com/{username}</p>
+              {creator?.totalFanbase && creator.totalFanbase > 0 && (
+                <p className="text-[11px] text-slate-400 font-bold mt-0.5">
+                  {formatCount(creator.totalFanbase)} total verified fanbase
+                </p>
+              )}
             </div>
-            <p className="text-xs text-slate-500 font-medium mt-0.5">inflixo.com/{username}</p>
-            {creator?.totalFanbase && creator.totalFanbase > 0 && (
-              <p className="text-xs text-slate-400 font-semibold mt-1">
-                {formatCount(creator.totalFanbase)} total fans
-              </p>
-            )}
-            <p className="text-xs text-slate-400 font-medium mt-2 leading-relaxed">
-              Creator of {series.title} • Streaming on Inflixo
-            </p>
           </div>
+
           <Link
             href={`/${username}`}
-            className="shrink-0 inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all"
+            className="tap-scale shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6D3254] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-all"
           >
-            <span>Full Profile</span>
+            <span>View Creator Profile</span>
             <ChevronRight className="h-3.5 w-3.5" />
           </Link>
         </div>
 
-        {/* ── INFLIXO FOOTER ATTRIBUTION ── */}
-        <div className="mt-10 text-center">
-          <p className="text-xs text-slate-600 font-medium">
-            Streaming experience powered by{" "}
-            <span className="text-slate-400 font-bold">Inflixo</span>
+        {/* ── INFLIXO BRANDING FOOTER ── */}
+        <div className="text-center pt-2 pb-6">
+          <p className="text-xs font-medium text-slate-400">
+            OTT Series &amp; Show streaming experience powered by{" "}
+            <Link href="/" className="font-bold text-[#803D63] hover:underline">
+              Inflixo
+            </Link>
           </p>
         </div>
-
       </main>
     </div>
   );
