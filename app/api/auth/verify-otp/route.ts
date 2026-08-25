@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
+import { logDeviceLogin } from "@/lib/loginLogger";
 
 export async function POST(req: Request) {
   try {
@@ -51,8 +52,8 @@ export async function POST(req: Request) {
       );
     }
 
-    // 2. Mark OTP as used in database
-    await db.query("UPDATE otps SET is_used = TRUE WHERE id = ?", [otpRows[0].id]);
+    // 2. Cleanly delete OTP from database on successful verification (no duplicate/stale rows)
+    await db.query("DELETE FROM otps WHERE email = ?", [email]);
 
     // 3. Fetch Creator details from MySQL database
     const [rows]: any = await db.query(
@@ -66,6 +67,16 @@ export async function POST(req: Request) {
 
     const creator = rows[0] || null;
     let socialRows: any[] = [];
+
+    // Log successful login & device info
+    const userAgent = req.headers.get("user-agent");
+    await logDeviceLogin({
+      email,
+      creatorId: creator?.id || null,
+      ipAddress: clientIp,
+      userAgent,
+      status: "success",
+    });
 
     if (creator) {
       // Ensure Early Access subscription is active in MySQL
