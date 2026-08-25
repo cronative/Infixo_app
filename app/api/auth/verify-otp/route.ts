@@ -104,7 +104,7 @@ export async function POST(req: Request) {
 
     try {
       const [stepRows]: any = await db.query(
-        "SELECT step_name FROM creator_onboarding_steps WHERE email = ?",
+        "SELECT step_name FROM creator_onboarding_steps WHERE email = ? ORDER BY id DESC LIMIT 1",
         [email]
       );
       const dbStep = (stepRows?.[0]?.step_name || "").trim().toLowerCase();

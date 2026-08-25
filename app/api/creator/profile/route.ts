@@ -114,6 +114,25 @@ export async function POST(req: Request) {
     const safeProfession = profession ? String(profession).substring(0, 490) : null;
     const visibilityJson = visibilitySettings ? JSON.stringify(visibilitySettings) : null;
 
+    // If only updating onboarding step (e.g. from setStep("finish")):
+    const isStepOnlyUpdate = Boolean(
+      body.onboardingStep &&
+      !displayName &&
+      !username &&
+      !category &&
+      !profession &&
+      !bio &&
+      !photoDataUrl &&
+      !city &&
+      !state &&
+      !country
+    );
+
+    if (isStepOnlyUpdate && creatorId) {
+      await recordOnboardingStep(email, body.onboardingStep, creatorId);
+      return NextResponse.json({ success: true, onboardingStep: body.onboardingStep });
+    }
+
     if (creatorId) {
       // Username is permanently locked once created — do not overwrite existing handle
       const finalUsername = existingUsername || cleanUsername;
