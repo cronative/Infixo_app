@@ -18,6 +18,7 @@ import { YoutubeFetcher } from "@/components/socials/YoutubeFetcher";
 import { FacebookFetcher } from "@/components/socials/FacebookFetcher";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { SocialDataConsentCard } from "@/components/socials/SocialDataConsentCard";
+import { OtherPlatformsManager } from "@/components/socials/OtherPlatformsManager";
 import { authRepository } from "@/repositories/localRepository";
 import { useToast } from "@/contexts/ToastContext";
 
@@ -266,6 +267,9 @@ export default function SocialsStepPage() {
             </>
           )}
         </PlatformCard>
+
+        {/* OTHER SOCIAL PLATFORMS (Twitter/X, LinkedIn, Threads, Snapchat, Pinterest, Twitch, Spotify) */}
+        <OtherPlatformsManager />
 
         {/* Step 2 Sticky Form Bottom Navigation (Back + Next) */}
         <div className="sticky bottom-0 z-40 bg-white py-4 border-t border-gray-100 mt-8 flex items-center gap-3">

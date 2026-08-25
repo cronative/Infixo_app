@@ -50,6 +50,44 @@ export interface AuthSession {
 // Profile
 // ---------------------------------------------------------------------------
 
+export interface VisibilitySettings {
+  showFanbase: boolean;
+  showInstagram: boolean;
+  showFacebook: boolean;
+  showYoutube: boolean;
+  showTwitter?: boolean;
+  showLinkedin?: boolean;
+  showThreads?: boolean;
+  showSnapchat?: boolean;
+  showPinterest?: boolean;
+  showTwitch?: boolean;
+  showSpotify?: boolean;
+  showContentCategory: boolean;
+  showSeries: boolean;
+  showCollabGigs: boolean;
+  showReviews: boolean;
+  showCustomLinks: boolean;
+}
+
+export const DEFAULT_VISIBILITY_SETTINGS: VisibilitySettings = {
+  showFanbase: true,
+  showInstagram: true,
+  showFacebook: true,
+  showYoutube: true,
+  showTwitter: true,
+  showLinkedin: true,
+  showThreads: true,
+  showSnapchat: true,
+  showPinterest: true,
+  showTwitch: true,
+  showSpotify: true,
+  showContentCategory: true,
+  showSeries: true,
+  showCollabGigs: true,
+  showReviews: true,
+  showCustomLinks: true,
+};
+
 export interface CreatorProfile {
   id?: string;
   email?: string;
@@ -64,12 +102,24 @@ export interface CreatorProfile {
   state?: string;
   country?: string;
   isVerified?: boolean;
+  visibilitySettings?: VisibilitySettings;
   updatedAt: string;
 }
 
 // ---------------------------------------------------------------------------
 // Social Accounts
 // ---------------------------------------------------------------------------
+
+export interface GenericSocialStats {
+  url: string;
+  followers: number;
+  username?: string;
+  name?: string;
+  isVerified?: boolean;
+  avatarUrl?: string;
+  enabled?: boolean;
+  lastSyncedAt?: string;
+}
 
 export interface InstagramStats {
   url: string;
@@ -94,6 +144,7 @@ export interface YoutubeStats {
   avatarUrl?: string;
   description?: string;
   lastSyncedAt?: string;
+  followers?: number;
 }
 
 export interface FacebookPageStats {
@@ -112,6 +163,13 @@ export interface SocialAccounts {
   instagram: InstagramStats;
   youtube: YoutubeStats;
   facebook: FacebookPageStats;
+  twitter?: GenericSocialStats;
+  linkedin?: GenericSocialStats;
+  threads?: GenericSocialStats;
+  snapchat?: GenericSocialStats;
+  pinterest?: GenericSocialStats;
+  twitch?: GenericSocialStats;
+  spotify?: GenericSocialStats;
   updatedAt: string;
 }
 
@@ -119,6 +177,13 @@ export const EMPTY_SOCIAL_ACCOUNTS: SocialAccounts = {
   instagram: { url: "", followers: 0, posts: 0 },
   youtube: { url: "", subscribers: 0, videos: 0, totalViews: 0 },
   facebook: { url: "", followers: 0, posts: 0 },
+  twitter: { url: "", followers: 0 },
+  linkedin: { url: "", followers: 0 },
+  threads: { url: "", followers: 0 },
+  snapchat: { url: "", followers: 0 },
+  pinterest: { url: "", followers: 0 },
+  twitch: { url: "", followers: 0 },
+  spotify: { url: "", followers: 0 },
   updatedAt: new Date().toISOString(),
 };
 
@@ -328,3 +393,29 @@ export interface ToastMessage {
   type: "success" | "error" | "info";
   message: string;
 }
+
+// ---------------------------------------------------------------------------
+// Creator Reviews & Testimonials
+// ---------------------------------------------------------------------------
+
+export type ReviewStatus = "pending_invite" | "pending_approval" | "approved" | "rejected";
+
+export interface CreatorReview {
+  id: string;
+  creatorId: string;
+  token: string;
+  clientName: string;
+  clientEmail: string;
+  clientDesignation?: string;
+  projectTitle: string;
+  contentUrl: string; // Mandatory link of reels, shoot, short etc.
+  rating: number; // 1 to 5 Overall Experience
+  ratingContentQuality?: number; // 1 to 5 Content Quality
+  ratingProfessionalism?: number; // 1 to 5 Professionalism
+  ratingTimelyDelivery?: number; // 1 to 5 Timely Delivery
+  comment: string;
+  status: ReviewStatus;
+  createdAt: string;
+  updatedAt?: string;
+}
+

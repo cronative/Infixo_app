@@ -36,7 +36,7 @@ export default function PrivacyPolicyPage() {
             Privacy Policy
           </h1>
           <p className="text-sm font-semibold text-slate-500">
-            Last Updated: August 19, 2026 • TrustIQ Labs / Inflixo
+            Last Updated: August 19, 2026 • TrustIQ Labs PVT LTD / Inflixo
           </p>
         </div>
 
@@ -47,7 +47,7 @@ export default function PrivacyPolicyPage() {
               1. Overview &amp; Commitment
             </h2>
             <p>
-              At <strong>Inflixo</strong> (operated by TrustIQ Labs), we respect your privacy and are committed to protecting the personal and social account data of content creators and their audiences. This Privacy Policy explains how we collect, use, store, and safeguard your information when you use our website, creator profile services, and platform integrations.
+              At <strong>Inflixo</strong> (operated by TrustIQ Labs PVT LTD), we respect your privacy and are committed to protecting the personal and social account data of content creators and their audiences. This Privacy Policy explains how we collect, use, store, and safeguard your information when you use our website, creator profile services, and platform integrations.
             </p>
           </section>
 
@@ -122,7 +122,7 @@ export default function PrivacyPolicyPage() {
               If you have any questions or concerns regarding this Privacy Policy, please reach out to our privacy compliance office at:
             </p>
             <div className="rounded-2xl bg-white border border-purple-200 p-4 space-y-1 text-xs sm:text-sm font-semibold text-slate-800">
-              <p>TrustIQ Labs — Inflixo Legal Division</p>
+              <p>TrustIQ Labs PVT LTD — Inflixo Legal Division</p>
               <p className="text-[#803D63]">Email: privacy@inflixo.com</p>
             </div>
           </section>
@@ -139,7 +139,7 @@ export default function PrivacyPolicyPage() {
             <Link href="/privacy" className="text-[#803D63] font-bold">Privacy Policy</Link>
             <Link href="/terms" className="hover:text-[#803D63] transition-colors">Terms of Service</Link>
           </div>
-          <p className="text-slate-400">&copy; 2026 Inflixo · TrustIQ Labs</p>
+          <p className="text-slate-400">&copy; 2026 Inflixo · TrustIQ Labs PVT LTD</p>
         </div>
       </footer>
     </div>

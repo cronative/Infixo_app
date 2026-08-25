@@ -144,11 +144,18 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                     <span>{item.label}</span>
                   </div>
 
-                  <ChevronRight
-                    className={`h-4 w-4 transition-transform ${
-                      active ? "text-[#803D63] translate-x-0.5" : "text-slate-300"
-                    }`}
-                  />
+                  <div className="flex items-center gap-2">
+                    {item.badge && (
+                      <span className="bg-[#803D63] text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-md tracking-wider">
+                        {item.badge}
+                      </span>
+                    )}
+                    <ChevronRight
+                      className={`h-4 w-4 transition-transform ${
+                        active ? "text-[#803D63] translate-x-0.5" : "text-slate-300"
+                      }`}
+                    />
+                  </div>
                 </Link>
               );
             })}

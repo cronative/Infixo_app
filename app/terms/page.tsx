@@ -36,7 +36,7 @@ export default function TermsOfServicePage() {
             Terms of Service
           </h1>
           <p className="text-sm font-semibold text-slate-500">
-            Last Updated: August 19, 2026 • TrustIQ Labs / Inflixo
+            Last Updated: August 19, 2026 • TrustIQ Labs PVT LTD / Inflixo
           </p>
         </div>
 
@@ -47,7 +47,7 @@ export default function TermsOfServicePage() {
               1. Acceptance of Terms
             </h2>
             <p>
-              By accessing, registering for, or using the <strong>Inflixo</strong> platform (operated by TrustIQ Labs), you agree to be bound by these Terms of Service (&quot;Terms&quot;). If you do not agree to all terms, you may not use our creator page builder, social fanbase tools, or series portfolio features.
+              By accessing, registering for, or using the <strong>Inflixo</strong> platform (operated by TrustIQ Labs PVT LTD), you agree to be bound by these Terms of Service (&quot;Terms&quot;). If you do not agree to all terms, you may not use our creator page builder, social fanbase tools, or series portfolio features.
             </p>
           </section>
 
@@ -87,7 +87,7 @@ export default function TermsOfServicePage() {
               5. Service Availability &amp; Modifications
             </h2>
             <p>
-              We strive for 99.9% uptime for all creator pages. However, TrustIQ Labs reserves the right to modify, update, or temporarily suspend aspects of the service for scheduled maintenance, performance optimizations, or platform upgrades.
+              We strive for 99.9% uptime for all creator pages. However, TrustIQ Labs PVT LTD reserves the right to modify, update, or temporarily suspend aspects of the service for scheduled maintenance, performance optimizations, or platform upgrades.
             </p>
           </section>
 
@@ -108,7 +108,7 @@ export default function TermsOfServicePage() {
               For any legal inquiries, copyright notices (DMCA), or terms clarification, please contact:
             </p>
             <div className="rounded-2xl bg-white border border-purple-200 p-4 space-y-1 text-xs sm:text-sm font-semibold text-slate-800">
-              <p>TrustIQ Labs — Inflixo Terms &amp; Compliance</p>
+              <p>TrustIQ Labs PVT LTD — Inflixo Terms &amp; Compliance</p>
               <p className="text-[#803D63]">Email: legal@inflixo.com</p>
             </div>
           </section>
@@ -125,7 +125,7 @@ export default function TermsOfServicePage() {
             <Link href="/privacy" className="hover:text-[#803D63] transition-colors">Privacy Policy</Link>
             <Link href="/terms" className="text-[#803D63] font-bold">Terms of Service</Link>
           </div>
-          <p className="text-slate-400">&copy; 2026 Inflixo · TrustIQ Labs</p>
+          <p className="text-slate-400">&copy; 2026 Inflixo · TrustIQ Labs PVT LTD</p>
         </div>
       </footer>
     </div>

@@ -9,14 +9,16 @@ import {
   Settings,
   LogOut,
   Briefcase,
+  Star,
 } from "lucide-react";
 
 export const SIDEBAR_NAV = [
   { href: "/dashboard", label: "Overview", icon: LayoutGrid },
   { href: "/dashboard/profile", label: "Profile", icon: UserRound },
   { href: "/dashboard/socials", label: "Social Accounts & Custom Links", icon: Share2 },
-  { href: "/dashboard/series", label: "Series & Episodes", icon: Layers },
+  { href: "/dashboard/series", label: "Series & Episodes", icon: Layers, badge: "PRO" },
   { href: "/dashboard/mediakit", label: "Media Kit", icon: Briefcase, badge: "VIP" },
+  { href: "/dashboard/reviews", label: "Client Reviews", icon: Star, badge: "VIP" },
   { href: "/dashboard/themes", label: "Themes", icon: Palette },
   { href: "/dashboard/preview", label: "Preview", icon: Eye },
   { href: "/dashboard/subscription", label: "Subscription", icon: CreditCard },
@@ -29,6 +31,6 @@ export const BOTTOM_NAV = [
   { href: "/dashboard", label: "Home", icon: LayoutGrid },
   { href: "/dashboard/series", label: "Series", icon: Layers },
   { href: "/dashboard/mediakit", label: "Media Kit", icon: Briefcase, badge: "VIP" },
-  { href: "/dashboard/themes", label: "Themes", icon: Palette },
+  { href: "/dashboard/reviews", label: "Reviews", icon: Star },
   { href: "/dashboard/settings", label: "Account", icon: Settings },
 ];

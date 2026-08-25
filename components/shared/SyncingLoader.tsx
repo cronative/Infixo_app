@@ -8,9 +8,11 @@ import { CREATOR_QUOTES, getRandomQuoteIndex } from "@/data/creatorQuotes";
 export function SyncingLoader({
   message = "Syncing your creator profile & content...",
   fullScreen = true,
+  hideProgressBar = false,
 }: {
   message?: string;
   fullScreen?: boolean;
+  hideProgressBar?: boolean;
 }) {
   const [dots, setDots] = useState(".");
   const [quoteIndex, setQuoteIndex] = useState(0);
@@ -84,17 +86,19 @@ export function SyncingLoader({
         </div>
 
         {/* Horizontal Progress Bar (No Percentage Counter) */}
-        <div className="w-56 space-y-1">
-          <div className="flex items-center justify-center text-[10px] font-bold text-slate-500">
-            <span>Syncing Creator Data...</span>
+        {!hideProgressBar && (
+          <div className="w-56 space-y-1">
+            <div className="flex items-center justify-center text-[10px] font-bold text-slate-500">
+              <span>Syncing Creator Data...</span>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100 border border-slate-200 shadow-2xs">
+              <div
+                className="h-full bg-gradient-to-r from-[#803D63] to-[#6D3254] transition-all duration-300 ease-out"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
           </div>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100 border border-slate-200 shadow-2xs">
-            <div
-              className="h-full bg-gradient-to-r from-[#803D63] to-[#6D3254] transition-all duration-300 ease-out"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
+        )}
 
         {/* 40px Italic Motivational Quote in Primary Brand Color */}
         <div className="min-h-[80px] flex items-center justify-center px-4 pt-3 w-full">

@@ -58,6 +58,8 @@ export const STORAGE_KEYS = {
   customLinks: "custom_links",
   theme: "theme",
   series: "series",
+  reviews: "reviews",
   subscription: "subscription",
   onboardingStep: "onboarding_step",
+  visibilitySettings: "visibility_settings",
 } as const;

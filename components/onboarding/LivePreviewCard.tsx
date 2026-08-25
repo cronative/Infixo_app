@@ -2,12 +2,23 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Users, Sparkles, ExternalLink, Play, Film, Share2, ChevronDown, ChevronUp, ChevronRight, Copy, Eye, Briefcase, Clock, CheckCircle2, MessageCircle, Mail, Link as LinkIcon } from "lucide-react";
-import { CreatorProfile, SocialAccounts, ThemeKey, Series, MediaKitPackage, MediaKitSettings, CustomLink } from "@/types";
+import { Users, Sparkles, ExternalLink, Play, Film, Share2, ChevronDown, ChevronUp, ChevronRight, Copy, Eye, Briefcase, Clock, CheckCircle2, MessageCircle, Mail, Link as LinkIcon, ArrowRight, Star, Settings } from "lucide-react";
+import { CreatorProfile, SocialAccounts, ThemeKey, Series, MediaKitPackage, MediaKitSettings, CustomLink, CreatorReview, VisibilitySettings, DEFAULT_VISIBILITY_SETTINGS } from "@/types";
 import { formatCount } from "@/utils/format";
 import { MediaKitService, SAMPLE_PACKAGES } from "@/services/MediaKitService";
-import { customLinksRepository } from "@/repositories/localRepository";
-import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
+import { customLinksRepository, reviewsRepository } from "@/repositories/localRepository";
+import {
+  InstagramIcon,
+  YoutubeIcon,
+  FacebookIcon,
+  XTwitterIcon,
+  LinkedinIcon,
+  ThreadsIcon,
+  SnapchatIcon,
+  PinterestIcon,
+  TwitchIcon,
+  SpotifyIcon,
+} from "@/components/shared/BrandIcons";
 import { InflixoLogoIcon } from "@/components/shared/Logo";
 import { useToast } from "@/contexts/ToastContext";
 import { ShareSeriesModal } from "@/components/shared/ShareSeriesModal";
@@ -16,6 +27,8 @@ import { SeriesPoster } from "@/components/shared/SeriesPoster";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { BrandLeadQualifierModal } from "@/components/mediakit/BrandLeadQualifierModal";
 import { EpisodeQuickDrawer } from "@/components/series/EpisodeQuickDrawer";
+import { VisibilitySettingsModal } from "@/components/shared/VisibilitySettingsModal";
+import { STORAGE_KEYS, storage } from "@/utils/storage";
 
 export interface ThemeStyleConfig {
   cardBg?: string;
@@ -36,7 +49,7 @@ export interface ThemeStyleConfig {
 }
 
 export const DEFAULT_THEME_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0] border border-slate-200 text-slate-900 shadow-xl",
+  cardBg: "bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0] border border-[#e2e8f0] text-slate-900 shadow-xl",
   profBadgeBg: "bg-[#803D63]/10",
   profBadgeText: "text-[#803D63]",
   profBadgeBorder: "border-[#803D63]/30",
@@ -48,23 +61,7 @@ export const DEFAULT_THEME_STYLE: ThemeStyleConfig = {
   socialUnitColor: "text-slate-500",
   nameColor: "text-slate-900",
   bioColor: "text-slate-600",
-  handleColor: "text-[#803D63]",
-};
-
-const SIGNATURE_PURPLE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-br from-[#faf5ff] via-[#f3e8ff] to-[#e9d5ff] text-slate-900 border border-purple-200 shadow-xl",
-  profBadgeBg: "bg-purple-100",
-  profBadgeText: "text-purple-800",
-  profBadgeBorder: "border-purple-300",
-  fanbaseBg: "bg-purple-100",
-  fanbaseText: "text-purple-800",
-  socialItemBg: "bg-white/80 backdrop-blur-xs",
-  socialItemBorder: "border-purple-200",
-  socialNameColor: "text-slate-900",
-  socialUnitColor: "text-purple-700/70",
-  nameColor: "text-slate-900",
-  bioColor: "text-slate-700",
-  handleColor: "text-purple-600",
+  handleColor: "text-slate-500",
 };
 
 const DARK_PURPLE_STYLE: ThemeStyleConfig = {
@@ -100,51 +97,19 @@ const OCEAN_BLUE_STYLE: ThemeStyleConfig = {
 };
 
 const EMERALD_LUXE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-br from-[#064e3b] via-[#022c22] to-[#047857] text-white border border-emerald-500/30 shadow-2xl",
+  cardBg: "bg-gradient-to-br from-[#064e3b] via-[#022c22] to-[#065f46] text-white border border-emerald-500/30 shadow-2xl",
   profBadgeBg: "bg-emerald-500/20",
   profBadgeText: "text-emerald-300",
   profBadgeBorder: "border-emerald-500/30",
   fanbaseBg: "bg-emerald-500/20",
   fanbaseText: "text-emerald-300",
-  socialItemBg: "bg-emerald-900/80 backdrop-blur-md",
+  socialItemBg: "bg-slate-900/80 backdrop-blur-md",
   socialItemBorder: "border-emerald-500/20",
   socialNameColor: "text-white",
   socialUnitColor: "text-emerald-200/70",
   nameColor: "text-white",
   bioColor: "text-emerald-100/80",
   handleColor: "text-emerald-400",
-};
-
-const CRIMSON_VELVET_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-br from-[#881337] via-[#4c0519] to-[#9f1239] text-white border border-rose-500/30 shadow-2xl",
-  profBadgeBg: "bg-rose-500/20",
-  profBadgeText: "text-rose-300",
-  profBadgeBorder: "border-rose-500/30",
-  fanbaseBg: "bg-rose-500/20",
-  fanbaseText: "text-rose-300",
-  socialItemBg: "bg-rose-900/80 backdrop-blur-md",
-  socialItemBorder: "border-rose-500/20",
-  socialNameColor: "text-white",
-  socialUnitColor: "text-rose-200/70",
-  nameColor: "text-white",
-  bioColor: "text-rose-100/80",
-  handleColor: "text-rose-400",
-};
-
-const NEON_PULSE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-br from-[#09090b] via-[#0f172a] to-[#164e63] text-white border border-cyan-500/30 shadow-2xl",
-  profBadgeBg: "bg-cyan-500/20",
-  profBadgeText: "text-cyan-300",
-  profBadgeBorder: "border-cyan-500/30",
-  fanbaseBg: "bg-cyan-500/20",
-  fanbaseText: "text-cyan-300",
-  socialItemBg: "bg-zinc-900/80 backdrop-blur-md",
-  socialItemBorder: "border-cyan-500/20",
-  socialNameColor: "text-white",
-  socialUnitColor: "text-cyan-200/70",
-  nameColor: "text-white",
-  bioColor: "text-cyan-100/80",
-  handleColor: "text-cyan-400",
 };
 
 const SUNSET_STYLE: ThemeStyleConfig = {
@@ -470,6 +435,55 @@ const MINIMAL_WHITE_STYLE: ThemeStyleConfig = {
   bioColor: "text-[#4B5563]",
   handleColor: "text-[#1F2937]",
 };
+const SIGNATURE_PURPLE_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-[#6b21a8] via-[#a78bfa] to-[#c4b5fd] text-white border border-purple-500/30 shadow-2xl",
+  profBadgeBg: "bg-purple-500/20",
+  profBadgeText: "text-purple-200",
+  profBadgeBorder: "border-purple-500/30",
+  fanbaseBg: "bg-purple-500/20",
+  fanbaseText: "text-purple-200",
+  socialItemBg: "bg-slate-900/80 backdrop-blur-md",
+  socialItemBorder: "border-purple-500/20",
+  socialNameColor: "text-white",
+  socialUnitColor: "text-purple-200/70",
+  nameColor: "text-white",
+  bioColor: "text-purple-100/80",
+  handleColor: "text-purple-400",
+};
+
+const NEON_PULSE_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-[#ff00ff] via-[#00ffff] to-[#ff00ff] text-black border border-pink-500/30 shadow-xl",
+  profBadgeBg: "bg-pink-500/20",
+  profBadgeText: "text-pink-100",
+  profBadgeBorder: "border-pink-500/30",
+  fanbaseBg: "bg-pink-500/20",
+  fanbaseText: "text-pink-100",
+  socialItemBg: "bg-black/80 backdrop-blur-md",
+  socialItemBorder: "border-pink-500/20",
+  socialNameColor: "text-pink-100",
+  socialUnitColor: "text-pink-200/70",
+  nameColor: "text-pink-100",
+  bioColor: "text-pink-100/80",
+  handleColor: "text-pink-200",
+  isShimmerName: true,
+};
+
+const CRIMSON_VELVET_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-br from-[#7f1d1d] via-[#b91c1c] to-[#dc2626] text-white border border-red-500/30 shadow-2xl",
+  profBadgeBg: "bg-red-500/20",
+  profBadgeText: "text-red-200",
+  profBadgeBorder: "border-red-500/30",
+  fanbaseBg: "bg-red-500/20",
+  fanbaseText: "text-red-200",
+  socialItemBg: "bg-slate-900/80 backdrop-blur-md",
+  socialItemBorder: "border-red-500/20",
+  socialNameColor: "text-white",
+  socialUnitColor: "text-red-200/70",
+  nameColor: "text-white",
+  bioColor: "text-red-100/80",
+  handleColor: "text-red-400",
+};
+
 
 export const THEME_STYLES: Record<string, ThemeStyleConfig> = {
   "minimal-white": MINIMAL_WHITE_STYLE,
@@ -519,7 +533,7 @@ function getHandle(url: string): string {
   return cleaned.replace(/^@/, "");
 }
 
-export function buildSocialUrl(platform: "instagram" | "youtube" | "facebook", rawUrlOrHandle?: string): string {
+export function buildSocialUrl(platform: string, rawUrlOrHandle?: string): string {
   if (!rawUrlOrHandle || !rawUrlOrHandle.trim()) return "#";
   const raw = rawUrlOrHandle.trim();
   if (raw.startsWith("http://") || raw.startsWith("https://")) return raw;
@@ -534,6 +548,26 @@ export function buildSocialUrl(platform: "instagram" | "youtube" | "facebook", r
         : `https://youtube.com/@${clean}`;
     case "facebook":
       return `https://facebook.com/${clean}`;
+    case "twitter":
+      return `https://x.com/${clean}`;
+    case "linkedin":
+      return clean.startsWith("in/") || clean.startsWith("company/")
+        ? `https://linkedin.com/${clean}`
+        : `https://linkedin.com/in/${clean}`;
+    case "threads":
+      return `https://threads.net/@${clean}`;
+    case "snapchat":
+      return `https://snapchat.com/add/${clean}`;
+    case "pinterest":
+      return `https://pinterest.com/${clean}`;
+    case "twitch":
+      return `https://twitch.tv/${clean}`;
+    case "spotify":
+      return clean.startsWith("artist/") || clean.startsWith("user/") || clean.startsWith("show/")
+        ? `https://open.spotify.com/${clean}`
+        : `https://open.spotify.com/artist/${clean}`;
+    default:
+      return `https://${clean}`;
   }
 }
 
@@ -544,10 +578,12 @@ export interface LivePreviewCardProps {
   customLinks?: CustomLink[];
   mediaKitPackages?: MediaKitPackage[];
   mediaKitSettings?: MediaKitSettings;
+  reviews?: CreatorReview[];
   totalAudience?: number;
   themeKey?: ThemeKey;
   compact?: boolean;
   variant?: "compact" | "full";
+  showSettingsIcon?: boolean;
   onShare?: () => void;
 }
 
@@ -591,15 +627,62 @@ export function LivePreviewCard({
   customLinks: passedCustomLinks,
   mediaKitPackages: passedMediaKitPackages,
   mediaKitSettings: passedMediaKitSettings,
+  reviews: passedReviews,
   totalAudience: passedTotalAudience,
   themeKey = "minimal-white",
   compact = false,
   variant,
+  showSettingsIcon: showSettingsIconProp,
   onShare,
 }: LivePreviewCardProps) {
   const { showToast } = useToast();
   const [expandedSeriesId, setExpandedSeriesId] = useState<string | null>(null);
-  const [activeContentTab, setActiveContentTab] = useState<"series" | "gigs">("series");
+  const [activeContentTab, setActiveContentTab] = useState<"series" | "gigs" | "reviews">("series");
+  const [approvedReviews, setApprovedReviews] = useState<CreatorReview[]>(passedReviews || []);
+  const [isDashboardPreview, setIsDashboardPreview] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const pathname = window.location.pathname;
+      setIsDashboardPreview(
+        showSettingsIconProp ?? (
+          pathname.startsWith("/dashboard") ||
+          pathname.startsWith("/onboarding")
+        )
+      );
+    }
+  }, [showSettingsIconProp]);
+
+  useEffect(() => {
+    if (passedReviews && passedReviews.length > 0) {
+      setApprovedReviews(passedReviews);
+      return;
+    }
+    async function loadApprovedReviews() {
+      const email = profile.email || "";
+      const username = profile.username || "";
+
+      try {
+        if (email || username) {
+          const res = await fetch(
+            `/api/creator/reviews?email=${encodeURIComponent(email)}&username=${encodeURIComponent(username)}&status=approved`
+          ).then((r) => r.json());
+
+          if (res && res.success && Array.isArray(res.reviews) && res.reviews.length > 0) {
+            setApprovedReviews(res.reviews);
+            return;
+          }
+        }
+      } catch (e) {}
+
+      const all = reviewsRepository.getAll();
+      const approved = all.filter((r) => r.status === "approved");
+      if (approved.length > 0) {
+        setApprovedReviews(approved);
+      }
+    }
+    loadApprovedReviews();
+  }, [profile.email, profile.username, passedReviews]);
   const [mediaKitPackages, setMediaKitPackages] = useState<MediaKitPackage[]>(passedMediaKitPackages || []);
   const [mediaKitSettings, setMediaKitSettings] = useState<MediaKitSettings>(passedMediaKitSettings || MediaKitService.DEFAULT_SETTINGS);
   const [customLinksList, setCustomLinksList] = useState<CustomLink[]>(passedCustomLinks || []);
@@ -608,6 +691,55 @@ export function LivePreviewCard({
   const [drawerSeries, setDrawerSeries] = useState<Series | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [showAllGigs, setShowAllGigs] = useState(false);
+
+  const [visibilitySettings, setVisibilitySettings] = useState<VisibilitySettings>(() => {
+    if (profile.visibilitySettings) return profile.visibilitySettings;
+    return storage.get<VisibilitySettings>(STORAGE_KEYS.visibilitySettings, DEFAULT_VISIBILITY_SETTINGS);
+  });
+  const [isVisibilityModalOpen, setIsVisibilityModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (profile.visibilitySettings) {
+      setVisibilitySettings(profile.visibilitySettings);
+    }
+  }, [profile.visibilitySettings]);
+
+  const handleSaveVisibilitySettings = async (newSettings: VisibilitySettings) => {
+    setVisibilitySettings(newSettings);
+    storage.set(STORAGE_KEYS.visibilitySettings, newSettings);
+    try {
+      const { ProfileService } = await import("@/services/ProfileService");
+      ProfileService.saveLocal({ visibilitySettings: newSettings });
+      const targetEmail = profile.email || ProfileService.getProfile().email;
+      const targetUsername = profile.username;
+
+      if (targetEmail || targetUsername) {
+        await Promise.all([
+          fetch("/api/creator/settings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: targetEmail,
+              username: targetUsername,
+              visibilitySettings: newSettings,
+            }),
+          }),
+          fetch("/api/creator/profile", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: targetEmail || `${targetUsername}@inflixo.com`,
+              visibilitySettings: newSettings,
+            }),
+          }),
+        ]);
+      }
+    } catch (e) {
+      console.warn("Error saving visibility settings to DB:", e);
+    }
+
+    showToast("Page display settings saved! ⚙️", "success");
+  };
 
   const isDark = isDarkTheme(themeKey);
 
@@ -642,54 +774,162 @@ export function LivePreviewCard({
   const totalEpisodesCount = (series || []).reduce((acc, s) => acc + getSeriesEpisodes(s).length, 0);
 
   const calculatedTotal =
-    (socials.instagram.followers || 0) +
-    (socials.youtube.subscribers || 0) +
-    (socials.facebook.followers || 0);
+    (socials.instagram?.followers || 0) +
+    (socials.youtube?.subscribers || 0) +
+    (socials.facebook?.followers || 0) +
+    (socials.twitter?.followers || 0) +
+    (socials.linkedin?.followers || 0) +
+    (socials.threads?.followers || 0) +
+    (socials.snapchat?.followers || 0) +
+    (socials.pinterest?.followers || 0) +
+    (socials.twitch?.followers || 0) +
+    (socials.spotify?.followers || 0);
 
   const totalAudience = passedTotalAudience !== undefined ? passedTotalAudience : calculatedTotal;
 
-  const instaHandle = socials.instagram.username || getHandle(socials.instagram.url || "");
-  const ytHandle = socials.youtube.username || getHandle(socials.youtube.url || "");
-  const fbHandle = socials.facebook.username || getHandle(socials.facebook.url || "");
+  const instaHandle = socials.instagram?.username || getHandle(socials.instagram?.url || "");
+  const ytHandle = socials.youtube?.username || getHandle(socials.youtube?.url || "");
+  const fbHandle = socials.facebook?.username || getHandle(socials.facebook?.url || "");
+  const twHandle = socials.twitter?.username || getHandle(socials.twitter?.url || "");
+  const liHandle = socials.linkedin?.username || getHandle(socials.linkedin?.url || "");
+  const thHandle = socials.threads?.username || getHandle(socials.threads?.url || "");
+  const scHandle = socials.snapchat?.username || getHandle(socials.snapchat?.url || "");
+  const pinHandle = socials.pinterest?.username || getHandle(socials.pinterest?.url || "");
+  const twiHandle = socials.twitch?.username || getHandle(socials.twitch?.url || "");
+  const spHandle = socials.spotify?.username || getHandle(socials.spotify?.url || "");
 
   const activeSocialList = [
     {
       platform: "instagram",
       label: "Instagram",
-      name: socials.instagram.name,
+      name: socials.instagram?.name,
       icon: <InstagramIcon className="h-4 w-4 text-white" />,
       badgeBg: "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-xs",
       handle: instaHandle,
-      count: socials.instagram.followers,
+      count: socials.instagram?.followers || 0,
       unit: "Followers",
-      url: buildSocialUrl("instagram", socials.instagram.url || socials.instagram.username || instaHandle),
-      hasAccount: Boolean(instaHandle || socials.instagram.followers > 0 || socials.instagram.url || socials.instagram.username),
+      url: buildSocialUrl("instagram", socials.instagram?.url || socials.instagram?.username || instaHandle),
+      hasAccount: Boolean(instaHandle || (socials.instagram?.followers || 0) > 0 || socials.instagram?.url),
+      visible: visibilitySettings.showInstagram !== false,
     },
     {
       platform: "youtube",
       label: "YouTube",
-      name: socials.youtube.channelTitle,
+      name: socials.youtube?.channelTitle,
       icon: <YoutubeIcon className="h-4 w-4 text-white" />,
       badgeBg: "bg-red-600 shadow-xs",
       handle: ytHandle,
-      count: socials.youtube.subscribers,
+      count: socials.youtube?.subscribers || 0,
       unit: "Subscribers",
-      url: buildSocialUrl("youtube", socials.youtube.url || socials.youtube.username || ytHandle),
-      hasAccount: Boolean(ytHandle || socials.youtube.subscribers > 0 || socials.youtube.url || socials.youtube.username),
+      url: buildSocialUrl("youtube", socials.youtube?.url || socials.youtube?.username || ytHandle),
+      hasAccount: Boolean(ytHandle || (socials.youtube?.subscribers || 0) > 0 || socials.youtube?.url),
+      visible: visibilitySettings.showYoutube !== false,
     },
     {
       platform: "facebook",
       label: "Facebook",
-      name: socials.facebook.name,
+      name: socials.facebook?.name,
       icon: <FacebookIcon className="h-4 w-4 text-white" />,
       badgeBg: "bg-blue-600 shadow-xs",
       handle: fbHandle,
-      count: socials.facebook.followers,
+      count: socials.facebook?.followers || 0,
       unit: "Followers",
-      url: buildSocialUrl("facebook", socials.facebook.url || socials.facebook.username || fbHandle),
-      hasAccount: Boolean(fbHandle || socials.facebook.followers > 0 || socials.facebook.url || socials.facebook.username),
+      url: buildSocialUrl("facebook", socials.facebook?.url || socials.facebook?.username || fbHandle),
+      hasAccount: Boolean(fbHandle || (socials.facebook?.followers || 0) > 0 || socials.facebook?.url),
+      visible: visibilitySettings.showFacebook !== false,
     },
-  ].filter((item) => item.hasAccount || item.count > 0 || (item.url && item.url !== "#"));
+    {
+      platform: "twitter",
+      label: "X (Twitter)",
+      name: socials.twitter?.name,
+      icon: <XTwitterIcon className="h-4 w-4 text-white" />,
+      badgeBg: "bg-slate-900 shadow-xs",
+      handle: twHandle,
+      count: socials.twitter?.followers || 0,
+      unit: "Followers",
+      url: buildSocialUrl("twitter", socials.twitter?.url || twHandle),
+      hasAccount: Boolean(twHandle || (socials.twitter?.followers || 0) > 0 || socials.twitter?.url),
+      visible: visibilitySettings.showTwitter !== false,
+    },
+    {
+      platform: "linkedin",
+      label: "LinkedIn",
+      name: socials.linkedin?.name,
+      icon: <LinkedinIcon className="h-4 w-4 text-white" />,
+      badgeBg: "bg-sky-700 shadow-xs",
+      handle: liHandle,
+      count: socials.linkedin?.followers || 0,
+      unit: "Connections",
+      url: buildSocialUrl("linkedin", socials.linkedin?.url || liHandle),
+      hasAccount: Boolean(liHandle || (socials.linkedin?.followers || 0) > 0 || socials.linkedin?.url),
+      visible: visibilitySettings.showLinkedin !== false,
+    },
+    {
+      platform: "threads",
+      label: "Threads",
+      name: socials.threads?.name,
+      icon: <ThreadsIcon className="h-4 w-4 text-white" />,
+      badgeBg: "bg-slate-900 shadow-xs",
+      handle: thHandle,
+      count: socials.threads?.followers || 0,
+      unit: "Followers",
+      url: buildSocialUrl("threads", socials.threads?.url || thHandle),
+      hasAccount: Boolean(thHandle || (socials.threads?.followers || 0) > 0 || socials.threads?.url),
+      visible: visibilitySettings.showThreads !== false,
+    },
+    {
+      platform: "snapchat",
+      label: "Snapchat",
+      name: socials.snapchat?.name,
+      icon: <SnapchatIcon className="h-4 w-4 text-white" />,
+      badgeBg: "bg-yellow-500 shadow-xs",
+      handle: scHandle,
+      count: socials.snapchat?.followers || 0,
+      unit: "Subscribers",
+      url: buildSocialUrl("snapchat", socials.snapchat?.url || scHandle),
+      hasAccount: Boolean(scHandle || (socials.snapchat?.followers || 0) > 0 || socials.snapchat?.url),
+      visible: visibilitySettings.showSnapchat !== false,
+    },
+    {
+      platform: "pinterest",
+      label: "Pinterest",
+      name: socials.pinterest?.name,
+      icon: <PinterestIcon className="h-4 w-4 text-white" />,
+      badgeBg: "bg-red-700 shadow-xs",
+      handle: pinHandle,
+      count: socials.pinterest?.followers || 0,
+      unit: "Followers",
+      url: buildSocialUrl("pinterest", socials.pinterest?.url || pinHandle),
+      hasAccount: Boolean(pinHandle || (socials.pinterest?.followers || 0) > 0 || socials.pinterest?.url),
+      visible: visibilitySettings.showPinterest !== false,
+    },
+    {
+      platform: "twitch",
+      label: "Twitch",
+      name: socials.twitch?.name,
+      icon: <TwitchIcon className="h-4 w-4 text-white" />,
+      badgeBg: "bg-purple-700 shadow-xs",
+      handle: twiHandle,
+      count: socials.twitch?.followers || 0,
+      unit: "Followers",
+      url: buildSocialUrl("twitch", socials.twitch?.url || twiHandle),
+      hasAccount: Boolean(twiHandle || (socials.twitch?.followers || 0) > 0 || socials.twitch?.url),
+      visible: visibilitySettings.showTwitch !== false,
+    },
+    {
+      platform: "spotify",
+      label: "Spotify",
+      name: socials.spotify?.name,
+      icon: <SpotifyIcon className="h-4 w-4 text-white" />,
+      badgeBg: "bg-emerald-600 shadow-xs",
+      handle: spHandle,
+      count: socials.spotify?.followers || 0,
+      unit: "Listeners",
+      url: buildSocialUrl("spotify", socials.spotify?.url || spHandle),
+      hasAccount: Boolean(spHandle || (socials.spotify?.followers || 0) > 0 || socials.spotify?.url),
+      visible: visibilitySettings.showSpotify !== false,
+    },
+  ].filter((item) => item.visible && (item.hasAccount || item.count > 0 || (item.url && item.url !== "#")));
 
   const handleCopyClick = async () => {
     const cleanUsername = profile.username || "username";
@@ -760,6 +1000,8 @@ export function LivePreviewCard({
           >
             <Share2 className="h-3.5 w-3.5" />
           </button>
+
+
         </div>
       </div>
 
@@ -817,7 +1059,7 @@ export function LivePreviewCard({
         </button>
 
         {/* Category Chips (Max 3 prominent chips) */}
-        {(() => {
+        {visibilitySettings.showContentCategory !== false && (() => {
           const allChips: string[] = [];
           if (profile.category) {
             profile.category.split(",").forEach((c) => {
@@ -864,34 +1106,36 @@ export function LivePreviewCard({
         </p>
 
         {/* "Total Fanbase" Authority Card */}
-        <div className={`mt-4 rounded-2xl p-4 shadow-2xs text-center w-full space-y-1 ${
-          isDark
-            ? "bg-slate-900/60 backdrop-blur-md border border-white/15 text-white"
-            : "bg-white/75 backdrop-blur-md border border-white/60 text-slate-900"
-        }`}>
-          {totalAudience > 0 ? (
-            <div className="space-y-1">
-              <p className={`text-2xl font-black tabular-nums ${isDark ? "text-white" : "text-[#111827]"}`}>
-                ❤️ {formatCount(totalAudience)}
-              </p>
-              <p className={`text-[11px] font-bold tracking-wider uppercase ${themeKey === "minimal-white" ? "text-[#0F172A]" : isDark ? "text-amber-400 font-extrabold" : "text-[#803D63]"}`}>
-                TOTAL FANBASE
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-1">
-              <p className={`text-2xl font-black tabular-nums ${isDark ? "text-white" : "text-[#111827]"}`}>
-                ❤️ 0
-              </p>
-              <p className={`text-[11px] font-bold tracking-wider uppercase ${themeKey === "minimal-white" ? "text-[#0F172A]" : isDark ? "text-amber-400 font-extrabold" : "text-[#803D63]"}`}>
-                TOTAL FANBASE
-              </p>
-              <p className={`text-[10px] font-medium ${isDark ? "text-slate-400" : "text-gray-400"}`}>
-                Connect socials to display total reach
-              </p>
-            </div>
-          )}
-        </div>
+        {visibilitySettings.showFanbase !== false && (
+          <div className={`mt-4 rounded-2xl p-4 shadow-2xs text-center w-full space-y-1 ${
+            isDark
+              ? "bg-slate-900/60 backdrop-blur-md border border-white/15 text-white"
+              : "bg-white/75 backdrop-blur-md border border-white/60 text-slate-900"
+          }`}>
+            {totalAudience > 0 ? (
+              <div className="space-y-1">
+                <p className={`text-2xl font-black tabular-nums ${isDark ? "text-white" : "text-[#111827]"}`}>
+                  ❤️ {formatCount(totalAudience)}
+                </p>
+                <p className={`text-[11px] font-bold tracking-wider uppercase ${themeKey === "minimal-white" ? "text-[#0F172A]" : isDark ? "text-amber-400 font-extrabold" : "text-[#803D63]"}`}>
+                  TOTAL FANBASE
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                <p className={`text-2xl font-black tabular-nums ${isDark ? "text-white" : "text-[#111827]"}`}>
+                  ❤️ 0
+                </p>
+                <p className={`text-[11px] font-bold tracking-wider uppercase ${themeKey === "minimal-white" ? "text-[#0F172A]" : isDark ? "text-amber-400 font-extrabold" : "text-[#803D63]"}`}>
+                  TOTAL FANBASE
+                </p>
+                <p className={`text-[10px] font-medium ${isDark ? "text-slate-400" : "text-gray-400"}`}>
+                  Connect socials to display total reach
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Direct Social Platform Link Tiles */}
@@ -938,7 +1182,7 @@ export function LivePreviewCard({
       )}
 
       {/* Dynamic Additional Custom Links (Linktree Style) */}
-      {customLinksList && customLinksList.filter((l) => l.isEnabled !== false && l.title && l.url).length > 0 && (
+      {visibilitySettings.showCustomLinks !== false && customLinksList && customLinksList.filter((l) => l.isEnabled !== false && l.title && l.url).length > 0 && (
         <div className="relative z-10 mt-3 space-y-2 w-full text-left">
           <div className="grid grid-cols-1 gap-2 w-full">
             {customLinksList
@@ -976,48 +1220,72 @@ export function LivePreviewCard({
         </div>
       )}
 
-      {/* Interactive 2-Tab Content Switcher (Series & Shows vs Collab Gigs) */}
-      <div className="relative z-10 mt-6 w-full text-left">
-        {/* 2-Tab Pill Switcher */}
-        <div className={`flex items-center gap-1.5 p-1 rounded-2xl border mb-4 ${
-          isDark
-            ? "bg-slate-950/60 backdrop-blur-md border-white/15"
-            : "bg-white/60 backdrop-blur-md border-white/60"
-        }`}>
-          <button
-            type="button"
-            onClick={() => setActiveContentTab("series")}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
-              activeContentTab === "series"
-                ? isDark
-                  ? "bg-[#803D63]/30 text-white border border-[#803D63]/40 shadow-sm"
-                  : "bg-[#803D63]/10 text-[#803D63] border border-[#803D63]/20 shadow-2xs"
-                : isDark
-                  ? "text-slate-300 hover:text-white hover:bg-white/10"
-                  : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
-            }`}
-          >
-            <Film className="h-3.5 w-3.5" />
-            <span>🎬 Series ({series ? series.length : 0})</span>
-          </button>
+      {/* Interactive Content Switcher (Series, Gigs, Reviews) */}
+      {(visibilitySettings.showSeries !== false || visibilitySettings.showCollabGigs !== false || visibilitySettings.showReviews !== false) && (
+        <div className="relative z-10 mt-6 w-full text-left">
+          {/* Tab Pill Switcher */}
+          <div className={`flex items-center gap-1.5 p-1 rounded-2xl border mb-4 ${
+            isDark
+              ? "bg-slate-950/60 backdrop-blur-md border-white/15"
+              : "bg-white/60 backdrop-blur-md border-white/60"
+          }`}>
+            {visibilitySettings.showSeries !== false && (
+              <button
+                type="button"
+                onClick={() => setActiveContentTab("series")}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                  activeContentTab === "series"
+                    ? isDark
+                      ? "bg-[#803D63]/30 text-white border border-[#803D63]/40 shadow-sm"
+                      : "bg-[#803D63]/10 text-[#803D63] border border-[#803D63]/20 shadow-2xs"
+                    : isDark
+                      ? "text-slate-300 hover:text-white hover:bg-white/10"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
+                }`}
+              >
+                <Film className="h-3.5 w-3.5" />
+                <span>🎬 Series ({series ? series.length : 0})</span>
+              </button>
+            )}
 
-          <button
-            type="button"
-            onClick={() => setActiveContentTab("gigs")}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
-              activeContentTab === "gigs"
-                ? isDark
-                  ? "bg-[#803D63]/30 text-white border border-[#803D63]/40 shadow-sm"
-                  : "bg-[#803D63]/10 text-[#803D63] border border-[#803D63]/20 shadow-2xs"
-                : isDark
-                  ? "text-slate-300 hover:text-white hover:bg-white/10"
-                  : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
-            }`}
-          >
-            <Briefcase className="h-3.5 w-3.5" />
-            <span>💼 Collab Gigs ({mediaKitPackages.filter((p) => p.isActive).length})</span>
-          </button>
-        </div>
+            {visibilitySettings.showCollabGigs !== false && (
+              <button
+                type="button"
+                onClick={() => setActiveContentTab("gigs")}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                  activeContentTab === "gigs"
+                    ? isDark
+                      ? "bg-[#803D63]/30 text-white border border-[#803D63]/40 shadow-sm"
+                      : "bg-[#803D63]/10 text-[#803D63] border border-[#803D63]/20 shadow-2xs"
+                    : isDark
+                      ? "text-slate-300 hover:text-white hover:bg-white/10"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
+                }`}
+              >
+                <Briefcase className="h-3.5 w-3.5" />
+                <span>💼 Gigs ({mediaKitPackages.filter((p) => p.isActive).length})</span>
+              </button>
+            )}
+
+            {visibilitySettings.showReviews !== false && (
+              <button
+                type="button"
+                onClick={() => setActiveContentTab("reviews")}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                  activeContentTab === "reviews"
+                    ? isDark
+                      ? "bg-[#803D63]/30 text-white border border-[#803D63]/40 shadow-sm"
+                      : "bg-[#803D63]/10 text-[#803D63] border border-[#803D63]/20 shadow-2xs"
+                    : isDark
+                      ? "text-slate-300 hover:text-white hover:bg-white/10"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
+                }`}
+              >
+                <Star className="h-3.5 w-3.5" />
+                <span>⭐ Reviews ({approvedReviews.length})</span>
+              </button>
+            )}
+          </div>
 
         {/* TAB 1: 🎬 SERIES & SHOWS */}
         {activeContentTab === "series" && (
@@ -1140,37 +1408,63 @@ export function LivePreviewCard({
                           )}
 
                           {/* Direct Contact Actions */}
-                          <div
-                            className={`pt-2.5 border-t grid grid-cols-2 gap-2 ${
-                              isDark ? "border-white/10" : "border-slate-100"
-                            }`}
-                          >
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setSelectedGigForWhatsApp(pkg);
-                                setIsLeadModalOpen(true);
-                              }}
-                              className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
-                            >
-                              <MessageCircle className="h-3.5 w-3.5 fill-white" />
-                              <span>Book WhatsApp</span>
-                            </button>
+                          {(() => {
+                            const hasPhone = Boolean(mediaKitSettings?.whatsappNumber && mediaKitSettings.whatsappNumber.trim());
+                            const hasEmail = Boolean(mediaKitSettings?.sponsorEmail && mediaKitSettings.sponsorEmail.trim());
 
-                            {mediaKitSettings.sponsorEmail && (
-                              <a
-                                href={mailUrl}
-                                className={`${
-                                  isDark
-                                    ? "bg-white text-slate-900 hover:bg-slate-100"
-                                    : "bg-slate-900 text-white hover:bg-slate-800"
-                                } text-xs font-bold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 shadow-2xs`}
+                            let showWhatsApp = true;
+                            let showEmail = true;
+                            if (hasPhone && !hasEmail) {
+                              showWhatsApp = true;
+                              showEmail = false;
+                            } else if (!hasPhone && hasEmail) {
+                              showWhatsApp = false;
+                              showEmail = true;
+                            } else {
+                              showWhatsApp = true;
+                              showEmail = true;
+                            }
+
+                            return (
+                              <div
+                                className={`pt-2.5 border-t ${
+                                  showWhatsApp && showEmail ? "grid grid-cols-2 gap-2" : "flex w-full"
+                                } ${isDark ? "border-white/10" : "border-slate-100"}`}
                               >
-                                <Mail className="h-3.5 w-3.5" />
-                                <span>Email Brief</span>
-                              </a>
-                            )}
-                          </div>
+                                {showWhatsApp && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setSelectedGigForWhatsApp(pkg);
+                                      setIsLeadModalOpen(true);
+                                    }}
+                                    className={`bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs ${
+                                      !showEmail ? "w-full" : ""
+                                    }`}
+                                  >
+                                    <MessageCircle className="h-3.5 w-3.5 fill-white" />
+                                    <span>Book WhatsApp</span>
+                                  </button>
+                                )}
+
+                                {showEmail && (
+                                  <a
+                                    href={mailUrl}
+                                    className={`${
+                                      isDark
+                                        ? "bg-white text-slate-900 hover:bg-slate-100"
+                                        : "bg-slate-900 text-white hover:bg-slate-800"
+                                    } text-xs font-bold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 shadow-2xs ${
+                                      !showWhatsApp ? "w-full" : ""
+                                    }`}
+                                  >
+                                    <Mail className="h-3.5 w-3.5" />
+                                    <span>Email Brief</span>
+                                  </a>
+                                )}
+                              </div>
+                            );
+                          })()}
                         </div>
                       );
                     })}
@@ -1199,7 +1493,174 @@ export function LivePreviewCard({
             })()}
           </div>
         )}
-    </div>
+
+        {/* TAB 3: ⭐ CLIENT REVIEWS & TESTIMONIALS */}
+        {activeContentTab === "reviews" && (
+          <div className="space-y-3 animate-in fade-in duration-200">
+            {approvedReviews && approvedReviews.length > 0 ? (
+              <div className="space-y-3">
+                {/* Summary Header */}
+                {(() => {
+                  const total = approvedReviews.length;
+                  const avg = (
+                    approvedReviews.reduce((acc, r) => acc + (r.rating || 5), 0) / total
+                  ).toFixed(1);
+
+                  // Calculate average scores for category highlights
+                  const cqAvg =
+                    approvedReviews.reduce(
+                      (acc, r) => acc + (r.ratingContentQuality || r.rating || 5),
+                      0
+                    ) / total;
+                  const profAvg =
+                    approvedReviews.reduce(
+                      (acc, r) => acc + (r.ratingProfessionalism || r.rating || 5),
+                      0
+                    ) / total;
+                  const tdAvg =
+                    approvedReviews.reduce(
+                      (acc, r) => acc + (r.ratingTimelyDelivery || r.rating || 5),
+                      0
+                    ) / total;
+
+                  const scores = [
+                    { name: "Content Quality", score: cqAvg },
+                    { name: "Professionalism", score: profAvg },
+                    { name: "Timely Delivery", score: tdAvg },
+                  ].sort((a, b) => b.score - a.score);
+
+                  const top2 = scores.slice(0, 2).map((s) => s.name);
+
+                  return (
+                    <div
+                      className={`rounded-2xl p-3.5 border text-left flex items-center justify-between gap-3 ${
+                        isDark
+                          ? "bg-[#803D63]/20 border-[#803D63]/40 text-white"
+                          : "bg-[#F6EBF1] border-[#E8DCE4] text-slate-900"
+                      }`}
+                    >
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-amber-400 text-sm">⭐</span>
+                          <span className="font-extrabold text-sm text-slate-900 dark:text-white">
+                            {avg}
+                          </span>
+                          <span className="text-slate-400 font-bold text-xs">·</span>
+                          <span className="font-bold text-xs text-slate-700 dark:text-slate-200">
+                            {total} Collaboration{total > 1 ? "s" : ""}
+                          </span>
+                        </div>
+                        <p
+                          className={`text-[11px] font-semibold mt-0.5 ${
+                            isDark ? "text-purple-200" : "text-[#803D63]"
+                          }`}
+                        >
+                          <strong>Highly rated for:</strong> {top2.join(" · ")}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Individual Review Cards */}
+                {approvedReviews.map((rev) => (
+                  <div
+                    key={rev.id}
+                    className={`rounded-2xl p-4 space-y-2.5 transition-all text-left border ${
+                      isDark
+                        ? "bg-slate-900/60 backdrop-blur-md border-white/10 text-white"
+                        : "bg-white/90 backdrop-blur-md border-slate-200/80 text-slate-900 shadow-2xs"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-0.5 text-amber-400">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`h-3.5 w-3.5 ${
+                              i < (rev.rating || 5)
+                                ? "fill-amber-400 text-amber-400"
+                                : "text-slate-300 fill-slate-300 opacity-30"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      {rev.projectTitle && (
+                        <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                          <span
+                            className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border truncate max-w-[140px] ${
+                              isDark
+                                ? "bg-purple-900/40 text-purple-300 border-purple-500/30"
+                                : "bg-[#F6EBF1] text-[#803D63] border-[#E8DCE4]"
+                            }`}
+                          >
+                            {rev.projectTitle}
+                          </span>
+                          {rev.contentUrl && (
+                            <a
+                              href={rev.contentUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border hover:underline flex items-center gap-0.5 ${
+                                isDark
+                                  ? "bg-slate-800 text-purple-200 border-slate-700"
+                                  : "bg-slate-100 text-slate-700 border-slate-200"
+                              }`}
+                            >
+                              <span>Work ↗</span>
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {rev.comment && (
+                      <p
+                        className={`text-xs font-medium italic leading-relaxed ${
+                          isDark ? "text-slate-200" : "text-slate-700"
+                        }`}
+                      >
+                        “{rev.comment}”
+                      </p>
+                    )}
+
+                    <div className="pt-1 flex items-center justify-between text-[11px] border-t border-slate-200/30">
+                      <div className="min-w-0 flex-1 truncate pr-2">
+                        <span className={`font-extrabold ${isDark ? "text-white" : "text-slate-900"}`}>
+                          {rev.clientName}
+                        </span>
+                        {rev.clientDesignation && (
+                          <span className={`ml-1 font-medium ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+                            • {rev.clientDesignation}
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[10px] font-extrabold text-emerald-600 flex items-center gap-0.5 shrink-0">
+                        <CheckCircle2 className="h-3 w-3 text-emerald-500" /> Verified Collaboration
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className={`rounded-2xl border-2 border-dashed p-6 text-center space-y-1.5 ${
+                isDark
+                  ? "bg-slate-900/60 backdrop-blur-md border-white/20 text-white"
+                  : "bg-white/70 backdrop-blur-md border-gray-200 text-slate-900"
+              }`}>
+                <Star className="h-7 w-7 mx-auto text-amber-400" />
+                <p className={`font-bold text-xs ${isDark ? "text-white" : "text-slate-800"}`}>
+                  No Reviews Published Yet
+                </p>
+                <p className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+                  Verified brand testimonials &amp; client ratings will appear here once approved.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+        </div>
+      )}
 
       {/* Bottom Conversion Watermark */}
       <div className="relative z-10 mt-6 pt-4 text-center border-t border-gray-200/30">
@@ -1241,6 +1702,14 @@ export function LivePreviewCard({
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         series={drawerSeries}
+      />
+
+      {/* Page Display Settings Modal */}
+      <VisibilitySettingsModal
+        isOpen={isVisibilityModalOpen}
+        onClose={() => setIsVisibilityModalOpen(false)}
+        settings={visibilitySettings}
+        onSave={handleSaveVisibilitySettings}
       />
     </div>
   );
@@ -1305,8 +1774,20 @@ export function PreviewSeriesItem({
 }) {
   const { showToast } = useToast();
   const isDark = isDarkTheme(themeKey);
+  const [localExpanded, setLocalExpanded] = useState(false);
+  const isOpen = onToggle ? expanded : localExpanded;
+
+  const handleToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (onToggle) {
+      onToggle();
+    }
+    setLocalExpanded(!localExpanded);
+  };
+
   const allEpisodes = getSeriesEpisodes(series);
   const genresList = series.genre ? series.genre.split(",").map((g) => g.trim()).filter(Boolean) : [];
+  const seriesCategory = genresList.length > 0 ? genresList[0] : (series.genre || "Series");
 
   const handleShareSeriesLink = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -1328,215 +1809,148 @@ export function PreviewSeriesItem({
     }
   };
 
-  const firstEp = allEpisodes[0];
-  const mainPlatform = firstEp ? getPlatformInfo(firstEp.platform, firstEp.externalUrl) : getPlatformInfo("YouTube");
   const seriesLinkUrl = username ? `/${username}/series/${series.id}` : `#`;
 
   return (
     <div
       id={`series-${series.id}`}
-      className={`rounded-2xl p-3.5 sm:p-4 transition-all text-left border ${
+      className={`rounded-2xl p-4 sm:p-5 transition-all text-left border space-y-3.5 ${
         isDark
-          ? "bg-slate-900/70 backdrop-blur-md border-white/15 hover:border-purple-400 text-white shadow-md"
-          : "bg-white/80 backdrop-blur-md border-white/60 hover:border-[#803D63] hover:bg-white/95 text-slate-900 shadow-2xs"
+          ? "bg-slate-900/70 backdrop-blur-md border-white/15 hover:border-purple-400/60 text-white shadow-md"
+          : "bg-white/85 backdrop-blur-md border-slate-200/80 hover:border-[#803D63]/50 hover:bg-white text-slate-900 shadow-2xs"
       }`}
     >
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3.5 sm:gap-4 w-full text-left">
-        {/* Widescreen 16:9 Netflix-Style Hero Poster Thumbnail */}
-        <div className={`relative w-full sm:w-48 aspect-video rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center border shrink-0 shadow-2xs ${
-          isDark ? "border-white/15" : "border-gray-200"
-        }`}>
-          <SeriesPoster
-            src={series.posterDataUrl}
-            title={series.title}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            textClassName="text-[11px] font-bold text-indigo-200"
-          />
-
-          {/* Top-Left Genre Badge Overlay on Thumbnail */}
-          {genresList.length > 0 && (
-            <div className="absolute top-1.5 left-1.5 z-10 max-w-[75%]">
-              <span className="bg-black/75 text-white text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-xs border border-white/20 truncate inline-block">
-                {genresList[0]}
-              </span>
-            </div>
-          )}
-
-          {/* Episode Count Badge inside Thumbnail (Bottom-Right) */}
-          <div className="absolute bottom-1.5 right-1.5 z-10">
-            <span className="bg-black/75 text-white text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-xs border border-white/10">
-              {allEpisodes.length} {allEpisodes.length === 1 ? "Ep" : "Eps"}
-            </span>
-          </div>
-        </div>
-
-        {/* Series Info & Details on Right (Clean Left Alignment) */}
-        <div className="min-w-0 flex-1 space-y-1.5 text-left w-full">
-          <div className="flex items-center justify-between gap-2 text-left">
-            <h3 className={`text-sm sm:text-base font-bold leading-snug break-words text-left ${
-              isDark ? "text-white" : "text-[#111827]"
+      {/* 1. Header: Title, Subtitle, Description & Share Button */}
+      <div className="flex items-start justify-between gap-3 text-left">
+        <div className="min-w-0 flex-1 space-y-0.5">
+          <Link href={seriesLinkUrl} className="group inline-block">
+            <h3 className={`text-base sm:text-lg font-extrabold leading-tight break-words text-left transition-colors ${
+              isDark ? "text-white group-hover:text-purple-300" : "text-slate-900 group-hover:text-[#803D63]"
             }`}>
               {series.title}
             </h3>
-
-            {/* Action Icon Group: Share + View Page Icon Button */}
-            <div className="flex items-center gap-1.5 shrink-0">
-              {/* Share Icon Button */}
-              <button
-                type="button"
-                onClick={handleShareSeriesLink}
-                className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-colors cursor-pointer ${
-                  isDark
-                    ? "border-white/15 bg-white/10 text-slate-300 hover:text-white hover:bg-white/20"
-                    : "border-gray-200 bg-white/80 text-gray-500 hover:text-[#803D63]"
-                }`}
-                title="Share Series Link"
-                aria-label="Share Series"
-              >
-                <Share2 className="h-3.5 w-3.5" />
-              </button>
-
-              {/* View Page Icon Button (Next to Share button -> Opens Series Detail Page) */}
-              <Link
-                href={seriesLinkUrl}
-                className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-colors cursor-pointer ${
-                  isDark
-                    ? "border-purple-400/40 bg-purple-900/60 text-purple-200 hover:bg-purple-800/80"
-                    : "border-indigo-200 bg-[#F6EBF1] hover:bg-indigo-100 text-[#803D63]"
-                }`}
-                title="View Series Details Page"
-                aria-label="View Series Page"
-              >
-                <Eye className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-          </div>
-
+          </Link>
+          <p className={`text-xs font-semibold text-left ${
+            isDark ? "text-purple-300/80" : "text-slate-500"
+          }`}>
+            {seriesCategory} • {allEpisodes.length} {allEpisodes.length === 1 ? "Episode" : "Episodes"}
+          </p>
           {series.description && (
-            <p className={`text-xs font-medium leading-relaxed line-clamp-2 text-left ${
-              isDark ? "text-slate-300" : "text-[#4B5563]"
+            <p className={`text-xs font-medium leading-relaxed line-clamp-2 pt-1 text-left ${
+              isDark ? "text-slate-300" : "text-slate-600"
             }`}>
               {series.description}
             </p>
           )}
-
-          {/* Bottom Platform Tag & Episode Count Meta Row */}
-          <div className={`pt-2 mt-1 flex items-center justify-between gap-2 border-t text-left w-full ${
-            isDark ? "border-white/10" : "border-gray-100"
-          }`}>
-            <div className="flex items-center gap-2 min-w-0 text-left shrink-0">
-              {/* Logo-Only Platform Badge (No Text) */}
-              <span
-                className={`inline-flex items-center justify-center h-6.5 w-6.5 rounded-md border shrink-0 ${mainPlatform.chipClass}`}
-                title={mainPlatform.name}
-                aria-label={mainPlatform.name}
-              >
-                <span className={`flex h-4 w-4 items-center justify-center rounded ${mainPlatform.badgeClass}`}>
-                  {mainPlatform.icon}
-                </span>
-              </span>
-
-              {/* Highlighted Interactive Episodes Count Link Button */}
-              <button
-                type="button"
-                onClick={onToggle}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shadow-2xs border ${
-                  expanded
-                    ? "bg-[#803D63] text-white border-[#803D63] ring-2 ring-[#803D63]/30 shadow-xs"
-                    : isDark
-                    ? "bg-purple-900/60 text-purple-200 border-purple-400/40 hover:bg-purple-800/80"
-                    : "bg-[#F6EBF1] text-[#803D63] border-[#E8DCE4] hover:bg-[#803D63] hover:text-white"
-                }`}
-                title="Click to view episode playlist"
-              >
-                <Film className="h-3.5 w-3.5" />
-                <span>{allEpisodes.length} {allEpisodes.length === 1 ? "Episode" : "Episodes"}</span>
-                <span className="font-extrabold">{expanded ? "↑" : "↓"}</span>
-              </button>
-            </div>
-          </div>
         </div>
+
+        {/* Share Button */}
+        <button
+          type="button"
+          onClick={handleShareSeriesLink}
+          className={`flex h-8 w-8 items-center justify-center rounded-xl border transition-colors cursor-pointer shrink-0 ${
+            isDark
+              ? "border-white/15 bg-white/10 text-slate-300 hover:text-white hover:bg-white/20"
+              : "border-slate-200 bg-slate-50 text-slate-500 hover:text-[#803D63] hover:bg-rose-50/50 shadow-2xs"
+          }`}
+          title="Share Series Link"
+          aria-label="Share Series"
+        >
+          <Share2 className="h-3.5 w-3.5" />
+        </button>
       </div>
 
-      {/* Expanded Episodes List Drawer (In-line List Below Card) */}
-      {expanded && allEpisodes.length > 0 && (
-        <div className={`mt-3 pt-3 border-t space-y-2 rounded-xl p-3 text-left ${
-          isDark
-            ? "border-white/10 bg-slate-950/60 backdrop-blur-md"
-            : "border-gray-200/60 bg-white/50 backdrop-blur-md"
-        }`}>
-          <div className="flex items-center justify-between pb-1 text-left">
-            <span className={`text-xs font-bold ${isDark ? "text-slate-200" : "text-gray-700"}`}>
-              Episodes Playlist ({allEpisodes.length})
-            </span>
-            <span className={`text-[10px] font-medium ${isDark ? "text-slate-400" : "text-gray-500"}`}>
-              Click Watch to open video
-            </span>
-          </div>
-          <div className="space-y-2">
-            {allEpisodes.map((ep) => {
-              const plat = getPlatformInfo(ep.platform, ep.externalUrl);
-              const epNumStr = ep.episodeNumber < 10 ? `EP 0${ep.episodeNumber}` : `EP ${ep.episodeNumber}`;
-              const epTitleStr = ep.title && ep.title.trim() ? ep.title : `Part ${ep.episodeNumber}`;
+      {/* 2. Interactive Toggle Button: View All X Episodes ↓ / ↑ */}
+      <button
+        type="button"
+        onClick={handleToggle}
+        className={`flex w-full items-center justify-center gap-2 rounded-xl py-2.5 px-4 text-xs font-extrabold transition-all border shadow-2xs cursor-pointer ${
+          isOpen
+            ? "bg-[#803D63] border-[#803D63] text-white"
+            : isDark
+            ? "bg-purple-900/50 border-purple-400/30 text-purple-200 hover:bg-purple-800/70 hover:border-purple-400 hover:text-white"
+            : "bg-[#F6EBF1] border-[#E8DCE4] text-[#803D63] hover:bg-[#803D63] hover:text-white"
+        }`}
+      >
+        <span>
+          {isOpen
+            ? `Hide Episodes (${allEpisodes.length}) ↑`
+            : `View All ${allEpisodes.length} ${allEpisodes.length === 1 ? "Episode" : "Episodes"} ↓`}
+        </span>
+      </button>
 
-              return (
-                <a
-                  key={ep.id}
-                  href={ep.externalUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`group flex items-center justify-between gap-3 rounded-xl p-2.5 sm:p-3 transition-all text-left border ${
-                    isDark
-                      ? "bg-slate-900/80 backdrop-blur-sm border-white/15 hover:border-purple-400 text-white"
-                      : "bg-white/80 backdrop-blur-sm border-white/50 hover:border-[#803D63] text-slate-900 shadow-2xs"
-                  }`}
-                >
-                  {/* Left Side: EP Badge + Platform Logo + Multiline Title */}
-                  <div className="flex items-center gap-2.5 min-w-0 flex-1 text-left">
-                    <span className={`font-bold text-[11px] px-2 py-1 rounded-md border shrink-0 ${
+      {/* 3. Expanded Episodes List */}
+      {isOpen && (
+        <div className="space-y-2.5 pt-1 animate-in fade-in duration-200">
+          {allEpisodes.length > 0 ? (
+            <div className="space-y-1.5">
+              {allEpisodes.map((ep, idx) => {
+                const partNum = ep.episodeNumber || idx + 1;
+                const partNumStr = partNum < 10 ? `0${partNum}` : `${partNum}`;
+                const epTitleStr = ep.title && ep.title.trim() ? ep.title : `Part ${partNumStr}`;
+
+                return (
+                  <a
+                    key={ep.id || idx}
+                    href={ep.externalUrl || "#"}
+                    target={ep.externalUrl ? "_blank" : "_self"}
+                    rel="noopener noreferrer"
+                    className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs transition-all border text-left cursor-pointer ${
                       isDark
-                        ? "bg-purple-900/60 text-purple-200 border-purple-400/40"
-                        : "bg-[#F6EBF1] text-[#803D63] border-[#E8DCE4]"
+                        ? "bg-slate-950/40 border-white/10 hover:border-purple-400/40 hover:bg-purple-950/30 text-white"
+                        : "bg-slate-50/80 border-slate-200/70 hover:border-[#803D63]/30 hover:bg-purple-50/40 text-slate-900"
+                    }`}
+                  >
+                    {/* ▶ Play Icon */}
+                    <div className={`flex h-6 w-6 items-center justify-center rounded-lg shrink-0 transition-colors ${
+                      isDark
+                        ? "bg-purple-500/20 text-purple-300 group-hover:bg-purple-600 group-hover:text-white"
+                        : "bg-[#803D63]/10 text-[#803D63] group-hover:bg-[#803D63] group-hover:text-white"
                     }`}>
-                      {epNumStr}
+                      <Play className="h-3 w-3 fill-current ml-0.5" />
+                    </div>
+
+                    {/* Part 01 Badge Label */}
+                    <span className={`font-extrabold text-xs shrink-0 tracking-tight min-w-[52px] ${
+                      isDark ? "text-purple-300" : "text-[#803D63]"
+                    }`}>
+                      Part {partNumStr}
                     </span>
 
-                    {/* Logo-Only Platform Badge (No Text) */}
-                    <span
-                      className={`inline-flex items-center justify-center h-6 w-6 rounded-md border shrink-0 ${plat.chipClass}`}
-                      title={plat.name}
-                      aria-label={plat.name}
-                    >
-                      <span className={`flex h-4 w-4 items-center justify-center rounded ${plat.badgeClass}`}>
-                        {plat.icon}
-                      </span>
-                    </span>
-
-                    {/* Multiline Episode Title (No Truncation) */}
-                    <p className={`text-xs font-bold leading-normal break-words transition-colors text-left flex-1 min-w-0 ${
-                      isDark ? "text-white group-hover:text-purple-300" : "text-gray-900 group-hover:text-[#803D63]"
+                    {/* Episode Title */}
+                    <span className={`font-semibold text-xs truncate flex-1 ${
+                      isDark ? "text-slate-200 group-hover:text-white" : "text-slate-800 group-hover:text-slate-950"
                     }`}>
                       {epTitleStr}
-                    </p>
-                  </div>
-
-                  {/* Right Side: Icon-Only Watch Button (40x40 Target) */}
-                  <div className="flex items-center shrink-0 ml-1">
-                    <span
-                      className={`h-9 w-9 sm:h-10 sm:w-10 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${
-                        isDark
-                          ? "bg-gradient-to-r from-purple-600 to-rose-600 text-white border-purple-400/40 group-hover:from-purple-500 group-hover:to-rose-500 shadow-2xs"
-                          : "bg-[#F6EBF1] text-[#803D63] border-[#E8DCE4] group-hover:bg-[#803D63] group-hover:text-white shadow-2xs"
-                      }`}
-                      aria-label="Watch episode"
-                      title="Watch episode"
-                    >
-                      <ExternalLink className="h-4 w-4 stroke-[2.5]" />
                     </span>
-                  </div>
-                </a>
-              );
-            })}
+
+                    {/* External Link Arrow Icon */}
+                    <ExternalLink className={`h-3.5 w-3.5 opacity-60 group-hover:opacity-100 transition-opacity shrink-0 ${
+                      isDark ? "text-purple-300" : "text-[#803D63]"
+                    }`} />
+                  </a>
+                );
+              })}
+            </div>
+          ) : (
+            <div className={`text-xs font-medium py-3 px-3 rounded-xl border text-center ${
+              isDark ? "bg-slate-950/30 border-white/10 text-slate-400" : "bg-slate-50 border-slate-200 text-slate-500"
+            }`}>
+              No episodes published in this series yet.
+            </div>
+          )}
+
+          {/* Link to Full Series Detail Page inside expanded section */}
+          <div className="pt-1 text-center">
+            <Link
+              href={seriesLinkUrl}
+              className={`inline-flex items-center gap-1.5 text-xs font-bold transition-colors ${
+                isDark ? "text-purple-300 hover:text-purple-200" : "text-[#803D63] hover:text-[#6D3254]"
+              }`}
+            >
+              <span>Go to Full Series Details Page</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
           </div>
         </div>
       )}

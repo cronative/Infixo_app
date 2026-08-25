@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { recordOnboardingStep } from "@/lib/onboardingStepDb";
+import { ensureCreatorSettingsTable } from "@/lib/settingsDb";
 
 // GET /api/creator/profile?email=... or ?username=...
 export async function GET(req: Request) {
   try {
+    await ensureCreatorSettingsTable();
+
     const { searchParams } = new URL(req.url);
     const email = searchParams.get("email");
     const username = searchParams.get("username");
@@ -14,9 +17,10 @@ export async function GET(req: Request) {
     }
 
     let query = `
-       SELECT c.*, s.plan_key, s.plan_name, s.billing_cycle, s.status AS sub_status
+       SELECT c.*, s.plan_key, s.plan_name, s.billing_cycle, s.status AS sub_status, cs.visibility_settings AS settings_visibility
        FROM creators c
        LEFT JOIN subscriptions s ON c.id = s.creator_id
+       LEFT JOIN creator_settings cs ON c.id = cs.creator_id
     `;
     const params: any[] = [];
     if (username) {
@@ -32,6 +36,16 @@ export async function GET(req: Request) {
     const creator = rows[0];
     if (!creator) {
       return NextResponse.json({ error: "Creator not found" }, { status: 404 });
+    }
+
+    const rawVis = creator.settings_visibility || creator.visibility_settings;
+    let visibilitySettings = null;
+    if (rawVis) {
+      try {
+        visibilitySettings = typeof rawVis === "string" 
+          ? JSON.parse(rawVis) 
+          : rawVis;
+      } catch (e) {}
     }
 
     return NextResponse.json({
@@ -52,6 +66,7 @@ export async function GET(req: Request) {
         themeKey: (!creator.theme_key || creator.theme_key === "modern-purple") ? "minimal-white" : creator.theme_key,
         themeChangesCount: Number(creator.theme_changes_count || 0),
         isVerified: Boolean(creator.is_verified),
+        visibilitySettings,
         updatedAt: creator.updated_at,
       },
     });
@@ -64,8 +79,10 @@ export async function GET(req: Request) {
 // POST /api/creator/profile
 export async function POST(req: Request) {
   try {
+    await ensureCreatorSettingsTable();
+
     const body = await req.json();
-    const { email, displayName, username, category, customCategory, profession, bio, photoDataUrl, city, state, country, themeKey, incrementThemeCount } = body;
+    const { email, displayName, username, category, customCategory, profession, bio, photoDataUrl, city, state, country, themeKey, incrementThemeCount, visibilitySettings } = body;
 
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
@@ -83,6 +100,7 @@ export async function POST(req: Request) {
     try { await db.query("ALTER TABLE creators ADD COLUMN state VARCHAR(100) DEFAULT NULL"); } catch {}
     try { await db.query("ALTER TABLE creators ADD COLUMN country VARCHAR(100) DEFAULT NULL"); } catch {}
     try { await db.query("ALTER TABLE creators ADD COLUMN theme_changes_count INT DEFAULT 0"); } catch {}
+    try { await db.query("ALTER TABLE creators ADD COLUMN visibility_settings TEXT DEFAULT NULL"); } catch {}
 
     const cleanUsername = (username || email.split("@")[0]).replace(/[^a-z0-9_]/gi, "").toLowerCase();
 
@@ -94,6 +112,7 @@ export async function POST(req: Request) {
     const safeCategory = category ? String(category).substring(0, 490) : null;
     const safeCustomCategory = customCategory ? String(customCategory).substring(0, 490) : "";
     const safeProfession = profession ? String(profession).substring(0, 490) : null;
+    const visibilityJson = visibilitySettings ? JSON.stringify(visibilitySettings) : null;
 
     if (creatorId) {
       // Username is permanently locked once created — do not overwrite existing handle
@@ -114,9 +133,10 @@ export async function POST(req: Request) {
              city = COALESCE(?, city),
              state = COALESCE(?, state),
              country = COALESCE(?, country),
-             theme_key = ?
+             theme_key = ?,
+             visibility_settings = COALESCE(?, visibility_settings)
           WHERE id = ?`,
-        [displayName, finalUsername, safeCategory, safeCustomCategory, safeProfession, bio, photoDataUrl, city, state, country, safeThemeKey, creatorId]
+        [displayName, finalUsername, safeCategory, safeCustomCategory, safeProfession, bio, photoDataUrl, city, state, country, safeThemeKey, visibilityJson, creatorId]
       );
 
       if (incrementThemeCount) {
@@ -127,8 +147,8 @@ export async function POST(req: Request) {
       creatorId = `cr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
       const safeThemeKey = (!themeKey || themeKey === "modern-purple") ? "minimal-white" : themeKey;
       await db.query(
-        `INSERT INTO creators (id, email, display_name, username, category, profession, bio, photo_url, city, state, country, theme_key, theme_changes_count)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`,
+        `INSERT INTO creators (id, email, display_name, username, category, profession, bio, photo_url, city, state, country, theme_key, theme_changes_count, visibility_settings)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)`,
         [
           creatorId,
           email,
@@ -142,6 +162,7 @@ export async function POST(req: Request) {
           state || null,
           country || null,
           safeThemeKey,
+          visibilityJson,
         ]
       );
 
@@ -154,13 +175,45 @@ export async function POST(req: Request) {
       );
     }
 
+    // Upsert into dedicated creator_settings table
+    if (visibilityJson) {
+      try {
+        await db.query(
+          `INSERT INTO creator_settings (creator_id, visibility_settings)
+           VALUES (?, ?)
+           ON DUPLICATE KEY UPDATE 
+             visibility_settings = VALUES(visibility_settings),
+             updated_at = CURRENT_TIMESTAMP`,
+          [creatorId, visibilityJson]
+        );
+      } catch (e) {
+        console.warn("Could not upsert into creator_settings:", e);
+      }
+    }
+
     // Record / Update current step in creator_onboarding_steps table (1 row per email)
     const stepToRecord = body.onboardingStep || "profile";
     await recordOnboardingStep(email, stepToRecord, creatorId);
 
-    // Re-fetch updated profile
-    const [updatedRows]: any = await db.query("SELECT * FROM creators WHERE id = ?", [creatorId]);
+    // Re-fetch updated profile with LEFT JOIN on creator_settings
+    const [updatedRows]: any = await db.query(
+      `SELECT c.*, cs.visibility_settings AS settings_visibility 
+       FROM creators c 
+       LEFT JOIN creator_settings cs ON c.id = cs.creator_id 
+       WHERE c.id = ?`,
+      [creatorId]
+    );
     const updated = updatedRows[0];
+
+    const rawVis = updated.settings_visibility || updated.visibility_settings;
+    let parsedVisibility = null;
+    if (rawVis) {
+      try {
+        parsedVisibility = typeof rawVis === "string"
+          ? JSON.parse(rawVis)
+          : rawVis;
+      } catch (e) {}
+    }
 
     return NextResponse.json({
       success: true,
@@ -179,6 +232,7 @@ export async function POST(req: Request) {
         themeKey: updated.theme_key,
         themeChangesCount: Number(updated.theme_changes_count || 0),
         isVerified: Boolean(updated.is_verified),
+        visibilitySettings: parsedVisibility,
         updatedAt: updated.updated_at,
       },
     });

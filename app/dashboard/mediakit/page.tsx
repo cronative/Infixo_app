@@ -30,13 +30,15 @@ import {
   Play,
   Layers,
   Award,
+  Link2,
+  Globe,
 } from "lucide-react";
-import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
+import { InstagramIcon, YoutubeIcon, FacebookIcon, XTwitterIcon, LinkedinIcon, ThreadsIcon } from "@/components/shared/BrandIcons";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { MediaKitService, SAMPLE_PACKAGES } from "@/services/MediaKitService";
-import { MediaKitPackage, MediaKitSettings } from "@/types";
-import { authRepository } from "@/repositories/localRepository";
+import { MediaKitPackage, MediaKitSettings, CustomLink } from "@/types";
+import { authRepository, customLinksRepository } from "@/repositories/localRepository";
 import { formatCount } from "@/utils/format";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { canCreateGig } from "@/services/subscriptionLimits";
@@ -216,12 +218,17 @@ export default function DashboardMediaKitPage() {
 
   // Public Preview Modal State
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
-  const [activePreviewTab, setActivePreviewTab] = useState<"series" | "mediakit">("series");
+  const [activePreviewTab, setActivePreviewTab] = useState<"mediakit" | "series">("mediakit");
+  const [customLinks, setCustomLinks] = useState<CustomLink[]>([]);
 
   const activeEmail = profile.email || authRepository.getPendingEmail() || "";
   const activeCreatorId = profile.id;
   const activeUsername = profile.username;
   const creatorQueryKey = activeCreatorId || activeEmail || activeUsername || "";
+
+  useEffect(() => {
+    setCustomLinks(customLinksRepository.get());
+  }, []);
 
   useEffect(() => {
     async function initMediaKit() {
@@ -426,14 +433,6 @@ export default function DashboardMediaKitPage() {
 
           {/* Top Quick Actions */}
           <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-            <button
-              type="button"
-              onClick={() => setIsPreviewModalOpen(true)}
-              className="bg-white hover:bg-slate-50 text-slate-800 border border-gray-200 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs cursor-pointer"
-            >
-              <Eye className="h-3.5 w-3.5 text-[#803D63]" />
-              <span>Preview Public View</span>
-            </button>
             <button
               type="button"
               onClick={handleShareMediaKit}
@@ -888,46 +887,8 @@ export default function DashboardMediaKitPage() {
               </div>
             </div>
           </div>
-
-          {/* Past Brand Collaborations Grayscale Bar */}
-          <div className="pt-3 border-t border-gray-100 space-y-2 text-center">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              Trusted by Leading Brands &amp; Sponsors:
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-6 text-xs font-black text-slate-400 grayscale opacity-70">
-              <span>NIKE</span>
-              <span>boAt</span>
-              <span>MAMAEARTH</span>
-              <span>SWIGGY</span>
-              <span>ZOMATO</span>
-              <span>SAMSUNG</span>
-              <span>TECHBURNER</span>
-            </div>
-          </div>
         </div>
 
-        {/* 5. EXPORT DOCUMENT ACTION BAR */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-2xs">
-          <div className="space-y-0.5">
-            <h4 className="font-display text-sm font-bold text-slate-900">
-              Download Printable Rate Card Document
-            </h4>
-            <p className="text-xs text-slate-500 font-medium">
-              Export clean PDF rate cards to attach directly to brand proposal emails
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              type="button"
-              onClick={handleExportPDF}
-              className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs cursor-pointer"
-            >
-              <Download className="h-4 w-4" />
-              <span>Export PDF Media Kit</span>
-            </button>
-          </div>
-        </div>
       </div>
 
       {/* CREATE / EDIT GIG MODAL */}
@@ -1188,37 +1149,35 @@ export default function DashboardMediaKitPage() {
           <div className="bg-white border border-gray-200 rounded-3xl max-w-3xl w-full p-6 shadow-2xl space-y-5 text-left max-h-[90vh] overflow-y-auto">
             
             {/* Modal Header & Close Button */}
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3 gap-3">
               <div>
                 <h3 className="font-display text-base font-extrabold text-slate-900">
-                  Live Public Preview — {profile.displayName || "Creator"}
+                  Media Kit &amp; Rate Card — {profile.displayName || "Creator"}
                 </h3>
-                <p className="text-[11px] text-slate-500 font-medium">Switch tabs to test both Fan Viewer experience and Brand Sponsor view</p>
+                <p className="text-[11px] text-slate-500 font-medium">Verified creator portfolio, aggregated fanbase analytics &amp; direct brand collab rates</p>
               </div>
-              <button
-                type="button"
-                onClick={() => setIsPreviewModalOpen(false)}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleExportPDF}
+                  className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs cursor-pointer"
+                  title="Print / Save as PDF"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Export PDF</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsPreviewModalOpen(false)}
+                  className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             </div>
 
             {/* 2-Tab Navigation Bar */}
             <div className="flex items-center gap-2 bg-slate-100/80 p-1.5 rounded-2xl border border-gray-200">
-              <button
-                type="button"
-                onClick={() => setActivePreviewTab("series")}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
-                  activePreviewTab === "series"
-                    ? "bg-[#803D63] text-white shadow-2xs"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
-                }`}
-              >
-                <Film className="h-4 w-4" />
-                <span>🎬 Series &amp; Shows</span>
-              </button>
-
               <button
                 type="button"
                 onClick={() => setActivePreviewTab("mediakit")}
@@ -1229,11 +1188,380 @@ export default function DashboardMediaKitPage() {
                 }`}
               >
                 <Briefcase className="h-4 w-4" />
-                <span>💼 Media Kit &amp; Collabs</span>
+                <span>💼 Media Kit &amp; Rate Card</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActivePreviewTab("series")}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                  activePreviewTab === "series"
+                    ? "bg-[#803D63] text-white shadow-2xs"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
+                }`}
+              >
+                <Film className="h-4 w-4" />
+                <span>🎬 Series &amp; Shows ({series ? series.length : 0})</span>
               </button>
             </div>
 
-            {/* TAB 1: 🎬 SERIES & SHOWS (FAN & VIEWER AUDIENCE VIEW) */}
+            {/* TAB 1: 💼 MEDIA KIT & RATE CARD (COMPREHENSIVE ALL-IN-ONE BRAND SPONSOR VIEW) */}
+            {activePreviewTab === "mediakit" && (
+              <div className="space-y-6 animate-in fade-in duration-200">
+                {/* 1. CREATOR IDENTITY & AUTHORITY HEADER */}
+                <div className="rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white p-6 space-y-5 relative overflow-hidden shadow-md">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      {/* Avatar */}
+                      <div className="relative shrink-0">
+                        {profile.photoDataUrl ? (
+                          <img
+                            src={profile.photoDataUrl}
+                            alt={profile.displayName || "Creator"}
+                            className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl object-cover ring-2 ring-white/20 shadow-md"
+                          />
+                        ) : (
+                          <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500 to-[#803D63] text-2xl font-black text-white shadow-md">
+                            {(profile.displayName || "C").charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xs" title="Verified Creator">
+                          <Check className="h-3 w-3 stroke-[3]" />
+                        </span>
+                      </div>
+
+                      {/* Name & Handle */}
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h2 className="font-display text-xl sm:text-2xl font-black text-white">
+                            {profile.displayName || "Creator Name"}
+                          </h2>
+                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 text-[10px] font-black">
+                            <ShieldCheck className="h-3 w-3" /> Verified by Inflixo
+                          </span>
+                        </div>
+                        <p className="text-xs text-indigo-200 font-medium">
+                          @{handleStr} • <span className="text-amber-300 font-bold">{profile.category || "Digital Creator"}</span>
+                        </p>
+                        <p className="text-[11px] text-slate-400 font-mono">
+                          inflixo.com/{handleStr}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Total Aggregated Reach Card */}
+                    <div className="bg-white/10 backdrop-blur-md border border-white/15 px-4 py-3 rounded-2xl text-left sm:text-right shrink-0">
+                      <p className="text-[10px] text-slate-300 uppercase font-extrabold tracking-wider flex items-center sm:justify-end gap-1">
+                        <span>❤️</span> TOTAL FANBASE
+                      </p>
+                      <p className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                        {formatCount(totalAudience)}
+                      </p>
+                      <p className="text-[10px] text-emerald-400 font-bold mt-0.5">
+                        ✓ Verified Aggregated Reach
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 2. ABOUT & BIO HIGHLIGHT */}
+                  {(profile.bio || settings.bioHighlight) && (
+                    <div className="pt-3 border-t border-white/10 space-y-2">
+                      {settings.bioHighlight && (
+                        <p className="text-xs sm:text-sm text-amber-200/90 font-semibold italic leading-relaxed">
+                          "{settings.bioHighlight}"
+                        </p>
+                      )}
+                      {profile.bio && (
+                        <p className="text-xs text-slate-300 font-normal leading-relaxed">
+                          {profile.bio}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* 3. DIRECT CONTACT ROUTING BAR */}
+                  <div className="pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
+                    <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                      <Zap className="h-3.5 w-3.5 text-amber-400" /> Direct Brand Inquiry Routing (0% Commission):
+                    </span>
+                    <div className="flex items-center gap-2">
+                      {cleanPhone && (
+                        <a
+                          href={`https://wa.me/${cleanPhone}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs"
+                        >
+                          <MessageCircle className="h-3.5 w-3.5 fill-white" />
+                          <span>WhatsApp Direct</span>
+                        </a>
+                      )}
+                      {(settings.sponsorEmail || profile.email) && (
+                        <a
+                          href={`mailto:${settings.sponsorEmail || profile.email}`}
+                          className="bg-white hover:bg-slate-100 text-slate-900 text-xs font-extrabold px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs"
+                        >
+                          <Mail className="h-3.5 w-3.5 text-[#803D63]" />
+                          <span>Email Proposal</span>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4. CONNECTED SOCIAL ACCOUNTS STATS BREAKDOWN */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                      <Layers className="h-4 w-4 text-[#803D63]" />
+                      <span>Connected Social Channels &amp; Metrics</span>
+                    </h4>
+                    <span className="text-[11px] font-bold text-slate-500">Live Synchronized</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {/* Instagram Tile */}
+                    <div className="rounded-2xl border border-gray-200 bg-white p-3.5 flex items-center justify-between shadow-2xs">
+                      <div className="flex items-center gap-2.5">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 via-rose-500 to-orange-400 text-white shadow-2xs">
+                          <InstagramIcon className="h-4 w-4 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-slate-900">Instagram</p>
+                          <p className="text-[10px] text-slate-500 font-medium truncate max-w-[100px]">
+                            @{socials.instagram?.username || handleStr}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-display text-sm font-black text-slate-900">
+                          {formatCount(socials.instagram?.followers || 0)}
+                        </p>
+                        <p className="text-[9px] text-slate-400 uppercase font-bold">Followers</p>
+                      </div>
+                    </div>
+
+                    {/* YouTube Tile */}
+                    <div className="rounded-2xl border border-gray-200 bg-white p-3.5 flex items-center justify-between shadow-2xs">
+                      <div className="flex items-center gap-2.5">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#FF0000] text-white shadow-2xs">
+                          <YoutubeIcon className="h-4 w-4 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-slate-900">YouTube</p>
+                          <p className="text-[10px] text-slate-500 font-medium truncate max-w-[100px]">
+                            {socials.youtube?.channelTitle || `@${socials.youtube?.username || handleStr}`}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-display text-sm font-black text-slate-900">
+                          {formatCount(socials.youtube?.subscribers || 0)}
+                        </p>
+                        <p className="text-[9px] text-slate-400 uppercase font-bold">Subscribers</p>
+                      </div>
+                    </div>
+
+                    {/* Facebook Tile */}
+                    <div className="rounded-2xl border border-gray-200 bg-white p-3.5 flex items-center justify-between shadow-2xs">
+                      <div className="flex items-center gap-2.5">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1877F2] text-white shadow-2xs">
+                          <FacebookIcon className="h-4 w-4 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-slate-900">Facebook</p>
+                          <p className="text-[10px] text-slate-500 font-medium truncate max-w-[100px]">
+                            {socials.facebook?.name || `@${socials.facebook?.username || handleStr}`}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-display text-sm font-black text-slate-900">
+                          {formatCount(socials.facebook?.followers || 0)}
+                        </p>
+                        <p className="text-[9px] text-slate-400 uppercase font-bold">Followers</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 5. CUSTOM CREATOR LINKS */}
+                {customLinks && customLinks.filter((l) => l.isEnabled !== false).length > 0 && (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                        <Link2 className="h-4 w-4 text-[#803D63]" />
+                        <span>Official Portfolio &amp; Links ({customLinks.filter((l) => l.isEnabled !== false).length})</span>
+                      </h4>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {customLinks
+                        .filter((l) => l.isEnabled !== false)
+                        .map((link) => {
+                          const displayDomain = link.url.replace(/^https?:\/\//, "").split("/")[0];
+                          return (
+                            <a
+                              key={link.id}
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center justify-between p-3 rounded-xl border border-gray-200 bg-white hover:border-[#803D63]/40 hover:bg-slate-50 transition-all text-left shadow-2xs group"
+                            >
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] shrink-0">
+                                  <Globe className="h-4 w-4" />
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="text-xs font-bold text-slate-900 truncate group-hover:text-[#803D63] transition-colors">
+                                    {link.title}
+                                  </p>
+                                  <p className="text-[10px] text-slate-400 truncate">{displayDomain}</p>
+                                </div>
+                              </div>
+                              <ExternalLink className="h-3.5 w-3.5 text-slate-400 group-hover:text-[#803D63] shrink-0" />
+                            </a>
+                          );
+                        })}
+                    </div>
+                  </div>
+                )}
+
+                {/* 6. COLLABORATION GIGS & RATE CARDS (MAX 3 PACKAGES) */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                      <FileSpreadsheet className="h-4 w-4 text-[#803D63]" />
+                      <span>Official Collaboration Rate Cards (Top {Math.min(3, packages.filter((p) => p.isActive).length)})</span>
+                    </h4>
+                    <span className="text-[11px] font-bold text-[#803D63]">Verified Deliverables</span>
+                  </div>
+
+                  {packages.filter((p) => p.isActive).length === 0 ? (
+                    <div className="rounded-xl border border-dashed border-gray-200 bg-slate-50 p-6 text-center text-xs text-slate-500 font-medium">
+                      No active rate card packages published currently.
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                      {packages
+                        .filter((p) => p.isActive)
+                        .slice(0, 3)
+                        .map((pkg) => {
+                          const waText = encodeURIComponent(
+                            `Hi ${profile.displayName || "Creator"}, I saw your "${pkg.title}" (${pkg.price}) package on Inflixo and want to collaborate.`
+                          );
+                          const waUrl = `https://wa.me/${cleanPhone}?text=${waText}`;
+                          const mailSubject = encodeURIComponent(`[Inflixo Collab Inquiry] - ${pkg.title}`);
+                          const mailBody = encodeURIComponent(
+                            `Hi ${profile.displayName || "Creator"},\n\nI would like to inquire about collaborating on your "${pkg.title}" package listed on Inflixo.\n\nBest regards,\n[Brand Representative]`
+                          );
+                          const mailUrl = `mailto:${settings.sponsorEmail || profile.email}?subject=${mailSubject}&body=${mailBody}`;
+
+                          const hasPhone = Boolean(cleanPhone);
+                          const hasEmail = Boolean(settings?.sponsorEmail || profile.email);
+
+                          return (
+                            <div
+                              key={pkg.id}
+                              className="border border-slate-200 rounded-2xl p-4 space-y-3 bg-white text-left transition-all flex flex-col justify-between shadow-2xs hover:border-[#803D63]/30"
+                            >
+                              <div className="space-y-2.5">
+                                {/* Header Row: Platform Pill + Badge + Price */}
+                                <div className="flex items-center justify-between gap-1.5">
+                                  <span className="bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider truncate">
+                                    {pkg.platform}
+                                  </span>
+                                  {(pkg.badge || pkg.packageName || pkg.isPopular) && (
+                                    <span className="bg-amber-100 text-amber-900 text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0">
+                                      {pkg.badge || pkg.packageName || "⭐ POPULAR"}
+                                    </span>
+                                  )}
+                                </div>
+
+                                <div>
+                                  <div className="flex items-baseline justify-between gap-1">
+                                    <span className="font-display text-base font-extrabold text-[#803D63]">
+                                      {pkg.price}
+                                    </span>
+                                  </div>
+                                  <h5 className="font-bold text-slate-900 text-xs leading-snug mt-0.5 line-clamp-2">
+                                    {pkg.title}
+                                  </h5>
+                                  <p className="text-[10px] text-slate-500 font-medium mt-1 flex items-center gap-1">
+                                    <Clock className="h-3 w-3 shrink-0" /> Turnaround: {pkg.turnaroundDays} Days
+                                  </p>
+                                </div>
+
+                                <ul className="text-[11px] text-slate-600 space-y-1 pt-2 border-t border-slate-100">
+                                  {pkg.deliverables.map((item, idx) => (
+                                    <li key={idx} className="flex items-start gap-1.5">
+                                      <CheckCircle2 className="h-3 w-3 text-emerald-500 shrink-0 mt-0.5" />
+                                      <span className="leading-tight line-clamp-2">{item}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+
+                              {/* Lead Actions */}
+                              <div className="pt-2 border-t border-slate-100 flex gap-1.5">
+                                {hasPhone && (
+                                  <a
+                                    href={waUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold py-1.5 px-2 rounded-xl transition-colors inline-flex items-center justify-center gap-1 shadow-2xs"
+                                  >
+                                    <MessageCircle className="h-3 w-3 fill-white" />
+                                    <span>WhatsApp</span>
+                                  </a>
+                                )}
+                                {hasEmail && (
+                                  <a
+                                    href={mailUrl}
+                                    className="flex-1 bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold py-1.5 px-2 rounded-xl transition-colors inline-flex items-center justify-center gap-1 shadow-2xs"
+                                  >
+                                    <Mail className="h-3 w-3" />
+                                    <span>Email</span>
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  )}
+                </div>
+
+                {/* 7. CONTACT INFORMATION & BOOKING DIRECT ROUTING */}
+                <div className="rounded-2xl border border-gray-200 bg-slate-50 p-4 space-y-2">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                    <div className="space-y-1">
+                      <p className="font-bold text-slate-900 flex items-center gap-1.5">
+                        <Building2 className="h-4 w-4 text-[#803D63]" />
+                        <span>Official Booking &amp; Sponsorship Inquiries</span>
+                      </p>
+                      <p className="text-[11px] text-slate-500">
+                        Direct communication with creator management team • No middlemen or agency commissions
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-slate-700">
+                      {settings.sponsorEmail && (
+                        <span className="inline-flex items-center gap-1 text-slate-800">
+                          <Mail className="h-3.5 w-3.5 text-[#803D63]" /> {settings.sponsorEmail}
+                        </span>
+                      )}
+                      {cleanPhone && (
+                        <span className="inline-flex items-center gap-1 text-slate-800">
+                          <MessageCircle className="h-3.5 w-3.5 text-emerald-600" /> +{cleanPhone}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 2: 🎬 SERIES & SHOWS (FAN & VIEWER AUDIENCE VIEW) */}
             {activePreviewTab === "series" && (
               <div className="space-y-4 animate-in fade-in duration-200">
                 <div className="flex items-center justify-between">
@@ -1308,191 +1636,6 @@ export default function DashboardMediaKitPage() {
                     </p>
                   </div>
                 )}
-              </div>
-            )}
-
-            {/* TAB 2: 💼 MEDIA KIT & COLLABS (BRAND MANAGER / SPONSOR VIEW) */}
-            {activePreviewTab === "mediakit" && (
-              <div className="space-y-5 animate-in fade-in duration-200">
-                {/* Public Header Preview */}
-                <div className="rounded-2xl bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-white p-6 space-y-4 relative">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h2 className="font-display text-2xl font-black">{profile.displayName || "Creator"}</h2>
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-0.5 text-[10px] font-black">
-                          <ShieldCheck className="h-3 w-3" /> Verified by Inflixo
-                        </span>
-                      </div>
-                      <p className="text-xs text-indigo-200 font-medium mt-0.5">
-                        @{handleStr} • {profile.category || "Digital Creator"}
-                      </p>
-                    </div>
-                    <div className="bg-white/10 backdrop-blur-xs border border-white/15 px-4 py-2 rounded-xl text-left sm:text-right shrink-0">
-                      <p className="text-[10px] text-slate-300 uppercase font-extrabold tracking-wider">Total Aggregated Reach</p>
-                      <p className="text-2xl font-black text-white">{formatCount(totalAudience)}</p>
-                    </div>
-                  </div>
-
-                  {settings.bioHighlight && (
-                    <p className="text-xs text-slate-300 font-medium pt-2 border-t border-white/10 leading-relaxed">
-                      "{settings.bioHighlight}"
-                    </p>
-                  )}
-
-                  {/* Direct Contact Routing Bar */}
-                  <div className="pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
-                    <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                      <Zap className="h-3.5 w-3.5 text-amber-400" /> Direct Brand Inquiry Routing (0% Commission):
-                    </span>
-                    <div className="flex items-center gap-2">
-                      {cleanPhone && (
-                        <a
-                          href={`https://wa.me/${cleanPhone}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs"
-                        >
-                          <MessageCircle className="h-3.5 w-3.5 fill-white" />
-                          <span>💬 WhatsApp Chat</span>
-                        </a>
-                      )}
-                      {settings.sponsorEmail && (
-                        <a
-                          href={`mailto:${settings.sponsorEmail}`}
-                          className="bg-white hover:bg-slate-100 text-slate-900 text-xs font-extrabold px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs"
-                        >
-                          <Mail className="h-3.5 w-3.5 text-[#803D63]" />
-                          <span>✉️ Send Email</span>
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Public Gigs Grid (Active Only - 2 per row) */}
-                <div className="space-y-3">
-                  <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                    <FileSpreadsheet className="h-4 w-4 text-[#803D63]" />
-                    <span>Official Collaboration Rate Cards ({packages.filter((p) => p.isActive).length})</span>
-                  </h4>
-
-                  {packages.filter((p) => p.isActive).length === 0 ? (
-                    <div className="rounded-xl border border-dashed border-gray-200 bg-slate-50 p-6 text-center text-xs text-slate-500 font-medium">
-                      No active rate card packages published currently.
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {packages.filter((p) => p.isActive).map((pkg) => {
-                        const waText = encodeURIComponent(
-                          `Hi ${profile.displayName || "Creator"}, I saw your "${pkg.title}" (${pkg.price}) package on Inflixo and want to collaborate.`
-                        );
-                        const waUrl = `https://wa.me/${cleanPhone}?text=${waText}`;
-                        const mailSubject = encodeURIComponent(`[Inflixo Collab Inquiry] - ${pkg.title}`);
-                        const mailBody = encodeURIComponent(`Hi ${profile.displayName || "Creator"},\n\nI would like to inquire about collaborating on your "${pkg.title}" package listed on Inflixo.\n\nBest regards,\n[Brand Representative]`);
-                        const mailUrl = `mailto:${settings.sponsorEmail}?subject=${mailSubject}&body=${mailBody}`;
-
-                        return (
-                          <div key={pkg.id} className="border border-slate-200/80 rounded-2xl p-4 space-y-3 bg-white text-left transition-all flex flex-col justify-between shadow-2xs">
-                            <div className="space-y-3">
-                              {/* Header Row: Platform Pill + Badge + Price */}
-                              <div className="flex items-center justify-between gap-2">
-                                <div className="flex items-center gap-1.5 flex-wrap">
-                                  <span className="bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                                    {pkg.platform}
-                                  </span>
-                                  {(pkg.badge || pkg.packageName || pkg.isPopular) && (
-                                    <span className="bg-amber-100 text-amber-900 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                                      {pkg.badge || pkg.packageName || "⭐ POPULAR"}
-                                    </span>
-                                  )}
-                                </div>
-                                <span className="font-display text-base font-extrabold text-[#803D63] shrink-0">{pkg.price}</span>
-                              </div>
-
-                              <div>
-                                <h5 className="font-bold text-slate-900 text-sm leading-snug">{pkg.title}</h5>
-                                <p className="text-[11px] text-slate-500 font-medium mt-0.5 flex items-center gap-1">
-                                  <Clock className="h-3 w-3 shrink-0" /> Turnaround: {pkg.turnaroundDays} Days
-                                </p>
-                              </div>
-
-                              <ul className="text-xs text-slate-600 space-y-1.5 pt-2 border-t border-slate-100">
-                                {pkg.deliverables.map((item, idx) => (
-                                  <li key={idx} className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                                    <span className="leading-snug">{item}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-
-                            {/* Frictionless Direct Lead Actions */}
-                            <div className="pt-2.5 border-t border-slate-100 grid grid-cols-2 gap-2">
-                              <a
-                                href={waUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 shadow-2xs"
-                              >
-                                <MessageCircle className="h-3.5 w-3.5 fill-white" />
-                                <span>WhatsApp</span>
-                              </a>
-                              <a
-                                href={mailUrl}
-                                className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 shadow-2xs"
-                              >
-                                <Mail className="h-3.5 w-3.5" />
-                                <span>Send Email</span>
-                              </a>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-
-                {/* OTT Series & Episodes Track Record Summary */}
-                <div className="pt-2 border-t border-gray-100 space-y-2">
-                  <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                    <Film className="h-3.5 w-3.5 text-[#803D63]" /> Production Portfolio Track Record
-                  </h4>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="flex items-center gap-2.5 bg-slate-50 border border-gray-200 rounded-xl p-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] shrink-0">
-                        <Film className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <p className="text-[9px] font-bold text-slate-500 uppercase">Total Series</p>
-                        <p className="font-display text-sm font-black text-slate-900">{totalSeriesCount} Series</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2.5 bg-slate-50 border border-gray-200 rounded-xl p-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100 shrink-0">
-                        <Tv className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <p className="text-[9px] font-bold text-slate-500 uppercase">Total Episodes</p>
-                        <p className="font-display text-sm font-black text-slate-900">{totalEpisodesCount} Episodes</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Past Brand Collaborations Grayscale Bar */}
-                <div className="pt-2 border-t border-gray-100 text-center space-y-1.5">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Past Brand Collaborations</p>
-                  <div className="flex flex-wrap items-center justify-center gap-5 text-xs font-black text-slate-400 grayscale opacity-75">
-                    <span>NIKE</span>
-                    <span>boAt</span>
-                    <span>MAMAEARTH</span>
-                    <span>SWIGGY</span>
-                    <span>ZOMATO</span>
-                    <span>SAMSUNG</span>
-                  </div>
-                </div>
               </div>
             )}
 

@@ -167,7 +167,7 @@ export default function AdminLoginPage() {
         {/* 7. FOOTER */}
         <div className="text-center pt-2">
           <p className="text-xs text-slate-400 font-medium">
-            © 2026 Inflixo · TrustIQ Labs
+            © 2026 Inflixo · TrustIQ Labs PVT LTD
           </p>
         </div>
       </div>

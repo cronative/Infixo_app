@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Trash2, Edit3, Link as LinkIcon, ExternalLink, X, Sparkles, Check, Globe } from "lucide-react";
+import { Plus, Trash2, Edit3, Link as LinkIcon, ExternalLink, X, Check, ChevronDown } from "lucide-react";
 import { CustomLink } from "@/types";
 import { customLinksRepository, authRepository } from "@/repositories/localRepository";
 import { useToast } from "@/contexts/ToastContext";
@@ -289,40 +289,57 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
               </button>
             </div>
 
-            {/* Quick Title Presets */}
+            {/* Link Type Selector */}
             <div className="space-y-1.5">
               <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                Quick Presets
+                Link Type
               </label>
-              <div className="flex flex-wrap gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => setFormTitle("🎬 Watch Latest Episode")}
-                  className="bg-rose-50 hover:bg-rose-100 text-[#803D63] border border-rose-200 text-xs font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer"
+              <div className="relative">
+                <select
+                  className="w-full appearance-none rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 pr-9 text-xs font-semibold text-slate-900 focus:border-[#803D63] focus:outline-none focus:ring-2 focus:ring-[#803D63]/20 cursor-pointer"
+                  defaultValue=""
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (!val) return;
+                    const [title] = val.split("|||");
+                    setFormTitle(title);
+                    e.target.value = "";
+                  }}
                 >
-                  🎬 Watch Latest Episode
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFormTitle("📅 Book 1-on-1 Consultation")}
-                  className="bg-purple-50 hover:bg-purple-100 text-[#803D63] border border-purple-200 text-xs font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer"
-                >
-                  📅 Book Consultation
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFormTitle("🛍️ Store & Merch")}
-                  className="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 text-xs font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer"
-                >
-                  🛍️ Store &amp; Merch
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFormTitle("🌐 Official Website")}
-                  className="bg-sky-50 hover:bg-sky-100 text-sky-900 border border-sky-200 text-xs font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer"
-                >
-                  🌐 Official Website
-                </button>
+                  <option value="" disabled>— Select a type to auto-fill title —</option>
+
+                  <optgroup label="🔗 Content & General">
+                    <option value="🎬 Watch Latest Episode|||https://">🎬 Watch Latest Episode</option>
+                    <option value="🎙️ Stream Latest Podcast|||https://open.spotify.com/">🎙️ Stream Latest Podcast</option>
+                    <option value="📁 Press Kit & Media Assets|||https://drive.google.com/">📁 Press Kit & Media Assets</option>
+                    <option value="🌐 Official Website|||https://">🌐 Official Website</option>
+                    <option value="👤 Personal Portfolio & Bio|||https://">👤 Personal Portfolio & Bio</option>
+                    <option value="🛍️ Store & Merch Shop|||https://">🛍️ Store & Merch Shop</option>
+                    <option value="📅 Book 1-on-1 Consultation|||https://calendly.com/">📅 Book 1-on-1 Consultation</option>
+                    <option value="📍 Store / Location (Google Maps)|||https://maps.google.com/?q=">📍 Store / Location (Google Maps)</option>
+                    <option value="💬 Direct WhatsApp Chat|||https://wa.me/91">💬 Direct WhatsApp Chat</option>
+                  </optgroup>
+
+                  <optgroup label="📱 Social Profiles">
+                    <option value="📸 Follow on Instagram|||https://instagram.com/">📸 Follow on Instagram</option>
+                    <option value="▶️ Subscribe on YouTube|||https://youtube.com/@">▶️ Subscribe on YouTube</option>
+                    <option value="🐦 Follow on X (Twitter)|||https://x.com/">🐦 Follow on X (Twitter)</option>
+                    <option value="💼 Connect on LinkedIn|||https://linkedin.com/in/">💼 Connect on LinkedIn</option>
+                    <option value="🧵 Follow on Threads|||https://threads.net/@">🧵 Follow on Threads</option>
+                    <option value="👻 Add Me on Snapchat|||https://snapchat.com/add/">👻 Add Me on Snapchat</option>
+                    <option value="📌 Follow on Pinterest|||https://pinterest.com/">📌 Follow on Pinterest</option>
+                    <option value="🎮 Watch on Twitch|||https://twitch.tv/">🎮 Watch on Twitch</option>
+                    <option value="🎵 Follow on Spotify|||https://open.spotify.com/artist/">🎵 Follow on Spotify</option>
+                    <option value="🎬 Follow on TikTok|||https://tiktok.com/@">🎬 Follow on TikTok</option>
+                    <option value="✈️ Join Telegram Channel|||https://t.me/">✈️ Join Telegram Channel</option>
+                    <option value="👻 Add on Snapchat|||https://snapchat.com/add/">👻 Add on Snapchat</option>
+                  </optgroup>
+
+                  <optgroup label="✨ Other">
+                    <option value="✨ Custom Link|||https://">✨ Custom / Other</option>
+                  </optgroup>
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               </div>
             </div>
 

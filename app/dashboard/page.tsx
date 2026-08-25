@@ -33,6 +33,7 @@ import {
 } from "@/services/subscriptionLimits";
 import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
 import { PreviewSeriesItem, THEME_STYLES, DEFAULT_THEME_STYLE } from "@/components/onboarding/LivePreviewCard";
+import { DailyHabitWidget } from "@/components/dashboard/DailyHabitWidget";
 
 function extractHandle(handleOrUrl?: string): string | null {
   if (!handleOrUrl) return null;
@@ -128,6 +129,8 @@ export default function DashboardOverviewPage() {
       </div>
 
       <div className="mx-auto max-w-5xl px-3 sm:px-6 space-y-5">
+        {/* 1. DAILY STREAK & 24H AI REEL IDEAS (Hidden for now) */}
+        {/* <DailyHabitWidget profile={profile} /> */}
 
         {/* 2. HERO CARD: TOTAL FANBASE & SOCIAL CHANNELS */}
         <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-4 shadow-2xs">

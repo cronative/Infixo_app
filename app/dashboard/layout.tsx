@@ -94,7 +94,7 @@ function Shell({ children }: { children: ReactNode }) {
   }, [loading, router]);
 
   if (loading) {
-    return <SyncingLoader message="Syncing your creator profile, series & stats..." fullScreen />;
+    return <SyncingLoader message="Syncing your creator profile, series & stats..." fullScreen hideProgressBar={true} />;
   }
 
   return (
@@ -111,7 +111,7 @@ function Shell({ children }: { children: ReactNode }) {
         <DashboardMobileHeader onOpenDrawer={() => setDrawerOpen(true)} />
 
         {/* Scrollable Content Viewport (Only inner area scrolls with full bottom clearance above fixed nav) */}
-        <main className="flex-1 overflow-y-auto pb-32 lg:pb-8">
+        <main className="flex-1 overflow-y-auto pb-32 lg:pb-8 animate-fade-in-up">
           {children}
         </main>
       </div>
@@ -139,7 +139,7 @@ export default function DashboardRootLayout({ children }: { children: ReactNode 
   }, [router]);
 
   if (!checked) {
-    return <SyncingLoader message="Authenticating account..." fullScreen />;
+    return <SyncingLoader message="Authenticating account..." fullScreen hideProgressBar={true} />;
   }
 
   return (

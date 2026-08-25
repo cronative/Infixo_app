@@ -74,7 +74,7 @@ export default function DemoCreatorPage() {
 
             <Link
               href="/login"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6d3354] px-3.5 py-1.5 text-xs font-bold text-white shadow-sm transition-all cursor-pointer"
+              className="hidden inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6d3354] px-3.5 py-1.5 text-xs font-bold text-white shadow-sm transition-all cursor-pointer"
             >
               <span>Create My Page</span>
               <ArrowRight className="h-3.5 w-3.5" />

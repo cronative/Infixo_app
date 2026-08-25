@@ -45,6 +45,7 @@ export const ProfileService = {
               city: currentLocal.city || data.profile.city || "",
               state: currentLocal.state || data.profile.state || "",
               country: currentLocal.country || data.profile.country || "",
+              visibilitySettings: currentLocal.visibilitySettings || data.profile.visibilitySettings || null,
               updatedAt: new Date().toISOString(),
             } as CreatorProfile);
 
@@ -85,6 +86,7 @@ export const ProfileService = {
           city: currentLocal.city || data.profile.city || "",
           state: currentLocal.state || data.profile.state || "",
           country: currentLocal.country || data.profile.country || "",
+          visibilitySettings: data.profile.visibilitySettings || currentLocal.visibilitySettings || null,
           updatedAt: new Date().toISOString(),
         } as CreatorProfile;
 
@@ -174,6 +176,7 @@ export const ProfileService = {
             country: updated.country || "",
             photoDataUrl: updated.photoDataUrl,
             themeKey: currentTheme,
+            visibilitySettings: updated.visibilitySettings,
           }),
         });
         const data = await res.json();

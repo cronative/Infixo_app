@@ -1,5 +1,15 @@
 import { socialRepository, authRepository } from "@/repositories/localRepository";
-import { SocialAccounts, EMPTY_SOCIAL_ACCOUNTS } from "@/types";
+import { SocialAccounts, EMPTY_SOCIAL_ACCOUNTS, GenericSocialStats } from "@/types";
+
+const PLATFORMS_LIST: { key: keyof SocialAccounts; platform: string; urlPrefix: string }[] = [
+  { key: "twitter", platform: "twitter", urlPrefix: "https://x.com/" },
+  { key: "linkedin", platform: "linkedin", urlPrefix: "https://linkedin.com/in/" },
+  { key: "threads", platform: "threads", urlPrefix: "https://threads.net/@" },
+  { key: "snapchat", platform: "snapchat", urlPrefix: "https://snapchat.com/add/" },
+  { key: "pinterest", platform: "pinterest", urlPrefix: "https://pinterest.com/" },
+  { key: "twitch", platform: "twitch", urlPrefix: "https://twitch.tv/" },
+  { key: "spotify", platform: "spotify", urlPrefix: "https://open.spotify.com/artist/" },
+];
 
 export const SocialService = {
   getAccounts(): SocialAccounts {
@@ -68,6 +78,26 @@ export const SocialService = {
           }),
         }).catch((e) => console.error("Failed to save Facebook to MySQL DB:", e));
       }
+
+      // Save additional platforms
+      PLATFORMS_LIST.forEach(({ key, platform }) => {
+        const item = updated[key] as GenericSocialStats | undefined;
+        const handle = item?.username || item?.name || item?.url?.split("/").filter(Boolean).pop();
+        if (handle) {
+          fetch("/api/creator/socials", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email,
+              platform,
+              accountName: item?.name || handle,
+              username: handle,
+              followerCount: item?.followers || 0,
+              isVerified: item?.isVerified || false,
+            }),
+          }).catch((e) => console.error(`Failed to save ${platform} to DB:`, e));
+        }
+      });
     }
 
     return updated;
@@ -85,7 +115,6 @@ export const SocialService = {
         const updated: SocialAccounts = { ...current };
 
         data.socials.forEach((s: any) => {
-          const handle = s.username || s.accountName || "";
           if (s.platform === "instagram" && s.username) {
             updated.instagram = {
               ...updated.instagram,
@@ -119,6 +148,19 @@ export const SocialService = {
               url: `https://facebook.com/${s.username.replace(/^@/, "")}`,
               lastSyncedAt: s.lastSyncedAt || new Date().toISOString(),
             };
+          } else if (s.username) {
+            const pInfo = PLATFORMS_LIST.find((p) => p.platform === s.platform);
+            if (pInfo) {
+              const key = pInfo.key;
+              (updated as any)[key] = {
+                url: `${pInfo.urlPrefix}${s.username.replace(/^@/, "")}`,
+                username: s.username,
+                name: s.accountName || s.username,
+                followers: s.followerCount || 0,
+                isVerified: Boolean(s.isVerified),
+                lastSyncedAt: s.lastSyncedAt || new Date().toISOString(),
+              };
+            }
           }
         });
 
@@ -132,11 +174,19 @@ export const SocialService = {
   },
 
   calculateTotalAudience(accounts: SocialAccounts): number {
-    return (
+    let total =
       (accounts.instagram?.followers ?? 0) +
       (accounts.youtube?.subscribers ?? 0) +
-      (accounts.facebook?.followers ?? 0)
-    );
+      (accounts.facebook?.followers ?? 0);
+
+    PLATFORMS_LIST.forEach(({ key }) => {
+      const item = accounts[key] as GenericSocialStats | undefined;
+      if (item && item.followers) {
+        total += item.followers;
+      }
+    });
+
+    return total;
   },
 
   reset(): SocialAccounts {

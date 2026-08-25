@@ -16,6 +16,7 @@ import {
   Subscription,
   ThemeKey,
   EMPTY_SOCIAL_ACCOUNTS,
+  CreatorReview,
 } from "@/types";
 
 export const authRepository = {
@@ -112,3 +113,15 @@ export const onboardingRepository = {
     storage.set(STORAGE_KEYS.onboardingStep, step);
   },
 };
+
+const DEFAULT_REVIEWS: CreatorReview[] = [];
+
+export const reviewsRepository = {
+  getAll(): CreatorReview[] {
+    return storage.get<CreatorReview[]>(STORAGE_KEYS.reviews, DEFAULT_REVIEWS);
+  },
+  saveAll(reviews: CreatorReview[]) {
+    storage.set(STORAGE_KEYS.reviews, reviews);
+  },
+};
+

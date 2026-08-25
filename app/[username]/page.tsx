@@ -10,7 +10,7 @@ import { SocialService } from "@/services/SocialService";
 import { ThemeService, THEME_PAGE_BACKGROUNDS } from "@/services/ThemeService";
 import { SeriesService } from "@/services/SeriesService";
 import { ThemeCard } from "@/themes/registry";
-import { CreatorProfile, SocialAccounts, Series, ThemeKey, EMPTY_SOCIAL_ACCOUNTS } from "@/types";
+import { CreatorProfile, SocialAccounts, Series, ThemeKey, EMPTY_SOCIAL_ACCOUNTS, CreatorReview, MediaKitPackage, MediaKitSettings } from "@/types";
 import { useToast } from "@/contexts/ToastContext";
 import { buildProfileUrl } from "@/utils/format";
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
@@ -35,6 +35,9 @@ export default function PublicProfilePage() {
   const [theme, setTheme] = useState<ThemeKey>("minimal-white");
   const [series, setSeries] = useState<Series[]>([]);
   const [customLinks, setCustomLinks] = useState<any[]>([]);
+  const [mediaKitPackages, setMediaKitPackages] = useState<MediaKitPackage[]>([]);
+  const [mediaKitSettings, setMediaKitSettings] = useState<MediaKitSettings | undefined>(undefined);
+  const [reviews, setReviews] = useState<CreatorReview[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -77,13 +80,15 @@ export default function PublicProfilePage() {
         setLoaded(true);
       }
 
-      // 2. Fetch Creator Profile by username from MySQL DB (Universal Deeplinking!)
+      // 2. Fetch Creator Profile by username from MySQL DB (Universal Deeplinking & Server Data!)
       try {
-        const [profRes, socRes, serRes, linkRes] = await Promise.all([
+        const [profRes, socRes, serRes, linkRes, mediakitRes, revRes] = await Promise.all([
           fetch(`/api/creator/profile?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
           fetch(`/api/creator/socials?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
           fetch(`/api/series?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
           fetch(`/api/creator/custom-links?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
+          fetch(`/api/creator/mediakit?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
+          fetch(`/api/creator/reviews?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
         ]);
 
         if (profRes.success && profRes.profile) {
@@ -132,6 +137,17 @@ export default function PublicProfilePage() {
 
         if (serRes.success && Array.isArray(serRes.series)) {
           setSeries(serRes.series);
+        }
+
+        if (mediakitRes.success && Array.isArray(mediakitRes.packages)) {
+          setMediaKitPackages(mediakitRes.packages);
+        }
+        if (mediakitRes.success && mediakitRes.settings) {
+          setMediaKitSettings(mediakitRes.settings);
+        }
+
+        if (revRes.success && Array.isArray(revRes.reviews)) {
+          setReviews(revRes.reviews);
         }
       } catch (e) {
         console.warn("Failed to load creator profile from DB deeplink:", e);
@@ -257,7 +273,7 @@ export default function PublicProfilePage() {
   if (!loaded) {
     const handle = decodeURIComponent(params.username ?? "").trim();
     const syncMessage = handle ? `Syncing @${handle}'s creator page...` : "Syncing creator page & live reach...";
-    return <SyncingLoader message={syncMessage} fullScreen />;
+    return <SyncingLoader message={syncMessage} fullScreen hideProgressBar={true} />;
   }
 
   if (notFound) {
@@ -375,14 +391,17 @@ export default function PublicProfilePage() {
 
   return (
     <div className={`min-h-dvh transition-colors duration-300 ${pageBgStyle}`}>
-      <main className="mx-auto max-w-2xl px-2.5 sm:px-8 py-4 sm:py-10 space-y-5">
-        {/* Main Theme Profile Card (Renders Profile, Socials & Theme-Styled Series/Episodes) */}
+      <main className="mx-auto max-w-2xl px-2.5 sm:px-8 py-4 sm:py-10 space-y-5 animate-fade-in-up">
+        {/* Main Theme Profile Card (Renders Profile, Socials, Series, Gigs, Reviews & Custom Links) */}
         <ThemeCard
           themeKey={theme}
           profile={profile}
           socials={socials}
           series={series}
           customLinks={customLinks}
+          mediaKitPackages={mediaKitPackages}
+          mediaKitSettings={mediaKitSettings}
+          reviews={reviews}
           totalAudience={totalAudience}
           variant="full"
           onShare={handleShare}

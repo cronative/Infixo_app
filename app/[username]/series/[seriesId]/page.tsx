@@ -3,20 +3,22 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Share2, ArrowLeft, Play, Eye, ExternalLink, Film, Layers, Sparkles, Users, Tv, CheckCircle2, ChevronRight } from "lucide-react";
+import {
+  Share2, ArrowLeft, Play, Film, Layers, CheckCircle2,
+  Clock, Globe, ChevronRight, ExternalLink, Star
+} from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 import { SkeletonProfileCard } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Series, ThemeKey } from "@/types";
 import { useToast } from "@/contexts/ToastContext";
-import { THEME_PAGE_BACKGROUNDS } from "@/services/ThemeService";
 import { THEME_STYLES, DEFAULT_THEME_STYLE } from "@/components/onboarding/LivePreviewCard";
 import { formatCount, buildSeriesUrl } from "@/utils/format";
-import { ShareSeriesModal } from "@/components/shared/ShareSeriesModal";
 import { SeriesPoster } from "@/components/shared/SeriesPoster";
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { copyToClipboard } from "@/lib/copyToClipboard";
+import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 
 function getPlatformInfo(platformStr?: string, urlStr?: string) {
   const p = (platformStr || "").toLowerCase();
@@ -25,36 +27,36 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   if (p.includes("youtube") || u.includes("youtube.com") || u.includes("youtu.be")) {
     return {
       name: "YouTube",
-      icon: <YoutubeIcon className="h-3.5 w-3.5 text-white" />,
-      badgeClass: "bg-red-600 text-white shadow-2xs",
-      chipClass: "bg-red-50 text-red-700 border-red-200/80",
-      textColor: "text-red-600",
+      icon: <YoutubeIcon className="h-4 w-4 text-white" />,
+      gradient: "from-red-600 to-red-700",
+      glow: "shadow-red-500/30",
+      badge: "bg-red-600",
     };
   }
   if (p.includes("instagram") || u.includes("instagram.com")) {
     return {
       name: "Instagram",
-      icon: <InstagramIcon className="h-3.5 w-3.5 text-white" />,
-      badgeClass: "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white shadow-2xs",
-      chipClass: "bg-rose-50 text-rose-700 border-rose-200/80",
-      textColor: "text-rose-600",
+      icon: <InstagramIcon className="h-4 w-4 text-white" />,
+      gradient: "from-amber-500 via-rose-500 to-purple-600",
+      glow: "shadow-rose-500/30",
+      badge: "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600",
     };
   }
   if (p.includes("facebook") || u.includes("facebook.com")) {
     return {
       name: "Facebook",
-      icon: <FacebookIcon className="h-3.5 w-3.5 text-white" />,
-      badgeClass: "bg-blue-600 text-white shadow-2xs",
-      chipClass: "bg-blue-50 text-blue-700 border-blue-200/80",
-      textColor: "text-blue-600",
+      icon: <FacebookIcon className="h-4 w-4 text-white" />,
+      gradient: "from-blue-600 to-blue-700",
+      glow: "shadow-blue-500/30",
+      badge: "bg-blue-600",
     };
   }
   return {
-    name: platformStr || "Web",
-    icon: <Film className="h-3.5 w-3.5 text-white" />,
-    badgeClass: "bg-[#803D63] text-white shadow-2xs",
-    chipClass: "bg-indigo-50 text-indigo-700 border-indigo-200/80",
-    textColor: "text-[#803D63]",
+    name: platformStr || "Watch",
+    icon: <Film className="h-4 w-4 text-white" />,
+    gradient: "from-[#803D63] to-[#6D3254]",
+    glow: "shadow-purple-500/30",
+    badge: "bg-[#803D63]",
   };
 }
 
@@ -62,7 +64,6 @@ export default function SeriesDetailPage() {
   const params = useParams<{ username: string; seriesId: string }>();
   const router = useRouter();
   const { showToast } = useToast();
-  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   const [series, setSeries] = useState<Series | null>(null);
   const [creator, setCreator] = useState<{
@@ -75,6 +76,7 @@ export default function SeriesDetailPage() {
 
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [activeEp, setActiveEp] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadSeriesData() {
@@ -94,11 +96,7 @@ export default function SeriesDetailPage() {
           if (res.series.creator) {
             setCreator(res.series.creator);
           } else {
-            setCreator({
-              displayName: usernameParam,
-              username: usernameParam,
-              photoDataUrl: null,
-            });
+            setCreator({ displayName: usernameParam, username: usernameParam, photoDataUrl: null });
           }
           setNotFound(false);
         } else {
@@ -173,189 +171,234 @@ export default function SeriesDetailPage() {
   }, [series, creator, params.username]);
 
   const username = creator?.username || params.username || "creator";
-  const theme = (creator?.themeKey as ThemeKey) || "minimal-white";
-  const pageBgStyle = THEME_PAGE_BACKGROUNDS[theme] || THEME_PAGE_BACKGROUNDS["minimal-white"];
-  const style = THEME_STYLES[theme] || DEFAULT_THEME_STYLE;
-  const isDark = style.nameColor.includes("white") || style.nameColor.includes("amber") || style.nameColor.includes("sky");
 
   const handleShare = async () => {
     if (!series) return;
-    const handle = username || "creator";
     const shareUrl = typeof window !== "undefined"
-      ? `${window.location.origin}/${handle}/series/${series.id}`
-      : `https://inflixo.com/${handle}/series/${series.id}`;
+      ? `${window.location.origin}/${username}/series/${series.id}`
+      : `https://inflixo.com/${username}/series/${series.id}`;
     const title = `${series.title} on Inflixo`;
 
     if (typeof navigator !== "undefined" && navigator.share) {
       navigator.share({ title, url: shareUrl }).catch(async () => {
         const success = await copyToClipboard(shareUrl);
-        if (success) showToast("Series link copied to clipboard! 🎬");
+        if (success) showToast("Series link copied! 🎬");
       });
     } else {
       const success = await copyToClipboard(shareUrl);
-      if (success) showToast("Series link copied to clipboard! 🎬");
+      if (success) showToast("Series link copied! 🎬");
     }
   };
 
   if (loading) {
     const handle = decodeURIComponent(params.username ?? "").trim();
-    const syncMessage = handle ? `Syncing @${handle}'s OTT series playlist...` : "Syncing OTT series playlist...";
-    return <SyncingLoader message={syncMessage} fullScreen />;
+    return <SyncingLoader message={handle ? `Loading ${handle}'s series...` : "Loading series..."} fullScreen hideProgressBar={true} />;
   }
 
   if (notFound || !series) {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center p-4 bg-slate-950 text-white text-center">
-        <div className="mt-8 max-w-sm">
-          <EmptyState
-            icon={<Film className="h-6 w-6 text-purple-600" />}
-            title="Series Not Found"
-            description="This series doesn't exist or has been removed."
-            action={
-              <button onClick={() => router.push(`/${username}`)} className="text-sm font-bold text-inflixo-purple">
-                ← Return to Creator Profile
-              </button>
-            }
-          />
-        </div>
+        <EmptyState
+          icon={<Film className="h-6 w-6 text-purple-400" />}
+          title="Series Not Found"
+          description="This series doesn't exist or has been removed."
+          action={
+            <button onClick={() => router.push(`/${username}`)} className="mt-4 text-sm font-bold text-purple-400 hover:text-purple-300">
+              ← Return to Creator Profile
+            </button>
+          }
+        />
       </div>
     );
   }
 
   const allEpisodes = series.seasons.flatMap((sn) => sn.episodes);
+  const hasPoster = Boolean(series.posterDataUrl);
 
   return (
-    <div className={`min-h-dvh transition-colors duration-300 relative overflow-hidden ${pageBgStyle}`}>
-      {series.posterDataUrl && (
-        <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-15 blur-3xl transition-opacity duration-700">
+    <div className="min-h-dvh bg-slate-950 text-white relative overflow-hidden">
+
+      {/* Ambient background glow from poster */}
+      {hasPoster && (
+        <div className="pointer-events-none fixed inset-0 overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={series.posterDataUrl} alt="" className="h-full w-full object-cover scale-150 transform" />
+          <img
+            src={series.posterDataUrl!}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover scale-150 opacity-10 blur-3xl"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/80 to-slate-950" />
         </div>
       )}
 
-      <main className="relative z-10 mx-auto max-w-4xl px-4 sm:px-8 py-6 sm:py-10 space-y-6 text-left">
-        {/* Top Navigation Bar Polish */}
-        <div className="flex items-center justify-between gap-4">
-          <Link
-            href={`/${username}`}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white hover:bg-slate-50 px-3.5 py-2 text-xs font-semibold text-gray-600 hover:text-gray-900 shadow-2xs transition-colors"
-          >
-            <ArrowLeft className="h-3.5 w-3.5 text-[#803D63]" />
-            <span>← Back to Profile</span>
-          </Link>
+      {/* Top Nav */}
+      <nav className="relative z-20 flex items-center justify-between px-4 sm:px-8 py-4 border-b border-white/5 backdrop-blur-sm">
+        <Link
+          href={`/${username}`}
+          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-300 hover:text-white transition-colors group"
+        >
+          <ArrowLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
+          <span className="hidden sm:inline">Back to Profile</span>
+          <span className="sm:hidden">Back</span>
+        </Link>
 
+        <div className="flex items-center gap-2">
           <button
             onClick={handleShare}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[#E8DCE4] bg-[#F6EBF1] hover:bg-rose-100/70 px-3.5 py-2 text-xs font-semibold text-[#803D63] transition-colors cursor-pointer shadow-2xs"
+            className="inline-flex items-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 px-3.5 py-2 text-xs font-semibold text-white transition-all cursor-pointer backdrop-blur-sm"
           >
             <Share2 className="h-3.5 w-3.5" />
-            <span>🔗 Share Series</span>
+            Share
           </button>
         </div>
+      </nav>
 
-        {/* 1. Cinematic OTT Hero Header (Poster & Info Integration) */}
-        <div className="w-full aspect-video md:aspect-[21/9] rounded-2xl overflow-hidden relative shadow-md bg-slate-900 border border-gray-200/80">
-          <SeriesPoster
-            src={series.posterDataUrl}
-            title={series.title}
-            className="h-full w-full object-cover"
-            textClassName="text-base font-bold text-indigo-200"
-          />
+      <main className="relative z-10 mx-auto max-w-5xl px-4 sm:px-8 pb-16">
 
-          {/* Bottom Dark Gradient Overlay */}
-          <div className="bg-gradient-to-t from-black/90 via-black/40 to-transparent absolute inset-0 z-10 pointer-events-none" />
+        {/* ── HERO SECTION ── */}
+        <div className="relative mt-0">
+          {/* Full-bleed cinematic banner */}
+          <div className="relative w-full aspect-[16/7] sm:aspect-[21/8] overflow-hidden">
+            <SeriesPoster
+              src={series.posterDataUrl}
+              title={series.title}
+              className="h-full w-full object-cover"
+              textClassName="text-2xl font-black text-slate-300"
+            />
+            {/* Multi-layer gradient for text legibility */}
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/50 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
 
-          {/* Top-Right Floating Quick Badges */}
-          <div className="absolute top-3.5 right-3.5 z-20 flex items-center gap-2">
-            <span className="bg-black/50 backdrop-blur-md text-white text-xs font-medium px-3 py-1 rounded-full border border-white/15 shadow-xs">
-              🎬 {allEpisodes.length} {allEpisodes.length === 1 ? "Episode" : "Episodes"}
-            </span>
-            {series.language && (
-              <span className="bg-black/50 backdrop-blur-md text-white text-xs font-medium px-3 py-1 rounded-full border border-white/15 shadow-xs">
-                🌐 {series.language}
+            {/* Top-right floating badges */}
+            <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
+              <span className="backdrop-blur-md bg-black/40 border border-white/15 text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+                {allEpisodes.length} {allEpisodes.length === 1 ? "Episode" : "Episodes"}
               </span>
-            )}
-          </div>
+              {series.language && (
+                <span className="backdrop-blur-md bg-black/40 border border-white/15 text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+                  {series.language}
+                </span>
+              )}
+            </div>
 
-          {/* Title & Metadata Inside Banner Bottom */}
-          <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7 z-20 space-y-2 text-left">
-            <h1 className="font-display text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-tight">
-              {series.title}
-            </h1>
+            {/* Hero content — bottom left */}
+            <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-10 z-10">
+              {/* Genre chips */}
+              {series.genre && (
+                <div className="flex flex-wrap gap-1.5 mb-3">
+                  {series.genre.split(",").map((g, idx) => {
+                    const cleanG = g.trim().replace(/^Genre:\s*/i, "");
+                    if (!cleanG) return null;
+                    return (
+                      <span key={idx} className="text-[11px] font-bold uppercase tracking-widest text-slate-300 bg-white/10 border border-white/15 px-2.5 py-0.5 rounded-full backdrop-blur-sm">
+                        {cleanG}
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
 
-            {series.description && (
-              <p className="text-xs sm:text-sm font-medium text-gray-200/90 leading-relaxed max-w-2xl line-clamp-2">
-                {series.description}
-              </p>
-            )}
+              <h1 className="font-display text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight mb-2 drop-shadow-lg">
+                {series.title}
+              </h1>
 
-            {/* Clean Niche Genre Chips (No repetitive "Genre:" prefix) */}
-            {series.genre && (
-              <div className="pt-1 flex flex-wrap items-center gap-1.5">
-                {series.genre.split(",").map((g, idx) => {
-                  const cleanGenre = g.trim().replace(/^Genre:\s*/i, "");
-                  if (!cleanGenre) return null;
-                  return (
-                    <span
-                      key={idx}
-                      className="bg-white/20 backdrop-blur-md text-white text-xs font-medium px-3 py-1 rounded-full border border-white/20 shadow-2xs"
-                    >
-                      {cleanGenre}
-                    </span>
-                  );
-                })}
+              {series.description && (
+                <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl line-clamp-2 mb-5">
+                  {series.description}
+                </p>
+              )}
+
+              {/* CTA Row */}
+              <div className="flex flex-wrap items-center gap-3">
+                {allEpisodes[0]?.externalUrl && (
+                  <a
+                    href={allEpisodes[0].externalUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2.5 bg-white hover:bg-slate-100 text-slate-900 font-extrabold text-sm px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-white/10 cursor-pointer"
+                  >
+                    <Play className="h-4 w-4 fill-slate-900" />
+                    Play Episode 1
+                  </a>
+                )}
+                <button
+                  onClick={handleShare}
+                  className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/15 text-white font-semibold text-sm px-4 py-2.5 rounded-xl transition-all backdrop-blur-sm cursor-pointer"
+                >
+                  <Share2 className="h-4 w-4" />
+                  Share
+                </button>
               </div>
-            )}
+            </div>
           </div>
         </div>
 
-        {/* 2. Episode Playlist List Items (OTT Show Tracklist) */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-5 sm:p-6 shadow-2xs space-y-4 text-left">
-          <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-            <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-              <Layers className="h-4.5 w-4.5 text-[#803D63]" />
-              <span>Episodes ({allEpisodes.length})</span>
+        {/* ── EPISODE LIST ── */}
+        <div className="mt-8 space-y-3">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-lg font-extrabold text-white flex items-center gap-2.5">
+              <Layers className="h-5 w-5 text-[#C87FAA]" />
+              Episodes
+              <span className="text-sm font-semibold text-slate-500">({allEpisodes.length})</span>
             </h2>
-            <span className="text-xs text-gray-400 font-medium">Click episode to watch on external platform</span>
           </div>
 
           {allEpisodes.length === 0 ? (
-            <p className="text-xs font-medium text-gray-500 text-center py-8">No episodes added to this series yet.</p>
+            <div className="text-center py-16 text-slate-500">
+              <Film className="h-10 w-10 mx-auto mb-3 opacity-30" />
+              <p className="text-sm font-medium">No episodes added yet.</p>
+            </div>
           ) : (
-            <div className="space-y-3">
-              {allEpisodes.map((ep) => {
+            <div className="space-y-2">
+              {allEpisodes.map((ep, index) => {
                 const plat = getPlatformInfo(ep.platform, ep.externalUrl);
-                const epNumStr = ep.episodeNumber < 10 ? `EP 0${ep.episodeNumber}` : `EP ${ep.episodeNumber}`;
-                const epTitleStr = ep.title && ep.title.trim() ? ep.title : `Part ${ep.episodeNumber}`;
+                const epNumStr = ep.episodeNumber < 10 ? `E${String(ep.episodeNumber).padStart(2,"0")}` : `E${ep.episodeNumber}`;
+                const epTitleStr = ep.title?.trim() || `Episode ${ep.episodeNumber}`;
+                const isActive = activeEp === ep.id;
 
                 return (
                   <a
                     key={ep.id}
-                    href={ep.externalUrl}
-                    target="_blank"
+                    href={ep.externalUrl || "#"}
+                    target={ep.externalUrl ? "_blank" : undefined}
                     rel="noopener noreferrer"
-                    className="group bg-white hover:bg-slate-50 border border-gray-200 hover:border-[#803D63] rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all shadow-2xs text-left"
+                    onMouseEnter={() => setActiveEp(ep.id)}
+                    onMouseLeave={() => setActiveEp(null)}
+                    className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/15 px-4 py-4 transition-all duration-200 cursor-pointer backdrop-blur-sm"
                   >
-                    {/* Left Side (Episode Identity) */}
-                    <div className="flex items-center gap-3 min-w-0 flex-1 text-left">
-                      <span className="bg-[#F6EBF1] text-[#803D63] font-bold text-xs w-10 h-10 rounded-lg flex items-center justify-center border border-[#E8DCE4] group-hover:bg-[#803D63] group-hover:text-white transition-colors shrink-0">
-                        {epNumStr}
-                      </span>
-                      <div className="min-w-0 text-left space-y-0.5">
-                        <p className="truncate text-sm font-bold text-gray-900 group-hover:text-[#803D63] transition-colors text-left">
-                          {epTitleStr}
-                        </p>
-                        <p className="truncate text-xs text-gray-500 font-medium text-left">
-                          {plat.name} Video • Direct Link
-                        </p>
+                    {/* Episode number */}
+                    <div className="shrink-0 w-10 text-center">
+                      {isActive ? (
+                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${plat.gradient} flex items-center justify-center shadow-lg ${plat.glow}`}>
+                          <Play className="h-4 w-4 fill-white text-white" />
+                        </div>
+                      ) : (
+                        <span className="text-lg font-black text-slate-600 group-hover:text-slate-400 transition-colors tabular-nums">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Title + subtitle */}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-sm text-slate-200 group-hover:text-white transition-colors truncate">
+                        {epTitleStr}
+                      </p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-1.5 py-0.5 rounded-md ${plat.badge} bg-opacity-80`}>
+                          {plat.icon}
+                          <span>{plat.name}</span>
+                        </span>
+                        <span className="text-[11px] text-slate-600 font-medium">{epNumStr}</span>
                       </div>
                     </div>
 
-                    {/* Right Side (Call to Action) */}
-                    <div className="shrink-0 self-end sm:self-auto">
-                      <span className="bg-[#803D63] hover:bg-[#6D3254] text-white text-xs font-semibold px-4 py-2 rounded-lg flex items-center gap-1.5 shadow-2xs transition-colors">
-                        <span>Watch on {plat.name} ↗</span>
+                    {/* Watch CTA */}
+                    <div className="shrink-0 flex items-center gap-2 text-slate-500 group-hover:text-white transition-colors">
+                      <span className="hidden sm:inline text-xs font-semibold text-slate-500 group-hover:text-slate-300">
+                        Watch
                       </span>
+                      <ExternalLink className="h-4 w-4" />
                     </div>
                   </a>
                 );
@@ -364,35 +407,50 @@ export default function SeriesDetailPage() {
           )}
         </div>
 
-        {/* 3. Creator Attribution Footer Card */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-2xs text-left">
-          <div className="flex items-center gap-3 min-w-0">
-            {creator?.photoDataUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={creator.photoDataUrl} alt={creator.displayName} className="w-12 h-12 rounded-full object-cover border border-gray-200 shrink-0" />
-            ) : (
-              <div className="w-12 h-12 shrink-0 items-center justify-center rounded-full bg-[#803D63] text-white font-bold text-base flex">
-                {creator?.displayName ? creator.displayName[0].toUpperCase() : "C"}
-              </div>
-            )}
-            <div className="min-w-0 text-left space-y-0.5">
-              <p className="truncate text-sm font-bold text-gray-900 flex items-center gap-1">
-                <span>{creator?.displayName || username}</span>
-                <CheckCircle2 className="h-4 w-4 text-[#803D63] fill-[#F6EBF1] inline-block shrink-0" />
-              </p>
-              <p className="text-xs font-medium text-gray-500">inflixo.com/{username}</p>
+        {/* ── CREATOR CARD ── */}
+        <div className="mt-10 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-5 flex flex-col sm:flex-row items-center sm:items-start gap-5">
+          <CreatorAvatar
+            src={creator?.photoDataUrl}
+            name={creator?.displayName || username}
+            className="w-16 h-16 rounded-2xl object-cover shrink-0"
+            textClassName="text-xl font-black text-white"
+            fallbackBgClass="bg-[#803D63]"
+          />
+          <div className="flex-1 min-w-0 text-center sm:text-left">
+            <div className="flex items-center gap-2 justify-center sm:justify-start">
+              <h3 className="font-extrabold text-base text-white truncate">
+                {creator?.displayName || username}
+              </h3>
+              <CheckCircle2 className="h-4 w-4 text-[#C87FAA] shrink-0" />
             </div>
+            <p className="text-xs text-slate-500 font-medium mt-0.5">inflixo.com/{username}</p>
+            {creator?.totalFanbase && creator.totalFanbase > 0 && (
+              <p className="text-xs text-slate-400 font-semibold mt-1">
+                {formatCount(creator.totalFanbase)} total fans
+              </p>
+            )}
+            <p className="text-xs text-slate-400 font-medium mt-2 leading-relaxed">
+              Creator of {series.title} • Streaming on Inflixo
+            </p>
           </div>
-
           <Link
             href={`/${username}`}
-            className="bg-white border border-gray-200 hover:border-[#803D63] text-gray-800 hover:text-[#803D63] text-xs font-semibold px-4 py-2 rounded-xl transition-all shadow-2xs shrink-0 inline-flex items-center gap-1.5"
+            className="shrink-0 inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all"
           >
-            <span>More from Creator →</span>
+            <span>Full Profile</span>
+            <ChevronRight className="h-3.5 w-3.5" />
           </Link>
         </div>
+
+        {/* ── INFLIXO FOOTER ATTRIBUTION ── */}
+        <div className="mt-10 text-center">
+          <p className="text-xs text-slate-600 font-medium">
+            Streaming experience powered by{" "}
+            <span className="text-slate-400 font-bold">Inflixo</span>
+          </p>
+        </div>
+
       </main>
     </div>
   );
 }
-

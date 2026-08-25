@@ -136,7 +136,7 @@ export default function VerifyOtpPage() {
   const isOtpComplete = digits.every((d) => d !== "");
 
   if (submitting) {
-    return <SyncingLoader message="Verifying OTP & syncing your creator profile..." fullScreen />;
+    return <SyncingLoader message="Verifying OTP & syncing your creator profile..." fullScreen hideProgressBar={true} />;
   }
 
   return (

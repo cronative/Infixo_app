@@ -12,13 +12,13 @@ export function AuthSplitLayout({ children }: { children: ReactNode }) {
         </div>
 
         {/* Vertically Centered Form Container */}
-        <div className="mx-auto w-full max-w-sm my-auto py-6 sm:py-8">
+        <div className="mx-auto w-full max-w-sm my-auto py-6 sm:py-8 animate-fade-in-up">
           {children}
         </div>
 
         {/* Minimal Understated Footer */}
         <div className="text-center text-xs text-gray-400 font-medium pt-4">
-          &copy; 2026 Inflixo · TrustIQ Labs
+          &copy; 2026 Inflixo · TrustIQ Labs PVT LTD
         </div>
       </div>
 

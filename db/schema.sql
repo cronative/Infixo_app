@@ -242,4 +242,38 @@ CREATE TABLE IF NOT EXISTS razorpay_webhook_events (
   UNIQUE KEY unique_event_id (event_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 9. CREATOR REVIEWS & TESTIMONIALS TABLE
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS creator_reviews (
+  id VARCHAR(64) NOT NULL PRIMARY KEY COMMENT 'Unique Review ID (e.g. rev_123456)',
+  creator_id VARCHAR(64) NOT NULL COMMENT 'Creator ID / Creator Email',
+  token VARCHAR(128) NOT NULL UNIQUE COMMENT 'Unique submission URL token',
+  client_name VARCHAR(150) NOT NULL COMMENT 'Client / Brand Representative Name',
+  client_email VARCHAR(255) NOT NULL COMMENT 'Client Email address',
+  client_designation VARCHAR(150) DEFAULT NULL COMMENT 'Designation or Brand (e.g. Marketing Manager @ Puma)',
+  project_title VARCHAR(255) NOT NULL COMMENT 'Project / Deliverable Title (e.g. 1x Reel Campaign)',
+  content_url TEXT NOT NULL COMMENT 'Mandatory link of reels, shoot, short etc',
+  rating INT NOT NULL DEFAULT 5 COMMENT 'Overall Experience Rating (1 to 5)',
+  rating_content_quality INT NOT NULL DEFAULT 5 COMMENT 'Content Quality Rating (1 to 5)',
+  rating_professionalism INT NOT NULL DEFAULT 5 COMMENT 'Professionalism Rating (1 to 5)',
+  rating_timely_delivery INT NOT NULL DEFAULT 5 COMMENT 'Timely Delivery Rating (1 to 5)',
+  comment TEXT DEFAULT NULL COMMENT 'Testimonial / Review Text',
+  status ENUM('pending_invite', 'pending_approval', 'approved', 'rejected') NOT NULL DEFAULT 'pending_invite' COMMENT 'Review Workflow Status',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_creator_reviews (creator_id, status),
+  INDEX idx_review_token (token)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 10. CREATOR SETTINGS TABLE (Dedicated table for Page Display Visibility & Preferences)
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS creator_settings (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  creator_id VARCHAR(64) NOT NULL UNIQUE COMMENT 'FK to creators table ID',
+  visibility_settings TEXT DEFAULT NULL COMMENT 'JSON settings to show/hide page sections (fanbase, socials, series, gigs, reviews, links)',
+  theme_key VARCHAR(50) DEFAULT 'minimal-white' COMMENT 'Active visual theme key',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (creator_id) REFERENCES creators(id) ON DELETE CASCADE,
+  INDEX idx_creator_settings (creator_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -89,18 +89,31 @@ export function MinimalWhiteCard({ profile, socials, series, totalAudience, vari
       </div>
 
       {series.length > 0 && (
-        <div className="mt-6 space-y-2">
-          {series.slice(0, full ? undefined : 2).map((s) => (
-            <div key={s.id} className="flex items-center gap-3 rounded-2xl border border-inflixo-border px-3 py-2.5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundImage: "var(--gradient-premium)" }}>
-                <Play className="h-4 w-4 fill-white text-white" />
+        <div className="mt-6 space-y-3">
+          {series.slice(0, full ? undefined : 2).map((s) => {
+            const eps = s.seasons?.flatMap((sn) => sn.episodes) || [];
+            const genreStr = s.genre || "Series";
+            return (
+              <div key={s.id} className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4 text-left space-y-2.5">
+                <div>
+                  <p className="text-base font-bold text-slate-900">{s.title}</p>
+                  <p className="text-xs font-semibold text-slate-500">
+                    {genreStr} • {eps.length} {eps.length === 1 ? "Episode" : "Episodes"}
+                  </p>
+                </div>
+                {eps.slice(0, 3).map((ep, idx) => (
+                  <div key={ep.id || idx} className="flex items-center gap-2.5 rounded-xl border border-slate-200/80 bg-white px-3 py-2 text-xs font-semibold text-slate-800">
+                    <Play className="h-3 w-3 fill-[#803D63] text-[#803D63]" />
+                    <span className="font-extrabold text-[#803D63]">Part {String(ep.episodeNumber || idx + 1).padStart(2, "0")}</span>
+                    <span className="truncate flex-1">{ep.title || `Part ${idx + 1}`}</span>
+                  </div>
+                ))}
+                <p className="text-center text-xs font-bold text-[#803D63]">
+                  View All {eps.length} Episodes →
+                </p>
               </div>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-inflixo-navy">{s.title}</p>
-                <p className="text-xs text-muted">{s.seasons.length} season{s.seasons.length !== 1 ? "s" : ""}</p>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
