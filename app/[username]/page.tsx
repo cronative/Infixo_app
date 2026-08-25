@@ -242,12 +242,10 @@ export default function PublicProfilePage() {
   const pageBgStyle = THEME_PAGE_BACKGROUNDS[theme] || THEME_PAGE_BACKGROUNDS["minimal-white"];
 
   async function handleShare() {
-    const shareText = `Check out ${profile.displayName ? `${profile.displayName}'s` : "my"} Inflixo profile to see fanbase stats, social channels & original series! 🎬✨`;
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
         await navigator.share({
           title: `${profile.displayName || "Creator"} on Inflixo`,
-          text: shareText,
           url: fullUrl,
         });
       } catch {
@@ -259,11 +257,10 @@ export default function PublicProfilePage() {
   }
 
   async function handleCopy() {
-    const shareText = `Check out ${profile.displayName ? `${profile.displayName}'s` : "my"} Inflixo profile to see fanbase stats, social channels & original series! 🎬✨`;
-    const success = await copyToClipboard(`${shareText}\n${fullUrl}`);
+    const success = await copyToClipboard(fullUrl);
     if (success) {
       setCopied(true);
-      showToast("Profile link & message copied! ✨");
+      showToast("Profile link copied to clipboard! ✨");
       setTimeout(() => setCopied(false), 2000);
     } else {
       showToast("Couldn't copy link", "error");
