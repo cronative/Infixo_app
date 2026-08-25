@@ -277,3 +277,61 @@ CREATE TABLE IF NOT EXISTS creator_settings (
   FOREIGN KEY (creator_id) REFERENCES creators(id) ON DELETE CASCADE,
   INDEX idx_creator_settings (creator_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 11. CREATOR CUSTOM LINKS TABLE
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS creator_custom_links (
+  id VARCHAR(100) PRIMARY KEY,
+  creator_id VARCHAR(100) NOT NULL,
+  email VARCHAR(255) DEFAULT NULL,
+  title VARCHAR(255) NOT NULL,
+  url VARCHAR(1000) NOT NULL,
+  icon VARCHAR(50) DEFAULT 'link',
+  is_enabled TINYINT(1) DEFAULT 1,
+  sort_order INT DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_custom_links_creator (creator_id),
+  INDEX idx_custom_links_email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 12. MEDIA KIT SETTINGS TABLE
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS mediakit_settings (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  creator_id VARCHAR(100) NOT NULL UNIQUE,
+  email VARCHAR(255) DEFAULT NULL,
+  whatsapp_number VARCHAR(50) DEFAULT NULL,
+  sponsor_email VARCHAR(255) DEFAULT NULL,
+  min_budget VARCHAR(50) DEFAULT NULL,
+  bio_highlight TEXT DEFAULT NULL,
+  accepting_sponsors TINYINT(1) DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_mediakit_settings_creator (creator_id),
+  INDEX idx_mediakit_settings_email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 13. MEDIA KIT COLLAB GIGS TABLE
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS mediakit_gigs (
+  id VARCHAR(100) PRIMARY KEY,
+  creator_id VARCHAR(100) NOT NULL,
+  email VARCHAR(255) DEFAULT NULL,
+  title VARCHAR(255) NOT NULL,
+  platform VARCHAR(100) NOT NULL,
+  price VARCHAR(100) NOT NULL,
+  min_price VARCHAR(100) DEFAULT NULL,
+  max_price VARCHAR(100) DEFAULT NULL,
+  package_name VARCHAR(100) DEFAULT NULL,
+  turnaround_days INT DEFAULT 2,
+  deliverables JSON NOT NULL,
+  badge VARCHAR(100) DEFAULT NULL,
+  is_popular TINYINT(1) DEFAULT 0,
+  is_active TINYINT(1) DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_mediakit_gigs_creator (creator_id),
+  INDEX idx_mediakit_gigs_email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
