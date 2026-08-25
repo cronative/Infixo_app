@@ -89,6 +89,28 @@ export default function SeriesDetailPage() {
         return;
       }
 
+      if (usernameParam === "demo_creator") {
+        try {
+          const { EXPERT_DEMO_SERIES, EXPERT_DEMO_PROFILE } = await import("@/data/expertDemoCreator");
+          const found = EXPERT_DEMO_SERIES.find((s) => s.id === seriesIdParam);
+          if (found) {
+            setSeries(found);
+            setCreator({
+              displayName: EXPERT_DEMO_PROFILE.displayName,
+              username: EXPERT_DEMO_PROFILE.username,
+              photoDataUrl: EXPERT_DEMO_PROFILE.photoDataUrl,
+              themeKey: "minimal-white",
+              totalFanbase: 1345000,
+            });
+            setNotFound(false);
+            setLoading(false);
+            return;
+          }
+        } catch (e) {
+          console.warn("Error loading demo creator series:", e);
+        }
+      }
+
       try {
         const res = await fetch(`/api/series?seriesId=${encodeURIComponent(seriesIdParam)}`).then((r) => r.json());
         if (res.success && res.series) {
@@ -171,6 +193,7 @@ export default function SeriesDetailPage() {
   }, [series, creator, params.username]);
 
   const username = creator?.username || params.username || "creator";
+  const profileUrl = username === "demo_creator" ? "/demo_creator" : `/${username}`;
 
   const handleShare = async () => {
     if (!series) return;
@@ -197,17 +220,63 @@ export default function SeriesDetailPage() {
 
   if (notFound || !series) {
     return (
-      <div className="flex min-h-dvh flex-col items-center justify-center p-4 bg-slate-950 text-white text-center">
-        <EmptyState
-          icon={<Film className="h-6 w-6 text-purple-400" />}
-          title="Series Not Found"
-          description="This series doesn't exist or has been removed."
-          action={
-            <button onClick={() => router.push(`/${username}`)} className="mt-4 text-sm font-bold text-purple-400 hover:text-purple-300">
-              ← Return to Creator Profile
-            </button>
-          }
-        />
+      <div className="relative flex min-h-dvh flex-col items-center justify-center bg-gradient-to-b from-purple-50/80 via-slate-50 to-white px-4 py-12 text-center text-slate-900 overflow-hidden selection:bg-[#803D63]/20">
+        {/* Ambient Light Background Glow */}
+        <div className="pointer-events-none absolute -top-24 -left-20 h-96 w-96 rounded-full bg-purple-200/40 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -right-20 h-96 w-96 rounded-full bg-pink-200/30 blur-3xl" />
+
+        <main className="relative z-10 w-full max-w-lg space-y-6">
+          {/* Header Branding */}
+          <div className="flex items-center justify-between px-2">
+            <Logo />
+            <span className="rounded-full bg-purple-100 border border-purple-200 px-3.5 py-1 text-xs font-bold text-[#803D63] shadow-2xs">
+              Series Showcase • Inflixo
+            </span>
+          </div>
+
+          {/* Main Not Found Card */}
+          <div className="rounded-[32px] border border-purple-100 bg-white/95 p-8 sm:p-10 shadow-2xl shadow-purple-500/10 backdrop-blur-xl space-y-6 text-center">
+            {/* Animated Icon Badge */}
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-[#803D63] text-white shadow-xl shadow-purple-900/20 ring-4 ring-purple-100">
+              <Film className="h-10 w-10 stroke-[2.2]" />
+            </div>
+
+            {/* Title & Description */}
+            <div className="space-y-2.5">
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-purple-50 border border-purple-200 px-3 py-1 text-[11px] font-black text-[#803D63] uppercase tracking-wider mb-1">
+                <span>SERIES NOT FOUND</span>
+              </div>
+              <h1 className="font-display text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
+                This Series isn’t available
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-md mx-auto">
+                This OTT series playlist or episode collection doesn’t exist, has been removed, or is currently private.
+              </p>
+            </div>
+
+            {/* Action Buttons in Inflixo Theme */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+              <button
+                onClick={() => router.push(profileUrl)}
+                className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6D3254] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-purple-900/20 transition-all border border-purple-400/30 hover:scale-[1.02] cursor-pointer"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span>Return to @{username}&apos;s Profile</span>
+              </button>
+
+              <button
+                onClick={() => router.push("/")}
+                className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-100 hover:bg-slate-200 px-6 py-3.5 text-xs font-black text-slate-700 transition-all hover:scale-[1.02] cursor-pointer"
+              >
+                <span>Explore Inflixo</span>
+              </button>
+            </div>
+          </div>
+
+          <p className="text-xs font-semibold text-slate-400">
+            One profile for your content, fanbase, and series.
+          </p>
+        </main>
       </div>
     );
   }

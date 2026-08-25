@@ -1,9 +1,20 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { recordOnboardingStep } from "@/lib/onboardingStepDb";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 
 export async function POST(req: Request) {
   try {
+    // 0. Rate Limiting Protection (Max 10 verify attempts per 5 minutes per IP)
+    const clientIp = getClientIp(req);
+    const rateCheck = checkRateLimit(`verify_${clientIp}`, 10, 5 * 60 * 1000);
+    if (!rateCheck.success) {
+      return NextResponse.json(
+        { error: `Too many attempts. Please wait ${rateCheck.retryAfterSec} seconds.` },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json();
     const email = (body.email || "").trim().toLowerCase();
     const otp = (body.otp || "").trim();
@@ -43,9 +54,6 @@ export async function POST(req: Request) {
     // 2. Mark OTP as used in database
     await db.query("UPDATE otps SET is_used = TRUE WHERE id = ?", [otpRows[0].id]);
 
-    // Record / Update current step in creator_onboarding_steps table (1 row per email)
-    await recordOnboardingStep(email, "otp_verified");
-
     // 3. Fetch Creator details from MySQL database
     const [rows]: any = await db.query(
       `SELECT c.*, 
@@ -81,35 +89,40 @@ export async function POST(req: Request) {
 
     // 4. Fetch current onboarding step from single email row in creator_onboarding_steps table
     let currentStep = "profile";
+    let isExistingProfile = false;
+
     try {
       const [stepRows]: any = await db.query(
         "SELECT step_name FROM creator_onboarding_steps WHERE email = ?",
         [email]
       );
-      if (stepRows && stepRows.length > 0) {
-        const lastStep = stepRows[0].step_name;
-        if (lastStep === "finish") {
-          currentStep = "finish";
-        } else if (lastStep === "subscription") {
-          currentStep = "subscription";
-        } else if (lastStep === "series") {
-          currentStep = "series";
-        } else if (lastStep === "theme" || lastStep === "themes") {
-          currentStep = "theme";
-        } else if (lastStep === "socials") {
-          currentStep = "socials";
-        } else if (lastStep === "profile") {
-          currentStep = "profile";
-        } else {
-          currentStep = "profile";
-        }
+      const dbStep = stepRows?.[0]?.step_name;
+
+      // Check if creator already has a profile & username in DB
+      const hasValidProfile = Boolean(creator && creator.username && creator.username.trim() !== "");
+
+      if (hasValidProfile || dbStep === "finish") {
+        // Existing creator who has completed onboarding -> Dashboard
+        currentStep = "finish";
+        isExistingProfile = true;
+        await recordOnboardingStep(email, "finish", creator?.id || null);
+      } else if (dbStep && dbStep !== "otp_verified") {
+        // In-progress onboarding -> resume their last step
+        currentStep = dbStep;
+        isExistingProfile = false;
+      } else {
+        // First time creator -> start at Step 1 (Profile)
+        currentStep = "profile";
+        isExistingProfile = false;
+        await recordOnboardingStep(email, "profile", creator?.id || null);
       }
     } catch (e: any) {
       console.warn("⚠️ Could not read completed step:", e.message);
+      if (creator && creator.username && creator.username.trim() !== "") {
+        currentStep = "finish";
+        isExistingProfile = true;
+      }
     }
-
-    // Determine if creator has already finished onboarding
-    const isExistingProfile = Boolean(currentStep === "finish");
 
     return NextResponse.json({
       success: true,

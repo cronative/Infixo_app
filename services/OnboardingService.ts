@@ -19,6 +19,12 @@ export const OnboardingService = {
 
     const email = authRepository.getPendingEmail() || profileRepository.get()?.email;
     if (email) {
+      fetch("/api/creator/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, onboardingStep: step }),
+      }).catch(() => {});
+
       if (step === "finish") {
         fetch("/api/subscription", {
           method: "POST",
@@ -29,12 +35,6 @@ export const OnboardingService = {
             planName: "Early Access",
             billingCycle: "yearly",
           }),
-        }).catch(() => {});
-      } else {
-        fetch("/api/creator/profile", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, onboardingStep: step }),
         }).catch(() => {});
       }
     }

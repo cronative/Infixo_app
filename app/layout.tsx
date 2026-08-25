@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Plus_Jakarta_Sans, Outfit } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { ToastProvider } from "@/contexts/ToastContext";
+import { GA_MEASUREMENT_ID } from "@/lib/analytics";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -61,6 +63,26 @@ export default function RootLayout({
       lang="en"
       className={`h-full antialiased ${inter.variable} ${plusJakartaSans.variable} ${outfit.variable}`}
     >
+      <head>
+        {/* Google Analytics 4 (GA4) */}
+        <Script
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+        >
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}', {
+              page_path: window.location.pathname,
+            });
+          `}
+        </Script>
+      </head>
       <body className="min-h-full bg-background font-sans">
         <ToastProvider>{children}</ToastProvider>
       </body>

@@ -12,15 +12,19 @@ import { storage } from "@/utils/storage";
 
 export const AuthService = {
   async requestOtp(email: string): Promise<{ success: boolean; demoOtp?: string }> {
-    // 1. Wipe any stale session/profile data from previous users before requesting OTP for a new email
-    storage.clearAll();
-    authRepository.savePendingEmail(email);
+    const cleanEmail = email.trim().toLowerCase();
+    // Only wipe local storage if switching to a completely different email
+    const prevEmail = authRepository.getPendingEmail();
+    if (prevEmail && prevEmail.toLowerCase() !== cleanEmail) {
+      storage.clearAll();
+    }
+    authRepository.savePendingEmail(cleanEmail);
 
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: cleanEmail }),
       });
       const data = await res.json();
       return data;
@@ -47,8 +51,13 @@ export const AuthService = {
       throw new Error(data.error || "Invalid OTP code");
     }
 
-    const isExistingProfile = Boolean(data.isExistingProfile);
-    const onboardingStep = data.creator?.onboardingStep || "profile";
+    // Accurate check: If creator has username/displayName or finish step, they are an existing creator -> dashboard
+    const hasDbProfile = Boolean(
+      (data.creator?.username && data.creator.username.trim() !== "") ||
+      (data.creator?.displayName && data.creator.displayName.trim() !== "")
+    );
+    const isExistingProfile = Boolean(data.isExistingProfile || hasDbProfile || data.creator?.onboardingStep === "finish");
+    const onboardingStep = isExistingProfile ? "finish" : (data.creator?.onboardingStep || "profile");
 
     // Re-save pending email & session
     authRepository.savePendingEmail(email);
