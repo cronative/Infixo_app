@@ -51,8 +51,14 @@ export const AuthService = {
       throw new Error(data.error || "Invalid OTP code");
     }
 
-    // Strict check: Only route to dashboard if onboarding is explicitly finished
-    const isFinished = Boolean(data.creator?.onboardingStep === "finish");
+    // Established creator check: Route to dashboard if finished OR creator has saved profile with username & displayName
+    const hasDbProfile = Boolean(
+      data.creator?.username &&
+      data.creator.username.trim() !== "" &&
+      data.creator?.displayName &&
+      data.creator.displayName.trim() !== ""
+    );
+    const isFinished = Boolean(data.creator?.onboardingStep === "finish" || hasDbProfile || data.isExistingProfile);
     const isExistingProfile = isFinished;
     const onboardingStep = isFinished ? "finish" : (data.creator?.onboardingStep || "profile");
 

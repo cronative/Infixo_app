@@ -98,7 +98,15 @@ export async function POST(req: Request) {
       socialRows = sRows || [];
     }
 
-    // 4. Fetch current onboarding step strictly from creator_onboarding_steps table
+    // 4. Fetch current onboarding step strictly from DB & creators profile state
+    const hasCompletedProfile = Boolean(
+      creator &&
+      creator.username &&
+      creator.username.trim() !== "" &&
+      creator.display_name &&
+      creator.display_name.trim() !== ""
+    );
+
     let currentStep = "profile";
     let isExistingProfile = false;
 
@@ -109,10 +117,11 @@ export async function POST(req: Request) {
       );
       const dbStep = (stepRows?.[0]?.step_name || "").trim().toLowerCase();
 
-      if (dbStep === "finish") {
-        // ONLY if step is explicitly "finish" -> allow Dashboard access
+      if (hasCompletedProfile || dbStep === "finish") {
+        // Established creator with existing profile & handle -> Dashboard
         currentStep = "finish";
         isExistingProfile = true;
+        await recordOnboardingStep(email, "finish", creator?.id || null);
       } else if (dbStep === "subscription") {
         currentStep = "subscription";
         isExistingProfile = false;
@@ -126,15 +135,20 @@ export async function POST(req: Request) {
         currentStep = "socials";
         isExistingProfile = false;
       } else {
-        // If step is "profile", null, or empty -> Step 1 (Profile)
+        // First-time creator with empty profile -> Step 1 (Profile)
         currentStep = "profile";
         isExistingProfile = false;
         await recordOnboardingStep(email, "profile", creator?.id || null);
       }
     } catch (e: any) {
       console.warn("⚠️ Could not read completed step:", e.message);
-      currentStep = "profile";
-      isExistingProfile = false;
+      if (hasCompletedProfile) {
+        currentStep = "finish";
+        isExistingProfile = true;
+      } else {
+        currentStep = "profile";
+        isExistingProfile = false;
+      }
     }
 
     return NextResponse.json({
