@@ -281,100 +281,38 @@ export default function PublicProfilePage() {
         <div className="pointer-events-none absolute -top-24 -left-20 h-96 w-96 rounded-full bg-[#803D63]/10 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 -right-20 h-96 w-96 rounded-full bg-rose-200/40 blur-3xl" />
 
-        <main className="relative z-10 w-full max-w-xl space-y-6">
+        <main className="relative z-10 w-full max-w-md space-y-6">
           {/* Header Branding */}
-          <div className="flex items-center justify-between px-2">
+          <div className="flex items-center justify-center px-2">
             <Logo />
-            <span className="rounded-full bg-[#F6EBF1] border border-[#E8DCE4] px-3.5 py-1 text-xs font-black text-[#803D63] shadow-2xs">
-              Creator Home by Inflixo
-            </span>
           </div>
 
-          {/* Main 404 Inflixo Light Theme Card */}
-          <div className="rounded-[32px] border border-[#E8DCE4] bg-white/95 p-8 sm:p-12 shadow-2xl shadow-[#803D63]/5 backdrop-blur-xl space-y-6 text-center">
-            {/* Animated Icon Badge */}
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-[#803D63] text-white shadow-xl shadow-[#803D63]/25 ring-4 ring-[#F6EBF1]">
-              <UserX className="h-10 w-10 stroke-[2.2]" />
+          {/* Main Clean Light Theme Card */}
+          <div className="rounded-[32px] border border-[#E8DCE4] bg-white/95 p-8 sm:p-10 shadow-2xl shadow-[#803D63]/5 backdrop-blur-xl space-y-6 text-center">
+            {/* Icon Badge */}
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#803D63] text-white shadow-xl shadow-[#803D63]/25 ring-4 ring-[#F6EBF1]">
+              <UserX className="h-8 w-8 stroke-[2.2]" />
             </div>
 
             {/* Title & Description */}
             <div className="space-y-2.5">
-              {usernameAvailable === true ? (
-                <>
-                  <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-[11px] font-black text-emerald-700 uppercase tracking-wider mb-1">
-                    <Sparkles className="h-3 w-3 text-emerald-600" />
-                    <span>@{handle} is Available 🎉</span>
-                  </div>
-                  <h1 className="font-display text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
-                    @{handle} is available
-                  </h1>
-                  <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-md mx-auto">
-                    Want this creator handle? Claim it now and set up your Inflixo page in minutes.
-                  </p>
-                </>
-              ) : (
-                <>
-                  <div className="inline-flex items-center gap-1.5 rounded-full bg-[#F6EBF1] border border-[#E8DCE4] px-3 py-1 text-[11px] font-black text-[#803D63] uppercase tracking-wider mb-1">
-                    <span>CREATOR NOT FOUND</span>
-                  </div>
-                  <h1 className="font-display text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
-                    @{handle} isn’t available
-                  </h1>
-                  <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-md mx-auto">
-                    This creator profile may have moved, changed its username, or is no longer active.
-                  </p>
-                </>
-              )}
+              <h1 className="font-display text-xl sm:text-2xl font-black text-slate-900 leading-tight">
+                No Profile Found for @{handle}
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-sm mx-auto">
+                Using this username on Inflixo, no profile has been created yet. If you want to create your creator profile with this handle, click below to get started.
+              </p>
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-              {usernameAvailable === true ? (
-                <button
-                  onClick={() => router.push(`/login`)}
-                  className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6D3254] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#803D63]/20 transition-all border border-[#803D63] hover:scale-[1.02] cursor-pointer"
-                >
-                  <Sparkles className="h-4 w-4" />
-                  <span>Claim @{handle}</span>
-                </button>
-              ) : (
-                <button
-                  onClick={() => router.push("/login")}
-                  className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6D3254] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#803D63]/20 transition-all border border-[#803D63] hover:scale-[1.02] cursor-pointer"
-                >
-                  <Sparkles className="h-4 w-4" />
-                  <span>Create Your Inflixo</span>
-                </button>
-              )}
-
+            {/* Single Action Button */}
+            <div className="pt-2">
               <button
-                onClick={() => router.push("/")}
-                className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl border border-[#E8DCE4] bg-[#F6EBF1] hover:bg-[#ECD3E2] px-6 py-3.5 text-xs font-black text-[#803D63] transition-all hover:scale-[1.02] cursor-pointer"
+                onClick={() => router.push("/login")}
+                className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6D3254] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#803D63]/20 transition-all border border-[#803D63] hover:scale-[1.02] cursor-pointer"
               >
-                <Home className="h-4 w-4" />
-                <span>Explore Inflixo</span>
+                <Sparkles className="h-4 w-4" />
+                <span>Create Profile</span>
               </button>
-            </div>
-
-            {/* Value Highlights Grid */}
-            <div className="mt-8 border-t border-[#E8DCE4] pt-6 grid grid-cols-3 gap-2 text-left">
-              <div className="rounded-2xl bg-[#F6EBF1]/60 border border-[#E8DCE4] p-3">
-                <Film className="h-4 w-4 text-[#803D63] mb-1" />
-                <p className="text-[11px] font-black text-slate-900">Series &amp; Parts</p>
-                <p className="text-[9px] text-slate-500 font-medium">Keep content in order</p>
-              </div>
-
-              <div className="rounded-2xl bg-[#F6EBF1]/60 border border-[#E8DCE4] p-3">
-                <Users className="h-4 w-4 text-[#803D63] mb-1" />
-                <p className="text-[11px] font-black text-slate-900">Total Fanbase</p>
-                <p className="text-[9px] text-slate-500 font-medium">Bring audience together</p>
-              </div>
-
-              <div className="rounded-2xl bg-[#F6EBF1]/60 border border-[#E8DCE4] p-3">
-                <Sparkles className="h-4 w-4 text-[#803D63] mb-1" />
-                <p className="text-[11px] font-black text-slate-900">Creator Themes</p>
-                <p className="text-[9px] text-slate-500 font-medium">Make it yours</p>
-              </div>
             </div>
           </div>
 
