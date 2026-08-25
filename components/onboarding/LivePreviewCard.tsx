@@ -1117,30 +1117,30 @@ export function LivePreviewCard({
           {profile.bio || "Sharing my journey & content. Stream original series and connect across all platforms."}
         </p>
 
-        {/* Prominent Social Redirect Icon Badges (Instagram, YouTube, Facebook) */}
-        <div className="mt-3.5 flex items-center justify-center gap-3">
+        {/* Clean Icon-Only Social Links (Instagram, YouTube, Facebook) */}
+        <div className="mt-3 flex items-center justify-center gap-4">
           {/* Instagram Icon */}
           {hasInsta ? (
             <a
               href={instaUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="tap-scale flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white shadow-xs transition-all hover:scale-110 hover:shadow-md cursor-pointer"
+              className="tap-scale inline-flex items-center justify-center text-[#E1306C] hover:text-[#C13584] transition-all hover:scale-125 cursor-pointer drop-shadow-xs"
               title={`Instagram: ${instaHandle ? `@${instaHandle.replace(/^@/, "")}` : "Visit Profile"}`}
               aria-label="Instagram Profile"
             >
-              <InstagramIcon className="h-4 w-4 text-white" />
+              <InstagramIcon className="h-5 w-5" />
             </a>
           ) : (
-            <div
-              className={`flex h-9 w-9 items-center justify-center rounded-xl border border-dashed opacity-40 cursor-not-allowed ${
-                isDark ? "bg-slate-800/60 border-white/20 text-slate-400" : "bg-slate-100 border-slate-300 text-slate-400"
+            <span
+              className={`inline-flex items-center justify-center opacity-30 cursor-not-allowed ${
+                isDark ? "text-white/40" : "text-slate-900/40"
               }`}
               title="Instagram (Not connected)"
               aria-label="Instagram (Not connected)"
             >
-              <InstagramIcon className="h-4 w-4" />
-            </div>
+              <InstagramIcon className="h-5 w-5" />
+            </span>
           )}
 
           {/* YouTube Icon */}
@@ -1149,22 +1149,22 @@ export function LivePreviewCard({
               href={ytUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="tap-scale flex h-9 w-9 items-center justify-center rounded-xl bg-red-600 text-white shadow-xs transition-all hover:scale-110 hover:shadow-md cursor-pointer"
+              className="tap-scale inline-flex items-center justify-center text-[#FF0000] hover:text-[#D90000] transition-all hover:scale-125 cursor-pointer drop-shadow-xs"
               title={`YouTube: ${ytHandle ? `@${ytHandle.replace(/^@/, "")}` : "Visit Channel"}`}
               aria-label="YouTube Channel"
             >
-              <YoutubeIcon className="h-4 w-4 text-white" />
+              <YoutubeIcon className="h-5.5 w-5.5" />
             </a>
           ) : (
-            <div
-              className={`flex h-9 w-9 items-center justify-center rounded-xl border border-dashed opacity-40 cursor-not-allowed ${
-                isDark ? "bg-slate-800/60 border-white/20 text-slate-400" : "bg-slate-100 border-slate-300 text-slate-400"
+            <span
+              className={`inline-flex items-center justify-center opacity-30 cursor-not-allowed ${
+                isDark ? "text-white/40" : "text-slate-900/40"
               }`}
               title="YouTube (Not connected)"
               aria-label="YouTube (Not connected)"
             >
-              <YoutubeIcon className="h-4 w-4" />
-            </div>
+              <YoutubeIcon className="h-5.5 w-5.5" />
+            </span>
           )}
 
           {/* Facebook Icon */}
@@ -1173,22 +1173,22 @@ export function LivePreviewCard({
               href={fbUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="tap-scale flex h-9 w-9 items-center justify-center rounded-xl bg-[#1877F2] text-white shadow-xs transition-all hover:scale-110 hover:shadow-md cursor-pointer"
+              className="tap-scale inline-flex items-center justify-center text-[#1877F2] hover:text-[#0C63D4] transition-all hover:scale-125 cursor-pointer drop-shadow-xs"
               title={`Facebook: ${fbHandle ? `@${fbHandle.replace(/^@/, "")}` : "Visit Page"}`}
               aria-label="Facebook Page"
             >
-              <FacebookIcon className="h-4 w-4 text-white" />
+              <FacebookIcon className="h-5 w-5" />
             </a>
           ) : (
-            <div
-              className={`flex h-9 w-9 items-center justify-center rounded-xl border border-dashed opacity-40 cursor-not-allowed ${
-                isDark ? "bg-slate-800/60 border-white/20 text-slate-400" : "bg-slate-100 border-slate-300 text-slate-400"
+            <span
+              className={`inline-flex items-center justify-center opacity-30 cursor-not-allowed ${
+                isDark ? "text-white/40" : "text-slate-900/40"
               }`}
               title="Facebook (Not connected)"
               aria-label="Facebook (Not connected)"
             >
-              <FacebookIcon className="h-4 w-4" />
-            </div>
+              <FacebookIcon className="h-5 w-5" />
+            </span>
           )}
         </div>
 
