@@ -276,24 +276,24 @@ export default function PublicProfilePage() {
   if (notFound) {
     const handle = decodeURIComponent(params.username ?? "");
     return (
-      <div className="relative flex min-h-dvh flex-col items-center justify-center bg-gradient-to-b from-indigo-50/90 via-slate-50 to-white px-4 py-12 text-center text-slate-900 overflow-hidden">
-        {/* Ambient Light Background Glow Orbs */}
-        <div className="pointer-events-none absolute -top-24 -left-20 h-96 w-96 rounded-full bg-indigo-300/40 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -right-20 h-96 w-96 rounded-full bg-pink-300/30 blur-3xl" />
+      <div className="relative flex min-h-dvh flex-col items-center justify-center bg-gradient-to-b from-[#F6EBF1]/60 via-slate-50 to-white px-4 py-12 text-center text-slate-900 overflow-hidden">
+        {/* Ambient Maroon Background Glow Orbs */}
+        <div className="pointer-events-none absolute -top-24 -left-20 h-96 w-96 rounded-full bg-[#803D63]/10 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -right-20 h-96 w-96 rounded-full bg-rose-200/40 blur-3xl" />
 
         <main className="relative z-10 w-full max-w-xl space-y-6">
           {/* Header Branding */}
           <div className="flex items-center justify-between px-2">
             <Logo />
-            <span className="rounded-full bg-indigo-100 border border-indigo-200/80 px-3.5 py-1 text-xs font-black text-indigo-700 shadow-2xs">
+            <span className="rounded-full bg-[#F6EBF1] border border-[#E8DCE4] px-3.5 py-1 text-xs font-black text-[#803D63] shadow-2xs">
               Creator Home by Inflixo
             </span>
           </div>
 
-          {/* Main 404 Light Theme Card */}
-          <div className="rounded-[32px] border border-indigo-100 bg-white/90 p-8 sm:p-12 shadow-2xl shadow-indigo-500/10 backdrop-blur-xl space-y-6 text-center">
+          {/* Main 404 Inflixo Light Theme Card */}
+          <div className="rounded-[32px] border border-[#E8DCE4] bg-white/95 p-8 sm:p-12 shadow-2xl shadow-[#803D63]/5 backdrop-blur-xl space-y-6 text-center">
             {/* Animated Icon Badge */}
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-[#803D63] text-white shadow-xl shadow-indigo-600/30 ring-4 ring-indigo-100">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-[#803D63] text-white shadow-xl shadow-[#803D63]/25 ring-4 ring-[#F6EBF1]">
               <UserX className="h-10 w-10 stroke-[2.2]" />
             </div>
 
@@ -314,14 +314,14 @@ export default function PublicProfilePage() {
                 </>
               ) : (
                 <>
-                  <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 border border-slate-200 px-3 py-1 text-[11px] font-black text-slate-700 uppercase tracking-wider mb-1">
+                  <div className="inline-flex items-center gap-1.5 rounded-full bg-[#F6EBF1] border border-[#E8DCE4] px-3 py-1 text-[11px] font-black text-[#803D63] uppercase tracking-wider mb-1">
                     <span>CREATOR NOT FOUND</span>
                   </div>
                   <h1 className="font-display text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
                     @{handle} isn’t available
                   </h1>
                   <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-md mx-auto">
-                    This creator profile may have moved, changed its username, or is no longer available.
+                    This creator profile may have moved, changed its username, or is no longer active.
                   </p>
                 </>
               )}
@@ -332,7 +332,7 @@ export default function PublicProfilePage() {
               {usernameAvailable === true ? (
                 <button
                   onClick={() => router.push(`/login`)}
-                  className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6D3254] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-indigo-900/20 transition-all border border-indigo-400/30 hover:scale-[1.02]"
+                  className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6D3254] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#803D63]/20 transition-all border border-[#803D63] hover:scale-[1.02] cursor-pointer"
                 >
                   <Sparkles className="h-4 w-4" />
                   <span>Claim @{handle}</span>
@@ -340,7 +340,7 @@ export default function PublicProfilePage() {
               ) : (
                 <button
                   onClick={() => router.push("/login")}
-                  className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6D3254] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-indigo-900/20 transition-all border border-indigo-400/30 hover:scale-[1.02]"
+                  className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6D3254] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#803D63]/20 transition-all border border-[#803D63] hover:scale-[1.02] cursor-pointer"
                 >
                   <Sparkles className="h-4 w-4" />
                   <span>Create Your Inflixo</span>
@@ -349,7 +349,7 @@ export default function PublicProfilePage() {
 
               <button
                 onClick={() => router.push("/")}
-                className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-100 hover:bg-slate-200 px-6 py-3.5 text-xs font-black text-slate-700 transition-all hover:scale-[1.02]"
+                className="tap-scale w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl border border-[#E8DCE4] bg-[#F6EBF1] hover:bg-[#ECD3E2] px-6 py-3.5 text-xs font-black text-[#803D63] transition-all hover:scale-[1.02] cursor-pointer"
               >
                 <Home className="h-4 w-4" />
                 <span>Explore Inflixo</span>
@@ -357,20 +357,20 @@ export default function PublicProfilePage() {
             </div>
 
             {/* Value Highlights Grid */}
-            <div className="mt-8 border-t border-indigo-100 pt-6 grid grid-cols-3 gap-2 text-left">
-              <div className="rounded-2xl bg-indigo-50/60 border border-indigo-100 p-3">
+            <div className="mt-8 border-t border-[#E8DCE4] pt-6 grid grid-cols-3 gap-2 text-left">
+              <div className="rounded-2xl bg-[#F6EBF1]/60 border border-[#E8DCE4] p-3">
                 <Film className="h-4 w-4 text-[#803D63] mb-1" />
                 <p className="text-[11px] font-black text-slate-900">Series &amp; Parts</p>
                 <p className="text-[9px] text-slate-500 font-medium">Keep content in order</p>
               </div>
 
-              <div className="rounded-2xl bg-indigo-50/60 border border-indigo-100 p-3">
+              <div className="rounded-2xl bg-[#F6EBF1]/60 border border-[#E8DCE4] p-3">
                 <Users className="h-4 w-4 text-[#803D63] mb-1" />
                 <p className="text-[11px] font-black text-slate-900">Total Fanbase</p>
-                <p className="text-[9px] text-slate-500 font-medium">Bring your audience together</p>
+                <p className="text-[9px] text-slate-500 font-medium">Bring audience together</p>
               </div>
 
-              <div className="rounded-2xl bg-indigo-50/60 border border-indigo-100 p-3">
+              <div className="rounded-2xl bg-[#F6EBF1]/60 border border-[#E8DCE4] p-3">
                 <Sparkles className="h-4 w-4 text-[#803D63] mb-1" />
                 <p className="text-[11px] font-black text-slate-900">Creator Themes</p>
                 <p className="text-[9px] text-slate-500 font-medium">Make it yours</p>
