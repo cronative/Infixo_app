@@ -98,7 +98,7 @@ export async function POST(req: Request) {
       socialRows = sRows || [];
     }
 
-    // 4. Fetch current onboarding step from single email row in creator_onboarding_steps table
+    // 4. Fetch current onboarding step strictly from creator_onboarding_steps table
     let currentStep = "profile";
     let isExistingProfile = false;
 
@@ -107,32 +107,34 @@ export async function POST(req: Request) {
         "SELECT step_name FROM creator_onboarding_steps WHERE email = ?",
         [email]
       );
-      const dbStep = stepRows?.[0]?.step_name;
+      const dbStep = (stepRows?.[0]?.step_name || "").trim().toLowerCase();
 
-      // Check if creator already has a profile & username in DB
-      const hasValidProfile = Boolean(creator && creator.username && creator.username.trim() !== "");
-
-      if (hasValidProfile || dbStep === "finish") {
-        // Existing creator who has completed onboarding -> Dashboard
+      if (dbStep === "finish") {
+        // ONLY if step is explicitly "finish" -> allow Dashboard access
         currentStep = "finish";
         isExistingProfile = true;
-        await recordOnboardingStep(email, "finish", creator?.id || null);
-      } else if (dbStep && dbStep !== "otp_verified") {
-        // In-progress onboarding -> resume their last step
-        currentStep = dbStep;
+      } else if (dbStep === "subscription") {
+        currentStep = "subscription";
+        isExistingProfile = false;
+      } else if (dbStep === "series") {
+        currentStep = "series";
+        isExistingProfile = false;
+      } else if (dbStep === "theme" || dbStep === "themes") {
+        currentStep = "theme";
+        isExistingProfile = false;
+      } else if (dbStep === "socials") {
+        currentStep = "socials";
         isExistingProfile = false;
       } else {
-        // First time creator -> start at Step 1 (Profile)
+        // If step is "profile", null, or empty -> Step 1 (Profile)
         currentStep = "profile";
         isExistingProfile = false;
         await recordOnboardingStep(email, "profile", creator?.id || null);
       }
     } catch (e: any) {
       console.warn("⚠️ Could not read completed step:", e.message);
-      if (creator && creator.username && creator.username.trim() !== "") {
-        currentStep = "finish";
-        isExistingProfile = true;
-      }
+      currentStep = "profile";
+      isExistingProfile = false;
     }
 
     return NextResponse.json({
