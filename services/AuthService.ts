@@ -51,13 +51,10 @@ export const AuthService = {
       throw new Error(data.error || "Invalid OTP code");
     }
 
-    // Accurate check: If creator has username/displayName or finish step, they are an existing creator -> dashboard
-    const hasDbProfile = Boolean(
-      (data.creator?.username && data.creator.username.trim() !== "") ||
-      (data.creator?.displayName && data.creator.displayName.trim() !== "")
-    );
-    const isExistingProfile = Boolean(data.isExistingProfile || hasDbProfile || data.creator?.onboardingStep === "finish");
-    const onboardingStep = isExistingProfile ? "finish" : (data.creator?.onboardingStep || "profile");
+    // Strict check: Only route to dashboard if onboarding is explicitly finished
+    const isFinished = Boolean(data.creator?.onboardingStep === "finish");
+    const isExistingProfile = isFinished;
+    const onboardingStep = isFinished ? "finish" : (data.creator?.onboardingStep || "profile");
 
     // Re-save pending email & session
     authRepository.savePendingEmail(email);

@@ -52,7 +52,7 @@ export async function POST(req: Request) {
       }
     } catch (dbErr: any) {
       console.warn("⚠️ MySQL server not running or connection refused. Falling back to local mode:", dbErr.code || dbErr.message);
-      creator = { email, username: email.split("@")[0] };
+      creator = { email, username: "" };
     }
 
     // 3. Generate dynamic random 4-digit OTP code (e.g. 4819)
