@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import { ToastProvider } from "@/contexts/ToastContext";
 import { GA_MEASUREMENT_ID } from "@/lib/analytics";
+import { PwaInstallPrompt } from "@/components/shared/PwaInstallPrompt";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -30,6 +31,16 @@ export const metadata: Metadata = {
   description:
     "Build your creator page, bring your social fanbase together, and organize your content into binge-worthy series with Inflixo.",
   metadataBase: new URL("https://inflixo.com"),
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Inflixo",
+  },
+  icons: {
+    icon: "/favicon.png",
+    apple: "/logo-square.png",
+  },
   openGraph: {
     title: "Inflixo — One Link for Your Content & Fanbase",
     description: "Build your creator page, bring your social fanbase together, and organize your content into binge-worthy series.",
@@ -64,6 +75,11 @@ export default function RootLayout({
       className={`h-full antialiased ${inter.variable} ${plusJakartaSans.variable} ${outfit.variable}`}
     >
       <head>
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="apple-touch-icon" href="/logo-square.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="mobile-web-app-capable" content="yes" />
         {/* Google Analytics 4 (GA4) */}
         <Script
           strategy="afterInteractive"
@@ -84,7 +100,10 @@ export default function RootLayout({
         </Script>
       </head>
       <body className="min-h-full bg-background font-sans">
-        <ToastProvider>{children}</ToastProvider>
+        <ToastProvider>
+          {children}
+          <PwaInstallPrompt />
+        </ToastProvider>
       </body>
     </html>
   );
