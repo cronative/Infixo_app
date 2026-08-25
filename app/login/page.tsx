@@ -2,12 +2,13 @@
 
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { Mail, CheckCircle2, Play, Users } from "lucide-react";
-import { AuthSplitLayout } from "@/layouts/AuthSplitLayout";
+import Link from "next/link";
+import { Mail, CheckCircle2, Sparkles, ArrowRight } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { AuthService } from "@/services/AuthService";
 import { useToast } from "@/contexts/ToastContext";
+import { Logo } from "@/components/shared/Logo";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -21,107 +22,115 @@ export default function LoginPage() {
     const trimmed = email.trim();
     const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
     if (!validEmail) {
-      setError("Enter a valid email address");
+      setError("Please enter a valid email address");
       return;
     }
     setError("");
     setLoading(true);
-    await AuthService.requestOtp(trimmed);
-    setLoading(false);
-    showToast("Verification OTP sent to your email");
-    router.push("/verify-otp");
+    try {
+      await AuthService.requestOtp(trimmed);
+      setLoading(false);
+      showToast("Verification OTP sent to your email! 📩");
+      router.push("/verify-otp");
+    } catch (err: any) {
+      setLoading(false);
+      setError(err.message || "Failed to send verification code. Please try again.");
+    }
   }
 
   return (
-    <AuthSplitLayout>
-      <div className="space-y-6 text-left">
-        {/* Headline & Subtitle */}
-        <div className="space-y-1.5">
-          <h1 className="font-display text-3xl font-extrabold tracking-tight text-[#111827] sm:text-4xl leading-tight">
-            Create your Inflixo
-          </h1>
-          <p className="text-sm font-medium text-[#4B5563] leading-snug">
-            One beautiful home for everything you create.
-          </p>
-        </div>
+    <div className="relative flex min-h-dvh flex-col items-center justify-center bg-gradient-to-b from-[#F6EBF1]/60 via-slate-50 to-white px-4 py-8 text-center text-slate-900 overflow-hidden">
+      {/* Ambient Maroon Background Glow Orbs */}
+      <div className="pointer-events-none absolute -top-24 -left-20 h-96 w-96 rounded-full bg-[#803D63]/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-24 -right-20 h-96 w-96 rounded-full bg-rose-200/40 blur-3xl" />
 
-        {/* Email Form */}
-        <form onSubmit={handleSubmit} className="space-y-4 pt-1">
-          {/* Trust Badge Above Input */}
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-purple-50 border border-purple-200 px-3 py-1 text-[11px] font-bold text-[#803D63]">
-            <span>⚡ Password-free login • New here? We’ll set up your profile next.</span>
+      <div className="relative z-10 w-full max-w-[460px] space-y-6">
+        {/* 1. Header Branding */}
+        <div className="flex flex-col items-center text-center space-y-2">
+          <div className="flex items-center justify-center gap-2">
+            <Logo size="md" />
+            <span className="rounded-full bg-[#F6EBF1] px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest text-[#803D63] border border-[#E8DCE4]">
+              CREATOR
+            </span>
           </div>
 
-          <Input
-            type="email"
-            name="email"
-            label="Creator Email"
-            placeholder="name@gmail.com"
-            leftIcon={<Mail className="h-4 w-4 text-slate-400" />}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            error={error}
-            autoFocus
-          />
-
-          <Button
-            type="submit"
-            fullWidth
-            size="lg"
-            loading={loading}
-            className="bg-[#803D63] text-white font-bold hover:bg-[#6D3254] transition-colors h-12 text-sm rounded-xl cursor-pointer shadow-none"
-          >
-            Send Secure Code →
-          </Button>
-        </form>
-
-        {/* Clean Checklist Section */}
-        <div className="pt-5 border-t border-[#E5E7EB] space-y-2.5 text-sm font-medium text-gray-600">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
-            <span>Manage your live Total Fanbase</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
-            <span>Organize OTT series &amp; episodes</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
-            <span>Instant 60-second setup for new creators</span>
+          <div className="space-y-1 pt-1">
+            <h1 className="font-display text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              Create your Inflixo
+            </h1>
+            <p className="text-xs sm:text-sm font-medium text-slate-500 max-w-xs mx-auto leading-relaxed">
+              One link for your content, fanbase &amp; original series.
+            </p>
           </div>
         </div>
 
-        {/* Compact Mobile Creator Preview (Visible on Mobile only) */}
-        <div className="lg:hidden mt-8 pt-4 border-t border-[#E5E7EB]">
-          <div className="rounded-2xl bg-[#0F172A] p-4 text-white space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
-                  alt="Maya"
-                  className="h-9 w-9 rounded-full object-cover border border-white/20"
-                />
-                <div>
-                  <p className="text-xs font-bold text-white">Maya</p>
-                  <p className="text-[10px] font-medium text-purple-200">@maya · Travel Creator</p>
-                </div>
-              </div>
-              <span className="text-[10px] font-bold bg-[#803D63] px-2 py-0.5 rounded-full text-white">
-                126K Fanbase
-              </span>
+        {/* 2. Main Centered Login Card */}
+        <div className="rounded-[32px] border border-[#E8DCE4] bg-white/95 p-7 sm:p-9 shadow-2xl shadow-[#803D63]/5 backdrop-blur-xl space-y-5 text-left">
+          {/* Trust Pill */}
+          <div className="flex items-center gap-1.5 rounded-full bg-[#F6EBF1] border border-[#E8DCE4] px-3 py-1 text-[11px] font-bold text-[#803D63]">
+            <Sparkles className="h-3 w-3 text-[#803D63] shrink-0" />
+            <span>Password-free login • Fast 60s setup</span>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Input
+              type="email"
+              name="email"
+              label="Creator Email Address"
+              placeholder="name@example.com"
+              leftIcon={<Mail className="h-4 w-4 text-slate-400" />}
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (error) setError("");
+              }}
+              error={error}
+              autoFocus
+            />
+
+            <Button
+              type="submit"
+              fullWidth
+              size="lg"
+              loading={loading}
+              className="bg-[#803D63] text-white font-bold hover:bg-[#6D3254] transition-all h-12 text-xs sm:text-sm rounded-2xl cursor-pointer shadow-md shadow-[#803D63]/20 hover:scale-[1.01]"
+            >
+              <span>Send Verification Code</span>
+              <ArrowRight className="h-4 w-4 ml-1.5" />
+            </Button>
+          </form>
+
+          {/* Feature Highlights List */}
+          <div className="pt-4 border-t border-[#E8DCE4]/60 space-y-2 text-xs font-medium text-slate-600">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
+              <span>Unified Live Total Fanbase Reach</span>
             </div>
-
-            <div className="flex items-center justify-between rounded-xl bg-slate-800/80 p-2 text-[11px] font-bold">
-              <div className="flex items-center gap-1.5">
-                <Play className="h-3.5 w-3.5 fill-white text-white" />
-                <span>Kashmir Diaries</span>
-              </div>
-              <span className="text-[10px] text-purple-200 font-medium">S1 · 5 Eps</span>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
+              <span>Binge-worthy OTT Series &amp; Episode player</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
+              <span>Sponsorship rate cards &amp; brand collaboration briefs</span>
             </div>
           </div>
         </div>
+
+        {/* 3. Footer Links */}
+        <p className="text-[11px] font-medium text-slate-400 text-center leading-relaxed px-4">
+          By continuing, you agree to Inflixo&apos;s{" "}
+          <Link href="/terms" className="underline hover:text-slate-600 font-semibold">
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link href="/privacy" className="underline hover:text-slate-600 font-semibold">
+            Privacy Policy
+          </Link>
+          .
+        </p>
       </div>
-    </AuthSplitLayout>
+    </div>
   );
 }
