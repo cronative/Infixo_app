@@ -110,6 +110,29 @@ export default function DashboardReviewsPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [activeMenuId]);
 
+  // Background Scroll Lock & Escape Key for Full-screen Review Request Popup
+  useEffect(() => {
+    if (isModalOpen) {
+      const originalOverflow = document.body.style.overflow;
+      const scrollY = window.scrollY;
+      document.body.style.overflow = "hidden";
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          setIsModalOpen(false);
+        }
+      };
+
+      window.addEventListener("keydown", handleKeyDown);
+
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        window.removeEventListener("keydown", handleKeyDown);
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [isModalOpen]);
+
   const updateReviews = (updated: CreatorReview[]) => {
     setReviews(updated);
     reviewsRepository.saveAll(updated);
@@ -708,127 +731,143 @@ export default function DashboardReviewsPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* POPUP MODAL: Request Review Form (100% PRESERVED & UNTOUCHED LOGIC) */}
+      {/* FULL-SCREEN OVERLAY POPUP: Request Review Form */}
       {/* ========================================================================= */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="relative max-w-xl w-full bg-white rounded-2xl p-5 sm:p-6 shadow-2xl space-y-4 text-left border border-[#ECE8EB] animate-in zoom-in-95 duration-150">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-[#ECE8EB] pb-3">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F7EDF3] text-[#803D63]">
-                  <Mail className="h-4 w-4" />
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Request a Client Review"
+          className="fixed inset-0 z-50 flex flex-col h-[100dvh] w-screen bg-[#FAFAFB] overflow-hidden animate-in fade-in duration-150"
+        >
+          {/* 1. Full-Width Sticky Popup Header */}
+          <header className="sticky top-0 z-10 w-full flex items-center justify-between border-b border-[#ECE8EB] bg-white px-4 sm:px-8 py-3.5 shadow-2xs shrink-0">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F7EDF3] text-[#803D63] shrink-0">
+                <Mail className="h-4 w-4" />
+              </div>
+              <div className="min-w-0 text-left">
+                <h2 className="font-display text-base sm:text-lg font-bold text-[#17131A] truncate">
+                  Request a Client Review
+                </h2>
+                <p className="text-xs text-[#6F6872] font-medium truncate">
+                  Send a secure review invitation after completing a collaboration.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              aria-label="Close review request"
+              className="flex h-10 w-10 items-center justify-center rounded-xl text-[#6F6872] hover:text-[#17131A] hover:bg-[#FAF8FA] transition-colors cursor-pointer shrink-0 border border-transparent hover:border-[#ECE8EB]"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </header>
+
+          {/* 2. Scrollable Popup Content (Centered readable column) */}
+          <main className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 sm:px-8 py-6 sm:py-8">
+            <form id="review-request-form" onSubmit={handleSendEmailRequest} className="max-w-2xl w-full mx-auto space-y-5 text-left">
+              <div className="rounded-2xl border border-[#ECE8EB] bg-white p-5 sm:p-6 shadow-2xs space-y-4">
+                <div className="space-y-1">
+                  <label htmlFor="client-name" className="block text-xs font-bold text-[#17131A]">
+                    Client or brand name <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    id="client-name"
+                    type="text"
+                    required
+                    value={clientName}
+                    onChange={(e) => setClientName(e.target.value)}
+                    placeholder="e.g. Puma India / Nike"
+                    className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                  />
                 </div>
-                <div>
-                  <h3 className="font-display text-base font-bold text-[#17131A]">
-                    Request Review from Brand / Client
-                  </h3>
-                  <p className="text-xs text-[#6F6872] font-medium">
-                    An email invitation with a secure single-use link will be sent to the client.
-                  </p>
+
+                <div className="space-y-1">
+                  <label htmlFor="client-email" className="block text-xs font-bold text-[#17131A]">
+                    Client or brand email <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    id="client-email"
+                    type="email"
+                    required
+                    value={clientEmail}
+                    onChange={(e) => setClientEmail(e.target.value)}
+                    placeholder="e.g. marketing@puma.com"
+                    className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label htmlFor="collab-title" className="block text-xs font-bold text-[#17131A]">
+                    Collaboration title <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    id="collab-title"
+                    type="text"
+                    required
+                    value={projectTitle}
+                    onChange={(e) => setProjectTitle(e.target.value)}
+                    placeholder="e.g. Instagram Reel / Short Film / Brand Campaign"
+                    className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label htmlFor="content-url" className="block text-xs font-bold text-[#17131A]">
+                    Related work link <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    id="content-url"
+                    type="url"
+                    required
+                    value={contentUrl}
+                    onChange={(e) => setContentUrl(e.target.value)}
+                    placeholder="e.g. https://instagram.com/reel/123 or YouTube link"
+                    className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label htmlFor="client-designation" className="block text-xs font-bold text-[#17131A]">
+                    Client role or designation <span className="text-[#6F6872] font-normal">(Optional)</span>
+                  </label>
+                  <input
+                    id="client-designation"
+                    type="text"
+                    value={clientDesignation}
+                    onChange={(e) => setClientDesignation(e.target.value)}
+                    placeholder="e.g. Marketing Manager @ Puma"
+                    className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                  />
                 </div>
               </div>
+            </form>
+          </main>
 
+          {/* 3. Full-Width Sticky Popup Footer */}
+          <footer className="sticky bottom-0 z-10 w-full border-t border-[#ECE8EB] bg-white px-4 sm:px-8 py-3.5 shadow-2xs shrink-0">
+            <div className="max-w-2xl w-full mx-auto flex items-center justify-end gap-3">
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="text-[#6F6872] hover:text-[#17131A] p-1.5 rounded-xl hover:bg-[#FAF8FA] transition-colors cursor-pointer"
+                className="px-4 py-2.5 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
               >
-                <X className="h-4 w-4" />
+                Cancel
+              </button>
+              <button
+                type="submit"
+                form="review-request-form"
+                disabled={isSubmitting}
+                className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2.5 px-5 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5 disabled:opacity-50"
+              >
+                <Send className="h-3.5 w-3.5" />
+                <span>{isSubmitting ? "Sending..." : "Send Review Request"}</span>
               </button>
             </div>
-
-            {/* Modal Form */}
-            <form onSubmit={handleSendEmailRequest} className="space-y-3.5 pt-1">
-              <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#17131A]">
-                  Client / Brand Name <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={clientName}
-                  onChange={(e) => setClientName(e.target.value)}
-                  placeholder="e.g. Puma India / Nike"
-                  className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#17131A]">
-                  Client / Brand Email <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={clientEmail}
-                  onChange={(e) => setClientEmail(e.target.value)}
-                  placeholder="e.g. marketing@puma.com"
-                  className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#17131A]">
-                  Title of Collab (Reels / Shorts / Shoot) <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={projectTitle}
-                  onChange={(e) => setProjectTitle(e.target.value)}
-                  placeholder="e.g. Created Reel / Short Film / Brand Campaign"
-                  className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#17131A]">
-                  Link of Reels, Shoot, Short etc. <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="url"
-                  required
-                  value={contentUrl}
-                  onChange={(e) => setContentUrl(e.target.value)}
-                  placeholder="e.g. https://instagram.com/reel/123 or YouTube link"
-                  className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#17131A]">
-                  Client Role / Designation <span className="text-[#6F6872] font-normal">(Optional)</span>
-                </label>
-                <input
-                  type="text"
-                  value={clientDesignation}
-                  onChange={(e) => setClientDesignation(e.target.value)}
-                  placeholder="e.g. Marketing Manager @ Puma"
-                  className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none"
-                />
-              </div>
-
-              {/* Modal Actions */}
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#ECE8EB]">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5"
-                >
-                  <Send className="h-3.5 w-3.5" />
-                  <span>{isSubmitting ? "Sending..." : "Send Review Request"}</span>
-                </button>
-              </div>
-            </form>
-          </div>
+          </footer>
         </div>
       )}
 
