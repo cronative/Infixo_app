@@ -28,6 +28,66 @@ interface CustomLinksManagerProps {
 
 const MAX_FREE_LINKS = 3;
 
+interface LinkTypeOption {
+  value: string;
+  label: string;
+  suggestedTitle: string;
+  placeholderUrl: string;
+}
+
+const LINK_TYPE_GROUPS: Array<{
+  group: string;
+  options: LinkTypeOption[];
+}> = [
+  {
+    group: "📱 Social Media",
+    options: [
+      { value: "instagram", label: "Instagram", suggestedTitle: "Follow on Instagram", placeholderUrl: "https://instagram.com/username" },
+      { value: "youtube", label: "YouTube", suggestedTitle: "Subscribe on YouTube", placeholderUrl: "https://youtube.com/@channel" },
+      { value: "facebook", label: "Facebook", suggestedTitle: "Follow on Facebook", placeholderUrl: "https://facebook.com/page" },
+      { value: "x_twitter", label: "X / Twitter", suggestedTitle: "Follow on X", placeholderUrl: "https://x.com/username" },
+      { value: "linkedin", label: "LinkedIn", suggestedTitle: "Connect on LinkedIn", placeholderUrl: "https://linkedin.com/in/username" },
+      { value: "snapchat", label: "Snapchat", suggestedTitle: "Add on Snapchat", placeholderUrl: "https://snapchat.com/add/username" },
+      { value: "tiktok", label: "TikTok", suggestedTitle: "Follow on TikTok", placeholderUrl: "https://tiktok.com/@username" },
+      { value: "threads", label: "Threads", suggestedTitle: "Follow on Threads", placeholderUrl: "https://threads.net/@username" },
+      { value: "pinterest", label: "Pinterest", suggestedTitle: "Follow on Pinterest", placeholderUrl: "https://pinterest.com/username" },
+      { value: "twitch", label: "Twitch", suggestedTitle: "Watch on Twitch", placeholderUrl: "https://twitch.tv/username" },
+      { value: "discord", label: "Discord", suggestedTitle: "Join Discord Server", placeholderUrl: "https://discord.gg/invite" },
+      { value: "telegram", label: "Telegram", suggestedTitle: "Join Telegram Channel", placeholderUrl: "https://t.me/channel" },
+      { value: "whatsapp", label: "WhatsApp", suggestedTitle: "Chat on WhatsApp", placeholderUrl: "https://wa.me/919876543210" },
+    ],
+  },
+  {
+    group: "🎵 Music & Audio",
+    options: [
+      { value: "spotify", label: "Spotify", suggestedTitle: "Listen on Spotify", placeholderUrl: "https://open.spotify.com/artist/..." },
+      { value: "apple_music", label: "Apple Music", suggestedTitle: "Listen on Apple Music", placeholderUrl: "https://music.apple.com/..." },
+      { value: "podcast", label: "Podcast", suggestedTitle: "Stream Latest Podcast", placeholderUrl: "https://podcasts.apple.com/..." },
+    ],
+  },
+  {
+    group: "🎬 Content & Media",
+    options: [
+      { value: "latest_video", label: "Latest Video", suggestedTitle: "Watch Latest Video", placeholderUrl: "https://youtube.com/watch?v=..." },
+      { value: "latest_episode", label: "Latest Episode", suggestedTitle: "Watch Latest Episode", placeholderUrl: "https://inflixo.com/series/..." },
+      { value: "media_kit", label: "Media Kit", suggestedTitle: "Media Kit & Rate Card", placeholderUrl: "https://inflixo.com/..." },
+      { value: "blog", label: "Blog", suggestedTitle: "Read My Blog", placeholderUrl: "https://blog.yourwebsite.com" },
+      { value: "newsletter", label: "Newsletter", suggestedTitle: "Subscribe to Newsletter", placeholderUrl: "https://newsletter.com" },
+    ],
+  },
+  {
+    group: "💼 Business & Personal",
+    options: [
+      { value: "website", label: "Website", suggestedTitle: "Official Website", placeholderUrl: "https://yourwebsite.com" },
+      { value: "portfolio", label: "Portfolio", suggestedTitle: "Work Portfolio", placeholderUrl: "https://yourportfolio.com" },
+      { value: "online_store", label: "Online Store", suggestedTitle: "Store & Merch Shop", placeholderUrl: "https://yourstore.com" },
+      { value: "booking_page", label: "Booking Page", suggestedTitle: "Book 1-on-1 Consultation", placeholderUrl: "https://cal.com/username" },
+      { value: "personal", label: "Personal", suggestedTitle: "About Me", placeholderUrl: "https://yourwebsite.com/about" },
+      { value: "other", label: "Other", suggestedTitle: "Custom Link", placeholderUrl: "https://..." },
+    ],
+  },
+];
+
 function extractDomain(url: string): string {
   try {
     const full = url.startsWith("http://") || url.startsWith("https://") ? url : `https://${url}`;
@@ -45,11 +105,16 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
   const [links, setLinks] = useState<CustomLink[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingLink, setEditingLink] = useState<CustomLink | null>(null);
+  const [selectedType, setSelectedType] = useState<string>("");
   const [formTitle, setFormTitle] = useState("");
   const [formUrl, setFormUrl] = useState("");
+  const [isTitleManuallyEdited, setIsTitleManuallyEdited] = useState<boolean>(false);
+  const [lastSuggestedTitle, setLastSuggestedTitle] = useState<string>("");
   const [isSaving, setIsSaving] = useState(false);
   const [linkToDelete, setLinkToDelete] = useState<CustomLink | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+
+  const triggerButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const planKey = (subscription?.planKey || "").toLowerCase();
   const isVip = planKey.includes("vip") || planKey.includes("pro");
@@ -82,7 +147,8 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [activeMenuId]);
 
-  function handleOpenCreate() {
+  function handleOpenCreate(btnElement?: HTMLButtonElement | null) {
+    if (btnElement) triggerButtonRef.current = btnElement;
     if (isLimitReached) {
       showToast(
         `Early Access plan is limited to ${MAX_FREE_LINKS} custom links. Upgrade to VIP Plan for unlimited links! ⭐`,
@@ -91,16 +157,37 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
       return;
     }
     setEditingLink(null);
+    setSelectedType("");
     setFormTitle("");
     setFormUrl("");
+    setIsTitleManuallyEdited(false);
+    setLastSuggestedTitle("");
     setIsModalOpen(true);
   }
 
   function handleOpenEdit(link: CustomLink) {
     setEditingLink(link);
+    setSelectedType("");
     setFormTitle(link.title);
     setFormUrl(link.url);
+    setIsTitleManuallyEdited(true); // Preserve creator's title
+    setLastSuggestedTitle("");
     setIsModalOpen(true);
+  }
+
+  function handleTypeSelect(typeVal: string) {
+    setSelectedType(typeVal);
+    if (!typeVal) return;
+
+    const allOptions = LINK_TYPE_GROUPS.flatMap((g) => g.options);
+    const foundOpt = allOptions.find((o) => o.value === typeVal);
+    if (!foundOpt) return;
+
+    // Auto-fill title ONLY if user hasn't manually edited the title (or title is empty or equals last suggestion)
+    if (!isTitleManuallyEdited || formTitle.trim() === "" || formTitle === lastSuggestedTitle) {
+      setFormTitle(foundOpt.suggestedTitle);
+      setLastSuggestedTitle(foundOpt.suggestedTitle);
+    }
   }
 
   async function handleSaveModalLink(e?: React.FormEvent) {
@@ -204,7 +291,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
 
           <button
             type="button"
-            onClick={handleOpenCreate}
+            onClick={(e) => handleOpenCreate(e.currentTarget)}
             disabled={isLimitReached}
             className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-colors cursor-pointer shadow-2xs ${
               isLimitReached
@@ -229,7 +316,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
           <div className="pt-1">
             <button
               type="button"
-              onClick={handleOpenCreate}
+              onClick={(e) => handleOpenCreate(e.currentTarget)}
               className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
             >
               <Plus className="h-3.5 w-3.5" />
@@ -350,102 +437,89 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
       {/* MODAL FOR ADDING / EDITING CUSTOM LINK */}
       <Modal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          if (!isSaving) {
+            setIsModalOpen(false);
+            triggerButtonRef.current?.focus();
+          }
+        }}
         size="md"
         title={editingLink ? "Edit Custom Link" : "Add Custom Link"}
-        description="Add link title and destination URL to display on your public profile"
+        description="Add a useful destination to your public creator profile."
         icon={<LinkIcon className="h-4 w-4" />}
       >
         <div className="flex flex-col flex-1 min-h-0">
+          {/* Modal Form Content (Internal Scrolling) */}
           <ModalBody className="p-5 space-y-4 text-left">
-            {/* Link Type Selector */}
-            <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#17131A]">
-                Link type template
-              </label>
-              <div className="relative">
-                <select
-                  className="w-full appearance-none rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 pr-9 text-xs font-semibold text-[#17131A] focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors cursor-pointer"
-                  defaultValue=""
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    if (!val) return;
-                    const [title] = val.split("|||");
-                    setFormTitle(title);
-                    e.target.value = "";
-                  }}
-                >
-                  <option value="" disabled>— Select a type to auto-fill title —</option>
-
-                  <optgroup label="🔗 Content & General">
-                    <option value="🎬 Watch Latest Episode|||https://">🎬 Watch Latest Episode</option>
-                    <option value="🎙️ Stream Latest Podcast|||https://open.spotify.com/">🎙️ Stream Latest Podcast</option>
-                    <option value="📁 Press Kit & Media Assets|||https://drive.google.com/">📁 Press Kit & Media Assets</option>
-                    <option value="🌐 Official Website|||https://">🌐 Official Website</option>
-                    <option value="👤 Personal Portfolio & Bio|||https://">👤 Personal Portfolio & Bio</option>
-                    <option value="🛍️ Store & Merch Shop|||https://">🛍️ Store & Merch Shop</option>
-                    <option value="📅 Book 1-on-1 Consultation|||https://calendly.com/">📅 Book 1-on-1 Consultation</option>
-                    <option value="📍 Store / Location (Google Maps)|||https://maps.google.com/?q=">📍 Store / Location (Google Maps)</option>
-                    <option value="💬 Direct WhatsApp Chat|||https://wa.me/91">💬 Direct WhatsApp Chat</option>
-                  </optgroup>
-
-                  <optgroup label="📱 Social Profiles">
-                    <option value="📸 Follow on Instagram|||https://instagram.com/">📸 Follow on Instagram</option>
-                    <option value="▶️ Subscribe on YouTube|||https://youtube.com/@">▶️ Subscribe on YouTube</option>
-                    <option value="🐦 Follow on X (Twitter)|||https://x.com/">🐦 Follow on X (Twitter)</option>
-                    <option value="💼 Connect on LinkedIn|||https://linkedin.com/in/">💼 Connect on LinkedIn</option>
-                    <option value="🧵 Follow on Threads|||https://threads.net/@">🧵 Follow on Threads</option>
-                    <option value="👻 Add Me on Snapchat|||https://snapchat.com/add/">👻 Add Me on Snapchat</option>
-                    <option value="📌 Follow on Pinterest|||https://pinterest.com/">📌 Follow on Pinterest</option>
-                    <option value="🎮 Watch on Twitch|||https://twitch.tv/">🎮 Watch on Twitch</option>
-                    <option value="🎵 Follow on Spotify|||https://open.spotify.com/artist/">🎵 Follow on Spotify</option>
-                    <option value="🎬 Follow on TikTok|||https://tiktok.com/@">🎬 Follow on TikTok</option>
-                    <option value="✈️ Join Telegram Channel|||https://t.me/">✈️ Join Telegram Channel</option>
-                  </optgroup>
-
-                  <optgroup label="✨ Other">
-                    <option value="✨ Custom Link|||https://">✨ Custom / Other</option>
-                  </optgroup>
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6F6872]" />
-              </div>
-            </div>
-
-            {/* Form Inputs */}
-            <form id="custom-link-form" onSubmit={handleSaveModalLink} className="space-y-4 pt-1">
+            <form id="custom-link-form" onSubmit={handleSaveModalLink} className="space-y-4">
+              {/* Link Type Selector */}
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#17131A]">
+                <label htmlFor="custom-link-type" className="block text-xs font-bold text-[#17131A]">
+                  Link type
+                </label>
+                <div className="relative">
+                  <select
+                    id="custom-link-type"
+                    value={selectedType}
+                    onChange={(e) => handleTypeSelect(e.target.value)}
+                    className="w-full appearance-none rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 pr-9 text-xs font-semibold text-[#17131A] focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors cursor-pointer"
+                  >
+                    <option value="">— Select a link type (auto-fills title) —</option>
+                    {LINK_TYPE_GROUPS.map((group) => (
+                      <optgroup key={group.group} label={group.group}>
+                        {group.options.map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label} ({opt.suggestedTitle})
+                          </option>
+                        ))}
+                      </optgroup>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6F6872]" />
+                </div>
+              </div>
+
+              {/* Link Title Field */}
+              <div className="space-y-1">
+                <label htmlFor="custom-link-title" className="block text-xs font-bold text-[#17131A]">
                   Link title <span className="text-rose-500">*</span>
                 </label>
                 <input
+                  id="custom-link-title"
                   type="text"
                   required
                   value={formTitle}
-                  onChange={(e) => setFormTitle(e.target.value)}
-                  placeholder="e.g. Watch Latest Episode"
+                  onChange={(e) => {
+                    setFormTitle(e.target.value);
+                    setIsTitleManuallyEdited(true);
+                  }}
+                  placeholder="e.g. Follow on Instagram or Watch Latest Video"
                   className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
+              {/* Destination URL Field */}
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#17131A]">
+                <label htmlFor="custom-link-url" className="block text-xs font-bold text-[#17131A]">
                   Destination URL <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
                   <input
+                    id="custom-link-url"
                     type="url"
                     required
                     value={formUrl}
                     onChange={(e) => setFormUrl(e.target.value)}
-                    placeholder="e.g. https://cal.com/yourname"
+                    placeholder="https://example.com/your-destination"
                     className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] pl-3.5 pr-9 py-2.5 text-xs font-mono font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
                   />
-                  {formUrl && (formUrl.startsWith("http") || formUrl.startsWith("https")) && (
+                  {formUrl && (formUrl.startsWith("http://") || formUrl.startsWith("https://")) && (
                     <a
                       href={formUrl}
                       target="_blank"
-                      rel="noreferrer"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6F6872] hover:text-[#803D63]"
+                      rel="noopener noreferrer"
+                      aria-label="Test link destination in new tab"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6F6872] hover:text-[#803D63] transition-colors"
                     >
                       <ExternalLink className="h-4 w-4" />
                     </a>
@@ -455,12 +529,18 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
             </form>
           </ModalBody>
 
-          {/* Action Buttons */}
-          <ModalFooter className="px-5 py-3.5">
+          {/* Modal Actions Footer */}
+          <ModalFooter className="px-5 sm:px-6 py-3.5">
             <button
               type="button"
-              onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
+              onClick={() => {
+                if (!isSaving) {
+                  setIsModalOpen(false);
+                  triggerButtonRef.current?.focus();
+                }
+              }}
+              disabled={isSaving}
+              className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>
@@ -471,7 +551,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
               className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               <Check className="h-3.5 w-3.5" />
-              <span>{editingLink ? "Save Changes" : "Save Link"}</span>
+              <span>{isSaving ? "Saving..." : editingLink ? "Save Changes" : "Save Link"}</span>
             </button>
           </ModalFooter>
         </div>
