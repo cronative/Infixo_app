@@ -22,6 +22,7 @@ import { AuthService } from "@/services/AuthService";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { copyToClipboard } from "@/lib/copyToClipboard";
+import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 
 function getCanonicalProfileUrl(username: string): string {
   const cleanUsername = (username || "creator").replace(/^@/, "");
@@ -454,151 +455,131 @@ function LegalDocumentModal({
   const isTerms = type === "terms";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="relative flex max-h-[85vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl text-left">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4 bg-slate-50">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F7EDF3] text-[#803D63] border border-[#ECE8EB]">
-              {isTerms ? <FileText className="h-5 w-5" /> : <Lock className="h-5 w-5" />}
-            </div>
-            <div>
-              <h3 className="font-display text-base font-bold text-slate-900">
-                {isTerms ? "Terms & Conditions" : "Privacy Policy"}
-              </h3>
-              <p className="text-[11px] text-slate-500 font-medium">
-                Last updated: February 2026 • Official Legal Document
+    <Modal
+      isOpen={true}
+      onClose={onClose}
+      size="lg"
+      title={isTerms ? "Terms & Conditions" : "Privacy Policy"}
+      description="Last updated: February 2026 • Official Legal Document"
+      icon={isTerms ? <FileText className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+    >
+      {/* Scrollable Content Body */}
+      <ModalBody className="p-5 sm:p-6 text-xs text-[#6F6872] leading-relaxed space-y-4 text-left">
+        {isTerms ? (
+          <>
+            <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-4 space-y-1">
+              <p className="font-bold text-[#803D63] text-xs">📜 Inflixo Creator Service Agreement</p>
+              <p className="text-[11px] text-[#17131A] font-medium">
+                Welcome to Inflixo. By creating an account, linking social handles, or using our creator portfolio services, you agree to these Terms and Conditions.
               </p>
             </div>
-          </div>
 
-          <button
-            onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-200/60 text-slate-500 hover:bg-slate-200 hover:text-slate-900 transition-colors cursor-pointer"
-            aria-label="Close modal"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
+            <div className="space-y-2">
+              <h4 className="font-bold text-[#17131A] text-xs uppercase tracking-wider">1. Account Creation &amp; Eligibility</h4>
+              <p>
+                You must be at least 13 years of age (or the legal age of digital consent in your jurisdiction) to create an Inflixo creator profile. You agree to provide accurate email details and verify ownership via single-use One-Time Passwords (OTP).
+              </p>
+            </div>
 
-        {/* Scrollable Content Body */}
-        <div className="flex-1 overflow-y-auto px-6 py-5 text-xs text-slate-600 leading-relaxed space-y-4">
-          {isTerms ? (
-            <>
-              <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-4 space-y-1">
-                <p className="font-bold text-[#803D63] text-xs">📜 Inflixo Creator Service Agreement</p>
-                <p className="text-[11px] text-slate-700 font-medium">
-                  Welcome to Inflixo. By creating an account, linking social handles, or using our creator portfolio services, you agree to these Terms and Conditions.
-                </p>
-              </div>
+            <div className="space-y-2">
+              <h4 className="font-bold text-[#17131A] text-xs uppercase tracking-wider">2. Social Media Handle Authorization &amp; Public Metrics Consent</h4>
+              <p>
+                By entering your public social media usernames (Instagram, YouTube, Facebook) and authorizing Inflixo, you grant us permission to aggregate publicly available metrics (follower counts, subscriber totals, channel titles, verified badges, and public avatar images) to display on your public creator page.
+              </p>
+              <p className="font-semibold text-[#17131A]">
+                💡 Inflixo strictly aggregates 100% public data. We never ask for, store, or access private account passwords or OAuth credentials.
+              </p>
+            </div>
 
-              <div className="space-y-2">
-                <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">1. Account Creation &amp; Eligibility</h4>
-                <p>
-                  You must be at least 13 years of age (or the legal age of digital consent in your jurisdiction) to create an Inflixo creator profile. You agree to provide accurate email details and verify ownership via single-use One-Time Passwords (OTP).
-                </p>
-              </div>
+            <div className="space-y-2">
+              <h4 className="font-bold text-[#17131A] text-xs uppercase tracking-wider">3. Content Ownership &amp; Intellectual Property</h4>
+              <p>
+                Creators retain full copyright ownership of all uploaded custom avatars, series posters, and video metadata. You grant Inflixo a non-exclusive license to host, display, and format your content for public portfolio presentation at <code className="bg-[#FAF8FA] px-1 py-0.5 rounded text-[#803D63] font-mono border border-[#ECE8EB]">inflixo.com/your-username</code>.
+              </p>
+            </div>
 
-              <div className="space-y-2">
-                <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">2. Social Media Handle Authorization &amp; Public Metrics Consent</h4>
-                <p>
-                  By entering your public social media usernames (Instagram, YouTube, Facebook) and authorizing Inflixo, you grant us permission to aggregate publicly available metrics (follower counts, subscriber totals, channel titles, verified badges, and public avatar images) to display on your public creator page.
-                </p>
-                <p className="font-semibold text-slate-800">
-                  💡 Inflixo strictly aggregates 100% public data. We never ask for, store, or access private account passwords or OAuth credentials.
-                </p>
-              </div>
+            <div className="space-y-2">
+              <h4 className="font-bold text-[#17131A] text-xs uppercase tracking-wider">4. Early Access &amp; Subscription Terms</h4>
+              <p>
+                Early Access accounts receive access to core platform features (up to 3 Series &amp; 3 Theme switches). Early Access pricing and features remain valid until paid subscription tiers are officially launched.
+              </p>
+            </div>
 
-              <div className="space-y-2">
-                <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">3. Content Ownership &amp; Intellectual Property</h4>
-                <p>
-                  Creators retain full copyright ownership of all uploaded custom avatars, series posters, and video metadata. You grant Inflixo a non-exclusive license to host, display, and format your content for public portfolio presentation at <code className="bg-slate-100 px-1 py-0.5 rounded text-[#803D63] font-mono">inflixo.com/your-username</code>.
-                </p>
-              </div>
+            <div className="space-y-2">
+              <h4 className="font-bold text-[#17131A] text-xs uppercase tracking-wider">5. Prohibited Conduct</h4>
+              <p>
+                You agree not to impersonate other creators, link social accounts you do not manage, upload infringing or explicit material, or use automated bots to disrupt Inflixo services.
+              </p>
+            </div>
 
-              <div className="space-y-2">
-                <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">4. Early Access &amp; Subscription Terms</h4>
-                <p>
-                  Early Access accounts receive access to core platform features (up to 3 Series &amp; 3 Theme switches). Early Access pricing and features remain valid until paid subscription tiers are officially launched.
-                </p>
-              </div>
+            <div className="space-y-2">
+              <h4 className="font-bold text-[#17131A] text-xs uppercase tracking-wider">6. Limitation of Liability</h4>
+              <p>
+                Inflixo provides services on an "as is" and "as available" basis. Inflixo shall not be liable for indirect, incidental, or consequential damages resulting from third-party social platform API changes or website downtime.
+              </p>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="rounded-xl border border-emerald-100 bg-emerald-50/60 p-4 space-y-1">
+              <p className="font-bold text-emerald-950 text-xs">🔒 Inflixo Privacy Policy &amp; Public Data Notice</p>
+              <p className="text-[11px] text-emerald-800 font-medium">
+                Your privacy matters to us. This policy details what data we collect, how we process public social stats, and your rights as a creator.
+              </p>
+            </div>
 
-              <div className="space-y-2">
-                <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">5. Prohibited Conduct</h4>
-                <p>
-                  You agree not to impersonate other creators, link social accounts you do not manage, upload infringing or explicit material, or use automated bots to disrupt Inflixo services.
-                </p>
-              </div>
+            <div className="space-y-2">
+              <h4 className="font-bold text-[#17131A] text-xs uppercase tracking-wider">1. Data We Collect</h4>
+              <ul className="list-disc pl-4 space-y-1 text-[11px]">
+                <li><strong className="text-[#17131A]">Account Credentials:</strong> Email address used for OTP verification and login sessions.</li>
+                <li><strong className="text-[#17131A]">Creator Profile Details:</strong> Display name, custom username handle, category, profession, bio, and profile photo.</li>
+                <li><strong className="text-[#17131A]">Public Social Metrics:</strong> Public follower counts, subscriber totals, video counts, and public badges fetched from connected Instagram, YouTube, and Facebook URLs.</li>
+                <li><strong className="text-[#17131A]">Technical Logs:</strong> Device IP, browser type, and authentication cookies required for session security.</li>
+              </ul>
+            </div>
 
-              <div className="space-y-2">
-                <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">6. Limitation of Liability</h4>
-                <p>
-                  Inflixo provides services on an "as is" and "as available" basis. Inflixo shall not be liable for indirect, incidental, or consequential damages resulting from third-party social platform API changes or website downtime.
-                </p>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="rounded-xl border border-emerald-100 bg-emerald-50/60 p-4 space-y-1">
-                <p className="font-bold text-emerald-950 text-xs">🔒 Inflixo Privacy Policy &amp; Public Data Notice</p>
-                <p className="text-[11px] text-emerald-800 font-medium">
-                  Your privacy matters to us. This policy details what data we collect, how we process public social stats, and your rights as a creator.
-                </p>
-              </div>
+            <div className="space-y-2">
+              <h4 className="font-bold text-[#17131A] text-xs uppercase tracking-wider">2. How We Use Your Data</h4>
+              <p>
+                We process data solely to create, host, and render your public Inflixo landing page, calculate total audience reach, send single-use OTP login emails, and deliver essential platform updates.
+              </p>
+            </div>
 
-              <div className="space-y-2">
-                <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">1. Data We Collect</h4>
-                <ul className="list-disc pl-4 space-y-1 text-[11px]">
-                  <li><strong className="text-slate-800">Account Credentials:</strong> Email address used for OTP verification and login sessions.</li>
-                  <li><strong className="text-slate-800">Creator Profile Details:</strong> Display name, custom username handle, category, profession, bio, and profile photo.</li>
-                  <li><strong className="text-slate-800">Public Social Metrics:</strong> Public follower counts, subscriber totals, video counts, and public badges fetched from connected Instagram, YouTube, and Facebook URLs.</li>
-                  <li><strong className="text-slate-800">Technical Logs:</strong> Device IP, browser type, and authentication cookies required for session security.</li>
-                </ul>
-              </div>
+            <div className="space-y-2">
+              <h4 className="font-bold text-[#17131A] text-xs uppercase tracking-wider">3. Data Protection &amp; No Third-Party Sales</h4>
+              <p className="font-semibold text-[#17131A]">
+                🛡️ We NEVER sell, rent, or monetize your personal email or creator profile data to third-party advertisers.
+              </p>
+            </div>
 
-              <div className="space-y-2">
-                <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">2. How We Use Your Data</h4>
-                <p>
-                  We process data solely to create, host, and render your public Inflixo landing page, calculate total audience reach, send single-use OTP login emails, and deliver essential platform updates.
-                </p>
-              </div>
+            <div className="space-y-2">
+              <h4 className="font-bold text-[#17131A] text-xs uppercase tracking-wider">4. Public Profile Visibility &amp; Indexing</h4>
+              <p>
+                Your public profile page is accessible on the internet via your unique username link. You can toggle Search Engine Indexing in Account Settings to control whether search engines index your profile.
+              </p>
+            </div>
 
-              <div className="space-y-2">
-                <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">3. Data Protection &amp; No Third-Party Sales</h4>
-                <p className="font-semibold text-slate-800">
-                  🛡️ We NEVER sell, rent, or monetize your personal email or creator profile data to third-party advertisers.
-                </p>
-              </div>
+            <div className="space-y-2">
+              <h4 className="font-bold text-[#17131A] text-xs uppercase tracking-wider">5. Account Deletion &amp; Data Rights</h4>
+              <p>
+                You have the right to request deletion of your account and removal of all associated social metrics and series from Inflixo servers by contacting <code className="bg-[#FAF8FA] px-1 py-0.5 rounded text-[#803D63] font-mono border border-[#ECE8EB]">support@inflixo.com</code>.
+              </p>
+            </div>
+          </>
+        )}
+      </ModalBody>
 
-              <div className="space-y-2">
-                <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">4. Public Profile Visibility &amp; Indexing</h4>
-                <p>
-                  Your public profile page is accessible on the internet via your unique username link. You can toggle Search Engine Indexing in Account Settings to control whether search engines index your profile.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">5. Account Deletion &amp; Data Rights</h4>
-                <p>
-                  You have the right to request deletion of your account and removal of all associated social metrics and series from Inflixo servers by contacting <code className="bg-slate-100 px-1 py-0.5 rounded text-[#803D63] font-mono">support@inflixo.com</code>.
-                </p>
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Footer Close Action */}
-        <div className="border-t border-gray-100 px-6 py-4 bg-slate-50 flex items-center justify-between">
-          <p className="text-[11px] text-slate-500 font-medium">Inflixo Legal &amp; Compliance</p>
-          <button
-            type="button"
-            onClick={onClose}
-            className="bg-[#803D63] hover:bg-[#6F3456] text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors cursor-pointer shadow-2xs"
-          >
-            Got it, Close
-          </button>
-        </div>
-      </div>
-    </div>
+      {/* Footer Close Action */}
+      <ModalFooter className="px-5 sm:px-6 py-3.5 justify-between">
+        <p className="text-[11px] text-[#6F6872] font-medium">Inflixo Legal &amp; Compliance</p>
+        <button
+          type="button"
+          onClick={onClose}
+          className="bg-[#803D63] hover:bg-[#6F3456] text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors cursor-pointer shadow-2xs"
+        >
+          Got it, Close
+        </button>
+      </ModalFooter>
+    </Modal>
   );
 }

@@ -40,6 +40,7 @@ import { SeriesPoster } from "@/components/shared/SeriesPoster";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
+import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import {
   getSeriesUsage,
   getEpisodeUsage,
@@ -184,33 +185,20 @@ function SeriesDrawer({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end animate-in fade-in duration-200">
-      <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity" onClick={onClose} />
-      <aside className="relative z-10 flex h-full w-full max-w-lg flex-col overflow-y-auto bg-white shadow-2xl animate-in slide-in-from-right duration-300">
-        {/* Drawer Header */}
-        <div className="flex items-center justify-between border-b border-[#ECE8EB] px-6 py-4">
-          <div>
-            <h2 className="font-display text-lg font-bold text-[#17131A]">
-              {isEditing ? "Edit Series" : "Create Series"}
-            </h2>
-            <p className="text-xs text-[#6F6872] font-medium mt-0.5">
-              {isEditing
-                ? "Update series details and cover poster."
-                : `Series ${seriesList.length + 1} of ${EARLY_ACCESS_LIMITS.maxSeries} allowed in Early Access`}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#FAF8FA] text-[#6F6872] hover:bg-[#F7EDF3] hover:text-[#803D63] transition-colors cursor-pointer"
-            aria-label="Close"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-
-        {/* Drawer Body Form */}
-        <form onSubmit={handleSubmit} className="flex-1 space-y-5 p-6 text-left">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="lg"
+      title={isEditing ? "Edit Series" : "Create Series"}
+      description={
+        isEditing
+          ? "Update series details and cover poster."
+          : `Series ${seriesList.length + 1} of ${EARLY_ACCESS_LIMITS.maxSeries} allowed in Early Access`
+      }
+      icon={<Film className="h-4 w-4" />}
+    >
+      <form id="series-form" onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+        <ModalBody className="p-5 sm:p-6 space-y-4 text-left">
           {/* 16:9 Landscape Poster */}
           <div>
             <label className="block text-xs font-bold text-[#17131A] mb-1.5">
@@ -230,7 +218,7 @@ function SeriesDrawer({
           </div>
 
           {/* Series Title */}
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <label className="block text-xs font-bold text-[#17131A]">
               Series title <span className="text-rose-500">*</span>
             </label>
@@ -240,12 +228,12 @@ function SeriesDrawer({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Kashmir Diaries or Tech Masterclass"
-              className="w-full rounded-xl border border-[#ECE8EB] bg-white px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:outline-none focus:border-[#803D63] focus:ring-1 focus:ring-[#803D63]/20"
+              className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
             />
           </div>
 
           {/* Description */}
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <label className="block text-xs font-bold text-[#17131A]">
               Short description
             </label>
@@ -254,13 +242,13 @@ function SeriesDrawer({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Tell your audience what this series is about..."
-              className="w-full rounded-xl border border-[#ECE8EB] bg-white p-3 text-xs sm:text-sm font-medium text-[#17131A] placeholder:text-[#6F6872]/50 focus:outline-none focus:border-[#803D63] focus:ring-1 focus:ring-[#803D63]/20 resize-y"
+              className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3 text-xs font-medium text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors resize-y"
             />
           </div>
 
           {/* Primary Platform */}
           {!isEditing && (
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <label className="block text-xs font-bold text-[#17131A]">
                 Primary content platform
               </label>
@@ -292,27 +280,27 @@ function SeriesDrawer({
             <GenreMultiSelect value={genre} onChange={setGenre} max={5} />
             <LanguageSelect value={language} onChange={setLanguage} />
           </div>
+        </ModalBody>
 
-          {/* Drawer Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#ECE8EB] mt-6">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-4 py-2.5 text-xs font-semibold text-[#6F6872] hover:text-[#17131A] transition-colors cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={submitting}
-              className="inline-flex items-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-6 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs disabled:opacity-60"
-            >
-              {submitting ? "Saving..." : isEditing ? "Save Changes" : "Create Series"}
-            </button>
-          </div>
-        </form>
-      </aside>
-    </div>
+        <ModalFooter className="px-5 sm:px-6 py-3.5">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            form="series-form"
+            disabled={submitting}
+            className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5 disabled:opacity-50"
+          >
+            <span>{submitting ? "Saving..." : isEditing ? "Save Changes" : "Create Series"}</span>
+          </button>
+        </ModalFooter>
+      </form>
+    </Modal>
   );
 }
 
@@ -434,41 +422,26 @@ function EpisodeDrawer({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end animate-in fade-in duration-200">
-      <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity" onClick={onClose} />
-      <aside className="relative z-10 flex h-full w-full max-w-md flex-col overflow-y-auto bg-white shadow-2xl animate-in slide-in-from-right duration-300">
-        {/* Drawer Header */}
-        <div className="flex items-center justify-between border-b border-[#ECE8EB] px-6 py-4">
-          <div>
-            <h2 className="font-display text-lg font-bold text-[#17131A]">
-              {isEditing ? `Edit ${formatEpisodeNumber(epNumber)}` : "Add Episode"}
-            </h2>
-            <p className="text-xs text-[#6F6872] font-medium mt-0.5 truncate max-w-[280px]">
-              {isEditing ? `Updating episode in ${series.title}` : `Adding to ${series.title}`}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#FAF8FA] text-[#6F6872] hover:bg-[#F7EDF3] hover:text-[#803D63] transition-colors cursor-pointer"
-            aria-label="Close"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-
-        {/* Drawer Body Form */}
-        <form onSubmit={handleSubmit} className="flex-1 space-y-5 p-6 text-left">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="md"
+      title={isEditing ? `Edit ${formatEpisodeNumber(epNumber)}` : "Add Episode"}
+      description={isEditing ? `Updating episode in ${series.title}` : `Adding to ${series.title}`}
+      icon={<Play className="h-4 w-4" />}
+    >
+      <form id="episode-form" onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+        <ModalBody className="p-5 space-y-4 text-left">
           {/* Episode Number Display */}
-          <div className="flex items-center justify-between rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-4 py-3">
+          <div className="flex items-center justify-between rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-4 py-2.5">
             <span className="text-xs font-semibold text-[#6F6872]">Episode Order</span>
-            <span className="text-xs font-bold text-[#803D63] bg-[#F7EDF3] border border-[#ECE8EB] px-2.5 py-1 rounded-lg">
+            <span className="text-xs font-bold text-[#803D63] bg-[#F7EDF3] border border-[#ECE8EB] px-2.5 py-0.5 rounded-md">
               {formatEpisodeNumber(epNumber)}
             </span>
           </div>
 
           {/* Episode Title */}
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <label className="block text-xs font-bold text-[#17131A]">
               Episode title <span className="text-rose-500">*</span>
             </label>
@@ -478,7 +451,7 @@ function EpisodeDrawer({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. The journey begins"
-              className="w-full rounded-xl border border-[#ECE8EB] bg-white px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:outline-none focus:border-[#803D63] focus:ring-1 focus:ring-[#803D63]/20"
+              className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
             />
             <p className="text-[11px] text-[#6F6872]">
               A concise title for this episode or reel.
@@ -486,7 +459,7 @@ function EpisodeDrawer({
           </div>
 
           {/* Video URL */}
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <label className="block text-xs font-bold text-[#17131A]">
               Video or content link <span className="text-rose-500">*</span>
             </label>
@@ -497,40 +470,40 @@ function EpisodeDrawer({
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="Paste a YouTube, Instagram, or Facebook link"
-                className="w-full rounded-xl border border-[#ECE8EB] bg-white pl-3.5 pr-9 py-2.5 text-xs sm:text-sm font-medium text-[#17131A] placeholder:text-[#6F6872]/50 focus:outline-none focus:border-[#803D63] focus:ring-1 focus:ring-[#803D63]/20"
+                className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] pl-3.5 pr-9 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2">
                 {platformInfo.icon}
               </div>
             </div>
             {url.trim() && (
-              <p className="text-[11px] font-semibold text-[#16794A] flex items-center gap-1">
+              <p className="text-[11px] font-semibold text-emerald-700 flex items-center gap-1">
                 <Check className="h-3 w-3" />
                 <span>Detected: {platformInfo.name} ({platformInfo.host})</span>
               </p>
             )}
           </div>
+        </ModalBody>
 
-          {/* Drawer Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#ECE8EB] mt-6">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-4 py-2.5 text-xs font-semibold text-[#6F6872] hover:text-[#17131A] transition-colors cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={submitting}
-              className="inline-flex items-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-6 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs disabled:opacity-60"
-            >
-              {submitting ? "Saving..." : isEditing ? "Save Changes" : "Add Episode"}
-            </button>
-          </div>
-        </form>
-      </aside>
-    </div>
+        <ModalFooter className="px-5 py-3.5">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            form="episode-form"
+            disabled={submitting}
+            className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5 disabled:opacity-50"
+          >
+            <span>{submitting ? "Saving..." : isEditing ? "Save Changes" : "Add Episode"}</span>
+          </button>
+        </ModalFooter>
+      </form>
+    </Modal>
   );
 }
 

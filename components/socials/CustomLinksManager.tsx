@@ -20,6 +20,7 @@ import { useToast } from "@/contexts/ToastContext";
 import { useCreator } from "@/contexts/CreatorContext";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
+import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 
 interface CustomLinksManagerProps {
   onChange?: (links: CustomLink[]) => void;
@@ -346,43 +347,25 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
         cancelText="Cancel"
       />
 
-      {/* APPROVED POPUP MODAL FOR ADDING / EDITING CUSTOM LINK (100% UNTOUCHED) */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white border border-gray-200 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 text-left animate-in zoom-in-95">
-            
-            {/* Header & Close Button */}
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-              <div className="flex items-center gap-2.5">
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#803D63]/10 text-[#803D63]">
-                  <LinkIcon className="h-5 w-5" />
-                </span>
-                <div>
-                  <h3 className="font-display text-base font-extrabold text-slate-900">
-                    {editingLink ? "Edit Custom Link" : "Add Custom Link"}
-                  </h3>
-                  <p className="text-[11px] text-slate-500 font-medium">
-                    Add link title and destination URL to display on your public profile
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
+      {/* MODAL FOR ADDING / EDITING CUSTOM LINK */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        size="md"
+        title={editingLink ? "Edit Custom Link" : "Add Custom Link"}
+        description="Add link title and destination URL to display on your public profile"
+        icon={<LinkIcon className="h-4 w-4" />}
+      >
+        <div className="flex flex-col flex-1 min-h-0">
+          <ModalBody className="p-5 space-y-4 text-left">
             {/* Link Type Selector */}
-            <div className="space-y-1.5">
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                Link Type
+            <div className="space-y-1">
+              <label className="block text-xs font-bold text-[#17131A]">
+                Link type template
               </label>
               <div className="relative">
                 <select
-                  className="w-full appearance-none rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 pr-9 text-xs font-semibold text-slate-900 focus:border-[#803D63] focus:outline-none focus:ring-2 focus:ring-[#803D63]/20 cursor-pointer"
+                  className="w-full appearance-none rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 pr-9 text-xs font-semibold text-[#17131A] focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors cursor-pointer"
                   defaultValue=""
                   onChange={(e) => {
                     const val = e.target.value;
@@ -418,35 +401,34 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     <option value="🎵 Follow on Spotify|||https://open.spotify.com/artist/">🎵 Follow on Spotify</option>
                     <option value="🎬 Follow on TikTok|||https://tiktok.com/@">🎬 Follow on TikTok</option>
                     <option value="✈️ Join Telegram Channel|||https://t.me/">✈️ Join Telegram Channel</option>
-                    <option value="👻 Add on Snapchat|||https://snapchat.com/add/">👻 Add on Snapchat</option>
                   </optgroup>
 
                   <optgroup label="✨ Other">
                     <option value="✨ Custom Link|||https://">✨ Custom / Other</option>
                   </optgroup>
                 </select>
-                <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6F6872]" />
               </div>
             </div>
 
             {/* Form Inputs */}
-            <form onSubmit={handleSaveModalLink} className="space-y-4 pt-1">
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-slate-800">
-                  Link Title <span className="text-rose-500">*</span>
+            <form id="custom-link-form" onSubmit={handleSaveModalLink} className="space-y-4 pt-1">
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-[#17131A]">
+                  Link title <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
                   required
                   value={formTitle}
                   onChange={(e) => setFormTitle(e.target.value)}
-                  placeholder="e.g. 🎬 Watch Latest Episode"
-                  className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#803D63] focus:outline-none focus:ring-2 focus:ring-[#803D63]/20"
+                  placeholder="e.g. Watch Latest Episode"
+                  className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-slate-800">
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-[#17131A]">
                   Destination URL <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
@@ -456,43 +438,44 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     value={formUrl}
                     onChange={(e) => setFormUrl(e.target.value)}
                     placeholder="e.g. https://cal.com/yourname"
-                    className="w-full rounded-xl border border-slate-200 bg-white pl-3.5 pr-9 py-2.5 text-xs font-mono font-semibold text-slate-900 placeholder-slate-400 focus:border-[#803D63] focus:outline-none focus:ring-2 focus:ring-[#803D63]/20"
+                    className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] pl-3.5 pr-9 py-2.5 text-xs font-mono font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
                   />
                   {formUrl && (formUrl.startsWith("http") || formUrl.startsWith("https")) && (
                     <a
                       href={formUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#803D63]"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6F6872] hover:text-[#803D63]"
                     >
                       <ExternalLink className="h-4 w-4" />
                     </a>
                   )}
                 </div>
               </div>
-
-              {/* Action Buttons */}
-              <div className="pt-4 border-t border-gray-100 flex items-center justify-end gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-all cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSaving}
-                  className="bg-[#803D63] hover:bg-[#6D3254] text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-all shadow-2xs cursor-pointer flex items-center gap-1.5"
-                >
-                  <Check className="h-4 w-4" />
-                  <span>{editingLink ? "Save Changes" : "Save Link"}</span>
-                </button>
-              </div>
             </form>
-          </div>
+          </ModalBody>
+
+          {/* Action Buttons */}
+          <ModalFooter className="px-5 py-3.5">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form="custom-link-form"
+              disabled={isSaving}
+              className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5 disabled:opacity-50"
+            >
+              <Check className="h-3.5 w-3.5" />
+              <span>{editingLink ? "Save Changes" : "Save Link"}</span>
+            </button>
+          </ModalFooter>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }

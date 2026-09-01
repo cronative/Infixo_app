@@ -28,6 +28,7 @@ import { CreatorReview, ReviewStatus } from "@/types";
 import { reviewsRepository } from "@/repositories/localRepository";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
+import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 
 function formatDate(dateStr: string): string {
   try {
@@ -737,45 +738,20 @@ export default function DashboardReviewsPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* POPUP MODAL: Request Review Form (Attached via Root Portal to document.body) */}
+      {/* POPUP MODAL: Request Review Form */}
       {/* ========================================================================= */}
-      {mounted && isModalOpen && createPortal(
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="request-review-title"
-          aria-describedby="request-review-description"
-          className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-150"
-        >
-          <div className="relative w-full max-w-xl max-h-[calc(100dvh-40px)] bg-white rounded-2xl border border-[#ECE8EB] shadow-2xl flex flex-col overflow-hidden text-left animate-in zoom-in-95 duration-150">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-[#ECE8EB] bg-white px-5 sm:px-6 py-4 shrink-0">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F7EDF3] text-[#803D63] shrink-0">
-                  <Mail className="h-4 w-4" />
-                </div>
-                <div className="min-w-0">
-                  <h3 id="request-review-title" className="font-display text-base font-bold text-[#17131A] truncate">
-                    Request a Client Review
-                  </h3>
-                  <p id="request-review-description" className="text-xs text-[#6F6872] font-medium truncate">
-                    Send a secure review invitation after completing a collaboration.
-                  </p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                aria-label="Close review request"
-                className="text-[#6F6872] hover:text-[#17131A] p-2 rounded-xl hover:bg-[#FAF8FA] transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center shrink-0"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            {/* Modal Form Content (Internal Scrolling) */}
-            <form id="review-request-form" onSubmit={handleSendEmailRequest} className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 sm:px-6 py-5 space-y-4">
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        size="md"
+        title="Request a Client Review"
+        description="Send a secure review invitation after completing a collaboration."
+        icon={<Mail className="h-4 w-4" />}
+      >
+        <div className="flex flex-col flex-1 min-h-0">
+          {/* Modal Form Content (Internal Scrolling) */}
+          <ModalBody className="p-5 space-y-4 text-left">
+            <form id="review-request-form" onSubmit={handleSendEmailRequest} className="space-y-4">
               <div className="space-y-1">
                 <label htmlFor="client-name" className="block text-xs font-bold text-[#17131A]">
                   Client or brand name <span className="text-rose-500">*</span>
@@ -850,30 +826,29 @@ export default function DashboardReviewsPage() {
                 />
               </div>
             </form>
+          </ModalBody>
 
-            {/* Modal Actions Footer */}
-            <div className="flex items-center justify-end gap-2.5 border-t border-[#ECE8EB] bg-white px-5 sm:px-6 py-3.5 shrink-0">
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                form="review-request-form"
-                disabled={isSubmitting}
-                className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5 disabled:opacity-50"
-              >
-                <Send className="h-3.5 w-3.5" />
-                <span>{isSubmitting ? "Sending..." : "Send Review Request"}</span>
-              </button>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
+          {/* Modal Actions Footer */}
+          <ModalFooter className="px-5 sm:px-6 py-3.5">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form="review-request-form"
+              disabled={isSubmitting}
+              className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5 disabled:opacity-50"
+            >
+              <Send className="h-3.5 w-3.5" />
+              <span>{isSubmitting ? "Sending..." : "Send Review Request"}</span>
+            </button>
+          </ModalFooter>
+        </div>
+      </Modal>
 
       {/* Delete Review Confirmation Modal */}
       <ConfirmModal

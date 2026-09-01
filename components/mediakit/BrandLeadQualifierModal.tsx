@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { MessageCircle, X, Send, Sparkles, ShieldCheck, DollarSign, Building2, Package } from "lucide-react";
+import { MessageCircle, Send, Building2, DollarSign, Package, ShieldCheck } from "lucide-react";
 import { useToast } from "@/contexts/ToastContext";
+import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 
 interface BrandLeadQualifierModalProps {
   isOpen: boolean;
@@ -30,8 +31,6 @@ export function BrandLeadQualifierModal({
   const [budget, setBudget] = useState(packagePrice !== "Custom" ? packagePrice : "");
   const [selectedDeliverable, setSelectedDeliverable] = useState(packageName);
 
-  if (!isOpen) return null;
-
   function cleanPhone(phone: string) {
     const digits = phone.replace(/\D/g, "");
     if (digits.length === 10) return `91${digits}`;
@@ -57,11 +56,10 @@ export function BrandLeadQualifierModal({
     }
 
     const mediaKitUrl = `https://inflixo.com/${creatorUsername || "creator"}`;
-    const briefText = `Hi ${creatorName || "Creator"}, I am from ${brandName.trim()}. We want to book your '${selectedDeliverable}' deliverable (Campaign Budget: ${budget.trim()}). Found your Inflixo Media Kit: ${mediaKitUrl}`;
+    const briefText = `Hi ${creatorName || "Creator"}, I am from ${brandName.trim()}. We want to book your '${selectedDeliverable}' deliverable (Campaign Budget: ${budget.trim()}). Found your Inflixo Profile: ${mediaKitUrl}`;
 
     const waUrl = `https://wa.me/${cleanNum}?text=${encodeURIComponent(briefText)}`;
     
-    // Launch WhatsApp web / app link in new tab
     if (typeof window !== "undefined") {
       window.open(waUrl, "_blank", "noopener,noreferrer");
     }
@@ -71,66 +69,44 @@ export function BrandLeadQualifierModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm animate-in fade-in">
-      <div className="bg-white border border-gray-200 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 text-left animate-in zoom-in-95">
-        
-        {/* Header & Close */}
-        <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600">
-              <MessageCircle className="h-5 w-5" />
-            </span>
-            <div>
-              <h3 className="font-display text-base font-extrabold text-slate-900 flex items-center gap-1.5">
-                <span>Book via WhatsApp</span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider">
-                  <ShieldCheck className="h-3 w-3" /> 0% Commission
-                </span>
-              </h3>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">
-                Send a pre-verified brand campaign brief to {creatorName || "Creator"}
-              </p>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="md"
+      title="Book via WhatsApp"
+      description={`Send a direct brand collaboration brief to ${creatorName || "Creator"}`}
+      icon={<MessageCircle className="h-4 w-4 text-emerald-600" />}
+    >
+      <form id="brand-lead-form" onSubmit={handleSendWhatsApp} className="flex flex-col flex-1 min-h-0">
+        <ModalBody className="p-5 space-y-4 text-left">
+          {/* Deliverable Summary Badge */}
+          <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3.5 flex items-center gap-3">
+            <Package className="h-4 w-4 text-[#803D63] shrink-0" />
+            <div className="min-w-0 text-xs">
+              <p className="font-bold text-[#17131A] truncate">{packageName}</p>
+              {deliverableText && <p className="text-[#6F6872] font-medium truncate mt-0.5">{deliverableText}</p>}
             </div>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
 
-        {/* Deliverable Summary Badge */}
-        <div className="rounded-2xl border border-purple-100 bg-purple-50/50 p-3.5 flex items-center gap-3">
-          <Package className="h-5 w-5 text-[#803D63] shrink-0" />
-          <div className="min-w-0 text-xs">
-            <p className="font-extrabold text-slate-900 truncate">{packageName}</p>
-            {deliverableText && <p className="text-slate-500 font-medium truncate mt-0.5">{deliverableText}</p>}
-          </div>
-        </div>
-
-        {/* Lead Qualifier Form Inputs */}
-        <form onSubmit={handleSendWhatsApp} className="space-y-4">
-          <div className="space-y-1.5">
-            <label className="block text-xs font-bold text-slate-800 flex items-center gap-1.5">
+          <div className="space-y-1">
+            <label className="block text-xs font-bold text-[#17131A] flex items-center gap-1.5">
               <Building2 className="h-3.5 w-3.5 text-[#803D63]" />
-              <span>Your Brand / Agency Name</span> <span className="text-rose-500">*</span>
+              <span>Brand or Agency name</span> <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
               required
               value={brandName}
               onChange={(e) => setBrandName(e.target.value)}
-              placeholder="e.g. Nike / Puma / Local Marketing Agency"
-              className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#803D63] focus:outline-none focus:ring-2 focus:ring-[#803D63]/20"
+              placeholder="e.g. Puma India / Nike"
+              className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
             />
           </div>
 
-          <div className="space-y-1.5">
-            <label className="block text-xs font-bold text-slate-800 flex items-center gap-1.5">
+          <div className="space-y-1">
+            <label className="block text-xs font-bold text-[#17131A] flex items-center gap-1.5">
               <DollarSign className="h-3.5 w-3.5 text-emerald-600" />
-              <span>Campaign Budget</span> <span className="text-rose-500">*</span>
+              <span>Campaign budget</span> <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
@@ -138,41 +114,41 @@ export function BrandLeadQualifierModal({
               value={budget}
               onChange={(e) => setBudget(e.target.value)}
               placeholder="e.g. ₹25,000 / $500 USD"
-              className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#803D63] focus:outline-none focus:ring-2 focus:ring-[#803D63]/20"
+              className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
             />
           </div>
 
-          <div className="space-y-1.5">
-            <label className="block text-xs font-bold text-slate-800">
-              Selected Package Title
+          <div className="space-y-1">
+            <label className="block text-xs font-bold text-[#17131A]">
+              Selected package
             </label>
             <input
               type="text"
               value={selectedDeliverable}
               onChange={(e) => setSelectedDeliverable(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs font-semibold text-slate-700"
+              className="w-full rounded-xl border border-[#ECE8EB] bg-white px-3.5 py-2.5 text-xs font-semibold text-[#17131A]"
             />
           </div>
+        </ModalBody>
 
-          {/* Direct Submit Action */}
-          <div className="pt-3 border-t border-gray-100 flex items-center justify-end gap-2.5">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-all cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-all shadow-2xs cursor-pointer flex items-center gap-2"
-            >
-              <Send className="h-3.5 w-3.5" />
-              <span>Open WhatsApp with Brief →</span>
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <ModalFooter className="px-5 py-3.5">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            form="brand-lead-form"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5"
+          >
+            <Send className="h-3.5 w-3.5" />
+            <span>Open WhatsApp with Brief →</span>
+          </button>
+        </ModalFooter>
+      </form>
+    </Modal>
   );
 }

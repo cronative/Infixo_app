@@ -55,6 +55,7 @@ import { copyToClipboard } from "@/lib/copyToClipboard";
 import { canCreateGig } from "@/services/subscriptionLimits";
 import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
+import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 
 // 10 Tailored Deliverable Suggestion Chips per Platform Type
 const DELIVERABLE_SUGGESTIONS: Record<string, string[]> = {
@@ -1063,292 +1064,250 @@ export default function DashboardMediaKitPage() {
          ========================================================================== */}
       
       {/* 1. CREATE / EDIT GIG MODAL */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white border border-gray-200 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 text-left">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-              <h3 className="font-display text-base font-bold text-slate-900">
-                {editingPkgId ? "Edit Collaboration Gig" : "Create New Rate Card Gig"}
-              </h3>
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
-              >
-                <X className="h-4 w-4" />
-              </button>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        size="lg"
+        title={editingPkgId ? "Edit Service" : "Create Service"}
+        description="Set up your collaboration package, deliverables, and rates."
+        icon={<Briefcase className="h-4 w-4" />}
+      >
+        <form id="gig-form" onSubmit={handleSavePackage} className="flex flex-col flex-1 min-h-0">
+          <ModalBody className="p-5 sm:p-6 space-y-4 text-left">
+            <div className="space-y-1">
+              <label className="block text-xs font-bold text-[#17131A]">Service title <span className="text-rose-500">*</span></label>
+              <input
+                type="text"
+                value={formTitle}
+                onChange={(e) => setFormTitle(e.target.value)}
+                placeholder="e.g., 1x Instagram Reel or 3x Reels Pack"
+                className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                required
+              />
             </div>
 
-            <form onSubmit={handleSavePackage} className="space-y-3.5">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Gig Title</label>
-                <input
-                  type="text"
-                  value={formTitle}
-                  onChange={(e) => setFormTitle(e.target.value)}
-                  placeholder="e.g., 1x Instagram Reel or 3x Reels Pack"
-                  className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
-                  required
-                />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-[#17131A]">Platform type</label>
+                <select
+                  value={formPlatform}
+                  onChange={(e) => setFormPlatform(e.target.value)}
+                  className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                >
+                  <option value="Instagram Reel">Instagram Reel</option>
+                  <option value="Instagram Bundle">Instagram Bundle (Reels + Stories)</option>
+                  <option value="Instagram Story">Instagram Story Sponsorship</option>
+                  <option value="YouTube Dedicated Video">YouTube Dedicated Video</option>
+                  <option value="YouTube Video Integration">YouTube Integration (60-90s)</option>
+                  <option value="YouTube Shorts">YouTube Shorts</option>
+                  <option value="Multi-Platform Campaign">Multi-Platform Campaign</option>
+                  <option value="Series Title Sponsorship">Series Title Sponsorship ("Presented by")</option>
+                  <option value="Podcast Episode Integration">Podcast Episode Integration</option>
+                  <option value="Monthly Creator Retainer">Monthly Creator Retainer</option>
+                </select>
               </div>
 
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-[#17131A]">Turnaround time (Days)</label>
+                <input
+                  type="number"
+                  value={formTurnaround}
+                  onChange={(e) => setFormTurnaround(Number(e.target.value))}
+                  min={1}
+                  max={30}
+                  className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                />
+              </div>
+            </div>
+
+            {/* Min - Max Pricing Range Inputs */}
+            <div className="space-y-1">
+              <label className="block text-xs font-bold text-[#17131A]">
+                Pricing range (in INR)
+              </label>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Platform Type</label>
-                  <select
-                    value={formPlatform}
-                    onChange={(e) => setFormPlatform(e.target.value)}
-                    className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
-                  >
-                    <option value="Instagram Reel">Instagram Reel</option>
-                    <option value="Instagram Bundle">Instagram Bundle (Reels + Stories)</option>
-                    <option value="Instagram Story">Instagram Story Sponsorship</option>
-                    <option value="YouTube Dedicated Video">YouTube Dedicated Video</option>
-                    <option value="YouTube Video Integration">YouTube Integration (60-90s)</option>
-                    <option value="YouTube Shorts">YouTube Shorts</option>
-                    <option value="Multi-Platform Campaign">Multi-Platform Campaign</option>
-                    <option value="Series Title Sponsorship">Series Title Sponsorship ("Presented by")</option>
-                    <option value="Podcast Episode Integration">Podcast Episode Integration</option>
-                    <option value="Monthly Creator Retainer">Monthly Creator Retainer</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Turnaround Time (TAT in Days)</label>
-                  <input
-                    type="number"
-                    value={formTurnaround}
-                    onChange={(e) => setFormTurnaround(Number(e.target.value))}
-                    min={1}
-                    max={30}
-                    className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
-                  />
-                </div>
-              </div>
-
-              {/* Min - Max Pricing Range Inputs (Dedicated Row) */}
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Pricing Range (in INR)
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-500 mb-0.5">Min Price (₹)</label>
-                    <input
-                      type="text"
-                      value={formMinPrice}
-                      onChange={(e) => setFormMinPrice(e.target.value)}
-                      placeholder="₹2,000"
-                      className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-semibold text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-500 mb-0.5">Max Price (Optional)</label>
-                    <input
-                      type="text"
-                      value={formMaxPrice}
-                      onChange={(e) => setFormMaxPrice(e.target.value)}
-                      placeholder="₹5,000"
-                      className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-semibold text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
-                    />
-                  </div>
-                </div>
-                <p className="text-[10px] text-slate-400 pt-0.5">
-                  e.g. Min ₹2,000 – Max ₹5,000 (leave Max empty for fixed pricing)
-                </p>
-              </div>
-
-              {/* Dynamic Deliverables List & 10 Suggestions */}
-              <div className="space-y-2">
-                <label className="block text-xs font-bold text-slate-700">Included Deliverables List</label>
-                <div className="flex items-center gap-2 mb-1">
+                  <label className="block text-[10px] font-bold text-[#6F6872] mb-0.5">Min Price (₹) <span className="text-rose-500">*</span></label>
                   <input
                     type="text"
-                    value={formDeliverableInput}
-                    onChange={(e) => setFormDeliverableInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleAddDeliverable();
-                      }
-                    }}
-                    placeholder="Add deliverable (e.g. Brand Collaborator Tag)"
-                    className="flex-1 rounded-xl border border-gray-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
+                    value={formMinPrice}
+                    onChange={(e) => setFormMinPrice(e.target.value)}
+                    placeholder="₹2,000"
+                    className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                    required
                   />
-                  <button
-                    type="button"
-                    onClick={handleAddDeliverable}
-                    className="bg-[#803D63] text-white text-xs font-semibold px-3 py-1.5 rounded-xl hover:bg-[#6D3254]"
-                  >
-                    + Add
-                  </button>
                 </div>
-
-                {/* 10 Tailored Deliverable Suggestion Chips */}
-                <div className="space-y-1 bg-slate-50 border border-gray-200 rounded-xl p-2.5">
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center justify-between">
-                    <span>💡 10 Suggested Deliverables for {formPlatform}:</span>
-                    <span className="text-[9px] text-[#803D63] font-extrabold">Click chip to add +</span>
-                  </p>
-                  <div className="flex flex-wrap items-center gap-1.5 max-h-28 overflow-y-auto pt-1">
-                    {(DELIVERABLE_SUGGESTIONS[formPlatform] || DELIVERABLE_SUGGESTIONS["Instagram Reel"]).map((item, idx) => {
-                      const isAdded = formDeliverables.includes(item);
-                      return (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => {
-                            if (!isAdded) {
-                              setFormDeliverables([...formDeliverables, item]);
-                            }
-                          }}
-                          disabled={isAdded}
-                          className={`text-[11px] font-semibold px-2 py-0.5 rounded-lg border transition-all cursor-pointer ${
-                            isAdded
-                              ? "bg-emerald-50 text-emerald-700 border-emerald-200 cursor-default opacity-70"
-                              : "bg-white hover:bg-[#F6EBF1] text-slate-700 hover:text-[#803D63] border-gray-200 hover:border-[#E8DCE4]"
-                          }`}
-                        >
-                          {isAdded ? `✓ ${item}` : `+ ${item}`}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Included Items Chips */}
-                {formDeliverables.length > 0 && (
-                  <div className="space-y-1.5 max-h-32 overflow-y-auto pt-1">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Added Deliverables ({formDeliverables.length}):</p>
-                    {formDeliverables.map((item, idx) => (
-                      <div key={idx} className="flex items-center justify-between bg-[#FAF8FA] border border-[#E8DCE4] rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-800">
-                        <span>• {item}</span>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveDeliverable(idx)}
-                          className="text-rose-500 hover:text-rose-700 p-0.5 cursor-pointer"
-                        >
-                          <X className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Package Tier Name / Highlight Badge Input with Selectable Suggestions */}
-              <div className="space-y-2">
-                <label className="block text-xs font-bold text-slate-700">
-                  Package Name / Highlight Badge Tag (Optional)
-                </label>
-
-                <input
-                  type="text"
-                  value={formPackageName}
-                  onChange={(e) => setFormPackageName(e.target.value)}
-                  placeholder="e.g. 🥈 Silver Package, ⭐ MOST POPULAR, 🔥 BEST VALUE..."
-                  className="w-full rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-[#803D63] focus:outline-hidden"
-                />
-
-                {/* Selectable Suggestions below input */}
-                <div className="space-y-1 pt-0.5">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Selectable Suggestions:</p>
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => setFormPackageName("🥉 Bronze Package")}
-                      className="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 text-xs font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer"
-                    >
-                      🥉 Bronze Package
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setFormPackageName("🥈 Silver Package")}
-                      className="bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300 text-xs font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer"
-                    >
-                      🥈 Silver Package
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setFormPackageName("🥇 Gold Package")}
-                      className="bg-yellow-50 hover:bg-yellow-100 text-yellow-900 border border-yellow-300 text-xs font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer"
-                    >
-                      🥇 Gold Package
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setFormPackageName("⭐ MOST POPULAR")}
-                      className="bg-purple-50 hover:bg-purple-100 text-[#803D63] border border-purple-200 text-xs font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer"
-                    >
-                      ⭐ MOST POPULAR
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setFormPackageName("🔥 BEST VALUE (25% OFF)")}
-                      className="bg-orange-50 hover:bg-orange-100 text-orange-900 border border-orange-200 text-xs font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer"
-                    >
-                      🔥 BEST VALUE
-                    </button>
-                  </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-[#6F6872] mb-0.5">Max Price (Optional)</label>
+                  <input
+                    type="text"
+                    value={formMaxPrice}
+                    onChange={(e) => setFormMaxPrice(e.target.value)}
+                    placeholder="₹5,000"
+                    className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                  />
                 </div>
               </div>
-
-              <div className="pt-3 border-t border-gray-100 flex items-center justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-[#803D63] hover:bg-[#6D3254] text-white text-xs font-semibold px-4 py-2 rounded-xl transition-all shadow-2xs cursor-pointer"
-                >
-                  {editingPkgId ? "Save Changes" : "Create Gig"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* 2. PUBLIC MEDIA KIT PREVIEW MODAL */}
-      {isPreviewModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white border border-gray-200 rounded-3xl max-w-3xl w-full p-6 shadow-2xl space-y-5 text-left max-h-[90vh] overflow-y-auto">
-            
-            {/* Modal Header & Close Button */}
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3 gap-3">
-              <div>
-                <h3 className="font-display text-base font-extrabold text-slate-900">
-                  Media Kit &amp; Rate Card — {profile.displayName || "Creator"}
-                </h3>
-                <p className="text-[11px] text-slate-500 font-medium">Verified creator portfolio, aggregated fanbase analytics &amp; direct brand collab rates</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleExportPDF}
-                  className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs cursor-pointer"
-                  title="Print / Save as PDF"
-                >
-                  <Download className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">Export PDF</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsPreviewModalOpen(false)}
-                  className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
+              <p className="text-[10px] text-[#6F6872]">
+                e.g. Min ₹2,000 – Max ₹5,000 (leave Max empty for fixed pricing)
+              </p>
             </div>
 
-            {/* 2-Tab Navigation Bar */}
-            <div className="flex items-center gap-2 bg-slate-100/80 p-1.5 rounded-2xl border border-gray-200">
+            {/* Dynamic Deliverables List & 10 Suggestions */}
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-[#17131A]">Included deliverables</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={formDeliverableInput}
+                  onChange={(e) => setFormDeliverableInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddDeliverable();
+                    }
+                  }}
+                  placeholder="Add deliverable (e.g. Brand Collaborator Tag)"
+                  className="flex-1 rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddDeliverable}
+                  className="bg-[#803D63] text-white text-xs font-semibold px-3.5 py-2 rounded-xl hover:bg-[#6F3456] transition-colors cursor-pointer shrink-0"
+                >
+                  + Add
+                </button>
+              </div>
+
+              {/* 10 Tailored Deliverable Suggestion Chips */}
+              <div className="space-y-1 bg-[#FAF8FA] border border-[#ECE8EB] rounded-xl p-2.5">
+                <p className="text-[10px] font-bold text-[#6F6872] uppercase tracking-wider flex items-center justify-between">
+                  <span>💡 Suggested Deliverables for {formPlatform}:</span>
+                  <span className="text-[9px] text-[#803D63] font-bold">Click chip to add +</span>
+                </p>
+                <div className="flex flex-wrap items-center gap-1.5 max-h-28 overflow-y-auto pt-1">
+                  {(DELIVERABLE_SUGGESTIONS[formPlatform] || DELIVERABLE_SUGGESTIONS["Instagram Reel"]).map((item, idx) => {
+                    const isAdded = formDeliverables.includes(item);
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => {
+                          if (!isAdded) {
+                            setFormDeliverables([...formDeliverables, item]);
+                          }
+                        }}
+                        disabled={isAdded}
+                        className={`text-[11px] font-semibold px-2 py-0.5 rounded-lg border transition-colors cursor-pointer ${
+                          isAdded
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-200 cursor-default opacity-70"
+                            : "bg-white hover:bg-[#F7EDF3] text-[#17131A] hover:text-[#803D63] border-[#ECE8EB]"
+                        }`}
+                      >
+                        {isAdded ? `✓ ${item}` : `+ ${item}`}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Included Items Chips */}
+              {formDeliverables.length > 0 && (
+                <div className="space-y-1.5 max-h-32 overflow-y-auto pt-1">
+                  <p className="text-[10px] font-bold text-[#6F6872] uppercase tracking-wider">Added Deliverables ({formDeliverables.length}):</p>
+                  {formDeliverables.map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between bg-white border border-[#ECE8EB] rounded-lg px-2.5 py-1 text-xs font-semibold text-[#17131A]">
+                      <span>• {item}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveDeliverable(idx)}
+                        className="text-rose-500 hover:text-rose-700 p-0.5 cursor-pointer"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Package Tier Name / Highlight Badge */}
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-[#17131A]">
+                Package name or badge tag <span className="text-[#6F6872] font-normal">(Optional)</span>
+              </label>
+
+              <input
+                type="text"
+                value={formPackageName}
+                onChange={(e) => setFormPackageName(e.target.value)}
+                placeholder="e.g. 🥈 Silver Package, ⭐ MOST POPULAR, 🔥 BEST VALUE..."
+                className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+              />
+
+              <div className="space-y-1 pt-0.5">
+                <p className="text-[10px] font-bold text-[#6F6872] uppercase tracking-wider">Selectable Suggestions:</p>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {["🥉 Bronze Package", "🥈 Silver Package", "🥇 Gold Package", "⭐ MOST POPULAR", "🔥 BEST VALUE (25% OFF)"].map((tag) => (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => setFormPackageName(tag)}
+                      className="bg-[#FAF8FA] hover:bg-[#F7EDF3] text-[#17131A] hover:text-[#803D63] border border-[#ECE8EB] text-xs font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </ModalBody>
+
+          <ModalFooter className="px-5 sm:px-6 py-3.5">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form="gig-form"
+              className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5"
+            >
+              <span>{editingPkgId ? "Save Changes" : "Create Service"}</span>
+            </button>
+          </ModalFooter>
+        </form>
+      </Modal>
+
+      {/* 2. PUBLIC MEDIA KIT PREVIEW MODAL */}
+      <Modal
+        isOpen={isPreviewModalOpen}
+        onClose={() => setIsPreviewModalOpen(false)}
+        size="xl"
+        title={`Media Kit & Rate Card — ${profile.displayName || "Creator"}`}
+        description="Verified creator portfolio, aggregated fanbase analytics & direct brand collab rates"
+        icon={<Briefcase className="h-4 w-4" />}
+      >
+        <ModalBody className="p-5 sm:p-6 space-y-5 text-left">
+          {/* Quick Actions Row */}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex-1" />
+            <button
+              type="button"
+              onClick={handleExportPDF}
+              className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-colors inline-flex items-center gap-1.5 shadow-2xs cursor-pointer"
+              title="Print / Save as PDF"
+            >
+              <Download className="h-3.5 w-3.5" />
+              <span>Export PDF</span>
+            </button>
+          </div>
+
+          {/* 2-Tab Navigation Bar */}
+          <div className="flex items-center gap-2 bg-[#FAF8FA] p-1.5 rounded-2xl border border-[#ECE8EB]">
               <button
                 type="button"
                 onClick={() => setActivePreviewTab("mediakit")}
@@ -1777,9 +1736,8 @@ export default function DashboardMediaKitPage() {
                 )}
               </div>
             )}
-          </div>
-        </div>
-      )}
+        </ModalBody>
+      </Modal>
 
       {/* 3. LIMIT REACHED MODAL */}
       <LimitReachedModal
