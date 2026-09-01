@@ -23,10 +23,39 @@ import {
   Link2,
   AtSign,
   Info,
+  Search,
+  ChevronDown,
+  Briefcase,
+  Play,
+  User,
+  ShoppingBag,
+  Sparkles,
+  BookOpen,
+  Mail,
+  Calendar,
+  Heart,
+  Video,
+  Radio,
+  FileText,
+  Bookmark,
+  Coffee,
+  Film,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
-import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
+import {
+  InstagramIcon,
+  YoutubeIcon,
+  FacebookIcon,
+  XTwitterIcon,
+  ThreadsIcon,
+  LinkedinIcon,
+  SnapchatIcon,
+  PinterestIcon,
+  TwitchIcon,
+  SpotifyIcon,
+  WhatsappIcon,
+} from "@/components/shared/BrandIcons";
 import { InstagramFetcher } from "@/components/socials/InstagramFetcher";
 import { YoutubeFetcher } from "@/components/socials/YoutubeFetcher";
 import { FacebookFetcher } from "@/components/socials/FacebookFetcher";
@@ -53,46 +82,602 @@ function extractDomain(url: string): string {
     const parsed = new URL(full);
     return parsed.hostname.replace(/^www\./, "");
   } catch {
-    return url;
+    return url || "example.com";
   }
 }
 
 const MAX_CUSTOM_LINKS = 3;
 
 /* ==========================================================================
-   1. CUSTOM LINK SLIDE-OVER DRAWER
+   STRUCTURED LINK TYPES & SUGGESTIONS DATA
    ========================================================================== */
-interface CustomLinkDrawerProps {
+export interface LinkTypeOption {
+  id: string;
+  category: "Social Platforms" | "Creator and Business" | "Content" | "Personal" | "Other";
+  label: string;
+  suggestedTitle: string;
+  placeholderUrl: string;
+  domainMatch?: string[];
+  icon: React.ReactNode;
+}
+
+export const LINK_TYPES: LinkTypeOption[] = [
+  // GROUP 1 — SOCIAL PLATFORMS
+  {
+    id: "instagram",
+    category: "Social Platforms",
+    label: "Instagram",
+    suggestedTitle: "Follow me on Instagram",
+    placeholderUrl: "https://instagram.com/username",
+    domainMatch: ["instagram.com", "ig.me"],
+    icon: <InstagramIcon className="h-4 w-4 text-pink-600" />,
+  },
+  {
+    id: "youtube",
+    category: "Social Platforms",
+    label: "YouTube",
+    suggestedTitle: "Subscribe on YouTube",
+    placeholderUrl: "https://youtube.com/@channel",
+    domainMatch: ["youtube.com", "youtu.be"],
+    icon: <YoutubeIcon className="h-4 w-4 text-red-600" />,
+  },
+  {
+    id: "facebook",
+    category: "Social Platforms",
+    label: "Facebook",
+    suggestedTitle: "Follow me on Facebook",
+    placeholderUrl: "https://facebook.com/page",
+    domainMatch: ["facebook.com", "fb.watch", "fb.com"],
+    icon: <FacebookIcon className="h-4 w-4 text-blue-600" />,
+  },
+  {
+    id: "twitter",
+    category: "Social Platforms",
+    label: "X / Twitter",
+    suggestedTitle: "Follow me on X",
+    placeholderUrl: "https://x.com/username",
+    domainMatch: ["x.com", "twitter.com"],
+    icon: <XTwitterIcon className="h-4 w-4 text-slate-900" />,
+  },
+  {
+    id: "threads",
+    category: "Social Platforms",
+    label: "Threads",
+    suggestedTitle: "Follow me on Threads",
+    placeholderUrl: "https://threads.net/@username",
+    domainMatch: ["threads.net"],
+    icon: <ThreadsIcon className="h-4 w-4 text-slate-900" />,
+  },
+  {
+    id: "linkedin",
+    category: "Social Platforms",
+    label: "LinkedIn",
+    suggestedTitle: "Connect with me on LinkedIn",
+    placeholderUrl: "https://linkedin.com/in/username",
+    domainMatch: ["linkedin.com"],
+    icon: <LinkedinIcon className="h-4 w-4 text-blue-700" />,
+  },
+  {
+    id: "snapchat",
+    category: "Social Platforms",
+    label: "Snapchat",
+    suggestedTitle: "Add me on Snapchat",
+    placeholderUrl: "https://snapchat.com/add/username",
+    domainMatch: ["snapchat.com"],
+    icon: <SnapchatIcon className="h-4 w-4 text-amber-500" />,
+  },
+  {
+    id: "tiktok",
+    category: "Social Platforms",
+    label: "TikTok",
+    suggestedTitle: "Follow me on TikTok",
+    placeholderUrl: "https://tiktok.com/@username",
+    domainMatch: ["tiktok.com"],
+    icon: <Play className="h-4 w-4 text-slate-900" />,
+  },
+  {
+    id: "pinterest",
+    category: "Social Platforms",
+    label: "Pinterest",
+    suggestedTitle: "Follow me on Pinterest",
+    placeholderUrl: "https://pinterest.com/username",
+    domainMatch: ["pinterest.com"],
+    icon: <PinterestIcon className="h-4 w-4 text-red-600" />,
+  },
+  {
+    id: "whatsapp",
+    category: "Social Platforms",
+    label: "WhatsApp",
+    suggestedTitle: "Chat with me on WhatsApp",
+    placeholderUrl: "https://wa.me/919XXXXXXXXX",
+    domainMatch: ["wa.me", "whatsapp.com"],
+    icon: <WhatsappIcon className="h-4 w-4 text-emerald-600" />,
+  },
+  {
+    id: "telegram",
+    category: "Social Platforms",
+    label: "Telegram",
+    suggestedTitle: "Join me on Telegram",
+    placeholderUrl: "https://t.me/username",
+    domainMatch: ["t.me", "telegram.me"],
+    icon: <Share2 className="h-4 w-4 text-sky-500" />,
+  },
+  {
+    id: "discord",
+    category: "Social Platforms",
+    label: "Discord",
+    suggestedTitle: "Join my Discord community",
+    placeholderUrl: "https://discord.gg/invitecode",
+    domainMatch: ["discord.gg", "discord.com"],
+    icon: <Share2 className="h-4 w-4 text-indigo-600" />,
+  },
+  {
+    id: "twitch",
+    category: "Social Platforms",
+    label: "Twitch",
+    suggestedTitle: "Watch me on Twitch",
+    placeholderUrl: "https://twitch.tv/channel",
+    domainMatch: ["twitch.tv"],
+    icon: <TwitchIcon className="h-4 w-4 text-purple-600" />,
+  },
+  {
+    id: "spotify",
+    category: "Social Platforms",
+    label: "Spotify",
+    suggestedTitle: "Listen on Spotify",
+    placeholderUrl: "https://open.spotify.com/...",
+    domainMatch: ["spotify.com"],
+    icon: <SpotifyIcon className="h-4 w-4 text-emerald-600" />,
+  },
+  {
+    id: "apple_music",
+    category: "Social Platforms",
+    label: "Apple Music",
+    suggestedTitle: "Listen on Apple Music",
+    placeholderUrl: "https://music.apple.com/...",
+    domainMatch: ["music.apple.com", "apple.com"],
+    icon: <Play className="h-4 w-4 text-rose-500" />,
+  },
+  {
+    id: "soundcloud",
+    category: "Social Platforms",
+    label: "SoundCloud",
+    suggestedTitle: "Listen on SoundCloud",
+    placeholderUrl: "https://soundcloud.com/username",
+    domainMatch: ["soundcloud.com"],
+    icon: <Play className="h-4 w-4 text-orange-500" />,
+  },
+  {
+    id: "medium",
+    category: "Social Platforms",
+    label: "Medium",
+    suggestedTitle: "Read my articles",
+    placeholderUrl: "https://medium.com/@username",
+    domainMatch: ["medium.com"],
+    icon: <FileText className="h-4 w-4 text-slate-900" />,
+  },
+  {
+    id: "substack",
+    category: "Social Platforms",
+    label: "Substack",
+    suggestedTitle: "Join my newsletter",
+    placeholderUrl: "https://username.substack.com",
+    domainMatch: ["substack.com"],
+    icon: <Mail className="h-4 w-4 text-orange-600" />,
+  },
+  {
+    id: "github",
+    category: "Social Platforms",
+    label: "GitHub",
+    suggestedTitle: "View my GitHub",
+    placeholderUrl: "https://github.com/username",
+    domainMatch: ["github.com"],
+    icon: <Globe className="h-4 w-4 text-slate-900" />,
+  },
+  {
+    id: "behance",
+    category: "Social Platforms",
+    label: "Behance",
+    suggestedTitle: "View my Behance portfolio",
+    placeholderUrl: "https://behance.net/username",
+    domainMatch: ["behance.net"],
+    icon: <Briefcase className="h-4 w-4 text-blue-600" />,
+  },
+  {
+    id: "dribbble",
+    category: "Social Platforms",
+    label: "Dribbble",
+    suggestedTitle: "View my Dribbble work",
+    placeholderUrl: "https://dribbble.com/username",
+    domainMatch: ["dribbble.com"],
+    icon: <Sparkles className="h-4 w-4 text-pink-500" />,
+  },
+  {
+    id: "reddit",
+    category: "Social Platforms",
+    label: "Reddit",
+    suggestedTitle: "Follow me on Reddit",
+    placeholderUrl: "https://reddit.com/user/username",
+    domainMatch: ["reddit.com"],
+    icon: <Share2 className="h-4 w-4 text-orange-600" />,
+  },
+  {
+    id: "quora",
+    category: "Social Platforms",
+    label: "Quora",
+    suggestedTitle: "Follow me on Quora",
+    placeholderUrl: "https://quora.com/profile/username",
+    domainMatch: ["quora.com"],
+    icon: <Share2 className="h-4 w-4 text-red-700" />,
+  },
+
+  // GROUP 2 — CREATOR AND BUSINESS
+  {
+    id: "collab",
+    category: "Creator and Business",
+    label: "Book a Collaboration",
+    suggestedTitle: "Work with me",
+    placeholderUrl: "https://calendly.com/...",
+    icon: <Briefcase className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "contact",
+    category: "Creator and Business",
+    label: "Contact Me",
+    suggestedTitle: "Contact me",
+    placeholderUrl: "https://example.com/contact",
+    icon: <Mail className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "mediakit",
+    category: "Creator and Business",
+    label: "Media Kit",
+    suggestedTitle: "View my media kit",
+    placeholderUrl: "https://inflixo.com/...",
+    icon: <FileText className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "portfolio",
+    category: "Creator and Business",
+    label: "Portfolio",
+    suggestedTitle: "View my portfolio",
+    placeholderUrl: "https://yourportfolio.com",
+    icon: <Globe className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "personal_website",
+    category: "Creator and Business",
+    label: "Personal Website",
+    suggestedTitle: "Visit my website",
+    placeholderUrl: "https://yourwebsite.com",
+    icon: <Globe className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "business_website",
+    category: "Creator and Business",
+    label: "Business Website",
+    suggestedTitle: "Visit our website",
+    placeholderUrl: "https://yourcompany.com",
+    icon: <Globe className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "store",
+    category: "Creator and Business",
+    label: "Online Store",
+    suggestedTitle: "Visit my store",
+    placeholderUrl: "https://store.example.com",
+    icon: <ShoppingBag className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "merchandise",
+    category: "Creator and Business",
+    label: "Merchandise Store",
+    suggestedTitle: "Shop my merchandise",
+    placeholderUrl: "https://shop.example.com",
+    icon: <ShoppingBag className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "book_call",
+    category: "Creator and Business",
+    label: "Book a Call",
+    suggestedTitle: "Book a call",
+    placeholderUrl: "https://calendly.com/...",
+    icon: <Calendar className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "appointment",
+    category: "Creator and Business",
+    label: "Appointment Booking",
+    suggestedTitle: "Book an appointment",
+    placeholderUrl: "https://topmate.io/...",
+    icon: <Calendar className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "event",
+    category: "Creator and Business",
+    label: "Event Registration",
+    suggestedTitle: "Register for event",
+    placeholderUrl: "https://lu.ma/...",
+    icon: <Calendar className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "newsletter",
+    category: "Creator and Business",
+    label: "Newsletter",
+    suggestedTitle: "Join my newsletter",
+    placeholderUrl: "https://newsletter.example.com",
+    icon: <Mail className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "community",
+    category: "Creator and Business",
+    label: "Community",
+    suggestedTitle: "Join my community",
+    placeholderUrl: "https://community.example.com",
+    icon: <Share2 className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "course",
+    category: "Creator and Business",
+    label: "Course",
+    suggestedTitle: "Explore my course",
+    placeholderUrl: "https://course.example.com",
+    icon: <BookOpen className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "digital_product",
+    category: "Creator and Business",
+    label: "Digital Product",
+    suggestedTitle: "Explore my products",
+    placeholderUrl: "https://gumroad.com/...",
+    icon: <ShoppingBag className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "support",
+    category: "Creator and Business",
+    label: "Support My Work",
+    suggestedTitle: "Support my work",
+    placeholderUrl: "https://buymeacoffee.com/...",
+    icon: <Coffee className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "affiliate",
+    category: "Creator and Business",
+    label: "Affiliate Link",
+    suggestedTitle: "Recommended products",
+    placeholderUrl: "https://amazon.in/...",
+    icon: <Bookmark className="h-4 w-4 text-[#803D63]" />,
+  },
+
+  // GROUP 3 — CONTENT
+  {
+    id: "latest_video",
+    category: "Content",
+    label: "Latest Video",
+    suggestedTitle: "Watch my latest video",
+    placeholderUrl: "https://youtube.com/watch?v=...",
+    icon: <Video className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "latest_reel",
+    category: "Content",
+    label: "Latest Reel",
+    suggestedTitle: "Watch my latest reel",
+    placeholderUrl: "https://instagram.com/reel/...",
+    icon: <Play className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "latest_post",
+    category: "Content",
+    label: "Latest Post",
+    suggestedTitle: "View my latest post",
+    placeholderUrl: "https://...",
+    icon: <FileText className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "featured_content",
+    category: "Content",
+    label: "Featured Content",
+    suggestedTitle: "View my featured content",
+    placeholderUrl: "https://...",
+    icon: <Sparkles className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "blog",
+    category: "Content",
+    label: "Blog",
+    suggestedTitle: "Read my blog",
+    placeholderUrl: "https://blog.example.com",
+    icon: <FileText className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "podcast",
+    category: "Content",
+    label: "Podcast",
+    suggestedTitle: "Listen to my podcast",
+    placeholderUrl: "https://podcast.example.com",
+    icon: <Radio className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "playlist",
+    category: "Content",
+    label: "Playlist",
+    suggestedTitle: "Explore my playlist",
+    placeholderUrl: "https://...",
+    icon: <Play className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "live_stream",
+    category: "Content",
+    label: "Live Stream",
+    suggestedTitle: "Watch my live stream",
+    placeholderUrl: "https://...",
+    icon: <Radio className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "content_series",
+    category: "Content",
+    label: "Content Series",
+    suggestedTitle: "Explore my content series",
+    placeholderUrl: "https://...",
+    icon: <Film className="h-4 w-4 text-[#803D63]" />,
+  },
+
+  // GROUP 4 — PERSONAL
+  {
+    id: "about_me",
+    category: "Personal",
+    label: "About Me",
+    suggestedTitle: "Learn more about me",
+    placeholderUrl: "https://...",
+    icon: <User className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "my_story",
+    category: "Personal",
+    label: "My Story",
+    suggestedTitle: "Read my story",
+    placeholderUrl: "https://...",
+    icon: <FileText className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "personal_blog",
+    category: "Personal",
+    label: "Personal Blog",
+    suggestedTitle: "Read my personal blog",
+    placeholderUrl: "https://...",
+    icon: <FileText className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "recommendations",
+    category: "Personal",
+    label: "My Recommendations",
+    suggestedTitle: "View my recommendations",
+    placeholderUrl: "https://...",
+    icon: <Heart className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "favourite_tools",
+    category: "Personal",
+    label: "My Favourite Tools",
+    suggestedTitle: "Explore my favourite tools",
+    placeholderUrl: "https://...",
+    icon: <Bookmark className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "my_gear",
+    category: "Personal",
+    label: "My Gear",
+    suggestedTitle: "See the gear I use",
+    placeholderUrl: "https://...",
+    icon: <Bookmark className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "wishlist",
+    category: "Personal",
+    label: "My Wishlist",
+    suggestedTitle: "View my wishlist",
+    placeholderUrl: "https://...",
+    icon: <Heart className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "family_channel",
+    category: "Personal",
+    label: "Family Channel",
+    suggestedTitle: "Visit our family channel",
+    placeholderUrl: "https://...",
+    icon: <User className="h-4 w-4 text-[#803D63]" />,
+  },
+  {
+    id: "other_personal",
+    category: "Personal",
+    label: "Other Personal Link",
+    suggestedTitle: "Read my travel journal",
+    placeholderUrl: "https://...",
+    icon: <Link2 className="h-4 w-4 text-[#803D63]" />,
+  },
+
+  // GROUP 5 — OTHER
+  {
+    id: "other",
+    category: "Other",
+    label: "Other",
+    suggestedTitle: "",
+    placeholderUrl: "https://example.com",
+    icon: <Link2 className="h-4 w-4 text-[#803D63]" />,
+  },
+];
+
+/* ==========================================================================
+   1. CENTRED CUSTOM LINK MODAL
+   ========================================================================== */
+interface CustomLinkModalProps {
   isOpen: boolean;
   onClose: () => void;
   linkToEdit?: CustomLink | null;
   onSave: (title: string, url: string) => Promise<void>;
 }
 
-function CustomLinkDrawer({ isOpen, onClose, linkToEdit, onSave }: CustomLinkDrawerProps) {
+function CustomLinkModal({ isOpen, onClose, linkToEdit, onSave }: CustomLinkModalProps) {
   const isEditing = Boolean(linkToEdit);
+  const [selectedType, setSelectedType] = useState<LinkTypeOption | null>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [typeSearch, setTypeSearch] = useState("");
+
   const [title, setTitle] = useState("");
+  const [isTitleManuallyEdited, setIsTitleManuallyEdited] = useState(false);
   const [url, setUrl] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ title?: string; url?: string }>({});
 
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Initialize or reset on open
   useEffect(() => {
     if (linkToEdit) {
       setTitle(linkToEdit.title || "");
       setUrl(linkToEdit.url || "");
+      setIsTitleManuallyEdited(true);
+
+      // Attempt to match link type by domain
+      const found = LINK_TYPES.find(
+        (t) => t.domainMatch && t.domainMatch.some((d) => (linkToEdit.url || "").toLowerCase().includes(d))
+      );
+      setSelectedType(found || LINK_TYPES.find((t) => t.id === "other") || null);
     } else {
       setTitle("");
       setUrl("");
+      setSelectedType(null);
+      setIsTitleManuallyEdited(false);
     }
+    setTypeSearch("");
+    setIsDropdownOpen(false);
     setErrors({});
   }, [linkToEdit, isOpen]);
+
+  // Click outside to close type dropdown
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    if (isDropdownOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isDropdownOpen]);
 
   // Keyboard Escape listener
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
       const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === "Escape") onClose();
+        if (e.key === "Escape") {
+          if (isDropdownOpen) {
+            setIsDropdownOpen(false);
+          } else {
+            onClose();
+          }
+        }
       };
       window.addEventListener("keydown", handleKeyDown);
       return () => {
@@ -102,16 +687,84 @@ function CustomLinkDrawer({ isOpen, onClose, linkToEdit, onSave }: CustomLinkDra
     } else {
       document.body.style.overflow = "";
     }
-  }, [isOpen, onClose]);
+  }, [isOpen, isDropdownOpen, onClose]);
 
   if (!isOpen) return null;
+
+  // Filter types by search
+  const filteredTypes = LINK_TYPES.filter(
+    (t) =>
+      t.label.toLowerCase().includes(typeSearch.toLowerCase()) ||
+      t.category.toLowerCase().includes(typeSearch.toLowerCase()) ||
+      t.suggestedTitle.toLowerCase().includes(typeSearch.toLowerCase())
+  );
+
+  // Group filtered types
+  const groupedTypes = {
+    "Social Platforms": filteredTypes.filter((t) => t.category === "Social Platforms"),
+    "Creator and Business": filteredTypes.filter((t) => t.category === "Creator and Business"),
+    Content: filteredTypes.filter((t) => t.category === "Content"),
+    Personal: filteredTypes.filter((t) => t.category === "Personal"),
+    Other: filteredTypes.filter((t) => t.category === "Other"),
+  };
+
+  const handleSelectType = (type: LinkTypeOption) => {
+    setSelectedType(type);
+    setIsDropdownOpen(false);
+    setTypeSearch("");
+
+    // If title has not been manually edited by user, auto-populate suggested title
+    if (!isTitleManuallyEdited || !title.trim()) {
+      setTitle(type.suggestedTitle);
+      if (errors.title) setErrors((prev) => ({ ...prev, title: undefined }));
+    }
+  };
+
+  const handleSelectCustomQuery = (queryText: string) => {
+    const customType: LinkTypeOption = {
+      id: "custom",
+      category: "Other",
+      label: queryText.trim(),
+      suggestedTitle: queryText.trim(),
+      placeholderUrl: "https://example.com",
+      icon: <Link2 className="h-4 w-4 text-[#803D63]" />,
+    };
+    setSelectedType(customType);
+    setIsDropdownOpen(false);
+    setTypeSearch("");
+
+    if (!isTitleManuallyEdited || !title.trim()) {
+      setTitle(queryText.trim());
+      if (errors.title) setErrors((prev) => ({ ...prev, title: undefined }));
+    }
+  };
+
+  // Check domain mismatch warning
+  const domainWarning = useMemo(() => {
+    if (!selectedType || !selectedType.domainMatch || !url.trim()) return null;
+    const lower = url.toLowerCase();
+    const isMatched = selectedType.domainMatch.some((d) => lower.includes(d));
+    if (!isMatched && (lower.startsWith("http://") || lower.startsWith("https://") || lower.includes("."))) {
+      return `This link doesn't appear to be a ${selectedType.label} URL. Check the link or continue if it redirects to ${selectedType.label}.`;
+    }
+    return null;
+  }, [selectedType, url]);
+
+  // Preview Domain
+  const previewDomain = extractDomain(url);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const newErrors: typeof errors = {};
 
     if (!title.trim()) newErrors.title = "Enter a link title.";
-    if (!url.trim()) newErrors.url = "Enter a valid destination URL.";
+    if (!url.trim()) newErrors.url = "Enter a valid URL.";
+
+    // Block unsafe protocols
+    const trimmedUrl = url.trim().toLowerCase();
+    if (trimmedUrl.startsWith("javascript:") || trimmedUrl.startsWith("data:")) {
+      newErrors.url = "Unsafe URL scheme is not allowed.";
+    }
 
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
@@ -126,17 +779,22 @@ function CustomLinkDrawer({ isOpen, onClose, linkToEdit, onSave }: CustomLinkDra
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200">
+      {/* Dark Translucent Overlay */}
       <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity" onClick={onClose} />
-      <aside className="relative z-10 flex h-full w-full max-w-md flex-col overflow-y-auto bg-white shadow-2xl animate-in slide-in-from-right duration-300">
-        {/* Drawer Header */}
-        <div className="flex items-center justify-between border-b border-[#ECE8EB] px-6 py-4">
+
+      {/* Centred Modal Container */}
+      <div className="relative z-10 flex w-full max-w-lg max-h-[90vh] sm:max-h-[85vh] flex-col overflow-y-auto rounded-t-3xl sm:rounded-2xl border border-[#ECE8EB] bg-white p-5 sm:p-7 shadow-2xl animate-in slide-in-from-bottom-5 sm:slide-in-from-bottom-2 duration-300 text-left">
+        {/* Modal Header */}
+        <div className="flex items-center justify-between border-b border-[#ECE8EB] pb-4">
           <div>
             <h2 className="font-display text-lg font-bold text-[#17131A]">
               {isEditing ? "Edit custom link" : "Add custom link"}
             </h2>
             <p className="text-xs text-[#6F6872] font-medium mt-0.5">
-              Add a useful destination to your public creator profile.
+              {isEditing
+                ? "Update how this link appears on your public creator profile."
+                : "Add a useful destination to your public creator profile."}
             </p>
           </div>
           <button
@@ -149,22 +807,133 @@ function CustomLinkDrawer({ isOpen, onClose, linkToEdit, onSave }: CustomLinkDra
           </button>
         </div>
 
-        {/* Drawer Form */}
-        <form onSubmit={handleSubmit} className="flex-1 space-y-5 p-6 text-left">
-          {/* Link Title */}
+        {/* Modal Form */}
+        <form onSubmit={handleSubmit} className="space-y-4.5 pt-4">
+          {/* FIELD 1: LINK TYPE SELECTOR (Searchable Dropdown) */}
+          <div className="space-y-1.5 relative" ref={dropdownRef}>
+            <div className="flex items-center justify-between">
+              <label className="block text-xs font-bold text-[#17131A]">
+                Link type
+              </label>
+              <span className="text-[11px] text-[#6F6872]">
+                Custom links do not sync stats
+              </span>
+            </div>
+
+            {/* Dropdown Trigger Button */}
+            <button
+              type="button"
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="w-full flex items-center justify-between rounded-xl border border-[#ECE8EB] bg-white px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-[#17131A] hover:border-[#803D63]/40 focus:outline-none transition-colors cursor-pointer"
+            >
+              <div className="flex items-center gap-2.5 truncate">
+                {selectedType ? (
+                  <>
+                    <div className="shrink-0">{selectedType.icon}</div>
+                    <span className="truncate">{selectedType.label}</span>
+                  </>
+                ) : (
+                  <span className="text-[#6F6872]/60 font-normal">Choose a platform or link type</span>
+                )}
+              </div>
+              <ChevronDown className="h-4 w-4 text-[#6F6872] shrink-0" />
+            </button>
+
+            {/* Searchable Options Menu */}
+            {isDropdownOpen && (
+              <div className="absolute left-0 right-0 top-full mt-1 z-30 max-h-64 overflow-y-auto rounded-2xl border border-[#ECE8EB] bg-white p-2 shadow-xl space-y-2 animate-in fade-in">
+                {/* Search Input */}
+                <div className="relative sticky top-0 bg-white pb-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#6F6872]" />
+                  <input
+                    type="text"
+                    value={typeSearch}
+                    onChange={(e) => setTypeSearch(e.target.value)}
+                    placeholder="Search platforms, bookings, store..."
+                    className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] pl-8 pr-3 py-1.5 text-xs text-[#17131A] placeholder:text-[#6F6872]/60 focus:outline-none focus:border-[#803D63]"
+                    autoFocus
+                  />
+                </div>
+
+                {/* Grouped Options */}
+                {Object.entries(groupedTypes).map(([categoryName, items]) => {
+                  if (items.length === 0) return null;
+                  return (
+                    <div key={categoryName} className="space-y-0.5">
+                      <p className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#6F6872]/80">
+                        {categoryName}
+                      </p>
+                      <div className="space-y-0.5">
+                        {items.map((item) => (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => handleSelectType(item)}
+                            className={`flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs font-semibold transition-colors text-left cursor-pointer ${
+                              selectedType?.id === item.id
+                                ? "bg-[#F7EDF3] text-[#803D63]"
+                                : "text-[#17131A] hover:bg-[#FAF8FA]"
+                            }`}
+                          >
+                            <div className="shrink-0">{item.icon}</div>
+                            <span className="flex-1 truncate">{item.label}</span>
+                            {item.suggestedTitle && (
+                              <span className="text-[10px] text-[#6F6872] truncate hidden sm:inline">
+                                {item.suggestedTitle}
+                              </span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* Custom search write-in if no exact item found */}
+                {typeSearch.trim() && filteredTypes.length === 0 && (
+                  <button
+                    type="button"
+                    onClick={() => handleSelectCustomQuery(typeSearch)}
+                    className="flex w-full items-center gap-2 rounded-xl p-2.5 text-xs font-semibold text-[#803D63] bg-[#F7EDF3] hover:bg-[#F7EDF3]/80 transition-colors text-left cursor-pointer"
+                  >
+                    <Plus className="h-3.5 w-3.5 shrink-0" />
+                    <span>Use &ldquo;{typeSearch.trim()}&rdquo; as a custom link title</span>
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* FIELD 2: LINK TITLE */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-bold text-[#17131A]">
-              Link title <span className="text-rose-500">*</span>
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="block text-xs font-bold text-[#17131A]">
+                Link title <span className="text-rose-500">*</span>
+              </label>
+              {selectedType?.suggestedTitle && title !== selectedType.suggestedTitle && (
+                <button
+                  type="button"
+                  onClick={() => setTitle(selectedType.suggestedTitle)}
+                  className="text-[11px] font-semibold text-[#803D63] hover:underline cursor-pointer"
+                >
+                  Use suggested title
+                </button>
+              )}
+            </div>
             <input
               type="text"
               required
               value={title}
               onChange={(e) => {
                 setTitle(e.target.value);
+                setIsTitleManuallyEdited(true);
                 if (errors.title) setErrors((prev) => ({ ...prev, title: undefined }));
               }}
-              placeholder="e.g. Book a collaboration"
+              placeholder={
+                selectedType?.id === "other"
+                  ? "e.g. Join my community"
+                  : selectedType?.suggestedTitle || "e.g. Book a collaboration"
+              }
               className={`w-full rounded-xl border px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:outline-none transition-colors ${
                 errors.title
                   ? "border-rose-400 bg-rose-50/20 focus:border-rose-500"
@@ -174,10 +943,10 @@ function CustomLinkDrawer({ isOpen, onClose, linkToEdit, onSave }: CustomLinkDra
             {errors.title && <p className="text-[11px] font-semibold text-rose-600">{errors.title}</p>}
           </div>
 
-          {/* Destination URL */}
+          {/* FIELD 3: DESTINATION URL */}
           <div className="space-y-1.5">
             <label className="block text-xs font-bold text-[#17131A]">
-              Destination URL <span className="text-rose-500">*</span>
+              URL <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
@@ -187,7 +956,7 @@ function CustomLinkDrawer({ isOpen, onClose, linkToEdit, onSave }: CustomLinkDra
                 setUrl(e.target.value);
                 if (errors.url) setErrors((prev) => ({ ...prev, url: undefined }));
               }}
-              placeholder="https://example.com or linktr.ee/..."
+              placeholder={selectedType?.placeholderUrl || "https://example.com"}
               className={`w-full rounded-xl border px-3.5 py-2.5 text-xs sm:text-sm font-medium text-[#17131A] placeholder:text-[#6F6872]/50 focus:outline-none transition-colors ${
                 errors.url
                   ? "border-rose-400 bg-rose-50/20 focus:border-rose-500"
@@ -196,15 +965,42 @@ function CustomLinkDrawer({ isOpen, onClose, linkToEdit, onSave }: CustomLinkDra
             />
             {errors.url ? (
               <p className="text-[11px] font-semibold text-rose-600">{errors.url}</p>
+            ) : domainWarning ? (
+              <p className="text-[11px] font-medium text-amber-700 bg-amber-50 border border-amber-200 p-2 rounded-xl">
+                {domainWarning}
+              </p>
             ) : (
               <p className="text-[11px] text-[#6F6872]">
-                Supports HTTPS links (WhatsApp, Calendly, Store, Community, etc.)
+                Enter any valid destination URL (starts with https://)
               </p>
             )}
           </div>
 
-          {/* Drawer Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#ECE8EB] mt-6">
+          {/* FIELD 4: PROFILE PREVIEW */}
+          <div className="space-y-1.5 pt-1">
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#6F6872]">
+              Profile preview
+            </label>
+            <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-white border border-[#ECE8EB] shrink-0 text-[#803D63]">
+                  {selectedType?.icon || <Link2 className="h-3.5 w-3.5" />}
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-xs font-bold text-[#17131A]">
+                    {title.trim() || "Link Title"}
+                  </p>
+                  <p className="truncate text-[11px] font-medium text-[#6F6872]">
+                    {previewDomain}
+                  </p>
+                </div>
+              </div>
+              <ExternalLink className="h-3.5 w-3.5 text-[#803D63] shrink-0 opacity-70" />
+            </div>
+          </div>
+
+          {/* MODAL ACTIONS */}
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#ECE8EB] mt-5">
             <button
               type="button"
               onClick={onClose}
@@ -214,14 +1010,21 @@ function CustomLinkDrawer({ isOpen, onClose, linkToEdit, onSave }: CustomLinkDra
             </button>
             <button
               type="submit"
-              disabled={submitting}
-              className="inline-flex items-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-6 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs disabled:opacity-60"
+              disabled={submitting || !title.trim() || !url.trim()}
+              className="inline-flex items-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-6 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs disabled:opacity-50"
             >
-              {submitting ? "Saving..." : isEditing ? "Save Changes" : "Add Link"}
+              {submitting ? (
+                <>
+                  <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                  <span>{isEditing ? "Saving..." : "Adding..."}</span>
+                </>
+              ) : (
+                <span>{isEditing ? "Save Changes" : "Add Link"}</span>
+              )}
             </button>
           </div>
         </form>
-      </aside>
+      </div>
     </div>
   );
 }
@@ -234,12 +1037,11 @@ export default function DashboardSocialsPage() {
   const { profile, socials, totalAudience, updateSocials } = useCreator();
   const { showToast } = useToast();
 
-  const [isSyncingAll, setIsSyncingAll] = useState(false);
   const [syncingPlatform, setSyncingPlatform] = useState<string | null>(null);
 
   // Custom Links state
   const [links, setLinks] = useState<CustomLink[]>([]);
-  const [isLinkDrawerOpen, setIsLinkDrawerOpen] = useState(false);
+  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [linkToEdit, setLinkToEdit] = useState<CustomLink | null>(null);
 
   // Draft handle inputs for unconnected platforms
@@ -692,7 +1494,7 @@ export default function DashboardSocialsPage() {
                   return;
                 }
                 setLinkToEdit(null);
-                setIsLinkDrawerOpen(true);
+                setIsLinkModalOpen(true);
               }}
               disabled={links.length >= MAX_CUSTOM_LINKS}
               className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-colors cursor-pointer shadow-2xs ${
@@ -719,7 +1521,7 @@ export default function DashboardSocialsPage() {
                 type="button"
                 onClick={() => {
                   setLinkToEdit(null);
-                  setIsLinkDrawerOpen(true);
+                  setIsLinkModalOpen(true);
                 }}
                 className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
               >
@@ -738,7 +1540,7 @@ export default function DashboardSocialsPage() {
                 total={links.length}
                 onEdit={() => {
                   setLinkToEdit(link);
-                  setIsLinkDrawerOpen(true);
+                  setIsLinkModalOpen(true);
                 }}
                 onDelete={() => setLinkToDelete(link)}
                 onMove={(dir) => handleMoveLink(index, dir)}
@@ -774,7 +1576,7 @@ export default function DashboardSocialsPage() {
           </div>
           <div className="flex items-center gap-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-[#803D63]" />
-            <span>Never receives your account passwords</span>
+            <span>Inflixo never receives your social-platform password</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-[#803D63]" />
@@ -783,11 +1585,11 @@ export default function DashboardSocialsPage() {
         </div>
       </section>
 
-      {/* 6. DRAWERS & CONFIRMATION MODALS */}
-      {/* Custom Link Add/Edit Drawer */}
-      <CustomLinkDrawer
-        isOpen={isLinkDrawerOpen}
-        onClose={() => setIsLinkDrawerOpen(false)}
+      {/* 6. MODALS */}
+      {/* Centred Custom Link Modal */}
+      <CustomLinkModal
+        isOpen={isLinkModalOpen}
+        onClose={() => setIsLinkModalOpen(false)}
         linkToEdit={linkToEdit}
         onSave={handleSaveCustomLink}
       />
@@ -850,7 +1652,6 @@ function ConnectedSocialCard({
   onSync,
   onDisconnect,
 }: ConnectedSocialCardProps) {
-  const { showToast } = useToast();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
