@@ -98,7 +98,6 @@ export interface LinkTypeOption {
   suggestedTitle: string;
   placeholderUrl: string;
   domainMatch?: string[];
-  icon: React.ReactNode;
 }
 
 export const LINK_TYPES: LinkTypeOption[] = [
@@ -110,7 +109,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "Follow me on Instagram",
     placeholderUrl: "https://instagram.com/username",
     domainMatch: ["instagram.com", "ig.me"],
-    icon: <InstagramIcon className="h-4 w-4 text-pink-600" />,
   },
   {
     id: "youtube",
@@ -119,7 +117,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "Subscribe on YouTube",
     placeholderUrl: "https://youtube.com/@channel",
     domainMatch: ["youtube.com", "youtu.be"],
-    icon: <YoutubeIcon className="h-4 w-4 text-red-600" />,
   },
   {
     id: "facebook",
@@ -128,7 +125,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "Follow me on Facebook",
     placeholderUrl: "https://facebook.com/page",
     domainMatch: ["facebook.com", "fb.watch", "fb.com"],
-    icon: <FacebookIcon className="h-4 w-4 text-blue-600" />,
   },
   {
     id: "twitter",
@@ -137,7 +133,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "Follow me on X",
     placeholderUrl: "https://x.com/username",
     domainMatch: ["x.com", "twitter.com"],
-    icon: <XTwitterIcon className="h-4 w-4 text-slate-900" />,
   },
   {
     id: "threads",
@@ -146,7 +141,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "Follow me on Threads",
     placeholderUrl: "https://threads.net/@username",
     domainMatch: ["threads.net"],
-    icon: <ThreadsIcon className="h-4 w-4 text-slate-900" />,
   },
   {
     id: "linkedin",
@@ -155,7 +149,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "Connect with me on LinkedIn",
     placeholderUrl: "https://linkedin.com/in/username",
     domainMatch: ["linkedin.com"],
-    icon: <LinkedinIcon className="h-4 w-4 text-blue-700" />,
   },
   {
     id: "snapchat",
@@ -164,7 +157,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "Add me on Snapchat",
     placeholderUrl: "https://snapchat.com/add/username",
     domainMatch: ["snapchat.com"],
-    icon: <SnapchatIcon className="h-4 w-4 text-amber-500" />,
   },
   {
     id: "tiktok",
@@ -173,7 +165,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "Follow me on TikTok",
     placeholderUrl: "https://tiktok.com/@username",
     domainMatch: ["tiktok.com"],
-    icon: <Play className="h-4 w-4 text-slate-900" />,
   },
   {
     id: "pinterest",
@@ -182,7 +173,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "Follow me on Pinterest",
     placeholderUrl: "https://pinterest.com/username",
     domainMatch: ["pinterest.com"],
-    icon: <PinterestIcon className="h-4 w-4 text-red-600" />,
   },
   {
     id: "whatsapp",
@@ -191,7 +181,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "Chat with me on WhatsApp",
     placeholderUrl: "https://wa.me/919XXXXXXXXX",
     domainMatch: ["wa.me", "whatsapp.com"],
-    icon: <WhatsappIcon className="h-4 w-4 text-emerald-600" />,
   },
   {
     id: "telegram",
@@ -200,7 +189,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "Join me on Telegram",
     placeholderUrl: "https://t.me/username",
     domainMatch: ["t.me", "telegram.me"],
-    icon: <Share2 className="h-4 w-4 text-sky-500" />,
   },
   {
     id: "discord",
@@ -209,7 +197,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "Join my Discord community",
     placeholderUrl: "https://discord.gg/invitecode",
     domainMatch: ["discord.gg", "discord.com"],
-    icon: <Share2 className="h-4 w-4 text-indigo-600" />,
   },
   {
     id: "twitch",
@@ -218,7 +205,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "Watch me on Twitch",
     placeholderUrl: "https://twitch.tv/channel",
     domainMatch: ["twitch.tv"],
-    icon: <TwitchIcon className="h-4 w-4 text-purple-600" />,
   },
   {
     id: "spotify",
@@ -227,7 +213,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "Listen on Spotify",
     placeholderUrl: "https://open.spotify.com/...",
     domainMatch: ["spotify.com"],
-    icon: <SpotifyIcon className="h-4 w-4 text-emerald-600" />,
   },
   {
     id: "apple_music",
@@ -236,7 +221,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "Listen on Apple Music",
     placeholderUrl: "https://music.apple.com/...",
     domainMatch: ["music.apple.com", "apple.com"],
-    icon: <Play className="h-4 w-4 text-rose-500" />,
   },
   {
     id: "soundcloud",
@@ -245,7 +229,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "Listen on SoundCloud",
     placeholderUrl: "https://soundcloud.com/username",
     domainMatch: ["soundcloud.com"],
-    icon: <Play className="h-4 w-4 text-orange-500" />,
   },
   {
     id: "medium",
@@ -254,7 +237,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "Read my articles",
     placeholderUrl: "https://medium.com/@username",
     domainMatch: ["medium.com"],
-    icon: <FileText className="h-4 w-4 text-slate-900" />,
   },
   {
     id: "substack",
@@ -263,7 +245,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "Join my newsletter",
     placeholderUrl: "https://username.substack.com",
     domainMatch: ["substack.com"],
-    icon: <Mail className="h-4 w-4 text-orange-600" />,
   },
   {
     id: "github",
@@ -272,7 +253,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "View my GitHub",
     placeholderUrl: "https://github.com/username",
     domainMatch: ["github.com"],
-    icon: <Globe className="h-4 w-4 text-slate-900" />,
   },
   {
     id: "behance",
@@ -281,7 +261,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "View my Behance portfolio",
     placeholderUrl: "https://behance.net/username",
     domainMatch: ["behance.net"],
-    icon: <Briefcase className="h-4 w-4 text-blue-600" />,
   },
   {
     id: "dribbble",
@@ -290,7 +269,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "View my Dribbble work",
     placeholderUrl: "https://dribbble.com/username",
     domainMatch: ["dribbble.com"],
-    icon: <Sparkles className="h-4 w-4 text-pink-500" />,
   },
   {
     id: "reddit",
@@ -299,7 +277,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "Follow me on Reddit",
     placeholderUrl: "https://reddit.com/user/username",
     domainMatch: ["reddit.com"],
-    icon: <Share2 className="h-4 w-4 text-orange-600" />,
   },
   {
     id: "quora",
@@ -308,7 +285,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     suggestedTitle: "Follow me on Quora",
     placeholderUrl: "https://quora.com/profile/username",
     domainMatch: ["quora.com"],
-    icon: <Share2 className="h-4 w-4 text-red-700" />,
   },
 
   // GROUP 2 — CREATOR AND BUSINESS
@@ -318,7 +294,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Book a Collaboration",
     suggestedTitle: "Work with me",
     placeholderUrl: "https://calendly.com/...",
-    icon: <Briefcase className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "contact",
@@ -326,7 +301,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Contact Me",
     suggestedTitle: "Contact me",
     placeholderUrl: "https://example.com/contact",
-    icon: <Mail className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "mediakit",
@@ -334,7 +308,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Media Kit",
     suggestedTitle: "View my media kit",
     placeholderUrl: "https://inflixo.com/...",
-    icon: <FileText className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "portfolio",
@@ -342,7 +315,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Portfolio",
     suggestedTitle: "View my portfolio",
     placeholderUrl: "https://yourportfolio.com",
-    icon: <Globe className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "personal_website",
@@ -350,7 +322,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Personal Website",
     suggestedTitle: "Visit my website",
     placeholderUrl: "https://yourwebsite.com",
-    icon: <Globe className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "business_website",
@@ -358,7 +329,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Business Website",
     suggestedTitle: "Visit our website",
     placeholderUrl: "https://yourcompany.com",
-    icon: <Globe className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "store",
@@ -366,7 +336,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Online Store",
     suggestedTitle: "Visit my store",
     placeholderUrl: "https://store.example.com",
-    icon: <ShoppingBag className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "merchandise",
@@ -374,7 +343,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Merchandise Store",
     suggestedTitle: "Shop my merchandise",
     placeholderUrl: "https://shop.example.com",
-    icon: <ShoppingBag className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "book_call",
@@ -382,7 +350,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Book a Call",
     suggestedTitle: "Book a call",
     placeholderUrl: "https://calendly.com/...",
-    icon: <Calendar className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "appointment",
@@ -390,7 +357,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Appointment Booking",
     suggestedTitle: "Book an appointment",
     placeholderUrl: "https://topmate.io/...",
-    icon: <Calendar className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "event",
@@ -398,7 +364,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Event Registration",
     suggestedTitle: "Register for event",
     placeholderUrl: "https://lu.ma/...",
-    icon: <Calendar className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "newsletter",
@@ -406,7 +371,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Newsletter",
     suggestedTitle: "Join my newsletter",
     placeholderUrl: "https://newsletter.example.com",
-    icon: <Mail className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "community",
@@ -414,7 +378,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Community",
     suggestedTitle: "Join my community",
     placeholderUrl: "https://community.example.com",
-    icon: <Share2 className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "course",
@@ -422,7 +385,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Course",
     suggestedTitle: "Explore my course",
     placeholderUrl: "https://course.example.com",
-    icon: <BookOpen className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "digital_product",
@@ -430,7 +392,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Digital Product",
     suggestedTitle: "Explore my products",
     placeholderUrl: "https://gumroad.com/...",
-    icon: <ShoppingBag className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "support",
@@ -438,7 +399,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Support My Work",
     suggestedTitle: "Support my work",
     placeholderUrl: "https://buymeacoffee.com/...",
-    icon: <Coffee className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "affiliate",
@@ -446,7 +406,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Affiliate Link",
     suggestedTitle: "Recommended products",
     placeholderUrl: "https://amazon.in/...",
-    icon: <Bookmark className="h-4 w-4 text-[#803D63]" />,
   },
 
   // GROUP 3 — CONTENT
@@ -456,7 +415,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Latest Video",
     suggestedTitle: "Watch my latest video",
     placeholderUrl: "https://youtube.com/watch?v=...",
-    icon: <Video className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "latest_reel",
@@ -464,7 +422,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Latest Reel",
     suggestedTitle: "Watch my latest reel",
     placeholderUrl: "https://instagram.com/reel/...",
-    icon: <Play className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "latest_post",
@@ -472,7 +429,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Latest Post",
     suggestedTitle: "View my latest post",
     placeholderUrl: "https://...",
-    icon: <FileText className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "featured_content",
@@ -480,7 +436,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Featured Content",
     suggestedTitle: "View my featured content",
     placeholderUrl: "https://...",
-    icon: <Sparkles className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "blog",
@@ -488,7 +443,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Blog",
     suggestedTitle: "Read my blog",
     placeholderUrl: "https://blog.example.com",
-    icon: <FileText className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "podcast",
@@ -496,7 +450,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Podcast",
     suggestedTitle: "Listen to my podcast",
     placeholderUrl: "https://podcast.example.com",
-    icon: <Radio className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "playlist",
@@ -504,7 +457,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Playlist",
     suggestedTitle: "Explore my playlist",
     placeholderUrl: "https://...",
-    icon: <Play className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "live_stream",
@@ -512,7 +464,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Live Stream",
     suggestedTitle: "Watch my live stream",
     placeholderUrl: "https://...",
-    icon: <Radio className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "content_series",
@@ -520,7 +471,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Content Series",
     suggestedTitle: "Explore my content series",
     placeholderUrl: "https://...",
-    icon: <Film className="h-4 w-4 text-[#803D63]" />,
   },
 
   // GROUP 4 — PERSONAL
@@ -530,7 +480,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "About Me",
     suggestedTitle: "Learn more about me",
     placeholderUrl: "https://...",
-    icon: <User className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "my_story",
@@ -538,7 +487,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "My Story",
     suggestedTitle: "Read my story",
     placeholderUrl: "https://...",
-    icon: <FileText className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "personal_blog",
@@ -546,7 +494,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Personal Blog",
     suggestedTitle: "Read my personal blog",
     placeholderUrl: "https://...",
-    icon: <FileText className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "recommendations",
@@ -554,7 +501,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "My Recommendations",
     suggestedTitle: "View my recommendations",
     placeholderUrl: "https://...",
-    icon: <Heart className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "favourite_tools",
@@ -562,7 +508,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "My Favourite Tools",
     suggestedTitle: "Explore my favourite tools",
     placeholderUrl: "https://...",
-    icon: <Bookmark className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "my_gear",
@@ -570,7 +515,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "My Gear",
     suggestedTitle: "See the gear I use",
     placeholderUrl: "https://...",
-    icon: <Bookmark className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "wishlist",
@@ -578,7 +522,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "My Wishlist",
     suggestedTitle: "View my wishlist",
     placeholderUrl: "https://...",
-    icon: <Heart className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "family_channel",
@@ -586,7 +529,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Family Channel",
     suggestedTitle: "Visit our family channel",
     placeholderUrl: "https://...",
-    icon: <User className="h-4 w-4 text-[#803D63]" />,
   },
   {
     id: "other_personal",
@@ -594,7 +536,6 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Other Personal Link",
     suggestedTitle: "Read my travel journal",
     placeholderUrl: "https://...",
-    icon: <Link2 className="h-4 w-4 text-[#803D63]" />,
   },
 
   // GROUP 5 — OTHER
@@ -604,9 +545,100 @@ export const LINK_TYPES: LinkTypeOption[] = [
     label: "Other",
     suggestedTitle: "",
     placeholderUrl: "https://example.com",
-    icon: <Link2 className="h-4 w-4 text-[#803D63]" />,
   },
 ];
+
+function renderTypeIcon(typeId?: string): React.ReactNode {
+  switch (typeId) {
+    case "instagram":
+      return <InstagramIcon className="h-4 w-4 text-pink-600" />;
+    case "youtube":
+      return <YoutubeIcon className="h-4 w-4 text-red-600" />;
+    case "facebook":
+      return <FacebookIcon className="h-4 w-4 text-blue-600" />;
+    case "twitter":
+      return <XTwitterIcon className="h-4 w-4 text-slate-900" />;
+    case "threads":
+      return <ThreadsIcon className="h-4 w-4 text-slate-900" />;
+    case "linkedin":
+      return <LinkedinIcon className="h-4 w-4 text-blue-700" />;
+    case "snapchat":
+      return <SnapchatIcon className="h-4 w-4 text-amber-500" />;
+    case "pinterest":
+      return <PinterestIcon className="h-4 w-4 text-red-600" />;
+    case "whatsapp":
+      return <WhatsappIcon className="h-4 w-4 text-emerald-600" />;
+    case "twitch":
+      return <TwitchIcon className="h-4 w-4 text-purple-600" />;
+    case "spotify":
+      return <SpotifyIcon className="h-4 w-4 text-emerald-600" />;
+    case "collab":
+    case "behance":
+      return <Briefcase className="h-4 w-4 text-[#803D63]" />;
+    case "contact":
+    case "newsletter":
+    case "substack":
+      return <Mail className="h-4 w-4 text-[#803D63]" />;
+    case "mediakit":
+    case "blog":
+    case "personal_blog":
+    case "my_story":
+    case "latest_post":
+    case "medium":
+      return <FileText className="h-4 w-4 text-[#803D63]" />;
+    case "portfolio":
+    case "personal_website":
+    case "business_website":
+    case "github":
+      return <Globe className="h-4 w-4 text-[#803D63]" />;
+    case "store":
+    case "merchandise":
+    case "digital_product":
+      return <ShoppingBag className="h-4 w-4 text-[#803D63]" />;
+    case "book_call":
+    case "appointment":
+    case "event":
+      return <Calendar className="h-4 w-4 text-[#803D63]" />;
+    case "course":
+      return <BookOpen className="h-4 w-4 text-[#803D63]" />;
+    case "support":
+      return <Coffee className="h-4 w-4 text-[#803D63]" />;
+    case "affiliate":
+    case "favourite_tools":
+    case "my_gear":
+      return <Bookmark className="h-4 w-4 text-[#803D63]" />;
+    case "latest_video":
+      return <Video className="h-4 w-4 text-[#803D63]" />;
+    case "podcast":
+    case "live_stream":
+      return <Radio className="h-4 w-4 text-[#803D63]" />;
+    case "content_series":
+      return <Film className="h-4 w-4 text-[#803D63]" />;
+    case "about_me":
+    case "family_channel":
+      return <User className="h-4 w-4 text-[#803D63]" />;
+    case "recommendations":
+    case "wishlist":
+      return <Heart className="h-4 w-4 text-[#803D63]" />;
+    case "featured_content":
+    case "dribbble":
+      return <Sparkles className="h-4 w-4 text-[#803D63]" />;
+    case "tiktok":
+    case "latest_reel":
+    case "playlist":
+    case "apple_music":
+    case "soundcloud":
+      return <Play className="h-4 w-4 text-[#803D63]" />;
+    case "telegram":
+    case "discord":
+    case "community":
+    case "reddit":
+    case "quora":
+      return <Share2 className="h-4 w-4 text-[#803D63]" />;
+    default:
+      return <Link2 className="h-4 w-4 text-[#803D63]" />;
+  }
+}
 
 /* ==========================================================================
    1. CENTRED CUSTOM LINK MODAL
@@ -639,7 +671,6 @@ function CustomLinkModal({ isOpen, onClose, linkToEdit, onSave }: CustomLinkModa
       setUrl(linkToEdit.url || "");
       setIsTitleManuallyEdited(true);
 
-      // Attempt to match link type by domain
       const found = LINK_TYPES.find(
         (t) => t.domainMatch && t.domainMatch.some((d) => (linkToEdit.url || "").toLowerCase().includes(d))
       );
@@ -713,7 +744,6 @@ function CustomLinkModal({ isOpen, onClose, linkToEdit, onSave }: CustomLinkModa
     setIsDropdownOpen(false);
     setTypeSearch("");
 
-    // If title has not been manually edited by user, auto-populate suggested title
     if (!isTitleManuallyEdited || !title.trim()) {
       setTitle(type.suggestedTitle);
       if (errors.title) setErrors((prev) => ({ ...prev, title: undefined }));
@@ -727,7 +757,6 @@ function CustomLinkModal({ isOpen, onClose, linkToEdit, onSave }: CustomLinkModa
       label: queryText.trim(),
       suggestedTitle: queryText.trim(),
       placeholderUrl: "https://example.com",
-      icon: <Link2 className="h-4 w-4 text-[#803D63]" />,
     };
     setSelectedType(customType);
     setIsDropdownOpen(false);
@@ -750,7 +779,6 @@ function CustomLinkModal({ isOpen, onClose, linkToEdit, onSave }: CustomLinkModa
     return null;
   }, [selectedType, url]);
 
-  // Preview Domain
   const previewDomain = extractDomain(url);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -760,7 +788,6 @@ function CustomLinkModal({ isOpen, onClose, linkToEdit, onSave }: CustomLinkModa
     if (!title.trim()) newErrors.title = "Enter a link title.";
     if (!url.trim()) newErrors.url = "Enter a valid URL.";
 
-    // Block unsafe protocols
     const trimmedUrl = url.trim().toLowerCase();
     if (trimmedUrl.startsWith("javascript:") || trimmedUrl.startsWith("data:")) {
       newErrors.url = "Unsafe URL scheme is not allowed.";
@@ -829,7 +856,7 @@ function CustomLinkModal({ isOpen, onClose, linkToEdit, onSave }: CustomLinkModa
               <div className="flex items-center gap-2.5 truncate">
                 {selectedType ? (
                   <>
-                    <div className="shrink-0">{selectedType.icon}</div>
+                    <div className="shrink-0">{renderTypeIcon(selectedType.id)}</div>
                     <span className="truncate">{selectedType.label}</span>
                   </>
                 ) : (
@@ -875,7 +902,7 @@ function CustomLinkModal({ isOpen, onClose, linkToEdit, onSave }: CustomLinkModa
                                 : "text-[#17131A] hover:bg-[#FAF8FA]"
                             }`}
                           >
-                            <div className="shrink-0">{item.icon}</div>
+                            <div className="shrink-0">{renderTypeIcon(item.id)}</div>
                             <span className="flex-1 truncate">{item.label}</span>
                             {item.suggestedTitle && (
                               <span className="text-[10px] text-[#6F6872] truncate hidden sm:inline">
@@ -984,7 +1011,7 @@ function CustomLinkModal({ isOpen, onClose, linkToEdit, onSave }: CustomLinkModa
             <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-white border border-[#ECE8EB] shrink-0 text-[#803D63]">
-                  {selectedType?.icon || <Link2 className="h-3.5 w-3.5" />}
+                  {renderTypeIcon(selectedType?.id)}
                 </div>
                 <div className="min-w-0">
                   <p className="truncate text-xs font-bold text-[#17131A]">
@@ -1045,9 +1072,9 @@ export default function DashboardSocialsPage() {
   const [linkToEdit, setLinkToEdit] = useState<CustomLink | null>(null);
 
   // Draft handle inputs for unconnected platforms
-  const [draftInsta, setDraftInsta] = useState(() => extractUsername(socials.instagram.url));
-  const [draftYt, setDraftYt] = useState(() => extractUsername(socials.youtube.url));
-  const [draftFb, setDraftFb] = useState(() => extractUsername(socials.facebook.url));
+  const [draftInsta, setDraftInsta] = useState(() => extractUsername(socials?.instagram?.url || ""));
+  const [draftYt, setDraftYt] = useState(() => extractUsername(socials?.youtube?.url || ""));
+  const [draftFb, setDraftFb] = useState(() => extractUsername(socials?.facebook?.url || ""));
 
   // Modals
   const [disconnectModal, setDisconnectModal] = useState<{
@@ -1059,14 +1086,14 @@ export default function DashboardSocialsPage() {
 
   const [linkToDelete, setLinkToDelete] = useState<CustomLink | null>(null);
 
-  // Connected handles & booleans
-  const instaConnectedHandle = extractUsername(socials.instagram.url) || socials.instagram.username || "";
-  const ytConnectedHandle = extractUsername(socials.youtube.url) || socials.youtube.username || "";
-  const fbConnectedHandle = extractUsername(socials.facebook.url) || socials.facebook.username || "";
+  // Connected handles & booleans (safe optional chaining)
+  const instaConnectedHandle = extractUsername(socials?.instagram?.url || "") || socials?.instagram?.username || "";
+  const ytConnectedHandle = extractUsername(socials?.youtube?.url || "") || socials?.youtube?.username || "";
+  const fbConnectedHandle = extractUsername(socials?.facebook?.url || "") || socials?.facebook?.username || "";
 
-  const isInstaConnected = Boolean(socials.instagram.url || socials.instagram.followers > 0 || instaConnectedHandle);
-  const isYtConnected = Boolean(socials.youtube.url || socials.youtube.subscribers > 0 || ytConnectedHandle);
-  const isFbConnected = Boolean(socials.facebook.url || socials.facebook.followers > 0 || fbConnectedHandle);
+  const isInstaConnected = Boolean(socials?.instagram?.url || (socials?.instagram?.followers ?? 0) > 0 || instaConnectedHandle);
+  const isYtConnected = Boolean(socials?.youtube?.url || (socials?.youtube?.subscribers ?? 0) > 0 || ytConnectedHandle);
+  const isFbConnected = Boolean(socials?.facebook?.url || (socials?.facebook?.followers ?? 0) > 0 || fbConnectedHandle);
 
   const connectedCount = [isInstaConnected, isYtConnected, isFbConnected].filter(Boolean).length;
 
@@ -1254,7 +1281,7 @@ export default function DashboardSocialsPage() {
             <span className="text-base">❤️</span>
           </div>
           <p className="font-display text-2xl font-bold text-[#17131A]">
-            {formatCount(totalAudience)}
+            {formatCount(totalAudience || 0)}
           </p>
           <p className="text-[11px] text-[#6F6872] font-medium">
             Combined connected audience
@@ -1303,12 +1330,12 @@ export default function DashboardSocialsPage() {
                 platformName="Instagram"
                 icon={<InstagramIcon className="h-4 w-4" />}
                 handle={instaConnectedHandle}
-                displayName={socials.instagram.name || "Instagram Profile"}
-                isVerified={socials.instagram.isVerified}
-                count={socials.instagram.followers}
+                displayName={socials?.instagram?.name || "Instagram Profile"}
+                isVerified={socials?.instagram?.isVerified}
+                count={socials?.instagram?.followers || 0}
                 countLabel="Followers"
-                lastSyncedAt={socials.instagram.lastSyncedAt || socials.updatedAt}
-                profileUrl={socials.instagram.url || `https://instagram.com/${instaConnectedHandle}`}
+                lastSyncedAt={socials?.instagram?.lastSyncedAt || socials?.updatedAt}
+                profileUrl={socials?.instagram?.url || `https://instagram.com/${instaConnectedHandle}`}
                 isSyncing={syncingPlatform === "instagram"}
                 onSync={() => handleSyncPlatform("instagram")}
                 onDisconnect={() =>
@@ -1327,12 +1354,12 @@ export default function DashboardSocialsPage() {
                 platformName="YouTube"
                 icon={<YoutubeIcon className="h-4 w-4" />}
                 handle={ytConnectedHandle}
-                displayName={socials.youtube.channelTitle || "YouTube Channel"}
-                isVerified={socials.youtube.isVerified}
-                count={socials.youtube.subscribers}
+                displayName={socials?.youtube?.channelTitle || "YouTube Channel"}
+                isVerified={socials?.youtube?.isVerified}
+                count={socials?.youtube?.subscribers || 0}
                 countLabel="Subscribers"
-                lastSyncedAt={socials.youtube.lastSyncedAt || socials.updatedAt}
-                profileUrl={socials.youtube.url || `https://youtube.com/@${ytConnectedHandle}`}
+                lastSyncedAt={socials?.youtube?.lastSyncedAt || socials?.updatedAt}
+                profileUrl={socials?.youtube?.url || `https://youtube.com/@${ytConnectedHandle}`}
                 isSyncing={syncingPlatform === "youtube"}
                 onSync={() => handleSyncPlatform("youtube")}
                 onDisconnect={() =>
@@ -1351,12 +1378,12 @@ export default function DashboardSocialsPage() {
                 platformName="Facebook"
                 icon={<FacebookIcon className="h-4 w-4" />}
                 handle={fbConnectedHandle}
-                displayName={socials.facebook.name || "Facebook Page"}
-                isVerified={socials.facebook.isVerified}
-                count={socials.facebook.followers}
+                displayName={socials?.facebook?.name || "Facebook Page"}
+                isVerified={socials?.facebook?.isVerified}
+                count={socials?.facebook?.followers || 0}
                 countLabel="Page Followers"
-                lastSyncedAt={socials.facebook.lastSyncedAt || socials.updatedAt}
-                profileUrl={socials.facebook.url || `https://facebook.com/${fbConnectedHandle}`}
+                lastSyncedAt={socials?.facebook?.lastSyncedAt || socials?.updatedAt}
+                profileUrl={socials?.facebook?.url || `https://facebook.com/${fbConnectedHandle}`}
                 isSyncing={syncingPlatform === "facebook"}
                 onSync={() => handleSyncPlatform("facebook")}
                 onDisconnect={() =>
@@ -1496,12 +1523,7 @@ export default function DashboardSocialsPage() {
                 setLinkToEdit(null);
                 setIsLinkModalOpen(true);
               }}
-              disabled={links.length >= MAX_CUSTOM_LINKS}
-              className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-colors cursor-pointer shadow-2xs ${
-                links.length >= MAX_CUSTOM_LINKS
-                  ? "bg-[#FAF8FA] border border-[#ECE8EB] text-[#6F6872] opacity-60 cursor-not-allowed"
-                  : "bg-[#803D63] hover:bg-[#6F3456] text-white"
-              }`}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-3.5 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Add Link</span>
