@@ -1,17 +1,41 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Plus, Trash2, Edit3, Link as LinkIcon, ExternalLink, X, Check, ChevronDown } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import {
+  Plus,
+  Trash2,
+  Edit3,
+  Link as LinkIcon,
+  ExternalLink,
+  X,
+  Check,
+  ChevronDown,
+  MoreVertical,
+  Copy,
+  Pencil,
+} from "lucide-react";
 import { CustomLink } from "@/types";
 import { customLinksRepository, authRepository } from "@/repositories/localRepository";
 import { useToast } from "@/contexts/ToastContext";
 import { useCreator } from "@/contexts/CreatorContext";
+import { copyToClipboard } from "@/lib/copyToClipboard";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
 interface CustomLinksManagerProps {
   onChange?: (links: CustomLink[]) => void;
 }
 
 const MAX_FREE_LINKS = 3;
+
+function extractDomain(url: string): string {
+  try {
+    const full = url.startsWith("http://") || url.startsWith("https://") ? url : `https://${url}`;
+    const parsed = new URL(full);
+    return parsed.hostname.replace(/^www\./, "");
+  } catch {
+    return url || "example.com";
+  }
+}
 
 export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
   const { showToast } = useToast();
@@ -23,6 +47,8 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
   const [formTitle, setFormTitle] = useState("");
   const [formUrl, setFormUrl] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [linkToDelete, setLinkToDelete] = useState<CustomLink | null>(null);
+  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
 
   const planKey = (subscription?.planKey || "").toLowerCase();
   const isVip = planKey.includes("vip") || planKey.includes("pro");
@@ -48,10 +74,17 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
     }
   }, []);
 
+  // Click outside to close 3-dot menus
+  useEffect(() => {
+    const handleClickOutside = () => setActiveMenuId(null);
+    if (activeMenuId) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [activeMenuId]);
+
   function handleOpenCreate() {
     if (isLimitReached) {
       showToast(
-        `Free / Early Access plan is limited to ${MAX_FREE_LINKS} custom links. Upgrade to VIP Plan for unlimited links! ⭐`,
+        `Early Access plan is limited to ${MAX_FREE_LINKS} custom links. Upgrade to VIP Plan for unlimited links! ⭐`,
         "info"
       );
       return;
@@ -116,7 +149,8 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
     setLinks(updatedList);
     customLinksRepository.save(updatedList);
     if (onChange) onChange(updatedList);
-    showToast("Custom link removed");
+    showToast("Custom link removed! 🗑️");
+    setLinkToDelete(null);
     syncToBackend(updatedList);
   }
 
@@ -141,126 +175,178 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
     }
   }
 
+  async function handleCopy(url: string) {
+    setActiveMenuId(null);
+    const success = await copyToClipboard(url);
+    if (success) {
+      showToast("Link URL copied! ✨");
+    }
+  }
+
   return (
-    <div className="space-y-4 rounded-3xl border border-rose-100 bg-white p-5 sm:p-6 shadow-sm text-left">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 gap-2">
+    <div className="space-y-3 text-left">
+      {/* Section Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-0.5">
         <div>
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <h3 className="font-display text-base font-extrabold text-slate-900 flex items-center gap-2">
-              <LinkIcon className="h-4 w-4 text-[#803D63]" />
-              Additional Custom Links
-            </h3>
-            {!isVip ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200/80 px-2.5 py-0.5 text-[11px] font-bold text-amber-800">
-                ⚡ Free / Early Access ({links.length}/{MAX_FREE_LINKS} Links)
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 rounded-full bg-purple-50 border border-purple-200/80 px-2.5 py-0.5 text-[11px] font-bold text-[#803D63]">
-                ⭐ VIP Plan (Unlimited Links)
-              </span>
-            )}
-          </div>
-          <p className="text-xs text-slate-500 font-medium mt-0.5">
-            Add custom links for latest episodes, booking pages, merch store, or personal website.
+          <h2 className="font-display text-base font-bold text-[#17131A]">
+            Custom links
+          </h2>
+          <p className="text-xs text-[#6F6872] font-medium mt-0.5">
+            Add the destinations you want followers and brands to find.
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={handleOpenCreate}
-          className={`tap-scale inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all shrink-0 ${
-            isLimitReached
-              ? "bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed"
-              : "bg-[#803D63] hover:bg-[#6D3254] text-white cursor-pointer shadow-2xs"
-          }`}
-          title={isLimitReached ? "Free / Early Access plan limit reached (3 links max)" : "Add new custom link"}
-        >
-          <Plus className="h-3.5 w-3.5" />
-          <span>Add Link</span>
-        </button>
-      </div>
+        <div className="flex items-center gap-3 shrink-0 self-start sm:self-auto">
+          <span className="text-xs font-semibold text-[#6F6872]">
+            Early Access • {links.length} of {MAX_FREE_LINKS} links
+          </span>
 
-      {links.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-8 text-center space-y-3">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#803D63]/10 text-[#803D63]">
-            <LinkIcon className="h-6 w-6" />
-          </div>
-          <div className="space-y-1">
-            <h4 className="font-display text-sm font-bold text-slate-900">No custom links added yet</h4>
-            <p className="text-xs text-slate-500 max-w-sm mx-auto font-medium">
-              Click &quot;Add Link&quot; to add custom links for latest episodes, booking pages, merch store, or personal website.
-            </p>
-          </div>
           <button
             type="button"
             onClick={handleOpenCreate}
-            className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#803D63]/30 bg-[#803D63]/10 hover:bg-[#803D63]/20 px-4 py-2 text-xs font-bold text-[#803D63] transition-all cursor-pointer"
+            disabled={isLimitReached}
+            className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-colors cursor-pointer shadow-2xs ${
+              isLimitReached
+                ? "bg-[#FAF8FA] border border-[#ECE8EB] text-[#6F6872] opacity-60 cursor-not-allowed"
+                : "bg-[#803D63] hover:bg-[#6F3456] text-white"
+            }`}
+            title={isLimitReached ? "Early Access plan limit reached (3 links max)" : "Add new custom link"}
           >
             <Plus className="h-3.5 w-3.5" />
-            <span>+ Add First Custom Link</span>
+            <span>Add Link</span>
           </button>
         </div>
-      ) : (
-        <div className="space-y-2.5">
-          {links.map((item, idx) => (
-            <div
-              key={item.id}
-              className="group rounded-2xl border border-slate-200/80 bg-slate-50/50 p-3.5 transition-all hover:border-[#803D63]/30 hover:bg-white flex items-center justify-between gap-3"
+      </div>
+
+      {/* Links List / Empty State */}
+      {links.length === 0 ? (
+        <div className="rounded-2xl border border-[#ECE8EB] bg-white p-6 text-center space-y-2 shadow-2xs">
+          <p className="text-xs font-bold text-[#17131A]">Add your first custom link</p>
+          <p className="text-xs text-[#6F6872] max-w-sm mx-auto">
+            Help people reach your latest content, website, booking page, store or community.
+          </p>
+          <div className="pt-1">
+            <button
+              type="button"
+              onClick={handleOpenCreate}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
             >
-              <div className="flex items-center gap-3 min-w-0">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#803D63]/10 text-[#803D63]">
-                  <LinkIcon className="h-4 w-4" />
-                </span>
-                <div className="min-w-0 text-left space-y-0.5">
-                  <p className="truncate text-xs font-extrabold text-slate-900 flex items-center gap-2">
-                    <span>{item.title}</span>
-                    <span className="text-[10px] font-black uppercase text-[#803D63] tracking-wider bg-[#803D63]/10 px-1.5 py-0.5 rounded-md">
-                      #{idx + 1}
-                    </span>
-                  </p>
-                  <p className="truncate text-[11px] font-mono text-slate-500 max-w-md">
-                    {item.url}
-                  </p>
+              <Plus className="h-3.5 w-3.5" />
+              <span>Add Link</span>
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="rounded-2xl border border-[#ECE8EB] bg-white divide-y divide-[#ECE8EB] overflow-hidden shadow-2xs">
+          {links.map((item, idx) => {
+            const domain = extractDomain(item.url);
+            return (
+              <div
+                key={item.id || idx}
+                className="p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-[#FAFAFB] transition-colors text-left"
+              >
+                {/* Left: Index badge & Title/Domain */}
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-md bg-[#FAF8FA] border border-[#ECE8EB] text-[10px] font-bold text-[#6F6872] shrink-0">
+                    0{idx + 1}
+                  </span>
+
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-xs font-bold text-[#17131A]">{item.title}</p>
+                    <p className="truncate text-[11px] font-medium text-[#6F6872] mt-0.5">{domain}</p>
+                  </div>
+                </div>
+
+                {/* Right: Actions */}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {item.url && (
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 rounded-lg border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-2.5 py-1 text-xs font-semibold text-[#17131A] transition-colors"
+                      title="Open link in new tab"
+                    >
+                      <span className="hidden sm:inline">Open</span>
+                      <ExternalLink className="h-3 w-3 text-[#803D63]" />
+                    </a>
+                  )}
+
+                  {/* Three-dot menu */}
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveMenuId(activeMenuId === item.id ? null : item.id);
+                      }}
+                      className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] text-[#6F6872] hover:text-[#17131A] transition-colors cursor-pointer"
+                      aria-label="More actions"
+                    >
+                      <MoreVertical className="h-3.5 w-3.5" />
+                    </button>
+
+                    {activeMenuId === item.id && (
+                      <div
+                        onClick={(e) => e.stopPropagation()}
+                        className="absolute right-0 top-full mt-1.5 w-36 rounded-xl border border-[#ECE8EB] bg-white p-1 shadow-lg z-20 space-y-0.5 animate-in fade-in"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setActiveMenuId(null);
+                            handleOpenEdit(item);
+                          }}
+                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#17131A] hover:bg-[#FAF8FA] transition-colors cursor-pointer"
+                        >
+                          <Pencil className="h-3.5 w-3.5 text-[#6F6872]" />
+                          <span>Edit Link</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleCopy(item.url)}
+                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#17131A] hover:bg-[#FAF8FA] transition-colors cursor-pointer"
+                        >
+                          <Copy className="h-3.5 w-3.5 text-[#6F6872]" />
+                          <span>Copy Link</span>
+                        </button>
+
+                        <div className="my-1 border-t border-[#ECE8EB]" />
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setActiveMenuId(null);
+                            setLinkToDelete(item);
+                          }}
+                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                          <span>Delete Link</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-
-              <div className="flex items-center gap-1.5 shrink-0">
-                {item.url && (
-                  <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-[#803D63] hover:bg-rose-50 transition-colors"
-                    title="Open Link"
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
-                )}
-
-                <button
-                  type="button"
-                  onClick={() => handleOpenEdit(item)}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-[#803D63] hover:bg-rose-50 transition-colors cursor-pointer"
-                  title="Edit Link"
-                >
-                  <Edit3 className="h-4 w-4" />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleDeleteLink(item.id)}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                  title="Remove Link"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
-      {/* POPUP MODAL FOR ADDING / EDITING CUSTOM LINK (Similar to Create Gig Modal) */}
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={Boolean(linkToDelete)}
+        onClose={() => setLinkToDelete(null)}
+        onConfirm={() => linkToDelete && handleDeleteLink(linkToDelete.id)}
+        title="Delete this link?"
+        description={`"${linkToDelete?.title}" will be removed from your public creator profile.`}
+        confirmText="Delete Link"
+        cancelText="Cancel"
+      />
+
+      {/* APPROVED POPUP MODAL FOR ADDING / EDITING CUSTOM LINK (100% UNTOUCHED) */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white border border-gray-200 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 text-left animate-in zoom-in-95">
