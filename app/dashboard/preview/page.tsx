@@ -47,33 +47,31 @@ export default function DashboardPreviewPage() {
   };
 
   return (
-    <div className="min-h-dvh bg-[#F9FAFB] text-slate-900 pb-16">
-      {/* Sticky Page Subheader */}
-      <div className="sticky top-0 z-30 bg-[#FAF8FA]/95 backdrop-blur-md border-b border-[#E8DCE4]/80 px-3 sm:px-6 py-3.5 shadow-2xs text-left mb-6">
-        <div className="mx-auto max-w-5xl flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <h1 className="font-display text-base font-extrabold text-slate-900 truncate">
-              Profile Preview
-            </h1>
-            <p className="text-xs text-slate-500 font-medium truncate">
-              This is exactly how your public profile looks to brands &amp; fans
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setIsVisibilityModalOpen(true)}
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:border-[#803D63]/30 hover:text-[#803D63] transition-all shadow-xs cursor-pointer shrink-0"
-          >
-            <Settings className="h-3.5 w-3.5" />
-            <span>Page Display Settings</span>
-          </button>
+    <div className="space-y-6 max-w-5xl mx-auto pb-12 text-left">
+      {/* 1. PAGE HEADER */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
+        <div>
+          <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#17131A] tracking-tight">
+            Profile Preview
+          </h1>
+          <p className="text-xs sm:text-sm text-[#6F6872] font-medium mt-1">
+            This is exactly how your public profile looks to brands and fans.
+          </p>
         </div>
+
+        <button
+          type="button"
+          onClick={() => setIsVisibilityModalOpen(true)}
+          className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer shadow-2xs shrink-0 self-start sm:self-auto"
+        >
+          <Settings className="h-3.5 w-3.5 text-[#803D63]" />
+          <span>Page Display Settings</span>
+        </button>
       </div>
 
-      <div className="mx-auto max-w-5xl px-3 sm:px-6 space-y-5">
-        {/* Preview Card */}
-        <div className={`w-full rounded-3xl p-4 sm:p-8 transition-colors duration-300 shadow-sm ${pageBgStyle}`}>
+      {/* 2. PREVIEW CANVAS CONTAINER */}
+      <div className="space-y-4">
+        <div className={`w-full rounded-3xl p-4 sm:p-8 transition-colors duration-300 shadow-2xs border border-[#ECE8EB] ${pageBgStyle}`}>
           <div className="w-full max-w-2xl mx-auto">
             <ThemeCard
               themeKey={theme}
@@ -87,7 +85,7 @@ export default function DashboardPreviewPage() {
         </div>
       </div>
 
-      {/* Visibility Settings Modal */}
+      {/* Visibility Settings Modal (100% Intact) */}
       <VisibilitySettingsModal
         isOpen={isVisibilityModalOpen}
         onClose={() => setIsVisibilityModalOpen(false)}
@@ -97,4 +95,3 @@ export default function DashboardPreviewPage() {
     </div>
   );
 }
-

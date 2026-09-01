@@ -9,6 +9,7 @@ import {
   LogOut,
   Briefcase,
   Star,
+  Eye,
 } from "lucide-react";
 
 export interface NavItem {
@@ -26,6 +27,7 @@ export const WORKSPACE_NAV: NavItem[] = [
   { href: "/dashboard/mediakit", label: "Services & Brand Work", icon: Briefcase },
   { href: "/dashboard/reviews", label: "Reviews", icon: Star },
   { href: "/dashboard/themes", label: "Appearance", icon: Palette },
+  { href: "/dashboard/preview", label: "Profile Preview", icon: Eye },
 ];
 
 export const ACCOUNT_NAV: NavItem[] = [
