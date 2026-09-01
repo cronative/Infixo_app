@@ -20,7 +20,6 @@ import { buildSeriesUrl } from "@/utils/format";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { ShareSeriesModal } from "@/components/shared/ShareSeriesModal";
-import { Logo } from "@/components/shared/Logo";
 import { PublicCreatorInfo } from "@/lib/publicSeriesService";
 
 function extractYoutubeId(url?: string): string | null {
@@ -92,6 +91,33 @@ export function SeriesDetailClient({
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [coverImageError, setCoverImageError] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
+
+  // Parallax scroll listener with requestAnimationFrame
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
+
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrollY(window.scrollY);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const parallaxOffset = useMemo(() => {
+    // Subtle, smooth parallax displacement (moves at 30% scroll speed, clamped)
+    return Math.min(scrollY * 0.3, 160);
+  }, [scrollY]);
 
   // Client-side fallback fetch if initial SSR data is not present
   useEffect(() => {
@@ -202,16 +228,8 @@ export function SeriesDetailClient({
   if (loading) {
     return (
       <div className="min-h-screen bg-[#FAF8FA] text-[#17131A] flex flex-col font-sans">
-        {/* Header Skeleton */}
-        <div className="w-full bg-white border-b border-[#ECE8EB] px-4 sm:px-8 py-3.5">
-          <div className="max-w-4xl mx-auto flex items-center justify-between">
-            <div className="h-8 w-24 bg-[#FAF8FA] border border-[#ECE8EB] rounded-xl animate-pulse" />
-            <div className="h-8 w-28 bg-[#FAF8FA] border border-[#ECE8EB] rounded-xl animate-pulse" />
-          </div>
-        </div>
-
         {/* Full-width Cover Skeleton */}
-        <div className="w-full h-[260px] sm:h-[440px] bg-slate-200/80 animate-pulse" />
+        <div className="w-full h-[280px] sm:h-[460px] md:h-[520px] bg-slate-200/80 animate-pulse" />
 
         {/* Centered Content Skeleton */}
         <main className="max-w-4xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
@@ -276,71 +294,21 @@ export function SeriesDetailClient({
   return (
     <div className="min-h-screen bg-[#FAF8FA] text-[#17131A] selection:bg-[#803D63] selection:text-white font-sans antialiased">
       {/* ========================================================================= */}
-      {/* 1. SIMPLE TOP HEADER */}
+      {/* 1. FULL-WIDTH PARALLAX COVER (STARTS AT THE VERY TOP OF THE VIEWPORT) */}
       {/* ========================================================================= */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#ECE8EB] px-4 sm:px-8 py-3.5 shadow-2xs">
-        <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
-          {/* Brand & Back Navigation */}
-          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-            <Logo size="sm" />
-
-            <div className="h-4 w-px bg-[#ECE8EB]" />
-
-            <Link
-              href={`/${username}`}
-              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#6F6872] hover:text-[#803D63] transition-colors truncate"
-            >
-              <ArrowLeft className="h-3.5 w-3.5 shrink-0" />
-              <span className="truncate">Back to @{username}</span>
-            </Link>
-          </div>
-
-          {/* Right Actions */}
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              type="button"
-              onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] hover:bg-white px-3 py-1.5 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer"
-              title="Copy series URL"
-            >
-              {copiedLink ? (
-                <>
-                  <Check className="h-3.5 w-3.5 text-emerald-600" />
-                  <span className="hidden sm:inline text-emerald-600">Copied</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="h-3.5 w-3.5 text-[#6F6872]" />
-                  <span className="hidden sm:inline">Copy Link</span>
-                </>
-              )}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setIsShareModalOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-3.5 py-1.5 text-xs font-semibold text-white shadow-2xs transition-colors cursor-pointer"
-              title="Share this series"
-            >
-              <Share2 className="h-3.5 w-3.5" />
-              <span>Share</span>
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* ========================================================================= */}
-      {/* 2. FULL-WIDTH COVER IMAGE */}
-      {/* ========================================================================= */}
-      <section className="w-full bg-[#FAF8FA] border-b border-[#ECE8EB] overflow-hidden">
-        <div className="w-full h-[220px] sm:h-[360px] md:h-[460px] relative bg-[#FAF8FA] flex items-center justify-center">
+      <section className="w-full bg-[#FAF8FA] border-b border-[#ECE8EB] overflow-hidden relative">
+        <div className="w-full h-[260px] sm:h-[400px] md:h-[500px] lg:h-[540px] relative overflow-hidden bg-[#FAF8FA] flex items-center justify-center">
           {coverImageSrc ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={coverImageSrc}
               alt={series.title}
               onError={() => setCoverImageError(true)}
-              className="w-full h-full object-cover object-center"
+              style={{
+                transform: `translate3d(0, ${parallaxOffset}px, 0)`,
+                willChange: "transform",
+              }}
+              className="w-full h-[125%] -top-[12%] absolute object-cover object-center transition-transform duration-75 ease-out select-none pointer-events-none"
             />
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center p-8 bg-gradient-to-br from-[#FAF8FA] via-white to-[#F6EBF1] text-center">
@@ -354,7 +322,7 @@ export function SeriesDetailClient({
       </section>
 
       {/* ========================================================================= */}
-      {/* 3. CENTRED SERIES DETAILS & EPISODES CONTAINER */}
+      {/* 2. CENTRED SERIES DETAILS & EPISODES CONTAINER */}
       {/* ========================================================================= */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 text-left">
         {/* ── SERIES DETAILS ── */}
@@ -556,7 +524,7 @@ export function SeriesDetailClient({
       </main>
 
       {/* ========================================================================= */}
-      {/* 4. STANDARDIZED SHARE MODAL */}
+      {/* 3. STANDARDIZED SHARE MODAL */}
       {/* ========================================================================= */}
       {series && (
         <ShareSeriesModal
