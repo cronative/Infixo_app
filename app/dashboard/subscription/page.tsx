@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Sparkles, Layers, Film, Briefcase } from "lucide-react";
+import { Layers, Film, Briefcase, Sparkles, Check } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
-import { BillingCycle, PlanKey } from "@/types";
 import { PricingTable } from "@/components/subscription/PricingTable";
 import { getSeriesUsage, getTotalEpisodesUsage, getGigUsage } from "@/services/subscriptionLimits";
 import { MediaKitService } from "@/services/MediaKitService";
@@ -26,67 +25,132 @@ export default function DashboardSubscriptionPage() {
   const gigUsage = getGigUsage(activeGigsCount, planKey);
 
   return (
-    <div className="min-h-dvh bg-[#F9FAFB] text-slate-900 pb-16">
-      {/* Sticky Page Subheader */}
-      <div className="sticky top-0 z-30 bg-[#FAF8FA]/95 backdrop-blur-md border-b border-[#E8DCE4]/80 px-3 sm:px-6 py-3.5 shadow-2xs text-left mb-6">
-        <div className="mx-auto max-w-5xl flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <h1 className="font-display text-base font-extrabold text-slate-900 truncate">
-              Subscription &amp; Plans
-            </h1>
-            <p className="text-xs text-slate-500 font-medium truncate">
-              Inflixo Early Access is 100% free for all creators until Pro &amp; VIP plans launch.
-            </p>
-          </div>
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 px-3 py-1 text-xs font-bold shrink-0">
-            <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
-            <span>EARLY ACCESS FREE</span>
+    <div className="space-y-6 max-w-6xl mx-auto pb-12">
+      {/* 1. PAGE HEADER */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
+        <div>
+          <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#17131A] tracking-tight">
+            Plan
+          </h1>
+          <p className="text-xs sm:text-sm text-[#6F6872] font-medium mt-1">
+            View your current access, usage limits and upcoming Inflixo plans.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+          <span className="inline-flex items-center gap-1.5 rounded-xl bg-[#ECFDF3] border border-[#ECE8EB] px-3.5 py-1.5 text-xs font-semibold text-[#16794A]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#16794A]" />
+            Early Access Active
           </span>
         </div>
       </div>
 
-      <div className="mx-auto max-w-5xl px-3 sm:px-6 space-y-5">
-        {/* Current Active Plan Status Banner */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-2xs">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="space-y-1 text-left">
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800">Current Plan</span>
-                <span className="rounded-md border border-emerald-300 bg-emerald-100 px-2 py-0.5 text-[10px] font-extrabold text-emerald-900">
-                  EARLY ACCESS • FREE
-                </span>
-              </div>
-              <p className="font-display text-lg font-extrabold text-slate-900">
+      {/* 2. SECTION 1 — CURRENT PLAN & REAL-TIME USAGE CARD */}
+      <section className="rounded-2xl border border-[#ECE8EB] bg-white p-5 sm:p-6 text-left space-y-5 shadow-2xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#ECE8EB] pb-4">
+          <div className="space-y-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#803D63] block">
+              CURRENT ACCESS
+            </span>
+            <div className="flex items-center gap-2">
+              <h2 className="font-display text-lg font-bold text-[#17131A]">
                 Inflixo Early Access
-              </p>
-              <p className="text-xs text-slate-500 font-medium">
-                Free for all creators until Creator Pro &amp; VIP plans are launched • No credit card required
-              </p>
+              </h2>
+              <span className="text-[10px] font-bold text-[#16794A] bg-[#ECFDF3] px-2 py-0.5 rounded-full">
+                Active
+              </span>
             </div>
+            <p className="text-xs text-[#6F6872] font-medium">
+              You currently have Early Access to Inflixo while creator plans are being prepared.
+            </p>
+          </div>
 
-            {/* Real-time Usage Meter Pills */}
-            <div className="flex flex-wrap items-center gap-2 shrink-0">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
-                <Layers className="h-4 w-4 text-[#803D63]" />
-                <span>Series: <strong className="text-[#803D63]">{seriesUsage.current} / {seriesUsage.max === Infinity ? "∞" : seriesUsage.max}</strong></span>
-              </div>
-              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
-                <Film className="h-4 w-4 text-[#803D63]" />
-                <span>Episodes: <strong className="text-[#803D63]">{episodeUsage.current} / {episodeUsage.max === Infinity ? "∞" : episodeUsage.max}</strong></span>
-              </div>
-              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
-                <Briefcase className="h-4 w-4 text-[#803D63]" />
-                <span>Collab Gigs: <strong className="text-[#803D63]">{gigUsage.current} / {gigUsage.max === Infinity ? "∞" : gigUsage.max}</strong></span>
-              </div>
+          <span className="text-xs font-semibold text-[#6F6872] shrink-0 self-start sm:self-auto">
+            Early Access is currently available to all creators. No card required.
+          </span>
+        </div>
+
+        {/* Real-time Usage Metrics (3 Columns) */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {/* Metric 1: Content Series */}
+          <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3.5 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-[#6F6872] flex items-center gap-1.5">
+                <Layers className="h-3.5 w-3.5 text-[#803D63]" />
+                <span>Content Series</span>
+              </span>
+              <span className="text-xs font-bold text-[#17131A]">
+                {seriesUsage.current} of {seriesUsage.max === Infinity ? "Unlimited" : seriesUsage.max}
+              </span>
             </div>
+            {/* Progress Bar */}
+            <div className="w-full bg-[#ECE8EB] h-1.5 rounded-full overflow-hidden">
+              <div
+                className="bg-[#803D63] h-full rounded-full transition-all"
+                style={{ width: `${Math.min(100, seriesUsage.percentage)}%` }}
+              />
+            </div>
+            <p className="text-[10px] text-[#6F6872] font-medium">
+              {seriesUsage.max === Infinity
+                ? "Unlimited series allowed"
+                : `${seriesUsage.max - seriesUsage.current} slots available`}
+            </p>
+          </div>
+
+          {/* Metric 2: Total Episodes */}
+          <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3.5 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-[#6F6872] flex items-center gap-1.5">
+                <Film className="h-3.5 w-3.5 text-[#803D63]" />
+                <span>Total Episodes</span>
+              </span>
+              <span className="text-xs font-bold text-[#17131A]">
+                {episodeUsage.current} of {episodeUsage.max === Infinity ? "Unlimited" : episodeUsage.max}
+              </span>
+            </div>
+            {/* Progress Bar */}
+            <div className="w-full bg-[#ECE8EB] h-1.5 rounded-full overflow-hidden">
+              <div
+                className="bg-[#803D63] h-full rounded-full transition-all"
+                style={{ width: `${Math.min(100, episodeUsage.percentage)}%` }}
+              />
+            </div>
+            <p className="text-[10px] text-[#6F6872] font-medium">
+              {episodeUsage.max === Infinity
+                ? "Unlimited episodes allowed"
+                : `${episodeUsage.max - episodeUsage.current} episode uploads left`}
+            </p>
+          </div>
+
+          {/* Metric 3: Creator Services */}
+          <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3.5 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-[#6F6872] flex items-center gap-1.5">
+                <Briefcase className="h-3.5 w-3.5 text-[#803D63]" />
+                <span>Creator Services</span>
+              </span>
+              <span className="text-xs font-bold text-[#17131A]">
+                {gigUsage.current} of {gigUsage.max === Infinity ? "Unlimited" : gigUsage.max}
+              </span>
+            </div>
+            {/* Progress Bar */}
+            <div className="w-full bg-[#ECE8EB] h-1.5 rounded-full overflow-hidden">
+              <div
+                className="bg-[#803D63] h-full rounded-full transition-all"
+                style={{ width: `${Math.min(100, gigUsage.percentage)}%` }}
+              />
+            </div>
+            <p className="text-[10px] text-[#6F6872] font-medium">
+              {gigUsage.max === Infinity
+                ? "Unlimited services allowed"
+                : `${gigUsage.max - gigUsage.current} active slot available`}
+            </p>
           </div>
         </div>
+      </section>
 
-        {/* Pricing Table with Monthly/Yearly Toggle */}
-        <div className="space-y-4">
-          <PricingTable />
-        </div>
-      </div>
+      {/* 3. SECTION 2 — UPCOMING PLANS & PRICING TABLE */}
+      <PricingTable />
     </div>
   );
 }
