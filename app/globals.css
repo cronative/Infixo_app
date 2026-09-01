@@ -135,6 +135,60 @@ h1, h2, h3, h4, h5, h6, .font-display {
   }
 }
 
+@keyframes orbit-slow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes orbit-reverse {
+  0% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes float-slow-1 {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  50% {
+    transform: translateY(-14px) translateX(6px);
+  }
+}
+
+@keyframes float-slow-2 {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  50% {
+    transform: translateY(12px) translateX(-8px);
+  }
+}
+
+@keyframes float-slow-3 {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  50% {
+    transform: translateY(-10px) translateX(-7px);
+  }
+}
+
+@keyframes float-slow-4 {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  50% {
+    transform: translateY(14px) translateX(6px);
+  }
+}
+
 /* Global Animation Utilities */
 .animate-fade-in-up {
   animation: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -148,8 +202,47 @@ h1, h2, h3, h4, h5, h6, .font-display {
   animation: float 4s ease-in-out infinite;
 }
 
+.animate-orbit-slow {
+  animation: orbit-slow 35s linear infinite;
+}
+
+.animate-orbit-reverse {
+  animation: orbit-reverse 45s linear infinite;
+}
+
+.animate-float-slow-1 {
+  animation: float-slow-1 4.5s ease-in-out infinite;
+}
+
+.animate-float-slow-2 {
+  animation: float-slow-2 5.5s ease-in-out infinite;
+}
+
+.animate-float-slow-3 {
+  animation: float-slow-3 5s ease-in-out infinite;
+}
+
+.animate-float-slow-4 {
+  animation: float-slow-4 6s ease-in-out infinite;
+}
+
 .animate-pulse-glow {
   animation: pulse-glow 2.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-orbit-slow,
+  .animate-orbit-reverse,
+  .animate-float-slow-1,
+  .animate-float-slow-2,
+  .animate-float-slow-3,
+  .animate-float-slow-4,
+  .animate-float,
+  .animate-fade-in-up,
+  .animate-scale-in {
+    animation: none !important;
+    transform: none !important;
+  }
 }
 
 /* Interactive Card & Button Micro-Interactions */

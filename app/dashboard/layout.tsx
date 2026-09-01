@@ -5,66 +5,76 @@ import { useRouter } from "next/navigation";
 import { CreatorProvider, useCreator } from "@/contexts/CreatorContext";
 import { AuthService } from "@/services/AuthService";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
-import { DashboardBottomNav } from "@/components/dashboard/DashboardBottomNav";
 import { DashboardMobileHeader } from "@/components/dashboard/DashboardMobileHeader";
 import { DashboardSideDrawer } from "@/components/dashboard/DashboardSideDrawer";
-import { LogOut, Copy, Menu, ExternalLink } from "lucide-react";
+import { Copy, ExternalLink } from "lucide-react";
 import { useToast } from "@/contexts/ToastContext";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { OnboardingService } from "@/services/OnboardingService";
 
+function getGreeting(name?: string): string {
+  const hour = new Date().getHours();
+  const firstName = name ? name.trim().split(" ")[0] : "Creator";
+  if (hour < 12) return `Good morning, ${firstName}`;
+  if (hour < 18) return `Good afternoon, ${firstName}`;
+  return `Good evening, ${firstName}`;
+}
+
 function DesktopTopHeader() {
   const { profile } = useCreator();
   const { showToast } = useToast();
-  const router = useRouter();
 
-  const handleStr = profile.username || "you";
+  const handleStr = profile.username || "username";
+  const displayName = profile.displayName || profile.email?.split("@")[0] || "Creator";
+  const [greeting, setGreeting] = useState("Welcome back");
+
+  useEffect(() => {
+    setGreeting(getGreeting(displayName));
+  }, [displayName]);
+
+  const handleCopy = async () => {
+    const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
+    const fullUrl = `${origin}/${handleStr}`;
+    const success = await copyToClipboard(fullUrl);
+    if (success) {
+      showToast("Profile link copied! ✨");
+    } else {
+      showToast("Could not copy link", "error");
+    }
+  };
 
   return (
-    <header className="hidden items-center justify-between border-b border-slate-200 bg-white px-8 py-3.5 lg:flex">
+    <header className="hidden items-center justify-between border-b border-[#ECE8EB] bg-white px-8 py-4 lg:flex shrink-0">
       <div>
-        <p className="font-display text-sm font-bold text-slate-900">
-          {profile.displayName ? `Welcome, ${profile.displayName.split(" ")[0]}` : "Welcome"}
+        <h1 className="font-display text-lg font-bold text-[#17131A] tracking-tight">
+          {greeting}
+        </h1>
+        <p className="text-xs text-[#6F6872] font-medium mt-0.5">
+          Here&apos;s how your creator profile is looking today.
         </p>
-        <p className="text-xs text-slate-500 font-medium">inflixo.com/{handleStr}</p>
       </div>
-      <div className="flex items-center gap-2">
+
+      <div className="flex items-center gap-2.5">
         <button
-          onClick={async () => {
-            const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
-            const fullUrl = `${origin}/${handleStr}`;
-            const success = await copyToClipboard(fullUrl);
-            if (success) {
-              showToast("Profile link copied to clipboard! ✨");
-            } else {
-              showToast("Could not copy link", "error");
-            }
-          }}
-          className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-800 hover:bg-slate-50 cursor-pointer"
+          type="button"
+          onClick={handleCopy}
+          className="flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer"
         >
-          <Copy className="h-3.5 w-3.5 text-slate-500" /> Copy Link
+          <Copy className="h-3.5 w-3.5 text-[#6F6872]" />
+          <span>Copy Link</span>
         </button>
 
         <a
           href={`/${handleStr}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-800 hover:bg-slate-50 cursor-pointer"
+          className="flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
         >
-          <ExternalLink className="h-3.5 w-3.5 text-[#803D63]" /> View Public Profile ↗
+          <span>View Profile</span>
+          <ExternalLink className="h-3.5 w-3.5" />
         </a>
-
-        <button
-          onClick={() => {
-            AuthService.logout();
-            router.push("/login");
-          }}
-          className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 cursor-pointer"
-        >
-          <LogOut className="h-3.5 w-3.5" /> Logout
-        </button>
       </div>
     </header>
   );
@@ -98,26 +108,25 @@ function Shell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-background">
-      {/* Desktop Sidebar (Static / Fixed Left Side) */}
+    <div className="flex h-screen w-screen overflow-hidden bg-[#FAFAFB]">
+      {/* Desktop Sidebar */}
       <DashboardSidebar />
 
-      {/* Main Container (Static Header + Independent Scrollable Main) */}
+      {/* Main Content Area */}
       <div className="flex h-screen flex-1 flex-col overflow-hidden min-w-0">
-        {/* Desktop Top Header (Static / Fixed Top) */}
+        {/* Desktop Top Header */}
         <DesktopTopHeader />
 
-        {/* Mobile Navigation Header (Fixed Top) */}
+        {/* Mobile Navigation Header */}
         <DashboardMobileHeader onOpenDrawer={() => setDrawerOpen(true)} />
 
-        {/* Scrollable Content Viewport (Only inner area scrolls with full bottom clearance above fixed nav) */}
-        <main className="flex-1 overflow-y-auto pb-32 lg:pb-8 animate-fade-in-up">
-          {children}
+        {/* Scrollable Content Viewport */}
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 animate-fade-in-up">
+          <div className="mx-auto max-w-[1240px]">
+            {children}
+          </div>
         </main>
       </div>
-
-      {/* Mobile Fixed Bottom Navigation Bar */}
-      <DashboardBottomNav />
 
       {/* Side Drawer Overlay Menu */}
       <DashboardSideDrawer isOpen={drawerOpen} onClose={() => setDrawerOpen(false)} />
@@ -134,7 +143,6 @@ export default function DashboardRootLayout({ children }: { children: ReactNode 
       router.replace("/login");
       return;
     }
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time auth gate after mount
     setChecked(true);
   }, [router]);
 

@@ -1387,7 +1387,14 @@ export function LivePreviewCard({
                     themeKey={themeKey}
                     username={profile.username}
                     expanded={expandedSeriesId === s.id}
-                    onToggle={() => setExpandedSeriesId(expandedSeriesId === s.id ? null : s.id)}
+                    onToggle={() => {
+                      if (typeof window !== "undefined" && window.innerWidth < 640) {
+                        setDrawerSeries(s);
+                        setIsDrawerOpen(true);
+                      } else {
+                        setExpandedSeriesId(expandedSeriesId === s.id ? null : s.id);
+                      }
+                    }}
                   />
                 ))}
               </div>
