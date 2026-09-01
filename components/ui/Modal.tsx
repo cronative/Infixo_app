@@ -89,7 +89,7 @@ export function Modal({
       aria-modal="true"
       aria-label={ariaLabel || title}
       onClick={handleBackdropClick}
-      className="fixed inset-0 z-[999] flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-150 select-none"
+      className="fixed inset-0 z-[999] w-screen h-[100dvh] flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-150"
     >
       <div
         ref={modalRef}
