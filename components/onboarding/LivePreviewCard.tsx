@@ -1180,7 +1180,7 @@ export function LivePreviewCard({
       {/* Connected Social Accounts List */}
       {activeSocialList.length > 0 && (
         <div className="relative z-10 mt-4 space-y-2 w-full">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full">
+          <div className="grid grid-cols-1 gap-2.5 w-full">
             {activeSocialList.map((item) => (
               <a
                 key={item.platform}
