@@ -12,6 +12,7 @@ import {
   ExternalLink,
   Copy,
   Check,
+  ChevronRight,
 } from "lucide-react";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 import { Series, Episode } from "@/types";
@@ -324,71 +325,49 @@ export function SeriesDetailClient({
       {/* ========================================================================= */}
       {/* 2. CENTRED SERIES DETAILS & EPISODES CONTAINER */}
       {/* ========================================================================= */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 text-left">
-        {/* ── SERIES DETAILS ── */}
-        <div className="space-y-3.5 pb-6 border-b border-[#ECE8EB]">
-          {/* Genre Chips & Episode Metadata */}
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex flex-wrap items-center gap-1.5">
-              {series.genre ? (
-                series.genre.split(",").map((g, idx) => {
-                  const cleanG = g.trim().replace(/^Genre:\s*/i, "");
-                  if (!cleanG) return null;
-                  return (
-                    <span
-                      key={idx}
-                      className="px-2.5 py-0.5 rounded-full bg-[#F7EDF3] border border-[#ECD7E4] text-[11px] font-bold text-[#803D63] uppercase tracking-wide"
-                    >
-                      {cleanG}
-                    </span>
-                  );
-                })
-              ) : (
-                <span className="px-2.5 py-0.5 rounded-full bg-[#FAF8FA] border border-[#ECE8EB] text-[11px] font-bold text-[#6F6872] uppercase tracking-wide">
-                  Series
-                </span>
-              )}
-
-              {series.language && (
-                <span className="px-2.5 py-0.5 rounded-full bg-[#FAF8FA] border border-[#ECE8EB] text-[11px] font-medium text-[#6F6872]">
-                  {series.language}
-                </span>
-              )}
-            </div>
-
-            <div className="text-xs font-semibold text-[#6F6872]">
-              {allEpisodes.length} {allEpisodes.length === 1 ? "Episode" : "Episodes"}
-            </div>
-          </div>
-
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-8 text-left">
+        {/* ── 2. SERIES DETAILS (OPEN JIOHOTSTAR-STYLE STRUCTURE) ── */}
+        <div className="space-y-4 pb-6 border-b border-[#ECE8EB]">
           {/* Series Title */}
           <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#17131A] tracking-tight leading-tight">
             {series.title}
           </h1>
 
-          {/* Minimal Creator Reference */}
-          {creator && (
-            <div className="flex items-center gap-2 pt-0.5">
-              <CreatorAvatar
-                src={creator.photoDataUrl}
-                name={creator.displayName || username}
-                className="w-6 h-6 rounded-full object-cover shrink-0"
-                textClassName="text-[10px] font-bold text-white"
-                fallbackBgClass="bg-[#803D63]"
-              />
-              <Link
-                href={`/${username}`}
-                className="text-xs sm:text-sm font-semibold text-[#17131A] hover:text-[#803D63] transition-colors truncate"
-              >
-                <span>By {creator.displayName}</span>
-                <span className="text-[#6F6872] font-normal ml-1">(@{creator.username})</span>
-              </Link>
-            </div>
-          )}
+          {/* Genre Chips, Language, Episode Count & Platform */}
+          <div className="flex flex-wrap items-center gap-2">
+            {series.genre ? (
+              series.genre.split(",").map((g, idx) => {
+                const cleanG = g.trim().replace(/^Genre:\s*/i, "");
+                if (!cleanG) return null;
+                return (
+                  <span
+                    key={idx}
+                    className="px-2.5 py-0.5 rounded-full bg-[#F7EDF3] border border-[#ECD7E4] text-[11px] font-bold text-[#803D63] uppercase tracking-wide"
+                  >
+                    {cleanG}
+                  </span>
+                );
+              })
+            ) : (
+              <span className="px-2.5 py-0.5 rounded-full bg-[#FAF8FA] border border-[#ECE8EB] text-[11px] font-bold text-[#6F6872] uppercase tracking-wide">
+                Series
+              </span>
+            )}
+
+            {series.language && (
+              <span className="px-2.5 py-0.5 rounded-full bg-[#FAF8FA] border border-[#ECE8EB] text-[11px] font-medium text-[#6F6872]">
+                {series.language}
+              </span>
+            )}
+
+            <span className="px-2.5 py-0.5 rounded-full bg-[#FAF8FA] border border-[#ECE8EB] text-[11px] font-semibold text-[#6F6872]">
+              {allEpisodes.length} {allEpisodes.length === 1 ? "Episode" : "Episodes"}
+            </span>
+          </div>
 
           {/* Short Description */}
           {series.description && (
-            <p className="text-xs sm:text-sm text-[#6F6872] leading-relaxed max-w-3xl font-normal pt-1">
+            <p className="text-xs sm:text-sm text-[#6F6872] leading-relaxed max-w-3xl font-normal">
               {series.description}
             </p>
           )}
@@ -415,8 +394,8 @@ export function SeriesDetailClient({
           </div>
         </div>
 
-        {/* ── EPISODES LIST ── */}
-        <div className="space-y-4 pt-2">
+        {/* ── 3. EPISODES LISTING ── */}
+        <div className="space-y-4">
           <div className="flex items-center justify-between px-0.5">
             <h2 className="font-display text-lg sm:text-xl font-bold text-[#17131A] flex items-center gap-2">
               <Layers className="h-4 w-4 text-[#803D63]" />
@@ -451,25 +430,32 @@ export function SeriesDetailClient({
                     key={ep.id || index}
                     className="rounded-2xl border border-[#ECE8EB] bg-white hover:border-[#803D63]/40 hover:bg-[#FAF8FA]/50 transition-all duration-150 p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 shadow-2xs text-left"
                   >
-                    {/* Left: Thumbnail & Info */}
+                    {/* Left: Thumbnail / Fallback Number Block & Info */}
                     <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
-                      {/* 16:9 Thumbnail preview */}
-                      <div className="relative w-28 sm:w-36 aspect-[16/9] rounded-xl overflow-hidden bg-[#FAF8FA] border border-[#ECE8EB] shrink-0">
+                      {/* 16:9 Thumbnail preview or Soft Maroon-tinted Fallback Number Block */}
+                      <div className="relative w-28 sm:w-36 aspect-[16/9] rounded-xl overflow-hidden border border-[#ECE8EB] shrink-0">
                         {thumbnailSrc ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={thumbnailSrc}
-                            alt={epTitleStr}
-                            className="h-full w-full object-cover object-center"
-                          />
+                          <>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={thumbnailSrc}
+                              alt={epTitleStr}
+                              className="h-full w-full object-cover object-center"
+                            />
+                            <div className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-slate-950/80 text-[10px] font-bold text-white">
+                              E{epNumStr}
+                            </div>
+                          </>
                         ) : (
-                          <div className="h-full w-full flex items-center justify-center bg-[#FAF8FA] text-[#6F6872]">
-                            <Film className="h-5 w-5 opacity-40 text-[#803D63]" />
+                          <div className="h-full w-full flex flex-col items-center justify-center bg-[#F7EDF3] border border-[#ECD7E4] text-[#803D63]">
+                            <span className="font-display text-sm sm:text-base font-black tracking-tight">
+                              E{epNumStr}
+                            </span>
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-[#803D63]/70">
+                              Episode
+                            </span>
                           </div>
                         )}
-                        <div className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-slate-950/80 text-[10px] font-bold text-white">
-                          E{epNumStr}
-                        </div>
                       </div>
 
                       {/* Episode text metadata */}
@@ -521,10 +507,43 @@ export function SeriesDetailClient({
             </div>
           )}
         </div>
+
+        {/* ── 4. CREATED BY (MINIMAL COMPACT SECTION AT BOTTOM) ── */}
+        {creator && (
+          <div className="pt-6 border-t border-[#ECE8EB] flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <CreatorAvatar
+                src={creator.photoDataUrl}
+                name={creator.displayName || username}
+                className="w-8 h-8 rounded-full object-cover shrink-0 ring-1 ring-[#ECE8EB]"
+                textClassName="text-[11px] font-bold text-white"
+                fallbackBgClass="bg-[#803D63]"
+              />
+              <div className="min-w-0 text-xs">
+                <span className="text-[#6F6872]">Created by </span>
+                <Link
+                  href={`/${username}`}
+                  className="font-bold text-[#17131A] hover:text-[#803D63] transition-colors"
+                >
+                  {creator.displayName}
+                </Link>
+                <span className="text-[#6F6872] ml-1">(@{creator.username})</span>
+              </div>
+            </div>
+
+            <Link
+              href={`/${username}`}
+              className="shrink-0 inline-flex items-center gap-1 text-xs font-bold text-[#803D63] hover:text-[#6F3456] transition-colors"
+            >
+              <span>View Profile</span>
+              <ChevronRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+        )}
       </main>
 
       {/* ========================================================================= */}
-      {/* 3. STANDARDIZED SHARE MODAL */}
+      {/* 5. STANDARDIZED SHARE MODAL */}
       {/* ========================================================================= */}
       {series && (
         <ShareSeriesModal
