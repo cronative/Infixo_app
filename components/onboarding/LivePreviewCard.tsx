@@ -944,11 +944,17 @@ export function LivePreviewCard({
   ].filter((item) => item.visible && (item.hasAccount || item.count > 0 || (item.url && item.url !== "#")));
 
   const handleCopyClick = async () => {
-    const cleanUsername = profile.username || "username";
-    const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/${cleanUsername}` : "";
+    const cleanUsername = (profile.username || "username").replace(/^@/, "");
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://inflixo.com";
+    const shareUrl = typeof window !== "undefined"
+      ? (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+          ? `${window.location.origin}/${cleanUsername}`
+          : `${baseUrl.replace(/\/$/, "")}/${cleanUsername}`)
+      : `${baseUrl.replace(/\/$/, "")}/${cleanUsername}`;
+
     const success = await copyToClipboard(shareUrl);
     if (success) {
-      showToast("Profile link copied to clipboard! ✨");
+      showToast("Profile link copied! ✨");
     } else {
       showToast("Could not copy link", "error");
     }
@@ -959,15 +965,21 @@ export function LivePreviewCard({
       onShare();
       return;
     }
-    const cleanUsername = profile.username || "username";
-    const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/${cleanUsername}` : "";
+    const cleanUsername = (profile.username || "username").replace(/^@/, "");
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://inflixo.com";
+    const shareUrl = typeof window !== "undefined"
+      ? (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+          ? `${window.location.origin}/${cleanUsername}`
+          : `${baseUrl.replace(/\/$/, "")}/${cleanUsername}`)
+      : `${baseUrl.replace(/\/$/, "")}/${cleanUsername}`;
+
     const title = `${profile.displayName || "Creator"} on Inflixo`;
     try {
       if (typeof navigator !== "undefined" && navigator.share) {
         await navigator.share({ title, url: shareUrl });
       } else {
         const success = await copyToClipboard(shareUrl);
-        if (success) showToast("Profile link copied to clipboard! ✨");
+        if (success) showToast("Profile link copied! ✨");
       }
     } catch {
       // User dismissed share sheet
@@ -978,25 +990,25 @@ export function LivePreviewCard({
 
   const cardContent = (
     <div className={`relative overflow-hidden ${isFull ? "rounded-3xl p-5 sm:p-8" : "rounded-[28px] p-4 sm:p-6"} transition-all ${style.cardBg || DEFAULT_THEME_STYLE.cardBg}`}>
-      {/* Top Header Bar */}
+      {/* Top Action Bar */}
       <div className="relative z-10 flex items-center justify-between w-full mb-4 px-1">
         <div
-          className="tap-scale flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-[#803D63] text-white shadow-md transition-all shrink-0 cursor-pointer border border-white/20"
+          className="tap-scale flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-[#803D63] text-white shadow-xs transition-all shrink-0 border border-white/20"
           title="Inflixo"
           aria-label="Inflixo"
         >
-          <InflixoLogoIcon className="h-5 w-5 sm:h-6 sm:w-6 text-white animate-[spin_8s_linear_infinite]" />
+          <InflixoLogoIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
         </div>
 
         <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={handleCopyClick}
-            className={`tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} ${
+            className={`tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 cursor-pointer ${style.socialItemBg} ${style.socialItemBorder} ${
               isDark ? "text-slate-200 hover:text-white" : "text-slate-600 hover:text-[#803D63]"
             }`}
-            title="Copy Profile Link"
-            aria-label="Copy Profile Link"
+            title="Copy profile link"
+            aria-label="Copy profile link"
           >
             <Copy className="h-3.5 w-3.5" />
           </button>
@@ -1004,73 +1016,52 @@ export function LivePreviewCard({
           <button
             type="button"
             onClick={handleShareClick}
-            className={`tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 ${style.socialItemBg} ${style.socialItemBorder} ${
+            className={`tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 cursor-pointer ${style.socialItemBg} ${style.socialItemBorder} ${
               isDark ? "text-slate-200 hover:text-white" : "text-slate-600 hover:text-[#803D63]"
             }`}
-            title="Share Profile"
-            aria-label="Share Profile"
+            title="Share profile"
+            aria-label="Share profile"
           >
             <Share2 className="h-3.5 w-3.5" />
           </button>
-
-
         </div>
       </div>
 
+      {/* Creator Identity Header */}
       <div className="relative z-10 flex flex-col items-center text-center">
-        {/* Circular Profile Avatar (Fix vertical slicing bug) */}
+        {/* Profile Avatar */}
         <div className="relative">
           <CreatorAvatar
             src={profile.photoDataUrl}
             name={profile.displayName || "Creator"}
-            className="w-24 h-24 rounded-full aspect-square object-cover overflow-hidden border-2 border-white shadow-md mx-auto"
+            className="w-24 h-24 sm:w-28 sm:h-28 rounded-full aspect-square object-cover overflow-hidden border-2 border-white shadow-md mx-auto"
             textClassName="text-2xl font-extrabold text-white"
             fallbackBgClass="bg-[#803D63]"
           />
         </div>
 
-        {/* Name & Verified Creator Badge */}
+        {/* Creator Name & Verified Checkmark */}
         <div className="mt-3 flex items-center justify-center gap-1.5 max-w-full">
-          <h3 className={`text-lg sm:text-xl font-bold tracking-tight ${
+          <h1 className={`text-xl sm:text-2xl font-bold tracking-tight ${
             style.isShimmerName
               ? "bg-gradient-to-r from-amber-500 via-rose-500 to-purple-600 bg-clip-text text-transparent animate-pulse"
               : style.nameColor
           }`}>
-            {profile.displayName || "Your Name"}
-          </h3>
-          {/* Verified SVG Checkmark Badge */}
-          <svg className={`w-5 h-5 ${isDark ? "text-amber-400" : themeKey === "minimal-white" ? "text-[#0F172A]" : "text-[#803D63]"} shrink-0`} viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L9 14.17l9.59-9.59L20 6l-10 11z" />
-          </svg>
+            {profile.displayName || "Creator Name"}
+          </h1>
+          {Boolean(profile.isVerified) && (
+            <svg className="w-5 h-5 text-emerald-500 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-label="Verified Creator">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L9 14.17l9.59-9.59L20 6l-10 11z" />
+            </svg>
+          )}
         </div>
 
-        {/* Clean Interactive Handle Chip */}
-        <button
-          type="button"
-          onClick={async () => {
-            const handle = profile.username || "username";
-            const profileUrl = typeof window !== "undefined" ? `${window.location.origin}/${handle}` : `https://inflixo.com/${handle}`;
-            const success = await copyToClipboard(profileUrl);
-            if (success) {
-              showToast("Profile link copied to clipboard! ✨");
-            } else {
-              showToast("Could not copy link", "error");
-            }
-          }}
-          className={`mt-1.5 inline-flex items-center gap-1.5 rounded-full text-xs font-semibold px-3 py-1.5 transition-colors cursor-pointer ${
-            isDark
-              ? "bg-white/10 text-indigo-200 border border-white/20 hover:bg-white/20"
-              : themeKey === "minimal-white"
-              ? "bg-[#F3F4F6] text-[#1F2937] border border-[#E5E7EB] hover:bg-[#E5E7EB]"
-              : "bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] hover:bg-rose-100/60"
-          }`}
-          title="Click to copy profile link"
-        >
-          <span>{profile.username ? `inflixo.com/${profile.username}` : "inflixo.com/username"}</span>
-          <Copy className="h-3 w-3 opacity-70" />
-        </button>
+        {/* Creator Handle */}
+        <p className={`mt-0.5 text-xs font-semibold ${isDark ? "text-indigo-200" : "text-[#6F6872]"}`}>
+          @{profile.username || "username"}
+        </p>
 
-        {/* Category Chips (Max 3 prominent chips) */}
+        {/* Category Chips (Max 3) */}
         {visibilitySettings.showContentCategory !== false && (() => {
           const allChips: string[] = [];
           if (profile.category) {
@@ -1101,7 +1092,7 @@ export function LivePreviewCard({
                     isDark
                       ? "bg-slate-900/60 text-slate-100 border-white/20"
                       : "bg-white/80 text-slate-800 border-white/60"
-                  } backdrop-blur-md text-xs font-semibold px-3 py-1 rounded-full border shadow-2xs`}
+                  } backdrop-blur-md text-xs font-semibold px-3 py-0.5 rounded-full border shadow-2xs`}
                 >
                   {chip}
                 </span>
@@ -1110,157 +1101,119 @@ export function LivePreviewCard({
           );
         })()}
 
-        {/* Bio Formatting */}
-        <p className={`mt-2.5 text-xs leading-relaxed max-w-sm mx-auto font-medium px-1 ${
-          isDark ? "text-slate-200" : "text-[#4B5563]"
-        }`}>
-          {profile.bio || "Sharing my journey & content. Stream original series and connect across all platforms."}
-        </p>
+        {/* Bio */}
+        {profile.bio && (
+          <p className={`mt-2.5 text-xs leading-relaxed max-w-md mx-auto font-normal px-2 ${
+            isDark ? "text-slate-200" : "text-[#4B5563]"
+          }`}>
+            {profile.bio}
+          </p>
+        )}
 
-        {/* Clean Icon-Only Social Links (Instagram, YouTube, Facebook) */}
-        <div className="mt-3 flex items-center justify-center gap-4">
+        {/* Quick Social Icon Buttons (Instagram, YouTube, Facebook) */}
+        <div className="mt-3.5 flex items-center justify-center gap-3.5">
           {/* Instagram Icon */}
-          {hasInsta ? (
+          {hasInsta && (
             <a
               href={instaUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="tap-scale inline-flex items-center justify-center text-[#E1306C] hover:text-[#C13584] transition-all hover:scale-125 cursor-pointer drop-shadow-xs"
+              className="tap-scale flex h-9 w-9 items-center justify-center rounded-xl bg-pink-50 text-[#E1306C] hover:scale-110 transition-transform shadow-2xs"
               title={`Instagram: ${instaHandle ? `@${instaHandle.replace(/^@/, "")}` : "Visit Profile"}`}
               aria-label="Instagram Profile"
             >
               <InstagramIcon className="h-5 w-5" />
             </a>
-          ) : (
-            <span
-              className={`inline-flex items-center justify-center opacity-30 cursor-not-allowed ${
-                isDark ? "text-white/40" : "text-slate-900/40"
-              }`}
-              title="Instagram (Not connected)"
-              aria-label="Instagram (Not connected)"
-            >
-              <InstagramIcon className="h-5 w-5" />
-            </span>
           )}
 
           {/* YouTube Icon */}
-          {hasYt ? (
+          {hasYt && (
             <a
               href={ytUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="tap-scale inline-flex items-center justify-center text-[#FF0000] hover:text-[#D90000] transition-all hover:scale-125 cursor-pointer drop-shadow-xs"
+              className="tap-scale flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-[#FF0000] hover:scale-110 transition-transform shadow-2xs"
               title={`YouTube: ${ytHandle ? `@${ytHandle.replace(/^@/, "")}` : "Visit Channel"}`}
               aria-label="YouTube Channel"
             >
               <YoutubeIcon className="h-5.5 w-5.5" />
             </a>
-          ) : (
-            <span
-              className={`inline-flex items-center justify-center opacity-30 cursor-not-allowed ${
-                isDark ? "text-white/40" : "text-slate-900/40"
-              }`}
-              title="YouTube (Not connected)"
-              aria-label="YouTube (Not connected)"
-            >
-              <YoutubeIcon className="h-5.5 w-5.5" />
-            </span>
           )}
 
           {/* Facebook Icon */}
-          {hasFb ? (
+          {hasFb && (
             <a
               href={fbUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="tap-scale inline-flex items-center justify-center text-[#1877F2] hover:text-[#0C63D4] transition-all hover:scale-125 cursor-pointer drop-shadow-xs"
+              className="tap-scale flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-[#1877F2] hover:scale-110 transition-transform shadow-2xs"
               title={`Facebook: ${fbHandle ? `@${fbHandle.replace(/^@/, "")}` : "Visit Page"}`}
               aria-label="Facebook Page"
             >
               <FacebookIcon className="h-5 w-5" />
             </a>
-          ) : (
-            <span
-              className={`inline-flex items-center justify-center opacity-30 cursor-not-allowed ${
-                isDark ? "text-white/40" : "text-slate-900/40"
-              }`}
-              title="Facebook (Not connected)"
-              aria-label="Facebook (Not connected)"
-            >
-              <FacebookIcon className="h-5 w-5" />
-            </span>
           )}
         </div>
 
-        {/* "Total Fanbase" Authority Card */}
+        {/* Clean Total Fanbase Card */}
         {visibilitySettings.showFanbase !== false && (
           <div className={`mt-4 rounded-2xl p-4 shadow-2xs text-center w-full space-y-1 ${
             isDark
               ? "bg-slate-900/60 backdrop-blur-md border border-white/15 text-white"
-              : "bg-white/75 backdrop-blur-md border border-white/60 text-slate-900"
+              : "bg-white/80 backdrop-blur-md border border-white/60 text-slate-900"
           }`}>
-            {totalAudience > 0 ? (
-              <div className="space-y-1">
-                <p className={`text-2xl font-black tabular-nums ${isDark ? "text-white" : "text-[#111827]"}`}>
-                  ❤️ {formatCount(totalAudience)}
-                </p>
-                <p className={`text-[11px] font-bold tracking-wider uppercase ${themeKey === "minimal-white" ? "text-[#0F172A]" : isDark ? "text-amber-400 font-extrabold" : "text-[#803D63]"}`}>
-                  TOTAL FANBASE
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-1">
-                <p className={`text-2xl font-black tabular-nums ${isDark ? "text-white" : "text-[#111827]"}`}>
-                  ❤️ 0
-                </p>
-                <p className={`text-[11px] font-bold tracking-wider uppercase ${themeKey === "minimal-white" ? "text-[#0F172A]" : isDark ? "text-amber-400 font-extrabold" : "text-[#803D63]"}`}>
-                  TOTAL FANBASE
-                </p>
-                <p className={`text-[10px] font-medium ${isDark ? "text-slate-400" : "text-gray-400"}`}>
-                  Connect socials to display total reach
-                </p>
-              </div>
-            )}
+            <span className={`text-[10px] font-bold tracking-wider uppercase block ${
+              themeKey === "minimal-white" ? "text-[#6F6872]" : isDark ? "text-purple-300" : "text-[#803D63]"
+            }`}>
+              Total Fanbase
+            </span>
+            <p className={`text-2xl sm:text-3xl font-black tabular-nums ${isDark ? "text-white" : "text-[#17131A]"}`}>
+              {formatCount(totalAudience)}
+            </p>
+            <p className={`text-[11px] font-medium ${isDark ? "text-slate-400" : "text-[#6F6872]"}`}>
+              Across connected creator platforms
+            </p>
           </div>
         )}
       </div>
 
-      {/* Direct Social Platform Link Tiles */}
+      {/* Connected Social Accounts List */}
       {activeSocialList.length > 0 && (
         <div className="relative z-10 mt-4 space-y-2 w-full">
-          <div className="grid grid-cols-1 gap-2.5 w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full">
             {activeSocialList.map((item) => (
               <a
                 key={item.platform}
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`group rounded-xl p-3.5 transition-all flex items-center justify-between shadow-2xs border ${
+                className={`group rounded-xl p-3 transition-all flex items-center justify-between shadow-2xs border ${
                   isDark
                     ? "bg-slate-900/60 hover:bg-slate-900/80 backdrop-blur-md border-white/15 hover:border-white/30 text-white"
-                    : "bg-white/80 hover:bg-white/95 backdrop-blur-md border-white/60 hover:border-[#803D63] text-slate-900"
+                    : "bg-white/80 hover:bg-white/95 backdrop-blur-md border-white/60 hover:border-[#803D63]/30 text-slate-900"
                 }`}
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${item.badgeBg}`}>
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${item.badgeBg}`}>
                     {item.icon}
                   </span>
                   <div className="min-w-0 text-left space-y-0.5">
-                    <p className={`truncate text-xs font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
+                    <p className={`truncate text-xs font-bold ${isDark ? "text-white" : "text-slate-900"}`}>
                       {item.label}
                     </p>
                     {item.handle && (
-                      <p className={`truncate text-xs font-medium ${isDark ? "text-slate-300" : "text-[#4B5563]"}`}>
+                      <p className={`truncate text-[10px] font-medium ${isDark ? "text-slate-300" : "text-[#6F6872]"}`}>
                         @{item.handle.replace(/^@/, "")}
                       </p>
                     )}
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className={`text-sm font-bold tabular-nums ${isDark ? "text-white" : "text-gray-900"}`}>
-                    {formatCount(item.count)}
+                  <span className={`text-xs font-bold tabular-nums ${isDark ? "text-white" : "text-slate-900"}`}>
+                    {formatCount(item.count)}{" "}
+                    <span className="font-normal text-[10px] opacity-75">{item.unit.toLowerCase()}</span>
                   </span>
-                  <ExternalLink className={`h-4 w-4 transition-colors ${isDark ? "text-slate-400 group-hover:text-purple-300" : "text-gray-400 group-hover:text-[#803D63]"}`} />
+                  <ExternalLink className={`h-3.5 w-3.5 transition-colors ${isDark ? "text-slate-400 group-hover:text-purple-300" : "text-slate-400 group-hover:text-[#803D63]"}`} />
                 </div>
               </a>
             ))}
@@ -1268,9 +1221,12 @@ export function LivePreviewCard({
         </div>
       )}
 
-      {/* Dynamic Additional Custom Links (Linktree Style) */}
+      {/* Custom Links List */}
       {visibilitySettings.showCustomLinks !== false && customLinksList && customLinksList.filter((l) => l.isEnabled !== false && l.title && l.url).length > 0 && (
-        <div className="relative z-10 mt-3 space-y-2 w-full text-left">
+        <div className="relative z-10 mt-4 space-y-2 w-full text-left">
+          <span className={`text-[10px] font-bold uppercase tracking-wider px-1 block ${isDark ? "text-slate-400" : "text-[#6F6872]"}`}>
+            Links
+          </span>
           <div className="grid grid-cols-1 gap-2 w-full">
             {customLinksList
               .filter((l) => l.isEnabled !== false && l.title && l.url)
@@ -1283,13 +1239,13 @@ export function LivePreviewCard({
                   className={`group rounded-xl p-3 text-xs font-bold transition-all flex items-center justify-between shadow-2xs border ${
                     isDark
                       ? "bg-slate-900/60 hover:bg-slate-900/80 backdrop-blur-md border-white/15 hover:border-white/30 text-white"
-                      : "bg-white/80 hover:bg-white/95 backdrop-blur-md border-white/60 hover:border-[#803D63] text-slate-900"
+                      : "bg-white/80 hover:bg-white/95 backdrop-blur-md border-white/60 hover:border-[#803D63]/30 text-slate-900"
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <span
                       className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
-                        isDark ? "bg-white/10 text-purple-300" : "bg-[#803D63]/10 text-[#803D63]"
+                        isDark ? "bg-white/10 text-purple-300" : "bg-[#F7EDF3] text-[#803D63]"
                       }`}
                     >
                       <LinkIcon className="h-3.5 w-3.5" />
@@ -1307,10 +1263,10 @@ export function LivePreviewCard({
         </div>
       )}
 
-      {/* Interactive Content Switcher (Series, Gigs, Reviews) */}
+      {/* Primary Content Navigation (Content, Services, Reviews) */}
       {(visibilitySettings.showSeries !== false || visibilitySettings.showCollabGigs !== false || visibilitySettings.showReviews !== false) && (
         <div className="relative z-10 mt-6 w-full text-left">
-          {/* Tab Pill Switcher */}
+          {/* Clean Visitor-Facing Tab Switcher */}
           <div className={`flex items-center gap-1.5 p-1 rounded-2xl border mb-4 ${
             isDark
               ? "bg-slate-950/60 backdrop-blur-md border-white/15"
@@ -1320,18 +1276,17 @@ export function LivePreviewCard({
               <button
                 type="button"
                 onClick={() => setActiveContentTab("series")}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeContentTab === "series"
                     ? isDark
                       ? "bg-[#803D63]/30 text-white border border-[#803D63]/40 shadow-sm"
-                      : "bg-[#803D63]/10 text-[#803D63] border border-[#803D63]/20 shadow-2xs"
+                      : "bg-white text-[#803D63] border border-[#ECE8EB] shadow-2xs"
                     : isDark
                       ? "text-slate-300 hover:text-white hover:bg-white/10"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
+                      : "text-[#6F6872] hover:text-[#17131A] hover:bg-white/40"
                 }`}
               >
-                <Film className="h-3.5 w-3.5" />
-                <span>🎬 Series ({series ? series.length : 0})</span>
+                <span>Content ({series ? series.length : 0})</span>
               </button>
             )}
 
@@ -1339,18 +1294,17 @@ export function LivePreviewCard({
               <button
                 type="button"
                 onClick={() => setActiveContentTab("gigs")}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeContentTab === "gigs"
                     ? isDark
                       ? "bg-[#803D63]/30 text-white border border-[#803D63]/40 shadow-sm"
-                      : "bg-[#803D63]/10 text-[#803D63] border border-[#803D63]/20 shadow-2xs"
+                      : "bg-white text-[#803D63] border border-[#ECE8EB] shadow-2xs"
                     : isDark
                       ? "text-slate-300 hover:text-white hover:bg-white/10"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
+                      : "text-[#6F6872] hover:text-[#17131A] hover:bg-white/40"
                 }`}
               >
-                <Briefcase className="h-3.5 w-3.5" />
-                <span>💼 Gigs ({mediaKitPackages.filter((p) => p.isActive).length})</span>
+                <span>Services ({mediaKitPackages.filter((p) => p.isActive).length})</span>
               </button>
             )}
 
@@ -1358,423 +1312,375 @@ export function LivePreviewCard({
               <button
                 type="button"
                 onClick={() => setActiveContentTab("reviews")}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeContentTab === "reviews"
                     ? isDark
                       ? "bg-[#803D63]/30 text-white border border-[#803D63]/40 shadow-sm"
-                      : "bg-[#803D63]/10 text-[#803D63] border border-[#803D63]/20 shadow-2xs"
+                      : "bg-white text-[#803D63] border border-[#ECE8EB] shadow-2xs"
                     : isDark
                       ? "text-slate-300 hover:text-white hover:bg-white/10"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
+                      : "text-[#6F6872] hover:text-[#17131A] hover:bg-white/40"
                 }`}
               >
-                <Star className="h-3.5 w-3.5" />
-                <span>⭐ Reviews ({approvedReviews.length})</span>
+                <span>Reviews ({approvedReviews.length})</span>
               </button>
             )}
           </div>
 
-        {/* TAB 1: 🎬 SERIES & SHOWS */}
-        {activeContentTab === "series" && (
-          <div className="space-y-3 animate-in fade-in duration-200">
-            {series && series.length > 0 ? (
-              <div className="space-y-4">
-                {series.map((s) => (
-                  <PreviewSeriesItem
-                    key={s.id}
-                    series={s}
-                    style={style}
-                    themeKey={themeKey}
-                    username={profile.username}
-                    expanded={expandedSeriesId === s.id}
-                    onToggle={() => {
-                      if (typeof window !== "undefined" && window.innerWidth < 640) {
-                        setDrawerSeries(s);
-                        setIsDrawerOpen(true);
-                      } else {
-                        setExpandedSeriesId(expandedSeriesId === s.id ? null : s.id);
-                      }
-                    }}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className={`rounded-2xl border-2 border-dashed p-6 text-center space-y-1.5 ${
-                isDark
-                  ? "bg-slate-900/60 backdrop-blur-md border-white/20 text-white"
-                  : "bg-white/70 backdrop-blur-md border-gray-200 text-slate-900"
-              }`}>
-                <Film className={`h-7 w-7 mx-auto ${isDark ? "text-slate-400" : "text-slate-400"}`} />
-                <p className={`font-bold text-xs ${isDark ? "text-white" : "text-slate-800"}`}>No Series Published Yet</p>
-                <p className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>Check back soon for this creator&apos;s web series &amp; episode listings!</p>
-              </div>
-            )}
-          </div>
-        )}
+          {/* TAB 1: CONTENT (SERIES) */}
+          {activeContentTab === "series" && (
+            <div className="space-y-3 animate-in fade-in duration-200">
+              {series && series.length > 0 ? (
+                <div className="space-y-4">
+                  {series.map((s) => (
+                    <PreviewSeriesItem
+                      key={s.id}
+                      series={s}
+                      style={style}
+                      themeKey={themeKey}
+                      username={profile.username}
+                      expanded={expandedSeriesId === s.id}
+                      onToggle={() => {
+                        if (typeof window !== "undefined" && window.innerWidth < 640) {
+                          setDrawerSeries(s);
+                          setIsDrawerOpen(true);
+                        } else {
+                          setExpandedSeriesId(expandedSeriesId === s.id ? null : s.id);
+                        }
+                      }}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className={`rounded-2xl border-2 border-dashed p-6 text-center space-y-1.5 ${
+                  isDark
+                    ? "bg-slate-900/60 backdrop-blur-md border-white/20 text-white"
+                    : "bg-white/70 backdrop-blur-md border-gray-200 text-slate-900"
+                }`}>
+                  <Film className={`h-6 w-6 mx-auto ${isDark ? "text-slate-400" : "text-slate-400"}`} />
+                  <p className={`font-bold text-xs ${isDark ? "text-white" : "text-slate-800"}`}>No public series yet</p>
+                  <p className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>Check back soon for upcoming video series &amp; episodes.</p>
+                </div>
+              )}
+            </div>
+          )}
 
-        {/* TAB 2: 💼 COLLAB GIGS & RATE CARDS */}
-        {activeContentTab === "gigs" && (
-          <div className="space-y-3 animate-in fade-in duration-200">
-            {(() => {
-              const activePkgs = mediaKitPackages.filter((p) => p.isActive);
+          {/* TAB 2: SERVICES (COLLAB GIGS) */}
+          {activeContentTab === "gigs" && (
+            <div className="space-y-3 animate-in fade-in duration-200">
+              {(() => {
+                const activePkgs = mediaKitPackages.filter((p) => p.isActive);
 
-              if (activePkgs.length === 0) {
+                if (activePkgs.length === 0) {
+                  return (
+                    <div className={`rounded-2xl border-2 border-dashed p-6 text-center space-y-1.5 ${
+                      isDark
+                        ? "bg-slate-900/60 backdrop-blur-md border-white/20 text-white"
+                        : "bg-white/70 backdrop-blur-md border-gray-200 text-slate-900"
+                    }`}>
+                      <Briefcase className={`h-6 w-6 mx-auto ${isDark ? "text-purple-400" : "text-[#803D63]"}`} />
+                      <p className={`font-bold text-xs ${isDark ? "text-white" : "text-slate-800"}`}>
+                        No collaboration services are listed right now
+                      </p>
+                      <p className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+                        Explore other creator options or check back later.
+                      </p>
+                    </div>
+                  );
+                }
+
+                const visiblePackages = showAllGigs ? activePkgs : activePkgs.slice(0, 1);
+                const remainingCount = activePkgs.length - 1;
+
                 return (
-                  <div className={`rounded-2xl border-2 border-dashed p-6 text-center space-y-1.5 ${
-                    isDark
-                      ? "bg-slate-900/60 backdrop-blur-md border-white/20 text-white"
-                      : "bg-white/70 backdrop-blur-md border-gray-200 text-slate-900"
-                  }`}>
-                    <Briefcase className={`h-7 w-7 mx-auto ${isDark ? "text-purple-400" : "text-[#803D63]"}`} />
-                    <p className={`font-bold text-xs ${isDark ? "text-white" : "text-slate-800"}`}>
-                      No Collaboration Packages Added Yet
-                    </p>
-                    <p className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-                      This creator hasn&apos;t added any sponsorship rate cards or brand packages yet.
-                    </p>
-                  </div>
-                );
-              }
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-1 gap-3">
+                      {visiblePackages.map((pkg) => {
+                        const mailSubject = encodeURIComponent(`[Inflixo Collab Inquiry] - ${pkg.title}`);
+                        const mailBody = encodeURIComponent(
+                          `Hi ${profile.displayName || "Creator"},\n\nI would like to inquire about collaborating on your "${pkg.title}" package listed on Inflixo.\n\nBest regards,\n[Brand Representative]`
+                        );
+                        const mailUrl = `mailto:${mediaKitSettings?.sponsorEmail || profile.email}?subject=${mailSubject}&body=${mailBody}`;
 
-              const visiblePackages = showAllGigs ? activePkgs : activePkgs.slice(0, 1);
-              const remainingCount = activePkgs.length - 1;
+                        const hasPhone = Boolean(mediaKitSettings?.whatsappNumber && mediaKitSettings.whatsappNumber.trim());
+                        const hasEmail = Boolean(mediaKitSettings?.sponsorEmail || profile.email);
 
-              return (
-                <div className="space-y-3">
-                  <div className="grid grid-cols-1 gap-3">
-                    {visiblePackages.map((pkg) => {
-                      const mailSubject = encodeURIComponent(`[Inflixo Collab Inquiry] - ${pkg.title}`);
-                      const mailBody = encodeURIComponent(
-                        `Hi ${profile.displayName || "Creator"},\n\nI would like to inquire about collaborating on your "${pkg.title}" package listed on Inflixo.\n\nBest regards,\n[Brand Representative]`
-                      );
-                      const mailUrl = `mailto:${mediaKitSettings.sponsorEmail}?subject=${mailSubject}&body=${mailBody}`;
-
-                      return (
-                        <div
-                          key={pkg.id}
-                          className={`rounded-2xl p-4 space-y-3 transition-all text-left border ${
-                            isDark
-                              ? "bg-slate-900/60 backdrop-blur-md border-white/10 text-white"
-                              : "bg-white/80 backdrop-blur-md border-slate-200/80 text-slate-900 shadow-2xs"
-                          }`}
-                        >
-                          {/* Header Row: Platform Pill + Badge + Price */}
-                          <div className="flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span
-                                className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
-                                  isDark
-                                    ? "bg-purple-900/40 text-purple-300 border border-purple-500/30"
-                                    : "bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4]"
-                                }`}
-                              >
-                                {pkg.platform}
-                              </span>
-                              {(pkg.badge || pkg.packageName || pkg.isPopular) && (
+                        return (
+                          <div
+                            key={pkg.id}
+                            className={`rounded-2xl p-4 space-y-3 transition-all text-left border ${
+                              isDark
+                                ? "bg-slate-900/60 backdrop-blur-md border-white/10 text-white"
+                                : "bg-white/80 backdrop-blur-md border-slate-200/80 text-slate-900 shadow-2xs"
+                            }`}
+                          >
+                            {/* Platform Tag & Price */}
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-1.5 flex-wrap">
                                 <span
-                                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                                    isDark ? "bg-amber-400/20 text-amber-300" : "bg-amber-100 text-amber-900"
+                                  className={`text-[10px] font-bold px-2 py-0.5 rounded-lg uppercase tracking-wider ${
+                                    isDark
+                                      ? "bg-purple-900/40 text-purple-300 border border-purple-500/30"
+                                      : "bg-[#F7EDF3] text-[#803D63] border border-[#ECE8EB]"
                                   }`}
                                 >
-                                  {pkg.badge || pkg.packageName || "⭐ POPULAR"}
+                                  {pkg.platform}
                                 </span>
-                              )}
+                                {(pkg.badge || pkg.packageName) && (
+                                  <span
+                                    className={`text-[10px] font-semibold px-2 py-0.5 rounded-md ${
+                                      isDark ? "bg-amber-400/20 text-amber-300" : "bg-amber-50 text-amber-900 border border-amber-200"
+                                    }`}
+                                  >
+                                    {pkg.badge || pkg.packageName}
+                                  </span>
+                                )}
+                              </div>
+                              <span
+                                className={`font-display text-base font-bold shrink-0 ${
+                                  isDark ? "text-amber-400" : "text-[#803D63]"
+                                }`}
+                              >
+                                {pkg.price}
+                              </span>
                             </div>
-                            <span
-                              className={`font-display text-base font-extrabold shrink-0 ${
-                                isDark ? "text-amber-400" : "text-[#803D63]"
-                              }`}
-                            >
-                              {pkg.price}
-                            </span>
-                          </div>
 
-                          {/* Title & Turnaround */}
-                          <div>
-                            <h5 className={`font-bold text-sm ${isDark ? "text-white" : "text-slate-900"}`}>
-                              {pkg.title}
-                            </h5>
-                            <p
-                              className={`text-[11px] font-medium mt-0.5 flex items-center gap-1 ${
-                                isDark ? "text-slate-400" : "text-slate-500"
-                              }`}
-                            >
-                              <Clock className="h-3 w-3 shrink-0" /> Turnaround: {pkg.turnaroundDays} Days
-                            </p>
-                          </div>
+                            {/* Title & Delivery Time */}
+                            <div>
+                              <h3 className={`font-bold text-sm leading-snug ${isDark ? "text-white" : "text-slate-900"}`}>
+                                {pkg.title}
+                              </h3>
+                              <p
+                                className={`text-[11px] font-medium mt-0.5 flex items-center gap-1 ${
+                                  isDark ? "text-slate-400" : "text-[#6F6872]"
+                                }`}
+                              >
+                                <Clock className="h-3 w-3 shrink-0" /> {pkg.turnaroundDays}-day delivery
+                              </p>
+                            </div>
 
-                          {/* Deliverables List */}
-                          {pkg.deliverables && pkg.deliverables.length > 0 && (
-                            <ul
-                              className={`text-xs space-y-1.5 pt-2 border-t ${
-                                isDark ? "border-white/10 text-slate-300" : "border-slate-100 text-slate-600"
-                              }`}
-                            >
-                              {pkg.deliverables.map((item, idx) => (
-                                <li key={idx} className="flex items-start gap-2">
-                                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                                  <span className="leading-snug">{item}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          )}
+                            {/* Deliverables List */}
+                            {pkg.deliverables && pkg.deliverables.length > 0 && (
+                              <ul
+                                className={`text-xs space-y-1.5 pt-2 border-t ${
+                                  isDark ? "border-white/10 text-slate-300" : "border-slate-100 text-slate-700"
+                                }`}
+                              >
+                                {pkg.deliverables.slice(0, 3).map((item, idx) => (
+                                  <li key={idx} className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                                    <span className="leading-snug">{item}</span>
+                                  </li>
+                                ))}
+                                {pkg.deliverables.length > 3 && (
+                                  <li className={`text-[11px] font-semibold pl-5 ${isDark ? "text-purple-300" : "text-[#803D63]"}`}>
+                                    +{pkg.deliverables.length - 3} more deliverables
+                                  </li>
+                                )}
+                              </ul>
+                            )}
 
-                          {/* Direct Contact Actions */}
-                          {(() => {
-                            const hasPhone = Boolean(mediaKitSettings?.whatsappNumber && mediaKitSettings.whatsappNumber.trim());
-                            const hasEmail = Boolean(mediaKitSettings?.sponsorEmail && mediaKitSettings.sponsorEmail.trim());
-
-                            let showWhatsApp = true;
-                            let showEmail = true;
-                            if (hasPhone && !hasEmail) {
-                              showWhatsApp = true;
-                              showEmail = false;
-                            } else if (!hasPhone && hasEmail) {
-                              showWhatsApp = false;
-                              showEmail = true;
-                            } else {
-                              showWhatsApp = true;
-                              showEmail = true;
-                            }
-
-                            return (
+                            {/* Direct Contact Actions */}
+                            {(hasPhone || hasEmail) && (
                               <div
                                 className={`pt-2.5 border-t ${
-                                  showWhatsApp && showEmail ? "grid grid-cols-2 gap-2" : "flex w-full"
+                                  hasPhone && hasEmail ? "grid grid-cols-2 gap-2" : "flex w-full"
                                 } ${isDark ? "border-white/10" : "border-slate-100"}`}
                               >
-                                {showWhatsApp && (
+                                {hasPhone && (
                                   <button
                                     type="button"
                                     onClick={() => {
                                       setSelectedGigForWhatsApp(pkg);
                                       setIsLeadModalOpen(true);
                                     }}
-                                    className={`bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs ${
-                                      !showEmail ? "w-full" : ""
+                                    className={`bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs ${
+                                      !hasEmail ? "w-full" : ""
                                     }`}
                                   >
                                     <MessageCircle className="h-3.5 w-3.5 fill-white" />
-                                    <span>Book WhatsApp</span>
+                                    <span>Enquire on WhatsApp</span>
                                   </button>
                                 )}
 
-                                {showEmail && (
+                                {hasEmail && (
                                   <a
                                     href={mailUrl}
                                     className={`${
                                       isDark
                                         ? "bg-white text-slate-900 hover:bg-slate-100"
                                         : "bg-slate-900 text-white hover:bg-slate-800"
-                                    } text-xs font-bold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 shadow-2xs ${
-                                      !showWhatsApp ? "w-full" : ""
+                                    } text-xs font-semibold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 shadow-2xs ${
+                                      !hasPhone ? "w-full" : ""
                                     }`}
                                   >
                                     <Mail className="h-3.5 w-3.5" />
-                                    <span>Email Brief</span>
+                                    <span>Send Email</span>
                                   </a>
                                 )}
                               </div>
-                            );
-                          })()}
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Toggle / View All Gigs Pill Button */}
-                  {activePkgs.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => setShowAllGigs(!showAllGigs)}
-                      className={`w-full py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer border ${
-                        isDark
-                          ? "bg-slate-900/80 text-purple-300 border-purple-500/30 hover:bg-slate-900"
-                          : "bg-[#F6EBF1] text-[#803D63] border-[#E8DCE4] hover:bg-[#ECD3E2]"
-                      }`}
-                    >
-                      <span>
-                        {showAllGigs
-                          ? "Show Fewer Gigs ↑"
-                          : `+ ${remainingCount} More Collab Gig${remainingCount > 1 ? "s" : ""} Available ↓`}
-                      </span>
-                    </button>
-                  )}
-                </div>
-              );
-            })()}
-          </div>
-        )}
-
-        {/* TAB 3: ⭐ CLIENT REVIEWS & TESTIMONIALS */}
-        {activeContentTab === "reviews" && (
-          <div className="space-y-3 animate-in fade-in duration-200">
-            {approvedReviews && approvedReviews.length > 0 ? (
-              <div className="space-y-3">
-                {/* Summary Header */}
-                {(() => {
-                  const total = approvedReviews.length;
-                  const avg = (
-                    approvedReviews.reduce((acc, r) => acc + (r.rating || 5), 0) / total
-                  ).toFixed(1);
-
-                  // Calculate average scores for category highlights
-                  const cqAvg =
-                    approvedReviews.reduce(
-                      (acc, r) => acc + (r.ratingContentQuality || r.rating || 5),
-                      0
-                    ) / total;
-                  const profAvg =
-                    approvedReviews.reduce(
-                      (acc, r) => acc + (r.ratingProfessionalism || r.rating || 5),
-                      0
-                    ) / total;
-                  const tdAvg =
-                    approvedReviews.reduce(
-                      (acc, r) => acc + (r.ratingTimelyDelivery || r.rating || 5),
-                      0
-                    ) / total;
-
-                  const scores = [
-                    { name: "Content Quality", score: cqAvg },
-                    { name: "Professionalism", score: profAvg },
-                    { name: "Timely Delivery", score: tdAvg },
-                  ].sort((a, b) => b.score - a.score);
-
-                  const top2 = scores.slice(0, 2).map((s) => s.name);
-
-                  return (
-                    <div
-                      className={`rounded-2xl p-3.5 border text-left flex items-center justify-between gap-3 ${
-                        isDark
-                          ? "bg-[#803D63]/20 border-[#803D63]/40 text-white"
-                          : "bg-[#F6EBF1] border-[#E8DCE4] text-slate-900"
-                      }`}
-                    >
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-amber-400 text-sm">⭐</span>
-                          <span className="font-extrabold text-sm text-slate-900 dark:text-white">
-                            {avg}
-                          </span>
-                          <span className="text-slate-400 font-bold text-xs">·</span>
-                          <span className="font-bold text-xs text-slate-700 dark:text-slate-200">
-                            {total} Collaboration{total > 1 ? "s" : ""}
-                          </span>
-                        </div>
-                        <p
-                          className={`text-[11px] font-semibold mt-0.5 ${
-                            isDark ? "text-purple-200" : "text-[#803D63]"
-                          }`}
-                        >
-                          <strong>Highly rated for:</strong> {top2.join(" · ")}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })()}
-
-                {/* Individual Review Cards */}
-                {approvedReviews.map((rev) => (
-                  <div
-                    key={rev.id}
-                    className={`rounded-2xl p-4 space-y-2.5 transition-all text-left border ${
-                      isDark
-                        ? "bg-slate-900/60 backdrop-blur-md border-white/10 text-white"
-                        : "bg-white/90 backdrop-blur-md border-slate-200/80 text-slate-900 shadow-2xs"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-0.5 text-amber-400">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-3.5 w-3.5 ${
-                              i < (rev.rating || 5)
-                                ? "fill-amber-400 text-amber-400"
-                                : "text-slate-300 fill-slate-300 opacity-30"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      {rev.projectTitle && (
-                        <div className="flex items-center gap-1.5 flex-wrap justify-end">
-                          <span
-                            className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border truncate max-w-[140px] ${
-                              isDark
-                                ? "bg-purple-900/40 text-purple-300 border-purple-500/30"
-                                : "bg-[#F6EBF1] text-[#803D63] border-[#E8DCE4]"
-                            }`}
-                          >
-                            {rev.projectTitle}
-                          </span>
-                          {rev.contentUrl && (
-                            <a
-                              href={rev.contentUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border hover:underline flex items-center gap-0.5 ${
-                                isDark
-                                  ? "bg-slate-800 text-purple-200 border-slate-700"
-                                  : "bg-slate-100 text-slate-700 border-slate-200"
-                              }`}
-                            >
-                              <span>Work ↗</span>
-                            </a>
-                          )}
-                        </div>
-                      )}
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
 
-                    {rev.comment && (
-                      <p
-                        className={`text-xs font-medium italic leading-relaxed ${
-                          isDark ? "text-slate-200" : "text-slate-700"
+                    {/* Toggle More Services */}
+                    {activePkgs.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => setShowAllGigs(!showAllGigs)}
+                        className={`w-full py-2 px-3 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer border ${
+                          isDark
+                            ? "bg-slate-900/80 text-purple-300 border-purple-500/30 hover:bg-slate-900"
+                            : "bg-[#F7EDF3] text-[#803D63] border-[#ECE8EB] hover:bg-[#ECD3E2]"
                         }`}
                       >
-                        “{rev.comment}”
-                      </p>
-                    )}
-
-                    <div className="pt-1 flex items-center justify-between text-[11px] border-t border-slate-200/30">
-                      <div className="min-w-0 flex-1 truncate pr-2">
-                        <span className={`font-extrabold ${isDark ? "text-white" : "text-slate-900"}`}>
-                          {rev.clientName}
+                        <span>
+                          {showAllGigs
+                            ? "Show fewer services ↑"
+                            : `+ ${remainingCount} more collaboration service${remainingCount > 1 ? "s" : ""} available ↓`}
                         </span>
-                        {rev.clientDesignation && (
-                          <span className={`ml-1 font-medium ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-                            • {rev.clientDesignation}
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-[10px] font-extrabold text-emerald-600 flex items-center gap-0.5 shrink-0">
-                        <CheckCircle2 className="h-3 w-3 text-emerald-500" /> Verified Collaboration
-                      </span>
-                    </div>
+                      </button>
+                    )}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className={`rounded-2xl border-2 border-dashed p-6 text-center space-y-1.5 ${
-                isDark
-                  ? "bg-slate-900/60 backdrop-blur-md border-white/20 text-white"
-                  : "bg-white/70 backdrop-blur-md border-gray-200 text-slate-900"
-              }`}>
-                <Star className="h-7 w-7 mx-auto text-amber-400" />
-                <p className={`font-bold text-xs ${isDark ? "text-white" : "text-slate-800"}`}>
-                  No Reviews Published Yet
-                </p>
-                <p className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-                  Verified brand testimonials &amp; client ratings will appear here once approved.
-                </p>
-              </div>
-            )}
-          </div>
-        )}
+                );
+              })()}
+            </div>
+          )}
+
+          {/* TAB 3: REVIEWS */}
+          {activeContentTab === "reviews" && (
+            <div className="space-y-3 animate-in fade-in duration-200">
+              {approvedReviews && approvedReviews.length > 0 ? (
+                <div className="space-y-3">
+                  {/* Rating Summary Header */}
+                  {(() => {
+                    const total = approvedReviews.length;
+                    const avg = (
+                      approvedReviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) / total
+                    ).toFixed(1);
+
+                    return (
+                      <div
+                        className={`rounded-2xl p-3.5 border text-left flex items-center justify-between gap-3 ${
+                          isDark
+                            ? "bg-slate-900/60 border-white/15 text-white"
+                            : "bg-[#FAF8FA] border-[#ECE8EB] text-slate-900"
+                        }`}
+                      >
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-bold text-sm text-slate-900 dark:text-white">
+                              {avg} out of 5
+                            </span>
+                            <span className="text-slate-400 font-bold text-xs">·</span>
+                            <span className="font-medium text-xs text-slate-600 dark:text-slate-300">
+                              Based on {total} client review{total > 1 ? "s" : ""}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Individual Review Cards */}
+                  {approvedReviews.map((rev) => {
+                    const ratingNum = Number(rev.rating) || 5;
+                    return (
+                      <div
+                        key={rev.id}
+                        className={`rounded-2xl p-4 space-y-2.5 transition-all text-left border ${
+                          isDark
+                            ? "bg-slate-900/60 backdrop-blur-md border-white/10 text-white"
+                            : "bg-white/90 backdrop-blur-md border-slate-200/80 text-slate-900 shadow-2xs"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-0.5 text-amber-400" aria-label={`Rated ${ratingNum} out of 5`}>
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`h-3.5 w-3.5 ${
+                                  i < ratingNum
+                                    ? "fill-amber-400 text-amber-400"
+                                    : "text-slate-200 fill-slate-200"
+                                }`}
+                              />
+                            ))}
+                          </div>
+                          {rev.projectTitle && (
+                            <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                              <span
+                                className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border truncate max-w-[140px] ${
+                                  isDark
+                                    ? "bg-purple-900/40 text-purple-300 border-purple-500/30"
+                                    : "bg-[#F7EDF3] text-[#803D63] border-[#ECE8EB]"
+                                }`}
+                              >
+                                {rev.projectTitle}
+                              </span>
+                              {rev.contentUrl && (
+                                <a
+                                  href={rev.contentUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-[10px] font-semibold text-[#803D63] hover:underline flex items-center gap-0.5"
+                                >
+                                  <span>View related work ↗</span>
+                                </a>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        {rev.comment && (
+                          <p
+                            className={`text-xs font-normal leading-relaxed ${
+                              isDark ? "text-slate-200" : "text-slate-700"
+                            }`}
+                          >
+                            “{rev.comment}”
+                          </p>
+                        )}
+
+                        <div className="pt-1.5 flex items-center justify-between text-[11px] border-t border-slate-200/40">
+                          <div className="min-w-0 flex-1 truncate pr-2">
+                            <span className={`font-bold ${isDark ? "text-white" : "text-slate-900"}`}>
+                              {rev.clientName}
+                            </span>
+                            {rev.clientDesignation && (
+                              <span className={`ml-1 font-medium ${isDark ? "text-slate-400" : "text-[#6F6872]"}`}>
+                                • {rev.clientDesignation}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className={`rounded-2xl border-2 border-dashed p-6 text-center space-y-1.5 ${
+                  isDark
+                    ? "bg-slate-900/60 backdrop-blur-md border-white/20 text-white"
+                    : "bg-white/70 backdrop-blur-md border-gray-200 text-slate-900"
+                }`}>
+                  <Star className="h-6 w-6 mx-auto text-amber-400" />
+                  <p className={`font-bold text-xs ${isDark ? "text-white" : "text-slate-800"}`}>
+                    No public reviews yet
+                  </p>
+                  <p className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+                    Client ratings will appear here once approved.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
-      {/* Bottom Conversion Watermark */}
+      {/* Subtle Inflixo Attribution */}
       <div className="relative z-10 mt-6 pt-4 text-center border-t border-gray-200/30">
         <a
           href="/"
@@ -1787,7 +1693,7 @@ export function LivePreviewCard({
           }`}
         >
           <InflixoLogoIcon className="h-3.5 w-3.5 text-[#803D63]" />
-          <span>Create your own Inflixo</span>
+          <span>Made with Inflixo</span>
         </a>
       </div>
     </div>

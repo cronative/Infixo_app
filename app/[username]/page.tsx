@@ -329,8 +329,8 @@ export default function PublicProfilePage() {
 
   return (
     <div className={`min-h-dvh transition-colors duration-300 ${pageBgStyle}`}>
-      <main className="mx-auto max-w-2xl px-2.5 sm:px-8 py-4 sm:py-10 space-y-5 animate-fade-in-up">
-        {/* Main Theme Profile Card (Renders Profile, Socials, Series, Gigs, Reviews & Custom Links) */}
+      <main className="mx-auto max-w-3xl px-3 sm:px-6 py-4 sm:py-10 space-y-5 animate-fade-in-up">
+        {/* Main Theme Profile Card (Renders Profile, Socials, Series, Services, Reviews & Custom Links) */}
         <ThemeCard
           themeKey={theme}
           profile={profile}
