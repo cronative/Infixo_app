@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
+import Link from "next/link";
 import {
   Star,
   CheckCircle2,
@@ -12,13 +13,41 @@ import {
   Mail,
   Trash2,
   Plus,
+  ExternalLink,
+  MoreVertical,
+  Check,
+  Eye,
+  EyeOff,
+  Copy,
   Video,
-  Sparkles,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { CreatorReview, ReviewStatus } from "@/types";
 import { reviewsRepository } from "@/repositories/localRepository";
+import { copyToClipboard } from "@/lib/copyToClipboard";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
+
+function formatDate(dateStr: string): string {
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return "Recently";
+    return d.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  } catch {
+    return "Recently";
+  }
+}
+
+function maskEmail(email: string): string {
+  if (!email || !email.includes("@")) return email || "";
+  const [user, domain] = email.split("@");
+  if (user.length <= 2) return `${user.charAt(0)}***@${domain}`;
+  return `${user.substring(0, 2)}***@${domain}`;
+}
 
 export default function DashboardReviewsPage() {
   const { profile } = useCreator();
@@ -26,12 +55,14 @@ export default function DashboardReviewsPage() {
 
   const [reviews, setReviews] = useState<CreatorReview[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"pending" | "approved" | "invited" | "all">("pending");
+  const [activeTab, setActiveTab] = useState<"all" | "approved" | "pending" | "invited">("all");
+  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  const [reviewToDelete, setReviewToDelete] = useState<CreatorReview | null>(null);
 
-  // Popup Modal State
+  // Popup Modal State (100% UNTOUCHED logic)
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // New Review Request Form State
+  // Form State for Request Review (100% UNTOUCHED fields)
   const [clientName, setClientName] = useState("");
   const [clientEmail, setClientEmail] = useState("");
   const [clientDesignation, setClientDesignation] = useState("");
@@ -65,7 +96,6 @@ export default function DashboardReviewsPage() {
         console.warn("Failed to fetch reviews from DB:", err);
       }
 
-      // Fallback to local repository
       setReviews(reviewsRepository.getAll());
       setLoading(false);
     }
@@ -73,13 +103,19 @@ export default function DashboardReviewsPage() {
     loadReviews();
   }, [profile.email, profile.username]);
 
-  // Sync state to local storage repository
+  // Click outside to close 3-dot menus
+  useEffect(() => {
+    const handleClickOutside = () => setActiveMenuId(null);
+    if (activeMenuId) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [activeMenuId]);
+
   const updateReviews = (updated: CreatorReview[]) => {
     setReviews(updated);
     reviewsRepository.saveAll(updated);
   };
 
-  // Handle Send Review Invitation Email to Brand Client
+  // Handle Send Review Invitation Email (100% UNTOUCHED handler logic)
   const handleSendEmailRequest = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -127,7 +163,6 @@ export default function DashboardReviewsPage() {
 
         showToast(`Review invitation email sent to ${clientEmail.trim()}! ✉️`, "success");
 
-        // Reset form & close modal
         setClientName("");
         setClientEmail("");
         setClientDesignation("");
@@ -173,8 +208,9 @@ export default function DashboardReviewsPage() {
     }
   };
 
-  // Handle Status Update (Approve / Reject)
+  // Handle Status Update (Approve / Hide / Reject)
   const handleUpdateStatus = async (id: string, status: ReviewStatus) => {
+    setActiveMenuId(null);
     try {
       fetch("/api/creator/reviews", {
         method: "PATCH",
@@ -187,14 +223,16 @@ export default function DashboardReviewsPage() {
     updateReviews(updated);
 
     if (status === "approved") {
-      showToast("Review approved and published to public profile! ⭐", "success");
+      showToast("Review approved and published to profile! ⭐");
     } else if (status === "rejected") {
-      showToast("Review status set to rejected", "info");
+      showToast("Review hidden from profile.");
     }
   };
 
   // Handle Delete Review
-  const handleDeleteReview = async (id: string) => {
+  const handleDeleteReview = async () => {
+    if (!reviewToDelete) return;
+    const id = reviewToDelete.id;
     try {
       fetch(`/api/creator/reviews?id=${encodeURIComponent(id)}`, { method: "DELETE" }).catch((e) =>
         console.warn("Failed API delete:", e)
@@ -203,303 +241,489 @@ export default function DashboardReviewsPage() {
 
     const updated = reviews.filter((r) => r.id !== id);
     updateReviews(updated);
-    showToast("Review deleted", "info");
+    showToast("Review removed.");
+    setReviewToDelete(null);
   };
 
-  // Filter counts
-  const pendingCount = reviews.filter((r) => r.status === "pending_approval").length;
-  const approvedCount = reviews.filter((r) => r.status === "approved").length;
-  const invitedCount = reviews.filter((r) => r.status === "pending_invite").length;
+  const handleCopyReviewLink = async (rev: CreatorReview) => {
+    setActiveMenuId(null);
+    if (!rev.token) {
+      showToast("No direct review link available", "info");
+      return;
+    }
+    const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
+    const link = `${origin}/review/${rev.token}`;
+    const success = await copyToClipboard(link);
+    if (success) {
+      showToast("Review submission link copied! 🔗");
+    }
+  };
 
-  const filteredReviews = reviews.filter((r) => {
-    if (activeTab === "pending") return r.status === "pending_approval";
-    if (activeTab === "approved") return r.status === "approved";
-    if (activeTab === "invited") return r.status === "pending_invite";
-    return true;
-  });
+  // Dynamic counts
+  const pendingCount = useMemo(() => reviews.filter((r) => r.status === "pending_approval").length, [reviews]);
+  const approvedCount = useMemo(() => reviews.filter((r) => r.status === "approved").length, [reviews]);
+  const invitedCount = useMemo(() => reviews.filter((r) => r.status === "pending_invite").length, [reviews]);
+
+  const filteredReviews = useMemo(() => {
+    if (activeTab === "pending") return reviews.filter((r) => r.status === "pending_approval");
+    if (activeTab === "approved") return reviews.filter((r) => r.status === "approved");
+    if (activeTab === "invited") return reviews.filter((r) => r.status === "pending_invite");
+    return reviews;
+  }, [reviews, activeTab]);
 
   return (
-    <div className="px-4 sm:px-8 py-6 max-w-6xl mx-auto space-y-6 text-left pb-10">
-      
-      {/* Page Header with Trigger Button */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+    <div className="space-y-6 max-w-6xl mx-auto pb-12">
+      {/* 1. PAGE HEADER */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
         <div>
-          <h1 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-            <span>Client Reviews & Brand Testimonials</span>
-            <span className="bg-[#803D63]/10 text-[#803D63] text-xs font-bold px-2.5 py-0.5 rounded-full border border-[#803D63]/20">
-              Social Proof
-            </span>
+          <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#17131A] tracking-tight">
+            Reviews
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
-            Send email review invitations to brands, approve incoming testimonials & showcase 5-star social proof.
+          <p className="text-xs sm:text-sm text-[#6F6872] font-medium mt-1">
+            Collect feedback from brand collaborations and choose what appears on your creator profile.
           </p>
         </div>
 
-        {/* Action Button: Opens Popup Modal */}
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
-          className="bg-[#803D63] hover:bg-[#6D3254] text-white font-extrabold text-xs py-2.5 px-4 rounded-xl transition-all shadow-md cursor-pointer flex items-center justify-center gap-2 shrink-0"
+          className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs shrink-0 self-start sm:self-auto"
         >
-          <Plus className="h-4 w-4" />
-          <span>Request Brand Review</span>
+          <Plus className="h-3.5 w-3.5" />
+          <span>Request Review</span>
         </button>
       </div>
 
       {/* Success Notification Banner */}
       {lastSentEmail && (
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 flex items-center justify-between gap-3 text-emerald-900 text-xs font-bold animate-in fade-in">
+        <div className="rounded-2xl border border-emerald-200 bg-[#ECFDF3] p-4 flex items-center justify-between gap-3 text-[#16794A] text-xs font-semibold animate-in fade-in text-left">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
-            <span>Review invitation email successfully sent to <strong>{lastSentEmail}</strong>!</span>
+            <CheckCircle2 className="h-4 w-4 text-[#16794A] shrink-0" />
+            <span>Review invitation email sent to <strong>{lastSentEmail}</strong>!</span>
           </div>
           <button
             type="button"
             onClick={() => setLastSentEmail(null)}
-            className="text-emerald-700 hover:text-emerald-950 p-1"
+            className="text-[#16794A] hover:opacity-80 p-1 cursor-pointer"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
       )}
 
-      {/* Reviews Filter Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-2 overflow-x-auto">
-        <button
-          type="button"
-          onClick={() => setActiveTab("pending")}
-          className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
-            activeTab === "pending"
-              ? "bg-[#803D63] text-white shadow-2xs"
-              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-          }`}
-        >
-          <Clock className="h-3.5 w-3.5" />
-          <span>Pending Approval</span>
-          {pendingCount > 0 && (
-            <span className="bg-amber-400 text-slate-950 font-black text-[10px] px-1.5 py-0.2 rounded-full">
-              {pendingCount}
+      {/* 2. COMPACT REVIEW SUMMARY (4 Cards) */}
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 text-left">
+        {/* Card 1: All Reviews */}
+        <div className="rounded-2xl border border-[#ECE8EB] bg-white p-4 space-y-1.5 shadow-2xs">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-[#6F6872] uppercase tracking-wider">
+              All Reviews
             </span>
-          )}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab("approved")}
-          className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
-            activeTab === "approved"
-              ? "bg-[#803D63] text-white shadow-2xs"
-              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-          }`}
-        >
-          <CheckCircle2 className="h-3.5 w-3.5" />
-          <span>Published Testimonials ({approvedCount})</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab("invited")}
-          className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
-            activeTab === "invited"
-              ? "bg-[#803D63] text-white shadow-2xs"
-              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-          }`}
-        >
-          <Send className="h-3.5 w-3.5" />
-          <span>Sent Email Invites ({invitedCount})</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab("all")}
-          className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
-            activeTab === "all"
-              ? "bg-[#803D63] text-white shadow-2xs"
-              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-          }`}
-        >
-          <span>All ({reviews.length})</span>
-        </button>
-      </div>
-
-      {/* Reviews List */}
-      {filteredReviews.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-slate-200 bg-white p-10 text-center space-y-3">
-          <MessageSquare className="h-9 w-9 text-slate-300 mx-auto" />
-          <div className="space-y-1">
-            <p className="text-xs font-bold text-slate-700">No review requests in this tab</p>
-            <p className="text-[11px] text-slate-500 font-medium max-w-sm mx-auto">
-              {activeTab === "pending"
-                ? "You have no submitted brand reviews awaiting approval."
-                : activeTab === "approved"
-                ? "Approved client reviews will show up on your public profile."
-                : "Click 'Request Brand Review' above to send email invitations to your brand partners."}
-            </p>
+            <MessageSquare className="h-4 w-4 text-[#803D63]" />
           </div>
+          <p className="font-display text-2xl font-bold text-[#17131A]">
+            {reviews.length}
+          </p>
+          <p className="text-[11px] text-[#6F6872] font-medium">
+            Feedback received
+          </p>
+        </div>
+
+        {/* Card 2: Published */}
+        <div className="rounded-2xl border border-[#ECE8EB] bg-white p-4 space-y-1.5 shadow-2xs">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-[#6F6872] uppercase tracking-wider">
+              Published
+            </span>
+            <CheckCircle2 className="h-4 w-4 text-[#16794A]" />
+          </div>
+          <p className="font-display text-2xl font-bold text-[#17131A]">
+            {approvedCount}
+          </p>
+          <p className="text-[11px] text-[#6F6872] font-medium">
+            Visible on your profile
+          </p>
+        </div>
+
+        {/* Card 3: Pending Approval */}
+        <div className="rounded-2xl border border-[#ECE8EB] bg-white p-4 space-y-1.5 shadow-2xs">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-[#6F6872] uppercase tracking-wider">
+              Pending Approval
+            </span>
+            <Clock className="h-4 w-4 text-amber-600" />
+          </div>
+          <p className="font-display text-2xl font-bold text-[#17131A]">
+            {pendingCount}
+          </p>
+          <p className="text-[11px] text-[#6F6872] font-medium">
+            Waiting for your decision
+          </p>
+        </div>
+
+        {/* Card 4: Invitations Sent */}
+        <div className="rounded-2xl border border-[#ECE8EB] bg-white p-4 space-y-1.5 shadow-2xs">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-[#6F6872] uppercase tracking-wider">
+              Invitations Sent
+            </span>
+            <Send className="h-4 w-4 text-[#803D63]" />
+          </div>
+          <p className="font-display text-2xl font-bold text-[#17131A]">
+            {invitedCount}
+          </p>
+          <p className="text-[11px] text-[#6F6872] font-medium">
+            Awaiting a response
+          </p>
+        </div>
+      </section>
+
+      {/* 3. STATUS NAVIGATION TABS */}
+      <section className="space-y-4 text-left">
+        <div className="flex items-center gap-1.5 border-b border-[#ECE8EB] pb-2 overflow-x-auto">
           <button
             type="button"
-            onClick={() => setIsModalOpen(true)}
-            className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2 px-3.5 rounded-xl transition-all cursor-pointer inline-flex items-center gap-1.5"
+            onClick={() => setActiveTab("all")}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${
+              activeTab === "all"
+                ? "bg-[#F7EDF3] text-[#803D63]"
+                : "text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A]"
+            }`}
           >
-            <Plus className="h-3.5 w-3.5" />
-            <span>Request Brand Review</span>
+            All ({reviews.length})
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("approved")}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${
+              activeTab === "approved"
+                ? "bg-[#F7EDF3] text-[#803D63]"
+                : "text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A]"
+            }`}
+          >
+            Published ({approvedCount})
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("pending")}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${
+              activeTab === "pending"
+                ? "bg-[#F7EDF3] text-[#803D63]"
+                : "text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A]"
+            }`}
+          >
+            Pending ({pendingCount})
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("invited")}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${
+              activeTab === "invited"
+                ? "bg-[#F7EDF3] text-[#803D63]"
+                : "text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A]"
+            }`}
+          >
+            Invitations ({invitedCount})
           </button>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredReviews.map((rev) => (
-            <div
-              key={rev.id}
-              className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 space-y-3 shadow-2xs text-left flex flex-col justify-between"
-            >
-              <div className="space-y-2.5">
-                {/* Status & Rating Header */}
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-1 text-amber-500">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`h-4 w-4 ${
-                          i < rev.rating ? "fill-amber-400 text-amber-400" : "text-slate-200 fill-slate-200"
-                        }`}
-                      />
-                    ))}
-                  </div>
 
-                  {rev.status === "pending_approval" && (
-                    <span className="bg-amber-100 text-amber-900 border border-amber-200 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full">
-                      ⏳ Pending Approval
-                    </span>
-                  )}
-                  {rev.status === "approved" && (
-                    <span className="bg-emerald-100 text-emerald-900 border border-emerald-200 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                      <CheckCircle2 className="h-3 w-3 text-emerald-600" /> Published
-                    </span>
-                  )}
-                  {rev.status === "pending_invite" && (
-                    <span className="bg-slate-100 text-slate-700 border border-slate-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
-                      📩 Email Sent ({rev.clientEmail})
-                    </span>
-                  )}
-                  {rev.status === "rejected" && (
-                    <span className="bg-rose-100 text-rose-900 border border-rose-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
-                      Rejected
-                    </span>
-                  )}
-                </div>
-
-                {/* Client & Project Badge */}
-                <div>
-                  <div className="flex items-center gap-1.5">
-                    <Building2 className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
-                    <h4 className="font-extrabold text-sm text-slate-900 truncate">
-                      {rev.clientName}
-                    </h4>
-                  </div>
-                  {rev.clientDesignation && (
-                    <p className="text-[11px] font-semibold text-slate-500">
-                      {rev.clientDesignation}
-                    </p>
-                  )}
-                  <div className="flex items-center gap-2 mt-1 flex-wrap">
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md border border-purple-100">
-                      📦 {rev.projectTitle}
-                    </span>
-                    {rev.contentUrl && (
-                      <a
-                        href={rev.contentUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[10px] font-bold text-[#803D63] hover:underline flex items-center gap-1"
-                      >
-                        <Video className="h-3 w-3" /> View Reel/Shoot Link ↗
-                      </a>
-                    )}
-                  </div>
-                </div>
-
-                {/* Comment text */}
-                {rev.comment ? (
-                  <p className="text-xs text-slate-700 font-medium leading-relaxed italic bg-slate-50 rounded-xl p-3 border border-slate-100">
-                    “{rev.comment}”
-                  </p>
-                ) : (
-                  <p className="text-xs text-slate-400 font-medium italic">
-                    Waiting for brand client to submit review text via email link...
-                  </p>
-                )}
-              </div>
-
-              {/* Actions Footer */}
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                <span className="text-[10px] font-semibold text-slate-400">
-                  {new Date(rev.createdAt).toLocaleDateString()}
-                </span>
-
-                <div className="flex items-center gap-1.5">
-                  {rev.status === "pending_approval" && (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => handleUpdateStatus(rev.id, "approved")}
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer shadow-2xs flex items-center gap-1"
-                      >
-                        <CheckCircle2 className="h-3.5 w-3.5" />
-                        <span>Approve & Publish</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleUpdateStatus(rev.id, "rejected")}
-                        className="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold px-2.5 py-1.5 rounded-xl transition-all cursor-pointer"
-                      >
-                        Reject
-                      </button>
-                    </>
-                  )}
-
-                  {rev.status === "approved" && (
-                    <button
-                      type="button"
-                      onClick={() => handleUpdateStatus(rev.id, "rejected")}
-                      className="text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-xl transition-all cursor-pointer"
-                    >
-                      Hide / Unpublish
-                    </button>
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteReview(rev.id)}
-                    className="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
-                    title="Delete Review Request"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              </div>
+        {/* 4. REVIEWS LIST / EMPTY STATES */}
+        {filteredReviews.length === 0 ? (
+          <div className="rounded-2xl border border-[#ECE8EB] bg-white p-8 sm:p-10 text-center space-y-3 shadow-2xs">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F7EDF3] text-[#803D63]">
+              <MessageSquare className="h-6 w-6" />
             </div>
-          ))}
-        </div>
-      )}
+
+            <div className="space-y-1">
+              <h3 className="font-display text-base font-bold text-[#17131A]">
+                {activeTab === "all" && "Build trust from completed collaborations"}
+                {activeTab === "approved" && "No published reviews yet"}
+                {activeTab === "pending" && "No reviews waiting for approval"}
+                {activeTab === "invited" && "No review invitations sent"}
+              </h3>
+              <p className="text-xs text-[#6F6872] max-w-md mx-auto">
+                {activeTab === "all" &&
+                  "Request feedback from brands you have worked with and choose which reviews appear on your creator profile."}
+                {activeTab === "approved" &&
+                  "Approve a received review to display it on your creator profile."}
+                {activeTab === "pending" &&
+                  "New feedback will appear here before it is published."}
+                {activeTab === "invited" &&
+                  "Request feedback after completing a brand collaboration."}
+              </p>
+            </div>
+
+            {(activeTab === "all" || activeTab === "invited") && (
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(true)}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  <span>{activeTab === "all" ? "Request First Review" : "Request Review"}</span>
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filteredReviews.map((rev) => {
+              const formattedDate = formatDate(rev.createdAt);
+              const ratingValue = Number(rev.rating) || 5;
+
+              return (
+                <div
+                  key={rev.id}
+                  className="rounded-2xl border border-[#ECE8EB] bg-white p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-2xs text-left"
+                >
+                  <div className="space-y-3">
+                    {/* Top Row: Client Info + Status Badge */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F7EDF3] text-[#803D63] border border-[#ECE8EB] shrink-0">
+                          <Building2 className="h-4 w-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="font-display text-sm font-bold text-[#17131A] truncate" title={rev.clientName}>
+                            {rev.clientName}
+                          </h3>
+                          {rev.clientDesignation ? (
+                            <p className="text-[11px] text-[#6F6872] font-medium truncate">
+                              {rev.clientDesignation}
+                            </p>
+                          ) : (
+                            <p className="text-[11px] text-[#6F6872] font-medium truncate">
+                              {maskEmail(rev.clientEmail)}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Status Badge */}
+                      <div className="shrink-0">
+                        {rev.status === "approved" && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#16794A] bg-[#ECFDF3] px-2 py-0.5 rounded-full">
+                            <span className="h-1 w-1 rounded-full bg-[#16794A]" />
+                            Published
+                          </span>
+                        )}
+                        {rev.status === "pending_approval" && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
+                            <span className="h-1 w-1 rounded-full bg-amber-600" />
+                            Pending Approval
+                          </span>
+                        )}
+                        {rev.status === "pending_invite" && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#6F6872] bg-[#FAF8FA] border border-[#ECE8EB] px-2 py-0.5 rounded-full">
+                            <span className="h-1 w-1 rounded-full bg-[#6F6872]" />
+                            Invitation Sent
+                          </span>
+                        )}
+                        {rev.status === "rejected" && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#6F6872] bg-[#FAF8FA] border border-[#ECE8EB] px-2 py-0.5 rounded-full">
+                            Hidden
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Second Row: Rating Stars + Collaboration Type */}
+                    <div className="flex items-center justify-between gap-2 pt-0.5">
+                      {rev.status !== "pending_invite" ? (
+                        <div className="flex items-center gap-1.5">
+                          <div
+                            className="flex items-center gap-0.5 text-amber-400"
+                            aria-label={`Rated ${ratingValue} out of 5`}
+                          >
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`h-3.5 w-3.5 ${
+                                  i < ratingValue
+                                    ? "fill-amber-400 text-amber-400"
+                                    : "fill-[#ECE8EB] text-[#ECE8EB]"
+                                }`}
+                              />
+                            ))}
+                          </div>
+                          <span className="text-xs font-bold text-[#17131A]">
+                            {ratingValue.toFixed(1)}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-[11px] text-[#6F6872] font-medium">
+                          Awaiting brand rating
+                        </span>
+                      )}
+
+                      {rev.projectTitle && (
+                        <span className="text-[10px] font-bold text-[#803D63] bg-[#F7EDF3] px-2 py-0.5 rounded-md truncate max-w-[160px]">
+                          {rev.projectTitle}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Review Text / Comment */}
+                    <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3 text-xs text-[#17131A] font-normal leading-relaxed">
+                      {rev.comment ? (
+                        <p className="line-clamp-4">“{rev.comment}”</p>
+                      ) : (
+                        <p className="text-[#6F6872] italic">
+                          Awaiting client feedback submission via secure link.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Footer Row: Date, Related Link, Actions */}
+                  <div className="pt-2 border-t border-[#ECE8EB] flex items-center justify-between gap-2 text-xs">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className="text-[11px] text-[#6F6872] shrink-0">
+                        {formattedDate}
+                      </span>
+
+                      {rev.contentUrl && (
+                        <a
+                          href={rev.contentUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[11px] font-semibold text-[#803D63] hover:underline inline-flex items-center gap-1 truncate"
+                        >
+                          <span>View related work</span>
+                          <ExternalLink className="h-3 w-3 shrink-0" />
+                        </a>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {/* Visibility / Approval Actions */}
+                      {rev.status === "pending_approval" && (
+                        <button
+                          type="button"
+                          onClick={() => handleUpdateStatus(rev.id, "approved")}
+                          className="inline-flex items-center gap-1 rounded-lg bg-[#803D63] hover:bg-[#6F3456] text-white px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer shadow-2xs"
+                        >
+                          <Check className="h-3 w-3" />
+                          <span>Approve</span>
+                        </button>
+                      )}
+
+                      {rev.status === "approved" && (
+                        <button
+                          type="button"
+                          onClick={() => handleUpdateStatus(rev.id, "rejected")}
+                          className="rounded-lg border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] text-[#6F6872] hover:text-[#17131A] px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer"
+                        >
+                          Hide from Profile
+                        </button>
+                      )}
+
+                      {rev.status === "rejected" && (
+                        <button
+                          type="button"
+                          onClick={() => handleUpdateStatus(rev.id, "approved")}
+                          className="rounded-lg border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] text-[#803D63] px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer"
+                        >
+                          Publish to Profile
+                        </button>
+                      )}
+
+                      {/* Three-dot Menu */}
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveMenuId(activeMenuId === rev.id ? null : rev.id);
+                          }}
+                          className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#ECE8EB] bg-[#FAF8FA] text-[#6F6872] hover:text-[#17131A] transition-colors cursor-pointer"
+                          aria-label="More actions"
+                        >
+                          <MoreVertical className="h-3.5 w-3.5" />
+                        </button>
+
+                        {activeMenuId === rev.id && (
+                          <div
+                            onClick={(e) => e.stopPropagation()}
+                            className="absolute right-0 bottom-full mb-1.5 w-40 rounded-xl border border-[#ECE8EB] bg-white p-1 shadow-lg z-20 space-y-0.5 animate-in fade-in"
+                          >
+                            {rev.token && (
+                              <button
+                                type="button"
+                                onClick={() => handleCopyReviewLink(rev)}
+                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#17131A] hover:bg-[#FAF8FA] transition-colors cursor-pointer"
+                              >
+                                <Copy className="h-3.5 w-3.5 text-[#6F6872]" />
+                                <span>Copy Link</span>
+                              </button>
+                            )}
+
+                            {rev.status === "approved" ? (
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateStatus(rev.id, "rejected")}
+                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#17131A] hover:bg-[#FAF8FA] transition-colors cursor-pointer"
+                              >
+                                <EyeOff className="h-3.5 w-3.5 text-[#6F6872]" />
+                                <span>Hide from Profile</span>
+                              </button>
+                            ) : rev.status === "rejected" ? (
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateStatus(rev.id, "approved")}
+                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#17131A] hover:bg-[#FAF8FA] transition-colors cursor-pointer"
+                              >
+                                <Eye className="h-3.5 w-3.5 text-[#6F6872]" />
+                                <span>Publish to Profile</span>
+                              </button>
+                            ) : null}
+
+                            <div className="my-1 border-t border-[#ECE8EB]" />
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setActiveMenuId(null);
+                                setReviewToDelete(rev);
+                              }}
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                              <span>Delete Review</span>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
 
       {/* ========================================================================= */}
-      {/* POPUP MODAL: Request Review Form */}
+      {/* POPUP MODAL: Request Review Form (100% PRESERVED & UNTOUCHED LOGIC) */}
       {/* ========================================================================= */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="relative max-w-xl w-full bg-white rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 text-left border border-slate-200/80 animate-in zoom-in-95 duration-150">
-            
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="relative max-w-xl w-full bg-white rounded-2xl p-5 sm:p-6 shadow-2xl space-y-4 text-left border border-[#ECE8EB] animate-in zoom-in-95 duration-150">
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div className="flex items-center justify-between border-b border-[#ECE8EB] pb-3">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-50 text-[#803D63]">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F7EDF3] text-[#803D63]">
                   <Mail className="h-4 w-4" />
                 </div>
                 <div>
-                  <h3 className="font-display text-base font-extrabold text-slate-900">
+                  <h3 className="font-display text-base font-bold text-[#17131A]">
                     Request Review from Brand / Client
                   </h3>
-                  <p className="text-xs text-slate-500 font-medium">
+                  <p className="text-xs text-[#6F6872] font-medium">
                     An email invitation with a secure single-use link will be sent to the client.
                   </p>
                 </div>
@@ -508,16 +732,16 @@ export default function DashboardReviewsPage() {
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-700 p-1.5 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer"
+                className="text-[#6F6872] hover:text-[#17131A] p-1.5 rounded-xl hover:bg-[#FAF8FA] transition-colors cursor-pointer"
               >
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4" />
               </button>
             </div>
 
             {/* Modal Form */}
             <form onSubmit={handleSendEmailRequest} className="space-y-3.5 pt-1">
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-slate-800">
+                <label className="block text-xs font-bold text-[#17131A]">
                   Client / Brand Name <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -526,12 +750,12 @@ export default function DashboardReviewsPage() {
                   value={clientName}
                   onChange={(e) => setClientName(e.target.value)}
                   placeholder="e.g. Puma India / Nike"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#803D63] focus:bg-white focus:outline-none"
+                  className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-slate-800">
+                <label className="block text-xs font-bold text-[#17131A]">
                   Client / Brand Email <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -540,12 +764,12 @@ export default function DashboardReviewsPage() {
                   value={clientEmail}
                   onChange={(e) => setClientEmail(e.target.value)}
                   placeholder="e.g. marketing@puma.com"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#803D63] focus:bg-white focus:outline-none"
+                  className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-slate-800">
+                <label className="block text-xs font-bold text-[#17131A]">
                   Title of Collab (Reels / Shorts / Shoot) <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -554,12 +778,12 @@ export default function DashboardReviewsPage() {
                   value={projectTitle}
                   onChange={(e) => setProjectTitle(e.target.value)}
                   placeholder="e.g. Created Reel / Short Film / Brand Campaign"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#803D63] focus:bg-white focus:outline-none"
+                  className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-slate-800">
+                <label className="block text-xs font-bold text-[#17131A]">
                   Link of Reels, Shoot, Short etc. <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -568,39 +792,39 @@ export default function DashboardReviewsPage() {
                   value={contentUrl}
                   onChange={(e) => setContentUrl(e.target.value)}
                   placeholder="e.g. https://instagram.com/reel/123 or YouTube link"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#803D63] focus:bg-white focus:outline-none"
+                  className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-slate-800">
-                  Client Role / Designation <span className="text-slate-400 font-normal">(Optional)</span>
+                <label className="block text-xs font-bold text-[#17131A]">
+                  Client Role / Designation <span className="text-[#6F6872] font-normal">(Optional)</span>
                 </label>
                 <input
                   type="text"
                   value={clientDesignation}
                   onChange={(e) => setClientDesignation(e.target.value)}
                   placeholder="e.g. Marketing Manager @ Puma"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#803D63] focus:bg-white focus:outline-none"
+                  className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none"
                 />
               </div>
 
               {/* Modal Actions */}
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#ECE8EB]">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-[#803D63] hover:bg-[#6D3254] text-white font-bold text-xs py-2.5 px-4 rounded-xl transition-all shadow-md cursor-pointer flex items-center justify-center gap-2"
+                  className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5"
                 >
-                  <Send className="h-4 w-4" />
-                  <span>{isSubmitting ? "Sending..." : "Send Review Request Email →"}</span>
+                  <Send className="h-3.5 w-3.5" />
+                  <span>{isSubmitting ? "Sending..." : "Send Review Request"}</span>
                 </button>
               </div>
             </form>
@@ -608,6 +832,16 @@ export default function DashboardReviewsPage() {
         </div>
       )}
 
+      {/* Delete Review Confirmation Modal */}
+      <ConfirmModal
+        isOpen={Boolean(reviewToDelete)}
+        onClose={() => setReviewToDelete(null)}
+        onConfirm={handleDeleteReview}
+        title="Delete this review?"
+        description={`The review from "${reviewToDelete?.clientName}" will be removed.`}
+        confirmText="Delete Review"
+        cancelText="Cancel"
+      />
     </div>
   );
 }
