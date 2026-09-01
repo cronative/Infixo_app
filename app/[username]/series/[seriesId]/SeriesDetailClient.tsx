@@ -12,7 +12,6 @@ import {
   ExternalLink,
   Copy,
   Check,
-  Tv,
 } from "lucide-react";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 import { Series, Episode } from "@/types";
@@ -199,27 +198,29 @@ export function SeriesDetailClient({
     }
   }
 
-  // ── LOADING STATE ──
+  // ── LOADING SKELETON ──
   if (loading) {
     return (
       <div className="min-h-screen bg-[#FAF8FA] text-[#17131A] flex flex-col font-sans">
         {/* Header Skeleton */}
-        <div className="w-full bg-white border-b border-[#ECE8EB] px-4 sm:px-6 py-3.5">
-          <div className="max-w-5xl mx-auto flex items-center justify-between">
+        <div className="w-full bg-white border-b border-[#ECE8EB] px-4 sm:px-8 py-3.5">
+          <div className="max-w-4xl mx-auto flex items-center justify-between">
             <div className="h-8 w-24 bg-[#FAF8FA] border border-[#ECE8EB] rounded-xl animate-pulse" />
             <div className="h-8 w-28 bg-[#FAF8FA] border border-[#ECE8EB] rounded-xl animate-pulse" />
           </div>
         </div>
 
-        {/* Content Skeleton */}
-        <main className="max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
-          <div className="w-full aspect-[16/9] sm:aspect-[21/9] bg-white border border-[#ECE8EB] rounded-2xl sm:rounded-3xl animate-pulse" />
-          <div className="bg-white border border-[#ECE8EB] rounded-2xl sm:rounded-3xl p-6 space-y-3">
-            <div className="h-7 w-2/3 bg-[#FAF8FA] rounded-xl animate-pulse" />
-            <div className="h-4 w-1/3 bg-[#FAF8FA] rounded-lg animate-pulse" />
-            <div className="h-4 w-full bg-[#FAF8FA] rounded-lg animate-pulse" />
-          </div>
+        {/* Full-width Cover Skeleton */}
+        <div className="w-full h-[260px] sm:h-[440px] bg-slate-200/80 animate-pulse" />
+
+        {/* Centered Content Skeleton */}
+        <main className="max-w-4xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
           <div className="space-y-3">
+            <div className="h-8 w-3/4 bg-white border border-[#ECE8EB] rounded-xl animate-pulse" />
+            <div className="h-5 w-1/3 bg-white border border-[#ECE8EB] rounded-lg animate-pulse" />
+            <div className="h-4 w-full bg-white border border-[#ECE8EB] rounded-lg animate-pulse" />
+          </div>
+          <div className="space-y-3 pt-4">
             {[1, 2, 3].map((i) => (
               <div key={i} className="h-20 bg-white border border-[#ECE8EB] rounded-2xl animate-pulse" />
             ))}
@@ -277,8 +278,8 @@ export function SeriesDetailClient({
       {/* ========================================================================= */}
       {/* 1. SIMPLE TOP HEADER */}
       {/* ========================================================================= */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#ECE8EB] px-4 sm:px-6 py-3 shadow-2xs">
-        <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#ECE8EB] px-4 sm:px-8 py-3.5 shadow-2xs">
+        <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
           {/* Brand & Back Navigation */}
           <div className="flex items-center gap-3 sm:gap-4 min-w-0">
             <Logo size="sm" />
@@ -329,32 +330,36 @@ export function SeriesDetailClient({
       </header>
 
       {/* ========================================================================= */}
-      {/* 2. READABLE CENTERED CONTENT CONTAINER */}
+      {/* 2. FULL-WIDTH COVER IMAGE */}
       {/* ========================================================================= */}
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 text-left">
-        {/* ── 2. SERIES COVER ── */}
-        <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] rounded-2xl sm:rounded-3xl border border-[#ECE8EB] overflow-hidden bg-[#FAF8FA] shadow-2xs">
+      <section className="w-full bg-[#FAF8FA] border-b border-[#ECE8EB] overflow-hidden">
+        <div className="w-full h-[220px] sm:h-[360px] md:h-[460px] relative bg-[#FAF8FA] flex items-center justify-center">
           {coverImageSrc ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={coverImageSrc}
               alt={series.title}
               onError={() => setCoverImageError(true)}
-              className="h-full w-full object-cover object-center"
+              className="w-full h-full object-cover object-center"
             />
           ) : (
-            <div className="h-full w-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-[#FAF8FA] to-[#F2EEF1] text-center">
-              <Film className="h-10 w-10 text-[#803D63]/50 mb-2" />
-              <span className="font-display text-base font-bold text-[#17131A] max-w-sm truncate">
+            <div className="w-full h-full flex flex-col items-center justify-center p-8 bg-gradient-to-br from-[#FAF8FA] via-white to-[#F6EBF1] text-center">
+              <Film className="h-12 w-12 text-[#803D63]/40 mb-2" />
+              <span className="font-display text-lg font-bold text-[#17131A] max-w-md truncate">
                 {series.title}
               </span>
             </div>
           )}
         </div>
+      </section>
 
-        {/* ── 3. SERIES INFORMATION ── */}
-        <div className="rounded-2xl sm:rounded-3xl border border-[#ECE8EB] bg-white p-5 sm:p-7 shadow-2xs space-y-4">
-          {/* Genre Chips & Metadata line */}
+      {/* ========================================================================= */}
+      {/* 3. CENTRED SERIES DETAILS & EPISODES CONTAINER */}
+      {/* ========================================================================= */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 text-left">
+        {/* ── SERIES DETAILS ── */}
+        <div className="space-y-3.5 pb-6 border-b border-[#ECE8EB]">
+          {/* Genre Chips & Episode Metadata */}
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex flex-wrap items-center gap-1.5">
               {series.genre ? (
@@ -383,70 +388,72 @@ export function SeriesDetailClient({
               )}
             </div>
 
-            <div className="flex items-center gap-2 text-xs font-semibold text-[#6F6872]">
-              <span>
-                {allEpisodes.length} {allEpisodes.length === 1 ? "Episode" : "Episodes"}
-              </span>
+            <div className="text-xs font-semibold text-[#6F6872]">
+              {allEpisodes.length} {allEpisodes.length === 1 ? "Episode" : "Episodes"}
             </div>
           </div>
 
-          {/* Large Series Title */}
-          <div className="space-y-1.5">
-            <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-[#17131A] tracking-tight leading-tight">
-              {series.title}
-            </h1>
+          {/* Series Title */}
+          <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#17131A] tracking-tight leading-tight">
+            {series.title}
+          </h1>
 
-            {/* Minimal Creator Reference Near Title */}
-            {creator && (
-              <div className="flex items-center gap-2 pt-0.5">
-                <CreatorAvatar
-                  src={creator.photoDataUrl}
-                  name={creator.displayName || username}
-                  className="w-6 h-6 rounded-full object-cover shrink-0"
-                  textClassName="text-[10px] font-bold text-white"
-                  fallbackBgClass="bg-[#803D63]"
-                />
-                <Link
-                  href={`/${username}`}
-                  className="text-xs sm:text-sm font-semibold text-[#17131A] hover:text-[#803D63] transition-colors truncate"
-                >
-                  <span>By {creator.displayName}</span>
-                  <span className="text-[#6F6872] font-normal ml-1">(@{creator.username})</span>
-                </Link>
-              </div>
-            )}
-          </div>
+          {/* Minimal Creator Reference */}
+          {creator && (
+            <div className="flex items-center gap-2 pt-0.5">
+              <CreatorAvatar
+                src={creator.photoDataUrl}
+                name={creator.displayName || username}
+                className="w-6 h-6 rounded-full object-cover shrink-0"
+                textClassName="text-[10px] font-bold text-white"
+                fallbackBgClass="bg-[#803D63]"
+              />
+              <Link
+                href={`/${username}`}
+                className="text-xs sm:text-sm font-semibold text-[#17131A] hover:text-[#803D63] transition-colors truncate"
+              >
+                <span>By {creator.displayName}</span>
+                <span className="text-[#6F6872] font-normal ml-1">(@{creator.username})</span>
+              </Link>
+            </div>
+          )}
 
           {/* Short Description */}
           {series.description && (
-            <p className="text-xs sm:text-sm text-[#6F6872] leading-relaxed max-w-3xl font-normal">
+            <p className="text-xs sm:text-sm text-[#6F6872] leading-relaxed max-w-3xl font-normal pt-1">
               {series.description}
             </p>
           )}
 
-          {/* Share Action Row */}
-          <div className="pt-2 border-t border-[#ECE8EB] flex items-center justify-between gap-3">
-            <div className="text-xs font-semibold text-[#6F6872]">
-              Share this series with friends &amp; followers
-            </div>
+          {/* Share Series Action */}
+          <div className="pt-2 flex items-center gap-2.5">
             <button
               type="button"
               onClick={() => setIsShareModalOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] hover:bg-white hover:border-[#803D63] px-3.5 py-1.5 text-xs font-bold text-[#17131A] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] hover:border-[#803D63] px-3.5 py-2 text-xs font-bold text-[#17131A] shadow-2xs transition-colors cursor-pointer"
             >
               <Share2 className="h-3.5 w-3.5 text-[#803D63]" />
               <span>Share Series</span>
             </button>
+
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#6F6872] hover:text-[#17131A] transition-colors cursor-pointer"
+            >
+              <Copy className="h-3.5 w-3.5" />
+              <span>Copy Link</span>
+            </button>
           </div>
         </div>
 
-        {/* ── 4. EPISODE LISTING ── */}
-        <div className="space-y-4">
+        {/* ── EPISODES LIST ── */}
+        <div className="space-y-4 pt-2">
           <div className="flex items-center justify-between px-0.5">
             <h2 className="font-display text-lg sm:text-xl font-bold text-[#17131A] flex items-center gap-2">
               <Layers className="h-4 w-4 text-[#803D63]" />
               <span>Episodes</span>
-              <span className="text-xs font-bold text-[#6F6872] bg-[#FAF8FA] border border-[#ECE8EB] px-2.5 py-0.5 rounded-full">
+              <span className="text-xs font-bold text-[#6F6872] bg-white border border-[#ECE8EB] px-2.5 py-0.5 rounded-full shadow-2xs">
                 {allEpisodes.length}
               </span>
             </h2>
@@ -549,7 +556,7 @@ export function SeriesDetailClient({
       </main>
 
       {/* ========================================================================= */}
-      {/* 5. STANDARDIZED SHARE MODAL */}
+      {/* 4. STANDARDIZED SHARE MODAL */}
       {/* ========================================================================= */}
       {series && (
         <ShareSeriesModal
