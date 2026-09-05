@@ -24,10 +24,12 @@ import {
   ArrowRight,
   AlertCircle,
   HelpCircle,
+  Globe,
 } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { PhotoUpload } from "@/components/ui/PhotoUpload";
+import { SeriesCoverUpload } from "@/components/series/SeriesCoverUpload";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { SeriesService } from "@/services/SeriesService";
@@ -53,6 +55,7 @@ const PLATFORM_ICONS: Record<EpisodePlatform, React.ReactNode> = {
   YouTube: <YoutubeIcon className="h-4 w-4 text-red-500" />,
   Instagram: <InstagramIcon className="h-4 w-4 text-pink-500" />,
   Facebook: <FacebookIcon className="h-4 w-4 text-blue-600" />,
+  Other: <Globe className="h-4 w-4 text-[#803D63]" />,
 };
 
 function formatEpisodeNumber(num: number): string {
@@ -199,23 +202,13 @@ function SeriesDrawer({
     >
       <form id="series-form" onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
         <ModalBody className="p-5 sm:p-6 space-y-4 text-left">
-          {/* 16:9 Landscape Poster */}
-          <div>
-            <label className="block text-xs font-bold text-[#17131A] mb-1.5">
-              Series Cover (16:9 Landscape)
-            </label>
-            <div className="flex justify-center sm:justify-start">
-              <PhotoUpload
-                value={poster}
-                onChange={setPoster}
-                shape="landscape"
-                label={poster ? "Change Cover Poster" : "Upload Series Poster"}
-              />
-            </div>
-            <p className="text-[11px] text-[#6F6872] mt-1.5">
-              Displays as the video playlist banner across your profile.
-            </p>
-          </div>
+          {/* Full-Width 16:9 Landscape Series Cover */}
+          <SeriesCoverUpload
+            value={poster}
+            onChange={setPoster}
+            maxSizeMB={5}
+            label="Series Cover"
+          />
 
           {/* Series Title */}
           <div className="space-y-1">
@@ -252,8 +245,8 @@ function SeriesDrawer({
               <label className="block text-xs font-bold text-[#17131A]">
                 Primary content platform
               </label>
-              <div className="grid grid-cols-3 gap-2">
-                {(["YouTube", "Instagram", "Facebook"] as EpisodePlatform[]).map((p) => {
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {(["YouTube", "Instagram", "Facebook", "Other"] as EpisodePlatform[]).map((p) => {
                   const isSelected = seriesPlatform === p;
                   return (
                     <button

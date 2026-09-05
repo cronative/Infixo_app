@@ -5,41 +5,25 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Share2,
-  ArrowLeft,
-  Play,
   Film,
-  Layers,
-  ExternalLink,
   Copy,
-  Check,
-  ChevronRight,
+  Layers,
+  Sparkles,
+  Eye,
+  ArrowLeft,
 } from "lucide-react";
+import { LogoStadiumLinkI } from "@/components/shared/Logo";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
-import { Series, Episode } from "@/types";
+import { Series, Episode, ThemeKey, Season } from "@/types";
 import { useToast } from "@/contexts/ToastContext";
 import { buildSeriesUrl } from "@/utils/format";
 import { copyToClipboard } from "@/lib/copyToClipboard";
-import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { ShareSeriesModal } from "@/components/shared/ShareSeriesModal";
 import { PublicCreatorInfo } from "@/lib/publicSeriesService";
-
-function extractYoutubeId(url?: string): string | null {
-  if (!url) return null;
-  const match = url.match(
-    /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/|watch\?.+&v=))([\w-]{11})/
-  );
-  return match ? match[1] : null;
-}
-
-function getEpisodeThumbnail(ep?: Episode): string | null {
-  if (!ep) return null;
-  if (ep.thumbnailDataUrl) return ep.thumbnailDataUrl;
-  const ytId = extractYoutubeId(ep.externalUrl);
-  if (ytId) {
-    return `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
-  }
-  return null;
-}
+import { THEME_STYLES, isDarkTheme, DEFAULT_THEME_STYLE } from "@/components/onboarding/LivePreviewCard";
+import { THEME_PAGE_BACKGROUNDS, ThemeService, getThemeCssVariables } from "@/services/ThemeService";
+import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
+import { FocusOverlay } from "@/components/theme/FocusOverlay";
 
 function getPlatformInfo(platformStr?: string, urlStr?: string) {
   const p = (platformStr || "").toLowerCase();
@@ -48,19 +32,19 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   if (p.includes("youtube") || u.includes("youtube.com") || u.includes("youtu.be")) {
     return {
       name: "YouTube",
-      icon: <YoutubeIcon className="h-3.5 w-3.5 text-red-600" />,
+      icon: <YoutubeIcon className="h-3.5 w-3.5 text-red-500" />,
     };
   }
   if (p.includes("instagram") || u.includes("instagram.com")) {
     return {
       name: "Instagram",
-      icon: <InstagramIcon className="h-3.5 w-3.5 text-pink-600" />,
+      icon: <InstagramIcon className="h-3.5 w-3.5 text-pink-500" />,
     };
   }
   if (p.includes("facebook") || u.includes("facebook.com")) {
     return {
       name: "Facebook",
-      icon: <FacebookIcon className="h-3.5 w-3.5 text-blue-600" />,
+      icon: <FacebookIcon className="h-3.5 w-3.5 text-blue-500" />,
     };
   }
   return {
@@ -90,35 +74,8 @@ export function SeriesDetailClient({
   const [loading, setLoading] = useState(!initialSeries);
   const [notFound, setNotFound] = useState(!initialSeries && !loading);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const [copiedLink, setCopiedLink] = useState(false);
   const [coverImageError, setCoverImageError] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
-
-  // Parallax scroll listener with requestAnimationFrame
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) return;
-
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setScrollY(window.scrollY);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const parallaxOffset = useMemo(() => {
-    // Subtle, smooth parallax displacement (moves at 30% scroll speed, clamped)
-    return Math.min(scrollY * 0.3, 160);
-  }, [scrollY]);
+  const [activeSeasonIndex, setActiveSeasonIndex] = useState<number>(0);
 
   // Client-side fallback fetch if initial SSR data is not present
   useEffect(() => {
@@ -131,7 +88,7 @@ export function SeriesDetailClient({
         const seriesIdParam = decodeURIComponent(seriesId || "").trim();
 
         if (usernameParam === "demo_creator") {
-          const { EXPERT_DEMO_SERIES, EXPERT_DEMO_PROFILE } = await import("@/data/expertDemoCreator");
+          const { EXPERT_DEMO_SERIES, EXPERT_DEMO_PROFILE, EXPERT_DEMO_THEME } = await import("@/data/expertDemoCreator");
           const found = EXPERT_DEMO_SERIES.find((s) => s.id === seriesIdParam);
           if (found) {
             setSeries(found);
@@ -141,7 +98,7 @@ export function SeriesDetailClient({
               photoDataUrl: EXPERT_DEMO_PROFILE.photoDataUrl,
               bio: EXPERT_DEMO_PROFILE.bio,
               category: EXPERT_DEMO_PROFILE.category,
-              themeKey: "minimal-white",
+              themeKey: EXPERT_DEMO_THEME || "minimal-white",
               totalFanbase: 1345000,
             });
             setLoading(false);
@@ -149,31 +106,26 @@ export function SeriesDetailClient({
           }
         }
 
-        const res = await fetch(`/api/series?username=${encodeURIComponent(usernameParam)}`);
-        if (res.ok) {
-          const data = await res.json();
-          const list: Series[] = data.series || [];
-          const found = list.find((s) => s.id === seriesIdParam);
-          if (found) {
-            setSeries(found);
-            const profRes = await fetch(`/api/creator/profile?username=${encodeURIComponent(usernameParam)}`);
-            if (profRes.ok) {
-              const profData = await profRes.json();
-              if (profData.profile) {
-                setCreator({
-                  displayName: profData.profile.displayName || usernameParam,
-                  username: profData.profile.username || usernameParam,
-                  photoDataUrl: profData.profile.photoDataUrl,
-                  bio: profData.profile.bio,
-                  category: profData.profile.category,
-                  themeKey: profData.profile.themeKey || "minimal-white",
-                  totalFanbase: profData.profile.totalFanbase || 0,
-                });
-              }
-            }
-          } else {
-            setNotFound(true);
-          }
+        const [seriesRes, profRes] = await Promise.all([
+          fetch(`/api/series?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({})),
+          fetch(`/api/creator/profile?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({})),
+        ]);
+
+        const list: Series[] = seriesRes.series || [];
+        const found = list.find((s) => s.id === seriesIdParam);
+
+        if (found && profRes.success && profRes.profile) {
+          setSeries(found);
+          setCreator({
+            displayName: profRes.profile.displayName || usernameParam,
+            username: profRes.profile.username || usernameParam,
+            photoDataUrl: profRes.profile.photoDataUrl,
+            bio: profRes.profile.bio,
+            category: profRes.profile.category,
+            themeKey: profRes.profile.themeKey || "minimal-white",
+            totalFanbase: profRes.profile.totalFanbase || 0,
+          });
+          setNotFound(false);
         } else {
           setNotFound(true);
         }
@@ -191,58 +143,90 @@ export function SeriesDetailClient({
   const username = creator?.username || initialUsername;
   const profileUrl = `/${username}`;
 
-  const allEpisodes: Episode[] = useMemo(() => {
+  // Theme integration
+  const themeKey = (creator?.themeKey || "minimal-white") as ThemeKey;
+  const themeMeta = ThemeService.getThemeMeta(themeKey);
+  const style = THEME_STYLES[themeKey] || THEME_STYLES["minimal-white"];
+  const pageBgStyle = themeMeta.outerBgClass || THEME_PAGE_BACKGROUNDS[themeKey] || THEME_PAGE_BACKGROUNDS["minimal-white"];
+  const isDark = isDarkTheme(themeKey);
+  const isSignaturePurple = themeKey === "signature-purple";
+
+  const seasonsList: Season[] = useMemo(() => {
     if (!series) return [];
     if (Array.isArray(series.seasons) && series.seasons.length > 0) {
-      return series.seasons.flatMap((sn) => (sn && Array.isArray(sn.episodes) ? sn.episodes : []));
+      return series.seasons;
     }
-    return (series as any).episodes || [];
+    return [];
   }, [series]);
 
-  const firstPlayableEp: Episode | undefined = useMemo(() => {
-    return allEpisodes.find((ep: Episode) => ep.externalUrl && ep.externalUrl.trim() !== "") || allEpisodes[0];
-  }, [allEpisodes]);
+  const allEpisodes: Episode[] = useMemo(() => {
+    if (!series) return [];
+    if (seasonsList.length > 0) {
+      return seasonsList.flatMap((sn) => (sn && Array.isArray(sn.episodes) ? sn.episodes : []));
+    }
+    return (series as any).episodes || [];
+  }, [series, seasonsList]);
 
-  // Determine cover image following hierarchy
-  const coverImageSrc = useMemo(() => {
-    if (coverImageError) return null;
-    if (series?.posterDataUrl) return series.posterDataUrl;
-    const firstEpThumb = getEpisodeThumbnail(firstPlayableEp);
-    if (firstEpThumb) return firstEpThumb;
-    return null;
-  }, [series?.posterDataUrl, firstPlayableEp, coverImageError]);
+  const currentEpisodes: Episode[] = useMemo(() => {
+    if (seasonsList.length > 0 && seasonsList[activeSeasonIndex]) {
+      return seasonsList[activeSeasonIndex].episodes || [];
+    }
+    return allEpisodes;
+  }, [seasonsList, activeSeasonIndex, allEpisodes]);
+
+  const platformInfo = useMemo(() => {
+    if (!series?.platform) return null;
+    return getPlatformInfo(series.platform);
+  }, [series?.platform]);
+
+  // Valid cover image: only when genuinely available and not errored
+  const hasValidCover = Boolean(
+    series?.posterDataUrl &&
+    typeof series.posterDataUrl === "string" &&
+    series.posterDataUrl.trim() !== "" &&
+    !coverImageError
+  );
 
   async function handleCopyLink() {
     if (!series) return;
     const url = buildSeriesUrl(username, series.id);
     const success = await copyToClipboard(url);
     if (success) {
-      setCopiedLink(true);
       showToast("Series link copied! 📋✨", "success");
-      setTimeout(() => setCopiedLink(false), 2000);
     } else {
       showToast("Link: " + url, "info");
     }
   }
 
-  // ── LOADING SKELETON ──
+  const trackEpisodeClick = (ep: Episode) => {
+    try {
+      fetch("/api/analytics/track", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventType: "episode_click",
+          username,
+          seriesId: series?.id,
+          episodeId: ep.id,
+          url: ep.externalUrl,
+        }),
+      }).catch(() => {});
+    } catch {}
+  };
+
+  // ── LOADING SKELETON (THEME-AWARE) ──
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FAF8FA] text-[#17131A] flex flex-col font-sans">
-        {/* Full-width Cover Skeleton */}
-        <div className="w-full h-[280px] sm:h-[460px] md:h-[520px] bg-slate-200/80 animate-pulse" />
-
-        {/* Centered Content Skeleton */}
-        <main className="max-w-4xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
-          <div className="space-y-3">
-            <div className="h-8 w-3/4 bg-white border border-[#ECE8EB] rounded-xl animate-pulse" />
-            <div className="h-5 w-1/3 bg-white border border-[#ECE8EB] rounded-lg animate-pulse" />
-            <div className="h-4 w-full bg-white border border-[#ECE8EB] rounded-lg animate-pulse" />
-          </div>
-          <div className="space-y-3 pt-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-20 bg-white border border-[#ECE8EB] rounded-2xl animate-pulse" />
-            ))}
+      <div className={`min-h-dvh flex flex-col transition-colors duration-300 ${pageBgStyle}`}>
+        <main className="flex-1 flex flex-col mx-auto max-w-2xl w-full px-3 sm:px-6 py-6 sm:py-8 animate-pulse">
+          <div className={`flex-1 rounded-3xl p-5 sm:p-8 space-y-4 border ${style.socialItemBg} ${style.socialItemBorder}`}>
+            <div className="w-full aspect-[16/9] bg-black/10 rounded-2xl" />
+            <div className="h-6 w-1/2 mx-auto bg-black/10 rounded-md" />
+            <div className="h-4 w-3/4 mx-auto bg-black/10 rounded-md" />
+            <div className="space-y-2 pt-2">
+              <div className="h-12 w-full bg-black/10 rounded-xl" />
+              <div className="h-12 w-full bg-black/10 rounded-xl" />
+            </div>
           </div>
         </main>
       </div>
@@ -252,19 +236,19 @@ export function SeriesDetailClient({
   // ── NOT FOUND STATE ──
   if (notFound || !series) {
     return (
-      <div className="min-h-screen bg-[#FAF8FA] text-[#17131A] flex flex-col items-center justify-center p-4 font-sans">
+      <div className={`min-h-dvh flex flex-col items-center justify-center p-4 py-6 sm:py-8 transition-colors duration-300 ${pageBgStyle}`}>
         <main className="mx-auto max-w-md w-full text-center space-y-6">
-          <div className="rounded-3xl border border-[#ECE8EB] bg-white p-8 sm:p-10 shadow-2xs space-y-5">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#F7EDF3] text-[#803D63]">
+          <div className={`rounded-3xl border p-8 sm:p-10 shadow-2xs space-y-5 ${style.socialItemBg} ${style.socialItemBorder}`}>
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#803D63] text-white shadow-md">
               <Film className="h-8 w-8" />
             </div>
 
             <div className="space-y-2">
-              <h1 className="font-display text-xl sm:text-2xl font-bold text-[#17131A]">
+              <h1 className={`font-display text-xl sm:text-2xl font-bold ${style.nameColor}`}>
                 Series isn’t available
               </h1>
-              <p className="text-xs sm:text-sm text-[#6F6872] leading-relaxed">
-                This series playlist doesn’t exist or has been removed.
+              <p className={`text-xs sm:text-sm leading-relaxed ${style.bioColor}`}>
+                This series playlist doesn’t exist, belongs to another creator, or has been removed.
               </p>
             </div>
 
@@ -272,16 +256,21 @@ export function SeriesDetailClient({
               <button
                 type="button"
                 onClick={() => router.push(profileUrl)}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-5 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer"
+                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold transition-all cursor-pointer border ${
+                  isDark
+                    ? "bg-[#803D63]/22 hover:bg-[#803D63]/32 active:bg-[#803D63]/40 border-[#803D63]/45 hover:border-[#803D63]/60 text-[#F8FAFC] focus-visible:ring-2 focus-visible:ring-[#803D63]/60"
+                    : isSignaturePurple
+                    ? "bg-[#803D63]/16 hover:bg-[#803D63]/24 active:bg-[#803D63]/32 border border-[#803D63]/35 hover:border-[#803D63]/50 text-[#803D63] focus-visible:ring-2 focus-visible:ring-[#803D63]/60 shadow-xs"
+                    : "bg-[#803D63] hover:bg-[#6F3456] text-white border-transparent"
+                }`}
               >
-                <ArrowLeft className="h-3.5 w-3.5" />
-                <span>Back to @{username}</span>
+                <span>Go to @{username}</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => router.push("/")}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] hover:bg-white px-5 py-2.5 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer"
+                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border px-5 py-2.5 text-xs font-semibold transition-colors cursor-pointer ${style.socialItemBg} ${style.socialItemBorder} ${style.nameColor}`}
               >
                 <span>Explore Inflixo</span>
               </button>
@@ -292,259 +281,375 @@ export function SeriesDetailClient({
     );
   }
 
+  const themeCssVars = getThemeCssVariables(themeMeta);
+  const c = themeMeta.colors;
+  const typ = themeMeta.typography;
+  const eff = themeMeta.effects;
+
   return (
-    <div className="min-h-screen bg-[#FAF8FA] text-[#17131A] selection:bg-[#803D63] selection:text-white font-sans antialiased">
-      {/* ========================================================================= */}
-      {/* 1. FULL-WIDTH PARALLAX COVER (STARTS AT THE VERY TOP OF THE VIEWPORT) */}
-      {/* ========================================================================= */}
-      <section className="w-full bg-[#FAF8FA] border-b border-[#ECE8EB] overflow-hidden relative">
-        <div className="w-full h-[260px] sm:h-[400px] md:h-[500px] lg:h-[540px] relative overflow-hidden bg-[#FAF8FA] flex items-center justify-center">
-          {coverImageSrc ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={coverImageSrc}
-              alt={series.title}
-              onError={() => setCoverImageError(true)}
-              style={{
-                transform: `translate3d(0, ${parallaxOffset}px, 0)`,
-                willChange: "transform",
-              }}
-              className="w-full h-[125%] -top-[12%] absolute object-cover object-center transition-transform duration-75 ease-out select-none pointer-events-none"
-            />
-          ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center p-8 bg-gradient-to-br from-[#FAF8FA] via-white to-[#F6EBF1] text-center">
-              <Film className="h-12 w-12 text-[#803D63]/40 mb-2" />
-              <span className="font-display text-lg font-bold text-[#17131A] max-w-md truncate">
-                {series.title}
-              </span>
-            </div>
-          )}
-        </div>
-      </section>
+    <div
+      style={{ backgroundColor: c.pageBackground }}
+      className="relative min-h-dvh flex flex-col font-sans antialiased transition-colors duration-500"
+    >
+      {/* 1. Full-screen outer background covering complete viewport */}
+      <div
+        className={`fixed inset-0 pointer-events-none transition-colors duration-500 z-0 ${pageBgStyle}`}
+        style={{ backgroundColor: c.pageBackground }}
+        aria-hidden="true"
+      >
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[650px] bg-gradient-radial from-white/[0.06] to-transparent blur-3xl pointer-events-none" />
+      </div>
 
-      {/* ========================================================================= */}
-      {/* 2. CENTRED SERIES DETAILS & EPISODES CONTAINER */}
-      {/* ========================================================================= */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-8 text-left">
-        {/* ── 2. SERIES DETAILS (OPEN JIOHOTSTAR-STYLE STRUCTURE) ── */}
-        <div className="space-y-4 pb-6 border-b border-[#ECE8EB]">
-          {/* Series Title */}
-          <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#17131A] tracking-tight leading-tight">
-            {series.title}
-          </h1>
+      {/* 2. Ambient animation if theme is animated */}
+      {themeMeta.animation?.type !== "none" && (
+        <AmbientAnimation
+          type={themeMeta.animation?.type || themeMeta.animationType}
+          colors={themeMeta.animation?.colors || themeMeta.particleColors}
+          themeKey={themeMeta.key}
+        />
+      )}
 
-          {/* Genre Chips, Language, Episode Count & Platform */}
-          <div className="flex flex-wrap items-center gap-2">
-            {series.genre ? (
-              series.genre.split(",").map((g, idx) => {
-                const cleanG = g.trim().replace(/^Genre:\s*/i, "");
-                if (!cleanG) return null;
-                return (
-                  <span
-                    key={idx}
-                    className="px-2.5 py-0.5 rounded-full bg-[#F7EDF3] border border-[#ECD7E4] text-[11px] font-bold text-[#803D63] uppercase tracking-wide"
-                  >
-                    {cleanG}
-                  </span>
-                );
-              })
-            ) : (
-              <span className="px-2.5 py-0.5 rounded-full bg-[#FAF8FA] border border-[#ECE8EB] text-[11px] font-bold text-[#6F6872] uppercase tracking-wide">
-                Series
-              </span>
-            )}
+      {/* 3. Theme-aware Focus Overlay Layer */}
+      <FocusOverlay overlay={themeMeta.focusOverlay} />
 
-            {series.language && (
-              <span className="px-2.5 py-0.5 rounded-full bg-[#FAF8FA] border border-[#ECE8EB] text-[11px] font-medium text-[#6F6872]">
-                {series.language}
-              </span>
-            )}
+      {/* 4. Centered Content */}
+      <main className="relative z-10 flex-1 flex flex-col mx-auto max-w-2xl w-full px-0 sm:px-6 py-0 sm:py-8 animate-fade-in-up">
+        {/* Centered Theme Card with min-h-full & flex layout */}
+        <div
+          style={{
+            ...themeCssVars,
+            backgroundColor: themeMeta.profileSurface?.background || c.profileBackground,
+            borderColor: themeMeta.profileSurface?.border || c.border,
+            color: c.primaryText,
+            fontFamily: typ.fontFamily,
+            letterSpacing: typ.letterSpacing,
+            ["--desktop-surface-shadow" as any]: themeMeta.profileSurface?.shadow || eff.shadow || "0 24px 70px rgba(0,0,0,0.15)",
+          }}
+          className="flex-1 flex flex-col justify-between relative overflow-hidden border-0 sm:border rounded-none sm:rounded-[28px] shadow-none sm:shadow-[var(--desktop-surface-shadow)] transition-all"
+        >
+          <div className="flex-1 flex flex-col">
+            {/* 1. Full-Width Hero Cover Image */}
+            {hasValidCover ? (
+              <div className="relative w-full aspect-[16/9] overflow-hidden bg-slate-950 m-0 p-0 shrink-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={series.posterDataUrl!}
+                  alt={series.title}
+                  onError={() => setCoverImageError(true)}
+                  className="block w-full h-full object-cover object-center m-0 p-0"
+                />
 
-            <span className="px-2.5 py-0.5 rounded-full bg-[#FAF8FA] border border-[#ECE8EB] text-[11px] font-semibold text-[#6F6872]">
-              {allEpisodes.length} {allEpisodes.length === 1 ? "Episode" : "Episodes"}
-            </span>
-          </div>
+                {/* Gradient Overlays for top action contrast & smooth bottom fade */}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-transparent to-black/70 pointer-events-none" />
 
-          {/* Short Description */}
-          {series.description && (
-            <p className="text-xs sm:text-sm text-[#6F6872] leading-relaxed max-w-3xl font-normal">
-              {series.description}
-            </p>
-          )}
+                {/* OVERLAY: Top Action Bar on top of the Cover Image */}
+                <header className="absolute top-3 inset-x-3 sm:top-4 sm:inset-x-4 z-20 flex items-center justify-between">
+                  {/* Top Left: Back Button + original circular Inflixo Logo */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (typeof window !== "undefined" && window.history.length > 1) {
+                          router.back();
+                        } else {
+                          router.push(profileUrl);
+                        }
+                      }}
+                      className="tap-scale flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-black/45 hover:bg-black/65 backdrop-blur-md border border-white/20 text-white transition-all shadow-md cursor-pointer"
+                      title={`Back to @${username}`}
+                      aria-label={`Back to @${username}`}
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                    </button>
 
-          {/* Share Series Action */}
-          <div className="pt-2 flex items-center gap-2.5">
-            <button
-              type="button"
-              onClick={() => setIsShareModalOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] hover:border-[#803D63] px-3.5 py-2 text-xs font-bold text-[#17131A] shadow-2xs transition-colors cursor-pointer"
-            >
-              <Share2 className="h-3.5 w-3.5 text-[#803D63]" />
-              <span>Share Series</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#6F6872] hover:text-[#17131A] transition-colors cursor-pointer"
-            >
-              <Copy className="h-3.5 w-3.5" />
-              <span>Copy Link</span>
-            </button>
-          </div>
-        </div>
-
-        {/* ── 3. EPISODES LISTING ── */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between px-0.5">
-            <h2 className="font-display text-lg sm:text-xl font-bold text-[#17131A] flex items-center gap-2">
-              <Layers className="h-4 w-4 text-[#803D63]" />
-              <span>Episodes</span>
-              <span className="text-xs font-bold text-[#6F6872] bg-white border border-[#ECE8EB] px-2.5 py-0.5 rounded-full shadow-2xs">
-                {allEpisodes.length}
-              </span>
-            </h2>
-          </div>
-
-          {allEpisodes.length === 0 ? (
-            <div className="text-center py-12 px-4 rounded-2xl border border-[#ECE8EB] bg-white space-y-2 shadow-2xs">
-              <Film className="h-8 w-8 mx-auto text-[#6F6872]/40" />
-              <p className="text-xs font-bold text-[#17131A]">No episodes added yet</p>
-              <p className="text-xs text-[#6F6872]">
-                The creator hasn&apos;t added episodes to this series yet.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {allEpisodes.map((ep: Episode, index: number) => {
-                const plat = getPlatformInfo(ep.platform, ep.externalUrl);
-                const epNumStr =
-                  ep.episodeNumber < 10
-                    ? `0${ep.episodeNumber}`
-                    : `${ep.episodeNumber}`;
-                const epTitleStr = ep.title?.trim() || `Episode ${ep.episodeNumber || index + 1}`;
-                const thumbnailSrc = getEpisodeThumbnail(ep);
-
-                return (
-                  <div
-                    key={ep.id || index}
-                    className="rounded-2xl border border-[#ECE8EB] bg-white hover:border-[#803D63]/40 hover:bg-[#FAF8FA]/50 transition-all duration-150 p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 shadow-2xs text-left"
-                  >
-                    {/* Left: Thumbnail / Fallback Number Block & Info */}
-                    <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
-                      {/* 16:9 Thumbnail preview or Soft Maroon-tinted Fallback Number Block */}
-                      <div className="relative w-28 sm:w-36 aspect-[16/9] rounded-xl overflow-hidden border border-[#ECE8EB] shrink-0">
-                        {thumbnailSrc ? (
-                          <>
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={thumbnailSrc}
-                              alt={epTitleStr}
-                              className="h-full w-full object-cover object-center"
-                            />
-                            <div className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-slate-950/80 text-[10px] font-bold text-white">
-                              E{epNumStr}
-                            </div>
-                          </>
-                        ) : (
-                          <div className="h-full w-full flex flex-col items-center justify-center bg-[#F7EDF3] border border-[#ECD7E4] text-[#803D63]">
-                            <span className="font-display text-sm sm:text-base font-black tracking-tight">
-                              E{epNumStr}
-                            </span>
-                            <span className="text-[9px] font-bold uppercase tracking-wider text-[#803D63]/70">
-                              Episode
-                            </span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Episode text metadata */}
-                      <div className="min-w-0 flex-1 space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-[#FAF8FA] border border-[#ECE8EB] text-[#17131A]">
-                            {plat.icon}
-                            <span>{plat.name}</span>
-                          </span>
-                          <span className="text-[11px] font-semibold text-[#6F6872]">
-                            Episode {ep.episodeNumber || index + 1}
-                          </span>
-                        </div>
-
-                        <h3 className="font-display text-xs sm:text-sm font-bold text-[#17131A] truncate">
-                          {epTitleStr}
-                        </h3>
-
-                        {ep.description && (
-                          <p className="text-xs text-[#6F6872] line-clamp-2 leading-relaxed">
-                            {ep.description}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Right: Watch Action */}
-                    <div className="shrink-0 flex items-center justify-end pt-1 sm:pt-0">
-                      {ep.externalUrl ? (
-                        <a
-                          href={ep.externalUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] text-white px-4 py-2 text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
-                        >
-                          <Play className="h-3 w-3 fill-white" />
-                          <span>Watch on {plat.name}</span>
-                          <ExternalLink className="h-3 w-3 opacity-75" />
-                        </a>
-                      ) : (
-                        <span className="text-xs font-semibold text-[#6F6872] italic">
-                          Link unavailable
-                        </span>
-                      )}
-                    </div>
+                    <Link
+                      href="/"
+                      style={{ backgroundColor: c.accent }}
+                      className="tap-scale flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full text-white shadow-xs transition-all shrink-0 border border-white/20 hover:scale-105 cursor-pointer select-none"
+                      title="Inflixo Home"
+                      aria-label="Inflixo Home"
+                    >
+                      <LogoStadiumLinkI className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+                    </Link>
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
 
-        {/* ── 4. CREATED BY (MINIMAL COMPACT SECTION AT BOTTOM) ── */}
-        {creator && (
-          <div className="pt-6 border-t border-[#ECE8EB] flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <CreatorAvatar
-                src={creator.photoDataUrl}
-                name={creator.displayName || username}
-                className="w-8 h-8 rounded-full object-cover shrink-0 ring-1 ring-[#ECE8EB]"
-                textClassName="text-[11px] font-bold text-white"
-                fallbackBgClass="bg-[#803D63]"
-              />
-              <div className="min-w-0 text-xs">
-                <span className="text-[#6F6872]">Created by </span>
-                <Link
-                  href={`/${username}`}
-                  className="font-bold text-[#17131A] hover:text-[#803D63] transition-colors"
+                  {/* Right: Copy & Share Action Buttons */}
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={handleCopyLink}
+                      className="tap-scale flex h-8 w-8 items-center justify-center rounded-full bg-black/45 hover:bg-black/65 backdrop-blur-md border border-white/20 text-white transition-all shadow-md cursor-pointer"
+                      title="Copy series link"
+                      aria-label="Copy series link"
+                    >
+                      <Copy className="h-3.5 w-3.5" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsShareModalOpen(true)}
+                      style={{
+                        backgroundColor: c.accentSoft,
+                        borderColor: c.accentBorder,
+                        color: c.accentText,
+                      }}
+                      className="tap-scale flex h-8 w-8 items-center justify-center rounded-full backdrop-blur-md border transition-all shadow-md cursor-pointer"
+                      title="Share series"
+                      aria-label="Share series"
+                    >
+                      <Share2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </header>
+
+                {/* Bottom Right Overlay: Platform */}
+                {series.platform && (
+                  <div className="absolute bottom-2.5 right-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold shadow-sm">
+                    {platformInfo?.icon}
+                    <span>{platformInfo?.name}</span>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* No-Cover State */
+              <header
+                style={{ borderColor: c.divider }}
+                className="flex items-center justify-between p-4 sm:p-6 pb-2 border-b shrink-0"
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (typeof window !== "undefined" && window.history.length > 1) {
+                        router.back();
+                      } else {
+                        router.push(profileUrl);
+                      }
+                    }}
+                    style={{ backgroundColor: c.cardBackground, borderColor: c.border, color: c.secondaryText }}
+                    className="tap-scale flex h-8 w-8 items-center justify-center rounded-full border transition-all cursor-pointer shadow-2xs"
+                    title={`Back to @${username}`}
+                    aria-label={`Back to @${username}`}
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                  </button>
+                  <Link
+                    href="/"
+                    style={{ backgroundColor: c.accent }}
+                    className="tap-scale flex h-8 w-8 items-center justify-center rounded-full text-white shadow-xs shrink-0 border border-white/20 select-none"
+                    title="Inflixo Home"
+                  >
+                    <LogoStadiumLinkI className="h-4 w-4 text-white" />
+                  </Link>
+                  <span
+                    style={{
+                      color: c.primaryText,
+                      fontFamily: typ.headingFontFamily,
+                      fontWeight: typ.headingWeight as any,
+                    }}
+                    className="text-xs sm:text-sm font-bold truncate max-w-[140px] sm:max-w-[200px]"
+                  >
+                    {series.title}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={handleCopyLink}
+                    style={{ backgroundColor: c.cardBackground, borderColor: c.border, color: c.secondaryText }}
+                    className="tap-scale flex h-8 w-8 items-center justify-center rounded-full border transition-all cursor-pointer shadow-2xs"
+                    title="Copy series link"
+                    aria-label="Copy series link"
+                  >
+                    <Copy className="h-3.5 w-3.5" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsShareModalOpen(true)}
+                    style={{
+                      backgroundColor: c.accentSoft,
+                      borderColor: c.accentBorder,
+                      color: c.accentText,
+                    }}
+                    className="tap-scale flex h-8 w-8 items-center justify-center rounded-full border transition-all cursor-pointer shadow-2xs"
+                    title="Share series"
+                    aria-label="Share series"
+                  >
+                    <Share2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </header>
+            )}
+
+            {/* 2. TITLE, DESCRIPTION, DOT-SEPARATED GENRES & DETAILS */}
+            <div className="p-5 sm:p-8 pt-4 sm:pt-6 space-y-4 flex-1">
+              <div className="text-center space-y-1.5 px-1">
+                <h1
+                  style={{
+                    color: c.primaryText,
+                    fontFamily: typ.headingFontFamily,
+                    fontWeight: typ.headingWeight as any,
+                  }}
+                  className="text-lg sm:text-xl font-extrabold leading-tight"
                 >
-                  {creator.displayName}
-                </Link>
-                <span className="text-[#6F6872] ml-1">(@{creator.username})</span>
+                  {series.title}
+                </h1>
+
+                {series.description && series.description.trim() && (
+                  <p
+                    style={{ color: c.secondaryText }}
+                    className="text-xs leading-relaxed font-normal"
+                  >
+                    {series.description}
+                  </p>
+                )}
+
+                {/* Dot-separated Genres & Language */}
+                {(() => {
+                  const parts: string[] = [];
+                  if (series.genre) {
+                    const gItems = series.genre
+                      .split(/[,•|/]/)
+                      .map((g) => g.trim().replace(/^Genre:\s*/i, ""))
+                      .filter(Boolean);
+                    parts.push(...gItems);
+                  }
+                  if (series.language && series.language.trim()) {
+                    parts.push(series.language.trim());
+                  }
+                  const str = parts.join(" • ");
+                  return str ? (
+                    <p
+                      style={{ color: c.accentText }}
+                      className="text-[11.5px] font-semibold tracking-wide pt-0.5"
+                    >
+                      {str}
+                    </p>
+                  ) : null;
+                })()}
+              </div>
+
+              {/* Seasons Filter Tabs */}
+              {seasonsList.length > 1 && (
+                <div className="flex items-center justify-center gap-2 overflow-x-auto pt-2 pb-1 scrollbar-none">
+                  {seasonsList.map((sn, idx) => (
+                    <button
+                      key={sn.id || idx}
+                      type="button"
+                      onClick={() => setActiveSeasonIndex(idx)}
+                      style={
+                        activeSeasonIndex === idx
+                          ? { backgroundColor: c.accentSoft, borderColor: c.accentBorder, color: c.accentText }
+                          : { backgroundColor: c.cardBackground, borderColor: c.border, color: c.secondaryText }
+                      }
+                      className="tap-scale px-3 py-1 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer border"
+                    >
+                      {sn.title || `Season ${sn.seasonNumber || idx + 1}`} ({sn.episodes?.length || 0})
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* 3. EPISODES HEADER & LISTING */}
+              <div className="space-y-2.5 pt-1">
+                <div className="flex items-center justify-between px-1">
+                  <span
+                    style={{ color: c.mutedText }}
+                    className="text-[10.5px] font-bold uppercase tracking-wider"
+                  >
+                    {seasonsList.length > 1
+                      ? `${seasonsList[activeSeasonIndex]?.title || `Season ${activeSeasonIndex + 1}`} Episodes (${currentEpisodes.length})`
+                      : `Episodes (${currentEpisodes.length})`}
+                  </span>
+                </div>
+
+                {currentEpisodes.length === 0 ? (
+                  <div
+                    style={{ borderColor: c.border, color: c.mutedText }}
+                    className="p-6 text-center text-xs font-semibold rounded-xl border border-dashed"
+                  >
+                    No episodes uploaded for this series yet.
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {currentEpisodes.map((ep: Episode, index: number) => {
+                      const partNum = ep.episodeNumber || index + 1;
+                      const partNumStr = partNum < 10 ? `0${partNum}` : `${partNum}`;
+                      const epTitleStr = ep.title?.trim() || `Episode ${partNum}`;
+
+                      return (
+                        <a
+                          key={ep.id || index}
+                          href={ep.externalUrl || "#"}
+                          target={ep.externalUrl ? "_blank" : undefined}
+                          rel="noopener noreferrer"
+                          onClick={() => trackEpisodeClick(ep)}
+                          style={{
+                            backgroundColor: c.cardBackground,
+                            borderColor: c.border,
+                            color: c.primaryText,
+                            boxShadow: eff.cardShadow,
+                          }}
+                          className="group relative flex items-center justify-between w-full px-3.5 py-3 rounded-xl transition-all duration-150 border cursor-pointer hover:scale-[1.005]"
+                        >
+                          {/* Left: Number */}
+                          <span
+                            style={{ color: c.mutedText }}
+                            className="w-6 text-left text-xs font-mono font-bold transition-colors shrink-0"
+                          >
+                            {partNumStr}
+                          </span>
+
+                          {/* Center: Title */}
+                          <span
+                            style={{ color: c.primaryText }}
+                            className="flex-1 text-center font-bold text-xs truncate px-2"
+                          >
+                            {epTitleStr}
+                          </span>
+
+                          {/* Right: View Icon */}
+                          <span
+                            style={{ color: c.accentText }}
+                            className="w-6 flex justify-end transition-transform group-hover:scale-110 shrink-0"
+                          >
+                            <Eye className="h-3.5 w-3.5" />
+                          </span>
+                        </a>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </div>
+          </div>
 
+          {/* 4. MADE WITH INFLIXO FOOTER */}
+          <div
+            style={{ borderColor: c.divider }}
+            className="flex items-center justify-center px-5 pt-4 pb-5 select-none mt-auto border-t"
+          >
             <Link
-              href={`/${username}`}
-              className="shrink-0 inline-flex items-center gap-1 text-xs font-bold text-[#803D63] hover:text-[#6F3456] transition-colors"
+              href="/"
+              style={{
+                backgroundColor: c.cardBackground,
+                borderColor: c.border,
+                color: c.secondaryText,
+              }}
+              className="tap-scale inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border text-[11px] font-bold shadow-2xs hover:scale-105 transition-all"
             >
-              <span>View Profile</span>
-              <ChevronRight className="h-3.5 w-3.5" />
+              <span style={{ color: c.accentText }} className="inline-flex items-center">
+              <LogoStadiumLinkI className="h-3.5 w-3.5" />
+            </span>
+              <span>Made with Inflixo</span>
             </Link>
           </div>
-        )}
+        </div>
       </main>
 
-      {/* ========================================================================= */}
-      {/* 5. STANDARDIZED SHARE MODAL */}
-      {/* ========================================================================= */}
+      {/* Share Modal */}
       {series && (
         <ShareSeriesModal
           isOpen={isShareModalOpen}
@@ -556,3 +661,5 @@ export function SeriesDetailClient({
     </div>
   );
 }
+
+

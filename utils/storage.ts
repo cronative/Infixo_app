@@ -62,4 +62,9 @@ export const STORAGE_KEYS = {
   subscription: "subscription",
   onboardingStep: "onboarding_step",
   visibilitySettings: "visibility_settings",
+  otherSocials: "other_socials",
+  team: "team",
+  brands: "brands",
+  collaborations: "collaborations",
+  sections: "sections",
 } as const;

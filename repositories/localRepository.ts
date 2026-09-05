@@ -125,3 +125,49 @@ export const reviewsRepository = {
   },
 };
 
+export const otherSocialsRepository = {
+  getAll(): any[] {
+    return storage.get<any[]>(STORAGE_KEYS.otherSocials, []);
+  },
+  saveAll(socials: any[]) {
+    storage.set(STORAGE_KEYS.otherSocials, socials);
+  },
+};
+
+export const teamRepository = {
+  get(): any | null {
+    return storage.get<any | null>(STORAGE_KEYS.team, null);
+  },
+  save(team: any | null) {
+    storage.set(STORAGE_KEYS.team, team);
+  },
+};
+
+export const brandsRepository = {
+  getAll(): any[] {
+    return storage.get<any[]>(STORAGE_KEYS.brands, []);
+  },
+  saveAll(brands: any[]) {
+    storage.set(STORAGE_KEYS.brands, brands);
+  },
+};
+
+export const collaborationsRepository = {
+  getAll(): any[] {
+    return storage.get<any[]>(STORAGE_KEYS.collaborations, []);
+  },
+  saveAll(collabs: any[]) {
+    storage.set(STORAGE_KEYS.collaborations, collabs);
+  },
+};
+
+export const sectionsRepository = {
+  getAll(): any[] {
+    return storage.get<any[]>(STORAGE_KEYS.sections, []);
+  },
+  saveAll(sections: any[]) {
+    storage.set(STORAGE_KEYS.sections, sections);
+  },
+};
+
+

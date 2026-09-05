@@ -45,7 +45,17 @@ export function PhotoUpload({
       >
         {value ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={value} alt="Preview" className="w-full h-full object-cover aspect-square rounded-full overflow-hidden" />
+          <img
+            src={value}
+            alt="Preview"
+            className={`w-full h-full object-cover overflow-hidden ${
+              shape === "circle"
+                ? "aspect-square rounded-full"
+                : shape === "landscape"
+                ? "aspect-video rounded-xl"
+                : "rounded-2xl"
+            }`}
+          />
         ) : (
           <div className="flex flex-col items-center justify-center gap-1 p-2 text-center text-slate-400">
             {isLandscape ? (

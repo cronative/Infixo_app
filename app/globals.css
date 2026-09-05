@@ -325,3 +325,299 @@ h1, h2, h3, h4, h5, h6, .font-display {
   }
 }
 
+/* Ambient Floating Particle Animation */
+@keyframes floatParticle {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.85);
+    opacity: 0;
+  }
+  15% {
+    opacity: var(--p-opacity, 0.45);
+  }
+  70% {
+    opacity: var(--p-opacity, 0.45);
+  }
+  100% {
+    transform: translate3d(var(--drift-x, 15px), var(--drift-y, -140px), 0) scale(1.15);
+    opacity: 0;
+  }
+}
+
+.floating-particle {
+  animation: floatParticle var(--p-duration, 18s) ease-in-out infinite;
+  animation-delay: var(--p-delay, 0s);
+  will-change: transform, opacity;
+}
+
+/* Neon Grid Animation */
+@keyframes neonGridMove {
+  0% {
+    transform: perspective(600px) rotateX(65deg) translateY(0);
+  }
+  100% {
+    transform: perspective(600px) rotateX(65deg) translateY(48px);
+  }
+}
+
+.ambient-neon-grid {
+  background-image: 
+    linear-gradient(to right, rgba(6, 182, 212, 0.18) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(6, 182, 212, 0.18) 1px, transparent 1px);
+  background-size: 48px 48px;
+  animation: neonGridMove 8s linear infinite;
+  will-change: transform;
+}
+
+/* Liquid Aurora Waves */
+@keyframes auroraWave1 {
+  0%, 100% {
+    transform: translate3d(-10%, -10%, 0) scale(1) rotate(0deg);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translate3d(15%, 10%, 0) scale(1.2) rotate(12deg);
+    opacity: 0.6;
+  }
+}
+
+@keyframes auroraWave2 {
+  0%, 100% {
+    transform: translate3d(10%, 15%, 0) scale(1.1) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate3d(-15%, -10%, 0) scale(0.9) rotate(-10deg);
+    opacity: 0.55;
+  }
+}
+
+.aurora-ribbon-1 {
+  animation: auroraWave1 18s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.aurora-ribbon-2 {
+  animation: auroraWave2 22s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* Spotlight Stage Glow */
+@keyframes spotlightGlow {
+  0%, 100% {
+    transform: translate(-50%, 0) scale(1);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translate(-48%, 5%) scale(1.12);
+    opacity: 0.7;
+  }
+}
+
+.ambient-spotlight {
+  animation: spotlightGlow 12s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* Paper Confetti Drift */
+@keyframes paperConfettiDrift {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: var(--p-opacity, 0.4);
+  }
+  80% {
+    opacity: var(--p-opacity, 0.4);
+  }
+  100% {
+    transform: translate3d(var(--drift-x, 25px), var(--drift-y, -160px), 0) rotate(160deg);
+    opacity: 0;
+  }
+}
+
+.paper-confetti-item {
+  animation: paperConfettiDrift var(--p-duration, 20s) ease-in-out infinite;
+  animation-delay: var(--p-delay, 0s);
+  will-change: transform, opacity;
+}
+
+/* Floating Shapes Drift */
+@keyframes shapeFloat {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: var(--p-opacity, 0.35);
+  }
+  50% {
+    transform: translate3d(var(--drift-x, 20px), var(--drift-y, -30px), 0) scale(1.08);
+    opacity: calc(var(--p-opacity, 0.35) * 1.3);
+  }
+}
+
+.floating-shape-item {
+  animation: shapeFloat var(--p-duration, 16s) ease-in-out infinite;
+  animation-delay: var(--p-delay, 0s);
+  will-change: transform, opacity;
+}
+
+/* Sparkles & Twinkling Stars */
+@keyframes sparkleTwinkle {
+  0%, 100% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.15) rotate(45deg);
+    opacity: var(--p-opacity, 0.7);
+  }
+}
+
+.sparkle-item {
+  animation: sparkleTwinkle var(--p-duration, 3.5s) ease-in-out infinite;
+  animation-delay: var(--p-delay, 0s);
+  will-change: transform, opacity;
+}
+
+/* Round Orbs & Breathing Rings */
+@keyframes roundOrbFloat {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: var(--p-opacity, 0.4);
+  }
+  50% {
+    transform: translate3d(var(--drift-x, 20px), var(--drift-y, -25px), 0) scale(1.2);
+    opacity: calc(var(--p-opacity, 0.4) * 1.4);
+  }
+}
+
+@keyframes roundRingPulse {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+.round-orb-item {
+  animation: roundOrbFloat var(--p-duration, 12s) ease-in-out infinite;
+  animation-delay: var(--p-delay, 0s);
+  will-change: transform, opacity;
+}
+
+.round-orb-ring {
+  animation: roundRingPulse var(--p-duration, 8s) ease-out infinite;
+  animation-delay: var(--p-delay, 0s);
+  will-change: transform, opacity;
+}
+
+/* Galaxy Cosmic Swirl & Nebula */
+@keyframes galaxySwirl {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(180deg) scale(1.08);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg) scale(1);
+  }
+}
+
+@keyframes galaxyDustDrift {
+  0% {
+    transform: rotate(0deg) translateX(var(--dust-r, 120px)) rotate(0deg);
+    opacity: 0.2;
+  }
+  50% {
+    opacity: var(--p-opacity, 0.7);
+  }
+  100% {
+    transform: rotate(360deg) translateX(var(--dust-r, 120px)) rotate(-360deg);
+    opacity: 0.2;
+  }
+}
+
+.galaxy-core {
+  animation: galaxySwirl 50s linear infinite;
+  will-change: transform;
+}
+
+.galaxy-dust-item {
+  animation: galaxyDustDrift var(--p-duration, 25s) linear infinite;
+  animation-delay: var(--p-delay, 0s);
+  will-change: transform, opacity;
+}
+
+/* Firecrackers & Fireworks Celebration */
+@keyframes fireworkSparkBurst {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.2);
+    opacity: 1;
+  }
+  60% {
+    opacity: var(--p-opacity, 0.85);
+  }
+  100% {
+    transform: translate3d(var(--spark-x, 40px), var(--spark-y, -60px), 0) scale(0.8);
+    opacity: 0;
+  }
+}
+
+@keyframes fireworkEmberDrift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0;
+  }
+  20% {
+    opacity: var(--p-opacity, 0.7);
+  }
+  80% {
+    opacity: var(--p-opacity, 0.7);
+  }
+  100% {
+    transform: translate3d(var(--drift-x, 15px), var(--drift-y, -120px), 0) scale(0.4);
+    opacity: 0;
+  }
+}
+
+.firework-spark-item {
+  animation: fireworkSparkBurst var(--p-duration, 2.2s) cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+  animation-delay: var(--p-delay, 0s);
+  will-change: transform, opacity;
+}
+
+.firework-ember-item {
+  animation: fireworkEmberDrift var(--p-duration, 14s) ease-in-out infinite;
+  animation-delay: var(--p-delay, 0s);
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-particle,
+  .ambient-neon-grid,
+  .aurora-ribbon-1,
+  .aurora-ribbon-2,
+  .ambient-spotlight,
+  .paper-confetti-item,
+  .floating-shape-item,
+  .sparkle-item,
+  .round-orb-item,
+  .round-orb-ring,
+  .galaxy-core,
+  .galaxy-dust-item,
+  .firework-spark-item,
+  .firework-ember-item {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+
+

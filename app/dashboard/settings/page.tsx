@@ -23,19 +23,8 @@ import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
-
-function getCanonicalProfileUrl(username: string): string {
-  const cleanUsername = (username || "creator").replace(/^@/, "");
-  if (typeof window !== "undefined") {
-    // In local dev, allow current host; otherwise default to inflixo.com
-    const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-    if (isLocalhost) {
-      return `${window.location.origin}/${cleanUsername}`;
-    }
-  }
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://inflixo.com";
-  return `${baseUrl.replace(/\/$/, "")}/${cleanUsername}`;
-}
+import { SectionOrderManager } from "@/components/dashboard/SectionOrderManager";
+import { buildProfileUrl } from "@/utils/format";
 
 export default function DashboardSettingsPage() {
   const router = useRouter();
@@ -51,7 +40,7 @@ export default function DashboardSettingsPage() {
 
   const accountEmail = session?.email || profile?.email || "creator@inflixo.com";
   const rawUsername = profile?.username || "creator";
-  const canonicalUrl = getCanonicalProfileUrl(rawUsername);
+  const canonicalUrl = buildProfileUrl(rawUsername);
   const planDisplayName = subscription?.planName || "Inflixo Early Access";
 
   function handleLogout() {
@@ -196,6 +185,9 @@ export default function DashboardSettingsPage() {
           </div>
         </div>
       </section>
+
+      {/* 3.1. SECTION ORDER & VISIBILITY */}
+      <SectionOrderManager />
 
       {/* 4. SECTION 3 — SEARCH VISIBILITY */}
       <section className="rounded-2xl border border-[#ECE8EB] bg-white p-5 sm:p-6 space-y-4 shadow-2xs">

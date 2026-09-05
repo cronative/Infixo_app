@@ -530,16 +530,7 @@ function ConnectedSocialCard({
         </span>
 
         <div className="flex items-center gap-1.5 shrink-0">
-          <button
-            type="button"
-            onClick={onSync}
-            disabled={isSyncing}
-            className="inline-flex items-center gap-1 rounded-lg border border-[#ECE8EB] bg-[#FAF8FA] hover:bg-[#F7EDF3] hover:text-[#803D63] px-2 py-1 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer disabled:opacity-60"
-            title="Refresh audience stats"
-          >
-            <RefreshCw className={`h-3 w-3 ${isSyncing ? "animate-spin text-[#803D63]" : ""}`} />
-            <span>{isSyncing ? "Syncing..." : "Sync"}</span>
-          </button>
+          {/* Manual Sync action hidden for Pro users */}
 
           {/* Three-dot menu */}
           <div className="relative" ref={menuRef}>

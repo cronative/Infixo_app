@@ -13,13 +13,11 @@ import {
 } from "@/data/expertDemoCreator";
 import { ThemeKey } from "@/types";
 
-// 5 Curated Light Themes that Auto-Rotate Every 10 Seconds
+// 3 Curated Themes that Auto-Rotate Every 10 Seconds
 const LIGHT_THEMES: { key: ThemeKey; name: string }[] = [
   { key: "minimal-white", name: "Minimal White" },
-  { key: "modern-purple", name: "Modern Purple" },
-  { key: "pastel-dream", name: "Pastel Dream" },
-  { key: "ocean-blue", name: "Ocean Blue" },
-  { key: "sunset", name: "Sunset" },
+  { key: "signature-purple", name: "Signature Purple" },
+  { key: "midnight", name: "Midnight Dark" },
 ];
 
 export default function DemoCreatorPage() {

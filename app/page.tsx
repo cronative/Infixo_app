@@ -135,11 +135,9 @@ const DEMO_REVIEWS: CreatorReview[] = [
 ];
 
 const PREVIEW_THEMES: { key: ThemeKey; name: string }[] = [
-  { key: "minimal-white", name: "Soft Minimal" },
-  { key: "sand-linen", name: "Warm Sand" },
-  { key: "rose-gold", name: "Rose Gold" },
-  { key: "lavender-haze", name: "Lavender Haze" },
-  { key: "sakura-blossom", name: "Sakura Blossom" },
+  { key: "minimal-white", name: "Minimal White" },
+  { key: "signature-purple", name: "Signature Purple" },
+  { key: "midnight", name: "Midnight Dark" },
 ];
 
 export default function LandingHomePage() {

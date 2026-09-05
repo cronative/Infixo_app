@@ -15,6 +15,8 @@ import { useToast } from "@/contexts/ToastContext";
 import { buildProfileUrl } from "@/utils/format";
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { copyToClipboard } from "@/lib/copyToClipboard";
+import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
+import { FocusOverlay } from "@/components/theme/FocusOverlay";
 
 const EMPTY_PROFILE: CreatorProfile = {
   photoDataUrl: null,
@@ -38,6 +40,11 @@ export default function PublicProfilePage() {
   const [mediaKitPackages, setMediaKitPackages] = useState<MediaKitPackage[]>([]);
   const [mediaKitSettings, setMediaKitSettings] = useState<MediaKitSettings | undefined>(undefined);
   const [reviews, setReviews] = useState<CreatorReview[]>([]);
+  const [team, setTeam] = useState<{ team?: any; members: any[] }>({ members: [] });
+  const [brands, setBrands] = useState<any[]>([]);
+  const [collaborations, setCollaborations] = useState<any[]>([]);
+  const [otherSocials, setOtherSocials] = useState<any[]>([]);
+  const [sections, setSections] = useState<any[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -45,7 +52,8 @@ export default function PublicProfilePage() {
 
   useEffect(() => {
     async function loadData() {
-      const usernameParam = decodeURIComponent(params.username ?? "").trim().toLowerCase();
+      const rawUser = decodeURIComponent(params.username ?? "").trim();
+      const usernameParam = rawUser.replace(/^@/, "").toLowerCase();
       if (!usernameParam) {
         setNotFound(true);
         setLoaded(true);
@@ -70,15 +78,32 @@ export default function PublicProfilePage() {
         return;
       }
 
-      // Fetch Creator Profile strictly from MySQL Database (100% Server DB Truth — Never uses browser localStorage)
+      // Fetch Creator Profile from MySQL Database (with local repository fallback for immediate preview)
       try {
-        const [profRes, socRes, serRes, linkRes, mediakitRes, revRes] = await Promise.all([
+        const [
+          profRes,
+          socRes,
+          serRes,
+          linkRes,
+          mediakitRes,
+          revRes,
+          teamRes,
+          brandRes,
+          collabRes,
+          otherSocRes,
+          secRes,
+        ] = await Promise.all([
           fetch(`/api/creator/profile?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
           fetch(`/api/creator/socials?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
           fetch(`/api/series?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
           fetch(`/api/creator/custom-links?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
           fetch(`/api/creator/mediakit?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
           fetch(`/api/creator/reviews?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
+          fetch(`/api/creator/team?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
+          fetch(`/api/creator/brands?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
+          fetch(`/api/creator/collaborations?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
+          fetch(`/api/creator/other-socials?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
+          fetch(`/api/creator/sections?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
         ]);
 
         if (profRes.success && profRes.profile && profRes.profile.username) {
@@ -147,8 +172,86 @@ export default function PublicProfilePage() {
           } else {
             setReviews([]);
           }
+
+          if (teamRes.success && teamRes.team) {
+            setTeam({ team: teamRes.team, members: teamRes.members || [] });
+          }
+
+          if (brandRes.success && Array.isArray(brandRes.brands)) {
+            setBrands(brandRes.brands);
+          }
+
+          if (collabRes.success && Array.isArray(collabRes.collaborations)) {
+            setCollaborations(collabRes.collaborations);
+          }
+
+          if (otherSocRes.success && Array.isArray(otherSocRes.otherSocials)) {
+            setOtherSocials(otherSocRes.otherSocials);
+          }
+
+          if (secRes.success && Array.isArray(secRes.sections)) {
+            setSections(secRes.sections);
+          }
+
+          // Track Profile View Event
+          try {
+            const visitorKey = typeof window !== "undefined"
+              ? (localStorage.getItem("inflixo_vid") || (() => {
+                  const vid = `v_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+                  localStorage.setItem("inflixo_vid", vid);
+                  return vid;
+                })())
+              : undefined;
+
+            fetch("/api/analytics/track", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                creator_id: profRes.profile.id,
+                creator_username: usernameParam,
+                event_type: "profile_view",
+                visitor_id: visitorKey,
+                metadata: {
+                  referrer: typeof document !== "undefined" ? document.referrer : "",
+                },
+              }),
+            }).catch(() => {});
+          } catch {}
         } else {
-          // If not found in MySQL DB, strictly show 404 (Never fallback to browser localStorage)
+          // Fallback to local profile if in same browser session for immediate view
+          try {
+            const {
+              profileRepository,
+              seriesRepository,
+              customLinksRepository,
+              themeRepository,
+              teamRepository,
+              brandsRepository,
+              collaborationsRepository,
+              otherSocialsRepository,
+              sectionsRepository,
+            } = await import("@/repositories/localRepository");
+            const local = profileRepository.get();
+            const cleanLocalUser = (local?.username || "").replace(/^@/, "").toLowerCase();
+            if (local && (cleanLocalUser === usernameParam || !local.username)) {
+              setProfile({ ...local, username: local.username || usernameParam });
+              const localTheme = themeRepository.get() || local.themeKey || "minimal-white";
+              setTheme(localTheme as ThemeKey);
+              setSeries(seriesRepository.getAll());
+              setCustomLinks(customLinksRepository.get());
+              setTeam(teamRepository.get());
+              setBrands(brandsRepository.getAll());
+              setCollaborations(collaborationsRepository.getAll());
+              setOtherSocials(otherSocialsRepository.getAll());
+              setSections(sectionsRepository.getAll());
+              setNotFound(false);
+              setLoaded(true);
+              return;
+            }
+          } catch (localErr) {
+            console.warn("Local fallback error:", localErr);
+          }
+
           setNotFound(true);
         }
       } catch (e) {
@@ -242,7 +345,8 @@ export default function PublicProfilePage() {
   const totalAudience = SocialService.calculateTotalAudience(socials);
   const handleStr = profile.username || decodeURIComponent(params.username ?? "username");
   const fullUrl = buildProfileUrl(handleStr);
-  const pageBgStyle = THEME_PAGE_BACKGROUNDS[theme] || THEME_PAGE_BACKGROUNDS["minimal-white"];
+  const themeMeta = ThemeService.getThemeMeta(theme);
+  const pageBgStyle = themeMeta.outerBgClass || THEME_PAGE_BACKGROUNDS[theme] || THEME_PAGE_BACKGROUNDS["minimal-white"];
 
   async function handleShare() {
     if (typeof navigator !== "undefined" && navigator.share) {
@@ -328,8 +432,34 @@ export default function PublicProfilePage() {
   }
 
   return (
-    <div className={`min-h-dvh transition-colors duration-300 ${pageBgStyle}`}>
-      <main className="mx-auto max-w-3xl px-3 sm:px-6 py-4 sm:py-10 space-y-5 animate-fade-in-up">
+    <div
+      style={{ backgroundColor: themeMeta.colors.pageBackground }}
+      className="relative min-h-dvh flex flex-col transition-colors duration-500"
+    >
+      {/* 1. Full-screen outer background covering complete viewport */}
+      <div
+        className={`fixed inset-0 pointer-events-none transition-colors duration-500 z-0 ${pageBgStyle}`}
+        style={{ backgroundColor: themeMeta.colors.pageBackground }}
+        aria-hidden="true"
+      >
+        {/* Soft ambient radial lighting */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[650px] bg-gradient-radial from-white/[0.06] to-transparent blur-3xl pointer-events-none" />
+      </div>
+
+      {/* 2. Ambient animation if theme is animated */}
+      {themeMeta.animation?.type !== "none" && (
+        <AmbientAnimation
+          type={themeMeta.animation?.type || themeMeta.animationType}
+          colors={themeMeta.animation?.colors || themeMeta.particleColors}
+          themeKey={themeMeta.key}
+        />
+      )}
+
+      {/* 3. Theme-aware Focus Overlay Layer */}
+      <FocusOverlay overlay={themeMeta.focusOverlay} />
+
+      {/* 4. Centred Creator Profile Surface */}
+      <main className="relative z-10 flex-1 flex flex-col mx-auto w-full max-w-[640px] px-0 sm:px-4 py-0 sm:py-8 animate-fade-in-up">
         {/* Main Theme Profile Card (Renders Profile, Socials, Series, Services, Reviews & Custom Links) */}
         <ThemeCard
           themeKey={theme}
@@ -340,14 +470,15 @@ export default function PublicProfilePage() {
           mediaKitPackages={mediaKitPackages}
           mediaKitSettings={mediaKitSettings}
           reviews={reviews}
+          team={team}
+          brands={brands}
+          collaborations={collaborations}
+          otherSocials={otherSocials}
+          sections={sections}
           totalAudience={totalAudience}
           variant="full"
           onShare={handleShare}
         />
-
-
-
-
       </main>
     </div>
   );

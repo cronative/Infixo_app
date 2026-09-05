@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles, AtSign } from "lucide-react";
+import { Sparkles, AtSign, Eye, Link2 } from "lucide-react";
 import { OnboardingLayout } from "@/layouts/OnboardingLayout";
 import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
 import { PlatformCard } from "@/components/socials/PlatformCard";
@@ -18,7 +18,6 @@ import { YoutubeFetcher } from "@/components/socials/YoutubeFetcher";
 import { FacebookFetcher } from "@/components/socials/FacebookFetcher";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { SocialDataConsentCard } from "@/components/socials/SocialDataConsentCard";
-import { OtherPlatformsManager } from "@/components/socials/OtherPlatformsManager";
 import { authRepository } from "@/repositories/localRepository";
 import { useToast } from "@/contexts/ToastContext";
 
@@ -47,6 +46,7 @@ export default function SocialsStepPage() {
   const [consentAccepted, setConsentAccepted] = useState(true);
   const [consentError, setConsentError] = useState(false);
   const [disconnectModal, setDisconnectModal] = useState<ConfirmDisconnectModal>(null);
+  const [isMobilePreviewOpen, setIsMobilePreviewOpen] = useState(false);
 
   const [instaInput, setInstaInput] = useState(() => extractUsername(socials.instagram.url));
   const [ytInput, setYtInput] = useState(() => extractUsername(socials.youtube.url));
@@ -151,11 +151,35 @@ export default function SocialsStepPage() {
   return (
     <OnboardingLayout
       step="socials"
-      preview={<LivePreviewCard profile={profile} socials={socials} totalAudience={totalAudience} themeKey={theme} />}
+      isMobilePreviewOpen={isMobilePreviewOpen}
+      setIsMobilePreviewOpen={setIsMobilePreviewOpen}
+      preview={
+        <LivePreviewCard
+          profile={profile}
+          socials={socials}
+          totalAudience={totalAudience}
+          themeKey={theme}
+          isOnboarding={true}
+          isInformational={true}
+        />
+      }
     >
-      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/20 bg-[#803D63]/10 px-3 py-1 text-xs font-bold text-[#803D63]">
-        <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
-        <span>Step 2 of 6 • Social Handles</span>
+      <div className="flex items-center justify-between gap-2 mb-2.5">
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/20 bg-[#803D63]/10 px-3 py-1 text-xs font-bold text-[#803D63]">
+          <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
+          <span>Step 2 of 6 • Social Handles</span>
+        </div>
+
+        {/* Mobile / Tablet Dedicated Preview Trigger */}
+        <button
+          type="button"
+          onClick={() => setIsMobilePreviewOpen(true)}
+          className="lg:hidden tap-scale inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/30 bg-[#803D63]/10 hover:bg-[#803D63]/15 px-3 py-1 text-xs font-bold text-[#803D63] transition-all cursor-pointer shadow-2xs"
+          title="Preview public profile"
+        >
+          <Eye className="h-3.5 w-3.5 text-[#803D63]" />
+          <span>Preview Profile</span>
+        </button>
       </div>
 
       <h1 className="text-3xl font-extrabold leading-[1.15] tracking-tight text-inflixo-navy sm:text-4xl">
@@ -268,15 +292,39 @@ export default function SocialsStepPage() {
           )}
         </PlatformCard>
 
-        {/* OTHER SOCIAL PLATFORMS (Twitter/X, LinkedIn, Threads, Snapchat, Pinterest, Twitch, Spotify) */}
-        <OtherPlatformsManager />
+        {/* Additional Platform Informational Note */}
+        <div className="rounded-2xl border border-[#803D63]/15 bg-[#803D63]/5 p-4 text-left flex items-start gap-3 shadow-2xs">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#803D63]/10 text-[#803D63]">
+            <Link2 className="h-4 w-4" />
+          </div>
+          <div className="space-y-0.5">
+            <h4 className="text-xs font-bold text-slate-900">Want to add more platforms?</h4>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              You can add more social profiles and custom links anytime after creating your profile from{" "}
+              <strong className="text-[#803D63] font-semibold">Dashboard → Links &amp; Socials</strong>.
+            </p>
+          </div>
+        </div>
 
-        {/* Step 2 Sticky Form Bottom Navigation (Back + Next) */}
-        <div className="sticky bottom-0 z-40 bg-white py-4 border-t border-gray-100 mt-8 flex items-center gap-3">
-          <Button variant="outline" size="lg" className="rounded-xl border-gray-200 text-gray-700 hover:bg-gray-50" onClick={() => router.push("/onboarding/profile")}>
+        {/* Step 2 Form Bottom Navigation (Natural flow, Back + Next) */}
+        <div className="pt-4 border-t border-[#E5E7EB] mt-8 flex flex-col-reverse sm:flex-row items-center gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            className="w-full sm:w-auto h-12 rounded-xl border-[#E5E7EB] text-slate-700 hover:bg-slate-50 font-bold text-sm px-6"
+            onClick={() => router.push("/onboarding/profile")}
+          >
             Back
           </Button>
-          <Button fullWidth size="lg" loading={submitting} onClick={handleNext} className="bg-[#803D63] hover:bg-[#6D3254] text-white font-medium py-3 rounded-xl shadow-none">
+          <Button
+            type="button"
+            fullWidth
+            size="lg"
+            loading={submitting}
+            onClick={handleNext}
+            className="w-full sm:flex-1 h-12 bg-[#803D63] hover:bg-[#6D3254] text-white font-bold text-sm rounded-xl cursor-pointer shadow-none"
+          >
             Save &amp; Next →
           </Button>
         </div>

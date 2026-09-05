@@ -83,8 +83,8 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
         </span>
       </div>
 
-      {/* Direct Interactive Chips List */}
-      <div className="flex flex-wrap gap-1.5 rounded-2xl border border-indigo-100 bg-slate-50/60 p-3 max-h-48 overflow-y-auto">
+      {/* Direct Interactive Chips List (Natural Expansion, No Clipping) */}
+      <div className="flex flex-wrap gap-2 rounded-2xl border border-slate-200 bg-slate-50/60 p-3.5">
         {ALL_SERIES_GENRES.map((g) => {
           const isSelected = selectedGenres.includes(g);
           const isMaxReached = !isSelected && selectedGenres.length >= max;
@@ -95,12 +95,12 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
               type="button"
               disabled={isMaxReached}
               onClick={() => toggleGenre(g)}
-              className={`tap-scale flex items-center gap-1.5 rounded-full px-3 py-1 text-xs transition-all cursor-pointer ${
+              className={`tap-scale flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs transition-all cursor-pointer shrink-0 ${
                 isSelected
-                  ? "bg-[#F6EBF1] text-[#803D63] border border-[#803D63] font-semibold shadow-2xs"
+                  ? "bg-[#F6EBF1] text-[#803D63] border border-[#803D63] font-bold shadow-2xs"
                   : isMaxReached
                   ? "opacity-40 cursor-not-allowed bg-white border border-slate-200 text-slate-400"
-                  : "bg-white border border-slate-200 text-slate-700 hover:border-indigo-300 hover:bg-indigo-50/50 hover:text-[#803D63]"
+                  : "bg-white border border-slate-200 text-slate-700 hover:border-[#803D63]/40 hover:bg-slate-50 hover:text-[#803D63]"
               }`}
             >
               {isSelected ? (

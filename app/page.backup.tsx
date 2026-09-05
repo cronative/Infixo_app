@@ -88,11 +88,9 @@ const DEMO_SERIES: Series[] = [
 ];
 
 const PREVIEW_THEMES: { key: ThemeKey; name: string }[] = [
-  { key: "minimal-white", name: "Soft Minimal" },
-  { key: "sand-linen", name: "Warm Sand Linen" },
-  { key: "rose-gold", name: "Rose Gold Luxe" },
-  { key: "lavender-haze", name: "Lavender Haze" },
-  { key: "sakura-blossom", name: "Sakura Blossom" },
+  { key: "minimal-white", name: "Minimal White" },
+  { key: "signature-purple", name: "Signature Purple" },
+  { key: "midnight", name: "Midnight Dark" },
 ];
 
 const HERO_SLIDES = [

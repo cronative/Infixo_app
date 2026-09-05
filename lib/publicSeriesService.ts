@@ -70,11 +70,27 @@ export async function getPublicSeriesData(
     );
 
     const [creatorRows]: any = await db.query(
-      "SELECT * FROM creators WHERE id = ? OR username = ?",
-      [s.creator_id, cleanUsername]
+      "SELECT * FROM creators WHERE LOWER(username) = ?",
+      [cleanUsername]
     );
 
     const creator = creatorRows[0] || null;
+
+    // Verify creator exists and owns this series
+    if (!creator || String(creator.id) !== String(s.creator_id)) {
+      // If cleanUsername wasn't found directly, try fallback by creator_id if cleanUsername was empty
+      if (!cleanUsername && s.creator_id) {
+        const [idCreatorRows]: any = await db.query(
+          "SELECT * FROM creators WHERE id = ?",
+          [s.creator_id]
+        );
+        if (!idCreatorRows || idCreatorRows.length === 0) {
+          return { series: null, creator: null };
+        }
+      } else {
+        return { series: null, creator: null };
+      }
+    }
 
     let totalFanbase = 0;
     if (creator) {

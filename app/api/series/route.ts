@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { recordOnboardingStep } from "@/lib/onboardingStepDb";
+import { saveBase64Image } from "@/lib/imageStorage";
 
 // GET /api/series?email=... or ?username=...
 export async function GET(req: Request) {
@@ -69,7 +70,11 @@ export async function GET(req: Request) {
     let creatorId: string | null = null;
 
     if (username && username.trim() !== "") {
-      const [creatorsByUsername]: any = await db.query("SELECT id FROM creators WHERE username = ?", [username]);
+      const cleanUser = username.trim().replace(/^@/, "").toLowerCase();
+      const [creatorsByUsername]: any = await db.query(
+        "SELECT id FROM creators WHERE LOWER(username) = ? OR username = ? OR LOWER(username) = ?",
+        [cleanUser, username, `@${cleanUser}`]
+      );
       if (creatorsByUsername.length > 0) {
         creatorId = creatorsByUsername[0].id;
       }
@@ -203,29 +208,7 @@ export async function POST(req: Request) {
     const isEpisodeOnlyFlag = Boolean(isEpisodeOnly || body.title === "Update" || !title);
 
     if (!isEpisodeOnlyFlag) {
-      let finalPosterUrl = posterDataUrl || null;
-      if (finalPosterUrl && typeof finalPosterUrl === "string" && finalPosterUrl.startsWith("data:image/")) {
-        try {
-          const matches = finalPosterUrl.match(/^data:image\/([a-zA-Z0-9]+);base64,(.+)$/);
-          if (matches) {
-            const extension = matches[1] === "jpeg" ? "jpg" : matches[1];
-            const fileBuffer = Buffer.from(matches[2], "base64");
-            const fs = require("fs");
-            const path = require("path");
-            const uploadsDir = path.join(process.cwd(), "public", "uploads", "posters");
-            if (!fs.existsSync(uploadsDir)) {
-              fs.mkdirSync(uploadsDir, { recursive: true });
-            }
-            const fileName = `poster_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${extension}`;
-            const filePath = path.join(uploadsDir, fileName);
-            fs.writeFileSync(filePath, fileBuffer);
-            finalPosterUrl = `/uploads/posters/${fileName}`;
-            console.log(`📸 [POST /api/series] Converted base64 poster to disk file: ${finalPosterUrl}`);
-          }
-        } catch (e: any) {
-          console.error("Failed to convert base64 poster in API route:", e);
-        }
-      }
+      const finalPosterUrl = saveBase64Image(posterDataUrl, "posters", "poster") || (posterDataUrl && !posterDataUrl.startsWith("data:") ? posterDataUrl : null);
 
       // Upsert Series into MySQL DB
       await db.query(

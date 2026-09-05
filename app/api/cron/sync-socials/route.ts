@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { ApifySocialService } from "@/services/ApifySocialService";
 
 export const maxDuration = 300; // 5 minutes max execution duration
 
@@ -30,100 +31,160 @@ async function fetchInstagramStats(usernameStr: string) {
   const handle = extractHandle(usernameStr);
   if (!handle) return null;
 
-  const apiKey = process.env.RAPIDAPI_KEY || "02af3277a0msh6d2023026fe26cap12bd27jsn3e7de18972b7";
-  const response = await fetch("https://instagram120.p.rapidapi.com/api/instagram/userInfo", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-rapidapi-host": "instagram120.p.rapidapi.com",
-      "x-rapidapi-key": apiKey,
-    },
-    body: JSON.stringify({ username: handle }),
-  });
+  // 1. Primary: Try Apify
+  try {
+    const apify = await ApifySocialService.fetchInstagramProfile(handle);
+    if (apify) {
+      return {
+        followerCount: apify.follower_count,
+        mediaCount: apify.media_count,
+        avatarUrl: apify.profile_pic_url,
+        isVerified: apify.is_verified,
+        name: apify.full_name || handle,
+      };
+    }
+  } catch (e) {}
 
-  if (!response.ok) return null;
-  const data = await response.json();
-  const user = data?.result?.[0]?.user || data?.user;
-  if (!user) return null;
+  // 2. Fallback: Try RapidAPI
+  try {
+    const apiKey = process.env.RAPIDAPI_KEY || "02af3277a0msh6d2023026fe26cap12bd27jsn3e7de18972b7";
+    const response = await fetch("https://instagram120.p.rapidapi.com/api/instagram/userInfo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-rapidapi-host": "instagram120.p.rapidapi.com",
+        "x-rapidapi-key": apiKey,
+      },
+      body: JSON.stringify({ username: handle }),
+    });
 
-  return {
-    followerCount: user.follower_count || 0,
-    mediaCount: user.media_count || 0,
-    avatarUrl: user.hd_profile_pic_url_info?.url || user.profile_pic_url || "",
-    isVerified: Boolean(user.is_verified),
-    name: user.full_name || handle,
-  };
+    if (response.ok) {
+      const data = await response.json();
+      const user = data?.result?.[0]?.user || data?.user;
+      if (user) {
+        return {
+          followerCount: Number(user.follower_count || 0),
+          mediaCount: Number(user.media_count || 0),
+          avatarUrl: user.hd_profile_pic_url_info?.url || user.profile_pic_url || "",
+          isVerified: Boolean(user.is_verified),
+          name: user.full_name || handle,
+        };
+      }
+    }
+  } catch (e) {}
+
+  return null;
 }
 
 async function fetchYouTubeStats(channelNameStr: string) {
   const handle = extractHandle(channelNameStr);
   if (!handle) return null;
 
-  const apiKey = process.env.RAPIDAPI_KEY || "02af3277a0msh6d2023026fe26cap12bd27jsn3e7de18972b7";
-  const headers = {
-    "Content-Type": "application/json",
-    "x-rapidapi-host": "youtube-v2.p.rapidapi.com",
-    "x-rapidapi-key": apiKey,
-  };
+  // 1. Primary: Try Apify
+  try {
+    const apify = await ApifySocialService.fetchYouTubeChannel(handle);
+    if (apify) {
+      return {
+        followerCount: apify.subscribers,
+        mediaCount: 0,
+        avatarUrl: apify.avatar_url,
+        isVerified: apify.verified,
+        name: apify.title || handle,
+      };
+    }
+  } catch (e) {}
 
-  const idUrl = `https://youtube-v2.p.rapidapi.com/channel/id?channel_name=${encodeURIComponent(handle)}`;
-  const idRes = await fetch(idUrl, { headers });
-  if (!idRes.ok) return null;
+  // 2. Fallback: Try RapidAPI
+  try {
+    const apiKey = process.env.RAPIDAPI_KEY || "02af3277a0msh6d2023026fe26cap12bd27jsn3e7de18972b7";
+    const headers = {
+      "Content-Type": "application/json",
+      "x-rapidapi-host": "youtube-v2.p.rapidapi.com",
+      "x-rapidapi-key": apiKey,
+    };
 
-  const idData = await idRes.json();
-  const channelId = idData.channel_id;
-  if (!channelId) return null;
+    const idUrl = `https://youtube-v2.p.rapidapi.com/channel/id?channel_name=${encodeURIComponent(handle)}`;
+    const idRes = await fetch(idUrl, { headers });
+    if (idRes.ok) {
+      const idData = await idRes.json();
+      const channelId = idData.channel_id;
+      if (channelId) {
+        const detailsUrl = `https://youtube-v2.p.rapidapi.com/channel/details?channel_id=${channelId}`;
+        const detailsRes = await fetch(detailsUrl, { headers });
+        if (detailsRes.ok) {
+          const details = await detailsRes.json();
+          const avatars = details.avatar || [];
+          const avatarUrl = avatars.length > 0 ? avatars[avatars.length - 1].url : "";
+          const subCount = parseSubscribers(details.subscriber_count || "0");
+          const videoCount = parseInt(details.video_count || "0", 10) || 0;
 
-  const detailsUrl = `https://youtube-v2.p.rapidapi.com/channel/details?channel_id=${channelId}`;
-  const detailsRes = await fetch(detailsUrl, { headers });
-  if (!detailsRes.ok) return null;
+          return {
+            followerCount: subCount,
+            mediaCount: videoCount,
+            avatarUrl,
+            isVerified: Boolean(details.is_verified),
+            name: details.title || handle,
+          };
+        }
+      }
+    }
+  } catch (e) {}
 
-  const details = await detailsRes.json();
-  const avatars = details.avatar || [];
-  const avatarUrl = avatars.length > 0 ? avatars[avatars.length - 1].url : "";
-  const subCount = parseSubscribers(details.subscriber_count || "0");
-  const videoCount = parseInt(details.video_count || "0", 10) || 0;
-
-  return {
-    followerCount: subCount,
-    mediaCount: videoCount,
-    avatarUrl,
-    isVerified: Boolean(details.is_verified),
-    name: details.title || handle,
-  };
+  return null;
 }
 
 async function fetchFacebookStats(usernameStr: string) {
   const handle = extractHandle(usernameStr);
   if (!handle) return null;
 
+  // 1. Primary: Try Apify
+  try {
+    const apify = await ApifySocialService.fetchFacebookPage(handle);
+    if (apify) {
+      return {
+        followerCount: apify.followers,
+        mediaCount: 0,
+        avatarUrl: apify.image,
+        isVerified: apify.verified,
+        name: apify.name || handle,
+      };
+    }
+  } catch (e) {}
+
+  // 2. Fallback: Try RapidAPI
   const fbUrl = handle.startsWith("http") ? handle : `https://www.facebook.com/${handle}`;
   const apiKey = process.env.RAPIDAPI_KEY || "02af3277a0msh6d2023026fe26cap12bd27jsn3e7de18972b7";
 
-  const response = await fetch(
-    `https://facebook-scraper3.p.rapidapi.com/page/details?url=${encodeURIComponent(fbUrl)}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "x-rapidapi-host": "facebook-scraper3.p.rapidapi.com",
-        "x-rapidapi-key": apiKey,
-      },
+  try {
+    const response = await fetch(
+      `https://facebook-scraper3.p.rapidapi.com/page/details?url=${encodeURIComponent(fbUrl)}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-rapidapi-host": "facebook-scraper3.p.rapidapi.com",
+          "x-rapidapi-key": apiKey,
+        },
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      const res = data.results || data;
+
+      if (res && res.name) {
+        return {
+          followerCount: Number(res.followers || 0),
+          mediaCount: 0,
+          avatarUrl: res.image || "",
+          isVerified: Boolean(res.verified),
+          name: res.name || handle,
+        };
+      }
     }
-  );
+  } catch (e) {}
 
-  if (!response.ok) return null;
-  const data = await response.json();
-  const res = data.results || data;
-  if (!res || !res.name) return null;
-
-  return {
-    followerCount: res.followers || res.likes || 0,
-    mediaCount: 0,
-    avatarUrl: res.image || "",
-    isVerified: Boolean(res.verified),
-    name: res.name || handle,
-  };
+  return null;
 }
 
 export async function GET(req: Request) {

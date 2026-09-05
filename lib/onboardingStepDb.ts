@@ -14,9 +14,16 @@ export async function ensureSingleOnboardingStepSchema() {
         step_name VARCHAR(50) NOT NULL,
         is_completed BOOLEAN NOT NULL DEFAULT TRUE,
         completed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        INDEX idx_email (email)
+        UNIQUE KEY unique_email (email)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
+
+    // Ensure unique_email key exists if table was created previously without it
+    try {
+      await db.query(`ALTER TABLE creator_onboarding_steps ADD UNIQUE KEY unique_email (email)`);
+    } catch (e) {
+      // Key already exists, ignore
+    }
 
     isSchemaEnsured = true;
   } catch (err: any) {
@@ -35,13 +42,15 @@ export async function recordOnboardingStep(
   try {
     await ensureSingleOnboardingStepSchema();
 
-    // 1. Delete all previous step records for this email to guarantee strictly 1 row per email
-    await db.query("DELETE FROM creator_onboarding_steps WHERE email = ?", [cleanEmail]);
-
-    // 2. Insert fresh record with current step
+    // Atomic upsert with ON DUPLICATE KEY UPDATE to guarantee 1 row per email without race conditions
     await db.query(
       `INSERT INTO creator_onboarding_steps (email, creator_id, step_name, is_completed, completed_at)
-       VALUES (?, ?, ?, TRUE, NOW())`,
+       VALUES (?, ?, ?, TRUE, NOW())
+       ON DUPLICATE KEY UPDATE
+         creator_id = COALESCE(VALUES(creator_id), creator_id),
+         step_name = VALUES(step_name),
+         is_completed = TRUE,
+         completed_at = NOW()`,
       [cleanEmail, creatorId || null, stepName]
     );
 
@@ -50,3 +59,4 @@ export async function recordOnboardingStep(
     console.error("❌ Failed to record onboarding step:", err.message);
   }
 }
+

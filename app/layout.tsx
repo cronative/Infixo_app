@@ -38,7 +38,10 @@ export const metadata: Metadata = {
     title: "Inflixo",
   },
   icons: {
-    icon: "/favicon.png",
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.png", type: "image/png" },
+    ],
     apple: "/logo-square.png",
   },
   openGraph: {
@@ -75,6 +78,8 @@ export default function RootLayout({
       className={`h-full antialiased ${inter.variable} ${plusJakartaSans.variable} ${outfit.variable}`}
     >
       <head>
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/favicon.png" type="image/png" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/logo-square.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
