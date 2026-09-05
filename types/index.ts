@@ -102,6 +102,8 @@ export interface CreatorProfile {
   state?: string;
   country?: string;
   isVerified?: boolean;
+  themeKey?: ThemeKey;
+  theme_key?: string;
   visibilitySettings?: VisibilitySettings;
   updatedAt: string;
 }
@@ -201,58 +203,125 @@ export const DEFAULT_CUSTOM_LINKS: CustomLink[] = [];
 // Themes
 // ---------------------------------------------------------------------------
 
-export type ThemeGroup = "light" | "shimmer" | "dark";
+export type ThemeGroup = "light" | "dark" | "animated";
+
+export type ThemeAnimationType =
+  | "none"
+  | "floating-particles"
+  | "neon-grid"
+  | "liquid-aurora"
+  | "floating-shapes"
+  | "spotlight-stage"
+  | "paper-confetti"
+  | "sparkles"
+  | "round-orbs"
+  | "galaxy"
+  | "firecrackers";
 
 export type ThemeKey =
   | "minimal-white"
   | "signature-purple"
-  | "pastel-dream"
-  | "matcha-cream"
-  | "cloud-fluff"
-  | "boba-milk"
-  | "sakura-pink"
-  | "nordic-frost"
-  | "sand-linen"
-  | "golden-hour"
-  | "modern-purple"
   | "midnight"
-  | "ocean-blue"
-  | "sunset"
-  | "forest"
-  | "rose-gold"
-  | "mono"
-  | "neon-pulse"
-  | "cyberpunk"
-  | "emerald-luxe"
-  | "crimson-velvet"
-  | "solar-flare"
-  | "lavender-haze"
-  | "cosmic-galaxy"
-  | "tokyo-drift"
-  | "retro-synth"
-  | "shimmer-gold"
-  | "holographic-wave"
-  | "aurora-borealis"
-  | "electric-cyber"
-  | "luminous-pearl"
-  | "cosmic-pulse"
-  | "sakura-blossom"
-  | "sand-dune";
+  | "neon-grid"
+  | "liquid-aurora"
+  | "floating-studio"
+  | "spotlight-stage"
+  | "creative-paper"
+  | "cosmic-purple"
+  | "aurora-night"
+  | "rose-glow"
+  | "ocean-motion"
+  | "sunset-studio"
+  | "minimal-spark";
+
+export interface ThemeTypography {
+  fontFamily?: string;
+  headingFontFamily?: string;
+  headingWeight?: string;
+  letterSpacing?: string;
+}
+
+export interface ThemeColors {
+  pageBackground: string;
+  profileBackground: string;
+  cardBackground: string;
+  elevatedBackground: string;
+  primaryText: string;
+  secondaryText: string;
+  mutedText: string;
+  accent: string;
+  accentText: string;
+  accentSoft: string;
+  accentBorder: string;
+  border: string;
+  divider: string;
+}
+
+export interface ThemeEffects {
+  shadow?: string;
+  cardShadow?: string;
+  glow?: string;
+  blur?: string;
+  radius?: string;
+}
+
+export interface ThemeAnimation {
+  type: ThemeAnimationType;
+  colors?: string[];
+  opacity?: number;
+  density?: number;
+  speed?: "slow" | "normal";
+  enabledOnMobile?: boolean;
+}
+
+export interface ThemeFocusOverlay {
+  color: string;
+  centerOpacity: number;
+  edgeOpacity: number;
+}
+
+export interface ThemeProfileSurface {
+  background?: string;
+  border?: string;
+  shadow?: string;
+  accentGlow?: string;
+}
 
 export interface ThemeMeta {
   key: ThemeKey;
+  id?: string;
   name: string;
+  mode?: "light" | "dark";
   description: string;
-  swatch: string[]; // preview colors
+  swatch: string[]; // preview colors [bg, accent, text]
   group: ThemeGroup;
-  isShimmer?: boolean;
+  isAnimated?: boolean;
+  tag?: string;
+  typography: ThemeTypography;
+  colors: ThemeColors;
+  effects: ThemeEffects;
+  animation?: ThemeAnimation;
+  focusOverlay?: ThemeFocusOverlay;
+  profileSurface?: ThemeProfileSurface;
+  // Legacy / Tailwind utility fallback fields
+  outerBgClass?: string;
+  profileBgClass?: string;
+  cardBgClass?: string;
+  cardBorderClass?: string;
+  primaryTextClass?: string;
+  secondaryTextClass?: string;
+  accentColor?: string;
+  accentSoftClass?: string;
+  accentBorderClass?: string;
+  animationType?: ThemeAnimationType;
+  particleColors?: string[];
 }
 
 // ---------------------------------------------------------------------------
 // Series / Seasons / Episodes
 // ---------------------------------------------------------------------------
 
-export type EpisodePlatform = "YouTube" | "Instagram" | "Facebook";
+export type EpisodePlatform = "YouTube" | "Instagram" | "Facebook" | "Other";
 
 export interface Episode {
   id: string;
@@ -278,6 +347,7 @@ export interface Series {
   description: string;
   genre: string;
   language: string;
+  platform?: EpisodePlatform | string;
   seasons: Season[];
   createdAt: string;
 }
@@ -418,4 +488,172 @@ export interface CreatorReview {
   createdAt: string;
   updatedAt?: string;
 }
+
+// ---------------------------------------------------------------------------
+// Other / Secondary Social Accounts (Does NOT affect Total Fanbase)
+// ---------------------------------------------------------------------------
+
+export interface OtherSocialAccount {
+  id: string;
+  creatorId: string;
+  platform: "instagram" | "youtube" | "facebook" | "twitter" | "linkedin" | "threads" | "snapchat" | "pinterest" | "twitch" | "spotify" | "other";
+  username: string;
+  url: string;
+  label?: string;
+  sortOrder: number;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Creator Team & Team Members
+// ---------------------------------------------------------------------------
+
+export interface TeamMember {
+  id: string;
+  teamId: string;
+  creatorId: string;
+  name: string;
+  role: string;
+  avatarUrl?: string | null;
+  instagramUrl?: string;
+  youtubeUrl?: string;
+  facebookUrl?: string;
+  sortOrder: number;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CreatorTeam {
+  id: string;
+  creatorId: string;
+  teamName: string;
+  teamLogoUrl?: string | null;
+  members: TeamMember[];
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Creator Brands & Ventures
+// ---------------------------------------------------------------------------
+
+export interface CreatorBrand {
+  id: string;
+  creatorId: string;
+  brandName: string;
+  brandLogoUrl?: string | null;
+  instagramUrl?: string;
+  youtubeUrl?: string;
+  facebookUrl?: string;
+  websiteUrl?: string;
+  sortOrder: number;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Selected Collaborations (Past Brand Deals / Campaigns)
+// ---------------------------------------------------------------------------
+
+export interface CreatorCollaboration {
+  id: string;
+  creatorId: string;
+  brandName: string;
+  brandLogoUrl?: string | null;
+  campaignTitle?: string;
+  campaignUrl?: string;
+  description?: string;
+  sortOrder: number;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Collaboration Inquiries ("Work With Me")
+// ---------------------------------------------------------------------------
+
+export type CollaborationStatus = "NEW" | "VIEWED" | "REPLIED" | "CLOSED";
+
+export interface CollaborationRequest {
+  id: string;
+  creatorId: string;
+  senderName: string;
+  companyName?: string;
+  email: string;
+  campaignType?: string;
+  approxBudget?: string;
+  message: string;
+  status: CollaborationStatus;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Profile Section Ordering & Visibility
+// ---------------------------------------------------------------------------
+
+export type ProfileSectionKey =
+  | "ABOUT"
+  | "TOTAL_FANBASE"
+  | "SOCIALS"
+  | "OTHER_SOCIALS"
+  | "SERIES"
+  | "SERVICES"
+  | "COLLABORATIONS"
+  | "REVIEWS"
+  | "BRANDS"
+  | "TEAM"
+  | "LINKS"
+  | "WORK_WITH_ME";
+
+export interface CreatorProfileSection {
+  id?: string;
+  creatorId?: string;
+  sectionKey: ProfileSectionKey;
+  label?: string;
+  sortOrder: number;
+  isVisible: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export const DEFAULT_PROFILE_SECTIONS: { sectionKey: ProfileSectionKey; label: string; sortOrder: number; isVisible: boolean }[] = [
+  { sectionKey: "ABOUT", label: "About Creator", sortOrder: 0, isVisible: true },
+  { sectionKey: "TOTAL_FANBASE", label: "Total Fanbase", sortOrder: 1, isVisible: true },
+  { sectionKey: "SOCIALS", label: "Primary Social Accounts", sortOrder: 2, isVisible: true },
+  { sectionKey: "OTHER_SOCIALS", label: "Other Social Accounts", sortOrder: 3, isVisible: true },
+  { sectionKey: "LINKS", label: "Custom Links", sortOrder: 4, isVisible: true },
+  { sectionKey: "SERIES", label: "OTT Series & Shows", sortOrder: 5, isVisible: true },
+  { sectionKey: "SERVICES", label: "Services & Rate Card", sortOrder: 6, isVisible: true },
+  { sectionKey: "COLLABORATIONS", label: "Selected Collaborations", sortOrder: 7, isVisible: true },
+  { sectionKey: "BRANDS", label: "My Brands & Projects", sortOrder: 8, isVisible: true },
+  { sectionKey: "TEAM", label: "Creator Team", sortOrder: 9, isVisible: true },
+  { sectionKey: "REVIEWS", label: "Client Reviews", sortOrder: 10, isVisible: true },
+  { sectionKey: "WORK_WITH_ME", label: "Work With Me (Collaboration CTA)", sortOrder: 11, isVisible: true },
+];
+
+// ---------------------------------------------------------------------------
+// Analytics Events
+// ---------------------------------------------------------------------------
+
+export type AnalyticsEventType =
+  | "profile_view"
+  | "social_click"
+  | "series_view"
+  | "episode_click"
+  | "service_view"
+  | "service_click"
+  | "work_with_me_click"
+  | "collaboration_submit"
+  | "media_kit_view"
+  | "brand_click"
+  | "team_social_click"
+  | "collaboration_click";
+
 

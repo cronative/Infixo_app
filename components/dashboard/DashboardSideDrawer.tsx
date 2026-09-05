@@ -7,18 +7,14 @@ import {
   X,
   Sparkles,
   ExternalLink,
-  Copy,
   LogOut,
-  ChevronRight,
   ShieldCheck,
 } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { useCreator } from "@/contexts/CreatorContext";
-import { useToast } from "@/contexts/ToastContext";
 import { AuthService } from "@/services/AuthService";
-import { copyToClipboard } from "@/lib/copyToClipboard";
-import { SIDEBAR_NAV } from "@/components/dashboard/navConfig";
+import { WORKSPACE_NAV, ACCOUNT_NAV } from "@/components/dashboard/navConfig";
 
 interface DashboardSideDrawerProps {
   isOpen: boolean;
@@ -29,164 +25,173 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
   const pathname = usePathname();
   const router = useRouter();
   const { profile } = useCreator();
-  const { showToast } = useToast();
 
   // Close drawer automatically on route change
   useEffect(() => {
     onClose();
   }, [pathname]);
 
-  // Lock body scroll when drawer is open
+  // Lock body scroll & escape listener when drawer is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") onClose();
+      };
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.body.style.overflow = "";
+        window.removeEventListener("keydown", handleKeyDown);
+      };
     } else {
       document.body.style.overflow = "";
     }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   const handleStr = profile.username || "username";
-  const liveUrl = `https://inflixo.com/${handleStr}`;
+  const displayName = profile.displayName || profile.email?.split("@")[0] || "Creator";
 
   return (
-    <div className="fixed inset-0 z-50 flex animate-in fade-in duration-200">
-      {/* Dark Glassmorphism Backdrop Overlay */}
+    <div className="fixed inset-0 z-50 flex animate-in fade-in duration-200 lg:hidden">
+      {/* Dark Backdrop Overlay */}
       <div
-        className="fixed inset-0 bg-slate-950/65 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity"
         onClick={onClose}
       />
 
       {/* Drawer Container (Slides in from Left) */}
-      <aside className="relative z-10 flex h-full w-[310px] sm:w-[340px] max-w-[85vw] flex-col overflow-hidden rounded-r-3xl bg-white shadow-2xl transition-transform duration-300 animate-in slide-in-from-left">
+      <aside className="relative z-10 flex h-full w-[300px] max-w-[85vw] flex-col overflow-y-auto rounded-r-3xl bg-white shadow-2xl transition-transform duration-300 animate-in slide-in-from-left">
         {/* Top Header: Logo + Close Button */}
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
+        <div className="flex items-center justify-between border-b border-[#ECE8EB] px-5 py-4">
           <Logo size="sm" />
           <button
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-2xl bg-slate-100 text-slate-500 hover:bg-purple-100 hover:text-purple-700 transition-all cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#FAF8FA] text-[#6F6872] hover:bg-[#F7EDF3] hover:text-[#803D63] transition-all cursor-pointer"
             aria-label="Close menu"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
-        {/* Creator Info Row (Flat Simple Style with 40x40px Profile Pic & Full-Width Dividers) */}
-        <div className="px-4 my-3 py-2.5 border-y border-slate-200/80 flex items-center justify-between gap-2.5">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <CreatorAvatar
-              src={profile.photoDataUrl}
-              name={profile.displayName || profile.email || "Creator"}
-              className="w-[40px] h-[40px] rounded-full border border-slate-200 overflow-hidden object-cover aspect-square shrink-0"
-              textClassName="text-sm font-black text-slate-900"
-              fallbackBgClass="bg-rose-50"
-            />
+        {/* Creator Info Header */}
+        <div className="px-5 py-3 border-b border-[#ECE8EB] flex items-center gap-3 bg-[#FAFAFB]">
+          <CreatorAvatar
+            src={profile.photoDataUrl}
+            name={displayName}
+            className="w-10 h-10 rounded-full border border-[#ECE8EB] overflow-hidden object-cover aspect-square shrink-0"
+            textClassName="text-sm font-bold text-[#17131A]"
+            fallbackBgClass="bg-[#F7EDF3]"
+          />
 
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1">
-                <p className="truncate text-xs font-bold text-slate-900">
-                  {profile.displayName || "Creator"}
-                </p>
-                {profile.isVerified && (
-                  <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
-                )}
-              </div>
-              <p className="truncate text-[11px] font-medium text-slate-500">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1">
+              <p className="truncate text-xs font-bold text-[#17131A]">
+                {displayName}
+              </p>
+              {profile.isVerified && (
+                <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
+              )}
+            </div>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <p className="truncate text-[11px] font-medium text-[#6F6872]">
                 @{handleStr}
               </p>
+              <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-[#16794A] bg-[#ECFDF3] px-1.5 py-0.2 rounded">
+                <span className="h-1 w-1 rounded-full bg-[#16794A]" />
+                Live
+              </span>
             </div>
           </div>
-
-          <a
-            href={`/${handleStr}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-bold text-slate-700 hover:bg-slate-100 transition-colors shrink-0"
-          >
-            <ExternalLink className="h-3 w-3" />
-            <span>View</span>
-          </a>
         </div>
 
-        {/* Scrollable Nav List */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-          <div className="space-y-1">
-            <p className="px-3 text-[10px] font-black uppercase tracking-wider text-slate-400">
-              Dashboard Navigation
+        {/* Navigation List */}
+        <nav className="flex-1 space-y-4 p-4">
+          {/* WORKSPACE */}
+          <div>
+            <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#6F6872]/80 mb-1.5">
+              Workspace
             </p>
-
-            {SIDEBAR_NAV.map((item) => {
-              const active = pathname === item.href;
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={onClose}
-                  className={`flex items-center justify-between rounded-2xl px-3.5 py-3 text-xs font-extrabold transition-all ${
-                    active
-                      ? "bg-[#803D63]/10 text-[#803D63] shadow-2xs border border-[#803D63]/20"
-                      : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`flex h-8 w-8 items-center justify-center rounded-xl transition-colors ${
-                        active ? "bg-[#803D63] text-white shadow-2xs" : "bg-slate-100 text-slate-600"
-                      }`}
-                    >
-                      <Icon className="h-4 w-4" />
-                    </div>
-                    <span>{item.label}</span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    {item.badge && (
-                      <span className="bg-[#803D63] text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-md tracking-wider">
-                        {item.badge}
-                      </span>
-                    )}
-                    <ChevronRight
-                      className={`h-4 w-4 transition-transform ${
-                        active ? "text-[#803D63] translate-x-0.5" : "text-slate-300"
-                      }`}
-                    />
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Drawer Bottom Footer */}
-        <div className="border-t border-slate-100 p-4 bg-slate-50/50 space-y-2">
-          {/* Subscription Status Badge */}
-          <div className="flex items-center justify-between rounded-2xl border border-purple-200 bg-purple-50/80 px-3.5 py-2.5 text-xs font-extrabold text-[#803D63]">
-            <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-[#803D63] shrink-0" />
-              <span>Early Access Active</span>
+            <div className="space-y-1">
+              {WORKSPACE_NAV.map((item) => {
+                const active = pathname === item.href;
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={onClose}
+                    className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold min-h-[44px] transition-colors ${
+                      active
+                        ? "bg-[#F7EDF3] text-[#803D63]"
+                        : "text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A]"
+                    }`}
+                  >
+                    <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#803D63]" : "text-[#6F6872]"}`} />
+                    <span className="flex-1 truncate">{item.label}</span>
+                  </Link>
+                );
+              })}
             </div>
           </div>
 
-          {/* Logout Button */}
+          {/* ACCOUNT */}
+          <div>
+            <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#6F6872]/80 mb-1.5">
+              Account
+            </p>
+            <div className="space-y-1">
+              {ACCOUNT_NAV.map((item) => {
+                const active = pathname === item.href;
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={onClose}
+                    className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold min-h-[44px] transition-colors ${
+                      active
+                        ? "bg-[#F7EDF3] text-[#803D63]"
+                        : "text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A]"
+                    }`}
+                  >
+                    <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#803D63]" : "text-[#6F6872]"}`} />
+                    <span className="flex-1 truncate">{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </nav>
+
+        {/* Bottom Utility Area */}
+        <div className="p-4 border-t border-[#ECE8EB] space-y-2 bg-[#FAFAFB]/50">
+          <div className="flex items-center justify-between rounded-xl border border-[#ECE8EB] bg-white px-3 py-2 text-xs font-medium text-[#17131A]">
+            <div className="flex items-center gap-1.5">
+              <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
+              <span className="text-[11px] font-semibold">Early Access</span>
+            </div>
+            <Link
+              href={`/${handleStr}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] font-semibold text-[#803D63] hover:underline inline-flex items-center gap-1"
+            >
+              <span>View Profile</span>
+              <ExternalLink className="h-3 w-3" />
+            </Link>
+          </div>
+
           <button
             onClick={() => {
-              onClose();
               AuthService.logout();
               router.push("/login");
             }}
-            className="flex w-full items-center justify-between rounded-2xl px-3.5 py-2.5 text-xs font-extrabold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-[#6F6872] hover:bg-rose-50 hover:text-rose-600 transition-colors min-h-[44px] cursor-pointer"
           >
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-rose-100 text-rose-600">
-                <LogOut className="h-4 w-4" />
-              </div>
-              <span>Sign Out</span>
-            </div>
+            <LogOut className="h-4 w-4 shrink-0" />
+            <span>Logout</span>
           </button>
         </div>
       </aside>

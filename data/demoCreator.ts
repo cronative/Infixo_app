@@ -36,7 +36,7 @@ export const DEMO_SOCIALS: SocialAccounts = {
   updatedAt: new Date().toISOString(),
 };
 
-export const DEMO_THEME: ThemeKey = "modern-purple";
+export const DEMO_THEME: ThemeKey = "signature-purple";
 
 export const DEMO_SERIES: Series[] = [
   {

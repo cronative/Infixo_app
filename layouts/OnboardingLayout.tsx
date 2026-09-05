@@ -54,17 +54,25 @@ export function OnboardingLayout({
   preview,
   footer,
   fullWidth = false,
+  isMobilePreviewOpen: controlledMobilePreviewOpen,
+  setIsMobilePreviewOpen: controlledSetMobilePreviewOpen,
 }: {
   step: OnboardingStep;
   children: ReactNode;
   preview?: ReactNode;
   footer?: ReactNode;
   fullWidth?: boolean;
+  isMobilePreviewOpen?: boolean;
+  setIsMobilePreviewOpen?: (open: boolean) => void;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
   const [email, setEmail] = useState("");
+  const [internalMobilePreviewOpen, setInternalMobilePreviewOpen] = useState(false);
   const isFullWidthStep = fullWidth || !preview;
+
+  const isMobilePreviewOpen = controlledMobilePreviewOpen !== undefined ? controlledMobilePreviewOpen : internalMobilePreviewOpen;
+  const setIsMobilePreviewOpen = controlledSetMobilePreviewOpen || setInternalMobilePreviewOpen;
 
   useEffect(() => {
     const pendingEmail = storage.get<string>(STORAGE_KEYS.otpEmail, "");
@@ -78,9 +86,9 @@ export function OnboardingLayout({
   }
 
   return (
-    <div className="min-h-dvh bg-background">
-      {/* Fixed Header section with Top Navbar + Step Navigation */}
-      <header className="fixed top-0 left-0 w-full z-50 border-b border-gray-200 bg-white safe-top shadow-2xs">
+    <div className="min-h-dvh bg-background scroll-pt-32">
+      {/* Sticky Header section with Top Navbar + Step Navigation */}
+      <header className="sticky top-0 z-40 w-full border-b border-gray-200 bg-white shadow-2xs safe-top">
         {/* Top Navbar Row */}
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-3.5 py-2.5 sm:px-8 border-b border-slate-100">
           {/* Left: Logo */}
@@ -115,11 +123,11 @@ export function OnboardingLayout({
         </div>
       </header>
 
-      {/* Main Content Area with Top Padding for Fixed Header */}
-      <div className="pt-28 sm:pt-32">
+      {/* Main Content Area with Natural Spacing Below Sticky Header */}
+      <div className="w-full">
         {isFullWidthStep ? (
           /* Full Screen / Full Width Layout for Subscription & Finish steps */
-          <div className="mx-auto max-w-full sm:max-w-[95%] w-full px-3 pb-16 pt-4 sm:px-8 sm:pb-20 sm:pt-4">
+          <div className="mx-auto max-w-full sm:max-w-[95%] w-full px-3 pb-16 pt-5 sm:px-8 sm:pb-20 sm:pt-6">
             <main key={step} className="onboarding-step-enter w-full">
               {children}
             </main>
@@ -127,25 +135,63 @@ export function OnboardingLayout({
         ) : (
           /* Split Layout with 50-50 wide desktop split */
           <div className="mx-auto flex max-w-7xl w-full flex-col lg:flex-row gap-8">
-            {/* Form column */}
-            <main className="flex-1 px-3 pb-16 pt-4 sm:px-8 sm:pb-20 sm:pt-4 lg:w-[50%]">
+            {/* Left form column - scrolls normally */}
+            <main className="flex-1 px-3.5 pb-16 pt-4 sm:px-8 sm:pb-20 sm:pt-6 lg:w-[50%] max-w-xl mx-auto lg:max-w-none">
               <div key={step} className="onboarding-step-enter">{children}</div>
             </main>
 
-            {/* Live preview column (desktop only, sticky top-32 h-fit) */}
+            {/* Right live preview column - sticky below header and contained in viewport */}
             {preview && (
-              <aside className="hidden flex-1 border-l border-slate-200/80 bg-slate-50/50 px-6 py-8 lg:block pb-20 lg:w-[50%] min-w-[440px]">
-                <div className="sticky top-32 h-fit w-full flex flex-col items-center">{preview}</div>
+              <aside className="hidden flex-1 border-l border-slate-200/80 bg-slate-50/50 px-6 py-4 pb-20 lg:block lg:w-[50%] min-w-[440px]">
+                <div className="sticky top-[116px] max-h-[calc(100vh-128px)] overflow-y-auto pr-1 pb-6 scrollbar-thin flex flex-col items-center">
+                  <div className="w-full max-w-[480px]">
+                    {preview}
+                  </div>
+                </div>
               </aside>
             )}
           </div>
         )}
       </div>
 
-      {/* Mobile compact preview */}
-      {!isFullWidthStep && preview && (
-        <div className="border-t border-inflixo-border bg-surface-muted/50 px-2.5 py-5 lg:hidden mb-12">
-          {preview}
+      {/* Dedicated Full-Screen Preview Sheet for Mobile & Tablet */}
+      {preview && isMobilePreviewOpen && (
+        <div className="fixed inset-0 z-50 flex flex-col bg-black/60 backdrop-blur-xs lg:hidden animate-fade-in">
+          <div className="relative flex flex-col w-full h-full max-h-dvh bg-slate-50 overflow-hidden shadow-2xl">
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3.5 bg-white border-b border-slate-200 safe-top">
+              <div className="flex items-center gap-2">
+                <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-sm font-bold text-slate-900">Live Profile Preview</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMobilePreviewOpen(false)}
+                className="tap-scale flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors cursor-pointer"
+                aria-label="Close Preview"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Preview Body */}
+            <div className="flex-1 overflow-y-auto p-4 flex flex-col items-center">
+              <div className="w-full max-w-[480px] my-auto py-2">
+                {preview}
+              </div>
+            </div>
+
+            {/* Bottom Return Action */}
+            <div className="p-3.5 bg-white border-t border-slate-200 safe-bottom">
+              <button
+                type="button"
+                onClick={() => setIsMobilePreviewOpen(false)}
+                className="w-full rounded-xl bg-[#803D63] hover:bg-[#6D3254] py-3 text-xs font-bold text-white transition-colors cursor-pointer text-center shadow-xs"
+              >
+                Back to Editing Form
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -68,21 +68,12 @@ export function ConnectedAccountCard({
             </span>
           </div>
 
-          {/* Last Sync Date & Sync Now Button */}
+          {/* Last Sync Date (Sync Now hidden for Pro users) */}
           <div className="flex items-center gap-2 text-xs text-gray-500 pt-0.5">
             <span className="inline-flex items-center gap-1 text-slate-400">
               <Clock className="h-3 w-3 text-slate-400" />
               Synced {formattedSyncDate}
             </span>
-            <span>&middot;</span>
-            <button
-              type="button"
-              onClick={() => {}}
-              className="text-xs font-semibold text-[#803D63] hover:underline cursor-pointer inline-flex items-center gap-1"
-            >
-              <span>Sync Now</span>
-              <span>↻</span>
-            </button>
           </div>
         </div>
       </div>

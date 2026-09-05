@@ -12,6 +12,11 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
     mediaKitPackages,
     mediaKitSettings,
     reviews,
+    team,
+    brands,
+    collaborations,
+    otherSocials,
+    sections,
     totalAudience,
     variant,
     onShare,
@@ -25,6 +30,11 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
       mediaKitPackages={mediaKitPackages}
       mediaKitSettings={mediaKitSettings}
       reviews={reviews}
+      team={team}
+      brands={brands}
+      collaborations={collaborations}
+      otherSocials={otherSocials}
+      sections={sections}
       totalAudience={totalAudience}
       compact={variant === "compact"}
       themeKey={themeKey}

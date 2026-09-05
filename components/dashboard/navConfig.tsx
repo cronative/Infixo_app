@@ -4,33 +4,58 @@ import {
   Share2,
   Layers,
   Palette,
-  Eye,
   CreditCard,
   Settings,
   LogOut,
   Briefcase,
   Star,
+  Eye,
+  Users,
+  Building2,
+  Handshake,
+  Inbox,
 } from "lucide-react";
 
-export const SIDEBAR_NAV = [
-  { href: "/dashboard", label: "Overview", icon: LayoutGrid },
-  { href: "/dashboard/profile", label: "Profile", icon: UserRound },
-  { href: "/dashboard/socials", label: "Social Accounts & Custom Links", icon: Share2 },
-  { href: "/dashboard/series", label: "Series & Episodes", icon: Layers, badge: "PRO" },
-  { href: "/dashboard/mediakit", label: "Media Kit", icon: Briefcase, badge: "VIP" },
-  { href: "/dashboard/reviews", label: "Client Reviews", icon: Star, badge: "VIP" },
-  { href: "/dashboard/themes", label: "Themes", icon: Palette },
-  { href: "/dashboard/preview", label: "Preview", icon: Eye },
-  { href: "/dashboard/subscription", label: "Subscription", icon: CreditCard },
+export interface NavItem {
+  href: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge?: string;
+}
+
+export const WORKSPACE_NAV: NavItem[] = [
+  { href: "/dashboard", label: "Home", icon: LayoutGrid },
+  { href: "/dashboard/profile", label: "My Profile", icon: UserRound },
+  { href: "/dashboard/series", label: "Content", icon: Layers },
+  { href: "/dashboard/socials", label: "Links & Socials", icon: Share2 },
+  { href: "/dashboard/mediakit", label: "Services & Brand Work", icon: Briefcase },
+  // Selected Collabs & My Brands hidden as requested
+  // { href: "/dashboard/collaborations", label: "Selected Collabs", icon: Handshake },
+  // { href: "/dashboard/brands", label: "My Brands", icon: Building2 },
+  { href: "/dashboard/team", label: "Team", icon: Users },
+  { href: "/dashboard/requests", label: "Collab Inquiries", icon: Inbox },
+  { href: "/dashboard/reviews", label: "Reviews", icon: Star },
+  { href: "/dashboard/themes", label: "Appearance", icon: Palette },
+  { href: "/dashboard/preview", label: "Profile Preview", icon: Eye },
+];
+
+export const ACCOUNT_NAV: NavItem[] = [
+  { href: "/dashboard/subscription", label: "Plan", icon: CreditCard },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
-export const LOGOUT_ITEM = { href: "/login", label: "Logout", icon: LogOut };
+// Flat export for components requiring a unified list
+export const SIDEBAR_NAV: NavItem[] = [
+  ...WORKSPACE_NAV,
+  ...ACCOUNT_NAV,
+];
 
-export const BOTTOM_NAV = [
+export const BOTTOM_NAV: NavItem[] = [
   { href: "/dashboard", label: "Home", icon: LayoutGrid },
-  { href: "/dashboard/series", label: "Series", icon: Layers },
-  { href: "/dashboard/mediakit", label: "Media Kit", icon: Briefcase, badge: "VIP" },
+  { href: "/dashboard/series", label: "Content", icon: Layers },
+  { href: "/dashboard/mediakit", label: "Services", icon: Briefcase },
   { href: "/dashboard/reviews", label: "Reviews", icon: Star },
   { href: "/dashboard/settings", label: "Account", icon: Settings },
 ];
+
+export const LOGOUT_ITEM = { href: "/login", label: "Logout", icon: LogOut };

@@ -4,103 +4,136 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   ExternalLink,
-  Copy,
-  LogOut,
   Sparkles,
   ShieldCheck,
+  LogOut,
 } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
-import { SIDEBAR_NAV } from "@/components/dashboard/navConfig";
+import { WORKSPACE_NAV, ACCOUNT_NAV } from "@/components/dashboard/navConfig";
 import { AuthService } from "@/services/AuthService";
 import { useCreator } from "@/contexts/CreatorContext";
-import { useToast } from "@/contexts/ToastContext";
-import { copyToClipboard } from "@/lib/copyToClipboard";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 
 export function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { profile } = useCreator();
-  const { showToast } = useToast();
 
   const handleStr = profile.username || "username";
-  const liveUrl = `https://inflixo.com/${handleStr}`;
+  const displayName = profile.displayName || profile.email?.split("@")[0] || "Creator";
 
   return (
-    <aside className="hidden w-64 shrink-0 flex-col border-r border-slate-200/80 bg-white px-4 py-5 lg:flex h-full overflow-y-auto">
-      <div className="px-2">
+    <aside className="hidden w-64 shrink-0 flex-col border-r border-[#ECE8EB] bg-white px-4 py-5 lg:flex h-full overflow-y-auto select-none">
+      {/* Brand Logo */}
+      <div className="px-2 pb-2">
         <Logo size="sm" />
       </div>
 
-      {/* Simple Flat Creator Profile Row with 40x40px Profile Pic & Full-Width Edge-to-Edge Dividers */}
-      <div className="my-3 -mx-4 px-4 py-2.5 border-y border-slate-200/80 flex items-center gap-2.5">
+      {/* Creator Header Strip */}
+      <div className="my-3 -mx-4 px-4 py-2.5 border-y border-[#ECE8EB] flex items-center gap-2.5 bg-[#FAFAFB]/60">
         <CreatorAvatar
           src={profile.photoDataUrl}
-          name={profile.displayName || profile.email || "Creator"}
-          className="w-[40px] h-[40px] rounded-full overflow-hidden object-cover aspect-square border border-slate-200 shrink-0"
-          textClassName="text-sm font-black text-slate-900"
-          fallbackBgClass="bg-rose-50"
+          name={displayName}
+          className="w-9 h-9 rounded-full overflow-hidden object-cover aspect-square border border-[#ECE8EB] shrink-0"
+          textClassName="text-xs font-bold text-[#17131A]"
+          fallbackBgClass="bg-[#F7EDF3]"
         />
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1">
-            <p className="truncate text-xs font-bold text-slate-900">
-              {profile.displayName || "Creator"}
+            <p className="truncate text-xs font-semibold text-[#17131A]" title={displayName}>
+              {displayName}
             </p>
             {profile.isVerified && (
               <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
             )}
           </div>
-          <p className="truncate text-[11px] font-medium text-slate-500">
-            @{handleStr}
-          </p>
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <p className="truncate text-[11px] font-medium text-[#6F6872]">
+              @{handleStr}
+            </p>
+            <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-[#16794A] bg-[#ECFDF3] px-1.5 py-0.2 rounded">
+              <span className="h-1 w-1 rounded-full bg-[#16794A]" />
+              Live
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Navigation List */}
-      <nav className="mt-4 flex-1 space-y-1">
-        <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-          Admin Navigation
-        </p>
+      {/* Main Navigation List */}
+      <nav className="flex-1 space-y-5 pt-1">
+        {/* WORKSPACE GROUP */}
+        <div>
+          <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#6F6872]/80 mb-1.5">
+            Workspace
+          </p>
+          <div className="space-y-0.5">
+            {WORKSPACE_NAV.map((item) => {
+              const active = pathname === item.href;
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs transition-colors ${
+                    active
+                      ? "bg-[#F7EDF3] text-[#803D63] font-semibold"
+                      : "text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] font-medium"
+                  }`}
+                >
+                  <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#803D63]" : "text-[#6F6872]"}`} />
+                  <span className="flex-1 truncate">{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
 
-        {SIDEBAR_NAV.map((item) => {
-          const active = pathname === item.href;
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-bold transition-colors ${
-                active
-                  ? "bg-[#803D63]/10 text-[#803D63] border border-[#803D63]/20"
-                  : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-              }`}
-            >
-              <div
-                className={`flex h-6 w-6 items-center justify-center rounded-lg ${
-                  active ? "bg-[#803D63] text-white" : "bg-slate-100 text-slate-500"
-                }`}
-              >
-                <Icon className="h-3.5 w-3.5 shrink-0" />
-              </div>
-              <span className="flex-1">{item.label}</span>
-              {item.badge && (
-                <span className="bg-[#803D63] text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-md tracking-wider">
-                  {item.badge}
-                </span>
-              )}
-            </Link>
-          );
-        })}
+        {/* ACCOUNT GROUP */}
+        <div>
+          <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#6F6872]/80 mb-1.5">
+            Account
+          </p>
+          <div className="space-y-0.5">
+            {ACCOUNT_NAV.map((item) => {
+              const active = pathname === item.href;
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs transition-colors ${
+                    active
+                      ? "bg-[#F7EDF3] text-[#803D63] font-semibold"
+                      : "text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] font-medium"
+                  }`}
+                >
+                  <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#803D63]" : "text-[#6F6872]"}`} />
+                  <span className="flex-1 truncate">{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
       </nav>
 
-      {/* Footer: Early Access Status & Logout */}
-      <div className="pt-3 border-t border-slate-200 space-y-2">
-        <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-bold text-slate-700">
+      {/* Bottom Utility Area: Early Access & Logout */}
+      <div className="pt-3 border-t border-[#ECE8EB] space-y-2">
+        <div className="flex items-center justify-between rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3 py-2 text-[11px] font-semibold text-[#17131A]">
           <div className="flex items-center gap-1.5">
             <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
-            <span>Early Access Active</span>
+            <span>Early Access</span>
           </div>
+          <Link
+            href={`/${handleStr}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] text-[#803D63] hover:underline inline-flex items-center gap-0.5 font-semibold"
+            title="View live profile"
+          >
+            <span>Preview</span>
+            <ExternalLink className="h-2.5 w-2.5" />
+          </Link>
         </div>
 
         <button
@@ -108,12 +141,10 @@ export function DashboardSidebar() {
             AuthService.logout();
             router.push("/login");
           }}
-          className="flex w-full items-center gap-2.5 rounded-xl px-3 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+          className="flex w-full items-center gap-2 rounded-xl px-3 py-1.5 text-xs font-semibold text-[#6F6872] hover:bg-rose-50 hover:text-rose-600 transition-colors cursor-pointer"
         >
-          <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-rose-100 text-rose-600">
-            <LogOut className="h-3.5 w-3.5 shrink-0" />
-          </div>
-          Logout
+          <LogOut className="h-3.5 w-3.5 shrink-0" />
+          <span>Logout</span>
         </button>
       </div>
     </aside>

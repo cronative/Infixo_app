@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Sparkles, User, AtSign, Tag, FileText, Search, Loader2, AlertCircle } from "lucide-react";
+import { Check, Sparkles, User, AtSign, Tag, FileText, Search, Loader2, AlertCircle, Eye } from "lucide-react";
 import { OnboardingLayout } from "@/layouts/OnboardingLayout";
 import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
 import { PhotoUpload } from "@/components/ui/PhotoUpload";
@@ -53,6 +53,7 @@ export default function ProfileStepPage() {
   const { showToast } = useToast();
   const { profile, socials, totalAudience, updateProfile, theme } = useCreator();
   const [bioSuggestionIndex, setBioSuggestionIndex] = useState(0);
+  const [isMobilePreviewOpen, setIsMobilePreviewOpen] = useState(false);
 
   const [errors, setErrors] = useState<{
     displayName?: string;
@@ -147,11 +148,35 @@ export default function ProfileStepPage() {
   return (
     <OnboardingLayout
       step="profile"
-      preview={<LivePreviewCard profile={profile} socials={socials} totalAudience={totalAudience} themeKey={theme} />}
+      isMobilePreviewOpen={isMobilePreviewOpen}
+      setIsMobilePreviewOpen={setIsMobilePreviewOpen}
+      preview={
+        <LivePreviewCard
+          profile={profile}
+          socials={socials}
+          totalAudience={0}
+          themeKey={theme}
+          isOnboarding={true}
+          isInformational={true}
+        />
+      }
     >
-      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/20 bg-[#803D63]/10 px-3 py-1 text-xs font-bold text-[#803D63]">
-        <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
-        <span>Step 1 of 6 • Profile Setup</span>
+      <div className="flex items-center justify-between gap-2 mb-2.5">
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/20 bg-[#803D63]/10 px-3 py-1 text-xs font-bold text-[#803D63]">
+          <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
+          <span>Step 1 of 6 • Profile Setup</span>
+        </div>
+
+        {/* Mobile / Tablet Dedicated Preview Trigger */}
+        <button
+          type="button"
+          onClick={() => setIsMobilePreviewOpen(true)}
+          className="lg:hidden tap-scale inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/30 bg-[#803D63]/10 hover:bg-[#803D63]/15 px-3 py-1 text-xs font-bold text-[#803D63] transition-all cursor-pointer shadow-2xs"
+          title="Preview public profile"
+        >
+          <Eye className="h-3.5 w-3.5 text-[#803D63]" />
+          <span>Preview Profile</span>
+        </button>
       </div>
 
       <h1 className="text-2xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-3xl">
@@ -279,10 +304,6 @@ export default function ProfileStepPage() {
             value={profile.bio}
             onChange={(e) => updateProfile({ bio: e.target.value })}
           />
-
-          <div className="flex justify-end text-[11px] text-slate-400 font-medium">
-            {profile.bio.length} / 160
-          </div>
         </div>
 
         {/* Form Bottom CTA Button Flow (Inline & Non-overlapping) */}

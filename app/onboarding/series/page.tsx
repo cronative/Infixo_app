@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Layers, SkipForward, Sparkles, Film, ArrowRight } from "lucide-react";
+import { Layers, SkipForward, Sparkles, Film, ArrowRight, Eye, Globe } from "lucide-react";
 import { OnboardingLayout } from "@/layouts/OnboardingLayout";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
 import { PhotoUpload } from "@/components/ui/PhotoUpload";
+import { SeriesCoverUpload } from "@/components/series/SeriesCoverUpload";
 import { SeriesService } from "@/services/SeriesService";
 import { OnboardingService } from "@/services/OnboardingService";
 import { EpisodePlatform, Series } from "@/types";
@@ -23,6 +24,7 @@ export default function SeriesStepPage() {
   const router = useRouter();
   const { showToast } = useToast();
   const [submitting, setSubmitting] = useState(false);
+  const [isMobilePreviewOpen, setIsMobilePreviewOpen] = useState(false);
 
   // Series-level fields
   const [title, setTitle] = useState("");
@@ -43,11 +45,11 @@ export default function SeriesStepPage() {
     const newErrors: typeof errors = {};
     if (!title.trim()) newErrors.title = "Series title is required";
     if (!genre.trim()) newErrors.genre = "Select at least 1 genre for your series";
-    if (!language.trim()) newErrors.language = "Select a series language";
+    if (!language.trim()) newErrors.language = "Select language";
 
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
-      showToast("Please fill in all required fields highlighted below 💡", "error");
+      showToast("Please fill the required fields to create your series", "error");
       scrollToFirstError(newErrors);
       return;
     }
@@ -58,40 +60,39 @@ export default function SeriesStepPage() {
         title: title.trim(),
         posterDataUrl: poster,
         description: description.trim(),
-        genre,
-        language,
+        genre: genre || "Entertainment",
+        language: language || "English",
       });
 
-      showToast(`Series "${title.trim()}" created successfully! 🚀`);
+      showToast("Series created! Next: Upgrade to Pro or Finish 🚀");
       OnboardingService.setStep("subscription");
-      setTimeout(() => {
-        setSubmitting(false);
-        router.push("/onboarding/subscription");
-      }, 120);
-    } catch (err) {
-      console.error("Failed to save series:", err);
-      showToast("Oops, couldn't save series details. Let's try again! 💡", "error");
+      router.push("/onboarding/subscription");
+    } catch (err: any) {
+      console.error("Failed to create series:", err);
+      showToast("Couldn't save series. Try again!", "error");
+    } finally {
       setSubmitting(false);
     }
   }
 
   const { profile, socials, totalAudience, theme, series } = useCreator();
 
-  // Create active draft series array for live phone preview sync
-  const draftSeries: Series[] = title.trim() || poster
+  // Create active draft series array for live phone preview sync (only when title is entered)
+  const draftSeries: Series[] = title.trim()
     ? [
         {
           id: "draft-1",
-          title: title.trim() || "My New Series",
+          title: title.trim(),
           posterDataUrl: poster,
-          description: description.trim() || "Series description preview",
+          description: description.trim(),
           genre: genre || "Entertainment",
           language: language || "English",
+          platform: seriesPlatform,
           seasons: [],
           createdAt: new Date().toISOString(),
         },
       ]
-    : series || [];
+    : [];
 
   const preview = (
     <LivePreviewCard
@@ -100,14 +101,34 @@ export default function SeriesStepPage() {
       totalAudience={totalAudience}
       themeKey={theme}
       series={draftSeries}
+      isOnboarding={true}
+      isInformational={true}
     />
   );
 
   return (
-    <OnboardingLayout step="series" preview={preview}>
-      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/20 bg-[#803D63]/10 px-3 py-1 text-xs font-bold text-[#803D63]">
-        <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
-        <span>Step 4 of 6 • Series &amp; Episodes</span>
+    <OnboardingLayout
+      step="series"
+      isMobilePreviewOpen={isMobilePreviewOpen}
+      setIsMobilePreviewOpen={setIsMobilePreviewOpen}
+      preview={preview}
+    >
+      <div className="flex items-center justify-between gap-2 mb-2.5">
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/20 bg-[#803D63]/10 px-3 py-1 text-xs font-bold text-[#803D63]">
+          <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
+          <span>Step 4 of 6 • Series &amp; Episodes</span>
+        </div>
+
+        {/* Mobile / Tablet Dedicated Preview Trigger */}
+        <button
+          type="button"
+          onClick={() => setIsMobilePreviewOpen(true)}
+          className="lg:hidden tap-scale inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/30 bg-[#803D63]/10 hover:bg-[#803D63]/15 px-3 py-1 text-xs font-bold text-[#803D63] transition-all cursor-pointer shadow-2xs"
+          title="Preview public profile"
+        >
+          <Eye className="h-3.5 w-3.5 text-[#803D63]" />
+          <span>Preview Profile</span>
+        </button>
       </div>
 
       <h1 className="text-3xl font-extrabold leading-[1.15] tracking-tight text-inflixo-navy sm:text-4xl">
@@ -126,33 +147,35 @@ export default function SeriesStepPage() {
               <Film className="h-4 w-4 text-[#803D63]" />
               Series Information
             </p>
-            <span className="text-[11px] font-bold text-[#803D63] bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-100">
-              Step 4
-            </span>
           </div>
 
-          {/* Poster + Title & Platform Selector */}
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-            <PhotoUpload value={poster} onChange={setPoster} shape="landscape" label="Upload Series Landscape Poster" />
-            <div className="w-full space-y-3" id="title">
-              <Input
-                label="Series title"
-                placeholder="e.g. Kashmir Diaries or Tech Unboxed"
-                value={title}
-                onChange={(e) => {
-                  setTitle(e.target.value);
-                  if (errors.title) setErrors((p) => ({ ...p, title: undefined }));
-                }}
-                error={errors.title}
-              />
+          {/* Full-Width 16:9 Landscape Series Cover */}
+          <SeriesCoverUpload
+            value={poster}
+            onChange={setPoster}
+            maxSizeMB={5}
+            label="Series Cover"
+          />
+
+          <div className="w-full space-y-3" id="title">
+            <Input
+              label="Series title"
+              placeholder="e.g. Kashmir Diaries or Tech Unboxed"
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if (errors.title) setErrors((p) => ({ ...p, title: undefined }));
+              }}
+              error={errors.title}
+            />
 
               {/* Platform Selector Pills */}
               <div>
                 <label className="mb-1.5 block text-xs font-bold text-slate-900">
                   Social Platform for Series
                 </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {(["YouTube", "Instagram", "Facebook"] as EpisodePlatform[]).map((p) => {
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {(["YouTube", "Instagram", "Facebook", "Other"] as EpisodePlatform[]).map((p) => {
                     const isSelected = seriesPlatform === p;
                     return (
                       <button
@@ -168,6 +191,7 @@ export default function SeriesStepPage() {
                         {p === "YouTube" && <YoutubeIcon className={`h-3.5 w-3.5 ${isSelected ? "text-white" : "text-red-500"}`} />}
                         {p === "Instagram" && <InstagramIcon className={`h-3.5 w-3.5 ${isSelected ? "text-white" : "text-pink-500"}`} />}
                         {p === "Facebook" && <FacebookIcon className={`h-3.5 w-3.5 ${isSelected ? "text-white" : "text-blue-600"}`} />}
+                        {p === "Other" && <Globe className={`h-3.5 w-3.5 ${isSelected ? "text-white" : "text-[#803D63]"}`} />}
                         <span>{p}</span>
                       </button>
                     );
@@ -175,7 +199,6 @@ export default function SeriesStepPage() {
                 </div>
               </div>
             </div>
-          </div>
 
           {/* Vertical Stack for Genre Chips & Language Select */}
           <div className="space-y-4">
@@ -215,34 +238,43 @@ export default function SeriesStepPage() {
         {/* Bottom Early Access Note */}
         <div className="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4 text-left flex items-start gap-3 text-xs font-semibold text-indigo-950 shadow-2xs">
           <Sparkles className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5" />
-          <div>
-            <strong>Note:</strong> Episodes can be added anytime from your <strong>Creator Dashboard</strong>. Early Access allows up to 3 Series &amp; 15 Total Episodes.
-          </div>
+          <p className="leading-relaxed">
+            Episodes can be added anytime from your <strong>Creator Dashboard</strong>. Early Access supports up to 3 series and 15 total episodes.
+          </p>
         </div>
       </div>
 
-      {/* Sticky Form Bottom Actions: Back | Skip for Now | Save & Next → */}
-      <div className="sticky bottom-0 z-30 bg-white/95 backdrop-blur-md py-3.5 border-t border-gray-100 -mx-4 sm:-mx-6 px-4 sm:px-6 mt-8">
-        <div className="flex items-center justify-between gap-3 w-full">
-          <Button variant="outline" size="lg" onClick={() => router.push("/onboarding/themes")}>
+      {/* Step 4 Form Bottom Navigation (Natural flow, Back + Skip + Next) */}
+      <div className="pt-4 border-t border-[#E5E7EB] mt-8 flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5 w-full sm:w-auto">
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            className="w-full sm:w-auto h-12 rounded-xl border-[#E5E7EB] text-slate-700 hover:bg-slate-50 font-bold text-sm px-6"
+            onClick={() => router.push("/onboarding/themes")}
+          >
             Back
           </Button>
-
-          <div className="flex items-center gap-2.5">
-            <button
-              type="button"
-              onClick={handleSkip}
-              className="px-4 py-2.5 rounded-xl text-xs font-extrabold text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors flex items-center gap-1.5 cursor-pointer"
-            >
-              <SkipForward className="h-3.5 w-3.5" />
-              <span>Skip for Now</span>
-            </button>
-
-            <Button size="lg" loading={submitting} onClick={handleSaveAndContinue}>
-              Save &amp; Next →
-            </Button>
-          </div>
+          <button
+            type="button"
+            onClick={handleSkip}
+            className="w-full sm:w-auto h-12 px-4 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+          >
+            <SkipForward className="h-3.5 w-3.5" />
+            <span>Skip for Now</span>
+          </button>
         </div>
+
+        <Button
+          type="button"
+          size="lg"
+          loading={submitting}
+          onClick={handleSaveAndContinue}
+          className="w-full sm:flex-1 sm:max-w-xs h-12 bg-[#803D63] hover:bg-[#6D3254] text-white font-bold text-sm rounded-xl cursor-pointer shadow-none"
+        >
+          Save &amp; Next →
+        </Button>
       </div>
     </OnboardingLayout>
   );

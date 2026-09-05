@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 import { ensureCreatorSettingsTable } from "@/lib/settingsDb";
+import { saveBase64Image } from "@/lib/imageStorage";
 
 // GET /api/creator/profile?email=... or ?username=...
 export async function GET(req: Request) {
@@ -24,11 +25,12 @@ export async function GET(req: Request) {
     `;
     const params: any[] = [];
     if (username) {
-      query += ` WHERE c.username = ?`;
-      params.push(username);
+      const cleanUser = username.trim().replace(/^@/, "").toLowerCase();
+      query += ` WHERE LOWER(c.username) = ? OR c.username = ? OR LOWER(c.username) = ?`;
+      params.push(cleanUser, username, `@${cleanUser}`);
     } else {
-      query += ` WHERE c.email = ?`;
-      params.push(email);
+      query += ` WHERE LOWER(c.email) = LOWER(?)`;
+      params.push(email?.trim());
     }
 
     const [rows]: any = await db.query(query, params);
@@ -113,6 +115,7 @@ export async function POST(req: Request) {
     const safeCustomCategory = customCategory ? String(customCategory).substring(0, 490) : "";
     const safeProfession = profession ? String(profession).substring(0, 490) : null;
     const visibilityJson = visibilitySettings ? JSON.stringify(visibilitySettings) : null;
+    const finalPhotoUrl = saveBase64Image(photoDataUrl, "avatars", "avatar") || (photoDataUrl && !photoDataUrl.startsWith("data:") ? photoDataUrl : null);
 
     // If only updating onboarding step (e.g. from setStep("finish")):
     const isStepOnlyUpdate = Boolean(
@@ -155,7 +158,7 @@ export async function POST(req: Request) {
              theme_key = ?,
              visibility_settings = COALESCE(?, visibility_settings)
           WHERE id = ?`,
-        [displayName, finalUsername, safeCategory, safeCustomCategory, safeProfession, bio, photoDataUrl, city, state, country, safeThemeKey, visibilityJson, creatorId]
+        [displayName, finalUsername, safeCategory, safeCustomCategory, safeProfession, bio, finalPhotoUrl, city, state, country, safeThemeKey, visibilityJson, creatorId]
       );
 
       if (incrementThemeCount) {
@@ -176,7 +179,7 @@ export async function POST(req: Request) {
           safeCategory,
           safeProfession,
           bio || "",
-          photoDataUrl || null,
+          finalPhotoUrl || null,
           city || null,
           state || null,
           country || null,

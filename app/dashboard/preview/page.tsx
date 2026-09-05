@@ -1,24 +1,44 @@
 "use client";
 
-import { useState } from "react";
-import { Settings, Eye } from "lucide-react";
+import { useState, useMemo } from "react";
+import {
+  Settings,
+  Eye,
+  ExternalLink,
+  RotateCw,
+  Sparkles,
+} from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { ThemeCard } from "@/themes/registry";
-import { THEME_PAGE_BACKGROUNDS } from "@/services/ThemeService";
+import { THEME_PAGE_BACKGROUNDS, THEME_LIST } from "@/services/ThemeService";
+import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
+import { FocusOverlay } from "@/components/theme/FocusOverlay";
 import { VisibilitySettingsModal } from "@/components/shared/VisibilitySettingsModal";
 import { VisibilitySettings, DEFAULT_VISIBILITY_SETTINGS } from "@/types";
 import { STORAGE_KEYS, storage } from "@/utils/storage";
+import { useToast } from "@/contexts/ToastContext";
+import { buildProfileUrl } from "@/utils/format";
 
 export default function DashboardPreviewPage() {
   const { profile, socials, series, totalAudience, theme } = useCreator();
+  const { showToast } = useToast();
 
-  const pageBgStyle = THEME_PAGE_BACKGROUNDS[theme] || THEME_PAGE_BACKGROUNDS["minimal-white"];
-
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [isVisibilityModalOpen, setIsVisibilityModalOpen] = useState(false);
+
   const [visibilitySettings, setVisibilitySettings] = useState<VisibilitySettings>(() => {
     if (profile.visibilitySettings) return profile.visibilitySettings;
     return storage.get<VisibilitySettings>(STORAGE_KEYS.visibilitySettings, DEFAULT_VISIBILITY_SETTINGS);
   });
+
+  const activeThemeMeta = useMemo(() => {
+    return THEME_LIST.find((t) => t.key === theme) || THEME_LIST[0];
+  }, [theme]);
+
+  const pageBgStyle = activeThemeMeta.outerBgClass || THEME_PAGE_BACKGROUNDS[theme] || THEME_PAGE_BACKGROUNDS["minimal-white"];
+
+  const rawUsername = profile?.username || "creator";
+  const canonicalUrl = buildProfileUrl(rawUsername);
 
   const handleSaveVisibility = async (newSettings: VisibilitySettings) => {
     setVisibilitySettings(newSettings);
@@ -41,40 +61,103 @@ export default function DashboardPreviewPage() {
           }),
         ]);
       }
+      showToast("Display preferences updated! ✨");
     } catch (e) {
       console.warn("Error saving visibility settings:", e);
     }
   };
 
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => {
+      setIsRefreshing(false);
+      showToast("Preview updated! 🔄");
+    }, 400);
+  };
+
   return (
-    <div className="min-h-dvh bg-[#F9FAFB] text-slate-900 pb-16">
-      {/* Sticky Page Subheader */}
-      <div className="sticky top-0 z-30 bg-[#FAF8FA]/95 backdrop-blur-md border-b border-[#E8DCE4]/80 px-3 sm:px-6 py-3.5 shadow-2xs text-left mb-6">
-        <div className="mx-auto max-w-5xl flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <h1 className="font-display text-base font-extrabold text-slate-900 truncate">
+    <div className="space-y-5 max-w-6xl mx-auto pb-12 text-left">
+      {/* 1. PAGE HEADER */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
+        <div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#17131A] tracking-tight">
               Profile Preview
             </h1>
-            <p className="text-xs text-slate-500 font-medium truncate">
-              This is exactly how your public profile looks to brands &amp; fans
-            </p>
+            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#16794A] bg-[#ECFDF3] px-2.5 py-0.5 rounded-full">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#16794A]" />
+              Public profile is live
+            </span>
           </div>
+          <p className="text-xs sm:text-sm text-[#6F6872] font-medium mt-1">
+            See exactly how your public creator profile appears to visitors.
+          </p>
+        </div>
 
+        <div className="flex items-center gap-2.5 shrink-0 self-start sm:self-auto">
           <button
             type="button"
             onClick={() => setIsVisibilityModalOpen(true)}
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:border-[#803D63]/30 hover:text-[#803D63] transition-all shadow-xs cursor-pointer shrink-0"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer shadow-2xs"
           >
-            <Settings className="h-3.5 w-3.5" />
-            <span>Page Display Settings</span>
+            <Settings className="h-3.5 w-3.5 text-[#803D63]" />
+            <span>Display Settings</span>
+          </button>
+
+          <a
+            href={canonicalUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-3.5 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
+          >
+            <span>Open Public Profile</span>
+            <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+        </div>
+      </div>
+
+      {/* 2. COMPACT PREVIEW TOOLBAR */}
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#ECE8EB] bg-white px-4 py-2.5 shadow-2xs">
+        {/* Left: Active Theme Info */}
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#803D63] bg-[#F7EDF3] border border-[#ECE8EB] px-3 py-1.5 rounded-xl">
+            <Sparkles className="h-3.5 w-3.5 text-[#803D63]" />
+            <span>Active theme: {activeThemeMeta.name}</span>
+          </span>
+        </div>
+
+        {/* Right: Refresh Action */}
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={handleRefresh}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6F6872] hover:text-[#17131A] px-3 py-1.5 rounded-xl hover:bg-[#FAF8FA] border border-transparent hover:border-[#ECE8EB] transition-colors cursor-pointer"
+            title="Refresh preview canvas"
+          >
+            <RotateCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-[#803D63]" : ""}`} />
+            <span>Refresh</span>
           </button>
         </div>
       </div>
 
-      <div className="mx-auto max-w-5xl px-3 sm:px-6 space-y-5">
-        {/* Preview Card */}
-        <div className={`w-full rounded-3xl p-4 sm:p-8 transition-colors duration-300 shadow-sm ${pageBgStyle}`}>
-          <div className="w-full max-w-2xl mx-auto">
+      {/* 3. FULL SCREEN / FULL WIDTH PREVIEW CANVAS */}
+      <div className="rounded-2xl border border-[#ECE8EB] overflow-hidden shadow-2xs">
+        <div
+          style={{ backgroundColor: activeThemeMeta.colors.pageBackground }}
+          className={`relative w-full p-3 sm:p-6 md:p-8 transition-colors duration-300 ${pageBgStyle}`}
+        >
+          {/* Ambient Background Animation in Live Preview */}
+          <AmbientAnimation
+            type={activeThemeMeta.animation?.type || activeThemeMeta.animationType}
+            colors={activeThemeMeta.animation?.colors || activeThemeMeta.particleColors}
+            themeKey={theme}
+            contained={true}
+          />
+
+          {/* Theme-aware Focus Overlay */}
+          <FocusOverlay overlay={activeThemeMeta.focusOverlay} contained={true} />
+
+          <div className="relative z-10 w-full max-w-[620px] mx-auto flex flex-col min-h-full">
             <ThemeCard
               themeKey={theme}
               profile={{ ...profile, visibilitySettings }}
@@ -87,7 +170,7 @@ export default function DashboardPreviewPage() {
         </div>
       </div>
 
-      {/* Visibility Settings Modal */}
+      {/* 4. VISIBILITY SETTINGS MODAL */}
       <VisibilitySettingsModal
         isOpen={isVisibilityModalOpen}
         onClose={() => setIsVisibilityModalOpen(false)}
@@ -97,4 +180,3 @@ export default function DashboardPreviewPage() {
     </div>
   );
 }
-

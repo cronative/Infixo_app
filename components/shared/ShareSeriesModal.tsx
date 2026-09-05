@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Check, X, Share2, Sparkles, MessageSquare } from "lucide-react";
+import { Copy, Check, Share2, Sparkles, MessageSquare } from "lucide-react";
 import { FacebookIcon, XTwitterIcon } from "@/components/shared/BrandIcons";
 import { useToast } from "@/contexts/ToastContext";
 import { Series } from "@/types";
 import { copyToClipboard } from "@/lib/copyToClipboard";
+import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 
 interface ShareSeriesModalProps {
   isOpen: boolean;
@@ -19,19 +20,19 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedCaption, setCopiedCaption] = useState(false);
 
-  if (!isOpen) return null;
-
   const handleStr = username || "creator";
-  const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
+  const origin = typeof window !== "undefined" && window.location.origin && !window.location.origin.includes("localhost") 
+    ? window.location.origin 
+    : "https://inflixo.com";
   const seriesUrl = `${origin}/${handleStr}/series/${series.id}`;
 
-  const reelCaption = `🎬 ${series.title}\n\nMissed a part? Watch all episodes in the correct order on Inflixo 👇\n${seriesUrl}`;
+  const reelCaption = `🎬 ${series.title}\n\nMissed a part? Watch all episodes in order on Inflixo 👇\n${seriesUrl}`;
 
   async function handleCopyLink() {
     const success = await copyToClipboard(seriesUrl);
     if (success) {
       setCopiedLink(true);
-      showToast("Series link copied to clipboard! 🔗✨");
+      showToast("Series link copied! 🔗", "success");
       setTimeout(() => setCopiedLink(false), 2000);
     } else {
       showToast("Could not copy link", "error");
@@ -42,7 +43,7 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
     const success = await copyToClipboard(reelCaption);
     if (success) {
       setCopiedCaption(true);
-      showToast("Reel caption copied! Ready to paste in your Reel/Short caption! 🎬🔥");
+      showToast("Reel caption copied! Ready to paste 🎬", "success");
       setTimeout(() => setCopiedCaption(false), 2000);
     } else {
       showToast("Could not copy caption", "error");
@@ -65,50 +66,38 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-white/20 bg-slate-900/95 p-6 text-white shadow-2xl space-y-5">
-        
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/10 pb-4">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#803D63] text-white shadow-md">
-              <Share2 className="h-4 w-4" />
-            </div>
-            <div>
-              <h3 className="text-lg font-black text-white leading-tight">Share Series</h3>
-              <p className="text-xs text-slate-400 font-medium">Direct public URL for Reel captions &amp; bio</p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-slate-300 transition-colors"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="md"
+      title="Share Series"
+      description="Direct public URL for Reel captions and social bio"
+      icon={<Share2 className="h-4 w-4" />}
+    >
+      <ModalBody className="p-5 space-y-4 text-left">
         {/* Series Title Badge */}
-        <div className="rounded-2xl border border-indigo-500/30 bg-indigo-950/40 p-3 flex items-center gap-3">
-          <span className="text-lg">🎬</span>
+        <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3 flex items-center gap-3">
+          <span className="text-base">🎬</span>
           <div className="min-w-0 text-left">
-            <p className="text-xs font-black text-indigo-200 truncate">{series.title}</p>
-            <p className="text-[10px] text-indigo-300/80 font-medium truncate">inflixo.com/{handleStr}/series/{series.id}</p>
+            <p className="text-xs font-bold text-[#17131A] truncate">{series.title}</p>
+            <p className="text-[11px] text-[#6F6872] font-medium truncate">inflixo.com/{handleStr}/series/{series.id}</p>
           </div>
         </div>
 
         {/* Copy Direct Link Section */}
-        <div className="space-y-1.5 text-left">
-          <label className="text-xs font-extrabold uppercase tracking-wider text-slate-300">Series Public URL</label>
+        <div className="space-y-1 text-left">
+          <label className="block text-xs font-bold text-[#17131A]">Series Public Link</label>
           <div className="flex items-center gap-2">
             <input
               type="text"
               readOnly
               value={seriesUrl}
-              className="flex-1 rounded-xl border border-white/15 bg-white/5 px-3.5 py-2 text-xs font-mono text-slate-200 select-all focus:outline-none focus:ring-2 focus:ring-[#803D63]"
+              className="flex-1 rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2 text-xs font-mono text-[#17131A] select-all focus:border-[#803D63] focus:bg-white focus:outline-none"
             />
             <button
+              type="button"
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6D3254] px-4 py-2 text-xs font-black text-white shadow-md transition-all shrink-0"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-3.5 py-2 text-xs font-semibold text-white shadow-2xs transition-colors shrink-0 cursor-pointer"
             >
               {copiedLink ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               <span>{copiedLink ? "Copied" : "Copy"}</span>
@@ -116,58 +105,71 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
           </div>
         </div>
 
-        {/* Killer Feature: Copy Reel / Short Caption Box */}
-        <div className="space-y-2 rounded-2xl border border-amber-500/40 bg-gradient-to-br from-amber-950/30 via-slate-900 to-purple-950/30 p-4 text-left shadow-md">
+        {/* Caption Box */}
+        <div className="space-y-2 rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3.5 text-left">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-amber-400 font-black text-xs uppercase tracking-wide">
-              <Sparkles className="h-3.5 w-3.5 text-amber-400" />
-              <span>Copy Reel / Short Caption</span>
+            <div className="flex items-center gap-1.5 text-[#803D63] font-bold text-xs">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Ready-to-Paste Reel Caption</span>
             </div>
-            <span className="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-bold">Recommended</span>
+            <span className="text-[10px] bg-[#F7EDF3] text-[#803D63] px-2 py-0.5 rounded-md font-bold">Recommended</span>
           </div>
 
-          <div className="rounded-xl border border-white/10 bg-black/40 p-3 text-xs font-mono text-slate-300 leading-relaxed whitespace-pre-wrap select-all">
+          <div className="rounded-lg border border-[#ECE8EB] bg-white p-2.5 text-xs font-mono text-[#17131A] leading-relaxed whitespace-pre-wrap select-all">
             {reelCaption}
           </div>
 
           <button
+            type="button"
             onClick={handleCopyCaption}
-            className="w-full tap-scale inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-400 hover:to-rose-500 px-4 py-2.5 text-xs font-black text-white shadow-lg transition-all"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors cursor-pointer"
           >
-            {copiedCaption ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-            <span>{copiedCaption ? "Caption Copied ✓" : "Copy Ready Reel Caption ✨"}</span>
+            {copiedCaption ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+            <span>{copiedCaption ? "Caption Copied ✓" : "Copy Reel Caption"}</span>
           </button>
         </div>
 
-        {/* One-Tap Social Share Buttons */}
+        {/* Social Share Buttons */}
         <div className="space-y-1.5 text-left pt-1">
-          <label className="text-xs font-extrabold uppercase tracking-wider text-slate-300">Share Directly</label>
+          <label className="block text-xs font-bold text-[#17131A]">Share Directly</label>
           <div className="grid grid-cols-3 gap-2">
             <button
+              type="button"
               onClick={handleWhatsAppShare}
-              className="flex items-center justify-center gap-2 rounded-xl bg-emerald-600/90 hover:bg-emerald-500 px-3 py-2.5 text-xs font-black text-white shadow-sm transition-all"
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 px-3 py-2 text-xs font-semibold transition-colors cursor-pointer"
             >
-              <MessageSquare className="h-4 w-4" />
+              <MessageSquare className="h-3.5 w-3.5" />
               <span>WhatsApp</span>
             </button>
             <button
+              type="button"
               onClick={handleFacebookShare}
-              className="flex items-center justify-center gap-2 rounded-xl bg-blue-600/90 hover:bg-blue-500 px-3 py-2.5 text-xs font-black text-white shadow-sm transition-all"
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-800 px-3 py-2 text-xs font-semibold transition-colors cursor-pointer"
             >
-              <FacebookIcon className="h-4 w-4 text-white shrink-0" />
+              <FacebookIcon className="h-3.5 w-3.5 text-blue-600 shrink-0" />
               <span>Facebook</span>
             </button>
             <button
+              type="button"
               onClick={handleTwitterShare}
-              className="flex items-center justify-center gap-2 rounded-xl bg-slate-800 hover:bg-slate-700 px-3 py-2.5 text-xs font-black text-white shadow-sm transition-all"
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] text-[#17131A] px-3 py-2 text-xs font-semibold transition-colors cursor-pointer"
             >
-              <XTwitterIcon className="h-4 w-4 text-white shrink-0" />
+              <XTwitterIcon className="h-3.5 w-3.5 text-[#17131A] shrink-0" />
               <span>X (Twitter)</span>
             </button>
           </div>
         </div>
+      </ModalBody>
 
-      </div>
-    </div>
+      <ModalFooter className="px-5 py-3.5">
+        <button
+          type="button"
+          onClick={onClose}
+          className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
+        >
+          Close
+        </button>
+      </ModalFooter>
+    </Modal>
   );
 }

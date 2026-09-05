@@ -15,9 +15,13 @@ export async function GET(req: Request) {
 
     let creators: any = [];
     if (username) {
-      [creators] = await db.query("SELECT id FROM creators WHERE username = ?", [username]);
+      const cleanUser = username.trim().replace(/^@/, "").toLowerCase();
+      [creators] = await db.query(
+        "SELECT id, email FROM creators WHERE LOWER(username) = ? OR username = ? OR LOWER(username) = ?",
+        [cleanUser, username, `@${cleanUser}`]
+      );
     } else {
-      [creators] = await db.query("SELECT id FROM creators WHERE email = ?", [email]);
+      [creators] = await db.query("SELECT id, email FROM creators WHERE LOWER(email) = LOWER(?)", [email?.trim()]);
     }
     if (creators.length === 0) {
       return NextResponse.json({ socials: [] });
