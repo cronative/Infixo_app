@@ -1955,56 +1955,84 @@ export function LivePreviewCard({
                           {approvedReviews.map((rev) => {
                             const ratingNum = Number(rev.rating) || 5;
                             const clientInitials = getInitials(rev.clientName || "Client");
-                            const subtitleParts: string[] = [];
-                            if (rev.clientDesignation) subtitleParts.push(rev.clientDesignation);
-                            if (rev.projectTitle) subtitleParts.push(rev.projectTitle);
-                            if (rev.comment) subtitleParts.push(`“${rev.comment}”`);
-                            const subtitleStr = subtitleParts.join(" • ");
 
                             return (
                               <div
                                 key={rev.id}
-                                className="px-3.5 py-2.5 sm:py-3 transition-colors flex items-center justify-between hover:bg-[#F7F0EA]/50 group"
+                                className="px-3.5 py-3 sm:py-3.5 transition-colors text-left space-y-1.5 hover:bg-[#F7F0EA]/40 group"
                               >
-                                <div className="flex items-center gap-3 min-w-0">
-                                  <span
-                                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#F3DDE0] text-[#8C3F4D] text-[11px] sm:text-xs font-bold tracking-tight select-none"
-                                  >
-                                    {clientInitials}
-                                  </span>
-                                  <div className="min-w-0 text-left space-y-0.5">
-                                    <div className="flex items-center gap-1.5 min-w-0">
-                                      <p style={{ color: c.primaryText }} className="truncate text-xs sm:text-[13px] font-bold">
-                                        {rev.clientName}
-                                      </p>
-                                      {rev.contentUrl && (
-                                        <a
-                                          href={rev.contentUrl}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          onClick={(e) => e.stopPropagation()}
-                                          style={{ color: c.accentText }}
-                                          className="hover:underline shrink-0"
-                                          title="View related work"
-                                        >
-                                          <ExternalLink className="h-3 w-3" />
-                                        </a>
-                                      )}
+                                {/* Top: Client Avatar/Initials + Client Name/Project + Star Rating */}
+                                <div className="flex items-center justify-between gap-2.5">
+                                  <div className="flex items-center gap-2.5 min-w-0">
+                                    <span
+                                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#F3DDE0] text-[#8C3F4D] text-[11px] font-bold tracking-tight select-none"
+                                    >
+                                      {clientInitials}
+                                    </span>
+                                    <div className="min-w-0">
+                                      <div className="flex items-center gap-1.5 flex-wrap">
+                                        <p style={{ color: c.primaryText }} className="truncate text-xs sm:text-[13px] font-bold">
+                                          {rev.clientName}
+                                        </p>
+                                        {rev.clientDesignation && (
+                                          <span style={{ color: c.mutedText }} className="text-[11px] font-medium truncate">
+                                            • {rev.clientDesignation}
+                                          </span>
+                                        )}
+                                      </div>
                                     </div>
-                                    <p style={{ color: c.mutedText }} className="truncate text-[11px] font-medium">
-                                      {subtitleStr || "Verified Client Review"}
-                                    </p>
+                                  </div>
+
+                                  {/* Right: Stars + Related Link */}
+                                  <div className="flex items-center gap-2 shrink-0">
+                                    {rev.contentUrl && (
+                                      <a
+                                        href={rev.contentUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        onClick={(e) => e.stopPropagation()}
+                                        style={{ color: c.accentText }}
+                                        className="hover:underline flex items-center gap-1 text-[11px] font-semibold"
+                                        title="View related work"
+                                      >
+                                        <span>Work</span>
+                                        <ExternalLink className="h-3 w-3" />
+                                      </a>
+                                    )}
+                                    <div className="flex items-center gap-1 text-amber-400">
+                                      <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                                      <span style={{ color: c.primaryText }} className="text-xs sm:text-[13px] font-bold tabular-nums">
+                                        {ratingNum.toFixed(1)}
+                                      </span>
+                                    </div>
                                   </div>
                                 </div>
 
-                                <div className="flex items-center gap-1.5 shrink-0">
-                                  <div className="flex items-center gap-1 text-amber-400">
-                                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                                    <span style={{ color: c.primaryText }} className="text-xs sm:text-[13px] font-bold tabular-nums">
-                                      {ratingNum.toFixed(1)}
+                                {/* Full Review Text (Not truncated) */}
+                                {rev.comment && rev.comment.trim() && (
+                                  <p
+                                    style={{ color: c.secondaryText }}
+                                    className="text-xs leading-relaxed font-normal whitespace-pre-line pl-9 pr-1"
+                                  >
+                                    “{rev.comment.trim()}”
+                                  </p>
+                                )}
+
+                                {/* Optional Project Tag */}
+                                {rev.projectTitle && (
+                                  <div className="pl-9 pt-0.5">
+                                    <span
+                                      style={{
+                                        backgroundColor: c.accentSoft,
+                                        borderColor: c.accentBorder,
+                                        color: c.accentText,
+                                      }}
+                                      className="inline-block text-[10px] font-semibold px-2 py-0.5 rounded-md border"
+                                    >
+                                      {rev.projectTitle}
                                     </span>
                                   </div>
-                                </div>
+                                )}
                               </div>
                             );
                           })}
