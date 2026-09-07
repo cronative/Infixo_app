@@ -49,6 +49,7 @@ import {
   OtherSocialAccount,
   CreatorProfileSection,
   DEFAULT_PROFILE_SECTIONS,
+  EMPTY_SOCIAL_ACCOUNTS,
 } from "@/types";
 import { formatCount } from "@/utils/format";
 import { MediaKitService, SAMPLE_PACKAGES } from "@/services/MediaKitService";
@@ -443,14 +444,23 @@ const DARK_THEME_KEYS = new Set([
   "sunset-studio",
 ]);
 
+const EMPTY_PROFILE_FALLBACK: CreatorProfile = {
+  photoDataUrl: null,
+  displayName: "",
+  username: "",
+  category: null,
+  bio: "",
+  updatedAt: new Date().toISOString(),
+};
+
 export function isDarkTheme(themeKey: string = "minimal-white"): boolean {
   return DARK_THEME_KEYS.has(themeKey);
 }
 
 export function LivePreviewCard({
-  profile,
-  socials,
-  series = [],
+  profile: incomingProfile,
+  socials: incomingSocials,
+  series: incomingSeries = [],
   customLinks: passedCustomLinks,
   mediaKitPackages: passedMediaKitPackages,
   mediaKitSettings: passedMediaKitSettings,
@@ -470,6 +480,10 @@ export function LivePreviewCard({
   isOnboarding: isOnboardingProp,
   isFinishStep: isFinishStepProp,
 }: LivePreviewCardProps) {
+  const profile: CreatorProfile = incomingProfile || EMPTY_PROFILE_FALLBACK;
+  const socials: SocialAccounts = incomingSocials || EMPTY_SOCIAL_ACCOUNTS;
+  const series: Series[] = incomingSeries || [];
+
   const { showToast } = useToast();
   const [expandedSeriesId, setExpandedSeriesId] = useState<string | null>(null);
   const [selectedSeriesDetail, setSelectedSeriesDetail] = useState<Series | null>(null);

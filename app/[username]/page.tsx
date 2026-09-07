@@ -222,9 +222,11 @@ export default function PublicProfilePage() {
           try {
             const {
               profileRepository,
+              socialRepository,
               seriesRepository,
               customLinksRepository,
               themeRepository,
+              reviewsRepository,
               teamRepository,
               brandsRepository,
               collaborationsRepository,
@@ -237,13 +239,15 @@ export default function PublicProfilePage() {
               setProfile({ ...local, username: local.username || usernameParam });
               const localTheme = themeRepository.get() || local.themeKey || "minimal-white";
               setTheme(localTheme as ThemeKey);
-              setSeries(seriesRepository.getAll());
-              setCustomLinks(customLinksRepository.get());
-              setTeam(teamRepository.get());
-              setBrands(brandsRepository.getAll());
-              setCollaborations(collaborationsRepository.getAll());
-              setOtherSocials(otherSocialsRepository.getAll());
-              setSections(sectionsRepository.getAll());
+              setSocials(socialRepository.get() || EMPTY_SOCIAL_ACCOUNTS);
+              setSeries(seriesRepository.getAll() || []);
+              setCustomLinks(customLinksRepository.get() || []);
+              setReviews(reviewsRepository.getAll() || []);
+              setTeam(teamRepository.get() || { members: [] });
+              setBrands(brandsRepository.getAll() || []);
+              setCollaborations(collaborationsRepository.getAll() || []);
+              setOtherSocials(otherSocialsRepository.getAll() || []);
+              setSections(sectionsRepository.getAll() || []);
               setNotFound(false);
               setLoaded(true);
               return;
