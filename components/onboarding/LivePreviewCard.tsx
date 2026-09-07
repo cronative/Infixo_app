@@ -954,13 +954,15 @@ export function LivePreviewCard({
       {/* Top Action Bar (Rendered only on main profile view) */}
       {!selectedSeriesDetail && (
         <div className="relative z-10 flex items-center justify-between w-full mb-6 px-0.5">
-          <div
-            className="tap-scale flex h-9 w-9 items-center justify-center rounded-xl text-white font-bold text-sm shadow-xs transition-all shrink-0 border border-white/20 select-none bg-[#B85C6B]"
+          <Link
+            href="/"
+            style={{ backgroundColor: c.accent }}
+            className="tap-scale flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-xs transition-all shrink-0 border border-white/20 select-none hover:scale-105 cursor-pointer"
             title="Inflixo"
             aria-label="Inflixo"
           >
-            I
-          </div>
+            <InflixoLogoIcon className="h-5 w-5 text-white" />
+          </Link>
 
           {!isOnboardingMode && (
             <div className="flex items-center gap-2">
