@@ -11,6 +11,7 @@ import {
   Sparkles,
   Eye,
   ArrowLeft,
+  Globe,
 } from "lucide-react";
 import { LogoStadiumLinkI } from "@/components/shared/Logo";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
@@ -174,10 +175,27 @@ export function SeriesDetailClient({
     return allEpisodes;
   }, [seasonsList, activeSeasonIndex, allEpisodes]);
 
+  const detectedPlatform = useMemo(() => {
+    if (series?.platform && series.platform.trim()) {
+      const p = series.platform.trim();
+      if (/youtube/i.test(p)) return "YouTube";
+      if (/instagram/i.test(p)) return "Instagram";
+      if (/facebook/i.test(p)) return "Facebook";
+      return p;
+    }
+    const firstUrl = allEpisodes[0]?.externalUrl || "";
+    if (firstUrl) {
+      if (/youtube\.com|youtu\.be/i.test(firstUrl)) return "YouTube";
+      if (/instagram\.com/i.test(firstUrl)) return "Instagram";
+      if (/facebook\.com/i.test(firstUrl)) return "Facebook";
+    }
+    return null;
+  }, [series?.platform, allEpisodes]);
+
   const platformInfo = useMemo(() => {
-    if (!series?.platform) return null;
-    return getPlatformInfo(series.platform);
-  }, [series?.platform]);
+    if (!detectedPlatform) return null;
+    return getPlatformInfo(detectedPlatform, allEpisodes[0]?.externalUrl);
+  }, [detectedPlatform, allEpisodes]);
 
   // Valid cover image: only when genuinely available and not errored
   const hasValidCover = Boolean(
@@ -285,6 +303,20 @@ export function SeriesDetailClient({
   const typ = themeMeta.typography;
   const eff = themeMeta.effects;
 
+  const genresList = series.genre
+    ? series.genre
+        .split(/[,•|/]/)
+        .map((g) => g.trim().replace(/^Genre:\s*/i, ""))
+        .filter(Boolean)
+    : [];
+
+  const langTag =
+    series.language &&
+    series.language.trim() &&
+    !genresList.some((g) => g.toLowerCase() === series.language!.trim().toLowerCase())
+      ? series.language.trim()
+      : null;
+
   return (
     <div
       style={{ backgroundColor: c.pageBackground }}
@@ -312,7 +344,7 @@ export function SeriesDetailClient({
       <FocusOverlay overlay={themeMeta.focusOverlay} />
 
       {/* 4. Centered Content */}
-      <main className="relative z-10 flex-1 flex flex-col mx-auto max-w-[520px] w-full px-3 sm:px-4 py-4 sm:py-8 animate-fade-in-up">
+      <main className="relative z-10 flex-1 flex flex-col mx-auto max-w-[520px] w-full px-3 sm:px-4 py-4 sm:py-6 animate-fade-in-up">
         {/* Centered Theme Card with min-h-full & flex layout */}
         <div
           style={{
@@ -328,7 +360,7 @@ export function SeriesDetailClient({
         >
           <div className="flex-1 flex flex-col">
             {/* 1. Full-Width Hero Cover Header (Maroon Gradient or Valid Poster) */}
-            <div className="relative w-full aspect-[21/9] min-h-[140px] sm:min-h-[160px] overflow-hidden bg-gradient-to-r from-[#B85C6B] via-[#A24B5A] to-[#8C3F4D] m-0 p-0 shrink-0">
+            <div className="relative w-full aspect-[21/9] min-h-[120px] sm:min-h-[140px] overflow-hidden bg-gradient-to-r from-[#B85C6B] via-[#A24B5A] to-[#8C3F4D] m-0 p-0 shrink-0">
               {hasValidCover && (
                 <>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -343,7 +375,7 @@ export function SeriesDetailClient({
               )}
 
               {/* Top Action Bar on Cover */}
-              <header className="absolute top-3 inset-x-3 sm:top-4 sm:inset-x-4 z-20 flex items-center justify-between">
+              <header className="absolute top-3 inset-x-3 sm:top-3.5 sm:inset-x-3.5 z-20 flex items-center justify-between">
                 {/* Top Left: Back Button + circular Inflixo Logo */}
                 <div className="flex items-center gap-2">
                   <button
@@ -355,7 +387,7 @@ export function SeriesDetailClient({
                         router.push(profileUrl);
                       }
                     }}
-                    className="tap-scale flex h-8.5 w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-black/55 active:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
+                    className="tap-scale flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-black/55 active:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
                     title={`Back to @${username}`}
                     aria-label={`Back to @${username}`}
                   >
@@ -365,7 +397,7 @@ export function SeriesDetailClient({
                   <Link
                     href="/"
                     style={{ backgroundColor: c.accent }}
-                    className="tap-scale flex h-8.5 w-8.5 items-center justify-center rounded-full text-white shadow-xs transition-all shrink-0 border border-white/25 hover:scale-105 cursor-pointer select-none"
+                    className="tap-scale flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-full text-white shadow-xs transition-all shrink-0 border border-white/25 hover:scale-105 cursor-pointer select-none"
                     title="Inflixo Home"
                     aria-label="Inflixo Home"
                   >
@@ -378,7 +410,7 @@ export function SeriesDetailClient({
                   <button
                     type="button"
                     onClick={handleCopyLink}
-                    className="tap-scale flex h-8.5 w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-black/55 active:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
+                    className="tap-scale flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-black/55 active:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
                     title="Copy series link"
                     aria-label="Copy series link"
                   >
@@ -388,7 +420,7 @@ export function SeriesDetailClient({
                   <button
                     type="button"
                     onClick={() => setIsShareModalOpen(true)}
-                    className="tap-scale flex h-8.5 w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-black/55 active:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
+                    className="tap-scale flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-black/55 active:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
                     title="Share series"
                     aria-label="Share series"
                   >
@@ -398,16 +430,21 @@ export function SeriesDetailClient({
               </header>
 
               {/* Bottom Right Overlay: Platform */}
-              {series.platform && (
+              {detectedPlatform && (
                 <div className="absolute bottom-2.5 right-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold shadow-sm">
-                  {platformInfo?.icon}
-                  <span>{platformInfo?.name}</span>
+                  {detectedPlatform === "YouTube" && <YoutubeIcon className="h-2.5 w-2.5 text-red-500" />}
+                  {detectedPlatform === "Instagram" && <InstagramIcon className="h-2.5 w-2.5 text-pink-500" />}
+                  {detectedPlatform === "Facebook" && <FacebookIcon className="h-2.5 w-2.5 text-blue-500" />}
+                  {detectedPlatform !== "YouTube" && detectedPlatform !== "Instagram" && detectedPlatform !== "Facebook" && (
+                    <Globe className="h-2.5 w-2.5 text-white" />
+                  )}
+                  <span>{detectedPlatform}</span>
                 </div>
               )}
             </div>
 
             {/* 2. BODY CONTENT: TITLE, DESCRIPTION, PILL TAGS, EPISODES */}
-            <div className="p-5 sm:p-7 pt-6 sm:pt-7 flex-1 flex flex-col">
+            <div className="p-4 sm:p-5 pt-4 sm:pt-5 flex-1 flex flex-col">
               {/* Title & Description & Genre Tags */}
               <div className="text-center px-1">
                 <h1
@@ -416,7 +453,7 @@ export function SeriesDetailClient({
                     fontFamily: typ.headingFontFamily,
                     fontWeight: typ.headingWeight as any,
                   }}
-                  className="text-xl sm:text-2xl font-extrabold leading-tight tracking-tight text-[#241618]"
+                  className="text-lg sm:text-xl font-extrabold leading-snug tracking-tight text-[#241618]"
                 >
                   {series.title}
                 </h1>
@@ -424,51 +461,70 @@ export function SeriesDetailClient({
                 {series.description && series.description.trim() && (
                   <p
                     style={{ color: c.secondaryText }}
-                    className="mt-2 sm:mt-2.5 text-xs sm:text-sm leading-relaxed text-[#6B5A5D] font-normal max-w-md mx-auto"
+                    className="mt-1.5 text-xs sm:text-[13px] leading-relaxed text-[#6B5A5D] font-normal max-w-md mx-auto"
                   >
                     {series.description}
                   </p>
                 )}
 
-                {/* Category / Genre & Language Pill Tags */}
-                {(() => {
-                  const parts: string[] = [];
-                  if (series.genre) {
-                    const gItems = series.genre
-                      .split(/[,•|/]/)
-                      .map((g) => g.trim().replace(/^Genre:\s*/i, ""))
-                      .filter(Boolean);
-                    parts.push(...gItems);
-                  }
-                  if (series.language && series.language.trim()) {
-                    parts.push(series.language.trim());
-                  }
+                {/* Category / Genre / Platform Pill Tags */}
+                {(detectedPlatform || genresList.length > 0 || langTag) && (
+                  <div className="mt-2.5 flex flex-wrap items-center justify-center gap-1.5">
+                    {/* Platform Pill */}
+                    {detectedPlatform && (
+                      <span
+                        style={{
+                          backgroundColor: c.accentSoft,
+                          borderColor: c.accentBorder,
+                          color: c.accentText,
+                        }}
+                        className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border transition-all"
+                      >
+                        {detectedPlatform === "YouTube" && <YoutubeIcon className="h-2.5 w-2.5 text-red-500" />}
+                        {detectedPlatform === "Instagram" && <InstagramIcon className="h-2.5 w-2.5 text-pink-500" />}
+                        {detectedPlatform === "Facebook" && <FacebookIcon className="h-2.5 w-2.5 text-blue-500" />}
+                        {detectedPlatform !== "YouTube" && detectedPlatform !== "Instagram" && detectedPlatform !== "Facebook" && (
+                          <Globe className="h-2.5 w-2.5 text-[#8C3F4D]" />
+                        )}
+                        <span>{detectedPlatform}</span>
+                      </span>
+                    )}
 
-                  if (parts.length === 0) return null;
+                    {/* Genre Pills */}
+                    {genresList.map((tag, idx) => (
+                      <span
+                        key={idx}
+                        style={{
+                          backgroundColor: c.accentSoft,
+                          borderColor: c.accentBorder,
+                          color: c.accentText,
+                        }}
+                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border transition-all"
+                      >
+                        {tag}
+                      </span>
+                    ))}
 
-                  return (
-                    <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-                      {parts.map((tag, idx) => (
-                        <span
-                          key={idx}
-                          style={{
-                            backgroundColor: c.accentSoft,
-                            borderColor: c.accentBorder,
-                            color: c.accentText,
-                          }}
-                          className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-semibold border transition-all"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  );
-                })()}
+                    {/* Language Pill */}
+                    {langTag && (
+                      <span
+                        style={{
+                          backgroundColor: c.accentSoft,
+                          borderColor: c.accentBorder,
+                          color: c.accentText,
+                        }}
+                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border transition-all"
+                      >
+                        {langTag}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Seasons Filter Tabs (if multiple seasons) */}
               {seasonsList.length > 1 && (
-                <div className="mt-6 flex items-center justify-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                <div className="mt-3.5 flex items-center justify-center gap-2 overflow-x-auto pb-1 scrollbar-none">
                   {seasonsList.map((sn, idx) => (
                     <button
                       key={sn.id || idx}
@@ -479,7 +535,7 @@ export function SeriesDetailClient({
                           ? { backgroundColor: c.accentSoft, borderColor: c.accentBorder, color: c.accentText }
                           : { backgroundColor: c.cardBackground, borderColor: c.border, color: c.secondaryText }
                       }
-                      className="tap-scale px-3 py-1 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer border"
+                      className="tap-scale px-2.5 py-1 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer border"
                     >
                       {sn.title || `Season ${sn.seasonNumber || idx + 1}`} ({sn.episodes?.length || 0})
                     </button>
@@ -488,7 +544,7 @@ export function SeriesDetailClient({
               )}
 
               {/* 3. EPISODES HEADER & GROUPED LIST */}
-              <div className="mt-8 sm:mt-9 space-y-3">
+              <div className="mt-5 sm:mt-6 space-y-2">
                 <div className="flex items-center justify-between px-1">
                   <span
                     style={{ color: c.mutedText }}
@@ -503,7 +559,7 @@ export function SeriesDetailClient({
                 {currentEpisodes.length === 0 ? (
                   <div
                     style={{ borderColor: c.border, color: c.mutedText }}
-                    className="p-6 text-center text-xs font-semibold rounded-2xl border border-dashed border-[#E4DAD5] bg-[#F7F0EA]/30 text-[#6B5A5D]"
+                    className="p-5 text-center text-xs font-semibold rounded-2xl border border-dashed border-[#E4DAD5] bg-[#F7F0EA]/30 text-[#6B5A5D]"
                   >
                     No episodes uploaded for this series yet.
                   </div>
@@ -527,33 +583,33 @@ export function SeriesDetailClient({
                           target={ep.externalUrl ? "_blank" : undefined}
                           rel="noopener noreferrer"
                           onClick={() => trackEpisodeClick(ep)}
-                          className="group flex items-center justify-between w-full px-4 py-3.5 transition-colors hover:bg-[#F7F0EA]/50 cursor-pointer"
+                          className="group flex items-center justify-between w-full px-3.5 py-2.5 sm:py-3 transition-colors hover:bg-[#F7F0EA]/50 cursor-pointer"
                         >
                           {/* Left: Number & Title */}
-                          <div className="flex items-center gap-3.5 min-w-0 pr-2">
+                          <div className="flex items-center gap-3 min-w-0 pr-2">
                             <span
                               style={{ color: c.mutedText }}
-                              className="text-xs font-mono font-medium text-[#6B5A5D] w-6 shrink-0"
+                              className="text-xs font-mono font-medium text-[#6B5A5D] w-5 shrink-0"
                             >
                               {partNumStr}
                             </span>
                             <span
                               style={{ color: c.primaryText }}
-                              className="text-xs sm:text-sm font-bold text-[#241618] truncate group-hover:text-[#8C3F4D] transition-colors"
+                              className="text-xs sm:text-[13px] font-bold text-[#241618] truncate group-hover:text-[#8C3F4D] transition-colors"
                             >
                               {epTitleStr}
                             </span>
                           </div>
 
-                          {/* Right: Enlarged 34px Circular View Icon */}
+                          {/* Right: Circular View Icon */}
                           <div
                             style={{
                               borderColor: c.border,
                               color: c.accentText,
                             }}
-                            className="h-8.5 w-8.5 rounded-full border border-[#E4DAD5] bg-white text-[#8C3F4D] flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-[#F3DDE0] group-hover:border-[#B85C6B]/30 group-hover:scale-105 transition-all"
+                            className="h-8 w-8 rounded-full border border-[#E4DAD5] bg-white text-[#8C3F4D] flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-[#F3DDE0] group-hover:border-[#B85C6B]/30 group-hover:scale-105 transition-all"
                           >
-                            <Eye className="h-4 w-4" />
+                            <Eye className="h-3.5 w-3.5" />
                           </div>
                         </a>
                       );
@@ -567,7 +623,7 @@ export function SeriesDetailClient({
           {/* 4. PINNED MADE WITH INFLIXO FOOTER */}
           <div
             style={{ borderColor: c.divider }}
-            className="flex items-center justify-center px-5 pt-4 pb-5 select-none mt-auto border-t border-[#E4DAD5]"
+            className="flex items-center justify-center px-5 pt-3 pb-4 select-none mt-6 border-t border-[#E4DAD5]"
           >
             <Link
               href="/"
@@ -576,7 +632,7 @@ export function SeriesDetailClient({
                 borderColor: c.border,
                 color: c.secondaryText,
               }}
-              className="tap-scale inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#E4DAD5] bg-white text-[#6B5A5D] text-[11px] font-bold shadow-2xs hover:scale-105 transition-all"
+              className="tap-scale inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#E4DAD5] bg-white text-[#6B5A5D] text-[11px] font-bold shadow-2xs hover:scale-105 transition-all"
             >
               <span style={{ color: c.accentText }} className="inline-flex items-center text-[#8C3F4D]">
                 <LogoStadiumLinkI className="h-3.5 w-3.5" />
