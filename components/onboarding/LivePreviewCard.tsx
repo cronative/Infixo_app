@@ -934,13 +934,9 @@ export function LivePreviewCard({
         selectedSeriesDetail
           ? "min-h-[calc(100dvh-4rem)] sm:min-h-[calc(100dvh-5rem)] p-0"
           : isFull
-          ? "p-4 sm:p-7 pt-6 sm:pt-8"
-          : "p-3.5 sm:p-5 pt-5 sm:pt-7"
-      } ${
-        isInformationalMode || isDashboardPreview
-          ? "rounded-[24px] sm:rounded-[28px] border shadow-[var(--desktop-surface-shadow)]"
-          : "border-0 sm:border rounded-none sm:rounded-[28px] shadow-none sm:shadow-[var(--desktop-surface-shadow)]"
-      } transition-all`}
+          ? "p-6 sm:p-8 pt-7 sm:pt-8"
+          : "p-4 sm:p-6 pt-6 sm:pt-8"
+      } rounded-[24px] border shadow-md transition-all`}
     >
       {/* Ambient Animation in Preview mode when theme supports it */}
       {themeMeta.animation?.type !== "none" && (
@@ -957,18 +953,18 @@ export function LivePreviewCard({
 
       {/* Top Action Bar (Rendered only on main profile view) */}
       {!selectedSeriesDetail && (
-        <div className="relative z-10 flex items-center justify-between w-full mb-3.5 sm:mb-4 px-0.5">
+        <div className="relative z-10 flex items-center justify-between w-full mb-6 px-0.5">
           <div
-            className="tap-scale flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full text-white shadow-xs transition-all shrink-0 border border-white/20 select-none"
+            className="tap-scale flex h-9 w-9 items-center justify-center rounded-full text-white shadow-xs transition-all shrink-0 border border-white/20 select-none"
             style={{ backgroundColor: c.accent }}
             title="Inflixo"
             aria-label="Inflixo"
           >
-            <InflixoLogoIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+            <InflixoLogoIcon className="h-4.5 w-4.5 text-white" />
           </div>
 
           {!isOnboardingMode && (
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={handleCopyClick}
@@ -977,11 +973,11 @@ export function LivePreviewCard({
                   borderColor: c.border,
                   color: c.secondaryText,
                 }}
-                className="tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 cursor-pointer"
+                className="tap-scale flex h-9 w-9 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 cursor-pointer"
                 title="Copy profile link"
                 aria-label="Copy profile link"
               >
-                <Copy className="h-3.5 w-3.5" />
+                <Copy className="h-4 w-4" />
               </button>
 
               <button
@@ -992,11 +988,11 @@ export function LivePreviewCard({
                   borderColor: c.border,
                   color: c.secondaryText,
                 }}
-                className="tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 cursor-pointer"
+                className="tap-scale flex h-9 w-9 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 cursor-pointer"
                 title="Share profile"
                 aria-label="Share profile"
               >
-                <Share2 className="h-3.5 w-3.5" />
+                <Share2 className="h-4 w-4" />
               </button>
             </div>
           )}
@@ -1343,19 +1339,19 @@ export function LivePreviewCard({
           {/* Creator Identity Header */}
           <div className="relative z-10 flex flex-col items-center text-center">
             {/* Profile Avatar */}
-            <div className="relative">
+            <div className="relative inline-block mx-auto">
               <CreatorAvatar
                 src={profile.photoDataUrl}
                 name={profile.displayName || "Creator"}
-                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full aspect-square object-cover overflow-hidden border-2 shadow-md mx-auto"
-                style={{ borderColor: c.border }}
+                className="w-24 h-24 sm:w-28 sm:h-28 rounded-full aspect-square object-cover overflow-hidden border-2 border-white ring-4 ring-[#F3DDE0] shadow-md mx-auto"
+                style={{ borderColor: "#FFFFFF" }}
                 textClassName="text-xl sm:text-2xl font-extrabold text-white"
                 fallbackBgClass="bg-[#B85C6B]"
               />
             </div>
 
             {/* Creator Name & Verified Checkmark */}
-            <div className="mt-3.5 sm:mt-4 flex items-center justify-center gap-1.5 max-w-full">
+            <div className="mt-4 flex items-center justify-center gap-1.5 max-w-full">
               <h1
                 style={{
                   color: c.primaryText,
@@ -1373,7 +1369,7 @@ export function LivePreviewCard({
               )}
             </div>
 
-            {/* Creator Handle */}
+            {/* Creator Handle (4px under name) */}
             <p
               style={{ color: c.secondaryText }}
               className="mt-1 text-xs font-semibold"
@@ -1381,7 +1377,7 @@ export function LivePreviewCard({
               @{profile.username || "username"}
             </p>
 
-            {/* Category Chips */}
+            {/* Category Chips (16px under handle) */}
             {visibilitySettings.showContentCategory !== false && (() => {
               const allChips: string[] = [];
               if (profile.category) {
@@ -1404,7 +1400,7 @@ export function LivePreviewCard({
               const visibleChips = allChips.slice(0, 3);
 
               return (
-                <div className="mt-2.5 flex flex-wrap items-center justify-center gap-1.5 max-w-xs">
+                <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5 max-w-xs">
                   {visibleChips.map((chip, idx) => (
                     <span
                       key={idx}
@@ -1413,7 +1409,7 @@ export function LivePreviewCard({
                         borderColor: c.border,
                         color: c.secondaryText,
                       }}
-                      className="backdrop-blur-md text-[11px] font-semibold px-2.5 py-0.5 rounded-full border shadow-2xs"
+                      className="backdrop-blur-md text-xs font-semibold px-3.5 py-1.5 rounded-full border shadow-2xs"
                     >
                       {chip}
                     </span>
@@ -1422,19 +1418,19 @@ export function LivePreviewCard({
               );
             })()}
 
-            {/* Bio */}
+            {/* Bio (16px under chips/handle) */}
             {profile.bio && profile.bio.trim() && (
               <p
                 style={{ color: c.secondaryText }}
-                className="mt-2.5 text-xs leading-relaxed max-w-md mx-auto font-normal px-2"
+                className="mt-4 text-xs sm:text-sm leading-relaxed max-w-md mx-auto font-normal px-2"
               >
                 {profile.bio}
               </p>
             )}
 
-            {/* Quick Social Icon Buttons */}
+            {/* Quick Social Icon Buttons (20px under bio) */}
             {(hasInsta || hasYt || hasFb) && (
-              <div className="mt-3.5 sm:mt-4 flex items-center justify-center gap-2.5 sm:gap-3">
+              <div className="mt-5 flex items-center justify-center gap-3.5">
                 {hasInsta && (
                   <a
                     href={instaUrl}
@@ -1445,11 +1441,11 @@ export function LivePreviewCard({
                       backgroundColor: c.cardBackground,
                       borderColor: c.border,
                     }}
-                    className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-xl border transition-all shadow-2xs hover:scale-110"
+                    className="tap-scale flex h-10 w-10 items-center justify-center rounded-xl border transition-all shadow-2xs hover:-translate-y-0.5 hover:shadow-xs"
                     title={`Instagram: ${instaHandle ? `@${instaHandle.replace(/^@/, "")}` : "Visit Profile"}`}
                     aria-label="Instagram Profile"
                   >
-                    <InstagramIcon className="h-4.5 w-4.5" />
+                    <InstagramIcon className="h-5 w-5" />
                   </a>
                 )}
 
@@ -1463,7 +1459,7 @@ export function LivePreviewCard({
                       backgroundColor: c.cardBackground,
                       borderColor: c.border,
                     }}
-                    className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-xl border transition-all shadow-2xs hover:scale-110"
+                    className="tap-scale flex h-10 w-10 items-center justify-center rounded-xl border transition-all shadow-2xs hover:-translate-y-0.5 hover:shadow-xs"
                     title={`YouTube: ${ytHandle ? `@${ytHandle.replace(/^@/, "")}` : "Visit Channel"}`}
                     aria-label="YouTube Channel"
                   >
@@ -1481,17 +1477,17 @@ export function LivePreviewCard({
                       backgroundColor: c.cardBackground,
                       borderColor: c.border,
                     }}
-                    className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-xl border transition-all shadow-2xs hover:scale-110"
+                    className="tap-scale flex h-10 w-10 items-center justify-center rounded-xl border transition-all shadow-2xs hover:-translate-y-0.5 hover:shadow-xs"
                     title={`Facebook: ${fbHandle ? `@${fbHandle.replace(/^@/, "")}` : "Visit Page"}`}
                     aria-label="Facebook Page"
                   >
-                    <FacebookIcon className="h-4.5 w-4.5" />
+                    <FacebookIcon className="h-5 w-5" />
                   </a>
                 )}
               </div>
             )}
 
-            {/* Clean Total Fanbase Card */}
+            {/* Clean Total Fanbase Card (28px section gap) */}
             {visibilitySettings.showFanbase !== false && (
               <div
                 style={{
@@ -1499,11 +1495,11 @@ export function LivePreviewCard({
                   borderColor: c.border,
                   boxShadow: eff.cardShadow,
                 }}
-                className="mt-5 sm:mt-6 rounded-2xl p-3.5 sm:p-4 border text-center w-full space-y-0.5"
+                className="mt-7 rounded-2xl py-3.5 px-4 border text-center w-full space-y-0.5"
               >
                 <span
                   style={{ color: c.accentText }}
-                  className="text-[10px] font-bold tracking-wider uppercase block"
+                  className="text-[11px] font-bold tracking-wider uppercase block"
                 >
                   TOTAL FANBASE
                 </span>
@@ -1513,13 +1509,13 @@ export function LivePreviewCard({
                     fontFamily: typ.headingFontFamily,
                     fontWeight: typ.headingWeight as any,
                   }}
-                  className="text-2xl sm:text-3xl font-black tabular-nums"
+                  className="text-[34px] leading-tight font-extrabold tabular-nums"
                 >
                   {formatCount(totalAudience)}
                 </p>
                 <p
                   style={{ color: c.mutedText }}
-                  className="text-[11px] font-medium"
+                  className="text-xs font-medium mt-0.5"
                 >
                   {(() => {
                     const connectedPlatformsCount = activeSocialList.filter((s) => s.hasAccount && s.visible).length;
@@ -1532,10 +1528,10 @@ export function LivePreviewCard({
             )}
           </div>
 
-          {/* Connected Social Accounts List */}
+          {/* Connected Social Accounts List (28px section gap) */}
           {activeSocialList.length > 0 && (
-            <div className="relative z-10 mt-3.5 space-y-1.5 w-full">
-              <div className="grid grid-cols-1 gap-2 w-full">
+            <div className="relative z-10 mt-7 space-y-2 w-full">
+              <div className="grid grid-cols-1 gap-2.5 w-full">
                 {activeSocialList.map((item) => (
                   <a
                     key={item.platform}
@@ -1548,18 +1544,18 @@ export function LivePreviewCard({
                       borderColor: c.border,
                       boxShadow: eff.cardShadow,
                     }}
-                    className="group rounded-xl p-2.5 sm:p-3 transition-all flex items-center justify-between border"
+                    className="group rounded-xl p-3 sm:p-3.5 transition-all flex items-center justify-between border hover:shadow-xs"
                   >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <span className={`flex h-7.5 w-7.5 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-lg ${item.badgeBg}`}>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className={`flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-lg ${item.badgeBg}`}>
                         {item.icon}
                       </span>
                       <div className="min-w-0 text-left space-y-0.5">
-                        <p style={{ color: c.primaryText }} className="truncate text-xs font-bold">
+                        <p style={{ color: c.primaryText }} className="truncate text-xs sm:text-sm font-bold">
                           {item.label}
                         </p>
                         {item.handle && (
-                          <p style={{ color: c.mutedText }} className="truncate text-[10px] font-medium">
+                          <p style={{ color: c.mutedText }} className="truncate text-[11px] font-medium">
                             @{item.handle.replace(/^@/, "")}
                           </p>
                         )}
@@ -1567,9 +1563,9 @@ export function LivePreviewCard({
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       {item.count > 0 && (
-                        <span style={{ color: c.primaryText }} className="text-xs font-bold tabular-nums">
+                        <span style={{ color: c.primaryText }} className="text-xs sm:text-sm font-bold tabular-nums">
                           {formatCount(item.count)}{" "}
-                          <span style={{ color: c.mutedText }} className="font-normal text-[10px]">{item.unit.toLowerCase()}</span>
+                          <span style={{ color: c.mutedText }} className="font-normal text-[11px]">{item.unit.toLowerCase()}</span>
                         </span>
                       )}
                       <ExternalLink style={{ color: c.secondaryText }} className="h-3.5 w-3.5 transition-colors" />
@@ -1580,13 +1576,13 @@ export function LivePreviewCard({
             </div>
           )}
 
-          {/* Custom Links List */}
+          {/* Custom Links List (28px section gap) */}
           {visibilitySettings.showCustomLinks !== false && customLinksList && customLinksList.filter((l) => l.isEnabled !== false && l.title && l.url).length > 0 && (
-            <div className="relative z-10 mt-4 space-y-1.5 w-full text-left">
+            <div className="relative z-10 mt-7 space-y-2 w-full text-left">
               <span style={{ color: c.mutedText }} className="text-[11px] font-bold uppercase tracking-wider px-1 block">
                 LINKS
               </span>
-              <div className="grid grid-cols-1 gap-2 w-full">
+              <div className="grid grid-cols-1 gap-2.5 w-full">
                 {customLinksList
                   .filter((l) => l.isEnabled !== false && l.title && l.url)
                   .map((link) => (
@@ -1601,18 +1597,18 @@ export function LivePreviewCard({
                         borderColor: c.border,
                         boxShadow: eff.cardShadow,
                       }}
-                      className="group min-h-[54px] rounded-xl px-3.5 py-2.5 text-xs font-bold transition-all flex items-center justify-between border cursor-pointer hover:scale-[1.005]"
+                      className="group min-h-[54px] rounded-xl px-4 py-3 text-xs sm:text-sm font-bold transition-all flex items-center justify-between border cursor-pointer hover:scale-[1.005]"
                     >
-                      <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="flex items-center gap-3 min-w-0">
                         <span
                           style={{
                             backgroundColor: c.accentSoft,
                             borderColor: c.accentBorder,
                             color: c.accentText,
                           }}
-                          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border"
+                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border"
                         >
-                          <LinkIcon className="h-3.5 w-3.5" />
+                          <LinkIcon className="h-4 w-4" />
                         </span>
                         <span style={{ color: c.primaryText }} className="truncate">{link.title}</span>
                       </div>
@@ -1633,7 +1629,7 @@ export function LivePreviewCard({
                 backgroundColor: c.cardBackground,
                 borderColor: c.border,
               }}
-              className="relative z-10 mt-5 rounded-2xl p-4 border border-dashed text-center space-y-1.5 transition-all"
+              className="relative z-10 mt-7 rounded-2xl p-4 border border-dashed text-center space-y-1.5 transition-all"
             >
               <div style={{ color: c.accentText }} className="flex items-center justify-center gap-1.5 text-xs font-bold">
                 <Sparkles className="h-3.5 w-3.5" />
@@ -1669,7 +1665,7 @@ export function LivePreviewCard({
             const showSegmentedTabs = visibleTabKeys.length >= 2;
 
             return (
-              <div className="relative z-10 mt-5 w-full text-left">
+              <div className="relative z-10 mt-7 w-full text-left">
                 {/* Segmented Control (Tabs) */}
                 {showSegmentedTabs ? (
                   <div
@@ -1677,7 +1673,7 @@ export function LivePreviewCard({
                       backgroundColor: c.cardBackground,
                       borderColor: c.border,
                     }}
-                    className="flex items-center gap-1 p-1 rounded-xl sm:rounded-2xl border mb-3 sm:mb-3.5"
+                    className="flex items-center gap-1 p-1 rounded-xl sm:rounded-2xl border mb-3.5 sm:mb-4"
                   >
                     {showSeriesTab && (
                       <button
@@ -1686,9 +1682,13 @@ export function LivePreviewCard({
                         style={
                           resolvedTab === "series"
                             ? { backgroundColor: c.accentSoft, borderColor: c.accentBorder, color: c.accentText }
-                            : { color: c.secondaryText }
+                            : {}
                         }
-                        className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg sm:rounded-xl text-xs font-bold transition-all cursor-pointer border border-transparent"
+                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg sm:rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                          resolvedTab === "series"
+                            ? "border-transparent shadow-xs"
+                            : "text-[#6B5A5D] hover:text-[#241618] border-transparent"
+                        }`}
                       >
                         <span>Content ({series ? series.length : 0})</span>
                       </button>
@@ -1701,9 +1701,13 @@ export function LivePreviewCard({
                         style={
                           resolvedTab === "gigs"
                             ? { backgroundColor: c.accentSoft, borderColor: c.accentBorder, color: c.accentText }
-                            : { color: c.secondaryText }
+                            : {}
                         }
-                        className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg sm:rounded-xl text-xs font-bold transition-all cursor-pointer border border-transparent"
+                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg sm:rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                          resolvedTab === "gigs"
+                            ? "border-transparent shadow-xs"
+                            : "text-[#6B5A5D] hover:text-[#241618] border-transparent"
+                        }`}
                       >
                         <span>Services ({activePkgs.length})</span>
                       </button>
@@ -1716,9 +1720,13 @@ export function LivePreviewCard({
                         style={
                           resolvedTab === "reviews"
                             ? { backgroundColor: c.accentSoft, borderColor: c.accentBorder, color: c.accentText }
-                            : { color: c.secondaryText }
+                            : {}
                         }
-                        className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg sm:rounded-xl text-xs font-bold transition-all cursor-pointer border border-transparent"
+                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg sm:rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                          resolvedTab === "reviews"
+                            ? "border-transparent shadow-xs"
+                            : "text-[#6B5A5D] hover:text-[#241618] border-transparent"
+                        }`}
                       >
                         <span>Reviews ({approvedReviews.length})</span>
                       </button>
@@ -2235,13 +2243,13 @@ export function LivePreviewCard({
           {!isOnboardingMode && (
             <div
               style={{
-                backgroundColor: c.cardBackground,
+                backgroundColor: "var(--color-surface-alt, #fbfbfb)",
                 borderColor: c.border,
                 boxShadow: eff.cardShadow,
               }}
-              className="relative z-10 mt-4 sm:mt-5 rounded-2xl p-3.5 sm:p-4 border transition-all text-left flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+              className="relative z-10 mt-7 rounded-2xl p-4 sm:p-5 border transition-all text-left flex flex-col sm:flex-row sm:items-center justify-between gap-3.5"
             >
-              <div className="space-y-0.5">
+              <div className="space-y-1">
                 <h3
                   style={{
                     color: c.primaryText,
@@ -2250,10 +2258,10 @@ export function LivePreviewCard({
                   }}
                   className="text-xs sm:text-sm font-bold flex items-center gap-1.5"
                 >
-                  <Briefcase style={{ color: c.accentText }} className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  <Briefcase style={{ color: c.accentText }} className="h-4 w-4" />
                   Work with @{profile.username || "creator"}
                 </h3>
-                <p style={{ color: c.secondaryText }} className="text-[11px] sm:text-xs">
+                <p style={{ color: c.secondaryText }} className="text-[11px] sm:text-xs leading-relaxed">
                   Interested in brand partnerships, sponsorships, or custom campaigns?
                 </p>
               </div>
@@ -2266,7 +2274,7 @@ export function LivePreviewCard({
                   borderColor: c.accentBorder,
                   color: c.accentText,
                 }}
-                className="inline-flex items-center justify-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer border shrink-0 self-start sm:self-auto hover:brightness-110"
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all cursor-pointer border shrink-0 w-full sm:w-auto hover:brightness-105"
               >
                 <Send className="h-3.5 w-3.5" />
                 <span>Send Brand Inquiry</span>
@@ -2276,15 +2284,15 @@ export function LivePreviewCard({
         </>
       )}
 
-      {/* Subtle Inflixo Attribution */}
+      {/* Subtle Inflixo Attribution (32px bottom margin) */}
       <div
         style={{ borderColor: c.divider }}
-        className={`relative z-10 mt-auto flex items-center justify-center px-5 pt-4 pb-5 select-none border-t ${
+        className={`relative z-10 mt-auto flex items-center justify-center px-5 pt-5 pb-8 mb-8 select-none border-t ${
           selectedSeriesDetail
             ? ""
             : isFull
-            ? "-mx-4 sm:-mx-7 -mb-4 sm:-mb-7 mt-6 sm:mt-8"
-            : "-mx-3.5 sm:-mx-5 -mb-3.5 sm:-mb-5 mt-6 sm:mt-8"
+            ? "-mx-6 sm:-mx-8 -mb-6 sm:-mb-8 mt-7 sm:mt-8"
+            : "-mx-4 sm:-mx-6 -mb-4 sm:-mb-6 mt-7 sm:mt-8"
         }`}
       >
         <a
@@ -2309,7 +2317,7 @@ export function LivePreviewCard({
   );
 
   return (
-    <div className={`relative w-full mx-auto flex-1 flex flex-col min-h-full transition-all ${isFull ? "max-w-4xl" : "max-w-xl sm:max-w-[620px]"}`}>
+    <div className="relative w-full mx-auto flex-1 flex flex-col min-h-full transition-all max-w-[520px]">
       {cardContent}
 
       {/* Collaboration Inquiry Modal */}
@@ -2361,9 +2369,9 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
     return {
       name: "YouTube",
       icon: <YoutubeIcon className="h-3 w-3 text-white" />,
-      badgeClass: "bg-red-600 text-white shadow-2xs",
+      badgeClass: "bg-[#FF0000] text-white shadow-2xs",
       chipClass: "bg-red-50 text-red-700 border-red-200/80",
-      textColor: "text-red-600",
+      textColor: "text-[#FF0000]",
     };
   }
   if (p.includes("instagram") || u.includes("instagram.com")) {
@@ -2379,9 +2387,9 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
     return {
       name: "Facebook",
       icon: <FacebookIcon className="h-3 w-3 text-white" />,
-      badgeClass: "bg-blue-600 text-white shadow-2xs",
+      badgeClass: "bg-[#1877F2] text-white shadow-2xs",
       chipClass: "bg-blue-50 text-blue-700 border-blue-200/80",
-      textColor: "text-blue-600",
+      textColor: "text-[#1877F2]",
     };
   }
   return {
@@ -2469,9 +2477,9 @@ export function PreviewSeriesItem({
               borderColor: c.accentBorder,
               color: c.accentText,
             }}
-            className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-xl mt-0.5 border shadow-2xs"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl mt-0.5 border shadow-2xs"
           >
-            <Film className="h-4 w-4" />
+            <Film className="h-5 w-5" />
           </div>
 
           <div className="min-w-0 flex-1 space-y-1">

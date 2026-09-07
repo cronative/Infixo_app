@@ -463,7 +463,7 @@ export default function PublicProfilePage() {
       <FocusOverlay overlay={themeMeta.focusOverlay} />
 
       {/* 4. Centred Creator Profile Surface */}
-      <main className="relative z-10 flex-1 flex flex-col mx-auto w-full max-w-[640px] px-0 sm:px-4 py-0 sm:py-8 animate-fade-in-up">
+      <main className="relative z-10 flex-1 flex flex-col mx-auto w-full max-w-[520px] px-3 sm:px-4 py-4 sm:py-8 animate-fade-in-up">
         {/* Main Theme Profile Card (Renders Profile, Socials, Series, Services, Reviews & Custom Links) */}
         <ThemeCard
           themeKey={theme}
