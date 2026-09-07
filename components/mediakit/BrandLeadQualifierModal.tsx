@@ -80,8 +80,8 @@ export function BrandLeadQualifierModal({
       <form id="brand-lead-form" onSubmit={handleSendWhatsApp} className="flex flex-col flex-1 min-h-0">
         <ModalBody className="p-5 space-y-4 text-left">
           {/* Deliverable Summary Badge */}
-          <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3.5 flex items-center gap-3">
-            <Package className="h-4 w-4 text-[#803D63] shrink-0" />
+          <div className="rounded-xl border border-[#E4DAD5] bg-[#F8F7F3] p-3.5 flex items-center gap-3">
+            <Package className="h-4 w-4 text-[#B85C6B] shrink-0" />
             <div className="min-w-0 text-xs">
               <p className="font-bold text-[#181716] truncate">{packageName}</p>
               {deliverableText && <p className="text-[#797570] font-medium truncate mt-0.5">{deliverableText}</p>}
@@ -90,7 +90,7 @@ export function BrandLeadQualifierModal({
 
           <div className="space-y-1">
             <label className="block text-xs font-bold text-[#181716] flex items-center gap-1.5">
-              <Building2 className="h-3.5 w-3.5 text-[#803D63]" />
+              <Building2 className="h-3.5 w-3.5 text-[#B85C6B]" />
               <span>Brand or Agency name</span> <span className="text-[#C2414B]">*</span>
             </label>
             <input
@@ -99,7 +99,7 @@ export function BrandLeadQualifierModal({
               value={brandName}
               onChange={(e) => setBrandName(e.target.value)}
               placeholder="e.g. Puma India / Nike"
-              className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+              className="w-full rounded-xl border border-[#E4DAD5] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#B85C6B] focus:bg-white focus:outline-none transition-colors"
             />
           </div>
 
@@ -114,7 +114,7 @@ export function BrandLeadQualifierModal({
               value={budget}
               onChange={(e) => setBudget(e.target.value)}
               placeholder="e.g. ₹25,000 / $500 USD"
-              className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+              className="w-full rounded-xl border border-[#E4DAD5] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#B85C6B] focus:bg-white focus:outline-none transition-colors"
             />
           </div>
 
@@ -126,7 +126,7 @@ export function BrandLeadQualifierModal({
               type="text"
               value={selectedDeliverable}
               onChange={(e) => setSelectedDeliverable(e.target.value)}
-              className="w-full rounded-xl border border-[#E7E3DC] bg-white px-3.5 py-2.5 text-xs font-semibold text-[#181716]"
+              className="w-full rounded-xl border border-[#E4DAD5] bg-white px-3.5 py-2.5 text-xs font-semibold text-[#181716]"
             />
           </div>
         </ModalBody>
@@ -135,7 +135,7 @@ export function BrandLeadQualifierModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716] transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-xl border border-[#E4DAD5] text-xs font-semibold text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716] transition-colors cursor-pointer"
           >
             Cancel
           </button>

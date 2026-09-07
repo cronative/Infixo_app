@@ -88,9 +88,9 @@ export function OnboardingLayout({
   return (
     <div className="min-h-dvh bg-background scroll-pt-32">
       {/* Sticky Header section with Top Navbar + Step Navigation */}
-      <header className="sticky top-0 z-40 w-full border-b border-[#E7E3DC] bg-white shadow-xs safe-top">
+      <header className="sticky top-0 z-40 w-full border-b border-[#E4DAD5] bg-white shadow-xs safe-top">
         {/* Top Navbar Row */}
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-3.5 py-2.5 sm:px-8 border-b border-[#ECE8E1]">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-3.5 py-2.5 sm:px-8 border-b border-[#E4DAD5]">
           {/* Left: Logo */}
           <div className="flex items-center gap-3">
             <Logo size="sm" />
@@ -107,9 +107,9 @@ export function OnboardingLayout({
           {/* Right: Save & Logout */}
           <button
             onClick={handleSaveAndLogout}
-            className="tap-scale flex shrink-0 items-center gap-1.5 rounded-full border border-[#E7E3DC] bg-[#F8F7F3] px-3 py-1.5 text-xs font-bold text-[#54514D] transition-all hover:border-[#803D63]/30 hover:bg-white hover:text-[#181716] shadow-xs"
+            className="tap-scale flex shrink-0 items-center gap-1.5 rounded-full border border-[#E4DAD5] bg-[#F7F0EA] px-3 py-1.5 text-xs font-bold text-[#6B5A5D] transition-all hover:border-[#B85C6B]/40 hover:bg-white hover:text-[#241618] shadow-xs"
           >
-            <LogOut className="h-3.5 w-3.5 text-[#797570]" />
+            <LogOut className="h-3.5 w-3.5 text-[#6B5A5D]" />
             <span className="hidden sm:inline">Save &amp; logout</span>
             <span className="sm:hidden">Logout</span>
           </button>
@@ -142,7 +142,7 @@ export function OnboardingLayout({
 
             {/* Right live preview column - sticky below header and contained in viewport */}
             {preview && (
-              <aside className="hidden flex-1 border-l border-[#E7E3DC] bg-[#F8F7F3] px-6 py-4 pb-20 lg:block lg:w-[50%] min-w-[440px]">
+              <aside className="hidden flex-1 border-l border-[#E4DAD5] bg-[#F7F0EA] px-6 py-4 pb-20 lg:block lg:w-[50%] min-w-[440px]">
                 <div className="sticky top-[116px] max-h-[calc(100vh-128px)] overflow-y-auto pr-1 pb-6 scrollbar-thin flex flex-col items-center">
                   <div className="w-full max-w-[480px]">
                     {preview}
@@ -157,17 +157,17 @@ export function OnboardingLayout({
       {/* Dedicated Full-Screen Preview Sheet for Mobile & Tablet */}
       {preview && isMobilePreviewOpen && (
         <div className="fixed inset-0 z-50 flex flex-col bg-black/60 backdrop-blur-xs lg:hidden animate-fade-in">
-          <div className="relative flex flex-col w-full h-full max-h-dvh bg-[#F8F7F3] overflow-hidden shadow-2xl">
+          <div className="relative flex flex-col w-full h-full max-h-dvh bg-[#F7F0EA] overflow-hidden shadow-2xl">
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3.5 bg-white border-b border-[#E7E3DC] safe-top">
+            <div className="flex items-center justify-between px-4 py-3.5 bg-white border-b border-[#E4DAD5] safe-top">
               <div className="flex items-center gap-2">
                 <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-sm font-bold text-[#181716]">Live Profile Preview</span>
+                <span className="text-sm font-bold text-[#241618]">Live Profile Preview</span>
               </div>
               <button
                 type="button"
                 onClick={() => setIsMobilePreviewOpen(false)}
-                className="tap-scale flex h-8 w-8 items-center justify-center rounded-full bg-[#F8F7F3] text-[#54514D] hover:bg-[#E7E3DC] transition-colors cursor-pointer"
+                className="tap-scale flex h-8 w-8 items-center justify-center rounded-full bg-[#F7F0EA] text-[#6B5A5D] hover:bg-[#E4DAD5] transition-colors cursor-pointer"
                 aria-label="Close Preview"
               >
                 <X className="h-4 w-4" />
@@ -182,11 +182,11 @@ export function OnboardingLayout({
             </div>
 
             {/* Bottom Return Action */}
-            <div className="p-3.5 bg-white border-t border-[#E7E3DC] safe-bottom">
+            <div className="p-3.5 bg-white border-t border-[#E4DAD5] safe-bottom">
               <button
                 type="button"
                 onClick={() => setIsMobilePreviewOpen(false)}
-                className="w-full rounded-xl bg-[#803D63] hover:bg-[#6F3456] py-3 text-xs font-bold text-white transition-colors cursor-pointer text-center shadow-xs"
+                className="w-full rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] py-3 text-xs font-bold text-white transition-colors cursor-pointer text-center shadow-xs"
               >
                 Back to Editing Form
               </button>

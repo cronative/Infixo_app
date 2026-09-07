@@ -124,19 +124,19 @@ export const DEFAULT_THEME_STYLE: ThemeStyleConfig = {
 const MINIMAL_WHITE_STYLE: ThemeStyleConfig = DEFAULT_THEME_STYLE;
 
 const SIGNATURE_PURPLE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#FAF5FF] via-[#FDFBFE] to-[#F8F2F7] border border-[#803D63]/18 text-slate-900 shadow-lg",
+  cardBg: "bg-gradient-to-b from-[#FAF5FF] via-[#FDFBFE] to-[#F8F2F7] border border-[#B85C6B]/18 text-slate-900 shadow-lg",
   profBadgeBg: "bg-white/80 backdrop-blur-md",
-  profBadgeText: "text-[#803D63]",
-  profBadgeBorder: "border-[#803D63]/18",
+  profBadgeText: "text-[#B85C6B]",
+  profBadgeBorder: "border-[#B85C6B]/18",
   fanbaseBg: "bg-white/80 backdrop-blur-md",
   fanbaseText: "text-[#17131A]",
   socialItemBg: "bg-white/80 hover:bg-white/95 backdrop-blur-md",
-  socialItemBorder: "border-[#803D63]/18 hover:border-[#803D63]/30",
+  socialItemBorder: "border-[#B85C6B]/18 hover:border-[#B85C6B]/30",
   socialNameColor: "text-[#17131A]",
   socialUnitColor: "text-[#6F6872]",
   nameColor: "text-[#17131A]",
   bioColor: "text-[#6F6872]",
-  handleColor: "text-[#803D63]",
+  handleColor: "text-[#B85C6B]",
 };
 
 const MIDNIGHT_DARK_STYLE: ThemeStyleConfig = {
@@ -239,19 +239,19 @@ const SUNSET_STUDIO_STYLE: ThemeStyleConfig = {
 };
 
 const MINIMAL_SPARK_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-white to-[#FAF8FA] text-[#17131A] border border-[#803D63]/16 shadow-2xs",
+  cardBg: "bg-gradient-to-b from-white to-[#FAF8FA] text-[#17131A] border border-[#B85C6B]/16 shadow-2xs",
   profBadgeBg: "bg-white/90",
-  profBadgeText: "text-[#803D63]",
-  profBadgeBorder: "border-[#803D63]/20",
+  profBadgeText: "text-[#B85C6B]",
+  profBadgeBorder: "border-[#B85C6B]/20",
   fanbaseBg: "bg-white/90 backdrop-blur-md",
   fanbaseText: "text-[#17131A]",
   socialItemBg: "bg-white/80 hover:bg-white/95 backdrop-blur-md",
-  socialItemBorder: "border-[#803D63]/16 hover:border-[#803D63]/30",
+  socialItemBorder: "border-[#B85C6B]/16 hover:border-[#B85C6B]/30",
   socialNameColor: "text-[#17131A]",
   socialUnitColor: "text-[#6F6872]",
   nameColor: "text-[#17131A]",
   bioColor: "text-[#6F6872]",
-  handleColor: "text-[#803D63]",
+  handleColor: "text-[#B85C6B]",
 };
 
 export const THEME_STYLES: Record<string, ThemeStyleConfig> = {
@@ -1251,7 +1251,7 @@ export function LivePreviewCard({
                 className="w-20 h-20 sm:w-24 sm:h-24 rounded-full aspect-square object-cover overflow-hidden border-2 shadow-md mx-auto"
                 style={{ borderColor: c.border }}
                 textClassName="text-xl sm:text-2xl font-extrabold text-white"
-                fallbackBgClass="bg-[#803D63]"
+                fallbackBgClass="bg-[#B85C6B]"
               />
             </div>
 
@@ -2288,9 +2288,9 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   return {
     name: platformStr || "Web",
     icon: <Film className="h-3 w-3 text-white" />,
-    badgeClass: "bg-[#803D63] text-white shadow-2xs",
+    badgeClass: "bg-[#B85C6B] text-white shadow-2xs",
     chipClass: "bg-indigo-50 text-indigo-700 border-indigo-200/80",
-    textColor: "text-[#803D63]",
+    textColor: "text-[#B85C6B]",
   };
 }
 

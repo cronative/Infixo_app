@@ -1,6 +1,6 @@
 // ---------------------------------------------------------------------------
 // Inflixo — Modern, Premium, Responsive Email Design System & Engine
-// Primary Brand Palette: #803D63 (Inflixo Maroon)
+// Primary Brand Palette: #B85C6B (Inflixo Maroon)
 // Layout: 720px spacious responsive container with email-safe tables & inline CSS.
 // ---------------------------------------------------------------------------
 
@@ -59,7 +59,7 @@ export type EmailTemplateType =
 
 function renderHeader(tagline: string = "Creator Platform • Collaboration & Growth"): string {
   return `
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #803D63; border-radius: 16px 16px 0 0;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #B85C6B; border-radius: 16px 16px 0 0;">
       <tr>
         <td style="padding: 24px 32px; text-align: left;">
           <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
@@ -111,14 +111,14 @@ function renderFooter(senderContext?: string): string {
           </p>
 
           <!-- Navigation Links -->
-          <p style="color: #803D63; font-size: 12px; font-weight: 700; margin: 0 0 14px 0;">
-            <a href="https://inflixo.com" target="_blank" style="color: #803D63; text-decoration: none;">inflixo.com</a>
+          <p style="color: #B85C6B; font-size: 12px; font-weight: 700; margin: 0 0 14px 0;">
+            <a href="https://inflixo.com" target="_blank" style="color: #B85C6B; text-decoration: none;">inflixo.com</a>
             &nbsp;•&nbsp;
-            <a href="https://inflixo.com/privacy" target="_blank" style="color: #803D63; text-decoration: none;">Privacy Policy</a>
+            <a href="https://inflixo.com/privacy" target="_blank" style="color: #B85C6B; text-decoration: none;">Privacy Policy</a>
             &nbsp;•&nbsp;
-            <a href="https://inflixo.com/terms" target="_blank" style="color: #803D63; text-decoration: none;">Terms of Service</a>
+            <a href="https://inflixo.com/terms" target="_blank" style="color: #B85C6B; text-decoration: none;">Terms of Service</a>
             &nbsp;•&nbsp;
-            <a href="mailto:support@inflixo.com" style="color: #803D63; text-decoration: none;">Help &amp; Support</a>
+            <a href="mailto:support@inflixo.com" style="color: #B85C6B; text-decoration: none;">Help &amp; Support</a>
           </p>
 
           <!-- Copyright -->
@@ -135,7 +135,7 @@ function renderFooter(senderContext?: string): string {
 function renderHeroBadge(badgeText: string): string {
   return `
     <div style="display: inline-block; background-color: #F8F1F5; border: 1px solid #E8DCE4; border-radius: 20px; padding: 4px 14px; margin-bottom: 16px;">
-      <span style="color: #803D63; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+      <span style="color: #B85C6B; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
         ${badgeText}
       </span>
     </div>
@@ -152,13 +152,13 @@ function renderCtaButton(label: string, url: string, microCopy?: string): string
   return `
     <div style="text-align: center; margin: 32px 0 24px 0;">
       <!--[if mso]>
-      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${url}" style="height:50px;v-text-anchor:middle;width:240px;" arcsize="24%" stroke="f" fillcolor="#803D63">
+      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${url}" style="height:50px;v-text-anchor:middle;width:240px;" arcsize="24%" stroke="f" fillcolor="#B85C6B">
         <w:anchorlock/>
         <center style="color:#ffffff;font-family:sans-serif;font-size:15px;font-weight:bold;">${label}</center>
       </v:roundrect>
       <![endif]-->
       <!--[if !mso]><!-->
-      <a href="${url}" target="_blank" style="background-color: #803D63; color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 800; padding: 14px 32px; border-radius: 12px; display: inline-block; line-height: 1; box-shadow: 0 4px 14px rgba(128, 61, 99, 0.25); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+      <a href="${url}" target="_blank" style="background-color: #B85C6B; color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 800; padding: 14px 32px; border-radius: 12px; display: inline-block; line-height: 1; box-shadow: 0 4px 14px rgba(128, 61, 99, 0.25); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
         ${label}
       </a>
       <!--<![endif]-->
@@ -189,7 +189,7 @@ function renderInfoTable(items: { label: string; value: string; isLink?: boolean
         <td style="padding: 12px 16px; border-bottom: 1px solid #F1F5F9; color: #0F172A; font-size: 13px; font-weight: 800; width: 65%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
           ${
             item.isLink
-              ? `<a href="${item.value}" target="_blank" style="color: #803D63; text-decoration: underline;">View Content ↗</a>`
+              ? `<a href="${item.value}" target="_blank" style="color: #B85C6B; text-decoration: underline;">View Content ↗</a>`
               : item.value
           }
         </td>
@@ -309,8 +309,8 @@ export function renderEmailTemplate(type: EmailTemplateType, options: EmailTempl
           Use the 4-digit code below to log in to your Inflixo creator dashboard.
         </p>
 
-        <div style="background-color: #F8F1F5; border: 2px dashed #803D63; border-radius: 16px; padding: 24px 16px; text-align: center; margin-bottom: 24px;">
-          <div style="font-size: 44px; font-weight: 900; letter-spacing: 16px; color: #803D63; font-family: 'Courier New', Courier, monospace; line-height: 1; padding-left: 16px;">
+        <div style="background-color: #F8F1F5; border: 2px dashed #B85C6B; border-radius: 16px; padding: 24px 16px; text-align: center; margin-bottom: 24px;">
+          <div style="font-size: 44px; font-weight: 900; letter-spacing: 16px; color: #B85C6B; font-family: 'Courier New', Courier, monospace; line-height: 1; padding-left: 16px;">
             ${code}
           </div>
         </div>

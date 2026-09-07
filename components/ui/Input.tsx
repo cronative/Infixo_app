@@ -17,18 +17,18 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full text-left">
         {label && (
-          <label htmlFor={inputId} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#54514D]">
+          <label htmlFor={inputId} className="mb-1.5 block text-xs font-semibold text-[#6B5A5D]">
             {label}
           </label>
         )}
         <div
-          className={`flex h-11 items-center rounded-xl border px-3.5 transition-colors focus-within:border-[#803D63] focus-within:ring-2 focus-within:ring-[#803D63]/15 ${
-            rest.disabled ? "bg-[#F8F7F3] cursor-not-allowed text-[#797570] border-[#E7E3DC]" : "bg-white"
-          } ${error ? "border-red-400 bg-red-50/10" : "border-[#E7E3DC]"}`}
+          className={`flex h-11 items-center rounded-[10px] border px-3.5 transition-colors focus-within:border-[#B85C6B] focus-within:ring-3 focus-within:ring-[#F3DDE0] ${
+            rest.disabled ? "bg-[#F7F0EA] cursor-not-allowed text-[#6B5A5D] border-[#E4DAD5]" : "bg-[#FFFFFF]"
+          } ${error ? "border-[#C1443A] bg-[#FCF7F3]" : "border-[#E4DAD5]"}`}
         >
-          {leftIcon && <span className="mr-2 shrink-0 text-[#797570]">{leftIcon}</span>}
+          {leftIcon && <span className="mr-2 shrink-0 text-[#6B5A5D]">{leftIcon}</span>}
           {prefix && (
-            <span className="mr-1 shrink-0 text-xs sm:text-sm font-semibold text-[#797570] select-none">
+            <span className="mr-1 shrink-0 text-xs sm:text-sm font-semibold text-[#6B5A5D] select-none">
               <span className="hidden sm:inline">{prefix}</span>
               <span className="sm:hidden">{prefix.includes("inflixo.com") ? "@" : prefix}</span>
             </span>
@@ -36,7 +36,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             id={inputId}
-            className={`h-full w-full min-w-0 flex-1 bg-transparent text-xs sm:text-sm font-semibold text-[#181716] outline-none placeholder:text-[#797570]/70 placeholder:font-normal ${className}`}
+            className={`h-full w-full min-w-0 flex-1 bg-transparent text-xs sm:text-sm font-semibold text-[#241618] outline-none placeholder:text-[#6B5A5D]/60 placeholder:font-normal ${className}`}
             {...rest}
           />
           {rightSlot && <div className="ml-1.5 shrink-0">{rightSlot}</div>}

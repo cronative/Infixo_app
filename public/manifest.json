@@ -6,8 +6,8 @@
   "id": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FFFFFF",
-  "theme_color": "#803D63",
+  "background_color": "#FCF7F3",
+  "theme_color": "#B85C6B",
   "categories": ["entertainment", "social", "productivity"],
   "icons": [
     {

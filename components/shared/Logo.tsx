@@ -114,10 +114,10 @@ export function Logo({
   const iconSize = { sm: "h-5 w-5", md: "h-6.5 w-6.5", lg: "h-8 w-8" }[size];
 
   const badgeStyles = {
-    gradient: "bg-[#803D63] text-white",
-    black: "bg-slate-900 text-white",
-    white: "bg-white border border-slate-200 text-[#111827]",
-    brand: "bg-[#803D63] text-white",
+    gradient: "bg-[#B85C6B] text-[#FCF7F3]",
+    black: "bg-[#241618] text-[#FCF7F3]",
+    white: "bg-[#FFFFFF] border border-[#E4DAD5] text-[#241618]",
+    brand: "bg-[#B85C6B] text-[#FCF7F3]",
   }[variant];
 
   return (
@@ -136,8 +136,8 @@ export function Logo({
       {/* Brand Name Text */}
       <span
         className={`font-display ${text} font-bold tracking-tight ${
-          light ? "text-white" : "text-slate-900"
-        } group-hover:text-[#803D63] transition-colors`}
+          light ? "text-white" : "text-[#241618]"
+        } group-hover:text-[#B85C6B] transition-colors`}
       >
         Inflixo
       </span>

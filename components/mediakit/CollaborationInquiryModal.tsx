@@ -110,24 +110,24 @@ export function CollaborationInquiryModal({
       size="md"
       title={`Collaborate with ${creatorName}`}
       description="Send a direct brand collaboration inquiry to the creator."
-      icon={<Briefcase className="h-4 w-4 text-[#803D63]" />}
+      icon={<Briefcase className="h-4 w-4 text-[#B85C6B]" />}
     >
       {isSuccess ? (
         <div className="p-8 text-center space-y-3">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100">
             <CheckCircle2 className="h-6 w-6" />
           </div>
-          <h3 className="font-display text-base font-bold text-[#17131A]">
+          <h3 className="font-display text-base font-bold text-[#241618]">
             Inquiry Sent to @{creatorUsername} 🎉
           </h3>
-          <p className="text-xs text-[#6F6872] max-w-sm mx-auto leading-relaxed">
+          <p className="text-xs text-[#6B5A5D] max-w-sm mx-auto leading-relaxed">
             Thank you! Your brand collaboration details have been delivered to {creatorName}’s creator inbox.
           </p>
           <div className="pt-3">
             <button
               type="button"
               onClick={handleClose}
-              className="bg-[#803D63] hover:bg-[#6D3254] text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition-colors cursor-pointer"
+              className="bg-[#B85C6B] hover:bg-[#8C3F4D] text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition-colors cursor-pointer"
             >
               Done
             </button>
@@ -139,24 +139,24 @@ export function CollaborationInquiryModal({
             {/* Brand & Contact Person */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[11px] font-bold text-[#17131A] uppercase tracking-wider block">
+                <label className="text-[11px] font-bold text-[#241618] uppercase tracking-wider block">
                   Brand / Company Name *
                 </label>
                 <div className="relative">
-                  <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#6F6872]" />
+                  <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#6B5A5D]" />
                   <input
                     type="text"
                     required
                     value={brandName}
                     onChange={(e) => setBrandName(e.target.value)}
                     placeholder="e.g. Acme Corp"
-                    className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] pl-8 pr-3 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/60 focus:bg-white focus:border-[#803D63] focus:outline-none"
+                    className="w-full rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] pl-8 pr-3 py-2 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-bold text-[#17131A] uppercase tracking-wider block">
+                <label className="text-[11px] font-bold text-[#241618] uppercase tracking-wider block">
                   Your Name *
                 </label>
                 <input
@@ -165,7 +165,7 @@ export function CollaborationInquiryModal({
                   value={contactName}
                   onChange={(e) => setContactName(e.target.value)}
                   placeholder="e.g. Sarah Connor"
-                  className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/60 focus:bg-white focus:border-[#803D63] focus:outline-none"
+                  className="w-full rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] px-3 py-2 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none"
                 />
               </div>
             </div>
@@ -173,34 +173,34 @@ export function CollaborationInquiryModal({
             {/* Email & Phone */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[11px] font-bold text-[#17131A] uppercase tracking-wider block">
+                <label className="text-[11px] font-bold text-[#241618] uppercase tracking-wider block">
                   Business Email *
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#6F6872]" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#6B5A5D]" />
                   <input
                     type="email"
                     required
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
                     placeholder="sarah@acme.com"
-                    className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] pl-8 pr-3 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/60 focus:bg-white focus:border-[#803D63] focus:outline-none"
+                    className="w-full rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] pl-8 pr-3 py-2 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-bold text-[#17131A] uppercase tracking-wider block">
+                <label className="text-[11px] font-bold text-[#241618] uppercase tracking-wider block">
                   Phone / WhatsApp
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#6F6872]" />
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#6B5A5D]" />
                   <input
                     type="tel"
                     value={contactPhone}
                     onChange={(e) => setContactPhone(e.target.value)}
                     placeholder="+91 98765 43210"
-                    className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] pl-8 pr-3 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/60 focus:bg-white focus:border-[#803D63] focus:outline-none"
+                    className="w-full rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] pl-8 pr-3 py-2 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none"
                   />
                 </div>
               </div>
@@ -209,13 +209,13 @@ export function CollaborationInquiryModal({
             {/* Budget & Timeline */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[11px] font-bold text-[#17131A] uppercase tracking-wider block">
+                <label className="text-[11px] font-bold text-[#241618] uppercase tracking-wider block">
                   Estimated Budget
                 </label>
                 <select
                   value={budgetRange}
                   onChange={(e) => setBudgetRange(e.target.value)}
-                  className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3 py-2 text-xs font-semibold text-[#17131A] focus:bg-white focus:border-[#803D63] focus:outline-none"
+                  className="w-full rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] px-3 py-2 text-xs font-semibold text-[#241618] focus:bg-white focus:border-[#B85C6B] focus:outline-none"
                 >
                   <option value="Under ₹15,000">Under ₹15,000</option>
                   <option value="₹15,000 – ₹30,000">₹15,000 – ₹30,000</option>
@@ -227,17 +227,17 @@ export function CollaborationInquiryModal({
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-bold text-[#17131A] uppercase tracking-wider block">
+                <label className="text-[11px] font-bold text-[#241618] uppercase tracking-wider block">
                   Campaign Timeline
                 </label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#6F6872]" />
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#6B5A5D]" />
                   <input
                     type="text"
                     value={timeline}
                     onChange={(e) => setTimeline(e.target.value)}
                     placeholder="e.g. Next month / Q3"
-                    className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] pl-8 pr-3 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/60 focus:bg-white focus:border-[#803D63] focus:outline-none"
+                    className="w-full rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] pl-8 pr-3 py-2 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none"
                   />
                 </div>
               </div>
@@ -245,7 +245,7 @@ export function CollaborationInquiryModal({
 
             {/* Preferred Deliverables */}
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-[#17131A] uppercase tracking-wider block">
+              <label className="text-[11px] font-bold text-[#241618] uppercase tracking-wider block">
                 Deliverables / Format
               </label>
               <input
@@ -253,13 +253,13 @@ export function CollaborationInquiryModal({
                 value={deliverables}
                 onChange={(e) => setDeliverables(e.target.value)}
                 placeholder="e.g. 1x Dedicated Reel, 2x Stories with Link"
-                className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/60 focus:bg-white focus:border-[#803D63] focus:outline-none"
+                className="w-full rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] px-3 py-2 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none"
               />
             </div>
 
             {/* Campaign Details / Message */}
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-[#17131A] uppercase tracking-wider block">
+              <label className="text-[11px] font-bold text-[#241618] uppercase tracking-wider block">
                 Campaign Brief &amp; Notes
               </label>
               <textarea
@@ -267,7 +267,7 @@ export function CollaborationInquiryModal({
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Share project goals, product details, or specific campaign requirements..."
-                className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/60 focus:bg-white focus:border-[#803D63] focus:outline-none resize-none"
+                className="w-full rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] p-3 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none resize-none"
               />
             </div>
           </ModalBody>
@@ -276,14 +276,14 @@ export function CollaborationInquiryModal({
             <button
               type="button"
               onClick={handleClose}
-              className="px-3.5 py-2 text-xs font-semibold text-[#6F6872] hover:text-[#17131A] cursor-pointer"
+              className="px-3.5 py-2 text-xs font-semibold text-[#6B5A5D] hover:text-[#241618] cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6D3254] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs disabled:opacity-50"
             >
               {submitting ? (
                 <>

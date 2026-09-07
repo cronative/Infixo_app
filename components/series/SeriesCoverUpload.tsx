@@ -135,10 +135,10 @@ export function SeriesCoverUpload({
         }}
         className={`group relative w-full aspect-[16/9] overflow-hidden rounded-2xl border transition-all cursor-pointer select-none ${
           value
-            ? "border-[#E7E3DC] bg-slate-950 shadow-sm"
+            ? "border-[#E4DAD5] bg-slate-950 shadow-sm"
             : isDragging
-            ? "border-2 border-dashed border-[#803D63] bg-[#803D63]/[0.09]"
-            : "border-2 border-dashed border-[#E7E3DC] hover:border-[#803D63] bg-[#F8F7F3] hover:bg-[#F5F3ED]"
+            ? "border-2 border-dashed border-[#B85C6B] bg-[#B85C6B]/[0.09]"
+            : "border-2 border-dashed border-[#E4DAD5] hover:border-[#B85C6B] bg-[#F8F7F3] hover:bg-[#F5F3ED]"
         }`}
       >
         {value ? (
@@ -165,7 +165,7 @@ export function SeriesCoverUpload({
                 }}
                 className="tap-scale flex items-center gap-1.5 rounded-xl bg-white/95 hover:bg-white text-[#181716] px-3 py-1.5 text-xs font-bold shadow-md border border-white/60 backdrop-blur-md transition-all cursor-pointer"
               >
-                <Camera className="h-3.5 w-3.5 text-[#803D63]" />
+                <Camera className="h-3.5 w-3.5 text-[#B85C6B]" />
                 <span>Change Cover</span>
               </button>
 
@@ -194,11 +194,11 @@ export function SeriesCoverUpload({
         ) : (
           /* Empty State - Full Width Landscape Dropzone */
           <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/20 shadow-xs group-hover:scale-105 transition-transform">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#B85C6B]/[0.09] text-[#B85C6B] border border-[#B85C6B]/20 shadow-xs group-hover:scale-105 transition-transform">
               <ImagePlus className="h-6 w-6 stroke-[2]" />
             </div>
 
-            <p className="mt-2.5 text-xs sm:text-sm font-bold text-[#181716] group-hover:text-[#803D63] transition-colors">
+            <p className="mt-2.5 text-xs sm:text-sm font-bold text-[#181716] group-hover:text-[#B85C6B] transition-colors">
               Upload Series Cover
             </p>
 
