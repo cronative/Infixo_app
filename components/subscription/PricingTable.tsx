@@ -188,7 +188,7 @@ export function PricingTable({ }: PricingTableProps) {
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
-                    <span>Direct brand lead routing</span>
+                    <span>Priority email support</span>
                   </li>
                 </ul>
               </div>
@@ -230,7 +230,7 @@ export function PricingTable({ }: PricingTableProps) {
               </div>
 
               <p className="text-xs text-[#797570] font-medium leading-relaxed">
-                For established creators managing a larger content portfolio.
+                For established creators managing brand collabs, client reviews &amp; direct enquiries.
               </p>
 
               <div className="pt-3 border-t border-[#E4DAD5] space-y-2">
@@ -240,11 +240,7 @@ export function PricingTable({ }: PricingTableProps) {
                 <ul className="space-y-2 text-xs text-[#181716] font-medium">
                   <li className="flex items-center gap-2">
                     <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
-                    <span>Unlimited content series</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
-                    <span>Unlimited total episodes</span>
+                    <span>Unlimited content series &amp; episodes</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
@@ -252,11 +248,15 @@ export function PricingTable({ }: PricingTableProps) {
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
-                    <span>Remove Inflixo branding</span>
+                    <span>Direct Brand Enquiries (WhatsApp &amp; Email)</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
-                    <span>Full feature access &amp; priority</span>
+                    <span>Client Reviews &amp; Invitations</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
+                    <span>Remove Inflixo branding &amp; VIP priority</span>
                   </li>
                 </ul>
               </div>
@@ -371,10 +371,10 @@ export function PricingTable({ }: PricingTableProps) {
                   Direct Brand Enquiries (WhatsApp &amp; Email)
                 </td>
                 <td className="py-3 px-4 text-center bg-[#B85C6B]/[0.05] border-x border-[#E4DAD5]">
-                  <Check className="h-4 w-4 mx-auto text-[#17845B]" />
+                  <Minus className="h-4 w-4 mx-auto text-[#797570]/50" />
                 </td>
                 <td className="py-3 px-4 text-center">
-                  <Check className="h-4 w-4 mx-auto text-[#17845B]" />
+                  <Minus className="h-4 w-4 mx-auto text-[#797570]/50" />
                 </td>
                 <td className="py-3 px-4 text-center">
                   <Check className="h-4 w-4 mx-auto text-[#17845B]" />
@@ -387,10 +387,10 @@ export function PricingTable({ }: PricingTableProps) {
                   Client Reviews &amp; Invitations
                 </td>
                 <td className="py-3 px-4 text-center bg-[#B85C6B]/[0.05] border-x border-[#E4DAD5]">
-                  <Check className="h-4 w-4 mx-auto text-[#17845B]" />
+                  <Minus className="h-4 w-4 mx-auto text-[#797570]/50" />
                 </td>
                 <td className="py-3 px-4 text-center">
-                  <Check className="h-4 w-4 mx-auto text-[#17845B]" />
+                  <Minus className="h-4 w-4 mx-auto text-[#797570]/50" />
                 </td>
                 <td className="py-3 px-4 text-center">
                   <Check className="h-4 w-4 mx-auto text-[#17845B]" />

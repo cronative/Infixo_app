@@ -25,7 +25,7 @@ export function DashboardMobileHeader({
         {showBack ? (
           <button
             onClick={() => router.back()}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] text-[#241618] active:scale-95 transition-transform cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] text-[#241618] active:scale-95 transition-transform cursor-pointer"
             aria-label="Back"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -33,7 +33,7 @@ export function DashboardMobileHeader({
         ) : (
           <button
             onClick={onOpenDrawer}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] text-[#241618] active:scale-95 transition-transform hover:bg-[#F3DDE0] hover:text-[#B85C6B] cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] text-[#241618] active:scale-95 transition-transform hover:bg-[#F3DDE0] hover:text-[#B85C6B] cursor-pointer"
             aria-label="Open menu drawer"
           >
             <Menu className="h-4 w-4" />

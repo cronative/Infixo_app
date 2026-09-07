@@ -150,7 +150,7 @@ export function CollaborationInquiryModal({
                     value={brandName}
                     onChange={(e) => setBrandName(e.target.value)}
                     placeholder="e.g. Acme Corp"
-                    className="w-full rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] pl-8 pr-3 py-2 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none"
+                    className="w-full rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] pl-8 pr-3 py-2 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none"
                   />
                 </div>
               </div>
@@ -165,7 +165,7 @@ export function CollaborationInquiryModal({
                   value={contactName}
                   onChange={(e) => setContactName(e.target.value)}
                   placeholder="e.g. Sarah Connor"
-                  className="w-full rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] px-3 py-2 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none"
+                  className="w-full rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] px-3 py-2 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none"
                 />
               </div>
             </div>
@@ -184,7 +184,7 @@ export function CollaborationInquiryModal({
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
                     placeholder="sarah@acme.com"
-                    className="w-full rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] pl-8 pr-3 py-2 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none"
+                    className="w-full rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] pl-8 pr-3 py-2 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none"
                   />
                 </div>
               </div>
@@ -200,7 +200,7 @@ export function CollaborationInquiryModal({
                     value={contactPhone}
                     onChange={(e) => setContactPhone(e.target.value)}
                     placeholder="+91 98765 43210"
-                    className="w-full rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] pl-8 pr-3 py-2 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none"
+                    className="w-full rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] pl-8 pr-3 py-2 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none"
                   />
                 </div>
               </div>
@@ -215,7 +215,7 @@ export function CollaborationInquiryModal({
                 <select
                   value={budgetRange}
                   onChange={(e) => setBudgetRange(e.target.value)}
-                  className="w-full rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] px-3 py-2 text-xs font-semibold text-[#241618] focus:bg-white focus:border-[#B85C6B] focus:outline-none"
+                  className="w-full rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] px-3 py-2 text-xs font-semibold text-[#241618] focus:bg-white focus:border-[#B85C6B] focus:outline-none"
                 >
                   <option value="Under ₹15,000">Under ₹15,000</option>
                   <option value="₹15,000 – ₹30,000">₹15,000 – ₹30,000</option>
@@ -237,7 +237,7 @@ export function CollaborationInquiryModal({
                     value={timeline}
                     onChange={(e) => setTimeline(e.target.value)}
                     placeholder="e.g. Next month / Q3"
-                    className="w-full rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] pl-8 pr-3 py-2 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none"
+                    className="w-full rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] pl-8 pr-3 py-2 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none"
                   />
                 </div>
               </div>
@@ -253,7 +253,7 @@ export function CollaborationInquiryModal({
                 value={deliverables}
                 onChange={(e) => setDeliverables(e.target.value)}
                 placeholder="e.g. 1x Dedicated Reel, 2x Stories with Link"
-                className="w-full rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] px-3 py-2 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none"
+                className="w-full rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] px-3 py-2 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none"
               />
             </div>
 
@@ -267,7 +267,7 @@ export function CollaborationInquiryModal({
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Share project goals, product details, or specific campaign requirements..."
-                className="w-full rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] p-3 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none resize-none"
+                className="w-full rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] p-3 text-xs font-semibold text-[#241618] placeholder:text-[#6B5A5D]/60 focus:bg-white focus:border-[#B85C6B] focus:outline-none resize-none"
               />
             </div>
           </ModalBody>

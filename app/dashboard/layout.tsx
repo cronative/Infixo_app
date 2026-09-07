@@ -60,7 +60,7 @@ function DesktopTopHeader() {
         <button
           type="button"
           onClick={handleCopy}
-          className="flex items-center gap-1.5 rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#F7F0EA] px-3.5 py-2 text-xs font-semibold text-[#241618] transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#fbfbfb] px-3.5 py-2 text-xs font-semibold text-[#241618] transition-colors cursor-pointer"
         >
           <Copy className="h-3.5 w-3.5 text-[#6B5A5D]" />
           <span>Copy Link</span>

@@ -68,7 +68,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
           <Logo size="sm" />
           <button
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F7F0EA] text-[#6B5A5D] hover:bg-[#F3DDE0] hover:text-[#B85C6B] transition-all cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#fbfbfb] text-[#6B5A5D] hover:bg-[#F3DDE0] hover:text-[#B85C6B] transition-all cursor-pointer"
             aria-label="Close menu"
           >
             <X className="h-4 w-4" />
@@ -76,7 +76,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
         </div>
 
         {/* Creator Info Header */}
-        <div className="px-5 py-3 border-b border-[#E4DAD5] flex items-center gap-3 bg-[#F7F0EA]">
+        <div className="px-5 py-3 border-b border-[#E4DAD5] flex items-center gap-3 bg-[#fbfbfb]">
           <CreatorAvatar
             src={profile.photoDataUrl}
             name={displayName}
@@ -122,11 +122,10 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                     key={item.href}
                     href={item.href}
                     onClick={onClose}
-                    className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold min-h-[44px] transition-colors ${
-                      active
+                    className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold min-h-[44px] transition-colors ${active
                         ? "bg-[#F3DDE0] text-[#8C3F4D]"
-                        : "text-[#6B5A5D] hover:bg-[#F7F0EA] hover:text-[#241618]"
-                    }`}
+                        : "text-[#6B5A5D] hover:bg-[#fbfbfb] hover:text-[#241618]"
+                      }`}
                   >
                     <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#8C3F4D]" : "text-[#6B5A5D]"}`} />
                     <span className="flex-1 truncate">{item.label}</span>
@@ -150,11 +149,10 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                     key={item.href}
                     href={item.href}
                     onClick={onClose}
-                    className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold min-h-[44px] transition-colors ${
-                      active
+                    className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold min-h-[44px] transition-colors ${active
                         ? "bg-[#F3DDE0] text-[#8C3F4D]"
-                        : "text-[#6B5A5D] hover:bg-[#F7F0EA] hover:text-[#241618]"
-                    }`}
+                        : "text-[#6B5A5D] hover:bg-[#fbfbfb] hover:text-[#241618]"
+                      }`}
                   >
                     <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#8C3F4D]" : "text-[#6B5A5D]"}`} />
                     <span className="flex-1 truncate">{item.label}</span>
@@ -166,7 +164,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
         </nav>
 
         {/* Bottom Utility Area */}
-        <div className="p-4 border-t border-[#E4DAD5] space-y-2 bg-[#F7F0EA]">
+        <div className="p-4 border-t border-[#E4DAD5] space-y-2 bg-[#fbfbfb]">
           <div className="flex items-center justify-between rounded-xl border border-[#E4DAD5] bg-white px-3 py-2 text-xs font-medium text-[#241618] shadow-xs">
             <div className="flex items-center gap-1.5">
               <Sparkles className="h-3.5 w-3.5 text-[#B85C6B] shrink-0" />

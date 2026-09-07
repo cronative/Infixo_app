@@ -140,7 +140,7 @@ export function SectionOrderManager() {
         <button
           type="button"
           onClick={handleResetDefault}
-          className="inline-flex items-center gap-1.5 rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#F7F0EA] px-3 py-1.5 text-xs font-semibold text-[#6B5A5D] hover:text-[#241618] transition-colors cursor-pointer shadow-xs"
+          className="inline-flex items-center gap-1.5 rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#fbfbfb] px-3 py-1.5 text-xs font-semibold text-[#6B5A5D] hover:text-[#241618] transition-colors cursor-pointer shadow-xs"
           title="Reset to default order"
         >
           <RotateCcw className="h-3.5 w-3.5" />
@@ -152,86 +152,84 @@ export function SectionOrderManager() {
         {sections
           .filter((s) => s.sectionKey !== "COLLABORATIONS" && s.sectionKey !== "BRANDS")
           .map((section, idx) => {
-          const info = SECTION_DESCRIPTIONS[section.sectionKey] || {
-            name: section.sectionKey,
-            desc: "Custom profile block",
-          };
-          const isFirst = idx === 0;
-          const isLast = idx === sections.length - 1;
-          const isAbout = section.sectionKey === "ABOUT";
+            const info = SECTION_DESCRIPTIONS[section.sectionKey] || {
+              name: section.sectionKey,
+              desc: "Custom profile block",
+            };
+            const isFirst = idx === 0;
+            const isLast = idx === sections.length - 1;
+            const isAbout = section.sectionKey === "ABOUT";
 
-          return (
-            <div
-              key={section.sectionKey}
-              className={`flex items-center justify-between p-3 sm:p-3.5 rounded-xl border transition-all ${
-                section.isVisible
-                  ? "bg-white border-[#E4DAD5] shadow-xs"
-                  : "bg-[#F7F0EA] border-[#E4DAD5]/60 opacity-60"
-              }`}
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-[#F7F0EA] border border-[#E4DAD5] text-[11px] font-bold text-[#6B5A5D]">
-                  {idx + 1}
-                </span>
+            return (
+              <div
+                key={section.sectionKey}
+                className={`flex items-center justify-between p-3 sm:p-3.5 rounded-xl border transition-all ${section.isVisible
+                    ? "bg-white border-[#E4DAD5] shadow-xs"
+                    : "bg-[#fbfbfb] border-[#E4DAD5]/60 opacity-60"
+                  }`}
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-[#fbfbfb] border border-[#E4DAD5] text-[11px] font-bold text-[#6B5A5D]">
+                    {idx + 1}
+                  </span>
 
-                <div className="min-w-0 space-y-0.5">
-                  <p className="text-xs font-bold text-[#241618] truncate flex items-center gap-1.5">
-                    {info.name}
-                    {isAbout && (
-                      <span className="text-[10px] font-semibold text-[#B85C6B] bg-[#F3DDE0] border border-[#B85C6B]/20 px-1.5 py-0.2 rounded-md">
-                        Locked
-                      </span>
+                  <div className="min-w-0 space-y-0.5">
+                    <p className="text-xs font-bold text-[#241618] truncate flex items-center gap-1.5">
+                      {info.name}
+                      {isAbout && (
+                        <span className="text-[10px] font-semibold text-[#B85C6B] bg-[#F3DDE0] border border-[#B85C6B]/20 px-1.5 py-0.2 rounded-md">
+                          Locked
+                        </span>
+                      )}
+                    </p>
+                    <p className="text-[11px] text-[#6B5A5D] truncate">{info.desc}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                  {/* Visibility toggle */}
+                  <button
+                    type="button"
+                    onClick={() => handleToggleVisibility(section.sectionKey)}
+                    disabled={isAbout}
+                    className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-colors cursor-pointer ${section.isVisible
+                        ? "border-[#E4DAD5] bg-[#fbfbfb] text-[#241618] hover:bg-[#F3DDE0] hover:text-[#B85C6B]"
+                        : "border-[#C1443A]/20 bg-[#C1443A]/10 text-[#C1443A]"
+                      } disabled:opacity-40 disabled:cursor-not-allowed`}
+                    title={section.isVisible ? "Hide section from profile" : "Show section on profile"}
+                  >
+                    {section.isVisible ? (
+                      <Eye className="h-3.5 w-3.5" />
+                    ) : (
+                      <EyeOff className="h-3.5 w-3.5" />
                     )}
-                  </p>
-                  <p className="text-[11px] text-[#6B5A5D] truncate">{info.desc}</p>
+                  </button>
+
+                  {/* Move Up */}
+                  <button
+                    type="button"
+                    onClick={() => handleMove(idx, "up")}
+                    disabled={isFirst}
+                    className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E4DAD5] bg-[#fbfbfb] text-[#6B5A5D] hover:text-[#241618] hover:bg-white transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                    title="Move up"
+                  >
+                    <ArrowUp className="h-3.5 w-3.5" />
+                  </button>
+
+                  {/* Move Down */}
+                  <button
+                    type="button"
+                    onClick={() => handleMove(idx, "down")}
+                    disabled={isLast}
+                    className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E4DAD5] bg-[#fbfbfb] text-[#6B5A5D] hover:text-[#241618] hover:bg-white transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                    title="Move down"
+                  >
+                    <ArrowDown className="h-3.5 w-3.5" />
+                  </button>
                 </div>
               </div>
-
-              <div className="flex items-center gap-1.5 shrink-0 ml-2">
-                {/* Visibility toggle */}
-                <button
-                  type="button"
-                  onClick={() => handleToggleVisibility(section.sectionKey)}
-                  disabled={isAbout}
-                  className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-colors cursor-pointer ${
-                    section.isVisible
-                      ? "border-[#E4DAD5] bg-[#F7F0EA] text-[#241618] hover:bg-[#F3DDE0] hover:text-[#B85C6B]"
-                      : "border-[#C1443A]/20 bg-[#C1443A]/10 text-[#C1443A]"
-                  } disabled:opacity-40 disabled:cursor-not-allowed`}
-                  title={section.isVisible ? "Hide section from profile" : "Show section on profile"}
-                >
-                  {section.isVisible ? (
-                    <Eye className="h-3.5 w-3.5" />
-                  ) : (
-                    <EyeOff className="h-3.5 w-3.5" />
-                  )}
-                </button>
-
-                {/* Move Up */}
-                <button
-                  type="button"
-                  onClick={() => handleMove(idx, "up")}
-                  disabled={isFirst}
-                  className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E4DAD5] bg-[#F7F0EA] text-[#6B5A5D] hover:text-[#241618] hover:bg-white transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                  title="Move up"
-                >
-                  <ArrowUp className="h-3.5 w-3.5" />
-                </button>
-
-                {/* Move Down */}
-                <button
-                  type="button"
-                  onClick={() => handleMove(idx, "down")}
-                  disabled={isLast}
-                  className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E4DAD5] bg-[#F7F0EA] text-[#6B5A5D] hover:text-[#241618] hover:bg-white transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                  title="Move down"
-                >
-                  <ArrowDown className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
     </section>
   );

@@ -38,9 +38,8 @@ function TaglineRotator() {
   return (
     <div className="flex items-center justify-center overflow-hidden px-2 text-center min-h-[24px]">
       <p
-        className={`text-xs sm:text-sm font-bold text-inflixo-purple-dark transition-all duration-300 transform ${
-          visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
-        }`}
+        className={`text-xs sm:text-sm font-bold text-inflixo-purple-dark transition-all duration-300 transform ${visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
+          }`}
       >
         {PRODUCT_TAGLINES[index]}
       </p>
@@ -107,7 +106,7 @@ export function OnboardingLayout({
           {/* Right: Save & Logout */}
           <button
             onClick={handleSaveAndLogout}
-            className="tap-scale flex shrink-0 items-center gap-1.5 rounded-full border border-[#E4DAD5] bg-[#F7F0EA] px-3 py-1.5 text-xs font-bold text-[#6B5A5D] transition-all hover:border-[#B85C6B]/40 hover:bg-white hover:text-[#241618] shadow-xs"
+            className="tap-scale flex shrink-0 items-center gap-1.5 rounded-full border border-[#E4DAD5] bg-[#fbfbfb] px-3 py-1.5 text-xs font-bold text-[#6B5A5D] transition-all hover:border-[#B85C6B]/40 hover:bg-white hover:text-[#241618] shadow-xs"
           >
             <LogOut className="h-3.5 w-3.5 text-[#6B5A5D]" />
             <span className="hidden sm:inline">Save &amp; logout</span>
@@ -142,7 +141,7 @@ export function OnboardingLayout({
 
             {/* Right live preview column - sticky below header and contained in viewport */}
             {preview && (
-              <aside className="hidden flex-1 border-l border-[#E4DAD5] bg-[#F7F0EA] px-6 py-4 pb-20 lg:block lg:w-[50%] min-w-[440px]">
+              <aside className="hidden flex-1 border-l border-[#E4DAD5] bg-[#fbfbfb] px-6 py-4 pb-20 lg:block lg:w-[50%] min-w-[440px]">
                 <div className="sticky top-[116px] max-h-[calc(100vh-128px)] overflow-y-auto pr-1 pb-6 scrollbar-thin flex flex-col items-center">
                   <div className="w-full max-w-[480px]">
                     {preview}
@@ -157,7 +156,7 @@ export function OnboardingLayout({
       {/* Dedicated Full-Screen Preview Sheet for Mobile & Tablet */}
       {preview && isMobilePreviewOpen && (
         <div className="fixed inset-0 z-50 flex flex-col bg-black/60 backdrop-blur-xs lg:hidden animate-fade-in">
-          <div className="relative flex flex-col w-full h-full max-h-dvh bg-[#F7F0EA] overflow-hidden shadow-2xl">
+          <div className="relative flex flex-col w-full h-full max-h-dvh bg-[#fbfbfb] overflow-hidden shadow-2xl">
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3.5 bg-white border-b border-[#E4DAD5] safe-top">
               <div className="flex items-center gap-2">
@@ -167,7 +166,7 @@ export function OnboardingLayout({
               <button
                 type="button"
                 onClick={() => setIsMobilePreviewOpen(false)}
-                className="tap-scale flex h-8 w-8 items-center justify-center rounded-full bg-[#F7F0EA] text-[#6B5A5D] hover:bg-[#E4DAD5] transition-colors cursor-pointer"
+                className="tap-scale flex h-8 w-8 items-center justify-center rounded-full bg-[#fbfbfb] text-[#6B5A5D] hover:bg-[#E4DAD5] transition-colors cursor-pointer"
                 aria-label="Close Preview"
               >
                 <X className="h-4 w-4" />

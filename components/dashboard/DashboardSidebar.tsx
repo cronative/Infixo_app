@@ -30,7 +30,7 @@ export function DashboardSidebar() {
       </div>
 
       {/* Creator Header Strip */}
-      <div className="my-3 -mx-4 px-4 py-2.5 border-y border-[#E4DAD5] flex items-center gap-2.5 bg-[#F7F0EA]">
+      <div className="my-3 -mx-4 px-4 py-2.5 border-y border-[#E4DAD5] flex items-center gap-2.5 bg-[#fbfbfb]">
         <CreatorAvatar
           src={profile.photoDataUrl}
           name={displayName}
@@ -75,11 +75,10 @@ export function DashboardSidebar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2.5 rounded-[10px] px-3 py-2 text-xs transition-colors ${
-                    active
+                  className={`flex items-center gap-2.5 rounded-[10px] px-3 py-2 text-xs transition-colors ${active
                       ? "bg-[#F3DDE0] text-[#8C3F4D] font-semibold"
-                      : "text-[#6B5A5D] hover:bg-[#F7F0EA] hover:text-[#241618] font-medium"
-                  }`}
+                      : "text-[#6B5A5D] hover:bg-[#fbfbfb] hover:text-[#241618] font-medium"
+                    }`}
                 >
                   <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#B85C6B]" : "text-[#6B5A5D]"}`} />
                   <span className="flex-1 truncate">{item.label}</span>
@@ -102,11 +101,10 @@ export function DashboardSidebar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2.5 rounded-[10px] px-3 py-2 text-xs transition-colors ${
-                    active
+                  className={`flex items-center gap-2.5 rounded-[10px] px-3 py-2 text-xs transition-colors ${active
                       ? "bg-[#F3DDE0] text-[#8C3F4D] font-semibold"
-                      : "text-[#6B5A5D] hover:bg-[#F7F0EA] hover:text-[#241618] font-medium"
-                  }`}
+                      : "text-[#6B5A5D] hover:bg-[#fbfbfb] hover:text-[#241618] font-medium"
+                    }`}
                 >
                   <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#B85C6B]" : "text-[#6B5A5D]"}`} />
                   <span className="flex-1 truncate">{item.label}</span>
@@ -119,7 +117,7 @@ export function DashboardSidebar() {
 
       {/* Bottom Utility Area: Early Access & Logout */}
       <div className="pt-3 border-t border-[#E4DAD5] space-y-2">
-        <div className="flex items-center justify-between rounded-[10px] border border-[#E4DAD5] bg-[#F7F0EA] px-3 py-2 text-[11px] font-semibold text-[#241618]">
+        <div className="flex items-center justify-between rounded-[10px] border border-[#E4DAD5] bg-[#fbfbfb] px-3 py-2 text-[11px] font-semibold text-[#241618]">
           <div className="flex items-center gap-1.5">
             <Sparkles className="h-3.5 w-3.5 text-[#B85C6B] shrink-0" />
             <span>Starter Plan</span>

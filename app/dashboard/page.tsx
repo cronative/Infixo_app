@@ -281,7 +281,7 @@ export default function DashboardOverviewPage() {
           <div className="flex items-center gap-2.5 shrink-0 self-start md:self-auto">
             <Link
               href="/dashboard/profile"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#F7F0EA] px-3.5 py-2 text-xs font-semibold text-[#241618] transition-colors cursor-pointer shadow-xs"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#fbfbfb] px-3.5 py-2 text-xs font-semibold text-[#241618] transition-colors cursor-pointer shadow-xs"
             >
               <span>Edit Profile</span>
             </Link>
@@ -307,7 +307,7 @@ export default function DashboardOverviewPage() {
               {animatedPercentage}%
             </span>
           </div>
-          <div className="w-full h-2 rounded-full bg-[#F7F0EA] border border-[#E4DAD5] overflow-hidden">
+          <div className="w-full h-2 rounded-full bg-[#fbfbfb] border border-[#E4DAD5] overflow-hidden">
             <div
               className="h-full bg-[#B85C6B] rounded-full transition-all duration-700 ease-out"
               style={{ width: isLoaded ? `${profileSteps.percentage}%` : "0%" }}
@@ -667,7 +667,7 @@ export default function DashboardOverviewPage() {
               return (
                 <div
                   key={s.id}
-                  className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-[#F7F0EA]/50 transition-colors"
+                  className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-[#fbfbfb]/50 transition-colors"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F3DDE0] text-[#8C3F4D] shrink-0 font-bold text-xs">
@@ -686,7 +686,7 @@ export default function DashboardOverviewPage() {
                   <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
                     <Link
                       href="/dashboard/series"
-                      className="inline-flex items-center gap-1 rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#F7F0EA] px-3 py-1.5 text-xs font-semibold text-[#241618] transition-colors"
+                      className="inline-flex items-center gap-1 rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#fbfbfb] px-3 py-1.5 text-xs font-semibold text-[#241618] transition-colors"
                     >
                       <Edit2 className="h-3 w-3 text-[#6B5A5D]" />
                       <span>Manage</span>
@@ -695,7 +695,7 @@ export default function DashboardOverviewPage() {
                       href={`/${handleStr}/series/${s.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] hover:bg-white px-3 py-1.5 text-xs font-semibold text-[#B85C6B] transition-colors"
+                      className="inline-flex items-center gap-1 rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] hover:bg-white px-3 py-1.5 text-xs font-semibold text-[#B85C6B] transition-colors"
                     >
                       <span>View</span>
                       <ExternalLink className="h-3 w-3" />

@@ -140,7 +140,7 @@ export default function VerifyOtpPage() {
 
   return (
     <div className="relative flex min-h-dvh flex-col items-center justify-center bg-[#fbfbfb] px-4 py-8 text-center text-[#241618] overflow-hidden">
-      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-80 bg-[radial-gradient(ellipse_at_top,#F7F0EA_0%,transparent_70%)] blur-2xl" />
+      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-80 bg-[radial-gradient(ellipse_at_top,#fbfbfb_0%,transparent_70%)] blur-2xl" />
 
       <div className="relative z-10 w-full max-w-[440px] space-y-6">
         {/* 1. Header Branding */}
@@ -169,7 +169,7 @@ export default function VerifyOtpPage() {
             <button
               type="button"
               onClick={() => router.push("/login")}
-              className="inline-flex items-center gap-1.5 rounded-full bg-[#F7F0EA] px-3 py-1 text-xs font-semibold text-[#6B5A5D] border border-[#E4DAD5] hover:bg-[#F3DDE0] hover:text-[#8C3F4D] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#fbfbfb] px-3 py-1 text-xs font-semibold text-[#6B5A5D] border border-[#E4DAD5] hover:bg-[#F3DDE0] hover:text-[#8C3F4D] transition-colors cursor-pointer"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               <span>Change email address</span>
@@ -197,10 +197,10 @@ export default function VerifyOtpPage() {
                   onPaste={handlePaste}
                   aria-label={`Digit ${i + 1}`}
                   className={`h-13 w-13 sm:h-14 sm:w-14 rounded-[10px] border text-center text-xl font-bold text-[#241618] bg-[#FFFFFF] outline-none transition-all duration-150 ${errorMessage
-                      ? "border-[#C1443A] bg-[#fbfbfb] text-[#C1443A] ring-2 ring-[#C1443A]/20"
-                      : d
-                        ? "border-[#B85C6B] ring-2 ring-[#F3DDE0] bg-[#fbfbfb]"
-                        : "border-[#E4DAD5] focus:border-[#B85C6B] focus:ring-3 focus:ring-[#F3DDE0]"
+                    ? "border-[#C1443A] bg-[#fbfbfb] text-[#C1443A] ring-2 ring-[#C1443A]/20"
+                    : d
+                      ? "border-[#B85C6B] ring-2 ring-[#F3DDE0] bg-[#fbfbfb]"
+                      : "border-[#E4DAD5] focus:border-[#B85C6B] focus:ring-3 focus:ring-[#F3DDE0]"
                     }`}
                 />
               ))}
@@ -227,8 +227,8 @@ export default function VerifyOtpPage() {
             disabled={!isOtpComplete || submitting}
             onClick={() => submit(digits.join(""))}
             className={`w-full inline-flex items-center justify-center gap-2 rounded-[10px] font-semibold text-xs sm:text-sm h-11 transition-all cursor-pointer active:scale-98 ${isOtpComplete && !submitting
-                ? "bg-[#B85C6B] text-[#fbfbfb] hover:bg-[#8C3F4D]"
-                : "bg-[#F7F0EA] text-[#6B5A5D] border border-[#E4DAD5] cursor-not-allowed"
+              ? "bg-[#B85C6B] text-[#fbfbfb] hover:bg-[#8C3F4D]"
+              : "bg-[#fbfbfb] text-[#6B5A5D] border border-[#E4DAD5] cursor-not-allowed"
               }`}
           >
             {submitting ? (

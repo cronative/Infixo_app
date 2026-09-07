@@ -16,8 +16,6 @@ const EARLY_ACCESS_FEATURES = [
   "1 creator service and rate card",
   "Total Fanbase",
   "Social profiles and custom links",
-  "Client reviews",
-  "Direct brand inquiries",
   "Public creator profile",
 ];
 

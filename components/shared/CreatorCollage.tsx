@@ -57,15 +57,15 @@ export function CreatorCollage() {
 
           {/* Crisp 1px Border Platform Follower Pills */}
           <div className="grid grid-cols-3 gap-2">
-            <div className="flex flex-col items-center justify-center rounded-xl bg-[#F7F0EA] border border-[#E4DAD5] p-2 text-center">
+            <div className="flex flex-col items-center justify-center rounded-xl bg-[#fbfbfb] border border-[#E4DAD5] p-2 text-center">
               <InstagramIcon className="h-4 w-4 text-pink-500 mb-0.5" />
               <span className="text-xs font-black text-[#241618]">48.7K</span>
             </div>
-            <div className="flex flex-col items-center justify-center rounded-xl bg-[#F7F0EA] border border-[#E4DAD5] p-2 text-center">
+            <div className="flex flex-col items-center justify-center rounded-xl bg-[#fbfbfb] border border-[#E4DAD5] p-2 text-center">
               <YoutubeIcon className="h-4 w-4 text-red-500 mb-0.5" />
               <span className="text-xs font-black text-[#241618]">62.3K</span>
             </div>
-            <div className="flex flex-col items-center justify-center rounded-xl bg-[#F7F0EA] border border-[#E4DAD5] p-2 text-center">
+            <div className="flex flex-col items-center justify-center rounded-xl bg-[#fbfbfb] border border-[#E4DAD5] p-2 text-center">
               <FacebookIcon className="h-4 w-4 text-blue-600 mb-0.5" />
               <span className="text-xs font-black text-[#241618]">15K</span>
             </div>

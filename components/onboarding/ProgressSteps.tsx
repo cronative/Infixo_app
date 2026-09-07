@@ -24,10 +24,10 @@ export function ProgressSteps({ current }: { current: OnboardingStep }) {
                 {/* Step Circle */}
                 <div
                   className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${isDone
-                      ? "bg-[#B85C6B] text-[#fbfbfb]"
-                      : isActive
-                        ? "bg-[#B85C6B] text-[#fbfbfb] ring-4 ring-[#F3DDE0]"
-                        : "bg-[#F7F0EA] border border-[#E4DAD5] text-[#6B5A5D]"
+                    ? "bg-[#B85C6B] text-[#fbfbfb]"
+                    : isActive
+                      ? "bg-[#B85C6B] text-[#fbfbfb] ring-4 ring-[#F3DDE0]"
+                      : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#6B5A5D]"
                     }`}
                 >
                   {isDone ? (
@@ -41,10 +41,10 @@ export function ProgressSteps({ current }: { current: OnboardingStep }) {
                 <div className="flex flex-col">
                   <span
                     className={`text-xs font-bold leading-none transition-colors ${isActive
+                      ? "text-[#241618]"
+                      : isDone
                         ? "text-[#241618]"
-                        : isDone
-                          ? "text-[#241618]"
-                          : "text-[#6B5A5D]"
+                        : "text-[#6B5A5D]"
                       }`}
                   >
                     {step.label}

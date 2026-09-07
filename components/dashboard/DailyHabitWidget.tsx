@@ -176,10 +176,10 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
 
   return (
     <div className="rounded-2xl border border-[#E4DAD5] bg-white p-5 sm:p-6 space-y-5 shadow-xs text-left">
-      
+
       {/* Top Banner: Daily Streak & Peak Posting Window */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#E4DAD5]">
-        
+
         {/* Streak Counter */}
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#B85C6B] via-rose-500 to-[#8C3F4D] text-white shadow-md animate-pulse shrink-0">
@@ -201,7 +201,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
         </div>
 
         {/* Peak Best Time to Post Badge */}
-        <div className="flex items-center gap-2.5 bg-[#F7F0EA] px-3.5 py-2 rounded-xl border border-[#E4DAD5] shadow-xs shrink-0">
+        <div className="flex items-center gap-2.5 bg-[#fbfbfb] px-3.5 py-2 rounded-xl border border-[#E4DAD5] shadow-xs shrink-0">
           <Clock className="h-4 w-4 text-[#B85C6B]" />
           <div>
             <p className="text-[10px] font-extrabold uppercase tracking-wider text-[#6B5A5D]">
@@ -255,7 +255,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
                 {item.title}
               </h4>
 
-              <div className="p-2.5 rounded-lg bg-[#F7F0EA] border border-[#E4DAD5] text-[11px] font-medium text-[#6B5A5D] italic leading-relaxed">
+              <div className="p-2.5 rounded-lg bg-[#fbfbfb] border border-[#E4DAD5] text-[11px] font-medium text-[#6B5A5D] italic leading-relaxed">
                 "{item.hook}"
               </div>
             </div>

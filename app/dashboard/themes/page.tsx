@@ -198,7 +198,7 @@ export default function DashboardThemesPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search themes by name or style..."
-            className="w-full pl-9 pr-8 py-2 bg-[#F7F0EA] border border-[#E4DAD5] rounded-xl text-xs font-medium text-[#241618] placeholder:text-[#6B5A5D]/60 focus:outline-none focus:border-[#B85C6B] focus:bg-white focus:ring-1 focus:ring-[#B85C6B]/20 transition-all"
+            className="w-full pl-9 pr-8 py-2 bg-[#fbfbfb] border border-[#E4DAD5] rounded-xl text-xs font-medium text-[#241618] placeholder:text-[#6B5A5D]/60 focus:outline-none focus:border-[#B85C6B] focus:bg-white focus:ring-1 focus:ring-[#B85C6B]/20 transition-all"
           />
           {searchQuery && (
             <button
@@ -217,11 +217,10 @@ export default function DashboardThemesPage() {
           <button
             type="button"
             onClick={() => setActiveGroup("all")}
-            className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${
-              activeGroup === "all"
+            className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${activeGroup === "all"
                 ? "bg-[#B85C6B] text-white shadow-xs"
-                : "bg-[#F7F0EA] border border-[#E4DAD5] text-[#6B5A5D] hover:text-[#241618] hover:bg-white"
-            }`}
+                : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#6B5A5D] hover:text-[#241618] hover:bg-white"
+              }`}
           >
             All ({groupCounts.all})
           </button>
@@ -229,11 +228,10 @@ export default function DashboardThemesPage() {
           <button
             type="button"
             onClick={() => setActiveGroup("animated")}
-            className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-              activeGroup === "animated"
+            className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${activeGroup === "animated"
                 ? "bg-[#B85C6B] text-white shadow-xs"
-                : "bg-[#F7F0EA] border border-[#E4DAD5] text-[#8C3F4D] hover:text-[#241618] hover:bg-white"
-            }`}
+                : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#8C3F4D] hover:text-[#241618] hover:bg-white"
+              }`}
           >
             <Sparkles className="h-3.5 w-3.5" />
             <span>Animated ({groupCounts.animated})</span>
@@ -242,11 +240,10 @@ export default function DashboardThemesPage() {
           <button
             type="button"
             onClick={() => setActiveGroup("light")}
-            className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${
-              activeGroup === "light"
+            className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${activeGroup === "light"
                 ? "bg-[#B85C6B] text-white shadow-xs"
-                : "bg-[#F7F0EA] border border-[#E4DAD5] text-[#6B5A5D] hover:text-[#241618] hover:bg-white"
-            }`}
+                : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#6B5A5D] hover:text-[#241618] hover:bg-white"
+              }`}
           >
             Light ({groupCounts.light})
           </button>
@@ -254,11 +251,10 @@ export default function DashboardThemesPage() {
           <button
             type="button"
             onClick={() => setActiveGroup("dark")}
-            className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${
-              activeGroup === "dark"
+            className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${activeGroup === "dark"
                 ? "bg-[#B85C6B] text-white shadow-xs"
-                : "bg-[#F7F0EA] border border-[#E4DAD5] text-[#6B5A5D] hover:text-[#241618] hover:bg-white"
-            }`}
+                : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#6B5A5D] hover:text-[#241618] hover:bg-white"
+              }`}
           >
             Dark ({groupCounts.dark})
           </button>
@@ -307,16 +303,14 @@ export default function DashboardThemesPage() {
 
           {/* Soft Left Edge Fade */}
           <div
-            className={`absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#F7F0EA] to-transparent pointer-events-none z-10 transition-opacity duration-200 ${
-              canScrollLeft ? "opacity-100" : "opacity-0"
-            }`}
+            className={`absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#fbfbfb] to-transparent pointer-events-none z-10 transition-opacity duration-200 ${canScrollLeft ? "opacity-100" : "opacity-0"
+              }`}
           />
 
           {/* Soft Right Edge Fade */}
           <div
-            className={`absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#F7F0EA] to-transparent pointer-events-none z-10 transition-opacity duration-200 ${
-              canScrollRight ? "opacity-100" : "opacity-0"
-            }`}
+            className={`absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#fbfbfb] to-transparent pointer-events-none z-10 transition-opacity duration-200 ${canScrollRight ? "opacity-100" : "opacity-0"
+              }`}
           />
 
           {/* Scrollable Track */}
@@ -403,7 +397,7 @@ export default function DashboardThemesPage() {
                   type="button"
                   onClick={handleCancelPreview}
                   disabled={isApplying}
-                  className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#F7F0EA] text-[#6B5A5D] hover:text-[#241618] px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                  className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#fbfbfb] text-[#6B5A5D] hover:text-[#241618] px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer shadow-xs disabled:opacity-50"
                   title="Cancel preview and revert to active theme"
                 >
                   <Undo2 className="h-3.5 w-3.5" />
@@ -436,7 +430,7 @@ export default function DashboardThemesPage() {
               href={canonicalUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] hover:bg-white text-[#241618] px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer shadow-xs hover:border-[#B85C6B]/30"
+              className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] hover:bg-white text-[#241618] px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer shadow-xs hover:border-[#B85C6B]/30"
               title="Open public profile in new tab"
             >
               <span>Open Public Profile</span>
@@ -448,7 +442,7 @@ export default function DashboardThemesPage() {
         {/* =========================================================================
            5. FULL-WIDTH LIVE PROFILE PREVIEW CONTAINER
            ========================================================================= */}
-        <div className="rounded-2xl sm:rounded-3xl border border-[#E4DAD5] bg-[#F7F0EA] p-3 sm:p-6 md:p-8 shadow-xs transition-all">
+        <div className="rounded-2xl sm:rounded-3xl border border-[#E4DAD5] bg-[#fbfbfb] p-3 sm:p-6 md:p-8 shadow-xs transition-all">
           <div
             style={{ backgroundColor: previewThemeMeta.colors.pageBackground }}
             className={`relative w-full rounded-2xl border border-black/5 overflow-hidden transition-colors duration-300 p-3 sm:p-6 md:p-8 ${pageBgStyle}`}
@@ -505,11 +499,10 @@ function ThemeCarouselCard({
     <button
       type="button"
       onClick={onSelect}
-      className={`group relative flex flex-col justify-between w-[260px] sm:w-[280px] shrink-0 rounded-2xl border p-3 text-left transition-all cursor-pointer shadow-xs snap-start ${
-        isPreviewing
+      className={`group relative flex flex-col justify-between w-[260px] sm:w-[280px] shrink-0 rounded-2xl border p-3 text-left transition-all cursor-pointer shadow-xs snap-start ${isPreviewing
           ? "border-[#B85C6B] ring-2 ring-[#B85C6B]/25 bg-[#F3DDE0]/30"
           : "border-[#E4DAD5] bg-white hover:border-[#B85C6B]/40 hover:shadow-sm"
-      }`}
+        }`}
     >
       {/* Mini Visual Palette / Swatch Banner */}
       <div

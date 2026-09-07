@@ -185,7 +185,7 @@ export function CookieConsentBanner() {
                 <button
                   type="button"
                   onClick={handleRejectOptional}
-                  className="inline-flex items-center justify-center rounded-[8px] bg-[#FFFFFF] hover:bg-[#F7F0EA] border border-[#E4DAD5] px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#241618] transition-colors cursor-pointer"
+                  className="inline-flex items-center justify-center rounded-[8px] bg-[#FFFFFF] hover:bg-[#fbfbfb] border border-[#E4DAD5] px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#241618] transition-colors cursor-pointer"
                 >
                   Reject Optional
                 </button>
@@ -197,7 +197,7 @@ export function CookieConsentBanner() {
                     setShowBanner(false);
                     setShowPreferences(true);
                   }}
-                  className="inline-flex items-center justify-center rounded-[8px] bg-transparent hover:bg-[#F7F0EA] px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#6B5A5D] hover:text-[#241618] transition-colors cursor-pointer"
+                  className="inline-flex items-center justify-center rounded-[8px] bg-transparent hover:bg-[#fbfbfb] px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#6B5A5D] hover:text-[#241618] transition-colors cursor-pointer"
                 >
                   <Sliders className="mr-1.5 h-3.5 w-3.5" />
                   Manage Preferences
@@ -246,7 +246,7 @@ export function CookieConsentBanner() {
             className="w-full sm:max-w-xl max-h-[92dvh] sm:max-h-[85vh] flex flex-col bg-[#FFFFFF] rounded-t-[18px] sm:rounded-[18px] border border-[#E4DAD5] outline-none overflow-hidden animate-in slide-in-from-bottom-6 duration-200"
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-5 border-b border-[#E4DAD5] bg-[#F7F0EA] shrink-0">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-[#E4DAD5] bg-[#fbfbfb] shrink-0">
               <div className="flex items-center gap-2.5">
                 <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#FFFFFF] border border-[#E4DAD5] text-[#241618]">
                   <Sliders className="h-4 w-4" />
@@ -282,7 +282,7 @@ export function CookieConsentBanner() {
 
               <div className="space-y-3">
                 {/* Category 1: Essential Cookies (Locked ON) */}
-                <div className="p-4 rounded-[12px] border border-[#E4DAD5] bg-[#F7F0EA]/70 space-y-2">
+                <div className="p-4 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb]/70 space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Lock className="h-4 w-4 text-[#241618]" />
@@ -401,7 +401,7 @@ export function CookieConsentBanner() {
             </div>
 
             {/* Modal Footer / Actions */}
-            <div className="p-4 sm:p-5 border-t border-[#E4DAD5] bg-[#F7F0EA] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 shrink-0">
+            <div className="p-4 sm:p-5 border-t border-[#E4DAD5] bg-[#fbfbfb] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 shrink-0">
               <div className="flex items-center gap-2 order-2 sm:order-1">
                 <button
                   type="button"
