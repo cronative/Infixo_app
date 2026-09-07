@@ -73,7 +73,7 @@ export default function DashboardSubscriptionPage() {
         {/* Real-time Usage Metrics (3 Columns) */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {/* Metric 1: Content Series */}
-          <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3.5 space-y-2">
+          <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3.5 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-[#797570] flex items-center gap-1.5">
                 <Layers className="h-3.5 w-3.5 text-[#b85c6b]" />
@@ -98,7 +98,7 @@ export default function DashboardSubscriptionPage() {
           </div>
 
           {/* Metric 2: Total Episodes */}
-          <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3.5 space-y-2">
+          <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3.5 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-[#797570] flex items-center gap-1.5">
                 <Film className="h-3.5 w-3.5 text-[#b85c6b]" />
@@ -123,7 +123,7 @@ export default function DashboardSubscriptionPage() {
           </div>
 
           {/* Metric 3: Creator Services */}
-          <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3.5 space-y-2">
+          <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3.5 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-[#797570] flex items-center gap-1.5">
                 <Briefcase className="h-3.5 w-3.5 text-[#b85c6b]" />

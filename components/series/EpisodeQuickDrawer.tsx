@@ -56,7 +56,7 @@ export function EpisodeQuickDrawer({ isOpen, onClose, series }: EpisodeQuickDraw
       <ModalBody className="p-5 sm:p-6 space-y-4 text-left">
         {/* Series Description */}
         {series.description && (
-          <p className="text-xs text-[#797570] font-medium leading-relaxed bg-[#F8F7F3] p-3 rounded-xl border border-[#E4DAD5]">
+          <p className="text-xs text-[#797570] font-medium leading-relaxed bg-[#fbfbfb] p-3 rounded-xl border border-[#E4DAD5]">
             {series.description}
           </p>
         )}
@@ -68,7 +68,7 @@ export function EpisodeQuickDrawer({ isOpen, onClose, series }: EpisodeQuickDraw
           </p>
 
           {episodes.length === 0 ? (
-            <div className="p-6 text-center text-xs text-[#797570] font-semibold border border-dashed border-[#E4DAD5] rounded-2xl bg-[#F8F7F3]">
+            <div className="p-6 text-center text-xs text-[#797570] font-semibold border border-dashed border-[#E4DAD5] rounded-2xl bg-[#fbfbfb]">
               No episodes uploaded for this series yet.
             </div>
           ) : (

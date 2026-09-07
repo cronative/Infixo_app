@@ -59,7 +59,7 @@ export function LimitReachedModal({
         </p>
 
         {/* Upgrade Plan Cards Preview */}
-        <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-4 space-y-3">
+        <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-4 space-y-3">
           <div className="flex items-center justify-between">
             <span className="font-display text-xs font-bold text-[#181716]">
               {isGig ? "Creator VIP Plan" : "Creator Pro Plan"}
@@ -98,7 +98,7 @@ export function LimitReachedModal({
         <button
           type="button"
           onClick={onClose}
-          className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716] transition-colors cursor-pointer"
+          className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716] transition-colors cursor-pointer"
         >
           Got it
         </button>

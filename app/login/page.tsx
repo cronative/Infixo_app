@@ -45,7 +45,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-dvh flex-col items-center justify-center bg-[#FCF7F3] px-4 py-8 text-center text-[#241618] overflow-hidden">
+    <div className="relative flex min-h-dvh flex-col items-center justify-center bg-[#fbfbfb] px-4 py-8 text-center text-[#241618] overflow-hidden">
       {/* Subtle Ambient Warmth */}
       <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-80 bg-[radial-gradient(ellipse_at_top,#F7F0EA_0%,transparent_70%)] blur-2xl" />
 
@@ -88,11 +88,10 @@ export default function LoginPage() {
               </label>
 
               <div
-                className={`flex h-11 items-center rounded-[10px] border px-3.5 bg-[#FFFFFF] transition-all duration-200 focus-within:border-[#B85C6B] focus-within:ring-3 focus-within:ring-[#F3DDE0] ${
-                  error
-                    ? "border-[#C1443A] bg-[#FCF7F3]"
+                className={`flex h-11 items-center rounded-[10px] border px-3.5 bg-[#FFFFFF] transition-all duration-200 focus-within:border-[#B85C6B] focus-within:ring-3 focus-within:ring-[#F3DDE0] ${error
+                    ? "border-[#C1443A] bg-[#fbfbfb]"
                     : "border-[#E4DAD5]"
-                } ${isShaking ? "animate-shake" : ""}`}
+                  } ${isShaking ? "animate-shake" : ""}`}
               >
                 <Mail className="mr-2.5 h-4 w-4 shrink-0 text-[#6B5A5D]" />
                 <input
@@ -121,7 +120,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-[10px] bg-[#B85C6B] hover:bg-[#8C3F4D] text-[#FCF7F3] font-semibold text-xs sm:text-sm h-11 transition-all cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed active:scale-98"
+              className="w-full inline-flex items-center justify-center gap-2 rounded-[10px] bg-[#B85C6B] hover:bg-[#8C3F4D] text-[#fbfbfb] font-semibold text-xs sm:text-sm h-11 transition-all cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed active:scale-98"
             >
               {loading ? (
                 <>
@@ -140,19 +139,19 @@ export default function LoginPage() {
           {/* Feature Highlights List (Stagger 4, 5, 6) */}
           <div className="pt-5 border-t border-[#E4DAD5] space-y-2.5 text-xs font-medium text-[#6B5A5D]">
             <div className="flex items-center gap-2.5 animate-fade-up [animation-delay:0.35s]">
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#B85C6B] text-[#FCF7F3] shrink-0">
+              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#B85C6B] text-[#fbfbfb] shrink-0">
                 <Check className="h-2.5 w-2.5 stroke-[3]" />
               </span>
               <span className="text-[#241618]">Unified fanbase reach across platforms</span>
             </div>
             <div className="flex items-center gap-2.5 animate-fade-up [animation-delay:0.45s]">
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#B85C6B] text-[#FCF7F3] shrink-0">
+              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#B85C6B] text-[#fbfbfb] shrink-0">
                 <Check className="h-2.5 w-2.5 stroke-[3]" />
               </span>
               <span className="text-[#241618]">Bingeable OTT-style series</span>
             </div>
             <div className="flex items-center gap-2.5 animate-fade-up [animation-delay:0.55s]">
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#B85C6B] text-[#FCF7F3] shrink-0">
+              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#B85C6B] text-[#fbfbfb] shrink-0">
                 <Check className="h-2.5 w-2.5 stroke-[3]" />
               </span>
               <span className="text-[#241618]">Rate cards &amp; brand briefs, built in</span>

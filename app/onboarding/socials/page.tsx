@@ -312,7 +312,7 @@ export default function SocialsStepPage() {
             type="button"
             variant="outline"
             size="lg"
-            className="w-full sm:w-auto h-11 rounded-xl border-[#E7E3DC] text-[#181716] hover:bg-[#F8F7F3] font-semibold text-sm px-6"
+            className="w-full sm:w-auto h-11 rounded-xl border-[#E7E3DC] text-[#181716] hover:bg-[#fbfbfb] font-semibold text-sm px-6"
             onClick={() => router.push("/onboarding/profile")}
           >
             Back

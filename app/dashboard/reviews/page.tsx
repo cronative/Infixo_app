@@ -415,8 +415,8 @@ export default function DashboardReviewsPage() {
             type="button"
             onClick={() => setActiveTab("all")}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "all"
-                ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20"
-                : "text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716]"
+              ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20"
+              : "text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716]"
               }`}
           >
             All ({reviews.length})
@@ -426,8 +426,8 @@ export default function DashboardReviewsPage() {
             type="button"
             onClick={() => setActiveTab("approved")}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "approved"
-                ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20"
-                : "text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716]"
+              ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20"
+              : "text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716]"
               }`}
           >
             Published ({approvedCount})
@@ -437,8 +437,8 @@ export default function DashboardReviewsPage() {
             type="button"
             onClick={() => setActiveTab("pending")}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "pending"
-                ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20"
-                : "text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716]"
+              ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20"
+              : "text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716]"
               }`}
           >
             Pending ({pendingCount})
@@ -448,8 +448,8 @@ export default function DashboardReviewsPage() {
             type="button"
             onClick={() => setActiveTab("invited")}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "invited"
-                ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20"
-                : "text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716]"
+              ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20"
+              : "text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716]"
               }`}
           >
             Invitations ({invitedCount})
@@ -544,13 +544,13 @@ export default function DashboardReviewsPage() {
                           </span>
                         )}
                         {rev.status === "pending_invite" && (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#797570] bg-[#F8F7F3] border border-[#E7E3DC] px-2 py-0.5 rounded-full">
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#797570] bg-[#fbfbfb] border border-[#E7E3DC] px-2 py-0.5 rounded-full">
                             <span className="h-1 w-1 rounded-full bg-[#797570]" />
                             Invitation Sent
                           </span>
                         )}
                         {rev.status === "rejected" && (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#797570] bg-[#F8F7F3] border border-[#E7E3DC] px-2 py-0.5 rounded-full">
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#797570] bg-[#fbfbfb] border border-[#E7E3DC] px-2 py-0.5 rounded-full">
                             Hidden
                           </span>
                         )}
@@ -569,8 +569,8 @@ export default function DashboardReviewsPage() {
                               <Star
                                 key={i}
                                 className={`h-3.5 w-3.5 ${i < ratingValue
-                                    ? "fill-amber-400 text-amber-400"
-                                    : "fill-[#E7E3DC] text-[#E7E3DC]"
+                                  ? "fill-amber-400 text-amber-400"
+                                  : "fill-[#E7E3DC] text-[#E7E3DC]"
                                   }`}
                               />
                             ))}
@@ -593,7 +593,7 @@ export default function DashboardReviewsPage() {
                     </div>
 
                     {/* Review Text / Comment */}
-                    <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3 text-xs text-[#181716] font-normal leading-relaxed">
+                    <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3 text-xs text-[#181716] font-normal leading-relaxed">
                       {rev.comment ? (
                         <p className="line-clamp-4">“{rev.comment}”</p>
                       ) : (
@@ -641,7 +641,7 @@ export default function DashboardReviewsPage() {
                         <button
                           type="button"
                           onClick={() => handleUpdateStatus(rev.id, "rejected")}
-                          className="rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] text-[#797570] hover:text-[#181716] px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer"
+                          className="rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] text-[#797570] hover:text-[#181716] px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer"
                         >
                           Hide from Profile
                         </button>
@@ -651,7 +651,7 @@ export default function DashboardReviewsPage() {
                         <button
                           type="button"
                           onClick={() => handleUpdateStatus(rev.id, "approved")}
-                          className="rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] text-[#b85c6b] px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer"
+                          className="rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] text-[#b85c6b] px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer"
                         >
                           Publish to Profile
                         </button>
@@ -665,7 +665,7 @@ export default function DashboardReviewsPage() {
                             e.stopPropagation();
                             setActiveMenuId(activeMenuId === rev.id ? null : rev.id);
                           }}
-                          className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E7E3DC] bg-[#F8F7F3] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer"
+                          className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E7E3DC] bg-[#fbfbfb] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer"
                           aria-label="More actions"
                         >
                           <MoreVertical className="h-3.5 w-3.5" />
@@ -680,7 +680,7 @@ export default function DashboardReviewsPage() {
                               <button
                                 type="button"
                                 onClick={() => handleCopyReviewLink(rev)}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#F8F7F3] transition-colors cursor-pointer"
+                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#fbfbfb] transition-colors cursor-pointer"
                               >
                                 <Copy className="h-3.5 w-3.5 text-[#797570]" />
                                 <span>Copy Link</span>
@@ -691,7 +691,7 @@ export default function DashboardReviewsPage() {
                               <button
                                 type="button"
                                 onClick={() => handleUpdateStatus(rev.id, "rejected")}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#F8F7F3] transition-colors cursor-pointer"
+                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#fbfbfb] transition-colors cursor-pointer"
                               >
                                 <EyeOff className="h-3.5 w-3.5 text-[#797570]" />
                                 <span>Hide from Profile</span>
@@ -700,7 +700,7 @@ export default function DashboardReviewsPage() {
                               <button
                                 type="button"
                                 onClick={() => handleUpdateStatus(rev.id, "approved")}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#F8F7F3] transition-colors cursor-pointer"
+                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#fbfbfb] transition-colors cursor-pointer"
                               >
                                 <Eye className="h-3.5 w-3.5 text-[#797570]" />
                                 <span>Publish to Profile</span>
@@ -758,7 +758,7 @@ export default function DashboardReviewsPage() {
                   value={clientName}
                   onChange={(e) => setClientName(e.target.value)}
                   placeholder="e.g. Puma India"
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
@@ -773,7 +773,7 @@ export default function DashboardReviewsPage() {
                   value={clientEmail}
                   onChange={(e) => setClientEmail(e.target.value)}
                   placeholder="e.g. marketing@puma.com"
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
@@ -788,7 +788,7 @@ export default function DashboardReviewsPage() {
                   value={projectTitle}
                   onChange={(e) => setProjectTitle(e.target.value)}
                   placeholder="e.g. Summer campaign reel"
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
@@ -803,7 +803,7 @@ export default function DashboardReviewsPage() {
                   value={contentUrl}
                   onChange={(e) => setContentUrl(e.target.value)}
                   placeholder="https://instagram.com/reel/..."
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
@@ -817,7 +817,7 @@ export default function DashboardReviewsPage() {
                   value={clientDesignation}
                   onChange={(e) => setClientDesignation(e.target.value)}
                   placeholder="e.g. Marketing Manager"
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
             </form>
@@ -828,7 +828,7 @@ export default function DashboardReviewsPage() {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716] transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716] transition-colors cursor-pointer"
             >
               Cancel
             </button>

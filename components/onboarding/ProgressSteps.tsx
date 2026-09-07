@@ -23,31 +23,29 @@ export function ProgressSteps({ current }: { current: OnboardingStep }) {
               <div className="flex items-center gap-2.5">
                 {/* Step Circle */}
                 <div
-                  className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${
-                    isDone
-                      ? "bg-[#B85C6B] text-[#FCF7F3]"
+                  className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${isDone
+                      ? "bg-[#B85C6B] text-[#fbfbfb]"
                       : isActive
-                      ? "bg-[#B85C6B] text-[#FCF7F3] ring-4 ring-[#F3DDE0]"
-                      : "bg-[#F7F0EA] border border-[#E4DAD5] text-[#6B5A5D]"
-                  }`}
+                        ? "bg-[#B85C6B] text-[#fbfbfb] ring-4 ring-[#F3DDE0]"
+                        : "bg-[#F7F0EA] border border-[#E4DAD5] text-[#6B5A5D]"
+                    }`}
                 >
                   {isDone ? (
-                    <Check className="h-3.5 w-3.5 stroke-[3] text-[#FCF7F3]" />
+                    <Check className="h-3.5 w-3.5 stroke-[3] text-[#fbfbfb]" />
                   ) : (
-                    <Icon className={`h-3.5 w-3.5 ${isActive ? "text-[#FCF7F3]" : "text-[#6B5A5D]"}`} />
+                    <Icon className={`h-3.5 w-3.5 ${isActive ? "text-[#fbfbfb]" : "text-[#6B5A5D]"}`} />
                   )}
                 </div>
 
                 {/* Step Label */}
                 <div className="flex flex-col">
                   <span
-                    className={`text-xs font-bold leading-none transition-colors ${
-                      isActive
+                    className={`text-xs font-bold leading-none transition-colors ${isActive
                         ? "text-[#241618]"
                         : isDone
-                        ? "text-[#241618]"
-                        : "text-[#6B5A5D]"
-                    }`}
+                          ? "text-[#241618]"
+                          : "text-[#6B5A5D]"
+                      }`}
                   >
                     {step.label}
                   </span>
@@ -79,7 +77,7 @@ export function ProgressSteps({ current }: { current: OnboardingStep }) {
       <div className="sm:hidden">
         <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#B85C6B] text-[10px] font-bold text-[#FCF7F3]">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#B85C6B] text-[10px] font-bold text-[#fbfbfb]">
               {currentIndex + 1}
             </span>
             <span className="text-xs font-bold text-[#241618]">

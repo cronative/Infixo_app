@@ -470,7 +470,7 @@ export default function DashboardMediaKitPage() {
           <button
             type="button"
             onClick={handleShareMediaKit}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-3.5 py-2 text-xs font-semibold text-[#181716] transition-colors cursor-pointer shadow-xs"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] px-3.5 py-2 text-xs font-semibold text-[#181716] transition-colors cursor-pointer shadow-xs"
           >
             <Share2 className="h-3.5 w-3.5 text-[#b85c6b]" />
             <span>Share Profile</span>
@@ -559,7 +559,7 @@ export default function DashboardMediaKitPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {/* Instagram */}
-            <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3 flex items-center justify-between">
+            <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3 flex items-center justify-between">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-pink-50 text-pink-600 shrink-0">
                   <InstagramIcon className="h-4 w-4" />
@@ -576,7 +576,7 @@ export default function DashboardMediaKitPage() {
             </div>
 
             {/* YouTube */}
-            <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3 flex items-center justify-between">
+            <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3 flex items-center justify-between">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-50 text-red-600 shrink-0">
                   <YoutubeIcon className="h-4 w-4" />
@@ -595,7 +595,7 @@ export default function DashboardMediaKitPage() {
             </div>
 
             {/* Facebook */}
-            <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3 flex items-center justify-between">
+            <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3 flex items-center justify-between">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-blue-600 shrink-0">
                   <FacebookIcon className="h-4 w-4" />
@@ -671,7 +671,7 @@ export default function DashboardMediaKitPage() {
               <button
                 type="button"
                 onClick={handleLoadSampleGigs}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-4 py-2 text-xs font-semibold text-[#181716] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] px-4 py-2 text-xs font-semibold text-[#181716] transition-colors cursor-pointer"
               >
                 <Sparkles className="h-3.5 w-3.5 text-[#b85c6b]" />
                 <span>Load Sample Services</span>
@@ -688,7 +688,7 @@ export default function DashboardMediaKitPage() {
               return (
                 <div
                   key={pkg.id}
-                  className={`rounded-2xl border bg-white p-4 sm:p-5 flex flex-col justify-between space-y-3.5 shadow-xs text-left transition-all ${pkg.isActive ? "border-[#E7E3DC] hover:border-[#b85c6b]/30" : "border-[#E7E3DC] opacity-60 bg-[#F8F7F3]"
+                  className={`rounded-2xl border bg-white p-4 sm:p-5 flex flex-col justify-between space-y-3.5 shadow-xs text-left transition-all ${pkg.isActive ? "border-[#E7E3DC] hover:border-[#b85c6b]/30" : "border-[#E7E3DC] opacity-60 bg-[#fbfbfb]"
                     }`}
                 >
                   <div className="space-y-3">
@@ -700,14 +700,14 @@ export default function DashboardMediaKitPage() {
 
                       <div className="flex items-center gap-1.5 shrink-0">
                         {(pkg.packageName || pkg.badge) && (
-                          <span className="text-[10px] font-semibold text-[#797570] bg-[#F8F7F3] border border-[#E7E3DC] px-2 py-0.5 rounded-md">
+                          <span className="text-[10px] font-semibold text-[#797570] bg-[#fbfbfb] border border-[#E7E3DC] px-2 py-0.5 rounded-md">
                             {pkg.packageName || pkg.badge}
                           </span>
                         )}
                         <span
                           className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${pkg.isActive
-                              ? "bg-[#EAF7F0] text-[#17845B]"
-                              : "bg-zinc-100 text-zinc-500"
+                            ? "bg-[#EAF7F0] text-[#17845B]"
+                            : "bg-zinc-100 text-zinc-500"
                             }`}
                         >
                           {pkg.isActive ? "Active" : "Paused"}
@@ -770,7 +770,7 @@ export default function DashboardMediaKitPage() {
                           e.stopPropagation();
                           setActiveMenuId(activeMenuId === pkg.id ? null : pkg.id);
                         }}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E7E3DC] bg-[#F8F7F3] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E7E3DC] bg-[#fbfbfb] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer"
                         aria-label="More options"
                       >
                         <MoreVertical className="h-3.5 w-3.5" />
@@ -784,7 +784,7 @@ export default function DashboardMediaKitPage() {
                           <button
                             type="button"
                             onClick={() => handleShareService(pkg)}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#F8F7F3] transition-colors cursor-pointer"
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#fbfbfb] transition-colors cursor-pointer"
                           >
                             <Copy className="h-3.5 w-3.5 text-[#797570]" />
                             <span>Share Link</span>
@@ -793,7 +793,7 @@ export default function DashboardMediaKitPage() {
                           <button
                             type="button"
                             onClick={() => handleTogglePackageActive(pkg.id, pkg.isActive)}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#F8F7F3] transition-colors cursor-pointer"
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#fbfbfb] transition-colors cursor-pointer"
                           >
                             <Power className="h-3.5 w-3.5 text-[#797570]" />
                             <span>{pkg.isActive ? "Pause Service" : "Activate"}</span>
@@ -838,7 +838,7 @@ export default function DashboardMediaKitPage() {
           <button
             type="button"
             onClick={() => setIsEditingSettings(!isEditingSettings)}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-3.5 py-1.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] px-3.5 py-1.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
           >
             <SlidersHorizontal className="h-3.5 w-3.5 text-[#b85c6b]" />
             <span>{isEditingSettings ? "Close Settings" : "Manage Contact Settings"}</span>
@@ -847,7 +847,7 @@ export default function DashboardMediaKitPage() {
 
         {/* Inline Edit Form when toggled */}
         {isEditingSettings ? (
-          <div className="space-y-4 p-4 rounded-xl bg-[#F8F7F3] border border-[#E7E3DC] animate-in fade-in">
+          <div className="space-y-4 p-4 rounded-xl bg-[#fbfbfb] border border-[#E7E3DC] animate-in fade-in">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-[#181716]">
@@ -924,7 +924,7 @@ export default function DashboardMediaKitPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
             {/* WhatsApp Tile */}
-            <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3.5 space-y-1">
+            <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3.5 space-y-1">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570] block">
                 Official WhatsApp
               </span>
@@ -955,7 +955,7 @@ export default function DashboardMediaKitPage() {
             </div>
 
             {/* Business Email Tile */}
-            <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3.5 space-y-1">
+            <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3.5 space-y-1">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570] block">
                 Business Email
               </span>
@@ -984,7 +984,7 @@ export default function DashboardMediaKitPage() {
             </div>
 
             {/* Min Budget Filter Tile */}
-            <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3.5 space-y-1">
+            <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3.5 space-y-1">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570] block">
                 Min. Deal Filter
               </span>
@@ -1015,7 +1015,7 @@ export default function DashboardMediaKitPage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          <div className="flex items-center gap-3.5 rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-4">
+          <div className="flex items-center gap-3.5 rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#b85c6b]/[0.09] text-[#b85c6b] shrink-0">
               <Film className="h-5 w-5" />
             </div>
@@ -1029,7 +1029,7 @@ export default function DashboardMediaKitPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3.5 rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-4">
+          <div className="flex items-center gap-3.5 rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#b85c6b]/[0.09] text-[#b85c6b] shrink-0">
               <Tv className="h-5 w-5" />
             </div>
@@ -1063,7 +1063,7 @@ export default function DashboardMediaKitPage() {
                 value={formTitle}
                 onChange={(e) => setFormTitle(e.target.value)}
                 placeholder="e.g., 1x Instagram Reel or 3x Reels Pack"
-                className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 required
               />
             </div>
@@ -1074,7 +1074,7 @@ export default function DashboardMediaKitPage() {
                 <select
                   value={formPlatform}
                   onChange={(e) => setFormPlatform(e.target.value)}
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 >
                   <option value="Instagram Reel">Instagram Reel</option>
                   <option value="Instagram Bundle">Instagram Bundle (Reels + Stories)</option>
@@ -1097,7 +1097,7 @@ export default function DashboardMediaKitPage() {
                   onChange={(e) => setFormTurnaround(Number(e.target.value))}
                   min={1}
                   max={30}
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
             </div>
@@ -1115,7 +1115,7 @@ export default function DashboardMediaKitPage() {
                     value={formMinPrice}
                     onChange={(e) => setFormMinPrice(e.target.value)}
                     placeholder="₹2,000"
-                    className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                    className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                     required
                   />
                 </div>
@@ -1126,7 +1126,7 @@ export default function DashboardMediaKitPage() {
                     value={formMaxPrice}
                     onChange={(e) => setFormMaxPrice(e.target.value)}
                     placeholder="₹5,000"
-                    className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                    className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                   />
                 </div>
               </div>
@@ -1150,7 +1150,7 @@ export default function DashboardMediaKitPage() {
                     }
                   }}
                   placeholder="Add deliverable (e.g. Brand Collaborator Tag)"
-                  className="flex-1 rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                  className="flex-1 rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 />
                 <button
                   type="button"
@@ -1162,7 +1162,7 @@ export default function DashboardMediaKitPage() {
               </div>
 
               {/* 10 Tailored Deliverable Suggestion Chips */}
-              <div className="space-y-1 bg-[#F8F7F3] border border-[#E7E3DC] rounded-xl p-2.5">
+              <div className="space-y-1 bg-[#fbfbfb] border border-[#E7E3DC] rounded-xl p-2.5">
                 <p className="text-[10px] font-bold text-[#797570] uppercase tracking-wider flex items-center justify-between">
                   <span>💡 Suggested Deliverables for {formPlatform}:</span>
                   <span className="text-[9px] text-[#b85c6b] font-bold">Click chip to add +</span>
@@ -1181,8 +1181,8 @@ export default function DashboardMediaKitPage() {
                         }}
                         disabled={isAdded}
                         className={`text-[11px] font-semibold px-2 py-0.5 rounded-lg border transition-colors cursor-pointer ${isAdded
-                            ? "bg-[#EAF7F0] text-[#17845B] border-[#17845B]/20 cursor-default opacity-70"
-                            : "bg-white hover:bg-[#b85c6b]/[0.09] text-[#181716] hover:text-[#b85c6b] border-[#E7E3DC]"
+                          ? "bg-[#EAF7F0] text-[#17845B] border-[#17845B]/20 cursor-default opacity-70"
+                          : "bg-white hover:bg-[#b85c6b]/[0.09] text-[#181716] hover:text-[#b85c6b] border-[#E7E3DC]"
                           }`}
                       >
                         {isAdded ? `✓ ${item}` : `+ ${item}`}
@@ -1223,7 +1223,7 @@ export default function DashboardMediaKitPage() {
                 value={formPackageName}
                 onChange={(e) => setFormPackageName(e.target.value)}
                 placeholder="e.g. 🥈 Silver Package, ⭐ MOST POPULAR, 🔥 BEST VALUE..."
-                className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
               />
 
               <div className="space-y-1 pt-0.5">
@@ -1234,7 +1234,7 @@ export default function DashboardMediaKitPage() {
                       key={tag}
                       type="button"
                       onClick={() => setFormPackageName(tag)}
-                      className="bg-[#F8F7F3] hover:bg-[#b85c6b]/[0.09] text-[#181716] hover:text-[#b85c6b] border border-[#E7E3DC] text-xs font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                      className="bg-[#fbfbfb] hover:bg-[#b85c6b]/[0.09] text-[#181716] hover:text-[#b85c6b] border border-[#E7E3DC] text-xs font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
                     >
                       {tag}
                     </button>
@@ -1248,7 +1248,7 @@ export default function DashboardMediaKitPage() {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716] transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716] transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -1288,13 +1288,13 @@ export default function DashboardMediaKitPage() {
           </div>
 
           {/* 2-Tab Navigation Bar */}
-          <div className="flex items-center gap-2 bg-[#F8F7F3] p-1.5 rounded-2xl border border-[#E7E3DC]">
+          <div className="flex items-center gap-2 bg-[#fbfbfb] p-1.5 rounded-2xl border border-[#E7E3DC]">
             <button
               type="button"
               onClick={() => setActivePreviewTab("mediakit")}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${activePreviewTab === "mediakit"
-                  ? "bg-[#b85c6b] text-white shadow-xs"
-                  : "text-[#54514D] hover:text-[#181716] hover:bg-white/60"
+                ? "bg-[#b85c6b] text-white shadow-xs"
+                : "text-[#54514D] hover:text-[#181716] hover:bg-white/60"
                 }`}
             >
               <Briefcase className="h-4 w-4" />
@@ -1305,8 +1305,8 @@ export default function DashboardMediaKitPage() {
               type="button"
               onClick={() => setActivePreviewTab("series")}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${activePreviewTab === "series"
-                  ? "bg-[#b85c6b] text-white shadow-xs"
-                  : "text-[#54514D] hover:text-[#181716] hover:bg-white/60"
+                ? "bg-[#b85c6b] text-white shadow-xs"
+                : "text-[#54514D] hover:text-[#181716] hover:bg-white/60"
                 }`}
             >
               <Film className="h-4 w-4" />
@@ -1512,7 +1512,7 @@ export default function DashboardMediaKitPage() {
                             href={link.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center justify-between p-3 rounded-xl border border-[#E7E3DC] bg-white hover:border-[#b85c6b]/40 hover:bg-[#F8F7F3] transition-all text-left shadow-2xs group"
+                            className="flex items-center justify-between p-3 rounded-xl border border-[#E7E3DC] bg-white hover:border-[#b85c6b]/40 hover:bg-[#fbfbfb] transition-all text-left shadow-2xs group"
                           >
                             <div className="flex items-center gap-2.5 min-w-0">
                               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20 shrink-0">
@@ -1544,7 +1544,7 @@ export default function DashboardMediaKitPage() {
                 </div>
 
                 {packages.filter((p) => p.isActive).length === 0 ? (
-                  <div className="rounded-xl border border-dashed border-[#E7E3DC] bg-[#F8F7F3] p-6 text-center text-xs text-[#797570] font-medium">
+                  <div className="rounded-xl border border-dashed border-[#E7E3DC] bg-[#fbfbfb] p-6 text-center text-xs text-[#797570] font-medium">
                     No active rate card packages published currently.
                   </div>
                 ) : (
@@ -1705,7 +1705,7 @@ export default function DashboardMediaKitPage() {
                   })}
                 </div>
               ) : (
-                <div className="rounded-2xl border-2 border-dashed border-[#E7E3DC] bg-[#F8F7F3] p-8 text-center space-y-2">
+                <div className="rounded-2xl border-2 border-dashed border-[#E7E3DC] bg-[#fbfbfb] p-8 text-center space-y-2">
                   <Film className="h-8 w-8 text-[#797570] mx-auto" />
                   <h4 className="font-bold text-[#181716] text-sm">No Series Published Yet</h4>
                   <p className="text-xs text-[#797570] max-w-sm mx-auto">

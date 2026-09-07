@@ -34,11 +34,11 @@ export function PhotoUpload({
   return (
     <div className="flex flex-col items-center sm:items-start gap-2">
       <div
-        className={`group relative flex shrink-0 items-center justify-center overflow-hidden border border-[#E7E3DC] bg-[#F8F7F3] shadow-xs transition-colors hover:border-[#b85c6b] ${shape === "circle"
-            ? "w-20 h-20 rounded-full aspect-square overflow-hidden shrink-0"
-            : shape === "landscape"
-              ? "aspect-video w-44 rounded-xl"
-              : "w-20 h-20 rounded-2xl overflow-hidden"
+        className={`group relative flex shrink-0 items-center justify-center overflow-hidden border border-[#E7E3DC] bg-[#fbfbfb] shadow-xs transition-colors hover:border-[#b85c6b] ${shape === "circle"
+          ? "w-20 h-20 rounded-full aspect-square overflow-hidden shrink-0"
+          : shape === "landscape"
+            ? "aspect-video w-44 rounded-xl"
+            : "w-20 h-20 rounded-2xl overflow-hidden"
           } ${className}`}
         style={!isLandscape && shape !== "circle" ? { width: size, height: size } : undefined}
       >
@@ -48,10 +48,10 @@ export function PhotoUpload({
             src={value}
             alt="Preview"
             className={`w-full h-full object-cover overflow-hidden ${shape === "circle"
-                ? "aspect-square rounded-full"
-                : shape === "landscape"
-                  ? "aspect-video rounded-xl"
-                  : "rounded-2xl"
+              ? "aspect-square rounded-full"
+              : shape === "landscape"
+                ? "aspect-video rounded-xl"
+                : "rounded-2xl"
               }`}
           />
         ) : (

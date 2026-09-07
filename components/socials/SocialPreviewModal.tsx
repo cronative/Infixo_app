@@ -72,7 +72,7 @@ export function SocialPreviewCard({
       <div className="mt-4 bg-white border border-[#E4DAD5] rounded-2xl p-5 shadow-xs text-left">
         <div className="flex items-center justify-between pb-3.5 border-b border-[#E4DAD5]">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F8F7F3] border border-[#E4DAD5] shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#fbfbfb] border border-[#E4DAD5] shrink-0">
               {brandIcon}
             </div>
             <div>
@@ -88,7 +88,7 @@ export function SocialPreviewCard({
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-xl text-[#797570] hover:text-[#181716] hover:bg-[#F8F7F3] transition-colors cursor-pointer"
+            className="flex h-8 w-8 items-center justify-center rounded-xl text-[#797570] hover:text-[#181716] hover:bg-[#fbfbfb] transition-colors cursor-pointer"
           >
             <X className="h-4 w-4" />
           </button>
@@ -96,7 +96,7 @@ export function SocialPreviewCard({
 
         <div className="grid grid-cols-3 gap-2.5 py-3.5 text-center">
           {stats.map((st, i) => (
-            <div key={i} className="flex flex-col items-center justify-center p-2 rounded-xl bg-[#F8F7F3] border border-[#E4DAD5]">
+            <div key={i} className="flex flex-col items-center justify-center p-2 rounded-xl bg-[#fbfbfb] border border-[#E4DAD5]">
               <p className="text-sm font-bold text-[#181716] leading-tight">
                 {st.value}
               </p>
@@ -112,7 +112,7 @@ export function SocialPreviewCard({
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="flex-1 rounded-xl border border-[#E4DAD5] bg-white py-2 text-xs font-semibold text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716] transition-colors cursor-pointer"
+            className="flex-1 rounded-xl border border-[#E4DAD5] bg-white py-2 text-xs font-semibold text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716] transition-colors cursor-pointer"
           >
             Cancel
           </button>
@@ -205,7 +205,7 @@ export function SocialPreviewModal({
 
         <div className="grid grid-cols-3 gap-2.5 text-center">
           {stats.map((st, i) => (
-            <div key={i} className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-[#F8F7F3] border border-[#E4DAD5]">
+            <div key={i} className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-[#fbfbfb] border border-[#E4DAD5]">
               <p className="text-sm font-bold text-[#181716] leading-tight">
                 {st.value}
               </p>
@@ -222,7 +222,7 @@ export function SocialPreviewModal({
           type="button"
           onClick={onClose}
           disabled={loading}
-          className="px-4 py-2 rounded-xl border border-[#E4DAD5] text-xs font-semibold text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716] transition-colors cursor-pointer"
+          className="px-4 py-2 rounded-xl border border-[#E4DAD5] text-xs font-semibold text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716] transition-colors cursor-pointer"
         >
           Cancel
         </button>

@@ -249,7 +249,7 @@ export default function DashboardBrandsPage() {
           {brands.map((brand) => (
             <div
               key={brand.id}
-              className={`relative flex flex-col justify-between rounded-2xl border p-4 bg-white shadow-xs transition-all ${brand.isActive ? "border-[#E7E3DC]" : "border-[#E7E3DC] opacity-60 bg-[#F8F7F3]"
+              className={`relative flex flex-col justify-between rounded-2xl border p-4 bg-white shadow-xs transition-all ${brand.isActive ? "border-[#E7E3DC]" : "border-[#E7E3DC] opacity-60 bg-[#fbfbfb]"
                 }`}
             >
               <div className="flex items-start gap-3.5">
@@ -334,7 +334,7 @@ export default function DashboardBrandsPage() {
                   <button
                     type="button"
                     onClick={() => handleOpenModal(brand)}
-                    className="p-1 text-[#797570] hover:text-[#181716] hover:bg-[#F8F7F3] rounded-lg transition-colors cursor-pointer"
+                    className="p-1 text-[#797570] hover:text-[#181716] hover:bg-[#fbfbfb] rounded-lg transition-colors cursor-pointer"
                     title="Edit brand"
                   >
                     <Pencil className="h-3.5 w-3.5" />
@@ -367,7 +367,7 @@ export default function DashboardBrandsPage() {
         <form onSubmit={handleSaveBrand} className="flex flex-col flex-1 min-h-0">
           <ModalBody className="p-5 sm:p-6 space-y-4 text-left">
             {/* Live Brand Initials Badge Preview */}
-            <div className="flex items-center gap-3.5 p-3 rounded-2xl bg-[#F8F7F3] border border-[#E7E3DC]">
+            <div className="flex items-center gap-3.5 p-3 rounded-2xl bg-[#fbfbfb] border border-[#E7E3DC]">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#b85c6b] text-white font-extrabold text-sm shadow-xs ring-2 ring-[#b85c6b]/20 shrink-0">
                 {getInitials(brandName || "Brand")}
               </div>
@@ -387,7 +387,7 @@ export default function DashboardBrandsPage() {
                 value={brandName}
                 onChange={(e) => setBrandName(e.target.value)}
                 placeholder="e.g. CreatorCloths or The Tech Show"
-                className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
@@ -400,7 +400,7 @@ export default function DashboardBrandsPage() {
                 value={websiteUrl}
                 onChange={(e) => setWebsiteUrl(e.target.value)}
                 placeholder="https://mybrand.com"
-                className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
@@ -414,7 +414,7 @@ export default function DashboardBrandsPage() {
                 <label className="block text-[11px] font-semibold text-[#797570] mb-1">
                   Instagram Username
                 </label>
-                <div className="flex h-10 items-center rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3 transition-colors focus-within:border-[#b85c6b] focus-within:bg-white">
+                <div className="flex h-10 items-center rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3 transition-colors focus-within:border-[#b85c6b] focus-within:bg-white">
                   <span className="mr-2 text-[#E1306C] shrink-0">
                     <InstagramIcon className="h-4 w-4" />
                   </span>
@@ -435,7 +435,7 @@ export default function DashboardBrandsPage() {
                 <label className="block text-[11px] font-semibold text-[#797570] mb-1">
                   YouTube Channel Username
                 </label>
-                <div className="flex h-10 items-center rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3 transition-colors focus-within:border-[#b85c6b] focus-within:bg-white">
+                <div className="flex h-10 items-center rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3 transition-colors focus-within:border-[#b85c6b] focus-within:bg-white">
                   <span className="mr-2 text-[#FF0000] shrink-0">
                     <YoutubeIcon className="h-4 w-4" />
                   </span>
@@ -456,7 +456,7 @@ export default function DashboardBrandsPage() {
                 <label className="block text-[11px] font-semibold text-[#797570] mb-1">
                   Facebook Username
                 </label>
-                <div className="flex h-10 items-center rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3 transition-colors focus-within:border-[#b85c6b] focus-within:bg-white">
+                <div className="flex h-10 items-center rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3 transition-colors focus-within:border-[#b85c6b] focus-within:bg-white">
                   <span className="mr-2 text-[#1877F2] shrink-0">
                     <FacebookIcon className="h-4 w-4" />
                   </span>
@@ -479,7 +479,7 @@ export default function DashboardBrandsPage() {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716] transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716] transition-colors cursor-pointer"
             >
               Cancel
             </button>

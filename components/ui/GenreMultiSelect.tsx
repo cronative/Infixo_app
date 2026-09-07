@@ -84,7 +84,7 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
       </div>
 
       {/* Direct Interactive Chips List (Natural Expansion, No Clipping) */}
-      <div className="flex flex-wrap gap-2 rounded-2xl border border-[#E7E3DC] bg-[#F8F7F3] p-3.5">
+      <div className="flex flex-wrap gap-2 rounded-2xl border border-[#E7E3DC] bg-[#fbfbfb] p-3.5">
         {ALL_SERIES_GENRES.map((g) => {
           const isSelected = selectedGenres.includes(g);
           const isMaxReached = !isSelected && selectedGenres.length >= max;
@@ -96,10 +96,10 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
               disabled={isMaxReached}
               onClick={() => toggleGenre(g)}
               className={`tap-scale flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs transition-all cursor-pointer shrink-0 ${isSelected
-                  ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b] font-bold shadow-xs"
-                  : isMaxReached
-                    ? "opacity-40 cursor-not-allowed bg-white border border-[#E7E3DC] text-[#797570]"
-                    : "bg-white border border-[#E7E3DC] text-[#54514D] hover:border-[#b85c6b]/40 hover:bg-[#F8F7F3] hover:text-[#b85c6b]"
+                ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b] font-bold shadow-xs"
+                : isMaxReached
+                  ? "opacity-40 cursor-not-allowed bg-white border border-[#E7E3DC] text-[#797570]"
+                  : "bg-white border border-[#E7E3DC] text-[#54514D] hover:border-[#b85c6b]/40 hover:bg-[#fbfbfb] hover:text-[#b85c6b]"
                 }`}
             >
               {isSelected ? (

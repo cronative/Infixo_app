@@ -91,7 +91,7 @@ export default function DashboardSettingsPage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-          <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3.5 space-y-1">
+          <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3.5 space-y-1">
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570] block">
               Account Email
             </span>
@@ -106,7 +106,7 @@ export default function DashboardSettingsPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3.5 space-y-1">
+          <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3.5 space-y-1">
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570] block">
               Current Access
             </span>
@@ -125,7 +125,7 @@ export default function DashboardSettingsPage() {
           <button
             type="button"
             onClick={() => showToast("Security link sent to your registered email! 🔒", "info")}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-3.5 py-2 text-xs font-semibold text-[#181716] transition-colors cursor-pointer shadow-xs"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] px-3.5 py-2 text-xs font-semibold text-[#181716] transition-colors cursor-pointer shadow-xs"
           >
             <Lock className="h-3.5 w-3.5 text-[#b85c6b]" />
             <span>Manage Security</span>
@@ -149,7 +149,7 @@ export default function DashboardSettingsPage() {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3 sm:p-3.5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3 sm:p-3.5">
           <span className="font-mono text-xs font-semibold text-[#181716] truncate">
             {canonicalUrl}
           </span>
@@ -158,7 +158,7 @@ export default function DashboardSettingsPage() {
             <button
               type="button"
               onClick={handleCopyProfileLink}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-3 py-1.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer shadow-xs"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] px-3 py-1.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer shadow-xs"
             >
               {copiedLink ? (
                 <>
@@ -323,7 +323,7 @@ export default function DashboardSettingsPage() {
           <button
             type="button"
             onClick={() => setActiveLegalModal("terms")}
-            className="flex items-center justify-between rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-4 text-left hover:border-[#b85c6b]/40 hover:bg-white transition-all cursor-pointer group"
+            className="flex items-center justify-between rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-4 text-left hover:border-[#b85c6b]/40 hover:bg-white transition-all cursor-pointer group"
           >
             <div className="space-y-0.5">
               <p className="text-xs font-bold text-[#181716] group-hover:text-[#b85c6b] transition-colors">
@@ -339,7 +339,7 @@ export default function DashboardSettingsPage() {
           <button
             type="button"
             onClick={() => setActiveLegalModal("privacy")}
-            className="flex items-center justify-between rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-4 text-left hover:border-[#b85c6b]/40 hover:bg-white transition-all cursor-pointer group"
+            className="flex items-center justify-between rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-4 text-left hover:border-[#b85c6b]/40 hover:bg-white transition-all cursor-pointer group"
           >
             <div className="space-y-0.5">
               <p className="text-xs font-bold text-[#181716] group-hover:text-[#b85c6b] transition-colors">
@@ -374,7 +374,7 @@ export default function DashboardSettingsPage() {
           <button
             type="button"
             onClick={handleLogout}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-4 py-2.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer shadow-xs"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] px-4 py-2.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer shadow-xs"
           >
             <LogOut className="h-3.5 w-3.5 text-[#797570]" />
             <span>Sign Out of Account</span>
@@ -383,7 +383,7 @@ export default function DashboardSettingsPage() {
           <button
             type="button"
             onClick={() => showToast("Contact support@inflixo.com for account inquiries.", "info")}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-4 py-2.5 text-xs font-semibold text-[#797570] transition-colors cursor-pointer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] px-4 py-2.5 text-xs font-semibold text-[#797570] transition-colors cursor-pointer"
           >
             <AlertTriangle className="h-3.5 w-3.5" />
             <span>Account Support</span>
@@ -457,7 +457,7 @@ function LegalDocumentModal({
       <ModalBody className="p-5 sm:p-6 text-xs text-[#797570] leading-relaxed space-y-4 text-left">
         {isTerms ? (
           <>
-            <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-4 space-y-1">
+            <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-4 space-y-1">
               <p className="font-bold text-[#b85c6b] text-xs">📜 Inflixo Creator Service Agreement</p>
               <p className="text-[11px] text-[#181716] font-medium">
                 Welcome to Inflixo. By creating an account, linking social handles, or using our creator portfolio services, you agree to these Terms and Conditions.
@@ -484,7 +484,7 @@ function LegalDocumentModal({
             <div className="space-y-2">
               <h4 className="font-bold text-[#181716] text-xs uppercase tracking-wider">3. Content Ownership &amp; Intellectual Property</h4>
               <p>
-                Creators retain full copyright ownership of all uploaded custom avatars, series posters, and video metadata. You grant Inflixo a non-exclusive license to host, display, and format your content for public portfolio presentation at <code className="bg-[#F8F7F3] px-1 py-0.5 rounded text-[#b85c6b] font-mono border border-[#E7E3DC]">inflixo.com/your-username</code>.
+                Creators retain full copyright ownership of all uploaded custom avatars, series posters, and video metadata. You grant Inflixo a non-exclusive license to host, display, and format your content for public portfolio presentation at <code className="bg-[#fbfbfb] px-1 py-0.5 rounded text-[#b85c6b] font-mono border border-[#E7E3DC]">inflixo.com/your-username</code>.
               </p>
             </div>
 
@@ -552,7 +552,7 @@ function LegalDocumentModal({
             <div className="space-y-2">
               <h4 className="font-bold text-[#181716] text-xs uppercase tracking-wider">5. Account Deletion &amp; Data Rights</h4>
               <p>
-                You have the right to request deletion of your account and removal of all associated social metrics and series from Inflixo servers by contacting <code className="bg-[#F8F7F3] px-1 py-0.5 rounded text-[#b85c6b] font-mono border border-[#E7E3DC]">support@inflixo.com</code>.
+                You have the right to request deletion of your account and removal of all associated social metrics and series from Inflixo servers by contacting <code className="bg-[#fbfbfb] px-1 py-0.5 rounded text-[#b85c6b] font-mono border border-[#E7E3DC]">support@inflixo.com</code>.
               </p>
             </div>
           </>

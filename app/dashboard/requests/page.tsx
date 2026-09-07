@@ -12,7 +12,7 @@ const STATUS_CONFIG: Record<CollaborationStatus, { label: string; bg: string; te
   NEW: { label: "New", bg: "bg-[#EAF7F0]", text: "text-[#17845B]", border: "border-[#17845B]/20" },
   VIEWED: { label: "Viewed", bg: "bg-[#b85c6b]/[0.09]", text: "text-[#b85c6b]", border: "border-[#b85c6b]/20" },
   REPLIED: { label: "Replied", bg: "bg-[#b85c6b]/[0.09]", text: "text-[#b85c6b]", border: "border-[#b85c6b]/20" },
-  CLOSED: { label: "Closed", bg: "bg-[#F8F7F3]", text: "text-[#797570]", border: "border-[#E7E3DC]" },
+  CLOSED: { label: "Closed", bg: "bg-[#fbfbfb]", text: "text-[#797570]", border: "border-[#E7E3DC]" },
 };
 
 function formatDate(dateStr: string): string {
@@ -181,12 +181,12 @@ export default function DashboardRequestsPage() {
               type="button"
               onClick={() => setActiveTab(tab)}
               className={`tap-scale flex items-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${isSelected
-                  ? "bg-[#b85c6b] text-white shadow-xs"
-                  : "text-[#797570] hover:text-[#181716] hover:bg-[#F8F7F3]"
+                ? "bg-[#b85c6b] text-white shadow-xs"
+                : "text-[#797570] hover:text-[#181716] hover:bg-[#fbfbfb]"
                 }`}
             >
               <span>{tab === "ALL" ? "All Inquiries" : STATUS_CONFIG[tab].label}</span>
-              <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-[#F8F7F3] text-[#797570]"}`}>
+              <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-[#fbfbfb] text-[#797570]"}`}>
                 {count}
               </span>
             </button>
@@ -298,7 +298,7 @@ export default function DashboardRequestsPage() {
           <div className="flex flex-col flex-1 min-h-0">
             <ModalBody className="p-5 sm:p-6 space-y-4 text-left">
               {/* Sender summary card */}
-              <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3.5 space-y-2">
+              <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3.5 space-y-2">
                 <div className="flex items-center justify-between">
                   <h3 className="font-bold text-sm text-[#181716]">{selectedRequest.senderName}</h3>
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${STATUS_CONFIG[selectedRequest.status].bg} ${STATUS_CONFIG[selectedRequest.status].text} ${STATUS_CONFIG[selectedRequest.status].border}`}>
@@ -358,8 +358,8 @@ export default function DashboardRequestsPage() {
                       disabled={isUpdating}
                       onClick={() => handleStatusChange(st)}
                       className={`tap-scale py-2 px-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${selectedRequest.status === st
-                          ? "bg-[#b85c6b] text-white border-[#b85c6b] shadow-xs"
-                          : "border-[#E7E3DC] bg-white text-[#797570] hover:bg-[#F8F7F3]"
+                        ? "bg-[#b85c6b] text-white border-[#b85c6b] shadow-xs"
+                        : "border-[#E7E3DC] bg-white text-[#797570] hover:bg-[#fbfbfb]"
                         }`}
                     >
                       {STATUS_CONFIG[st].label}

@@ -133,13 +133,12 @@ export function SeriesCoverUpload({
             fileInputRef.current?.click();
           }
         }}
-        className={`group relative w-full aspect-[16/9] overflow-hidden rounded-2xl border transition-all cursor-pointer select-none ${
-          value
+        className={`group relative w-full aspect-[16/9] overflow-hidden rounded-2xl border transition-all cursor-pointer select-none ${value
             ? "border-[#E4DAD5] bg-slate-950 shadow-sm"
             : isDragging
-            ? "border-2 border-dashed border-[#B85C6B] bg-[#B85C6B]/[0.09]"
-            : "border-2 border-dashed border-[#E4DAD5] hover:border-[#B85C6B] bg-[#F8F7F3] hover:bg-[#F5F3ED]"
-        }`}
+              ? "border-2 border-dashed border-[#B85C6B] bg-[#B85C6B]/[0.09]"
+              : "border-2 border-dashed border-[#E4DAD5] hover:border-[#B85C6B] bg-[#fbfbfb] hover:bg-[#F5F3ED]"
+          }`}
       >
         {value ? (
           <>

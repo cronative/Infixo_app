@@ -36,6 +36,44 @@ import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
 import { reviewsRepository, customLinksRepository } from "@/repositories/localRepository";
 import { MediaKitPackage, CreatorReview, CustomLink } from "@/types";
 
+// Eased count-up animation hook for smooth metric reveals
+function useCountUp(target: number, durationMs = 900, delayMs = 250): number {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || target === 0) {
+      setCount(target);
+      return;
+    }
+
+    let startTimestamp: number | null = null;
+    let animationFrameId: number;
+
+    const timer = setTimeout(() => {
+      const step = (timestamp: number) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / durationMs, 1);
+        // Easing: easeOutQuart
+        const easeOut = 1 - Math.pow(1 - progress, 4);
+        setCount(Math.round(easeOut * target));
+        if (progress < 1) {
+          animationFrameId = requestAnimationFrame(step);
+        } else {
+          setCount(target);
+        }
+      };
+      animationFrameId = requestAnimationFrame(step);
+    }, delayMs);
+
+    return () => {
+      clearTimeout(timer);
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    };
+  }, [target, durationMs, delayMs]);
+
+  return count;
+}
+
 export default function DashboardOverviewPage() {
   const router = useRouter();
   const { profile, socials, series, totalAudience, updateSocials } = useCreator();
@@ -53,6 +91,13 @@ export default function DashboardOverviewPage() {
     isOpen: false,
     type: "series",
   });
+
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoaded(true), 50);
+    return () => clearTimeout(t);
+  }, []);
 
   const handleStr = profile.username || "username";
   const displayName = profile.displayName || profile.email?.split("@")[0] || "Creator";
@@ -107,9 +152,9 @@ export default function DashboardOverviewPage() {
   // Social account count
   const connectedSocialsCount = useMemo(() => {
     let count = 0;
-    if (socials.instagram.username || socials.instagram.url) count++;
-    if (socials.youtube.username || socials.youtube.url) count++;
-    if (socials.facebook.username || socials.facebook.url) count++;
+    if (socials.instagram?.username || socials.instagram?.url) count++;
+    if (socials.youtube?.username || socials.youtube?.url) count++;
+    if (socials.facebook?.username || socials.facebook?.url) count++;
     return count;
   }, [socials]);
 
@@ -143,6 +188,10 @@ export default function DashboardOverviewPage() {
 
     return { items, completedCount, totalCount: items.length, percentage };
   }, [profile, connectedSocialsCount, customLinks, series, packages, reviews]);
+
+  // Animated counters
+  const animatedFanbase = useCountUp(totalAudience, 1000, 250);
+  const animatedPercentage = useCountUp(profileSteps.percentage, 900, 300);
 
   // Dynamic next best step recommendation
   const nextStep = useMemo(() => {
@@ -191,32 +240,39 @@ export default function DashboardOverviewPage() {
   return (
     <div className="space-y-6">
       {/* 1. PROFILE READINESS CARD */}
-      <section className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 shadow-xs">
+      <section
+        style={{ animationDelay: "0ms" }}
+        className="rounded-2xl border border-[#E4DAD5] bg-white p-5 sm:p-6 shadow-none transition-all duration-300 animate-fade-in-up"
+      >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
           {/* Creator Details */}
           <div className="flex items-center gap-3.5 min-w-0">
             <CreatorAvatar
               src={profile.photoDataUrl}
               name={displayName}
-              className="w-12 h-12 rounded-full border border-[#E7E3DC] overflow-hidden object-cover aspect-square shrink-0"
-              textClassName="text-sm font-bold text-[#181716]"
-              fallbackBgClass="bg-[#b85c6b]/[0.09]"
+              className="w-12 h-12 rounded-full border border-[#E4DAD5] overflow-hidden object-cover aspect-square shrink-0"
+              textClassName="text-sm font-bold text-[#241618]"
+              fallbackBgClass="bg-[#F3DDE0]"
             />
             <div className="min-w-0">
-              <div className="flex items-center gap-1.5">
-                <h2 className="font-display text-base sm:text-lg font-bold text-[#181716] truncate">
+              <div className="flex items-center gap-2">
+                <h2 className="font-display text-base sm:text-lg font-bold text-[#241618] truncate">
                   {displayName}
                 </h2>
                 {profile.isVerified && (
-                  <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-500" />
+                  <ShieldCheck className="h-4 w-4 shrink-0 text-[#B85C6B]" />
                 )}
-                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
+                {/* Live Badge with maroon pulsing dot */}
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-[#8C3F4D] bg-[#F3DDE0] px-2.5 py-0.5 rounded-full border border-[#B85C6B]/20">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#B85C6B] opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#B85C6B]" />
+                  </span>
                   Live
                 </span>
               </div>
-              <p className="text-xs text-[#797570] font-medium mt-0.5">
-                @{handleStr} • {profileSteps.completedCount} of {profileSteps.totalCount} profile steps completed
+              <p className="text-xs text-[#6B5A5D] font-medium mt-0.5">
+                @{handleStr}
               </p>
             </div>
           </div>
@@ -225,7 +281,7 @@ export default function DashboardOverviewPage() {
           <div className="flex items-center gap-2.5 shrink-0 self-start md:self-auto">
             <Link
               href="/dashboard/profile"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-3.5 py-2 text-xs font-semibold text-[#181716] transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#F7F0EA] px-3.5 py-2 text-xs font-semibold text-[#241618] transition-colors cursor-pointer shadow-xs"
             >
               <span>Edit Profile</span>
             </Link>
@@ -233,7 +289,7 @@ export default function DashboardOverviewPage() {
               href={`/${handleStr}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors shadow-xs"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
             >
               <span>View Profile</span>
               <ExternalLink className="h-3.5 w-3.5" />
@@ -241,49 +297,61 @@ export default function DashboardOverviewPage() {
           </div>
         </div>
 
-        {/* Progress Bar & Checklist Summary */}
-        <div className="mt-5 pt-4 border-t border-[#E7E3DC] space-y-2.5">
+        {/* Merged Single-Line Profile Completion & Progress Bar */}
+        <div className="mt-5 pt-4 border-t border-[#E4DAD5] space-y-2.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-semibold text-[#181716]">Profile Completion</span>
-            <span className="font-bold text-[#b85c6b]">{profileSteps.percentage}%</span>
+            <span className="font-semibold text-[#241618]">
+              Profile completion — {profileSteps.completedCount} of {profileSteps.totalCount} steps done
+            </span>
+            <span className="font-display font-bold text-[#B85C6B] text-sm tabular-nums">
+              {animatedPercentage}%
+            </span>
           </div>
-          <div className="w-full h-2 rounded-full bg-[#F8F7F3] border border-[#E7E3DC] overflow-hidden">
+          <div className="w-full h-2 rounded-full bg-[#F7F0EA] border border-[#E4DAD5] overflow-hidden">
             <div
-              className="h-full bg-[#b85c6b] rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${profileSteps.percentage}%` }}
+              className="h-full bg-[#B85C6B] rounded-full transition-all duration-700 ease-out"
+              style={{ width: isLoaded ? `${profileSteps.percentage}%` : "0%" }}
             />
           </div>
         </div>
       </section>
 
-      {/* 2. COMPACT CREATOR STATISTICS (4 equal cards) */}
+      {/* 2. COMPACT CREATOR STATISTICS (4 equal cards, Sentence case labels, standardized icon containers) */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         {/* Stat 1: Total Fanbase */}
-        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 space-y-2 shadow-xs flex flex-col justify-between">
+        <div
+          style={{ animationDelay: "60ms" }}
+          className="rounded-2xl border border-[#E4DAD5] bg-white p-4 sm:p-5 space-y-3 shadow-none flex flex-col justify-between transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md animate-fade-in-up"
+        >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
-              Total Fanbase
+            <span className="text-xs font-semibold text-[#6B5A5D]">
+              Total fanbase
             </span>
-            <button
-              type="button"
-              onClick={handleRefreshStats}
-              className="p-1 rounded-lg text-[#797570] hover:text-[#b85c6b] hover:bg-[#b85c6b]/[0.09] transition-colors cursor-pointer"
-              title={`Last synced: ${formatSyncDate(socials.updatedAt)}. Click to refresh.`}
-            >
-              <RefreshCw className={`h-3.5 w-3.5 ${isSyncing ? "animate-spin text-[#b85c6b]" : ""}`} />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={handleRefreshStats}
+                className="p-1 rounded-lg text-[#6B5A5D] hover:text-[#B85C6B] hover:bg-[#F3DDE0] transition-colors cursor-pointer"
+                title={`Last synced: ${formatSyncDate(socials.updatedAt)}. Click to refresh.`}
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${isSyncing ? "animate-spin text-[#B85C6B]" : ""}`} />
+              </button>
+              <div className="h-8 w-8 rounded-xl bg-[#F3DDE0] flex items-center justify-center text-[#8C3F4D]">
+                <Users className="h-4 w-4" />
+              </div>
+            </div>
           </div>
           <div>
-            <p className="font-display text-2xl sm:text-3xl font-bold text-[#181716]">
-              {formatCount(totalAudience)}
+            <p className="font-display text-2xl sm:text-3xl font-bold text-[#241618] tabular-nums">
+              {formatCount(animatedFanbase)}
             </p>
-            <p className="text-[11px] text-[#797570] font-medium mt-0.5">
+            <p className="text-[11px] text-[#6B5A5D] font-medium mt-0.5">
               Across {connectedSocialsCount} connected {connectedSocialsCount === 1 ? "account" : "accounts"}
             </p>
           </div>
           <Link
             href="/dashboard/socials"
-            className="text-[11px] font-semibold text-[#b85c6b] hover:underline inline-flex items-center gap-1 pt-1"
+            className="text-[11px] font-semibold text-[#B85C6B] hover:text-[#8C3F4D] hover:underline inline-flex items-center gap-1 pt-1"
           >
             <span>View breakdown</span>
             <ChevronRight className="h-3 w-3" />
@@ -291,24 +359,29 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* Stat 2: Content Series */}
-        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 space-y-2 shadow-xs flex flex-col justify-between">
+        <div
+          style={{ animationDelay: "120ms" }}
+          className="rounded-2xl border border-[#E4DAD5] bg-white p-4 sm:p-5 space-y-3 shadow-none flex flex-col justify-between transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md animate-fade-in-up"
+        >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
-              Content Series
+            <span className="text-xs font-semibold text-[#6B5A5D]">
+              Content series
             </span>
-            <Layers className="h-4 w-4 text-[#b85c6b]" />
+            <div className="h-8 w-8 rounded-xl bg-[#F3DDE0] flex items-center justify-center text-[#8C3F4D]">
+              <Layers className="h-4 w-4" />
+            </div>
           </div>
           <div>
-            <p className="font-display text-2xl sm:text-3xl font-bold text-[#181716]">
+            <p className="font-display text-2xl sm:text-3xl font-bold text-[#241618]">
               {series.length}
             </p>
-            <p className="text-[11px] text-[#797570] font-medium mt-0.5">
+            <p className="text-[11px] text-[#6B5A5D] font-medium mt-0.5">
               {totalEpisodesCount} published {totalEpisodesCount === 1 ? "episode" : "episodes"}
             </p>
           </div>
           <Link
             href="/dashboard/series"
-            className="text-[11px] font-semibold text-[#b85c6b] hover:underline inline-flex items-center gap-1 pt-1"
+            className="text-[11px] font-semibold text-[#B85C6B] hover:text-[#8C3F4D] hover:underline inline-flex items-center gap-1 pt-1"
           >
             <span>Manage series</span>
             <ChevronRight className="h-3 w-3" />
@@ -316,24 +389,29 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* Stat 3: Creator Services */}
-        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 space-y-2 shadow-xs flex flex-col justify-between">
+        <div
+          style={{ animationDelay: "180ms" }}
+          className="rounded-2xl border border-[#E4DAD5] bg-white p-4 sm:p-5 space-y-3 shadow-none flex flex-col justify-between transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md animate-fade-in-up"
+        >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
-              Services &amp; Gigs
+            <span className="text-xs font-semibold text-[#6B5A5D]">
+              Services &amp; gigs
             </span>
-            <Briefcase className="h-4 w-4 text-[#b85c6b]" />
+            <div className="h-8 w-8 rounded-xl bg-[#F3DDE0] flex items-center justify-center text-[#8C3F4D]">
+              <Briefcase className="h-4 w-4" />
+            </div>
           </div>
           <div>
-            <p className="font-display text-2xl sm:text-3xl font-bold text-[#181716]">
+            <p className="font-display text-2xl sm:text-3xl font-bold text-[#241618]">
               {packages.length}
             </p>
-            <p className="text-[11px] text-[#797570] font-medium mt-0.5">
+            <p className="text-[11px] text-[#6B5A5D] font-medium mt-0.5">
               {packages.length > 0 ? "Active brand packages" : "Add how brands can work with you"}
             </p>
           </div>
           <Link
             href="/dashboard/mediakit"
-            className="text-[11px] font-semibold text-[#b85c6b] hover:underline inline-flex items-center gap-1 pt-1"
+            className="text-[11px] font-semibold text-[#B85C6B] hover:text-[#8C3F4D] hover:underline inline-flex items-center gap-1 pt-1"
           >
             <span>{packages.length > 0 ? "Manage packages" : "Add service"}</span>
             <ChevronRight className="h-3 w-3" />
@@ -341,24 +419,29 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* Stat 4: Client Reviews */}
-        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 space-y-2 shadow-xs flex flex-col justify-between">
+        <div
+          style={{ animationDelay: "240ms" }}
+          className="rounded-2xl border border-[#E4DAD5] bg-white p-4 sm:p-5 space-y-3 shadow-none flex flex-col justify-between transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md animate-fade-in-up"
+        >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
-              Client Reviews
+            <span className="text-xs font-semibold text-[#6B5A5D]">
+              Client reviews
             </span>
-            <Star className="h-4 w-4 text-[#b85c6b]" />
+            <div className="h-8 w-8 rounded-xl bg-[#F3DDE0] flex items-center justify-center text-[#8C3F4D]">
+              <Star className="h-4 w-4" />
+            </div>
           </div>
           <div>
-            <p className="font-display text-2xl sm:text-3xl font-bold text-[#181716]">
+            <p className="font-display text-2xl sm:text-3xl font-bold text-[#241618]">
               {reviews.length}
             </p>
-            <p className="text-[11px] text-[#797570] font-medium mt-0.5">
+            <p className="text-[11px] text-[#6B5A5D] font-medium mt-0.5">
               {reviews.length > 0 ? "Verified brand ratings" : "Request your first review"}
             </p>
           </div>
           <Link
             href="/dashboard/reviews"
-            className="text-[11px] font-semibold text-[#b85c6b] hover:underline inline-flex items-center gap-1 pt-1"
+            className="text-[11px] font-semibold text-[#B85C6B] hover:text-[#8C3F4D] hover:underline inline-flex items-center gap-1 pt-1"
           >
             <span>{reviews.length > 0 ? "View reviews" : "Request review"}</span>
             <ChevronRight className="h-3 w-3" />
@@ -366,17 +449,20 @@ export default function DashboardOverviewPage() {
         </div>
       </section>
 
-      {/* 3. RECOMMENDED NEXT ACTION CARD */}
-      <section className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 shadow-xs space-y-4">
+      {/* 3. RECOMMENDED NEXT BEST STEP CARD */}
+      <section
+        style={{ animationDelay: "300ms" }}
+        className="rounded-2xl border border-[#E4DAD5] bg-white p-5 sm:p-6 shadow-none space-y-4 animate-fade-in-up"
+      >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-[#b85c6b] bg-[#b85c6b]/[0.09] px-2.5 py-0.5 rounded-full border border-[#b85c6b]/20">
+          <div className="space-y-1.5">
+            <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-[#8C3F4D] bg-[#F3DDE0] px-2.5 py-0.5 rounded-full border border-[#B85C6B]/20">
               Next best step
             </span>
-            <h3 className="font-display text-base sm:text-lg font-bold text-[#181716]">
+            <h3 className="font-display text-base sm:text-lg font-bold text-[#241618]">
               {nextStep.title}
             </h3>
-            <p className="text-xs text-[#54514D] font-medium max-w-xl">
+            <p className="text-xs text-[#6B5A5D] font-medium max-w-xl leading-relaxed">
               {nextStep.description}
             </p>
           </div>
@@ -387,7 +473,7 @@ export default function DashboardOverviewPage() {
                 href={nextStep.ctaHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] px-4 py-2.5 text-xs font-semibold text-white transition-colors shadow-xs"
+                className="inline-flex items-center gap-2 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
               >
                 <span>{nextStep.ctaLabel}</span>
                 <ExternalLink className="h-3.5 w-3.5" />
@@ -396,7 +482,7 @@ export default function DashboardOverviewPage() {
               <button
                 type="button"
                 onClick={nextStep.onClick}
-                className="inline-flex items-center gap-2 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] px-4 py-2.5 text-xs font-semibold text-white transition-colors shadow-xs cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2.5 text-xs font-semibold text-white transition-colors shadow-xs cursor-pointer"
               >
                 <span>{nextStep.ctaLabel}</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -404,7 +490,7 @@ export default function DashboardOverviewPage() {
             ) : (
               <Link
                 href={nextStep.ctaHref}
-                className="inline-flex items-center gap-2 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] px-4 py-2.5 text-xs font-semibold text-white transition-colors shadow-xs"
+                className="inline-flex items-center gap-2 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
               >
                 <span>{nextStep.ctaLabel}</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -414,28 +500,31 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* Secondary Quick Action Links */}
-        <div className="pt-3 border-t border-[#E7E3DC] flex flex-wrap items-center gap-4 text-xs font-semibold text-[#54514D]">
-          <span className="text-[11px] text-[#797570] uppercase tracking-wider font-bold">Quick Shortcuts:</span>
-          <Link href="/dashboard/series" className="hover:text-[#b85c6b] transition-colors inline-flex items-center gap-1">
+        <div className="pt-3 border-t border-[#E4DAD5] flex flex-wrap items-center gap-4 text-xs font-semibold text-[#6B5A5D]">
+          <span className="text-[11px] text-[#6B5A5D] uppercase tracking-wider font-bold">Quick shortcuts:</span>
+          <Link href="/dashboard/series" className="hover:text-[#B85C6B] transition-colors inline-flex items-center gap-1">
             <Plus className="h-3 w-3" /> Add Series
           </Link>
-          <Link href="/dashboard/socials" className="hover:text-[#b85c6b] transition-colors inline-flex items-center gap-1">
+          <Link href="/dashboard/socials" className="hover:text-[#B85C6B] transition-colors inline-flex items-center gap-1">
             <Link2 className="h-3 w-3" /> Add Link
           </Link>
-          <Link href="/dashboard/themes" className="hover:text-[#b85c6b] transition-colors inline-flex items-center gap-1">
+          <Link href="/dashboard/themes" className="hover:text-[#B85C6B] transition-colors inline-flex items-center gap-1">
             <Palette className="h-3 w-3" /> Change Theme
           </Link>
-          <Link href="/dashboard/reviews" className="hover:text-[#b85c6b] transition-colors inline-flex items-center gap-1">
+          <Link href="/dashboard/reviews" className="hover:text-[#B85C6B] transition-colors inline-flex items-center gap-1">
             <Star className="h-3 w-3" /> Request Review
           </Link>
         </div>
       </section>
 
       {/* 4. CREATOR WORKSPACE SUMMARY (2x2 Grid) */}
-      <section className="space-y-3">
+      <section
+        style={{ animationDelay: "360ms" }}
+        className="space-y-3 animate-fade-in-up"
+      >
         <div className="px-0.5">
-          <h3 className="font-display text-sm font-bold uppercase tracking-wider text-[#797570]">
-            Workspace Summary
+          <h3 className="font-display text-sm font-bold text-[#241618]">
+            Workspace summary
           </h3>
         </div>
 
@@ -443,149 +532,152 @@ export default function DashboardOverviewPage() {
           {/* Card 1: Content */}
           <Link
             href="/dashboard/series"
-            className="group rounded-2xl border border-[#E7E3DC] bg-white p-4 sm:p-5 transition-all hover:border-[#b85c6b]/40 shadow-xs flex items-start justify-between gap-3"
+            className="group rounded-2xl border border-[#E4DAD5] bg-white p-4 sm:p-5 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md hover:border-[#B85C6B]/40 shadow-none flex items-start justify-between gap-3"
           >
             <div className="space-y-1.5 min-w-0">
               <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#b85c6b]/[0.09] text-[#b85c6b]">
-                  <Layers className="h-3.5 w-3.5" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#F3DDE0] text-[#8C3F4D]">
+                  <Layers className="h-4 w-4" />
                 </div>
-                <h4 className="font-display text-sm font-bold text-[#181716] group-hover:text-[#b85c6b] transition-colors">
+                <h4 className="font-display text-sm font-bold text-[#241618] group-hover:text-[#B85C6B] transition-colors">
                   Content &amp; Series
                 </h4>
               </div>
-              <p className="text-xs text-[#54514D] font-medium leading-relaxed">
+              <p className="text-xs text-[#6B5A5D] font-medium leading-relaxed">
                 {series.length} {series.length === 1 ? "series" : "series"} with {totalEpisodesCount} total {totalEpisodesCount === 1 ? "episode" : "episodes"} organized.
               </p>
             </div>
-            <ChevronRight className="h-4 w-4 text-[#797570] group-hover:text-[#b85c6b] transition-transform group-hover:translate-x-0.5 shrink-0 mt-1" />
+            <ChevronRight className="h-4 w-4 text-[#6B5A5D] group-hover:text-[#B85C6B] transition-transform group-hover:translate-x-0.5 shrink-0 mt-1" />
           </Link>
 
           {/* Card 2: Services & Brand Work */}
           <Link
             href="/dashboard/mediakit"
-            className="group rounded-2xl border border-[#E7E3DC] bg-white p-4 sm:p-5 transition-all hover:border-[#b85c6b]/40 shadow-xs flex items-start justify-between gap-3"
+            className="group rounded-2xl border border-[#E4DAD5] bg-white p-4 sm:p-5 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md hover:border-[#B85C6B]/40 shadow-none flex items-start justify-between gap-3"
           >
             <div className="space-y-1.5 min-w-0">
               <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#b85c6b]/[0.09] text-[#b85c6b]">
-                  <Briefcase className="h-3.5 w-3.5" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#F3DDE0] text-[#8C3F4D]">
+                  <Briefcase className="h-4 w-4" />
                 </div>
-                <h4 className="font-display text-sm font-bold text-[#181716] group-hover:text-[#b85c6b] transition-colors">
+                <h4 className="font-display text-sm font-bold text-[#241618] group-hover:text-[#B85C6B] transition-colors">
                   Services &amp; Brand Work
                 </h4>
               </div>
-              <p className="text-xs text-[#54514D] font-medium leading-relaxed">
+              <p className="text-xs text-[#6B5A5D] font-medium leading-relaxed">
                 {packages.length > 0 ? `${packages.length} active collaboration packages configured.` : "Show brands how they can collaborate with you."}
               </p>
             </div>
-            <ChevronRight className="h-4 w-4 text-[#797570] group-hover:text-[#b85c6b] transition-transform group-hover:translate-x-0.5 shrink-0 mt-1" />
+            <ChevronRight className="h-4 w-4 text-[#6B5A5D] group-hover:text-[#B85C6B] transition-transform group-hover:translate-x-0.5 shrink-0 mt-1" />
           </Link>
 
           {/* Card 3: Reviews */}
           <Link
             href="/dashboard/reviews"
-            className="group rounded-2xl border border-[#E7E3DC] bg-white p-4 sm:p-5 transition-all hover:border-[#b85c6b]/40 shadow-xs flex items-start justify-between gap-3"
+            className="group rounded-2xl border border-[#E4DAD5] bg-white p-4 sm:p-5 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md hover:border-[#B85C6B]/40 shadow-none flex items-start justify-between gap-3"
           >
             <div className="space-y-1.5 min-w-0">
               <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#b85c6b]/[0.09] text-[#b85c6b]">
-                  <Star className="h-3.5 w-3.5" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#F3DDE0] text-[#8C3F4D]">
+                  <Star className="h-4 w-4" />
                 </div>
-                <h4 className="font-display text-sm font-bold text-[#181716] group-hover:text-[#b85c6b] transition-colors">
+                <h4 className="font-display text-sm font-bold text-[#241618] group-hover:text-[#B85C6B] transition-colors">
                   Client Reviews
                 </h4>
               </div>
-              <p className="text-xs text-[#54514D] font-medium leading-relaxed">
+              <p className="text-xs text-[#6B5A5D] font-medium leading-relaxed">
                 {reviews.length > 0 ? `${reviews.length} verified client reviews displayed on your profile.` : "Turn completed brand collaborations into visible trust."}
               </p>
             </div>
-            <ChevronRight className="h-4 w-4 text-[#797570] group-hover:text-[#b85c6b] transition-transform group-hover:translate-x-0.5 shrink-0 mt-1" />
+            <ChevronRight className="h-4 w-4 text-[#6B5A5D] group-hover:text-[#B85C6B] transition-transform group-hover:translate-x-0.5 shrink-0 mt-1" />
           </Link>
 
           {/* Card 4: Links & Socials */}
           <Link
             href="/dashboard/socials"
-            className="group rounded-2xl border border-[#E7E3DC] bg-white p-4 sm:p-5 transition-all hover:border-[#b85c6b]/40 shadow-xs flex items-start justify-between gap-3"
+            className="group rounded-2xl border border-[#E4DAD5] bg-white p-4 sm:p-5 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md hover:border-[#B85C6B]/40 shadow-none flex items-start justify-between gap-3"
           >
             <div className="space-y-1.5 min-w-0">
               <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#b85c6b]/[0.09] text-[#b85c6b]">
-                  <Share2 className="h-3.5 w-3.5" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#F3DDE0] text-[#8C3F4D]">
+                  <Share2 className="h-4 w-4" />
                 </div>
-                <h4 className="font-display text-sm font-bold text-[#181716] group-hover:text-[#b85c6b] transition-colors">
+                <h4 className="font-display text-sm font-bold text-[#241618] group-hover:text-[#B85C6B] transition-colors">
                   Links &amp; Socials
                 </h4>
               </div>
-              <p className="text-xs text-[#54514D] font-medium leading-relaxed">
+              <p className="text-xs text-[#6B5A5D] font-medium leading-relaxed">
                 {connectedSocialsCount} connected platforms and {customLinks.length} custom links live.
               </p>
             </div>
-            <ChevronRight className="h-4 w-4 text-[#797570] group-hover:text-[#b85c6b] transition-transform group-hover:translate-x-0.5 shrink-0 mt-1" />
+            <ChevronRight className="h-4 w-4 text-[#6B5A5D] group-hover:text-[#B85C6B] transition-transform group-hover:translate-x-0.5 shrink-0 mt-1" />
           </Link>
         </div>
       </section>
 
       {/* 5. RECENT CONTENT SECTION (Max 3 items) */}
-      <section className="space-y-3">
+      <section
+        style={{ animationDelay: "420ms" }}
+        className="space-y-3 animate-fade-in-up"
+      >
         <div className="flex items-center justify-between px-0.5">
           <div>
-            <h3 className="font-display text-sm font-bold uppercase tracking-wider text-[#797570]">
-              Recent Content
+            <h3 className="font-display text-sm font-bold text-[#241618]">
+              Recent content
             </h3>
-            <p className="text-xs text-[#797570] font-medium mt-0.5">
+            <p className="text-xs text-[#6B5A5D] font-medium mt-0.5">
               Your latest series and episodes.
             </p>
           </div>
           <Link
             href="/dashboard/series"
-            className="text-xs font-semibold text-[#b85c6b] hover:underline inline-flex items-center gap-1"
+            className="text-xs font-semibold text-[#B85C6B] hover:text-[#8C3F4D] hover:underline inline-flex items-center gap-1"
           >
-            <span>Manage Content</span>
+            <span>Manage content</span>
             <ChevronRight className="h-3.5 w-3.5" />
           </Link>
         </div>
 
         {series.length === 0 ? (
-          <div className="rounded-2xl border border-[#E7E3DC] bg-white p-6 sm:p-8 text-center space-y-3 shadow-xs">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#b85c6b]/[0.09] text-[#b85c6b] mx-auto">
+          <div className="rounded-2xl border border-[#E4DAD5] bg-white p-6 sm:p-8 text-center space-y-3 shadow-none">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F3DDE0] text-[#8C3F4D] mx-auto">
               <Film className="h-5 w-5" />
             </div>
             <div className="space-y-1">
-              <h4 className="font-display text-sm font-bold text-[#181716]">
+              <h4 className="font-display text-sm font-bold text-[#241618]">
                 Start your first content series
               </h4>
-              <p className="text-xs text-[#54514D] font-medium max-w-sm mx-auto leading-relaxed">
+              <p className="text-xs text-[#6B5A5D] font-medium max-w-sm mx-auto leading-relaxed">
                 Organize related reels and videos so followers can watch every part in the correct order.
               </p>
             </div>
             <button
               type="button"
               onClick={handleCreateSeriesClick}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Create First Series</span>
             </button>
           </div>
         ) : (
-          <div className="rounded-2xl border border-[#E7E3DC] bg-white divide-y divide-[#E7E3DC] overflow-hidden shadow-xs">
+          <div className="rounded-2xl border border-[#E4DAD5] bg-white divide-y divide-[#E4DAD5] overflow-hidden shadow-none">
             {series.slice(0, 3).map((s) => {
               const eps = s.seasons?.flatMap((sn) => sn.episodes) || (s as any).episodes || [];
               return (
                 <div
                   key={s.id}
-                  className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-[#F8F7F3] transition-colors"
+                  className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-[#F7F0EA]/50 transition-colors"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#b85c6b]/[0.09] text-[#b85c6b] shrink-0 font-bold text-xs">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F3DDE0] text-[#8C3F4D] shrink-0 font-bold text-xs">
                       <Film className="h-4 w-4" />
                     </div>
                     <div className="min-w-0">
-                      <h4 className="font-display text-sm font-bold text-[#181716] truncate">
+                      <h4 className="font-display text-sm font-bold text-[#241618] truncate">
                         {s.title}
                       </h4>
-                      <p className="text-xs text-[#797570] font-medium mt-0.5">
+                      <p className="text-xs text-[#6B5A5D] font-medium mt-0.5">
                         {s.genre || "Series"} • {eps.length} {eps.length === 1 ? "Episode" : "Episodes"}
                       </p>
                     </div>
@@ -594,16 +686,16 @@ export default function DashboardOverviewPage() {
                   <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
                     <Link
                       href="/dashboard/series"
-                      className="inline-flex items-center gap-1 rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-2.5 py-1 text-xs font-semibold text-[#181716] transition-colors"
+                      className="inline-flex items-center gap-1 rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#F7F0EA] px-3 py-1.5 text-xs font-semibold text-[#241618] transition-colors"
                     >
-                      <Edit2 className="h-3 w-3 text-[#797570]" />
+                      <Edit2 className="h-3 w-3 text-[#6B5A5D]" />
                       <span>Manage</span>
                     </Link>
                     <a
                       href={`/${handleStr}/series/${s.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-2.5 py-1 text-xs font-semibold text-[#b85c6b] transition-colors"
+                      className="inline-flex items-center gap-1 rounded-xl border border-[#E4DAD5] bg-[#F7F0EA] hover:bg-white px-3 py-1.5 text-xs font-semibold text-[#B85C6B] transition-colors"
                     >
                       <span>View</span>
                       <ExternalLink className="h-3 w-3" />
@@ -617,19 +709,24 @@ export default function DashboardOverviewPage() {
       </section>
 
       {/* 6. MINIMAL EARLY ACCESS USAGE CARD */}
-      <section className="rounded-2xl border border-[#E7E3DC] bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+      <section
+        style={{ animationDelay: "480ms" }}
+        className="rounded-2xl border border-[#E4DAD5] bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-none animate-fade-in-up"
+      >
         <div className="flex items-center gap-2.5 min-w-0">
-          <Sparkles className="h-4 w-4 text-[#b85c6b] shrink-0" />
+          <div className="h-8 w-8 rounded-xl bg-[#F3DDE0] flex items-center justify-center text-[#8C3F4D] shrink-0">
+            <Sparkles className="h-4 w-4" />
+          </div>
           <div className="min-w-0">
-            <p className="text-xs font-bold text-[#181716]">Early Access Active</p>
-            <p className="text-xs text-[#797570] font-medium mt-0.5">
+            <p className="text-xs font-bold text-[#241618]">Early Access Active</p>
+            <p className="text-xs text-[#6B5A5D] font-medium mt-0.5">
               {seriesUsage.current} of 3 series used • {totalEpisodesUsage.current} of 15 episodes used
             </p>
           </div>
         </div>
         <Link
           href="/dashboard/subscription"
-          className="text-xs font-semibold text-[#b85c6b] hover:underline shrink-0"
+          className="text-xs font-semibold text-[#B85C6B] hover:text-[#8C3F4D] hover:underline shrink-0"
         >
           View Plan →
         </Link>

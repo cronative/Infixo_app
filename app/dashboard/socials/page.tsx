@@ -390,7 +390,7 @@ export default function DashboardSocialsPage() {
       </section>
 
       {/* 5. HOW SOCIAL DATA WORKS (Disclosure Card) */}
-      <section className="rounded-2xl border border-[#E7E3DC] bg-[#F8F7F3] p-4 sm:p-5 text-left space-y-2.5 shadow-xs">
+      <section className="rounded-2xl border border-[#E7E3DC] bg-[#fbfbfb] p-4 sm:p-5 text-left space-y-2.5 shadow-xs">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-4 w-4 text-[#b85c6b]" />
@@ -527,7 +527,7 @@ function ConnectedSocialCard({
             <button
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
-              className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E7E3DC] bg-[#F8F7F3] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer"
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E7E3DC] bg-[#fbfbfb] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer"
               aria-label="More actions"
             >
               <MoreVertical className="h-3.5 w-3.5" />
@@ -540,7 +540,7 @@ function ConnectedSocialCard({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMenuOpen(false)}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#F8F7F3] transition-colors"
+                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#fbfbfb] transition-colors"
                 >
                   <ExternalLink className="h-3.5 w-3.5 text-[#797570]" />
                   <span>Open Profile</span>

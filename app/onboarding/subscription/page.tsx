@@ -91,7 +91,7 @@ export default function SubscriptionStepPage() {
         </div>
 
         {/* Small Note Box */}
-        <div className="rounded-xl bg-[#F8F7F3] border border-[#E7E3DC] p-3.5 text-xs text-[#54514D] font-medium flex items-center gap-2">
+        <div className="rounded-xl bg-[#fbfbfb] border border-[#E7E3DC] p-3.5 text-xs text-[#54514D] font-medium flex items-center gap-2">
           <ShieldCheck className="h-4 w-4 text-[#b85c6b] shrink-0" />
           <span>No credit card required. You’ll be notified before paid plans become available.</span>
         </div>
@@ -103,7 +103,7 @@ export default function SubscriptionStepPage() {
           <h3 className="text-xs font-semibold uppercase tracking-wider text-[#797570]">
             Upcoming Plans
           </h3>
-          <span className="text-[11px] font-semibold text-[#797570] bg-[#F8F7F3] px-2.5 py-0.5 rounded-full border border-[#E7E3DC]">
+          <span className="text-[11px] font-semibold text-[#797570] bg-[#fbfbfb] px-2.5 py-0.5 rounded-full border border-[#E7E3DC]">
             Coming Soon
           </span>
         </div>
@@ -133,7 +133,7 @@ export default function SubscriptionStepPage() {
               <button
                 type="button"
                 onClick={() => showToast("We'll notify you when Pro is available! 🚀")}
-                className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] hover:bg-[#E7E3DC] px-3 py-1.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer"
+                className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] hover:bg-[#E7E3DC] px-3 py-1.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer"
               >
                 <Bell className="h-3.5 w-3.5 text-[#b85c6b]" />
                 <span>Notify Me</span>
@@ -165,7 +165,7 @@ export default function SubscriptionStepPage() {
               <button
                 type="button"
                 onClick={() => showToast("We'll notify you when VIP is available! 👑")}
-                className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] hover:bg-[#E7E3DC] px-3 py-1.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer"
+                className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] hover:bg-[#E7E3DC] px-3 py-1.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer"
               >
                 <Bell className="h-3.5 w-3.5 text-[#b85c6b]" />
                 <span>Notify Me</span>
@@ -182,7 +182,7 @@ export default function SubscriptionStepPage() {
           variant="outline"
           size="lg"
           disabled={activating}
-          className="w-full sm:w-auto h-11 rounded-xl border-[#E7E3DC] text-[#181716] hover:bg-[#F8F7F3] font-semibold text-sm px-6"
+          className="w-full sm:w-auto h-11 rounded-xl border-[#E7E3DC] text-[#181716] hover:bg-[#fbfbfb] font-semibold text-sm px-6"
           onClick={() => router.push("/onboarding/series")}
         >
           Back

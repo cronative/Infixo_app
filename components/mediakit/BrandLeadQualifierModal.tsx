@@ -59,7 +59,7 @@ export function BrandLeadQualifierModal({
     const briefText = `Hi ${creatorName || "Creator"}, I am from ${brandName.trim()}. We want to book your '${selectedDeliverable}' deliverable (Campaign Budget: ${budget.trim()}). Found your Inflixo Profile: ${mediaKitUrl}`;
 
     const waUrl = `https://wa.me/${cleanNum}?text=${encodeURIComponent(briefText)}`;
-    
+
     if (typeof window !== "undefined") {
       window.open(waUrl, "_blank", "noopener,noreferrer");
     }
@@ -80,7 +80,7 @@ export function BrandLeadQualifierModal({
       <form id="brand-lead-form" onSubmit={handleSendWhatsApp} className="flex flex-col flex-1 min-h-0">
         <ModalBody className="p-5 space-y-4 text-left">
           {/* Deliverable Summary Badge */}
-          <div className="rounded-xl border border-[#E4DAD5] bg-[#F8F7F3] p-3.5 flex items-center gap-3">
+          <div className="rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] p-3.5 flex items-center gap-3">
             <Package className="h-4 w-4 text-[#B85C6B] shrink-0" />
             <div className="min-w-0 text-xs">
               <p className="font-bold text-[#181716] truncate">{packageName}</p>
@@ -99,7 +99,7 @@ export function BrandLeadQualifierModal({
               value={brandName}
               onChange={(e) => setBrandName(e.target.value)}
               placeholder="e.g. Puma India / Nike"
-              className="w-full rounded-xl border border-[#E4DAD5] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#B85C6B] focus:bg-white focus:outline-none transition-colors"
+              className="w-full rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#B85C6B] focus:bg-white focus:outline-none transition-colors"
             />
           </div>
 
@@ -114,7 +114,7 @@ export function BrandLeadQualifierModal({
               value={budget}
               onChange={(e) => setBudget(e.target.value)}
               placeholder="e.g. ₹25,000 / $500 USD"
-              className="w-full rounded-xl border border-[#E4DAD5] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#B85C6B] focus:bg-white focus:outline-none transition-colors"
+              className="w-full rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#B85C6B] focus:bg-white focus:outline-none transition-colors"
             />
           </div>
 
@@ -135,7 +135,7 @@ export function BrandLeadQualifierModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl border border-[#E4DAD5] text-xs font-semibold text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716] transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-xl border border-[#E4DAD5] text-xs font-semibold text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716] transition-colors cursor-pointer"
           >
             Cancel
           </button>

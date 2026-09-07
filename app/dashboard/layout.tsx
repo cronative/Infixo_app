@@ -15,12 +15,11 @@ import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { OnboardingService } from "@/services/OnboardingService";
 import { ProfileService } from "@/services/ProfileService";
 
-function getGreeting(name?: string): string {
+function getGreeting(): string {
   const hour = new Date().getHours();
-  const firstName = name ? name.trim().split(" ")[0] : "Creator";
-  if (hour < 12) return `Good morning, ${firstName}`;
-  if (hour < 18) return `Good afternoon, ${firstName}`;
-  return `Good evening, ${firstName}`;
+  if (hour < 12) return "Good morning 👋";
+  if (hour < 18) return "Good afternoon 👋";
+  return "Good evening 👋";
 }
 
 function DesktopTopHeader() {
@@ -29,11 +28,11 @@ function DesktopTopHeader() {
 
   const handleStr = profile.username || "username";
   const displayName = profile.displayName || profile.email?.split("@")[0] || "Creator";
-  const [greeting, setGreeting] = useState("Welcome back");
+  const [greeting, setGreeting] = useState("Good afternoon 👋");
 
   useEffect(() => {
-    setGreeting(getGreeting(displayName));
-  }, [displayName]);
+    setGreeting(getGreeting());
+  }, []);
 
   const handleCopy = async () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
@@ -53,7 +52,7 @@ function DesktopTopHeader() {
           {greeting}
         </h1>
         <p className="text-xs text-[#6B5A5D] font-medium mt-0.5">
-          Here&apos;s how your creator profile is looking today.
+          Here&apos;s how {displayName} is looking today.
         </p>
       </div>
 
@@ -96,7 +95,7 @@ function Shell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#FCF7F3]">
+    <div className="flex h-screen w-screen overflow-hidden bg-[#fbfbfb]">
       {/* Desktop Sidebar */}
       <DashboardSidebar />
 

@@ -13,7 +13,7 @@ interface PricingTableProps {
   showEarlyAccessBanner?: boolean;
 }
 
-export function PricingTable({}: PricingTableProps) {
+export function PricingTable({ }: PricingTableProps) {
   const { showToast } = useToast();
   const [notifiedPlan, setNotifiedPlan] = useState<string | null>(null);
   const [cycle, setCycle] = useState<BillingCycle>("monthly");
@@ -31,7 +31,7 @@ export function PricingTable({}: PricingTableProps) {
 
   return (
     <div className="w-full space-y-8 max-w-6xl mx-auto text-left">
-      
+
       {/* 1. UPCOMING PLANS INTRO & BILLING PERIOD TOGGLE */}
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -45,31 +45,28 @@ export function PricingTable({}: PricingTableProps) {
           </div>
 
           {/* Billing Switcher Toggle */}
-          <div className="inline-flex items-center rounded-xl bg-[#F8F7F3] p-1 border border-[#E4DAD5] shrink-0 self-start sm:self-auto">
+          <div className="inline-flex items-center rounded-xl bg-[#fbfbfb] p-1 border border-[#E4DAD5] shrink-0 self-start sm:self-auto">
             <button
               type="button"
               onClick={() => setCycle("monthly")}
-              className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
-                cycle === "monthly"
+              className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${cycle === "monthly"
                   ? "bg-white text-[#181716] shadow-xs border border-[#E4DAD5]"
                   : "text-[#797570] hover:text-[#181716]"
-              }`}
+                }`}
             >
               Monthly
             </button>
             <button
               type="button"
               onClick={() => setCycle("yearly")}
-              className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${
-                cycle === "yearly"
+              className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${cycle === "yearly"
                   ? "bg-[#B85C6B] text-white shadow-xs"
                   : "text-[#797570] hover:text-[#181716]"
-              }`}
+                }`}
             >
               <span>Yearly</span>
-              <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded-md ${
-                cycle === "yearly" ? "bg-white/20 text-white" : "bg-[#B85C6B]/[0.09] text-[#B85C6B] border border-[#B85C6B]/20"
-              }`}>
+              <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded-md ${cycle === "yearly" ? "bg-white/20 text-white" : "bg-[#B85C6B]/[0.09] text-[#B85C6B] border border-[#B85C6B]/20"
+                }`}>
                 Save 16%
               </span>
             </button>
@@ -78,7 +75,7 @@ export function PricingTable({}: PricingTableProps) {
 
         {/* 2. THREE READABLE PLAN CARDS */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          
+
           {/* Card 1: Early Access (Current) */}
           <div className="rounded-2xl border border-[#E4DAD5] bg-white p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xs text-left">
             <div className="space-y-4">
@@ -135,7 +132,7 @@ export function PricingTable({}: PricingTableProps) {
               <button
                 type="button"
                 disabled
-                className="w-full rounded-xl bg-[#F8F7F3] border border-[#E4DAD5] py-2.5 px-3 text-xs font-semibold text-[#797570] cursor-default text-center"
+                className="w-full rounded-xl bg-[#fbfbfb] border border-[#E4DAD5] py-2.5 px-3 text-xs font-semibold text-[#797570] cursor-default text-center"
               >
                 Current Access
               </button>
@@ -215,7 +212,7 @@ export function PricingTable({}: PricingTableProps) {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-display text-base font-bold text-[#181716]">VIP</h3>
-                <span className="text-[10px] font-semibold text-[#797570] bg-[#F8F7F3] border border-[#E4DAD5] px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-semibold text-[#797570] bg-[#fbfbfb] border border-[#E4DAD5] px-2 py-0.5 rounded-full">
                   Upcoming
                 </span>
               </div>
@@ -270,7 +267,7 @@ export function PricingTable({}: PricingTableProps) {
                 type="button"
                 onClick={() => handleNotifyMe("VIP Plan")}
                 disabled={notifiedPlan === "VIP Plan"}
-                className="w-full rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#F8F7F3] text-[#181716] py-2.5 px-3 text-xs font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-xs disabled:opacity-80"
+                className="w-full rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#fbfbfb] text-[#181716] py-2.5 px-3 text-xs font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-xs disabled:opacity-80"
               >
                 <Bell className="h-3.5 w-3.5 text-[#797570]" />
                 <span>{notifiedPlan === "VIP Plan" ? "Notification Set ✓" : "Notify Me"}</span>
@@ -295,7 +292,7 @@ export function PricingTable({}: PricingTableProps) {
         <div className="overflow-x-auto rounded-2xl border border-[#E4DAD5] bg-white shadow-xs">
           <table className="w-full text-left border-collapse min-w-[580px]">
             <thead>
-              <tr className="border-b border-[#E4DAD5] bg-[#F8F7F3] text-xs font-bold text-[#181716]">
+              <tr className="border-b border-[#E4DAD5] bg-[#fbfbfb] text-xs font-bold text-[#181716]">
                 <th className="py-3.5 px-5 w-2/5">Feature</th>
                 <th className="py-3.5 px-4 w-1/5 text-center bg-[#B85C6B]/[0.05] border-x border-[#E4DAD5]">
                   <div className="font-bold text-[#B85C6B]">Early Access</div>

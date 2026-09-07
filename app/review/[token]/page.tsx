@@ -356,7 +356,7 @@ export default function PublicReviewSubmissionPage() {
     setHoverVal: (n: number) => void;
     isRequired?: boolean;
   }) => (
-    <div className="space-y-1 py-2.5 px-3.5 bg-[#F8F7F3] rounded-xl border border-[#E7E3DC]">
+    <div className="space-y-1 py-2.5 px-3.5 bg-[#fbfbfb] rounded-xl border border-[#E7E3DC]">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 min-w-0">
           <Icon className="h-4 w-4 text-[#b85c6b] shrink-0" />
@@ -378,8 +378,8 @@ export default function PublicReviewSubmissionPage() {
             >
               <Star
                 className={`h-5 w-5 transition-colors ${star <= (hoverVal || val)
-                    ? "fill-amber-400 text-amber-400"
-                    : "text-[#E7E3DC] fill-[#E7E3DC]"
+                  ? "fill-amber-400 text-amber-400"
+                  : "text-[#E7E3DC] fill-[#E7E3DC]"
                   }`}
               />
             </button>
@@ -430,7 +430,7 @@ export default function PublicReviewSubmissionPage() {
         </div>
 
         {/* Read-Only Collaboration Info Card */}
-        <div className="rounded-2xl border border-[#E7E3DC] bg-[#F8F7F3] p-4 space-y-3 shadow-xs">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-[#fbfbfb] p-4 space-y-3 shadow-xs">
           <div className="flex items-center justify-between gap-2 border-b border-[#E7E3DC] pb-2.5">
             <div className="flex items-center gap-2 min-w-0">
               <Building2 className="h-4 w-4 text-[#b85c6b] shrink-0" />
@@ -602,7 +602,7 @@ export default function PublicReviewSubmissionPage() {
                   value={comment}
                   onChange={(e) => setComment(e.target.value.slice(0, 250))}
                   placeholder="Write a few words about working with this creator..."
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-medium text-[#181716] placeholder-[#797570] focus:border-[#b85c6b] focus:bg-white focus:outline-none"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-medium text-[#181716] placeholder-[#797570] focus:border-[#b85c6b] focus:bg-white focus:outline-none"
                 />
 
                 {/* Character Counter Display */}
@@ -624,7 +624,7 @@ export default function PublicReviewSubmissionPage() {
                         key={idx}
                         type="button"
                         onClick={() => handleSelectSuggestion(suggestion)}
-                        className="bg-[#F8F7F3] hover:bg-[#b85c6b]/[0.09] hover:border-[#b85c6b]/40 text-[#54514D] hover:text-[#b85c6b] text-[10.5px] font-semibold px-2.5 py-1 rounded-xl border border-[#E7E3DC] transition-all text-left cursor-pointer"
+                        className="bg-[#fbfbfb] hover:bg-[#b85c6b]/[0.09] hover:border-[#b85c6b]/40 text-[#54514D] hover:text-[#b85c6b] text-[10.5px] font-semibold px-2.5 py-1 rounded-xl border border-[#E7E3DC] transition-all text-left cursor-pointer"
                       >
                         {suggestion}
                       </button>

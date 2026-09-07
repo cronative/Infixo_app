@@ -79,8 +79,8 @@ export default function ThemeStepPage() {
           type="button"
           onClick={() => setActiveGroup("all")}
           className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${activeGroup === "all"
-              ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/25"
-              : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#F8F7F3]"
+            ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/25"
+            : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#fbfbfb]"
             }`}
         >
           All
@@ -90,8 +90,8 @@ export default function ThemeStepPage() {
           type="button"
           onClick={() => setActiveGroup("animated")}
           className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${activeGroup === "animated"
-              ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/25"
-              : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#F8F7F3]"
+            ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/25"
+            : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#fbfbfb]"
             }`}
         >
           <Sparkles className="h-3 w-3" />
@@ -102,8 +102,8 @@ export default function ThemeStepPage() {
           type="button"
           onClick={() => setActiveGroup("light")}
           className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${activeGroup === "light"
-              ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/25"
-              : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#F8F7F3]"
+            ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/25"
+            : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#fbfbfb]"
             }`}
         >
           Light
@@ -113,8 +113,8 @@ export default function ThemeStepPage() {
           type="button"
           onClick={() => setActiveGroup("dark")}
           className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${activeGroup === "dark"
-              ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/25"
-              : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#F8F7F3]"
+            ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/25"
+            : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#fbfbfb]"
             }`}
         >
           Dark
@@ -142,7 +142,7 @@ export default function ThemeStepPage() {
           type="button"
           variant="outline"
           size="lg"
-          className="w-full sm:w-auto h-11 rounded-xl border-[#E7E3DC] text-[#181716] hover:bg-[#F8F7F3] font-semibold text-sm px-6"
+          className="w-full sm:w-auto h-11 rounded-xl border-[#E7E3DC] text-[#181716] hover:bg-[#fbfbfb] font-semibold text-sm px-6"
           onClick={() => router.push("/onboarding/socials")}
         >
           Back
@@ -180,8 +180,8 @@ function ThemeTile({
       type="button"
       onClick={onSelect}
       className={`tap-scale relative w-full h-32 rounded-2xl overflow-hidden p-3.5 flex flex-col justify-between text-left transition-all cursor-pointer shadow-xs ${isSelected
-          ? "ring-2 ring-offset-2 ring-[#b85c6b]"
-          : "border border-gray-200/80 hover:border-gray-400 hover:shadow-md"
+        ? "ring-2 ring-offset-2 ring-[#b85c6b]"
+        : "border border-gray-200/80 hover:border-gray-400 hover:shadow-md"
         }`}
       style={{
         background:
@@ -221,8 +221,8 @@ function ThemeTile({
       <div className="z-10 self-start">
         <div
           className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold shadow-2xs ${isDark
-              ? "bg-black/50 text-white backdrop-blur-md border border-white/10"
-              : "bg-white/85 text-gray-900 backdrop-blur-md border border-white/40"
+            ? "bg-black/50 text-white backdrop-blur-md border border-white/10"
+            : "bg-white/85 text-gray-900 backdrop-blur-md border border-white/40"
             }`}
         >
           <span>{theme.name}</span>

@@ -218,7 +218,7 @@ export default function DashboardCollaborationsPage() {
           {collaborations.map((collab) => (
             <div
               key={collab.id}
-              className={`relative flex flex-col justify-between rounded-2xl border p-4 bg-white shadow-xs transition-all ${collab.isActive ? "border-[#E7E3DC]" : "border-[#E7E3DC] opacity-60 bg-[#F8F7F3]"
+              className={`relative flex flex-col justify-between rounded-2xl border p-4 bg-white shadow-xs transition-all ${collab.isActive ? "border-[#E7E3DC]" : "border-[#E7E3DC] opacity-60 bg-[#fbfbfb]"
                 }`}
             >
               <div className="space-y-3">
@@ -289,7 +289,7 @@ export default function DashboardCollaborationsPage() {
                   <button
                     type="button"
                     onClick={() => handleOpenModal(collab)}
-                    className="p-1 text-[#797570] hover:text-[#181716] hover:bg-[#F8F7F3] rounded-lg transition-colors cursor-pointer"
+                    className="p-1 text-[#797570] hover:text-[#181716] hover:bg-[#fbfbfb] rounded-lg transition-colors cursor-pointer"
                     title="Edit collaboration"
                   >
                     <Pencil className="h-3.5 w-3.5" />
@@ -344,7 +344,7 @@ export default function DashboardCollaborationsPage() {
                 value={brandName}
                 onChange={(e) => setBrandName(e.target.value)}
                 placeholder="e.g. Sony Music, Nike, or Boat Audio"
-                className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
@@ -357,7 +357,7 @@ export default function DashboardCollaborationsPage() {
                 value={campaignTitle}
                 onChange={(e) => setCampaignTitle(e.target.value)}
                 placeholder="e.g. Summer Launch Reel Campaign"
-                className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
@@ -370,7 +370,7 @@ export default function DashboardCollaborationsPage() {
                 value={campaignUrl}
                 onChange={(e) => setCampaignUrl(e.target.value)}
                 placeholder="https://instagram.com/reel/... or https://youtube.com/watch?v=..."
-                className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
@@ -383,7 +383,7 @@ export default function DashboardCollaborationsPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Briefly mention key deliverables (e.g. 2x Instagram Reels, 1x YouTube dedicated video with 250K+ views)..."
-                className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3 text-xs font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors resize-y"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3 text-xs font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors resize-y"
               />
             </div>
           </ModalBody>
@@ -392,7 +392,7 @@ export default function DashboardCollaborationsPage() {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716] transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716] transition-colors cursor-pointer"
             >
               Cancel
             </button>

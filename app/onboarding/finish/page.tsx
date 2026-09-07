@@ -203,7 +203,7 @@ export default function FinishStepPage() {
                 href={`/${handleStr}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] text-[#181716] font-semibold h-10 px-3 text-xs transition-colors cursor-pointer text-center"
+                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] text-[#181716] font-semibold h-10 px-3 text-xs transition-colors cursor-pointer text-center"
               >
                 <ExternalLink className="h-3.5 w-3.5 shrink-0" />
                 <span className="truncate">View Public Profile</span>
@@ -212,7 +212,7 @@ export default function FinishStepPage() {
               <button
                 type="button"
                 onClick={handleShare}
-                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] text-[#181716] font-semibold h-10 px-3 text-xs transition-colors cursor-pointer text-center"
+                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] text-[#181716] font-semibold h-10 px-3 text-xs transition-colors cursor-pointer text-center"
               >
                 <Share2 className="h-3.5 w-3.5 shrink-0" />
                 <span className="truncate">Share Profile</span>
@@ -221,7 +221,7 @@ export default function FinishStepPage() {
           </div>
 
           {/* Creator Summit Mission Notice */}
-          <div className="mt-6 w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-4 text-center text-xs shadow-xs">
+          <div className="mt-6 w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-4 text-center text-xs shadow-xs">
             <p className="font-bold text-[#181716] text-xs">Creator Mission 2027</p>
             <p className="mt-1 text-[#54514D] font-medium leading-relaxed">
               {verifiedCreatorNumber ? (

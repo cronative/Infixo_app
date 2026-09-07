@@ -279,7 +279,7 @@ export default function LandingHomePage() {
 
   if (checkingAuth && isLoggedIn) {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-[#FCF7F3]">
+      <div className="flex min-h-dvh items-center justify-center bg-[#fbfbfb]">
         <div className="flex flex-col items-center gap-3">
           <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#B85C6B] border-t-transparent" />
           <p className="text-xs font-medium text-[#6B5A5D]">Redirecting to dashboard...</p>
@@ -289,7 +289,7 @@ export default function LandingHomePage() {
   }
 
   return (
-    <div className="relative min-h-dvh bg-[#FCF7F3] text-[#241618] flex flex-col font-sans selection:bg-[#F3DDE0] selection:text-[#8C3F4D] overflow-x-hidden antialiased">
+    <div className="relative min-h-dvh bg-[#fbfbfb] text-[#241618] flex flex-col font-sans selection:bg-[#F3DDE0] selection:text-[#8C3F4D] overflow-x-hidden antialiased">
       {/* =========================================================================
           NAVIGATION BAR
          ========================================================================= */}
@@ -339,7 +339,7 @@ export default function LandingHomePage() {
             <button
               type="button"
               onClick={() => handleClaim(username || "yourname")}
-              className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#B85C6B] px-4 py-2 text-xs sm:text-sm font-semibold text-[#FCF7F3] hover:bg-[#8C3F4D] transition-colors cursor-pointer active:scale-98"
+              className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#B85C6B] px-4 py-2 text-xs sm:text-sm font-semibold text-[#fbfbfb] hover:bg-[#8C3F4D] transition-colors cursor-pointer active:scale-98"
             >
               <span>Claim Your Handle</span>
               <ArrowRight className="h-3.5 w-3.5" />
@@ -351,7 +351,7 @@ export default function LandingHomePage() {
       {/* =========================================================================
           SECTION 1: HERO
          ========================================================================= */}
-      <section className="relative z-10 pt-12 pb-16 sm:pt-16 sm:pb-24 border-b border-[#E4DAD5] bg-[#FCF7F3]">
+      <section className="relative z-10 pt-12 pb-16 sm:pt-16 sm:pb-24 border-b border-[#E4DAD5] bg-[#fbfbfb]">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="text-center space-y-6 max-w-3xl mx-auto">
             {/* Tag / Badge */}
@@ -396,7 +396,7 @@ export default function LandingHomePage() {
                 />
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-1 shrink-0 rounded-[8px] bg-[#B85C6B] px-4 py-2 text-xs sm:text-sm font-semibold text-[#FCF7F3] hover:bg-[#8C3F4D] transition-colors cursor-pointer active:scale-98"
+                  className="inline-flex items-center gap-1 shrink-0 rounded-[8px] bg-[#B85C6B] px-4 py-2 text-xs sm:text-sm font-semibold text-[#fbfbfb] hover:bg-[#8C3F4D] transition-colors cursor-pointer active:scale-98"
                 >
                   <span>Claim</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -408,7 +408,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username)}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] px-6 py-2.5 text-sm font-semibold text-[#FCF7F3] transition-colors cursor-pointer active:scale-98"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] px-6 py-2.5 text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer active:scale-98"
                 >
                   <span>Claim Your Handle</span>
                 </button>
@@ -511,23 +511,23 @@ export default function LandingHomePage() {
                 profile={
                   username.trim()
                     ? {
-                        displayName: username.trim().charAt(0).toUpperCase() + username.trim().slice(1),
-                        username: username.trim().toLowerCase().replace(/[^a-z0-9_]/g, ""),
-                        category: "Digital Creator",
-                        bio: `Official OTT Media Kit & Series Showcase of @${username.trim()}`,
-                        photoDataUrl: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(username.trim())}`,
-                        updatedAt: new Date().toISOString(),
-                      }
+                      displayName: username.trim().charAt(0).toUpperCase() + username.trim().slice(1),
+                      username: username.trim().toLowerCase().replace(/[^a-z0-9_]/g, ""),
+                      category: "Digital Creator",
+                      bio: `Official OTT Media Kit & Series Showcase of @${username.trim()}`,
+                      photoDataUrl: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(username.trim())}`,
+                      updatedAt: new Date().toISOString(),
+                    }
                     : DEMO_PROFILE
                 }
                 socials={
                   username.trim()
                     ? {
-                        instagram: { url: `https://instagram.com/${username}`, followers: 450000, posts: 180, username: username.trim() },
-                        youtube: { url: `https://youtube.com/@${username}`, subscribers: 820000, videos: 95, totalViews: 45000000, username: username.trim() },
-                        facebook: { url: `https://facebook.com/${username}`, followers: 210000, posts: 120, username: username.trim() },
-                        updatedAt: new Date().toISOString(),
-                      }
+                      instagram: { url: `https://instagram.com/${username}`, followers: 450000, posts: 180, username: username.trim() },
+                      youtube: { url: `https://youtube.com/@${username}`, subscribers: 820000, videos: 95, totalViews: 45000000, username: username.trim() },
+                      facebook: { url: `https://facebook.com/${username}`, followers: 210000, posts: 120, username: username.trim() },
+                      updatedAt: new Date().toISOString(),
+                    }
                     : DEMO_SOCIALS
                 }
                 series={DEMO_SERIES}
@@ -540,7 +540,7 @@ export default function LandingHomePage() {
               <button
                 type="button"
                 onClick={() => handleClaim(username || "yourname")}
-                className="w-full py-2.5 px-4 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] text-[#FCF7F3] font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                className="w-full py-2.5 px-4 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] text-[#fbfbfb] font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer active:scale-98"
               >
                 <span>Claim Your Handle</span>
                 <ArrowRight className="h-4 w-4" />
@@ -567,7 +567,7 @@ export default function LandingHomePage() {
 
           {/* 4 Trimmed Problem Cards (6-8 words descriptions) */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#FCF7F3] space-y-3 transition-colors hover:border-[#B85C6B]">
+            <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] space-y-3 transition-colors hover:border-[#B85C6B]">
               <div className="h-10 w-10 rounded-[8px] bg-[#F3DDE0] text-[#8C3F4D] flex items-center justify-center">
                 <Users className="h-5 w-5" />
               </div>
@@ -577,7 +577,7 @@ export default function LandingHomePage() {
               </p>
             </div>
 
-            <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#FCF7F3] space-y-3 transition-colors hover:border-[#B85C6B]">
+            <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] space-y-3 transition-colors hover:border-[#B85C6B]">
               <div className="h-10 w-10 rounded-[8px] bg-[#F3DDE0] text-[#8C3F4D] flex items-center justify-center">
                 <Tv className="h-5 w-5" />
               </div>
@@ -587,7 +587,7 @@ export default function LandingHomePage() {
               </p>
             </div>
 
-            <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#FCF7F3] space-y-3 transition-colors hover:border-[#B85C6B]">
+            <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] space-y-3 transition-colors hover:border-[#B85C6B]">
               <div className="h-10 w-10 rounded-[8px] bg-[#F3DDE0] text-[#8C3F4D] flex items-center justify-center">
                 <Briefcase className="h-5 w-5" />
               </div>
@@ -597,7 +597,7 @@ export default function LandingHomePage() {
               </p>
             </div>
 
-            <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#FCF7F3] space-y-3 transition-colors hover:border-[#B85C6B]">
+            <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] space-y-3 transition-colors hover:border-[#B85C6B]">
               <div className="h-10 w-10 rounded-[8px] bg-[#F3DDE0] text-[#8C3F4D] flex items-center justify-center">
                 <Star className="h-5 w-5" />
               </div>
@@ -613,7 +613,7 @@ export default function LandingHomePage() {
       {/* =========================================================================
           SECTION 3: UNIFIED REACH & EPISODIC PLAYLISTS (SIDE-BY-SIDE)
          ========================================================================= */}
-      <section id="total-fanbase" className="py-16 sm:py-24 bg-[#FCF7F3] border-b border-[#E4DAD5]">
+      <section id="total-fanbase" className="py-16 sm:py-24 bg-[#fbfbfb] border-b border-[#E4DAD5]">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 space-y-16">
           {/* Part A: Unified Reach */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
@@ -645,7 +645,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] px-5 py-2.5 text-xs sm:text-sm font-semibold text-[#FCF7F3] transition-colors cursor-pointer active:scale-98"
+                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] px-5 py-2.5 text-xs sm:text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer active:scale-98"
                 >
                   <span>Calculate My Total Reach</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -684,21 +684,21 @@ export default function LandingHomePage() {
                 </div>
 
                 <div className="space-y-2 pt-1 text-xs">
-                  <div className="flex items-center justify-between p-2.5 rounded-[8px] bg-[#FCF7F3] border border-[#E4DAD5]">
+                  <div className="flex items-center justify-between p-2.5 rounded-[8px] bg-[#fbfbfb] border border-[#E4DAD5]">
                     <div className="flex items-center gap-2 font-medium text-[#241618]">
                       <InstagramIcon className="h-4 w-4 text-[#B85C6B]" />
                       <span>Instagram</span>
                     </div>
                     <span className="font-bold text-[#241618]">4.8M Followers</span>
                   </div>
-                  <div className="flex items-center justify-between p-2.5 rounded-[8px] bg-[#FCF7F3] border border-[#E4DAD5]">
+                  <div className="flex items-center justify-between p-2.5 rounded-[8px] bg-[#fbfbfb] border border-[#E4DAD5]">
                     <div className="flex items-center gap-2 font-medium text-[#241618]">
                       <YoutubeIcon className="h-4 w-4 text-[#B85C6B]" />
                       <span>YouTube</span>
                     </div>
                     <span className="font-bold text-[#241618]">12.5M Subscribers</span>
                   </div>
-                  <div className="flex items-center justify-between p-2.5 rounded-[8px] bg-[#FCF7F3] border border-[#E4DAD5]">
+                  <div className="flex items-center justify-between p-2.5 rounded-[8px] bg-[#fbfbfb] border border-[#E4DAD5]">
                     <div className="flex items-center gap-2 font-medium text-[#241618]">
                       <TikTokIcon className="h-4 w-4 text-[#B85C6B]" />
                       <span>TikTok</span>
@@ -735,11 +735,10 @@ export default function LandingHomePage() {
                   ].map((ep) => (
                     <div
                       key={ep.num}
-                      className={`flex items-center gap-3 rounded-[8px] p-2.5 text-xs border ${
-                        ep.active
+                      className={`flex items-center gap-3 rounded-[8px] p-2.5 text-xs border ${ep.active
                           ? "bg-[#F7F0EA] border-[#B85C6B]"
                           : "bg-[#FFFFFF] border-[#E4DAD5] text-[#241618]"
-                      }`}
+                        }`}
                     >
                       <div className="flex h-7 w-7 items-center justify-center rounded-[6px] bg-[#F3DDE0] text-[#8C3F4D] shrink-0 font-bold">
                         <Play className="h-3 w-3 fill-current ml-0.5" />
@@ -791,7 +790,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] px-5 py-2.5 text-xs sm:text-sm font-semibold text-[#FCF7F3] transition-colors cursor-pointer active:scale-98"
+                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] px-5 py-2.5 text-xs sm:text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer active:scale-98"
                 >
                   <span>Build My Series Hub</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -837,7 +836,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] px-5 py-2.5 text-xs sm:text-sm font-semibold text-[#FCF7F3] transition-colors cursor-pointer active:scale-98"
+                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] px-5 py-2.5 text-xs sm:text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer active:scale-98"
                 >
                   <span>Build My Live Rate Card</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -847,7 +846,7 @@ export default function LandingHomePage() {
 
             {/* Right Visuals: Rate Card + Review */}
             <div className="lg:col-span-6 space-y-4">
-              <div className="rounded-[12px] border border-[#E4DAD5] bg-[#FCF7F3] p-5 space-y-3 text-left">
+              <div className="rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] p-5 space-y-3 text-left">
                 <div className="flex items-center justify-between pb-2 border-b border-[#E4DAD5]">
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-[4px] uppercase bg-[#F3DDE0] text-[#8C3F4D]">
@@ -872,7 +871,7 @@ export default function LandingHomePage() {
                 </div>
 
                 <div className="pt-2 border-t border-[#E4DAD5] grid grid-cols-2 gap-2">
-                  <div className="bg-[#B85C6B] text-[#FCF7F3] text-xs font-semibold py-2 px-3 rounded-[8px] inline-flex items-center justify-center gap-1.5 hover:bg-[#8C3F4D] transition-colors cursor-pointer">
+                  <div className="bg-[#B85C6B] text-[#fbfbfb] text-xs font-semibold py-2 px-3 rounded-[8px] inline-flex items-center justify-center gap-1.5 hover:bg-[#8C3F4D] transition-colors cursor-pointer">
                     <MessageCircle className="h-3.5 w-3.5 fill-current" />
                     <span>WhatsApp Inquiry</span>
                   </div>
@@ -922,7 +921,7 @@ export default function LandingHomePage() {
       {/* =========================================================================
           SECTION 6: PRICING & FINAL CONVERSION
          ========================================================================= */}
-      <section id="pricing" className="py-16 sm:py-24 bg-[#FCF7F3] border-b border-[#E4DAD5]">
+      <section id="pricing" className="py-16 sm:py-24 bg-[#fbfbfb] border-b border-[#E4DAD5]">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 space-y-10">
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <span className="inline-block rounded-full bg-[#F3DDE0] text-[#8C3F4D] px-3 py-0.5 text-xs font-semibold">
@@ -941,27 +940,24 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => setPricingCycle("monthly")}
-                  className={`rounded-[6px] px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
-                    pricingCycle === "monthly"
-                      ? "bg-[#B85C6B] text-[#FCF7F3]"
+                  className={`rounded-[6px] px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${pricingCycle === "monthly"
+                      ? "bg-[#B85C6B] text-[#fbfbfb]"
                       : "text-[#6B5A5D] hover:text-[#241618]"
-                  }`}
+                    }`}
                 >
                   Monthly
                 </button>
                 <button
                   type="button"
                   onClick={() => setPricingCycle("yearly")}
-                  className={`rounded-[6px] px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1 ${
-                    pricingCycle === "yearly"
-                      ? "bg-[#B85C6B] text-[#FCF7F3]"
+                  className={`rounded-[6px] px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1 ${pricingCycle === "yearly"
+                      ? "bg-[#B85C6B] text-[#fbfbfb]"
                       : "text-[#6B5A5D] hover:text-[#241618]"
-                  }`}
+                    }`}
                 >
                   <span>Yearly</span>
-                  <span className={`text-[10px] px-1 rounded ${
-                    pricingCycle === "yearly" ? "bg-white/20 text-white" : "bg-[#F3DDE0] text-[#8C3F4D]"
-                  }`}>
+                  <span className={`text-[10px] px-1 rounded ${pricingCycle === "yearly" ? "bg-white/20 text-white" : "bg-[#F3DDE0] text-[#8C3F4D]"
+                    }`}>
                     -16%
                   </span>
                 </button>
@@ -971,22 +967,20 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => setCurrency("INR")}
-                  className={`rounded-[6px] px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
-                    currency === "INR"
-                      ? "bg-[#B85C6B] text-[#FCF7F3]"
+                  className={`rounded-[6px] px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${currency === "INR"
+                      ? "bg-[#B85C6B] text-[#fbfbfb]"
                       : "text-[#6B5A5D] hover:text-[#241618]"
-                  }`}
+                    }`}
                 >
                   ₹ INR
                 </button>
                 <button
                   type="button"
                   onClick={() => setCurrency("USD")}
-                  className={`rounded-[6px] px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
-                    currency === "USD"
-                      ? "bg-[#B85C6B] text-[#FCF7F3]"
+                  className={`rounded-[6px] px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${currency === "USD"
+                      ? "bg-[#B85C6B] text-[#fbfbfb]"
                       : "text-[#6B5A5D] hover:text-[#241618]"
-                  }`}
+                    }`}
                 >
                   $ USD
                 </button>
@@ -1049,7 +1043,7 @@ export default function LandingHomePage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h4 className="font-display font-bold text-base text-[#241618]">Pro</h4>
-                  <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-[4px] bg-[#B85C6B] text-[#FCF7F3]">
+                  <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-[4px] bg-[#B85C6B] text-[#fbfbfb]">
                     Recommended
                   </span>
                 </div>
@@ -1060,8 +1054,8 @@ export default function LandingHomePage() {
                         ? "₹1,999"
                         : "₹199"
                       : pricingCycle === "yearly"
-                      ? "$24.99"
-                      : "$2.99"}
+                        ? "$24.99"
+                        : "$2.99"}
                     <span className="text-xs text-[#6B5A5D] font-normal">
                       {pricingCycle === "yearly" ? " / year" : " / month"}
                     </span>
@@ -1096,7 +1090,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="w-full py-2.5 px-4 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] text-[#FCF7F3] font-semibold text-xs sm:text-sm transition-colors cursor-pointer active:scale-98"
+                  className="w-full py-2.5 px-4 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] text-[#fbfbfb] font-semibold text-xs sm:text-sm transition-colors cursor-pointer active:scale-98"
                 >
                   Upgrade to Creator Pro
                 </button>
@@ -1119,8 +1113,8 @@ export default function LandingHomePage() {
                         ? "₹2,999"
                         : "₹299"
                       : pricingCycle === "yearly"
-                      ? "$39.99"
-                      : "$4.99"}
+                        ? "$39.99"
+                        : "$4.99"}
                     <span className="text-xs text-[#6B5A5D] font-normal">
                       {pricingCycle === "yearly" ? " / year" : " / month"}
                     </span>
@@ -1180,7 +1174,7 @@ export default function LandingHomePage() {
                   e.preventDefault();
                   handleClaim(bottomUsername);
                 }}
-                className="flex items-center rounded-[8px] border border-[#E4DAD5] bg-[#FCF7F3] p-1.5 focus-within:border-[#B85C6B] transition-colors"
+                className="flex items-center rounded-[8px] border border-[#E4DAD5] bg-[#fbfbfb] p-1.5 focus-within:border-[#B85C6B] transition-colors"
               >
                 <span className="pl-3 text-xs sm:text-sm font-medium text-[#6B5A5D] select-none shrink-0">
                   inflixo.com/
@@ -1194,7 +1188,7 @@ export default function LandingHomePage() {
                 />
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-1 shrink-0 rounded-[8px] bg-[#B85C6B] px-4 py-2 text-xs sm:text-sm font-semibold text-[#FCF7F3] hover:bg-[#8C3F4D] transition-colors cursor-pointer active:scale-98"
+                  className="inline-flex items-center gap-1 shrink-0 rounded-[8px] bg-[#B85C6B] px-4 py-2 text-xs sm:text-sm font-semibold text-[#fbfbfb] hover:bg-[#8C3F4D] transition-colors cursor-pointer active:scale-98"
                 >
                   <span>Claim</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -1204,7 +1198,7 @@ export default function LandingHomePage() {
               <button
                 type="button"
                 onClick={() => handleClaim(bottomUsername)}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] px-6 py-2.5 text-sm font-semibold text-[#FCF7F3] transition-colors cursor-pointer active:scale-98"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] px-6 py-2.5 text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer active:scale-98"
               >
                 <span>Claim Your Handle</span>
               </button>
@@ -1267,11 +1261,10 @@ export default function LandingHomePage() {
 
       {/* FLOATING SCROLL TO TOP BUTTON */}
       <div
-        className={`fixed bottom-6 right-6 z-40 transition-all duration-300 ${
-          showScrollTop
+        className={`fixed bottom-6 right-6 z-40 transition-all duration-300 ${showScrollTop
             ? "opacity-100 translate-y-0 pointer-events-auto"
             : "opacity-0 translate-y-4 pointer-events-none"
-        }`}
+          }`}
       >
         <button
           type="button"

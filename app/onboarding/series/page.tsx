@@ -183,8 +183,8 @@ export default function SeriesStepPage() {
                       type="button"
                       onClick={() => setSeriesPlatform(p)}
                       className={`tap-scale flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-all cursor-pointer ${isSelected
-                          ? "border-[#b85c6b] bg-[#b85c6b]/[0.09] text-[#b85c6b] font-bold"
-                          : "border-[#E7E3DC] bg-white text-[#54514D] hover:bg-[#F8F7F3]"
+                        ? "border-[#b85c6b] bg-[#b85c6b]/[0.09] text-[#b85c6b] font-bold"
+                        : "border-[#E7E3DC] bg-white text-[#54514D] hover:bg-[#fbfbfb]"
                         }`}
                     >
                       {p === "YouTube" && <YoutubeIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#b85c6b]" : "text-red-500"}`} />}
@@ -250,7 +250,7 @@ export default function SeriesStepPage() {
             type="button"
             variant="outline"
             size="lg"
-            className="w-full sm:w-auto h-11 rounded-xl border-[#E7E3DC] text-[#181716] hover:bg-[#F8F7F3] font-semibold text-sm px-6"
+            className="w-full sm:w-auto h-11 rounded-xl border-[#E7E3DC] text-[#181716] hover:bg-[#fbfbfb] font-semibold text-sm px-6"
             onClick={() => router.push("/onboarding/themes")}
           >
             Back
@@ -258,7 +258,7 @@ export default function SeriesStepPage() {
           <button
             type="button"
             onClick={handleSkip}
-            className="w-full sm:w-auto h-11 px-4 rounded-xl text-xs font-semibold text-[#797570] hover:text-[#181716] hover:bg-[#F8F7F3] transition-colors flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+            className="w-full sm:w-auto h-11 px-4 rounded-xl text-xs font-semibold text-[#797570] hover:text-[#181716] hover:bg-[#fbfbfb] transition-colors flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
           >
             <SkipForward className="h-3.5 w-3.5" />
             <span>Skip for Now</span>

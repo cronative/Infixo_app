@@ -180,7 +180,7 @@ export default function DashboardProfilePage() {
             href={`/${handleStr}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-3.5 py-2 text-xs font-semibold text-[#181716] transition-colors shadow-xs"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] px-3.5 py-2 text-xs font-semibold text-[#181716] transition-colors shadow-xs"
           >
             <span>View Profile</span>
             <ExternalLink className="h-3.5 w-3.5 text-[#b85c6b]" />
@@ -203,7 +203,7 @@ export default function DashboardProfilePage() {
           {/* Left: Compact Circular Photo Upload */}
           <div className="md:col-span-4 flex flex-col items-center sm:items-start gap-3">
             <div className="relative group">
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-[#E7E3DC] bg-[#F8F7F3] flex items-center justify-center shadow-xs">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-[#E7E3DC] bg-[#fbfbfb] flex items-center justify-center shadow-xs">
                 {profile.photoDataUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -234,7 +234,7 @@ export default function DashboardProfilePage() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] hover:bg-[#b85c6b]/[0.09] hover:text-[#b85c6b] px-3 py-1.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] hover:bg-[#b85c6b]/[0.09] hover:text-[#b85c6b] px-3 py-1.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer"
               >
                 <Camera className="h-3.5 w-3.5" />
                 <span>{profile.photoDataUrl ? "Change Photo" : "Upload Photo"}</span>
@@ -272,8 +272,8 @@ export default function DashboardProfilePage() {
                   if (errors.displayName) setErrors((prev) => ({ ...prev, displayName: undefined }));
                 }}
                 className={`w-full rounded-xl border px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:outline-none transition-colors ${errors.displayName
-                    ? "border-[#C2414B] bg-rose-50/20 focus:border-[#C2414B]"
-                    : "border-[#E7E3DC] bg-white focus:border-[#b85c6b] focus:ring-1 focus:ring-[#b85c6b]/20"
+                  ? "border-[#C2414B] bg-rose-50/20 focus:border-[#C2414B]"
+                  : "border-[#E7E3DC] bg-white focus:border-[#b85c6b] focus:ring-1 focus:ring-[#b85c6b]/20"
                   }`}
               />
               {errors.displayName ? (
@@ -294,7 +294,7 @@ export default function DashboardProfilePage() {
                   Live
                 </span>
               </div>
-              <div className="flex items-center justify-between rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-[#797570]">
+              <div className="flex items-center justify-between rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-[#797570]">
                 <span className="truncate">inflixo.com/{handleStr}</span>
                 <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#797570] bg-white border border-[#E7E3DC] px-2 py-0.5 rounded-md shrink-0">
                   <Lock className="h-2.5 w-2.5" />
@@ -388,10 +388,10 @@ export default function DashboardProfilePage() {
                   disabled={isMaxReached}
                   onClick={() => toggleCategory(item.category)}
                   className={`inline-flex items-center gap-1.5 text-xs py-1.5 px-3 rounded-xl transition-all cursor-pointer ${isSelected
-                      ? "bg-[#b85c6b]/[0.09] border border-[#b85c6b] text-[#b85c6b] font-semibold shadow-xs"
-                      : isMaxReached
-                        ? "opacity-40 cursor-not-allowed bg-white border border-[#E7E3DC] text-[#797570]"
-                        : "bg-white border border-[#E7E3DC] text-[#181716] hover:border-[#b85c6b]/40 hover:bg-[#F8F7F3]"
+                    ? "bg-[#b85c6b]/[0.09] border border-[#b85c6b] text-[#b85c6b] font-semibold shadow-xs"
+                    : isMaxReached
+                      ? "opacity-40 cursor-not-allowed bg-white border border-[#E7E3DC] text-[#797570]"
+                      : "bg-white border border-[#E7E3DC] text-[#181716] hover:border-[#b85c6b]/40 hover:bg-[#fbfbfb]"
                     }`}
                 >
                   <span className="text-xs shrink-0">{item.emoji}</span>
@@ -415,7 +415,7 @@ export default function DashboardProfilePage() {
 
         {/* Custom Input for "Other" Category */}
         {isOtherSelected && (
-          <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3.5 space-y-1.5">
+          <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3.5 space-y-1.5">
             <label className="block text-xs font-bold text-[#181716] flex items-center gap-1.5">
               <Sparkles className="h-3.5 w-3.5 text-[#b85c6b]" />
               <span>What type of content do you create?</span>
@@ -449,7 +449,7 @@ export default function DashboardProfilePage() {
         </div>
 
         {availableSpecialties.length === 0 ? (
-          <p className="text-xs text-[#797570] bg-[#F8F7F3] p-3.5 rounded-xl border border-[#E7E3DC]">
+          <p className="text-xs text-[#797570] bg-[#fbfbfb] p-3.5 rounded-xl border border-[#E7E3DC]">
             Select a creator category above to see related specialties.
           </p>
         ) : (
@@ -465,10 +465,10 @@ export default function DashboardProfilePage() {
                   disabled={isMaxReached}
                   onClick={() => toggleSpecialty(st)}
                   className={`inline-flex items-center gap-1.5 text-xs py-1.5 px-3 rounded-xl transition-all cursor-pointer ${isSelected
-                      ? "bg-[#b85c6b]/[0.09] border border-[#b85c6b] text-[#b85c6b] font-semibold shadow-xs"
-                      : isMaxReached
-                        ? "opacity-40 cursor-not-allowed bg-white border border-[#E7E3DC] text-[#797570]"
-                        : "bg-white border border-[#E7E3DC] text-[#181716] hover:border-[#b85c6b]/40 hover:bg-[#F8F7F3]"
+                    ? "bg-[#b85c6b]/[0.09] border border-[#b85c6b] text-[#b85c6b] font-semibold shadow-xs"
+                    : isMaxReached
+                      ? "opacity-40 cursor-not-allowed bg-white border border-[#E7E3DC] text-[#797570]"
+                      : "bg-white border border-[#E7E3DC] text-[#181716] hover:border-[#b85c6b]/40 hover:bg-[#fbfbfb]"
                     }`}
                 >
                   <span className="truncate">{st}</span>
@@ -528,8 +528,8 @@ export default function DashboardProfilePage() {
             placeholder="Tell people what you create and what they can expect from your content..."
             onChange={(e) => updateProfile({ bio: e.target.value })}
             className={`w-full rounded-xl border p-3 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:outline-none transition-colors resize-y min-h-[84px] ${errors.bio
-                ? "border-[#C2414B] bg-rose-50/20 focus:border-[#C2414B]"
-                : "border-[#E7E3DC] bg-white focus:border-[#b85c6b] focus:ring-1 focus:ring-[#b85c6b]/20"
+              ? "border-[#C2414B] bg-rose-50/20 focus:border-[#C2414B]"
+              : "border-[#E7E3DC] bg-white focus:border-[#b85c6b] focus:ring-1 focus:ring-[#b85c6b]/20"
               }`}
           />
           {errors.bio && (
@@ -543,7 +543,7 @@ export default function DashboardProfilePage() {
         <button
           type="button"
           onClick={() => router.push("/dashboard")}
-          className="rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-4 py-2.5 text-xs font-semibold text-[#797570] hover:text-[#181716] transition-colors cursor-pointer"
+          className="rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] px-4 py-2.5 text-xs font-semibold text-[#797570] hover:text-[#181716] transition-colors cursor-pointer"
         >
           Discard Changes
         </button>

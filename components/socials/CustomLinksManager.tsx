@@ -37,54 +37,54 @@ const LINK_TYPE_GROUPS: Array<{
   group: string;
   options: LinkTypeOption[];
 }> = [
-  {
-    group: "📱 Social Media",
-    options: [
-      { value: "instagram", label: "Instagram", suggestedTitle: "Follow on Instagram", placeholderUrl: "https://instagram.com/username" },
-      { value: "youtube", label: "YouTube", suggestedTitle: "Subscribe on YouTube", placeholderUrl: "https://youtube.com/@channel" },
-      { value: "facebook", label: "Facebook", suggestedTitle: "Follow on Facebook", placeholderUrl: "https://facebook.com/page" },
-      { value: "x_twitter", label: "X / Twitter", suggestedTitle: "Follow on X", placeholderUrl: "https://x.com/username" },
-      { value: "linkedin", label: "LinkedIn", suggestedTitle: "Connect on LinkedIn", placeholderUrl: "https://linkedin.com/in/username" },
-      { value: "snapchat", label: "Snapchat", suggestedTitle: "Add on Snapchat", placeholderUrl: "https://snapchat.com/add/username" },
-      { value: "tiktok", label: "TikTok", suggestedTitle: "Follow on TikTok", placeholderUrl: "https://tiktok.com/@username" },
-      { value: "threads", label: "Threads", suggestedTitle: "Follow on Threads", placeholderUrl: "https://threads.net/@username" },
-      { value: "pinterest", label: "Pinterest", suggestedTitle: "Follow on Pinterest", placeholderUrl: "https://pinterest.com/username" },
-      { value: "twitch", label: "Twitch", suggestedTitle: "Watch on Twitch", placeholderUrl: "https://twitch.tv/username" },
-      { value: "discord", label: "Discord", suggestedTitle: "Join Discord Server", placeholderUrl: "https://discord.gg/invite" },
-      { value: "telegram", label: "Telegram", suggestedTitle: "Join Telegram Channel", placeholderUrl: "https://t.me/channel" },
-      { value: "whatsapp", label: "WhatsApp", suggestedTitle: "Chat on WhatsApp", placeholderUrl: "https://wa.me/919876543210" },
-    ],
-  },
-  {
-    group: "🎵 Music & Audio",
-    options: [
-      { value: "spotify", label: "Spotify", suggestedTitle: "Listen on Spotify", placeholderUrl: "https://open.spotify.com/artist/..." },
-      { value: "apple_music", label: "Apple Music", suggestedTitle: "Listen on Apple Music", placeholderUrl: "https://music.apple.com/..." },
-      { value: "podcast", label: "Podcast", suggestedTitle: "Stream Latest Podcast", placeholderUrl: "https://podcasts.apple.com/..." },
-    ],
-  },
-  {
-    group: "🎬 Content & Media",
-    options: [
-      { value: "latest_video", label: "Latest Video", suggestedTitle: "Watch Latest Video", placeholderUrl: "https://youtube.com/watch?v=..." },
-      { value: "latest_episode", label: "Latest Episode", suggestedTitle: "Watch Latest Episode", placeholderUrl: "https://inflixo.com/series/..." },
-      { value: "media_kit", label: "Media Kit", suggestedTitle: "Media Kit & Rate Card", placeholderUrl: "https://inflixo.com/..." },
-      { value: "blog", label: "Blog", suggestedTitle: "Read My Blog", placeholderUrl: "https://blog.yourwebsite.com" },
-      { value: "newsletter", label: "Newsletter", suggestedTitle: "Subscribe to Newsletter", placeholderUrl: "https://newsletter.com" },
-    ],
-  },
-  {
-    group: "💼 Business & Personal",
-    options: [
-      { value: "website", label: "Website", suggestedTitle: "Official Website", placeholderUrl: "https://yourwebsite.com" },
-      { value: "portfolio", label: "Portfolio", suggestedTitle: "Work Portfolio", placeholderUrl: "https://yourportfolio.com" },
-      { value: "online_store", label: "Online Store", suggestedTitle: "Store & Merch Shop", placeholderUrl: "https://yourstore.com" },
-      { value: "booking_page", label: "Booking Page", suggestedTitle: "Book 1-on-1 Consultation", placeholderUrl: "https://cal.com/username" },
-      { value: "personal", label: "Personal", suggestedTitle: "About Me", placeholderUrl: "https://yourwebsite.com/about" },
-      { value: "other", label: "Other", suggestedTitle: "Custom Link", placeholderUrl: "https://..." },
-    ],
-  },
-];
+    {
+      group: "📱 Social Media",
+      options: [
+        { value: "instagram", label: "Instagram", suggestedTitle: "Follow on Instagram", placeholderUrl: "https://instagram.com/username" },
+        { value: "youtube", label: "YouTube", suggestedTitle: "Subscribe on YouTube", placeholderUrl: "https://youtube.com/@channel" },
+        { value: "facebook", label: "Facebook", suggestedTitle: "Follow on Facebook", placeholderUrl: "https://facebook.com/page" },
+        { value: "x_twitter", label: "X / Twitter", suggestedTitle: "Follow on X", placeholderUrl: "https://x.com/username" },
+        { value: "linkedin", label: "LinkedIn", suggestedTitle: "Connect on LinkedIn", placeholderUrl: "https://linkedin.com/in/username" },
+        { value: "snapchat", label: "Snapchat", suggestedTitle: "Add on Snapchat", placeholderUrl: "https://snapchat.com/add/username" },
+        { value: "tiktok", label: "TikTok", suggestedTitle: "Follow on TikTok", placeholderUrl: "https://tiktok.com/@username" },
+        { value: "threads", label: "Threads", suggestedTitle: "Follow on Threads", placeholderUrl: "https://threads.net/@username" },
+        { value: "pinterest", label: "Pinterest", suggestedTitle: "Follow on Pinterest", placeholderUrl: "https://pinterest.com/username" },
+        { value: "twitch", label: "Twitch", suggestedTitle: "Watch on Twitch", placeholderUrl: "https://twitch.tv/username" },
+        { value: "discord", label: "Discord", suggestedTitle: "Join Discord Server", placeholderUrl: "https://discord.gg/invite" },
+        { value: "telegram", label: "Telegram", suggestedTitle: "Join Telegram Channel", placeholderUrl: "https://t.me/channel" },
+        { value: "whatsapp", label: "WhatsApp", suggestedTitle: "Chat on WhatsApp", placeholderUrl: "https://wa.me/919876543210" },
+      ],
+    },
+    {
+      group: "🎵 Music & Audio",
+      options: [
+        { value: "spotify", label: "Spotify", suggestedTitle: "Listen on Spotify", placeholderUrl: "https://open.spotify.com/artist/..." },
+        { value: "apple_music", label: "Apple Music", suggestedTitle: "Listen on Apple Music", placeholderUrl: "https://music.apple.com/..." },
+        { value: "podcast", label: "Podcast", suggestedTitle: "Stream Latest Podcast", placeholderUrl: "https://podcasts.apple.com/..." },
+      ],
+    },
+    {
+      group: "🎬 Content & Media",
+      options: [
+        { value: "latest_video", label: "Latest Video", suggestedTitle: "Watch Latest Video", placeholderUrl: "https://youtube.com/watch?v=..." },
+        { value: "latest_episode", label: "Latest Episode", suggestedTitle: "Watch Latest Episode", placeholderUrl: "https://inflixo.com/series/..." },
+        { value: "media_kit", label: "Media Kit", suggestedTitle: "Media Kit & Rate Card", placeholderUrl: "https://inflixo.com/..." },
+        { value: "blog", label: "Blog", suggestedTitle: "Read My Blog", placeholderUrl: "https://blog.yourwebsite.com" },
+        { value: "newsletter", label: "Newsletter", suggestedTitle: "Subscribe to Newsletter", placeholderUrl: "https://newsletter.com" },
+      ],
+    },
+    {
+      group: "💼 Business & Personal",
+      options: [
+        { value: "website", label: "Website", suggestedTitle: "Official Website", placeholderUrl: "https://yourwebsite.com" },
+        { value: "portfolio", label: "Portfolio", suggestedTitle: "Work Portfolio", placeholderUrl: "https://yourportfolio.com" },
+        { value: "online_store", label: "Online Store", suggestedTitle: "Store & Merch Shop", placeholderUrl: "https://yourstore.com" },
+        { value: "booking_page", label: "Booking Page", suggestedTitle: "Book 1-on-1 Consultation", placeholderUrl: "https://cal.com/username" },
+        { value: "personal", label: "Personal", suggestedTitle: "About Me", placeholderUrl: "https://yourwebsite.com/about" },
+        { value: "other", label: "Other", suggestedTitle: "Custom Link", placeholderUrl: "https://..." },
+      ],
+    },
+  ];
 
 function extractDomain(url: string): string {
   try {
@@ -134,7 +134,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
             if (onChange) onChange(data.links);
           }
         })
-        .catch(() => {});
+        .catch(() => { });
     }
   }, []);
 
@@ -290,11 +290,10 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
             type="button"
             onClick={(e) => handleOpenCreate(e.currentTarget)}
             disabled={isLimitReached}
-            className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-colors cursor-pointer shadow-xs ${
-              isLimitReached
-                ? "bg-[#F8F7F3] border border-[#E4DAD5] text-[#797570] opacity-60 cursor-not-allowed"
+            className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-colors cursor-pointer shadow-xs ${isLimitReached
+                ? "bg-[#fbfbfb] border border-[#E4DAD5] text-[#797570] opacity-60 cursor-not-allowed"
                 : "bg-[#B85C6B] hover:bg-[#8C3F4D] text-white"
-            }`}
+              }`}
             title={isLimitReached ? "Early Access plan limit reached (3 links max)" : "Add new custom link"}
           >
             <Plus className="h-3.5 w-3.5" />
@@ -328,11 +327,11 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
             return (
               <div
                 key={item.id || idx}
-                className="p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-[#F8F7F3] transition-colors text-left"
+                className="p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-[#fbfbfb] transition-colors text-left"
               >
                 {/* Left: Index badge & Title/Domain */}
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-md bg-[#F8F7F3] border border-[#E4DAD5] text-[10px] font-bold text-[#797570] shrink-0">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-md bg-[#fbfbfb] border border-[#E4DAD5] text-[10px] font-bold text-[#797570] shrink-0">
                     0{idx + 1}
                   </span>
 
@@ -349,7 +348,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                       href={item.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 rounded-lg border border-[#E4DAD5] bg-white hover:bg-[#F8F7F3] px-2.5 py-1 text-xs font-semibold text-[#181716] transition-colors"
+                      className="inline-flex items-center gap-1 rounded-lg border border-[#E4DAD5] bg-white hover:bg-[#fbfbfb] px-2.5 py-1 text-xs font-semibold text-[#181716] transition-colors"
                       title="Open link in new tab"
                     >
                       <span className="hidden sm:inline">Open</span>
@@ -365,7 +364,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                         e.stopPropagation();
                         setActiveMenuId(activeMenuId === item.id ? null : item.id);
                       }}
-                      className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E4DAD5] bg-white hover:bg-[#F8F7F3] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer"
+                      className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E4DAD5] bg-white hover:bg-[#fbfbfb] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer"
                       aria-label="More actions"
                     >
                       <MoreVertical className="h-3.5 w-3.5" />
@@ -382,7 +381,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                             setActiveMenuId(null);
                             handleOpenEdit(item);
                           }}
-                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#F8F7F3] transition-colors cursor-pointer"
+                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#fbfbfb] transition-colors cursor-pointer"
                         >
                           <Pencil className="h-3.5 w-3.5 text-[#797570]" />
                           <span>Edit Link</span>
@@ -391,7 +390,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                         <button
                           type="button"
                           onClick={() => handleCopy(item.url)}
-                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#F8F7F3] transition-colors cursor-pointer"
+                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#fbfbfb] transition-colors cursor-pointer"
                         >
                           <Copy className="h-3.5 w-3.5 text-[#797570]" />
                           <span>Copy Link</span>
@@ -458,7 +457,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     id="custom-link-type"
                     value={selectedType}
                     onChange={(e) => handleTypeSelect(e.target.value)}
-                    className="w-full appearance-none rounded-xl border border-[#E4DAD5] bg-[#F8F7F3] px-3.5 py-2.5 pr-9 text-xs font-semibold text-[#181716] focus:border-[#B85C6B] focus:bg-white focus:outline-none transition-colors cursor-pointer"
+                    className="w-full appearance-none rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] px-3.5 py-2.5 pr-9 text-xs font-semibold text-[#181716] focus:border-[#B85C6B] focus:bg-white focus:outline-none transition-colors cursor-pointer"
                   >
                     <option value="">— Select a link type (auto-fills title) —</option>
                     {LINK_TYPE_GROUPS.map((group) => (
@@ -490,7 +489,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     setIsTitleManuallyEdited(true);
                   }}
                   placeholder="e.g. Follow on Instagram or Watch Latest Video"
-                  className="w-full rounded-xl border border-[#E4DAD5] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#B85C6B] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#B85C6B] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
@@ -507,7 +506,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     value={formUrl}
                     onChange={(e) => setFormUrl(e.target.value)}
                     placeholder="https://example.com/your-destination"
-                    className="w-full rounded-xl border border-[#E4DAD5] bg-[#F8F7F3] pl-3.5 pr-9 py-2.5 text-xs font-mono font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#B85C6B] focus:bg-white focus:outline-none transition-colors"
+                    className="w-full rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] pl-3.5 pr-9 py-2.5 text-xs font-mono font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#B85C6B] focus:bg-white focus:outline-none transition-colors"
                   />
                   {formUrl && (formUrl.startsWith("http://") || formUrl.startsWith("https://")) && (
                     <a
@@ -536,7 +535,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                 }
               }}
               disabled={isSaving}
-              className="px-4 py-2 rounded-xl border border-[#E4DAD5] text-xs font-semibold text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716] transition-colors cursor-pointer disabled:opacity-50"
+              className="px-4 py-2 rounded-xl border border-[#E4DAD5] text-xs font-semibold text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716] transition-colors cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>

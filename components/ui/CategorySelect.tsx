@@ -59,7 +59,7 @@ export function CategorySelect({
       {error && <p className="text-xs font-bold text-rose-500">{error}</p>}
 
       {/* Compact Chip Pills of Categories */}
-      <div className="flex flex-wrap gap-1.5 rounded-2xl border border-[#E7E3DC] bg-[#F8F7F3] p-3">
+      <div className="flex flex-wrap gap-1.5 rounded-2xl border border-[#E7E3DC] bg-[#fbfbfb] p-3">
         {CREATOR_TAXONOMY.map((item) => {
           const isSelected = selectedCategories.includes(item.category);
           const isMaxReached = !isSelected && selectedCategories.length >= max;
@@ -71,10 +71,10 @@ export function CategorySelect({
               disabled={isMaxReached}
               onClick={() => toggleCategory(item.category)}
               className={`tap-scale inline-flex items-center gap-1.5 text-xs py-1 px-3 rounded-full transition-all cursor-pointer ${isSelected
-                  ? "bg-[#b85c6b]/[0.09] border border-[#b85c6b] text-[#b85c6b] font-semibold shadow-xs"
-                  : isMaxReached
-                    ? "opacity-40 cursor-not-allowed bg-white border border-[#E7E3DC] text-[#797570]"
-                    : "bg-white border border-[#E7E3DC] text-[#54514D] hover:border-[#b85c6b]/30"
+                ? "bg-[#b85c6b]/[0.09] border border-[#b85c6b] text-[#b85c6b] font-semibold shadow-xs"
+                : isMaxReached
+                  ? "opacity-40 cursor-not-allowed bg-white border border-[#E7E3DC] text-[#797570]"
+                  : "bg-white border border-[#E7E3DC] text-[#54514D] hover:border-[#b85c6b]/30"
                 }`}
             >
               <span className="text-xs shrink-0">{item.emoji}</span>
