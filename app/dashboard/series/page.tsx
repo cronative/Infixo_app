@@ -584,14 +584,11 @@ function SeriesCard({
   const subtitleStr = subtitleParts.join(" • ");
 
   return (
-    <div
-      id={`series-${series.id}`}
-      className="rounded-2xl border border-[#E7E3DC] bg-white transition-all shadow-xs overflow-hidden"
-    >
+    <div id={`series-${series.id}`} className="transition-colors">
       {/* Series Row Header */}
       <div
         onClick={onToggle}
-        className="px-3.5 py-3 sm:px-4 sm:py-3.5 flex items-center justify-between gap-3 cursor-pointer hover:bg-[#F7F0EA]/30 transition-colors group"
+        className="px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 cursor-pointer hover:bg-[#FAF8F5]/80 transition-colors group"
       >
         {/* Left: Icon Badge + Title & Subtitle */}
         <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -599,12 +596,12 @@ function SeriesCard({
             <SeriesPoster
               src={series.posterDataUrl}
               title={series.title}
-              className="w-12 sm:w-14 aspect-video rounded-lg border border-[#E7E3DC] shrink-0 object-cover"
+              className="w-10 sm:w-12 aspect-video rounded-xl border border-[#E7E3DC] shrink-0 object-cover"
               textClassName="text-[10px] font-bold text-white"
             />
           ) : (
             <span
-              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
+              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
                 detectedPlatform === "YouTube"
                   ? "bg-red-600 shadow-xs text-white"
                   : detectedPlatform === "Instagram"
@@ -618,12 +615,12 @@ function SeriesCard({
                   : detectedPlatform === "Threads"
                   ? "bg-slate-900 shadow-xs text-white"
                   : detectedPlatform === "Snapchat"
-                  ? "bg-amber-400 shadow-xs text-slate-950"
+                  ? "bg-[#FFFC00] shadow-xs text-black"
                   : detectedPlatform === "Spotify"
-                  ? "bg-emerald-600 shadow-xs text-white"
+                  ? "bg-[#1DB954] shadow-xs text-white"
                   : detectedPlatform === "Twitch"
-                  ? "bg-purple-600 shadow-xs text-white"
-                  : "bg-[#F3DDE0] text-[#8C3F4D]"
+                  ? "bg-[#9146FF] shadow-xs text-white"
+                  : "bg-[#F3DDE0] border border-[#E7D0D4] text-[#8C3F4D]"
               }`}
             >
               {detectedPlatform === "YouTube" ? (
@@ -639,13 +636,13 @@ function SeriesCard({
               ) : detectedPlatform === "Threads" ? (
                 <ThreadsIcon className="h-3.5 w-3.5 text-white" />
               ) : detectedPlatform === "Snapchat" ? (
-                <SnapchatIcon className="h-4 w-4 text-slate-950" />
+                <SnapchatIcon className="h-4 w-4 text-black" />
               ) : detectedPlatform === "Spotify" ? (
                 <SpotifyIcon className="h-4 w-4 text-white" />
               ) : detectedPlatform === "Twitch" ? (
                 <TwitchIcon className="h-4 w-4 text-white" />
               ) : (
-                <span className="text-xs font-bold tracking-tight select-none">
+                <span className="text-[11px] font-bold tracking-tight select-none">
                   {getInitials(series.title)}
                 </span>
               )}
@@ -672,7 +669,7 @@ function SeriesCard({
             type="button"
             onClick={() => onAddEpisode(series)}
             disabled={epUsage.isLimitReached}
-            className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer shadow-2xs ${
+            className={`inline-flex items-center gap-1 rounded-xl px-2.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer shadow-xs ${
               epUsage.isLimitReached
                 ? "bg-[#fbfbfb] border border-[#E7E3DC] text-[#797570] cursor-not-allowed opacity-60"
                 : "bg-[#b85c6b] hover:bg-[#6F3456] text-white"
@@ -687,10 +684,10 @@ function SeriesCard({
             href={`/${username}/series/${series.id}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] px-2.5 py-1.5 text-xs font-medium text-[#181716] transition-colors"
+            className="inline-flex items-center gap-1 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] px-2.5 py-1.5 text-xs font-semibold text-[#181716] transition-colors shadow-xs"
             title="View public series page"
           >
-            <span className="hidden sm:inline">View</span>
+            <span>View</span>
             <ExternalLink className="h-3 w-3 text-[#b85c6b]" />
           </a>
 
@@ -699,7 +696,7 @@ function SeriesCard({
             <button
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
-              className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer"
+              className="flex h-7 w-7 items-center justify-center rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer shadow-xs"
               aria-label="More actions"
             >
               <MoreVertical className="h-3.5 w-3.5" />
@@ -713,7 +710,7 @@ function SeriesCard({
                     setMenuOpen(false);
                     onEditSeries(series);
                   }}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#fbfbfb] transition-colors cursor-pointer"
+                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
                 >
                   <Pencil className="h-3.5 w-3.5 text-[#797570]" />
                   <span>Edit Series</span>
@@ -722,7 +719,7 @@ function SeriesCard({
                 <button
                   type="button"
                   onClick={handleCopyLink}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#fbfbfb] transition-colors cursor-pointer"
+                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
                 >
                   <Copy className="h-3.5 w-3.5 text-[#797570]" />
                   <span>Copy Link</span>
@@ -734,7 +731,7 @@ function SeriesCard({
                     setMenuOpen(false);
                     onShareSeries(series);
                   }}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#fbfbfb] transition-colors cursor-pointer"
+                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
                 >
                   <Share2 className="h-3.5 w-3.5 text-[#797570]" />
                   <span>Share Series</span>
@@ -761,7 +758,7 @@ function SeriesCard({
           <button
             type="button"
             onClick={onToggle}
-            className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E7E3DC] bg-[#fbfbfb] hover:bg-[#b85c6b]/[0.09] hover:text-[#b85c6b] text-[#181716] transition-colors cursor-pointer"
+            className="flex h-7 w-7 items-center justify-center rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer shadow-xs"
             aria-expanded={expanded}
             title={expanded ? "Hide episodes" : "Show episodes"}
           >
@@ -770,12 +767,12 @@ function SeriesCard({
         </div>
       </div>
 
-      {/* Expanded Episodes List: Divided Card Pattern */}
+      {/* Expanded Episodes List */}
       {expanded && (
-        <div className="border-t border-[#E7E3DC] bg-[#FAF8F5]">
+        <div className="border-t border-[#E7E3DC] bg-[#FAF8F5]/80">
           {/* Header strip */}
-          <div className="px-3.5 py-2 bg-[#FAF8F5] flex items-center justify-between border-b border-[#E7E3DC]">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#797570]">
+          <div className="px-3.5 py-1.5 bg-[#FAF8F5] flex items-center justify-between border-b border-[#E7E3DC]">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570]">
               Episodes ({episodes.length} of {EARLY_ACCESS_LIMITS.maxEpisodesPerSeries})
             </span>
             {epUsage.isLimitReached && (
@@ -786,7 +783,7 @@ function SeriesCard({
           </div>
 
           {episodes.length === 0 ? (
-            <div className="p-6 text-center space-y-2 bg-white">
+            <div className="p-5 text-center space-y-2 bg-white">
               <p className="text-xs font-bold text-[#181716]">No episodes added yet</p>
               <p className="text-xs text-[#797570] max-w-sm mx-auto">
                 Add the first part so followers can begin this series.
@@ -794,7 +791,7 @@ function SeriesCard({
               <button
                 type="button"
                 onClick={() => onAddEpisode(series)}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-[#b85c6b] hover:bg-[#6F3456] px-3 py-1.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] px-3 py-1.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span>Add First Episode</span>
@@ -810,11 +807,11 @@ function SeriesCard({
                   return (
                     <div
                       key={ep.id}
-                      className="px-3.5 py-2.5 sm:py-3 transition-colors flex items-center justify-between hover:bg-[#F7F0EA]/40 group"
+                      className="px-3.5 py-2 sm:py-2.5 transition-colors flex items-center justify-between hover:bg-[#FAF8F5]/60 group"
                     >
                       {/* Left: Number & Episode Info */}
                       <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
-                        <span className="text-xs font-mono font-medium text-[#6B5A5D] w-5 shrink-0">
+                        <span className="text-xs font-mono font-bold text-[#797570] w-5 shrink-0">
                           {epNumStr}
                         </span>
 
@@ -836,7 +833,7 @@ function SeriesCard({
                             href={ep.externalUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] text-[#797570] hover:text-[#b85c6b] transition-colors"
+                            className="flex h-7 w-7 items-center justify-center rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-[#797570] hover:text-[#b85c6b] transition-colors shadow-xs"
                             title="Open original video link"
                           >
                             <ExternalLink className="h-3 w-3 text-[#b85c6b]" />
@@ -846,7 +843,7 @@ function SeriesCard({
                         <button
                           type="button"
                           onClick={() => onEditEpisode(series, season.id, ep)}
-                          className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer"
+                          className="flex h-7 w-7 items-center justify-center rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer shadow-xs"
                           title="Edit Episode"
                         >
                           <Pencil className="h-3 w-3" />
@@ -855,7 +852,7 @@ function SeriesCard({
                         <button
                           type="button"
                           onClick={() => onDeleteEpisode(series, season.id, ep)}
-                          className="flex h-7 w-7 items-center justify-center rounded-lg border border-rose-100 bg-white hover:bg-rose-50 text-[#C2414B] transition-colors cursor-pointer"
+                          className="flex h-7 w-7 items-center justify-center rounded-xl border border-rose-100 bg-white hover:bg-rose-50 text-[#C2414B] transition-colors cursor-pointer shadow-xs"
                           title="Remove Episode"
                         >
                           <Trash2 className="h-3 w-3" />
@@ -1155,7 +1152,7 @@ export default function DashboardContentPage() {
             No series matching &ldquo;{searchQuery}&rdquo;.
           </div>
         ) : (
-          <div className="space-y-2.5">
+          <div className="rounded-2xl border border-[#E7E3DC] bg-white divide-y divide-[#E7E3DC] overflow-hidden shadow-xs">
             {filteredSeries.map((s) => (
               <SeriesCard
                 key={s.id}
