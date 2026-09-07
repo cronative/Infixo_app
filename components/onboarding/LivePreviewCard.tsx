@@ -955,12 +955,11 @@ export function LivePreviewCard({
       {!selectedSeriesDetail && (
         <div className="relative z-10 flex items-center justify-between w-full mb-6 px-0.5">
           <div
-            className="tap-scale flex h-9 w-9 items-center justify-center rounded-full text-white shadow-xs transition-all shrink-0 border border-white/20 select-none"
-            style={{ backgroundColor: c.accent }}
+            className="tap-scale flex h-9 w-9 items-center justify-center rounded-xl text-white font-bold text-sm shadow-xs transition-all shrink-0 border border-white/20 select-none bg-[#B85C6B]"
             title="Inflixo"
             aria-label="Inflixo"
           >
-            <InflixoLogoIcon className="h-4.5 w-4.5 text-white" />
+            I
           </div>
 
           {!isOnboardingMode && (
@@ -968,31 +967,21 @@ export function LivePreviewCard({
               <button
                 type="button"
                 onClick={handleCopyClick}
-                style={{
-                  backgroundColor: c.cardBackground,
-                  borderColor: c.border,
-                  color: c.secondaryText,
-                }}
-                className="tap-scale flex h-9 w-9 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 cursor-pointer"
+                className="tap-scale flex h-8.5 w-8.5 items-center justify-center rounded-full border border-[#E4DAD5] bg-white text-[#6B5A5D] shadow-2xs transition-all hover:scale-105 cursor-pointer"
                 title="Copy profile link"
                 aria-label="Copy profile link"
               >
-                <Copy className="h-4 w-4" />
+                <Copy className="h-3.5 w-3.5" />
               </button>
 
               <button
                 type="button"
                 onClick={handleShareClick}
-                style={{
-                  backgroundColor: c.cardBackground,
-                  borderColor: c.border,
-                  color: c.secondaryText,
-                }}
-                className="tap-scale flex h-9 w-9 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-105 cursor-pointer"
+                className="tap-scale flex h-8.5 w-8.5 items-center justify-center rounded-full border border-[#E4DAD5] bg-white text-[#6B5A5D] shadow-2xs transition-all hover:scale-105 cursor-pointer"
                 title="Share profile"
                 aria-label="Share profile"
               >
-                <Share2 className="h-4 w-4" />
+                <Share2 className="h-3.5 w-3.5" />
               </button>
             </div>
           )}
@@ -1404,12 +1393,7 @@ export function LivePreviewCard({
                   {visibleChips.map((chip, idx) => (
                     <span
                       key={idx}
-                      style={{
-                        backgroundColor: c.cardBackground,
-                        borderColor: c.border,
-                        color: c.secondaryText,
-                      }}
-                      className="backdrop-blur-md text-xs font-semibold px-3.5 py-1.5 rounded-full border shadow-2xs"
+                      className="bg-[#F3DDE0] text-[#8C3F4D] text-xs font-semibold px-3.5 py-1.5 rounded-full"
                     >
                       {chip}
                     </span>
@@ -1528,10 +1512,17 @@ export function LivePreviewCard({
             )}
           </div>
 
-          {/* Connected Social Accounts List (28px section gap) */}
+          {/* Connected Social Accounts List: Single Card with Dividers (28px section gap) */}
           {activeSocialList.length > 0 && (
-            <div className="relative z-10 mt-7 space-y-2 w-full">
-              <div className="grid grid-cols-1 gap-2.5 w-full">
+            <div className="relative z-10 mt-7 w-full">
+              <div
+                style={{
+                  backgroundColor: c.cardBackground,
+                  borderColor: c.border,
+                  boxShadow: eff.cardShadow,
+                }}
+                className="rounded-2xl border divide-y divide-[#E4DAD5] overflow-hidden"
+              >
                 {activeSocialList.map((item) => (
                   <a
                     key={item.platform}
@@ -1539,12 +1530,7 @@ export function LivePreviewCard({
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
-                    style={{
-                      backgroundColor: c.cardBackground,
-                      borderColor: c.border,
-                      boxShadow: eff.cardShadow,
-                    }}
-                    className="group rounded-xl p-3 sm:p-3.5 transition-all flex items-center justify-between border hover:shadow-xs"
+                    className="p-3.5 sm:p-4 transition-all flex items-center justify-between hover:bg-[var(--color-surface-alt,#fbfbfb)] group"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <span className={`flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-lg ${item.badgeBg}`}>
@@ -1561,14 +1547,14 @@ export function LivePreviewCard({
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-2.5 shrink-0">
                       {item.count > 0 && (
                         <span style={{ color: c.primaryText }} className="text-xs sm:text-sm font-bold tabular-nums">
                           {formatCount(item.count)}{" "}
                           <span style={{ color: c.mutedText }} className="font-normal text-[11px]">{item.unit.toLowerCase()}</span>
                         </span>
                       )}
-                      <ExternalLink style={{ color: c.secondaryText }} className="h-3.5 w-3.5 transition-colors" />
+                      <ExternalLink style={{ color: c.secondaryText }} className="h-3.5 w-3.5 transition-colors group-hover:translate-x-0.5" />
                     </div>
                   </a>
                 ))}
@@ -1597,20 +1583,15 @@ export function LivePreviewCard({
                         borderColor: c.border,
                         boxShadow: eff.cardShadow,
                       }}
-                      className="group min-h-[54px] rounded-xl px-4 py-3 text-xs sm:text-sm font-bold transition-all flex items-center justify-between border cursor-pointer hover:scale-[1.005]"
+                      className="group rounded-2xl p-3.5 sm:p-4 text-xs sm:text-sm font-bold transition-all flex items-center justify-between border cursor-pointer hover:bg-[var(--color-surface-alt,#fbfbfb)]"
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <span
-                          style={{
-                            backgroundColor: c.accentSoft,
-                            borderColor: c.accentBorder,
-                            color: c.accentText,
-                          }}
-                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border"
+                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#F3DDE0] text-[#8C3F4D]"
                         >
-                          <LinkIcon className="h-4 w-4" />
+                          <LinkIcon className="h-4.5 w-4.5" />
                         </span>
-                        <span style={{ color: c.primaryText }} className="truncate">{link.title}</span>
+                        <span style={{ color: c.primaryText }} className="truncate font-semibold">{link.title}</span>
                       </div>
                       <ExternalLink
                         style={{ color: c.secondaryText }}
