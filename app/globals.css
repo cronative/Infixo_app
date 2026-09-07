@@ -1,62 +1,77 @@
 @import "tailwindcss";
 
 :root {
-  /* Warm Neutral Global Palette */
-  --app-bg: #FAF9F6;
-  --section-light: #FFFEFC;
-  --section-warm: #F5F3ED;
-  --surface: #FFFFFF;
-  --surface-soft: #F8F7F3;
+  /* Exact Inflixo Color Spec Palette */
+  --color-bg: #FCF7F3;          /* page/app background */
+  --color-surface: #FFFFFF;      /* cards, modals, inputs */
+  --color-surface-alt: #F7F0EA;  /* alternate/nested card tone */
 
-  --text-primary: #181716;
-  --text-secondary: #54514D;
-  --text-muted: #797570;
+  --color-primary: #B85C6B;      /* maroon — buttons, active states, links, highlights */
+  --color-primary-hover: #8C3F4D;/* darker maroon — hover/pressed states */
+  --color-primary-tint: #F3DDE0; /* light maroon — badges, tags, selected rows */
 
-  --border: #E7E3DC;
-  --divider: #ECE8E1;
+  --color-ink: #241618;          /* body text, headlines */
+  --color-ink-muted: #6B5A5D;    /* secondary text, captions, timestamps */
 
-  --brand-primary: #803D63;
-  --brand-hover: #6F3456;
-  --brand-soft: rgba(128, 61, 99, 0.09);
-  --brand-border: rgba(128, 61, 99, 0.20);
+  --color-border: #E4DAD5;       /* borders, dividers, input outlines */
 
-  --success: #17845B;
-  --success-soft: #EAF7F0;
+  --color-error: #C1443A;        /* only exception — destructive/error states */
+
+  /* Legacy and Component Aliases */
+  --app-bg: var(--color-bg);
+  --section-light: var(--color-surface);
+  --section-warm: var(--color-surface-alt);
+  --surface: var(--color-surface);
+  --surface-soft: var(--color-surface-alt);
+
+  --text-primary: var(--color-ink);
+  --text-secondary: var(--color-ink-muted);
+  --text-muted: var(--color-ink-muted);
+
+  --border: var(--color-border);
+  --divider: var(--color-border);
+
+  --brand-primary: var(--color-primary);
+  --brand-hover: var(--color-primary-hover);
+  --brand-soft: var(--color-primary-tint);
+  --brand-border: var(--color-border);
+
+  --success: var(--color-primary);
+  --success-soft: var(--color-primary-tint);
   --warning: #B7791F;
-  --danger: #C2414B;
+  --danger: var(--color-error);
 
-  /* Aliases for Framework & Backwards Compatibility */
-  --page-bg: var(--app-bg);
-  --background: var(--app-bg);
-  --surface-subtle: var(--surface-soft);
-  --surface-muted: var(--brand-soft);
-  --foreground: var(--text-primary);
+  --page-bg: var(--color-bg);
+  --background: var(--color-bg);
+  --surface-subtle: var(--color-surface-alt);
+  --surface-muted: var(--color-primary-tint);
+  --foreground: var(--color-ink);
 
-  --primary: var(--brand-primary);
-  --primary-soft: var(--brand-soft);
-  --inflixo-purple: var(--brand-primary);
-  --inflixo-purple-dark: var(--brand-hover);
-  --inflixo-purple-secondary: var(--brand-primary);
-  --inflixo-purple-light: var(--brand-soft);
-  --inflixo-lavender: var(--app-bg);
-  --inflixo-blue: var(--brand-primary);
-  --inflixo-lime: var(--success);
-  --inflixo-navy: var(--text-primary);
-  --inflixo-border: var(--border);
-  --muted: var(--text-secondary);
+  --primary: var(--color-primary);
+  --primary-soft: var(--color-primary-tint);
+  --inflixo-purple: var(--color-primary);
+  --inflixo-purple-dark: var(--color-primary-hover);
+  --inflixo-purple-secondary: var(--color-primary);
+  --inflixo-purple-light: var(--color-primary-tint);
+  --inflixo-lavender: var(--color-bg);
+  --inflixo-blue: var(--color-primary);
+  --inflixo-lime: var(--color-primary);
+  --inflixo-navy: var(--color-ink);
+  --inflixo-border: var(--color-border);
+  --muted: var(--color-ink-muted);
 
-  --radius-card: 16px;
-  --radius-input: 12px;
+  --radius-card: 12px;
+  --radius-input: 8px;
 
-  /* Subtle Warm Elevation */
-  --shadow-soft: 0 1px 3px 0 rgba(38, 30, 25, 0.04);
-  --shadow-elevated: 0 4px 12px -2px rgba(38, 30, 25, 0.05), 0 2px 6px -2px rgba(38, 30, 25, 0.03);
-  --shadow-premium: 0 8px 28px rgba(38, 30, 25, 0.045);
-  --shadow-hover: 0 12px 28px -6px rgba(128, 61, 99, 0.10), 0 6px 12px -4px rgba(38, 30, 25, 0.03);
+  /* Clean Spec: No grey drop shadows, crisp 1px borders */
+  --shadow-soft: none;
+  --shadow-elevated: none;
+  --shadow-premium: none;
+  --shadow-hover: none;
 
-  --gradient-premium: #181716;
-  --gradient-gold: #B7791F;
-  --gradient-energy: #803D63;
+  --gradient-premium: var(--color-ink);
+  --gradient-gold: var(--color-primary);
+  --gradient-energy: var(--color-primary);
 }
 
 @theme inline {
@@ -90,8 +105,9 @@
   --color-inflixo-gold: var(--warning);
   --color-inflixo-gold-light: #FEF3C7;
 
-  --font-sans: var(--font-plus-jakarta), "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
-  --font-display: var(--font-plus-jakarta), "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-inter), "Inter", var(--font-plus-jakarta), "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-sora), "Sora", var(--font-plus-jakarta), "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font-sora: var(--font-sora), "Sora", sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6, .font-display {

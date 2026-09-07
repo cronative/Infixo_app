@@ -3,8 +3,7 @@
 import { useEffect, useRef, useState, KeyboardEvent, ClipboardEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Mail, Lock, ArrowRight, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { ArrowLeft, Lock, ArrowRight, Loader2 } from "lucide-react";
 import { AuthService } from "@/services/AuthService";
 import { useToast } from "@/contexts/ToastContext";
 import { Logo } from "@/components/shared/Logo";
@@ -73,7 +72,7 @@ export default function VerifyOtpPage() {
       }
     } catch (err: any) {
       setSubmitting(false);
-      setErrorMessage(err?.message || "Invalid OTP code. Please check your email and try again.");
+      setErrorMessage(err?.message || "Invalid verification code. Please check your email.");
     }
   };
 
@@ -140,38 +139,37 @@ export default function VerifyOtpPage() {
   }
 
   return (
-    <div className="relative flex min-h-dvh flex-col items-center justify-center bg-[#FAF9F6] px-4 py-8 text-center text-[#181716] overflow-hidden">
-      {/* Subtle Ambient Background Light */}
-      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-80 bg-gradient-radial from-[#F5F3ED] to-transparent blur-3xl" />
+    <div className="relative flex min-h-dvh flex-col items-center justify-center bg-[#FCF7F3] px-4 py-8 text-center text-[#241618] overflow-hidden">
+      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-80 bg-[radial-gradient(ellipse_at_top,#F7F0EA_0%,transparent_70%)] blur-2xl" />
 
       <div className="relative z-10 w-full max-w-[440px] space-y-6">
         {/* 1. Header Branding */}
         <div className="flex flex-col items-center text-center space-y-2">
           <div className="flex items-center justify-center gap-2">
             <Logo size="md" />
-            <span className="rounded-full bg-[#803D63]/[0.09] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#803D63] border border-[#803D63]/20">
+            <span className="rounded-full bg-[#F3DDE0] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#8C3F4D]">
               VERIFICATION
             </span>
           </div>
 
           <div className="space-y-1 pt-1">
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#181716] tracking-tight">
+            <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-[#241618] tracking-tight">
               Check your email
             </h1>
-            <p className="text-xs sm:text-sm font-medium text-[#54514D] max-w-xs mx-auto leading-relaxed">
-              We sent a 4-digit code to <span className="font-bold text-[#181716]">{email || "your email"}</span>
+            <p className="text-xs sm:text-sm font-medium text-[#6B5A5D] max-w-xs mx-auto leading-relaxed">
+              We sent a 4-digit code to <span className="font-bold text-[#241618]">{email || "your email"}</span>
             </p>
           </div>
         </div>
 
         {/* 2. Main Centered Card */}
-        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-7 sm:p-8 shadow-xs space-y-5 text-center">
+        <div className="rounded-[18px] border border-[#E4DAD5] bg-[#FFFFFF] p-6 sm:p-8 space-y-5 text-center">
           {/* Change Email Pill */}
           <div className="flex items-center justify-center">
             <button
               type="button"
               onClick={() => router.push("/login")}
-              className="inline-flex items-center gap-1.5 rounded-full bg-[#F8F7F3] px-3 py-1 text-xs font-semibold text-[#54514D] border border-[#E7E3DC] hover:bg-[#E7E3DC] hover:text-[#181716] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#F7F0EA] px-3 py-1 text-xs font-semibold text-[#6B5A5D] border border-[#E4DAD5] hover:bg-[#F3DDE0] hover:text-[#8C3F4D] transition-colors cursor-pointer"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               <span>Change email address</span>
@@ -198,12 +196,12 @@ export default function VerifyOtpPage() {
                   onKeyDown={(e) => handleKeyDown(i, e)}
                   onPaste={handlePaste}
                   aria-label={`Digit ${i + 1}`}
-                  className={`h-14 w-14 sm:h-15 sm:w-15 rounded-xl border text-center text-2xl font-bold text-[#181716] bg-white outline-none transition-all duration-150 ${
+                  className={`h-13 w-13 sm:h-14 sm:w-14 rounded-[10px] border text-center text-xl font-bold text-[#241618] bg-[#FFFFFF] outline-none transition-all duration-150 ${
                     errorMessage
-                      ? "border-rose-400 bg-rose-50/20 text-[#C2414B] ring-2 ring-rose-200"
+                      ? "border-[#C1443A] bg-[#FCF7F3] text-[#C1443A] ring-2 ring-[#C1443A]/20"
                       : d
-                      ? "border-[#803D63] ring-1 ring-[#803D63] bg-[#803D63]/5"
-                      : "border-[#E7E3DC] focus:border-[#803D63] focus:ring-2 focus:ring-[#803D63]/15"
+                      ? "border-[#B85C6B] ring-2 ring-[#F3DDE0] bg-[#FCF7F3]"
+                      : "border-[#E4DAD5] focus:border-[#B85C6B] focus:ring-3 focus:ring-[#F3DDE0]"
                   }`}
                 />
               ))}
@@ -211,42 +209,49 @@ export default function VerifyOtpPage() {
 
             {/* Error Message */}
             {errorMessage && (
-              <p className="text-xs font-semibold text-[#C2414B] text-center animate-fade-in pt-1">
+              <p className="text-xs font-semibold text-[#C1443A] text-center animate-fade-in pt-1">
                 {errorMessage}
               </p>
             )}
 
-            {/* Code Sent Toast Banner */}
+            {/* Code Sent Notification Banner */}
             {codeSent && (
-              <p className="text-xs font-semibold text-emerald-600 text-center animate-fade-in pt-1">
-                New verification code sent ✓
+              <p className="text-xs font-semibold text-[#8C3F4D] bg-[#F3DDE0] py-1 px-2 rounded-[6px] text-center animate-fade-in pt-1">
+                New verification code sent 📩
               </p>
             )}
           </div>
 
           {/* Verify & Continue Button */}
-          <Button
-            fullWidth
-            size="lg"
-            loading={submitting}
+          <button
+            type="button"
             disabled={!isOtpComplete || submitting}
             onClick={() => submit(digits.join(""))}
-            className={`font-bold transition-all h-11 text-xs sm:text-sm rounded-xl cursor-pointer ${
+            className={`w-full inline-flex items-center justify-center gap-2 rounded-[10px] font-semibold text-xs sm:text-sm h-11 transition-all cursor-pointer active:scale-98 ${
               isOtpComplete && !submitting
-                ? "bg-[#803D63] text-white hover:bg-[#6F3456] shadow-xs"
-                : "bg-[#F8F7F3] text-[#797570] border border-[#E7E3DC] cursor-not-allowed shadow-none"
+                ? "bg-[#B85C6B] text-[#FCF7F3] hover:bg-[#8C3F4D]"
+                : "bg-[#F7F0EA] text-[#6B5A5D] border border-[#E4DAD5] cursor-not-allowed"
             }`}
           >
-            <span>Verify &amp; Continue</span>
-            <ArrowRight className="h-4 w-4 ml-1.5" />
-          </Button>
+            {submitting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Verifying...</span>
+              </>
+            ) : (
+              <>
+                <span>Verify &amp; Continue</span>
+                <ArrowRight className="h-4 w-4" />
+              </>
+            )}
+          </button>
 
           {/* Resend Countdown Timer */}
-          <div className="text-center text-xs font-medium text-[#797570] pt-1">
+          <div className="text-center text-xs font-medium text-[#6B5A5D] pt-1">
             {countdown > 0 ? (
               <p>
                 Didn&apos;t receive code? Resend in{" "}
-                <span className="font-mono font-bold text-[#181716]">
+                <span className="font-mono font-bold text-[#241618]">
                   00:{countdown.toString().padStart(2, "0")}
                 </span>
               </p>
@@ -257,7 +262,7 @@ export default function VerifyOtpPage() {
                   type="button"
                   onClick={handleResend}
                   disabled={resending}
-                  className="font-bold text-[#803D63] hover:underline cursor-pointer"
+                  className="font-bold text-[#B85C6B] hover:text-[#8C3F4D] underline cursor-pointer"
                 >
                   {resending ? "Sending..." : "Resend Code"}
                 </button>
@@ -267,8 +272,8 @@ export default function VerifyOtpPage() {
         </div>
 
         {/* 3. Footer */}
-        <p className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#797570] text-center">
-          <Lock className="h-3 w-3 text-[#797570]" />
+        <p className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#6B5A5D] text-center">
+          <Lock className="h-3 w-3 text-[#6B5A5D]" />
           <span>Secure passwordless verification by Inflixo</span>
         </p>
       </div>

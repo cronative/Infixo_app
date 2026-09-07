@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Plus_Jakarta_Sans, Outfit } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans, Outfit, Sora } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { ToastProvider } from "@/contexts/ToastContext";
@@ -11,6 +11,13 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
+});
+
+const sora = Sora({
+  subsets: ["latin"],
+  variable: "--font-sora",
+  display: "swap",
+  weight: ["400", "600", "700", "800"],
 });
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -76,7 +83,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`h-full antialiased ${inter.variable} ${plusJakartaSans.variable} ${outfit.variable}`}
+      className={`h-full antialiased ${inter.variable} ${sora.variable} ${plusJakartaSans.variable} ${outfit.variable}`}
     >
       <head>
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
