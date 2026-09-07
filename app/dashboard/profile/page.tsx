@@ -183,7 +183,7 @@ export default function DashboardProfilePage() {
             className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-3.5 py-2 text-xs font-semibold text-[#181716] transition-colors shadow-xs"
           >
             <span>View Profile</span>
-            <ExternalLink className="h-3.5 w-3.5 text-[#803D63]" />
+            <ExternalLink className="h-3.5 w-3.5 text-[#b85c6b]" />
           </a>
         </div>
       </div>
@@ -213,8 +213,8 @@ export default function DashboardProfilePage() {
                   />
                 ) : (
                   <div className="flex flex-col items-center justify-center text-[#797570] gap-1">
-                    <ImagePlus className="h-6 w-6 text-[#803D63]" />
-                    <span className="text-[10px] font-semibold text-[#803D63]">Upload Photo</span>
+                    <ImagePlus className="h-6 w-6 text-[#b85c6b]" />
+                    <span className="text-[10px] font-semibold text-[#b85c6b]">Upload Photo</span>
                   </div>
                 )}
               </div>
@@ -234,7 +234,7 @@ export default function DashboardProfilePage() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] hover:bg-[#803D63]/[0.09] hover:text-[#803D63] px-3 py-1.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] hover:bg-[#b85c6b]/[0.09] hover:text-[#b85c6b] px-3 py-1.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer"
               >
                 <Camera className="h-3.5 w-3.5" />
                 <span>{profile.photoDataUrl ? "Change Photo" : "Upload Photo"}</span>
@@ -271,11 +271,10 @@ export default function DashboardProfilePage() {
                   updateProfile({ displayName: e.target.value });
                   if (errors.displayName) setErrors((prev) => ({ ...prev, displayName: undefined }));
                 }}
-                className={`w-full rounded-xl border px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:outline-none transition-colors ${
-                  errors.displayName
+                className={`w-full rounded-xl border px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:outline-none transition-colors ${errors.displayName
                     ? "border-[#C2414B] bg-rose-50/20 focus:border-[#C2414B]"
-                    : "border-[#E7E3DC] bg-white focus:border-[#803D63] focus:ring-1 focus:ring-[#803D63]/20"
-                }`}
+                    : "border-[#E7E3DC] bg-white focus:border-[#b85c6b] focus:ring-1 focus:ring-[#b85c6b]/20"
+                  }`}
               />
               {errors.displayName ? (
                 <p className="text-[11px] font-semibold text-[#C2414B]">{errors.displayName}</p>
@@ -321,7 +320,7 @@ export default function DashboardProfilePage() {
               Select up to 3 categories that best describe the content you make.
             </p>
           </div>
-          <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/20 shrink-0">
+          <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20 shrink-0">
             {selectedCategories.length} of 3 selected
           </span>
         </div>
@@ -342,7 +341,7 @@ export default function DashboardProfilePage() {
                 return (
                   <span
                     key={cat}
-                    className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63]/[0.09] border border-[#803D63]/20 px-3 py-1.5 text-xs font-semibold text-[#803D63] shadow-xs"
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-[#b85c6b]/[0.09] border border-[#b85c6b]/20 px-3 py-1.5 text-xs font-semibold text-[#b85c6b] shadow-xs"
                   >
                     <span>{foundItem?.emoji || "✨"}</span>
                     <span>{cat}</span>
@@ -369,7 +368,7 @@ export default function DashboardProfilePage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search categories"
-            className="w-full rounded-xl border border-[#E7E3DC] bg-white pl-9 pr-3.5 py-2 text-xs text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#803D63] focus:ring-1 focus:ring-[#803D63]/20 transition-colors"
+            className="w-full rounded-xl border border-[#E7E3DC] bg-white pl-9 pr-3.5 py-2 text-xs text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#b85c6b] focus:ring-1 focus:ring-[#b85c6b]/20 transition-colors"
           />
         </div>
 
@@ -388,18 +387,17 @@ export default function DashboardProfilePage() {
                   type="button"
                   disabled={isMaxReached}
                   onClick={() => toggleCategory(item.category)}
-                  className={`inline-flex items-center gap-1.5 text-xs py-1.5 px-3 rounded-xl transition-all cursor-pointer ${
-                    isSelected
-                      ? "bg-[#803D63]/[0.09] border border-[#803D63] text-[#803D63] font-semibold shadow-xs"
+                  className={`inline-flex items-center gap-1.5 text-xs py-1.5 px-3 rounded-xl transition-all cursor-pointer ${isSelected
+                      ? "bg-[#b85c6b]/[0.09] border border-[#b85c6b] text-[#b85c6b] font-semibold shadow-xs"
                       : isMaxReached
-                      ? "opacity-40 cursor-not-allowed bg-white border border-[#E7E3DC] text-[#797570]"
-                      : "bg-white border border-[#E7E3DC] text-[#181716] hover:border-[#803D63]/40 hover:bg-[#F8F7F3]"
-                  }`}
+                        ? "opacity-40 cursor-not-allowed bg-white border border-[#E7E3DC] text-[#797570]"
+                        : "bg-white border border-[#E7E3DC] text-[#181716] hover:border-[#b85c6b]/40 hover:bg-[#F8F7F3]"
+                    }`}
                 >
                   <span className="text-xs shrink-0">{item.emoji}</span>
                   <span className="truncate">{item.category}</span>
                   {isSelected ? (
-                    <Check className="h-3 w-3 text-[#803D63] shrink-0" />
+                    <Check className="h-3 w-3 text-[#b85c6b] shrink-0" />
                   ) : (
                     <Plus className="h-3 w-3 text-[#797570] shrink-0 opacity-70" />
                   )}
@@ -419,7 +417,7 @@ export default function DashboardProfilePage() {
         {isOtherSelected && (
           <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3.5 space-y-1.5">
             <label className="block text-xs font-bold text-[#181716] flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5 text-[#803D63]" />
+              <Sparkles className="h-3.5 w-3.5 text-[#b85c6b]" />
               <span>What type of content do you create?</span>
             </label>
             <input
@@ -428,7 +426,7 @@ export default function DashboardProfilePage() {
               placeholder="e.g. Magic, Farming, ASMR, Collectibles"
               value={profile.customCategory || ""}
               onChange={(e) => updateProfile({ customCategory: e.target.value.slice(0, 40) })}
-              className="w-full rounded-lg border border-[#E7E3DC] bg-white px-3 py-2 text-xs font-medium text-[#181716] focus:outline-none focus:border-[#803D63]"
+              className="w-full rounded-lg border border-[#E7E3DC] bg-white px-3 py-2 text-xs font-medium text-[#181716] focus:outline-none focus:border-[#b85c6b]"
             />
           </div>
         )}
@@ -445,7 +443,7 @@ export default function DashboardProfilePage() {
               Select up to 5 options that describe your creator style.
             </p>
           </div>
-          <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/20 shrink-0">
+          <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20 shrink-0">
             {selectedSpecialties.length} of 5 selected
           </span>
         </div>
@@ -466,17 +464,16 @@ export default function DashboardProfilePage() {
                   type="button"
                   disabled={isMaxReached}
                   onClick={() => toggleSpecialty(st)}
-                  className={`inline-flex items-center gap-1.5 text-xs py-1.5 px-3 rounded-xl transition-all cursor-pointer ${
-                    isSelected
-                      ? "bg-[#803D63]/[0.09] border border-[#803D63] text-[#803D63] font-semibold shadow-xs"
+                  className={`inline-flex items-center gap-1.5 text-xs py-1.5 px-3 rounded-xl transition-all cursor-pointer ${isSelected
+                      ? "bg-[#b85c6b]/[0.09] border border-[#b85c6b] text-[#b85c6b] font-semibold shadow-xs"
                       : isMaxReached
-                      ? "opacity-40 cursor-not-allowed bg-white border border-[#E7E3DC] text-[#797570]"
-                      : "bg-white border border-[#E7E3DC] text-[#181716] hover:border-[#803D63]/40 hover:bg-[#F8F7F3]"
-                  }`}
+                        ? "opacity-40 cursor-not-allowed bg-white border border-[#E7E3DC] text-[#797570]"
+                        : "bg-white border border-[#E7E3DC] text-[#181716] hover:border-[#b85c6b]/40 hover:bg-[#F8F7F3]"
+                    }`}
                 >
                   <span className="truncate">{st}</span>
                   {isSelected ? (
-                    <Check className="h-3 w-3 text-[#803D63] shrink-0" />
+                    <Check className="h-3 w-3 text-[#b85c6b] shrink-0" />
                   ) : (
                     <Plus className="h-3 w-3 text-[#797570] shrink-0 opacity-70" />
                   )}
@@ -513,9 +510,9 @@ export default function DashboardProfilePage() {
               <button
                 type="button"
                 onClick={handleSuggestBio}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-[#803D63] bg-[#803D63]/[0.09] hover:bg-[#803D63]/20 border border-[#803D63]/20 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[#b85c6b] bg-[#b85c6b]/[0.09] hover:bg-[#b85c6b]/20 border border-[#b85c6b]/20 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
               >
-                <Sparkles className="h-3 w-3 text-[#803D63]" />
+                <Sparkles className="h-3 w-3 text-[#b85c6b]" />
                 <span>Suggest Bio</span>
               </button>
               <span className="text-[11px] font-medium text-[#797570]">
@@ -530,11 +527,10 @@ export default function DashboardProfilePage() {
             value={profile.bio || ""}
             placeholder="Tell people what you create and what they can expect from your content..."
             onChange={(e) => updateProfile({ bio: e.target.value })}
-            className={`w-full rounded-xl border p-3 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:outline-none transition-colors resize-y min-h-[84px] ${
-              errors.bio
+            className={`w-full rounded-xl border p-3 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:outline-none transition-colors resize-y min-h-[84px] ${errors.bio
                 ? "border-[#C2414B] bg-rose-50/20 focus:border-[#C2414B]"
-                : "border-[#E7E3DC] bg-white focus:border-[#803D63] focus:ring-1 focus:ring-[#803D63]/20"
-            }`}
+                : "border-[#E7E3DC] bg-white focus:border-[#b85c6b] focus:ring-1 focus:ring-[#b85c6b]/20"
+              }`}
           />
           {errors.bio && (
             <p className="text-[11px] font-semibold text-[#C2414B]">{errors.bio}</p>
@@ -556,7 +552,7 @@ export default function DashboardProfilePage() {
           type="button"
           onClick={handleSave}
           disabled={submitting}
-          className="inline-flex items-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-6 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] px-6 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs disabled:opacity-60"
         >
           {submitting ? (
             <>

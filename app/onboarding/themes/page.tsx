@@ -49,8 +49,8 @@ export default function ThemeStepPage() {
       preview={<ThemeCard themeKey={theme} {...cardProps} />}
     >
       <div className="flex items-center justify-between gap-2 mb-2.5">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/20 bg-[#803D63]/[0.09] px-3 py-1 text-xs font-bold text-[#803D63]">
-          <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#b85c6b]/20 bg-[#b85c6b]/[0.09] px-3 py-1 text-xs font-bold text-[#b85c6b]">
+          <Sparkles className="h-3.5 w-3.5 text-[#b85c6b] shrink-0" />
           <span>Step 3 of 6 • Theme Selection</span>
         </div>
 
@@ -58,10 +58,10 @@ export default function ThemeStepPage() {
         <button
           type="button"
           onClick={() => setIsMobilePreviewOpen(true)}
-          className="lg:hidden tap-scale inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/30 bg-[#803D63]/[0.09] hover:bg-[#803D63]/15 px-3 py-1 text-xs font-bold text-[#803D63] transition-all cursor-pointer shadow-xs"
+          className="lg:hidden tap-scale inline-flex items-center gap-1.5 rounded-full border border-[#b85c6b]/30 bg-[#b85c6b]/[0.09] hover:bg-[#b85c6b]/15 px-3 py-1 text-xs font-bold text-[#b85c6b] transition-all cursor-pointer shadow-xs"
           title="Preview public profile"
         >
-          <Eye className="h-3.5 w-3.5 text-[#803D63]" />
+          <Eye className="h-3.5 w-3.5 text-[#b85c6b]" />
           <span>Preview Profile</span>
         </button>
       </div>
@@ -78,11 +78,10 @@ export default function ThemeStepPage() {
         <button
           type="button"
           onClick={() => setActiveGroup("all")}
-          className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
-            activeGroup === "all"
-              ? "bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/25"
+          className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${activeGroup === "all"
+              ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/25"
               : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#F8F7F3]"
-          }`}
+            }`}
         >
           All
         </button>
@@ -90,11 +89,10 @@ export default function ThemeStepPage() {
         <button
           type="button"
           onClick={() => setActiveGroup("animated")}
-          className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${
-            activeGroup === "animated"
-              ? "bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/25"
+          className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${activeGroup === "animated"
+              ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/25"
               : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#F8F7F3]"
-          }`}
+            }`}
         >
           <Sparkles className="h-3 w-3" />
           <span>Animated</span>
@@ -103,11 +101,10 @@ export default function ThemeStepPage() {
         <button
           type="button"
           onClick={() => setActiveGroup("light")}
-          className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
-            activeGroup === "light"
-              ? "bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/25"
+          className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${activeGroup === "light"
+              ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/25"
               : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#F8F7F3]"
-          }`}
+            }`}
         >
           Light
         </button>
@@ -115,11 +112,10 @@ export default function ThemeStepPage() {
         <button
           type="button"
           onClick={() => setActiveGroup("dark")}
-          className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
-            activeGroup === "dark"
-              ? "bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/25"
+          className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${activeGroup === "dark"
+              ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/25"
               : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#F8F7F3]"
-          }`}
+            }`}
         >
           Dark
         </button>
@@ -157,7 +153,7 @@ export default function ThemeStepPage() {
           size="lg"
           loading={submitting}
           onClick={handleNext}
-          className="w-full sm:flex-1 h-11 bg-[#803D63] hover:bg-[#6F3456] text-white font-bold text-sm rounded-xl cursor-pointer shadow-xs"
+          className="w-full sm:flex-1 h-11 bg-[#b85c6b] hover:bg-[#6F3456] text-white font-bold text-sm rounded-xl cursor-pointer shadow-xs"
         >
           Save &amp; Next →
         </Button>
@@ -183,11 +179,10 @@ function ThemeTile({
     <button
       type="button"
       onClick={onSelect}
-      className={`tap-scale relative w-full h-32 rounded-2xl overflow-hidden p-3.5 flex flex-col justify-between text-left transition-all cursor-pointer shadow-xs ${
-        isSelected
-          ? "ring-2 ring-offset-2 ring-[#803D63]"
+      className={`tap-scale relative w-full h-32 rounded-2xl overflow-hidden p-3.5 flex flex-col justify-between text-left transition-all cursor-pointer shadow-xs ${isSelected
+          ? "ring-2 ring-offset-2 ring-[#b85c6b]"
           : "border border-gray-200/80 hover:border-gray-400 hover:shadow-md"
-      }`}
+        }`}
       style={{
         background:
           theme.key === "minimal-white"
@@ -215,7 +210,7 @@ function ThemeTile({
 
           {/* Selected Checkmark Badge */}
           {isSelected && (
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#803D63] text-white shadow-md border-2 border-white">
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#b85c6b] text-white shadow-md border-2 border-white">
               <Check className="h-3.5 w-3.5 stroke-[3]" />
             </div>
           )}
@@ -225,11 +220,10 @@ function ThemeTile({
       {/* Bottom Row: Dynamic Theme Name Tag */}
       <div className="z-10 self-start">
         <div
-          className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold shadow-2xs ${
-            isDark
+          className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold shadow-2xs ${isDark
               ? "bg-black/50 text-white backdrop-blur-md border border-white/10"
               : "bg-white/85 text-gray-900 backdrop-blur-md border border-white/40"
-          }`}
+            }`}
         >
           <span>{theme.name}</span>
         </div>

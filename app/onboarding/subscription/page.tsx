@@ -44,8 +44,8 @@ export default function SubscriptionStepPage() {
 
   return (
     <OnboardingLayout step="subscription">
-      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/20 bg-[#803D63]/[0.09] px-3 py-1 text-xs font-bold text-[#803D63]">
-        <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
+      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-[#b85c6b]/20 bg-[#b85c6b]/[0.09] px-3 py-1 text-xs font-bold text-[#b85c6b]">
+        <Sparkles className="h-3.5 w-3.5 text-[#b85c6b] shrink-0" />
         <span>Step 5 of 6 • Creator Plan</span>
       </div>
       <h1 className="text-2xl font-bold leading-tight tracking-tight text-[#181716] sm:text-3xl">
@@ -56,11 +56,11 @@ export default function SubscriptionStepPage() {
       </p>
 
       {/* Primary Early Access Card */}
-      <div className="mt-6 rounded-2xl border-2 border-[#803D63] bg-white p-6 sm:p-7 shadow-xs text-left relative overflow-hidden">
+      <div className="mt-6 rounded-2xl border-2 border-[#b85c6b] bg-white p-6 sm:p-7 shadow-xs text-left relative overflow-hidden">
         {/* Header inside card */}
         <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-[#E7E3DC]">
           <div>
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#803D63]/[0.09] px-3 py-1 text-xs font-bold text-[#803D63] mb-2 border border-[#803D63]/20">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#b85c6b]/[0.09] px-3 py-1 text-xs font-bold text-[#b85c6b] mb-2 border border-[#b85c6b]/20">
               <Sparkles className="h-3.5 w-3.5" />
               <span>Current Pass</span>
             </div>
@@ -71,7 +71,7 @@ export default function SubscriptionStepPage() {
           </div>
           <div className="text-left sm:text-right">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-[#797570] block">Status</span>
-            <span className="text-xl sm:text-2xl font-bold text-[#803D63]">Active</span>
+            <span className="text-xl sm:text-2xl font-bold text-[#b85c6b]">Active</span>
           </div>
         </div>
 
@@ -81,7 +81,7 @@ export default function SubscriptionStepPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {EARLY_ACCESS_FEATURES.map((feature, i) => (
               <div key={i} className="flex items-center gap-2.5 text-xs sm:text-sm font-semibold text-[#181716]">
-                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#803D63]/[0.09] text-[#803D63]">
+                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#b85c6b]/[0.09] text-[#b85c6b]">
                   <Check className="h-3 w-3 stroke-[3]" />
                 </div>
                 <span>{feature}</span>
@@ -92,7 +92,7 @@ export default function SubscriptionStepPage() {
 
         {/* Small Note Box */}
         <div className="rounded-xl bg-[#F8F7F3] border border-[#E7E3DC] p-3.5 text-xs text-[#54514D] font-medium flex items-center gap-2">
-          <ShieldCheck className="h-4 w-4 text-[#803D63] shrink-0" />
+          <ShieldCheck className="h-4 w-4 text-[#b85c6b] shrink-0" />
           <span>No credit card required. You’ll be notified before paid plans become available.</span>
         </div>
       </div>
@@ -115,7 +115,7 @@ export default function SubscriptionStepPage() {
               <div>
                 <div className="flex items-center gap-2">
                   <h4 className="text-base sm:text-lg font-bold text-[#181716]">Pro</h4>
-                  <span className="rounded-full bg-[#803D63]/[0.09] border border-[#803D63]/20 px-2 py-0.5 text-[10px] font-bold text-[#803D63]">
+                  <span className="rounded-full bg-[#b85c6b]/[0.09] border border-[#b85c6b]/20 px-2 py-0.5 text-[10px] font-bold text-[#b85c6b]">
                     Coming Soon
                   </span>
                 </div>
@@ -135,7 +135,7 @@ export default function SubscriptionStepPage() {
                 onClick={() => showToast("We'll notify you when Pro is available! 🚀")}
                 className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] hover:bg-[#E7E3DC] px-3 py-1.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer"
               >
-                <Bell className="h-3.5 w-3.5 text-[#803D63]" />
+                <Bell className="h-3.5 w-3.5 text-[#b85c6b]" />
                 <span>Notify Me</span>
               </button>
             </div>
@@ -167,7 +167,7 @@ export default function SubscriptionStepPage() {
                 onClick={() => showToast("We'll notify you when VIP is available! 👑")}
                 className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] hover:bg-[#E7E3DC] px-3 py-1.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer"
               >
-                <Bell className="h-3.5 w-3.5 text-[#803D63]" />
+                <Bell className="h-3.5 w-3.5 text-[#b85c6b]" />
                 <span>Notify Me</span>
               </button>
             </div>
@@ -194,7 +194,7 @@ export default function SubscriptionStepPage() {
           loading={activating}
           disabled={activating}
           onClick={handleActivate}
-          className="w-full sm:flex-1 h-11 bg-[#803D63] hover:bg-[#6F3456] text-white font-bold text-sm rounded-xl cursor-pointer shadow-xs"
+          className="w-full sm:flex-1 h-11 bg-[#b85c6b] hover:bg-[#6F3456] text-white font-bold text-sm rounded-xl cursor-pointer shadow-xs"
         >
           Activate Early Access &amp; Launch Profile →
         </Button>

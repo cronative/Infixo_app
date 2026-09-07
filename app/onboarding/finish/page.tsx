@@ -11,7 +11,7 @@ import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { OnboardingService } from "@/services/OnboardingService";
 
-const CONFETTI_COLORS = ["#803D63", "#d946ef", "#f59e0b", "#3b82f6", "#10b981", "#e6c583"];
+const CONFETTI_COLORS = ["#b85c6b", "#d946ef", "#f59e0b", "#3b82f6", "#10b981", "#e6c583"];
 
 function ConfettiBurst() {
   const [pieces, setPieces] = useState<{ left: number; color: string; delay: number; rotate: number; scale: number }[]>([]);
@@ -131,7 +131,7 @@ export default function FinishStepPage() {
               name={profile.displayName || "Creator"}
               className="w-20 h-20 sm:w-22 sm:h-22 rounded-full aspect-square object-cover overflow-hidden border-2 border-white shadow-md mx-auto"
               textClassName="text-2xl font-extrabold text-white"
-              fallbackBgClass="bg-[#803D63]"
+              fallbackBgClass="bg-[#b85c6b]"
             />
             <div
               className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500 text-white ring-2 ring-white shadow-md"
@@ -151,7 +151,7 @@ export default function FinishStepPage() {
           {/* Clean Public URL Box */}
           <div className="mt-6 flex w-full items-center justify-between gap-3 rounded-xl border border-[#E7E3DC] bg-white p-3 shadow-xs">
             <div className="flex items-center gap-2.5 min-w-0">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#803D63]/[0.09] text-[#803D63]">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#b85c6b]/[0.09] text-[#b85c6b]">
                 <Sparkles className="h-4 w-4" />
               </span>
               <span className="truncate text-sm font-bold text-[#181716]">{displayUrl}</span>
@@ -159,7 +159,7 @@ export default function FinishStepPage() {
             <button
               type="button"
               onClick={handleCopy}
-              className="tap-scale flex items-center gap-1.5 rounded-lg bg-[#803D63] hover:bg-[#6F3456] px-4 py-2 text-xs font-bold text-white transition-all cursor-pointer shrink-0 shadow-xs"
+              className="tap-scale flex items-center gap-1.5 rounded-lg bg-[#b85c6b] hover:bg-[#6F3456] px-4 py-2 text-xs font-bold text-white transition-all cursor-pointer shrink-0 shadow-xs"
             >
               {copied ? (
                 <>
@@ -182,7 +182,7 @@ export default function FinishStepPage() {
               type="button"
               onClick={handleGoToDashboard}
               disabled={isLoadingDashboard}
-              className="tap-scale w-full flex items-center justify-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6F3456] text-white font-bold h-11 text-sm transition-all cursor-pointer shadow-xs disabled:opacity-75"
+              className="tap-scale w-full flex items-center justify-center gap-2 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] text-white font-bold h-11 text-sm transition-all cursor-pointer shadow-xs disabled:opacity-75"
             >
               {isLoadingDashboard ? (
                 <>

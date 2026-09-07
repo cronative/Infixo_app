@@ -53,9 +53,9 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
   // Parse existing selected genres
   const selectedGenres = value
     ? value
-        .split(",")
-        .map((g) => g.trim())
-        .filter(Boolean)
+      .split(",")
+      .map((g) => g.trim())
+      .filter(Boolean)
     : [];
 
   function toggleGenre(genre: string) {
@@ -75,7 +75,7 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
     <div className="w-full">
       <div className="flex items-center justify-between mb-2">
         <label className="block text-sm font-bold text-[#181716] flex items-center gap-1.5">
-          <Tag className="h-4 w-4 text-[#803D63]" />
+          <Tag className="h-4 w-4 text-[#b85c6b]" />
           Series Genres
         </label>
         <span className={`text-xs font-semibold ${selectedGenres.length >= max ? "text-[#B7791F] font-bold" : "text-[#797570]"}`}>
@@ -95,17 +95,16 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
               type="button"
               disabled={isMaxReached}
               onClick={() => toggleGenre(g)}
-              className={`tap-scale flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs transition-all cursor-pointer shrink-0 ${
-                isSelected
-                  ? "bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63] font-bold shadow-xs"
+              className={`tap-scale flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs transition-all cursor-pointer shrink-0 ${isSelected
+                  ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b] font-bold shadow-xs"
                   : isMaxReached
-                  ? "opacity-40 cursor-not-allowed bg-white border border-[#E7E3DC] text-[#797570]"
-                  : "bg-white border border-[#E7E3DC] text-[#54514D] hover:border-[#803D63]/40 hover:bg-[#F8F7F3] hover:text-[#803D63]"
-              }`}
+                    ? "opacity-40 cursor-not-allowed bg-white border border-[#E7E3DC] text-[#797570]"
+                    : "bg-white border border-[#E7E3DC] text-[#54514D] hover:border-[#b85c6b]/40 hover:bg-[#F8F7F3] hover:text-[#b85c6b]"
+                }`}
             >
               {isSelected ? (
                 <>
-                  <Check className="h-3 w-3 stroke-[3] text-[#803D63] shrink-0" />
+                  <Check className="h-3 w-3 stroke-[3] text-[#b85c6b] shrink-0" />
                   <span>{g}</span>
                 </>
               ) : (

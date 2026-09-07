@@ -80,18 +80,18 @@ export default function SeriesStepPage() {
   // Create active draft series array for live phone preview sync (only when title is entered)
   const draftSeries: Series[] = title.trim()
     ? [
-        {
-          id: "draft-1",
-          title: title.trim(),
-          posterDataUrl: poster,
-          description: description.trim(),
-          genre: genre || "Entertainment",
-          language: language || "English",
-          platform: seriesPlatform,
-          seasons: [],
-          createdAt: new Date().toISOString(),
-        },
-      ]
+      {
+        id: "draft-1",
+        title: title.trim(),
+        posterDataUrl: poster,
+        description: description.trim(),
+        genre: genre || "Entertainment",
+        language: language || "English",
+        platform: seriesPlatform,
+        seasons: [],
+        createdAt: new Date().toISOString(),
+      },
+    ]
     : [];
 
   const preview = (
@@ -114,8 +114,8 @@ export default function SeriesStepPage() {
       preview={preview}
     >
       <div className="flex items-center justify-between gap-2 mb-2.5">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/20 bg-[#803D63]/[0.09] px-3 py-1 text-xs font-bold text-[#803D63]">
-          <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#b85c6b]/20 bg-[#b85c6b]/[0.09] px-3 py-1 text-xs font-bold text-[#b85c6b]">
+          <Sparkles className="h-3.5 w-3.5 text-[#b85c6b] shrink-0" />
           <span>Step 4 of 6 • Series &amp; Episodes</span>
         </div>
 
@@ -123,10 +123,10 @@ export default function SeriesStepPage() {
         <button
           type="button"
           onClick={() => setIsMobilePreviewOpen(true)}
-          className="lg:hidden tap-scale inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/30 bg-[#803D63]/[0.09] hover:bg-[#803D63]/15 px-3 py-1 text-xs font-bold text-[#803D63] transition-all cursor-pointer shadow-xs"
+          className="lg:hidden tap-scale inline-flex items-center gap-1.5 rounded-full border border-[#b85c6b]/30 bg-[#b85c6b]/[0.09] hover:bg-[#b85c6b]/15 px-3 py-1 text-xs font-bold text-[#b85c6b] transition-all cursor-pointer shadow-xs"
           title="Preview public profile"
         >
-          <Eye className="h-3.5 w-3.5 text-[#803D63]" />
+          <Eye className="h-3.5 w-3.5 text-[#b85c6b]" />
           <span>Preview Profile</span>
         </button>
       </div>
@@ -144,7 +144,7 @@ export default function SeriesStepPage() {
         <div className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 shadow-xs space-y-5">
           <div className="flex items-center justify-between border-b border-[#E7E3DC] pb-3">
             <p className="text-sm font-bold text-[#181716] flex items-center gap-2">
-              <Film className="h-4 w-4 text-[#803D63]" />
+              <Film className="h-4 w-4 text-[#b85c6b]" />
               Series Information
             </p>
           </div>
@@ -169,36 +169,35 @@ export default function SeriesStepPage() {
               error={errors.title}
             />
 
-              {/* Platform Selector Pills */}
-              <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#54514D]">
-                  Social Platform for Series
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {(["YouTube", "Instagram", "Facebook", "Other"] as EpisodePlatform[]).map((p) => {
-                    const isSelected = seriesPlatform === p;
-                    return (
-                      <button
-                        key={p}
-                        type="button"
-                        onClick={() => setSeriesPlatform(p)}
-                        className={`tap-scale flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-all cursor-pointer ${
-                          isSelected
-                            ? "border-[#803D63] bg-[#803D63]/[0.09] text-[#803D63] font-bold"
-                            : "border-[#E7E3DC] bg-white text-[#54514D] hover:bg-[#F8F7F3]"
+            {/* Platform Selector Pills */}
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#54514D]">
+                Social Platform for Series
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {(["YouTube", "Instagram", "Facebook", "Other"] as EpisodePlatform[]).map((p) => {
+                  const isSelected = seriesPlatform === p;
+                  return (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => setSeriesPlatform(p)}
+                      className={`tap-scale flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-all cursor-pointer ${isSelected
+                          ? "border-[#b85c6b] bg-[#b85c6b]/[0.09] text-[#b85c6b] font-bold"
+                          : "border-[#E7E3DC] bg-white text-[#54514D] hover:bg-[#F8F7F3]"
                         }`}
-                      >
-                        {p === "YouTube" && <YoutubeIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#803D63]" : "text-red-500"}`} />}
-                        {p === "Instagram" && <InstagramIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#803D63]" : "text-pink-500"}`} />}
-                        {p === "Facebook" && <FacebookIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#803D63]" : "text-blue-600"}`} />}
-                        {p === "Other" && <Globe className={`h-3.5 w-3.5 ${isSelected ? "text-[#803D63]" : "text-[#797570]"}`} />}
-                        <span>{p}</span>
-                      </button>
-                    );
-                  })}
-                </div>
+                    >
+                      {p === "YouTube" && <YoutubeIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#b85c6b]" : "text-red-500"}`} />}
+                      {p === "Instagram" && <InstagramIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#b85c6b]" : "text-pink-500"}`} />}
+                      {p === "Facebook" && <FacebookIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#b85c6b]" : "text-blue-600"}`} />}
+                      {p === "Other" && <Globe className={`h-3.5 w-3.5 ${isSelected ? "text-[#b85c6b]" : "text-[#797570]"}`} />}
+                      <span>{p}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
+          </div>
 
           {/* Vertical Stack for Genre Chips & Language Select */}
           <div className="space-y-4">
@@ -237,7 +236,7 @@ export default function SeriesStepPage() {
 
         {/* Informational Box */}
         <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 text-xs text-[#54514D] flex items-start gap-2.5">
-          <Sparkles className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5" />
+          <Sparkles className="h-4 w-4 text-[#b85c6b] shrink-0 mt-0.5" />
           <p className="leading-relaxed">
             Episodes can be added anytime from your <strong className="text-[#181716]">Creator Dashboard</strong>. Early Access supports up to 3 series and 15 total episodes.
           </p>
@@ -271,7 +270,7 @@ export default function SeriesStepPage() {
           size="lg"
           loading={submitting}
           onClick={handleSaveAndContinue}
-          className="w-full sm:flex-1 sm:max-w-xs h-11 bg-[#803D63] hover:bg-[#6F3456] text-white font-bold text-sm rounded-xl cursor-pointer shadow-xs"
+          className="w-full sm:flex-1 sm:max-w-xs h-11 bg-[#b85c6b] hover:bg-[#6F3456] text-white font-bold text-sm rounded-xl cursor-pointer shadow-xs"
         >
           Save &amp; Next →
         </Button>

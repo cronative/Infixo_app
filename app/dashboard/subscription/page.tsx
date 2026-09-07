@@ -49,7 +49,7 @@ export default function DashboardSubscriptionPage() {
       <section className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 text-left space-y-5 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E7E3DC] pb-4">
           <div className="space-y-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#803D63] block">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#b85c6b] block">
               CURRENT ACCESS
             </span>
             <div className="flex items-center gap-2">
@@ -76,7 +76,7 @@ export default function DashboardSubscriptionPage() {
           <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3.5 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-[#797570] flex items-center gap-1.5">
-                <Layers className="h-3.5 w-3.5 text-[#803D63]" />
+                <Layers className="h-3.5 w-3.5 text-[#b85c6b]" />
                 <span>Content Series</span>
               </span>
               <span className="text-xs font-bold text-[#181716]">
@@ -86,7 +86,7 @@ export default function DashboardSubscriptionPage() {
             {/* Progress Bar */}
             <div className="w-full bg-[#E7E3DC] h-1.5 rounded-full overflow-hidden">
               <div
-                className="bg-[#803D63] h-full rounded-full transition-all"
+                className="bg-[#b85c6b] h-full rounded-full transition-all"
                 style={{ width: `${Math.min(100, seriesUsage.percentage)}%` }}
               />
             </div>
@@ -101,7 +101,7 @@ export default function DashboardSubscriptionPage() {
           <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3.5 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-[#797570] flex items-center gap-1.5">
-                <Film className="h-3.5 w-3.5 text-[#803D63]" />
+                <Film className="h-3.5 w-3.5 text-[#b85c6b]" />
                 <span>Total Episodes</span>
               </span>
               <span className="text-xs font-bold text-[#181716]">
@@ -111,7 +111,7 @@ export default function DashboardSubscriptionPage() {
             {/* Progress Bar */}
             <div className="w-full bg-[#E7E3DC] h-1.5 rounded-full overflow-hidden">
               <div
-                className="bg-[#803D63] h-full rounded-full transition-all"
+                className="bg-[#b85c6b] h-full rounded-full transition-all"
                 style={{ width: `${Math.min(100, episodeUsage.percentage)}%` }}
               />
             </div>
@@ -126,7 +126,7 @@ export default function DashboardSubscriptionPage() {
           <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3.5 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-[#797570] flex items-center gap-1.5">
-                <Briefcase className="h-3.5 w-3.5 text-[#803D63]" />
+                <Briefcase className="h-3.5 w-3.5 text-[#b85c6b]" />
                 <span>Creator Services</span>
               </span>
               <span className="text-xs font-bold text-[#181716]">
@@ -136,7 +136,7 @@ export default function DashboardSubscriptionPage() {
             {/* Progress Bar */}
             <div className="w-full bg-[#E7E3DC] h-1.5 rounded-full overflow-hidden">
               <div
-                className="bg-[#803D63] h-full rounded-full transition-all"
+                className="bg-[#b85c6b] h-full rounded-full transition-all"
                 style={{ width: `${Math.min(100, gigUsage.percentage)}%` }}
               />
             </div>

@@ -108,7 +108,7 @@ export default function ProfileStepPage() {
     if (!profile.username.trim()) newErrors.username = "Choose a username";
     else if (profile.username.trim().length < 3) newErrors.username = "Username must be at least 3 characters";
     if (!profile.category) newErrors.category = "Select a category";
-    
+
     if (usernameStatus && !usernameStatus.available) {
       newErrors.username = usernameStatus.message || `@${profile.username} is already taken`;
     }
@@ -162,8 +162,8 @@ export default function ProfileStepPage() {
       }
     >
       <div className="flex items-center justify-between gap-2 mb-2.5">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/20 bg-[#803D63]/[0.09] px-3 py-1 text-xs font-bold text-[#803D63]">
-          <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#b85c6b]/20 bg-[#b85c6b]/[0.09] px-3 py-1 text-xs font-bold text-[#b85c6b]">
+          <Sparkles className="h-3.5 w-3.5 text-[#b85c6b] shrink-0" />
           <span>Step 1 of 6 • Profile Setup</span>
         </div>
 
@@ -171,10 +171,10 @@ export default function ProfileStepPage() {
         <button
           type="button"
           onClick={() => setIsMobilePreviewOpen(true)}
-          className="lg:hidden tap-scale inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/30 bg-[#803D63]/[0.09] hover:bg-[#803D63]/15 px-3 py-1 text-xs font-bold text-[#803D63] transition-all cursor-pointer shadow-xs"
+          className="lg:hidden tap-scale inline-flex items-center gap-1.5 rounded-full border border-[#b85c6b]/30 bg-[#b85c6b]/[0.09] hover:bg-[#b85c6b]/15 px-3 py-1 text-xs font-bold text-[#b85c6b] transition-all cursor-pointer shadow-xs"
           title="Preview public profile"
         >
-          <Eye className="h-3.5 w-3.5 text-[#803D63]" />
+          <Eye className="h-3.5 w-3.5 text-[#b85c6b]" />
           <span>Preview Profile</span>
         </button>
       </div>
@@ -244,7 +244,7 @@ export default function ProfileStepPage() {
           />
           {profile.username && usernameStatus?.available && (
             <p className="mt-1 text-xs text-[#54514D]">
-              Your public handle: <span className="font-bold text-[#803D63]">@{profile.username}</span>
+              Your public handle: <span className="font-bold text-[#b85c6b]">@{profile.username}</span>
             </p>
           )}
         </div>
@@ -281,7 +281,7 @@ export default function ProfileStepPage() {
         <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 space-y-2">
           <div className="flex items-center justify-between">
             <label className="text-xs font-semibold uppercase tracking-wider text-[#54514D] flex items-center gap-1.5">
-              <FileText className="h-3.5 w-3.5 text-[#803D63]" />
+              <FileText className="h-3.5 w-3.5 text-[#b85c6b]" />
               <span>Short Bio</span>
             </label>
 
@@ -289,9 +289,9 @@ export default function ProfileStepPage() {
             <button
               type="button"
               onClick={handleSuggestBio}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#803D63] hover:text-[#6F3456] bg-[#803D63]/[0.09] hover:bg-[#803D63]/15 px-2.5 py-1 rounded-full border border-[#803D63]/20 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#b85c6b] hover:text-[#6F3456] bg-[#b85c6b]/[0.09] hover:bg-[#b85c6b]/15 px-2.5 py-1 rounded-full border border-[#b85c6b]/20 transition-colors cursor-pointer"
             >
-              <Sparkles className="h-3.5 w-3.5 text-[#803D63]" />
+              <Sparkles className="h-3.5 w-3.5 text-[#b85c6b]" />
               <span>✨ Suggest bio</span>
             </button>
           </div>
@@ -313,7 +313,7 @@ export default function ProfileStepPage() {
             size="lg"
             loading={submitting}
             onClick={handleNext}
-            className="bg-[#803D63] hover:bg-[#6F3456] text-white font-bold h-11 text-sm rounded-xl cursor-pointer shadow-xs"
+            className="bg-[#b85c6b] hover:bg-[#6F3456] text-white font-bold h-11 text-sm rounded-xl cursor-pointer shadow-xs"
           >
             Save &amp; Next →
           </Button>

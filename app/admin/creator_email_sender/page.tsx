@@ -156,11 +156,11 @@ export default function CreatorEmailSenderPage() {
             prev.map((log, idx) =>
               idx === i
                 ? {
-                    ...log,
-                    status: "failed",
-                    error: data.error || "SMTP send failed",
-                    timestamp: new Date().toLocaleTimeString(),
-                  }
+                  ...log,
+                  status: "failed",
+                  error: data.error || "SMTP send failed",
+                  timestamp: new Date().toLocaleTimeString(),
+                }
                 : log
             )
           );
@@ -170,11 +170,11 @@ export default function CreatorEmailSenderPage() {
           prev.map((log, idx) =>
             idx === i
               ? {
-                  ...log,
-                  status: "failed",
-                  error: err.message || "Network error",
-                  timestamp: new Date().toLocaleTimeString(),
-                }
+                ...log,
+                status: "failed",
+                error: err.message || "Network error",
+                timestamp: new Date().toLocaleTimeString(),
+              }
               : log
           )
         );
@@ -208,17 +208,17 @@ export default function CreatorEmailSenderPage() {
   const progressPercentage = parsedEmails.length > 0 ? Math.round(((currentIndex + (isDispatching ? 1 : 0)) / parsedEmails.length) * 100) : 0;
 
   return (
-    <div className="min-h-dvh bg-gradient-to-b from-indigo-50/70 via-slate-50 to-purple-50/60 text-slate-900 selection:bg-[#803D63]/20">
+    <div className="min-h-dvh bg-gradient-to-b from-indigo-50/70 via-slate-50 to-purple-50/60 text-slate-900 selection:bg-[#b85c6b]/20">
       {/* Light Top Navigation Bar */}
       <header className="sticky top-0 z-50 border-b border-purple-100 bg-white/90 backdrop-blur-md px-4 py-3 shadow-2xs">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Link href="/admin/dashboard" className="text-slate-500 hover:text-[#803D63] transition-colors">
+            <Link href="/admin/dashboard" className="text-slate-500 hover:text-[#b85c6b] transition-colors">
               <ArrowLeft className="h-5 w-5" />
             </Link>
             <Logo size="sm" />
-            <div className="hidden sm:flex items-center gap-1.5 rounded-full bg-purple-50 border border-purple-200 px-3 py-1 text-xs font-bold text-[#803D63]">
-              <Mail className="h-3.5 w-3.5 text-[#803D63]" />
+            <div className="hidden sm:flex items-center gap-1.5 rounded-full bg-purple-50 border border-purple-200 px-3 py-1 text-xs font-bold text-[#b85c6b]">
+              <Mail className="h-3.5 w-3.5 text-[#b85c6b]" />
               <span>Creator Email Dispatch Engine</span>
             </div>
           </div>
@@ -226,7 +226,7 @@ export default function CreatorEmailSenderPage() {
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2 rounded-xl bg-white border border-slate-200 px-3.5 py-1.5 text-xs font-bold text-slate-700 shadow-2xs">
               <ShieldCheck className="h-4 w-4 text-emerald-600" />
-              <span>Sender: <strong className="text-[#803D63]">inflixoapp@gmail.com</strong></span>
+              <span>Sender: <strong className="text-[#b85c6b]">inflixoapp@gmail.com</strong></span>
             </div>
           </div>
         </div>
@@ -236,8 +236,8 @@ export default function CreatorEmailSenderPage() {
       <main className="mx-auto max-w-6xl px-4 py-8 space-y-8">
         {/* Intro Header */}
         <div className="space-y-2 text-left">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-purple-100/80 border border-purple-200 px-3.5 py-1 text-xs font-bold text-[#803D63]">
-            <Sparkles className="h-3.5 w-3.5 text-[#803D63]" />
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-purple-100/80 border border-purple-200 px-3.5 py-1 text-xs font-bold text-[#b85c6b]">
+            <Sparkles className="h-3.5 w-3.5 text-[#b85c6b]" />
             <span>Sequential Dispatch Engine</span>
           </div>
           <h1 className="font-display text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
@@ -254,7 +254,7 @@ export default function CreatorEmailSenderPage() {
           <div className="lg:col-span-7 space-y-6">
             {/* Template Selector Cards */}
             <div className="space-y-3">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-[#803D63] flex items-center gap-1.5">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-[#b85c6b] flex items-center gap-1.5">
                 <FileText className="h-4 w-4" />
                 <span>1. Select Pre-Configured Email Template</span>
               </label>
@@ -267,17 +267,16 @@ export default function CreatorEmailSenderPage() {
                       key={tmpl.id}
                       type="button"
                       onClick={() => handleSelectTemplate(tmpl.id)}
-                      className={`p-4 rounded-2xl border text-left transition-all cursor-pointer relative ${
-                        isSelected
-                          ? "bg-purple-50/80 border-[#803D63] ring-2 ring-[#803D63]/20 shadow-md"
+                      className={`p-4 rounded-2xl border text-left transition-all cursor-pointer relative ${isSelected
+                          ? "bg-purple-50/80 border-[#b85c6b] ring-2 ring-[#b85c6b]/20 shadow-md"
                           : "bg-white border-slate-200 hover:border-purple-300 text-slate-800 shadow-2xs"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center justify-between pb-1">
-                        <span className={`text-xs font-extrabold uppercase tracking-wide ${isSelected ? "text-[#803D63]" : "text-purple-600"}`}>
+                        <span className={`text-xs font-extrabold uppercase tracking-wide ${isSelected ? "text-[#b85c6b]" : "text-purple-600"}`}>
                           {tmpl.language}
                         </span>
-                        {isSelected && <Check className="h-4 w-4 text-[#803D63] stroke-[3]" />}
+                        {isSelected && <Check className="h-4 w-4 text-[#b85c6b] stroke-[3]" />}
                       </div>
                       <h3 className="font-bold text-sm text-slate-900">{tmpl.name}</h3>
                       <p className="text-[11px] text-slate-500 mt-1 line-clamp-2">{tmpl.subject}</p>
@@ -301,7 +300,7 @@ export default function CreatorEmailSenderPage() {
                   setSelectedTemplateId("custom");
                 }}
                 placeholder="Enter email subject..."
-                className="w-full rounded-xl bg-white border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-900 outline-none focus:border-[#803D63] focus:ring-2 focus:ring-[#803D63]/20 transition-all placeholder:text-slate-400 shadow-2xs"
+                className="w-full rounded-xl bg-white border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-900 outline-none focus:border-[#b85c6b] focus:ring-2 focus:ring-[#b85c6b]/20 transition-all placeholder:text-slate-400 shadow-2xs"
               />
             </div>
 
@@ -319,7 +318,7 @@ export default function CreatorEmailSenderPage() {
                   setSelectedTemplateId("custom");
                 }}
                 placeholder="Write your email message..."
-                className="w-full rounded-2xl bg-white border border-slate-200 p-4 text-xs sm:text-sm font-mono text-slate-800 outline-none focus:border-[#803D63] focus:ring-2 focus:ring-[#803D63]/20 transition-all leading-relaxed placeholder:text-slate-400 shadow-2xs"
+                className="w-full rounded-2xl bg-white border border-slate-200 p-4 text-xs sm:text-sm font-mono text-slate-800 outline-none focus:border-[#b85c6b] focus:ring-2 focus:ring-[#b85c6b]/20 transition-all leading-relaxed placeholder:text-slate-400 shadow-2xs"
               />
             </div>
           </div>
@@ -329,13 +328,13 @@ export default function CreatorEmailSenderPage() {
             {/* Recipient Emails Area */}
             <div className="rounded-3xl border border-purple-100 bg-white p-6 space-y-4 shadow-xl shadow-purple-500/5">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-extrabold uppercase tracking-wider text-[#803D63] flex items-center gap-1.5">
+                <label className="text-xs font-extrabold uppercase tracking-wider text-[#b85c6b] flex items-center gap-1.5">
                   <Users className="h-4 w-4" />
                   <span>2. Enter Recipient Emails</span>
                 </label>
 
                 {parsedEmails.length > 0 && (
-                  <span className="rounded-full bg-purple-50 border border-purple-200 px-2.5 py-0.5 text-[11px] font-extrabold text-[#803D63]">
+                  <span className="rounded-full bg-purple-50 border border-purple-200 px-2.5 py-0.5 text-[11px] font-extrabold text-[#b85c6b]">
                     {parsedEmails.length} {parsedEmails.length === 1 ? "Email" : "Emails"} Ready
                   </span>
                 )}
@@ -346,7 +345,7 @@ export default function CreatorEmailSenderPage() {
                 value={rawEmailsInput}
                 onChange={(e) => setRawEmailsInput(e.target.value)}
                 placeholder="Paste emails here (separated by comma, space or line break):&#10;creator1@gmail.com&#10;creator2@yahoo.com, creator3@outlook.com"
-                className="w-full rounded-xl bg-slate-50 border border-slate-200 p-3.5 text-xs font-mono text-slate-800 outline-none focus:border-[#803D63] focus:ring-2 focus:ring-[#803D63]/20 transition-all placeholder:text-slate-400"
+                className="w-full rounded-xl bg-slate-50 border border-slate-200 p-3.5 text-xs font-mono text-slate-800 outline-none focus:border-[#b85c6b] focus:ring-2 focus:ring-[#b85c6b]/20 transition-all placeholder:text-slate-400"
                 disabled={isDispatching}
               />
 
@@ -357,7 +356,7 @@ export default function CreatorEmailSenderPage() {
                   </span>
                   <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
                     {parsedEmails.map((em, idx) => (
-                      <span key={idx} className="bg-white text-[#803D63] border border-purple-200 text-[10px] font-bold px-2 py-0.5 rounded-md shadow-2xs">
+                      <span key={idx} className="bg-white text-[#b85c6b] border border-purple-200 text-[10px] font-bold px-2 py-0.5 rounded-md shadow-2xs">
                         {em}
                       </span>
                     ))}
@@ -372,7 +371,7 @@ export default function CreatorEmailSenderPage() {
                     type="button"
                     onClick={handleStartDispatch}
                     disabled={parsedEmails.length === 0 || !subject.trim() || !bodyText.trim()}
-                    className="w-full rounded-xl bg-[#803D63] hover:bg-[#6d3354] px-5 py-3 text-sm font-bold text-white shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full rounded-xl bg-[#b85c6b] hover:bg-[#6d3354] px-5 py-3 text-sm font-bold text-white shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Send className="h-4 w-4" />
                     <span>Send {parsedEmails.length} Email{parsedEmails.length === 1 ? "" : "s"} One-by-One</span>
@@ -405,12 +404,12 @@ export default function CreatorEmailSenderPage() {
             {dispatchLogs.length > 0 && (
               <div className="rounded-3xl border border-purple-100 bg-white p-6 space-y-4 shadow-xl shadow-purple-500/5">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-[#803D63] flex items-center gap-1.5">
-                    <RotateCcw className={`h-4 w-4 ${isDispatching ? "animate-spin text-[#803D63]" : ""}`} />
+                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-[#b85c6b] flex items-center gap-1.5">
+                    <RotateCcw className={`h-4 w-4 ${isDispatching ? "animate-spin text-[#b85c6b]" : ""}`} />
                     <span>Dispatch Progress</span>
                   </h3>
 
-                  <span className="text-xs font-extrabold text-[#803D63]">
+                  <span className="text-xs font-extrabold text-[#b85c6b]">
                     {successCount + failedCount} / {parsedEmails.length} Sent
                   </span>
                 </div>
@@ -419,7 +418,7 @@ export default function CreatorEmailSenderPage() {
                 <div className="space-y-1">
                   <div className="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden border border-slate-200">
                     <div
-                      className="h-full bg-gradient-to-r from-[#803D63] to-rose-600 transition-all duration-300 rounded-full"
+                      className="h-full bg-gradient-to-r from-[#b85c6b] to-rose-600 transition-all duration-300 rounded-full"
                       style={{ width: `${progressPercentage}%` }}
                     />
                   </div>

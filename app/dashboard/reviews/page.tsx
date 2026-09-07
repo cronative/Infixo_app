@@ -247,7 +247,7 @@ export default function DashboardReviewsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, status }),
       }).catch((e) => console.warn("Failed API status update:", e));
-    } catch (e) {}
+    } catch (e) { }
 
     const updated = reviews.map((r) => (r.id === id ? { ...r, status } : r));
     updateReviews(updated);
@@ -267,7 +267,7 @@ export default function DashboardReviewsPage() {
       fetch(`/api/creator/reviews?id=${encodeURIComponent(id)}`, { method: "DELETE" }).catch((e) =>
         console.warn("Failed API delete:", e)
       );
-    } catch (e) {}
+    } catch (e) { }
 
     const updated = reviews.filter((r) => r.id !== id);
     updateReviews(updated);
@@ -317,7 +317,7 @@ export default function DashboardReviewsPage() {
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs shrink-0 self-start sm:self-auto"
+          className="inline-flex items-center gap-1.5 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] px-4 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs shrink-0 self-start sm:self-auto"
         >
           <Plus className="h-3.5 w-3.5" />
           <span>Request Review</span>
@@ -349,7 +349,7 @@ export default function DashboardReviewsPage() {
             <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
               All Reviews
             </span>
-            <MessageSquare className="h-4 w-4 text-[#803D63]" />
+            <MessageSquare className="h-4 w-4 text-[#b85c6b]" />
           </div>
           <p className="font-display text-2xl font-bold text-[#181716]">
             {reviews.length}
@@ -397,7 +397,7 @@ export default function DashboardReviewsPage() {
             <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
               Invitations Sent
             </span>
-            <Send className="h-4 w-4 text-[#803D63]" />
+            <Send className="h-4 w-4 text-[#b85c6b]" />
           </div>
           <p className="font-display text-2xl font-bold text-[#181716]">
             {invitedCount}
@@ -414,11 +414,10 @@ export default function DashboardReviewsPage() {
           <button
             type="button"
             onClick={() => setActiveTab("all")}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${
-              activeTab === "all"
-                ? "bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/20"
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "all"
+                ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20"
                 : "text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716]"
-            }`}
+              }`}
           >
             All ({reviews.length})
           </button>
@@ -426,11 +425,10 @@ export default function DashboardReviewsPage() {
           <button
             type="button"
             onClick={() => setActiveTab("approved")}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${
-              activeTab === "approved"
-                ? "bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/20"
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "approved"
+                ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20"
                 : "text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716]"
-            }`}
+              }`}
           >
             Published ({approvedCount})
           </button>
@@ -438,11 +436,10 @@ export default function DashboardReviewsPage() {
           <button
             type="button"
             onClick={() => setActiveTab("pending")}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${
-              activeTab === "pending"
-                ? "bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/20"
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "pending"
+                ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20"
                 : "text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716]"
-            }`}
+              }`}
           >
             Pending ({pendingCount})
           </button>
@@ -450,11 +447,10 @@ export default function DashboardReviewsPage() {
           <button
             type="button"
             onClick={() => setActiveTab("invited")}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${
-              activeTab === "invited"
-                ? "bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/20"
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "invited"
+                ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20"
                 : "text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716]"
-            }`}
+              }`}
           >
             Invitations ({invitedCount})
           </button>
@@ -463,7 +459,7 @@ export default function DashboardReviewsPage() {
         {/* 4. REVIEWS LIST / EMPTY STATES */}
         {filteredReviews.length === 0 ? (
           <div className="rounded-2xl border border-[#E7E3DC] bg-white p-8 sm:p-10 text-center space-y-3 shadow-xs">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/20">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20">
               <MessageSquare className="h-6 w-6" />
             </div>
 
@@ -491,7 +487,7 @@ export default function DashboardReviewsPage() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   <span>{activeTab === "all" ? "Request First Review" : "Request Review"}</span>
@@ -514,7 +510,7 @@ export default function DashboardReviewsPage() {
                     {/* Top Row: Client Info + Status Badge */}
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#803D63]/[0.09] text-[#803D63] border border-[#E7E3DC] shrink-0">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#E7E3DC] shrink-0">
                           <Building2 className="h-4 w-4" />
                         </div>
                         <div className="min-w-0">
@@ -572,11 +568,10 @@ export default function DashboardReviewsPage() {
                             {Array.from({ length: 5 }).map((_, i) => (
                               <Star
                                 key={i}
-                                className={`h-3.5 w-3.5 ${
-                                  i < ratingValue
+                                className={`h-3.5 w-3.5 ${i < ratingValue
                                     ? "fill-amber-400 text-amber-400"
                                     : "fill-[#E7E3DC] text-[#E7E3DC]"
-                                }`}
+                                  }`}
                               />
                             ))}
                           </div>
@@ -591,7 +586,7 @@ export default function DashboardReviewsPage() {
                       )}
 
                       {rev.projectTitle && (
-                        <span className="text-[10px] font-bold text-[#803D63] bg-[#803D63]/[0.09] border border-[#803D63]/20 px-2 py-0.5 rounded-md truncate max-w-[160px]">
+                        <span className="text-[10px] font-bold text-[#b85c6b] bg-[#b85c6b]/[0.09] border border-[#b85c6b]/20 px-2 py-0.5 rounded-md truncate max-w-[160px]">
                           {rev.projectTitle}
                         </span>
                       )}
@@ -621,7 +616,7 @@ export default function DashboardReviewsPage() {
                           href={rev.contentUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[11px] font-semibold text-[#803D63] hover:underline inline-flex items-center gap-1 truncate"
+                          className="text-[11px] font-semibold text-[#b85c6b] hover:underline inline-flex items-center gap-1 truncate"
                         >
                           <span>View related work</span>
                           <ExternalLink className="h-3 w-3 shrink-0" />
@@ -635,7 +630,7 @@ export default function DashboardReviewsPage() {
                         <button
                           type="button"
                           onClick={() => handleUpdateStatus(rev.id, "approved")}
-                          className="inline-flex items-center gap-1 rounded-lg bg-[#803D63] hover:bg-[#6F3456] text-white px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer shadow-xs"
+                          className="inline-flex items-center gap-1 rounded-lg bg-[#b85c6b] hover:bg-[#6F3456] text-white px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer shadow-xs"
                         >
                           <Check className="h-3 w-3" />
                           <span>Approve</span>
@@ -656,7 +651,7 @@ export default function DashboardReviewsPage() {
                         <button
                           type="button"
                           onClick={() => handleUpdateStatus(rev.id, "approved")}
-                          className="rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] text-[#803D63] px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer"
+                          className="rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] text-[#b85c6b] px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer"
                         >
                           Publish to Profile
                         </button>
@@ -763,7 +758,7 @@ export default function DashboardReviewsPage() {
                   value={clientName}
                   onChange={(e) => setClientName(e.target.value)}
                   placeholder="e.g. Puma India"
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
@@ -778,7 +773,7 @@ export default function DashboardReviewsPage() {
                   value={clientEmail}
                   onChange={(e) => setClientEmail(e.target.value)}
                   placeholder="e.g. marketing@puma.com"
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
@@ -793,7 +788,7 @@ export default function DashboardReviewsPage() {
                   value={projectTitle}
                   onChange={(e) => setProjectTitle(e.target.value)}
                   placeholder="e.g. Summer campaign reel"
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
@@ -808,7 +803,7 @@ export default function DashboardReviewsPage() {
                   value={contentUrl}
                   onChange={(e) => setContentUrl(e.target.value)}
                   placeholder="https://instagram.com/reel/..."
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
@@ -822,7 +817,7 @@ export default function DashboardReviewsPage() {
                   value={clientDesignation}
                   onChange={(e) => setClientDesignation(e.target.value)}
                   placeholder="e.g. Marketing Manager"
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
             </form>
@@ -841,7 +836,7 @@ export default function DashboardReviewsPage() {
               type="submit"
               form="review-request-form"
               disabled={isSubmitting}
-              className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="bg-[#b85c6b] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               <Send className="h-3.5 w-3.5" />
               <span>{isSubmitting ? "Sending..." : "Send Review Request"}</span>

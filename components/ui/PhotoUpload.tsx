@@ -34,13 +34,12 @@ export function PhotoUpload({
   return (
     <div className="flex flex-col items-center sm:items-start gap-2">
       <div
-        className={`group relative flex shrink-0 items-center justify-center overflow-hidden border border-[#E7E3DC] bg-[#F8F7F3] shadow-xs transition-colors hover:border-[#803D63] ${
-          shape === "circle"
+        className={`group relative flex shrink-0 items-center justify-center overflow-hidden border border-[#E7E3DC] bg-[#F8F7F3] shadow-xs transition-colors hover:border-[#b85c6b] ${shape === "circle"
             ? "w-20 h-20 rounded-full aspect-square overflow-hidden shrink-0"
             : shape === "landscape"
-            ? "aspect-video w-44 rounded-xl"
-            : "w-20 h-20 rounded-2xl overflow-hidden"
-        } ${className}`}
+              ? "aspect-video w-44 rounded-xl"
+              : "w-20 h-20 rounded-2xl overflow-hidden"
+          } ${className}`}
         style={!isLandscape && shape !== "circle" ? { width: size, height: size } : undefined}
       >
         {value ? (
@@ -48,23 +47,22 @@ export function PhotoUpload({
           <img
             src={value}
             alt="Preview"
-            className={`w-full h-full object-cover overflow-hidden ${
-              shape === "circle"
+            className={`w-full h-full object-cover overflow-hidden ${shape === "circle"
                 ? "aspect-square rounded-full"
                 : shape === "landscape"
-                ? "aspect-video rounded-xl"
-                : "rounded-2xl"
-            }`}
+                  ? "aspect-video rounded-xl"
+                  : "rounded-2xl"
+              }`}
           />
         ) : (
           <div className="flex flex-col items-center justify-center gap-1 p-2 text-center text-[#797570]">
             {isLandscape ? (
               <>
-                <Film className="h-5 w-5 text-[#803D63]" />
-                <span className="text-[10px] font-bold text-[#803D63] leading-tight">Upload Landscape Poster (16:9)</span>
+                <Film className="h-5 w-5 text-[#b85c6b]" />
+                <span className="text-[10px] font-bold text-[#b85c6b] leading-tight">Upload Landscape Poster (16:9)</span>
               </>
             ) : (
-              <ImagePlus className="h-6 w-6 text-[#803D63]" />
+              <ImagePlus className="h-6 w-6 text-[#b85c6b]" />
             )}
           </div>
         )}
@@ -80,7 +78,7 @@ export function PhotoUpload({
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="bg-[#803D63]/[0.09] text-[#803D63] hover:bg-[#803D63]/15 text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#803D63]/20 transition-colors cursor-pointer"
+        className="bg-[#b85c6b]/[0.09] text-[#b85c6b] hover:bg-[#b85c6b]/15 text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#b85c6b]/20 transition-colors cursor-pointer"
       >
         {label ?? (value ? (isLandscape ? "Change poster" : "Change Profile Photo") : (isLandscape ? "Upload poster preview" : "Upload Profile Photo"))}
       </button>

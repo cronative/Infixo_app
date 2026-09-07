@@ -254,10 +254,95 @@ const MINIMAL_SPARK_STYLE: ThemeStyleConfig = {
   handleColor: "text-[#B85C6B]",
 };
 
+const NEON_GRID_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-b from-[#090D1E] to-[#060917] text-[#F8FAFC] border border-cyan-400/25 shadow-2xl",
+  profBadgeBg: "bg-[#090D1E]",
+  profBadgeText: "text-[#06B6D4]",
+  profBadgeBorder: "border-cyan-400/30",
+  fanbaseBg: "bg-[#0E162C]/85 backdrop-blur-md",
+  fanbaseText: "text-[#F8FAFC]",
+  socialItemBg: "bg-[#0E162C]/80 hover:bg-[#162244]/90 backdrop-blur-md",
+  socialItemBorder: "border-cyan-400/22 hover:border-cyan-400/45",
+  socialNameColor: "text-[#F8FAFC]",
+  socialUnitColor: "text-[#94A3B8]",
+  nameColor: "text-[#F8FAFC]",
+  bioColor: "text-[#94A3B8]",
+  handleColor: "text-[#06B6D4]",
+};
+
+const LIQUID_AURORA_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-b from-[#0A1D2D] to-[#06121D] text-[#F0FDF4] border border-teal-400/25 shadow-2xl",
+  profBadgeBg: "bg-[#0A1D2D]",
+  profBadgeText: "text-[#2DD4BF]",
+  profBadgeBorder: "border-teal-400/30",
+  fanbaseBg: "bg-[#0F2638]/85 backdrop-blur-md",
+  fanbaseText: "text-[#F0FDF4]",
+  socialItemBg: "bg-[#0F2638]/80 hover:bg-[#15344C]/90 backdrop-blur-md",
+  socialItemBorder: "border-teal-400/22 hover:border-teal-400/45",
+  socialNameColor: "text-[#F0FDF4]",
+  socialUnitColor: "text-[#99F6E4]",
+  nameColor: "text-[#F0FDF4]",
+  bioColor: "text-[#99F6E4]",
+  handleColor: "text-[#2DD4BF]",
+};
+
+const FLOATING_STUDIO_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-b from-[#FCFAF7] to-[#F5F0E8] text-[#2D2824] border border-[#E5E0D8] shadow-xl",
+  profBadgeBg: "bg-white/90",
+  profBadgeText: "text-[#E05D44]",
+  profBadgeBorder: "border-[#E5E0D8]",
+  fanbaseBg: "bg-white/90 backdrop-blur-md",
+  fanbaseText: "text-[#2D2824]",
+  socialItemBg: "bg-white/80 hover:bg-white/95 backdrop-blur-md",
+  socialItemBorder: "border-[#E5E0D8] hover:border-[#E05D44]/35",
+  socialNameColor: "text-[#2D2824]",
+  socialUnitColor: "text-[#6B635B]",
+  nameColor: "text-[#2D2824]",
+  bioColor: "text-[#6B635B]",
+  handleColor: "text-[#E05D44]",
+};
+
+const SPOTLIGHT_STAGE_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-b from-[#16181E] to-[#0E1013] text-[#FAF8F5] border border-amber-400/25 shadow-2xl",
+  profBadgeBg: "bg-[#16181E]",
+  profBadgeText: "text-[#E5A93C]",
+  profBadgeBorder: "border-amber-400/30",
+  fanbaseBg: "bg-[#1C1F26]/90 backdrop-blur-md",
+  fanbaseText: "text-[#FAF8F5]",
+  socialItemBg: "bg-[#1C1F26]/80 hover:bg-[#282C36]/90 backdrop-blur-md",
+  socialItemBorder: "border-amber-400/20 hover:border-amber-400/45",
+  socialNameColor: "text-[#FAF8F5]",
+  socialUnitColor: "text-[#C7CAD1]",
+  nameColor: "text-[#FAF8F5]",
+  bioColor: "text-[#C7CAD1]",
+  handleColor: "text-[#E5A93C]",
+};
+
+const CREATIVE_PAPER_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-b from-[#FAF6F0] to-[#EDE5DB] text-[#29221D] border border-[#E3D9CC] shadow-xl",
+  profBadgeBg: "bg-white/90",
+  profBadgeText: "text-[#B85C6B]",
+  profBadgeBorder: "border-[#E3D9CC]",
+  fanbaseBg: "bg-white/90 backdrop-blur-md",
+  fanbaseText: "text-[#29221D]",
+  socialItemBg: "bg-white/80 hover:bg-white/95 backdrop-blur-md",
+  socialItemBorder: "border-[#E3D9CC] hover:border-[#B85C6B]/35",
+  socialNameColor: "text-[#29221D]",
+  socialUnitColor: "text-[#6A5E57]",
+  nameColor: "text-[#29221D]",
+  bioColor: "text-[#6A5E57]",
+  handleColor: "text-[#B85C6B]",
+};
+
 export const THEME_STYLES: Record<string, ThemeStyleConfig> = {
   "minimal-white": MINIMAL_WHITE_STYLE,
   "signature-purple": SIGNATURE_PURPLE_STYLE,
   midnight: MIDNIGHT_DARK_STYLE,
+  "neon-grid": NEON_GRID_STYLE,
+  "liquid-aurora": LIQUID_AURORA_STYLE,
+  "floating-studio": FLOATING_STUDIO_STYLE,
+  "spotlight-stage": SPOTLIGHT_STAGE_STYLE,
+  "creative-paper": CREATIVE_PAPER_STYLE,
   "cosmic-purple": COSMIC_PURPLE_STYLE,
   "aurora-night": AURORA_NIGHT_STYLE,
   "rose-glow": ROSE_GLOW_STYLE,

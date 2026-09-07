@@ -37,8 +37,8 @@ export function LimitReachedModal({
   const modalTitle = isSeries
     ? "3 Series Limit Reached"
     : isEpisode
-    ? "15 Total Episodes Limit Reached"
-    : "1 Service Limit Reached";
+      ? "15 Total Episodes Limit Reached"
+      : "1 Service Limit Reached";
 
   return (
     <Modal
@@ -54,8 +54,8 @@ export function LimitReachedModal({
           {isSeries
             ? "Early Access includes up to 3 Series. Upgrade to Pro or VIP for Unlimited Series & Episodes!"
             : isEpisode
-            ? "Early Access includes up to 15 Total Episodes across all series. Upgrade to Pro or VIP for Unlimited Episodes!"
-            : "Early Access includes 1 Active Service package. Upgrade to VIP for Unlimited Creator Services & Rate Cards!"}
+              ? "Early Access includes up to 15 Total Episodes across all series. Upgrade to Pro or VIP for Unlimited Episodes!"
+              : "Early Access includes 1 Active Service package. Upgrade to VIP for Unlimited Creator Services & Rate Cards!"}
         </p>
 
         {/* Upgrade Plan Cards Preview */}
@@ -64,7 +64,7 @@ export function LimitReachedModal({
             <span className="font-display text-xs font-bold text-[#181716]">
               {isGig ? "Creator VIP Plan" : "Creator Pro Plan"}
             </span>
-            <span className="rounded-md bg-[#803D63] px-2 py-0.5 text-[9px] font-bold text-white">
+            <span className="rounded-md bg-[#b85c6b] px-2 py-0.5 text-[9px] font-bold text-white">
               RECOMMENDED
             </span>
           </div>
@@ -74,7 +74,7 @@ export function LimitReachedModal({
               {isGig ? "₹299" : "₹199"}
             </span>
             <span className="text-xs text-[#797570]">/ month</span>
-            <span className="text-xs font-semibold text-[#803D63] ml-1">
+            <span className="text-xs font-semibold text-[#b85c6b] ml-1">
               {isGig ? "or ₹2,999 / year" : "or ₹1,999 / year"}
             </span>
           </div>
@@ -85,10 +85,10 @@ export function LimitReachedModal({
               <span>{isGig ? "Unlimited Services & Media Kit" : "Unlimited Series & Episodes"}</span>
             </li>
             <li className="flex items-center gap-1.5">
-              <Check className="h-3.5 w-3.5 text-[#803D63]" /> Remove Inflixo Footer Branding
+              <Check className="h-3.5 w-3.5 text-[#b85c6b]" /> Remove Inflixo Footer Branding
             </li>
             <li className="flex items-center gap-1.5">
-              <Check className="h-3.5 w-3.5 text-[#803D63]" /> Priority Support &amp; Analytics
+              <Check className="h-3.5 w-3.5 text-[#b85c6b]" /> Priority Support &amp; Analytics
             </li>
           </ul>
         </div>
@@ -106,7 +106,7 @@ export function LimitReachedModal({
           type="button"
           onClick={handleNotifyMe}
           disabled={notified}
-          className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+          className="bg-[#b85c6b] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
         >
           <Bell className="h-3.5 w-3.5" />
           <span>{notified ? "We'll Notify You! ✓" : "Notify Me"}</span>

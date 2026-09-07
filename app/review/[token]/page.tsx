@@ -177,7 +177,7 @@ export default function PublicReviewSubmissionPage() {
                   setLoading(false);
                   return;
                 }
-              } catch (e) {}
+              } catch (e) { }
             }
           }
           setNotFound(true);
@@ -257,18 +257,18 @@ export default function PublicReviewSubmissionPage() {
               const updatedList = list.map((r: any) =>
                 r.token === params.token
                   ? {
-                      ...r,
-                      rating: ratingOverall,
-                      ratingContentQuality,
-                      ratingProfessionalism,
-                      ratingTimelyDelivery,
-                      comment: comment.trim().slice(0, 250),
-                      status: "pending_approval",
-                    }
+                    ...r,
+                    rating: ratingOverall,
+                    ratingContentQuality,
+                    ratingProfessionalism,
+                    ratingTimelyDelivery,
+                    comment: comment.trim().slice(0, 250),
+                    status: "pending_approval",
+                  }
                   : r
               );
               window.localStorage.setItem("inflixo:reviews", JSON.stringify(updatedList));
-            } catch (e) {}
+            } catch (e) { }
           }
         }
 
@@ -292,18 +292,18 @@ export default function PublicReviewSubmissionPage() {
             const updatedList = list.map((r: any) =>
               r.token === params.token
                 ? {
-                    ...r,
-                    rating: ratingOverall,
-                    ratingContentQuality,
-                    ratingProfessionalism,
-                    ratingTimelyDelivery,
-                    comment: comment.trim().slice(0, 250),
-                    status: "pending_approval",
-                  }
+                  ...r,
+                  rating: ratingOverall,
+                  ratingContentQuality,
+                  ratingProfessionalism,
+                  ratingTimelyDelivery,
+                  comment: comment.trim().slice(0, 250),
+                  status: "pending_approval",
+                }
                 : r
             );
             window.localStorage.setItem("inflixo:reviews", JSON.stringify(updatedList));
-          } catch (e) {}
+          } catch (e) { }
         }
       }
 
@@ -324,11 +324,11 @@ export default function PublicReviewSubmissionPage() {
       <div className="flex min-h-dvh flex-col items-center justify-center p-4 bg-[#FAF9F6] text-[#181716] text-center">
         <div className="max-w-sm">
           <EmptyState
-            icon={<MessageSquare className="h-6 w-6 text-[#803D63]" />}
+            icon={<MessageSquare className="h-6 w-6 text-[#b85c6b]" />}
             title="Review Link Invalid or Expired"
             description="This review request link doesn't exist or is invalid."
             action={
-              <Link href="/" className="text-xs font-bold text-[#803D63] hover:underline">
+              <Link href="/" className="text-xs font-bold text-[#b85c6b] hover:underline">
                 ← Return to Inflixo Home
               </Link>
             }
@@ -359,12 +359,12 @@ export default function PublicReviewSubmissionPage() {
     <div className="space-y-1 py-2.5 px-3.5 bg-[#F8F7F3] rounded-xl border border-[#E7E3DC]">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 min-w-0">
-          <Icon className="h-4 w-4 text-[#803D63] shrink-0" />
+          <Icon className="h-4 w-4 text-[#b85c6b] shrink-0" />
           <span className="text-xs font-bold text-[#181716] truncate">
             {label} {isRequired && <span className="text-[#C2414B]">*</span>}
           </span>
         </div>
-        
+
         {/* Star Rating Buttons */}
         <div className="flex items-center gap-1 shrink-0">
           {[1, 2, 3, 4, 5].map((star) => (
@@ -377,11 +377,10 @@ export default function PublicReviewSubmissionPage() {
               className="p-1 transition-transform hover:scale-125 focus:outline-none cursor-pointer"
             >
               <Star
-                className={`h-5 w-5 transition-colors ${
-                  star <= (hoverVal || val)
+                className={`h-5 w-5 transition-colors ${star <= (hoverVal || val)
                     ? "fill-amber-400 text-amber-400"
                     : "text-[#E7E3DC] fill-[#E7E3DC]"
-                }`}
+                  }`}
               />
             </button>
           ))}
@@ -392,13 +391,13 @@ export default function PublicReviewSubmissionPage() {
 
   return (
     <div className="min-h-dvh bg-[#FAF9F6] text-[#181716] flex flex-col items-center justify-center p-4 sm:p-6 text-left relative">
-      
+
       <main className="max-w-lg w-full space-y-5 my-6">
-        
+
         {/* Top Inflixo Branding Header */}
         <div className="flex items-center justify-between pb-3 border-b border-[#E7E3DC]">
           <Logo size="sm" />
-          <span className="inline-flex items-center gap-1 rounded-full bg-[#803D63]/[0.09] border border-[#803D63]/20 px-3 py-1 text-[10px] font-extrabold text-[#803D63] uppercase tracking-wider">
+          <span className="inline-flex items-center gap-1 rounded-full bg-[#b85c6b]/[0.09] border border-[#b85c6b]/20 px-3 py-1 text-[10px] font-extrabold text-[#b85c6b] uppercase tracking-wider">
             <ShieldCheck className="h-3 w-3 text-[#17845B]" /> Verified Brand Review
           </span>
         </div>
@@ -408,9 +407,9 @@ export default function PublicReviewSubmissionPage() {
           <CreatorAvatar
             src={creatorData?.photoDataUrl || null}
             name={creatorData?.displayName || "Creator"}
-            className="w-14 h-14 rounded-full border-2 border-[#803D63]/30 object-cover shrink-0"
-            textClassName="text-lg font-black text-[#803D63]"
-            fallbackBgClass="bg-[#803D63]/[0.09]"
+            className="w-14 h-14 rounded-full border-2 border-[#b85c6b]/30 object-cover shrink-0"
+            textClassName="text-lg font-black text-[#b85c6b]"
+            fallbackBgClass="bg-[#b85c6b]/[0.09]"
           />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
@@ -419,7 +418,7 @@ export default function PublicReviewSubmissionPage() {
               </h2>
               {creatorData?.isVerified && <ShieldCheck className="h-4 w-4 text-[#17845B] shrink-0" />}
             </div>
-            <p className="text-xs font-bold text-[#803D63]">
+            <p className="text-xs font-bold text-[#b85c6b]">
               @{creatorData?.username || "creator"}
             </p>
             {(creatorData?.category || creatorData?.profession) && (
@@ -434,7 +433,7 @@ export default function PublicReviewSubmissionPage() {
         <div className="rounded-2xl border border-[#E7E3DC] bg-[#F8F7F3] p-4 space-y-3 shadow-xs">
           <div className="flex items-center justify-between gap-2 border-b border-[#E7E3DC] pb-2.5">
             <div className="flex items-center gap-2 min-w-0">
-              <Building2 className="h-4 w-4 text-[#803D63] shrink-0" />
+              <Building2 className="h-4 w-4 text-[#b85c6b] shrink-0" />
               <div className="min-w-0 text-xs">
                 <span className="text-[10px] font-bold text-[#797570] uppercase tracking-wider block">
                   Reviewing For Brand / Client
@@ -453,7 +452,7 @@ export default function PublicReviewSubmissionPage() {
 
           <div className="flex items-center justify-between gap-2 pt-0.5">
             <div className="flex items-center gap-2 min-w-0">
-              <Package className="h-4 w-4 text-[#803D63] shrink-0" />
+              <Package className="h-4 w-4 text-[#b85c6b] shrink-0" />
               <div className="min-w-0 text-xs">
                 <span className="text-[10px] font-bold text-[#797570] uppercase tracking-wider block">
                   Collab Deliverable
@@ -469,7 +468,7 @@ export default function PublicReviewSubmissionPage() {
                 href={reviewData.contentUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-[#803D63] hover:bg-[#6F3456] text-white font-extrabold text-xs px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1 shrink-0 shadow-xs"
+                className="bg-[#b85c6b] hover:bg-[#6F3456] text-white font-extrabold text-xs px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1 shrink-0 shadow-xs"
               >
                 <Video className="h-3.5 w-3.5" />
                 <span>View Work ↗</span>
@@ -496,7 +495,7 @@ export default function PublicReviewSubmissionPage() {
             <div className="pt-3 border-t border-amber-200/80 text-xs">
               <Link
                 href={`/${creatorData?.username || "creator"}`}
-                className="bg-[#803D63] hover:bg-[#6F3456] text-white font-extrabold px-4 py-2.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-sm"
+                className="bg-[#b85c6b] hover:bg-[#6F3456] text-white font-extrabold px-4 py-2.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-sm"
               >
                 <span>Visit Creator Profile →</span>
               </Link>
@@ -529,7 +528,7 @@ export default function PublicReviewSubmissionPage() {
         ) : (
           /* Submission Form — 4 Rating Criteria + Optional Written Review */
           <div className="rounded-3xl border border-[#E7E3DC] bg-white p-5 sm:p-7 shadow-xs space-y-5">
-            
+
             <div className="border-b border-[#E7E3DC] pb-2">
               <h3 className="font-extrabold text-[#181716] text-base">
                 Rate your collaboration with {creatorData?.displayName || "Creator"}
@@ -540,7 +539,7 @@ export default function PublicReviewSubmissionPage() {
             </div>
 
             <form onSubmit={handleSubmitReview} className="space-y-3.5">
-              
+
               {/* 4 Focused Rating Criteria */}
               <StarRatingRow
                 label="Overall Experience"
@@ -590,7 +589,7 @@ export default function PublicReviewSubmissionPage() {
                     type="button"
                     onClick={handleGenerateAiReview}
                     disabled={isGeneratingAi}
-                    className="inline-flex items-center gap-1 bg-[#803D63]/[0.09] hover:bg-[#803D63]/15 text-[#803D63] text-[11px] font-extrabold px-2.5 py-1 rounded-lg border border-[#803D63]/20 transition-all cursor-pointer shadow-2xs"
+                    className="inline-flex items-center gap-1 bg-[#b85c6b]/[0.09] hover:bg-[#b85c6b]/15 text-[#b85c6b] text-[11px] font-extrabold px-2.5 py-1 rounded-lg border border-[#b85c6b]/20 transition-all cursor-pointer shadow-2xs"
                   >
                     <Wand2 className={`h-3 w-3 ${isGeneratingAi ? "animate-spin" : ""}`} />
                     <span>{isGeneratingAi ? "Generating..." : "✨ Auto-Write with AI"}</span>
@@ -603,13 +602,13 @@ export default function PublicReviewSubmissionPage() {
                   value={comment}
                   onChange={(e) => setComment(e.target.value.slice(0, 250))}
                   placeholder="Write a few words about working with this creator..."
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-medium text-[#181716] placeholder-[#797570] focus:border-[#803D63] focus:bg-white focus:outline-none"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-medium text-[#181716] placeholder-[#797570] focus:border-[#b85c6b] focus:bg-white focus:outline-none"
                 />
 
                 {/* Character Counter Display */}
                 <div className="flex items-center justify-between text-[10.5px] px-1">
                   <div className="flex items-center gap-1 text-[#797570] font-bold">
-                    <Sparkles className="h-3 w-3 text-[#803D63]" />
+                    <Sparkles className="h-3 w-3 text-[#b85c6b]" />
                     <span>AI Review Suggestions:</span>
                   </div>
                   <span className={`font-extrabold ${comment.length >= 240 ? "text-amber-600" : "text-[#797570]"}`}>
@@ -625,7 +624,7 @@ export default function PublicReviewSubmissionPage() {
                         key={idx}
                         type="button"
                         onClick={() => handleSelectSuggestion(suggestion)}
-                        className="bg-[#F8F7F3] hover:bg-[#803D63]/[0.09] hover:border-[#803D63]/40 text-[#54514D] hover:text-[#803D63] text-[10.5px] font-semibold px-2.5 py-1 rounded-xl border border-[#E7E3DC] transition-all text-left cursor-pointer"
+                        className="bg-[#F8F7F3] hover:bg-[#b85c6b]/[0.09] hover:border-[#b85c6b]/40 text-[#54514D] hover:text-[#b85c6b] text-[10.5px] font-semibold px-2.5 py-1 rounded-xl border border-[#E7E3DC] transition-all text-left cursor-pointer"
                       >
                         {suggestion}
                       </button>
@@ -637,7 +636,7 @@ export default function PublicReviewSubmissionPage() {
                     <button
                       type="button"
                       onClick={() => handleRefreshSuggestions()}
-                      className="inline-flex items-center gap-1 text-[10.5px] font-bold text-[#803D63] hover:underline cursor-pointer"
+                      className="inline-flex items-center gap-1 text-[10.5px] font-bold text-[#b85c6b] hover:underline cursor-pointer"
                     >
                       <RotateCw className="h-3 w-3" />
                       <span>Refresh 5 AI Ideas</span>
@@ -651,7 +650,7 @@ export default function PublicReviewSubmissionPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-[#803D63] hover:bg-[#6F3456] text-white font-extrabold text-sm py-3.5 px-4 rounded-xl transition-all shadow-xs cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full bg-[#b85c6b] hover:bg-[#6F3456] text-white font-extrabold text-sm py-3.5 px-4 rounded-xl transition-all shadow-xs cursor-pointer flex items-center justify-center gap-2"
                 >
                   <Send className="h-4 w-4" />
                   <span>{submitting ? "Submitting Review..." : "Submit Brand Review →"}</span>

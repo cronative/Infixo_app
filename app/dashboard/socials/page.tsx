@@ -149,7 +149,7 @@ export default function DashboardSocialsPage() {
             <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
               Connected Accounts
             </span>
-            <Share2 className="h-4 w-4 text-[#803D63]" />
+            <Share2 className="h-4 w-4 text-[#b85c6b]" />
           </div>
           <p className="font-display text-2xl font-bold text-[#181716]">
             {connectedCount}
@@ -181,7 +181,7 @@ export default function DashboardSocialsPage() {
             <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
               Custom Links
             </span>
-            <Link2 className="h-4 w-4 text-[#803D63]" />
+            <Link2 className="h-4 w-4 text-[#b85c6b]" />
           </div>
           <p className="font-display text-2xl font-bold text-[#181716]">
             {customLinksCount} of 3
@@ -314,7 +314,7 @@ export default function DashboardSocialsPage() {
                         value={draftInsta}
                         onChange={(e) => setDraftInsta(e.target.value.trim().replace(/^@/, ""))}
                         placeholder="Instagram username"
-                        className="w-full rounded-xl border border-[#E7E3DC] bg-white pl-8 pr-3 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#803D63]"
+                        className="w-full rounded-xl border border-[#E7E3DC] bg-white pl-8 pr-3 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#b85c6b]"
                       />
                     </div>
                     <InstagramFetcher username={draftInsta} />
@@ -343,7 +343,7 @@ export default function DashboardSocialsPage() {
                         value={draftYt}
                         onChange={(e) => setDraftYt(e.target.value.trim().replace(/^@/, ""))}
                         placeholder="YouTube channel handle"
-                        className="w-full rounded-xl border border-[#E7E3DC] bg-white pl-8 pr-3 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#803D63]"
+                        className="w-full rounded-xl border border-[#E7E3DC] bg-white pl-8 pr-3 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#b85c6b]"
                       />
                     </div>
                     <YoutubeFetcher handle={draftYt} />
@@ -372,7 +372,7 @@ export default function DashboardSocialsPage() {
                         value={draftFb}
                         onChange={(e) => setDraftFb(e.target.value.trim().replace(/^@/, ""))}
                         placeholder="Facebook page username"
-                        className="w-full rounded-xl border border-[#E7E3DC] bg-white pl-8 pr-3 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#803D63]"
+                        className="w-full rounded-xl border border-[#E7E3DC] bg-white pl-8 pr-3 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#b85c6b]"
                       />
                     </div>
                     <FacebookFetcher username={draftFb} />
@@ -393,7 +393,7 @@ export default function DashboardSocialsPage() {
       <section className="rounded-2xl border border-[#E7E3DC] bg-[#F8F7F3] p-4 sm:p-5 text-left space-y-2.5 shadow-xs">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-[#803D63]" />
+            <ShieldCheck className="h-4 w-4 text-[#b85c6b]" />
             <h3 className="font-display text-xs sm:text-sm font-bold text-[#181716]">
               How social data works
             </h3>
@@ -410,15 +410,15 @@ export default function DashboardSocialsPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 text-[11px] text-[#797570] font-medium">
           <div className="flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#803D63]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[#b85c6b]" />
             <span>Reads supported public profile information</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#803D63]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[#b85c6b]" />
             <span>Never receives your social-platform password</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#803D63]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[#b85c6b]" />
             <span>Lets you disconnect an account when needed</span>
           </div>
         </div>

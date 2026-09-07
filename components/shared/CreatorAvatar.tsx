@@ -17,7 +17,7 @@ export function CreatorAvatar({
   name = "Creator",
   className = "h-20 w-20 rounded-full",
   textClassName = "text-xl font-extrabold text-white",
-  fallbackBgClass = "bg-[#803D63]",
+  fallbackBgClass = "bg-[#b85c6b]",
   style,
 }: CreatorAvatarProps) {
   const [imgError, setImgError] = useState(false);

@@ -173,8 +173,8 @@ export default function PublicMediaKitPage() {
                   referrer: typeof document !== "undefined" ? document.referrer : "",
                 },
               }),
-            }).catch(() => {});
-          } catch {}
+            }).catch(() => { });
+          } catch { }
         } else {
           try {
             const {
@@ -237,14 +237,14 @@ export default function PublicMediaKitPage() {
         <div className="max-w-md space-y-6">
           <Logo />
           <div className="rounded-3xl border border-[#ECE8EB] bg-white p-8 space-y-4 shadow-2xs">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F7EDF3] text-[#803D63]">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F7EDF3] text-[#b85c6b]">
               <UserX className="h-7 w-7" />
             </div>
             <h1 className="font-display text-xl font-bold text-[#17131A]">Media Kit Not Found</h1>
             <p className="text-xs text-[#6F6872]">No creator media kit registered for @{handle}.</p>
             <button
               onClick={() => router.push("/")}
-              className="w-full py-2.5 rounded-xl bg-[#803D63] text-white text-xs font-semibold hover:bg-[#6D3254] transition-colors"
+              className="w-full py-2.5 rounded-xl bg-[#b85c6b] text-white text-xs font-semibold hover:bg-[#6D3254] transition-colors"
             >
               Back to Home
             </button>
@@ -268,7 +268,7 @@ export default function PublicMediaKitPage() {
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Logo />
-            <span className="text-xs font-bold text-[#803D63] bg-[#F7EDF3] px-2 py-0.5 rounded-md">
+            <span className="text-xs font-bold text-[#b85c6b] bg-[#F7EDF3] px-2 py-0.5 rounded-md">
               Media Kit
             </span>
           </div>
@@ -279,7 +279,7 @@ export default function PublicMediaKitPage() {
               onClick={handleCopyLink}
               className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-3.5 py-1.5 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer shadow-2xs"
             >
-              <Share2 className="h-3.5 w-3.5 text-[#803D63]" />
+              <Share2 className="h-3.5 w-3.5 text-[#b85c6b]" />
               <span className="hidden sm:inline">Share Media Kit</span>
             </button>
 
@@ -295,7 +295,7 @@ export default function PublicMediaKitPage() {
             <button
               type="button"
               onClick={() => setIsInquiryOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6D3254] px-4 py-1.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#b85c6b] hover:bg-[#6D3254] px-4 py-1.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
             >
               <span>Work With Me</span>
             </button>
@@ -322,7 +322,7 @@ export default function PublicMediaKitPage() {
                   </h1>
                   {profile.isVerified && <ShieldCheck className="h-5 w-5 text-emerald-500 shrink-0" />}
                 </div>
-                <p className="text-xs sm:text-sm font-semibold text-[#803D63]">
+                <p className="text-xs sm:text-sm font-semibold text-[#b85c6b]">
                   @{profile.username} • {profile.category || "Digital Creator"}
                 </p>
                 <p className="text-xs text-[#6F6872] max-w-xl leading-relaxed pt-1">
@@ -335,7 +335,7 @@ export default function PublicMediaKitPage() {
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#6F6872] block">
                 Total Verified Fanbase
               </span>
-              <p className="font-display text-3xl font-bold text-[#803D63]">
+              <p className="font-display text-3xl font-bold text-[#b85c6b]">
                 {formatCount(totalAudience)}
               </p>
               <p className="text-[11px] text-[#6F6872]">Combined audience reach</p>
@@ -416,7 +416,7 @@ export default function PublicMediaKitPage() {
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between gap-1.5">
-                      <span className="text-[11px] font-bold text-[#803D63] bg-[#F7EDF3] px-2 py-0.5 rounded-lg">
+                      <span className="text-[11px] font-bold text-[#b85c6b] bg-[#F7EDF3] px-2 py-0.5 rounded-lg">
                         {pkg.platform}
                       </span>
                       {(pkg.packageName || pkg.badge) && (
@@ -429,7 +429,7 @@ export default function PublicMediaKitPage() {
                     <div>
                       <h3 className="font-bold text-sm text-[#17131A]">{pkg.title}</h3>
                       <div className="flex items-baseline gap-2 mt-1">
-                        <span className="font-display text-lg font-bold text-[#803D63]">
+                        <span className="font-display text-lg font-bold text-[#b85c6b]">
                           {pkg.price}
                         </span>
                         <span className="text-[11px] text-[#6F6872]">
@@ -453,7 +453,7 @@ export default function PublicMediaKitPage() {
                   <button
                     type="button"
                     onClick={() => setIsInquiryOpen(true)}
-                    className="w-full py-2 rounded-xl bg-[#803D63] hover:bg-[#6D3254] text-white text-xs font-semibold transition-colors cursor-pointer"
+                    className="w-full py-2 rounded-xl bg-[#b85c6b] hover:bg-[#6D3254] text-white text-xs font-semibold transition-colors cursor-pointer"
                   >
                     Request Booking
                   </button>
@@ -496,7 +496,7 @@ export default function PublicMediaKitPage() {
           <section className="space-y-3.5">
             <div className="px-1">
               <h2 className="font-display text-base sm:text-lg font-bold text-[#17131A] flex items-center gap-2">
-                <Users className="h-4 w-4 text-[#803D63]" />
+                <Users className="h-4 w-4 text-[#b85c6b]" />
                 {team.team?.teamName || "Creator Team"} ({team.members.length})
               </h2>
             </div>
@@ -504,12 +504,12 @@ export default function PublicMediaKitPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               {team.members.map((m) => (
                 <div key={m.id} className="rounded-2xl border border-[#ECE8EB] bg-white p-3.5 flex items-center gap-3 shadow-2xs">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#803D63] text-white font-extrabold text-xs shrink-0 ring-2 ring-[#F7EDF3]">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#b85c6b] text-white font-extrabold text-xs shrink-0 ring-2 ring-[#F7EDF3]">
                     {getInitials(m.name)}
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="font-bold text-xs text-[#17131A] truncate">{m.name}</p>
-                    <p className="text-[11px] font-semibold text-[#803D63] truncate">{m.role}</p>
+                    <p className="text-[11px] font-semibold text-[#b85c6b] truncate">{m.role}</p>
                   </div>
                 </div>
               ))}
@@ -529,7 +529,7 @@ export default function PublicMediaKitPage() {
             <button
               type="button"
               onClick={() => setIsInquiryOpen(true)}
-              className="inline-flex items-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6D3254] px-6 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#b85c6b] hover:bg-[#6D3254] px-6 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
             >
               <span>Submit Brand Inquiry</span>
               <ChevronRight className="h-3.5 w-3.5" />

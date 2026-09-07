@@ -188,7 +188,7 @@ export default function DashboardBrandsPage() {
       });
       showToast(updated ? "Brand visible on profile" : "Brand hidden from profile");
       loadBrands();
-    } catch {}
+    } catch { }
   };
 
   return (
@@ -208,7 +208,7 @@ export default function DashboardBrandsPage() {
           <button
             type="button"
             onClick={() => handleOpenModal()}
-            className="tap-scale flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4 transition-colors cursor-pointer shadow-xs shrink-0 self-start sm:self-auto"
+            className="tap-scale flex items-center gap-1.5 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4 transition-colors cursor-pointer shadow-xs shrink-0 self-start sm:self-auto"
           >
             <Plus className="h-3.5 w-3.5 stroke-[2.5]" />
             <span>Add Brand</span>
@@ -224,7 +224,7 @@ export default function DashboardBrandsPage() {
       ) : brands.length === 0 ? (
         /* Empty State */
         <div className="rounded-3xl border-2 border-dashed border-[#E7E3DC] bg-white p-10 sm:p-14 text-center space-y-4 max-w-xl mx-auto shadow-xs">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/20">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20">
             <Building2 className="h-7 w-7" />
           </div>
           <div className="space-y-1">
@@ -238,7 +238,7 @@ export default function DashboardBrandsPage() {
           <button
             type="button"
             onClick={() => handleOpenModal()}
-            className="tap-scale inline-flex items-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2.5 px-5 transition-colors cursor-pointer shadow-xs"
+            className="tap-scale inline-flex items-center gap-2 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] text-white font-semibold text-xs py-2.5 px-5 transition-colors cursor-pointer shadow-xs"
           >
             <Plus className="h-4 w-4 stroke-[2.5]" />
             <span>Add Brand</span>
@@ -249,12 +249,11 @@ export default function DashboardBrandsPage() {
           {brands.map((brand) => (
             <div
               key={brand.id}
-              className={`relative flex flex-col justify-between rounded-2xl border p-4 bg-white shadow-xs transition-all ${
-                brand.isActive ? "border-[#E7E3DC]" : "border-[#E7E3DC] opacity-60 bg-[#F8F7F3]"
-              }`}
+              className={`relative flex flex-col justify-between rounded-2xl border p-4 bg-white shadow-xs transition-all ${brand.isActive ? "border-[#E7E3DC]" : "border-[#E7E3DC] opacity-60 bg-[#F8F7F3]"
+                }`}
             >
               <div className="flex items-start gap-3.5">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#803D63] text-white font-extrabold text-sm shadow-xs ring-2 ring-[#803D63]/20 shrink-0">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#b85c6b] text-white font-extrabold text-sm shadow-xs ring-2 ring-[#b85c6b]/20 shrink-0">
                   {getInitials(brand.brandName)}
                 </div>
 
@@ -265,7 +264,7 @@ export default function DashboardBrandsPage() {
                       href={brand.websiteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-0.5 inline-flex items-center gap-1 text-[11px] font-medium text-[#803D63] hover:underline truncate max-w-full"
+                      className="mt-0.5 inline-flex items-center gap-1 text-[11px] font-medium text-[#b85c6b] hover:underline truncate max-w-full"
                     >
                       <Globe className="h-3 w-3 shrink-0" />
                       <span className="truncate">{brand.websiteUrl.replace(/^https?:\/\/(www\.)?/, "")}</span>
@@ -369,12 +368,12 @@ export default function DashboardBrandsPage() {
           <ModalBody className="p-5 sm:p-6 space-y-4 text-left">
             {/* Live Brand Initials Badge Preview */}
             <div className="flex items-center gap-3.5 p-3 rounded-2xl bg-[#F8F7F3] border border-[#E7E3DC]">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#803D63] text-white font-extrabold text-sm shadow-xs ring-2 ring-[#803D63]/20 shrink-0">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#b85c6b] text-white font-extrabold text-sm shadow-xs ring-2 ring-[#b85c6b]/20 shrink-0">
                 {getInitials(brandName || "Brand")}
               </div>
               <div className="min-w-0">
                 <p className="font-bold text-xs text-[#181716] truncate">{brandName.trim() || "Brand Name"}</p>
-                <span className="inline-block text-[10px] font-semibold text-[#803D63] bg-[#803D63]/[0.09] border border-[#803D63]/20 px-1.5 py-0.5 rounded-md">Brand Venture</span>
+                <span className="inline-block text-[10px] font-semibold text-[#b85c6b] bg-[#b85c6b]/[0.09] border border-[#b85c6b]/20 px-1.5 py-0.5 rounded-md">Brand Venture</span>
               </div>
             </div>
 
@@ -388,7 +387,7 @@ export default function DashboardBrandsPage() {
                 value={brandName}
                 onChange={(e) => setBrandName(e.target.value)}
                 placeholder="e.g. CreatorCloths or The Tech Show"
-                className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
@@ -401,7 +400,7 @@ export default function DashboardBrandsPage() {
                 value={websiteUrl}
                 onChange={(e) => setWebsiteUrl(e.target.value)}
                 placeholder="https://mybrand.com"
-                className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
@@ -415,7 +414,7 @@ export default function DashboardBrandsPage() {
                 <label className="block text-[11px] font-semibold text-[#797570] mb-1">
                   Instagram Username
                 </label>
-                <div className="flex h-10 items-center rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3 transition-colors focus-within:border-[#803D63] focus-within:bg-white">
+                <div className="flex h-10 items-center rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3 transition-colors focus-within:border-[#b85c6b] focus-within:bg-white">
                   <span className="mr-2 text-[#E1306C] shrink-0">
                     <InstagramIcon className="h-4 w-4" />
                   </span>
@@ -428,7 +427,7 @@ export default function DashboardBrandsPage() {
                   />
                 </div>
                 <p className="mt-1 text-[10.5px] font-medium text-[#797570]/80 truncate">
-                  Link: <span className="text-[#803D63] font-semibold">https://instagram.com/{instagramUrl || "username"}</span>
+                  Link: <span className="text-[#b85c6b] font-semibold">https://instagram.com/{instagramUrl || "username"}</span>
                 </p>
               </div>
 
@@ -436,7 +435,7 @@ export default function DashboardBrandsPage() {
                 <label className="block text-[11px] font-semibold text-[#797570] mb-1">
                   YouTube Channel Username
                 </label>
-                <div className="flex h-10 items-center rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3 transition-colors focus-within:border-[#803D63] focus-within:bg-white">
+                <div className="flex h-10 items-center rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3 transition-colors focus-within:border-[#b85c6b] focus-within:bg-white">
                   <span className="mr-2 text-[#FF0000] shrink-0">
                     <YoutubeIcon className="h-4 w-4" />
                   </span>
@@ -449,7 +448,7 @@ export default function DashboardBrandsPage() {
                   />
                 </div>
                 <p className="mt-1 text-[10.5px] font-medium text-[#797570]/80 truncate">
-                  Link: <span className="text-[#803D63] font-semibold">https://youtube.com/@{youtubeUrl || "channel_username"}</span>
+                  Link: <span className="text-[#b85c6b] font-semibold">https://youtube.com/@{youtubeUrl || "channel_username"}</span>
                 </p>
               </div>
 
@@ -457,7 +456,7 @@ export default function DashboardBrandsPage() {
                 <label className="block text-[11px] font-semibold text-[#797570] mb-1">
                   Facebook Username
                 </label>
-                <div className="flex h-10 items-center rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3 transition-colors focus-within:border-[#803D63] focus-within:bg-white">
+                <div className="flex h-10 items-center rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3 transition-colors focus-within:border-[#b85c6b] focus-within:bg-white">
                   <span className="mr-2 text-[#1877F2] shrink-0">
                     <FacebookIcon className="h-4 w-4" />
                   </span>
@@ -470,7 +469,7 @@ export default function DashboardBrandsPage() {
                   />
                 </div>
                 <p className="mt-1 text-[10.5px] font-medium text-[#797570]/80 truncate">
-                  Link: <span className="text-[#803D63] font-semibold">https://facebook.com/{facebookUrl || "username"}</span>
+                  Link: <span className="text-[#b85c6b] font-semibold">https://facebook.com/{facebookUrl || "username"}</span>
                 </p>
               </div>
             </div>
@@ -487,7 +486,7 @@ export default function DashboardBrandsPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="bg-[#b85c6b] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               <span>{isSubmitting ? "Saving..." : editingBrand ? "Save Changes" : "Add Brand"}</span>
             </button>

@@ -36,7 +36,7 @@ const DETERMINISTIC_PARTICLES = [
 ];
 
 export const AmbientParticles = memo(function AmbientParticles({
-  particleColors = ["#803D63", "#C084FC", "#60A5FA"],
+  particleColors = ["#b85c6b", "#C084FC", "#60A5FA"],
   themeKey,
   contained = false,
 }: AmbientParticlesProps) {

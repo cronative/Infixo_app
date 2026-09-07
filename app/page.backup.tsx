@@ -199,7 +199,7 @@ export default function LandingHomePage() {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-[#F9FAFB]">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#803D63] border-t-transparent" />
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#b85c6b] border-t-transparent" />
           <p className="text-xs font-medium text-[#4B5563]">Redirecting to dashboard...</p>
         </div>
       </div>
@@ -207,7 +207,7 @@ export default function LandingHomePage() {
   }
 
   return (
-    <div className="min-h-dvh bg-[#FFFFFF] text-[#111827] flex flex-col font-sans selection:bg-purple-100 selection:text-[#803D63]">
+    <div className="min-h-dvh bg-[#FFFFFF] text-[#111827] flex flex-col font-sans selection:bg-purple-100 selection:text-[#b85c6b]">
       {/* 1. NAVIGATION BAR */}
       <header className="sticky top-0 z-50 bg-[#FFFFFF]/95 backdrop-blur-sm border-b border-[#E5E7EB]">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5 sm:px-6">
@@ -225,7 +225,7 @@ export default function LandingHomePage() {
             <button
               type="button"
               onClick={() => handleClaim("")}
-              className="inline-flex items-center gap-1.5 rounded-full bg-[#803D63] px-4 py-2 text-xs sm:text-sm font-bold text-white hover:bg-[#6D3254] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#b85c6b] px-4 py-2 text-xs sm:text-sm font-bold text-white hover:bg-[#6D3254] transition-colors cursor-pointer"
             >
               <span>Claim Handle</span>
               <ArrowRight className="h-3.5 w-3.5" />
@@ -241,15 +241,15 @@ export default function LandingHomePage() {
             {/* Left Hero Column: Hero Copy + Brand Outreach Block */}
             <div className="lg:col-span-6 space-y-5 text-left pt-1">
               {/* HERO CAROUSEL CONTAINER */}
-              <div 
+              <div
                 className="relative w-full overflow-hidden space-y-3"
                 onMouseEnter={() => setIsHeroPaused(true)}
                 onMouseLeave={() => setIsHeroPaused(false)}
               >
                 {/* Header Strip with Category Pill & Controls */}
                 <div className="flex items-center justify-between gap-2">
-                  <div className="inline-flex items-center gap-1.5 rounded-full border border-purple-200 bg-purple-50 px-3.5 py-1 text-xs font-bold text-[#803D63] transition-all">
-                    <Sparkles className="h-3.5 w-3.5 text-[#803D63]" />
+                  <div className="inline-flex items-center gap-1.5 rounded-full border border-purple-200 bg-purple-50 px-3.5 py-1 text-xs font-bold text-[#b85c6b] transition-all">
+                    <Sparkles className="h-3.5 w-3.5 text-[#b85c6b]" />
                     <span>{currentHeroSlide.tag}</span>
                   </div>
 
@@ -258,7 +258,7 @@ export default function LandingHomePage() {
                     <button
                       type="button"
                       onClick={() => setHeroSlideIndex((prev) => (prev === 0 ? HERO_SLIDES.length - 1 : prev - 1))}
-                      className="p-1 rounded-full hover:bg-purple-50 hover:text-[#803D63] text-slate-500 transition-colors cursor-pointer"
+                      className="p-1 rounded-full hover:bg-purple-50 hover:text-[#b85c6b] text-slate-500 transition-colors cursor-pointer"
                       title="Previous slide"
                     >
                       <ChevronLeft className="h-3.5 w-3.5" />
@@ -269,7 +269,7 @@ export default function LandingHomePage() {
                     <button
                       type="button"
                       onClick={() => setHeroSlideIndex((prev) => (prev + 1) % HERO_SLIDES.length)}
-                      className="p-1 rounded-full hover:bg-purple-50 hover:text-[#803D63] text-slate-500 transition-colors cursor-pointer"
+                      className="p-1 rounded-full hover:bg-purple-50 hover:text-[#b85c6b] text-slate-500 transition-colors cursor-pointer"
                       title="Next slide"
                     >
                       <ChevronRight className="h-3.5 w-3.5" />
@@ -292,7 +292,7 @@ export default function LandingHomePage() {
                           {slide.heading}
                         </h1>
 
-                        <p className="text-base sm:text-lg font-bold text-[#803D63] leading-relaxed">
+                        <p className="text-base sm:text-lg font-bold text-[#b85c6b] leading-relaxed">
                           {slide.subheading}
                         </p>
                       </div>
@@ -308,11 +308,10 @@ export default function LandingHomePage() {
                       type="button"
                       onClick={() => setHeroSlideIndex(idx)}
                       title={slide.tag}
-                      className={`h-1.5 rounded-full transition-all duration-500 cursor-pointer ${
-                        idx === heroSlideIndex
-                          ? "w-8 bg-[#803D63]"
+                      className={`h-1.5 rounded-full transition-all duration-500 cursor-pointer ${idx === heroSlideIndex
+                          ? "w-8 bg-[#b85c6b]"
                           : "w-2 bg-slate-300 hover:bg-purple-300"
-                      }`}
+                        }`}
                     />
                   ))}
                 </div>
@@ -325,9 +324,9 @@ export default function LandingHomePage() {
                     e.preventDefault();
                     handleClaim(username);
                   }}
-                  className="flex items-center rounded-xl border border-[#E5E7EB] bg-white p-1.5 focus-within:border-[#803D63] focus-within:ring-2 focus-within:ring-[#803D63]/20 transition-all max-w-md shadow-xs"
+                  className="flex items-center rounded-xl border border-[#E5E7EB] bg-white p-1.5 focus-within:border-[#b85c6b] focus-within:ring-2 focus-within:ring-[#b85c6b]/20 transition-all max-w-md shadow-xs"
                 >
-                  <span className="pl-3.5 text-xs sm:text-sm font-bold text-[#803D63] select-none shrink-0">
+                  <span className="pl-3.5 text-xs sm:text-sm font-bold text-[#b85c6b] select-none shrink-0">
                     inflixo.com/
                   </span>
                   <input
@@ -339,7 +338,7 @@ export default function LandingHomePage() {
                   />
                   <button
                     type="submit"
-                    className="hidden inline-flex items-center gap-1.5 shrink-0 rounded-lg bg-[#803D63] px-4 py-2 text-xs sm:text-sm font-bold text-white hover:bg-[#6D3254] transition-colors cursor-pointer shadow-2xs"
+                    className="hidden inline-flex items-center gap-1.5 shrink-0 rounded-lg bg-[#b85c6b] px-4 py-2 text-xs sm:text-sm font-bold text-white hover:bg-[#6D3254] transition-colors cursor-pointer shadow-2xs"
                   >
                     <Sparkles className="h-3.5 w-3.5" />
                     <span>Create My Page</span>
@@ -362,15 +361,15 @@ export default function LandingHomePage() {
                 {/* Plain 3-Step What You Get Strip */}
                 <div className="pt-4 border-t border-[#E5E7EB] grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs font-bold text-[#111827]">
                   <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#803D63] shrink-0 stroke-[3]" />
+                    <Check className="h-4 w-4 text-[#b85c6b] shrink-0 stroke-[3]" />
                     <span>1. One page for your series (in order)</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#803D63] shrink-0 stroke-[3]" />
+                    <Check className="h-4 w-4 text-[#b85c6b] shrink-0 stroke-[3]" />
                     <span>2. One live combined fanbase count</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#803D63] shrink-0 stroke-[3]" />
+                    <Check className="h-4 w-4 text-[#b85c6b] shrink-0 stroke-[3]" />
                     <span>3. One rate card with direct brand contact</span>
                   </div>
                 </div>
@@ -378,7 +377,7 @@ export default function LandingHomePage() {
 
               {/* INTEGRATED BRAND OUTREACH & MEDIA KIT FEATURE BLOCK */}
               <div className="border-t border-[#E5E7EB] pt-8 mt-8 sm:mt-12 lg:mt-16 space-y-4">
-                <span className="inline-block rounded-full bg-purple-50 text-[#803D63] border border-purple-200 px-3 py-0.5 text-xs font-bold uppercase tracking-wider">
+                <span className="inline-block rounded-full bg-purple-50 text-[#b85c6b] border border-purple-200 px-3 py-0.5 text-xs font-bold uppercase tracking-wider">
                   Brand Outreach &amp; Media Kit
                 </span>
                 <h2 className="font-display text-2xl sm:text-3xl font-bold text-[#111827] leading-tight">
@@ -390,13 +389,13 @@ export default function LandingHomePage() {
 
                 <div className="space-y-2 pt-1 text-xs sm:text-sm font-semibold text-[#111827]">
                   <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
+                    <Check className="h-4 w-4 text-[#b85c6b] shrink-0 mt-0.5 stroke-[3]" />
                     <div>
                       <strong className="text-[#111827]">Free Rate Card &amp; Briefs:</strong> List your gig and get brand messages on WhatsApp — free to start.
                     </div>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
+                    <Check className="h-4 w-4 text-[#b85c6b] shrink-0 mt-0.5 stroke-[3]" />
                     <div>
                       <strong className="text-[#111827]">AI-Synced Fanbase Count:</strong> Inflixo checks your connected accounts and updates your numbers automatically — you never have to type them in yourself.
                     </div>
@@ -425,23 +424,23 @@ export default function LandingHomePage() {
                   profile={
                     username.trim()
                       ? {
-                          displayName: username.trim().charAt(0).toUpperCase() + username.trim().slice(1),
-                          username: username.trim().toLowerCase().replace(/[^a-z0-9_]/g, ""),
-                          category: "Digital Creator",
-                          bio: `🚀 Official OTT Media Kit & Series Showcase of @${username.trim()}`,
-                          photoDataUrl: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(username.trim())}`,
-                          updatedAt: new Date().toISOString(),
-                        }
+                        displayName: username.trim().charAt(0).toUpperCase() + username.trim().slice(1),
+                        username: username.trim().toLowerCase().replace(/[^a-z0-9_]/g, ""),
+                        category: "Digital Creator",
+                        bio: `🚀 Official OTT Media Kit & Series Showcase of @${username.trim()}`,
+                        photoDataUrl: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(username.trim())}`,
+                        updatedAt: new Date().toISOString(),
+                      }
                       : DEMO_PROFILE
                   }
                   socials={
                     username.trim()
                       ? {
-                          instagram: { url: `https://instagram.com/${username}`, followers: 450000, posts: 180, username: username.trim() },
-                          youtube: { url: `https://youtube.com/@${username}`, subscribers: 820000, videos: 95, totalViews: 45000000, username: username.trim() },
-                          facebook: { url: `https://facebook.com/${username}`, followers: 210000, posts: 120, username: username.trim() },
-                          updatedAt: new Date().toISOString(),
-                        }
+                        instagram: { url: `https://instagram.com/${username}`, followers: 450000, posts: 180, username: username.trim() },
+                        youtube: { url: `https://youtube.com/@${username}`, subscribers: 820000, videos: 95, totalViews: 45000000, username: username.trim() },
+                        facebook: { url: `https://facebook.com/${username}`, followers: 210000, posts: 120, username: username.trim() },
+                        updatedAt: new Date().toISOString(),
+                      }
                       : DEMO_SOCIALS
                   }
                   series={DEMO_SERIES}
@@ -453,7 +452,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username)}
-                  className="w-full tap-scale py-3 px-4 rounded-xl bg-[#803D63] hover:bg-[#6D3254] text-white font-extrabold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full tap-scale py-3 px-4 rounded-xl bg-[#b85c6b] hover:bg-[#6D3254] text-white font-extrabold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <span>Claim @{username.trim() || "yourname"} Profile Before Someone Else Does</span>
                   <ArrowRight className="h-4 w-4" />
@@ -472,7 +471,7 @@ export default function LandingHomePage() {
             <div className="lg:col-span-6 flex justify-center order-2 lg:order-1">
               <div className="w-full max-w-md rounded-xl border border-[#E5E7EB] bg-[#111827] text-white p-5 space-y-4 text-left">
                 <div className="flex items-center justify-between">
-                  <span className="rounded bg-[#803D63] px-2.5 py-0.5 text-[10px] font-bold text-white">
+                  <span className="rounded bg-[#b85c6b] px-2.5 py-0.5 text-[10px] font-bold text-white">
                     Season 1 • 5 Episodes
                   </span>
                   <span className="text-[10px] font-bold text-slate-400">Filmmaking Series</span>
@@ -488,7 +487,7 @@ export default function LandingHomePage() {
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                     <button
                       type="button"
-                      className="flex h-10 w-10 items-center justify-center rounded-full bg-[#803D63] text-white"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-[#b85c6b] text-white"
                     >
                       <Play className="h-5 w-5 fill-current ml-0.5" />
                     </button>
@@ -517,7 +516,7 @@ export default function LandingHomePage() {
 
             {/* Right Copy */}
             <div className="lg:col-span-6 space-y-4 text-left order-1 lg:order-2">
-              <span className="inline-block rounded-full bg-purple-50 text-[#803D63] border border-purple-200 px-3 py-0.5 text-xs font-bold uppercase tracking-wider">
+              <span className="inline-block rounded-full bg-purple-50 text-[#b85c6b] border border-purple-200 px-3 py-0.5 text-xs font-bold uppercase tracking-wider">
                 One page for your whole series
               </span>
               <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#111827] leading-tight">
@@ -529,13 +528,13 @@ export default function LandingHomePage() {
 
               <div className="space-y-2 pt-2 text-xs sm:text-sm font-semibold text-[#111827]">
                 <div className="flex items-start gap-2">
-                  <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
+                  <Check className="h-4 w-4 text-[#b85c6b] shrink-0 mt-0.5 stroke-[3]" />
                   <div>
                     <strong className="text-[#111827]">In-Order Playlist:</strong> Part 1 leads straight to Part 2, one tap to watch.
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
-                  <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
+                  <Check className="h-4 w-4 text-[#b85c6b] shrink-0 mt-0.5 stroke-[3]" />
                   <div>
                     <strong className="text-[#111827]">All Your Platforms, One Series:</strong> Add episodes from YouTube, Instagram, or Facebook, wherever you actually posted them — Inflixo verifies each link is from the right platform before it goes live.
                   </div>
@@ -552,7 +551,7 @@ export default function LandingHomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Left Copy */}
             <div className="lg:col-span-6 space-y-4 text-left">
-              <span className="inline-block rounded-full bg-purple-50 text-[#803D63] border border-purple-200 px-3 py-0.5 text-xs font-bold uppercase tracking-wider">
+              <span className="inline-block rounded-full bg-purple-50 text-[#b85c6b] border border-purple-200 px-3 py-0.5 text-xs font-bold uppercase tracking-wider">
                 Direct Brand Deals
               </span>
               <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#111827] leading-tight">
@@ -564,7 +563,7 @@ export default function LandingHomePage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs font-medium text-[#111827]">
                 <div className="flex items-start gap-2.5 rounded-xl border border-gray-100 bg-[#F9FAFB] p-3">
-                  <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
+                  <Check className="h-4 w-4 text-[#b85c6b] shrink-0 mt-0.5 stroke-[3]" />
                   <div>
                     <strong className="text-slate-900 block font-bold">Your Rate Card:</strong>
                     Set your own prices for Reels, YouTube videos, and monthly deals.
@@ -572,7 +571,7 @@ export default function LandingHomePage() {
                 </div>
 
                 <div className="flex items-start gap-2.5 rounded-xl border border-gray-100 bg-[#F9FAFB] p-3">
-                  <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
+                  <Check className="h-4 w-4 text-[#b85c6b] shrink-0 mt-0.5 stroke-[3]" />
                   <div>
                     <strong className="text-slate-900 block font-bold">AI-Synced Fanbase Count:</strong>
                     Automatically updated cross-platform reach across Instagram, YouTube &amp; Facebook.
@@ -580,7 +579,7 @@ export default function LandingHomePage() {
                 </div>
 
                 <div className="flex items-start gap-2.5 rounded-xl border border-gray-100 bg-[#F9FAFB] p-3">
-                  <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
+                  <Check className="h-4 w-4 text-[#b85c6b] shrink-0 mt-0.5 stroke-[3]" />
                   <div>
                     <strong className="text-slate-900 block font-bold">Brands Message You Directly:</strong>
                     WhatsApp or Email, with the brand&apos;s details already filled in — no back-and-forth.
@@ -588,7 +587,7 @@ export default function LandingHomePage() {
                 </div>
 
                 <div className="flex items-start gap-2.5 rounded-xl border border-gray-100 bg-[#F9FAFB] p-3">
-                  <Check className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5 stroke-[3]" />
+                  <Check className="h-4 w-4 text-[#b85c6b] shrink-0 mt-0.5 stroke-[3]" />
                   <div>
                     <strong className="text-slate-900 block font-bold">Instant PDF:</strong>
                     Turn your profile into a ready-to-send PDF for brands and agencies.
@@ -612,17 +611,17 @@ export default function LandingHomePage() {
 
                 {/* Sample Gig Card 1 */}
                 <div className="rounded-xl border border-amber-200 bg-white p-4 space-y-2.5 shadow-2xs relative">
-                  <span className="absolute -top-2 right-3 bg-[#803D63] text-white text-[9px] font-black px-2 py-0.5 rounded-full">
+                  <span className="absolute -top-2 right-3 bg-[#b85c6b] text-white text-[9px] font-black px-2 py-0.5 rounded-full">
                     MOST POPULAR
                   </span>
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <span className="border text-[9px] font-extrabold px-2 py-0.5 rounded uppercase bg-[#F6EBF1] text-[#803D63] border-[#E8DCE4]">
+                      <span className="border text-[9px] font-extrabold px-2 py-0.5 rounded uppercase bg-[#F6EBF1] text-[#b85c6b] border-[#E8DCE4]">
                         Instagram Reel
                       </span>
                       <h5 className="font-bold text-sm text-slate-900 mt-1">1x High-Engagement Dedicated Reel</h5>
                     </div>
-                    <span className="font-extrabold text-base text-[#803D63] tabular-nums">₹2,000</span>
+                    <span className="font-extrabold text-base text-[#b85c6b] tabular-nums">₹2,000</span>
                   </div>
                   <p className="text-[11px] text-slate-500 font-semibold">Turnaround: 2 Days</p>
                   <ul className="text-xs space-y-1 pt-1 border-t border-slate-100 text-slate-600">
@@ -646,7 +645,7 @@ export default function LandingHomePage() {
                       </span>
                       <h5 className="font-bold text-sm text-slate-900 mt-1">3x Reels Mini-Campaign Pack</h5>
                     </div>
-                    <span className="font-extrabold text-base text-[#803D63] tabular-nums">₹5,400</span>
+                    <span className="font-extrabold text-base text-[#b85c6b] tabular-nums">₹5,400</span>
                   </div>
                   <p className="text-[11px] text-slate-500 font-semibold">Turnaround: 5 Days • Save 10%</p>
                 </div>
@@ -684,7 +683,7 @@ export default function LandingHomePage() {
       <section className="py-16 sm:py-24 bg-[#F9FAFB] border-b border-[#E5E7EB]">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 text-center space-y-8">
           <div className="space-y-2 max-w-xl mx-auto">
-            <span className="inline-block rounded-full bg-purple-50 text-[#803D63] border border-purple-200 px-3 py-0.5 text-xs font-bold uppercase tracking-wider">
+            <span className="inline-block rounded-full bg-purple-50 text-[#b85c6b] border border-purple-200 px-3 py-0.5 text-xs font-bold uppercase tracking-wider">
               Pricing Plans
             </span>
             <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#111827]">
@@ -717,9 +716,9 @@ export default function LandingHomePage() {
                   e.preventDefault();
                   handleClaim(bottomUsername);
                 }}
-                className="flex items-center rounded-xl border border-[#E5E7EB] bg-white p-1.5 focus-within:border-[#803D63] focus-within:ring-2 focus-within:ring-[#803D63]/20 transition-all shadow-xs"
+                className="flex items-center rounded-xl border border-[#E5E7EB] bg-white p-1.5 focus-within:border-[#b85c6b] focus-within:ring-2 focus-within:ring-[#b85c6b]/20 transition-all shadow-xs"
               >
-                <span className="pl-3.5 text-xs sm:text-sm font-bold text-[#803D63] select-none shrink-0">
+                <span className="pl-3.5 text-xs sm:text-sm font-bold text-[#b85c6b] select-none shrink-0">
                   inflixo.com/
                 </span>
                 <input
@@ -731,7 +730,7 @@ export default function LandingHomePage() {
                 />
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-1 shrink-0 rounded-lg bg-[#803D63] px-4 py-2 text-xs sm:text-sm font-bold text-white hover:bg-[#6D3254] transition-colors cursor-pointer shadow-2xs"
+                  className="inline-flex items-center gap-1 shrink-0 rounded-lg bg-[#b85c6b] px-4 py-2 text-xs sm:text-sm font-bold text-white hover:bg-[#6D3254] transition-colors cursor-pointer shadow-2xs"
                 >
                   <span>Claim Handle</span>
                 </button>
