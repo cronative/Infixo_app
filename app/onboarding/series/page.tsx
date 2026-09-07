@@ -114,7 +114,7 @@ export default function SeriesStepPage() {
       preview={preview}
     >
       <div className="flex items-center justify-between gap-2 mb-2.5">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/20 bg-[#803D63]/10 px-3 py-1 text-xs font-bold text-[#803D63]">
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/20 bg-[#803D63]/[0.09] px-3 py-1 text-xs font-bold text-[#803D63]">
           <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
           <span>Step 4 of 6 • Series &amp; Episodes</span>
         </div>
@@ -123,7 +123,7 @@ export default function SeriesStepPage() {
         <button
           type="button"
           onClick={() => setIsMobilePreviewOpen(true)}
-          className="lg:hidden tap-scale inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/30 bg-[#803D63]/10 hover:bg-[#803D63]/15 px-3 py-1 text-xs font-bold text-[#803D63] transition-all cursor-pointer shadow-2xs"
+          className="lg:hidden tap-scale inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/30 bg-[#803D63]/[0.09] hover:bg-[#803D63]/15 px-3 py-1 text-xs font-bold text-[#803D63] transition-all cursor-pointer shadow-xs"
           title="Preview public profile"
         >
           <Eye className="h-3.5 w-3.5 text-[#803D63]" />
@@ -131,19 +131,19 @@ export default function SeriesStepPage() {
         </button>
       </div>
 
-      <h1 className="text-3xl font-extrabold leading-[1.15] tracking-tight text-inflixo-navy sm:text-4xl">
-        Your content, <span className="text-gradient-premium">your show</span>
+      <h1 className="text-2xl font-bold leading-tight tracking-tight text-[#181716] sm:text-3xl">
+        Your content, your show
       </h1>
-      <p className="mt-2 text-[15px] text-muted leading-relaxed">
+      <p className="mt-1.5 text-xs sm:text-sm text-[#54514D] leading-relaxed">
         Organize your social videos into seasons and episodes, OTT-style on your public profile.
       </p>
 
       {/* CREATE SERIES FORM UI (DEFAULT OPEN) */}
       <div className="mt-6 space-y-6 text-left">
         {/* Card 1: Series Information */}
-        <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-xs space-y-5">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <p className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 shadow-xs space-y-5">
+          <div className="flex items-center justify-between border-b border-[#E7E3DC] pb-3">
+            <p className="text-sm font-bold text-[#181716] flex items-center gap-2">
               <Film className="h-4 w-4 text-[#803D63]" />
               Series Information
             </p>
@@ -171,7 +171,7 @@ export default function SeriesStepPage() {
 
               {/* Platform Selector Pills */}
               <div>
-                <label className="mb-1.5 block text-xs font-bold text-slate-900">
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#54514D]">
                   Social Platform for Series
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -182,16 +182,16 @@ export default function SeriesStepPage() {
                         key={p}
                         type="button"
                         onClick={() => setSeriesPlatform(p)}
-                        className={`tap-scale flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition-all cursor-pointer ${
+                        className={`tap-scale flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-all cursor-pointer ${
                           isSelected
-                            ? "border-[#803D63] bg-[#803D63] text-white shadow-xs"
-                            : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                            ? "border-[#803D63] bg-[#803D63]/[0.09] text-[#803D63] font-bold"
+                            : "border-[#E7E3DC] bg-white text-[#54514D] hover:bg-[#F8F7F3]"
                         }`}
                       >
-                        {p === "YouTube" && <YoutubeIcon className={`h-3.5 w-3.5 ${isSelected ? "text-white" : "text-red-500"}`} />}
-                        {p === "Instagram" && <InstagramIcon className={`h-3.5 w-3.5 ${isSelected ? "text-white" : "text-pink-500"}`} />}
-                        {p === "Facebook" && <FacebookIcon className={`h-3.5 w-3.5 ${isSelected ? "text-white" : "text-blue-600"}`} />}
-                        {p === "Other" && <Globe className={`h-3.5 w-3.5 ${isSelected ? "text-white" : "text-[#803D63]"}`} />}
+                        {p === "YouTube" && <YoutubeIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#803D63]" : "text-red-500"}`} />}
+                        {p === "Instagram" && <InstagramIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#803D63]" : "text-pink-500"}`} />}
+                        {p === "Facebook" && <FacebookIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#803D63]" : "text-blue-600"}`} />}
+                        {p === "Other" && <Globe className={`h-3.5 w-3.5 ${isSelected ? "text-[#803D63]" : "text-[#797570]"}`} />}
                         <span>{p}</span>
                       </button>
                     );
@@ -228,30 +228,30 @@ export default function SeriesStepPage() {
 
           <Textarea
             label="Short description"
-            rows={2}
+            placeholder="Tell your viewers what this series is about..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="What is this series or show about?"
+            rows={2}
           />
         </div>
 
-        {/* Bottom Early Access Note */}
-        <div className="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4 text-left flex items-start gap-3 text-xs font-semibold text-indigo-950 shadow-2xs">
+        {/* Informational Box */}
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 text-xs text-[#54514D] flex items-start gap-2.5">
           <Sparkles className="h-4 w-4 text-[#803D63] shrink-0 mt-0.5" />
           <p className="leading-relaxed">
-            Episodes can be added anytime from your <strong>Creator Dashboard</strong>. Early Access supports up to 3 series and 15 total episodes.
+            Episodes can be added anytime from your <strong className="text-[#181716]">Creator Dashboard</strong>. Early Access supports up to 3 series and 15 total episodes.
           </p>
         </div>
       </div>
 
       {/* Step 4 Form Bottom Navigation (Natural flow, Back + Skip + Next) */}
-      <div className="pt-4 border-t border-[#E5E7EB] mt-8 flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
+      <div className="pt-4 border-t border-[#E7E3DC] mt-8 flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-2.5 w-full sm:w-auto">
           <Button
             type="button"
             variant="outline"
             size="lg"
-            className="w-full sm:w-auto h-12 rounded-xl border-[#E5E7EB] text-slate-700 hover:bg-slate-50 font-bold text-sm px-6"
+            className="w-full sm:w-auto h-11 rounded-xl border-[#E7E3DC] text-[#181716] hover:bg-[#F8F7F3] font-semibold text-sm px-6"
             onClick={() => router.push("/onboarding/themes")}
           >
             Back
@@ -259,7 +259,7 @@ export default function SeriesStepPage() {
           <button
             type="button"
             onClick={handleSkip}
-            className="w-full sm:w-auto h-12 px-4 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+            className="w-full sm:w-auto h-11 px-4 rounded-xl text-xs font-semibold text-[#797570] hover:text-[#181716] hover:bg-[#F8F7F3] transition-colors flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
           >
             <SkipForward className="h-3.5 w-3.5" />
             <span>Skip for Now</span>
@@ -271,7 +271,7 @@ export default function SeriesStepPage() {
           size="lg"
           loading={submitting}
           onClick={handleSaveAndContinue}
-          className="w-full sm:flex-1 sm:max-w-xs h-12 bg-[#803D63] hover:bg-[#6D3254] text-white font-bold text-sm rounded-xl cursor-pointer shadow-none"
+          className="w-full sm:flex-1 sm:max-w-xs h-11 bg-[#803D63] hover:bg-[#6F3456] text-white font-bold text-sm rounded-xl cursor-pointer shadow-xs"
         >
           Save &amp; Next →
         </Button>

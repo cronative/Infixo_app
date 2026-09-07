@@ -165,7 +165,7 @@ export default function SocialsStepPage() {
       }
     >
       <div className="flex items-center justify-between gap-2 mb-2.5">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/20 bg-[#803D63]/10 px-3 py-1 text-xs font-bold text-[#803D63]">
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/20 bg-[#803D63]/[0.09] px-3 py-1 text-xs font-bold text-[#803D63]">
           <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
           <span>Step 2 of 6 • Social Handles</span>
         </div>
@@ -174,7 +174,7 @@ export default function SocialsStepPage() {
         <button
           type="button"
           onClick={() => setIsMobilePreviewOpen(true)}
-          className="lg:hidden tap-scale inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/30 bg-[#803D63]/10 hover:bg-[#803D63]/15 px-3 py-1 text-xs font-bold text-[#803D63] transition-all cursor-pointer shadow-2xs"
+          className="lg:hidden tap-scale inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/30 bg-[#803D63]/[0.09] hover:bg-[#803D63]/15 px-3 py-1 text-xs font-bold text-[#803D63] transition-all cursor-pointer shadow-xs"
           title="Preview public profile"
         >
           <Eye className="h-3.5 w-3.5 text-[#803D63]" />
@@ -182,10 +182,10 @@ export default function SocialsStepPage() {
         </button>
       </div>
 
-      <h1 className="text-3xl font-extrabold leading-[1.15] tracking-tight text-inflixo-navy sm:text-4xl">
-        Add your <span className="text-gradient-premium">social handles</span>
+      <h1 className="text-2xl font-bold leading-tight tracking-tight text-[#181716] sm:text-3xl">
+        Add your social handles
       </h1>
-      <p className="mt-2 text-[15px] text-muted leading-relaxed">
+      <p className="mt-1.5 text-xs sm:text-sm text-[#54514D] leading-relaxed">
         Enter your handle for each platform, preview your profile details, and link them to your public page.
       </p>
 
@@ -293,13 +293,13 @@ export default function SocialsStepPage() {
         </PlatformCard>
 
         {/* Additional Platform Informational Note */}
-        <div className="rounded-2xl border border-[#803D63]/15 bg-[#803D63]/5 p-4 text-left flex items-start gap-3 shadow-2xs">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#803D63]/10 text-[#803D63]">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 text-left flex items-start gap-3 shadow-xs">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#803D63]/[0.09] text-[#803D63]">
             <Link2 className="h-4 w-4" />
           </div>
           <div className="space-y-0.5">
-            <h4 className="text-xs font-bold text-slate-900">Want to add more platforms?</h4>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <h4 className="text-xs font-bold text-[#181716]">Want to add more platforms?</h4>
+            <p className="text-xs text-[#54514D] leading-relaxed">
               You can add more social profiles and custom links anytime after creating your profile from{" "}
               <strong className="text-[#803D63] font-semibold">Dashboard → Links &amp; Socials</strong>.
             </p>
@@ -307,12 +307,12 @@ export default function SocialsStepPage() {
         </div>
 
         {/* Step 2 Form Bottom Navigation (Natural flow, Back + Next) */}
-        <div className="pt-4 border-t border-[#E5E7EB] mt-8 flex flex-col-reverse sm:flex-row items-center gap-3">
+        <div className="pt-4 border-t border-[#E7E3DC] mt-8 flex flex-col-reverse sm:flex-row items-center gap-3">
           <Button
             type="button"
             variant="outline"
             size="lg"
-            className="w-full sm:w-auto h-12 rounded-xl border-[#E5E7EB] text-slate-700 hover:bg-slate-50 font-bold text-sm px-6"
+            className="w-full sm:w-auto h-11 rounded-xl border-[#E7E3DC] text-[#181716] hover:bg-[#F8F7F3] font-semibold text-sm px-6"
             onClick={() => router.push("/onboarding/profile")}
           >
             Back
@@ -323,7 +323,7 @@ export default function SocialsStepPage() {
             size="lg"
             loading={submitting}
             onClick={handleNext}
-            className="w-full sm:flex-1 h-12 bg-[#803D63] hover:bg-[#6D3254] text-white font-bold text-sm rounded-xl cursor-pointer shadow-none"
+            className="w-full sm:flex-1 h-11 bg-[#803D63] hover:bg-[#6F3456] text-white font-bold text-sm rounded-xl cursor-pointer shadow-xs"
           >
             Save &amp; Next →
           </Button>

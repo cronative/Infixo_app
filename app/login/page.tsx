@@ -39,35 +39,34 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-dvh flex-col items-center justify-center bg-gradient-to-b from-[#F6EBF1]/60 via-slate-50 to-white px-4 py-8 text-center text-slate-900 overflow-hidden">
-      {/* Ambient Maroon Background Glow Orbs */}
-      <div className="pointer-events-none absolute -top-24 -left-20 h-96 w-96 rounded-full bg-[#803D63]/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-24 -right-20 h-96 w-96 rounded-full bg-rose-200/40 blur-3xl" />
+    <div className="relative flex min-h-dvh flex-col items-center justify-center bg-[#FAF9F6] px-4 py-8 text-center text-[#181716] overflow-hidden">
+      {/* Subtle Ambient Background Light */}
+      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-80 bg-gradient-radial from-[#F5F3ED] to-transparent blur-3xl" />
 
-      <div className="relative z-10 w-full max-w-[460px] space-y-6">
+      <div className="relative z-10 w-full max-w-[440px] space-y-6">
         {/* 1. Header Branding */}
         <div className="flex flex-col items-center text-center space-y-2">
           <div className="flex items-center justify-center gap-2">
             <Logo size="md" />
-            <span className="rounded-full bg-[#F6EBF1] px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest text-[#803D63] border border-[#E8DCE4]">
+            <span className="rounded-full bg-[#803D63]/[0.09] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#803D63] border border-[#803D63]/20">
               CREATOR
             </span>
           </div>
 
           <div className="space-y-1 pt-1">
-            <h1 className="font-display text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#181716] tracking-tight">
               Create your Inflixo
             </h1>
-            <p className="text-xs sm:text-sm font-medium text-slate-500 max-w-xs mx-auto leading-relaxed">
+            <p className="text-xs sm:text-sm font-medium text-[#54514D] max-w-xs mx-auto leading-relaxed">
               One link for your content, fanbase &amp; original series.
             </p>
           </div>
         </div>
 
         {/* 2. Main Centered Login Card */}
-        <div className="rounded-[32px] border border-[#E8DCE4] bg-white/95 p-7 sm:p-9 shadow-2xl shadow-[#803D63]/5 backdrop-blur-xl space-y-5 text-left">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-7 sm:p-8 shadow-xs space-y-5 text-left">
           {/* Trust Pill */}
-          <div className="flex items-center gap-1.5 rounded-full bg-[#F6EBF1] border border-[#E8DCE4] px-3 py-1 text-[11px] font-bold text-[#803D63]">
+          <div className="flex items-center gap-1.5 rounded-full bg-[#803D63]/[0.09] border border-[#803D63]/20 px-3 py-1 text-[11px] font-semibold text-[#803D63]">
             <Sparkles className="h-3 w-3 text-[#803D63] shrink-0" />
             <span>Password-free login • Fast 60s setup</span>
           </div>
@@ -79,7 +78,7 @@ export default function LoginPage() {
               name="email"
               label="Creator Email Address"
               placeholder="name@example.com"
-              leftIcon={<Mail className="h-4 w-4 text-slate-400" />}
+              leftIcon={<Mail className="h-4 w-4 text-[#797570]" />}
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
@@ -94,7 +93,7 @@ export default function LoginPage() {
               fullWidth
               size="lg"
               loading={loading}
-              className="bg-[#803D63] text-white font-bold hover:bg-[#6D3254] transition-all h-12 text-xs sm:text-sm rounded-2xl cursor-pointer shadow-md shadow-[#803D63]/20 hover:scale-[1.01]"
+              className="bg-[#803D63] text-white font-bold hover:bg-[#6F3456] transition-all h-11 text-xs sm:text-sm rounded-xl cursor-pointer shadow-xs"
             >
               <span>Send Verification Code</span>
               <ArrowRight className="h-4 w-4 ml-1.5" />
@@ -102,7 +101,7 @@ export default function LoginPage() {
           </form>
 
           {/* Feature Highlights List */}
-          <div className="pt-4 border-t border-[#E8DCE4]/60 space-y-2 text-xs font-medium text-slate-600">
+          <div className="pt-4 border-t border-[#E7E3DC] space-y-2 text-xs font-medium text-[#54514D]">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
               <span>Unified Live Total Fanbase Reach</span>
@@ -119,13 +118,13 @@ export default function LoginPage() {
         </div>
 
         {/* 3. Footer Links */}
-        <p className="text-[11px] font-medium text-slate-400 text-center leading-relaxed px-4">
+        <p className="text-[11px] font-medium text-[#797570] text-center leading-relaxed px-4">
           By continuing, you agree to Inflixo&apos;s{" "}
-          <Link href="/terms" className="underline hover:text-slate-600 font-semibold">
+          <Link href="/terms" className="underline hover:text-[#181716] font-semibold">
             Terms of Service
           </Link>{" "}
           and{" "}
-          <Link href="/privacy" className="underline hover:text-slate-600 font-semibold">
+          <Link href="/privacy" className="underline hover:text-[#181716] font-semibold">
             Privacy Policy
           </Link>
           .

@@ -1,38 +1,61 @@
 @import "tailwindcss";
 
 :root {
-  /* Final Inflixo Brand Palette */
-  --background: #FCF9FB;             /* Main Background Canvas */
-  --surface: #ffffff;                /* Surface Cards & Modals */
-  --surface-muted: #F6EBF1;          /* Light Brand Background */
-  --foreground: #241A20;             /* Dark Primary Text */
-  --muted: #6F6269;                  /* Secondary Text */
+  /* Warm Neutral Global Palette */
+  --app-bg: #FAF9F6;
+  --section-light: #FFFEFC;
+  --section-warm: #F5F3ED;
+  --surface: #FFFFFF;
+  --surface-soft: #F8F7F3;
 
-  /* Primary Brand Accent Tokens */
-  --inflixo-purple: #803D63; 
+  --text-primary: #181716;
+  --text-secondary: #54514D;
+  --text-muted: #797570;
 
-  --inflixo-purple-dark: #6D3254;     /* CTA Hover State */
-  --inflixo-purple-secondary: #803D63;/* Primary Brand Accent */
-  --inflixo-purple-light: #F6EBF1;    /* Light Brand Background */
-  --inflixo-lavender: #FCF9FB;        /* Main Background Canvas */
-  --inflixo-blue: #803D63;            /* Primary Brand Accent */
-  --inflixo-lime: #0D9488;            /* Success / Connected Badge Teal */
-  --inflixo-navy: #241A20;            /* Dark Primary Text */
-  --inflixo-border: #E8DCE4;          /* Clean Minimal 1px Border */
-  --inflixo-gold: #f59e0b;
-  --inflixo-gold-light: #fef3c7;
+  --border: #E7E3DC;
+  --divider: #ECE8E1;
+
+  --brand-primary: #803D63;
+  --brand-hover: #6F3456;
+  --brand-soft: rgba(128, 61, 99, 0.09);
+  --brand-border: rgba(128, 61, 99, 0.20);
+
+  --success: #17845B;
+  --success-soft: #EAF7F0;
+  --warning: #B7791F;
+  --danger: #C2414B;
+
+  /* Aliases for Framework & Backwards Compatibility */
+  --page-bg: var(--app-bg);
+  --background: var(--app-bg);
+  --surface-subtle: var(--surface-soft);
+  --surface-muted: var(--brand-soft);
+  --foreground: var(--text-primary);
+
+  --primary: var(--brand-primary);
+  --primary-soft: var(--brand-soft);
+  --inflixo-purple: var(--brand-primary);
+  --inflixo-purple-dark: var(--brand-hover);
+  --inflixo-purple-secondary: var(--brand-primary);
+  --inflixo-purple-light: var(--brand-soft);
+  --inflixo-lavender: var(--app-bg);
+  --inflixo-blue: var(--brand-primary);
+  --inflixo-lime: var(--success);
+  --inflixo-navy: var(--text-primary);
+  --inflixo-border: var(--border);
+  --muted: var(--text-secondary);
 
   --radius-card: 16px;
   --radius-input: 12px;
 
-  /* Flat Tokens: Zero Drop Shadows */
-  --shadow-soft: none;
-  --shadow-elevated: none;
-  --shadow-premium: none;
-  --shadow-hover: none;
+  /* Subtle Warm Elevation */
+  --shadow-soft: 0 1px 3px 0 rgba(38, 30, 25, 0.04);
+  --shadow-elevated: 0 4px 12px -2px rgba(38, 30, 25, 0.05), 0 2px 6px -2px rgba(38, 30, 25, 0.03);
+  --shadow-premium: 0 8px 28px rgba(38, 30, 25, 0.045);
+  --shadow-hover: 0 12px 28px -6px rgba(128, 61, 99, 0.10), 0 6px 12px -4px rgba(38, 30, 25, 0.03);
 
-  --gradient-premium: #803D63;
-  --gradient-gold: #f59e0b;
+  --gradient-premium: #181716;
+  --gradient-gold: #B7791F;
   --gradient-energy: #803D63;
 }
 
@@ -40,6 +63,15 @@
   --background-image-gradient-premium: var(--gradient-premium);
   --background-image-gradient-gold: var(--gradient-gold);
   --background-image-gradient-energy: var(--gradient-energy);
+
+  --color-app-bg: var(--app-bg);
+  --color-section-light: var(--section-light);
+  --color-section-warm: var(--section-warm);
+  --color-surface-soft: var(--surface-soft);
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-border: var(--brand-border);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -55,8 +87,8 @@
   --color-inflixo-lime: var(--inflixo-lime);
   --color-inflixo-navy: var(--inflixo-navy);
   --color-inflixo-border: var(--inflixo-border);
-  --color-inflixo-gold: var(--inflixo-gold);
-  --color-inflixo-gold-light: var(--inflixo-gold-light);
+  --color-inflixo-gold: var(--warning);
+  --color-inflixo-gold-light: #FEF3C7;
 
   --font-sans: var(--font-plus-jakarta), "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
   --font-display: var(--font-plus-jakarta), "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;

@@ -16,7 +16,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className="w-full">
         {label && (
-          <label htmlFor={inputId} className="mb-1.5 block text-sm font-semibold text-inflixo-navy">
+          <label htmlFor={inputId} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#54514D]">
             {label}
           </label>
         )}
@@ -25,8 +25,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={inputId}
           value={value}
           maxLength={maxLength}
-          className={`w-full resize-none rounded-xl border bg-white px-3.5 py-2.5 text-xs sm:text-sm font-bold text-[#0F172A] outline-none transition-colors placeholder:text-slate-400 placeholder:font-normal focus:border-[#803D63] focus:ring-1 focus:ring-[#803D63] ${
-            error ? "border-red-400 bg-red-50/10" : "border-[#E5E7EB]"
+          className={`w-full resize-none rounded-xl border bg-white px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-[#181716] outline-none transition-colors placeholder:text-[#797570]/70 placeholder:font-normal focus:border-[#803D63] focus:ring-2 focus:ring-[#803D63]/15 ${
+            error ? "border-red-400 bg-red-50/10" : "border-[#E7E3DC]"
           } ${className}`}
           {...rest}
         />
@@ -34,12 +34,12 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           {error ? (
             <p className="text-xs font-medium text-rose-500">{error}</p>
           ) : hint ? (
-            <p className="text-xs text-muted">{hint}</p>
+            <p className="text-xs text-[#797570]">{hint}</p>
           ) : (
             <span />
           )}
           {maxLength && (
-            <span className="text-xs text-muted">
+            <span className="text-xs text-[#797570]">
               {currentLength}/{maxLength}
             </span>
           )}

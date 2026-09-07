@@ -169,17 +169,17 @@ export default function DashboardThemesPage() {
          ========================================================================= */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
         <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#17131A] tracking-tight">
+          <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#181716] tracking-tight">
             Appearance
           </h1>
-          <p className="text-xs sm:text-sm text-[#6F6872] font-medium mt-1">
+          <p className="text-xs sm:text-sm text-[#797570] font-medium mt-1">
             Choose how your public creator profile looks.
           </p>
         </div>
 
         {/* Retained active-theme badge on the right */}
         <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-          <span className="inline-flex items-center gap-1.5 rounded-xl bg-[#F7EDF3] border border-[#ECE8EB] px-3.5 py-1.5 text-xs font-semibold text-[#803D63] shadow-2xs">
+          <span className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63]/[0.09] border border-[#803D63]/20 px-3.5 py-1.5 text-xs font-semibold text-[#803D63] shadow-xs">
             <span className="h-2 w-2 rounded-full bg-[#803D63]" />
             Active theme: {activeThemeMeta.name}
           </span>
@@ -189,22 +189,22 @@ export default function DashboardThemesPage() {
       {/* =========================================================================
          2. SEARCH AND THEME FILTERS TOOLBAR
          ========================================================================= */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 rounded-2xl border border-[#ECE8EB] bg-white p-2 sm:p-2.5 shadow-2xs">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 rounded-2xl border border-[#E7E3DC] bg-white p-2 sm:p-2.5 shadow-xs">
         {/* Search Input */}
         <div className="relative flex-1 min-w-[220px]">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6F6872] pointer-events-none" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#797570] pointer-events-none" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search themes by name or style..."
-            className="w-full pl-9 pr-8 py-2 bg-[#FAF8FA] border border-[#ECE8EB] rounded-xl text-xs font-medium text-[#17131A] placeholder:text-[#6F6872]/60 focus:outline-none focus:border-[#803D63] focus:bg-white focus:ring-1 focus:ring-[#803D63]/20 transition-all"
+            className="w-full pl-9 pr-8 py-2 bg-[#F8F7F3] border border-[#E7E3DC] rounded-xl text-xs font-medium text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#803D63] focus:bg-white focus:ring-1 focus:ring-[#803D63]/20 transition-all"
           />
           {searchQuery && (
             <button
               type="button"
               onClick={() => setSearchQuery("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#6F6872] hover:text-[#17131A] p-0.5 rounded-full cursor-pointer"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#797570] hover:text-[#181716] p-0.5 rounded-full cursor-pointer"
               title="Clear search"
             >
               <X className="h-3.5 w-3.5" />
@@ -219,8 +219,8 @@ export default function DashboardThemesPage() {
             onClick={() => setActiveGroup("all")}
             className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${
               activeGroup === "all"
-                ? "bg-[#803D63] text-white shadow-2xs"
-                : "bg-[#FAF8FA] border border-[#ECE8EB] text-[#6F6872] hover:text-[#17131A] hover:bg-white"
+                ? "bg-[#803D63] text-white shadow-xs"
+                : "bg-[#F8F7F3] border border-[#E7E3DC] text-[#797570] hover:text-[#181716] hover:bg-white"
             }`}
           >
             All ({groupCounts.all})
@@ -231,8 +231,8 @@ export default function DashboardThemesPage() {
             onClick={() => setActiveGroup("animated")}
             className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
               activeGroup === "animated"
-                ? "bg-[#803D63] text-white shadow-2xs"
-                : "bg-[#FAF8FA] border border-[#ECE8EB] text-[#803D63] hover:text-[#17131A] hover:bg-white"
+                ? "bg-[#803D63] text-white shadow-xs"
+                : "bg-[#F8F7F3] border border-[#E7E3DC] text-[#803D63] hover:text-[#181716] hover:bg-white"
             }`}
           >
             <Sparkles className="h-3.5 w-3.5" />
@@ -244,8 +244,8 @@ export default function DashboardThemesPage() {
             onClick={() => setActiveGroup("light")}
             className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${
               activeGroup === "light"
-                ? "bg-[#803D63] text-white shadow-2xs"
-                : "bg-[#FAF8FA] border border-[#ECE8EB] text-[#6F6872] hover:text-[#17131A] hover:bg-white"
+                ? "bg-[#803D63] text-white shadow-xs"
+                : "bg-[#F8F7F3] border border-[#E7E3DC] text-[#797570] hover:text-[#181716] hover:bg-white"
             }`}
           >
             Light ({groupCounts.light})
@@ -256,8 +256,8 @@ export default function DashboardThemesPage() {
             onClick={() => setActiveGroup("dark")}
             className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${
               activeGroup === "dark"
-                ? "bg-[#803D63] text-white shadow-2xs"
-                : "bg-[#FAF8FA] border border-[#ECE8EB] text-[#6F6872] hover:text-[#17131A] hover:bg-white"
+                ? "bg-[#803D63] text-white shadow-xs"
+                : "bg-[#F8F7F3] border border-[#E7E3DC] text-[#797570] hover:text-[#181716] hover:bg-white"
             }`}
           >
             Dark ({groupCounts.dark})
@@ -270,11 +270,11 @@ export default function DashboardThemesPage() {
          ========================================================================= */}
       <div className="space-y-2">
         <div className="flex items-center justify-between px-0.5">
-          <h2 className="font-display text-xs font-bold uppercase tracking-wider text-[#6F6872] flex items-center gap-1.5">
+          <h2 className="font-display text-xs font-bold uppercase tracking-wider text-[#797570] flex items-center gap-1.5">
             <Palette className="h-3.5 w-3.5 text-[#803D63]" />
             <span>Select theme to preview</span>
           </h2>
-          <span className="text-[11px] text-[#6F6872] font-semibold">
+          <span className="text-[11px] text-[#797570] font-semibold">
             {filteredThemes.length} {filteredThemes.length === 1 ? "theme" : "themes"}
           </span>
         </div>
@@ -286,7 +286,7 @@ export default function DashboardThemesPage() {
             <button
               type="button"
               onClick={() => scrollCarousel("left")}
-              className="absolute left-2 top-1/2 -translate-y-1/2 z-20 hidden md:flex h-8 w-8 items-center justify-center rounded-full bg-white/95 border border-[#ECE8EB] text-[#17131A] shadow-md hover:bg-white hover:scale-105 transition-all cursor-pointer"
+              className="absolute left-2 top-1/2 -translate-y-1/2 z-20 hidden md:flex h-8 w-8 items-center justify-center rounded-full bg-white/95 border border-[#E7E3DC] text-[#181716] shadow-md hover:bg-white hover:scale-105 transition-all cursor-pointer"
               title="Scroll left"
             >
               <ChevronLeft className="h-4 w-4" />
@@ -298,7 +298,7 @@ export default function DashboardThemesPage() {
             <button
               type="button"
               onClick={() => scrollCarousel("right")}
-              className="absolute right-2 top-1/2 -translate-y-1/2 z-20 hidden md:flex h-8 w-8 items-center justify-center rounded-full bg-white/95 border border-[#ECE8EB] text-[#17131A] shadow-md hover:bg-white hover:scale-105 transition-all cursor-pointer"
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-20 hidden md:flex h-8 w-8 items-center justify-center rounded-full bg-white/95 border border-[#E7E3DC] text-[#181716] shadow-md hover:bg-white hover:scale-105 transition-all cursor-pointer"
               title="Scroll right"
             >
               <ChevronRight className="h-4 w-4" />
@@ -307,24 +307,24 @@ export default function DashboardThemesPage() {
 
           {/* Soft Left Edge Fade */}
           <div
-            className={`absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#FAF8FA] to-transparent pointer-events-none z-10 transition-opacity duration-200 ${
+            className={`absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#F8F7F3] to-transparent pointer-events-none z-10 transition-opacity duration-200 ${
               canScrollLeft ? "opacity-100" : "opacity-0"
             }`}
           />
 
           {/* Soft Right Edge Fade */}
           <div
-            className={`absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#FAF8FA] to-transparent pointer-events-none z-10 transition-opacity duration-200 ${
+            className={`absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#F8F7F3] to-transparent pointer-events-none z-10 transition-opacity duration-200 ${
               canScrollRight ? "opacity-100" : "opacity-0"
             }`}
           />
 
           {/* Scrollable Track */}
           {filteredThemes.length === 0 ? (
-            <div className="rounded-2xl border border-[#ECE8EB] bg-white p-8 text-center space-y-2 shadow-2xs">
-              <Palette className="h-8 w-8 text-[#6F6872] mx-auto opacity-50" />
-              <h3 className="font-display text-sm font-bold text-[#17131A]">No themes found</h3>
-              <p className="text-xs text-[#6F6872] max-w-xs mx-auto">
+            <div className="rounded-2xl border border-[#E7E3DC] bg-white p-8 text-center space-y-2 shadow-xs">
+              <Palette className="h-8 w-8 text-[#797570] mx-auto opacity-50" />
+              <h3 className="font-display text-sm font-bold text-[#181716]">No themes found</h3>
+              <p className="text-xs text-[#797570] max-w-xs mx-auto">
                 Try searching for a different name or select another style category.
               </p>
               <div className="pt-1">
@@ -372,24 +372,24 @@ export default function DashboardThemesPage() {
          4. THEME INTERACTION & LIVE PROFILE PREVIEW ACTION BAR
          ========================================================================= */}
       <div className="space-y-3 pt-2">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-[#ECE8EB] bg-white p-3 sm:p-4 shadow-2xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-[#E7E3DC] bg-white p-3 sm:p-4 shadow-xs">
           {/* Left: Section Title & Current Preview Status */}
           <div className="flex items-center gap-2.5 flex-wrap">
             <div className="flex items-center gap-2">
               <Eye className="h-4 w-4 text-[#803D63]" />
-              <h2 className="font-display text-sm sm:text-base font-bold text-[#17131A]">
+              <h2 className="font-display text-sm sm:text-base font-bold text-[#181716]">
                 Live Profile Preview
               </h2>
             </div>
 
             {isPreviewDifferent ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#803D63]/10 border border-[#803D63]/30 px-2.5 py-0.5 text-xs font-bold text-[#803D63] animate-pulse">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#803D63]/[0.09] border border-[#803D63]/20 px-2.5 py-0.5 text-xs font-bold text-[#803D63] animate-pulse">
                 <Sparkles className="h-3 w-3 text-[#803D63]" />
                 Previewing: {previewThemeMeta.name}
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#16794A] bg-[#ECFDF3] px-2.5 py-0.5 rounded-full">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#16794A]" />
+              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#17845B] bg-[#EAF7F0] px-2.5 py-0.5 rounded-full border border-[#17845B]/20">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#17845B]" />
                 Showing active theme
               </span>
             )}
@@ -403,7 +403,7 @@ export default function DashboardThemesPage() {
                   type="button"
                   onClick={handleCancelPreview}
                   disabled={isApplying}
-                  className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] text-[#6F6872] hover:text-[#17131A] px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer shadow-2xs disabled:opacity-50"
+                  className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] text-[#797570] hover:text-[#181716] px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer shadow-xs disabled:opacity-50"
                   title="Cancel preview and revert to active theme"
                 >
                   <Undo2 className="h-3.5 w-3.5" />
@@ -414,7 +414,7 @@ export default function DashboardThemesPage() {
                   type="button"
                   onClick={handleApplyTheme}
                   disabled={isApplying}
-                  className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6D3254] text-white px-4 py-2 text-xs font-bold transition-all cursor-pointer shadow-2xs disabled:opacity-50"
+                  className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] text-white px-4 py-2 text-xs font-bold transition-all cursor-pointer shadow-xs disabled:opacity-50"
                   title="Save and apply this theme permanently"
                 >
                   {isApplying ? (
@@ -436,7 +436,7 @@ export default function DashboardThemesPage() {
               href={canonicalUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] hover:bg-white text-[#17131A] px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer shadow-2xs hover:border-[#803D63]/30"
+              className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] hover:bg-white text-[#181716] px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer shadow-xs hover:border-[#803D63]/30"
               title="Open public profile in new tab"
             >
               <span>Open Public Profile</span>
@@ -448,7 +448,7 @@ export default function DashboardThemesPage() {
         {/* =========================================================================
            5. FULL-WIDTH LIVE PROFILE PREVIEW CONTAINER
            ========================================================================= */}
-        <div className="rounded-2xl sm:rounded-3xl border border-[#ECE8EB] bg-[#FAF8FA] p-3 sm:p-6 md:p-8 shadow-2xs transition-all">
+        <div className="rounded-2xl sm:rounded-3xl border border-[#E7E3DC] bg-[#F8F7F3] p-3 sm:p-6 md:p-8 shadow-xs transition-all">
           <div
             style={{ backgroundColor: previewThemeMeta.colors.pageBackground }}
             className={`relative w-full rounded-2xl border border-black/5 overflow-hidden transition-colors duration-300 p-3 sm:p-6 md:p-8 ${pageBgStyle}`}
@@ -505,10 +505,10 @@ function ThemeCarouselCard({
     <button
       type="button"
       onClick={onSelect}
-      className={`group relative flex flex-col justify-between w-[260px] sm:w-[280px] shrink-0 rounded-2xl border p-3 text-left transition-all cursor-pointer shadow-2xs snap-start ${
+      className={`group relative flex flex-col justify-between w-[260px] sm:w-[280px] shrink-0 rounded-2xl border p-3 text-left transition-all cursor-pointer shadow-xs snap-start ${
         isPreviewing
-          ? "border-[#803D63] ring-2 ring-[#803D63]/25 bg-[#F7EDF3]/30"
-          : "border-[#ECE8EB] bg-white hover:border-[#803D63]/40 hover:shadow-xs"
+          ? "border-[#803D63] ring-2 ring-[#803D63]/25 bg-[#803D63]/5"
+          : "border-[#E7E3DC] bg-white hover:border-[#803D63]/40 hover:shadow-sm"
       }`}
     >
       {/* Mini Visual Palette / Swatch Banner */}
@@ -524,19 +524,19 @@ function ThemeCarouselCard({
         {/* Top Row: Swatches & Animated / Active Badge */}
         <div className="flex items-center justify-between w-full z-10">
           {/* Swatches Pill */}
-          <div className="flex items-center gap-1.5 rounded-full bg-black/25 backdrop-blur-md px-2.5 py-1 border border-white/20 shadow-2xs">
+          <div className="flex items-center gap-1.5 rounded-full bg-black/25 backdrop-blur-md px-2.5 py-1 border border-white/20 shadow-xs">
             <span
-              className="h-2.5 w-2.5 rounded-full border border-white/40 shadow-2xs"
+              className="h-2.5 w-2.5 rounded-full border border-white/40 shadow-xs"
               style={{ backgroundColor: bg }}
               title="Card background"
             />
             <span
-              className="h-2.5 w-2.5 rounded-full border border-white/40 shadow-2xs"
+              className="h-2.5 w-2.5 rounded-full border border-white/40 shadow-xs"
               style={{ backgroundColor: accent }}
               title="Accent color"
             />
             <span
-              className="h-2.5 w-2.5 rounded-full border border-white/40 shadow-2xs"
+              className="h-2.5 w-2.5 rounded-full border border-white/40 shadow-xs"
               style={{ backgroundColor: text }}
               title="Text color"
             />
@@ -545,7 +545,7 @@ function ThemeCarouselCard({
           {/* Right Badges */}
           <div className="flex items-center gap-1">
             {isThemeAnimated && (
-              <span className="flex items-center gap-1 rounded-full bg-black/40 text-amber-300 px-2 py-0.5 text-[9px] font-bold shadow-2xs border border-amber-300/30 backdrop-blur-xs">
+              <span className="flex items-center gap-1 rounded-full bg-black/40 text-amber-300 px-2 py-0.5 text-[9px] font-bold shadow-xs border border-amber-300/30 backdrop-blur-xs">
                 <Sparkles className="h-2.5 w-2.5 text-amber-300" />
                 <span>Animated</span>
               </span>
@@ -558,7 +558,7 @@ function ThemeCarouselCard({
                 <span>Active</span>
               </span>
             ) : isPreviewing ? (
-              <span className="flex items-center gap-1 rounded-full bg-white/90 text-[#803D63] px-2 py-0.5 text-[10px] font-bold shadow-2xs border border-[#803D63]/30 backdrop-blur-xs">
+              <span className="flex items-center gap-1 rounded-full bg-white/90 text-[#803D63] px-2 py-0.5 text-[10px] font-bold shadow-xs border border-[#803D63]/30 backdrop-blur-xs">
                 <Eye className="h-2.5 w-2.5" />
                 <span>Previewing</span>
               </span>
@@ -582,10 +582,10 @@ function ThemeCarouselCard({
       {/* Card Info Footer */}
       <div className="pt-2.5 px-0.5 flex items-center justify-between gap-2 w-full">
         <div className="min-w-0 flex-1">
-          <p className="truncate text-xs font-bold text-[#17131A] flex items-center gap-1">
+          <p className="truncate text-xs font-bold text-[#181716] flex items-center gap-1">
             <span>{theme.name}</span>
           </p>
-          <p className="truncate text-[10px] text-[#6F6872] capitalize font-medium">
+          <p className="truncate text-[10px] text-[#797570] capitalize font-medium">
             {theme.tag || `${theme.group} theme`}
           </p>
         </div>
@@ -593,15 +593,15 @@ function ThemeCarouselCard({
         {/* Action Button/Indicator */}
         <div>
           {isActive ? (
-            <span className="text-[11px] font-bold text-[#803D63] bg-[#F7EDF3] px-2 py-1 rounded-lg">
+            <span className="text-[11px] font-bold text-[#803D63] bg-[#803D63]/[0.09] border border-[#803D63]/20 px-2 py-1 rounded-lg">
               Active
             </span>
           ) : isPreviewing ? (
-            <span className="text-[11px] font-bold text-[#803D63] bg-[#803D63]/10 px-2 py-1 rounded-lg">
+            <span className="text-[11px] font-bold text-[#803D63] bg-[#803D63]/[0.09] border border-[#803D63]/20 px-2 py-1 rounded-lg">
               Previewing
             </span>
           ) : (
-            <span className="text-[11px] font-semibold text-[#6F6872] group-hover:text-[#803D63] transition-colors">
+            <span className="text-[11px] font-semibold text-[#797570] group-hover:text-[#803D63] transition-colors">
               Preview →
             </span>
           )}

@@ -9,10 +9,10 @@ import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
 const STATUS_CONFIG: Record<CollaborationStatus, { label: string; bg: string; text: string; border: string }> = {
-  NEW: { label: "New", bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200" },
-  VIEWED: { label: "Viewed", bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200" },
-  REPLIED: { label: "Replied", bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-200" },
-  CLOSED: { label: "Closed", bg: "bg-slate-100", text: "text-slate-600", border: "border-slate-200" },
+  NEW: { label: "New", bg: "bg-[#EAF7F0]", text: "text-[#17845B]", border: "border-[#17845B]/20" },
+  VIEWED: { label: "Viewed", bg: "bg-[#803D63]/[0.09]", text: "text-[#803D63]", border: "border-[#803D63]/20" },
+  REPLIED: { label: "Replied", bg: "bg-[#803D63]/[0.09]", text: "text-[#803D63]", border: "border-[#803D63]/20" },
+  CLOSED: { label: "Closed", bg: "bg-[#F8F7F3]", text: "text-[#797570]", border: "border-[#E7E3DC]" },
 };
 
 function formatDate(dateStr: string): string {
@@ -153,24 +153,24 @@ export default function DashboardRequestsPage() {
   return (
     <div className="space-y-6 text-left">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#ECE8EB] pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E7E3DC] pb-5">
         <div>
-          <h1 className="font-display text-xl font-bold text-[#17131A] tracking-tight flex items-center gap-2">
+          <h1 className="font-display text-xl font-bold text-[#181716] tracking-tight flex items-center gap-2">
             <span>Collaboration Inquiries</span>
             {unreadCount > 0 && (
-              <span className="rounded-full bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5">
+              <span className="rounded-full bg-[#17845B] text-white text-[10px] font-bold px-2 py-0.5">
                 {unreadCount} New
               </span>
             )}
           </h1>
-          <p className="text-xs text-[#6F6872] font-medium mt-0.5">
+          <p className="text-xs text-[#797570] font-medium mt-0.5">
             Incoming brand enquiries, partnership briefs, and messages received via your &quot;Work With Me&quot; profile form.
           </p>
         </div>
       </div>
 
       {/* Tabs Filter */}
-      <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-white border border-[#ECE8EB] shadow-2xs overflow-x-auto">
+      <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-white border border-[#E7E3DC] shadow-xs overflow-x-auto">
         {(["ALL", "NEW", "VIEWED", "REPLIED", "CLOSED"] as const).map((tab) => {
           const isSelected = activeTab === tab;
           const count = tab === "ALL" ? requests.length : requests.filter((r) => r.status === tab).length;
@@ -183,11 +183,11 @@ export default function DashboardRequestsPage() {
               className={`tap-scale flex items-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                 isSelected
                   ? "bg-[#803D63] text-white shadow-xs"
-                  : "text-[#6F6872] hover:text-[#17131A] hover:bg-[#FAF8FA]"
+                  : "text-[#797570] hover:text-[#181716] hover:bg-[#F8F7F3]"
               }`}
             >
               <span>{tab === "ALL" ? "All Inquiries" : STATUS_CONFIG[tab].label}</span>
-              <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-[#FAF8FA] text-[#6F6872]"}`}>
+              <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-[#F8F7F3] text-[#797570]"}`}>
                 {count}
               </span>
             </button>
@@ -197,20 +197,20 @@ export default function DashboardRequestsPage() {
 
       {/* Requests List */}
       {loading ? (
-        <div className="rounded-2xl border border-[#ECE8EB] bg-white p-12 text-center text-xs text-[#6F6872]">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-12 text-center text-xs text-[#797570]">
           Loading collaboration requests...
         </div>
       ) : filteredRequests.length === 0 ? (
         /* Empty State */
-        <div className="rounded-3xl border-2 border-dashed border-[#ECE8EB] bg-white p-10 sm:p-14 text-center space-y-4 max-w-xl mx-auto shadow-xs">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F7EDF3] text-[#803D63]">
+        <div className="rounded-3xl border-2 border-dashed border-[#E7E3DC] bg-white p-10 sm:p-14 text-center space-y-4 max-w-xl mx-auto shadow-xs">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/20">
             <Inbox className="h-7 w-7" />
           </div>
           <div className="space-y-1">
-            <h3 className="font-display text-base font-bold text-[#17131A]">
+            <h3 className="font-display text-base font-bold text-[#181716]">
               No collaboration requests yet
             </h3>
-            <p className="text-xs text-[#6F6872] font-medium max-w-sm mx-auto leading-relaxed">
+            <p className="text-xs text-[#797570] font-medium max-w-sm mx-auto leading-relaxed">
               When brands or sponsors reach out through the &quot;Work With Me&quot; button on your public Inflixo profile, their inquiries will appear here.
             </p>
           </div>
@@ -223,28 +223,28 @@ export default function DashboardRequestsPage() {
               <div
                 key={req.id}
                 onClick={() => handleOpenDetail(req)}
-                className="group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 rounded-2xl border border-[#ECE8EB] bg-white p-4 shadow-2xs hover:border-[#803D63]/40 transition-all cursor-pointer"
+                className="group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 rounded-2xl border border-[#E7E3DC] bg-white p-4 shadow-xs hover:border-[#803D63]/40 transition-all cursor-pointer"
               >
                 <div className="flex items-start gap-3.5 min-w-0">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F7EDF3] text-[#803D63] font-bold text-sm shrink-0">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/20 font-bold text-sm shrink-0">
                     {req.senderName.charAt(0).toUpperCase()}
                   </div>
 
                   <div className="min-w-0 space-y-0.5">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-bold text-xs text-[#17131A] truncate">{req.senderName}</h3>
+                      <h3 className="font-bold text-xs text-[#181716] truncate">{req.senderName}</h3>
                       {req.companyName && (
-                        <span className="text-[11px] font-semibold text-[#6F6872] truncate">
+                        <span className="text-[11px] font-semibold text-[#797570] truncate">
                           • {req.companyName}
                         </span>
                       )}
                     </div>
 
-                    <p className="text-xs text-[#6F6872] line-clamp-1">
+                    <p className="text-xs text-[#797570] line-clamp-1">
                       {req.message}
                     </p>
 
-                    <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] text-[#6F6872]">
+                    <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] text-[#797570]">
                       <span className="inline-flex items-center gap-1 font-medium">
                         <Mail className="h-3 w-3" />
                         {req.email}
@@ -274,7 +274,7 @@ export default function DashboardRequestsPage() {
                       e.stopPropagation();
                       setRequestToDelete(req);
                     }}
-                    className="p-1.5 text-[#6F6872] hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                    className="p-1.5 text-[#797570] hover:text-[#C2414B] hover:bg-[#C2414B]/10 rounded-lg transition-colors cursor-pointer"
                     title="Delete inquiry"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -299,15 +299,15 @@ export default function DashboardRequestsPage() {
           <div className="flex flex-col flex-1 min-h-0">
             <ModalBody className="p-5 sm:p-6 space-y-4 text-left">
               {/* Sender summary card */}
-              <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3.5 space-y-2">
+              <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3.5 space-y-2">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-sm text-[#17131A]">{selectedRequest.senderName}</h3>
+                  <h3 className="font-bold text-sm text-[#181716]">{selectedRequest.senderName}</h3>
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${STATUS_CONFIG[selectedRequest.status].bg} ${STATUS_CONFIG[selectedRequest.status].text} ${STATUS_CONFIG[selectedRequest.status].border}`}>
                     {STATUS_CONFIG[selectedRequest.status].label}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#6F6872]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#797570]">
                   {selectedRequest.companyName && (
                     <div className="flex items-center gap-1.5">
                       <Building2 className="h-3.5 w-3.5 text-[#803D63]" />
@@ -338,17 +338,17 @@ export default function DashboardRequestsPage() {
 
               {/* Message Content */}
               <div>
-                <label className="block text-xs font-bold text-[#17131A] mb-1.5">
+                <label className="block text-xs font-bold text-[#181716] mb-1.5">
                   Message / Requirement:
                 </label>
-                <div className="rounded-xl border border-[#ECE8EB] bg-white p-3.5 text-xs text-[#17131A] leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto">
+                <div className="rounded-xl border border-[#E7E3DC] bg-white p-3.5 text-xs text-[#181716] leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto">
                   {selectedRequest.message}
                 </div>
               </div>
 
               {/* Status Update Selector */}
               <div>
-                <label className="block text-xs font-bold text-[#17131A] mb-1.5">
+                <label className="block text-xs font-bold text-[#181716] mb-1.5">
                   Update Request Status:
                 </label>
                 <div className="grid grid-cols-4 gap-2">
@@ -361,7 +361,7 @@ export default function DashboardRequestsPage() {
                       className={`tap-scale py-2 px-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
                         selectedRequest.status === st
                           ? "bg-[#803D63] text-white border-[#803D63] shadow-xs"
-                          : "border-[#ECE8EB] bg-white text-[#6F6872] hover:bg-[#FAF8FA]"
+                          : "border-[#E7E3DC] bg-white text-[#797570] hover:bg-[#F8F7F3]"
                       }`}
                     >
                       {STATUS_CONFIG[st].label}
@@ -375,7 +375,7 @@ export default function DashboardRequestsPage() {
               <button
                 type="button"
                 onClick={() => setRequestToDelete(selectedRequest)}
-                className="text-xs font-semibold text-rose-600 hover:text-rose-700 hover:underline cursor-pointer"
+                className="text-xs font-semibold text-[#C2414B] hover:underline cursor-pointer"
               >
                 Delete Inquiry
               </button>
@@ -383,7 +383,7 @@ export default function DashboardRequestsPage() {
               <div className="flex items-center gap-2">
                 <a
                   href={`mailto:${selectedRequest.email}?subject=Collaboration with ${encodeURIComponent(profile.displayName || "Inflixo Creator")}`}
-                  className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5"
+                  className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
                 >
                   <Mail className="h-3.5 w-3.5" />
                   <span>Reply via Email</span>

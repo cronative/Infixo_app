@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, FileText, CheckCircle2, AlertCircle } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
+import { CookiePreferencesButton } from "@/components/shared/CookiePreferencesButton";
 
 export const metadata = {
   title: "Terms of Service — Inflixo",
@@ -9,14 +10,14 @@ export const metadata = {
 
 export default function TermsOfServicePage() {
   return (
-    <div className="min-h-dvh bg-[#FAF8FF] text-[#0F172A] flex flex-col font-sans selection:bg-purple-100 selection:text-[#803D63]">
+    <div className="min-h-dvh bg-[#FAF9F6] text-[#181716] flex flex-col font-sans selection:bg-[#803D63]/10 selection:text-[#803D63]">
       {/* Navbar */}
-      <header className="safe-top sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-purple-100/80">
+      <header className="safe-top sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#E7E3DC]">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 sm:px-8">
           <Logo size="md" />
           <Link
             href="/"
-            className="inline-flex items-center gap-2 rounded-full border border-purple-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:text-[#803D63] hover:border-purple-300 transition-all"
+            className="inline-flex items-center gap-2 rounded-full border border-[#E7E3DC] bg-white px-4 py-2 text-xs font-bold text-[#54514D] hover:text-[#803D63] hover:border-[#803D63]/30 transition-all"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Back to Home
@@ -27,23 +28,23 @@ export default function TermsOfServicePage() {
       {/* Main Content */}
       <main className="mx-auto max-w-4xl px-5 sm:px-8 py-12 sm:py-16 flex-1 text-left space-y-10">
         {/* Header Banner */}
-        <div className="space-y-3 border-b border-purple-200/80 pb-8">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-purple-100 px-3 py-1 text-xs font-bold text-[#803D63]">
+        <div className="space-y-3 border-b border-[#E7E3DC] pb-8">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#803D63]/[0.09] border border-[#803D63]/20 px-3 py-1 text-xs font-bold text-[#803D63]">
             <FileText className="h-4 w-4" />
             <span>TERMS &amp; CONDITIONS</span>
           </div>
-          <h1 className="font-display text-4xl sm:text-5xl font-bold text-slate-900 tracking-normal">
+          <h1 className="font-display text-4xl sm:text-5xl font-bold text-[#181716] tracking-tight">
             Terms of Service
           </h1>
-          <p className="text-sm font-semibold text-slate-500">
+          <p className="text-sm font-semibold text-[#797570]">
             Last Updated: August 19, 2026 • TrustIQ Labs PVT LTD / Inflixo
           </p>
         </div>
 
         {/* Terms Body */}
-        <div className="space-y-8 text-sm sm:text-base leading-relaxed text-slate-700 font-normal">
+        <div className="space-y-8 text-sm sm:text-base leading-relaxed text-[#54514D] font-normal">
           <section className="space-y-3">
-            <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
               1. Acceptance of Terms
             </h2>
             <p>
@@ -52,7 +53,7 @@ export default function TermsOfServicePage() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
               2. Creator Content Ownership
             </h2>
             <p>
@@ -61,7 +62,7 @@ export default function TermsOfServicePage() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
               3. Creator Responsibilities &amp; Acceptable Use
             </h2>
             <p>When creating and maintaining an Inflixo profile, you agree NOT to:</p>
@@ -74,7 +75,7 @@ export default function TermsOfServicePage() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
               4. Subscriptions &amp; Free Early Access
             </h2>
             <p>
@@ -83,7 +84,7 @@ export default function TermsOfServicePage() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
               5. Service Availability &amp; Modifications
             </h2>
             <p>
@@ -92,7 +93,7 @@ export default function TermsOfServicePage() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
               6. Account Termination
             </h2>
             <p>
@@ -100,14 +101,14 @@ export default function TermsOfServicePage() {
             </p>
           </section>
 
-          <section className="space-y-3 border-t border-purple-200/80 pt-6">
-            <h2 className="font-display text-xl font-bold text-slate-900">
+          <section className="space-y-3 border-t border-[#E7E3DC] pt-6">
+            <h2 className="font-display text-xl font-bold text-[#181716]">
               7. Contact Legal Team
             </h2>
-            <p className="text-sm font-medium text-slate-600">
+            <p className="text-sm font-medium text-[#54514D]">
               For any legal inquiries, copyright notices (DMCA), or terms clarification, please contact:
             </p>
-            <div className="rounded-2xl bg-white border border-purple-200 p-4 space-y-1 text-xs sm:text-sm font-semibold text-slate-800">
+            <div className="rounded-2xl bg-white border border-[#E7E3DC] p-4 space-y-1 text-xs sm:text-sm font-semibold text-[#181716]">
               <p>TrustIQ Labs PVT LTD — Inflixo Terms &amp; Compliance</p>
               <p className="text-[#803D63]">Email: legal@inflixo.com</p>
             </div>
@@ -116,16 +117,18 @@ export default function TermsOfServicePage() {
       </main>
 
       {/* Public Footer */}
-      <footer className="border-t border-purple-100 bg-white py-8">
-        <div className="mx-auto max-w-[1200px] px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-slate-600">
+      <footer className="border-t border-[#E7E3DC] bg-white py-8">
+        <div className="mx-auto max-w-[1200px] px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-[#54514D]">
           <Logo size="sm" />
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center gap-6">
             <Link href="/" className="hover:text-[#803D63] transition-colors">Home</Link>
             <Link href="/#pricing" className="hover:text-[#803D63] transition-colors">Pricing</Link>
             <Link href="/privacy" className="hover:text-[#803D63] transition-colors">Privacy Policy</Link>
+            <Link href="/cookies" className="hover:text-[#803D63] transition-colors">Cookie Policy</Link>
+            <CookiePreferencesButton className="hover:text-[#803D63] transition-colors cursor-pointer font-semibold" />
             <Link href="/terms" className="text-[#803D63] font-bold">Terms of Service</Link>
           </div>
-          <p className="text-slate-400">&copy; 2026 Inflixo · TrustIQ Labs PVT LTD</p>
+          <p className="text-[#797570]">&copy; 2026 Inflixo · TrustIQ Labs PVT LTD</p>
         </div>
       </footer>
     </div>

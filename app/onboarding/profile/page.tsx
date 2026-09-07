@@ -162,7 +162,7 @@ export default function ProfileStepPage() {
       }
     >
       <div className="flex items-center justify-between gap-2 mb-2.5">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/20 bg-[#803D63]/10 px-3 py-1 text-xs font-bold text-[#803D63]">
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/20 bg-[#803D63]/[0.09] px-3 py-1 text-xs font-bold text-[#803D63]">
           <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
           <span>Step 1 of 6 • Profile Setup</span>
         </div>
@@ -171,7 +171,7 @@ export default function ProfileStepPage() {
         <button
           type="button"
           onClick={() => setIsMobilePreviewOpen(true)}
-          className="lg:hidden tap-scale inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/30 bg-[#803D63]/10 hover:bg-[#803D63]/15 px-3 py-1 text-xs font-bold text-[#803D63] transition-all cursor-pointer shadow-2xs"
+          className="lg:hidden tap-scale inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/30 bg-[#803D63]/[0.09] hover:bg-[#803D63]/15 px-3 py-1 text-xs font-bold text-[#803D63] transition-all cursor-pointer shadow-xs"
           title="Preview public profile"
         >
           <Eye className="h-3.5 w-3.5 text-[#803D63]" />
@@ -179,16 +179,16 @@ export default function ProfileStepPage() {
         </button>
       </div>
 
-      <h1 className="text-2xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-3xl">
-        Create your <span className="text-gradient-premium">Inflixo Creator Page</span>
+      <h1 className="text-2xl font-bold leading-tight tracking-tight text-[#181716] sm:text-3xl">
+        Create your Inflixo Creator Page
       </h1>
-      <p className="mt-1.5 text-xs sm:text-sm text-slate-500 leading-relaxed">
+      <p className="mt-1.5 text-xs sm:text-sm text-[#54514D] leading-relaxed">
         Set up your public creator profile details below.
       </p>
 
       <div className="mt-6 space-y-5">
         {/* 1. Compact Profile Photo Upload Card */}
-        <div className="rounded-2xl border border-[#E5E7EB] bg-white p-4 transition-all">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 transition-all">
           <div className="flex items-center gap-4">
             <PhotoUpload
               value={profile.photoDataUrl}
@@ -197,8 +197,8 @@ export default function ProfileStepPage() {
               label={profile.photoDataUrl ? "Change Profile Photo" : "Upload Profile Photo"}
             />
             <div className="text-xs space-y-0.5">
-              <p className="font-bold text-slate-900">Upload Profile Photo</p>
-              <p className="text-slate-500">Recommended square JPG or PNG</p>
+              <p className="font-bold text-[#181716]">Upload Profile Photo</p>
+              <p className="text-[#797570]">Recommended square JPG or PNG</p>
             </div>
           </div>
         </div>
@@ -208,7 +208,7 @@ export default function ProfileStepPage() {
           label="Display name"
           name="displayName"
           placeholder="e.g. Tony Stark"
-          leftIcon={<User className="h-4 w-4 text-slate-400" />}
+          leftIcon={<User className="h-4 w-4 text-[#797570]" />}
           value={profile.displayName}
           onChange={(e) => updateProfile({ displayName: e.target.value })}
           error={errors.displayName}
@@ -221,7 +221,7 @@ export default function ProfileStepPage() {
             name="username"
             placeholder="username"
             prefix="inflixo.com/"
-            leftIcon={<AtSign className="h-4 w-4 text-slate-400" />}
+            leftIcon={<AtSign className="h-4 w-4 text-[#797570]" />}
             value={profile.username}
             onChange={(e) => updateProfile({ username: slugifyUsername(e.target.value) })}
             error={errors.username}
@@ -243,7 +243,7 @@ export default function ProfileStepPage() {
             }
           />
           {profile.username && usernameStatus?.available && (
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-[#54514D]">
               Your public handle: <span className="font-bold text-[#803D63]">@{profile.username}</span>
             </p>
           )}
@@ -278,9 +278,9 @@ export default function ProfileStepPage() {
         )}
 
         {/* 6. Short Bio + Compact Suggest Action */}
-        <div className="rounded-2xl border border-[#E5E7EB] bg-white p-4 space-y-2">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-bold uppercase tracking-wider text-[#64748B] flex items-center gap-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wider text-[#54514D] flex items-center gap-1.5">
               <FileText className="h-3.5 w-3.5 text-[#803D63]" />
               <span>Short Bio</span>
             </label>
@@ -289,7 +289,7 @@ export default function ProfileStepPage() {
             <button
               type="button"
               onClick={handleSuggestBio}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#803D63] hover:text-[#6D3254] bg-purple-50 hover:bg-purple-100 px-2.5 py-1 rounded-full border border-purple-200 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#803D63] hover:text-[#6F3456] bg-[#803D63]/[0.09] hover:bg-[#803D63]/15 px-2.5 py-1 rounded-full border border-[#803D63]/20 transition-colors cursor-pointer"
             >
               <Sparkles className="h-3.5 w-3.5 text-[#803D63]" />
               <span>✨ Suggest bio</span>
@@ -307,13 +307,13 @@ export default function ProfileStepPage() {
         </div>
 
         {/* Form Bottom CTA Button Flow (Inline & Non-overlapping) */}
-        <div className="pt-4 border-t border-[#E5E7EB] mt-8">
+        <div className="pt-4 border-t border-[#E7E3DC] mt-8">
           <Button
             fullWidth
             size="lg"
             loading={submitting}
             onClick={handleNext}
-            className="bg-[#803D63] hover:bg-[#6D3254] text-white font-bold h-12 text-sm rounded-xl cursor-pointer shadow-none"
+            className="bg-[#803D63] hover:bg-[#6F3456] text-white font-bold h-11 text-sm rounded-xl cursor-pointer shadow-xs"
           >
             Save &amp; Next →
           </Button>

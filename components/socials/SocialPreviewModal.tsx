@@ -69,17 +69,17 @@ export function SocialPreviewCard({
 
   if (variant === "inline") {
     return (
-      <div className="mt-4 bg-white border border-[#ECE8EB] rounded-2xl p-5 shadow-2xs text-left">
-        <div className="flex items-center justify-between pb-3.5 border-b border-[#ECE8EB]">
+      <div className="mt-4 bg-white border border-[#E7E3DC] rounded-2xl p-5 shadow-xs text-left">
+        <div className="flex items-center justify-between pb-3.5 border-b border-[#E7E3DC]">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FAF8FA] border border-[#ECE8EB] shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F8F7F3] border border-[#E7E3DC] shrink-0">
               {brandIcon}
             </div>
             <div>
-              <h4 className="font-display text-sm font-bold text-[#17131A] leading-snug">
+              <h4 className="font-display text-sm font-bold text-[#181716] leading-snug">
                 {displayName}
               </h4>
-              <p className="text-xs font-medium text-[#6F6872]">
+              <p className="text-xs font-medium text-[#797570]">
                 {handle}
               </p>
             </div>
@@ -88,7 +88,7 @@ export function SocialPreviewCard({
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-xl text-[#6F6872] hover:text-[#17131A] hover:bg-[#FAF8FA] transition-colors cursor-pointer"
+            className="flex h-8 w-8 items-center justify-center rounded-xl text-[#797570] hover:text-[#181716] hover:bg-[#F8F7F3] transition-colors cursor-pointer"
           >
             <X className="h-4 w-4" />
           </button>
@@ -96,11 +96,11 @@ export function SocialPreviewCard({
 
         <div className="grid grid-cols-3 gap-2.5 py-3.5 text-center">
           {stats.map((st, i) => (
-            <div key={i} className="flex flex-col items-center justify-center p-2 rounded-xl bg-[#FAF8FA] border border-[#ECE8EB]">
-              <p className="text-sm font-bold text-[#17131A] leading-tight">
+            <div key={i} className="flex flex-col items-center justify-center p-2 rounded-xl bg-[#F8F7F3] border border-[#E7E3DC]">
+              <p className="text-sm font-bold text-[#181716] leading-tight">
                 {st.value}
               </p>
-              <p className="text-[10px] font-semibold text-[#6F6872] uppercase mt-0.5">
+              <p className="text-[10px] font-semibold text-[#797570] uppercase mt-0.5">
                 {st.label}
               </p>
             </div>
@@ -112,7 +112,7 @@ export function SocialPreviewCard({
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="flex-1 rounded-xl border border-[#ECE8EB] bg-white py-2 text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
+            className="flex-1 rounded-xl border border-[#E7E3DC] bg-white py-2 text-xs font-semibold text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716] transition-colors cursor-pointer"
           >
             Cancel
           </button>
@@ -121,7 +121,7 @@ export function SocialPreviewCard({
             type="button"
             onClick={onConfirm}
             disabled={loading}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
           >
             {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
             <span>Confirm &amp; Link</span>
@@ -199,17 +199,17 @@ export function SocialPreviewModal({
       icon={brandIcon}
     >
       <ModalBody className="p-5 space-y-4 text-left">
-        <p className="text-xs text-[#6F6872] font-medium">
+        <p className="text-xs text-[#797570] font-medium">
           Confirm that this is your account to link it to your Inflixo profile.
         </p>
 
         <div className="grid grid-cols-3 gap-2.5 text-center">
           {stats.map((st, i) => (
-            <div key={i} className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-[#FAF8FA] border border-[#ECE8EB]">
-              <p className="text-sm font-bold text-[#17131A] leading-tight">
+            <div key={i} className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-[#F8F7F3] border border-[#E7E3DC]">
+              <p className="text-sm font-bold text-[#181716] leading-tight">
                 {st.value}
               </p>
-              <p className="text-[10px] font-semibold text-[#6F6872] uppercase mt-0.5">
+              <p className="text-[10px] font-semibold text-[#797570] uppercase mt-0.5">
                 {st.label}
               </p>
             </div>
@@ -222,7 +222,7 @@ export function SocialPreviewModal({
           type="button"
           onClick={onClose}
           disabled={loading}
-          className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
+          className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716] transition-colors cursor-pointer"
         >
           Cancel
         </button>
@@ -230,7 +230,7 @@ export function SocialPreviewModal({
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5 disabled:opacity-50"
+          className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
         >
           {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
           <span>Confirm &amp; Link</span>

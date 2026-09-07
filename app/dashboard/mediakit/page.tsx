@@ -7,21 +7,18 @@ import {
   Briefcase,
   Sparkles,
   Plus,
-  Edit2,
   Trash2,
   Share2,
   Download,
   Eye,
   CheckCircle2,
   Clock,
-  Building2,
   Mail,
   MessageCircle,
   Copy,
   ExternalLink,
   ShieldCheck,
   Zap,
-  Tag,
   Check,
   X,
   FileSpreadsheet,
@@ -29,7 +26,6 @@ import {
   Tv,
   Play,
   Layers,
-  Award,
   Link2,
   Globe,
   MoreVertical,
@@ -41,9 +37,6 @@ import {
   InstagramIcon,
   YoutubeIcon,
   FacebookIcon,
-  XTwitterIcon,
-  LinkedinIcon,
-  ThreadsIcon,
 } from "@/components/shared/BrandIcons";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -221,7 +214,6 @@ export default function DashboardMediaKitPage() {
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [packageToDelete, setPackageToDelete] = useState<MediaKitPackage | null>(null);
 
-  // Package Modal State (Unchanged functionality)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
   const [editingPkgId, setEditingPkgId] = useState<string | null>(null);
@@ -236,7 +228,7 @@ export default function DashboardMediaKitPage() {
   const [formDeliverableInput, setFormDeliverableInput] = useState("");
   const [formDeliverables, setFormDeliverables] = useState<string[]>([]);
 
-  // Public Preview Modal State (Unchanged functionality)
+  // Public Preview Modal State
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [activePreviewTab, setActivePreviewTab] = useState<"mediakit" | "series">("mediakit");
   const [customLinks, setCustomLinks] = useState<CustomLink[]>([]);
@@ -246,7 +238,6 @@ export default function DashboardMediaKitPage() {
   const activeUsername = profile.username;
   const creatorQueryKey = activeCreatorId || activeEmail || activeUsername || "";
 
-  // Connected accounts calculation
   const isInstaConnected = Boolean(socials?.instagram?.url || (socials?.instagram?.followers ?? 0) > 0);
   const isYtConnected = Boolean(socials?.youtube?.url || (socials?.youtube?.subscribers ?? 0) > 0);
   const isFbConnected = Boolean(socials?.facebook?.url || (socials?.facebook?.followers ?? 0) > 0);
@@ -260,7 +251,6 @@ export default function DashboardMediaKitPage() {
     setCustomLinks(customLinksRepository.get());
   }, []);
 
-  // Click outside to close 3-dot dropdowns
   useEffect(() => {
     const handleClickOutside = () => setActiveMenuId(null);
     if (activeMenuId) document.addEventListener("mousedown", handleClickOutside);
@@ -468,10 +458,10 @@ export default function DashboardMediaKitPage() {
       {/* 1. PAGE HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
         <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#17131A] tracking-tight">
+          <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#181716] tracking-tight">
             Services &amp; Brand Work
           </h1>
-          <p className="text-xs sm:text-sm text-[#6F6872] font-medium mt-1">
+          <p className="text-xs sm:text-sm text-[#797570] font-medium mt-1">
             Show brands how they can work with you and manage your collaboration details.
           </p>
         </div>
@@ -480,7 +470,7 @@ export default function DashboardMediaKitPage() {
           <button
             type="button"
             onClick={handleShareMediaKit}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer shadow-2xs"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-3.5 py-2 text-xs font-semibold text-[#181716] transition-colors cursor-pointer shadow-xs"
           >
             <Share2 className="h-3.5 w-3.5 text-[#803D63]" />
             <span>Share Profile</span>
@@ -489,13 +479,13 @@ export default function DashboardMediaKitPage() {
       </div>
 
       {/* 2. SECTION 1 — BRAND-READY COLLABORATION PROFILE SUMMARY */}
-      <section className="rounded-2xl border border-[#ECE8EB] bg-white p-5 sm:p-6 text-left space-y-5 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#ECE8EB] pb-4">
+      <section className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 text-left space-y-5 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E7E3DC] pb-4">
           <div>
-            <h2 className="font-display text-base font-bold text-[#17131A]">
+            <h2 className="font-display text-base font-bold text-[#181716]">
               Your collaboration profile
             </h2>
-            <p className="text-xs text-[#6F6872] font-medium mt-0.5">
+            <p className="text-xs text-[#797570] font-medium mt-0.5">
               Give brands a clear view of your audience, services and ways to contact you.
             </p>
           </div>
@@ -506,7 +496,7 @@ export default function DashboardMediaKitPage() {
               setActivePreviewTab("mediakit");
               setIsPreviewModalOpen(true);
             }}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-[#F7EDF3] hover:bg-[#F7EDF3]/80 px-3.5 py-1.5 text-xs font-semibold text-[#803D63] transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63]/[0.09] hover:bg-[#803D63]/15 px-3.5 py-1.5 text-xs font-semibold text-[#803D63] transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
           >
             <Eye className="h-3.5 w-3.5" />
             <span>Preview Profile</span>
@@ -516,111 +506,111 @@ export default function DashboardMediaKitPage() {
         {/* 3 Compact Metrics */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="space-y-1">
-            <span className="text-xs font-semibold text-[#6F6872] uppercase tracking-wider">
+            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
               Total Fanbase
             </span>
-            <p className="font-display text-2xl font-bold text-[#17131A]">
+            <p className="font-display text-2xl font-bold text-[#181716]">
               {formatCount(totalAudience || 0)}
             </p>
-            <p className="text-[11px] text-[#6F6872] font-medium">
+            <p className="text-[11px] text-[#797570] font-medium">
               Across {connectedPlatformsCount || 1} connected {connectedPlatformsCount === 1 ? "account" : "accounts"}
             </p>
           </div>
 
           <div className="space-y-1">
-            <span className="text-xs font-semibold text-[#6F6872] uppercase tracking-wider">
+            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
               Active Services
             </span>
-            <p className="font-display text-2xl font-bold text-[#17131A]">
+            <p className="font-display text-2xl font-bold text-[#181716]">
               {activeServicesCount}
             </p>
-            <p className="text-[11px] text-[#6F6872] font-medium">
+            <p className="text-[11px] text-[#797570] font-medium">
               Available for brand enquiries
             </p>
           </div>
 
           <div className="space-y-1">
-            <span className="text-xs font-semibold text-[#6F6872] uppercase tracking-wider">
+            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
               Contact Setup
             </span>
             <div className="flex items-center gap-1.5 pt-0.5">
               <span className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full ${
-                hasContactConfigured ? "bg-[#ECFDF3] text-[#16794A]" : "bg-amber-50 text-amber-800 border border-amber-200"
+                hasContactConfigured ? "bg-[#EAF7F0] text-[#17845B]" : "bg-amber-50 text-amber-800 border border-amber-200"
               }`}>
-                <span className={`h-1.5 w-1.5 rounded-full ${hasContactConfigured ? "bg-[#16794A]" : "bg-amber-600"}`} />
+                <span className={`h-1.5 w-1.5 rounded-full ${hasContactConfigured ? "bg-[#17845B]" : "bg-amber-600"}`} />
                 {hasContactConfigured ? "Active" : "Action Needed"}
               </span>
             </div>
-            <p className="text-[11px] text-[#6F6872] font-medium">
+            <p className="text-[11px] text-[#797570] font-medium">
               {hasContactConfigured ? "WhatsApp and business email" : "Set up contact options below"}
             </p>
           </div>
         </div>
 
         {/* Connected Audience Breakdown */}
-        <div className="pt-4 border-t border-[#ECE8EB] space-y-2.5">
+        <div className="pt-4 border-t border-[#E7E3DC] space-y-2.5">
           <div className="flex items-center justify-between">
-            <h3 className="font-display text-xs font-bold text-[#17131A] uppercase tracking-wider">
+            <h3 className="font-display text-xs font-bold text-[#181716] uppercase tracking-wider">
               Connected audience overview
             </h3>
-            <span className="text-[11px] text-[#6F6872] font-medium">
+            <span className="text-[11px] text-[#797570] font-medium">
               Audience counts from your connected social profiles
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {/* Instagram */}
-            <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3 flex items-center justify-between">
+            <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3 flex items-center justify-between">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-pink-50 text-pink-600 shrink-0">
                   <InstagramIcon className="h-4 w-4" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-bold text-[#17131A]">Instagram</p>
-                  <p className="text-[10px] text-[#6F6872] truncate">@{socials.instagram?.username || handleStr}</p>
+                  <p className="text-xs font-bold text-[#181716]">Instagram</p>
+                  <p className="text-[10px] text-[#797570] truncate">@{socials.instagram?.username || handleStr}</p>
                 </div>
               </div>
-              <p className="font-display text-xs font-bold text-[#17131A] shrink-0">
+              <p className="font-display text-xs font-bold text-[#181716] shrink-0">
                 {formatCount(socials.instagram?.followers || 0)}{" "}
-                <span className="font-normal text-[10px] text-[#6F6872]">followers</span>
+                <span className="font-normal text-[10px] text-[#797570]">followers</span>
               </p>
             </div>
 
             {/* YouTube */}
-            <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3 flex items-center justify-between">
+            <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3 flex items-center justify-between">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-50 text-red-600 shrink-0">
                   <YoutubeIcon className="h-4 w-4" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-bold text-[#17131A]">YouTube</p>
-                  <p className="text-[10px] text-[#6F6872] truncate">
+                  <p className="text-xs font-bold text-[#181716]">YouTube</p>
+                  <p className="text-[10px] text-[#797570] truncate">
                     {socials.youtube?.channelTitle || `@${socials.youtube?.username || handleStr}`}
                   </p>
                 </div>
               </div>
-              <p className="font-display text-xs font-bold text-[#17131A] shrink-0">
+              <p className="font-display text-xs font-bold text-[#181716] shrink-0">
                 {formatCount(socials.youtube?.subscribers || 0)}{" "}
-                <span className="font-normal text-[10px] text-[#6F6872]">subscribers</span>
+                <span className="font-normal text-[10px] text-[#797570]">subscribers</span>
               </p>
             </div>
 
             {/* Facebook */}
-            <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3 flex items-center justify-between">
+            <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3 flex items-center justify-between">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-blue-600 shrink-0">
                   <FacebookIcon className="h-4 w-4" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-bold text-[#17131A]">Facebook</p>
-                  <p className="text-[10px] text-[#6F6872] truncate">
+                  <p className="text-xs font-bold text-[#181716]">Facebook</p>
+                  <p className="text-[10px] text-[#797570] truncate">
                     {socials.facebook?.name || `@${socials.facebook?.username || handleStr}`}
                   </p>
                 </div>
               </div>
-              <p className="font-display text-xs font-bold text-[#17131A] shrink-0">
+              <p className="font-display text-xs font-bold text-[#181716] shrink-0">
                 {formatCount(socials.facebook?.followers || 0)}{" "}
-                <span className="font-normal text-[10px] text-[#6F6872]">followers</span>
+                <span className="font-normal text-[10px] text-[#797570]">followers</span>
               </p>
             </div>
           </div>
@@ -631,23 +621,23 @@ export default function DashboardMediaKitPage() {
       <section className="space-y-3.5 text-left">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-0.5">
           <div>
-            <h2 className="font-display text-base font-bold text-[#17131A]">
+            <h2 className="font-display text-base font-bold text-[#181716]">
               Creator services
             </h2>
-            <p className="text-xs text-[#6F6872] font-medium mt-0.5">
+            <p className="text-xs text-[#797570] font-medium mt-0.5">
               Create clear collaboration options with pricing, deliverables and turnaround time.
             </p>
           </div>
 
           <div className="flex items-center gap-3 shrink-0 self-start sm:self-auto">
-            <span className="text-xs font-semibold text-[#6F6872]">
+            <span className="text-xs font-semibold text-[#797570]">
               {packages.length} {packages.length === 1 ? "service" : "services"}
             </span>
 
             <button
               type="button"
               onClick={handleOpenAddModal}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-3.5 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-3.5 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Create Service</span>
@@ -657,15 +647,15 @@ export default function DashboardMediaKitPage() {
 
         {/* Services Grid or Empty State */}
         {packages.length === 0 ? (
-          <div className="rounded-2xl border border-[#ECE8EB] bg-white p-8 sm:p-10 text-center space-y-3 shadow-2xs">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F7EDF3] text-[#803D63]">
+          <div className="rounded-2xl border border-[#E7E3DC] bg-white p-8 sm:p-10 text-center space-y-3 shadow-xs">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#803D63]/[0.09] text-[#803D63]">
               <Briefcase className="h-6 w-6" />
             </div>
             <div className="space-y-1">
-              <h3 className="font-display text-base font-bold text-[#17131A]">
+              <h3 className="font-display text-base font-bold text-[#181716]">
                 Show brands how they can work with you
               </h3>
-              <p className="text-xs text-[#6F6872] max-w-md mx-auto">
+              <p className="text-xs text-[#797570] max-w-md mx-auto">
                 Add your collaboration formats, starting rates, deliverables and turnaround time (sponsored reels, video integrations, story promotions).
               </p>
             </div>
@@ -673,7 +663,7 @@ export default function DashboardMediaKitPage() {
               <button
                 type="button"
                 onClick={handleOpenAddModal}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span>Create First Service</span>
@@ -682,7 +672,7 @@ export default function DashboardMediaKitPage() {
               <button
                 type="button"
                 onClick={handleLoadSampleGigs}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-4 py-2 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-4 py-2 text-xs font-semibold text-[#181716] transition-colors cursor-pointer"
               >
                 <Sparkles className="h-3.5 w-3.5 text-[#803D63]" />
                 <span>Load Sample Services</span>
@@ -693,35 +683,34 @@ export default function DashboardMediaKitPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
             {packages.map((pkg) => {
               const displayPrice = formatPriceClean(pkg.price);
-              const isPopular = Boolean(pkg.isPopular || pkg.packageName?.toLowerCase().includes("popular"));
               const visibleDeliverables = (pkg.deliverables || []).slice(0, 3);
               const extraDeliverablesCount = Math.max(0, (pkg.deliverables?.length || 0) - 3);
 
               return (
                 <div
                   key={pkg.id}
-                  className={`rounded-2xl border bg-white p-4 sm:p-5 flex flex-col justify-between space-y-3.5 shadow-2xs text-left transition-all ${
-                    pkg.isActive ? "border-[#ECE8EB] hover:border-[#803D63]/30" : "border-[#ECE8EB] opacity-60 bg-[#FAFAFB]"
+                  className={`rounded-2xl border bg-white p-4 sm:p-5 flex flex-col justify-between space-y-3.5 shadow-xs text-left transition-all ${
+                    pkg.isActive ? "border-[#E7E3DC] hover:border-[#803D63]/30" : "border-[#E7E3DC] opacity-60 bg-[#F8F7F3]"
                   }`}
                 >
                   <div className="space-y-3">
                     {/* Top Platform & Tier Row */}
                     <div className="flex items-center justify-between gap-1.5">
-                      <span className="text-[11px] font-bold text-[#803D63] bg-[#F7EDF3] px-2 py-0.5 rounded-lg truncate">
+                      <span className="text-[11px] font-bold text-[#803D63] bg-[#803D63]/[0.09] px-2 py-0.5 rounded-lg truncate">
                         {pkg.platform}
                       </span>
 
                       <div className="flex items-center gap-1.5 shrink-0">
                         {(pkg.packageName || pkg.badge) && (
-                          <span className="text-[10px] font-semibold text-[#6F6872] bg-[#FAF8FA] border border-[#ECE8EB] px-2 py-0.5 rounded-md">
+                          <span className="text-[10px] font-semibold text-[#797570] bg-[#F8F7F3] border border-[#E7E3DC] px-2 py-0.5 rounded-md">
                             {pkg.packageName || pkg.badge}
                           </span>
                         )}
                         <span
                           className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
                             pkg.isActive
-                              ? "bg-[#ECFDF3] text-[#16794A]"
-                              : "bg-slate-100 text-slate-500"
+                              ? "bg-[#EAF7F0] text-[#17845B]"
+                              : "bg-zinc-100 text-zinc-500"
                           }`}
                         >
                           {pkg.isActive ? "Active" : "Paused"}
@@ -731,33 +720,33 @@ export default function DashboardMediaKitPage() {
 
                     {/* Title & Price */}
                     <div>
-                      <h3 className="font-display text-sm font-bold text-[#17131A] line-clamp-2 leading-snug">
+                      <h3 className="font-display text-sm font-bold text-[#181716] line-clamp-2 leading-snug">
                         {pkg.title}
                       </h3>
                       <div className="flex items-baseline gap-2 mt-1.5">
                         <span className="font-display text-lg font-bold text-[#803D63]">
                           {displayPrice}
                         </span>
-                        <span className="text-[11px] text-[#6F6872] font-medium">
+                        <span className="text-[11px] text-[#797570] font-medium">
                           • {formatDeliveryDays(pkg.turnaroundDays)}
                         </span>
                       </div>
                     </div>
 
                     {/* Included Deliverables */}
-                    <div className="space-y-1.5 pt-2 border-t border-[#ECE8EB]">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#6F6872]">
+                    <div className="space-y-1.5 pt-2 border-t border-[#E7E3DC]">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570]">
                         Included
                       </span>
-                      <ul className="space-y-1 text-xs text-[#17131A] font-medium">
+                      <ul className="space-y-1 text-xs text-[#181716] font-medium">
                         {visibleDeliverables.map((item, idx) => (
                           <li key={idx} className="flex items-start gap-1.5">
-                            <Check className="h-3.5 w-3.5 text-[#16794A] shrink-0 mt-0.5" />
+                            <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0 mt-0.5" />
                             <span className="line-clamp-1 leading-tight">{item}</span>
                           </li>
                         ))}
                         {extraDeliverablesCount > 0 && (
-                          <li className="text-[11px] text-[#6F6872] font-semibold pl-5">
+                          <li className="text-[11px] text-[#797570] font-semibold pl-5">
                             +{extraDeliverablesCount} more
                           </li>
                         )}
@@ -766,7 +755,7 @@ export default function DashboardMediaKitPage() {
                   </div>
 
                   {/* Card Bottom Actions */}
-                  <div className="pt-2 border-t border-[#ECE8EB] flex items-center justify-between gap-2">
+                  <div className="pt-2 border-t border-[#E7E3DC] flex items-center justify-between gap-2">
                     <button
                       type="button"
                       onClick={() => handleOpenEditModal(pkg)}
@@ -784,7 +773,7 @@ export default function DashboardMediaKitPage() {
                           e.stopPropagation();
                           setActiveMenuId(activeMenuId === pkg.id ? null : pkg.id);
                         }}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#ECE8EB] bg-[#FAF8FA] text-[#6F6872] hover:text-[#17131A] transition-colors cursor-pointer"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E7E3DC] bg-[#F8F7F3] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer"
                         aria-label="More options"
                       >
                         <MoreVertical className="h-3.5 w-3.5" />
@@ -793,27 +782,27 @@ export default function DashboardMediaKitPage() {
                       {activeMenuId === pkg.id && (
                         <div
                           onClick={(e) => e.stopPropagation()}
-                          className="absolute right-0 bottom-full mb-1.5 w-38 rounded-xl border border-[#ECE8EB] bg-white p-1 shadow-lg z-20 space-y-0.5 animate-in fade-in"
+                          className="absolute right-0 bottom-full mb-1.5 w-38 rounded-xl border border-[#E7E3DC] bg-white p-1 shadow-lg z-20 space-y-0.5 animate-in fade-in"
                         >
                           <button
                             type="button"
                             onClick={() => handleShareService(pkg)}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#17131A] hover:bg-[#FAF8FA] transition-colors cursor-pointer"
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#F8F7F3] transition-colors cursor-pointer"
                           >
-                            <Copy className="h-3.5 w-3.5 text-[#6F6872]" />
+                            <Copy className="h-3.5 w-3.5 text-[#797570]" />
                             <span>Share Link</span>
                           </button>
 
                           <button
                             type="button"
                             onClick={() => handleTogglePackageActive(pkg.id, pkg.isActive)}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#17131A] hover:bg-[#FAF8FA] transition-colors cursor-pointer"
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#F8F7F3] transition-colors cursor-pointer"
                           >
-                            <Power className="h-3.5 w-3.5 text-[#6F6872]" />
+                            <Power className="h-3.5 w-3.5 text-[#797570]" />
                             <span>{pkg.isActive ? "Pause Service" : "Activate"}</span>
                           </button>
 
-                          <div className="my-1 border-t border-[#ECE8EB]" />
+                          <div className="my-1 border-t border-[#E7E3DC]" />
 
                           <button
                             type="button"
@@ -821,7 +810,7 @@ export default function DashboardMediaKitPage() {
                               setActiveMenuId(null);
                               setPackageToDelete(pkg);
                             }}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-rose-50 transition-colors cursor-pointer"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                             <span>Delete Service</span>
@@ -838,13 +827,13 @@ export default function DashboardMediaKitPage() {
       </section>
 
       {/* 4. SECTION 3 — BRAND ENQUIRY ROUTING */}
-      <section className="rounded-2xl border border-[#ECE8EB] bg-white p-5 sm:p-6 text-left space-y-4 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#ECE8EB] pb-3.5">
+      <section className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 text-left space-y-4 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E7E3DC] pb-3.5">
           <div>
-            <h2 className="font-display text-base font-bold text-[#17131A]">
+            <h2 className="font-display text-base font-bold text-[#181716]">
               Brand enquiries
             </h2>
-            <p className="text-xs text-[#6F6872] font-medium mt-0.5">
+            <p className="text-xs text-[#797570] font-medium mt-0.5">
               Receive collaboration enquiries through your selected contact methods.
             </p>
           </div>
@@ -852,7 +841,7 @@ export default function DashboardMediaKitPage() {
           <button
             type="button"
             onClick={() => setIsEditingSettings(!isEditingSettings)}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-3.5 py-1.5 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-3.5 py-1.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
           >
             <SlidersHorizontal className="h-3.5 w-3.5 text-[#803D63]" />
             <span>{isEditingSettings ? "Close Settings" : "Manage Contact Settings"}</span>
@@ -861,10 +850,10 @@ export default function DashboardMediaKitPage() {
 
         {/* Inline Edit Form when toggled */}
         {isEditingSettings ? (
-          <div className="space-y-4 p-4 rounded-xl bg-[#FAF8FA] border border-[#ECE8EB] animate-in fade-in">
+          <div className="space-y-4 p-4 rounded-xl bg-[#F8F7F3] border border-[#E7E3DC] animate-in fade-in">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[#17131A]">
+                <label className="block text-xs font-bold text-[#181716]">
                   Official WhatsApp Number
                 </label>
                 <input
@@ -872,12 +861,12 @@ export default function DashboardMediaKitPage() {
                   value={settings.whatsappNumber || ""}
                   onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })}
                   placeholder="+91 9XXXXXXXXX"
-                  className="w-full rounded-xl border border-[#ECE8EB] bg-white px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/60 focus:outline-none focus:border-[#803D63]"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-white px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#803D63]"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[#17131A]">
+                <label className="block text-xs font-bold text-[#181716]">
                   Business Email Address
                 </label>
                 <input
@@ -885,14 +874,14 @@ export default function DashboardMediaKitPage() {
                   value={settings.sponsorEmail || ""}
                   onChange={(e) => setSettings({ ...settings, sponsorEmail: e.target.value })}
                   placeholder={profile.email || "business@example.com"}
-                  className="w-full rounded-xl border border-[#ECE8EB] bg-white px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/60 focus:outline-none focus:border-[#803D63]"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-white px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#803D63]"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[#17131A]">
+                <label className="block text-xs font-bold text-[#181716]">
                   Minimum Sponsorship Budget Filter (Optional)
                 </label>
                 <input
@@ -900,12 +889,12 @@ export default function DashboardMediaKitPage() {
                   value={settings.minBudget || ""}
                   onChange={(e) => setSettings({ ...settings, minBudget: e.target.value })}
                   placeholder="₹0 (Accept all enquiries)"
-                  className="w-full rounded-xl border border-[#ECE8EB] bg-white px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/60 focus:outline-none focus:border-[#803D63]"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-white px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#803D63]"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[#17131A]">
+                <label className="block text-xs font-bold text-[#181716]">
                   Bio Pitch Tagline (Optional)
                 </label>
                 <input
@@ -913,23 +902,23 @@ export default function DashboardMediaKitPage() {
                   value={settings.bioHighlight || ""}
                   onChange={(e) => setSettings({ ...settings, bioHighlight: e.target.value })}
                   placeholder="Short pitch for brand partners..."
-                  className="w-full rounded-xl border border-[#ECE8EB] bg-white px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/60 focus:outline-none focus:border-[#803D63]"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-white px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#803D63]"
                 />
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-2 border-t border-[#ECE8EB]">
+            <div className="flex justify-end gap-2 pt-2 border-t border-[#E7E3DC]">
               <button
                 type="button"
                 onClick={() => setIsEditingSettings(false)}
-                className="px-3.5 py-2 rounded-xl text-xs font-semibold text-[#6F6872] hover:bg-white"
+                className="px-3.5 py-2 rounded-xl text-xs font-semibold text-[#797570] hover:bg-white"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleSaveSettings}
-                className="bg-[#803D63] hover:bg-[#6F3456] text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors cursor-pointer shadow-2xs"
+                className="bg-[#803D63] hover:bg-[#6F3456] text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors cursor-pointer shadow-xs"
               >
                 Save Settings
               </button>
@@ -938,13 +927,13 @@ export default function DashboardMediaKitPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
             {/* WhatsApp Tile */}
-            <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3.5 space-y-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#6F6872] block">
+            <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3.5 space-y-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570] block">
                 Official WhatsApp
               </span>
               {settings.whatsappNumber ? (
                 <div className="flex items-center justify-between gap-1.5">
-                  <p className="text-xs font-bold text-[#17131A] truncate">
+                  <p className="text-xs font-bold text-[#181716] truncate">
                     {settings.whatsappNumber}
                   </p>
                   <a
@@ -969,13 +958,13 @@ export default function DashboardMediaKitPage() {
             </div>
 
             {/* Business Email Tile */}
-            <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3.5 space-y-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#6F6872] block">
+            <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3.5 space-y-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570] block">
                 Business Email
               </span>
               {settings.sponsorEmail || profile.email ? (
                 <div className="flex items-center justify-between gap-1.5">
-                  <p className="text-xs font-bold text-[#17131A] truncate">
+                  <p className="text-xs font-bold text-[#181716] truncate">
                     {settings.sponsorEmail || profile.email}
                   </p>
                   <a
@@ -998,11 +987,11 @@ export default function DashboardMediaKitPage() {
             </div>
 
             {/* Min Budget Filter Tile */}
-            <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3.5 space-y-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#6F6872] block">
+            <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3.5 space-y-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570] block">
                 Min. Deal Filter
               </span>
-              <p className="text-xs font-bold text-[#17131A]">
+              <p className="text-xs font-bold text-[#181716]">
                 {settings.minBudget
                   ? settings.minBudget === "0" || settings.minBudget === "₹0"
                     ? "Accept all deals"
@@ -1015,43 +1004,43 @@ export default function DashboardMediaKitPage() {
       </section>
 
       {/* 5. SECTION 4 — OTT PRODUCTION TRACK RECORD */}
-      <section className="rounded-2xl border border-[#ECE8EB] bg-white p-5 sm:p-6 text-left space-y-3.5 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#ECE8EB] pb-3">
+      <section className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 text-left space-y-3.5 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E7E3DC] pb-3">
           <div className="flex items-center gap-2">
             <Film className="h-4 w-4 text-[#803D63]" />
-            <h2 className="font-display text-base font-bold text-[#17131A]">
+            <h2 className="font-display text-base font-bold text-[#181716]">
               Production track record
             </h2>
           </div>
-          <span className="text-xs font-semibold text-[#6F6872]">
+          <span className="text-xs font-semibold text-[#797570]">
             Series and episode catalog shown to brand partners
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          <div className="flex items-center gap-3.5 rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F7EDF3] text-[#803D63] shrink-0">
+          <div className="flex items-center gap-3.5 rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#803D63]/[0.09] text-[#803D63] shrink-0">
               <Film className="h-5 w-5" />
             </div>
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#6F6872] block">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570] block">
                 Total Created Series
               </span>
-              <p className="font-display text-xl font-bold text-[#17131A]">
+              <p className="font-display text-xl font-bold text-[#181716]">
                 {totalSeriesCount} {totalSeriesCount === 1 ? "Series" : "Series"}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3.5 rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-[#803D63] shrink-0">
+          <div className="flex items-center gap-3.5 rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#803D63]/[0.09] text-[#803D63] shrink-0">
               <Tv className="h-5 w-5" />
             </div>
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#6F6872] block">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570] block">
                 Total Published Episodes
               </span>
-              <p className="font-display text-xl font-bold text-[#17131A]">
+              <p className="font-display text-xl font-bold text-[#181716]">
                 {totalEpisodesCount} {totalEpisodesCount === 1 ? "Episode" : "Episodes"}
               </p>
             </div>
@@ -1059,10 +1048,6 @@ export default function DashboardMediaKitPage() {
         </div>
       </section>
 
-      {/* ==========================================================================
-         POPUP MODALS (100% PRESERVED & UNTOUCHED LOGIC)
-         ========================================================================== */}
-      
       {/* 1. CREATE / EDIT GIG MODAL */}
       <Modal
         isOpen={isModalOpen}
@@ -1075,24 +1060,24 @@ export default function DashboardMediaKitPage() {
         <form id="gig-form" onSubmit={handleSavePackage} className="flex flex-col flex-1 min-h-0">
           <ModalBody className="p-5 sm:p-6 space-y-4 text-left">
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#17131A]">Service title <span className="text-rose-500">*</span></label>
+              <label className="block text-xs font-bold text-[#181716]">Service title <span className="text-[#C2414B]">*</span></label>
               <input
                 type="text"
                 value={formTitle}
                 onChange={(e) => setFormTitle(e.target.value)}
                 placeholder="e.g., 1x Instagram Reel or 3x Reels Pack"
-                className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
                 required
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#17131A]">Platform type</label>
+                <label className="block text-xs font-bold text-[#181716]">Platform type</label>
                 <select
                   value={formPlatform}
                   onChange={(e) => setFormPlatform(e.target.value)}
-                  className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
                 >
                   <option value="Instagram Reel">Instagram Reel</option>
                   <option value="Instagram Bundle">Instagram Bundle (Reels + Stories)</option>
@@ -1108,54 +1093,54 @@ export default function DashboardMediaKitPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#17131A]">Turnaround time (Days)</label>
+                <label className="block text-xs font-bold text-[#181716]">Turnaround time (Days)</label>
                 <input
                   type="number"
                   value={formTurnaround}
                   onChange={(e) => setFormTurnaround(Number(e.target.value))}
                   min={1}
                   max={30}
-                  className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
             </div>
 
             {/* Min - Max Pricing Range Inputs */}
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#17131A]">
+              <label className="block text-xs font-bold text-[#181716]">
                 Pricing range (in INR)
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[10px] font-bold text-[#6F6872] mb-0.5">Min Price (₹) <span className="text-rose-500">*</span></label>
+                  <label className="block text-[10px] font-bold text-[#797570] mb-0.5">Min Price (₹) <span className="text-[#C2414B]">*</span></label>
                   <input
                     type="text"
                     value={formMinPrice}
                     onChange={(e) => setFormMinPrice(e.target.value)}
                     placeholder="₹2,000"
-                    className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                    className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-[#6F6872] mb-0.5">Max Price (Optional)</label>
+                  <label className="block text-[10px] font-bold text-[#797570] mb-0.5">Max Price (Optional)</label>
                   <input
                     type="text"
                     value={formMaxPrice}
                     onChange={(e) => setFormMaxPrice(e.target.value)}
                     placeholder="₹5,000"
-                    className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                    className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
                   />
                 </div>
               </div>
-              <p className="text-[10px] text-[#6F6872]">
+              <p className="text-[10px] text-[#797570]">
                 e.g. Min ₹2,000 – Max ₹5,000 (leave Max empty for fixed pricing)
               </p>
             </div>
 
             {/* Dynamic Deliverables List & 10 Suggestions */}
             <div className="space-y-2">
-              <label className="block text-xs font-bold text-[#17131A]">Included deliverables</label>
+              <label className="block text-xs font-bold text-[#181716]">Included deliverables</label>
               <div className="flex items-center gap-2">
                 <input
                   type="text"
@@ -1168,7 +1153,7 @@ export default function DashboardMediaKitPage() {
                     }
                   }}
                   placeholder="Add deliverable (e.g. Brand Collaborator Tag)"
-                  className="flex-1 rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                  className="flex-1 rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
                 />
                 <button
                   type="button"
@@ -1180,8 +1165,8 @@ export default function DashboardMediaKitPage() {
               </div>
 
               {/* 10 Tailored Deliverable Suggestion Chips */}
-              <div className="space-y-1 bg-[#FAF8FA] border border-[#ECE8EB] rounded-xl p-2.5">
-                <p className="text-[10px] font-bold text-[#6F6872] uppercase tracking-wider flex items-center justify-between">
+              <div className="space-y-1 bg-[#F8F7F3] border border-[#E7E3DC] rounded-xl p-2.5">
+                <p className="text-[10px] font-bold text-[#797570] uppercase tracking-wider flex items-center justify-between">
                   <span>💡 Suggested Deliverables for {formPlatform}:</span>
                   <span className="text-[9px] text-[#803D63] font-bold">Click chip to add +</span>
                 </p>
@@ -1200,8 +1185,8 @@ export default function DashboardMediaKitPage() {
                         disabled={isAdded}
                         className={`text-[11px] font-semibold px-2 py-0.5 rounded-lg border transition-colors cursor-pointer ${
                           isAdded
-                            ? "bg-emerald-50 text-emerald-700 border-emerald-200 cursor-default opacity-70"
-                            : "bg-white hover:bg-[#F7EDF3] text-[#17131A] hover:text-[#803D63] border-[#ECE8EB]"
+                            ? "bg-[#EAF7F0] text-[#17845B] border-[#17845B]/20 cursor-default opacity-70"
+                            : "bg-white hover:bg-[#803D63]/[0.09] text-[#181716] hover:text-[#803D63] border-[#E7E3DC]"
                         }`}
                       >
                         {isAdded ? `✓ ${item}` : `+ ${item}`}
@@ -1214,14 +1199,14 @@ export default function DashboardMediaKitPage() {
               {/* Included Items Chips */}
               {formDeliverables.length > 0 && (
                 <div className="space-y-1.5 max-h-32 overflow-y-auto pt-1">
-                  <p className="text-[10px] font-bold text-[#6F6872] uppercase tracking-wider">Added Deliverables ({formDeliverables.length}):</p>
+                  <p className="text-[10px] font-bold text-[#797570] uppercase tracking-wider">Added Deliverables ({formDeliverables.length}):</p>
                   {formDeliverables.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between bg-white border border-[#ECE8EB] rounded-lg px-2.5 py-1 text-xs font-semibold text-[#17131A]">
+                    <div key={idx} className="flex items-center justify-between bg-white border border-[#E7E3DC] rounded-lg px-2.5 py-1 text-xs font-semibold text-[#181716]">
                       <span>• {item}</span>
                       <button
                         type="button"
                         onClick={() => handleRemoveDeliverable(idx)}
-                        className="text-rose-500 hover:text-rose-700 p-0.5 cursor-pointer"
+                        className="text-[#C2414B] hover:text-rose-700 p-0.5 cursor-pointer"
                       >
                         <X className="h-3.5 w-3.5" />
                       </button>
@@ -1233,8 +1218,8 @@ export default function DashboardMediaKitPage() {
 
             {/* Package Tier Name / Highlight Badge */}
             <div className="space-y-2">
-              <label className="block text-xs font-bold text-[#17131A]">
-                Package name or badge tag <span className="text-[#6F6872] font-normal">(Optional)</span>
+              <label className="block text-xs font-bold text-[#181716]">
+                Package name or badge tag <span className="text-[#797570] font-normal">(Optional)</span>
               </label>
 
               <input
@@ -1242,18 +1227,18 @@ export default function DashboardMediaKitPage() {
                 value={formPackageName}
                 onChange={(e) => setFormPackageName(e.target.value)}
                 placeholder="e.g. 🥈 Silver Package, ⭐ MOST POPULAR, 🔥 BEST VALUE..."
-                className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
               />
 
               <div className="space-y-1 pt-0.5">
-                <p className="text-[10px] font-bold text-[#6F6872] uppercase tracking-wider">Selectable Suggestions:</p>
+                <p className="text-[10px] font-bold text-[#797570] uppercase tracking-wider">Selectable Suggestions:</p>
                 <div className="flex flex-wrap items-center gap-1.5">
                   {["🥉 Bronze Package", "🥈 Silver Package", "🥇 Gold Package", "⭐ MOST POPULAR", "🔥 BEST VALUE (25% OFF)"].map((tag) => (
                     <button
                       key={tag}
                       type="button"
                       onClick={() => setFormPackageName(tag)}
-                      className="bg-[#FAF8FA] hover:bg-[#F7EDF3] text-[#17131A] hover:text-[#803D63] border border-[#ECE8EB] text-xs font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                      className="bg-[#F8F7F3] hover:bg-[#803D63]/[0.09] text-[#181716] hover:text-[#803D63] border border-[#E7E3DC] text-xs font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
                     >
                       {tag}
                     </button>
@@ -1267,14 +1252,14 @@ export default function DashboardMediaKitPage() {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716] transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               form="gig-form"
-              className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5"
+              className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
             >
               <span>{editingPkgId ? "Save Changes" : "Create Service"}</span>
             </button>
@@ -1298,7 +1283,7 @@ export default function DashboardMediaKitPage() {
             <button
               type="button"
               onClick={handleExportPDF}
-              className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-colors inline-flex items-center gap-1.5 shadow-2xs cursor-pointer"
+              className="bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
               title="Print / Save as PDF"
             >
               <Download className="h-3.5 w-3.5" />
@@ -1307,435 +1292,435 @@ export default function DashboardMediaKitPage() {
           </div>
 
           {/* 2-Tab Navigation Bar */}
-          <div className="flex items-center gap-2 bg-[#FAF8FA] p-1.5 rounded-2xl border border-[#ECE8EB]">
-              <button
-                type="button"
-                onClick={() => setActivePreviewTab("mediakit")}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
-                  activePreviewTab === "mediakit"
-                    ? "bg-[#803D63] text-white shadow-2xs"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
-                }`}
-              >
-                <Briefcase className="h-4 w-4" />
-                <span>💼 Media Kit &amp; Rate Card</span>
-              </button>
+          <div className="flex items-center gap-2 bg-[#F8F7F3] p-1.5 rounded-2xl border border-[#E7E3DC]">
+            <button
+              type="button"
+              onClick={() => setActivePreviewTab("mediakit")}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                activePreviewTab === "mediakit"
+                  ? "bg-[#803D63] text-white shadow-xs"
+                  : "text-[#54514D] hover:text-[#181716] hover:bg-white/60"
+              }`}
+            >
+              <Briefcase className="h-4 w-4" />
+              <span>💼 Media Kit &amp; Rate Card</span>
+            </button>
 
-              <button
-                type="button"
-                onClick={() => setActivePreviewTab("series")}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
-                  activePreviewTab === "series"
-                    ? "bg-[#803D63] text-white shadow-2xs"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
-                }`}
-              >
-                <Film className="h-4 w-4" />
-                <span>🎬 Series &amp; Shows ({series ? series.length : 0})</span>
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => setActivePreviewTab("series")}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                activePreviewTab === "series"
+                  ? "bg-[#803D63] text-white shadow-xs"
+                  : "text-[#54514D] hover:text-[#181716] hover:bg-white/60"
+              }`}
+            >
+              <Film className="h-4 w-4" />
+              <span>🎬 Series &amp; Shows ({series ? series.length : 0})</span>
+            </button>
+          </div>
 
-            {/* TAB 1: 💼 MEDIA KIT & RATE CARD */}
-            {activePreviewTab === "mediakit" && (
-              <div className="space-y-6 animate-in fade-in duration-200">
-                {/* Creator Identity Card */}
-                <div className="rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white p-6 space-y-5 relative overflow-hidden shadow-md">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                      {/* Avatar */}
-                      <div className="relative shrink-0">
-                        {profile.photoDataUrl ? (
-                          <img
-                            src={profile.photoDataUrl}
-                            alt={profile.displayName || "Creator"}
-                            className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl object-cover ring-2 ring-white/20 shadow-md"
-                          />
-                        ) : (
-                          <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500 to-[#803D63] text-2xl font-black text-white shadow-md">
-                            {(profile.displayName || "C").charAt(0).toUpperCase()}
-                          </div>
-                        )}
-                        <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xs" title="Verified Creator">
-                          <Check className="h-3 w-3 stroke-[3]" />
+          {/* TAB 1: 💼 MEDIA KIT & RATE CARD */}
+          {activePreviewTab === "mediakit" && (
+            <div className="space-y-6 animate-in fade-in duration-200">
+              {/* Creator Identity Card */}
+              <div className="rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white p-6 space-y-5 relative overflow-hidden shadow-md">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    {/* Avatar */}
+                    <div className="relative shrink-0">
+                      {profile.photoDataUrl ? (
+                        <img
+                          src={profile.photoDataUrl}
+                          alt={profile.displayName || "Creator"}
+                          className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl object-cover ring-2 ring-white/20 shadow-md"
+                        />
+                      ) : (
+                        <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500 to-[#803D63] text-2xl font-black text-white shadow-md">
+                          {(profile.displayName || "C").charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#17845B] text-white shadow-xs" title="Verified Creator">
+                        <Check className="h-3 w-3 stroke-[3]" />
+                      </span>
+                    </div>
+
+                    {/* Name & Handle */}
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h2 className="font-display text-xl sm:text-2xl font-black text-white">
+                          {profile.displayName || "Creator Name"}
+                        </h2>
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 text-[10px] font-black">
+                          <ShieldCheck className="h-3 w-3" /> Verified by Inflixo
                         </span>
                       </div>
-
-                      {/* Name & Handle */}
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h2 className="font-display text-xl sm:text-2xl font-black text-white">
-                            {profile.displayName || "Creator Name"}
-                          </h2>
-                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 text-[10px] font-black">
-                            <ShieldCheck className="h-3 w-3" /> Verified by Inflixo
-                          </span>
-                        </div>
-                        <p className="text-xs text-indigo-200 font-medium">
-                          @{handleStr} • <span className="text-amber-300 font-bold">{profile.category || "Digital Creator"}</span>
-                        </p>
-                        <p className="text-[11px] text-slate-400 font-mono">
-                          inflixo.com/{handleStr}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Total Aggregated Reach Card */}
-                    <div className="bg-white/10 backdrop-blur-md border border-white/15 px-4 py-3 rounded-2xl text-left sm:text-right shrink-0">
-                      <p className="text-[10px] text-slate-300 uppercase font-extrabold tracking-wider flex items-center sm:justify-end gap-1">
-                        <span>❤️</span> TOTAL FANBASE
+                      <p className="text-xs text-indigo-200 font-medium">
+                        @{handleStr} • <span className="text-amber-300 font-bold">{profile.category || "Digital Creator"}</span>
                       </p>
-                      <p className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                        {formatCount(totalAudience)}
-                      </p>
-                      <p className="text-[10px] text-emerald-400 font-bold mt-0.5">
-                        ✓ Verified Aggregated Reach
+                      <p className="text-[11px] text-slate-400 font-mono">
+                        inflixo.com/{handleStr}
                       </p>
                     </div>
                   </div>
 
-                  {/* Bio Highlight */}
-                  {(profile.bio || settings.bioHighlight) && (
-                    <div className="pt-3 border-t border-white/10 space-y-2">
-                      {settings.bioHighlight && (
-                        <p className="text-xs sm:text-sm text-amber-200/90 font-semibold italic leading-relaxed">
-                          "{settings.bioHighlight}"
-                        </p>
-                      )}
-                      {profile.bio && (
-                        <p className="text-xs text-slate-300 font-normal leading-relaxed">
-                          {profile.bio}
-                        </p>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Direct Contact Routing Bar */}
-                  <div className="pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
-                    <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                      <Zap className="h-3.5 w-3.5 text-amber-400" /> Direct Brand Inquiry Routing:
-                    </span>
-                    <div className="flex items-center gap-2">
-                      {cleanPhone && (
-                        <a
-                          href={`https://wa.me/${cleanPhone}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs"
-                        >
-                          <MessageCircle className="h-3.5 w-3.5 fill-white" />
-                          <span>WhatsApp Direct</span>
-                        </a>
-                      )}
-                      {(settings.sponsorEmail || profile.email) && (
-                        <a
-                          href={`mailto:${settings.sponsorEmail || profile.email}`}
-                          className="bg-white hover:bg-slate-100 text-slate-900 text-xs font-extrabold px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs"
-                        >
-                          <Mail className="h-3.5 w-3.5 text-[#803D63]" />
-                          <span>Email Proposal</span>
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Connected Channels Grid */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                      <Layers className="h-4 w-4 text-[#803D63]" />
-                      <span>Connected Social Channels &amp; Metrics</span>
-                    </h4>
-                    <span className="text-[11px] font-bold text-slate-500">Live Synchronized</span>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div className="rounded-2xl border border-gray-200 bg-white p-3.5 flex items-center justify-between shadow-2xs">
-                      <div className="flex items-center gap-2.5">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 via-rose-500 to-orange-400 text-white shadow-2xs">
-                          <InstagramIcon className="h-4 w-4 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-slate-900">Instagram</p>
-                          <p className="text-[10px] text-slate-500 font-medium truncate max-w-[100px]">
-                            @{socials.instagram?.username || handleStr}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-display text-sm font-black text-slate-900">
-                          {formatCount(socials.instagram?.followers || 0)}
-                        </p>
-                        <p className="text-[9px] text-slate-400 uppercase font-bold">Followers</p>
-                      </div>
-                    </div>
-
-                    <div className="rounded-2xl border border-gray-200 bg-white p-3.5 flex items-center justify-between shadow-2xs">
-                      <div className="flex items-center gap-2.5">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#FF0000] text-white shadow-2xs">
-                          <YoutubeIcon className="h-4 w-4 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-slate-900">YouTube</p>
-                          <p className="text-[10px] text-slate-500 font-medium truncate max-w-[100px]">
-                            {socials.youtube?.channelTitle || `@${socials.youtube?.username || handleStr}`}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-display text-sm font-black text-slate-900">
-                          {formatCount(socials.youtube?.subscribers || 0)}
-                        </p>
-                        <p className="text-[9px] text-slate-400 uppercase font-bold">Subscribers</p>
-                      </div>
-                    </div>
-
-                    <div className="rounded-2xl border border-gray-200 bg-white p-3.5 flex items-center justify-between shadow-2xs">
-                      <div className="flex items-center gap-2.5">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1877F2] text-white shadow-2xs">
-                          <FacebookIcon className="h-4 w-4 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-slate-900">Facebook</p>
-                          <p className="text-[10px] text-slate-500 font-medium truncate max-w-[100px]">
-                            {socials.facebook?.name || `@${socials.facebook?.username || handleStr}`}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-display text-sm font-black text-slate-900">
-                          {formatCount(socials.facebook?.followers || 0)}
-                        </p>
-                        <p className="text-[9px] text-slate-400 uppercase font-bold">Followers</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Custom Creator Links */}
-                {customLinks && customLinks.filter((l) => l.isEnabled !== false).length > 0 && (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                        <Link2 className="h-4 w-4 text-[#803D63]" />
-                        <span>Official Portfolio &amp; Links ({customLinks.filter((l) => l.isEnabled !== false).length})</span>
-                      </h4>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                      {customLinks
-                        .filter((l) => l.isEnabled !== false)
-                        .map((link) => {
-                          const displayDomain = link.url.replace(/^https?:\/\//, "").split("/")[0];
-                          return (
-                            <a
-                              key={link.id}
-                              href={link.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center justify-between p-3 rounded-xl border border-gray-200 bg-white hover:border-[#803D63]/40 hover:bg-slate-50 transition-all text-left shadow-2xs group"
-                            >
-                              <div className="flex items-center gap-2.5 min-w-0">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] shrink-0">
-                                  <Globe className="h-4 w-4" />
-                                </div>
-                                <div className="min-w-0">
-                                  <p className="text-xs font-bold text-slate-900 truncate group-hover:text-[#803D63] transition-colors">
-                                    {link.title}
-                                  </p>
-                                  <p className="text-[10px] text-slate-400 truncate">{displayDomain}</p>
-                                </div>
-                              </div>
-                              <ExternalLink className="h-3.5 w-3.5 text-slate-400 group-hover:text-[#803D63] shrink-0" />
-                            </a>
-                          );
-                        })}
-                    </div>
-                  </div>
-                )}
-
-                {/* Collaboration Gigs Preview List */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                      <FileSpreadsheet className="h-4 w-4 text-[#803D63]" />
-                      <span>Official Collaboration Rate Cards (Top {Math.min(3, packages.filter((p) => p.isActive).length)})</span>
-                    </h4>
-                    <span className="text-[11px] font-bold text-[#803D63]">Verified Deliverables</span>
-                  </div>
-
-                  {packages.filter((p) => p.isActive).length === 0 ? (
-                    <div className="rounded-xl border border-dashed border-gray-200 bg-slate-50 p-6 text-center text-xs text-slate-500 font-medium">
-                      No active rate card packages published currently.
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                      {packages
-                        .filter((p) => p.isActive)
-                        .slice(0, 3)
-                        .map((pkg) => {
-                          const waText = encodeURIComponent(
-                            `Hi ${profile.displayName || "Creator"}, I saw your "${pkg.title}" (${pkg.price}) package on Inflixo and want to collaborate.`
-                          );
-                          const waUrl = `https://wa.me/${cleanPhone}?text=${waText}`;
-                          const mailSubject = encodeURIComponent(`[Inflixo Collab Inquiry] - ${pkg.title}`);
-                          const mailBody = encodeURIComponent(
-                            `Hi ${profile.displayName || "Creator"},\n\nI would like to inquire about collaborating on your "${pkg.title}" package listed on Inflixo.\n\nBest regards,\n[Brand Representative]`
-                          );
-                          const mailUrl = `mailto:${settings.sponsorEmail || profile.email}?subject=${mailSubject}&body=${mailBody}`;
-
-                          const hasPhone = Boolean(cleanPhone);
-                          const hasEmail = Boolean(settings?.sponsorEmail || profile.email);
-
-                          return (
-                            <div
-                              key={pkg.id}
-                              className="border border-slate-200 rounded-2xl p-4 space-y-3 bg-white text-left transition-all flex flex-col justify-between shadow-2xs hover:border-[#803D63]/30"
-                            >
-                              <div className="space-y-2.5">
-                                <div className="flex items-center justify-between gap-1.5">
-                                  <span className="bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider truncate">
-                                    {pkg.platform}
-                                  </span>
-                                  {(pkg.badge || pkg.packageName || pkg.isPopular) && (
-                                    <span className="bg-amber-100 text-amber-900 text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0">
-                                      {pkg.badge || pkg.packageName || "⭐ POPULAR"}
-                                    </span>
-                                  )}
-                                </div>
-
-                                <div>
-                                  <div className="flex items-baseline justify-between gap-1">
-                                    <span className="font-display text-base font-extrabold text-[#803D63]">
-                                      {pkg.price}
-                                    </span>
-                                  </div>
-                                  <h5 className="font-bold text-slate-900 text-xs leading-snug mt-0.5 line-clamp-2">
-                                    {pkg.title}
-                                  </h5>
-                                  <p className="text-[10px] text-slate-500 font-medium mt-1 flex items-center gap-1">
-                                    <Clock className="h-3 w-3 shrink-0" /> Turnaround: {pkg.turnaroundDays} Days
-                                  </p>
-                                </div>
-
-                                <ul className="text-[11px] text-slate-600 space-y-1 pt-2 border-t border-slate-100">
-                                  {pkg.deliverables.map((item, idx) => (
-                                    <li key={idx} className="flex items-start gap-1.5">
-                                      <CheckCircle2 className="h-3 w-3 text-emerald-500 shrink-0 mt-0.5" />
-                                      <span className="leading-tight line-clamp-2">{item}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-
-                              <div className="pt-2 border-t border-slate-100 flex gap-1.5">
-                                {hasPhone && (
-                                  <a
-                                    href={waUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold py-1.5 px-2 rounded-xl transition-colors inline-flex items-center justify-center gap-1 shadow-2xs"
-                                  >
-                                    <MessageCircle className="h-3 w-3 fill-white" />
-                                    <span>WhatsApp</span>
-                                  </a>
-                                )}
-                                {hasEmail && (
-                                  <a
-                                    href={mailUrl}
-                                    className="flex-1 bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold py-1.5 px-2 rounded-xl transition-colors inline-flex items-center justify-center gap-1 shadow-2xs"
-                                  >
-                                    <Mail className="h-3 w-3" />
-                                    <span>Email</span>
-                                  </a>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* TAB 2: 🎬 SERIES & SHOWS */}
-            {activePreviewTab === "series" && (
-              <div className="space-y-4 animate-in fade-in duration-200">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                    <Film className="h-4 w-4 text-[#803D63]" />
-                    <span>Featured Series &amp; Shows ({series ? series.length : 0})</span>
-                  </h4>
-                  <span className="text-[11px] font-semibold text-slate-500">
-                    Default Audience View
-                  </span>
-                </div>
-
-                {series && series.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {series.map((ser: any) => {
-                      const episodeCount = ser.seasons
-                        ? ser.seasons.reduce((acc: number, season: any) => acc + (season.episodes?.length || 0), 0)
-                        : (ser.episodesCount || 0);
-
-                      return (
-                        <div key={ser.id} className="rounded-2xl border border-gray-200 overflow-hidden bg-slate-950 text-white shadow-md flex flex-col justify-between group hover:border-[#803D63] transition-all">
-                          <div className="aspect-video relative bg-slate-900 flex items-center justify-center overflow-hidden">
-                            {ser.posterDataUrl ? (
-                              <img src={ser.posterDataUrl} alt={ser.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                            ) : (
-                              <div className="flex flex-col items-center gap-1 text-slate-500">
-                                <Film className="h-8 w-8 text-slate-600" />
-                                <span className="text-[10px] font-bold">16:9 WIDESCREEN POSTER</span>
-                              </div>
-                            )}
-                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
-                            <span className="absolute bottom-2 left-2 bg-[#803D63] text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-2xs">
-                              🎬 {ser.seasons?.length || 1} Season • {episodeCount} Episodes
-                            </span>
-                          </div>
-
-                          <div className="p-4 space-y-2">
-                            <div className="flex items-start justify-between gap-2">
-                              <div>
-                                <h5 className="font-bold text-sm text-white group-hover:text-amber-300 transition-colors line-clamp-1">{ser.title}</h5>
-                                <p className="text-[11px] text-slate-400 font-medium truncate">{ser.genre || "Web Series"} • {ser.language || "Hindi"}</p>
-                              </div>
-                              {ser.rating && (
-                                <span className="bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0">
-                                  ⭐ {ser.rating}
-                                </span>
-                              )}
-                            </div>
-                            {ser.description && (
-                              <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
-                                {ser.description}
-                              </p>
-                            )}
-
-                            <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px]">
-                              <span className="text-slate-400 font-medium flex items-center gap-1">
-                                <Play className="h-3 w-3 text-indigo-400 fill-indigo-400" /> Free Episode Playlist
-                              </span>
-                              <span className="text-[#803D63] font-bold">Watch Now →</span>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="rounded-2xl border-2 border-dashed border-gray-200 bg-slate-50 p-8 text-center space-y-2">
-                    <Film className="h-8 w-8 text-slate-400 mx-auto" />
-                    <h4 className="font-bold text-slate-800 text-sm">No Series Published Yet</h4>
-                    <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                      Create OTT Series in <Link href="/dashboard/series" className="text-[#803D63] font-bold underline">Series &amp; Episodes</Link> to show widescreen posters &amp; episode playlists to your fans!
+                  {/* Total Aggregated Reach Card */}
+                  <div className="bg-white/10 backdrop-blur-md border border-white/15 px-4 py-3 rounded-2xl text-left sm:text-right shrink-0">
+                    <p className="text-[10px] text-slate-300 uppercase font-extrabold tracking-wider flex items-center sm:justify-end gap-1">
+                      <span>❤️</span> TOTAL FANBASE
+                    </p>
+                    <p className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                      {formatCount(totalAudience)}
+                    </p>
+                    <p className="text-[10px] text-emerald-400 font-bold mt-0.5">
+                      ✓ Verified Aggregated Reach
                     </p>
                   </div>
+                </div>
+
+                {/* Bio Highlight */}
+                {(profile.bio || settings.bioHighlight) && (
+                  <div className="pt-3 border-t border-white/10 space-y-2">
+                    {settings.bioHighlight && (
+                      <p className="text-xs sm:text-sm text-amber-200/90 font-semibold italic leading-relaxed">
+                        "{settings.bioHighlight}"
+                      </p>
+                    )}
+                    {profile.bio && (
+                      <p className="text-xs text-slate-300 font-normal leading-relaxed">
+                        {profile.bio}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Direct Contact Routing Bar */}
+                <div className="pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
+                  <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                    <Zap className="h-3.5 w-3.5 text-amber-400" /> Direct Brand Inquiry Routing:
+                  </span>
+                  <div className="flex items-center gap-2">
+                    {cleanPhone && (
+                      <a
+                        href={`https://wa.me/${cleanPhone}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-[#17845B] hover:bg-[#146c4b] text-white text-xs font-extrabold px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs"
+                      >
+                        <MessageCircle className="h-3.5 w-3.5 fill-white" />
+                        <span>WhatsApp Direct</span>
+                      </a>
+                    )}
+                    {(settings.sponsorEmail || profile.email) && (
+                      <a
+                        href={`mailto:${settings.sponsorEmail || profile.email}`}
+                        className="bg-white hover:bg-slate-100 text-[#181716] text-xs font-extrabold px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs"
+                      >
+                        <Mail className="h-3.5 w-3.5 text-[#803D63]" />
+                        <span>Email Proposal</span>
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Connected Channels Grid */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-extrabold text-[#181716] uppercase tracking-wider flex items-center gap-1.5">
+                    <Layers className="h-4 w-4 text-[#803D63]" />
+                    <span>Connected Social Channels &amp; Metrics</span>
+                  </h4>
+                  <span className="text-[11px] font-bold text-[#797570]">Live Synchronized</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="rounded-2xl border border-[#E7E3DC] bg-white p-3.5 flex items-center justify-between shadow-2xs">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 via-rose-500 to-orange-400 text-white shadow-2xs">
+                        <InstagramIcon className="h-4 w-4 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-[#181716]">Instagram</p>
+                        <p className="text-[10px] text-[#797570] font-medium truncate max-w-[100px]">
+                          @{socials.instagram?.username || handleStr}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-display text-sm font-black text-[#181716]">
+                        {formatCount(socials.instagram?.followers || 0)}
+                      </p>
+                      <p className="text-[9px] text-[#797570] uppercase font-bold">Followers</p>
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-[#E7E3DC] bg-white p-3.5 flex items-center justify-between shadow-2xs">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#FF0000] text-white shadow-2xs">
+                        <YoutubeIcon className="h-4 w-4 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-[#181716]">YouTube</p>
+                        <p className="text-[10px] text-[#797570] font-medium truncate max-w-[100px]">
+                          {socials.youtube?.channelTitle || `@${socials.youtube?.username || handleStr}`}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-display text-sm font-black text-[#181716]">
+                        {formatCount(socials.youtube?.subscribers || 0)}
+                      </p>
+                      <p className="text-[9px] text-[#797570] uppercase font-bold">Subscribers</p>
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-[#E7E3DC] bg-white p-3.5 flex items-center justify-between shadow-2xs">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1877F2] text-white shadow-2xs">
+                        <FacebookIcon className="h-4 w-4 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-[#181716]">Facebook</p>
+                        <p className="text-[10px] text-[#797570] font-medium truncate max-w-[100px]">
+                          {socials.facebook?.name || `@${socials.facebook?.username || handleStr}`}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-display text-sm font-black text-[#181716]">
+                        {formatCount(socials.facebook?.followers || 0)}
+                      </p>
+                      <p className="text-[9px] text-[#797570] uppercase font-bold">Followers</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Custom Creator Links */}
+              {customLinks && customLinks.filter((l) => l.isEnabled !== false).length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-extrabold text-[#181716] uppercase tracking-wider flex items-center gap-1.5">
+                      <Link2 className="h-4 w-4 text-[#803D63]" />
+                      <span>Official Portfolio &amp; Links ({customLinks.filter((l) => l.isEnabled !== false).length})</span>
+                    </h4>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {customLinks
+                      .filter((l) => l.isEnabled !== false)
+                      .map((link) => {
+                        const displayDomain = link.url.replace(/^https?:\/\//, "").split("/")[0];
+                        return (
+                          <a
+                            key={link.id}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-between p-3 rounded-xl border border-[#E7E3DC] bg-white hover:border-[#803D63]/40 hover:bg-[#F8F7F3] transition-all text-left shadow-2xs group"
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/20 shrink-0">
+                                <Globe className="h-4 w-4" />
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-xs font-bold text-[#181716] truncate group-hover:text-[#803D63] transition-colors">
+                                  {link.title}
+                                </p>
+                                <p className="text-[10px] text-[#797570] truncate">{displayDomain}</p>
+                              </div>
+                            </div>
+                            <ExternalLink className="h-3.5 w-3.5 text-[#797570] group-hover:text-[#803D63] shrink-0" />
+                          </a>
+                        );
+                      })}
+                  </div>
+                </div>
+              )}
+
+              {/* Collaboration Gigs Preview List */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-extrabold text-[#181716] uppercase tracking-wider flex items-center gap-1.5">
+                    <FileSpreadsheet className="h-4 w-4 text-[#803D63]" />
+                    <span>Official Collaboration Rate Cards (Top {Math.min(3, packages.filter((p) => p.isActive).length)})</span>
+                  </h4>
+                  <span className="text-[11px] font-bold text-[#803D63]">Verified Deliverables</span>
+                </div>
+
+                {packages.filter((p) => p.isActive).length === 0 ? (
+                  <div className="rounded-xl border border-dashed border-[#E7E3DC] bg-[#F8F7F3] p-6 text-center text-xs text-[#797570] font-medium">
+                    No active rate card packages published currently.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                    {packages
+                      .filter((p) => p.isActive)
+                      .slice(0, 3)
+                      .map((pkg) => {
+                        const waText = encodeURIComponent(
+                          `Hi ${profile.displayName || "Creator"}, I saw your "${pkg.title}" (${pkg.price}) package on Inflixo and want to collaborate.`
+                        );
+                        const waUrl = `https://wa.me/${cleanPhone}?text=${waText}`;
+                        const mailSubject = encodeURIComponent(`[Inflixo Collab Inquiry] - ${pkg.title}`);
+                        const mailBody = encodeURIComponent(
+                          `Hi ${profile.displayName || "Creator"},\n\nI would like to inquire about collaborating on your "${pkg.title}" package listed on Inflixo.\n\nBest regards,\n[Brand Representative]`
+                        );
+                        const mailUrl = `mailto:${settings.sponsorEmail || profile.email}?subject=${mailSubject}&body=${mailBody}`;
+
+                        const hasPhone = Boolean(cleanPhone);
+                        const hasEmail = Boolean(settings?.sponsorEmail || profile.email);
+
+                        return (
+                          <div
+                            key={pkg.id}
+                            className="border border-[#E7E3DC] rounded-2xl p-4 space-y-3 bg-white text-left transition-all flex flex-col justify-between shadow-2xs hover:border-[#803D63]/30"
+                          >
+                            <div className="space-y-2.5">
+                              <div className="flex items-center justify-between gap-1.5">
+                                <span className="bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/20 text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider truncate">
+                                  {pkg.platform}
+                                </span>
+                                {(pkg.badge || pkg.packageName || pkg.isPopular) && (
+                                  <span className="bg-amber-100 text-amber-900 text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0">
+                                    {pkg.badge || pkg.packageName || "⭐ POPULAR"}
+                                  </span>
+                                )}
+                              </div>
+
+                              <div>
+                                <div className="flex items-baseline justify-between gap-1">
+                                  <span className="font-display text-base font-extrabold text-[#803D63]">
+                                    {pkg.price}
+                                  </span>
+                                </div>
+                                <h5 className="font-bold text-[#181716] text-xs leading-snug mt-0.5 line-clamp-2">
+                                  {pkg.title}
+                                </h5>
+                                <p className="text-[10px] text-[#797570] font-medium mt-1 flex items-center gap-1">
+                                  <Clock className="h-3 w-3 shrink-0" /> Turnaround: {pkg.turnaroundDays} Days
+                                </p>
+                              </div>
+
+                              <ul className="text-[11px] text-[#54514D] space-y-1 pt-2 border-t border-[#E7E3DC]">
+                                {pkg.deliverables.map((item, idx) => (
+                                  <li key={idx} className="flex items-start gap-1.5">
+                                    <CheckCircle2 className="h-3 w-3 text-[#17845B] shrink-0 mt-0.5" />
+                                    <span className="leading-tight line-clamp-2">{item}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+
+                            <div className="pt-2 border-t border-[#E7E3DC] flex gap-1.5">
+                              {hasPhone && (
+                                <a
+                                  href={waUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex-1 bg-[#17845B] hover:bg-[#146c4b] text-white text-[11px] font-bold py-1.5 px-2 rounded-xl transition-colors inline-flex items-center justify-center gap-1 shadow-2xs"
+                                >
+                                  <MessageCircle className="h-3 w-3 fill-white" />
+                                  <span>WhatsApp</span>
+                                </a>
+                              )}
+                              {hasEmail && (
+                                <a
+                                  href={mailUrl}
+                                  className="flex-1 bg-[#181716] hover:bg-slate-800 text-white text-[11px] font-bold py-1.5 px-2 rounded-xl transition-colors inline-flex items-center justify-center gap-1 shadow-2xs"
+                                >
+                                  <Mail className="h-3 w-3" />
+                                  <span>Email</span>
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
                 )}
               </div>
-            )}
+            </div>
+          )}
+
+          {/* TAB 2: 🎬 SERIES & SHOWS */}
+          {activePreviewTab === "series" && (
+            <div className="space-y-4 animate-in fade-in duration-200">
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-extrabold text-[#181716] uppercase tracking-wider flex items-center gap-1.5">
+                  <Film className="h-4 w-4 text-[#803D63]" />
+                  <span>Featured Series &amp; Shows ({series ? series.length : 0})</span>
+                </h4>
+                <span className="text-[11px] font-semibold text-[#797570]">
+                  Default Audience View
+                </span>
+              </div>
+
+              {series && series.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {series.map((ser: any) => {
+                    const episodeCount = ser.seasons
+                      ? ser.seasons.reduce((acc: number, season: any) => acc + (season.episodes?.length || 0), 0)
+                      : (ser.episodesCount || 0);
+
+                    return (
+                      <div key={ser.id} className="rounded-2xl border border-[#E7E3DC] overflow-hidden bg-slate-950 text-white shadow-md flex flex-col justify-between group hover:border-[#803D63] transition-all">
+                        <div className="aspect-video relative bg-slate-900 flex items-center justify-center overflow-hidden">
+                          {ser.posterDataUrl ? (
+                            <img src={ser.posterDataUrl} alt={ser.title} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300" />
+                          ) : (
+                            <div className="flex flex-col items-center gap-1 text-slate-500">
+                              <Film className="h-8 w-8 text-slate-600" />
+                              <span className="text-[10px] font-bold">16:9 WIDESCREEN POSTER</span>
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
+                          <span className="absolute bottom-2 left-2 bg-[#803D63] text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-2xs">
+                            🎬 {ser.seasons?.length || 1} Season • {episodeCount} Episodes
+                          </span>
+                        </div>
+
+                        <div className="p-4 space-y-2">
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <h5 className="font-bold text-sm text-white group-hover:text-amber-300 transition-colors line-clamp-1">{ser.title}</h5>
+                              <p className="text-[11px] text-slate-400 font-medium truncate">{ser.genre || "Web Series"} • {ser.language || "Hindi"}</p>
+                            </div>
+                            {ser.rating && (
+                              <span className="bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0">
+                                ⭐ {ser.rating}
+                              </span>
+                            )}
+                          </div>
+                          {ser.description && (
+                            <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
+                              {ser.description}
+                            </p>
+                          )}
+
+                          <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px]">
+                            <span className="text-slate-400 font-medium flex items-center gap-1">
+                              <Play className="h-3 w-3 text-indigo-400 fill-indigo-400" /> Free Episode Playlist
+                            </span>
+                            <span className="text-[#803D63] font-bold">Watch Now →</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="rounded-2xl border-2 border-dashed border-[#E7E3DC] bg-[#F8F7F3] p-8 text-center space-y-2">
+                  <Film className="h-8 w-8 text-[#797570] mx-auto" />
+                  <h4 className="font-bold text-[#181716] text-sm">No Series Published Yet</h4>
+                  <p className="text-xs text-[#797570] max-w-sm mx-auto">
+                    Create OTT Series in <Link href="/dashboard/series" className="text-[#803D63] font-bold underline">Series &amp; Episodes</Link> to show widescreen posters &amp; episode playlists to your fans!
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </ModalBody>
       </Modal>
 

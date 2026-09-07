@@ -46,12 +46,12 @@ function DesktopTopHeader() {
   };
 
   return (
-    <header className="hidden items-center justify-between border-b border-[#ECE8EB] bg-white px-8 py-4 lg:flex shrink-0">
+    <header className="hidden items-center justify-between border-b border-[#E7E3DC] bg-white px-8 py-4 lg:flex shrink-0">
       <div>
-        <h1 className="font-display text-lg font-bold text-[#17131A] tracking-tight">
+        <h1 className="font-display text-lg font-bold text-[#181716] tracking-tight">
           {greeting}
         </h1>
-        <p className="text-xs text-[#6F6872] font-medium mt-0.5">
+        <p className="text-xs text-[#54514D] font-medium mt-0.5">
           Here&apos;s how your creator profile is looking today.
         </p>
       </div>
@@ -60,9 +60,9 @@ function DesktopTopHeader() {
         <button
           type="button"
           onClick={handleCopy}
-          className="flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-3.5 py-2 text-xs font-semibold text-[#181716] transition-colors cursor-pointer"
         >
-          <Copy className="h-3.5 w-3.5 text-[#6F6872]" />
+          <Copy className="h-3.5 w-3.5 text-[#797570]" />
           <span>Copy Link</span>
         </button>
 
@@ -70,7 +70,7 @@ function DesktopTopHeader() {
           href={`/${handleStr}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
+          className="flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
         >
           <span>View Profile</span>
           <ExternalLink className="h-3.5 w-3.5" />
@@ -108,7 +108,7 @@ function Shell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#FAFAFB]">
+    <div className="flex h-screen w-screen overflow-hidden bg-[#FAF9F6]">
       {/* Desktop Sidebar */}
       <DashboardSidebar />
 

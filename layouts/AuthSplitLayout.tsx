@@ -6,7 +6,7 @@ export function AuthSplitLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-dvh w-full bg-white">
       {/* Left / form column */}
-      <div className="flex w-full flex-col justify-between px-6 py-8 sm:px-10 sm:py-10 lg:w-[48%] lg:px-14 lg:py-12 xl:w-[45%] bg-white border-r border-slate-100 min-h-dvh">
+      <div className="flex w-full flex-col justify-between px-6 py-8 sm:px-10 sm:py-10 lg:w-[48%] lg:px-14 lg:py-12 xl:w-[45%] bg-white border-r border-[#E7E3DC] min-h-dvh">
         <div>
           <Logo />
         </div>
@@ -17,7 +17,7 @@ export function AuthSplitLayout({ children }: { children: ReactNode }) {
         </div>
 
         {/* Minimal Understated Footer */}
-        <div className="text-center text-xs text-gray-400 font-medium pt-4">
+        <div className="text-center text-xs text-[#797570] font-medium pt-4">
           &copy; 2026 Inflixo · TrustIQ Labs PVT LTD
         </div>
       </div>

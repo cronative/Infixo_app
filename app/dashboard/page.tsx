@@ -191,31 +191,31 @@ export default function DashboardOverviewPage() {
   return (
     <div className="space-y-6">
       {/* 1. PROFILE READINESS CARD */}
-      <section className="rounded-2xl border border-[#ECE8EB] bg-white p-5 sm:p-6 shadow-2xs">
+      <section className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
           {/* Creator Details */}
           <div className="flex items-center gap-3.5 min-w-0">
             <CreatorAvatar
               src={profile.photoDataUrl}
               name={displayName}
-              className="w-12 h-12 rounded-full border border-[#ECE8EB] overflow-hidden object-cover aspect-square shrink-0"
-              textClassName="text-sm font-bold text-[#17131A]"
-              fallbackBgClass="bg-[#F7EDF3]"
+              className="w-12 h-12 rounded-full border border-[#E7E3DC] overflow-hidden object-cover aspect-square shrink-0"
+              textClassName="text-sm font-bold text-[#181716]"
+              fallbackBgClass="bg-[#803D63]/[0.09]"
             />
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <h2 className="font-display text-base sm:text-lg font-bold text-[#17131A] truncate">
+                <h2 className="font-display text-base sm:text-lg font-bold text-[#181716] truncate">
                   {displayName}
                 </h2>
                 {profile.isVerified && (
                   <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-500" />
                 )}
-                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#16794A] bg-[#ECFDF3] px-2 py-0.5 rounded-full">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#16794A]" />
+                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
                   Live
                 </span>
               </div>
-              <p className="text-xs text-[#6F6872] font-medium mt-0.5">
+              <p className="text-xs text-[#797570] font-medium mt-0.5">
                 @{handleStr} • {profileSteps.completedCount} of {profileSteps.totalCount} profile steps completed
               </p>
             </div>
@@ -225,7 +225,7 @@ export default function DashboardOverviewPage() {
           <div className="flex items-center gap-2.5 shrink-0 self-start md:self-auto">
             <Link
               href="/dashboard/profile"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-3.5 py-2 text-xs font-semibold text-[#181716] transition-colors"
             >
               <span>Edit Profile</span>
             </Link>
@@ -233,7 +233,7 @@ export default function DashboardOverviewPage() {
               href={`/${handleStr}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors shadow-2xs"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors shadow-xs"
             >
               <span>View Profile</span>
               <ExternalLink className="h-3.5 w-3.5" />
@@ -242,12 +242,12 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* Progress Bar & Checklist Summary */}
-        <div className="mt-5 pt-4 border-t border-[#ECE8EB] space-y-2.5">
+        <div className="mt-5 pt-4 border-t border-[#E7E3DC] space-y-2.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-semibold text-[#17131A]">Profile Completion</span>
+            <span className="font-semibold text-[#181716]">Profile Completion</span>
             <span className="font-bold text-[#803D63]">{profileSteps.percentage}%</span>
           </div>
-          <div className="w-full h-2 rounded-full bg-[#FAF8FA] border border-[#ECE8EB] overflow-hidden">
+          <div className="w-full h-2 rounded-full bg-[#F8F7F3] border border-[#E7E3DC] overflow-hidden">
             <div
               className="h-full bg-[#803D63] rounded-full transition-all duration-500 ease-out"
               style={{ width: `${profileSteps.percentage}%` }}
@@ -259,25 +259,25 @@ export default function DashboardOverviewPage() {
       {/* 2. COMPACT CREATOR STATISTICS (4 equal cards) */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         {/* Stat 1: Total Fanbase */}
-        <div className="rounded-2xl border border-[#ECE8EB] bg-white p-4 space-y-2 shadow-2xs flex flex-col justify-between">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 space-y-2 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#6F6872] uppercase tracking-wider">
+            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
               Total Fanbase
             </span>
             <button
               type="button"
               onClick={handleRefreshStats}
-              className="p-1 rounded-lg text-[#6F6872] hover:text-[#803D63] hover:bg-[#F7EDF3] transition-colors cursor-pointer"
+              className="p-1 rounded-lg text-[#797570] hover:text-[#803D63] hover:bg-[#803D63]/[0.09] transition-colors cursor-pointer"
               title={`Last synced: ${formatSyncDate(socials.updatedAt)}. Click to refresh.`}
             >
               <RefreshCw className={`h-3.5 w-3.5 ${isSyncing ? "animate-spin text-[#803D63]" : ""}`} />
             </button>
           </div>
           <div>
-            <p className="font-display text-2xl sm:text-3xl font-bold text-[#17131A]">
+            <p className="font-display text-2xl sm:text-3xl font-bold text-[#181716]">
               {formatCount(totalAudience)}
             </p>
-            <p className="text-[11px] text-[#6F6872] font-medium mt-0.5">
+            <p className="text-[11px] text-[#797570] font-medium mt-0.5">
               Across {connectedSocialsCount} connected {connectedSocialsCount === 1 ? "account" : "accounts"}
             </p>
           </div>
@@ -291,18 +291,18 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* Stat 2: Content Series */}
-        <div className="rounded-2xl border border-[#ECE8EB] bg-white p-4 space-y-2 shadow-2xs flex flex-col justify-between">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 space-y-2 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#6F6872] uppercase tracking-wider">
+            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
               Content Series
             </span>
             <Layers className="h-4 w-4 text-[#803D63]" />
           </div>
           <div>
-            <p className="font-display text-2xl sm:text-3xl font-bold text-[#17131A]">
+            <p className="font-display text-2xl sm:text-3xl font-bold text-[#181716]">
               {series.length}
             </p>
-            <p className="text-[11px] text-[#6F6872] font-medium mt-0.5">
+            <p className="text-[11px] text-[#797570] font-medium mt-0.5">
               {totalEpisodesCount} published {totalEpisodesCount === 1 ? "episode" : "episodes"}
             </p>
           </div>
@@ -316,18 +316,18 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* Stat 3: Creator Services */}
-        <div className="rounded-2xl border border-[#ECE8EB] bg-white p-4 space-y-2 shadow-2xs flex flex-col justify-between">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 space-y-2 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#6F6872] uppercase tracking-wider">
+            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
               Services &amp; Gigs
             </span>
             <Briefcase className="h-4 w-4 text-[#803D63]" />
           </div>
           <div>
-            <p className="font-display text-2xl sm:text-3xl font-bold text-[#17131A]">
+            <p className="font-display text-2xl sm:text-3xl font-bold text-[#181716]">
               {packages.length}
             </p>
-            <p className="text-[11px] text-[#6F6872] font-medium mt-0.5">
+            <p className="text-[11px] text-[#797570] font-medium mt-0.5">
               {packages.length > 0 ? "Active brand packages" : "Add how brands can work with you"}
             </p>
           </div>
@@ -341,18 +341,18 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* Stat 4: Client Reviews */}
-        <div className="rounded-2xl border border-[#ECE8EB] bg-white p-4 space-y-2 shadow-2xs flex flex-col justify-between">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 space-y-2 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#6F6872] uppercase tracking-wider">
+            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
               Client Reviews
             </span>
             <Star className="h-4 w-4 text-[#803D63]" />
           </div>
           <div>
-            <p className="font-display text-2xl sm:text-3xl font-bold text-[#17131A]">
+            <p className="font-display text-2xl sm:text-3xl font-bold text-[#181716]">
               {reviews.length}
             </p>
-            <p className="text-[11px] text-[#6F6872] font-medium mt-0.5">
+            <p className="text-[11px] text-[#797570] font-medium mt-0.5">
               {reviews.length > 0 ? "Verified brand ratings" : "Request your first review"}
             </p>
           </div>
@@ -367,16 +367,16 @@ export default function DashboardOverviewPage() {
       </section>
 
       {/* 3. RECOMMENDED NEXT ACTION CARD */}
-      <section className="rounded-2xl border border-[#ECE8EB] bg-white p-5 sm:p-6 shadow-2xs space-y-4">
+      <section className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-[#803D63] bg-[#F7EDF3] px-2.5 py-0.5 rounded-full">
+            <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-[#803D63] bg-[#803D63]/[0.09] px-2.5 py-0.5 rounded-full border border-[#803D63]/20">
               Next best step
             </span>
-            <h3 className="font-display text-base sm:text-lg font-bold text-[#17131A]">
+            <h3 className="font-display text-base sm:text-lg font-bold text-[#181716]">
               {nextStep.title}
             </h3>
-            <p className="text-xs text-[#6F6872] font-medium max-w-xl">
+            <p className="text-xs text-[#54514D] font-medium max-w-xl">
               {nextStep.description}
             </p>
           </div>
@@ -387,7 +387,7 @@ export default function DashboardOverviewPage() {
                 href={nextStep.ctaHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2.5 text-xs font-semibold text-white transition-colors shadow-2xs"
+                className="inline-flex items-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2.5 text-xs font-semibold text-white transition-colors shadow-xs"
               >
                 <span>{nextStep.ctaLabel}</span>
                 <ExternalLink className="h-3.5 w-3.5" />
@@ -396,7 +396,7 @@ export default function DashboardOverviewPage() {
               <button
                 type="button"
                 onClick={nextStep.onClick}
-                className="inline-flex items-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2.5 text-xs font-semibold text-white transition-colors shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2.5 text-xs font-semibold text-white transition-colors shadow-xs cursor-pointer"
               >
                 <span>{nextStep.ctaLabel}</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -404,7 +404,7 @@ export default function DashboardOverviewPage() {
             ) : (
               <Link
                 href={nextStep.ctaHref}
-                className="inline-flex items-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2.5 text-xs font-semibold text-white transition-colors shadow-2xs"
+                className="inline-flex items-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2.5 text-xs font-semibold text-white transition-colors shadow-xs"
               >
                 <span>{nextStep.ctaLabel}</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -414,8 +414,8 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* Secondary Quick Action Links */}
-        <div className="pt-3 border-t border-[#ECE8EB] flex flex-wrap items-center gap-4 text-xs font-semibold text-[#6F6872]">
-          <span className="text-[11px] text-[#6F6872]/80 uppercase tracking-wider font-bold">Quick Shortcuts:</span>
+        <div className="pt-3 border-t border-[#E7E3DC] flex flex-wrap items-center gap-4 text-xs font-semibold text-[#54514D]">
+          <span className="text-[11px] text-[#797570] uppercase tracking-wider font-bold">Quick Shortcuts:</span>
           <Link href="/dashboard/series" className="hover:text-[#803D63] transition-colors inline-flex items-center gap-1">
             <Plus className="h-3 w-3" /> Add Series
           </Link>
@@ -434,7 +434,7 @@ export default function DashboardOverviewPage() {
       {/* 4. CREATOR WORKSPACE SUMMARY (2x2 Grid) */}
       <section className="space-y-3">
         <div className="px-0.5">
-          <h3 className="font-display text-sm font-bold text-[#17131A] uppercase tracking-wider text-[#6F6872]">
+          <h3 className="font-display text-sm font-bold uppercase tracking-wider text-[#797570]">
             Workspace Summary
           </h3>
         </div>
@@ -443,85 +443,85 @@ export default function DashboardOverviewPage() {
           {/* Card 1: Content */}
           <Link
             href="/dashboard/series"
-            className="group rounded-2xl border border-[#ECE8EB] bg-white p-4 sm:p-5 transition-all hover:border-[#803D63]/30 shadow-2xs flex items-start justify-between gap-3"
+            className="group rounded-2xl border border-[#E7E3DC] bg-white p-4 sm:p-5 transition-all hover:border-[#803D63]/40 shadow-xs flex items-start justify-between gap-3"
           >
             <div className="space-y-1.5 min-w-0">
               <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#F7EDF3] text-[#803D63]">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#803D63]/[0.09] text-[#803D63]">
                   <Layers className="h-3.5 w-3.5" />
                 </div>
-                <h4 className="font-display text-sm font-bold text-[#17131A] group-hover:text-[#803D63] transition-colors">
+                <h4 className="font-display text-sm font-bold text-[#181716] group-hover:text-[#803D63] transition-colors">
                   Content &amp; Series
                 </h4>
               </div>
-              <p className="text-xs text-[#6F6872] font-medium leading-relaxed">
+              <p className="text-xs text-[#54514D] font-medium leading-relaxed">
                 {series.length} {series.length === 1 ? "series" : "series"} with {totalEpisodesCount} total {totalEpisodesCount === 1 ? "episode" : "episodes"} organized.
               </p>
             </div>
-            <ChevronRight className="h-4 w-4 text-[#6F6872] group-hover:text-[#803D63] transition-transform group-hover:translate-x-0.5 shrink-0 mt-1" />
+            <ChevronRight className="h-4 w-4 text-[#797570] group-hover:text-[#803D63] transition-transform group-hover:translate-x-0.5 shrink-0 mt-1" />
           </Link>
 
           {/* Card 2: Services & Brand Work */}
           <Link
             href="/dashboard/mediakit"
-            className="group rounded-2xl border border-[#ECE8EB] bg-white p-4 sm:p-5 transition-all hover:border-[#803D63]/30 shadow-2xs flex items-start justify-between gap-3"
+            className="group rounded-2xl border border-[#E7E3DC] bg-white p-4 sm:p-5 transition-all hover:border-[#803D63]/40 shadow-xs flex items-start justify-between gap-3"
           >
             <div className="space-y-1.5 min-w-0">
               <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#F7EDF3] text-[#803D63]">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#803D63]/[0.09] text-[#803D63]">
                   <Briefcase className="h-3.5 w-3.5" />
                 </div>
-                <h4 className="font-display text-sm font-bold text-[#17131A] group-hover:text-[#803D63] transition-colors">
+                <h4 className="font-display text-sm font-bold text-[#181716] group-hover:text-[#803D63] transition-colors">
                   Services &amp; Brand Work
                 </h4>
               </div>
-              <p className="text-xs text-[#6F6872] font-medium leading-relaxed">
+              <p className="text-xs text-[#54514D] font-medium leading-relaxed">
                 {packages.length > 0 ? `${packages.length} active collaboration packages configured.` : "Show brands how they can collaborate with you."}
               </p>
             </div>
-            <ChevronRight className="h-4 w-4 text-[#6F6872] group-hover:text-[#803D63] transition-transform group-hover:translate-x-0.5 shrink-0 mt-1" />
+            <ChevronRight className="h-4 w-4 text-[#797570] group-hover:text-[#803D63] transition-transform group-hover:translate-x-0.5 shrink-0 mt-1" />
           </Link>
 
           {/* Card 3: Reviews */}
           <Link
             href="/dashboard/reviews"
-            className="group rounded-2xl border border-[#ECE8EB] bg-white p-4 sm:p-5 transition-all hover:border-[#803D63]/30 shadow-2xs flex items-start justify-between gap-3"
+            className="group rounded-2xl border border-[#E7E3DC] bg-white p-4 sm:p-5 transition-all hover:border-[#803D63]/40 shadow-xs flex items-start justify-between gap-3"
           >
             <div className="space-y-1.5 min-w-0">
               <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#F7EDF3] text-[#803D63]">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#803D63]/[0.09] text-[#803D63]">
                   <Star className="h-3.5 w-3.5" />
                 </div>
-                <h4 className="font-display text-sm font-bold text-[#17131A] group-hover:text-[#803D63] transition-colors">
+                <h4 className="font-display text-sm font-bold text-[#181716] group-hover:text-[#803D63] transition-colors">
                   Client Reviews
                 </h4>
               </div>
-              <p className="text-xs text-[#6F6872] font-medium leading-relaxed">
+              <p className="text-xs text-[#54514D] font-medium leading-relaxed">
                 {reviews.length > 0 ? `${reviews.length} verified client reviews displayed on your profile.` : "Turn completed brand collaborations into visible trust."}
               </p>
             </div>
-            <ChevronRight className="h-4 w-4 text-[#6F6872] group-hover:text-[#803D63] transition-transform group-hover:translate-x-0.5 shrink-0 mt-1" />
+            <ChevronRight className="h-4 w-4 text-[#797570] group-hover:text-[#803D63] transition-transform group-hover:translate-x-0.5 shrink-0 mt-1" />
           </Link>
 
           {/* Card 4: Links & Socials */}
           <Link
             href="/dashboard/socials"
-            className="group rounded-2xl border border-[#ECE8EB] bg-white p-4 sm:p-5 transition-all hover:border-[#803D63]/30 shadow-2xs flex items-start justify-between gap-3"
+            className="group rounded-2xl border border-[#E7E3DC] bg-white p-4 sm:p-5 transition-all hover:border-[#803D63]/40 shadow-xs flex items-start justify-between gap-3"
           >
             <div className="space-y-1.5 min-w-0">
               <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#F7EDF3] text-[#803D63]">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#803D63]/[0.09] text-[#803D63]">
                   <Share2 className="h-3.5 w-3.5" />
                 </div>
-                <h4 className="font-display text-sm font-bold text-[#17131A] group-hover:text-[#803D63] transition-colors">
+                <h4 className="font-display text-sm font-bold text-[#181716] group-hover:text-[#803D63] transition-colors">
                   Links &amp; Socials
                 </h4>
               </div>
-              <p className="text-xs text-[#6F6872] font-medium leading-relaxed">
+              <p className="text-xs text-[#54514D] font-medium leading-relaxed">
                 {connectedSocialsCount} connected platforms and {customLinks.length} custom links live.
               </p>
             </div>
-            <ChevronRight className="h-4 w-4 text-[#6F6872] group-hover:text-[#803D63] transition-transform group-hover:translate-x-0.5 shrink-0 mt-1" />
+            <ChevronRight className="h-4 w-4 text-[#797570] group-hover:text-[#803D63] transition-transform group-hover:translate-x-0.5 shrink-0 mt-1" />
           </Link>
         </div>
       </section>
@@ -530,10 +530,10 @@ export default function DashboardOverviewPage() {
       <section className="space-y-3">
         <div className="flex items-center justify-between px-0.5">
           <div>
-            <h3 className="font-display text-sm font-bold text-[#17131A] uppercase tracking-wider text-[#6F6872]">
+            <h3 className="font-display text-sm font-bold uppercase tracking-wider text-[#797570]">
               Recent Content
             </h3>
-            <p className="text-xs text-[#6F6872] font-medium mt-0.5">
+            <p className="text-xs text-[#797570] font-medium mt-0.5">
               Your latest series and episodes.
             </p>
           </div>
@@ -547,45 +547,45 @@ export default function DashboardOverviewPage() {
         </div>
 
         {series.length === 0 ? (
-          <div className="rounded-2xl border border-[#ECE8EB] bg-white p-6 sm:p-8 text-center space-y-3 shadow-2xs">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F7EDF3] text-[#803D63] mx-auto">
+          <div className="rounded-2xl border border-[#E7E3DC] bg-white p-6 sm:p-8 text-center space-y-3 shadow-xs">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#803D63]/[0.09] text-[#803D63] mx-auto">
               <Film className="h-5 w-5" />
             </div>
             <div className="space-y-1">
-              <h4 className="font-display text-sm font-bold text-[#17131A]">
+              <h4 className="font-display text-sm font-bold text-[#181716]">
                 Start your first content series
               </h4>
-              <p className="text-xs text-[#6F6872] font-medium max-w-sm mx-auto leading-relaxed">
+              <p className="text-xs text-[#54514D] font-medium max-w-sm mx-auto leading-relaxed">
                 Organize related reels and videos so followers can watch every part in the correct order.
               </p>
             </div>
             <button
               type="button"
               onClick={handleCreateSeriesClick}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Create First Series</span>
             </button>
           </div>
         ) : (
-          <div className="rounded-2xl border border-[#ECE8EB] bg-white divide-y divide-[#ECE8EB] overflow-hidden shadow-2xs">
+          <div className="rounded-2xl border border-[#E7E3DC] bg-white divide-y divide-[#E7E3DC] overflow-hidden shadow-xs">
             {series.slice(0, 3).map((s) => {
               const eps = s.seasons?.flatMap((sn) => sn.episodes) || (s as any).episodes || [];
               return (
                 <div
                   key={s.id}
-                  className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-[#FAFAFB] transition-colors"
+                  className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-[#F8F7F3] transition-colors"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F7EDF3] text-[#803D63] shrink-0 font-bold text-xs">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#803D63]/[0.09] text-[#803D63] shrink-0 font-bold text-xs">
                       <Film className="h-4 w-4" />
                     </div>
                     <div className="min-w-0">
-                      <h4 className="font-display text-sm font-bold text-[#17131A] truncate">
+                      <h4 className="font-display text-sm font-bold text-[#181716] truncate">
                         {s.title}
                       </h4>
-                      <p className="text-xs text-[#6F6872] font-medium mt-0.5">
+                      <p className="text-xs text-[#797570] font-medium mt-0.5">
                         {s.genre || "Series"} • {eps.length} {eps.length === 1 ? "Episode" : "Episodes"}
                       </p>
                     </div>
@@ -594,16 +594,16 @@ export default function DashboardOverviewPage() {
                   <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
                     <Link
                       href="/dashboard/series"
-                      className="inline-flex items-center gap-1 rounded-lg border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-2.5 py-1 text-xs font-semibold text-[#17131A] transition-colors"
+                      className="inline-flex items-center gap-1 rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-2.5 py-1 text-xs font-semibold text-[#181716] transition-colors"
                     >
-                      <Edit2 className="h-3 w-3 text-[#6F6872]" />
+                      <Edit2 className="h-3 w-3 text-[#797570]" />
                       <span>Manage</span>
                     </Link>
                     <a
                       href={`/${handleStr}/series/${s.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 rounded-lg border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-2.5 py-1 text-xs font-semibold text-[#803D63] transition-colors"
+                      className="inline-flex items-center gap-1 rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-2.5 py-1 text-xs font-semibold text-[#803D63] transition-colors"
                     >
                       <span>View</span>
                       <ExternalLink className="h-3 w-3" />
@@ -617,12 +617,12 @@ export default function DashboardOverviewPage() {
       </section>
 
       {/* 6. MINIMAL EARLY ACCESS USAGE CARD */}
-      <section className="rounded-2xl border border-[#ECE8EB] bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+      <section className="rounded-2xl border border-[#E7E3DC] bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
         <div className="flex items-center gap-2.5 min-w-0">
           <Sparkles className="h-4 w-4 text-[#803D63] shrink-0" />
           <div className="min-w-0">
-            <p className="text-xs font-bold text-[#17131A]">Early Access Active</p>
-            <p className="text-xs text-[#6F6872] font-medium mt-0.5">
+            <p className="text-xs font-bold text-[#181716]">Early Access Active</p>
+            <p className="text-xs text-[#797570] font-medium mt-0.5">
               {seriesUsage.current} of 3 series used • {totalEpisodesUsage.current} of 15 episodes used
             </p>
           </div>

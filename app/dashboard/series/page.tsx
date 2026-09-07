@@ -1,17 +1,13 @@
 "use client";
 
 import { useState, useMemo, useEffect, useRef } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   Layers,
   Plus,
   Trash2,
   ChevronDown,
   ChevronUp,
-  Eye,
   Pencil,
-  X,
   Sparkles,
   Film,
   ExternalLink,
@@ -21,14 +17,8 @@ import {
   Search,
   MoreVertical,
   Play,
-  ArrowRight,
-  AlertCircle,
-  HelpCircle,
   Globe,
 } from "lucide-react";
-import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
-import { PhotoUpload } from "@/components/ui/PhotoUpload";
 import { SeriesCoverUpload } from "@/components/series/SeriesCoverUpload";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -124,7 +114,6 @@ function SeriesDrawer({
     }
   }, [seriesToEdit, isOpen]);
 
-  // Keyboard Escape listener
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -212,8 +201,8 @@ function SeriesDrawer({
 
           {/* Series Title */}
           <div className="space-y-1">
-            <label className="block text-xs font-bold text-[#17131A]">
-              Series title <span className="text-rose-500">*</span>
+            <label className="block text-xs font-bold text-[#181716]">
+              Series title <span className="text-[#C2414B]">*</span>
             </label>
             <input
               type="text"
@@ -221,13 +210,13 @@ function SeriesDrawer({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Kashmir Diaries or Tech Masterclass"
-              className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+              className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
             />
           </div>
 
           {/* Description */}
           <div className="space-y-1">
-            <label className="block text-xs font-bold text-[#17131A]">
+            <label className="block text-xs font-bold text-[#181716]">
               Short description
             </label>
             <textarea
@@ -235,14 +224,14 @@ function SeriesDrawer({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Tell your audience what this series is about..."
-              className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3 text-xs font-medium text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors resize-y"
+              className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-3 text-xs font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors resize-y"
             />
           </div>
 
           {/* Primary Platform */}
           {!isEditing && (
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#17131A]">
+              <label className="block text-xs font-bold text-[#181716]">
                 Primary content platform
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -255,8 +244,8 @@ function SeriesDrawer({
                       onClick={() => setSeriesPlatform(p)}
                       className={`flex items-center justify-center gap-1.5 rounded-xl border p-2 text-xs font-semibold transition-all cursor-pointer ${
                         isSelected
-                          ? "border-[#803D63] bg-[#F7EDF3] text-[#803D63]"
-                          : "border-[#ECE8EB] bg-white text-[#6F6872] hover:bg-[#FAF8FA]"
+                          ? "border-[#803D63] bg-[#803D63]/[0.09] text-[#803D63]"
+                          : "border-[#E7E3DC] bg-white text-[#797570] hover:bg-[#F8F7F3]"
                       }`}
                     >
                       {PLATFORM_ICONS[p]}
@@ -279,7 +268,7 @@ function SeriesDrawer({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716] transition-colors cursor-pointer"
           >
             Cancel
           </button>
@@ -287,7 +276,7 @@ function SeriesDrawer({
             type="submit"
             form="series-form"
             disabled={submitting}
-            className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5 disabled:opacity-50"
+            className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
           >
             <span>{submitting ? "Saving..." : isEditing ? "Save Changes" : "Create Series"}</span>
           </button>
@@ -339,7 +328,6 @@ function EpisodeDrawer({
     }
   }, [episodeToEdit, series, isOpen]);
 
-  // Keyboard Escape listener
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -426,17 +414,17 @@ function EpisodeDrawer({
       <form id="episode-form" onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
         <ModalBody className="p-5 space-y-4 text-left">
           {/* Episode Number Display */}
-          <div className="flex items-center justify-between rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-4 py-2.5">
-            <span className="text-xs font-semibold text-[#6F6872]">Episode Order</span>
-            <span className="text-xs font-bold text-[#803D63] bg-[#F7EDF3] border border-[#ECE8EB] px-2.5 py-0.5 rounded-md">
+          <div className="flex items-center justify-between rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-4 py-2.5">
+            <span className="text-xs font-semibold text-[#797570]">Episode Order</span>
+            <span className="text-xs font-bold text-[#803D63] bg-[#803D63]/[0.09] border border-[#803D63]/20 px-2.5 py-0.5 rounded-md">
               {formatEpisodeNumber(epNumber)}
             </span>
           </div>
 
           {/* Episode Title */}
           <div className="space-y-1">
-            <label className="block text-xs font-bold text-[#17131A]">
-              Episode title <span className="text-rose-500">*</span>
+            <label className="block text-xs font-bold text-[#181716]">
+              Episode title <span className="text-[#C2414B]">*</span>
             </label>
             <input
               type="text"
@@ -444,17 +432,17 @@ function EpisodeDrawer({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. The journey begins"
-              className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+              className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
             />
-            <p className="text-[11px] text-[#6F6872]">
+            <p className="text-[11px] text-[#797570]">
               A concise title for this episode or reel.
             </p>
           </div>
 
           {/* Video URL */}
           <div className="space-y-1">
-            <label className="block text-xs font-bold text-[#17131A]">
-              Video or content link <span className="text-rose-500">*</span>
+            <label className="block text-xs font-bold text-[#181716]">
+              Video or content link <span className="text-[#C2414B]">*</span>
             </label>
             <div className="relative">
               <input
@@ -463,14 +451,14 @@ function EpisodeDrawer({
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="Paste a YouTube, Instagram, or Facebook link"
-                className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] pl-3.5 pr-9 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] pl-3.5 pr-9 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2">
                 {platformInfo.icon}
               </div>
             </div>
             {url.trim() && (
-              <p className="text-[11px] font-semibold text-emerald-700 flex items-center gap-1">
+              <p className="text-[11px] font-semibold text-[#17845B] flex items-center gap-1">
                 <Check className="h-3 w-3" />
                 <span>Detected: {platformInfo.name} ({platformInfo.host})</span>
               </p>
@@ -482,7 +470,7 @@ function EpisodeDrawer({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716] transition-colors cursor-pointer"
           >
             Cancel
           </button>
@@ -490,7 +478,7 @@ function EpisodeDrawer({
             type="submit"
             form="episode-form"
             disabled={submitting}
-            className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5 disabled:opacity-50"
+            className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
           >
             <span>{submitting ? "Saving..." : isEditing ? "Save Changes" : "Add Episode"}</span>
           </button>
@@ -535,7 +523,6 @@ function SeriesCard({
   const epUsage = getEpisodeUsage(series);
   const episodes = series.seasons?.flatMap((sn) => sn.episodes) || (series as any).episodes || [];
 
-  // Close menu on click outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -561,7 +548,7 @@ function SeriesCard({
   return (
     <div
       id={`series-${series.id}`}
-      className="rounded-2xl border border-[#ECE8EB] bg-white transition-all shadow-2xs overflow-hidden"
+      className="rounded-2xl border border-[#E7E3DC] bg-white transition-all shadow-xs overflow-hidden"
     >
       {/* Collapsed / Header Card Content */}
       <div className="p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -570,19 +557,19 @@ function SeriesCard({
           <SeriesPoster
             src={series.posterDataUrl}
             title={series.title}
-            className="w-28 sm:w-36 aspect-video rounded-xl border border-[#ECE8EB] shrink-0 object-cover"
+            className="w-28 sm:w-36 aspect-video rounded-xl border border-[#E7E3DC] shrink-0 object-cover"
             textClassName="text-xs font-bold text-white"
           />
 
           <div className="min-w-0 flex-1 space-y-1 text-left">
-            <h3 className="font-display text-base font-bold text-[#17131A] truncate" title={series.title}>
+            <h3 className="font-display text-base font-bold text-[#181716] truncate" title={series.title}>
               {series.title}
             </h3>
-            <p className="text-xs text-[#6F6872] font-medium truncate">
+            <p className="text-xs text-[#797570] font-medium truncate">
               {series.genre || "General"} • {series.language || "All Languages"} • {episodes.length} {episodes.length === 1 ? "episode" : "episodes"}
             </p>
             {series.description && (
-              <p className="text-xs text-[#6F6872]/80 font-normal line-clamp-1">
+              <p className="text-xs text-[#797570]/80 font-normal line-clamp-1">
                 {series.description}
               </p>
             )}
@@ -591,10 +578,10 @@ function SeriesCard({
 
         {/* Middle: Progress Indicator */}
         <div className="hidden lg:flex flex-col items-center justify-center px-4 shrink-0 space-y-1">
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#17131A]">
+          <div className="flex items-center gap-2 text-xs font-semibold text-[#181716]">
             <span>{episodes.length} of {EARLY_ACCESS_LIMITS.maxEpisodesPerSeries} episodes</span>
           </div>
-          <div className="h-1.5 w-28 rounded-full bg-[#FAF8FA] border border-[#ECE8EB] overflow-hidden">
+          <div className="h-1.5 w-28 rounded-full bg-[#F8F7F3] border border-[#E7E3DC] overflow-hidden">
             <div
               className={`h-full rounded-full transition-all duration-300 ${
                 epUsage.isLimitReached ? "bg-amber-500" : "bg-[#803D63]"
@@ -611,9 +598,9 @@ function SeriesCard({
             type="button"
             onClick={() => onAddEpisode(series)}
             disabled={epUsage.isLimitReached}
-            className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-colors cursor-pointer shadow-2xs ${
+            className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-colors cursor-pointer shadow-xs ${
               epUsage.isLimitReached
-                ? "bg-[#FAF8FA] border border-[#ECE8EB] text-[#6F6872] cursor-not-allowed opacity-60"
+                ? "bg-[#F8F7F3] border border-[#E7E3DC] text-[#797570] cursor-not-allowed opacity-60"
                 : "bg-[#803D63] hover:bg-[#6F3456] text-white"
             }`}
           >
@@ -626,7 +613,7 @@ function SeriesCard({
             href={`/${username}/series/${series.id}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-3 py-2 text-xs font-semibold text-[#17131A] transition-colors"
+            className="inline-flex items-center gap-1 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-3 py-2 text-xs font-semibold text-[#181716] transition-colors"
             title="View public series page"
           >
             <span className="hidden sm:inline">View</span>
@@ -638,32 +625,32 @@ function SeriesCard({
             <button
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
-              className="flex h-8 w-8 items-center justify-center rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] text-[#6F6872] hover:text-[#17131A] transition-colors cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer"
               aria-label="More actions"
             >
               <MoreVertical className="h-4 w-4" />
             </button>
 
             {menuOpen && (
-              <div className="absolute right-0 top-full mt-1.5 w-44 rounded-xl border border-[#ECE8EB] bg-white p-1 shadow-lg z-20 space-y-0.5 animate-in fade-in">
+              <div className="absolute right-0 top-full mt-1.5 w-44 rounded-xl border border-[#E7E3DC] bg-white p-1 shadow-lg z-20 space-y-0.5 animate-in fade-in">
                 <button
                   type="button"
                   onClick={() => {
                     setMenuOpen(false);
                     onEditSeries(series);
                   }}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#17131A] hover:bg-[#FAF8FA] transition-colors cursor-pointer"
+                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#F8F7F3] transition-colors cursor-pointer"
                 >
-                  <Pencil className="h-3.5 w-3.5 text-[#6F6872]" />
+                  <Pencil className="h-3.5 w-3.5 text-[#797570]" />
                   <span>Edit Series</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handleCopyLink}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#17131A] hover:bg-[#FAF8FA] transition-colors cursor-pointer"
+                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#F8F7F3] transition-colors cursor-pointer"
                 >
-                  <Copy className="h-3.5 w-3.5 text-[#6F6872]" />
+                  <Copy className="h-3.5 w-3.5 text-[#797570]" />
                   <span>Copy Link</span>
                 </button>
 
@@ -673,13 +660,13 @@ function SeriesCard({
                     setMenuOpen(false);
                     onShareSeries(series);
                   }}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#17131A] hover:bg-[#FAF8FA] transition-colors cursor-pointer"
+                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#F8F7F3] transition-colors cursor-pointer"
                 >
-                  <Share2 className="h-3.5 w-3.5 text-[#6F6872]" />
+                  <Share2 className="h-3.5 w-3.5 text-[#797570]" />
                   <span>Share Series</span>
                 </button>
 
-                <div className="my-1 border-t border-[#ECE8EB]" />
+                <div className="my-1 border-t border-[#E7E3DC]" />
 
                 <button
                   type="button"
@@ -687,7 +674,7 @@ function SeriesCard({
                     setMenuOpen(false);
                     onDeleteSeries(series);
                   }}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-rose-50 transition-colors cursor-pointer"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   <span>Delete Series</span>
@@ -700,7 +687,7 @@ function SeriesCard({
           <button
             type="button"
             onClick={onToggle}
-            className="inline-flex items-center gap-1 rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] hover:bg-[#F7EDF3] hover:text-[#803D63] px-2.5 py-2 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1 rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] hover:bg-[#803D63]/[0.09] hover:text-[#803D63] px-2.5 py-2 text-xs font-semibold text-[#181716] transition-colors cursor-pointer"
             aria-expanded={expanded}
             title={expanded ? "Hide episodes" : "Show episodes"}
           >
@@ -712,9 +699,9 @@ function SeriesCard({
 
       {/* Expanded Episodes List */}
       {expanded && (
-        <div className="border-t border-[#ECE8EB] bg-[#FAFAFB]/60 p-4 sm:p-5 space-y-3">
+        <div className="border-t border-[#E7E3DC] bg-[#F8F7F3]/60 p-4 sm:p-5 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#6F6872]">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#797570]">
               Episodes ({episodes.length} of {EARLY_ACCESS_LIMITS.maxEpisodesPerSeries})
             </span>
             {epUsage.isLimitReached && (
@@ -725,15 +712,15 @@ function SeriesCard({
           </div>
 
           {episodes.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-[#ECE8EB] bg-white p-6 text-center space-y-2">
-              <p className="text-xs font-bold text-[#17131A]">No episodes added yet</p>
-              <p className="text-xs text-[#6F6872] max-w-sm mx-auto">
+            <div className="rounded-xl border border-dashed border-[#E7E3DC] bg-white p-6 text-center space-y-2">
+              <p className="text-xs font-bold text-[#181716]">No episodes added yet</p>
+              <p className="text-xs text-[#797570] max-w-sm mx-auto">
                 Add the first part so followers can begin this series.
               </p>
               <button
                 type="button"
                 onClick={() => onAddEpisode(series)}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-3.5 py-1.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-3.5 py-1.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span>Add First Episode</span>
@@ -747,19 +734,19 @@ function SeriesCard({
                   return (
                     <div
                       key={ep.id}
-                      className="flex items-center justify-between gap-3 rounded-xl border border-[#ECE8EB] bg-white p-3 transition-colors hover:border-[#803D63]/30 shadow-2xs"
+                      className="flex items-center justify-between gap-3 rounded-xl border border-[#E7E3DC] bg-white p-3 transition-colors hover:border-[#803D63]/30 shadow-xs"
                     >
                       {/* Left: Part Badge & Episode Info */}
                       <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <span className="flex h-7 w-16 items-center justify-center rounded-lg bg-[#F7EDF3] text-[#803D63] text-xs font-bold shrink-0">
+                        <span className="flex h-7 w-16 items-center justify-center rounded-lg bg-[#803D63]/[0.09] text-[#803D63] text-xs font-bold shrink-0">
                           {formatEpisodeNumber(ep.episodeNumber)}
                         </span>
 
                         <div className="min-w-0 flex-1 text-left">
-                          <p className="truncate text-xs font-bold text-[#17131A]">
+                          <p className="truncate text-xs font-bold text-[#181716]">
                             {ep.title}
                           </p>
-                          <div className="flex items-center gap-1.5 text-[11px] text-[#6F6872] font-medium mt-0.5">
+                          <div className="flex items-center gap-1.5 text-[11px] text-[#797570] font-medium mt-0.5">
                             {plat.icon}
                             <span>{plat.name} • {plat.host}</span>
                           </div>
@@ -773,7 +760,7 @@ function SeriesCard({
                             href={ep.externalUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 rounded-lg border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-2.5 py-1 text-xs font-medium text-[#17131A] transition-colors"
+                            className="inline-flex items-center gap-1 rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-2.5 py-1 text-xs font-medium text-[#181716] transition-colors"
                             title="Open original video link"
                           >
                             <span className="hidden sm:inline">Open Original</span>
@@ -784,7 +771,7 @@ function SeriesCard({
                         <button
                           type="button"
                           onClick={() => onEditEpisode(series, season.id, ep)}
-                          className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] text-[#6F6872] hover:text-[#17131A] transition-colors cursor-pointer"
+                          className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer"
                           title="Edit Episode"
                         >
                           <Pencil className="h-3 w-3" />
@@ -793,7 +780,7 @@ function SeriesCard({
                         <button
                           type="button"
                           onClick={() => onDeleteEpisode(series, season.id, ep)}
-                          className="flex h-7 w-7 items-center justify-center rounded-lg border border-rose-100 bg-white hover:bg-rose-50 text-rose-500 transition-colors cursor-pointer"
+                          className="flex h-7 w-7 items-center justify-center rounded-lg border border-rose-100 bg-white hover:bg-rose-50 text-[#C2414B] transition-colors cursor-pointer"
                           title="Remove Episode"
                         >
                           <Trash2 className="h-3 w-3" />
@@ -938,10 +925,10 @@ export default function DashboardContentPage() {
       {/* 1. PAGE HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#17131A] tracking-tight">
+          <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#181716] tracking-tight">
             Content
           </h1>
-          <p className="text-xs sm:text-sm text-[#6F6872] font-medium mt-1">
+          <p className="text-xs sm:text-sm text-[#797570] font-medium mt-1">
             Organize your multi-part content into series your audience can watch in order.
           </p>
         </div>
@@ -951,9 +938,9 @@ export default function DashboardContentPage() {
             type="button"
             onClick={handleOpenCreateSeries}
             disabled={seriesUsage.isLimitReached}
-            className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-colors shadow-2xs cursor-pointer ${
+            className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-colors shadow-xs cursor-pointer ${
               seriesUsage.isLimitReached
-                ? "bg-[#FAF8FA] border border-[#ECE8EB] text-[#6F6872] opacity-60 cursor-not-allowed"
+                ? "bg-[#F8F7F3] border border-[#E7E3DC] text-[#797570] opacity-60 cursor-not-allowed"
                 : "bg-[#803D63] hover:bg-[#6F3456] text-white"
             }`}
           >
@@ -966,49 +953,49 @@ export default function DashboardContentPage() {
       {/* 2. COMPACT CONTENT SUMMARY (3 cards) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
         {/* Card 1: Series Created */}
-        <div className="rounded-2xl border border-[#ECE8EB] bg-white p-4 space-y-1.5 shadow-2xs">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 space-y-1.5 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#6F6872] uppercase tracking-wider">
+            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
               Series Created
             </span>
             <Film className="h-4 w-4 text-[#803D63]" />
           </div>
-          <p className="font-display text-2xl font-bold text-[#17131A]">
+          <p className="font-display text-2xl font-bold text-[#181716]">
             {series.length} of {EARLY_ACCESS_LIMITS.maxSeries}
           </p>
-          <p className="text-[11px] text-[#6F6872] font-medium">
+          <p className="text-[11px] text-[#797570] font-medium">
             {EARLY_ACCESS_LIMITS.maxSeries - series.length} series slots remaining
           </p>
         </div>
 
         {/* Card 2: Total Episodes */}
-        <div className="rounded-2xl border border-[#ECE8EB] bg-white p-4 space-y-1.5 shadow-2xs">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 space-y-1.5 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#6F6872] uppercase tracking-wider">
+            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
               Total Episodes
             </span>
             <Layers className="h-4 w-4 text-[#803D63]" />
           </div>
-          <p className="font-display text-2xl font-bold text-[#17131A]">
+          <p className="font-display text-2xl font-bold text-[#181716]">
             {totalEpisodesCount} total
           </p>
-          <p className="text-[11px] text-[#6F6872] font-medium">
+          <p className="text-[11px] text-[#797570] font-medium">
             Across {series.length} {series.length === 1 ? "series" : "series"}
           </p>
         </div>
 
         {/* Card 3: Early Access Status */}
-        <div className="rounded-2xl border border-[#ECE8EB] bg-white p-4 space-y-1.5 shadow-2xs">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 space-y-1.5 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#6F6872] uppercase tracking-wider">
+            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
               Early Access
             </span>
             <Sparkles className="h-4 w-4 text-[#803D63]" />
           </div>
-          <p className="font-display text-2xl font-bold text-[#17131A]">
+          <p className="font-display text-2xl font-bold text-[#181716]">
             Active
           </p>
-          <p className="text-[11px] text-[#6F6872] font-medium">
+          <p className="text-[11px] text-[#797570] font-medium">
             Up to 5 episodes per series
           </p>
         </div>
@@ -1018,13 +1005,13 @@ export default function DashboardContentPage() {
       {series.length > 1 && (
         <div className="flex items-center justify-between gap-3">
           <div className="relative max-w-xs w-full">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#6F6872]" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#797570]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search series"
-              className="w-full rounded-xl border border-[#ECE8EB] bg-white pl-9 pr-3.5 py-2 text-xs text-[#17131A] placeholder:text-[#6F6872]/60 focus:outline-none focus:border-[#803D63] focus:ring-1 focus:ring-[#803D63]/20 transition-colors"
+              className="w-full rounded-xl border border-[#E7E3DC] bg-white pl-9 pr-3.5 py-2 text-xs text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#803D63] focus:ring-1 focus:ring-[#803D63]/20 transition-colors"
             />
           </div>
         </div>
@@ -1034,30 +1021,30 @@ export default function DashboardContentPage() {
       <div className="space-y-3">
         <div className="flex items-center justify-between px-0.5">
           <div>
-            <h2 className="font-display text-base font-bold text-[#17131A]">
+            <h2 className="font-display text-base font-bold text-[#181716]">
               Your Series
             </h2>
-            <p className="text-xs text-[#6F6872] font-medium mt-0.5">
+            <p className="text-xs text-[#797570] font-medium mt-0.5">
               Manage your series and keep every episode in the correct order.
             </p>
           </div>
-          <span className="text-xs font-semibold text-[#6F6872]">
+          <span className="text-xs font-semibold text-[#797570]">
             {filteredSeries.length} {filteredSeries.length === 1 ? "series" : "series"}
           </span>
         </div>
 
         {/* Empty State */}
         {series.length === 0 ? (
-          <div className="rounded-2xl border border-[#ECE8EB] bg-white p-8 text-center space-y-4 shadow-2xs">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F7EDF3] text-[#803D63] mx-auto">
+          <div className="rounded-2xl border border-[#E7E3DC] bg-white p-8 text-center space-y-4 shadow-xs">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#803D63]/[0.09] text-[#803D63] mx-auto">
               <Film className="h-6 w-6" />
             </div>
 
             <div className="space-y-1 max-w-md mx-auto">
-              <h3 className="font-display text-base font-bold text-[#17131A]">
+              <h3 className="font-display text-base font-bold text-[#181716]">
                 Create your first content series
               </h3>
-              <p className="text-xs text-[#6F6872] font-medium leading-relaxed">
+              <p className="text-xs text-[#797570] font-medium leading-relaxed">
                 Bring related reels and videos together so followers can start from Part 1 and find every next episode.
               </p>
             </div>
@@ -1070,9 +1057,9 @@ export default function DashboardContentPage() {
                 { num: "03", label: "Arrange in order" },
                 { num: "04", label: "Share one link" },
               ].map((step) => (
-                <div key={step.num} className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-2.5 space-y-0.5">
+                <div key={step.num} className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-2.5 space-y-0.5">
                   <span className="text-[10px] font-bold text-[#803D63]">{step.num}</span>
-                  <p className="text-xs font-semibold text-[#17131A]">{step.label}</p>
+                  <p className="text-xs font-semibold text-[#181716]">{step.label}</p>
                 </div>
               ))}
             </div>
@@ -1081,7 +1068,7 @@ export default function DashboardContentPage() {
               <button
                 type="button"
                 onClick={handleOpenCreateSeries}
-                className="inline-flex items-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-5 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
+                className="inline-flex items-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-5 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
               >
                 <Plus className="h-4 w-4" />
                 <span>Create First Series</span>
@@ -1089,7 +1076,7 @@ export default function DashboardContentPage() {
             </div>
           </div>
         ) : filteredSeries.length === 0 ? (
-          <div className="rounded-2xl border border-[#ECE8EB] bg-white p-8 text-center text-xs text-[#6F6872]">
+          <div className="rounded-2xl border border-[#E7E3DC] bg-white p-8 text-center text-xs text-[#797570]">
             No series matching &ldquo;{searchQuery}&rdquo;.
           </div>
         ) : (
@@ -1114,7 +1101,6 @@ export default function DashboardContentPage() {
       </div>
 
       {/* 5. DRAWERS & MODALS */}
-      {/* Create / Edit Series Drawer */}
       <SeriesDrawer
         isOpen={isSeriesDrawerOpen}
         onClose={() => setIsSeriesDrawerOpen(false)}
@@ -1124,7 +1110,6 @@ export default function DashboardContentPage() {
         onLimitTrigger={() => setLimitModalState({ isOpen: true, type: "series" })}
       />
 
-      {/* Add / Edit Episode Drawer */}
       <EpisodeDrawer
         isOpen={isEpisodeDrawerOpen}
         onClose={() => setIsEpisodeDrawerOpen(false)}
@@ -1134,7 +1119,6 @@ export default function DashboardContentPage() {
         onLimitTrigger={(seriesTitle) => setLimitModalState({ isOpen: true, type: "episode", seriesTitle })}
       />
 
-      {/* Share Series Modal */}
       {shareSeriesData && (
         <ShareSeriesModal
           isOpen={Boolean(shareSeriesData)}
@@ -1144,7 +1128,6 @@ export default function DashboardContentPage() {
         />
       )}
 
-      {/* Limit Reached Modal Popup */}
       <LimitReachedModal
         isOpen={limitModalState.isOpen}
         onClose={() => setLimitModalState({ ...limitModalState, isOpen: false })}
@@ -1152,7 +1135,6 @@ export default function DashboardContentPage() {
         seriesTitle={limitModalState.seriesTitle}
       />
 
-      {/* Confirmation Modal */}
       <ConfirmModal
         isOpen={Boolean(confirmModal)}
         onClose={() => setConfirmModal(null)}

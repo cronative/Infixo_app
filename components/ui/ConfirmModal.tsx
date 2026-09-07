@@ -38,16 +38,16 @@ export function ConfirmModal({
     >
       <ModalBody className="p-5 sm:p-6 space-y-3">
         <div className="flex items-start gap-3.5">
-          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-2xs ${
-            isDestructive ? "bg-rose-50 text-rose-600 border border-rose-100" : "bg-[#F7EDF3] text-[#803D63] border border-[#ECE8EB]"
+          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-xs ${
+            isDestructive ? "bg-rose-50 text-[#C2414B] border border-rose-200" : "bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/20"
           }`}>
             <AlertCircle className="h-5 w-5" />
           </div>
           <div className="space-y-1 min-w-0 flex-1 text-left">
-            <h3 className="font-display text-base font-bold text-[#17131A] leading-snug">
+            <h3 className="font-display text-base font-bold text-[#181716] leading-snug">
               {title}
             </h3>
-            <p className="text-xs font-medium text-[#6F6872] leading-relaxed">
+            <p className="text-xs font-medium text-[#54514D] leading-relaxed">
               {description}
             </p>
           </div>
@@ -59,7 +59,7 @@ export function ConfirmModal({
           type="button"
           onClick={onClose}
           disabled={loading}
-          className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer disabled:opacity-50"
+          className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#54514D] hover:bg-[#F8F7F3] hover:text-[#181716] transition-colors cursor-pointer disabled:opacity-50"
         >
           {cancelText}
         </button>
@@ -67,8 +67,8 @@ export function ConfirmModal({
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className={`font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5 disabled:opacity-50 text-white ${
-            isDestructive ? "bg-rose-600 hover:bg-rose-700" : "bg-[#803D63] hover:bg-[#6F3456]"
+          className={`font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50 text-white ${
+            isDestructive ? "bg-[#C2414B] hover:bg-[#a9323c]" : "bg-[#803D63] hover:bg-[#6F3456]"
           }`}
         >
           <span>{loading ? "Processing..." : confirmText}</span>

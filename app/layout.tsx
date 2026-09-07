@@ -5,6 +5,7 @@ import "./globals.css";
 import { ToastProvider } from "@/contexts/ToastContext";
 import { GA_MEASUREMENT_ID } from "@/lib/analytics";
 import { PwaInstallPrompt } from "@/components/shared/PwaInstallPrompt";
+import { CookieConsentBanner } from "@/components/shared/CookieConsentBanner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -85,7 +86,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="mobile-web-app-capable" content="yes" />
-        {/* Google Analytics 4 (GA4) */}
+        {/* Google Analytics 4 (GA4) with Consent Mode */}
         <Script
           strategy="afterInteractive"
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
@@ -97,6 +98,14 @@ export default function RootLayout({
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
+            gtag('consent', 'default', {
+              'analytics_storage': 'denied',
+              'ad_storage': 'denied',
+              'ad_user_data': 'denied',
+              'ad_personalization': 'denied',
+              'functionality_storage': 'denied',
+              'personalization_storage': 'denied'
+            });
             gtag('js', new Date());
             gtag('config', '${GA_MEASUREMENT_ID}', {
               page_path: window.location.pathname,
@@ -108,6 +117,7 @@ export default function RootLayout({
         <ToastProvider>
           {children}
           <PwaInstallPrompt />
+          <CookieConsentBanner />
         </ToastProvider>
       </body>
     </html>

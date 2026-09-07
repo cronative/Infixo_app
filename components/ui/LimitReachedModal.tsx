@@ -50,7 +50,7 @@ export function LimitReachedModal({
       icon={<AlertCircle className="h-4 w-4" />}
     >
       <ModalBody className="p-5 space-y-4 text-left">
-        <p className="text-xs text-[#6F6872] leading-relaxed font-medium">
+        <p className="text-xs text-[#797570] leading-relaxed font-medium">
           {isSeries
             ? "Early Access includes up to 3 Series. Upgrade to Pro or VIP for Unlimited Series & Episodes!"
             : isEpisode
@@ -59,9 +59,9 @@ export function LimitReachedModal({
         </p>
 
         {/* Upgrade Plan Cards Preview */}
-        <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-4 space-y-3">
+        <div className="rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="font-display text-xs font-bold text-[#17131A]">
+            <span className="font-display text-xs font-bold text-[#181716]">
               {isGig ? "Creator VIP Plan" : "Creator Pro Plan"}
             </span>
             <span className="rounded-md bg-[#803D63] px-2 py-0.5 text-[9px] font-bold text-white">
@@ -70,16 +70,16 @@ export function LimitReachedModal({
           </div>
 
           <div className="flex items-baseline gap-1.5">
-            <span className="text-xl font-bold text-[#17131A]">
+            <span className="text-xl font-bold text-[#181716]">
               {isGig ? "₹299" : "₹199"}
             </span>
-            <span className="text-xs text-[#6F6872]">/ month</span>
+            <span className="text-xs text-[#797570]">/ month</span>
             <span className="text-xs font-semibold text-[#803D63] ml-1">
               {isGig ? "or ₹2,999 / year" : "or ₹1,999 / year"}
             </span>
           </div>
 
-          <ul className="space-y-1.5 text-xs text-[#17131A] font-medium">
+          <ul className="space-y-1.5 text-xs text-[#181716] font-medium">
             <li className="flex items-center gap-1.5 text-emerald-700 font-semibold">
               <Check className="h-3.5 w-3.5 text-emerald-600" />
               <span>{isGig ? "Unlimited Services & Media Kit" : "Unlimited Series & Episodes"}</span>
@@ -98,7 +98,7 @@ export function LimitReachedModal({
         <button
           type="button"
           onClick={onClose}
-          className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
+          className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716] transition-colors cursor-pointer"
         >
           Got it
         </button>
@@ -106,7 +106,7 @@ export function LimitReachedModal({
           type="button"
           onClick={handleNotifyMe}
           disabled={notified}
-          className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5"
+          className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
         >
           <Bell className="h-3.5 w-3.5" />
           <span>{notified ? "We'll Notify You! ✓" : "Notify Me"}</span>

@@ -49,7 +49,7 @@ export default function ThemeStepPage() {
       preview={<ThemeCard themeKey={theme} {...cardProps} />}
     >
       <div className="flex items-center justify-between gap-2 mb-2.5">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/20 bg-[#803D63]/10 px-3 py-1 text-xs font-bold text-[#803D63]">
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/20 bg-[#803D63]/[0.09] px-3 py-1 text-xs font-bold text-[#803D63]">
           <Sparkles className="h-3.5 w-3.5 text-[#803D63] shrink-0" />
           <span>Step 3 of 6 • Theme Selection</span>
         </div>
@@ -58,7 +58,7 @@ export default function ThemeStepPage() {
         <button
           type="button"
           onClick={() => setIsMobilePreviewOpen(true)}
-          className="lg:hidden tap-scale inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/30 bg-[#803D63]/10 hover:bg-[#803D63]/15 px-3 py-1 text-xs font-bold text-[#803D63] transition-all cursor-pointer shadow-2xs"
+          className="lg:hidden tap-scale inline-flex items-center gap-1.5 rounded-full border border-[#803D63]/30 bg-[#803D63]/[0.09] hover:bg-[#803D63]/15 px-3 py-1 text-xs font-bold text-[#803D63] transition-all cursor-pointer shadow-xs"
           title="Preview public profile"
         >
           <Eye className="h-3.5 w-3.5 text-[#803D63]" />
@@ -66,10 +66,10 @@ export default function ThemeStepPage() {
         </button>
       </div>
 
-      <h1 className="text-3xl font-extrabold leading-[1.15] tracking-tight text-slate-900 sm:text-4xl">
+      <h1 className="text-2xl font-bold leading-tight tracking-tight text-[#181716] sm:text-3xl">
         Pick your page theme
       </h1>
-      <p className="mt-2 text-[15px] text-slate-500 leading-relaxed font-medium">
+      <p className="mt-1.5 text-xs sm:text-sm text-[#54514D] leading-relaxed">
         Choose a design theme for your creator page. You can change this anytime.
       </p>
 
@@ -78,10 +78,10 @@ export default function ThemeStepPage() {
         <button
           type="button"
           onClick={() => setActiveGroup("all")}
-          className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
+          className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
             activeGroup === "all"
-              ? "bg-[#803D63] text-white shadow-none"
-              : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+              ? "bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/25"
+              : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#F8F7F3]"
           }`}
         >
           All
@@ -90,10 +90,10 @@ export default function ThemeStepPage() {
         <button
           type="button"
           onClick={() => setActiveGroup("animated")}
-          className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 ${
+          className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${
             activeGroup === "animated"
-              ? "bg-[#803D63] text-white shadow-none"
-              : "bg-white border border-gray-200 text-[#803D63] hover:bg-gray-50"
+              ? "bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/25"
+              : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#F8F7F3]"
           }`}
         >
           <Sparkles className="h-3 w-3" />
@@ -103,10 +103,10 @@ export default function ThemeStepPage() {
         <button
           type="button"
           onClick={() => setActiveGroup("light")}
-          className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
+          className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
             activeGroup === "light"
-              ? "bg-[#803D63] text-white shadow-none"
-              : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+              ? "bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/25"
+              : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#F8F7F3]"
           }`}
         >
           Light
@@ -115,10 +115,10 @@ export default function ThemeStepPage() {
         <button
           type="button"
           onClick={() => setActiveGroup("dark")}
-          className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
+          className={`tap-scale shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
             activeGroup === "dark"
-              ? "bg-[#803D63] text-white shadow-none"
-              : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+              ? "bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/25"
+              : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#F8F7F3]"
           }`}
         >
           Dark
@@ -141,12 +141,12 @@ export default function ThemeStepPage() {
       </div>
 
       {/* Step 3 Form Bottom Navigation (Natural flow, Back + Next) */}
-      <div className="pt-4 border-t border-[#E5E7EB] mt-8 flex flex-col-reverse sm:flex-row items-center gap-3">
+      <div className="pt-4 border-t border-[#E7E3DC] mt-8 flex flex-col-reverse sm:flex-row items-center gap-3">
         <Button
           type="button"
           variant="outline"
           size="lg"
-          className="w-full sm:w-auto h-12 rounded-xl border-[#E5E7EB] text-slate-700 hover:bg-slate-50 font-bold text-sm px-6"
+          className="w-full sm:w-auto h-11 rounded-xl border-[#E7E3DC] text-[#181716] hover:bg-[#F8F7F3] font-semibold text-sm px-6"
           onClick={() => router.push("/onboarding/socials")}
         >
           Back
@@ -157,7 +157,7 @@ export default function ThemeStepPage() {
           size="lg"
           loading={submitting}
           onClick={handleNext}
-          className="w-full sm:flex-1 h-12 bg-[#803D63] hover:bg-[#6D3254] text-white font-bold text-sm rounded-xl cursor-pointer shadow-none"
+          className="w-full sm:flex-1 h-11 bg-[#803D63] hover:bg-[#6F3456] text-white font-bold text-sm rounded-xl cursor-pointer shadow-xs"
         >
           Save &amp; Next →
         </Button>

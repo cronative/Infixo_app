@@ -175,36 +175,36 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
   };
 
   return (
-    <div className="rounded-2xl border border-[#E8DCE4] bg-gradient-to-br from-white via-[#FAF5F8] to-[#F6EBF1] p-5 sm:p-6 space-y-5 shadow-sm text-left">
+    <div className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 space-y-5 shadow-xs text-left">
       
       {/* Top Banner: Daily Streak & Peak Posting Window */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#E8DCE4]/80">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#E7E3DC]">
         
         {/* Streak Counter */}
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white shadow-md animate-pulse shrink-0">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#B7791F] via-rose-500 to-[#803D63] text-white shadow-md animate-pulse shrink-0">
             <Flame className="h-6 w-6 fill-white" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-black text-lg text-slate-900">
+              <span className="font-black text-lg text-[#181716]">
                 🔥 {streakCount}-Day Creator Streak
               </span>
-              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
                 Active
               </span>
             </div>
-            <p className="text-xs font-medium text-slate-600">
+            <p className="text-xs font-medium text-[#797570]">
               Come back tomorrow before 12 AM to keep your streak burning!
             </p>
           </div>
         </div>
 
         {/* Peak Best Time to Post Badge */}
-        <div className="flex items-center gap-2.5 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-xl border border-rose-200/80 shadow-2xs shrink-0">
+        <div className="flex items-center gap-2.5 bg-[#F8F7F3] px-3.5 py-2 rounded-xl border border-[#E7E3DC] shadow-xs shrink-0">
           <Clock className="h-4 w-4 text-[#803D63]" />
           <div>
-            <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+            <p className="text-[10px] font-extrabold uppercase tracking-wider text-[#797570]">
               Today's Peak Window
             </p>
             <p className="text-xs font-black text-[#803D63]">
@@ -218,7 +218,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-[#803D63]" />
-          <h3 className="font-extrabold text-sm text-slate-900">
+          <h3 className="font-extrabold text-sm text-[#181716]">
             Today's Fresh AI Reel Ideas &amp; Viral Hooks (24h Daily Feed)
           </h3>
         </div>
@@ -239,11 +239,11 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
         {ideas.map((item, idx) => (
           <div
             key={item.id}
-            className="rounded-xl border border-white/90 bg-white p-4 space-y-2.5 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between"
+            className="rounded-xl border border-[#E7E3DC] bg-white p-4 space-y-2.5 shadow-xs hover:border-[#803D63]/30 transition-all flex flex-col justify-between"
           >
             <div className="space-y-1.5">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-[#803D63]/10 text-[#803D63]">
+                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/20">
                   Idea #{idx + 1} • {item.category}
                 </span>
                 <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-0.5">
@@ -251,23 +251,23 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
                 </span>
               </div>
 
-              <h4 className="font-extrabold text-xs text-slate-900 leading-snug">
+              <h4 className="font-extrabold text-xs text-[#181716] leading-snug">
                 {item.title}
               </h4>
 
-              <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100 text-[11px] font-medium text-slate-700 italic leading-relaxed">
+              <div className="p-2.5 rounded-lg bg-[#F8F7F3] border border-[#E7E3DC] text-[11px] font-medium text-[#54514D] italic leading-relaxed">
                 "{item.hook}"
               </div>
             </div>
 
-            <div className="pt-2 flex items-center justify-between gap-2 border-t border-slate-100">
-              <span className="text-[10px] font-semibold text-slate-400">
+            <div className="pt-2 flex items-center justify-between gap-2 border-t border-[#E7E3DC]">
+              <span className="text-[10px] font-semibold text-[#797570]">
                 {item.format}
               </span>
               <button
                 type="button"
                 onClick={() => handleCopyHook(item)}
-                className="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#803D63] hover:text-[#6D3254] bg-[#F6EBF1] px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#803D63] hover:text-[#6F3456] bg-[#803D63]/[0.09] border border-[#803D63]/20 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
               >
                 {copiedId === item.id ? (
                   <>
@@ -287,7 +287,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
       </div>
 
       {/* Daily Motivation Footer Banner */}
-      <div className="pt-1 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] font-medium text-slate-500 border-t border-[#E8DCE4]/60">
+      <div className="pt-1 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] font-medium text-[#797570] border-t border-[#E7E3DC]">
         <div className="flex items-center gap-1.5">
           <Award className="h-3.5 w-3.5 text-amber-500" />
           <span>Keep your streak active for 7 days to unlock exclusive brand collab badges!</span>

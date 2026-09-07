@@ -94,25 +94,25 @@ export function Modal({
       <div
         ref={modalRef}
         onClick={(e) => e.stopPropagation()}
-        className={`relative w-full ${SIZE_CLASSES[size]} max-h-[calc(100dvh-32px)] sm:max-h-[calc(100dvh-48px)] bg-white rounded-2xl border border-[#ECE8EB] shadow-2xl flex flex-col overflow-hidden text-left animate-in zoom-in-95 duration-150 ${className}`}
+        className={`relative w-full ${SIZE_CLASSES[size]} max-h-[calc(100dvh-32px)] sm:max-h-[calc(100dvh-48px)] bg-white rounded-2xl border border-[#E7E3DC] shadow-xl flex flex-col overflow-hidden text-left animate-in zoom-in-95 duration-150 ${className}`}
       >
         {/* Optional Automatic Header */}
         {(title || showCloseButton) && (
-          <div className="flex items-center justify-between border-b border-[#ECE8EB] bg-white px-5 sm:px-6 py-3.5 sm:py-4 shrink-0">
+          <div className="flex items-center justify-between border-b border-[#E7E3DC] bg-white px-5 sm:px-6 py-3.5 sm:py-4 shrink-0">
             <div className="flex items-center gap-3 min-w-0 pr-2">
               {icon && (
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F7EDF3] text-[#803D63] shrink-0">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#803D63]/[0.09] text-[#803D63] shrink-0">
                   {icon}
                 </div>
               )}
               <div className="min-w-0">
                 {title && (
-                  <h3 className="font-display text-base sm:text-lg font-bold text-[#17131A] truncate">
+                  <h3 className="font-display text-base sm:text-lg font-bold text-[#181716] truncate">
                     {title}
                   </h3>
                 )}
                 {description && (
-                  <p className="text-xs text-[#6F6872] font-medium truncate mt-0.5">
+                  <p className="text-xs text-[#54514D] font-medium truncate mt-0.5">
                     {description}
                   </p>
                 )}
@@ -124,7 +124,7 @@ export function Modal({
                 type="button"
                 onClick={onClose}
                 aria-label="Close modal"
-                className="flex h-9 w-9 items-center justify-center rounded-xl text-[#6F6872] hover:text-[#17131A] hover:bg-[#FAF8FA] transition-colors cursor-pointer shrink-0 border border-transparent hover:border-[#ECE8EB]"
+                className="flex h-9 w-9 items-center justify-center rounded-xl text-[#797570] hover:text-[#181716] hover:bg-[#F8F7F3] transition-colors cursor-pointer shrink-0 border border-transparent hover:border-[#E7E3DC]"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -156,19 +156,19 @@ export function ModalHeader({
   className?: string;
 }) {
   return (
-    <div className={`flex items-center justify-between border-b border-[#ECE8EB] bg-white px-5 sm:px-6 py-3.5 sm:py-4 shrink-0 ${className}`}>
+    <div className={`flex items-center justify-between border-b border-[#E7E3DC] bg-white px-5 sm:px-6 py-3.5 sm:py-4 shrink-0 ${className}`}>
       <div className="flex items-center gap-3 min-w-0 pr-2">
         {icon && (
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F7EDF3] text-[#803D63] shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#803D63]/[0.09] text-[#803D63] shrink-0">
             {icon}
           </div>
         )}
         <div className="min-w-0">
-          <h3 className="font-display text-base sm:text-lg font-bold text-[#17131A] truncate">
+          <h3 className="font-display text-base sm:text-lg font-bold text-[#181716] truncate">
             {title}
           </h3>
           {description && (
-            <p className="text-xs text-[#6F6872] font-medium truncate mt-0.5">
+            <p className="text-xs text-[#54514D] font-medium truncate mt-0.5">
               {description}
             </p>
           )}
@@ -180,7 +180,7 @@ export function ModalHeader({
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="flex h-9 w-9 items-center justify-center rounded-xl text-[#6F6872] hover:text-[#17131A] hover:bg-[#FAF8FA] transition-colors cursor-pointer shrink-0 border border-transparent hover:border-[#ECE8EB]"
+          className="flex h-9 w-9 items-center justify-center rounded-xl text-[#797570] hover:text-[#181716] hover:bg-[#F8F7F3] transition-colors cursor-pointer shrink-0 border border-transparent hover:border-[#E7E3DC]"
         >
           <X className="h-4 w-4" />
         </button>
@@ -211,7 +211,7 @@ export function ModalFooter({
   className?: string;
 }) {
   return (
-    <div className={`flex items-center justify-end gap-2.5 border-t border-[#ECE8EB] bg-white px-5 sm:px-6 py-3.5 shrink-0 ${className}`}>
+    <div className={`flex items-center justify-end gap-2.5 border-t border-[#E7E3DC] bg-white px-5 sm:px-6 py-3.5 shrink-0 ${className}`}>
       {children}
     </div>
   );

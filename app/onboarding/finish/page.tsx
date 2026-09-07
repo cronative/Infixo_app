@@ -141,25 +141,25 @@ export default function FinishStepPage() {
             </div>
           </div>
 
-          <h1 className="mt-2 text-3xl font-extrabold leading-[1.15] tracking-tight text-slate-900 sm:text-4xl">
-            You&apos;re <span className="text-gradient-premium">Live on Inflixo</span> 🎉
+          <h1 className="mt-2 text-2xl sm:text-3xl font-bold leading-tight tracking-tight text-[#181716]">
+            You&apos;re Live on Inflixo 🎉
           </h1>
-          <p className="mt-2 text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-sm">
+          <p className="mt-1.5 text-xs sm:text-sm text-[#54514D] font-medium leading-relaxed max-w-sm">
             Your creator profile is ready. Share your Inflixo link with your audience and potential brand partners.
           </p>
 
           {/* Clean Public URL Box */}
-          <div className="mt-6 flex w-full items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white p-3.5 shadow-xs">
+          <div className="mt-6 flex w-full items-center justify-between gap-3 rounded-xl border border-[#E7E3DC] bg-white p-3 shadow-xs">
             <div className="flex items-center gap-2.5 min-w-0">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-purple-50 text-[#803D63]">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#803D63]/[0.09] text-[#803D63]">
                 <Sparkles className="h-4 w-4" />
               </span>
-              <span className="truncate text-sm font-bold text-slate-900">{displayUrl}</span>
+              <span className="truncate text-sm font-bold text-[#181716]">{displayUrl}</span>
             </div>
             <button
               type="button"
               onClick={handleCopy}
-              className="tap-scale flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6D3254] px-4 py-2 text-xs font-bold text-white transition-all cursor-pointer shrink-0"
+              className="tap-scale flex items-center gap-1.5 rounded-lg bg-[#803D63] hover:bg-[#6F3456] px-4 py-2 text-xs font-bold text-white transition-all cursor-pointer shrink-0 shadow-xs"
             >
               {copied ? (
                 <>
@@ -182,7 +182,7 @@ export default function FinishStepPage() {
               type="button"
               onClick={handleGoToDashboard}
               disabled={isLoadingDashboard}
-              className="tap-scale w-full flex items-center justify-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6D3254] text-white font-bold h-12 text-sm transition-all cursor-pointer shadow-xs disabled:opacity-75"
+              className="tap-scale w-full flex items-center justify-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6F3456] text-white font-bold h-11 text-sm transition-all cursor-pointer shadow-xs disabled:opacity-75"
             >
               {isLoadingDashboard ? (
                 <>
@@ -203,7 +203,7 @@ export default function FinishStepPage() {
                 href={`/${handleStr}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-white hover:bg-slate-50 text-slate-700 font-bold h-11 px-3 text-xs transition-colors cursor-pointer text-center"
+                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] text-[#181716] font-semibold h-10 px-3 text-xs transition-colors cursor-pointer text-center"
               >
                 <ExternalLink className="h-3.5 w-3.5 shrink-0" />
                 <span className="truncate">View Public Profile</span>
@@ -212,7 +212,7 @@ export default function FinishStepPage() {
               <button
                 type="button"
                 onClick={handleShare}
-                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-white hover:bg-slate-50 text-slate-700 font-bold h-11 px-3 text-xs transition-colors cursor-pointer text-center"
+                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] text-[#181716] font-semibold h-10 px-3 text-xs transition-colors cursor-pointer text-center"
               >
                 <Share2 className="h-3.5 w-3.5 shrink-0" />
                 <span className="truncate">Share Profile</span>
@@ -221,9 +221,9 @@ export default function FinishStepPage() {
           </div>
 
           {/* Creator Summit Mission Notice */}
-          <div className="mt-6 w-full rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4 text-center text-xs shadow-2xs">
-            <p className="font-bold text-[#803D63] text-xs">Creator Mission 2027</p>
-            <p className="mt-1 text-slate-700 font-medium leading-relaxed">
+          <div className="mt-6 w-full rounded-xl border border-[#E7E3DC] bg-[#F8F7F3] p-4 text-center text-xs shadow-xs">
+            <p className="font-bold text-[#181716] text-xs">Creator Mission 2027</p>
+            <p className="mt-1 text-[#54514D] font-medium leading-relaxed">
               {verifiedCreatorNumber ? (
                 `You’re creator #${verifiedCreatorNumber.toLocaleString()} joining Inflixo’s journey to empower 10,000 creators with Early Access.`
               ) : (

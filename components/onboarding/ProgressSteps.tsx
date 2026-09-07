@@ -23,18 +23,18 @@ export function ProgressSteps({ current }: { current: OnboardingStep }) {
               <div className="flex items-center gap-2.5">
                 {/* Step Circle */}
                 <div
-                  className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-black transition-all duration-300 ${
+                  className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${
                     isDone
-                      ? "bg-[#803D63] text-white shadow-sm"
+                      ? "bg-[#803D63] text-white shadow-xs"
                       : isActive
-                      ? "bg-[#803D63] text-white ring-4 ring-[#F6EBF1] shadow-md shadow-[#803D63]/25 scale-105"
-                      : "bg-[#F6EBF1] border border-[#E8DCE4] text-[#803D63]/60"
+                      ? "bg-[#803D63] text-white ring-4 ring-[#803D63]/10 shadow-xs"
+                      : "bg-[#F8F7F3] border border-[#E7E3DC] text-[#797570]"
                   }`}
                 >
                   {isDone ? (
                     <Check className="h-3.5 w-3.5 stroke-[3] text-white" />
                   ) : (
-                    <Icon className={`h-3.5 w-3.5 ${isActive ? "text-white" : "text-[#803D63]/70"}`} />
+                    <Icon className={`h-3.5 w-3.5 ${isActive ? "text-white" : "text-[#797570]"}`} />
                   )}
                 </div>
 
@@ -43,16 +43,16 @@ export function ProgressSteps({ current }: { current: OnboardingStep }) {
                   <span
                     className={`text-xs font-bold leading-none transition-colors ${
                       isActive
-                        ? "text-[#803D63] font-black"
+                        ? "text-[#181716]"
                         : isDone
-                        ? "text-slate-900"
-                        : "text-slate-400"
+                        ? "text-[#181716]"
+                        : "text-[#797570]"
                     }`}
                   >
                     {step.label}
                   </span>
                   {isActive && (
-                    <span className="text-[10px] font-bold text-[#803D63]/80 mt-0.5">
+                    <span className="text-[10px] font-semibold text-[#803D63] mt-0.5">
                       Step {i + 1} of {ONBOARDING_STEPS.length}
                     </span>
                   )}
@@ -61,7 +61,7 @@ export function ProgressSteps({ current }: { current: OnboardingStep }) {
 
               {/* Connecting Line */}
               {i < ONBOARDING_STEPS.length - 1 && (
-                <div className="mx-3 h-1 flex-1 overflow-hidden rounded-full bg-[#E8DCE4]">
+                <div className="mx-3 h-1 flex-1 overflow-hidden rounded-full bg-[#E7E3DC]">
                   <div
                     className="h-full rounded-full transition-all duration-500 ease-out bg-[#803D63]"
                     style={{
@@ -79,18 +79,18 @@ export function ProgressSteps({ current }: { current: OnboardingStep }) {
       <div className="sm:hidden">
         <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#803D63] text-[10px] font-black text-white">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#803D63] text-[10px] font-bold text-white">
               {currentIndex + 1}
             </span>
-            <span className="text-xs font-black text-slate-900">
+            <span className="text-xs font-bold text-[#181716]">
               {ONBOARDING_STEPS[currentIndex]?.label || "Setup"}
             </span>
           </div>
-          <span className="rounded-full bg-[#F6EBF1] border border-[#E8DCE4] px-2.5 py-0.5 text-[11px] font-black text-[#803D63]">
+          <span className="rounded-full bg-[#803D63]/[0.09] border border-[#803D63]/20 px-2.5 py-0.5 text-[11px] font-bold text-[#803D63]">
             {progressPercent}% Complete
           </span>
         </div>
-        <div className="h-2 w-full overflow-hidden rounded-full bg-[#F6EBF1] border border-[#E8DCE4]">
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#E7E3DC]">
           <div
             className="h-full rounded-full transition-all duration-300 ease-out bg-[#803D63]"
             style={{

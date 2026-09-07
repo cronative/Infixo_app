@@ -82,63 +82,63 @@ export function VisibilitySettingsModal({
       label: "Show Total Fanbase Count",
       description: "Display total reach count on top banner",
       icon: Users,
-      color: "text-[#803D63] bg-[#F7EDF3]",
+      color: "text-[#803D63] bg-[#803D63]/[0.09] border border-[#803D63]/20",
     },
     {
       key: "showInstagram",
       label: "Show Instagram Account",
       description: "Display Instagram button & followers stats",
       icon: InstagramIcon,
-      color: "text-rose-600 bg-rose-50",
+      color: "text-[#803D63] bg-[#803D63]/[0.09] border border-[#803D63]/20",
     },
     {
       key: "showYoutube",
       label: "Show YouTube Channel",
       description: "Display YouTube button & subscribers stats",
       icon: YoutubeIcon,
-      color: "text-red-600 bg-red-50",
+      color: "text-[#803D63] bg-[#803D63]/[0.09] border border-[#803D63]/20",
     },
     {
       key: "showFacebook",
       label: "Show Facebook Page",
       description: "Display Facebook button & likes stats",
       icon: FacebookIcon,
-      color: "text-blue-600 bg-blue-50",
+      color: "text-[#803D63] bg-[#803D63]/[0.09] border border-[#803D63]/20",
     },
     {
       key: "showContentCategory",
       label: "Show Category & Profession",
       description: "Display niche badges below display name",
       icon: Tag,
-      color: "text-amber-600 bg-amber-50",
+      color: "text-[#B7791F] bg-[#B7791F]/10 border border-[#B7791F]/20",
     },
     {
       key: "showSeries",
       label: "Show Web Series & Shows",
       description: "Display Content tab & episode listings",
       icon: Film,
-      color: "text-[#803D63] bg-[#F7EDF3]",
+      color: "text-[#803D63] bg-[#803D63]/[0.09] border border-[#803D63]/20",
     },
     {
       key: "showCollabGigs",
       label: "Show Services & Brand Work",
       description: "Display Services tab & collaboration packages",
       icon: Briefcase,
-      color: "text-indigo-600 bg-indigo-50",
+      color: "text-[#803D63] bg-[#803D63]/[0.09] border border-[#803D63]/20",
     },
     {
       key: "showReviews",
       label: "Show Client Reviews",
       description: "Display Reviews tab & client testimonials",
       icon: Star,
-      color: "text-amber-600 bg-amber-50",
+      color: "text-[#B7791F] bg-[#B7791F]/10 border border-[#B7791F]/20",
     },
     {
       key: "showCustomLinks",
       label: "Show Custom Links",
       description: "Display custom website & media links",
       icon: LinkIcon,
-      color: "text-teal-600 bg-teal-50",
+      color: "text-[#17845B] bg-[#EAF7F0] border border-[#17845B]/20",
     },
   ];
 
@@ -162,16 +162,16 @@ export function VisibilitySettingsModal({
       description="Toggle section visibility on your public creator profile"
       icon={<Settings className="h-4 w-4" />}
     >
-      <ModalBody className="p-4 sm:p-5 space-y-3.5 divide-y divide-[#ECE8EB]">
+      <ModalBody className="p-4 sm:p-5 space-y-3.5 divide-y divide-[#ECE8E1]">
         {/* Show All master toggle */}
         <div className="pb-3.5 flex items-center justify-between gap-3">
           <div className="flex items-start gap-3 min-w-0">
-            <div className="p-2 rounded-xl shrink-0 text-[#803D63] bg-[#F7EDF3]">
+            <div className="p-2 rounded-xl shrink-0 text-[#803D63] bg-[#803D63]/[0.09] border border-[#803D63]/20">
               <Check className="h-4 w-4" />
             </div>
             <div className="min-w-0 text-left">
-              <p className="text-xs font-bold text-[#17131A]">Show All Sections</p>
-              <p className="text-[11px] font-medium text-[#6F6872] leading-tight">Enable all sections on your public profile</p>
+              <p className="text-xs font-bold text-[#181716]">Show All Sections</p>
+              <p className="text-[11px] font-medium text-[#797570] leading-tight">Enable all sections on your public profile</p>
             </div>
           </div>
           <button
@@ -180,7 +180,7 @@ export function VisibilitySettingsModal({
             aria-checked={allEnabled}
             onClick={handleShowAll}
             className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-              allEnabled ? "bg-[#803D63]" : "bg-slate-200"
+              allEnabled ? "bg-[#803D63]" : "bg-[#E7E3DC]"
             }`}
           >
             <span
@@ -205,10 +205,10 @@ export function VisibilitySettingsModal({
                   <Icon className="h-4 w-4" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-bold text-[#17131A] truncate">
+                  <p className="text-xs font-bold text-[#181716] truncate">
                     {item.label}
                   </p>
-                  <p className="text-[11px] font-medium text-[#6F6872] leading-tight">
+                  <p className="text-[11px] font-medium text-[#797570] leading-tight">
                     {item.description}
                   </p>
                 </div>
@@ -220,7 +220,7 @@ export function VisibilitySettingsModal({
                 aria-checked={isEnabled}
                 onClick={() => toggleKey(item.key)}
                 className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  isEnabled ? "bg-[#803D63]" : "bg-slate-200"
+                  isEnabled ? "bg-[#803D63]" : "bg-[#E7E3DC]"
                 }`}
               >
                 <span
@@ -238,7 +238,7 @@ export function VisibilitySettingsModal({
         <button
           type="button"
           onClick={onClose}
-          className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
+          className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#F8F7F3] hover:text-[#181716] transition-colors cursor-pointer"
         >
           Cancel
         </button>
@@ -246,7 +246,7 @@ export function VisibilitySettingsModal({
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5 disabled:opacity-50"
+          className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
         >
           <Check className="h-3.5 w-3.5" />
           <span>{saving ? "Saving..." : "Save Settings"}</span>

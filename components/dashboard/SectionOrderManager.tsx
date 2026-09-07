@@ -120,18 +120,18 @@ export function SectionOrderManager() {
   };
 
   return (
-    <section className="rounded-2xl border border-[#ECE8EB] bg-white p-5 sm:p-6 space-y-4 shadow-2xs text-left">
-      <div className="flex items-center justify-between border-b border-[#ECE8EB] pb-3.5">
+    <section className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 space-y-4 shadow-xs text-left">
+      <div className="flex items-center justify-between border-b border-[#E7E3DC] pb-3.5">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F7EDF3] text-[#803D63] shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/20 shrink-0">
             <Layers className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="font-display text-base font-bold text-[#17131A] flex items-center gap-2">
+            <h2 className="font-display text-base font-bold text-[#181716] flex items-center gap-2">
               Profile Sections &amp; Layout
               {saving && <Loader2 className="h-3.5 w-3.5 animate-spin text-[#803D63]" />}
             </h2>
-            <p className="text-xs text-[#6F6872] font-medium mt-0.5">
+            <p className="text-xs text-[#797570] font-medium mt-0.5">
               Customize the order and visibility of sections displayed on your public creator page.
             </p>
           </div>
@@ -140,7 +140,7 @@ export function SectionOrderManager() {
         <button
           type="button"
           onClick={handleResetDefault}
-          className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-3 py-1.5 text-xs font-semibold text-[#6F6872] transition-colors cursor-pointer shadow-2xs"
+          className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#F8F7F3] px-3 py-1.5 text-xs font-semibold text-[#797570] hover:text-[#181716] transition-colors cursor-pointer shadow-xs"
           title="Reset to default order"
         >
           <RotateCcw className="h-3.5 w-3.5" />
@@ -165,25 +165,25 @@ export function SectionOrderManager() {
               key={section.sectionKey}
               className={`flex items-center justify-between p-3 sm:p-3.5 rounded-xl border transition-all ${
                 section.isVisible
-                  ? "bg-white border-[#ECE8EB] shadow-2xs"
-                  : "bg-[#FAF8FA] border-[#ECE8EB]/60 opacity-60"
+                  ? "bg-white border-[#E7E3DC] shadow-xs"
+                  : "bg-[#F8F7F3] border-[#E7E3DC]/60 opacity-60"
               }`}
             >
               <div className="flex items-center gap-3 min-w-0">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-[#FAF8FA] border border-[#ECE8EB] text-[11px] font-bold text-[#6F6872]">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-[#F8F7F3] border border-[#E7E3DC] text-[11px] font-bold text-[#797570]">
                   {idx + 1}
                 </span>
 
                 <div className="min-w-0 space-y-0.5">
-                  <p className="text-xs font-bold text-[#17131A] truncate flex items-center gap-1.5">
+                  <p className="text-xs font-bold text-[#181716] truncate flex items-center gap-1.5">
                     {info.name}
                     {isAbout && (
-                      <span className="text-[10px] font-semibold text-[#803D63] bg-[#F7EDF3] px-1.5 py-0.2 rounded-md">
+                      <span className="text-[10px] font-semibold text-[#803D63] bg-[#803D63]/[0.09] border border-[#803D63]/20 px-1.5 py-0.2 rounded-md">
                         Locked
                       </span>
                     )}
                   </p>
-                  <p className="text-[11px] text-[#6F6872] truncate">{info.desc}</p>
+                  <p className="text-[11px] text-[#797570] truncate">{info.desc}</p>
                 </div>
               </div>
 
@@ -195,8 +195,8 @@ export function SectionOrderManager() {
                   disabled={isAbout}
                   className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-colors cursor-pointer ${
                     section.isVisible
-                      ? "border-[#ECE8EB] bg-[#FAF8FA] text-[#17131A] hover:bg-[#F7EDF3] hover:text-[#803D63]"
-                      : "border-rose-200 bg-rose-50 text-rose-600"
+                      ? "border-[#E7E3DC] bg-[#F8F7F3] text-[#181716] hover:bg-[#803D63]/[0.09] hover:text-[#803D63]"
+                      : "border-[#C2414B]/20 bg-[#C2414B]/10 text-[#C2414B]"
                   } disabled:opacity-40 disabled:cursor-not-allowed`}
                   title={section.isVisible ? "Hide section from profile" : "Show section on profile"}
                 >
@@ -212,7 +212,7 @@ export function SectionOrderManager() {
                   type="button"
                   onClick={() => handleMove(idx, "up")}
                   disabled={isFirst}
-                  className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#ECE8EB] bg-[#FAF8FA] text-[#6F6872] hover:text-[#17131A] hover:bg-white transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E7E3DC] bg-[#F8F7F3] text-[#797570] hover:text-[#181716] hover:bg-white transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                   title="Move up"
                 >
                   <ArrowUp className="h-3.5 w-3.5" />
@@ -223,7 +223,7 @@ export function SectionOrderManager() {
                   type="button"
                   onClick={() => handleMove(idx, "down")}
                   disabled={isLast}
-                  className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#ECE8EB] bg-[#FAF8FA] text-[#6F6872] hover:text-[#17131A] hover:bg-white transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E7E3DC] bg-[#F8F7F3] text-[#797570] hover:text-[#181716] hover:bg-white transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                   title="Move down"
                 >
                   <ArrowDown className="h-3.5 w-3.5" />

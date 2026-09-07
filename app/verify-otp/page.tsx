@@ -140,39 +140,38 @@ export default function VerifyOtpPage() {
   }
 
   return (
-    <div className="relative flex min-h-dvh flex-col items-center justify-center bg-gradient-to-b from-[#F6EBF1]/60 via-slate-50 to-white px-4 py-8 text-center text-slate-900 overflow-hidden">
-      {/* Ambient Maroon Background Glow Orbs */}
-      <div className="pointer-events-none absolute -top-24 -left-20 h-96 w-96 rounded-full bg-[#803D63]/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-24 -right-20 h-96 w-96 rounded-full bg-rose-200/40 blur-3xl" />
+    <div className="relative flex min-h-dvh flex-col items-center justify-center bg-[#FAF9F6] px-4 py-8 text-center text-[#181716] overflow-hidden">
+      {/* Subtle Ambient Background Light */}
+      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-80 bg-gradient-radial from-[#F5F3ED] to-transparent blur-3xl" />
 
-      <div className="relative z-10 w-full max-w-[460px] space-y-6">
+      <div className="relative z-10 w-full max-w-[440px] space-y-6">
         {/* 1. Header Branding */}
         <div className="flex flex-col items-center text-center space-y-2">
           <div className="flex items-center justify-center gap-2">
             <Logo size="md" />
-            <span className="rounded-full bg-[#F6EBF1] px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest text-[#803D63] border border-[#E8DCE4]">
+            <span className="rounded-full bg-[#803D63]/[0.09] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#803D63] border border-[#803D63]/20">
               VERIFICATION
             </span>
           </div>
 
           <div className="space-y-1 pt-1">
-            <h1 className="font-display text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#181716] tracking-tight">
               Check your email
             </h1>
-            <p className="text-xs sm:text-sm font-medium text-slate-500 max-w-xs mx-auto leading-relaxed">
-              We sent a 4-digit code to <span className="font-bold text-slate-800">{email || "your email"}</span>
+            <p className="text-xs sm:text-sm font-medium text-[#54514D] max-w-xs mx-auto leading-relaxed">
+              We sent a 4-digit code to <span className="font-bold text-[#181716]">{email || "your email"}</span>
             </p>
           </div>
         </div>
 
         {/* 2. Main Centered Card */}
-        <div className="rounded-[32px] border border-[#E8DCE4] bg-white/95 p-7 sm:p-9 shadow-2xl shadow-[#803D63]/5 backdrop-blur-xl space-y-5 text-center">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-7 sm:p-8 shadow-xs space-y-5 text-center">
           {/* Change Email Pill */}
           <div className="flex items-center justify-center">
             <button
               type="button"
               onClick={() => router.push("/login")}
-              className="inline-flex items-center gap-1.5 rounded-full bg-[#F6EBF1] px-3 py-1 text-xs font-bold text-[#803D63] border border-[#E8DCE4] hover:bg-[#ECD3E2] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#F8F7F3] px-3 py-1 text-xs font-semibold text-[#54514D] border border-[#E7E3DC] hover:bg-[#E7E3DC] hover:text-[#181716] transition-colors cursor-pointer"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               <span>Change email address</span>
@@ -199,12 +198,12 @@ export default function VerifyOtpPage() {
                   onKeyDown={(e) => handleKeyDown(i, e)}
                   onPaste={handlePaste}
                   aria-label={`Digit ${i + 1}`}
-                  className={`h-14 w-14 sm:h-16 sm:w-16 rounded-2xl border text-center text-2xl font-black text-slate-900 bg-white outline-none transition-all duration-150 ${
+                  className={`h-14 w-14 sm:h-15 sm:w-15 rounded-xl border text-center text-2xl font-bold text-[#181716] bg-white outline-none transition-all duration-150 ${
                     errorMessage
-                      ? "border-red-400 bg-red-50/20 text-red-600 ring-2 ring-red-200"
+                      ? "border-rose-400 bg-rose-50/20 text-[#C2414B] ring-2 ring-rose-200"
                       : d
-                      ? "border-[#803D63] ring-2 ring-[#803D63]/20 bg-[#F6EBF1]/30"
-                      : "border-[#E8DCE4] focus:border-[#803D63] focus:ring-2 focus:ring-[#803D63]/20"
+                      ? "border-[#803D63] ring-1 ring-[#803D63] bg-[#803D63]/5"
+                      : "border-[#E7E3DC] focus:border-[#803D63] focus:ring-2 focus:ring-[#803D63]/15"
                   }`}
                 />
               ))}
@@ -212,14 +211,14 @@ export default function VerifyOtpPage() {
 
             {/* Error Message */}
             {errorMessage && (
-              <p className="text-xs font-bold text-red-500 text-center animate-fade-in pt-1">
+              <p className="text-xs font-semibold text-[#C2414B] text-center animate-fade-in pt-1">
                 {errorMessage}
               </p>
             )}
 
             {/* Code Sent Toast Banner */}
             {codeSent && (
-              <p className="text-xs font-bold text-emerald-600 text-center animate-fade-in pt-1">
+              <p className="text-xs font-semibold text-emerald-600 text-center animate-fade-in pt-1">
                 New verification code sent ✓
               </p>
             )}
@@ -232,10 +231,10 @@ export default function VerifyOtpPage() {
             loading={submitting}
             disabled={!isOtpComplete || submitting}
             onClick={() => submit(digits.join(""))}
-            className={`font-bold transition-all h-12 text-xs sm:text-sm rounded-2xl cursor-pointer ${
+            className={`font-bold transition-all h-11 text-xs sm:text-sm rounded-xl cursor-pointer ${
               isOtpComplete && !submitting
-                ? "bg-[#803D63] text-white hover:bg-[#6D3254] shadow-md shadow-[#803D63]/20 hover:scale-[1.01]"
-                : "bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed shadow-none"
+                ? "bg-[#803D63] text-white hover:bg-[#6F3456] shadow-xs"
+                : "bg-[#F8F7F3] text-[#797570] border border-[#E7E3DC] cursor-not-allowed shadow-none"
             }`}
           >
             <span>Verify &amp; Continue</span>
@@ -243,11 +242,11 @@ export default function VerifyOtpPage() {
           </Button>
 
           {/* Resend Countdown Timer */}
-          <div className="text-center text-xs font-medium text-slate-500 pt-1">
+          <div className="text-center text-xs font-medium text-[#797570] pt-1">
             {countdown > 0 ? (
               <p>
                 Didn&apos;t receive code? Resend in{" "}
-                <span className="font-mono font-bold text-slate-800">
+                <span className="font-mono font-bold text-[#181716]">
                   00:{countdown.toString().padStart(2, "0")}
                 </span>
               </p>
@@ -268,8 +267,8 @@ export default function VerifyOtpPage() {
         </div>
 
         {/* 3. Footer */}
-        <p className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-400 text-center">
-          <Lock className="h-3 w-3 text-slate-400" />
+        <p className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#797570] text-center">
+          <Lock className="h-3 w-3 text-[#797570]" />
           <span>Secure passwordless verification by Inflixo</span>
         </p>
       </div>

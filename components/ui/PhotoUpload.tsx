@@ -34,7 +34,7 @@ export function PhotoUpload({
   return (
     <div className="flex flex-col items-center sm:items-start gap-2">
       <div
-        className={`group relative flex shrink-0 items-center justify-center overflow-hidden border border-[#E5E7EB] bg-slate-50 shadow-xs transition-colors hover:border-[#803D63] ${
+        className={`group relative flex shrink-0 items-center justify-center overflow-hidden border border-[#E7E3DC] bg-[#F8F7F3] shadow-xs transition-colors hover:border-[#803D63] ${
           shape === "circle"
             ? "w-20 h-20 rounded-full aspect-square overflow-hidden shrink-0"
             : shape === "landscape"
@@ -57,7 +57,7 @@ export function PhotoUpload({
             }`}
           />
         ) : (
-          <div className="flex flex-col items-center justify-center gap-1 p-2 text-center text-slate-400">
+          <div className="flex flex-col items-center justify-center gap-1 p-2 text-center text-[#797570]">
             {isLandscape ? (
               <>
                 <Film className="h-5 w-5 text-[#803D63]" />
@@ -71,7 +71,7 @@ export function PhotoUpload({
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="absolute inset-0 flex items-center justify-center bg-slate-950/40 text-white opacity-0 transition-all group-hover:opacity-100 cursor-pointer rounded-full"
+          className="absolute inset-0 flex items-center justify-center bg-black/40 text-white opacity-0 transition-all group-hover:opacity-100 cursor-pointer rounded-full"
           aria-label="Upload photo"
         >
           <Camera className="h-5 w-5" />
@@ -80,7 +80,7 @@ export function PhotoUpload({
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="bg-[#F6EBF1] text-[#803D63] hover:bg-[#E8DCE4] text-xs font-semibold px-3 py-1.5 rounded-lg border border-[#E8DCE4] transition-colors cursor-pointer"
+        className="bg-[#803D63]/[0.09] text-[#803D63] hover:bg-[#803D63]/15 text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#803D63]/20 transition-colors cursor-pointer"
       >
         {label ?? (value ? (isLandscape ? "Change poster" : "Change Profile Photo") : (isLandscape ? "Upload poster preview" : "Upload Profile Photo"))}
       </button>

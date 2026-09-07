@@ -45,13 +45,13 @@ export function CategorySelect({
     <div className="w-full space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-1.5">
         <div>
-          <label className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+          <label className="text-sm font-bold text-[#181716] flex items-center gap-1.5">
             <Tag className="h-4 w-4 text-[#803D63]" />
             What do you create?
           </label>
-          <p className="text-xs text-slate-500">Choose up to {max} categories that best describe your content.</p>
+          <p className="text-xs text-[#797570]">Choose up to {max} categories that best describe your content.</p>
         </div>
-        <span className="bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] text-xs font-semibold px-2.5 py-0.5 rounded-full shrink-0">
+        <span className="bg-[#803D63]/[0.09] text-[#803D63] border border-[#803D63]/20 text-xs font-semibold px-2.5 py-0.5 rounded-full shrink-0">
           {selectedCategories.length} / {max} selected
         </span>
       </div>
@@ -59,7 +59,7 @@ export function CategorySelect({
       {error && <p className="text-xs font-bold text-rose-500">{error}</p>}
 
       {/* Compact Chip Pills of Categories */}
-      <div className="flex flex-wrap gap-1.5 rounded-2xl border border-[#E5E7EB] bg-slate-50/50 p-3">
+      <div className="flex flex-wrap gap-1.5 rounded-2xl border border-[#E7E3DC] bg-[#F8F7F3] p-3">
         {CREATOR_TAXONOMY.map((item) => {
           const isSelected = selectedCategories.includes(item.category);
           const isMaxReached = !isSelected && selectedCategories.length >= max;
@@ -72,10 +72,10 @@ export function CategorySelect({
               onClick={() => toggleCategory(item.category)}
               className={`tap-scale inline-flex items-center gap-1.5 text-xs py-1 px-3 rounded-full transition-all cursor-pointer ${
                 isSelected
-                  ? "bg-[#F6EBF1] border border-[#803D63] text-[#803D63] font-semibold shadow-2xs"
+                  ? "bg-[#803D63]/[0.09] border border-[#803D63] text-[#803D63] font-semibold shadow-xs"
                   : isMaxReached
-                  ? "opacity-40 cursor-not-allowed bg-white border border-[#E5E7EB] text-gray-400"
-                  : "bg-white border border-[#E5E7EB] text-[#4B5563] hover:border-gray-300"
+                  ? "opacity-40 cursor-not-allowed bg-white border border-[#E7E3DC] text-[#797570]"
+                  : "bg-white border border-[#E7E3DC] text-[#54514D] hover:border-[#803D63]/30"
               }`}
             >
               <span className="text-xs shrink-0">{item.emoji}</span>
