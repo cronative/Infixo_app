@@ -2416,18 +2416,19 @@ export function PreviewSeriesItem({
   // Robust platform detection from series.platform OR first episode URL
   const firstEpUrl = allEpisodes[0]?.externalUrl || "";
   const detectedPlatform = (() => {
-    if (series.platform && series.platform.trim()) {
-      const p = series.platform.trim();
-      if (/youtube/i.test(p)) return "YouTube";
-      if (/instagram/i.test(p)) return "Instagram";
-      if (/facebook/i.test(p)) return "Facebook";
-      return p;
-    }
-    if (firstEpUrl) {
-      if (/youtube\.com|youtu\.be/i.test(firstEpUrl)) return "YouTube";
-      if (/instagram\.com/i.test(firstEpUrl)) return "Instagram";
-      if (/facebook\.com/i.test(firstEpUrl)) return "Facebook";
-    }
+    const p = (series.platform || "").toLowerCase();
+    const u = (firstEpUrl || "").toLowerCase();
+
+    if (p.includes("youtube") || u.includes("youtube.com") || u.includes("youtu.be")) return "YouTube";
+    if (p.includes("instagram") || u.includes("instagram.com")) return "Instagram";
+    if (p.includes("facebook") || u.includes("facebook.com")) return "Facebook";
+    if (p.includes("twitter") || p.includes("x.com") || u.includes("twitter.com") || u.includes("x.com")) return "X";
+    if (p.includes("linkedin") || u.includes("linkedin.com")) return "LinkedIn";
+    if (p.includes("threads") || u.includes("threads.net")) return "Threads";
+    if (p.includes("snapchat") || u.includes("snapchat.com")) return "Snapchat";
+    if (p.includes("spotify") || u.includes("spotify.com")) return "Spotify";
+    if (p.includes("twitch") || u.includes("twitch.tv")) return "Twitch";
+    if (series.platform && series.platform.trim()) return series.platform.trim();
     return null;
   })();
 
@@ -2458,6 +2459,18 @@ export function PreviewSeriesItem({
               ? "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-xs text-white"
               : detectedPlatform === "Facebook"
               ? "bg-blue-600 shadow-xs text-white"
+              : detectedPlatform === "X"
+              ? "bg-slate-900 shadow-xs text-white"
+              : detectedPlatform === "LinkedIn"
+              ? "bg-sky-700 shadow-xs text-white"
+              : detectedPlatform === "Threads"
+              ? "bg-slate-900 shadow-xs text-white"
+              : detectedPlatform === "Snapchat"
+              ? "bg-amber-400 shadow-xs text-slate-950"
+              : detectedPlatform === "Spotify"
+              ? "bg-emerald-600 shadow-xs text-white"
+              : detectedPlatform === "Twitch"
+              ? "bg-purple-600 shadow-xs text-white"
               : "bg-[#F3DDE0] text-[#8C3F4D]"
           }`}
         >
@@ -2467,8 +2480,22 @@ export function PreviewSeriesItem({
             <InstagramIcon className="h-4 w-4 text-white" />
           ) : detectedPlatform === "Facebook" ? (
             <FacebookIcon className="h-4 w-4 text-white" />
+          ) : detectedPlatform === "X" ? (
+            <XTwitterIcon className="h-3.5 w-3.5 text-white" />
+          ) : detectedPlatform === "LinkedIn" ? (
+            <LinkedinIcon className="h-3.5 w-3.5 text-white" />
+          ) : detectedPlatform === "Threads" ? (
+            <ThreadsIcon className="h-3.5 w-3.5 text-white" />
+          ) : detectedPlatform === "Snapchat" ? (
+            <SnapchatIcon className="h-4 w-4 text-slate-950" />
+          ) : detectedPlatform === "Spotify" ? (
+            <SpotifyIcon className="h-4 w-4 text-white" />
+          ) : detectedPlatform === "Twitch" ? (
+            <TwitchIcon className="h-4 w-4 text-white" />
           ) : (
-            <Film className="h-4 w-4" />
+            <span className="text-[11px] sm:text-xs font-bold tracking-tight select-none">
+              {getInitials(series.title)}
+            </span>
           )}
         </span>
         <div className="min-w-0 text-left space-y-0.5">
