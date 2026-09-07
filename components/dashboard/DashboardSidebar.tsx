@@ -36,7 +36,7 @@ export function DashboardSidebar() {
           name={displayName}
           className="w-9 h-9 rounded-full overflow-hidden object-cover aspect-square border border-[#E4DAD5] shrink-0"
           textClassName="text-xs font-bold text-[#241618]"
-          fallbackBgClass="bg-[#F3DDE0]"
+          fallbackBgClass="bg-[#f3dde057]"
         />
 
         <div className="min-w-0 flex-1">
@@ -52,7 +52,7 @@ export function DashboardSidebar() {
             <p className="truncate text-[11px] font-medium text-[#6B5A5D]">
               @{handleStr}
             </p>
-            <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-[#8C3F4D] bg-[#F3DDE0] px-1.5 py-0.2 rounded">
+            <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-[#8C3F4D] bg-[#f3dde057] px-1.5 py-0.2 rounded">
               <span className="h-1 w-1 rounded-full bg-[#B85C6B]" />
               Live
             </span>
@@ -76,8 +76,8 @@ export function DashboardSidebar() {
                   key={item.href}
                   href={item.href}
                   className={`flex items-center gap-2.5 rounded-[10px] px-3 py-2 text-xs transition-colors ${active
-                      ? "bg-[#F3DDE0] text-[#8C3F4D] font-semibold"
-                      : "text-[#6B5A5D] hover:bg-[#fbfbfb] hover:text-[#241618] font-medium"
+                    ? "bg-[#f3dde057] text-[#8C3F4D] font-semibold"
+                    : "text-[#6B5A5D] hover:bg-[#fbfbfb] hover:text-[#241618] font-medium"
                     }`}
                 >
                   <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#B85C6B]" : "text-[#6B5A5D]"}`} />
@@ -102,8 +102,8 @@ export function DashboardSidebar() {
                   key={item.href}
                   href={item.href}
                   className={`flex items-center gap-2.5 rounded-[10px] px-3 py-2 text-xs transition-colors ${active
-                      ? "bg-[#F3DDE0] text-[#8C3F4D] font-semibold"
-                      : "text-[#6B5A5D] hover:bg-[#fbfbfb] hover:text-[#241618] font-medium"
+                    ? "bg-[#f3dde057] text-[#8C3F4D] font-semibold"
+                    : "text-[#6B5A5D] hover:bg-[#fbfbfb] hover:text-[#241618] font-medium"
                     }`}
                 >
                   <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#B85C6B]" : "text-[#6B5A5D]"}`} />

@@ -112,7 +112,7 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
               <Sparkles className="h-3.5 w-3.5" />
               <span>Ready-to-Paste Reel Caption</span>
             </div>
-            <span className="text-[10px] bg-[#F3DDE0] text-[#8C3F4D] px-2 py-0.5 rounded-md font-bold">Recommended</span>
+            <span className="text-[10px] bg-[#f3dde057] text-[#8C3F4D] px-2 py-0.5 rounded-md font-bold">Recommended</span>
           </div>
 
           <div className="rounded-lg border border-[#E4DAD5] bg-white p-2.5 text-xs font-mono text-[#241618] leading-relaxed whitespace-pre-wrap select-all">

@@ -54,7 +54,7 @@ export default function LoginPage() {
         <div className="flex flex-col items-center text-center space-y-2 animate-fade-up [animation-delay:0.05s]">
           <div className="flex items-center justify-center gap-2">
             <Logo size="md" />
-            <span className="rounded-full bg-[#F3DDE0] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#8C3F4D]">
+            <span className="rounded-full bg-[#f3dde057] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#8C3F4D]">
               CREATOR
             </span>
           </div>
@@ -72,7 +72,7 @@ export default function LoginPage() {
         {/* 2. Main Centered Login Card (Stagger 3) */}
         <div className="rounded-[18px] border border-[#E4DAD5] bg-[#FFFFFF] p-6 sm:p-8 space-y-5 text-left animate-fade-up [animation-delay:0.25s]">
           {/* Trust Pill */}
-          <div className="flex items-center gap-1.5 rounded-full bg-[#F3DDE0] px-3 py-1 text-[11px] font-semibold text-[#8C3F4D]">
+          <div className="flex items-center gap-1.5 rounded-full bg-[#f3dde057] px-3 py-1 text-[11px] font-semibold text-[#8C3F4D]">
             <Sparkles className="h-3 w-3 text-[#B85C6B] shrink-0" />
             <span>Password-free login • Fast 60s setup</span>
           </div>
@@ -88,7 +88,7 @@ export default function LoginPage() {
               </label>
 
               <div
-                className={`flex h-11 items-center rounded-[10px] border px-3.5 bg-[#FFFFFF] transition-all duration-200 focus-within:border-[#B85C6B] focus-within:ring-3 focus-within:ring-[#F3DDE0] ${error
+                className={`flex h-11 items-center rounded-[10px] border px-3.5 bg-[#FFFFFF] transition-all duration-200 focus-within:border-[#B85C6B] focus-within:ring-3 focus-within:ring-[#f3dde057] ${error
                   ? "border-[#C1443A] bg-[#fbfbfb]"
                   : "border-[#E4DAD5]"
                   } ${isShaking ? "animate-shake" : ""}`}

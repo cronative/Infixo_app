@@ -163,23 +163,23 @@ export default function DashboardThemesPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-16 text-left">
+    <div className="space-y-6 w-full pb-16 text-left">
       {/* =========================================================================
          1. APPEARANCE PAGE HEADING
          ========================================================================= */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
         <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#241618] tracking-tight">
+          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#181716]">
             Appearance
           </h1>
-          <p className="text-xs sm:text-sm text-[#6B5A5D] font-medium mt-1">
+          <p className="text-xs sm:text-[13px] text-[#797570] font-medium mt-0.5">
             Choose how your public creator profile looks.
           </p>
         </div>
 
         {/* Retained active-theme badge on the right */}
         <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-          <span className="inline-flex items-center gap-1.5 rounded-xl bg-[#F3DDE0] border border-[#B85C6B]/20 px-3.5 py-1.5 text-xs font-semibold text-[#8C3F4D] shadow-xs">
+          <span className="inline-flex items-center gap-1.5 rounded-xl bg-[#f3dde057] border border-[#B85C6B]/20 px-3.5 py-1.5 text-xs font-semibold text-[#8C3F4D] shadow-xs">
             <span className="h-2 w-2 rounded-full bg-[#B85C6B]" />
             Active theme: {activeThemeMeta.name}
           </span>
@@ -218,8 +218,8 @@ export default function DashboardThemesPage() {
             type="button"
             onClick={() => setActiveGroup("all")}
             className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${activeGroup === "all"
-                ? "bg-[#B85C6B] text-white shadow-xs"
-                : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#6B5A5D] hover:text-[#241618] hover:bg-white"
+              ? "bg-[#B85C6B] text-white shadow-xs"
+              : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#6B5A5D] hover:text-[#241618] hover:bg-white"
               }`}
           >
             All ({groupCounts.all})
@@ -229,8 +229,8 @@ export default function DashboardThemesPage() {
             type="button"
             onClick={() => setActiveGroup("animated")}
             className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${activeGroup === "animated"
-                ? "bg-[#B85C6B] text-white shadow-xs"
-                : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#8C3F4D] hover:text-[#241618] hover:bg-white"
+              ? "bg-[#B85C6B] text-white shadow-xs"
+              : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#8C3F4D] hover:text-[#241618] hover:bg-white"
               }`}
           >
             <Sparkles className="h-3.5 w-3.5" />
@@ -241,8 +241,8 @@ export default function DashboardThemesPage() {
             type="button"
             onClick={() => setActiveGroup("light")}
             className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${activeGroup === "light"
-                ? "bg-[#B85C6B] text-white shadow-xs"
-                : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#6B5A5D] hover:text-[#241618] hover:bg-white"
+              ? "bg-[#B85C6B] text-white shadow-xs"
+              : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#6B5A5D] hover:text-[#241618] hover:bg-white"
               }`}
           >
             Light ({groupCounts.light})
@@ -252,8 +252,8 @@ export default function DashboardThemesPage() {
             type="button"
             onClick={() => setActiveGroup("dark")}
             className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${activeGroup === "dark"
-                ? "bg-[#B85C6B] text-white shadow-xs"
-                : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#6B5A5D] hover:text-[#241618] hover:bg-white"
+              ? "bg-[#B85C6B] text-white shadow-xs"
+              : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#6B5A5D] hover:text-[#241618] hover:bg-white"
               }`}
           >
             Dark ({groupCounts.dark})
@@ -377,7 +377,7 @@ export default function DashboardThemesPage() {
             </div>
 
             {isPreviewDifferent ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F3DDE0] border border-[#B85C6B]/20 px-2.5 py-0.5 text-xs font-bold text-[#8C3F4D] animate-pulse">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f3dde057] border border-[#B85C6B]/20 px-2.5 py-0.5 text-xs font-bold text-[#8C3F4D] animate-pulse">
                 <Sparkles className="h-3 w-3 text-[#B85C6B]" />
                 Previewing: {previewThemeMeta.name}
               </span>
@@ -500,8 +500,8 @@ function ThemeCarouselCard({
       type="button"
       onClick={onSelect}
       className={`group relative flex flex-col justify-between w-[260px] sm:w-[280px] shrink-0 rounded-2xl border p-3 text-left transition-all cursor-pointer shadow-xs snap-start ${isPreviewing
-          ? "border-[#B85C6B] ring-2 ring-[#B85C6B]/25 bg-[#F3DDE0]/30"
-          : "border-[#E4DAD5] bg-white hover:border-[#B85C6B]/40 hover:shadow-sm"
+        ? "border-[#B85C6B] ring-2 ring-[#B85C6B]/25 bg-[#f3dde057]/30"
+        : "border-[#E4DAD5] bg-white hover:border-[#B85C6B]/40 hover:shadow-sm"
         }`}
     >
       {/* Mini Visual Palette / Swatch Banner */}
@@ -586,11 +586,11 @@ function ThemeCarouselCard({
         {/* Action Button/Indicator */}
         <div>
           {isActive ? (
-            <span className="text-[11px] font-bold text-[#8C3F4D] bg-[#F3DDE0] border border-[#B85C6B]/20 px-2 py-1 rounded-lg">
+            <span className="text-[11px] font-bold text-[#8C3F4D] bg-[#f3dde057] border border-[#B85C6B]/20 px-2 py-1 rounded-lg">
               Active
             </span>
           ) : isPreviewing ? (
-            <span className="text-[11px] font-bold text-[#8C3F4D] bg-[#F3DDE0] border border-[#B85C6B]/20 px-2 py-1 rounded-lg">
+            <span className="text-[11px] font-bold text-[#8C3F4D] bg-[#f3dde057] border border-[#B85C6B]/20 px-2 py-1 rounded-lg">
               Previewing
             </span>
           ) : (

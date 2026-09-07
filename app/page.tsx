@@ -289,7 +289,7 @@ export default function LandingHomePage() {
   }
 
   return (
-    <div className="relative min-h-dvh bg-[#fbfbfb] text-[#241618] flex flex-col font-sans selection:bg-[#F3DDE0] selection:text-[#8C3F4D] overflow-x-hidden antialiased">
+    <div className="relative min-h-dvh bg-[#fbfbfb] text-[#241618] flex flex-col font-sans selection:bg-[#f3dde057] selection:text-[#8C3F4D] overflow-x-hidden antialiased">
       {/* =========================================================================
           NAVIGATION BAR
          ========================================================================= */}
@@ -355,7 +355,7 @@ export default function LandingHomePage() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="text-center space-y-6 max-w-3xl mx-auto">
             {/* Tag / Badge */}
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#F3DDE0] px-3.5 py-1 text-xs font-semibold text-[#8C3F4D]">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#f3dde057] px-3.5 py-1 text-xs font-semibold text-[#8C3F4D]">
               <Sparkles className="h-3.5 w-3.5 text-[#B85C6B]" />
               <span>The Link-in-Bio for Series Creators</span>
             </div>
@@ -482,7 +482,7 @@ export default function LandingHomePage() {
             {/* Floating Badge: Collab Gigs */}
             <div className="hidden sm:block absolute bottom-12 -right-8 lg:-right-14 z-20">
               <div className="flex items-center gap-2.5 rounded-[12px] bg-[#FFFFFF] border border-[#E4DAD5] px-3.5 py-2 text-xs font-semibold text-[#241618]">
-                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#F3DDE0] text-[#8C3F4D] shrink-0">
+                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#f3dde057] text-[#8C3F4D] shrink-0">
                   <Briefcase className="h-4 w-4" />
                 </span>
                 <div className="text-left">
@@ -568,7 +568,7 @@ export default function LandingHomePage() {
           {/* 4 Trimmed Problem Cards (6-8 words descriptions) */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] space-y-3 transition-colors hover:border-[#B85C6B]">
-              <div className="h-10 w-10 rounded-[8px] bg-[#F3DDE0] text-[#8C3F4D] flex items-center justify-center">
+              <div className="h-10 w-10 rounded-[8px] bg-[#f3dde057] text-[#8C3F4D] flex items-center justify-center">
                 <Users className="h-5 w-5" />
               </div>
               <h3 className="font-display font-semibold text-base text-[#241618]">Audience Fragmented</h3>
@@ -578,7 +578,7 @@ export default function LandingHomePage() {
             </div>
 
             <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] space-y-3 transition-colors hover:border-[#B85C6B]">
-              <div className="h-10 w-10 rounded-[8px] bg-[#F3DDE0] text-[#8C3F4D] flex items-center justify-center">
+              <div className="h-10 w-10 rounded-[8px] bg-[#f3dde057] text-[#8C3F4D] flex items-center justify-center">
                 <Tv className="h-5 w-5" />
               </div>
               <h3 className="font-display font-semibold text-base text-[#241618]">Multi-Part Videos Lost</h3>
@@ -588,7 +588,7 @@ export default function LandingHomePage() {
             </div>
 
             <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] space-y-3 transition-colors hover:border-[#B85C6B]">
-              <div className="h-10 w-10 rounded-[8px] bg-[#F3DDE0] text-[#8C3F4D] flex items-center justify-center">
+              <div className="h-10 w-10 rounded-[8px] bg-[#f3dde057] text-[#8C3F4D] flex items-center justify-center">
                 <Briefcase className="h-5 w-5" />
               </div>
               <h3 className="font-display font-semibold text-base text-[#241618]">Rate Cards in DMs</h3>
@@ -598,7 +598,7 @@ export default function LandingHomePage() {
             </div>
 
             <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] space-y-3 transition-colors hover:border-[#B85C6B]">
-              <div className="h-10 w-10 rounded-[8px] bg-[#F3DDE0] text-[#8C3F4D] flex items-center justify-center">
+              <div className="h-10 w-10 rounded-[8px] bg-[#f3dde057] text-[#8C3F4D] flex items-center justify-center">
                 <Star className="h-5 w-5" />
               </div>
               <h3 className="font-display font-semibold text-base text-[#241618]">Brand Proof Hidden</h3>
@@ -618,7 +618,7 @@ export default function LandingHomePage() {
           {/* Part A: Unified Reach */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-6 space-y-4 text-left">
-              <span className="inline-block rounded-full bg-[#F3DDE0] text-[#8C3F4D] px-3 py-0.5 text-xs font-semibold">
+              <span className="inline-block rounded-full bg-[#f3dde057] text-[#8C3F4D] px-3 py-0.5 text-xs font-semibold">
                 Unified Reach
               </span>
               <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#241618] tracking-tight leading-tight">
@@ -668,7 +668,7 @@ export default function LandingHomePage() {
                       <p className="text-xs text-[#6B5A5D]">@{DEMO_PROFILE.username}</p>
                     </div>
                   </div>
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#8C3F4D] bg-[#F3DDE0] px-2.5 py-0.5 rounded-full">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#8C3F4D] bg-[#f3dde057] px-2.5 py-0.5 rounded-full">
                     <span className="h-2 w-2 rounded-full bg-[#B85C6B] animate-pulse" />
                     Live Sync
                   </span>
@@ -716,7 +716,7 @@ export default function LandingHomePage() {
               <div className="w-full max-w-md rounded-[12px] border border-[#E4DAD5] bg-[#FFFFFF] p-5 space-y-3 text-left">
                 <div className="flex items-center justify-between pb-2 border-b border-[#E4DAD5]">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#8C3F4D] bg-[#F3DDE0] px-2 py-0.5 rounded-[4px]">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#8C3F4D] bg-[#f3dde057] px-2 py-0.5 rounded-[4px]">
                       OTT Playlist
                     </span>
                     <h4 className="text-sm font-bold text-[#241618] pt-1">
@@ -740,7 +740,7 @@ export default function LandingHomePage() {
                         : "bg-[#FFFFFF] border-[#E4DAD5] text-[#241618]"
                         }`}
                     >
-                      <div className="flex h-7 w-7 items-center justify-center rounded-[6px] bg-[#F3DDE0] text-[#8C3F4D] shrink-0 font-bold">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-[6px] bg-[#f3dde057] text-[#8C3F4D] shrink-0 font-bold">
                         <Play className="h-3 w-3 fill-current ml-0.5" />
                       </div>
                       <div className="min-w-0 flex-1 space-y-1">
@@ -766,7 +766,7 @@ export default function LandingHomePage() {
             </div>
 
             <div className="lg:col-span-6 space-y-4 text-left order-1 lg:order-2">
-              <span className="inline-block rounded-full bg-[#F3DDE0] text-[#8C3F4D] px-3 py-0.5 text-xs font-semibold">
+              <span className="inline-block rounded-full bg-[#f3dde057] text-[#8C3F4D] px-3 py-0.5 text-xs font-semibold">
                 Episodic Playlists
               </span>
               <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#241618] tracking-tight leading-tight">
@@ -809,7 +809,7 @@ export default function LandingHomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Left Copy */}
             <div className="lg:col-span-6 space-y-4 text-left">
-              <span className="inline-block rounded-full bg-[#F3DDE0] text-[#8C3F4D] px-3 py-0.5 text-xs font-semibold">
+              <span className="inline-block rounded-full bg-[#f3dde057] text-[#8C3F4D] px-3 py-0.5 text-xs font-semibold">
                 Media Kit &amp; Credibility
               </span>
               <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#241618] tracking-tight leading-tight">
@@ -849,7 +849,7 @@ export default function LandingHomePage() {
               <div className="rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] p-5 space-y-3 text-left">
                 <div className="flex items-center justify-between pb-2 border-b border-[#E4DAD5]">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-[4px] uppercase bg-[#F3DDE0] text-[#8C3F4D]">
+                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-[4px] uppercase bg-[#f3dde057] text-[#8C3F4D]">
                       Instagram Reel
                     </span>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-[4px] bg-[#FFFFFF] border border-[#E4DAD5] text-[#241618]">
@@ -891,7 +891,7 @@ export default function LandingHomePage() {
                     ))}
                     <span className="font-bold text-[#241618] ml-1">5.0</span>
                   </div>
-                  <span className="text-[10px] font-semibold text-[#8C3F4D] bg-[#F3DDE0] px-2 py-0.5 rounded-[4px]">
+                  <span className="text-[10px] font-semibold text-[#8C3F4D] bg-[#f3dde057] px-2 py-0.5 rounded-[4px]">
                     Verified Sponsor
                   </span>
                 </div>
@@ -924,7 +924,7 @@ export default function LandingHomePage() {
       <section id="pricing" className="py-16 sm:py-24 bg-[#fbfbfb] border-b border-[#E4DAD5]">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 space-y-10">
           <div className="text-center max-w-2xl mx-auto space-y-3">
-            <span className="inline-block rounded-full bg-[#F3DDE0] text-[#8C3F4D] px-3 py-0.5 text-xs font-semibold">
+            <span className="inline-block rounded-full bg-[#f3dde057] text-[#8C3F4D] px-3 py-0.5 text-xs font-semibold">
               Plans &amp; Pricing
             </span>
             <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-[#241618]">
@@ -956,7 +956,7 @@ export default function LandingHomePage() {
                     }`}
                 >
                   <span>Yearly</span>
-                  <span className={`text-[10px] px-1 rounded ${pricingCycle === "yearly" ? "bg-white/20 text-white" : "bg-[#F3DDE0] text-[#8C3F4D]"
+                  <span className={`text-[10px] px-1 rounded ${pricingCycle === "yearly" ? "bg-white/20 text-white" : "bg-[#f3dde057] text-[#8C3F4D]"
                     }`}>
                     -16%
                   </span>
@@ -995,7 +995,7 @@ export default function LandingHomePage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h4 className="font-display font-bold text-base text-[#241618]">Starter</h4>
-                  <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-[4px] bg-[#F3DDE0] text-[#8C3F4D]">
+                  <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-[4px] bg-[#f3dde057] text-[#8C3F4D]">
                     Free Forever
                   </span>
                 </div>
@@ -1102,7 +1102,7 @@ export default function LandingHomePage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h4 className="font-display font-bold text-base text-[#241618]">VIP</h4>
-                  <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-[4px] bg-[#F3DDE0] text-[#8C3F4D]">
+                  <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-[4px] bg-[#f3dde057] text-[#8C3F4D]">
                     Custom
                   </span>
                 </div>

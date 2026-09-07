@@ -147,7 +147,7 @@ export default function VerifyOtpPage() {
         <div className="flex flex-col items-center text-center space-y-2">
           <div className="flex items-center justify-center gap-2">
             <Logo size="md" />
-            <span className="rounded-full bg-[#F3DDE0] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#8C3F4D]">
+            <span className="rounded-full bg-[#f3dde057] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#8C3F4D]">
               VERIFICATION
             </span>
           </div>
@@ -169,7 +169,7 @@ export default function VerifyOtpPage() {
             <button
               type="button"
               onClick={() => router.push("/login")}
-              className="inline-flex items-center gap-1.5 rounded-full bg-[#fbfbfb] px-3 py-1 text-xs font-semibold text-[#6B5A5D] border border-[#E4DAD5] hover:bg-[#F3DDE0] hover:text-[#8C3F4D] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#fbfbfb] px-3 py-1 text-xs font-semibold text-[#6B5A5D] border border-[#E4DAD5] hover:bg-[#f3dde057] hover:text-[#8C3F4D] transition-colors cursor-pointer"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               <span>Change email address</span>
@@ -199,8 +199,8 @@ export default function VerifyOtpPage() {
                   className={`h-13 w-13 sm:h-14 sm:w-14 rounded-[10px] border text-center text-xl font-bold text-[#241618] bg-[#FFFFFF] outline-none transition-all duration-150 ${errorMessage
                     ? "border-[#C1443A] bg-[#fbfbfb] text-[#C1443A] ring-2 ring-[#C1443A]/20"
                     : d
-                      ? "border-[#B85C6B] ring-2 ring-[#F3DDE0] bg-[#fbfbfb]"
-                      : "border-[#E4DAD5] focus:border-[#B85C6B] focus:ring-3 focus:ring-[#F3DDE0]"
+                      ? "border-[#B85C6B] ring-2 ring-[#f3dde057] bg-[#fbfbfb]"
+                      : "border-[#E4DAD5] focus:border-[#B85C6B] focus:ring-3 focus:ring-[#f3dde057]"
                     }`}
                 />
               ))}
@@ -215,7 +215,7 @@ export default function VerifyOtpPage() {
 
             {/* Code Sent Notification Banner */}
             {codeSent && (
-              <p className="text-xs font-semibold text-[#8C3F4D] bg-[#F3DDE0] py-1 px-2 rounded-[6px] text-center animate-fade-in pt-1">
+              <p className="text-xs font-semibold text-[#8C3F4D] bg-[#f3dde057] py-1 px-2 rounded-[6px] text-center animate-fade-in pt-1">
                 New verification code sent 📩
               </p>
             )}

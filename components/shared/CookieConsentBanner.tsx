@@ -290,7 +290,7 @@ export function CookieConsentBanner() {
                         Essential Cookies
                       </h3>
                     </div>
-                    <span className="text-[11px] font-bold text-[#8C3F4D] bg-[#F3DDE0] px-2.5 py-0.5 rounded-full">
+                    <span className="text-[11px] font-bold text-[#8C3F4D] bg-[#f3dde057] px-2.5 py-0.5 rounded-full">
                       Always On
                     </span>
                   </div>

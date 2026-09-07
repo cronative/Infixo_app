@@ -130,13 +130,13 @@ export default function DashboardSocialsPage() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-5 max-w-6xl mx-auto">
+    <div className="space-y-4 sm:space-y-5 w-full pb-8">
       {/* 1. PAGE HEADER */}
       <div className="text-left">
-        <h1 className="font-display text-xl sm:text-2xl font-bold text-[#181716] tracking-tight">
+        <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#181716]">
           Links &amp; Socials
         </h1>
-        <p className="text-[11px] sm:text-xs text-[#797570] font-medium mt-0.5">
+        <p className="text-xs sm:text-[13px] text-[#797570] font-medium mt-0.5">
           Connect your platforms and manage the links shown on your creator profile.
         </p>
       </div>
@@ -539,7 +539,7 @@ function ConnectedSocialCard({
               href={profileUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] px-2.5 py-1 text-xs font-semibold text-[#181716] transition-colors shadow-xs"
+              className="hidden sm:inline-flex items-center gap-1 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] px-2.5 py-1 text-xs font-semibold text-[#181716] transition-colors shadow-xs"
               title="Open profile in new tab"
             >
               <span>Open</span>
@@ -559,7 +559,7 @@ function ConnectedSocialCard({
             </button>
 
             {menuOpen && (
-              <div className="absolute right-0 bottom-full mb-1.5 w-38 rounded-xl border border-[#E7E3DC] bg-white p-1 shadow-lg z-20 space-y-0.5 animate-in fade-in">
+              <div className="absolute right-0 top-full mt-1.5 w-38 rounded-xl border border-[#E7E3DC] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in">
                 <a
                   href={profileUrl}
                   target="_blank"

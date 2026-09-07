@@ -113,7 +113,7 @@ function getLinkPlatform(link: CustomLink): {
         {getInitials(link.title)}
       </span>
     ),
-    bgClass: "bg-[#F3DDE0] border border-[#E7D0D4]",
+    bgClass: "bg-[#f3dde057] border border-[#E7D0D4]",
   };
 }
 
@@ -381,11 +381,10 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
             type="button"
             onClick={(e) => handleOpenCreate(e.currentTarget)}
             disabled={isLimitReached}
-            className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-colors cursor-pointer shadow-xs ${
-              isLimitReached
+            className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-colors cursor-pointer shadow-xs ${isLimitReached
                 ? "bg-[#fbfbfb] border border-[#E7E3DC] text-[#797570] opacity-60 cursor-not-allowed"
                 : "bg-[#B85C6B] hover:bg-[#8C3F4D] text-white"
-            }`}
+              }`}
             title={isLimitReached ? "Early Access plan limit reached (3 links max)" : "Add new custom link"}
           >
             <Plus className="h-3.5 w-3.5" />
@@ -413,7 +412,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
           </div>
         </div>
       ) : (
-        <div className="rounded-2xl border border-[#E7E3DC] bg-white divide-y divide-[#E7E3DC] overflow-hidden shadow-xs">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white divide-y divide-[#E7E3DC] shadow-xs">
           {links.map((item, idx) => {
             const domain = extractDomain(item.url);
             const platformInfo = getLinkPlatform(item);
@@ -448,7 +447,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                       href={item.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] px-2.5 py-1.5 text-xs font-semibold text-[#181716] transition-colors shadow-xs"
+                      className="hidden sm:inline-flex items-center gap-1 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] px-2.5 py-1.5 text-xs font-semibold text-[#181716] transition-colors shadow-xs"
                       title="Open link in new tab"
                     >
                       <span>Open</span>
@@ -473,8 +472,21 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     {activeMenuId === item.id && (
                       <div
                         onClick={(e) => e.stopPropagation()}
-                        className="absolute right-0 top-full mt-1.5 w-36 rounded-xl border border-[#E7E3DC] bg-white p-1 shadow-lg z-20 space-y-0.5 animate-in fade-in"
+                        className="absolute right-0 top-full mt-1.5 w-36 rounded-xl border border-[#E7E3DC] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in"
                       >
+                        {item.url && (
+                          <a
+                            href={item.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => setActiveMenuId(null)}
+                            className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5 text-[#B85C6B]" />
+                            <span>Open Link</span>
+                          </a>
+                        )}
+
                         <button
                           type="button"
                           onClick={() => {

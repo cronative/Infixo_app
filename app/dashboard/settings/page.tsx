@@ -23,7 +23,6 @@ import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
-import { SectionOrderManager } from "@/components/dashboard/SectionOrderManager";
 import { buildProfileUrl } from "@/utils/format";
 
 export default function DashboardSettingsPage() {
@@ -61,14 +60,14 @@ export default function DashboardSettingsPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto pb-12 text-left">
+    <div className="space-y-6 w-full pb-12 text-left">
       {/* 1. PAGE HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
         <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#181716] tracking-tight">
+          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#181716]">
             Settings
           </h1>
-          <p className="text-xs sm:text-sm text-[#797570] font-medium mt-1">
+          <p className="text-xs sm:text-[13px] text-[#797570] font-medium mt-0.5">
             Manage your account, public-profile visibility and notifications.
           </p>
         </div>
@@ -185,9 +184,6 @@ export default function DashboardSettingsPage() {
           </div>
         </div>
       </section>
-
-      {/* 3.1. SECTION ORDER & VISIBILITY */}
-      <SectionOrderManager />
 
       {/* 4. SECTION 3 — SEARCH VISIBILITY */}
       <section className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 space-y-4 shadow-xs">

@@ -163,14 +163,14 @@ export default function DashboardProfilePage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full pb-12 text-left">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#181716] tracking-tight">
+          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#181716]">
             My Profile
           </h1>
-          <p className="text-xs sm:text-sm text-[#797570] font-medium mt-1">
+          <p className="text-xs sm:text-[13px] text-[#797570] font-medium mt-0.5">
             Manage the information that introduces you to followers and brands.
           </p>
         </div>

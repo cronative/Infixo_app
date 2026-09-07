@@ -302,14 +302,14 @@ export default function DashboardReviewsPage() {
   }, [reviews, activeTab]);
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-12">
+    <div className="space-y-4 sm:space-y-5 w-full pb-8 text-left">
       {/* 1. PAGE HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#181716] tracking-tight">
+          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#181716]">
             Reviews
           </h1>
-          <p className="text-xs sm:text-sm text-[#797570] font-medium mt-1">
+          <p className="text-xs sm:text-[13px] text-[#797570] font-medium mt-0.5">
             Collect feedback from brand collaborations and choose what appears on your creator profile.
           </p>
         </div>
@@ -317,7 +317,7 @@ export default function DashboardReviewsPage() {
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center gap-1.5 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] px-4 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs shrink-0 self-start sm:self-auto"
+          className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] px-3.5 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs shrink-0 self-start sm:self-auto"
         >
           <Plus className="h-3.5 w-3.5" />
           <span>Request Review</span>
@@ -326,7 +326,7 @@ export default function DashboardReviewsPage() {
 
       {/* Success Notification Banner */}
       {lastSentEmail && (
-        <div className="rounded-2xl border border-[#17845B]/20 bg-[#EAF7F0] p-4 flex items-center justify-between gap-3 text-[#17845B] text-xs font-semibold animate-in fade-in text-left">
+        <div className="rounded-2xl border border-[#17845B]/20 bg-[#EAF7F0] p-3.5 flex items-center justify-between gap-3 text-[#17845B] text-xs font-semibold animate-in fade-in text-left">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 text-[#17845B] shrink-0" />
             <span>Review invitation email sent to <strong>{lastSentEmail}</strong>!</span>
@@ -342,16 +342,16 @@ export default function DashboardReviewsPage() {
       )}
 
       {/* 2. COMPACT REVIEW SUMMARY (4 Cards) */}
-      <section className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 text-left">
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-left">
         {/* Card 1: All Reviews */}
-        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 space-y-1.5 shadow-xs">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-3.5 sm:p-4 space-y-1 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
+            <span className="text-[10px] font-bold text-[#797570] uppercase tracking-wider">
               All Reviews
             </span>
             <MessageSquare className="h-4 w-4 text-[#b85c6b]" />
           </div>
-          <p className="font-display text-2xl font-bold text-[#181716]">
+          <p className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
             {reviews.length}
           </p>
           <p className="text-[11px] text-[#797570] font-medium">
@@ -360,14 +360,14 @@ export default function DashboardReviewsPage() {
         </div>
 
         {/* Card 2: Published */}
-        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 space-y-1.5 shadow-xs">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-3.5 sm:p-4 space-y-1 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
+            <span className="text-[10px] font-bold text-[#797570] uppercase tracking-wider">
               Published
             </span>
             <CheckCircle2 className="h-4 w-4 text-[#17845B]" />
           </div>
-          <p className="font-display text-2xl font-bold text-[#181716]">
+          <p className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
             {approvedCount}
           </p>
           <p className="text-[11px] text-[#797570] font-medium">
@@ -376,14 +376,14 @@ export default function DashboardReviewsPage() {
         </div>
 
         {/* Card 3: Pending Approval */}
-        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 space-y-1.5 shadow-xs">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-3.5 sm:p-4 space-y-1 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
+            <span className="text-[10px] font-bold text-[#797570] uppercase tracking-wider">
               Pending Approval
             </span>
             <Clock className="h-4 w-4 text-[#B7791F]" />
           </div>
-          <p className="font-display text-2xl font-bold text-[#181716]">
+          <p className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
             {pendingCount}
           </p>
           <p className="text-[11px] text-[#797570] font-medium">
@@ -392,14 +392,14 @@ export default function DashboardReviewsPage() {
         </div>
 
         {/* Card 4: Invitations Sent */}
-        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 space-y-1.5 shadow-xs">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-3.5 sm:p-4 space-y-1 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
+            <span className="text-[10px] font-bold text-[#797570] uppercase tracking-wider">
               Invitations Sent
             </span>
             <Send className="h-4 w-4 text-[#b85c6b]" />
           </div>
-          <p className="font-display text-2xl font-bold text-[#181716]">
+          <p className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
             {invitedCount}
           </p>
           <p className="text-[11px] text-[#797570] font-medium">
@@ -409,14 +409,14 @@ export default function DashboardReviewsPage() {
       </section>
 
       {/* 3. STATUS NAVIGATION TABS */}
-      <section className="space-y-4 text-left">
+      <section className="space-y-3 sm:space-y-3.5 text-left">
         <div className="flex items-center gap-1.5 border-b border-[#E7E3DC] pb-2 overflow-x-auto">
           <button
             type="button"
             onClick={() => setActiveTab("all")}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "all"
+            className={`tap-scale px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "all"
               ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20"
-              : "text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716]"
+              : "text-[#797570] hover:bg-[#FAF8F5] hover:text-[#181716]"
               }`}
           >
             All ({reviews.length})
@@ -425,9 +425,9 @@ export default function DashboardReviewsPage() {
           <button
             type="button"
             onClick={() => setActiveTab("approved")}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "approved"
+            className={`tap-scale px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "approved"
               ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20"
-              : "text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716]"
+              : "text-[#797570] hover:bg-[#FAF8F5] hover:text-[#181716]"
               }`}
           >
             Published ({approvedCount})
@@ -436,9 +436,9 @@ export default function DashboardReviewsPage() {
           <button
             type="button"
             onClick={() => setActiveTab("pending")}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "pending"
+            className={`tap-scale px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "pending"
               ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20"
-              : "text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716]"
+              : "text-[#797570] hover:bg-[#FAF8F5] hover:text-[#181716]"
               }`}
           >
             Pending ({pendingCount})
@@ -447,30 +447,30 @@ export default function DashboardReviewsPage() {
           <button
             type="button"
             onClick={() => setActiveTab("invited")}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "invited"
+            className={`tap-scale px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "invited"
               ? "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20"
-              : "text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716]"
+              : "text-[#797570] hover:bg-[#FAF8F5] hover:text-[#181716]"
               }`}
           >
             Invitations ({invitedCount})
           </button>
         </div>
 
-        {/* 4. REVIEWS LIST / EMPTY STATES */}
+        {/* 4. REVIEWS UNIFIED DIVIDED LIST / EMPTY STATES */}
         {filteredReviews.length === 0 ? (
-          <div className="rounded-2xl border border-[#E7E3DC] bg-white p-8 sm:p-10 text-center space-y-3 shadow-xs">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20">
+          <div className="rounded-2xl border-2 border-dashed border-[#E7E3DC] bg-white p-8 sm:p-10 text-center space-y-3 max-w-xl mx-auto shadow-xs">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#b85c6b]/[0.09] text-[#b85c6b]">
               <MessageSquare className="h-6 w-6" />
             </div>
 
             <div className="space-y-1">
-              <h3 className="font-display text-base font-bold text-[#181716]">
+              <h3 className="font-display text-sm sm:text-base font-bold text-[#181716]">
                 {activeTab === "all" && "Build trust from completed collaborations"}
                 {activeTab === "approved" && "No published reviews yet"}
                 {activeTab === "pending" && "No reviews waiting for approval"}
                 {activeTab === "invited" && "No review invitations sent"}
               </h3>
-              <p className="text-xs text-[#54514D] max-w-md mx-auto">
+              <p className="text-xs text-[#797570] font-medium max-w-md mx-auto leading-relaxed">
                 {activeTab === "all" &&
                   "Request feedback from brands you have worked with and choose which reviews appear on your creator profile."}
                 {activeTab === "approved" &&
@@ -483,11 +483,11 @@ export default function DashboardReviewsPage() {
             </div>
 
             {(activeTab === "all" || activeTab === "invited") && (
-              <div className="pt-2">
+              <div className="pt-1">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+                  className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   <span>{activeTab === "all" ? "Request First Review" : "Request Review"}</span>
@@ -496,7 +496,7 @@ export default function DashboardReviewsPage() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="rounded-2xl border border-[#E7E3DC] bg-white divide-y divide-[#E7E3DC] shadow-xs">
             {filteredReviews.map((rev) => {
               const formattedDate = formatDate(rev.createdAt);
               const ratingValue = Number(rev.rating) || 5;
@@ -504,225 +504,184 @@ export default function DashboardReviewsPage() {
               return (
                 <div
                   key={rev.id}
-                  className="rounded-2xl border border-[#E7E3DC] bg-white p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs text-left"
+                  className="px-3.5 py-3 sm:py-3.5 flex items-start justify-between gap-3 hover:bg-[#FAF8F5]/60 transition-colors text-left"
                 >
-                  <div className="space-y-3">
-                    {/* Top Row: Client Info + Status Badge */}
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#E7E3DC] shrink-0">
-                          <Building2 className="h-4 w-4" />
-                        </div>
-                        <div className="min-w-0">
-                          <h3 className="font-display text-sm font-bold text-[#181716] truncate" title={rev.clientName}>
-                            {rev.clientName}
-                          </h3>
-                          {rev.clientDesignation ? (
-                            <p className="text-[11px] text-[#797570] font-medium truncate">
-                              {rev.clientDesignation}
-                            </p>
-                          ) : (
-                            <p className="text-[11px] text-[#797570] font-medium truncate">
-                              {maskEmail(rev.clientEmail)}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Status Badge */}
-                      <div className="shrink-0">
-                        {rev.status === "approved" && (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#17845B] bg-[#EAF7F0] px-2 py-0.5 rounded-full border border-[#17845B]/20">
-                            <span className="h-1 w-1 rounded-full bg-[#17845B]" />
-                            Published
-                          </span>
-                        )}
-                        {rev.status === "pending_approval" && (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#B7791F] bg-[#B7791F]/10 border border-[#B7791F]/20 px-2 py-0.5 rounded-full">
-                            <span className="h-1 w-1 rounded-full bg-[#B7791F]" />
-                            Pending Approval
-                          </span>
-                        )}
-                        {rev.status === "pending_invite" && (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#797570] bg-[#fbfbfb] border border-[#E7E3DC] px-2 py-0.5 rounded-full">
-                            <span className="h-1 w-1 rounded-full bg-[#797570]" />
-                            Invitation Sent
-                          </span>
-                        )}
-                        {rev.status === "rejected" && (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#797570] bg-[#fbfbfb] border border-[#E7E3DC] px-2 py-0.5 rounded-full">
-                            Hidden
-                          </span>
-                        )}
-                      </div>
+                  {/* Left: Building Icon / Initial Squircle Badge + Client Info */}
+                  <div className="flex items-start gap-3 min-w-0 flex-1">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f3dde057] border border-[#E7D0D4] text-[#8C3F4D] shrink-0 font-bold text-xs">
+                      {rev.clientName ? rev.clientName.charAt(0).toUpperCase() : <Building2 className="h-4 w-4" />}
                     </div>
 
-                    {/* Second Row: Rating Stars + Collaboration Type */}
-                    <div className="flex items-center justify-between gap-2 pt-0.5">
-                      {rev.status !== "pending_invite" ? (
-                        <div className="flex items-center gap-1.5">
-                          <div
-                            className="flex items-center gap-0.5 text-amber-400"
-                            aria-label={`Rated ${ratingValue} out of 5`}
-                          >
-                            {Array.from({ length: 5 }).map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`h-3.5 w-3.5 ${i < ratingValue
-                                  ? "fill-amber-400 text-amber-400"
-                                  : "fill-[#E7E3DC] text-[#E7E3DC]"
-                                  }`}
-                              />
-                            ))}
+                    <div className="min-w-0 flex-1 space-y-1">
+                      {/* Name, Designation, Project Tag, Rating */}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="font-bold text-xs sm:text-[13px] text-[#181716] truncate" title={rev.clientName}>
+                          {rev.clientName}
+                        </h3>
+                        {rev.clientDesignation ? (
+                          <span className="text-[11px] text-[#797570] font-medium truncate">
+                            • {rev.clientDesignation}
+                          </span>
+                        ) : rev.clientEmail ? (
+                          <span className="text-[11px] text-[#797570] font-medium truncate">
+                            • {maskEmail(rev.clientEmail)}
+                          </span>
+                        ) : null}
+
+                        {rev.projectTitle && (
+                          <span className="text-[10px] font-semibold text-[#b85c6b] bg-[#b85c6b]/[0.09] border border-[#b85c6b]/20 px-1.5 py-0.5 rounded-md truncate max-w-[150px]">
+                            {rev.projectTitle}
+                          </span>
+                        )}
+
+                        {rev.status !== "pending_invite" ? (
+                          <div className="flex items-center gap-1">
+                            <div className="flex items-center text-amber-400">
+                              <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                            </div>
+                            <span className="text-[11px] font-bold text-[#181716]">
+                              {ratingValue.toFixed(1)}
+                            </span>
                           </div>
-                          <span className="text-xs font-bold text-[#181716]">
-                            {ratingValue.toFixed(1)}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-[11px] text-[#797570] font-medium">
-                          Awaiting brand rating
-                        </span>
-                      )}
+                        ) : null}
+                      </div>
 
-                      {rev.projectTitle && (
-                        <span className="text-[10px] font-bold text-[#b85c6b] bg-[#b85c6b]/[0.09] border border-[#b85c6b]/20 px-2 py-0.5 rounded-md truncate max-w-[160px]">
-                          {rev.projectTitle}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Review Text / Comment */}
-                    <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3 text-xs text-[#181716] font-normal leading-relaxed">
+                      {/* Comment / Review excerpt */}
                       {rev.comment ? (
-                        <p className="line-clamp-4">“{rev.comment}”</p>
+                        <p className="text-xs text-[#181716] font-normal leading-relaxed line-clamp-2">
+                          “{rev.comment}”
+                        </p>
                       ) : (
-                        <p className="text-[#797570] italic">
+                        <p className="text-[11px] text-[#797570] italic">
                           Awaiting client feedback submission via secure link.
                         </p>
                       )}
+
+                      {/* Meta: Date & Related Work Link */}
+                      <div className="flex items-center gap-2.5 pt-0.5 text-[11px] text-[#797570]">
+                        <span>{formattedDate}</span>
+                        {rev.contentUrl && (
+                          <>
+                            <span>•</span>
+                            <a
+                              href={rev.contentUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="font-semibold text-[#b85c6b] hover:underline inline-flex items-center gap-1 truncate"
+                            >
+                              <span>View related work</span>
+                              <ExternalLink className="h-3 w-3 shrink-0" />
+                            </a>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
 
-                  {/* Footer Row: Date, Related Link, Actions */}
-                  <div className="pt-2 border-t border-[#E7E3DC] flex items-center justify-between gap-2 text-xs">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <span className="text-[11px] text-[#797570] shrink-0">
-                        {formattedDate}
+                  {/* Right: Status Pill + Quick Action Buttons + 3-Dot Menu */}
+                  <div className="flex items-center gap-2 shrink-0">
+                    {/* Status Badge */}
+                    {rev.status === "approved" && (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#17845B] bg-[#EAF7F0] px-2 py-0.5 rounded-full border border-[#17845B]/20">
+                        <span className="h-1 w-1 rounded-full bg-[#17845B]" />
+                        Published
                       </span>
+                    )}
+                    {rev.status === "pending_approval" && (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#B7791F] bg-[#B7791F]/10 border border-[#B7791F]/20 px-2 py-0.5 rounded-full">
+                        <span className="h-1 w-1 rounded-full bg-[#B7791F]" />
+                        Pending
+                      </span>
+                    )}
+                    {rev.status === "pending_invite" && (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#797570] bg-[#FAF8F5] border border-[#E7E3DC] px-2 py-0.5 rounded-full">
+                        <span className="h-1 w-1 rounded-full bg-[#797570]" />
+                        Invited
+                      </span>
+                    )}
+                    {rev.status === "rejected" && (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#797570] bg-[#FAF8F5] border border-[#E7E3DC] px-2 py-0.5 rounded-full">
+                        Hidden
+                      </span>
+                    )}
 
-                      {rev.contentUrl && (
-                        <a
-                          href={rev.contentUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[11px] font-semibold text-[#b85c6b] hover:underline inline-flex items-center gap-1 truncate"
+                    {/* Quick Visibility Actions */}
+                    {rev.status === "pending_approval" && (
+                      <button
+                        type="button"
+                        onClick={() => handleUpdateStatus(rev.id, "approved")}
+                        className="tap-scale hidden sm:inline-flex items-center gap-1 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] text-white px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer shadow-xs"
+                      >
+                        <Check className="h-3 w-3" />
+                        <span>Approve</span>
+                      </button>
+                    )}
+
+                    {/* Three-dot Menu */}
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveMenuId(activeMenuId === rev.id ? null : rev.id);
+                        }}
+                        className="tap-scale flex h-7 w-7 items-center justify-center rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer shadow-xs"
+                        aria-label="More actions"
+                      >
+                        <MoreVertical className="h-3.5 w-3.5" />
+                      </button>
+
+                      {activeMenuId === rev.id && (
+                        <div
+                          onClick={(e) => e.stopPropagation()}
+                          className="absolute right-0 top-full mt-1.5 w-40 rounded-xl border border-[#E7E3DC] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in"
                         >
-                          <span>View related work</span>
-                          <ExternalLink className="h-3 w-3 shrink-0" />
-                        </a>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      {/* Visibility / Approval Actions */}
-                      {rev.status === "pending_approval" && (
-                        <button
-                          type="button"
-                          onClick={() => handleUpdateStatus(rev.id, "approved")}
-                          className="inline-flex items-center gap-1 rounded-lg bg-[#b85c6b] hover:bg-[#6F3456] text-white px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer shadow-xs"
-                        >
-                          <Check className="h-3 w-3" />
-                          <span>Approve</span>
-                        </button>
-                      )}
-
-                      {rev.status === "approved" && (
-                        <button
-                          type="button"
-                          onClick={() => handleUpdateStatus(rev.id, "rejected")}
-                          className="rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] text-[#797570] hover:text-[#181716] px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer"
-                        >
-                          Hide from Profile
-                        </button>
-                      )}
-
-                      {rev.status === "rejected" && (
-                        <button
-                          type="button"
-                          onClick={() => handleUpdateStatus(rev.id, "approved")}
-                          className="rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] text-[#b85c6b] px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer"
-                        >
-                          Publish to Profile
-                        </button>
-                      )}
-
-                      {/* Three-dot Menu */}
-                      <div className="relative">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setActiveMenuId(activeMenuId === rev.id ? null : rev.id);
-                          }}
-                          className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E7E3DC] bg-[#fbfbfb] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer"
-                          aria-label="More actions"
-                        >
-                          <MoreVertical className="h-3.5 w-3.5" />
-                        </button>
-
-                        {activeMenuId === rev.id && (
-                          <div
-                            onClick={(e) => e.stopPropagation()}
-                            className="absolute right-0 bottom-full mb-1.5 w-40 rounded-xl border border-[#E7E3DC] bg-white p-1 shadow-lg z-20 space-y-0.5 animate-in fade-in"
-                          >
-                            {rev.token && (
-                              <button
-                                type="button"
-                                onClick={() => handleCopyReviewLink(rev)}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#fbfbfb] transition-colors cursor-pointer"
-                              >
-                                <Copy className="h-3.5 w-3.5 text-[#797570]" />
-                                <span>Copy Link</span>
-                              </button>
-                            )}
-
-                            {rev.status === "approved" ? (
-                              <button
-                                type="button"
-                                onClick={() => handleUpdateStatus(rev.id, "rejected")}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#fbfbfb] transition-colors cursor-pointer"
-                              >
-                                <EyeOff className="h-3.5 w-3.5 text-[#797570]" />
-                                <span>Hide from Profile</span>
-                              </button>
-                            ) : rev.status === "rejected" ? (
-                              <button
-                                type="button"
-                                onClick={() => handleUpdateStatus(rev.id, "approved")}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#fbfbfb] transition-colors cursor-pointer"
-                              >
-                                <Eye className="h-3.5 w-3.5 text-[#797570]" />
-                                <span>Publish to Profile</span>
-                              </button>
-                            ) : null}
-
-                            <div className="my-1 border-t border-[#E7E3DC]" />
-
+                          {rev.token && (
                             <button
                               type="button"
-                              onClick={() => {
-                                setActiveMenuId(null);
-                                setReviewToDelete(rev);
-                              }}
-                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-[#C2414B]/10 transition-colors cursor-pointer"
+                              onClick={() => handleCopyReviewLink(rev)}
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
                             >
-                              <Trash2 className="h-3.5 w-3.5" />
-                              <span>Delete Review</span>
+                              <Copy className="h-3.5 w-3.5 text-[#797570]" />
+                              <span>Copy Link</span>
                             </button>
-                          </div>
-                        )}
-                      </div>
+                          )}
+
+                          {rev.status === "approved" ? (
+                            <button
+                              type="button"
+                              onClick={() => handleUpdateStatus(rev.id, "rejected")}
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
+                            >
+                              <EyeOff className="h-3.5 w-3.5 text-[#797570]" />
+                              <span>Hide from Profile</span>
+                            </button>
+                          ) : rev.status === "rejected" || rev.status === "pending_approval" ? (
+                            <button
+                              type="button"
+                              onClick={() => handleUpdateStatus(rev.id, "approved")}
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
+                            >
+                              <Eye className="h-3.5 w-3.5 text-[#797570]" />
+                              <span>Publish to Profile</span>
+                            </button>
+                          ) : null}
+
+                          <div className="my-1 border-t border-[#E7E3DC]" />
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setActiveMenuId(null);
+                              setReviewToDelete(rev);
+                            }}
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-rose-50 transition-colors cursor-pointer"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            <span>Delete Review</span>
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -744,9 +703,8 @@ export default function DashboardReviewsPage() {
         icon={<Mail className="h-4 w-4" />}
       >
         <div className="flex flex-col flex-1 min-h-0">
-          {/* Modal Form Content (Internal Scrolling) */}
-          <ModalBody className="p-5 space-y-4 text-left">
-            <form id="review-request-form" onSubmit={handleSendEmailRequest} className="space-y-4">
+          <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
+            <form id="review-request-form" onSubmit={handleSendEmailRequest} className="space-y-3.5">
               <div className="space-y-1">
                 <label htmlFor="client-name" className="block text-xs font-bold text-[#181716]">
                   Client or brand name <span className="text-[#C2414B]">*</span>
@@ -758,7 +716,7 @@ export default function DashboardReviewsPage() {
                   value={clientName}
                   onChange={(e) => setClientName(e.target.value)}
                   placeholder="e.g. Puma India"
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
@@ -773,7 +731,7 @@ export default function DashboardReviewsPage() {
                   value={clientEmail}
                   onChange={(e) => setClientEmail(e.target.value)}
                   placeholder="e.g. marketing@puma.com"
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
@@ -788,7 +746,7 @@ export default function DashboardReviewsPage() {
                   value={projectTitle}
                   onChange={(e) => setProjectTitle(e.target.value)}
                   placeholder="e.g. Summer campaign reel"
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
@@ -803,7 +761,7 @@ export default function DashboardReviewsPage() {
                   value={contentUrl}
                   onChange={(e) => setContentUrl(e.target.value)}
                   placeholder="https://instagram.com/reel/..."
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
@@ -817,18 +775,18 @@ export default function DashboardReviewsPage() {
                   value={clientDesignation}
                   onChange={(e) => setClientDesignation(e.target.value)}
                   placeholder="e.g. Marketing Manager"
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
             </form>
           </ModalBody>
 
           {/* Modal Actions Footer */}
-          <ModalFooter className="px-5 sm:px-6 py-3.5">
+          <ModalFooter className="px-4 sm:px-5 py-3">
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716] transition-colors cursor-pointer"
+              className="px-3.5 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#FAF8F5] hover:text-[#181716] transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -836,7 +794,7 @@ export default function DashboardReviewsPage() {
               type="submit"
               form="review-request-form"
               disabled={isSubmitting}
-              className="bg-[#b85c6b] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="tap-scale bg-[#b85c6b] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               <Send className="h-3.5 w-3.5" />
               <span>{isSubmitting ? "Sending..." : "Send Review Request"}</span>

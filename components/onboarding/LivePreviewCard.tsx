@@ -540,7 +540,7 @@ export function LivePreviewCard({
             return;
           }
         }
-      } catch (e) {}
+      } catch (e) { }
 
       // Only fallback to local reviews in dashboard preview or onboarding mode
       if (isDashboardPreview) {
@@ -863,8 +863,8 @@ export function LivePreviewCard({
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://inflixo.com";
     const shareUrl = typeof window !== "undefined"
       ? (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-          ? `${window.location.origin}/${cleanUsername}`
-          : `${baseUrl.replace(/\/$/, "")}/${cleanUsername}`)
+        ? `${window.location.origin}/${cleanUsername}`
+        : `${baseUrl.replace(/\/$/, "")}/${cleanUsername}`)
       : `${baseUrl.replace(/\/$/, "")}/${cleanUsername}`;
 
     const success = await copyToClipboard(shareUrl);
@@ -889,8 +889,8 @@ export function LivePreviewCard({
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://inflixo.com";
     const shareUrl = typeof window !== "undefined"
       ? (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-          ? `${window.location.origin}/${cleanUsername}`
-          : `${baseUrl.replace(/\/$/, "")}/${cleanUsername}`)
+        ? `${window.location.origin}/${cleanUsername}`
+        : `${baseUrl.replace(/\/$/, "")}/${cleanUsername}`)
       : `${baseUrl.replace(/\/$/, "")}/${cleanUsername}`;
 
     const title = `${profile.displayName || "Creator"} on Inflixo`;
@@ -930,13 +930,12 @@ export function LivePreviewCard({
         letterSpacing: typ.letterSpacing,
         ["--desktop-surface-shadow" as any]: surfaceShadow,
       }}
-      className={`relative overflow-hidden flex-1 flex flex-col ${
-        selectedSeriesDetail
+      className={`relative overflow-hidden flex-1 flex flex-col ${selectedSeriesDetail
           ? "min-h-[calc(100dvh-4rem)] sm:min-h-[calc(100dvh-5rem)] p-0"
           : isFull
-          ? "p-6 sm:p-8 pt-7 sm:pt-8"
-          : "p-4 sm:p-6 pt-6 sm:pt-8"
-      } rounded-[24px] border shadow-md transition-all`}
+            ? "p-6 sm:p-8 pt-7 sm:pt-8"
+            : "p-4 sm:p-6 pt-6 sm:pt-8"
+        } rounded-[24px] border shadow-md transition-all`}
     >
       {/* Ambient Animation in Preview mode when theme supports it */}
       {themeMeta.animation?.type !== "none" && (
@@ -1019,15 +1018,15 @@ export function LivePreviewCard({
 
             const genresList = selectedSeriesDetail.genre
               ? selectedSeriesDetail.genre
-                  .split(/[,•|/]/)
-                  .map((g) => g.trim().replace(/^Genre:\s*/i, ""))
-                  .filter(Boolean)
+                .split(/[,•|/]/)
+                .map((g) => g.trim().replace(/^Genre:\s*/i, ""))
+                .filter(Boolean)
               : [];
 
             const langTag =
               selectedSeriesDetail.language &&
-              selectedSeriesDetail.language.trim() &&
-              !genresList.some((g) => g.toLowerCase() === selectedSeriesDetail.language!.trim().toLowerCase())
+                selectedSeriesDetail.language.trim() &&
+                !genresList.some((g) => g.toLowerCase() === selectedSeriesDetail.language!.trim().toLowerCase())
                 ? selectedSeriesDetail.language.trim()
                 : null;
 
@@ -1105,7 +1104,7 @@ export function LivePreviewCard({
                               await copyToClipboard(shareUrl);
                               showToast("Series link copied! 🎬✨");
                             }
-                          } catch {}
+                          } catch { }
                         }}
                         className="tap-scale flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-black/55 active:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all cursor-pointer shadow-md"
                         title="Share Series Link"
@@ -1292,7 +1291,7 @@ export function LivePreviewCard({
                                   borderColor: c.border,
                                   color: c.accentText,
                                 }}
-                                className="h-8 w-8 rounded-full border border-[#E4DAD5] bg-white text-[#8C3F4D] flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-[#F3DDE0] group-hover:border-[#B85C6B]/30 group-hover:scale-105 transition-all"
+                                className="h-8 w-8 rounded-full border border-[#E4DAD5] bg-white text-[#8C3F4D] flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-[#f3dde057] group-hover:border-[#B85C6B]/30 group-hover:scale-105 transition-all"
                               >
                                 <Eye className="h-3.5 w-3.5" />
                               </div>
@@ -1316,7 +1315,7 @@ export function LivePreviewCard({
               <CreatorAvatar
                 src={profile.photoDataUrl}
                 name={profile.displayName || "Creator"}
-                className="w-24 h-24 sm:w-28 sm:h-28 rounded-full aspect-square object-cover overflow-hidden border-2 border-white ring-4 ring-[#F3DDE0] shadow-md mx-auto"
+                className="w-24 h-24 sm:w-28 sm:h-28 rounded-full aspect-square object-cover overflow-hidden border-2 border-white ring-4 ring-[#f3dde057] shadow-md mx-auto"
                 style={{ borderColor: "#FFFFFF" }}
                 textClassName="text-xl sm:text-2xl font-extrabold text-white"
                 fallbackBgClass="bg-[#B85C6B]"
@@ -1377,7 +1376,7 @@ export function LivePreviewCard({
                   {visibleChips.map((chip, idx) => (
                     <span
                       key={idx}
-                      className="bg-[#F3DDE0] text-[#8C3F4D] text-xs font-semibold px-3.5 py-1.5 rounded-full"
+                      className="bg-[#f3dde057] text-[#8C3F4D] text-xs font-semibold px-3.5 py-1.5 rounded-full"
                     >
                       {chip}
                     </span>
@@ -1583,7 +1582,7 @@ export function LivePreviewCard({
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <span
-                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#F3DDE0] text-[#8C3F4D]"
+                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#f3dde057] text-[#8C3F4D]"
                         >
                           <LinkIcon className="h-4 w-4" />
                         </span>
@@ -1663,11 +1662,10 @@ export function LivePreviewCard({
                             ? { backgroundColor: c.accentSoft, borderColor: c.accentBorder, color: c.accentText }
                             : {}
                         }
-                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg sm:rounded-xl text-xs font-bold transition-all cursor-pointer border ${
-                          resolvedTab === "series"
+                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg sm:rounded-xl text-xs font-bold transition-all cursor-pointer border ${resolvedTab === "series"
                             ? "border-transparent shadow-xs"
                             : "text-[#6B5A5D] hover:text-[#241618] border-transparent"
-                        }`}
+                          }`}
                       >
                         <span>Series ({series ? series.length : 0})</span>
                       </button>
@@ -1682,11 +1680,10 @@ export function LivePreviewCard({
                             ? { backgroundColor: c.accentSoft, borderColor: c.accentBorder, color: c.accentText }
                             : {}
                         }
-                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg sm:rounded-xl text-xs font-bold transition-all cursor-pointer border ${
-                          resolvedTab === "gigs"
+                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg sm:rounded-xl text-xs font-bold transition-all cursor-pointer border ${resolvedTab === "gigs"
                             ? "border-transparent shadow-xs"
                             : "text-[#6B5A5D] hover:text-[#241618] border-transparent"
-                        }`}
+                          }`}
                       >
                         <span>Services ({activePkgs.length})</span>
                       </button>
@@ -1701,11 +1698,10 @@ export function LivePreviewCard({
                             ? { backgroundColor: c.accentSoft, borderColor: c.accentBorder, color: c.accentText }
                             : {}
                         }
-                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg sm:rounded-xl text-xs font-bold transition-all cursor-pointer border ${
-                          resolvedTab === "reviews"
+                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg sm:rounded-xl text-xs font-bold transition-all cursor-pointer border ${resolvedTab === "reviews"
                             ? "border-transparent shadow-xs"
                             : "text-[#6B5A5D] hover:text-[#241618] border-transparent"
-                        }`}
+                          }`}
                       >
                         <span>Reviews ({approvedReviews.length})</span>
                       </button>
@@ -1798,15 +1794,15 @@ export function LivePreviewCard({
                             const p = (pkg.platform || "").toLowerCase();
                             const detectedPlatform =
                               p.includes("youtube") ? "YouTube" :
-                              p.includes("instagram") ? "Instagram" :
-                              p.includes("facebook") ? "Facebook" :
-                              p.includes("twitter") || p.includes("x") ? "X" :
-                              p.includes("linkedin") ? "LinkedIn" :
-                              p.includes("threads") ? "Threads" :
-                              p.includes("snapchat") ? "Snapchat" :
-                              p.includes("spotify") ? "Spotify" :
-                              p.includes("twitch") ? "Twitch" :
-                              pkg.platform && pkg.platform.trim() ? pkg.platform.trim() : null;
+                                p.includes("instagram") ? "Instagram" :
+                                  p.includes("facebook") ? "Facebook" :
+                                    p.includes("twitter") || p.includes("x") ? "X" :
+                                      p.includes("linkedin") ? "LinkedIn" :
+                                        p.includes("threads") ? "Threads" :
+                                          p.includes("snapchat") ? "Snapchat" :
+                                            p.includes("spotify") ? "Spotify" :
+                                              p.includes("twitch") ? "Twitch" :
+                                                pkg.platform && pkg.platform.trim() ? pkg.platform.trim() : null;
 
                             const subtitleParts: string[] = [];
                             if (pkg.turnaroundDays) subtitleParts.push(`${pkg.turnaroundDays}d delivery`);
@@ -1825,27 +1821,26 @@ export function LivePreviewCard({
                               >
                                 <div className="flex items-center gap-3 min-w-0">
                                   <span
-                                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
-                                      detectedPlatform === "YouTube"
+                                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${detectedPlatform === "YouTube"
                                         ? "bg-red-600 shadow-xs text-white"
                                         : detectedPlatform === "Instagram"
-                                        ? "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-xs text-white"
-                                        : detectedPlatform === "Facebook"
-                                        ? "bg-blue-600 shadow-xs text-white"
-                                        : detectedPlatform === "X"
-                                        ? "bg-slate-900 shadow-xs text-white"
-                                        : detectedPlatform === "LinkedIn"
-                                        ? "bg-sky-700 shadow-xs text-white"
-                                        : detectedPlatform === "Threads"
-                                        ? "bg-slate-900 shadow-xs text-white"
-                                        : detectedPlatform === "Snapchat"
-                                        ? "bg-amber-400 shadow-xs text-slate-950"
-                                        : detectedPlatform === "Spotify"
-                                        ? "bg-emerald-600 shadow-xs text-white"
-                                        : detectedPlatform === "Twitch"
-                                        ? "bg-purple-600 shadow-xs text-white"
-                                        : "bg-[#F3DDE0] text-[#8C3F4D]"
-                                    }`}
+                                          ? "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-xs text-white"
+                                          : detectedPlatform === "Facebook"
+                                            ? "bg-blue-600 shadow-xs text-white"
+                                            : detectedPlatform === "X"
+                                              ? "bg-slate-900 shadow-xs text-white"
+                                              : detectedPlatform === "LinkedIn"
+                                                ? "bg-sky-700 shadow-xs text-white"
+                                                : detectedPlatform === "Threads"
+                                                  ? "bg-slate-900 shadow-xs text-white"
+                                                  : detectedPlatform === "Snapchat"
+                                                    ? "bg-amber-400 shadow-xs text-slate-950"
+                                                    : detectedPlatform === "Spotify"
+                                                      ? "bg-emerald-600 shadow-xs text-white"
+                                                      : detectedPlatform === "Twitch"
+                                                        ? "bg-purple-600 shadow-xs text-white"
+                                                        : "bg-[#f3dde057] text-[#8C3F4D]"
+                                      }`}
                                   >
                                     {detectedPlatform === "YouTube" ? (
                                       <YoutubeIcon className="h-4 w-4 text-white" />
@@ -1974,11 +1969,10 @@ export function LivePreviewCard({
                                     {Array.from({ length: 5 }).map((_, i) => (
                                       <Star
                                         key={i}
-                                        className={`h-3.5 w-3.5 ${
-                                          i < ratingNum
+                                        className={`h-3.5 w-3.5 ${i < ratingNum
                                             ? "fill-[#8C3F4D] text-[#8C3F4D]"
                                             : "text-slate-200 fill-slate-200"
-                                        }`}
+                                          }`}
                                       />
                                     ))}
                                   </div>
@@ -1990,7 +1984,7 @@ export function LivePreviewCard({
                                           backgroundColor: c.accentSoft,
                                           color: c.accentText,
                                         }}
-                                        className="bg-[#F3DDE0] text-[#8C3F4D] text-[11px] font-semibold px-2.5 py-0.5 rounded-full"
+                                        className="bg-[#f3dde057] text-[#8C3F4D] text-[11px] font-semibold px-2.5 py-0.5 rounded-full"
                                       >
                                         {rev.projectTitle}
                                       </span>
@@ -2217,13 +2211,12 @@ export function LivePreviewCard({
       {/* Subtle Inflixo Attribution (32px bottom margin) */}
       <div
         style={{ borderColor: c.divider }}
-        className={`relative z-10 mt-auto flex items-center justify-center px-5 pt-5 pb-8 mb-8 select-none border-t ${
-          selectedSeriesDetail
+        className={`relative z-10 mt-auto flex items-center justify-center px-5 pt-5 pb-8 mb-8 select-none border-t ${selectedSeriesDetail
             ? ""
             : isFull
-            ? "-mx-6 sm:-mx-8 -mb-6 sm:-mb-8 mt-7 sm:mt-8"
-            : "-mx-4 sm:-mx-6 -mb-4 sm:-mb-6 mt-7 sm:mt-8"
-        }`}
+              ? "-mx-6 sm:-mx-8 -mb-6 sm:-mb-8 mt-7 sm:mt-8"
+              : "-mx-4 sm:-mx-6 -mb-4 sm:-mb-6 mt-7 sm:mt-8"
+          }`}
       >
         <a
           href="/"
@@ -2382,9 +2375,9 @@ export function PreviewSeriesItem({
 
   const genresList = series.genre
     ? series.genre
-        .split(/[,•|/]/)
-        .map((g) => g.trim().replace(/^Genre:\s*/i, ""))
-        .filter(Boolean)
+      .split(/[,•|/]/)
+      .map((g) => g.trim().replace(/^Genre:\s*/i, ""))
+      .filter(Boolean)
     : [];
 
   const subtitleParts: string[] = [epCountStr];
@@ -2400,27 +2393,26 @@ export function PreviewSeriesItem({
     >
       <div className="flex items-center gap-3 min-w-0">
         <span
-          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
-            detectedPlatform === "YouTube"
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${detectedPlatform === "YouTube"
               ? "bg-red-600 shadow-xs text-white"
               : detectedPlatform === "Instagram"
-              ? "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-xs text-white"
-              : detectedPlatform === "Facebook"
-              ? "bg-blue-600 shadow-xs text-white"
-              : detectedPlatform === "X"
-              ? "bg-slate-900 shadow-xs text-white"
-              : detectedPlatform === "LinkedIn"
-              ? "bg-sky-700 shadow-xs text-white"
-              : detectedPlatform === "Threads"
-              ? "bg-slate-900 shadow-xs text-white"
-              : detectedPlatform === "Snapchat"
-              ? "bg-amber-400 shadow-xs text-slate-950"
-              : detectedPlatform === "Spotify"
-              ? "bg-emerald-600 shadow-xs text-white"
-              : detectedPlatform === "Twitch"
-              ? "bg-purple-600 shadow-xs text-white"
-              : "bg-[#F3DDE0] text-[#8C3F4D]"
-          }`}
+                ? "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-xs text-white"
+                : detectedPlatform === "Facebook"
+                  ? "bg-blue-600 shadow-xs text-white"
+                  : detectedPlatform === "X"
+                    ? "bg-slate-900 shadow-xs text-white"
+                    : detectedPlatform === "LinkedIn"
+                      ? "bg-sky-700 shadow-xs text-white"
+                      : detectedPlatform === "Threads"
+                        ? "bg-slate-900 shadow-xs text-white"
+                        : detectedPlatform === "Snapchat"
+                          ? "bg-amber-400 shadow-xs text-slate-950"
+                          : detectedPlatform === "Spotify"
+                            ? "bg-emerald-600 shadow-xs text-white"
+                            : detectedPlatform === "Twitch"
+                              ? "bg-purple-600 shadow-xs text-white"
+                              : "bg-[#f3dde057] text-[#8C3F4D]"
+            }`}
         >
           {detectedPlatform === "YouTube" ? (
             <YoutubeIcon className="h-4 w-4 text-white" />

@@ -47,7 +47,7 @@ export function CreatorCollage() {
           </div>
 
           {/* Total Fanbase Badge Pill */}
-          <div className="flex items-center justify-between rounded-xl bg-[#F3DDE0] px-3.5 py-2 border border-[#B85C6B]/20">
+          <div className="flex items-center justify-between rounded-xl bg-[#f3dde057] px-3.5 py-2 border border-[#B85C6B]/20">
             <div className="flex items-center gap-1.5">
               <Users className="h-3.5 w-3.5 text-[#B85C6B]" />
               <span className="text-xs font-extrabold text-[#B85C6B]">126K total fanbase</span>
@@ -78,7 +78,7 @@ export function CreatorCollage() {
             </div>
             <div className="min-w-0">
               <p className="truncate text-xs font-extrabold text-white">Kashmir Diaries</p>
-              <p className="text-[11px] font-semibold text-[#F3DDE0]">Season 1 · 5 Episodes</p>
+              <p className="text-[11px] font-semibold text-[#f3dde057]">Season 1 · 5 Episodes</p>
             </div>
           </div>
         </div>

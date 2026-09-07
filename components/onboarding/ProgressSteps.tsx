@@ -26,7 +26,7 @@ export function ProgressSteps({ current }: { current: OnboardingStep }) {
                   className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${isDone
                     ? "bg-[#B85C6B] text-[#fbfbfb]"
                     : isActive
-                      ? "bg-[#B85C6B] text-[#fbfbfb] ring-4 ring-[#F3DDE0]"
+                      ? "bg-[#B85C6B] text-[#fbfbfb] ring-4 ring-[#f3dde057]"
                       : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#6B5A5D]"
                     }`}
                 >
@@ -84,7 +84,7 @@ export function ProgressSteps({ current }: { current: OnboardingStep }) {
               {ONBOARDING_STEPS[currentIndex]?.label || "Setup"}
             </span>
           </div>
-          <span className="rounded-full bg-[#F3DDE0] border border-[#E4DAD5] px-2.5 py-0.5 text-[11px] font-bold text-[#8C3F4D]">
+          <span className="rounded-full bg-[#f3dde057] border border-[#E4DAD5] px-2.5 py-0.5 text-[11px] font-bold text-[#8C3F4D]">
             {progressPercent}% Complete
           </span>
         </div>

@@ -151,11 +151,11 @@ export default function DashboardRequestsPage() {
   });
 
   return (
-    <div className="space-y-6 text-left">
+    <div className="space-y-4 sm:space-y-5 w-full pb-8 text-left">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E7E3DC] pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-xl font-bold text-[#181716] tracking-tight flex items-center gap-2">
+          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#181716] flex items-center gap-2">
             <span>Collaboration Inquiries</span>
             {unreadCount > 0 && (
               <span className="rounded-full bg-[#17845B] text-white text-[10px] font-bold px-2 py-0.5">
@@ -163,7 +163,7 @@ export default function DashboardRequestsPage() {
               </span>
             )}
           </h1>
-          <p className="text-xs text-[#797570] font-medium mt-0.5">
+          <p className="text-xs sm:text-[13px] text-[#797570] font-medium mt-0.5">
             Incoming brand enquiries, partnership briefs, and messages received via your &quot;Work With Me&quot; profile form.
           </p>
         </div>
@@ -180,13 +180,13 @@ export default function DashboardRequestsPage() {
               key={tab}
               type="button"
               onClick={() => setActiveTab(tab)}
-              className={`tap-scale flex items-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${isSelected
+              className={`tap-scale flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${isSelected
                 ? "bg-[#b85c6b] text-white shadow-xs"
-                : "text-[#797570] hover:text-[#181716] hover:bg-[#fbfbfb]"
+                : "text-[#797570] hover:text-[#181716] hover:bg-[#FAF8F5]"
                 }`}
             >
               <span>{tab === "ALL" ? "All Inquiries" : STATUS_CONFIG[tab].label}</span>
-              <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-[#fbfbfb] text-[#797570]"}`}>
+              <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-[#FAF8F5] text-[#797570]"}`}>
                 {count}
               </span>
             </button>
@@ -196,17 +196,17 @@ export default function DashboardRequestsPage() {
 
       {/* Requests List */}
       {loading ? (
-        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-12 text-center text-xs text-[#797570]">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-8 text-center text-xs text-[#797570]">
           Loading collaboration requests...
         </div>
       ) : filteredRequests.length === 0 ? (
         /* Empty State */
-        <div className="rounded-3xl border-2 border-dashed border-[#E7E3DC] bg-white p-10 sm:p-14 text-center space-y-4 max-w-xl mx-auto shadow-xs">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20">
-            <Inbox className="h-7 w-7" />
+        <div className="rounded-2xl border-2 border-dashed border-[#E7E3DC] bg-white p-8 sm:p-10 text-center space-y-3 max-w-xl mx-auto shadow-xs">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#b85c6b]/[0.09] text-[#b85c6b]">
+            <Inbox className="h-6 w-6" />
           </div>
           <div className="space-y-1">
-            <h3 className="font-display text-base font-bold text-[#181716]">
+            <h3 className="font-display text-sm sm:text-base font-bold text-[#181716]">
               No collaboration requests yet
             </h3>
             <p className="text-xs text-[#797570] font-medium max-w-sm mx-auto leading-relaxed">
@@ -215,55 +215,55 @@ export default function DashboardRequestsPage() {
           </div>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white divide-y divide-[#E7E3DC] shadow-xs">
           {filteredRequests.map((req) => {
             const conf = STATUS_CONFIG[req.status] || STATUS_CONFIG.NEW;
             return (
               <div
                 key={req.id}
                 onClick={() => handleOpenDetail(req)}
-                className="group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 rounded-2xl border border-[#E7E3DC] bg-white p-4 shadow-xs hover:border-[#b85c6b]/40 transition-all cursor-pointer"
+                className="group px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#FAF8F5]/60 transition-colors cursor-pointer text-left"
               >
-                <div className="flex items-start gap-3.5 min-w-0">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20 font-bold text-sm shrink-0">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f3dde057] border border-[#E7D0D4] text-[#8C3F4D] font-bold text-xs shrink-0">
                     {req.senderName.charAt(0).toUpperCase()}
                   </div>
 
-                  <div className="min-w-0 space-y-0.5">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-bold text-xs text-[#181716] truncate">{req.senderName}</h3>
+                  <div className="min-w-0 flex-1 space-y-0.5">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="font-bold text-xs sm:text-[13px] text-[#181716] truncate group-hover:text-[#b85c6b] transition-colors">{req.senderName}</h3>
                       {req.companyName && (
                         <span className="text-[11px] font-semibold text-[#797570] truncate">
                           • {req.companyName}
                         </span>
                       )}
-                    </div>
-
-                    <p className="text-xs text-[#797570] line-clamp-1">
-                      {req.message}
-                    </p>
-
-                    <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] text-[#797570]">
-                      <span className="inline-flex items-center gap-1 font-medium">
-                        <Mail className="h-3 w-3" />
-                        {req.email}
-                      </span>
                       {req.approxBudget && (
-                        <span className="inline-flex items-center gap-1 font-semibold text-[#b85c6b]">
-                          <DollarSign className="h-3 w-3" />
+                        <span className="text-[10px] font-semibold text-[#b85c6b] bg-[#b85c6b]/[0.09] border border-[#b85c6b]/20 px-1.5 py-0.5 rounded-md truncate">
                           {req.approxBudget}
                         </span>
                       )}
+                    </div>
+
+                    <p className="text-[11px] text-[#797570] truncate max-w-xl">
+                      {req.message}
+                    </p>
+
+                    <div className="flex items-center gap-2.5 pt-0.5 text-[10px] text-[#797570]">
+                      <span className="inline-flex items-center gap-1 font-medium truncate max-w-[180px]">
+                        <Mail className="h-3 w-3 text-[#797570]" />
+                        {req.email}
+                      </span>
+                      <span>•</span>
                       <span className="inline-flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
+                        <Calendar className="h-3 w-3 text-[#797570]" />
                         {formatDate(req.createdAt)}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 self-end sm:self-center shrink-0">
-                  <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold border ${conf.bg} ${conf.text} ${conf.border}`}>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${conf.bg} ${conf.text} ${conf.border}`}>
                     {conf.label}
                   </span>
 
@@ -273,10 +273,10 @@ export default function DashboardRequestsPage() {
                       e.stopPropagation();
                       setRequestToDelete(req);
                     }}
-                    className="p-1.5 text-[#797570] hover:text-[#C2414B] hover:bg-[#C2414B]/10 rounded-lg transition-colors cursor-pointer"
+                    className="tap-scale flex h-7 w-7 items-center justify-center rounded-xl border border-[#E7E3DC] bg-white hover:bg-rose-50 text-[#797570] hover:text-[#C2414B] transition-colors cursor-pointer shadow-xs"
                     title="Delete inquiry"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-3.5 w-3.5" />
                   </button>
                 </div>
               </div>
@@ -296,12 +296,12 @@ export default function DashboardRequestsPage() {
       >
         {selectedRequest && (
           <div className="flex flex-col flex-1 min-h-0">
-            <ModalBody className="p-5 sm:p-6 space-y-4 text-left">
+            <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
               {/* Sender summary card */}
-              <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3.5 space-y-2">
+              <div className="rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 p-3 space-y-2">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-sm text-[#181716]">{selectedRequest.senderName}</h3>
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${STATUS_CONFIG[selectedRequest.status].bg} ${STATUS_CONFIG[selectedRequest.status].text} ${STATUS_CONFIG[selectedRequest.status].border}`}>
+                  <h3 className="font-bold text-xs sm:text-sm text-[#181716]">{selectedRequest.senderName}</h3>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border ${STATUS_CONFIG[selectedRequest.status].bg} ${STATUS_CONFIG[selectedRequest.status].text} ${STATUS_CONFIG[selectedRequest.status].border}`}>
                     {STATUS_CONFIG[selectedRequest.status].label}
                   </span>
                 </div>
@@ -336,18 +336,18 @@ export default function DashboardRequestsPage() {
               </div>
 
               {/* Message Content */}
-              <div>
-                <label className="block text-xs font-bold text-[#181716] mb-1.5">
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-[#181716]">
                   Message / Requirement:
                 </label>
-                <div className="rounded-xl border border-[#E7E3DC] bg-white p-3.5 text-xs text-[#181716] leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto">
+                <div className="rounded-xl border border-[#E7E3DC] bg-white p-3 text-xs text-[#181716] leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto">
                   {selectedRequest.message}
                 </div>
               </div>
 
               {/* Status Update Selector */}
-              <div>
-                <label className="block text-xs font-bold text-[#181716] mb-1.5">
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-[#181716]">
                   Update Request Status:
                 </label>
                 <div className="grid grid-cols-4 gap-2">
@@ -357,9 +357,9 @@ export default function DashboardRequestsPage() {
                       type="button"
                       disabled={isUpdating}
                       onClick={() => handleStatusChange(st)}
-                      className={`tap-scale py-2 px-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${selectedRequest.status === st
+                      className={`tap-scale py-1.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${selectedRequest.status === st
                         ? "bg-[#b85c6b] text-white border-[#b85c6b] shadow-xs"
-                        : "border-[#E7E3DC] bg-white text-[#797570] hover:bg-[#fbfbfb]"
+                        : "border-[#E7E3DC] bg-white text-[#797570] hover:bg-[#FAF8F5]"
                         }`}
                     >
                       {STATUS_CONFIG[st].label}
@@ -369,7 +369,7 @@ export default function DashboardRequestsPage() {
               </div>
             </ModalBody>
 
-            <ModalFooter className="px-5 sm:px-6 py-3.5 flex items-center justify-between">
+            <ModalFooter className="px-4 sm:px-5 py-3 flex items-center justify-between">
               <button
                 type="button"
                 onClick={() => setRequestToDelete(selectedRequest)}
@@ -381,7 +381,7 @@ export default function DashboardRequestsPage() {
               <div className="flex items-center gap-2">
                 <a
                   href={`mailto:${selectedRequest.email}?subject=Collaboration with ${encodeURIComponent(profile.displayName || "Inflixo Creator")}`}
-                  className="bg-[#b85c6b] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+                  className="tap-scale bg-[#b85c6b] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-3.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
                 >
                   <Mail className="h-3.5 w-3.5" />
                   <span>Reply via Email</span>

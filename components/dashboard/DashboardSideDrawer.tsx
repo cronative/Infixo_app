@@ -68,7 +68,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
           <Logo size="sm" />
           <button
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#fbfbfb] text-[#6B5A5D] hover:bg-[#F3DDE0] hover:text-[#B85C6B] transition-all cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#fbfbfb] text-[#6B5A5D] hover:bg-[#f3dde057] hover:text-[#B85C6B] transition-all cursor-pointer"
             aria-label="Close menu"
           >
             <X className="h-4 w-4" />
@@ -82,7 +82,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
             name={displayName}
             className="w-10 h-10 rounded-full border border-[#E4DAD5] overflow-hidden object-cover aspect-square shrink-0"
             textClassName="text-sm font-bold text-[#241618]"
-            fallbackBgClass="bg-[#F3DDE0]"
+            fallbackBgClass="bg-[#f3dde057]"
           />
 
           <div className="min-w-0 flex-1">
@@ -98,7 +98,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
               <p className="truncate text-[11px] font-medium text-[#6B5A5D]">
                 @{handleStr}
               </p>
-              <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-[#8C3F4D] bg-[#F3DDE0] px-1.5 py-0.2 rounded border border-[#B85C6B]/20">
+              <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-[#8C3F4D] bg-[#f3dde057] px-1.5 py-0.2 rounded border border-[#B85C6B]/20">
                 <span className="h-1 w-1 rounded-full bg-[#B85C6B]" />
                 Live
               </span>
@@ -123,8 +123,8 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                     href={item.href}
                     onClick={onClose}
                     className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold min-h-[44px] transition-colors ${active
-                        ? "bg-[#F3DDE0] text-[#8C3F4D]"
-                        : "text-[#6B5A5D] hover:bg-[#fbfbfb] hover:text-[#241618]"
+                      ? "bg-[#f3dde057] text-[#8C3F4D]"
+                      : "text-[#6B5A5D] hover:bg-[#fbfbfb] hover:text-[#241618]"
                       }`}
                   >
                     <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#8C3F4D]" : "text-[#6B5A5D]"}`} />
@@ -150,8 +150,8 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                     href={item.href}
                     onClick={onClose}
                     className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold min-h-[44px] transition-colors ${active
-                        ? "bg-[#F3DDE0] text-[#8C3F4D]"
-                        : "text-[#6B5A5D] hover:bg-[#fbfbfb] hover:text-[#241618]"
+                      ? "bg-[#f3dde057] text-[#8C3F4D]"
+                      : "text-[#6B5A5D] hover:bg-[#fbfbfb] hover:text-[#241618]"
                       }`}
                   >
                     <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#8C3F4D]" : "text-[#6B5A5D]"}`} />

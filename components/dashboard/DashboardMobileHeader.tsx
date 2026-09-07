@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Menu, ExternalLink } from "lucide-react";
+import { ArrowLeft, Menu, ExternalLink, Copy } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 import { useCreator } from "@/contexts/CreatorContext";
+import { useToast } from "@/contexts/ToastContext";
+import { copyToClipboard } from "@/lib/copyToClipboard";
 
 export function DashboardMobileHeader({
   title,
@@ -17,7 +19,19 @@ export function DashboardMobileHeader({
 }) {
   const router = useRouter();
   const { profile } = useCreator();
+  const { showToast } = useToast();
   const handleStr = profile.username || "username";
+
+  const handleCopy = async () => {
+    const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
+    const fullUrl = `${origin}/${handleStr}`;
+    const success = await copyToClipboard(fullUrl);
+    if (success) {
+      showToast("Profile link copied! ✨");
+    } else {
+      showToast("Could not copy link", "error");
+    }
+  };
 
   return (
     <header className="safe-top sticky top-0 z-20 flex items-center justify-between border-b border-[#E4DAD5] bg-white px-4 py-3 lg:hidden">
@@ -33,7 +47,7 @@ export function DashboardMobileHeader({
         ) : (
           <button
             onClick={onOpenDrawer}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] text-[#241618] active:scale-95 transition-transform hover:bg-[#F3DDE0] hover:text-[#B85C6B] cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] text-[#241618] active:scale-95 transition-transform hover:bg-[#f3dde057] hover:text-[#B85C6B] cursor-pointer"
             aria-label="Open menu drawer"
           >
             <Menu className="h-4 w-4" />
@@ -42,19 +56,30 @@ export function DashboardMobileHeader({
         <Logo size="sm" />
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5">
         {title ? (
           <p className="text-xs font-bold text-[#241618] truncate max-w-[140px]">{title}</p>
         ) : (
-          <Link
-            href={`/${handleStr}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs font-semibold text-[#B85C6B] bg-[#F3DDE0] border border-[#B85C6B]/20 px-2.5 py-1 rounded-lg"
-          >
-            <span>View Profile</span>
-            <ExternalLink className="h-3 w-3" />
-          </Link>
+          <>
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[#241618] bg-white hover:bg-[#FAF8F5] border border-[#E4DAD5] px-2.5 py-1.5 rounded-lg active:scale-95 transition-transform cursor-pointer shadow-xs"
+              title="Copy Profile Link"
+            >
+              <Copy className="h-3 w-3 text-[#6B5A5D]" />
+              <span className="hidden xs:inline text-[11px]">Copy</span>
+            </button>
+            <Link
+              href={`/${handleStr}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[#B85C6B] bg-[#f3dde057] border border-[#B85C6B]/20 px-2.5 py-1.5 rounded-lg active:scale-95 transition-transform shadow-xs"
+            >
+              <span className="text-[11px]">View</span>
+              <ExternalLink className="h-3 w-3" />
+            </Link>
+          </>
         )}
       </div>
     </header>

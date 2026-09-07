@@ -13,7 +13,7 @@
   /* maroon — buttons, active states, links, highlights */
   --color-primary-hover: #8C3F4D;
   /* darker maroon — hover/pressed states */
-  --color-primary-tint: #F3DDE0;
+  --color-primary-tint: #f3dde057;
   /* light maroon — badges, tags, selected rows */
 
   --color-ink: #241618;

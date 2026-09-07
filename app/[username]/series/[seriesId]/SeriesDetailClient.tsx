@@ -275,10 +275,10 @@ export function SeriesDetailClient({
                 type="button"
                 onClick={() => router.push(profileUrl)}
                 className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold transition-all cursor-pointer border ${isDark
-                    ? "bg-[#b85c6b]/22 hover:bg-[#b85c6b]/32 active:bg-[#b85c6b]/40 border-[#b85c6b]/45 hover:border-[#b85c6b]/60 text-[#F8FAFC] focus-visible:ring-2 focus-visible:ring-[#b85c6b]/60"
-                    : isSignaturePurple
-                      ? "bg-[#b85c6b]/16 hover:bg-[#b85c6b]/24 active:bg-[#b85c6b]/32 border border-[#b85c6b]/35 hover:border-[#b85c6b]/50 text-[#b85c6b] focus-visible:ring-2 focus-visible:ring-[#b85c6b]/60 shadow-xs"
-                      : "bg-[#b85c6b] hover:bg-[#6F3456] text-white border-transparent"
+                  ? "bg-[#b85c6b]/22 hover:bg-[#b85c6b]/32 active:bg-[#b85c6b]/40 border-[#b85c6b]/45 hover:border-[#b85c6b]/60 text-[#F8FAFC] focus-visible:ring-2 focus-visible:ring-[#b85c6b]/60"
+                  : isSignaturePurple
+                    ? "bg-[#b85c6b]/16 hover:bg-[#b85c6b]/24 active:bg-[#b85c6b]/32 border border-[#b85c6b]/35 hover:border-[#b85c6b]/50 text-[#b85c6b] focus-visible:ring-2 focus-visible:ring-[#b85c6b]/60 shadow-xs"
+                    : "bg-[#b85c6b] hover:bg-[#6F3456] text-white border-transparent"
                   }`}
               >
                 <span>Go to @{username}</span>
@@ -305,15 +305,15 @@ export function SeriesDetailClient({
 
   const genresList = series.genre
     ? series.genre
-        .split(/[,•|/]/)
-        .map((g) => g.trim().replace(/^Genre:\s*/i, ""))
-        .filter(Boolean)
+      .split(/[,•|/]/)
+      .map((g) => g.trim().replace(/^Genre:\s*/i, ""))
+      .filter(Boolean)
     : [];
 
   const langTag =
     series.language &&
-    series.language.trim() &&
-    !genresList.some((g) => g.toLowerCase() === series.language!.trim().toLowerCase())
+      series.language.trim() &&
+      !genresList.some((g) => g.toLowerCase() === series.language!.trim().toLowerCase())
       ? series.language.trim()
       : null;
 
@@ -607,7 +607,7 @@ export function SeriesDetailClient({
                               borderColor: c.border,
                               color: c.accentText,
                             }}
-                            className="h-8 w-8 rounded-full border border-[#E4DAD5] bg-white text-[#8C3F4D] flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-[#F3DDE0] group-hover:border-[#B85C6B]/30 group-hover:scale-105 transition-all"
+                            className="h-8 w-8 rounded-full border border-[#E4DAD5] bg-white text-[#8C3F4D] flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-[#f3dde057] group-hover:border-[#B85C6B]/30 group-hover:scale-105 transition-all"
                           >
                             <Eye className="h-3.5 w-3.5" />
                           </div>

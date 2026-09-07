@@ -22,6 +22,11 @@ import {
   Edit2,
   ChevronRight,
   Link2,
+  Copy,
+  Inbox,
+  Mail,
+  Building2,
+  Calendar,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -34,7 +39,8 @@ import {
 } from "@/services/subscriptionLimits";
 import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
 import { reviewsRepository, customLinksRepository } from "@/repositories/localRepository";
-import { MediaKitPackage, CreatorReview, CustomLink } from "@/types";
+import { copyToClipboard } from "@/lib/copyToClipboard";
+import { MediaKitPackage, CreatorReview, CustomLink, CollaborationRequest } from "@/types";
 
 // Eased count-up animation hook for smooth metric reveals
 function useCountUp(target: number, durationMs = 900, delayMs = 250): number {
@@ -53,7 +59,6 @@ function useCountUp(target: number, durationMs = 900, delayMs = 250): number {
       const step = (timestamp: number) => {
         if (!startTimestamp) startTimestamp = timestamp;
         const progress = Math.min((timestamp - startTimestamp) / durationMs, 1);
-        // Easing: easeOutQuart
         const easeOut = 1 - Math.pow(1 - progress, 4);
         setCount(Math.round(easeOut * target));
         if (progress < 1) {
@@ -83,6 +88,9 @@ export default function DashboardOverviewPage() {
   const [packages, setPackages] = useState<MediaKitPackage[]>([]);
   const [reviews, setReviews] = useState<CreatorReview[]>([]);
   const [customLinks, setCustomLinks] = useState<CustomLink[]>([]);
+  const [requests, setRequests] = useState<CollaborationRequest[]>([]);
+  const [unreadRequestsCount, setUnreadRequestsCount] = useState(0);
+
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
     type: "series" | "episode";
@@ -102,7 +110,7 @@ export default function DashboardOverviewPage() {
   const handleStr = profile.username || "username";
   const displayName = profile.displayName || profile.email?.split("@")[0] || "Creator";
 
-  // Load packages, reviews & custom links from local repository / APIs
+  // Load packages, reviews, custom links & collaboration requests
   useEffect(() => {
     // 1. Reviews
     const localRev = reviewsRepository.getAll();
@@ -112,7 +120,7 @@ export default function DashboardOverviewPage() {
     const localLinks = customLinksRepository.get();
     setCustomLinks(localLinks);
 
-    // 3. Media Kit Packages
+    // 3. Media Kit Packages & Brand Requests
     const ident = profile.id || profile.email || profile.username;
     if (ident) {
       fetch(`/api/creator/mediakit?identifier=${encodeURIComponent(ident)}`)
@@ -122,11 +130,30 @@ export default function DashboardOverviewPage() {
             setPackages(data.packages);
           }
         })
-        .catch(() => {
-          // fallback gracefully
-        });
+        .catch(() => { });
+
+      fetch(`/api/creator/requests?creatorId=${encodeURIComponent(ident)}`)
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.success && Array.isArray(data.requests)) {
+            setRequests(data.requests);
+            setUnreadRequestsCount(data.unreadCount || 0);
+          }
+        })
+        .catch(() => { });
     }
   }, [profile]);
+
+  const handleCopy = async () => {
+    const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
+    const fullUrl = `${origin}/${handleStr}`;
+    const success = await copyToClipboard(fullUrl);
+    if (success) {
+      showToast("Profile link copied! ✨");
+    } else {
+      showToast("Could not copy link", "error");
+    }
+  };
 
   function handleRefreshStats() {
     setIsSyncing(true);
@@ -238,32 +265,54 @@ export default function DashboardOverviewPage() {
   }, [series, totalEpisodesCount, packages, reviews, handleStr]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 w-full pb-8 text-left">
+      {/* 0. NEW BRAND INQUIRIES PRIORITY ALERT BANNER (If unread requests exist) */}
+      {unreadRequestsCount > 0 && (
+        <div className="rounded-2xl border border-[#17845B]/20 bg-[#EAF7F0] p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[#17845B] text-xs font-semibold shadow-xs animate-in fade-in">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <span className="relative flex h-2.5 w-2.5 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#17845B] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#17845B]" />
+            </span>
+            <span className="truncate">
+              You have <strong>{unreadRequestsCount} new brand collaboration {unreadRequestsCount === 1 ? "inquiry" : "inquiries"}</strong> waiting for your reply!
+            </span>
+          </div>
+          <Link
+            href="/dashboard/requests"
+            className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#17845B] hover:bg-[#126b49] text-white px-3.5 py-1.5 text-xs font-bold transition-colors shrink-0 shadow-xs self-start sm:self-auto"
+          >
+            <span>View Inquiries</span>
+            <ArrowRight className="h-3 w-3" />
+          </Link>
+        </div>
+      )}
+
       {/* 1. PROFILE READINESS CARD */}
       <section
         style={{ animationDelay: "0ms" }}
         className="rounded-2xl border border-[#E4DAD5] bg-white p-5 sm:p-6 shadow-none transition-all duration-300 animate-fade-in-up"
       >
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
-          {/* Creator Details */}
-          <div className="flex items-center gap-3.5 min-w-0">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          {/* Creator Details (Full name without premature truncation) */}
+          <div className="flex items-center gap-3.5 min-w-0 flex-1">
             <CreatorAvatar
               src={profile.photoDataUrl}
               name={displayName}
               className="w-12 h-12 rounded-full border border-[#E4DAD5] overflow-hidden object-cover aspect-square shrink-0"
               textClassName="text-sm font-bold text-[#241618]"
-              fallbackBgClass="bg-[#F3DDE0]"
+              fallbackBgClass="bg-[#f3dde057]"
             />
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <h2 className="font-display text-base sm:text-lg font-bold text-[#241618] truncate">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="font-display text-base sm:text-lg font-bold text-[#241618]">
                   {displayName}
                 </h2>
                 {profile.isVerified && (
                   <ShieldCheck className="h-4 w-4 shrink-0 text-[#B85C6B]" />
                 )}
                 {/* Live Badge with maroon pulsing dot */}
-                <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-[#8C3F4D] bg-[#F3DDE0] px-2.5 py-0.5 rounded-full border border-[#B85C6B]/20">
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-[#8C3F4D] bg-[#f3dde057] px-2.5 py-0.5 rounded-full border border-[#B85C6B]/20 shrink-0">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#B85C6B] opacity-75" />
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-[#B85C6B]" />
@@ -277,11 +326,20 @@ export default function DashboardOverviewPage() {
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-2.5 shrink-0 self-start md:self-auto">
+          {/* Action Buttons (Includes Copy Link on Mobile & Desktop) */}
+          <div className="flex items-center gap-2 shrink-0 self-start md:self-auto flex-wrap">
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#FAF8F5] px-3 py-2 text-xs font-semibold text-[#241618] transition-colors cursor-pointer shadow-xs"
+              title="Copy public profile link"
+            >
+              <Copy className="h-3.5 w-3.5 text-[#6B5A5D]" />
+              <span>Copy Link</span>
+            </button>
             <Link
               href="/dashboard/profile"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#fbfbfb] px-3.5 py-2 text-xs font-semibold text-[#241618] transition-colors cursor-pointer shadow-xs"
+              className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#fbfbfb] px-3 py-2 text-xs font-semibold text-[#241618] transition-colors cursor-pointer shadow-xs"
             >
               <span>Edit Profile</span>
             </Link>
@@ -289,7 +347,7 @@ export default function DashboardOverviewPage() {
               href={`/${handleStr}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+              className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-3.5 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
             >
               <span>View Profile</span>
               <ExternalLink className="h-3.5 w-3.5" />
@@ -297,7 +355,7 @@ export default function DashboardOverviewPage() {
           </div>
         </div>
 
-        {/* Merged Single-Line Profile Completion & Progress Bar */}
+        {/* Profile Completion & Direct Missing Step Shortcuts */}
         <div className="mt-5 pt-4 border-t border-[#E4DAD5] space-y-2.5">
           <div className="flex items-center justify-between text-xs">
             <span className="font-semibold text-[#241618]">
@@ -313,10 +371,29 @@ export default function DashboardOverviewPage() {
               style={{ width: isLoaded ? `${profileSteps.percentage}%` : "0%" }}
             />
           </div>
+
+          {/* Interactive Incomplete Step Badges */}
+          {profileSteps.percentage < 100 && (
+            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+              <span className="text-[11px] font-semibold text-[#6B5A5D]">Remaining steps:</span>
+              {profileSteps.items
+                .filter((i) => !i.completed)
+                .map((step) => (
+                  <Link
+                    key={step.id}
+                    href={step.link}
+                    className="tap-scale inline-flex items-center gap-1 text-[11px] font-semibold text-[#B85C6B] bg-[#f3dde057]/70 hover:bg-[#f3dde057] border border-[#B85C6B]/20 px-2 py-0.5 rounded-lg transition-colors"
+                  >
+                    <span>+ {step.label}</span>
+                    <ChevronRight className="h-2.5 w-2.5" />
+                  </Link>
+                ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* 2. COMPACT CREATOR STATISTICS (4 equal cards, Sentence case labels, standardized icon containers) */}
+      {/* 2. COMPACT CREATOR STATISTICS (Includes Brand Inquiries Card) */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         {/* Stat 1: Total Fanbase */}
         <div
@@ -331,12 +408,12 @@ export default function DashboardOverviewPage() {
               <button
                 type="button"
                 onClick={handleRefreshStats}
-                className="p-1 rounded-lg text-[#6B5A5D] hover:text-[#B85C6B] hover:bg-[#F3DDE0] transition-colors cursor-pointer"
+                className="p-1 rounded-lg text-[#6B5A5D] hover:text-[#B85C6B] hover:bg-[#f3dde057] transition-colors cursor-pointer"
                 title={`Last synced: ${formatSyncDate(socials.updatedAt)}. Click to refresh.`}
               >
                 <RefreshCw className={`h-3.5 w-3.5 ${isSyncing ? "animate-spin text-[#B85C6B]" : ""}`} />
               </button>
-              <div className="h-8 w-8 rounded-xl bg-[#F3DDE0] flex items-center justify-center text-[#8C3F4D]">
+              <div className="h-8 w-8 rounded-xl bg-[#f3dde057] flex items-center justify-center text-[#8C3F4D]">
                 <Users className="h-4 w-4" />
               </div>
             </div>
@@ -358,16 +435,53 @@ export default function DashboardOverviewPage() {
           </Link>
         </div>
 
-        {/* Stat 2: Content Series */}
+        {/* Stat 2: Brand Inquiries (CRITICAL FOR CREATORS) */}
         <div
           style={{ animationDelay: "120ms" }}
           className="rounded-2xl border border-[#E4DAD5] bg-white p-4 sm:p-5 space-y-3 shadow-none flex flex-col justify-between transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md animate-fade-in-up"
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-[#6B5A5D]">
+              Brand inquiries
+            </span>
+            <div className="h-8 w-8 rounded-xl bg-[#f3dde057] flex items-center justify-center text-[#8C3F4D]">
+              <Inbox className="h-4 w-4" />
+            </div>
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <p className="font-display text-2xl sm:text-3xl font-bold text-[#241618]">
+                {requests.length}
+              </p>
+              {unreadRequestsCount > 0 && (
+                <span className="text-[10px] font-bold text-[#17845B] bg-[#EAF7F0] border border-[#17845B]/20 px-2 py-0.5 rounded-full">
+                  {unreadRequestsCount} New
+                </span>
+              )}
+            </div>
+            <p className="text-[11px] text-[#6B5A5D] font-medium mt-0.5">
+              {unreadRequestsCount > 0 ? `${unreadRequestsCount} waiting for reply` : "Sponsor briefs received"}
+            </p>
+          </div>
+          <Link
+            href="/dashboard/requests"
+            className="text-[11px] font-semibold text-[#B85C6B] hover:text-[#8C3F4D] hover:underline inline-flex items-center gap-1 pt-1"
+          >
+            <span>View inquiries</span>
+            <ChevronRight className="h-3 w-3" />
+          </Link>
+        </div>
+
+        {/* Stat 3: Content Series */}
+        <div
+          style={{ animationDelay: "180ms" }}
+          className="rounded-2xl border border-[#E4DAD5] bg-white p-4 sm:p-5 space-y-3 shadow-none flex flex-col justify-between transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md animate-fade-in-up"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-[#6B5A5D]">
               Content series
             </span>
-            <div className="h-8 w-8 rounded-xl bg-[#F3DDE0] flex items-center justify-center text-[#8C3F4D]">
+            <div className="h-8 w-8 rounded-xl bg-[#f3dde057] flex items-center justify-center text-[#8C3F4D]">
               <Layers className="h-4 w-4" />
             </div>
           </div>
@@ -388,16 +502,16 @@ export default function DashboardOverviewPage() {
           </Link>
         </div>
 
-        {/* Stat 3: Creator Services */}
+        {/* Stat 4: Creator Services & Reviews */}
         <div
-          style={{ animationDelay: "180ms" }}
+          style={{ animationDelay: "240ms" }}
           className="rounded-2xl border border-[#E4DAD5] bg-white p-4 sm:p-5 space-y-3 shadow-none flex flex-col justify-between transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md animate-fade-in-up"
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-[#6B5A5D]">
-              Services &amp; gigs
+              Services &amp; reviews
             </span>
-            <div className="h-8 w-8 rounded-xl bg-[#F3DDE0] flex items-center justify-center text-[#8C3F4D]">
+            <div className="h-8 w-8 rounded-xl bg-[#f3dde057] flex items-center justify-center text-[#8C3F4D]">
               <Briefcase className="h-4 w-4" />
             </div>
           </div>
@@ -406,57 +520,27 @@ export default function DashboardOverviewPage() {
               {packages.length}
             </p>
             <p className="text-[11px] text-[#6B5A5D] font-medium mt-0.5">
-              {packages.length > 0 ? "Active brand packages" : "Add how brands can work with you"}
+              {packages.length > 0 ? `${packages.length} packages • ${reviews.length} reviews` : "Setup rates for brands"}
             </p>
           </div>
           <Link
             href="/dashboard/mediakit"
             className="text-[11px] font-semibold text-[#B85C6B] hover:text-[#8C3F4D] hover:underline inline-flex items-center gap-1 pt-1"
           >
-            <span>{packages.length > 0 ? "Manage packages" : "Add service"}</span>
-            <ChevronRight className="h-3 w-3" />
-          </Link>
-        </div>
-
-        {/* Stat 4: Client Reviews */}
-        <div
-          style={{ animationDelay: "240ms" }}
-          className="rounded-2xl border border-[#E4DAD5] bg-white p-4 sm:p-5 space-y-3 shadow-none flex flex-col justify-between transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md animate-fade-in-up"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#6B5A5D]">
-              Client reviews
-            </span>
-            <div className="h-8 w-8 rounded-xl bg-[#F3DDE0] flex items-center justify-center text-[#8C3F4D]">
-              <Star className="h-4 w-4" />
-            </div>
-          </div>
-          <div>
-            <p className="font-display text-2xl sm:text-3xl font-bold text-[#241618]">
-              {reviews.length}
-            </p>
-            <p className="text-[11px] text-[#6B5A5D] font-medium mt-0.5">
-              {reviews.length > 0 ? "Verified brand ratings" : "Request your first review"}
-            </p>
-          </div>
-          <Link
-            href="/dashboard/reviews"
-            className="text-[11px] font-semibold text-[#B85C6B] hover:text-[#8C3F4D] hover:underline inline-flex items-center gap-1 pt-1"
-          >
-            <span>{reviews.length > 0 ? "View reviews" : "Request review"}</span>
+            <span>Manage services</span>
             <ChevronRight className="h-3 w-3" />
           </Link>
         </div>
       </section>
 
-      {/* 3. RECOMMENDED NEXT BEST STEP CARD */}
+      {/* 3. RECOMMENDED NEXT BEST STEP CARD & FREQUENT SHORTCUTS */}
       <section
         style={{ animationDelay: "300ms" }}
         className="rounded-2xl border border-[#E4DAD5] bg-white p-5 sm:p-6 shadow-none space-y-4 animate-fade-in-up"
       >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1.5">
-            <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-[#8C3F4D] bg-[#F3DDE0] px-2.5 py-0.5 rounded-full border border-[#B85C6B]/20">
+            <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-[#8C3F4D] bg-[#f3dde057] px-2.5 py-0.5 rounded-full border border-[#B85C6B]/20">
               Next best step
             </span>
             <h3 className="font-display text-base sm:text-lg font-bold text-[#241618]">
@@ -473,7 +557,7 @@ export default function DashboardOverviewPage() {
                 href={nextStep.ctaHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+                className="tap-scale inline-flex items-center gap-2 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
               >
                 <span>{nextStep.ctaLabel}</span>
                 <ExternalLink className="h-3.5 w-3.5" />
@@ -482,7 +566,7 @@ export default function DashboardOverviewPage() {
               <button
                 type="button"
                 onClick={nextStep.onClick}
-                className="inline-flex items-center gap-2 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2.5 text-xs font-semibold text-white transition-colors shadow-xs cursor-pointer"
+                className="tap-scale inline-flex items-center gap-2 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2.5 text-xs font-semibold text-white transition-colors shadow-xs cursor-pointer"
               >
                 <span>{nextStep.ctaLabel}</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -490,7 +574,7 @@ export default function DashboardOverviewPage() {
             ) : (
               <Link
                 href={nextStep.ctaHref}
-                className="inline-flex items-center gap-2 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+                className="tap-scale inline-flex items-center gap-2 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
               >
                 <span>{nextStep.ctaLabel}</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -499,131 +583,51 @@ export default function DashboardOverviewPage() {
           </div>
         </div>
 
-        {/* Secondary Quick Action Links */}
-        <div className="pt-3 border-t border-[#E4DAD5] flex flex-wrap items-center gap-4 text-xs font-semibold text-[#6B5A5D]">
+        {/* Frequent High-Utility Shortcuts (Prioritizes Add Episode & Brand Inquiries) */}
+        <div className="pt-3 border-t border-[#E4DAD5] flex flex-wrap items-center gap-3 text-xs font-semibold text-[#6B5A5D]">
           <span className="text-[11px] text-[#6B5A5D] uppercase tracking-wider font-bold">Quick shortcuts:</span>
-          <Link href="/dashboard/series" className="hover:text-[#B85C6B] transition-colors inline-flex items-center gap-1">
-            <Plus className="h-3 w-3" /> Add Series
-          </Link>
-          <Link href="/dashboard/socials" className="hover:text-[#B85C6B] transition-colors inline-flex items-center gap-1">
-            <Link2 className="h-3 w-3" /> Add Link
-          </Link>
-          <Link href="/dashboard/themes" className="hover:text-[#B85C6B] transition-colors inline-flex items-center gap-1">
-            <Palette className="h-3 w-3" /> Change Theme
-          </Link>
-          <Link href="/dashboard/reviews" className="hover:text-[#B85C6B] transition-colors inline-flex items-center gap-1">
-            <Star className="h-3 w-3" /> Request Review
-          </Link>
-        </div>
-      </section>
-
-      {/* 4. CREATOR WORKSPACE SUMMARY (2x2 Grid) */}
-      <section
-        style={{ animationDelay: "360ms" }}
-        className="space-y-3 animate-fade-in-up"
-      >
-        <div className="px-0.5">
-          <h3 className="font-display text-sm font-bold text-[#241618]">
-            Workspace summary
-          </h3>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          {/* Card 1: Content */}
           <Link
             href="/dashboard/series"
-            className="group rounded-2xl border border-[#E4DAD5] bg-white p-4 sm:p-5 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md hover:border-[#B85C6B]/40 shadow-none flex items-start justify-between gap-3"
+            className="tap-scale hover:text-[#B85C6B] bg-[#FAF8F5] hover:bg-[#f3dde057]/50 border border-[#E4DAD5] px-2.5 py-1 rounded-lg transition-colors inline-flex items-center gap-1.5 text-[#241618]"
           >
-            <div className="space-y-1.5 min-w-0">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#F3DDE0] text-[#8C3F4D]">
-                  <Layers className="h-4 w-4" />
-                </div>
-                <h4 className="font-display text-sm font-bold text-[#241618] group-hover:text-[#B85C6B] transition-colors">
-                  Content &amp; Series
-                </h4>
-              </div>
-              <p className="text-xs text-[#6B5A5D] font-medium leading-relaxed">
-                {series.length} {series.length === 1 ? "series" : "series"} with {totalEpisodesCount} total {totalEpisodesCount === 1 ? "episode" : "episodes"} organized.
-              </p>
-            </div>
-            <ChevronRight className="h-4 w-4 text-[#6B5A5D] group-hover:text-[#B85C6B] transition-transform group-hover:translate-x-0.5 shrink-0 mt-1" />
+            <Plus className="h-3 w-3 text-[#B85C6B]" /> Add Episode
           </Link>
-
-          {/* Card 2: Services & Brand Work */}
           <Link
-            href="/dashboard/mediakit"
-            className="group rounded-2xl border border-[#E4DAD5] bg-white p-4 sm:p-5 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md hover:border-[#B85C6B]/40 shadow-none flex items-start justify-between gap-3"
+            href="/dashboard/requests"
+            className="tap-scale hover:text-[#B85C6B] bg-[#FAF8F5] hover:bg-[#f3dde057]/50 border border-[#E4DAD5] px-2.5 py-1 rounded-lg transition-colors inline-flex items-center gap-1.5 text-[#241618]"
           >
-            <div className="space-y-1.5 min-w-0">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#F3DDE0] text-[#8C3F4D]">
-                  <Briefcase className="h-4 w-4" />
-                </div>
-                <h4 className="font-display text-sm font-bold text-[#241618] group-hover:text-[#B85C6B] transition-colors">
-                  Services &amp; Brand Work
-                </h4>
-              </div>
-              <p className="text-xs text-[#6B5A5D] font-medium leading-relaxed">
-                {packages.length > 0 ? `${packages.length} active collaboration packages configured.` : "Show brands how they can collaborate with you."}
-              </p>
-            </div>
-            <ChevronRight className="h-4 w-4 text-[#6B5A5D] group-hover:text-[#B85C6B] transition-transform group-hover:translate-x-0.5 shrink-0 mt-1" />
+            <Inbox className="h-3 w-3 text-[#B85C6B]" /> Inquiries {unreadRequestsCount > 0 ? `(${unreadRequestsCount} new)` : ""}
           </Link>
-
-          {/* Card 3: Reviews */}
-          <Link
-            href="/dashboard/reviews"
-            className="group rounded-2xl border border-[#E4DAD5] bg-white p-4 sm:p-5 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md hover:border-[#B85C6B]/40 shadow-none flex items-start justify-between gap-3"
-          >
-            <div className="space-y-1.5 min-w-0">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#F3DDE0] text-[#8C3F4D]">
-                  <Star className="h-4 w-4" />
-                </div>
-                <h4 className="font-display text-sm font-bold text-[#241618] group-hover:text-[#B85C6B] transition-colors">
-                  Client Reviews
-                </h4>
-              </div>
-              <p className="text-xs text-[#6B5A5D] font-medium leading-relaxed">
-                {reviews.length > 0 ? `${reviews.length} verified client reviews displayed on your profile.` : "Turn completed brand collaborations into visible trust."}
-              </p>
-            </div>
-            <ChevronRight className="h-4 w-4 text-[#6B5A5D] group-hover:text-[#B85C6B] transition-transform group-hover:translate-x-0.5 shrink-0 mt-1" />
-          </Link>
-
-          {/* Card 4: Links & Socials */}
           <Link
             href="/dashboard/socials"
-            className="group rounded-2xl border border-[#E4DAD5] bg-white p-4 sm:p-5 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md hover:border-[#B85C6B]/40 shadow-none flex items-start justify-between gap-3"
+            className="tap-scale hover:text-[#B85C6B] bg-[#FAF8F5] hover:bg-[#f3dde057]/50 border border-[#E4DAD5] px-2.5 py-1 rounded-lg transition-colors inline-flex items-center gap-1.5 text-[#241618]"
           >
-            <div className="space-y-1.5 min-w-0">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#F3DDE0] text-[#8C3F4D]">
-                  <Share2 className="h-4 w-4" />
-                </div>
-                <h4 className="font-display text-sm font-bold text-[#241618] group-hover:text-[#B85C6B] transition-colors">
-                  Links &amp; Socials
-                </h4>
-              </div>
-              <p className="text-xs text-[#6B5A5D] font-medium leading-relaxed">
-                {connectedSocialsCount} connected platforms and {customLinks.length} custom links live.
-              </p>
-            </div>
-            <ChevronRight className="h-4 w-4 text-[#6B5A5D] group-hover:text-[#B85C6B] transition-transform group-hover:translate-x-0.5 shrink-0 mt-1" />
+            <Link2 className="h-3 w-3 text-[#B85C6B]" /> Add Link
+          </Link>
+          <Link
+            href="/dashboard/themes"
+            className="tap-scale hover:text-[#B85C6B] bg-[#FAF8F5] hover:bg-[#f3dde057]/50 border border-[#E4DAD5] px-2.5 py-1 rounded-lg transition-colors inline-flex items-center gap-1.5 text-[#241618]"
+          >
+            <Palette className="h-3 w-3 text-[#B85C6B]" /> Change Theme
+          </Link>
+          <Link
+            href="/dashboard/reviews"
+            className="tap-scale hover:text-[#B85C6B] bg-[#FAF8F5] hover:bg-[#f3dde057]/50 border border-[#E4DAD5] px-2.5 py-1 rounded-lg transition-colors inline-flex items-center gap-1.5 text-[#241618]"
+          >
+            <Star className="h-3 w-3 text-[#B85C6B]" /> Request Review
           </Link>
         </div>
       </section>
 
-      {/* 5. RECENT CONTENT SECTION (Max 3 items) */}
+      {/* 4. RECENT CONTENT & EPISODES (Directly actionable, No redundant summary cards) */}
       <section
-        style={{ animationDelay: "420ms" }}
+        style={{ animationDelay: "360ms" }}
         className="space-y-3 animate-fade-in-up"
       >
         <div className="flex items-center justify-between px-0.5">
           <div>
             <h3 className="font-display text-sm font-bold text-[#241618]">
-              Recent content
+              Recent content &amp; series
             </h3>
             <p className="text-xs text-[#6B5A5D] font-medium mt-0.5">
               Your latest series and episodes.
@@ -640,7 +644,7 @@ export default function DashboardOverviewPage() {
 
         {series.length === 0 ? (
           <div className="rounded-2xl border border-[#E4DAD5] bg-white p-6 sm:p-8 text-center space-y-3 shadow-none">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F3DDE0] text-[#8C3F4D] mx-auto">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f3dde057] text-[#8C3F4D] mx-auto">
               <Film className="h-5 w-5" />
             </div>
             <div className="space-y-1">
@@ -654,48 +658,48 @@ export default function DashboardOverviewPage() {
             <button
               type="button"
               onClick={handleCreateSeriesClick}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+              className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Create First Series</span>
             </button>
           </div>
         ) : (
-          <div className="rounded-2xl border border-[#E4DAD5] bg-white divide-y divide-[#E4DAD5] overflow-hidden shadow-none">
+          <div className="rounded-2xl border border-[#E4DAD5] bg-white divide-y divide-[#E4DAD5] shadow-xs">
             {series.slice(0, 3).map((s) => {
               const eps = s.seasons?.flatMap((sn) => sn.episodes) || (s as any).episodes || [];
               return (
                 <div
                   key={s.id}
-                  className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-[#fbfbfb]/50 transition-colors"
+                  className="px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#FAF8F5]/60 transition-colors text-left"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F3DDE0] text-[#8C3F4D] shrink-0 font-bold text-xs">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f3dde057] text-[#8C3F4D] shrink-0 font-bold text-xs">
                       <Film className="h-4 w-4" />
                     </div>
-                    <div className="min-w-0">
-                      <h4 className="font-display text-sm font-bold text-[#241618] truncate">
+                    <div className="min-w-0 flex-1">
+                      <h4 className="font-display text-xs sm:text-[13px] font-bold text-[#241618] truncate">
                         {s.title}
                       </h4>
-                      <p className="text-xs text-[#6B5A5D] font-medium mt-0.5">
+                      <p className="text-[11px] text-[#6B5A5D] font-medium mt-0.5">
                         {s.genre || "Series"} • {eps.length} {eps.length === 1 ? "Episode" : "Episodes"}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+                  <div className="flex items-center gap-1.5 shrink-0">
                     <Link
                       href="/dashboard/series"
-                      className="inline-flex items-center gap-1 rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#fbfbfb] px-3 py-1.5 text-xs font-semibold text-[#241618] transition-colors"
+                      className="inline-flex items-center gap-1 rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#FAF8F5] px-2.5 py-1 text-xs font-semibold text-[#241618] transition-colors shadow-xs"
                     >
                       <Edit2 className="h-3 w-3 text-[#6B5A5D]" />
-                      <span>Manage</span>
+                      <span className="hidden sm:inline">Manage</span>
                     </Link>
                     <a
                       href={`/${handleStr}/series/${s.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] hover:bg-white px-3 py-1.5 text-xs font-semibold text-[#B85C6B] transition-colors"
+                      className="inline-flex items-center gap-1 rounded-xl border border-[#E4DAD5] bg-[#FAF8F5] hover:bg-white px-2.5 py-1 text-xs font-semibold text-[#B85C6B] transition-colors shadow-xs"
                     >
                       <span>View</span>
                       <ExternalLink className="h-3 w-3" />
@@ -708,13 +712,77 @@ export default function DashboardOverviewPage() {
         )}
       </section>
 
+      {/* 5. RECENT BRAND INQUIRIES (Shown when requests exist) */}
+      {requests.length > 0 && (
+        <section
+          style={{ animationDelay: "420ms" }}
+          className="space-y-3 animate-fade-in-up"
+        >
+          <div className="flex items-center justify-between px-0.5">
+            <div>
+              <h3 className="font-display text-sm font-bold text-[#241618]">
+                Recent brand inquiries
+              </h3>
+              <p className="text-xs text-[#6B5A5D] font-medium mt-0.5">
+                Direct messages received from sponsor brands.
+              </p>
+            </div>
+            <Link
+              href="/dashboard/requests"
+              className="text-xs font-semibold text-[#B85C6B] hover:text-[#8C3F4D] hover:underline inline-flex items-center gap-1"
+            >
+              <span>View all ({requests.length})</span>
+              <ChevronRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+
+          <div className="rounded-2xl border border-[#E4DAD5] bg-white divide-y divide-[#E4DAD5] shadow-xs">
+            {requests.slice(0, 3).map((req) => (
+              <Link
+                key={req.id}
+                href="/dashboard/requests"
+                className="px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#FAF8F5]/60 transition-colors text-left group"
+              >
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f3dde057] text-[#8C3F4D] shrink-0 font-bold text-xs">
+                    {req.senderName.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-display text-xs sm:text-[13px] font-bold text-[#241618] group-hover:text-[#B85C6B] transition-colors truncate">
+                        {req.senderName}
+                      </h4>
+                      {req.companyName && (
+                        <span className="text-[11px] text-[#6B5A5D] font-medium truncate">
+                          • {req.companyName}
+                        </span>
+                      )}
+                      {req.status === "NEW" && (
+                        <span className="text-[10px] font-bold text-[#17845B] bg-[#EAF7F0] px-1.5 py-0.2 rounded-full">
+                          New
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-[#6B5A5D] truncate mt-0.5 max-w-md">
+                      {req.message}
+                    </p>
+                  </div>
+                </div>
+
+                <ChevronRight className="h-4 w-4 text-[#6B5A5D] group-hover:text-[#B85C6B] transition-transform group-hover:translate-x-0.5 shrink-0" />
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* 6. MINIMAL EARLY ACCESS USAGE CARD */}
       <section
         style={{ animationDelay: "480ms" }}
         className="rounded-2xl border border-[#E4DAD5] bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-none animate-fade-in-up"
       >
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="h-8 w-8 rounded-xl bg-[#F3DDE0] flex items-center justify-center text-[#8C3F4D] shrink-0">
+          <div className="h-8 w-8 rounded-xl bg-[#f3dde057] flex items-center justify-center text-[#8C3F4D] shrink-0">
             <Sparkles className="h-4 w-4" />
           </div>
           <div className="min-w-0">

@@ -37,6 +37,9 @@ import {
   InstagramIcon,
   YoutubeIcon,
   FacebookIcon,
+  LinkedinIcon,
+  XTwitterIcon,
+  SpotifyIcon,
 } from "@/components/shared/BrandIcons";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -453,15 +456,73 @@ export default function DashboardMediaKitPage() {
   const handleStr = profile.username || "username";
   const cleanPhone = (settings.whatsappNumber || "").replace(/[^0-9]/g, "");
 
+  const getServicePlatformBadge = (pkg: MediaKitPackage) => {
+    const platform = (pkg.platform || "").toLowerCase();
+    if (platform.includes("instagram")) {
+      return (
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 via-rose-500 to-orange-400 text-white shrink-0 shadow-2xs">
+          <InstagramIcon className="h-4 w-4 text-white" />
+        </div>
+      );
+    }
+    if (platform.includes("youtube")) {
+      return (
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#FF0000] text-white shrink-0 shadow-2xs">
+          <YoutubeIcon className="h-4 w-4 text-white" />
+        </div>
+      );
+    }
+    if (platform.includes("facebook")) {
+      return (
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1877F2] text-white shrink-0 shadow-2xs">
+          <FacebookIcon className="h-4 w-4 text-white" />
+        </div>
+      );
+    }
+    if (platform.includes("linkedin")) {
+      return (
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#0A66C2] text-white shrink-0 shadow-2xs">
+          <LinkedinIcon className="h-4 w-4 text-white" />
+        </div>
+      );
+    }
+    if (platform.includes("twitter") || platform.includes("x ")) {
+      return (
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#000000] text-white shrink-0 shadow-2xs">
+          <XTwitterIcon className="h-4 w-4 text-white" />
+        </div>
+      );
+    }
+    if (platform.includes("spotify") || platform.includes("podcast")) {
+      return (
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1DB954] text-white shrink-0 shadow-2xs">
+          <SpotifyIcon className="h-4 w-4 text-white" />
+        </div>
+      );
+    }
+    if (platform.includes("series") || platform.includes("ott")) {
+      return (
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f3dde057] border border-[#E7D0D4] text-[#8C3F4D] shrink-0">
+          <Film className="h-4 w-4" />
+        </div>
+      );
+    }
+    return (
+      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f3dde057] border border-[#E7D0D4] text-[#8C3F4D] font-bold text-xs shrink-0">
+        <Briefcase className="h-4 w-4" />
+      </div>
+    );
+  };
+
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-12">
+    <div className="space-y-4 sm:space-y-5 w-full pb-8 text-left">
       {/* 1. PAGE HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#181716] tracking-tight">
+          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#181716]">
             Services &amp; Brand Work
           </h1>
-          <p className="text-xs sm:text-sm text-[#797570] font-medium mt-1">
+          <p className="text-xs sm:text-[13px] text-[#797570] font-medium mt-0.5">
             Show brands how they can work with you and manage your collaboration details.
           </p>
         </div>
@@ -470,7 +531,7 @@ export default function DashboardMediaKitPage() {
           <button
             type="button"
             onClick={handleShareMediaKit}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] px-3.5 py-2 text-xs font-semibold text-[#181716] transition-colors cursor-pointer shadow-xs"
+            className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] px-3.5 py-2 text-xs font-semibold text-[#181716] transition-colors cursor-pointer shadow-xs"
           >
             <Share2 className="h-3.5 w-3.5 text-[#b85c6b]" />
             <span>Share Profile</span>
@@ -479,13 +540,13 @@ export default function DashboardMediaKitPage() {
       </div>
 
       {/* 2. SECTION 1 — BRAND-READY COLLABORATION PROFILE SUMMARY */}
-      <section className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 text-left space-y-5 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E7E3DC] pb-4">
+      <section className="rounded-2xl border border-[#E7E3DC] bg-white p-4 sm:p-5 text-left space-y-4 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E7E3DC] pb-3">
           <div>
-            <h2 className="font-display text-base font-bold text-[#181716]">
+            <h2 className="font-display text-sm sm:text-base font-bold text-[#181716]">
               Your collaboration profile
             </h2>
-            <p className="text-xs text-[#797570] font-medium mt-0.5">
+            <p className="text-[11px] sm:text-xs text-[#797570] font-medium mt-0.5">
               Give brands a clear view of your audience, services and ways to contact you.
             </p>
           </div>
@@ -496,7 +557,7 @@ export default function DashboardMediaKitPage() {
               setActivePreviewTab("mediakit");
               setIsPreviewModalOpen(true);
             }}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-[#b85c6b]/[0.09] hover:bg-[#b85c6b]/15 px-3.5 py-1.5 text-xs font-semibold text-[#b85c6b] transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
+            className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#b85c6b]/[0.09] hover:bg-[#b85c6b]/15 px-3 py-1.5 text-xs font-semibold text-[#b85c6b] transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
           >
             <Eye className="h-3.5 w-3.5" />
             <span>Preview Profile</span>
@@ -504,12 +565,12 @@ export default function DashboardMediaKitPage() {
         </div>
 
         {/* 3 Compact Metrics */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="space-y-1">
-            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="space-y-0.5">
+            <span className="text-[10px] font-bold text-[#797570] uppercase tracking-wider">
               Total Fanbase
             </span>
-            <p className="font-display text-2xl font-bold text-[#181716]">
+            <p className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
               {formatCount(totalAudience || 0)}
             </p>
             <p className="text-[11px] text-[#797570] font-medium">
@@ -517,11 +578,11 @@ export default function DashboardMediaKitPage() {
             </p>
           </div>
 
-          <div className="space-y-1">
-            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
+          <div className="space-y-0.5">
+            <span className="text-[10px] font-bold text-[#797570] uppercase tracking-wider">
               Active Services
             </span>
-            <p className="font-display text-2xl font-bold text-[#181716]">
+            <p className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
               {activeServicesCount}
             </p>
             <p className="text-[11px] text-[#797570] font-medium">
@@ -529,12 +590,12 @@ export default function DashboardMediaKitPage() {
             </p>
           </div>
 
-          <div className="space-y-1">
-            <span className="text-xs font-semibold text-[#797570] uppercase tracking-wider">
+          <div className="space-y-0.5">
+            <span className="text-[10px] font-bold text-[#797570] uppercase tracking-wider">
               Contact Setup
             </span>
             <div className="flex items-center gap-1.5 pt-0.5">
-              <span className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full ${hasContactConfigured ? "bg-[#EAF7F0] text-[#17845B]" : "bg-amber-50 text-amber-800 border border-amber-200"
+              <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full ${hasContactConfigured ? "bg-[#EAF7F0] text-[#17845B]" : "bg-amber-50 text-amber-800 border border-amber-200"
                 }`}>
                 <span className={`h-1.5 w-1.5 rounded-full ${hasContactConfigured ? "bg-[#17845B]" : "bg-amber-600"}`} />
                 {hasContactConfigured ? "Active" : "Action Needed"}
@@ -547,7 +608,7 @@ export default function DashboardMediaKitPage() {
         </div>
 
         {/* Connected Audience Breakdown */}
-        <div className="pt-4 border-t border-[#E7E3DC] space-y-2.5">
+        <div className="pt-3.5 border-t border-[#E7E3DC] space-y-2">
           <div className="flex items-center justify-between">
             <h3 className="font-display text-xs font-bold text-[#181716] uppercase tracking-wider">
               Connected audience overview
@@ -557,9 +618,9 @@ export default function DashboardMediaKitPage() {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             {/* Instagram */}
-            <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3 flex items-center justify-between">
+            <div className="rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 p-2.5 sm:p-3 flex items-center justify-between gap-2.5">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-pink-50 text-pink-600 shrink-0">
                   <InstagramIcon className="h-4 w-4" />
@@ -576,7 +637,7 @@ export default function DashboardMediaKitPage() {
             </div>
 
             {/* YouTube */}
-            <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3 flex items-center justify-between">
+            <div className="rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 p-2.5 sm:p-3 flex items-center justify-between gap-2.5">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-50 text-red-600 shrink-0">
                   <YoutubeIcon className="h-4 w-4" />
@@ -595,7 +656,7 @@ export default function DashboardMediaKitPage() {
             </div>
 
             {/* Facebook */}
-            <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3 flex items-center justify-between">
+            <div className="rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 p-2.5 sm:p-3 flex items-center justify-between gap-2.5">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-blue-600 shrink-0">
                   <FacebookIcon className="h-4 w-4" />
@@ -617,13 +678,13 @@ export default function DashboardMediaKitPage() {
       </section>
 
       {/* 3. SECTION 2 — COLLABORATION SERVICES */}
-      <section className="space-y-3.5 text-left">
+      <section className="space-y-3 sm:space-y-3.5 text-left">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-0.5">
           <div>
-            <h2 className="font-display text-base font-bold text-[#181716]">
+            <h2 className="font-display text-sm sm:text-base font-bold text-[#181716]">
               Creator services
             </h2>
-            <p className="text-xs text-[#797570] font-medium mt-0.5">
+            <p className="text-[11px] sm:text-xs text-[#797570] font-medium mt-0.5">
               Create clear collaboration options with pricing, deliverables and turnaround time.
             </p>
           </div>
@@ -636,7 +697,7 @@ export default function DashboardMediaKitPage() {
             <button
               type="button"
               onClick={handleOpenAddModal}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] px-3.5 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+              className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] px-3.5 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Create Service</span>
@@ -644,25 +705,25 @@ export default function DashboardMediaKitPage() {
           </div>
         </div>
 
-        {/* Services Grid or Empty State */}
+        {/* Services Unified Divided List or Empty State */}
         {packages.length === 0 ? (
-          <div className="rounded-2xl border border-[#E7E3DC] bg-white p-8 sm:p-10 text-center space-y-3 shadow-xs">
+          <div className="rounded-2xl border-2 border-dashed border-[#E7E3DC] bg-white p-8 sm:p-10 text-center space-y-3 max-w-xl mx-auto shadow-xs">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#b85c6b]/[0.09] text-[#b85c6b]">
               <Briefcase className="h-6 w-6" />
             </div>
             <div className="space-y-1">
-              <h3 className="font-display text-base font-bold text-[#181716]">
+              <h3 className="font-display text-sm sm:text-base font-bold text-[#181716]">
                 Show brands how they can work with you
               </h3>
-              <p className="text-xs text-[#797570] max-w-md mx-auto">
+              <p className="text-xs text-[#797570] font-medium max-w-md mx-auto leading-relaxed">
                 Add your collaboration formats, starting rates, deliverables and turnaround time (sponsored reels, video integrations, story promotions).
               </p>
             </div>
-            <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
               <button
                 type="button"
                 onClick={handleOpenAddModal}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+                className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] px-3.5 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span>Create First Service</span>
@@ -671,7 +732,7 @@ export default function DashboardMediaKitPage() {
               <button
                 type="button"
                 onClick={handleLoadSampleGigs}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] px-4 py-2 text-xs font-semibold text-[#181716] transition-colors cursor-pointer"
+                className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] px-3.5 py-2 text-xs font-semibold text-[#181716] transition-colors cursor-pointer shadow-xs"
               >
                 <Sparkles className="h-3.5 w-3.5 text-[#b85c6b]" />
                 <span>Load Sample Services</span>
@@ -679,28 +740,26 @@ export default function DashboardMediaKitPage() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+          <div className="rounded-2xl border border-[#E7E3DC] bg-white divide-y divide-[#E7E3DC] shadow-xs">
             {packages.map((pkg) => {
               const displayPrice = formatPriceClean(pkg.price);
-              const visibleDeliverables = (pkg.deliverables || []).slice(0, 3);
-              const extraDeliverablesCount = Math.max(0, (pkg.deliverables?.length || 0) - 3);
+              const deliverableCount = (pkg.deliverables || []).length;
 
               return (
                 <div
                   key={pkg.id}
-                  className={`rounded-2xl border bg-white p-4 sm:p-5 flex flex-col justify-between space-y-3.5 shadow-xs text-left transition-all ${pkg.isActive ? "border-[#E7E3DC] hover:border-[#b85c6b]/30" : "border-[#E7E3DC] opacity-60 bg-[#fbfbfb]"
+                  className={`px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#FAF8F5]/60 transition-colors text-left ${pkg.isActive ? "" : "opacity-60 bg-[#FAF8F5]/40"
                     }`}
                 >
-                  <div className="space-y-3">
-                    {/* Top Platform & Tier Row */}
-                    <div className="flex items-center justify-between gap-1.5">
-                      <span className="text-[11px] font-bold text-[#b85c6b] bg-[#b85c6b]/[0.09] px-2 py-0.5 rounded-lg truncate">
-                        {pkg.platform}
-                      </span>
+                  {/* Left: Platform Squircle Badge + Details */}
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    {getServicePlatformBadge(pkg)}
 
-                      <div className="flex items-center gap-1.5 shrink-0">
+                    <div className="min-w-0 flex-1 space-y-0.5">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="truncate font-bold text-xs sm:text-[13px] text-[#181716]">{pkg.title}</h3>
                         {(pkg.packageName || pkg.badge) && (
-                          <span className="text-[10px] font-semibold text-[#797570] bg-[#fbfbfb] border border-[#E7E3DC] px-2 py-0.5 rounded-md">
+                          <span className="text-[10px] font-semibold text-[#797570] bg-[#FAF8F5] border border-[#E7E3DC] px-1.5 py-0.5 rounded-md truncate max-w-[130px]">
                             {pkg.packageName || pkg.badge}
                           </span>
                         )}
@@ -713,107 +772,102 @@ export default function DashboardMediaKitPage() {
                           {pkg.isActive ? "Active" : "Paused"}
                         </span>
                       </div>
-                    </div>
 
-                    {/* Title & Price */}
-                    <div>
-                      <h3 className="font-display text-sm font-bold text-[#181716] line-clamp-2 leading-snug">
-                        {pkg.title}
-                      </h3>
-                      <div className="flex items-baseline gap-2 mt-1.5">
-                        <span className="font-display text-lg font-bold text-[#b85c6b]">
-                          {displayPrice}
-                        </span>
-                        <span className="text-[11px] text-[#797570] font-medium">
-                          • {formatDeliveryDays(pkg.turnaroundDays)}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Included Deliverables */}
-                    <div className="space-y-1.5 pt-2 border-t border-[#E7E3DC]">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570]">
-                        Included
-                      </span>
-                      <ul className="space-y-1 text-xs text-[#181716] font-medium">
-                        {visibleDeliverables.map((item, idx) => (
-                          <li key={idx} className="flex items-start gap-1.5">
-                            <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0 mt-0.5" />
-                            <span className="line-clamp-1 leading-tight">{item}</span>
-                          </li>
-                        ))}
-                        {extraDeliverablesCount > 0 && (
-                          <li className="text-[11px] text-[#797570] font-semibold pl-5">
-                            +{extraDeliverablesCount} more
-                          </li>
+                      <p className="text-[11px] text-[#797570] truncate flex items-center gap-1.5 flex-wrap">
+                        <span>{pkg.platform}</span>
+                        <span>•</span>
+                        <span>{formatDeliveryDays(pkg.turnaroundDays)}</span>
+                        {deliverableCount > 0 && (
+                          <>
+                            <span>•</span>
+                            <span>{deliverableCount} {deliverableCount === 1 ? "deliverable" : "deliverables"}</span>
+                          </>
                         )}
-                      </ul>
+                      </p>
                     </div>
                   </div>
 
-                  {/* Card Bottom Actions */}
-                  <div className="pt-2 border-t border-[#E7E3DC] flex items-center justify-between gap-2">
-                    <button
-                      type="button"
-                      onClick={() => handleOpenEditModal(pkg)}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-[#b85c6b] hover:text-[#6F3456] transition-colors cursor-pointer"
-                    >
-                      <Pencil className="h-3 w-3" />
-                      <span>Edit Service</span>
-                    </button>
+                  {/* Right: Price Tag + Action Buttons */}
+                  <div className="flex items-center gap-3 shrink-0">
+                    <span className="font-bold text-xs sm:text-[13px] text-[#b85c6b] text-right whitespace-nowrap">
+                      {displayPrice}
+                    </span>
 
-                    {/* Three-dot menu */}
-                    <div className="relative">
+                    <div className="flex items-center gap-1">
                       <button
                         type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setActiveMenuId(activeMenuId === pkg.id ? null : pkg.id);
-                        }}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E7E3DC] bg-[#fbfbfb] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer"
-                        aria-label="More options"
+                        onClick={() => handleOpenEditModal(pkg)}
+                        className="tap-scale hidden sm:flex h-7 w-7 items-center justify-center rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer shadow-xs"
+                        title="Edit Service"
                       >
-                        <MoreVertical className="h-3.5 w-3.5" />
+                        <Pencil className="h-3.5 w-3.5" />
                       </button>
 
-                      {activeMenuId === pkg.id && (
-                        <div
-                          onClick={(e) => e.stopPropagation()}
-                          className="absolute right-0 bottom-full mb-1.5 w-38 rounded-xl border border-[#E7E3DC] bg-white p-1 shadow-lg z-20 space-y-0.5 animate-in fade-in"
+                      {/* Three-dot menu */}
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveMenuId(activeMenuId === pkg.id ? null : pkg.id);
+                          }}
+                          className="tap-scale flex h-7 w-7 items-center justify-center rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer shadow-xs"
+                          aria-label="More options"
                         >
-                          <button
-                            type="button"
-                            onClick={() => handleShareService(pkg)}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#fbfbfb] transition-colors cursor-pointer"
-                          >
-                            <Copy className="h-3.5 w-3.5 text-[#797570]" />
-                            <span>Share Link</span>
-                          </button>
+                          <MoreVertical className="h-3.5 w-3.5" />
+                        </button>
 
-                          <button
-                            type="button"
-                            onClick={() => handleTogglePackageActive(pkg.id, pkg.isActive)}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#fbfbfb] transition-colors cursor-pointer"
+                        {activeMenuId === pkg.id && (
+                          <div
+                            onClick={(e) => e.stopPropagation()}
+                            className="absolute right-0 top-full mt-1.5 w-40 rounded-xl border border-[#E7E3DC] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in"
                           >
-                            <Power className="h-3.5 w-3.5 text-[#797570]" />
-                            <span>{pkg.isActive ? "Pause Service" : "Activate"}</span>
-                          </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setActiveMenuId(null);
+                                handleOpenEditModal(pkg);
+                              }}
+                              className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
+                            >
+                              <Pencil className="h-3.5 w-3.5 text-[#797570]" />
+                              <span>Edit Service</span>
+                            </button>
 
-                          <div className="my-1 border-t border-[#E7E3DC]" />
+                            <button
+                              type="button"
+                              onClick={() => handleShareService(pkg)}
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
+                            >
+                              <Copy className="h-3.5 w-3.5 text-[#797570]" />
+                              <span>Share Link</span>
+                            </button>
 
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setActiveMenuId(null);
-                              setPackageToDelete(pkg);
-                            }}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-rose-50 transition-colors cursor-pointer"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                            <span>Delete Service</span>
-                          </button>
-                        </div>
-                      )}
+                            <button
+                              type="button"
+                              onClick={() => handleTogglePackageActive(pkg.id, pkg.isActive)}
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
+                            >
+                              <Power className="h-3.5 w-3.5 text-[#797570]" />
+                              <span>{pkg.isActive ? "Pause Service" : "Activate"}</span>
+                            </button>
+
+                            <div className="my-1 border-t border-[#E7E3DC]" />
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setActiveMenuId(null);
+                                setPackageToDelete(pkg);
+                              }}
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-rose-50 transition-colors cursor-pointer"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                              <span>Delete Service</span>
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -824,13 +878,13 @@ export default function DashboardMediaKitPage() {
       </section>
 
       {/* 4. SECTION 3 — BRAND ENQUIRY ROUTING */}
-      <section className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 text-left space-y-4 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E7E3DC] pb-3.5">
+      <section className="rounded-2xl border border-[#E7E3DC] bg-white p-4 sm:p-5 text-left space-y-3.5 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E7E3DC] pb-3">
           <div>
-            <h2 className="font-display text-base font-bold text-[#181716]">
+            <h2 className="font-display text-sm sm:text-base font-bold text-[#181716]">
               Brand enquiries
             </h2>
-            <p className="text-xs text-[#797570] font-medium mt-0.5">
+            <p className="text-[11px] sm:text-xs text-[#797570] font-medium mt-0.5">
               Receive collaboration enquiries through your selected contact methods.
             </p>
           </div>
@@ -838,7 +892,7 @@ export default function DashboardMediaKitPage() {
           <button
             type="button"
             onClick={() => setIsEditingSettings(!isEditingSettings)}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] px-3.5 py-1.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
+            className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] px-3 py-1.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer shrink-0 self-start sm:self-auto shadow-xs"
           >
             <SlidersHorizontal className="h-3.5 w-3.5 text-[#b85c6b]" />
             <span>{isEditingSettings ? "Close Settings" : "Manage Contact Settings"}</span>
@@ -847,9 +901,9 @@ export default function DashboardMediaKitPage() {
 
         {/* Inline Edit Form when toggled */}
         {isEditingSettings ? (
-          <div className="space-y-4 p-4 rounded-xl bg-[#fbfbfb] border border-[#E7E3DC] animate-in fade-in">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div className="space-y-1.5">
+          <div className="space-y-3.5 p-3.5 sm:p-4 rounded-xl bg-[#FAF8F5]/60 border border-[#E7E3DC] animate-in fade-in">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1">
                 <label className="block text-xs font-bold text-[#181716]">
                   Official WhatsApp Number
                 </label>
@@ -862,7 +916,7 @@ export default function DashboardMediaKitPage() {
                 />
               </div>
 
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <label className="block text-xs font-bold text-[#181716]">
                   Business Email Address
                 </label>
@@ -876,8 +930,8 @@ export default function DashboardMediaKitPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div className="space-y-1.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1">
                 <label className="block text-xs font-bold text-[#181716]">
                   Minimum Sponsorship Budget Filter (Optional)
                 </label>
@@ -890,7 +944,7 @@ export default function DashboardMediaKitPage() {
                 />
               </div>
 
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <label className="block text-xs font-bold text-[#181716]">
                   Bio Pitch Tagline (Optional)
                 </label>
@@ -908,23 +962,23 @@ export default function DashboardMediaKitPage() {
               <button
                 type="button"
                 onClick={() => setIsEditingSettings(false)}
-                className="px-3.5 py-2 rounded-xl text-xs font-semibold text-[#797570] hover:bg-white"
+                className="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-[#797570] hover:bg-white transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleSaveSettings}
-                className="bg-[#b85c6b] hover:bg-[#6F3456] text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors cursor-pointer shadow-xs"
+                className="tap-scale bg-[#b85c6b] hover:bg-[#6F3456] text-white text-xs font-semibold px-4 py-1.5 rounded-xl transition-colors cursor-pointer shadow-xs"
               >
                 Save Settings
               </button>
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {/* WhatsApp Tile */}
-            <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3.5 space-y-1">
+            <div className="rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 p-3 space-y-1">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570] block">
                 Official WhatsApp
               </span>
@@ -955,7 +1009,7 @@ export default function DashboardMediaKitPage() {
             </div>
 
             {/* Business Email Tile */}
-            <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3.5 space-y-1">
+            <div className="rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 p-3 space-y-1">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570] block">
                 Business Email
               </span>
@@ -984,7 +1038,7 @@ export default function DashboardMediaKitPage() {
             </div>
 
             {/* Min Budget Filter Tile */}
-            <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3.5 space-y-1">
+            <div className="rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 p-3 space-y-1">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570] block">
                 Min. Deal Filter
               </span>
@@ -1001,43 +1055,43 @@ export default function DashboardMediaKitPage() {
       </section>
 
       {/* 5. SECTION 4 — OTT PRODUCTION TRACK RECORD */}
-      <section className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 text-left space-y-3.5 shadow-xs">
+      <section className="rounded-2xl border border-[#E7E3DC] bg-white p-4 sm:p-5 text-left space-y-3 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E7E3DC] pb-3">
           <div className="flex items-center gap-2">
             <Film className="h-4 w-4 text-[#b85c6b]" />
-            <h2 className="font-display text-base font-bold text-[#181716]">
+            <h2 className="font-display text-sm sm:text-base font-bold text-[#181716]">
               Production track record
             </h2>
           </div>
-          <span className="text-xs font-semibold text-[#797570]">
+          <span className="text-[11px] sm:text-xs font-semibold text-[#797570]">
             Series and episode catalog shown to brand partners
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          <div className="flex items-center gap-3.5 rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#b85c6b]/[0.09] text-[#b85c6b] shrink-0">
-              <Film className="h-5 w-5" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex items-center gap-3 rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 p-3 sm:p-3.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#b85c6b]/[0.09] text-[#b85c6b] shrink-0">
+              <Film className="h-4.5 w-4.5" />
             </div>
             <div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570] block">
                 Total Created Series
               </span>
-              <p className="font-display text-xl font-bold text-[#181716]">
+              <p className="font-display text-lg sm:text-xl font-bold text-[#181716]">
                 {totalSeriesCount} {totalSeriesCount === 1 ? "Series" : "Series"}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3.5 rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#b85c6b]/[0.09] text-[#b85c6b] shrink-0">
-              <Tv className="h-5 w-5" />
+          <div className="flex items-center gap-3 rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 p-3 sm:p-3.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#b85c6b]/[0.09] text-[#b85c6b] shrink-0">
+              <Tv className="h-4.5 w-4.5" />
             </div>
             <div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570] block">
                 Total Published Episodes
               </span>
-              <p className="font-display text-xl font-bold text-[#181716]">
+              <p className="font-display text-lg sm:text-xl font-bold text-[#181716]">
                 {totalEpisodesCount} {totalEpisodesCount === 1 ? "Episode" : "Episodes"}
               </p>
             </div>
@@ -1055,7 +1109,7 @@ export default function DashboardMediaKitPage() {
         icon={<Briefcase className="h-4 w-4" />}
       >
         <form id="gig-form" onSubmit={handleSavePackage} className="flex flex-col flex-1 min-h-0">
-          <ModalBody className="p-5 sm:p-6 space-y-4 text-left">
+          <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
             <div className="space-y-1">
               <label className="block text-xs font-bold text-[#181716]">Service title <span className="text-[#C2414B]">*</span></label>
               <input
@@ -1063,7 +1117,7 @@ export default function DashboardMediaKitPage() {
                 value={formTitle}
                 onChange={(e) => setFormTitle(e.target.value)}
                 placeholder="e.g., 1x Instagram Reel or 3x Reels Pack"
-                className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 required
               />
             </div>
@@ -1074,7 +1128,7 @@ export default function DashboardMediaKitPage() {
                 <select
                   value={formPlatform}
                   onChange={(e) => setFormPlatform(e.target.value)}
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 px-3.5 py-2 text-xs font-semibold text-[#181716] focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 >
                   <option value="Instagram Reel">Instagram Reel</option>
                   <option value="Instagram Bundle">Instagram Bundle (Reels + Stories)</option>
@@ -1097,7 +1151,7 @@ export default function DashboardMediaKitPage() {
                   onChange={(e) => setFormTurnaround(Number(e.target.value))}
                   min={1}
                   max={30}
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 px-3.5 py-2 text-xs font-semibold text-[#181716] focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
             </div>
@@ -1115,7 +1169,7 @@ export default function DashboardMediaKitPage() {
                     value={formMinPrice}
                     onChange={(e) => setFormMinPrice(e.target.value)}
                     placeholder="₹2,000"
-                    className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                    className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                     required
                   />
                 </div>
@@ -1126,7 +1180,7 @@ export default function DashboardMediaKitPage() {
                     value={formMaxPrice}
                     onChange={(e) => setFormMaxPrice(e.target.value)}
                     placeholder="₹5,000"
-                    className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                    className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                   />
                 </div>
               </div>
@@ -1150,19 +1204,19 @@ export default function DashboardMediaKitPage() {
                     }
                   }}
                   placeholder="Add deliverable (e.g. Brand Collaborator Tag)"
-                  className="flex-1 rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                  className="flex-1 rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
                 />
                 <button
                   type="button"
                   onClick={handleAddDeliverable}
-                  className="bg-[#b85c6b] text-white text-xs font-semibold px-3.5 py-2 rounded-xl hover:bg-[#6F3456] transition-colors cursor-pointer shrink-0"
+                  className="tap-scale bg-[#b85c6b] text-white text-xs font-semibold px-3.5 py-2 rounded-xl hover:bg-[#6F3456] transition-colors cursor-pointer shrink-0"
                 >
                   + Add
                 </button>
               </div>
 
               {/* 10 Tailored Deliverable Suggestion Chips */}
-              <div className="space-y-1 bg-[#fbfbfb] border border-[#E7E3DC] rounded-xl p-2.5">
+              <div className="space-y-1 bg-[#FAF8F5]/60 border border-[#E7E3DC] rounded-xl p-2.5">
                 <p className="text-[10px] font-bold text-[#797570] uppercase tracking-wider flex items-center justify-between">
                   <span>💡 Suggested Deliverables for {formPlatform}:</span>
                   <span className="text-[9px] text-[#b85c6b] font-bold">Click chip to add +</span>
@@ -1223,7 +1277,7 @@ export default function DashboardMediaKitPage() {
                 value={formPackageName}
                 onChange={(e) => setFormPackageName(e.target.value)}
                 placeholder="e.g. 🥈 Silver Package, ⭐ MOST POPULAR, 🔥 BEST VALUE..."
-                className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
               />
 
               <div className="space-y-1 pt-0.5">
@@ -1234,7 +1288,7 @@ export default function DashboardMediaKitPage() {
                       key={tag}
                       type="button"
                       onClick={() => setFormPackageName(tag)}
-                      className="bg-[#fbfbfb] hover:bg-[#b85c6b]/[0.09] text-[#181716] hover:text-[#b85c6b] border border-[#E7E3DC] text-xs font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                      className="bg-[#FAF8F5] hover:bg-[#b85c6b]/[0.09] text-[#181716] hover:text-[#b85c6b] border border-[#E7E3DC] text-xs font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
                     >
                       {tag}
                     </button>
@@ -1244,18 +1298,18 @@ export default function DashboardMediaKitPage() {
             </div>
           </ModalBody>
 
-          <ModalFooter className="px-5 sm:px-6 py-3.5">
+          <ModalFooter className="px-4 sm:px-5 py-3">
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716] transition-colors cursor-pointer"
+              className="px-3.5 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#FAF8F5] hover:text-[#181716] transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               form="gig-form"
-              className="bg-[#b85c6b] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+              className="tap-scale bg-[#b85c6b] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
             >
               <span>{editingPkgId ? "Save Changes" : "Create Service"}</span>
             </button>

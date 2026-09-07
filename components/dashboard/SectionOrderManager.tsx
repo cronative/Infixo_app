@@ -123,7 +123,7 @@ export function SectionOrderManager() {
     <section className="rounded-2xl border border-[#E4DAD5] bg-white p-5 sm:p-6 space-y-4 shadow-xs text-left">
       <div className="flex items-center justify-between border-b border-[#E4DAD5] pb-3.5">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F3DDE0] text-[#B85C6B] border border-[#B85C6B]/20 shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f3dde057] text-[#B85C6B] border border-[#B85C6B]/20 shrink-0">
             <Layers className="h-5 w-5" />
           </div>
           <div>
@@ -164,8 +164,8 @@ export function SectionOrderManager() {
               <div
                 key={section.sectionKey}
                 className={`flex items-center justify-between p-3 sm:p-3.5 rounded-xl border transition-all ${section.isVisible
-                    ? "bg-white border-[#E4DAD5] shadow-xs"
-                    : "bg-[#fbfbfb] border-[#E4DAD5]/60 opacity-60"
+                  ? "bg-white border-[#E4DAD5] shadow-xs"
+                  : "bg-[#fbfbfb] border-[#E4DAD5]/60 opacity-60"
                   }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
@@ -177,7 +177,7 @@ export function SectionOrderManager() {
                     <p className="text-xs font-bold text-[#241618] truncate flex items-center gap-1.5">
                       {info.name}
                       {isAbout && (
-                        <span className="text-[10px] font-semibold text-[#B85C6B] bg-[#F3DDE0] border border-[#B85C6B]/20 px-1.5 py-0.2 rounded-md">
+                        <span className="text-[10px] font-semibold text-[#B85C6B] bg-[#f3dde057] border border-[#B85C6B]/20 px-1.5 py-0.2 rounded-md">
                           Locked
                         </span>
                       )}
@@ -193,8 +193,8 @@ export function SectionOrderManager() {
                     onClick={() => handleToggleVisibility(section.sectionKey)}
                     disabled={isAbout}
                     className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-colors cursor-pointer ${section.isVisible
-                        ? "border-[#E4DAD5] bg-[#fbfbfb] text-[#241618] hover:bg-[#F3DDE0] hover:text-[#B85C6B]"
-                        : "border-[#C1443A]/20 bg-[#C1443A]/10 text-[#C1443A]"
+                      ? "border-[#E4DAD5] bg-[#fbfbfb] text-[#241618] hover:bg-[#f3dde057] hover:text-[#B85C6B]"
+                      : "border-[#C1443A]/20 bg-[#C1443A]/10 text-[#C1443A]"
                       } disabled:opacity-40 disabled:cursor-not-allowed`}
                     title={section.isVisible ? "Hide section from profile" : "Show section on profile"}
                   >

@@ -76,12 +76,12 @@ export default function DashboardPreviewPage() {
   };
 
   return (
-    <div className="space-y-5 max-w-6xl mx-auto pb-12 text-left">
+    <div className="space-y-5 w-full pb-12 text-left">
       {/* 1. PAGE HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
         <div>
           <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#181716] tracking-tight">
+            <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#181716]">
               Profile Preview
             </h1>
             <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#17845B] bg-[#EAF7F0] px-2.5 py-0.5 rounded-full border border-[#17845B]/20">
@@ -89,7 +89,7 @@ export default function DashboardPreviewPage() {
               Public profile is live
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-[#797570] font-medium mt-1">
+          <p className="text-xs sm:text-[13px] text-[#797570] font-medium mt-0.5">
             See exactly how your public creator profile appears to visitors.
           </p>
         </div>

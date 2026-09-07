@@ -243,7 +243,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
           >
             <div className="space-y-1.5">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-[#F3DDE0] text-[#8C3F4D] border border-[#B85C6B]/20">
+                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-[#f3dde057] text-[#8C3F4D] border border-[#B85C6B]/20">
                   Idea #{idx + 1} • {item.category}
                 </span>
                 <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-0.5">
@@ -267,7 +267,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
               <button
                 type="button"
                 onClick={() => handleCopyHook(item)}
-                className="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#B85C6B] hover:text-[#8C3F4D] bg-[#F3DDE0] border border-[#B85C6B]/20 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#B85C6B] hover:text-[#8C3F4D] bg-[#f3dde057] border border-[#B85C6B]/20 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
               >
                 {copiedId === item.id ? (
                   <>

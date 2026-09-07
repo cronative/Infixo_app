@@ -779,7 +779,7 @@ export default function AdminDashboardPage() {
 
                             {/* Dropdown Popover */}
                             {openActionMenuId === c.id && (
-                              <div className="absolute right-5 top-12 z-30 w-52 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl text-left space-y-0.5 animate-in fade-in duration-150">
+                              <div className="absolute right-5 top-12 z-50 w-52 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl text-left space-y-0.5 animate-in fade-in duration-150">
                                 <button
                                   type="button"
                                   onClick={() => handleGrantVIP(c)}

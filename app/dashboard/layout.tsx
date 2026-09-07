@@ -46,7 +46,7 @@ function DesktopTopHeader() {
   };
 
   return (
-    <header className="hidden items-center justify-between border-b border-[#E4DAD5] bg-white px-8 py-4 lg:flex shrink-0">
+    <header className="hidden items-center justify-between border-b border-[#E4DAD5] bg-white px-4 md:px-[100px] py-4 lg:flex shrink-0">
       <div>
         <h1 className="font-display text-lg font-bold text-[#241618] tracking-tight">
           {greeting}
@@ -108,8 +108,8 @@ function Shell({ children }: { children: ReactNode }) {
         <DashboardMobileHeader onOpenDrawer={() => setDrawerOpen(true)} />
 
         {/* Scrollable Content Viewport */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 animate-fade-in-up">
-          <div className="mx-auto max-w-[1240px]">
+        <main className="flex-1 overflow-y-auto px-4 py-6 md:px-[100px] animate-fade-in-up">
+          <div className="w-full">
             {children}
           </div>
         </main>

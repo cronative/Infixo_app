@@ -25,14 +25,14 @@ export default function DashboardSubscriptionPage() {
   const gigUsage = getGigUsage(activeGigsCount, planKey);
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-12">
+    <div className="space-y-6 w-full pb-12">
       {/* 1. PAGE HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
         <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#181716] tracking-tight">
+          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#181716]">
             Plan
           </h1>
-          <p className="text-xs sm:text-sm text-[#797570] font-medium mt-1">
+          <p className="text-xs sm:text-[13px] text-[#797570] font-medium mt-0.5">
             View your current access, usage limits and upcoming Inflixo plans.
           </p>
         </div>
