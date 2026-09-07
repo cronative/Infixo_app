@@ -84,28 +84,12 @@ function DesktopTopHeader() {
 function Shell({ children }: { children: ReactNode }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { loading } = useCreator();
-  const router = useRouter();
 
   useEffect(() => {
     if (!loading) {
-      const hasProfile = ProfileService.hasProfile();
-      const step = OnboardingService.getStep();
-      if (!hasProfile && step && step !== "finish") {
-        const stepRoutes: Record<string, string> = {
-          profile: "/onboarding/profile",
-          socials: "/onboarding/socials",
-          theme: "/onboarding/themes",
-          themes: "/onboarding/themes",
-          series: "/onboarding/series",
-          subscription: "/onboarding/subscription",
-        };
-        const targetRoute = stepRoutes[step] || "/onboarding/profile";
-        router.replace(targetRoute);
-      } else if (hasProfile && step !== "finish") {
-        OnboardingService.setStep("finish");
-      }
+      OnboardingService.setStep("finish");
     }
-  }, [loading, router]);
+  }, [loading]);
 
   if (loading) {
     return <SyncingLoader message="Syncing your creator profile, series & stats..." fullScreen hideProgressBar={true} />;
