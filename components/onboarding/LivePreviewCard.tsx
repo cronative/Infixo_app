@@ -2370,11 +2370,22 @@ export function PreviewSeriesItem({
     <div
       id={`series-${series.id}`}
       onClick={() => (onSelectSeries ? onSelectSeries(series) : onToggle ? onToggle() : null)}
-      className="group relative rounded-3xl p-5 sm:p-6 transition-all text-left bg-[#F4E3E6] hover:bg-[#EED9DD] border border-[#E8D4D8]/50 cursor-pointer shadow-2xs"
+      style={{
+        backgroundColor: c.cardBackground,
+        borderColor: c.border,
+      }}
+      className="group relative rounded-3xl p-5 sm:p-6 transition-all text-left border border-[#E4DAD5] bg-white hover:bg-[#F7F0EA]/50 cursor-pointer shadow-xs"
     >
       {/* Top Episode Count Pill */}
       <div className="w-fit">
-        <span className="inline-flex items-center px-3.5 py-1 rounded-full bg-white text-[#8C3F4D] text-xs font-bold shadow-2xs">
+        <span
+          style={{
+            backgroundColor: c.accentSoft,
+            borderColor: c.accentBorder,
+            color: c.accentText,
+          }}
+          className="inline-flex items-center px-3.5 py-1 rounded-full bg-[#F3DDE0] text-[#8C3F4D] text-xs font-bold"
+        >
           {epCountStr}
         </span>
       </div>
@@ -2383,6 +2394,7 @@ export function PreviewSeriesItem({
       <div className="mt-3.5 space-y-1.5">
         <h3
           style={{
+            color: c.primaryText,
             fontFamily: typ.headingFontFamily,
             fontWeight: typ.headingWeight as any,
           }}
@@ -2392,7 +2404,10 @@ export function PreviewSeriesItem({
         </h3>
 
         {series.description && series.description.trim() && (
-          <p className="text-xs sm:text-[13px] leading-relaxed text-[#6B5A5D] font-normal">
+          <p
+            style={{ color: c.secondaryText }}
+            className="text-xs sm:text-[13px] leading-relaxed text-[#6B5A5D] font-normal"
+          >
             {series.description}
           </p>
         )}
@@ -2404,7 +2419,12 @@ export function PreviewSeriesItem({
           {allTags.map((tag, idx) => (
             <span
               key={idx}
-              className="inline-flex items-center px-3.5 py-1 rounded-full bg-white text-[#8C3F4D] text-xs font-bold shadow-2xs"
+              style={{
+                backgroundColor: c.accentSoft,
+                borderColor: c.accentBorder,
+                color: c.accentText,
+              }}
+              className="inline-flex items-center px-3.5 py-1 rounded-full bg-[#F3DDE0] text-[#8C3F4D] text-xs font-semibold"
             >
               {tag}
             </span>
