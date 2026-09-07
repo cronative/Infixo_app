@@ -990,139 +990,46 @@ export function LivePreviewCard({
 
       {selectedSeriesDetail ? (
         /* IN-CARD SERIES DETAIL VIEW */
-        <div className="relative z-10 flex-1 flex flex-col justify-between space-y-3.5 animate-in fade-in duration-200">
-          <div className="flex-1">
-            {/* 1. FULL-WIDTH HERO COVER IMAGE */}
-            {selectedSeriesDetail.posterDataUrl && selectedSeriesDetail.posterDataUrl.trim() !== "" ? (
-              <div className="relative w-full aspect-[16/9] overflow-hidden bg-slate-950 m-0 p-0">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={selectedSeriesDetail.posterDataUrl}
-                  alt={selectedSeriesDetail.title}
-                  className="block w-full h-full object-cover object-center m-0 p-0"
-                />
+        <div className="relative z-10 flex-1 flex flex-col justify-between animate-in fade-in duration-200">
+          <div className="flex-1 flex flex-col">
+            {/* 1. FULL-WIDTH HERO COVER HEADER (Maroon Gradient or Valid Poster) */}
+            <div className="relative w-full aspect-[21/9] min-h-[140px] sm:min-h-[160px] overflow-hidden bg-gradient-to-r from-[#B85C6B] via-[#A24B5A] to-[#8C3F4D] m-0 p-0 shrink-0">
+              {selectedSeriesDetail.posterDataUrl && selectedSeriesDetail.posterDataUrl.trim() !== "" && (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={selectedSeriesDetail.posterDataUrl}
+                    alt={selectedSeriesDetail.title}
+                    className="block w-full h-full object-cover object-center m-0 p-0"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/60 pointer-events-none" />
+                </>
+              )}
 
-                {/* Gradient Overlays for top action contrast & smooth bottom fade */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-transparent to-black/70 pointer-events-none" />
-
-                {/* OVERLAY: TOP ACTION BAR */}
-                <div className="absolute top-3 inset-x-3 sm:top-4 sm:inset-x-4 z-20 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedSeriesDetail(null)}
-                      className="tap-scale flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-black/45 hover:bg-black/65 backdrop-blur-md border border-white/20 text-white transition-all shadow-md cursor-pointer"
-                      title="Back to profile"
-                      aria-label="Back to profile"
-                    >
-                      <ArrowLeft className="h-4 w-4" />
-                    </button>
-
-                    <div
-                      className="tap-scale flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full text-white shadow-xs transition-all shrink-0 border border-white/20 select-none"
-                      style={{ backgroundColor: c.accent }}
-                      title="Inflixo"
-                      aria-label="Inflixo"
-                    >
-                      <InflixoLogoIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      type="button"
-                      onClick={async (e) => {
-                        e.preventDefault();
-                        const cleanUsername = (profile.username || "creator").replace(/^@/, "");
-                        const shareUrl = typeof window !== "undefined"
-                          ? `${window.location.origin}/${cleanUsername}/series/${selectedSeriesDetail.id}`
-                          : `https://inflixo.com/${cleanUsername}/series/${selectedSeriesDetail.id}`;
-                        await copyToClipboard(shareUrl);
-                        showToast("Series link copied! 🎬✨");
-                      }}
-                      className="tap-scale flex h-8 w-8 items-center justify-center rounded-full bg-black/45 hover:bg-black/65 backdrop-blur-md border border-white/20 text-white transition-all cursor-pointer shadow-md"
-                      title="Copy Series Link"
-                      aria-label="Copy Series Link"
-                    >
-                      <Copy className="h-3.5 w-3.5" />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={async (e) => {
-                        e.preventDefault();
-                        const cleanUsername = (profile.username || "creator").replace(/^@/, "");
-                        const shareUrl = typeof window !== "undefined"
-                          ? `${window.location.origin}/${cleanUsername}/series/${selectedSeriesDetail.id}`
-                          : `https://inflixo.com/${cleanUsername}/series/${selectedSeriesDetail.id}`;
-                        const title = `${selectedSeriesDetail.title} by ${profile.displayName || "Creator"}`;
-                        try {
-                          if (typeof navigator !== "undefined" && navigator.share) {
-                            await navigator.share({ title, url: shareUrl });
-                          } else {
-                            await copyToClipboard(shareUrl);
-                            showToast("Series link copied! 🎬✨");
-                          }
-                        } catch {}
-                      }}
-                      style={{ backgroundColor: c.accentSoft, borderColor: c.accentBorder, color: c.accentText }}
-                      className="tap-scale flex h-8 w-8 items-center justify-center rounded-full backdrop-blur-md border transition-all cursor-pointer shadow-md"
-                      title="Share Series Link"
-                      aria-label="Share Series Link"
-                    >
-                      <Share2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Bottom Right Overlay: Platform */}
-                {selectedSeriesDetail.platform && (
-                  <div className="absolute bottom-2.5 right-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold shadow-sm">
-                    {selectedSeriesDetail.platform === "YouTube" && <YoutubeIcon className="h-3 w-3 text-red-500" />}
-                    {selectedSeriesDetail.platform === "Instagram" && <InstagramIcon className="h-3 w-3 text-pink-500" />}
-                    {selectedSeriesDetail.platform === "Facebook" && <FacebookIcon className="h-3 w-3 text-blue-500" />}
-                    {selectedSeriesDetail.platform === "Other" && <Globe className="h-3 w-3 text-purple-400" />}
-                    <span>{selectedSeriesDetail.platform}</span>
-                  </div>
-                )}
-              </div>
-            ) : (
-              /* No-Cover State: minimal navbar normally at top with series title */
-              <div
-                style={{ borderColor: c.divider }}
-                className="flex items-center justify-between p-4 sm:p-6 pb-2 border-b"
-              >
-                <div className="flex items-center gap-2 min-w-0">
+              {/* OVERLAY: TOP ACTION BAR */}
+              <div className="absolute top-3 inset-x-3 sm:top-4 sm:inset-x-4 z-20 flex items-center justify-between">
+                <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => setSelectedSeriesDetail(null)}
-                    style={{ backgroundColor: c.cardBackground, borderColor: c.border, color: c.secondaryText }}
-                    className="tap-scale flex h-8 w-8 items-center justify-center rounded-full border transition-all cursor-pointer shadow-2xs"
+                    className="tap-scale flex h-8.5 w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-black/55 active:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
                     title="Back to profile"
                     aria-label="Back to profile"
                   >
                     <ArrowLeft className="h-4 w-4" />
                   </button>
+
                   <div
+                    className="tap-scale flex h-8.5 w-8.5 items-center justify-center rounded-full text-white shadow-xs transition-all shrink-0 border border-white/25 select-none"
                     style={{ backgroundColor: c.accent }}
-                    className="tap-scale flex h-8 w-8 items-center justify-center rounded-full text-white shadow-xs shrink-0 border border-white/20 select-none"
                     title="Inflixo"
+                    aria-label="Inflixo"
                   >
                     <InflixoLogoIcon className="h-4 w-4 text-white" />
                   </div>
-                  <span
-                    style={{
-                      color: c.primaryText,
-                      fontFamily: typ.headingFontFamily,
-                      fontWeight: typ.headingWeight as any,
-                    }}
-                    className="text-xs sm:text-sm font-bold truncate max-w-[140px] sm:max-w-[200px]"
-                  >
-                    {selectedSeriesDetail.title}
-                  </span>
                 </div>
 
-                <div className="flex items-center gap-1.5 shrink-0">
+                <div className="flex items-center gap-1.5">
                   <button
                     type="button"
                     onClick={async (e) => {
@@ -1134,8 +1041,7 @@ export function LivePreviewCard({
                       await copyToClipboard(shareUrl);
                       showToast("Series link copied! 🎬✨");
                     }}
-                    style={{ backgroundColor: c.cardBackground, borderColor: c.border, color: c.secondaryText }}
-                    className="tap-scale flex h-8 w-8 items-center justify-center rounded-full border transition-all cursor-pointer shadow-2xs"
+                    className="tap-scale flex h-8.5 w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-black/55 active:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all cursor-pointer shadow-md"
                     title="Copy Series Link"
                     aria-label="Copy Series Link"
                   >
@@ -1160,8 +1066,7 @@ export function LivePreviewCard({
                         }
                       } catch {}
                     }}
-                    style={{ backgroundColor: c.accentSoft, borderColor: c.accentBorder, color: c.accentText }}
-                    className="tap-scale flex h-8 w-8 items-center justify-center rounded-full border transition-all cursor-pointer shadow-2xs"
+                    className="tap-scale flex h-8.5 w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-black/55 active:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all cursor-pointer shadow-md"
                     title="Share Series Link"
                     aria-label="Share Series Link"
                   >
@@ -1169,18 +1074,29 @@ export function LivePreviewCard({
                   </button>
                 </div>
               </div>
-            )}
 
-            {/* 2. TITLE, DESCRIPTION, DOT SEPARATED GENRE */}
-            <div className="p-5 sm:p-8 pt-4 sm:pt-6 space-y-4 flex-1">
-              <div className="text-center space-y-1.5 px-1">
+              {/* Bottom Right Overlay: Platform */}
+              {selectedSeriesDetail.platform && (
+                <div className="absolute bottom-2.5 right-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold shadow-sm">
+                  {selectedSeriesDetail.platform === "YouTube" && <YoutubeIcon className="h-3 w-3 text-red-500" />}
+                  {selectedSeriesDetail.platform === "Instagram" && <InstagramIcon className="h-3 w-3 text-pink-500" />}
+                  {selectedSeriesDetail.platform === "Facebook" && <FacebookIcon className="h-3 w-3 text-blue-500" />}
+                  {selectedSeriesDetail.platform === "Other" && <Globe className="h-3 w-3 text-purple-400" />}
+                  <span>{selectedSeriesDetail.platform}</span>
+                </div>
+              )}
+            </div>
+
+            {/* 2. BODY CONTENT: TITLE, DESCRIPTION, PILL TAGS, EPISODES */}
+            <div className="p-5 sm:p-7 pt-6 sm:pt-7 flex-1 flex flex-col">
+              <div className="text-center px-1">
                 <h2
                   style={{
                     color: c.primaryText,
                     fontFamily: typ.headingFontFamily,
                     fontWeight: typ.headingWeight as any,
                   }}
-                  className="text-lg sm:text-xl font-extrabold leading-tight"
+                  className="text-xl sm:text-2xl font-extrabold leading-tight tracking-tight text-[#241618]"
                 >
                   {selectedSeriesDetail.title}
                 </h2>
@@ -1188,13 +1104,13 @@ export function LivePreviewCard({
                 {selectedSeriesDetail.description && (
                   <p
                     style={{ color: c.secondaryText }}
-                    className="text-xs leading-relaxed font-normal"
+                    className="mt-2 sm:mt-2.5 text-xs sm:text-sm leading-relaxed text-[#6B5A5D] font-normal max-w-md mx-auto"
                   >
                     {selectedSeriesDetail.description}
                   </p>
                 )}
 
-                {/* Center Dot-Separated Genre & Details */}
+                {/* Category / Genre & Language Pill Tags */}
                 {(() => {
                   const parts: string[] = [];
                   if (selectedSeriesDetail.genre) {
@@ -1207,21 +1123,32 @@ export function LivePreviewCard({
                   if (selectedSeriesDetail.language && selectedSeriesDetail.language.trim()) {
                     parts.push(selectedSeriesDetail.language.trim());
                   }
-                  const str = parts.join(" • ");
-                  return str ? (
-                    <p
-                      style={{ color: c.accentText }}
-                      className="text-[11.5px] font-semibold tracking-wide pt-0.5"
-                    >
-                      {str}
-                    </p>
-                  ) : null;
+
+                  if (parts.length === 0) return null;
+
+                  return (
+                    <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+                      {parts.map((tag, idx) => (
+                        <span
+                          key={idx}
+                          style={{
+                            backgroundColor: c.accentSoft,
+                            borderColor: c.accentBorder,
+                            color: c.accentText,
+                          }}
+                          className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-semibold border transition-all"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  );
                 })()}
               </div>
 
               {/* Seasons Filter Tabs (If multiple) */}
               {selectedSeriesDetail.seasons && selectedSeriesDetail.seasons.length > 1 && (
-                <div className="flex items-center justify-center gap-2 overflow-x-auto pt-2 pb-1 scrollbar-none">
+                <div className="mt-6 flex items-center justify-center gap-2 overflow-x-auto pb-1 scrollbar-none">
                   {selectedSeriesDetail.seasons.map((sn, idx) => (
                     <button
                       key={sn.id || idx}
@@ -1240,7 +1167,7 @@ export function LivePreviewCard({
                 </div>
               )}
 
-              {/* 3. EPISODES HEADER & MINIMAL LISTING */}
+              {/* 3. EPISODES HEADER & GROUPED LIST */}
               {(() => {
                 const seasons = selectedSeriesDetail.seasons || [];
                 const currentEps =
@@ -1249,11 +1176,11 @@ export function LivePreviewCard({
                     : getSeriesEpisodes(selectedSeriesDetail);
 
                 return (
-                  <div className="space-y-2.5 pt-1">
+                  <div className="mt-8 sm:mt-9 space-y-3">
                     <div className="flex items-center justify-between px-1">
                       <span
                         style={{ color: c.mutedText }}
-                        className="text-[10.5px] font-bold uppercase tracking-wider"
+                        className="text-[11px] font-bold uppercase tracking-wider text-[#6B5A5D]"
                       >
                         {seasons.length > 1
                           ? `${seasons[selectedSeriesSeasonIdx]?.title || `Season ${selectedSeriesSeasonIdx + 1}`} Episodes (${currentEps.length})`
@@ -1264,12 +1191,18 @@ export function LivePreviewCard({
                     {currentEps.length === 0 ? (
                       <div
                         style={{ borderColor: c.border, color: c.mutedText }}
-                        className="p-6 text-center text-xs font-semibold rounded-xl border border-dashed"
+                        className="p-6 text-center text-xs font-semibold rounded-2xl border border-dashed border-[#E4DAD5] bg-[#F7F0EA]/30 text-[#6B5A5D]"
                       >
                         No episodes uploaded for this series yet.
                       </div>
                     ) : (
-                      <div className="space-y-2">
+                      <div
+                        style={{
+                          borderColor: c.divider,
+                          backgroundColor: c.cardBackground,
+                        }}
+                        className="rounded-2xl border border-[#E4DAD5] bg-white divide-y divide-[#E4DAD5] overflow-hidden shadow-xs"
+                      >
                         {currentEps.map((ep, idx) => {
                           const partNum = ep.episodeNumber || idx + 1;
                           const partNumStr = partNum < 10 ? `0${partNum}` : `${partNum}`;
@@ -1281,37 +1214,34 @@ export function LivePreviewCard({
                               href={ep.externalUrl || "#"}
                               target={ep.externalUrl ? "_blank" : undefined}
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: c.cardBackground,
-                                borderColor: c.border,
-                                color: c.primaryText,
-                                boxShadow: eff.cardShadow,
-                              }}
-                              className="group relative flex items-center justify-between w-full px-3.5 py-3 rounded-xl transition-all duration-150 border cursor-pointer hover:scale-[1.005]"
+                              className="group flex items-center justify-between w-full px-4 py-3.5 transition-colors hover:bg-[#F7F0EA]/50 cursor-pointer"
                             >
-                              {/* Left: Number */}
-                              <span
-                                style={{ color: c.mutedText }}
-                                className="w-6 text-left text-xs font-mono font-bold transition-colors shrink-0"
-                              >
-                                {partNumStr}
-                              </span>
+                              {/* Left: Number & Title */}
+                              <div className="flex items-center gap-3.5 min-w-0 pr-2">
+                                <span
+                                  style={{ color: c.mutedText }}
+                                  className="text-xs font-mono font-medium text-[#6B5A5D] w-6 shrink-0"
+                                >
+                                  {partNumStr}
+                                </span>
+                                <span
+                                  style={{ color: c.primaryText }}
+                                  className="text-xs sm:text-sm font-bold text-[#241618] truncate group-hover:text-[#8C3F4D] transition-colors"
+                                >
+                                  {epTitleStr}
+                                </span>
+                              </div>
 
-                              {/* Center: Title */}
-                              <span
-                                style={{ color: c.primaryText }}
-                                className="flex-1 text-center font-bold text-xs truncate px-2"
+                              {/* Right: Enlarged 34px Circular View Icon */}
+                              <div
+                                style={{
+                                  borderColor: c.border,
+                                  color: c.accentText,
+                                }}
+                                className="h-8.5 w-8.5 rounded-full border border-[#E4DAD5] bg-white text-[#8C3F4D] flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-[#F3DDE0] group-hover:border-[#B85C6B]/30 group-hover:scale-105 transition-all"
                               >
-                                {epTitleStr}
-                              </span>
-
-                              {/* Right: View Icon */}
-                              <span
-                                style={{ color: c.accentText }}
-                                className="w-6 flex justify-end transition-transform group-hover:scale-110 shrink-0"
-                              >
-                                <Eye className="h-3.5 w-3.5" />
-                              </span>
+                                <Eye className="h-4 w-4" />
+                              </div>
                             </a>
                           );
                         })}
