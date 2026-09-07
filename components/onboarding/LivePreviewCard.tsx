@@ -1953,96 +1953,86 @@ export function LivePreviewCard({
                           );
                         })()}
 
-                        {/* Individual Review Divided Card */}
-                        <div
-                          style={{
-                            backgroundColor: c.cardBackground,
-                            borderColor: c.border,
-                            boxShadow: eff.cardShadow,
-                          }}
-                          className="rounded-2xl border border-[#E4DAD5] bg-white divide-y divide-[#E4DAD5] overflow-hidden shadow-xs"
-                        >
+                        {/* Individual Review Cards matching reference */}
+                        <div className="space-y-3">
                           {approvedReviews.map((rev) => {
                             const ratingNum = Number(rev.rating) || 5;
-                            const clientInitials = getInitials(rev.clientName || "Client");
 
                             return (
                               <div
                                 key={rev.id}
-                                className="px-3.5 py-3 sm:py-3.5 transition-colors text-left space-y-1.5 hover:bg-[#F7F0EA]/40 group"
+                                style={{
+                                  backgroundColor: c.cardBackground,
+                                  borderColor: c.border,
+                                  boxShadow: eff.cardShadow,
+                                }}
+                                className="rounded-2xl border border-[#E4DAD5] bg-white p-4 sm:p-5 space-y-3 text-left shadow-xs transition-all"
                               >
-                                {/* Top: Client Avatar/Initials + Client Name/Project + Star Rating */}
-                                <div className="flex items-center justify-between gap-2.5">
-                                  <div className="flex items-center gap-2.5 min-w-0">
-                                    <span
-                                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#F3DDE0] text-[#8C3F4D] text-[11px] font-bold tracking-tight select-none"
-                                    >
-                                      {clientInitials}
-                                    </span>
-                                    <div className="min-w-0">
-                                      <div className="flex items-center gap-1.5 flex-wrap">
-                                        <p style={{ color: c.primaryText }} className="truncate text-xs sm:text-[13px] font-bold">
-                                          {rev.clientName}
-                                        </p>
-                                        {rev.clientDesignation && (
-                                          <span style={{ color: c.mutedText }} className="text-[11px] font-medium truncate">
-                                            • {rev.clientDesignation}
-                                          </span>
-                                        )}
-                                      </div>
-                                    </div>
+                                {/* Top: 5 Stars (Left) & Tag + Link (Right) */}
+                                <div className="flex items-center justify-between gap-2 flex-wrap">
+                                  <div className="flex items-center gap-1 text-[#8C3F4D]">
+                                    {Array.from({ length: 5 }).map((_, i) => (
+                                      <Star
+                                        key={i}
+                                        className={`h-3.5 w-3.5 ${
+                                          i < ratingNum
+                                            ? "fill-[#8C3F4D] text-[#8C3F4D]"
+                                            : "text-slate-200 fill-slate-200"
+                                        }`}
+                                      />
+                                    ))}
                                   </div>
 
-                                  {/* Right: Stars + Related Link */}
-                                  <div className="flex items-center gap-2 shrink-0">
+                                  <div className="flex items-center gap-2.5">
+                                    {rev.projectTitle && (
+                                      <span
+                                        style={{
+                                          backgroundColor: c.accentSoft,
+                                          color: c.accentText,
+                                        }}
+                                        className="bg-[#F3DDE0] text-[#8C3F4D] text-[11px] font-semibold px-2.5 py-0.5 rounded-full"
+                                      >
+                                        {rev.projectTitle}
+                                      </span>
+                                    )}
                                     {rev.contentUrl && (
                                       <a
                                         href={rev.contentUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        onClick={(e) => e.stopPropagation()}
                                         style={{ color: c.accentText }}
-                                        className="hover:underline flex items-center gap-1 text-[11px] font-semibold"
-                                        title="View related work"
+                                        className="text-[#8C3F4D] text-xs font-semibold hover:underline flex items-center gap-1"
                                       >
-                                        <span>Work</span>
-                                        <ExternalLink className="h-3 w-3" />
+                                        <span>View related work</span>
                                       </a>
                                     )}
-                                    <div className="flex items-center gap-1 text-amber-400">
-                                      <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                                      <span style={{ color: c.primaryText }} className="text-xs sm:text-[13px] font-bold tabular-nums">
-                                        {ratingNum.toFixed(1)}
-                                      </span>
-                                    </div>
                                   </div>
                                 </div>
 
-                                {/* Full Review Text (Not truncated) */}
-                                {rev.comment && rev.comment.trim() && (
+                                {/* Full Review Comment */}
+                                {rev.comment && (
                                   <p
-                                    style={{ color: c.secondaryText }}
-                                    className="text-xs leading-relaxed font-normal whitespace-pre-line pl-9 pr-1"
+                                    style={{ color: c.primaryText }}
+                                    className="text-xs sm:text-[13px] leading-relaxed font-normal text-[#241618]"
                                   >
-                                    “{rev.comment.trim()}”
+                                    &ldquo;{rev.comment.trim()}&rdquo;
                                   </p>
                                 )}
 
-                                {/* Optional Project Tag */}
-                                {rev.projectTitle && (
-                                  <div className="pl-9 pt-0.5">
-                                    <span
-                                      style={{
-                                        backgroundColor: c.accentSoft,
-                                        borderColor: c.accentBorder,
-                                        color: c.accentText,
-                                      }}
-                                      className="inline-block text-[10px] font-semibold px-2 py-0.5 rounded-md border"
-                                    >
-                                      {rev.projectTitle}
-                                    </span>
-                                  </div>
-                                )}
+                                {/* Divider */}
+                                <div style={{ borderColor: c.divider }} className="border-t border-[#E4DAD5] pt-1" />
+
+                                {/* Bottom Client Name */}
+                                <div className="flex items-center justify-between">
+                                  <p style={{ color: c.primaryText }} className="text-xs sm:text-[13px] font-bold text-[#241618]">
+                                    {rev.clientName}
+                                    {rev.clientDesignation && (
+                                      <span style={{ color: c.mutedText }} className="ml-1.5 font-medium text-[11px]">
+                                        • {rev.clientDesignation}
+                                      </span>
+                                    )}
+                                  </p>
+                                </div>
                               </div>
                             );
                           })}
