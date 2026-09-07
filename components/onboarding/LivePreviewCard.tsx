@@ -2350,6 +2350,24 @@ export function PreviewSeriesItem({
   const epCount = allEpisodes.length;
   const epCountStr = `${epCount} ${epCount === 1 ? "Episode" : "Episodes"}`;
 
+  // Robust platform detection from series.platform OR first episode URL
+  const firstEpUrl = allEpisodes[0]?.externalUrl || "";
+  const detectedPlatform = (() => {
+    if (series.platform && series.platform.trim()) {
+      const p = series.platform.trim();
+      if (/youtube/i.test(p)) return "YouTube";
+      if (/instagram/i.test(p)) return "Instagram";
+      if (/facebook/i.test(p)) return "Facebook";
+      return p;
+    }
+    if (firstEpUrl) {
+      if (/youtube\.com|youtu\.be/i.test(firstEpUrl)) return "YouTube";
+      if (/instagram\.com/i.test(firstEpUrl)) return "Instagram";
+      if (/facebook\.com/i.test(firstEpUrl)) return "Facebook";
+    }
+    return null;
+  })();
+
   const genresList = series.genre
     ? series.genre
         .split(/[,•|/]/)
@@ -2357,14 +2375,12 @@ export function PreviewSeriesItem({
         .filter(Boolean)
     : [];
 
-  const allTags: string[] = [];
-  if (series.platform) {
-    allTags.push(series.platform);
-  }
-  allTags.push(...genresList);
-  if (series.language && series.language.trim() && !allTags.includes(series.language.trim())) {
-    allTags.push(series.language.trim());
-  }
+  const langTag =
+    series.language &&
+    series.language.trim() &&
+    !genresList.some((g) => g.toLowerCase() === series.language!.trim().toLowerCase())
+      ? series.language.trim()
+      : null;
 
   return (
     <div
@@ -2374,7 +2390,7 @@ export function PreviewSeriesItem({
         backgroundColor: c.cardBackground,
         borderColor: c.border,
       }}
-      className="group relative rounded-3xl p-5 sm:p-6 transition-all text-left border border-[#E4DAD5] bg-white hover:bg-[#F7F0EA]/50 cursor-pointer shadow-xs"
+      className="group relative rounded-2xl p-4 sm:p-4.5 transition-all text-left border border-[#E4DAD5] bg-white hover:bg-[#F7F0EA]/50 cursor-pointer shadow-xs"
     >
       {/* Top Episode Count Pill */}
       <div className="w-fit">
@@ -2384,21 +2400,21 @@ export function PreviewSeriesItem({
             borderColor: c.accentBorder,
             color: c.accentText,
           }}
-          className="inline-flex items-center px-3.5 py-1 rounded-full bg-[#F3DDE0] text-[#8C3F4D] text-xs font-bold"
+          className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#F3DDE0] text-[#8C3F4D] text-[11px] font-bold"
         >
           {epCountStr}
         </span>
       </div>
 
       {/* Series Title & Description */}
-      <div className="mt-3.5 space-y-1.5">
+      <div className="mt-2 space-y-1">
         <h3
           style={{
             color: c.primaryText,
             fontFamily: typ.headingFontFamily,
             fontWeight: typ.headingWeight as any,
           }}
-          className="text-base sm:text-lg font-extrabold leading-tight text-[#241618] break-words"
+          className="text-sm sm:text-base font-extrabold leading-snug text-[#241618] break-words"
         >
           {series.title}
         </h3>
@@ -2406,7 +2422,7 @@ export function PreviewSeriesItem({
         {series.description && series.description.trim() && (
           <p
             style={{ color: c.secondaryText }}
-            className="text-xs sm:text-[13px] leading-relaxed text-[#6B5A5D] font-normal"
+            className="text-xs leading-relaxed text-[#6B5A5D] font-normal"
           >
             {series.description}
           </p>
@@ -2414,9 +2430,30 @@ export function PreviewSeriesItem({
       </div>
 
       {/* Bottom Platform & Genre Tags */}
-      {allTags.length > 0 && (
-        <div className="mt-3.5 flex flex-wrap items-center gap-2">
-          {allTags.map((tag, idx) => (
+      {(detectedPlatform || genresList.length > 0 || langTag) && (
+        <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+          {/* Platform Tag */}
+          {detectedPlatform && (
+            <span
+              style={{
+                backgroundColor: c.accentSoft,
+                borderColor: c.accentBorder,
+                color: c.accentText,
+              }}
+              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#F3DDE0] text-[#8C3F4D] text-[11px] font-semibold"
+            >
+              {detectedPlatform === "YouTube" && <YoutubeIcon className="h-2.5 w-2.5 text-red-500" />}
+              {detectedPlatform === "Instagram" && <InstagramIcon className="h-2.5 w-2.5 text-pink-500" />}
+              {detectedPlatform === "Facebook" && <FacebookIcon className="h-2.5 w-2.5 text-blue-500" />}
+              {detectedPlatform !== "YouTube" && detectedPlatform !== "Instagram" && detectedPlatform !== "Facebook" && (
+                <Globe className="h-2.5 w-2.5 text-[#8C3F4D]" />
+              )}
+              <span>{detectedPlatform}</span>
+            </span>
+          )}
+
+          {/* Genre Tags */}
+          {genresList.map((tag, idx) => (
             <span
               key={idx}
               style={{
@@ -2424,11 +2461,25 @@ export function PreviewSeriesItem({
                 borderColor: c.accentBorder,
                 color: c.accentText,
               }}
-              className="inline-flex items-center px-3.5 py-1 rounded-full bg-[#F3DDE0] text-[#8C3F4D] text-xs font-semibold"
+              className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#F3DDE0] text-[#8C3F4D] text-[11px] font-semibold"
             >
               {tag}
             </span>
           ))}
+
+          {/* Language Tag */}
+          {langTag && (
+            <span
+              style={{
+                backgroundColor: c.accentSoft,
+                borderColor: c.accentBorder,
+                color: c.accentText,
+              }}
+              className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#F3DDE0] text-[#8C3F4D] text-[11px] font-semibold"
+            >
+              {langTag}
+            </span>
+          )}
         </div>
       )}
     </div>
