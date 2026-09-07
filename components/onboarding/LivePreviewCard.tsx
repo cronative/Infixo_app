@@ -1774,211 +1774,146 @@ export function LivePreviewCard({
                 {/* TAB 2: SERVICES (COLLAB GIGS) */}
                 {resolvedTab === "gigs" && (
                   <div className="space-y-2.5 sm:space-y-3 animate-in fade-in duration-200">
-                    {(() => {
-                      if (activePkgs.length === 0) {
-                        if (!isPreviewMode) return null;
-                        return (
-                          <div
-                            style={{
-                              backgroundColor: c.cardBackground,
-                              borderColor: c.border,
-                            }}
-                            className="rounded-2xl border-2 border-dashed p-5 text-center space-y-1"
-                          >
-                            <Briefcase style={{ color: c.accentText }} className="h-5 w-5 mx-auto" />
-                            <p style={{ color: c.primaryText }} className="font-bold text-xs">
-                              No collaboration services are listed right now
-                            </p>
-                            <p style={{ color: c.mutedText }} className="text-[11px]">
-                              Explore other creator options or check back later.
-                            </p>
-                          </div>
-                        );
-                      }
+                    {activePkgs.length > 0 ? (
+                      <div className="space-y-2">
+                        <div
+                          style={{
+                            backgroundColor: c.cardBackground,
+                            borderColor: c.border,
+                            boxShadow: eff.cardShadow,
+                          }}
+                          className="rounded-2xl border border-[#E4DAD5] bg-white divide-y divide-[#E4DAD5] overflow-hidden shadow-xs"
+                        >
+                          {activePkgs.map((pkg) => {
+                            const p = (pkg.platform || "").toLowerCase();
+                            const detectedPlatform =
+                              p.includes("youtube") ? "YouTube" :
+                              p.includes("instagram") ? "Instagram" :
+                              p.includes("facebook") ? "Facebook" :
+                              p.includes("twitter") || p.includes("x") ? "X" :
+                              p.includes("linkedin") ? "LinkedIn" :
+                              p.includes("threads") ? "Threads" :
+                              p.includes("snapchat") ? "Snapchat" :
+                              p.includes("spotify") ? "Spotify" :
+                              p.includes("twitch") ? "Twitch" :
+                              pkg.platform && pkg.platform.trim() ? pkg.platform.trim() : null;
 
-                      const visiblePackages = showAllGigs ? activePkgs : activePkgs.slice(0, 1);
-                      const remainingCount = activePkgs.length - 1;
+                            const subtitleParts: string[] = [];
+                            if (pkg.turnaroundDays) subtitleParts.push(`${pkg.turnaroundDays}d delivery`);
+                            if (pkg.deliverables && pkg.deliverables.length > 0) subtitleParts.push(`${pkg.deliverables.length} deliverables`);
+                            if (pkg.packageName || pkg.badge) subtitleParts.push((pkg.packageName || pkg.badge) as string);
+                            const subtitleStr = subtitleParts.join(" • ");
 
-                      return (
-                        <div className="space-y-2.5">
-                          <div className="grid grid-cols-1 gap-2.5">
-                            {visiblePackages.map((pkg) => {
-                              const mailSubject = encodeURIComponent(`[Inflixo Collab Inquiry] - ${pkg.title}`);
-                              const mailBody = encodeURIComponent(
-                                `Hi ${profile.displayName || "Creator"},\n\nI would like to inquire about collaborating on your "${pkg.title}" package listed on Inflixo.\n\nBest regards,\n[Brand Representative]`
-                              );
-                              const mailUrl = `mailto:${mediaKitSettings?.sponsorEmail || profile.email}?subject=${mailSubject}&body=${mailBody}`;
-
-                              const hasPhone = Boolean(mediaKitSettings?.whatsappNumber && mediaKitSettings.whatsappNumber.trim());
-                              const hasEmail = Boolean(mediaKitSettings?.sponsorEmail || profile.email);
-
-                              return (
-                                <div
-                                  key={pkg.id}
-                                  style={{
-                                    backgroundColor: c.cardBackground,
-                                    borderColor: c.border,
-                                    boxShadow: eff.cardShadow,
-                                  }}
-                                  className="rounded-2xl p-3.5 sm:p-4 space-y-2.5 transition-all text-left border"
-                                >
-                                  {/* Platform Tag & Price */}
-                                  <div className="flex items-center justify-between gap-2">
-                                    <div className="flex items-center gap-1.5 flex-wrap">
-                                      <span
-                                        style={{
-                                          backgroundColor: c.accentSoft,
-                                          borderColor: c.accentBorder,
-                                          color: c.accentText,
-                                        }}
-                                        className="text-[10px] font-bold px-2 py-0.5 rounded-lg uppercase tracking-wider border"
-                                      >
-                                        {pkg.platform}
+                            return (
+                              <div
+                                key={pkg.id}
+                                onClick={() => {
+                                  setSelectedGigForWhatsApp(pkg);
+                                  setIsLeadModalOpen(true);
+                                }}
+                                className="px-3.5 py-2.5 sm:py-3 transition-colors flex items-center justify-between hover:bg-[#F7F0EA]/50 group cursor-pointer"
+                              >
+                                <div className="flex items-center gap-3 min-w-0">
+                                  <span
+                                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
+                                      detectedPlatform === "YouTube"
+                                        ? "bg-red-600 shadow-xs text-white"
+                                        : detectedPlatform === "Instagram"
+                                        ? "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-xs text-white"
+                                        : detectedPlatform === "Facebook"
+                                        ? "bg-blue-600 shadow-xs text-white"
+                                        : detectedPlatform === "X"
+                                        ? "bg-slate-900 shadow-xs text-white"
+                                        : detectedPlatform === "LinkedIn"
+                                        ? "bg-sky-700 shadow-xs text-white"
+                                        : detectedPlatform === "Threads"
+                                        ? "bg-slate-900 shadow-xs text-white"
+                                        : detectedPlatform === "Snapchat"
+                                        ? "bg-amber-400 shadow-xs text-slate-950"
+                                        : detectedPlatform === "Spotify"
+                                        ? "bg-emerald-600 shadow-xs text-white"
+                                        : detectedPlatform === "Twitch"
+                                        ? "bg-purple-600 shadow-xs text-white"
+                                        : "bg-[#F3DDE0] text-[#8C3F4D]"
+                                    }`}
+                                  >
+                                    {detectedPlatform === "YouTube" ? (
+                                      <YoutubeIcon className="h-4 w-4 text-white" />
+                                    ) : detectedPlatform === "Instagram" ? (
+                                      <InstagramIcon className="h-4 w-4 text-white" />
+                                    ) : detectedPlatform === "Facebook" ? (
+                                      <FacebookIcon className="h-4 w-4 text-white" />
+                                    ) : detectedPlatform === "X" ? (
+                                      <XTwitterIcon className="h-3.5 w-3.5 text-white" />
+                                    ) : detectedPlatform === "LinkedIn" ? (
+                                      <LinkedinIcon className="h-3.5 w-3.5 text-white" />
+                                    ) : detectedPlatform === "Threads" ? (
+                                      <ThreadsIcon className="h-3.5 w-3.5 text-white" />
+                                    ) : detectedPlatform === "Snapchat" ? (
+                                      <SnapchatIcon className="h-4 w-4 text-slate-950" />
+                                    ) : detectedPlatform === "Spotify" ? (
+                                      <SpotifyIcon className="h-4 w-4 text-white" />
+                                    ) : detectedPlatform === "Twitch" ? (
+                                      <TwitchIcon className="h-4 w-4 text-white" />
+                                    ) : (
+                                      <span className="text-[11px] sm:text-xs font-bold tracking-tight select-none">
+                                        {getInitials(pkg.title || "Service")}
                                       </span>
-                                      {(pkg.badge || pkg.packageName) && (
-                                        <span
-                                          style={{
-                                            backgroundColor: c.cardBackground,
-                                            borderColor: c.border,
-                                            color: c.secondaryText,
-                                          }}
-                                          className="text-[10px] font-semibold px-2 py-0.5 rounded-md border"
-                                        >
-                                          {pkg.badge || pkg.packageName}
-                                        </span>
-                                      )}
-                                    </div>
-                                    <span
-                                      style={{
-                                        color: c.accentText,
-                                        fontFamily: typ.headingFontFamily,
-                                      }}
-                                      className="text-base font-bold shrink-0"
-                                    >
-                                      {pkg.price}
-                                    </span>
-                                  </div>
-
-                                  {/* Title & Delivery Time */}
-                                  <div>
-                                    <h3
-                                      style={{
-                                        color: c.primaryText,
-                                        fontFamily: typ.headingFontFamily,
-                                        fontWeight: typ.headingWeight as any,
-                                      }}
-                                      className="font-bold text-sm leading-snug"
-                                    >
+                                    )}
+                                  </span>
+                                  <div className="min-w-0 text-left space-y-0.5">
+                                    <p style={{ color: c.primaryText }} className="truncate text-xs sm:text-[13px] font-bold">
                                       {pkg.title}
-                                    </h3>
-                                    <p
-                                      style={{ color: c.mutedText }}
-                                      className="text-[11px] font-medium mt-0.5 flex items-center gap-1"
-                                    >
-                                      <Clock className="h-3 w-3 shrink-0" /> {pkg.turnaroundDays}-day delivery
+                                    </p>
+                                    <p style={{ color: c.mutedText }} className="truncate text-[11px] font-medium">
+                                      {subtitleStr || pkg.platform}
                                     </p>
                                   </div>
-
-                                  {/* Deliverables List */}
-                                  {pkg.deliverables && pkg.deliverables.length > 0 && (
-                                    <ul
-                                      style={{
-                                        borderColor: c.divider,
-                                        color: c.secondaryText,
-                                      }}
-                                      className="text-xs space-y-1 pt-1.5 border-t"
-                                    >
-                                      {pkg.deliverables.slice(0, 3).map((item, idx) => (
-                                        <li key={idx} className="flex items-start gap-2">
-                                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                                          <span className="leading-snug">{item}</span>
-                                        </li>
-                                      ))}
-                                      {pkg.deliverables.length > 3 && (
-                                        <li style={{ color: c.accentText }} className="text-[11px] font-semibold pl-5">
-                                          +{pkg.deliverables.length - 3} more deliverables
-                                        </li>
-                                      )}
-                                    </ul>
-                                  )}
-
-                                  {/* Direct Contact Actions */}
-                                  {(hasPhone || hasEmail) && (
-                                    <div
-                                      style={{ borderColor: c.divider }}
-                                      className={`pt-2 border-t ${
-                                        hasPhone && hasEmail ? "grid grid-cols-2 gap-2" : "flex w-full"
-                                      }`}
-                                    >
-                                      {hasPhone && (
-                                        <button
-                                          type="button"
-                                          onClick={() => {
-                                            setSelectedGigForWhatsApp(pkg);
-                                            setIsLeadModalOpen(true);
-                                          }}
-                                          className={`bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs ${
-                                            !hasEmail ? "w-full" : ""
-                                          }`}
-                                        >
-                                          <MessageCircle className="h-3.5 w-3.5 fill-white" />
-                                          <span>Enquire on WhatsApp</span>
-                                        </button>
-                                      )}
-
-                                      {hasEmail && (
-                                        <a
-                                          href={mailUrl}
-                                          style={{
-                                            backgroundColor: c.accentSoft,
-                                            borderColor: c.accentBorder,
-                                            color: c.accentText,
-                                          }}
-                                          className={`text-xs font-semibold py-2 px-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 border shadow-2xs ${
-                                            !hasPhone ? "w-full" : ""
-                                          }`}
-                                        >
-                                          <Mail className="h-3.5 w-3.5" />
-                                          <span>Send Email</span>
-                                        </a>
-                                      )}
-                                    </div>
-                                  )}
                                 </div>
-                              );
-                            })}
-                          </div>
 
-                          {/* Toggle More Services */}
-                          {activePkgs.length > 1 && (
-                            <button
-                              type="button"
-                              onClick={() => setShowAllGigs(!showAllGigs)}
-                              style={{
-                                backgroundColor: c.cardBackground,
-                                borderColor: c.border,
-                                color: c.secondaryText,
-                              }}
-                              className="w-full py-2 px-3 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer border"
-                            >
-                              <span>
-                                {showAllGigs
-                                  ? "Show fewer services ↑"
-                                  : `+ ${remainingCount} more collaboration service${remainingCount > 1 ? "s" : ""} available ↓`}
-                              </span>
-                            </button>
-                          )}
+                                <div className="flex items-center gap-2 shrink-0">
+                                  <span style={{ color: c.primaryText }} className="text-xs sm:text-[13px] font-bold tabular-nums">
+                                    {pkg.price}
+                                  </span>
+                                  <ChevronRight
+                                    style={{ color: c.secondaryText }}
+                                    className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+                                  />
+                                </div>
+                              </div>
+                            );
+                          })}
                         </div>
-                      );
-                    })()}
+
+                        <p className="text-center text-xs text-[#6B5A5D] font-normal pt-1 select-none">
+                          Tap any service to enquire or book collaboration
+                        </p>
+                      </div>
+                    ) : isPreviewMode ? (
+                      <div
+                        style={{
+                          backgroundColor: c.cardBackground,
+                          borderColor: c.border,
+                        }}
+                        className="rounded-2xl border-2 border-dashed p-5 text-center space-y-1"
+                      >
+                        <Briefcase style={{ color: c.accentText }} className="h-5 w-5 mx-auto" />
+                        <p style={{ color: c.primaryText }} className="font-bold text-xs">
+                          No collaboration services are listed right now
+                        </p>
+                        <p style={{ color: c.mutedText }} className="text-[11px]">
+                          Explore other creator options or check back later.
+                        </p>
+                      </div>
+                    ) : null}
                   </div>
                 )}
 
-                {/* TAB 3: REVIEWS */}
+                {/* TAB 3: REVIEWS / RATINGS */}
                 {resolvedTab === "reviews" && (
                   <div className="space-y-2.5 sm:space-y-3 animate-in fade-in duration-200">
                     {approvedReviews && approvedReviews.length > 0 ? (
-                      <div className="space-y-2.5">
+                      <div className="space-y-2">
                         {/* Rating Summary Header */}
                         {(() => {
                           const total = approvedReviews.length;
@@ -1994,101 +1929,86 @@ export function LivePreviewCard({
                               }}
                               className="rounded-2xl p-3 border text-left flex items-center justify-between gap-3"
                             >
-                              <div>
-                                <div className="flex items-center gap-1.5">
-                                  <span style={{ color: c.primaryText }} className="font-bold text-xs sm:text-sm">
-                                    {avg} out of 5
-                                  </span>
-                                  <span style={{ color: c.mutedText }} className="font-bold text-xs">·</span>
-                                  <span style={{ color: c.secondaryText }} className="font-medium text-xs">
-                                    Based on {total} client review{total > 1 ? "s" : ""}
-                                  </span>
-                                </div>
+                              <div className="flex items-center gap-1.5">
+                                <Star className="h-4 w-4 fill-amber-400 text-amber-400 shrink-0" />
+                                <span style={{ color: c.primaryText }} className="font-bold text-xs sm:text-sm">
+                                  {avg} out of 5
+                                </span>
+                                <span style={{ color: c.mutedText }} className="font-bold text-xs">·</span>
+                                <span style={{ color: c.secondaryText }} className="font-medium text-xs">
+                                  Based on {total} client review{total > 1 ? "s" : ""}
+                                </span>
                               </div>
                             </div>
                           );
                         })()}
 
-                        {/* Individual Review Cards */}
-                        {approvedReviews.map((rev) => {
-                          const ratingNum = Number(rev.rating) || 5;
-                          return (
-                            <div
-                              key={rev.id}
-                              style={{
-                                backgroundColor: c.cardBackground,
-                                borderColor: c.border,
-                                boxShadow: eff.cardShadow,
-                              }}
-                              className="rounded-2xl p-3.5 sm:p-4 space-y-2 transition-all text-left border"
-                            >
-                              <div className="flex items-center justify-between gap-2">
-                                <div className="flex items-center gap-0.5 text-amber-400" aria-label={`Rated ${ratingNum} out of 5`}>
-                                  {Array.from({ length: 5 }).map((_, i) => (
-                                    <Star
-                                      key={i}
-                                      className={`h-3.5 w-3.5 ${
-                                        i < ratingNum
-                                          ? "fill-amber-400 text-amber-400"
-                                          : "text-slate-200 fill-slate-200"
-                                      }`}
-                                    />
-                                  ))}
-                                </div>
-                                {rev.projectTitle && (
-                                  <div className="flex items-center gap-1.5 flex-wrap justify-end">
-                                    <span
-                                      style={{
-                                        backgroundColor: c.accentSoft,
-                                        borderColor: c.accentBorder,
-                                        color: c.accentText,
-                                      }}
-                                      className="text-[10px] font-semibold px-2 py-0.5 rounded-md border truncate max-w-[140px]"
-                                    >
-                                      {rev.projectTitle}
-                                    </span>
-                                    {rev.contentUrl && (
-                                      <a
-                                        href={rev.contentUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        style={{ color: c.accentText }}
-                                        className="text-[10px] font-semibold hover:underline flex items-center gap-0.5"
-                                      >
-                                        <span>View related work ↗</span>
-                                      </a>
-                                    )}
-                                  </div>
-                                )}
-                              </div>
+                        {/* Individual Review Divided Card */}
+                        <div
+                          style={{
+                            backgroundColor: c.cardBackground,
+                            borderColor: c.border,
+                            boxShadow: eff.cardShadow,
+                          }}
+                          className="rounded-2xl border border-[#E4DAD5] bg-white divide-y divide-[#E4DAD5] overflow-hidden shadow-xs"
+                        >
+                          {approvedReviews.map((rev) => {
+                            const ratingNum = Number(rev.rating) || 5;
+                            const clientInitials = getInitials(rev.clientName || "Client");
+                            const subtitleParts: string[] = [];
+                            if (rev.clientDesignation) subtitleParts.push(rev.clientDesignation);
+                            if (rev.projectTitle) subtitleParts.push(rev.projectTitle);
+                            if (rev.comment) subtitleParts.push(`“${rev.comment}”`);
+                            const subtitleStr = subtitleParts.join(" • ");
 
-                              {rev.comment && (
-                                <p
-                                  style={{ color: c.secondaryText }}
-                                  className="text-xs font-normal leading-relaxed"
-                                >
-                                  “{rev.comment}”
-                                </p>
-                              )}
-
+                            return (
                               <div
-                                style={{ borderColor: c.divider }}
-                                className="pt-1.5 flex items-center justify-between text-[11px] border-t"
+                                key={rev.id}
+                                className="px-3.5 py-2.5 sm:py-3 transition-colors flex items-center justify-between hover:bg-[#F7F0EA]/50 group"
                               >
-                                <div className="min-w-0 flex-1 truncate pr-2">
-                                  <span style={{ color: c.primaryText }} className="font-bold">
-                                    {rev.clientName}
+                                <div className="flex items-center gap-3 min-w-0">
+                                  <span
+                                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#F3DDE0] text-[#8C3F4D] text-[11px] sm:text-xs font-bold tracking-tight select-none"
+                                  >
+                                    {clientInitials}
                                   </span>
-                                  {rev.clientDesignation && (
-                                    <span style={{ color: c.mutedText }} className="ml-1 font-medium">
-                                      • {rev.clientDesignation}
+                                  <div className="min-w-0 text-left space-y-0.5">
+                                    <div className="flex items-center gap-1.5 min-w-0">
+                                      <p style={{ color: c.primaryText }} className="truncate text-xs sm:text-[13px] font-bold">
+                                        {rev.clientName}
+                                      </p>
+                                      {rev.contentUrl && (
+                                        <a
+                                          href={rev.contentUrl}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          onClick={(e) => e.stopPropagation()}
+                                          style={{ color: c.accentText }}
+                                          className="hover:underline shrink-0"
+                                          title="View related work"
+                                        >
+                                          <ExternalLink className="h-3 w-3" />
+                                        </a>
+                                      )}
+                                    </div>
+                                    <p style={{ color: c.mutedText }} className="truncate text-[11px] font-medium">
+                                      {subtitleStr || "Verified Client Review"}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                <div className="flex items-center gap-1.5 shrink-0">
+                                  <div className="flex items-center gap-1 text-amber-400">
+                                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                                    <span style={{ color: c.primaryText }} className="text-xs sm:text-[13px] font-bold tabular-nums">
+                                      {ratingNum.toFixed(1)}
                                     </span>
-                                  )}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          );
-                        })}
+                            );
+                          })}
+                        </div>
                       </div>
                     ) : isPreviewMode ? (
                       <div
