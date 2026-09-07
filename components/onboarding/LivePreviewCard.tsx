@@ -1455,7 +1455,7 @@ export function LivePreviewCard({
               </div>
             )}
 
-            {/* Clean Total Fanbase Card (28px section gap) */}
+            {/* Clean Total Fanbase Card */}
             {visibilitySettings.showFanbase !== false && (
               <div
                 style={{
@@ -1463,7 +1463,7 @@ export function LivePreviewCard({
                   borderColor: c.border,
                   boxShadow: eff.cardShadow,
                 }}
-                className="mt-7 rounded-2xl py-3.5 px-4 border text-center w-full space-y-0.5"
+                className="mt-5 sm:mt-6 rounded-2xl py-3 px-4 border text-center w-full space-y-0.5"
               >
                 <span
                   style={{ color: c.accentText }}
@@ -1477,7 +1477,7 @@ export function LivePreviewCard({
                     fontFamily: typ.headingFontFamily,
                     fontWeight: typ.headingWeight as any,
                   }}
-                  className="text-[34px] leading-tight font-extrabold tabular-nums"
+                  className="text-[32px] leading-tight font-extrabold tabular-nums"
                 >
                   {formatCount(totalAudience)}
                 </p>
@@ -1496,16 +1496,16 @@ export function LivePreviewCard({
             )}
           </div>
 
-          {/* Connected Social Accounts List: Single Card with Dividers (28px section gap) */}
+          {/* Connected Social Accounts List: Single Card with Dividers */}
           {activeSocialList.length > 0 && (
-            <div className="relative z-10 mt-7 w-full">
+            <div className="relative z-10 mt-5 sm:mt-6 w-full">
               <div
                 style={{
                   backgroundColor: c.cardBackground,
                   borderColor: c.border,
                   boxShadow: eff.cardShadow,
                 }}
-                className="rounded-2xl border divide-y divide-[#E4DAD5] overflow-hidden"
+                className="rounded-2xl border border-[#E4DAD5] bg-white divide-y divide-[#E4DAD5] overflow-hidden shadow-xs"
               >
                 {activeSocialList.map((item) => (
                   <a
@@ -1514,14 +1514,14 @@ export function LivePreviewCard({
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
-                    className="p-3.5 sm:p-4 transition-all flex items-center justify-between hover:bg-[var(--color-surface-alt,#fbfbfb)] group"
+                    className="px-3.5 py-2.5 sm:py-3 transition-colors flex items-center justify-between hover:bg-[#F7F0EA]/50 group"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className={`flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-lg ${item.badgeBg}`}>
+                      <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${item.badgeBg}`}>
                         {item.icon}
                       </span>
                       <div className="min-w-0 text-left space-y-0.5">
-                        <p style={{ color: c.primaryText }} className="truncate text-xs sm:text-sm font-bold">
+                        <p style={{ color: c.primaryText }} className="truncate text-xs sm:text-[13px] font-bold">
                           {item.label}
                         </p>
                         {item.handle && (
@@ -1533,7 +1533,7 @@ export function LivePreviewCard({
                     </div>
                     <div className="flex items-center gap-2.5 shrink-0">
                       {item.count > 0 && (
-                        <span style={{ color: c.primaryText }} className="text-xs sm:text-sm font-bold tabular-nums">
+                        <span style={{ color: c.primaryText }} className="text-xs sm:text-[13px] font-bold tabular-nums">
                           {formatCount(item.count)}{" "}
                           <span style={{ color: c.mutedText }} className="font-normal text-[11px]">{item.unit.toLowerCase()}</span>
                         </span>
@@ -1546,13 +1546,20 @@ export function LivePreviewCard({
             </div>
           )}
 
-          {/* Custom Links List (28px section gap) */}
+          {/* Custom Links List: Single Card with Dividers (Matching Social Listing Pattern) */}
           {visibilitySettings.showCustomLinks !== false && customLinksList && customLinksList.filter((l) => l.isEnabled !== false && l.title && l.url).length > 0 && (
-            <div className="relative z-10 mt-7 space-y-2 w-full text-left">
+            <div className="relative z-10 mt-5 sm:mt-6 space-y-1.5 w-full text-left">
               <span style={{ color: c.mutedText }} className="text-[11px] font-bold uppercase tracking-wider px-1 block">
                 LINKS
               </span>
-              <div className="grid grid-cols-1 gap-2.5 w-full">
+              <div
+                style={{
+                  backgroundColor: c.cardBackground,
+                  borderColor: c.border,
+                  boxShadow: eff.cardShadow,
+                }}
+                className="rounded-2xl border border-[#E4DAD5] bg-white divide-y divide-[#E4DAD5] overflow-hidden shadow-xs"
+              >
                 {customLinksList
                   .filter((l) => l.isEnabled !== false && l.title && l.url)
                   .map((link) => (
@@ -1562,24 +1569,21 @@ export function LivePreviewCard({
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
-                      style={{
-                        backgroundColor: c.cardBackground,
-                        borderColor: c.border,
-                        boxShadow: eff.cardShadow,
-                      }}
-                      className="group rounded-2xl p-3.5 sm:p-4 text-xs sm:text-sm font-bold transition-all flex items-center justify-between border cursor-pointer hover:bg-[var(--color-surface-alt,#fbfbfb)]"
+                      className="px-3.5 py-2.5 sm:py-3 transition-colors flex items-center justify-between hover:bg-[#F7F0EA]/50 group cursor-pointer"
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <span
-                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#F3DDE0] text-[#8C3F4D]"
+                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#F3DDE0] text-[#8C3F4D]"
                         >
-                          <LinkIcon className="h-4.5 w-4.5" />
+                          <LinkIcon className="h-4 w-4" />
                         </span>
-                        <span style={{ color: c.primaryText }} className="truncate font-semibold">{link.title}</span>
+                        <span style={{ color: c.primaryText }} className="truncate text-xs sm:text-[13px] font-bold">
+                          {link.title}
+                        </span>
                       </div>
                       <ExternalLink
                         style={{ color: c.secondaryText }}
-                        className="h-3.5 w-3.5 shrink-0 transition-transform group-hover:translate-x-0.5"
+                        className="h-3.5 w-3.5 shrink-0 transition-colors group-hover:translate-x-0.5"
                       />
                     </a>
                   ))}
