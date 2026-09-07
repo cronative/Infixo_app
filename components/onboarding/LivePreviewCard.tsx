@@ -957,7 +957,7 @@ export function LivePreviewCard({
           <Link
             href="/"
             style={{ backgroundColor: c.accent }}
-            className="tap-scale flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-xs transition-all shrink-0 border border-white/20 select-none hover:scale-105 cursor-pointer"
+            className="tap-scale flex h-9 w-9 items-center justify-center rounded-full text-white shadow-xs transition-all shrink-0 border border-white/20 select-none hover:scale-105 cursor-pointer"
             title="Inflixo"
             aria-label="Inflixo"
           >
