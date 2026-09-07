@@ -1659,7 +1659,7 @@ export function LivePreviewCard({
                             : "text-[#6B5A5D] hover:text-[#241618] border-transparent"
                         }`}
                       >
-                        <span>Content ({series ? series.length : 0})</span>
+                        <span>Series ({series ? series.length : 0})</span>
                       </button>
                     )}
 
@@ -1705,7 +1705,7 @@ export function LivePreviewCard({
                   /* Single Section Heading */
                   <div className="mb-2 px-1">
                     <span style={{ color: c.mutedText }} className="text-[11px] font-bold uppercase tracking-wider">
-                      {resolvedTab === "series" ? `CONTENT (${series?.length || 0})` : resolvedTab === "gigs" ? `SERVICES (${activePkgs.length})` : `REVIEWS (${approvedReviews.length})`}
+                      {resolvedTab === "series" ? `SERIES (${series?.length || 0})` : resolvedTab === "gigs" ? `SERVICES (${activePkgs.length})` : `REVIEWS (${approvedReviews.length})`}
                     </span>
                   </div>
                 )}
@@ -1714,31 +1714,40 @@ export function LivePreviewCard({
                 {resolvedTab === "series" && (
                   <div className="space-y-2.5 sm:space-y-3 animate-in fade-in duration-200">
                     {series && series.length > 0 ? (
-                      <div className="space-y-3.5">
-                        {series.map((s) => (
-                          <PreviewSeriesItem
-                            key={s.id}
-                            series={s}
-                            style={style}
-                            themeKey={themeKey}
-                            username={profile.username}
-                            expanded={expandedSeriesId === s.id}
-                            isOnboarding={isOnboardingMode}
-                            isInformational={isInformationalMode}
-                            onSelectSeries={(selected) => setSelectedSeriesDetail(selected)}
-                            onToggle={() => {
-                              if (isOnboardingMode || isInformationalMode) return;
-                              if (typeof window !== "undefined" && window.innerWidth < 640) {
-                                setDrawerSeries(s);
-                                setIsDrawerOpen(true);
-                              } else {
-                                setExpandedSeriesId(expandedSeriesId === s.id ? null : s.id);
-                              }
-                            }}
-                          />
-                        ))}
+                      <div className="space-y-2">
+                        <div
+                          style={{
+                            backgroundColor: c.cardBackground,
+                            borderColor: c.border,
+                            boxShadow: eff.cardShadow,
+                          }}
+                          className="rounded-2xl border border-[#E4DAD5] bg-white divide-y divide-[#E4DAD5] overflow-hidden shadow-xs"
+                        >
+                          {series.map((s) => (
+                            <PreviewSeriesItem
+                              key={s.id}
+                              series={s}
+                              style={style}
+                              themeKey={themeKey}
+                              username={profile.username}
+                              expanded={expandedSeriesId === s.id}
+                              isOnboarding={isOnboardingMode}
+                              isInformational={isInformationalMode}
+                              onSelectSeries={(selected) => setSelectedSeriesDetail(selected)}
+                              onToggle={() => {
+                                if (isOnboardingMode || isInformationalMode) return;
+                                if (typeof window !== "undefined" && window.innerWidth < 640) {
+                                  setDrawerSeries(s);
+                                  setIsDrawerOpen(true);
+                                } else {
+                                  setExpandedSeriesId(expandedSeriesId === s.id ? null : s.id);
+                                }
+                              }}
+                            />
+                          ))}
+                        </div>
 
-                        <p className="text-center text-xs text-[#6B5A5D] font-normal pt-2 pb-1 select-none">
+                        <p className="text-center text-xs text-[#6B5A5D] font-normal pt-1 select-none">
                           Tap any series to open its full episode list
                         </p>
                       </div>
@@ -2397,10 +2406,8 @@ export function PreviewSeriesItem({
   isOnboarding?: boolean;
   isInformational?: boolean;
 }) {
-  const { showToast } = useToast();
   const themeMeta = ThemeService.getThemeMeta(themeKey);
   const c = themeMeta.colors;
-  const typ = themeMeta.typography;
 
   const allEpisodes = getSeriesEpisodes(series);
   const epCount = allEpisodes.length;
@@ -2431,113 +2438,55 @@ export function PreviewSeriesItem({
         .filter(Boolean)
     : [];
 
-  const langTag =
-    series.language &&
-    series.language.trim() &&
-    !genresList.some((g) => g.toLowerCase() === series.language!.trim().toLowerCase())
-      ? series.language.trim()
-      : null;
+  const subtitleParts: string[] = [epCountStr];
+  if (detectedPlatform) subtitleParts.push(detectedPlatform);
+  if (genresList.length > 0) subtitleParts.push(genresList[0]);
+  const subtitleStr = subtitleParts.join(" • ");
 
   return (
     <div
       id={`series-${series.id}`}
       onClick={() => (onSelectSeries ? onSelectSeries(series) : onToggle ? onToggle() : null)}
-      style={{
-        backgroundColor: c.cardBackground,
-        borderColor: c.border,
-      }}
-      className="group relative rounded-2xl p-4 sm:p-4.5 transition-all text-left border border-[#E4DAD5] bg-white hover:bg-[#F7F0EA]/50 cursor-pointer shadow-xs"
+      className="px-3.5 py-2.5 sm:py-3 transition-colors flex items-center justify-between hover:bg-[#F7F0EA]/50 group cursor-pointer"
     >
-      {/* Top Episode Count Pill */}
-      <div className="w-fit">
+      <div className="flex items-center gap-3 min-w-0">
         <span
-          style={{
-            backgroundColor: c.accentSoft,
-            borderColor: c.accentBorder,
-            color: c.accentText,
-          }}
-          className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#F3DDE0] text-[#8C3F4D] text-[11px] font-bold"
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
+            detectedPlatform === "YouTube"
+              ? "bg-red-600 shadow-xs text-white"
+              : detectedPlatform === "Instagram"
+              ? "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-xs text-white"
+              : detectedPlatform === "Facebook"
+              ? "bg-blue-600 shadow-xs text-white"
+              : "bg-[#F3DDE0] text-[#8C3F4D]"
+          }`}
         >
-          {epCountStr}
+          {detectedPlatform === "YouTube" ? (
+            <YoutubeIcon className="h-4 w-4 text-white" />
+          ) : detectedPlatform === "Instagram" ? (
+            <InstagramIcon className="h-4 w-4 text-white" />
+          ) : detectedPlatform === "Facebook" ? (
+            <FacebookIcon className="h-4 w-4 text-white" />
+          ) : (
+            <Film className="h-4 w-4" />
+          )}
         </span>
-      </div>
-
-      {/* Series Title & Description */}
-      <div className="mt-2 space-y-1">
-        <h3
-          style={{
-            color: c.primaryText,
-            fontFamily: typ.headingFontFamily,
-            fontWeight: typ.headingWeight as any,
-          }}
-          className="text-sm sm:text-base font-extrabold leading-snug text-[#241618] break-words"
-        >
-          {series.title}
-        </h3>
-
-        {series.description && series.description.trim() && (
-          <p
-            style={{ color: c.secondaryText }}
-            className="text-xs leading-relaxed text-[#6B5A5D] font-normal"
-          >
-            {series.description}
+        <div className="min-w-0 text-left space-y-0.5">
+          <p style={{ color: c.primaryText }} className="truncate text-xs sm:text-[13px] font-bold">
+            {series.title}
           </p>
-        )}
+          <p style={{ color: c.mutedText }} className="truncate text-[11px] font-medium">
+            {subtitleStr}
+          </p>
+        </div>
       </div>
 
-      {/* Bottom Platform & Genre Tags */}
-      {(detectedPlatform || genresList.length > 0 || langTag) && (
-        <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
-          {/* Platform Tag */}
-          {detectedPlatform && (
-            <span
-              style={{
-                backgroundColor: c.accentSoft,
-                borderColor: c.accentBorder,
-                color: c.accentText,
-              }}
-              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#F3DDE0] text-[#8C3F4D] text-[11px] font-semibold"
-            >
-              {detectedPlatform === "YouTube" && <YoutubeIcon className="h-2.5 w-2.5 text-red-500" />}
-              {detectedPlatform === "Instagram" && <InstagramIcon className="h-2.5 w-2.5 text-pink-500" />}
-              {detectedPlatform === "Facebook" && <FacebookIcon className="h-2.5 w-2.5 text-blue-500" />}
-              {detectedPlatform !== "YouTube" && detectedPlatform !== "Instagram" && detectedPlatform !== "Facebook" && (
-                <Globe className="h-2.5 w-2.5 text-[#8C3F4D]" />
-              )}
-              <span>{detectedPlatform}</span>
-            </span>
-          )}
-
-          {/* Genre Tags */}
-          {genresList.map((tag, idx) => (
-            <span
-              key={idx}
-              style={{
-                backgroundColor: c.accentSoft,
-                borderColor: c.accentBorder,
-                color: c.accentText,
-              }}
-              className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#F3DDE0] text-[#8C3F4D] text-[11px] font-semibold"
-            >
-              {tag}
-            </span>
-          ))}
-
-          {/* Language Tag */}
-          {langTag && (
-            <span
-              style={{
-                backgroundColor: c.accentSoft,
-                borderColor: c.accentBorder,
-                color: c.accentText,
-              }}
-              className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#F3DDE0] text-[#8C3F4D] text-[11px] font-semibold"
-            >
-              {langTag}
-            </span>
-          )}
-        </div>
-      )}
+      <div className="flex items-center gap-2 shrink-0">
+        <ChevronRight
+          style={{ color: c.secondaryText }}
+          className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+        />
+      </div>
     </div>
   );
 }
