@@ -1658,7 +1658,7 @@ export function LivePreviewCard({
                 {resolvedTab === "series" && (
                   <div className="space-y-2.5 sm:space-y-3 animate-in fade-in duration-200">
                     {series && series.length > 0 ? (
-                      <div className="space-y-3">
+                      <div className="space-y-3.5">
                         {series.map((s) => (
                           <PreviewSeriesItem
                             key={s.id}
@@ -1681,6 +1681,10 @@ export function LivePreviewCard({
                             }}
                           />
                         ))}
+
+                        <p className="text-center text-xs text-[#6B5A5D] font-normal pt-2 pb-1 select-none">
+                          Tap any series to open its full episode list
+                        </p>
                       </div>
                     ) : isPreviewMode ? (
                       <div
@@ -2341,134 +2345,72 @@ export function PreviewSeriesItem({
   const themeMeta = ThemeService.getThemeMeta(themeKey);
   const c = themeMeta.colors;
   const typ = themeMeta.typography;
-  const eff = themeMeta.effects;
 
   const allEpisodes = getSeriesEpisodes(series);
-  const genresList = series.genre ? series.genre.split(",").map((g) => g.trim()).filter(Boolean) : [];
-  const seriesCategory = genresList.length > 0 ? genresList.join(", ") : (series.genre || "Series");
+  const epCount = allEpisodes.length;
+  const epCountStr = `${epCount} ${epCount === 1 ? "Episode" : "Episodes"}`;
 
-  const handleShareSeriesLink = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (isOnboarding || isInformational) {
-      showToast("Series link active on live profile ✨");
-      return;
-    }
-    const handle = username || "creator";
-    const shareUrl = typeof window !== "undefined"
-      ? `${window.location.origin}/${handle}/series/${series.id}`
-      : `https://inflixo.com/${handle}/series/${series.id}`;
-    const title = `${series.title} on Inflixo`;
+  const genresList = series.genre
+    ? series.genre
+        .split(/[,•|/]/)
+        .map((g) => g.trim().replace(/^Genre:\s*/i, ""))
+        .filter(Boolean)
+    : [];
 
-    if (typeof navigator !== "undefined" && navigator.share) {
-      navigator.share({ title, url: shareUrl }).catch(async () => {
-        const success = await copyToClipboard(shareUrl);
-        if (success) showToast("Series link copied to clipboard! 🎬");
-      });
-    } else {
-      const success = await copyToClipboard(shareUrl);
-      if (success) showToast("Series link copied to clipboard! 🎬");
-    }
-  };
+  const allTags: string[] = [];
+  if (series.platform) {
+    allTags.push(series.platform);
+  }
+  allTags.push(...genresList);
+  if (series.language && series.language.trim() && !allTags.includes(series.language.trim())) {
+    allTags.push(series.language.trim());
+  }
 
   return (
     <div
       id={`series-${series.id}`}
-      onClick={() => onSelectSeries ? onSelectSeries(series) : onToggle ? onToggle() : null}
-      style={{
-        backgroundColor: c.cardBackground,
-        borderColor: c.border,
-        boxShadow: eff.cardShadow,
-      }}
-      className="group relative rounded-2xl p-3.5 sm:p-4 transition-all text-left border cursor-pointer hover:scale-[1.01] hover:brightness-[1.02]"
+      onClick={() => (onSelectSeries ? onSelectSeries(series) : onToggle ? onToggle() : null)}
+      className="group relative rounded-3xl p-5 sm:p-6 transition-all text-left bg-[#F4E3E6] hover:bg-[#EED9DD] border border-[#E8D4D8]/50 cursor-pointer shadow-2xs"
     >
-      <div className="flex items-start justify-between gap-3 text-left">
-        <div className="flex items-start gap-3 min-w-0 flex-1">
-          <div
-            style={{
-              backgroundColor: c.accentSoft,
-              borderColor: c.accentBorder,
-              color: c.accentText,
-            }}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl mt-0.5 border shadow-2xs"
-          >
-            <Film className="h-5 w-5" />
-          </div>
-
-          <div className="min-w-0 flex-1 space-y-1">
-            {/* Platform Badge & Category */}
-            <div className="flex items-center gap-1.5 flex-wrap">
-              {series.platform && (
-                <span
-                  style={{
-                    backgroundColor: c.accentSoft,
-                    borderColor: c.accentBorder,
-                    color: c.accentText,
-                  }}
-                  className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-bold border"
-                >
-                  {series.platform === "YouTube" && <YoutubeIcon className="h-2.5 w-2.5 text-red-500" />}
-                  {series.platform === "Instagram" && <InstagramIcon className="h-2.5 w-2.5 text-pink-500" />}
-                  {series.platform === "Facebook" && <FacebookIcon className="h-2.5 w-2.5 text-blue-500" />}
-                  {series.platform === "Other" && <Globe className="h-2.5 w-2.5 text-purple-400" />}
-                  <span>{series.platform}</span>
-                </span>
-              )}
-
-              <span style={{ color: c.mutedText }} className="text-[10px] font-semibold">
-                {seriesCategory}{series.language ? ` • ${series.language}` : ""} • {allEpisodes.length} {allEpisodes.length === 1 ? "Ep" : "Eps"}
-              </span>
-            </div>
-
-            <h3
-              style={{
-                color: c.primaryText,
-                fontFamily: typ.headingFontFamily,
-                fontWeight: typ.headingWeight as any,
-              }}
-              className="text-sm sm:text-base font-extrabold leading-tight break-words transition-colors group-hover:opacity-90"
-            >
-              {series.title}
-            </h3>
-
-            {series.description && (
-              <p
-                style={{ color: c.secondaryText }}
-                className="text-xs font-normal leading-relaxed line-clamp-2 text-left"
-              >
-                {series.description}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Right Side: Share Button & Subtle Navigation Arrow */}
-        <div className="flex items-center gap-1.5 shrink-0 pt-0.5">
-          {!isOnboarding && (
-            <button
-              type="button"
-              onClick={handleShareSeriesLink}
-              style={{
-                backgroundColor: c.cardBackground,
-                borderColor: c.border,
-                color: c.secondaryText,
-              }}
-              className="flex h-7.5 w-7.5 items-center justify-center rounded-xl border transition-all cursor-pointer shadow-2xs hover:scale-105 hover:brightness-105"
-              title="Share Series Link"
-              aria-label="Share Series"
-            >
-              <Share2 className="h-3.5 w-3.5" />
-            </button>
-          )}
-
-          <div
-            style={{ color: c.accentText }}
-            className="flex h-7.5 w-7.5 items-center justify-center rounded-xl transition-transform group-hover:translate-x-1"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </div>
-        </div>
+      {/* Top Episode Count Pill */}
+      <div className="w-fit">
+        <span className="inline-flex items-center px-3.5 py-1 rounded-full bg-white text-[#8C3F4D] text-xs font-bold shadow-2xs">
+          {epCountStr}
+        </span>
       </div>
+
+      {/* Series Title & Description */}
+      <div className="mt-3.5 space-y-1.5">
+        <h3
+          style={{
+            fontFamily: typ.headingFontFamily,
+            fontWeight: typ.headingWeight as any,
+          }}
+          className="text-base sm:text-lg font-extrabold leading-tight text-[#241618] break-words"
+        >
+          {series.title}
+        </h3>
+
+        {series.description && series.description.trim() && (
+          <p className="text-xs sm:text-[13px] leading-relaxed text-[#6B5A5D] font-normal">
+            {series.description}
+          </p>
+        )}
+      </div>
+
+      {/* Bottom Platform & Genre Tags */}
+      {allTags.length > 0 && (
+        <div className="mt-3.5 flex flex-wrap items-center gap-2">
+          {allTags.map((tag, idx) => (
+            <span
+              key={idx}
+              className="inline-flex items-center px-3.5 py-1 rounded-full bg-white text-[#8C3F4D] text-xs font-bold shadow-2xs"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
