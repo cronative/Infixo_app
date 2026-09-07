@@ -47,7 +47,7 @@ export function DashboardMobileHeader({
         ) : (
           <button
             onClick={onOpenDrawer}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] text-[#241618] active:scale-95 transition-transform hover:bg-[#f3dde057] hover:text-[#B85C6B] cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] text-[#241618] active:scale-95 transition-transform hover:bg-[#600b0f0f] hover:text-[#600a0f] cursor-pointer"
             aria-label="Open menu drawer"
           >
             <Menu className="h-4 w-4" />
@@ -74,7 +74,7 @@ export function DashboardMobileHeader({
               href={`/${handleStr}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-[#B85C6B] bg-[#f3dde057] border border-[#B85C6B]/20 px-2.5 py-1.5 rounded-lg active:scale-95 transition-transform shadow-xs"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[#600a0f] bg-[#600b0f0f] border border-[#600a0f]/20 px-2.5 py-1.5 rounded-lg active:scale-95 transition-transform shadow-xs"
             >
               <span className="text-[11px]">View</span>
               <ExternalLink className="h-3 w-3" />

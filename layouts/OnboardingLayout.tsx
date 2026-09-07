@@ -106,7 +106,7 @@ export function OnboardingLayout({
           {/* Right: Save & Logout */}
           <button
             onClick={handleSaveAndLogout}
-            className="tap-scale flex shrink-0 items-center gap-1.5 rounded-full border border-[#E4DAD5] bg-[#fbfbfb] px-3 py-1.5 text-xs font-bold text-[#6B5A5D] transition-all hover:border-[#B85C6B]/40 hover:bg-white hover:text-[#241618] shadow-xs"
+            className="tap-scale flex shrink-0 items-center gap-1.5 rounded-full border border-[#E4DAD5] bg-[#fbfbfb] px-3 py-1.5 text-xs font-bold text-[#6B5A5D] transition-all hover:border-[#600a0f]/40 hover:bg-white hover:text-[#241618] shadow-xs"
           >
             <LogOut className="h-3.5 w-3.5 text-[#6B5A5D]" />
             <span className="hidden sm:inline">Save &amp; logout</span>
@@ -185,7 +185,7 @@ export function OnboardingLayout({
               <button
                 type="button"
                 onClick={() => setIsMobilePreviewOpen(false)}
-                className="w-full rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] py-3 text-xs font-bold text-white transition-colors cursor-pointer text-center shadow-xs"
+                className="w-full rounded-xl bg-[#600a0f] hover:bg-[#600a0f] py-3 text-xs font-bold text-white transition-colors cursor-pointer text-center shadow-xs"
               >
                 Back to Editing Form
               </button>

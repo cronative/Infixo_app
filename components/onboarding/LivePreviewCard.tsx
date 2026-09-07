@@ -125,19 +125,19 @@ export const DEFAULT_THEME_STYLE: ThemeStyleConfig = {
 const MINIMAL_WHITE_STYLE: ThemeStyleConfig = DEFAULT_THEME_STYLE;
 
 const SIGNATURE_PURPLE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#FAF5FF] via-[#FDFBFE] to-[#F8F2F7] border border-[#B85C6B]/18 text-slate-900 shadow-lg",
+  cardBg: "bg-gradient-to-b from-[#FAF5FF] via-[#FDFBFE] to-[#F8F2F7] border border-[#600a0f]/18 text-slate-900 shadow-lg",
   profBadgeBg: "bg-white/80 backdrop-blur-md",
-  profBadgeText: "text-[#B85C6B]",
-  profBadgeBorder: "border-[#B85C6B]/18",
+  profBadgeText: "text-[#600a0f]",
+  profBadgeBorder: "border-[#600a0f]/18",
   fanbaseBg: "bg-white/80 backdrop-blur-md",
   fanbaseText: "text-[#17131A]",
   socialItemBg: "bg-white/80 hover:bg-white/95 backdrop-blur-md",
-  socialItemBorder: "border-[#B85C6B]/18 hover:border-[#B85C6B]/30",
+  socialItemBorder: "border-[#600a0f]/18 hover:border-[#600a0f]/30",
   socialNameColor: "text-[#17131A]",
   socialUnitColor: "text-[#6F6872]",
   nameColor: "text-[#17131A]",
   bioColor: "text-[#6F6872]",
-  handleColor: "text-[#B85C6B]",
+  handleColor: "text-[#600a0f]",
 };
 
 const MIDNIGHT_DARK_STYLE: ThemeStyleConfig = {
@@ -240,19 +240,19 @@ const SUNSET_STUDIO_STYLE: ThemeStyleConfig = {
 };
 
 const MINIMAL_SPARK_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-white to-[#FAF8FA] text-[#17131A] border border-[#B85C6B]/16 shadow-2xs",
+  cardBg: "bg-gradient-to-b from-white to-[#FAF8FA] text-[#17131A] border border-[#600a0f]/16 shadow-2xs",
   profBadgeBg: "bg-white/90",
-  profBadgeText: "text-[#B85C6B]",
-  profBadgeBorder: "border-[#B85C6B]/20",
+  profBadgeText: "text-[#600a0f]",
+  profBadgeBorder: "border-[#600a0f]/20",
   fanbaseBg: "bg-white/90 backdrop-blur-md",
   fanbaseText: "text-[#17131A]",
   socialItemBg: "bg-white/80 hover:bg-white/95 backdrop-blur-md",
-  socialItemBorder: "border-[#B85C6B]/16 hover:border-[#B85C6B]/30",
+  socialItemBorder: "border-[#600a0f]/16 hover:border-[#600a0f]/30",
   socialNameColor: "text-[#17131A]",
   socialUnitColor: "text-[#6F6872]",
   nameColor: "text-[#17131A]",
   bioColor: "text-[#6F6872]",
-  handleColor: "text-[#B85C6B]",
+  handleColor: "text-[#600a0f]",
 };
 
 const NEON_GRID_STYLE: ThemeStyleConfig = {
@@ -322,17 +322,17 @@ const SPOTLIGHT_STAGE_STYLE: ThemeStyleConfig = {
 const CREATIVE_PAPER_STYLE: ThemeStyleConfig = {
   cardBg: "bg-gradient-to-b from-[#FAF6F0] to-[#EDE5DB] text-[#29221D] border border-[#E3D9CC] shadow-xl",
   profBadgeBg: "bg-white/90",
-  profBadgeText: "text-[#B85C6B]",
+  profBadgeText: "text-[#600a0f]",
   profBadgeBorder: "border-[#E3D9CC]",
   fanbaseBg: "bg-white/90 backdrop-blur-md",
   fanbaseText: "text-[#29221D]",
   socialItemBg: "bg-white/80 hover:bg-white/95 backdrop-blur-md",
-  socialItemBorder: "border-[#E3D9CC] hover:border-[#B85C6B]/35",
+  socialItemBorder: "border-[#E3D9CC] hover:border-[#600a0f]/35",
   socialNameColor: "text-[#29221D]",
   socialUnitColor: "text-[#6A5E57]",
   nameColor: "text-[#29221D]",
   bioColor: "text-[#6A5E57]",
-  handleColor: "text-[#B85C6B]",
+  handleColor: "text-[#600a0f]",
 };
 
 export const THEME_STYLES: Record<string, ThemeStyleConfig> = {
@@ -931,10 +931,10 @@ export function LivePreviewCard({
         ["--desktop-surface-shadow" as any]: surfaceShadow,
       }}
       className={`relative overflow-hidden flex-1 flex flex-col ${selectedSeriesDetail
-          ? "min-h-[calc(100dvh-4rem)] sm:min-h-[calc(100dvh-5rem)] p-0"
-          : isFull
-            ? "p-6 sm:p-8 pt-7 sm:pt-8"
-            : "p-4 sm:p-6 pt-6 sm:pt-8"
+        ? "min-h-[calc(100dvh-4rem)] sm:min-h-[calc(100dvh-5rem)] p-0"
+        : isFull
+          ? "p-6 sm:p-8 pt-7 sm:pt-8"
+          : "p-4 sm:p-6 pt-6 sm:pt-8"
         } rounded-[24px] border shadow-md transition-all`}
     >
       {/* Ambient Animation in Preview mode when theme supports it */}
@@ -1033,7 +1033,7 @@ export function LivePreviewCard({
             return (
               <div className="flex-1 flex flex-col">
                 {/* 1. FULL-WIDTH HERO COVER HEADER (Maroon Gradient or Valid Poster) */}
-                <div className="relative w-full aspect-[21/9] min-h-[120px] sm:min-h-[140px] overflow-hidden bg-gradient-to-r from-[#B85C6B] via-[#A24B5A] to-[#8C3F4D] m-0 p-0 shrink-0">
+                <div className="relative w-full aspect-[21/9] min-h-[120px] sm:min-h-[140px] overflow-hidden bg-gradient-to-r from-[#600a0f] via-[#A24B5A] to-[#600a0f] m-0 p-0 shrink-0">
                   {selectedSeriesDetail.posterDataUrl && selectedSeriesDetail.posterDataUrl.trim() !== "" && (
                     <>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1169,7 +1169,7 @@ export function LivePreviewCard({
                             {detectedPlatform === "Instagram" && <InstagramIcon className="h-2.5 w-2.5 text-pink-500" />}
                             {detectedPlatform === "Facebook" && <FacebookIcon className="h-2.5 w-2.5 text-blue-500" />}
                             {detectedPlatform !== "YouTube" && detectedPlatform !== "Instagram" && detectedPlatform !== "Facebook" && (
-                              <Globe className="h-2.5 w-2.5 text-[#8C3F4D]" />
+                              <Globe className="h-2.5 w-2.5 text-[#600a0f]" />
                             )}
                             <span>{detectedPlatform}</span>
                           </span>
@@ -1279,7 +1279,7 @@ export function LivePreviewCard({
                                 </span>
                                 <span
                                   style={{ color: c.primaryText }}
-                                  className="text-xs sm:text-[13px] font-bold text-[#241618] truncate group-hover:text-[#8C3F4D] transition-colors"
+                                  className="text-xs sm:text-[13px] font-bold text-[#241618] truncate group-hover:text-[#600a0f] transition-colors"
                                 >
                                   {epTitleStr}
                                 </span>
@@ -1291,7 +1291,7 @@ export function LivePreviewCard({
                                   borderColor: c.border,
                                   color: c.accentText,
                                 }}
-                                className="h-8 w-8 rounded-full border border-[#E4DAD5] bg-white text-[#8C3F4D] flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-[#f3dde057] group-hover:border-[#B85C6B]/30 group-hover:scale-105 transition-all"
+                                className="h-8 w-8 rounded-full border border-[#E4DAD5] bg-white text-[#600a0f] flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-[#600b0f0f] group-hover:border-[#600a0f]/30 group-hover:scale-105 transition-all"
                               >
                                 <Eye className="h-3.5 w-3.5" />
                               </div>
@@ -1315,10 +1315,10 @@ export function LivePreviewCard({
               <CreatorAvatar
                 src={profile.photoDataUrl}
                 name={profile.displayName || "Creator"}
-                className="w-24 h-24 sm:w-28 sm:h-28 rounded-full aspect-square object-cover overflow-hidden border-2 border-white ring-4 ring-[#f3dde057] shadow-md mx-auto"
+                className="w-24 h-24 sm:w-28 sm:h-28 rounded-full aspect-square object-cover overflow-hidden border-2 border-white ring-4 ring-[#600b0f0f] shadow-md mx-auto"
                 style={{ borderColor: "#FFFFFF" }}
                 textClassName="text-xl sm:text-2xl font-extrabold text-white"
-                fallbackBgClass="bg-[#B85C6B]"
+                fallbackBgClass="bg-[#600a0f]"
               />
             </div>
 
@@ -1376,7 +1376,7 @@ export function LivePreviewCard({
                   {visibleChips.map((chip, idx) => (
                     <span
                       key={idx}
-                      className="bg-[#f3dde057] text-[#8C3F4D] text-xs font-semibold px-3.5 py-1.5 rounded-full"
+                      className="bg-[#600b0f0f] text-[#600a0f] text-xs font-semibold px-3.5 py-1.5 rounded-full"
                     >
                       {chip}
                     </span>
@@ -1582,7 +1582,7 @@ export function LivePreviewCard({
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <span
-                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#f3dde057] text-[#8C3F4D]"
+                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#600b0f0f] text-[#600a0f]"
                         >
                           <LinkIcon className="h-4 w-4" />
                         </span>
@@ -1663,8 +1663,8 @@ export function LivePreviewCard({
                             : {}
                         }
                         className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg sm:rounded-xl text-xs font-bold transition-all cursor-pointer border ${resolvedTab === "series"
-                            ? "border-transparent shadow-xs"
-                            : "text-[#6B5A5D] hover:text-[#241618] border-transparent"
+                          ? "border-transparent shadow-xs"
+                          : "text-[#6B5A5D] hover:text-[#241618] border-transparent"
                           }`}
                       >
                         <span>Series ({series ? series.length : 0})</span>
@@ -1681,8 +1681,8 @@ export function LivePreviewCard({
                             : {}
                         }
                         className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg sm:rounded-xl text-xs font-bold transition-all cursor-pointer border ${resolvedTab === "gigs"
-                            ? "border-transparent shadow-xs"
-                            : "text-[#6B5A5D] hover:text-[#241618] border-transparent"
+                          ? "border-transparent shadow-xs"
+                          : "text-[#6B5A5D] hover:text-[#241618] border-transparent"
                           }`}
                       >
                         <span>Services ({activePkgs.length})</span>
@@ -1699,8 +1699,8 @@ export function LivePreviewCard({
                             : {}
                         }
                         className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg sm:rounded-xl text-xs font-bold transition-all cursor-pointer border ${resolvedTab === "reviews"
-                            ? "border-transparent shadow-xs"
-                            : "text-[#6B5A5D] hover:text-[#241618] border-transparent"
+                          ? "border-transparent shadow-xs"
+                          : "text-[#6B5A5D] hover:text-[#241618] border-transparent"
                           }`}
                       >
                         <span>Reviews ({approvedReviews.length})</span>
@@ -1822,24 +1822,24 @@ export function LivePreviewCard({
                                 <div className="flex items-center gap-3 min-w-0">
                                   <span
                                     className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${detectedPlatform === "YouTube"
-                                        ? "bg-red-600 shadow-xs text-white"
-                                        : detectedPlatform === "Instagram"
-                                          ? "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-xs text-white"
-                                          : detectedPlatform === "Facebook"
-                                            ? "bg-blue-600 shadow-xs text-white"
-                                            : detectedPlatform === "X"
-                                              ? "bg-slate-900 shadow-xs text-white"
-                                              : detectedPlatform === "LinkedIn"
-                                                ? "bg-sky-700 shadow-xs text-white"
-                                                : detectedPlatform === "Threads"
-                                                  ? "bg-slate-900 shadow-xs text-white"
-                                                  : detectedPlatform === "Snapchat"
-                                                    ? "bg-amber-400 shadow-xs text-slate-950"
-                                                    : detectedPlatform === "Spotify"
-                                                      ? "bg-emerald-600 shadow-xs text-white"
-                                                      : detectedPlatform === "Twitch"
-                                                        ? "bg-purple-600 shadow-xs text-white"
-                                                        : "bg-[#f3dde057] text-[#8C3F4D]"
+                                      ? "bg-red-600 shadow-xs text-white"
+                                      : detectedPlatform === "Instagram"
+                                        ? "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-xs text-white"
+                                        : detectedPlatform === "Facebook"
+                                          ? "bg-blue-600 shadow-xs text-white"
+                                          : detectedPlatform === "X"
+                                            ? "bg-slate-900 shadow-xs text-white"
+                                            : detectedPlatform === "LinkedIn"
+                                              ? "bg-sky-700 shadow-xs text-white"
+                                              : detectedPlatform === "Threads"
+                                                ? "bg-slate-900 shadow-xs text-white"
+                                                : detectedPlatform === "Snapchat"
+                                                  ? "bg-amber-400 shadow-xs text-slate-950"
+                                                  : detectedPlatform === "Spotify"
+                                                    ? "bg-emerald-600 shadow-xs text-white"
+                                                    : detectedPlatform === "Twitch"
+                                                      ? "bg-purple-600 shadow-xs text-white"
+                                                      : "bg-[#600b0f0f] text-[#600a0f]"
                                       }`}
                                   >
                                     {detectedPlatform === "YouTube" ? (
@@ -1965,13 +1965,13 @@ export function LivePreviewCard({
                               >
                                 {/* Top: 5 Stars (Left) & Tag + Link (Right) */}
                                 <div className="flex items-center justify-between gap-2 flex-wrap">
-                                  <div className="flex items-center gap-1 text-[#8C3F4D]">
+                                  <div className="flex items-center gap-1 text-[#600a0f]">
                                     {Array.from({ length: 5 }).map((_, i) => (
                                       <Star
                                         key={i}
                                         className={`h-3.5 w-3.5 ${i < ratingNum
-                                            ? "fill-[#8C3F4D] text-[#8C3F4D]"
-                                            : "text-slate-200 fill-slate-200"
+                                          ? "fill-[#600a0f] text-[#600a0f]"
+                                          : "text-slate-200 fill-slate-200"
                                           }`}
                                       />
                                     ))}
@@ -1984,7 +1984,7 @@ export function LivePreviewCard({
                                           backgroundColor: c.accentSoft,
                                           color: c.accentText,
                                         }}
-                                        className="bg-[#f3dde057] text-[#8C3F4D] text-[11px] font-semibold px-2.5 py-0.5 rounded-full"
+                                        className="bg-[#600b0f0f] text-[#600a0f] text-[11px] font-semibold px-2.5 py-0.5 rounded-full"
                                       >
                                         {rev.projectTitle}
                                       </span>
@@ -1995,7 +1995,7 @@ export function LivePreviewCard({
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         style={{ color: c.accentText }}
-                                        className="text-[#8C3F4D] text-xs font-semibold hover:underline flex items-center gap-1"
+                                        className="text-[#600a0f] text-xs font-semibold hover:underline flex items-center gap-1"
                                       >
                                         <span>View related work</span>
                                       </a>
@@ -2212,10 +2212,10 @@ export function LivePreviewCard({
       <div
         style={{ borderColor: c.divider }}
         className={`relative z-10 mt-auto flex items-center justify-center px-5 pt-5 pb-8 mb-8 select-none border-t ${selectedSeriesDetail
-            ? ""
-            : isFull
-              ? "-mx-6 sm:-mx-8 -mb-6 sm:-mb-8 mt-7 sm:mt-8"
-              : "-mx-4 sm:-mx-6 -mb-4 sm:-mb-6 mt-7 sm:mt-8"
+          ? ""
+          : isFull
+            ? "-mx-6 sm:-mx-8 -mb-6 sm:-mb-8 mt-7 sm:mt-8"
+            : "-mx-4 sm:-mx-6 -mb-4 sm:-mb-6 mt-7 sm:mt-8"
           }`}
       >
         <a
@@ -2318,9 +2318,9 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   return {
     name: platformStr || "Web",
     icon: <Film className="h-3 w-3 text-white" />,
-    badgeClass: "bg-[#B85C6B] text-white shadow-2xs",
+    badgeClass: "bg-[#600a0f] text-white shadow-2xs",
     chipClass: "bg-indigo-50 text-indigo-700 border-indigo-200/80",
-    textColor: "text-[#B85C6B]",
+    textColor: "text-[#600a0f]",
   };
 }
 
@@ -2394,24 +2394,24 @@ export function PreviewSeriesItem({
       <div className="flex items-center gap-3 min-w-0">
         <span
           className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${detectedPlatform === "YouTube"
-              ? "bg-red-600 shadow-xs text-white"
-              : detectedPlatform === "Instagram"
-                ? "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-xs text-white"
-                : detectedPlatform === "Facebook"
-                  ? "bg-blue-600 shadow-xs text-white"
-                  : detectedPlatform === "X"
-                    ? "bg-slate-900 shadow-xs text-white"
-                    : detectedPlatform === "LinkedIn"
-                      ? "bg-sky-700 shadow-xs text-white"
-                      : detectedPlatform === "Threads"
-                        ? "bg-slate-900 shadow-xs text-white"
-                        : detectedPlatform === "Snapchat"
-                          ? "bg-amber-400 shadow-xs text-slate-950"
-                          : detectedPlatform === "Spotify"
-                            ? "bg-emerald-600 shadow-xs text-white"
-                            : detectedPlatform === "Twitch"
-                              ? "bg-purple-600 shadow-xs text-white"
-                              : "bg-[#f3dde057] text-[#8C3F4D]"
+            ? "bg-red-600 shadow-xs text-white"
+            : detectedPlatform === "Instagram"
+              ? "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-xs text-white"
+              : detectedPlatform === "Facebook"
+                ? "bg-blue-600 shadow-xs text-white"
+                : detectedPlatform === "X"
+                  ? "bg-slate-900 shadow-xs text-white"
+                  : detectedPlatform === "LinkedIn"
+                    ? "bg-sky-700 shadow-xs text-white"
+                    : detectedPlatform === "Threads"
+                      ? "bg-slate-900 shadow-xs text-white"
+                      : detectedPlatform === "Snapchat"
+                        ? "bg-amber-400 shadow-xs text-slate-950"
+                        : detectedPlatform === "Spotify"
+                          ? "bg-emerald-600 shadow-xs text-white"
+                          : detectedPlatform === "Twitch"
+                            ? "bg-purple-600 shadow-xs text-white"
+                            : "bg-[#600b0f0f] text-[#600a0f]"
             }`}
         >
           {detectedPlatform === "YouTube" ? (

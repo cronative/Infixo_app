@@ -10,14 +10,14 @@ export const metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="min-h-dvh bg-[#FAF9F6] text-[#181716] flex flex-col font-sans selection:bg-[#b85c6b]/10 selection:text-[#b85c6b]">
+    <div className="min-h-dvh bg-[#FAF9F6] text-[#181716] flex flex-col font-sans selection:bg-[#600a0f]/10 selection:text-[#600a0f]">
       {/* Navbar */}
       <header className="safe-top sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#E7E3DC]">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 sm:px-8">
           <Logo size="md" />
           <Link
             href="/"
-            className="inline-flex items-center gap-2 rounded-full border border-[#E7E3DC] bg-white px-4 py-2 text-xs font-bold text-[#54514D] hover:text-[#b85c6b] hover:border-[#b85c6b]/30 transition-all"
+            className="inline-flex items-center gap-2 rounded-full border border-[#E7E3DC] bg-white px-4 py-2 text-xs font-bold text-[#54514D] hover:text-[#600a0f] hover:border-[#600a0f]/30 transition-all"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Back to Home
@@ -29,7 +29,7 @@ export default function PrivacyPolicyPage() {
       <main className="mx-auto max-w-4xl px-5 sm:px-8 py-12 sm:py-16 flex-1 text-left space-y-10">
         {/* Header Banner */}
         <div className="space-y-3 border-b border-[#E7E3DC] pb-8">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#b85c6b]/[0.09] border border-[#b85c6b]/20 px-3 py-1 text-xs font-bold text-[#b85c6b]">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#600a0f]/[0.09] border border-[#600a0f]/20 px-3 py-1 text-xs font-bold text-[#600a0f]">
             <ShieldCheck className="h-4 w-4" />
             <span>LEGAL &amp; PRIVACY</span>
           </div>
@@ -111,7 +111,7 @@ export default function PrivacyPolicyPage() {
               6. Your Rights &amp; Account Erasure
             </h2>
             <p>
-              You maintain full ownership of your profile data. You have the right to inspect, edit, or request complete deletion of your Inflixo creator profile, series listings, and connected social tokens. To request complete account erasure, email us at <strong className="text-[#b85c6b]">privacy@inflixo.com</strong>.
+              You maintain full ownership of your profile data. You have the right to inspect, edit, or request complete deletion of your Inflixo creator profile, series listings, and connected social tokens. To request complete account erasure, email us at <strong className="text-[#600a0f]">privacy@inflixo.com</strong>.
             </p>
           </section>
 
@@ -124,7 +124,7 @@ export default function PrivacyPolicyPage() {
             </p>
             <div className="rounded-2xl bg-white border border-[#E7E3DC] p-4 space-y-1 text-xs sm:text-sm font-semibold text-[#181716]">
               <p>TrustIQ Labs PVT LTD — Inflixo Legal Division</p>
-              <p className="text-[#b85c6b]">Email: privacy@inflixo.com</p>
+              <p className="text-[#600a0f]">Email: privacy@inflixo.com</p>
             </div>
           </section>
         </div>
@@ -135,12 +135,12 @@ export default function PrivacyPolicyPage() {
         <div className="mx-auto max-w-[1200px] px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-[#54514D]">
           <Logo size="sm" />
           <div className="flex flex-wrap items-center gap-6">
-            <Link href="/" className="hover:text-[#b85c6b] transition-colors">Home</Link>
-            <Link href="/#pricing" className="hover:text-[#b85c6b] transition-colors">Pricing</Link>
-            <Link href="/privacy" className="text-[#b85c6b] font-bold">Privacy Policy</Link>
-            <Link href="/cookies" className="hover:text-[#b85c6b] transition-colors">Cookie Policy</Link>
-            <CookiePreferencesButton className="hover:text-[#b85c6b] transition-colors cursor-pointer font-semibold" />
-            <Link href="/terms" className="hover:text-[#b85c6b] transition-colors">Terms of Service</Link>
+            <Link href="/" className="hover:text-[#600a0f] transition-colors">Home</Link>
+            <Link href="/#pricing" className="hover:text-[#600a0f] transition-colors">Pricing</Link>
+            <Link href="/privacy" className="text-[#600a0f] font-bold">Privacy Policy</Link>
+            <Link href="/cookies" className="hover:text-[#600a0f] transition-colors">Cookie Policy</Link>
+            <CookiePreferencesButton className="hover:text-[#600a0f] transition-colors cursor-pointer font-semibold" />
+            <Link href="/terms" className="hover:text-[#600a0f] transition-colors">Terms of Service</Link>
           </div>
           <p className="text-[#797570]">&copy; 2026 Inflixo · TrustIQ Labs PVT LTD</p>
         </div>

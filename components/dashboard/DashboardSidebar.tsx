@@ -36,7 +36,7 @@ export function DashboardSidebar() {
           name={displayName}
           className="w-9 h-9 rounded-full overflow-hidden object-cover aspect-square border border-[#E4DAD5] shrink-0"
           textClassName="text-xs font-bold text-[#241618]"
-          fallbackBgClass="bg-[#f3dde057]"
+          fallbackBgClass="bg-[#600b0f0f]"
         />
 
         <div className="min-w-0 flex-1">
@@ -45,15 +45,15 @@ export function DashboardSidebar() {
               {displayName}
             </p>
             {profile.isVerified && (
-              <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-[#B85C6B]" />
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-[#600a0f]" />
             )}
           </div>
           <div className="flex items-center gap-1.5 mt-0.5">
             <p className="truncate text-[11px] font-medium text-[#6B5A5D]">
               @{handleStr}
             </p>
-            <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-[#8C3F4D] bg-[#f3dde057] px-1.5 py-0.2 rounded">
-              <span className="h-1 w-1 rounded-full bg-[#B85C6B]" />
+            <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-[#600a0f] bg-[#600b0f0f] px-1.5 py-0.2 rounded">
+              <span className="h-1 w-1 rounded-full bg-[#600a0f]" />
               Live
             </span>
           </div>
@@ -76,11 +76,11 @@ export function DashboardSidebar() {
                   key={item.href}
                   href={item.href}
                   className={`flex items-center gap-2.5 rounded-[10px] px-3 py-2 text-xs transition-colors ${active
-                    ? "bg-[#f3dde057] text-[#8C3F4D] font-semibold"
+                    ? "bg-[#600b0f0f] text-[#600a0f] font-semibold"
                     : "text-[#6B5A5D] hover:bg-[#fbfbfb] hover:text-[#241618] font-medium"
                     }`}
                 >
-                  <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#B85C6B]" : "text-[#6B5A5D]"}`} />
+                  <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#600a0f]" : "text-[#6B5A5D]"}`} />
                   <span className="flex-1 truncate">{item.label}</span>
                 </Link>
               );
@@ -102,11 +102,11 @@ export function DashboardSidebar() {
                   key={item.href}
                   href={item.href}
                   className={`flex items-center gap-2.5 rounded-[10px] px-3 py-2 text-xs transition-colors ${active
-                    ? "bg-[#f3dde057] text-[#8C3F4D] font-semibold"
+                    ? "bg-[#600b0f0f] text-[#600a0f] font-semibold"
                     : "text-[#6B5A5D] hover:bg-[#fbfbfb] hover:text-[#241618] font-medium"
                     }`}
                 >
-                  <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#B85C6B]" : "text-[#6B5A5D]"}`} />
+                  <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#600a0f]" : "text-[#6B5A5D]"}`} />
                   <span className="flex-1 truncate">{item.label}</span>
                 </Link>
               );
@@ -119,14 +119,14 @@ export function DashboardSidebar() {
       <div className="pt-3 border-t border-[#E4DAD5] space-y-2">
         <div className="flex items-center justify-between rounded-[10px] border border-[#E4DAD5] bg-[#fbfbfb] px-3 py-2 text-[11px] font-semibold text-[#241618]">
           <div className="flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-[#B85C6B] shrink-0" />
+            <Sparkles className="h-3.5 w-3.5 text-[#600a0f] shrink-0" />
             <span>Starter Plan</span>
           </div>
           <Link
             href={`/${handleStr}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[10px] text-[#B85C6B] hover:underline inline-flex items-center gap-0.5 font-semibold"
+            className="text-[10px] text-[#600a0f] hover:underline inline-flex items-center gap-0.5 font-semibold"
             title="View live profile"
           >
             <span>Preview</span>

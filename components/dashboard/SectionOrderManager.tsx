@@ -123,13 +123,13 @@ export function SectionOrderManager() {
     <section className="rounded-2xl border border-[#E4DAD5] bg-white p-5 sm:p-6 space-y-4 shadow-xs text-left">
       <div className="flex items-center justify-between border-b border-[#E4DAD5] pb-3.5">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f3dde057] text-[#B85C6B] border border-[#B85C6B]/20 shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#600b0f0f] text-[#600a0f] border border-[#600a0f]/20 shrink-0">
             <Layers className="h-5 w-5" />
           </div>
           <div>
             <h2 className="font-display text-base font-bold text-[#241618] flex items-center gap-2">
               Profile Sections &amp; Layout
-              {saving && <Loader2 className="h-3.5 w-3.5 animate-spin text-[#B85C6B]" />}
+              {saving && <Loader2 className="h-3.5 w-3.5 animate-spin text-[#600a0f]" />}
             </h2>
             <p className="text-xs text-[#6B5A5D] font-medium mt-0.5">
               Customize the order and visibility of sections displayed on your public creator page.
@@ -177,7 +177,7 @@ export function SectionOrderManager() {
                     <p className="text-xs font-bold text-[#241618] truncate flex items-center gap-1.5">
                       {info.name}
                       {isAbout && (
-                        <span className="text-[10px] font-semibold text-[#B85C6B] bg-[#f3dde057] border border-[#B85C6B]/20 px-1.5 py-0.2 rounded-md">
+                        <span className="text-[10px] font-semibold text-[#600a0f] bg-[#600b0f0f] border border-[#600a0f]/20 px-1.5 py-0.2 rounded-md">
                           Locked
                         </span>
                       )}
@@ -193,7 +193,7 @@ export function SectionOrderManager() {
                     onClick={() => handleToggleVisibility(section.sectionKey)}
                     disabled={isAbout}
                     className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-colors cursor-pointer ${section.isVisible
-                      ? "border-[#E4DAD5] bg-[#fbfbfb] text-[#241618] hover:bg-[#f3dde057] hover:text-[#B85C6B]"
+                      ? "border-[#E4DAD5] bg-[#fbfbfb] text-[#241618] hover:bg-[#600b0f0f] hover:text-[#600a0f]"
                       : "border-[#C1443A]/20 bg-[#C1443A]/10 text-[#C1443A]"
                       } disabled:opacity-40 disabled:cursor-not-allowed`}
                     title={section.isVisible ? "Hide section from profile" : "Show section on profile"}

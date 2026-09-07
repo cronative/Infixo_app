@@ -54,7 +54,7 @@ export default function LoginPage() {
         <div className="flex flex-col items-center text-center space-y-2 animate-fade-up [animation-delay:0.05s]">
           <div className="flex items-center justify-center gap-2">
             <Logo size="md" />
-            <span className="rounded-full bg-[#f3dde057] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#8C3F4D]">
+            <span className="rounded-full bg-[#600b0f0f] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#600a0f]">
               CREATOR
             </span>
           </div>
@@ -72,8 +72,8 @@ export default function LoginPage() {
         {/* 2. Main Centered Login Card (Stagger 3) */}
         <div className="rounded-[18px] border border-[#E4DAD5] bg-[#FFFFFF] p-6 sm:p-8 space-y-5 text-left animate-fade-up [animation-delay:0.25s]">
           {/* Trust Pill */}
-          <div className="flex items-center gap-1.5 rounded-full bg-[#f3dde057] px-3 py-1 text-[11px] font-semibold text-[#8C3F4D]">
-            <Sparkles className="h-3 w-3 text-[#B85C6B] shrink-0" />
+          <div className="flex items-center gap-1.5 rounded-full bg-[#600b0f0f] px-3 py-1 text-[11px] font-semibold text-[#600a0f]">
+            <Sparkles className="h-3 w-3 text-[#600a0f] shrink-0" />
             <span>Password-free login • Fast 60s setup</span>
           </div>
 
@@ -88,7 +88,7 @@ export default function LoginPage() {
               </label>
 
               <div
-                className={`flex h-11 items-center rounded-[10px] border px-3.5 bg-[#FFFFFF] transition-all duration-200 focus-within:border-[#B85C6B] focus-within:ring-3 focus-within:ring-[#f3dde057] ${error
+                className={`flex h-11 items-center rounded-[10px] border px-3.5 bg-[#FFFFFF] transition-all duration-200 focus-within:border-[#600a0f] focus-within:ring-3 focus-within:ring-[#600b0f0f] ${error
                   ? "border-[#C1443A] bg-[#fbfbfb]"
                   : "border-[#E4DAD5]"
                   } ${isShaking ? "animate-shake" : ""}`}
@@ -120,7 +120,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-[10px] bg-[#B85C6B] hover:bg-[#8C3F4D] text-[#fbfbfb] font-semibold text-xs sm:text-sm h-11 transition-all cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed active:scale-98"
+              className="w-full inline-flex items-center justify-center gap-2 rounded-[10px] bg-[#600a0f] hover:bg-[#600a0f] text-[#fbfbfb] font-semibold text-xs sm:text-sm h-11 transition-all cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed active:scale-98"
             >
               {loading ? (
                 <>
@@ -139,19 +139,19 @@ export default function LoginPage() {
           {/* Feature Highlights List (Stagger 4, 5, 6) */}
           <div className="pt-5 border-t border-[#E4DAD5] space-y-2.5 text-xs font-medium text-[#6B5A5D]">
             <div className="flex items-center gap-2.5 animate-fade-up [animation-delay:0.35s]">
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#B85C6B] text-[#fbfbfb] shrink-0">
+              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#600a0f] text-[#fbfbfb] shrink-0">
                 <Check className="h-2.5 w-2.5 stroke-[3]" />
               </span>
               <span className="text-[#241618]">Unified fanbase reach across platforms</span>
             </div>
             <div className="flex items-center gap-2.5 animate-fade-up [animation-delay:0.45s]">
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#B85C6B] text-[#fbfbfb] shrink-0">
+              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#600a0f] text-[#fbfbfb] shrink-0">
                 <Check className="h-2.5 w-2.5 stroke-[3]" />
               </span>
               <span className="text-[#241618]">Bingeable OTT-style series</span>
             </div>
             <div className="flex items-center gap-2.5 animate-fade-up [animation-delay:0.55s]">
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#B85C6B] text-[#fbfbfb] shrink-0">
+              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#600a0f] text-[#fbfbfb] shrink-0">
                 <Check className="h-2.5 w-2.5 stroke-[3]" />
               </span>
               <span className="text-[#241618]">Rate cards &amp; brand briefs, built in</span>

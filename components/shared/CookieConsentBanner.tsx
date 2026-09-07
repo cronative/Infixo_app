@@ -176,7 +176,7 @@ export function CookieConsentBanner() {
                 <button
                   type="button"
                   onClick={handleAcceptAll}
-                  className="inline-flex items-center justify-center rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2 text-xs sm:text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer"
+                  className="inline-flex items-center justify-center rounded-[8px] bg-[#600a0f] hover:bg-[#600a0f] px-4 py-2 text-xs sm:text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer"
                 >
                   Accept All
                 </button>
@@ -290,7 +290,7 @@ export function CookieConsentBanner() {
                         Essential Cookies
                       </h3>
                     </div>
-                    <span className="text-[11px] font-bold text-[#8C3F4D] bg-[#f3dde057] px-2.5 py-0.5 rounded-full">
+                    <span className="text-[11px] font-bold text-[#600a0f] bg-[#600b0f0f] px-2.5 py-0.5 rounded-full">
                       Always On
                     </span>
                   </div>
@@ -310,7 +310,7 @@ export function CookieConsentBanner() {
                       role="switch"
                       aria-checked={preferences.analytics}
                       onClick={() => toggleCategory("analytics")}
-                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#B85C6B] focus:ring-offset-2 ${preferences.analytics ? "bg-[#B85C6B]" : "bg-[#E4DAD5]"
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#600a0f] focus:ring-offset-2 ${preferences.analytics ? "bg-[#600a0f]" : "bg-[#E4DAD5]"
                         }`}
                     >
                       <span className="sr-only">Toggle Analytics Cookies</span>
@@ -336,7 +336,7 @@ export function CookieConsentBanner() {
                       role="switch"
                       aria-checked={preferences.marketing}
                       onClick={() => toggleCategory("marketing")}
-                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#B85C6B] focus:ring-offset-2 ${preferences.marketing ? "bg-[#B85C6B]" : "bg-[#E4DAD5]"
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#600a0f] focus:ring-offset-2 ${preferences.marketing ? "bg-[#600a0f]" : "bg-[#E4DAD5]"
                         }`}
                     >
                       <span className="sr-only">Toggle Marketing Cookies</span>
@@ -362,7 +362,7 @@ export function CookieConsentBanner() {
                       role="switch"
                       aria-checked={preferences.functional}
                       onClick={() => toggleCategory("functional")}
-                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#B85C6B] focus:ring-offset-2 ${preferences.functional ? "bg-[#B85C6B]" : "bg-[#E4DAD5]"
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#600a0f] focus:ring-offset-2 ${preferences.functional ? "bg-[#600a0f]" : "bg-[#E4DAD5]"
                         }`}
                     >
                       <span className="sr-only">Toggle Functional Cookies</span>
@@ -384,7 +384,7 @@ export function CookieConsentBanner() {
                 <Link
                   href="/cookies"
                   onClick={() => setShowPreferences(false)}
-                  className="text-[#241618] underline underline-offset-2 hover:text-[#B85C6B] font-medium"
+                  className="text-[#241618] underline underline-offset-2 hover:text-[#600a0f] font-medium"
                 >
                   Cookie Policy
                 </Link>{" "}
@@ -392,7 +392,7 @@ export function CookieConsentBanner() {
                 <Link
                   href="/privacy"
                   onClick={() => setShowPreferences(false)}
-                  className="text-[#241618] underline underline-offset-2 hover:text-[#B85C6B] font-medium"
+                  className="text-[#241618] underline underline-offset-2 hover:text-[#600a0f] font-medium"
                 >
                   Privacy Policy
                 </Link>
@@ -423,7 +423,7 @@ export function CookieConsentBanner() {
               <button
                 type="button"
                 onClick={handleSavePreferences}
-                className="order-1 sm:order-2 inline-flex items-center justify-center rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] px-5 py-2 text-xs sm:text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer"
+                className="order-1 sm:order-2 inline-flex items-center justify-center rounded-[8px] bg-[#600a0f] hover:bg-[#600a0f] px-5 py-2 text-xs sm:text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer"
               >
                 Save Preferences
               </button>

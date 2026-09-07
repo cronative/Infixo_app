@@ -165,8 +165,8 @@ export default function SocialsStepPage() {
       }
     >
       <div className="flex items-center justify-between gap-2 mb-2.5">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#b85c6b]/20 bg-[#b85c6b]/[0.09] px-3 py-1 text-xs font-bold text-[#b85c6b]">
-          <Sparkles className="h-3.5 w-3.5 text-[#b85c6b] shrink-0" />
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#600a0f]/20 bg-[#600a0f]/[0.09] px-3 py-1 text-xs font-bold text-[#600a0f]">
+          <Sparkles className="h-3.5 w-3.5 text-[#600a0f] shrink-0" />
           <span>Step 2 of 6 • Social Handles</span>
         </div>
 
@@ -174,10 +174,10 @@ export default function SocialsStepPage() {
         <button
           type="button"
           onClick={() => setIsMobilePreviewOpen(true)}
-          className="lg:hidden tap-scale inline-flex items-center gap-1.5 rounded-full border border-[#b85c6b]/30 bg-[#b85c6b]/[0.09] hover:bg-[#b85c6b]/15 px-3 py-1 text-xs font-bold text-[#b85c6b] transition-all cursor-pointer shadow-xs"
+          className="lg:hidden tap-scale inline-flex items-center gap-1.5 rounded-full border border-[#600a0f]/30 bg-[#600a0f]/[0.09] hover:bg-[#600a0f]/15 px-3 py-1 text-xs font-bold text-[#600a0f] transition-all cursor-pointer shadow-xs"
           title="Preview public profile"
         >
-          <Eye className="h-3.5 w-3.5 text-[#b85c6b]" />
+          <Eye className="h-3.5 w-3.5 text-[#600a0f]" />
           <span>Preview Profile</span>
         </button>
       </div>
@@ -294,14 +294,14 @@ export default function SocialsStepPage() {
 
         {/* Additional Platform Informational Note */}
         <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 text-left flex items-start gap-3 shadow-xs">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#b85c6b]/[0.09] text-[#b85c6b]">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#600a0f]/[0.09] text-[#600a0f]">
             <Link2 className="h-4 w-4" />
           </div>
           <div className="space-y-0.5">
             <h4 className="text-xs font-bold text-[#181716]">Want to add more platforms?</h4>
             <p className="text-xs text-[#54514D] leading-relaxed">
               You can add more social profiles and custom links anytime after creating your profile from{" "}
-              <strong className="text-[#b85c6b] font-semibold">Dashboard → Links &amp; Socials</strong>.
+              <strong className="text-[#600a0f] font-semibold">Dashboard → Links &amp; Socials</strong>.
             </p>
           </div>
         </div>
@@ -323,7 +323,7 @@ export default function SocialsStepPage() {
             size="lg"
             loading={submitting}
             onClick={handleNext}
-            className="w-full sm:flex-1 h-11 bg-[#b85c6b] hover:bg-[#6F3456] text-white font-bold text-sm rounded-xl cursor-pointer shadow-xs"
+            className="w-full sm:flex-1 h-11 bg-[#600a0f] hover:bg-[#6F3456] text-white font-bold text-sm rounded-xl cursor-pointer shadow-xs"
           >
             Save &amp; Next →
           </Button>

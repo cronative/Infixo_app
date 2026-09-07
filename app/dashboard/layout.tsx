@@ -70,7 +70,7 @@ function DesktopTopHeader() {
           href={`/${handleStr}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+          className="flex items-center gap-1.5 rounded-xl bg-[#600a0f] hover:bg-[#600a0f] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
         >
           <span>View Profile</span>
           <ExternalLink className="h-3.5 w-3.5" />

@@ -76,7 +76,7 @@ export default function DashboardSettingsPage() {
       {/* 2. SECTION 1 — ACCOUNT & SECURITY */}
       <section className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 space-y-4 shadow-xs">
         <div className="flex items-center gap-3 border-b border-[#E7E3DC] pb-3.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20 shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#600a0f]/[0.09] text-[#600a0f] border border-[#600a0f]/20 shrink-0">
             <ShieldCheck className="h-5 w-5" />
           </div>
           <div>
@@ -110,7 +110,7 @@ export default function DashboardSettingsPage() {
               Current Access
             </span>
             <div className="flex items-center justify-between gap-2">
-              <p className="font-display text-xs sm:text-sm font-bold text-[#b85c6b] truncate">
+              <p className="font-display text-xs sm:text-sm font-bold text-[#600a0f] truncate">
                 {planDisplayName}
               </p>
               <span className="text-[10px] font-semibold text-[#797570] bg-white border border-[#E7E3DC] px-2 py-0.5 rounded-md">
@@ -126,7 +126,7 @@ export default function DashboardSettingsPage() {
             onClick={() => showToast("Security link sent to your registered email! 🔒", "info")}
             className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] px-3.5 py-2 text-xs font-semibold text-[#181716] transition-colors cursor-pointer shadow-xs"
           >
-            <Lock className="h-3.5 w-3.5 text-[#b85c6b]" />
+            <Lock className="h-3.5 w-3.5 text-[#600a0f]" />
             <span>Manage Security</span>
           </button>
         </div>
@@ -135,7 +135,7 @@ export default function DashboardSettingsPage() {
       {/* 3. SECTION 2 — PUBLIC PROFILE LINK */}
       <section className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 space-y-4 shadow-xs">
         <div className="flex items-center gap-3 border-b border-[#E7E3DC] pb-3.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20 shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#600a0f]/[0.09] text-[#600a0f] border border-[#600a0f]/20 shrink-0">
             <Globe className="h-5 w-5" />
           </div>
           <div>
@@ -176,7 +176,7 @@ export default function DashboardSettingsPage() {
               href={`/${rawUsername}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#b85c6b] hover:bg-[#6F3456] px-3 py-1.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#600a0f] hover:bg-[#6F3456] px-3 py-1.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
             >
               <span>Open Profile</span>
               <ExternalLink className="h-3.5 w-3.5" />
@@ -188,7 +188,7 @@ export default function DashboardSettingsPage() {
       {/* 4. SECTION 3 — SEARCH VISIBILITY */}
       <section className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 space-y-4 shadow-xs">
         <div className="flex items-center gap-3 border-b border-[#E7E3DC] pb-3.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20 shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#600a0f]/[0.09] text-[#600a0f] border border-[#600a0f]/20 shrink-0">
             <Search className="h-5 w-5" />
           </div>
           <div>
@@ -228,7 +228,7 @@ export default function DashboardSettingsPage() {
       {/* 5. SECTION 4 — SHARING PREFERENCES */}
       <section className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 space-y-4 shadow-xs">
         <div className="flex items-center gap-3 border-b border-[#E7E3DC] pb-3.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20 shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#600a0f]/[0.09] text-[#600a0f] border border-[#600a0f]/20 shrink-0">
             <Share2 className="h-5 w-5" />
           </div>
           <div>
@@ -265,7 +265,7 @@ export default function DashboardSettingsPage() {
       {/* 6. SECTION 5 — NOTIFICATION PREFERENCES */}
       <section className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 space-y-4 shadow-xs">
         <div className="flex items-center gap-3 border-b border-[#E7E3DC] pb-3.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20 shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#600a0f]/[0.09] text-[#600a0f] border border-[#600a0f]/20 shrink-0">
             <Bell className="h-5 w-5" />
           </div>
           <div>
@@ -302,7 +302,7 @@ export default function DashboardSettingsPage() {
       {/* 7. SECTION 6 — LEGAL & PRIVACY */}
       <section className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 space-y-4 shadow-xs">
         <div className="flex items-center gap-3 border-b border-[#E7E3DC] pb-3.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20 shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#600a0f]/[0.09] text-[#600a0f] border border-[#600a0f]/20 shrink-0">
             <FileText className="h-5 w-5" />
           </div>
           <div>
@@ -319,33 +319,33 @@ export default function DashboardSettingsPage() {
           <button
             type="button"
             onClick={() => setActiveLegalModal("terms")}
-            className="flex items-center justify-between rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-4 text-left hover:border-[#b85c6b]/40 hover:bg-white transition-all cursor-pointer group"
+            className="flex items-center justify-between rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-4 text-left hover:border-[#600a0f]/40 hover:bg-white transition-all cursor-pointer group"
           >
             <div className="space-y-0.5">
-              <p className="text-xs font-bold text-[#181716] group-hover:text-[#b85c6b] transition-colors">
+              <p className="text-xs font-bold text-[#181716] group-hover:text-[#600a0f] transition-colors">
                 Terms &amp; Conditions
               </p>
               <p className="text-[11px] text-[#797570]">
                 Creator service agreement &amp; account terms
               </p>
             </div>
-            <ExternalLink className="h-4 w-4 text-[#797570] group-hover:text-[#b85c6b] shrink-0" />
+            <ExternalLink className="h-4 w-4 text-[#797570] group-hover:text-[#600a0f] shrink-0" />
           </button>
 
           <button
             type="button"
             onClick={() => setActiveLegalModal("privacy")}
-            className="flex items-center justify-between rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-4 text-left hover:border-[#b85c6b]/40 hover:bg-white transition-all cursor-pointer group"
+            className="flex items-center justify-between rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-4 text-left hover:border-[#600a0f]/40 hover:bg-white transition-all cursor-pointer group"
           >
             <div className="space-y-0.5">
-              <p className="text-xs font-bold text-[#181716] group-hover:text-[#b85c6b] transition-colors">
+              <p className="text-xs font-bold text-[#181716] group-hover:text-[#600a0f] transition-colors">
                 Privacy Policy
               </p>
               <p className="text-[11px] text-[#797570]">
                 Data collection, security &amp; public stats policy
               </p>
             </div>
-            <ExternalLink className="h-4 w-4 text-[#797570] group-hover:text-[#b85c6b] shrink-0" />
+            <ExternalLink className="h-4 w-4 text-[#797570] group-hover:text-[#600a0f] shrink-0" />
           </button>
         </div>
       </section>
@@ -417,7 +417,7 @@ function SwitchToggle({ checked, onChange, label, disabled = false }: SwitchTogg
       aria-label={label}
       disabled={disabled}
       onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-[#b85c6b]/20 disabled:cursor-not-allowed disabled:opacity-50 ${checked ? "bg-[#b85c6b]" : "bg-[#E7E3DC]"
+      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-[#600a0f]/20 disabled:cursor-not-allowed disabled:opacity-50 ${checked ? "bg-[#600a0f]" : "bg-[#E7E3DC]"
         }`}
     >
       <span
@@ -454,7 +454,7 @@ function LegalDocumentModal({
         {isTerms ? (
           <>
             <div className="rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-4 space-y-1">
-              <p className="font-bold text-[#b85c6b] text-xs">📜 Inflixo Creator Service Agreement</p>
+              <p className="font-bold text-[#600a0f] text-xs">📜 Inflixo Creator Service Agreement</p>
               <p className="text-[11px] text-[#181716] font-medium">
                 Welcome to Inflixo. By creating an account, linking social handles, or using our creator portfolio services, you agree to these Terms and Conditions.
               </p>
@@ -480,7 +480,7 @@ function LegalDocumentModal({
             <div className="space-y-2">
               <h4 className="font-bold text-[#181716] text-xs uppercase tracking-wider">3. Content Ownership &amp; Intellectual Property</h4>
               <p>
-                Creators retain full copyright ownership of all uploaded custom avatars, series posters, and video metadata. You grant Inflixo a non-exclusive license to host, display, and format your content for public portfolio presentation at <code className="bg-[#fbfbfb] px-1 py-0.5 rounded text-[#b85c6b] font-mono border border-[#E7E3DC]">inflixo.com/your-username</code>.
+                Creators retain full copyright ownership of all uploaded custom avatars, series posters, and video metadata. You grant Inflixo a non-exclusive license to host, display, and format your content for public portfolio presentation at <code className="bg-[#fbfbfb] px-1 py-0.5 rounded text-[#600a0f] font-mono border border-[#E7E3DC]">inflixo.com/your-username</code>.
               </p>
             </div>
 
@@ -548,7 +548,7 @@ function LegalDocumentModal({
             <div className="space-y-2">
               <h4 className="font-bold text-[#181716] text-xs uppercase tracking-wider">5. Account Deletion &amp; Data Rights</h4>
               <p>
-                You have the right to request deletion of your account and removal of all associated social metrics and series from Inflixo servers by contacting <code className="bg-[#fbfbfb] px-1 py-0.5 rounded text-[#b85c6b] font-mono border border-[#E7E3DC]">support@inflixo.com</code>.
+                You have the right to request deletion of your account and removal of all associated social metrics and series from Inflixo servers by contacting <code className="bg-[#fbfbfb] px-1 py-0.5 rounded text-[#600a0f] font-mono border border-[#E7E3DC]">support@inflixo.com</code>.
               </p>
             </div>
           </>
@@ -561,7 +561,7 @@ function LegalDocumentModal({
         <button
           type="button"
           onClick={onClose}
-          className="bg-[#b85c6b] hover:bg-[#6F3456] text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors cursor-pointer shadow-xs"
+          className="bg-[#600a0f] hover:bg-[#6F3456] text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors cursor-pointer shadow-xs"
         >
           Got it, Close
         </button>

@@ -121,7 +121,7 @@ export function SocialPreviewCard({
             type="button"
             onClick={onConfirm}
             disabled={loading}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#600a0f] hover:bg-[#600a0f] py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
           >
             {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
             <span>Confirm &amp; Link</span>
@@ -230,7 +230,7 @@ export function SocialPreviewModal({
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className="bg-[#B85C6B] hover:bg-[#8C3F4D] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
+          className="bg-[#600a0f] hover:bg-[#600a0f] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
         >
           {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
           <span>Confirm &amp; Link</span>

@@ -24,9 +24,9 @@ export function ProgressSteps({ current }: { current: OnboardingStep }) {
                 {/* Step Circle */}
                 <div
                   className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${isDone
-                    ? "bg-[#B85C6B] text-[#fbfbfb]"
+                    ? "bg-[#600a0f] text-[#fbfbfb]"
                     : isActive
-                      ? "bg-[#B85C6B] text-[#fbfbfb] ring-4 ring-[#f3dde057]"
+                      ? "bg-[#600a0f] text-[#fbfbfb] ring-4 ring-[#600b0f0f]"
                       : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#6B5A5D]"
                     }`}
                 >
@@ -50,7 +50,7 @@ export function ProgressSteps({ current }: { current: OnboardingStep }) {
                     {step.label}
                   </span>
                   {isActive && (
-                    <span className="text-[10px] font-semibold text-[#8C3F4D] mt-0.5">
+                    <span className="text-[10px] font-semibold text-[#600a0f] mt-0.5">
                       Step {i + 1} of {ONBOARDING_STEPS.length}
                     </span>
                   )}
@@ -61,7 +61,7 @@ export function ProgressSteps({ current }: { current: OnboardingStep }) {
               {i < ONBOARDING_STEPS.length - 1 && (
                 <div className="mx-3 h-1 flex-1 overflow-hidden rounded-full bg-[#E4DAD5]">
                   <div
-                    className="h-full rounded-full transition-all duration-500 ease-out bg-[#B85C6B]"
+                    className="h-full rounded-full transition-all duration-500 ease-out bg-[#600a0f]"
                     style={{
                       width: isDone ? "100%" : isActive ? "50%" : "0%",
                     }}
@@ -77,20 +77,20 @@ export function ProgressSteps({ current }: { current: OnboardingStep }) {
       <div className="sm:hidden">
         <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#B85C6B] text-[10px] font-bold text-[#fbfbfb]">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#600a0f] text-[10px] font-bold text-[#fbfbfb]">
               {currentIndex + 1}
             </span>
             <span className="text-xs font-bold text-[#241618]">
               {ONBOARDING_STEPS[currentIndex]?.label || "Setup"}
             </span>
           </div>
-          <span className="rounded-full bg-[#f3dde057] border border-[#E4DAD5] px-2.5 py-0.5 text-[11px] font-bold text-[#8C3F4D]">
+          <span className="rounded-full bg-[#600b0f0f] border border-[#E4DAD5] px-2.5 py-0.5 text-[11px] font-bold text-[#600a0f]">
             {progressPercent}% Complete
           </span>
         </div>
         <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#E4DAD5]">
           <div
-            className="h-full rounded-full transition-all duration-300 ease-out bg-[#B85C6B]"
+            className="h-full rounded-full transition-all duration-300 ease-out bg-[#600a0f]"
             style={{
               width: `${progressPercent}%`,
             }}

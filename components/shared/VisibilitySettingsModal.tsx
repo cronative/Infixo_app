@@ -171,7 +171,7 @@ export function VisibilitySettingsModal({
             <button
               type="button"
               onClick={handleResetDefault}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-[#6B5A5D] hover:text-[#B85C6B] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[#6B5A5D] hover:text-[#600a0f] transition-colors cursor-pointer"
             >
               <RotateCcw className="h-3 w-3" />
               <span>Reset Default</span>
@@ -195,8 +195,8 @@ export function VisibilitySettingsModal({
                   <div
                     key={section.sectionKey}
                     className={`flex items-center justify-between p-2.5 sm:p-3 rounded-xl border transition-all ${section.isVisible
-                        ? "bg-white border-[#E4DAD5] shadow-xs"
-                        : "bg-[#fbfbfb] border-[#E4DAD5]/60 opacity-60"
+                      ? "bg-white border-[#E4DAD5] shadow-xs"
+                      : "bg-[#fbfbfb] border-[#E4DAD5]/60 opacity-60"
                       }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0 flex-1">
@@ -208,7 +208,7 @@ export function VisibilitySettingsModal({
                         <p className="text-xs font-bold text-[#241618] truncate flex items-center gap-1.5">
                           {info.name}
                           {isAbout && (
-                            <span className="text-[9px] font-semibold text-[#B85C6B] bg-[#f3dde057] border border-[#B85C6B]/20 px-1.5 py-0.2 rounded">
+                            <span className="text-[9px] font-semibold text-[#600a0f] bg-[#600b0f0f] border border-[#600a0f]/20 px-1.5 py-0.2 rounded">
                               Locked
                             </span>
                           )}
@@ -224,8 +224,8 @@ export function VisibilitySettingsModal({
                         onClick={() => handleToggleVisibility(section.sectionKey)}
                         disabled={isAbout}
                         className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-colors cursor-pointer ${section.isVisible
-                            ? "border-[#E4DAD5] bg-[#fbfbfb] text-[#241618] hover:bg-[#f3dde057] hover:text-[#B85C6B]"
-                            : "border-[#C1443A]/20 bg-[#C1443A]/10 text-[#C1443A]"
+                          ? "border-[#E4DAD5] bg-[#fbfbfb] text-[#241618] hover:bg-[#600b0f0f] hover:text-[#600a0f]"
+                          : "border-[#C1443A]/20 bg-[#C1443A]/10 text-[#C1443A]"
                           } disabled:opacity-40 disabled:cursor-not-allowed`}
                         title={section.isVisible ? "Hide section" : "Show section"}
                       >
@@ -276,7 +276,7 @@ export function VisibilitySettingsModal({
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="tap-scale bg-[#B85C6B] hover:bg-[#8C3F4D] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
+            className="tap-scale bg-[#600a0f] hover:bg-[#600a0f] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
           >
             {saving ? (
               <>

@@ -101,7 +101,7 @@ export function Modal({
           <div className="flex items-center justify-between border-b border-[#E7E3DC] bg-white px-5 sm:px-6 py-3.5 sm:py-4 shrink-0">
             <div className="flex items-center gap-3 min-w-0 pr-2">
               {icon && (
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#b85c6b]/[0.09] text-[#b85c6b] shrink-0">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#600a0f]/[0.09] text-[#600a0f] shrink-0">
                   {icon}
                 </div>
               )}
@@ -159,7 +159,7 @@ export function ModalHeader({
     <div className={`flex items-center justify-between border-b border-[#E7E3DC] bg-white px-5 sm:px-6 py-3.5 sm:py-4 shrink-0 ${className}`}>
       <div className="flex items-center gap-3 min-w-0 pr-2">
         {icon && (
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#b85c6b]/[0.09] text-[#b85c6b] shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#600a0f]/[0.09] text-[#600a0f] shrink-0">
             {icon}
           </div>
         )}

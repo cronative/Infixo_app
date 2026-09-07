@@ -9,11 +9,11 @@
   --color-surface-alt: #fbfbfb;
   /* alternate/nested card tone */
 
-  --color-primary: #B85C6B;
+  --color-primary: #600a0f;
   /* maroon — buttons, active states, links, highlights */
-  --color-primary-hover: #8C3F4D;
+  --color-primary-hover: #600a0f;
   /* darker maroon — hover/pressed states */
-  --color-primary-tint: #f3dde057;
+  --color-primary-tint: #600b0f0f;
   /* light maroon — badges, tags, selected rows */
 
   --color-ink: #241618;
@@ -383,7 +383,7 @@ h6,
 }
 
 .text-gradient-premium {
-  color: #b85c6b;
+  color: #600a0f;
 }
 
 .text-gradient-gold {
@@ -402,7 +402,7 @@ h6,
 }
 
 .glass-card:hover {
-  border-color: #b85c6b;
+  border-color: #600a0f;
 }
 
 .glass-card-dark {
@@ -415,7 +415,7 @@ h6,
 }
 
 .hover-glow:hover {
-  border-color: #b85c6b;
+  border-color: #600a0f;
   box-shadow: 0 0 0 3px rgba(128, 61, 99, 0.1);
 }
 

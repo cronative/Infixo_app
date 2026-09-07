@@ -47,12 +47,12 @@ export function CreatorCollage() {
           </div>
 
           {/* Total Fanbase Badge Pill */}
-          <div className="flex items-center justify-between rounded-xl bg-[#f3dde057] px-3.5 py-2 border border-[#B85C6B]/20">
+          <div className="flex items-center justify-between rounded-xl bg-[#600b0f0f] px-3.5 py-2 border border-[#600a0f]/20">
             <div className="flex items-center gap-1.5">
-              <Users className="h-3.5 w-3.5 text-[#B85C6B]" />
-              <span className="text-xs font-extrabold text-[#B85C6B]">126K total fanbase</span>
+              <Users className="h-3.5 w-3.5 text-[#600a0f]" />
+              <span className="text-xs font-extrabold text-[#600a0f]">126K total fanbase</span>
             </div>
-            <span className="h-2 w-2 rounded-full bg-[#B85C6B] animate-pulse" />
+            <span className="h-2 w-2 rounded-full bg-[#600a0f] animate-pulse" />
           </div>
 
           {/* Crisp 1px Border Platform Follower Pills */}
@@ -73,12 +73,12 @@ export function CreatorCollage() {
 
           {/* Creator Series Preview Card (Solid Dark Surface #241618) */}
           <div className="flex items-center gap-3 rounded-2xl bg-[#241618] text-white p-3 border border-white/10">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#B85C6B]">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#600a0f]">
               <Play className="h-4 w-4 fill-white text-white" />
             </div>
             <div className="min-w-0">
               <p className="truncate text-xs font-extrabold text-white">Kashmir Diaries</p>
-              <p className="text-[11px] font-semibold text-[#f3dde057]">Season 1 · 5 Episodes</p>
+              <p className="text-[11px] font-semibold text-[#600b0f0f]">Season 1 · 5 Episodes</p>
             </div>
           </div>
         </div>

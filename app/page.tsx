@@ -281,7 +281,7 @@ export default function LandingHomePage() {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-[#fbfbfb]">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#B85C6B] border-t-transparent" />
+          <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#600a0f] border-t-transparent" />
           <p className="text-xs font-medium text-[#6B5A5D]">Redirecting to dashboard...</p>
         </div>
       </div>
@@ -289,7 +289,7 @@ export default function LandingHomePage() {
   }
 
   return (
-    <div className="relative min-h-dvh bg-[#fbfbfb] text-[#241618] flex flex-col font-sans selection:bg-[#f3dde057] selection:text-[#8C3F4D] overflow-x-hidden antialiased">
+    <div className="relative min-h-dvh bg-[#fbfbfb] text-[#241618] flex flex-col font-sans selection:bg-[#600b0f0f] selection:text-[#600a0f] overflow-x-hidden antialiased">
       {/* =========================================================================
           NAVIGATION BAR
          ========================================================================= */}
@@ -301,28 +301,28 @@ export default function LandingHomePage() {
               <button
                 type="button"
                 onClick={() => scrollToSection("total-fanbase")}
-                className="hover:text-[#B85C6B] transition-colors cursor-pointer py-1"
+                className="hover:text-[#600a0f] transition-colors cursor-pointer py-1"
               >
                 Total Fanbase
               </button>
               <button
                 type="button"
                 onClick={() => scrollToSection("series")}
-                className="hover:text-[#B85C6B] transition-colors cursor-pointer py-1"
+                className="hover:text-[#600a0f] transition-colors cursor-pointer py-1"
               >
                 Series Playlists
               </button>
               <button
                 type="button"
                 onClick={() => scrollToSection("collaborations")}
-                className="hover:text-[#B85C6B] transition-colors cursor-pointer py-1"
+                className="hover:text-[#600a0f] transition-colors cursor-pointer py-1"
               >
                 Brand Collabs
               </button>
               <button
                 type="button"
                 onClick={() => scrollToSection("pricing")}
-                className="hover:text-[#B85C6B] transition-colors cursor-pointer py-1"
+                className="hover:text-[#600a0f] transition-colors cursor-pointer py-1"
               >
                 Pricing
               </button>
@@ -339,7 +339,7 @@ export default function LandingHomePage() {
             <button
               type="button"
               onClick={() => handleClaim(username || "yourname")}
-              className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#B85C6B] px-4 py-2 text-xs sm:text-sm font-semibold text-[#fbfbfb] hover:bg-[#8C3F4D] transition-colors cursor-pointer active:scale-98"
+              className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#600a0f] px-4 py-2 text-xs sm:text-sm font-semibold text-[#fbfbfb] hover:bg-[#600a0f] transition-colors cursor-pointer active:scale-98"
             >
               <span>Claim Your Handle</span>
               <ArrowRight className="h-3.5 w-3.5" />
@@ -355,8 +355,8 @@ export default function LandingHomePage() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="text-center space-y-6 max-w-3xl mx-auto">
             {/* Tag / Badge */}
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#f3dde057] px-3.5 py-1 text-xs font-semibold text-[#8C3F4D]">
-              <Sparkles className="h-3.5 w-3.5 text-[#B85C6B]" />
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#600b0f0f] px-3.5 py-1 text-xs font-semibold text-[#600a0f]">
+              <Sparkles className="h-3.5 w-3.5 text-[#600a0f]" />
               <span>The Link-in-Bio for Series Creators</span>
             </div>
 
@@ -382,7 +382,7 @@ export default function LandingHomePage() {
                   e.preventDefault();
                   handleClaim(username);
                 }}
-                className="flex items-center rounded-[8px] border border-[#E4DAD5] bg-[#FFFFFF] p-1.5 focus-within:border-[#B85C6B] transition-colors"
+                className="flex items-center rounded-[8px] border border-[#E4DAD5] bg-[#FFFFFF] p-1.5 focus-within:border-[#600a0f] transition-colors"
               >
                 <span className="pl-3 text-xs sm:text-sm font-medium text-[#6B5A5D] select-none shrink-0">
                   inflixo.com/
@@ -396,7 +396,7 @@ export default function LandingHomePage() {
                 />
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-1 shrink-0 rounded-[8px] bg-[#B85C6B] px-4 py-2 text-xs sm:text-sm font-semibold text-[#fbfbfb] hover:bg-[#8C3F4D] transition-colors cursor-pointer active:scale-98"
+                  className="inline-flex items-center gap-1 shrink-0 rounded-[8px] bg-[#600a0f] px-4 py-2 text-xs sm:text-sm font-semibold text-[#fbfbfb] hover:bg-[#600a0f] transition-colors cursor-pointer active:scale-98"
                 >
                   <span>Claim</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -408,16 +408,16 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username)}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] px-6 py-2.5 text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer active:scale-98"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-[8px] bg-[#600a0f] hover:bg-[#600a0f] px-6 py-2.5 text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer active:scale-98"
                 >
                   <span>Claim Your Handle</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => scrollToSection("hero-preview")}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-[8px] bg-transparent hover:bg-[#fbfbfb] border border-[#B85C6B] px-6 py-2.5 text-sm font-semibold text-[#B85C6B] transition-colors cursor-pointer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-[8px] bg-transparent hover:bg-[#fbfbfb] border border-[#600a0f] px-6 py-2.5 text-sm font-semibold text-[#600a0f] transition-colors cursor-pointer"
                 >
-                  <Eye className="h-4 w-4 text-[#B85C6B]" />
+                  <Eye className="h-4 w-4 text-[#600a0f]" />
                   <span>See Creator Live Hub</span>
                 </button>
               </div>
@@ -432,7 +432,7 @@ export default function LandingHomePage() {
             {/* Floating Badge: Total Fanbase */}
             <div className="hidden sm:block absolute top-4 -left-6 lg:-left-12 z-20">
               <div className="flex items-center gap-2.5 rounded-[12px] bg-[#FFFFFF] border border-[#E4DAD5] px-3.5 py-2 text-xs font-semibold text-[#241618]">
-                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#fbfbfb] text-[#B85C6B] shrink-0">
+                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#fbfbfb] text-[#600a0f] shrink-0">
                   <Users className="h-4 w-4" />
                 </span>
                 <div className="text-left">
@@ -445,7 +445,7 @@ export default function LandingHomePage() {
             {/* Floating Badge: OTT Series */}
             <div className="hidden sm:block absolute top-6 -right-6 lg:-right-12 z-20">
               <div className="flex items-center gap-2.5 rounded-[12px] bg-[#FFFFFF] border border-[#E4DAD5] px-3.5 py-2 text-xs font-semibold text-[#241618]">
-                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#fbfbfb] text-[#B85C6B] shrink-0">
+                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#fbfbfb] text-[#600a0f] shrink-0">
                   <Tv className="h-4 w-4" />
                 </span>
                 <div className="text-left">
@@ -459,20 +459,20 @@ export default function LandingHomePage() {
             <div className="hidden md:flex absolute bottom-12 -left-8 lg:-left-14 z-20">
               <div className="flex items-center gap-3 rounded-[12px] bg-[#FFFFFF] border border-[#E4DAD5] px-3.5 py-2 text-xs font-semibold text-[#241618]">
                 <div className="flex items-center -space-x-1.5 shrink-0">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#fbfbfb] text-[#B85C6B] border border-[#E4DAD5]">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#fbfbfb] text-[#600a0f] border border-[#E4DAD5]">
                     <InstagramIcon className="h-3 w-3" />
                   </span>
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#fbfbfb] text-[#B85C6B] border border-[#E4DAD5]">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#fbfbfb] text-[#600a0f] border border-[#E4DAD5]">
                     <YoutubeIcon className="h-3 w-3" />
                   </span>
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#fbfbfb] text-[#B85C6B] border border-[#E4DAD5]">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#fbfbfb] text-[#600a0f] border border-[#E4DAD5]">
                     <TikTokIcon className="h-3 w-3" />
                   </span>
                 </div>
                 <div className="text-left">
                   <div className="flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-[#B85C6B] animate-pulse" />
-                    <p className="text-[11px] font-bold text-[#8C3F4D]">LIVE SYNC</p>
+                    <span className="h-2 w-2 rounded-full bg-[#600a0f] animate-pulse" />
+                    <p className="text-[11px] font-bold text-[#600a0f]">LIVE SYNC</p>
                   </div>
                   <p className="text-xs font-bold text-[#241618] leading-tight pt-0.5">3 Platforms</p>
                 </div>
@@ -482,7 +482,7 @@ export default function LandingHomePage() {
             {/* Floating Badge: Collab Gigs */}
             <div className="hidden sm:block absolute bottom-12 -right-8 lg:-right-14 z-20">
               <div className="flex items-center gap-2.5 rounded-[12px] bg-[#FFFFFF] border border-[#E4DAD5] px-3.5 py-2 text-xs font-semibold text-[#241618]">
-                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#f3dde057] text-[#8C3F4D] shrink-0">
+                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#600b0f0f] text-[#600a0f] shrink-0">
                   <Briefcase className="h-4 w-4" />
                 </span>
                 <div className="text-left">
@@ -540,7 +540,7 @@ export default function LandingHomePage() {
               <button
                 type="button"
                 onClick={() => handleClaim(username || "yourname")}
-                className="w-full py-2.5 px-4 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] text-[#fbfbfb] font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                className="w-full py-2.5 px-4 rounded-[8px] bg-[#600a0f] hover:bg-[#600a0f] text-[#fbfbfb] font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer active:scale-98"
               >
                 <span>Claim Your Handle</span>
                 <ArrowRight className="h-4 w-4" />
@@ -567,8 +567,8 @@ export default function LandingHomePage() {
 
           {/* 4 Trimmed Problem Cards (6-8 words descriptions) */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] space-y-3 transition-colors hover:border-[#B85C6B]">
-              <div className="h-10 w-10 rounded-[8px] bg-[#f3dde057] text-[#8C3F4D] flex items-center justify-center">
+            <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] space-y-3 transition-colors hover:border-[#600a0f]">
+              <div className="h-10 w-10 rounded-[8px] bg-[#600b0f0f] text-[#600a0f] flex items-center justify-center">
                 <Users className="h-5 w-5" />
               </div>
               <h3 className="font-display font-semibold text-base text-[#241618]">Audience Fragmented</h3>
@@ -577,8 +577,8 @@ export default function LandingHomePage() {
               </p>
             </div>
 
-            <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] space-y-3 transition-colors hover:border-[#B85C6B]">
-              <div className="h-10 w-10 rounded-[8px] bg-[#f3dde057] text-[#8C3F4D] flex items-center justify-center">
+            <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] space-y-3 transition-colors hover:border-[#600a0f]">
+              <div className="h-10 w-10 rounded-[8px] bg-[#600b0f0f] text-[#600a0f] flex items-center justify-center">
                 <Tv className="h-5 w-5" />
               </div>
               <h3 className="font-display font-semibold text-base text-[#241618]">Multi-Part Videos Lost</h3>
@@ -587,8 +587,8 @@ export default function LandingHomePage() {
               </p>
             </div>
 
-            <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] space-y-3 transition-colors hover:border-[#B85C6B]">
-              <div className="h-10 w-10 rounded-[8px] bg-[#f3dde057] text-[#8C3F4D] flex items-center justify-center">
+            <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] space-y-3 transition-colors hover:border-[#600a0f]">
+              <div className="h-10 w-10 rounded-[8px] bg-[#600b0f0f] text-[#600a0f] flex items-center justify-center">
                 <Briefcase className="h-5 w-5" />
               </div>
               <h3 className="font-display font-semibold text-base text-[#241618]">Rate Cards in DMs</h3>
@@ -597,8 +597,8 @@ export default function LandingHomePage() {
               </p>
             </div>
 
-            <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] space-y-3 transition-colors hover:border-[#B85C6B]">
-              <div className="h-10 w-10 rounded-[8px] bg-[#f3dde057] text-[#8C3F4D] flex items-center justify-center">
+            <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] space-y-3 transition-colors hover:border-[#600a0f]">
+              <div className="h-10 w-10 rounded-[8px] bg-[#600b0f0f] text-[#600a0f] flex items-center justify-center">
                 <Star className="h-5 w-5" />
               </div>
               <h3 className="font-display font-semibold text-base text-[#241618]">Brand Proof Hidden</h3>
@@ -618,7 +618,7 @@ export default function LandingHomePage() {
           {/* Part A: Unified Reach */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-6 space-y-4 text-left">
-              <span className="inline-block rounded-full bg-[#f3dde057] text-[#8C3F4D] px-3 py-0.5 text-xs font-semibold">
+              <span className="inline-block rounded-full bg-[#600b0f0f] text-[#600a0f] px-3 py-0.5 text-xs font-semibold">
                 Unified Reach
               </span>
               <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#241618] tracking-tight leading-tight">
@@ -629,15 +629,15 @@ export default function LandingHomePage() {
               </p>
               <ul className="space-y-2 text-xs sm:text-sm text-[#6B5A5D] pt-1">
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                  <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                   <span>One live-verified reach counter for brand proposals</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                  <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                   <span>Instant breakdown by platform with live counts</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                  <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                   <span>Command higher sponsorship rates with total audience data</span>
                 </li>
               </ul>
@@ -645,7 +645,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] px-5 py-2.5 text-xs sm:text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer active:scale-98"
+                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#600a0f] hover:bg-[#600a0f] px-5 py-2.5 text-xs sm:text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer active:scale-98"
                 >
                   <span>Calculate My Total Reach</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -668,8 +668,8 @@ export default function LandingHomePage() {
                       <p className="text-xs text-[#6B5A5D]">@{DEMO_PROFILE.username}</p>
                     </div>
                   </div>
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#8C3F4D] bg-[#f3dde057] px-2.5 py-0.5 rounded-full">
-                    <span className="h-2 w-2 rounded-full bg-[#B85C6B] animate-pulse" />
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#600a0f] bg-[#600b0f0f] px-2.5 py-0.5 rounded-full">
+                    <span className="h-2 w-2 rounded-full bg-[#600a0f] animate-pulse" />
                     Live Sync
                   </span>
                 </div>
@@ -678,7 +678,7 @@ export default function LandingHomePage() {
                   <p className="text-3xl sm:text-4xl font-bold tracking-tight text-[#241618]">
                     <AnimatedCounter end={20500000} />
                   </p>
-                  <p className="text-[11px] font-bold tracking-wider uppercase text-[#8C3F4D]">
+                  <p className="text-[11px] font-bold tracking-wider uppercase text-[#600a0f]">
                     TOTAL UNIFIED REACH
                   </p>
                 </div>
@@ -686,21 +686,21 @@ export default function LandingHomePage() {
                 <div className="space-y-2 pt-1 text-xs">
                   <div className="flex items-center justify-between p-2.5 rounded-[8px] bg-[#fbfbfb] border border-[#E4DAD5]">
                     <div className="flex items-center gap-2 font-medium text-[#241618]">
-                      <InstagramIcon className="h-4 w-4 text-[#B85C6B]" />
+                      <InstagramIcon className="h-4 w-4 text-[#600a0f]" />
                       <span>Instagram</span>
                     </div>
                     <span className="font-bold text-[#241618]">4.8M Followers</span>
                   </div>
                   <div className="flex items-center justify-between p-2.5 rounded-[8px] bg-[#fbfbfb] border border-[#E4DAD5]">
                     <div className="flex items-center gap-2 font-medium text-[#241618]">
-                      <YoutubeIcon className="h-4 w-4 text-[#B85C6B]" />
+                      <YoutubeIcon className="h-4 w-4 text-[#600a0f]" />
                       <span>YouTube</span>
                     </div>
                     <span className="font-bold text-[#241618]">12.5M Subscribers</span>
                   </div>
                   <div className="flex items-center justify-between p-2.5 rounded-[8px] bg-[#fbfbfb] border border-[#E4DAD5]">
                     <div className="flex items-center gap-2 font-medium text-[#241618]">
-                      <TikTokIcon className="h-4 w-4 text-[#B85C6B]" />
+                      <TikTokIcon className="h-4 w-4 text-[#600a0f]" />
                       <span>TikTok</span>
                     </div>
                     <span className="font-bold text-[#241618]">3.2M Followers</span>
@@ -716,7 +716,7 @@ export default function LandingHomePage() {
               <div className="w-full max-w-md rounded-[12px] border border-[#E4DAD5] bg-[#FFFFFF] p-5 space-y-3 text-left">
                 <div className="flex items-center justify-between pb-2 border-b border-[#E4DAD5]">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#8C3F4D] bg-[#f3dde057] px-2 py-0.5 rounded-[4px]">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#600a0f] bg-[#600b0f0f] px-2 py-0.5 rounded-[4px]">
                       OTT Playlist
                     </span>
                     <h4 className="text-sm font-bold text-[#241618] pt-1">
@@ -736,25 +736,25 @@ export default function LandingHomePage() {
                     <div
                       key={ep.num}
                       className={`flex items-center gap-3 rounded-[8px] p-2.5 text-xs border ${ep.active
-                        ? "bg-[#fbfbfb] border-[#B85C6B]"
+                        ? "bg-[#fbfbfb] border-[#600a0f]"
                         : "bg-[#FFFFFF] border-[#E4DAD5] text-[#241618]"
                         }`}
                     >
-                      <div className="flex h-7 w-7 items-center justify-center rounded-[6px] bg-[#f3dde057] text-[#8C3F4D] shrink-0 font-bold">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-[6px] bg-[#600b0f0f] text-[#600a0f] shrink-0 font-bold">
                         <Play className="h-3 w-3 fill-current ml-0.5" />
                       </div>
                       <div className="min-w-0 flex-1 space-y-1">
                         <div className="flex items-center justify-between">
                           <span className="font-semibold text-[#241618] truncate">{ep.title}</span>
                           {ep.active && (
-                            <span className="text-[10px] font-bold text-[#8C3F4D]">
+                            <span className="text-[10px] font-bold text-[#600a0f]">
                               Next Up
                             </span>
                           )}
                         </div>
                         <div className="h-1 w-full rounded-full bg-[#E4DAD5] overflow-hidden">
                           <div
-                            className="h-full bg-[#B85C6B] rounded-full transition-all duration-1000"
+                            className="h-full bg-[#600a0f] rounded-full transition-all duration-1000"
                             style={{ width: ep.progress }}
                           />
                         </div>
@@ -766,7 +766,7 @@ export default function LandingHomePage() {
             </div>
 
             <div className="lg:col-span-6 space-y-4 text-left order-1 lg:order-2">
-              <span className="inline-block rounded-full bg-[#f3dde057] text-[#8C3F4D] px-3 py-0.5 text-xs font-semibold">
+              <span className="inline-block rounded-full bg-[#600b0f0f] text-[#600a0f] px-3 py-0.5 text-xs font-semibold">
                 Episodic Playlists
               </span>
               <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#241618] tracking-tight leading-tight">
@@ -774,15 +774,15 @@ export default function LandingHomePage() {
               </h2>
               <ul className="space-y-2 text-xs sm:text-sm text-[#6B5A5D]">
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                  <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                   <span>Keep multi-part videos in sequential order</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                  <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                   <span>Enable season-style bingeing for evergreen content</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                  <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                   <span>Native YouTube &amp; Instagram views and ad revenue preserved</span>
                 </li>
               </ul>
@@ -790,7 +790,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] px-5 py-2.5 text-xs sm:text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer active:scale-98"
+                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#600a0f] hover:bg-[#600a0f] px-5 py-2.5 text-xs sm:text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer active:scale-98"
                 >
                   <span>Build My Series Hub</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -809,7 +809,7 @@ export default function LandingHomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Left Copy */}
             <div className="lg:col-span-6 space-y-4 text-left">
-              <span className="inline-block rounded-full bg-[#f3dde057] text-[#8C3F4D] px-3 py-0.5 text-xs font-semibold">
+              <span className="inline-block rounded-full bg-[#600b0f0f] text-[#600a0f] px-3 py-0.5 text-xs font-semibold">
                 Media Kit &amp; Credibility
               </span>
               <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#241618] tracking-tight leading-tight">
@@ -820,15 +820,15 @@ export default function LandingHomePage() {
               </p>
               <ul className="space-y-2 text-xs sm:text-sm text-[#6B5A5D]">
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                  <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                   <span>Instant 1-click WhatsApp &amp; email brief routing</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                  <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                   <span>Transparent fixed rates and deliverables</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                  <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                   <span>Verified ratings and sponsor ROI case studies</span>
                 </li>
               </ul>
@@ -836,7 +836,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] px-5 py-2.5 text-xs sm:text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer active:scale-98"
+                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#600a0f] hover:bg-[#600a0f] px-5 py-2.5 text-xs sm:text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer active:scale-98"
                 >
                   <span>Build My Live Rate Card</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -849,7 +849,7 @@ export default function LandingHomePage() {
               <div className="rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] p-5 space-y-3 text-left">
                 <div className="flex items-center justify-between pb-2 border-b border-[#E4DAD5]">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-[4px] uppercase bg-[#f3dde057] text-[#8C3F4D]">
+                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-[4px] uppercase bg-[#600b0f0f] text-[#600a0f]">
                       Instagram Reel
                     </span>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-[4px] bg-[#FFFFFF] border border-[#E4DAD5] text-[#241618]">
@@ -866,17 +866,17 @@ export default function LandingHomePage() {
                     1x Dedicated 4K Reel + Story Series
                   </h5>
                   <p className="text-xs text-[#6B5A5D] mt-0.5 flex items-center gap-1">
-                    <Clock className="h-3 w-3 text-[#B85C6B]" /> Turnaround: 3 Days
+                    <Clock className="h-3 w-3 text-[#600a0f]" /> Turnaround: 3 Days
                   </p>
                 </div>
 
                 <div className="pt-2 border-t border-[#E4DAD5] grid grid-cols-2 gap-2">
-                  <div className="bg-[#B85C6B] text-[#fbfbfb] text-xs font-semibold py-2 px-3 rounded-[8px] inline-flex items-center justify-center gap-1.5 hover:bg-[#8C3F4D] transition-colors cursor-pointer">
+                  <div className="bg-[#600a0f] text-[#fbfbfb] text-xs font-semibold py-2 px-3 rounded-[8px] inline-flex items-center justify-center gap-1.5 hover:bg-[#600a0f] transition-colors cursor-pointer">
                     <MessageCircle className="h-3.5 w-3.5 fill-current" />
                     <span>WhatsApp Inquiry</span>
                   </div>
                   <div className="bg-[#FFFFFF] border border-[#E4DAD5] text-[#241618] text-xs font-semibold py-2 px-3 rounded-[8px] inline-flex items-center justify-center gap-1.5 hover:bg-[#fbfbfb] transition-colors cursor-pointer">
-                    <Mail className="h-3.5 w-3.5 text-[#B85C6B]" />
+                    <Mail className="h-3.5 w-3.5 text-[#600a0f]" />
                     <span>Email Brief</span>
                   </div>
                 </div>
@@ -885,13 +885,13 @@ export default function LandingHomePage() {
               {/* Review Card */}
               <div className="rounded-[12px] border border-[#E4DAD5] bg-[#FFFFFF] p-4 space-y-2 text-left">
                 <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-1 text-[#B85C6B]">
+                  <div className="flex items-center gap-1 text-[#600a0f]">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} className="h-3.5 w-3.5 fill-current" />
                     ))}
                     <span className="font-bold text-[#241618] ml-1">5.0</span>
                   </div>
-                  <span className="text-[10px] font-semibold text-[#8C3F4D] bg-[#f3dde057] px-2 py-0.5 rounded-[4px]">
+                  <span className="text-[10px] font-semibold text-[#600a0f] bg-[#600b0f0f] px-2 py-0.5 rounded-[4px]">
                     Verified Sponsor
                   </span>
                 </div>
@@ -924,7 +924,7 @@ export default function LandingHomePage() {
       <section id="pricing" className="py-16 sm:py-24 bg-[#fbfbfb] border-b border-[#E4DAD5]">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 space-y-10">
           <div className="text-center max-w-2xl mx-auto space-y-3">
-            <span className="inline-block rounded-full bg-[#f3dde057] text-[#8C3F4D] px-3 py-0.5 text-xs font-semibold">
+            <span className="inline-block rounded-full bg-[#600b0f0f] text-[#600a0f] px-3 py-0.5 text-xs font-semibold">
               Plans &amp; Pricing
             </span>
             <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-[#241618]">
@@ -941,7 +941,7 @@ export default function LandingHomePage() {
                   type="button"
                   onClick={() => setPricingCycle("monthly")}
                   className={`rounded-[6px] px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${pricingCycle === "monthly"
-                    ? "bg-[#B85C6B] text-[#fbfbfb]"
+                    ? "bg-[#600a0f] text-[#fbfbfb]"
                     : "text-[#6B5A5D] hover:text-[#241618]"
                     }`}
                 >
@@ -951,12 +951,12 @@ export default function LandingHomePage() {
                   type="button"
                   onClick={() => setPricingCycle("yearly")}
                   className={`rounded-[6px] px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1 ${pricingCycle === "yearly"
-                    ? "bg-[#B85C6B] text-[#fbfbfb]"
+                    ? "bg-[#600a0f] text-[#fbfbfb]"
                     : "text-[#6B5A5D] hover:text-[#241618]"
                     }`}
                 >
                   <span>Yearly</span>
-                  <span className={`text-[10px] px-1 rounded ${pricingCycle === "yearly" ? "bg-white/20 text-white" : "bg-[#f3dde057] text-[#8C3F4D]"
+                  <span className={`text-[10px] px-1 rounded ${pricingCycle === "yearly" ? "bg-white/20 text-white" : "bg-[#600b0f0f] text-[#600a0f]"
                     }`}>
                     -16%
                   </span>
@@ -968,7 +968,7 @@ export default function LandingHomePage() {
                   type="button"
                   onClick={() => setCurrency("INR")}
                   className={`rounded-[6px] px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${currency === "INR"
-                    ? "bg-[#B85C6B] text-[#fbfbfb]"
+                    ? "bg-[#600a0f] text-[#fbfbfb]"
                     : "text-[#6B5A5D] hover:text-[#241618]"
                     }`}
                 >
@@ -978,7 +978,7 @@ export default function LandingHomePage() {
                   type="button"
                   onClick={() => setCurrency("USD")}
                   className={`rounded-[6px] px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${currency === "USD"
-                    ? "bg-[#B85C6B] text-[#fbfbfb]"
+                    ? "bg-[#600a0f] text-[#fbfbfb]"
                     : "text-[#6B5A5D] hover:text-[#241618]"
                     }`}
                 >
@@ -995,7 +995,7 @@ export default function LandingHomePage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h4 className="font-display font-bold text-base text-[#241618]">Starter</h4>
-                  <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-[4px] bg-[#f3dde057] text-[#8C3F4D]">
+                  <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-[4px] bg-[#600b0f0f] text-[#600a0f]">
                     Free Forever
                   </span>
                 </div>
@@ -1005,23 +1005,23 @@ export default function LandingHomePage() {
                 </div>
                 <ul className="space-y-2.5 text-xs text-[#6B5A5D] pt-3 border-t border-[#E4DAD5]">
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                     <span>Up to 3 content series</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                     <span>Up to 15 total episodes</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                     <span>1 creator service rate card</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                     <span>Total Fanbase live counter</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                     <span>Social profiles &amp; custom links</span>
                   </li>
                 </ul>
@@ -1031,7 +1031,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="w-full py-2 px-4 rounded-[8px] bg-transparent hover:bg-[#fbfbfb] border border-[#B85C6B] text-[#B85C6B] font-semibold text-xs transition-colors cursor-pointer"
+                  className="w-full py-2 px-4 rounded-[8px] bg-transparent hover:bg-[#fbfbfb] border border-[#600a0f] text-[#600a0f] font-semibold text-xs transition-colors cursor-pointer"
                 >
                   Get Started Free
                 </button>
@@ -1039,11 +1039,11 @@ export default function LandingHomePage() {
             </div>
 
             {/* Plan 2: Pro */}
-            <div className="p-6 rounded-[12px] border-2 border-[#B85C6B] bg-[#FFFFFF] space-y-5 flex flex-col justify-between relative">
+            <div className="p-6 rounded-[12px] border-2 border-[#600a0f] bg-[#FFFFFF] space-y-5 flex flex-col justify-between relative">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h4 className="font-display font-bold text-base text-[#241618]">Pro</h4>
-                  <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-[4px] bg-[#B85C6B] text-[#fbfbfb]">
+                  <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-[4px] bg-[#600a0f] text-[#fbfbfb]">
                     Recommended
                   </span>
                 </div>
@@ -1064,23 +1064,23 @@ export default function LandingHomePage() {
                 </div>
                 <ul className="space-y-2.5 text-xs text-[#241618] font-medium pt-3 border-t border-[#E4DAD5]">
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                     <span>Up to 30 content series</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                     <span>Up to 300 total episodes</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                     <span>Up to 3 active service rate cards</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                     <span>Remove Inflixo branding</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                     <span>Direct brand lead routing</span>
                   </li>
                 </ul>
@@ -1090,7 +1090,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="w-full py-2.5 px-4 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] text-[#fbfbfb] font-semibold text-xs sm:text-sm transition-colors cursor-pointer active:scale-98"
+                  className="w-full py-2.5 px-4 rounded-[8px] bg-[#600a0f] hover:bg-[#600a0f] text-[#fbfbfb] font-semibold text-xs sm:text-sm transition-colors cursor-pointer active:scale-98"
                 >
                   Upgrade to Creator Pro
                 </button>
@@ -1102,7 +1102,7 @@ export default function LandingHomePage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h4 className="font-display font-bold text-base text-[#241618]">VIP</h4>
-                  <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-[4px] bg-[#f3dde057] text-[#8C3F4D]">
+                  <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-[4px] bg-[#600b0f0f] text-[#600a0f]">
                     Custom
                   </span>
                 </div>
@@ -1123,23 +1123,23 @@ export default function LandingHomePage() {
                 </div>
                 <ul className="space-y-2.5 text-xs text-[#6B5A5D] pt-3 border-t border-[#E4DAD5]">
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                     <span>Unlimited content series</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                     <span>Unlimited total episodes</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                     <span>Unlimited creator services</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                     <span>Remove Inflixo branding</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#B85C6B] shrink-0" />
+                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
                     <span>Full feature access &amp; priority</span>
                   </li>
                 </ul>
@@ -1149,7 +1149,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="w-full py-2 px-4 rounded-[8px] bg-transparent hover:bg-[#fbfbfb] border border-[#B85C6B] text-[#B85C6B] font-semibold text-xs transition-colors cursor-pointer"
+                  className="w-full py-2 px-4 rounded-[8px] bg-transparent hover:bg-[#fbfbfb] border border-[#600a0f] text-[#600a0f] font-semibold text-xs transition-colors cursor-pointer"
                 >
                   Get VIP Access
                 </button>
@@ -1174,7 +1174,7 @@ export default function LandingHomePage() {
                   e.preventDefault();
                   handleClaim(bottomUsername);
                 }}
-                className="flex items-center rounded-[8px] border border-[#E4DAD5] bg-[#fbfbfb] p-1.5 focus-within:border-[#B85C6B] transition-colors"
+                className="flex items-center rounded-[8px] border border-[#E4DAD5] bg-[#fbfbfb] p-1.5 focus-within:border-[#600a0f] transition-colors"
               >
                 <span className="pl-3 text-xs sm:text-sm font-medium text-[#6B5A5D] select-none shrink-0">
                   inflixo.com/
@@ -1188,7 +1188,7 @@ export default function LandingHomePage() {
                 />
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-1 shrink-0 rounded-[8px] bg-[#B85C6B] px-4 py-2 text-xs sm:text-sm font-semibold text-[#fbfbfb] hover:bg-[#8C3F4D] transition-colors cursor-pointer active:scale-98"
+                  className="inline-flex items-center gap-1 shrink-0 rounded-[8px] bg-[#600a0f] px-4 py-2 text-xs sm:text-sm font-semibold text-[#fbfbfb] hover:bg-[#600a0f] transition-colors cursor-pointer active:scale-98"
                 >
                   <span>Claim</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -1198,7 +1198,7 @@ export default function LandingHomePage() {
               <button
                 type="button"
                 onClick={() => handleClaim(bottomUsername)}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-[8px] bg-[#B85C6B] hover:bg-[#8C3F4D] px-6 py-2.5 text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer active:scale-98"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-[8px] bg-[#600a0f] hover:bg-[#600a0f] px-6 py-2.5 text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer active:scale-98"
               >
                 <span>Claim Your Handle</span>
               </button>
@@ -1270,9 +1270,9 @@ export default function LandingHomePage() {
           type="button"
           onClick={scrollToTop}
           aria-label="Scroll to top"
-          className="group flex items-center gap-1.5 rounded-full border border-[#E4DAD5] bg-[#FFFFFF] px-3 py-2 text-xs font-semibold text-[#241618] hover:border-[#B85C6B] transition-colors cursor-pointer"
+          className="group flex items-center gap-1.5 rounded-full border border-[#E4DAD5] bg-[#FFFFFF] px-3 py-2 text-xs font-semibold text-[#241618] hover:border-[#600a0f] transition-colors cursor-pointer"
         >
-          <ArrowUp className="h-4 w-4 text-[#B85C6B]" />
+          <ArrowUp className="h-4 w-4 text-[#600a0f]" />
           <span className="hidden sm:inline">Top</span>
         </button>
       </div>

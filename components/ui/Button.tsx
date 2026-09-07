@@ -16,11 +16,11 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-[#B85C6B] text-[#fbfbfb] hover:bg-[#8C3F4D] active:scale-[0.99] disabled:opacity-50 disabled:bg-[#fbfbfb] disabled:text-[#6B5A5D] disabled:cursor-not-allowed",
+    "bg-[#600a0f] text-[#fbfbfb] hover:bg-[#600a0f] active:scale-[0.99] disabled:opacity-50 disabled:bg-[#fbfbfb] disabled:text-[#6B5A5D] disabled:cursor-not-allowed",
   secondary:
-    "bg-[#FFFFFF] text-[#241618] border border-[#E4DAD5] hover:bg-[#fbfbfb] hover:border-[#B85C6B]/40",
+    "bg-[#FFFFFF] text-[#241618] border border-[#E4DAD5] hover:bg-[#fbfbfb] hover:border-[#600a0f]/40",
   outline:
-    "bg-transparent text-[#B85C6B] border border-[#B85C6B] hover:bg-[#f3dde057]/50",
+    "bg-transparent text-[#600a0f] border border-[#600a0f] hover:bg-[#600b0f0f]/50",
   ghost: "bg-transparent text-[#6B5A5D] hover:text-[#241618] hover:bg-[#fbfbfb]",
   danger: "bg-rose-50 text-[#C1443A] border border-rose-200 hover:bg-rose-100",
 };

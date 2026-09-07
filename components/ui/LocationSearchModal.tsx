@@ -97,7 +97,7 @@ export function LocationSearchModal({
           type="button"
           onClick={() => setMode("search")}
           className={`flex-1 rounded-lg py-1.5 text-xs font-semibold transition-colors cursor-pointer ${mode === "search"
-            ? "bg-white text-[#b85c6b] shadow-xs border border-[#E7E3DC]"
+            ? "bg-white text-[#600a0f] shadow-xs border border-[#E7E3DC]"
             : "text-[#797570] hover:text-[#181716]"
             }`}
         >
@@ -107,7 +107,7 @@ export function LocationSearchModal({
           type="button"
           onClick={() => setMode("custom")}
           className={`flex-1 rounded-lg py-1.5 text-xs font-semibold transition-colors cursor-pointer ${mode === "custom"
-            ? "bg-white text-[#b85c6b] shadow-xs border border-[#E7E3DC]"
+            ? "bg-white text-[#600a0f] shadow-xs border border-[#E7E3DC]"
             : "text-[#797570] hover:text-[#181716]"
             }`}
         >
@@ -127,7 +127,7 @@ export function LocationSearchModal({
                 placeholder="Search city, state, or country..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] py-2.5 pl-10 pr-4 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] py-2.5 pl-10 pr-4 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:border-[#600a0f] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
@@ -143,14 +143,14 @@ export function LocationSearchModal({
                     key={idx}
                     type="button"
                     onClick={() => handleSelect(loc)}
-                    className="w-full flex items-center justify-between rounded-xl p-2.5 text-left border border-[#E7E3DC] bg-white hover:border-[#b85c6b]/30 hover:bg-[#fbfbfb] transition-colors group cursor-pointer"
+                    className="w-full flex items-center justify-between rounded-xl p-2.5 text-left border border-[#E7E3DC] bg-white hover:border-[#600a0f]/30 hover:bg-[#fbfbfb] transition-colors group cursor-pointer"
                   >
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#fbfbfb] text-[#797570] group-hover:bg-[#b85c6b]/[0.09] group-hover:text-[#b85c6b] transition-colors shrink-0">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#fbfbfb] text-[#797570] group-hover:bg-[#600a0f]/[0.09] group-hover:text-[#600a0f] transition-colors shrink-0">
                         <Building className="h-3.5 w-3.5" />
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-[#181716] group-hover:text-[#b85c6b] transition-colors">
+                        <p className="text-xs font-bold text-[#181716] group-hover:text-[#600a0f] transition-colors">
                           {loc.city}
                         </p>
                         <p className="text-[11px] text-[#797570] font-medium">
@@ -158,7 +158,7 @@ export function LocationSearchModal({
                         </p>
                       </div>
                     </div>
-                    <span className="text-xs font-semibold text-[#b85c6b] opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-xs font-semibold text-[#600a0f] opacity-0 group-hover:opacity-100 transition-opacity">
                       Select →
                     </span>
                   </button>
@@ -184,7 +184,7 @@ export function LocationSearchModal({
                   placeholder="e.g. Surat, Austin, Kyoto"
                   value={customCity}
                   onChange={(e) => setCustomCity(e.target.value)}
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] py-2.5 pl-10 pr-3.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] py-2.5 pl-10 pr-3.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:border-[#600a0f] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
             </div>
@@ -198,7 +198,7 @@ export function LocationSearchModal({
                   placeholder="e.g. Gujarat, California"
                   value={customState}
                   onChange={(e) => setCustomState(e.target.value)}
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] py-2.5 pl-10 pr-3.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] py-2.5 pl-10 pr-3.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:border-[#600a0f] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
             </div>
@@ -212,7 +212,7 @@ export function LocationSearchModal({
                   placeholder="e.g. India, United States, Japan"
                   value={customCountry}
                   onChange={(e) => setCustomCountry(e.target.value)}
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] py-2.5 pl-10 pr-3.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:border-[#b85c6b] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] py-2.5 pl-10 pr-3.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:border-[#600a0f] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
             </div>
@@ -229,7 +229,7 @@ export function LocationSearchModal({
                 type="button"
                 onClick={handleSaveCustom}
                 disabled={!customCity.trim() || !customCountry.trim()}
-                className="bg-[#b85c6b] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
+                className="bg-[#600a0f] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
               >
                 Save Location
               </button>

@@ -38,7 +38,7 @@ export function ConfirmModal({
     >
       <ModalBody className="p-5 sm:p-6 space-y-3">
         <div className="flex items-start gap-3.5">
-          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-xs ${isDestructive ? "bg-rose-50 text-[#C2414B] border border-rose-200" : "bg-[#b85c6b]/[0.09] text-[#b85c6b] border border-[#b85c6b]/20"
+          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-xs ${isDestructive ? "bg-rose-50 text-[#C2414B] border border-rose-200" : "bg-[#600a0f]/[0.09] text-[#600a0f] border border-[#600a0f]/20"
             }`}>
             <AlertCircle className="h-5 w-5" />
           </div>
@@ -66,7 +66,7 @@ export function ConfirmModal({
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className={`font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50 text-white ${isDestructive ? "bg-[#C2414B] hover:bg-[#a9323c]" : "bg-[#b85c6b] hover:bg-[#6F3456]"
+          className={`font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50 text-white ${isDestructive ? "bg-[#C2414B] hover:bg-[#a9323c]" : "bg-[#600a0f] hover:bg-[#6F3456]"
             }`}
         >
           <span>{loading ? "Processing..." : confirmText}</span>

@@ -109,11 +109,11 @@ function getLinkPlatform(link: CustomLink): {
   // Fallback to title initials with pink/maroon squircle badge
   return {
     icon: (
-      <span className="text-[11px] font-bold tracking-tight text-[#8C3F4D]">
+      <span className="text-[11px] font-bold tracking-tight text-[#600a0f]">
         {getInitials(link.title)}
       </span>
     ),
-    bgClass: "bg-[#f3dde057] border border-[#E7D0D4]",
+    bgClass: "bg-[#600b0f0f] border border-[#E7D0D4]",
   };
 }
 
@@ -382,8 +382,8 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
             onClick={(e) => handleOpenCreate(e.currentTarget)}
             disabled={isLimitReached}
             className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-colors cursor-pointer shadow-xs ${isLimitReached
-                ? "bg-[#fbfbfb] border border-[#E7E3DC] text-[#797570] opacity-60 cursor-not-allowed"
-                : "bg-[#B85C6B] hover:bg-[#8C3F4D] text-white"
+              ? "bg-[#fbfbfb] border border-[#E7E3DC] text-[#797570] opacity-60 cursor-not-allowed"
+              : "bg-[#600a0f] hover:bg-[#600a0f] text-white"
               }`}
             title={isLimitReached ? "Early Access plan limit reached (3 links max)" : "Add new custom link"}
           >
@@ -404,7 +404,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
             <button
               type="button"
               onClick={(e) => handleOpenCreate(e.currentTarget)}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#600a0f] hover:bg-[#600a0f] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Add Link</span>
@@ -451,7 +451,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                       title="Open link in new tab"
                     >
                       <span>Open</span>
-                      <ExternalLink className="h-3 w-3 text-[#B85C6B]" />
+                      <ExternalLink className="h-3 w-3 text-[#600a0f]" />
                     </a>
                   )}
 
@@ -482,7 +482,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                             onClick={() => setActiveMenuId(null)}
                             className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors"
                           >
-                            <ExternalLink className="h-3.5 w-3.5 text-[#B85C6B]" />
+                            <ExternalLink className="h-3.5 w-3.5 text-[#600a0f]" />
                             <span>Open Link</span>
                           </a>
                         )}
@@ -569,7 +569,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     id="custom-link-type"
                     value={selectedType}
                     onChange={(e) => handleTypeSelect(e.target.value)}
-                    className="w-full appearance-none rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 px-3.5 py-2 pr-9 text-xs font-semibold text-[#181716] focus:border-[#B85C6B] focus:bg-white focus:outline-none transition-colors cursor-pointer"
+                    className="w-full appearance-none rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 px-3.5 py-2 pr-9 text-xs font-semibold text-[#181716] focus:border-[#600a0f] focus:bg-white focus:outline-none transition-colors cursor-pointer"
                   >
                     <option value="">— Select a link type (auto-fills title) —</option>
                     {LINK_TYPE_GROUPS.map((group) => (
@@ -601,7 +601,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     setIsTitleManuallyEdited(true);
                   }}
                   placeholder="e.g. Follow on Instagram or Watch Latest Video"
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#B85C6B] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#600a0f] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
@@ -618,7 +618,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     value={formUrl}
                     onChange={(e) => setFormUrl(e.target.value)}
                     placeholder="https://example.com/your-destination"
-                    className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 pl-3.5 pr-9 py-2 text-xs font-mono font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#B85C6B] focus:bg-white focus:outline-none transition-colors"
+                    className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 pl-3.5 pr-9 py-2 text-xs font-mono font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#600a0f] focus:bg-white focus:outline-none transition-colors"
                   />
                   {formUrl && (formUrl.startsWith("http://") || formUrl.startsWith("https://")) && (
                     <a
@@ -626,7 +626,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="Test link destination in new tab"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#797570] hover:text-[#B85C6B] transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#797570] hover:text-[#600a0f] transition-colors"
                     >
                       <ExternalLink className="h-4 w-4" />
                     </a>
@@ -655,7 +655,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
               type="submit"
               form="custom-link-form"
               disabled={isSaving}
-              className="bg-[#B85C6B] hover:bg-[#8C3F4D] text-white font-semibold text-xs py-1.5 px-4 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="bg-[#600a0f] hover:bg-[#600a0f] text-white font-semibold text-xs py-1.5 px-4 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               <Check className="h-3.5 w-3.5" />
               <span>{isSaving ? "Saving..." : editingLink ? "Save Changes" : "Save Link"}</span>

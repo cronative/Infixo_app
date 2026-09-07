@@ -92,12 +92,12 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
               type="text"
               readOnly
               value={seriesUrl}
-              className="flex-1 rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] px-3.5 py-2 text-xs font-mono text-[#241618] select-all focus:border-[#B85C6B] focus:bg-white focus:outline-none"
+              className="flex-1 rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] px-3.5 py-2 text-xs font-mono text-[#241618] select-all focus:border-[#600a0f] focus:bg-white focus:outline-none"
             />
             <button
               type="button"
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-3.5 py-2 text-xs font-semibold text-white shadow-2xs transition-colors shrink-0 cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#600a0f] hover:bg-[#600a0f] px-3.5 py-2 text-xs font-semibold text-white shadow-2xs transition-colors shrink-0 cursor-pointer"
             >
               {copiedLink ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               <span>{copiedLink ? "Copied" : "Copy"}</span>
@@ -108,11 +108,11 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
         {/* Caption Box */}
         <div className="space-y-2 rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] p-3.5 text-left">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-[#B85C6B] font-bold text-xs">
+            <div className="flex items-center gap-1.5 text-[#600a0f] font-bold text-xs">
               <Sparkles className="h-3.5 w-3.5" />
               <span>Ready-to-Paste Reel Caption</span>
             </div>
-            <span className="text-[10px] bg-[#f3dde057] text-[#8C3F4D] px-2 py-0.5 rounded-md font-bold">Recommended</span>
+            <span className="text-[10px] bg-[#600b0f0f] text-[#600a0f] px-2 py-0.5 rounded-md font-bold">Recommended</span>
           </div>
 
           <div className="rounded-lg border border-[#E4DAD5] bg-white p-2.5 text-xs font-mono text-[#241618] leading-relaxed whitespace-pre-wrap select-all">
@@ -122,7 +122,7 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
           <button
             type="button"
             onClick={handleCopyCaption}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors cursor-pointer"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#600a0f] hover:bg-[#600a0f] px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors cursor-pointer"
           >
             {copiedCaption ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
             <span>{copiedCaption ? "Caption Copied ✓" : "Copy Reel Caption"}</span>

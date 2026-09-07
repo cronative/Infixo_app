@@ -179,8 +179,8 @@ export default function DashboardThemesPage() {
 
         {/* Retained active-theme badge on the right */}
         <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-          <span className="inline-flex items-center gap-1.5 rounded-xl bg-[#f3dde057] border border-[#B85C6B]/20 px-3.5 py-1.5 text-xs font-semibold text-[#8C3F4D] shadow-xs">
-            <span className="h-2 w-2 rounded-full bg-[#B85C6B]" />
+          <span className="inline-flex items-center gap-1.5 rounded-xl bg-[#600b0f0f] border border-[#600a0f]/20 px-3.5 py-1.5 text-xs font-semibold text-[#600a0f] shadow-xs">
+            <span className="h-2 w-2 rounded-full bg-[#600a0f]" />
             Active theme: {activeThemeMeta.name}
           </span>
         </div>
@@ -198,7 +198,7 @@ export default function DashboardThemesPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search themes by name or style..."
-            className="w-full pl-9 pr-8 py-2 bg-[#fbfbfb] border border-[#E4DAD5] rounded-xl text-xs font-medium text-[#241618] placeholder:text-[#6B5A5D]/60 focus:outline-none focus:border-[#B85C6B] focus:bg-white focus:ring-1 focus:ring-[#B85C6B]/20 transition-all"
+            className="w-full pl-9 pr-8 py-2 bg-[#fbfbfb] border border-[#E4DAD5] rounded-xl text-xs font-medium text-[#241618] placeholder:text-[#6B5A5D]/60 focus:outline-none focus:border-[#600a0f] focus:bg-white focus:ring-1 focus:ring-[#600a0f]/20 transition-all"
           />
           {searchQuery && (
             <button
@@ -218,7 +218,7 @@ export default function DashboardThemesPage() {
             type="button"
             onClick={() => setActiveGroup("all")}
             className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${activeGroup === "all"
-              ? "bg-[#B85C6B] text-white shadow-xs"
+              ? "bg-[#600a0f] text-white shadow-xs"
               : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#6B5A5D] hover:text-[#241618] hover:bg-white"
               }`}
           >
@@ -229,8 +229,8 @@ export default function DashboardThemesPage() {
             type="button"
             onClick={() => setActiveGroup("animated")}
             className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${activeGroup === "animated"
-              ? "bg-[#B85C6B] text-white shadow-xs"
-              : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#8C3F4D] hover:text-[#241618] hover:bg-white"
+              ? "bg-[#600a0f] text-white shadow-xs"
+              : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#600a0f] hover:text-[#241618] hover:bg-white"
               }`}
           >
             <Sparkles className="h-3.5 w-3.5" />
@@ -241,7 +241,7 @@ export default function DashboardThemesPage() {
             type="button"
             onClick={() => setActiveGroup("light")}
             className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${activeGroup === "light"
-              ? "bg-[#B85C6B] text-white shadow-xs"
+              ? "bg-[#600a0f] text-white shadow-xs"
               : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#6B5A5D] hover:text-[#241618] hover:bg-white"
               }`}
           >
@@ -252,7 +252,7 @@ export default function DashboardThemesPage() {
             type="button"
             onClick={() => setActiveGroup("dark")}
             className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${activeGroup === "dark"
-              ? "bg-[#B85C6B] text-white shadow-xs"
+              ? "bg-[#600a0f] text-white shadow-xs"
               : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#6B5A5D] hover:text-[#241618] hover:bg-white"
               }`}
           >
@@ -267,7 +267,7 @@ export default function DashboardThemesPage() {
       <div className="space-y-2">
         <div className="flex items-center justify-between px-0.5">
           <h2 className="font-display text-xs font-bold uppercase tracking-wider text-[#6B5A5D] flex items-center gap-1.5">
-            <Palette className="h-3.5 w-3.5 text-[#B85C6B]" />
+            <Palette className="h-3.5 w-3.5 text-[#600a0f]" />
             <span>Select theme to preview</span>
           </h2>
           <span className="text-[11px] text-[#6B5A5D] font-semibold">
@@ -328,7 +328,7 @@ export default function DashboardThemesPage() {
                     setSearchQuery("");
                     setActiveGroup("all");
                   }}
-                  className="text-xs font-semibold text-[#B85C6B] hover:underline cursor-pointer"
+                  className="text-xs font-semibold text-[#600a0f] hover:underline cursor-pointer"
                 >
                   Reset filters
                 </button>
@@ -370,15 +370,15 @@ export default function DashboardThemesPage() {
           {/* Left: Section Title & Current Preview Status */}
           <div className="flex items-center gap-2.5 flex-wrap">
             <div className="flex items-center gap-2">
-              <Eye className="h-4 w-4 text-[#B85C6B]" />
+              <Eye className="h-4 w-4 text-[#600a0f]" />
               <h2 className="font-display text-sm sm:text-base font-bold text-[#241618]">
                 Live Profile Preview
               </h2>
             </div>
 
             {isPreviewDifferent ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f3dde057] border border-[#B85C6B]/20 px-2.5 py-0.5 text-xs font-bold text-[#8C3F4D] animate-pulse">
-                <Sparkles className="h-3 w-3 text-[#B85C6B]" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#600b0f0f] border border-[#600a0f]/20 px-2.5 py-0.5 text-xs font-bold text-[#600a0f] animate-pulse">
+                <Sparkles className="h-3 w-3 text-[#600a0f]" />
                 Previewing: {previewThemeMeta.name}
               </span>
             ) : (
@@ -408,7 +408,7 @@ export default function DashboardThemesPage() {
                   type="button"
                   onClick={handleApplyTheme}
                   disabled={isApplying}
-                  className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] text-white px-4 py-2 text-xs font-bold transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                  className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#600a0f] hover:bg-[#600a0f] text-white px-4 py-2 text-xs font-bold transition-all cursor-pointer shadow-xs disabled:opacity-50"
                   title="Save and apply this theme permanently"
                 >
                   {isApplying ? (
@@ -430,11 +430,11 @@ export default function DashboardThemesPage() {
               href={canonicalUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] hover:bg-white text-[#241618] px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer shadow-xs hover:border-[#B85C6B]/30"
+              className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] hover:bg-white text-[#241618] px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer shadow-xs hover:border-[#600a0f]/30"
               title="Open public profile in new tab"
             >
               <span>Open Public Profile</span>
-              <ExternalLink className="h-3.5 w-3.5 text-[#B85C6B]" />
+              <ExternalLink className="h-3.5 w-3.5 text-[#600a0f]" />
             </a>
           </div>
         </div>
@@ -500,8 +500,8 @@ function ThemeCarouselCard({
       type="button"
       onClick={onSelect}
       className={`group relative flex flex-col justify-between w-[260px] sm:w-[280px] shrink-0 rounded-2xl border p-3 text-left transition-all cursor-pointer shadow-xs snap-start ${isPreviewing
-        ? "border-[#B85C6B] ring-2 ring-[#B85C6B]/25 bg-[#f3dde057]/30"
-        : "border-[#E4DAD5] bg-white hover:border-[#B85C6B]/40 hover:shadow-sm"
+        ? "border-[#600a0f] ring-2 ring-[#600a0f]/25 bg-[#600b0f0f]/30"
+        : "border-[#E4DAD5] bg-white hover:border-[#600a0f]/40 hover:shadow-sm"
         }`}
     >
       {/* Mini Visual Palette / Swatch Banner */}
@@ -546,12 +546,12 @@ function ThemeCarouselCard({
 
             {/* Active Badge (only when applied) */}
             {isActive ? (
-              <span className="flex items-center gap-1 rounded-full bg-[#B85C6B] text-white px-2.5 py-0.5 text-[10px] font-bold shadow-xs border border-white/30">
+              <span className="flex items-center gap-1 rounded-full bg-[#600a0f] text-white px-2.5 py-0.5 text-[10px] font-bold shadow-xs border border-white/30">
                 <Check className="h-3 w-3 stroke-[3]" />
                 <span>Active</span>
               </span>
             ) : isPreviewing ? (
-              <span className="flex items-center gap-1 rounded-full bg-white/90 text-[#B85C6B] px-2 py-0.5 text-[10px] font-bold shadow-xs border border-[#B85C6B]/30 backdrop-blur-xs">
+              <span className="flex items-center gap-1 rounded-full bg-white/90 text-[#600a0f] px-2 py-0.5 text-[10px] font-bold shadow-xs border border-[#600a0f]/30 backdrop-blur-xs">
                 <Eye className="h-2.5 w-2.5" />
                 <span>Previewing</span>
               </span>
@@ -586,15 +586,15 @@ function ThemeCarouselCard({
         {/* Action Button/Indicator */}
         <div>
           {isActive ? (
-            <span className="text-[11px] font-bold text-[#8C3F4D] bg-[#f3dde057] border border-[#B85C6B]/20 px-2 py-1 rounded-lg">
+            <span className="text-[11px] font-bold text-[#600a0f] bg-[#600b0f0f] border border-[#600a0f]/20 px-2 py-1 rounded-lg">
               Active
             </span>
           ) : isPreviewing ? (
-            <span className="text-[11px] font-bold text-[#8C3F4D] bg-[#f3dde057] border border-[#B85C6B]/20 px-2 py-1 rounded-lg">
+            <span className="text-[11px] font-bold text-[#600a0f] bg-[#600b0f0f] border border-[#600a0f]/20 px-2 py-1 rounded-lg">
               Previewing
             </span>
           ) : (
-            <span className="text-[11px] font-semibold text-[#6B5A5D] group-hover:text-[#B85C6B] transition-colors">
+            <span className="text-[11px] font-semibold text-[#6B5A5D] group-hover:text-[#600a0f] transition-colors">
               Preview →
             </span>
           )}

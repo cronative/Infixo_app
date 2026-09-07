@@ -149,7 +149,7 @@ export default function DashboardSocialsPage() {
             <span className="text-[11px] font-semibold text-[#797570] uppercase tracking-wider">
               Connected Accounts
             </span>
-            <Share2 className="h-4 w-4 text-[#b85c6b]" />
+            <Share2 className="h-4 w-4 text-[#600a0f]" />
           </div>
           <p className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
             {connectedCount}
@@ -181,7 +181,7 @@ export default function DashboardSocialsPage() {
             <span className="text-[11px] font-semibold text-[#797570] uppercase tracking-wider">
               Custom Links
             </span>
-            <Link2 className="h-4 w-4 text-[#b85c6b]" />
+            <Link2 className="h-4 w-4 text-[#600a0f]" />
           </div>
           <p className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
             {customLinksCount} of 3
@@ -326,7 +326,7 @@ export default function DashboardSocialsPage() {
                         value={draftInsta}
                         onChange={(e) => setDraftInsta(e.target.value.trim().replace(/^@/, ""))}
                         placeholder="Instagram username"
-                        className="w-full rounded-xl border border-[#E7E3DC] bg-white pl-8 pr-3 py-1.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#b85c6b] transition-colors"
+                        className="w-full rounded-xl border border-[#E7E3DC] bg-white pl-8 pr-3 py-1.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#600a0f] transition-colors"
                       />
                     </div>
                     <InstagramFetcher username={draftInsta} />
@@ -355,7 +355,7 @@ export default function DashboardSocialsPage() {
                         value={draftYt}
                         onChange={(e) => setDraftYt(e.target.value.trim().replace(/^@/, ""))}
                         placeholder="YouTube channel handle"
-                        className="w-full rounded-xl border border-[#E7E3DC] bg-white pl-8 pr-3 py-1.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#b85c6b] transition-colors"
+                        className="w-full rounded-xl border border-[#E7E3DC] bg-white pl-8 pr-3 py-1.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#600a0f] transition-colors"
                       />
                     </div>
                     <YoutubeFetcher handle={draftYt} />
@@ -384,7 +384,7 @@ export default function DashboardSocialsPage() {
                         value={draftFb}
                         onChange={(e) => setDraftFb(e.target.value.trim().replace(/^@/, ""))}
                         placeholder="Facebook page username"
-                        className="w-full rounded-xl border border-[#E7E3DC] bg-white pl-8 pr-3 py-1.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#b85c6b] transition-colors"
+                        className="w-full rounded-xl border border-[#E7E3DC] bg-white pl-8 pr-3 py-1.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#600a0f] transition-colors"
                       />
                     </div>
                     <FacebookFetcher username={draftFb} />
@@ -405,7 +405,7 @@ export default function DashboardSocialsPage() {
       <section className="rounded-2xl border border-[#E7E3DC] bg-[#FAF8F5]/80 p-3.5 sm:p-4 text-left space-y-2 shadow-xs">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-[#b85c6b]" />
+            <ShieldCheck className="h-4 w-4 text-[#600a0f]" />
             <h3 className="font-display text-xs sm:text-sm font-bold text-[#181716]">
               How social data works
             </h3>
@@ -422,15 +422,15 @@ export default function DashboardSocialsPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 text-[11px] text-[#797570] font-medium">
           <div className="flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#b85c6b]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[#600a0f]" />
             <span>Reads supported public profile information</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#b85c6b]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[#600a0f]" />
             <span>Never receives your social-platform password</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#b85c6b]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[#600a0f]" />
             <span>Lets you disconnect an account when needed</span>
           </div>
         </div>
@@ -543,7 +543,7 @@ function ConnectedSocialCard({
               title="Open profile in new tab"
             >
               <span>Open</span>
-              <ExternalLink className="h-3 w-3 text-[#b85c6b]" />
+              <ExternalLink className="h-3 w-3 text-[#600a0f]" />
             </a>
           )}
 

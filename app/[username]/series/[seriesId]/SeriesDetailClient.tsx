@@ -50,7 +50,7 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   }
   return {
     name: platformStr || "Watch",
-    icon: <Film className="h-3.5 w-3.5 text-[#b85c6b]" />,
+    icon: <Film className="h-3.5 w-3.5 text-[#600a0f]" />,
   };
 }
 
@@ -257,7 +257,7 @@ export function SeriesDetailClient({
       <div className={`min-h-dvh flex flex-col items-center justify-center p-4 py-6 sm:py-8 transition-colors duration-300 ${pageBgStyle}`}>
         <main className="mx-auto max-w-md w-full text-center space-y-6">
           <div className={`rounded-3xl border p-8 sm:p-10 shadow-2xs space-y-5 ${style.socialItemBg} ${style.socialItemBorder}`}>
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#b85c6b] text-white shadow-md">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#600a0f] text-white shadow-md">
               <Film className="h-8 w-8" />
             </div>
 
@@ -275,10 +275,10 @@ export function SeriesDetailClient({
                 type="button"
                 onClick={() => router.push(profileUrl)}
                 className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold transition-all cursor-pointer border ${isDark
-                  ? "bg-[#b85c6b]/22 hover:bg-[#b85c6b]/32 active:bg-[#b85c6b]/40 border-[#b85c6b]/45 hover:border-[#b85c6b]/60 text-[#F8FAFC] focus-visible:ring-2 focus-visible:ring-[#b85c6b]/60"
+                  ? "bg-[#600a0f]/22 hover:bg-[#600a0f]/32 active:bg-[#600a0f]/40 border-[#600a0f]/45 hover:border-[#600a0f]/60 text-[#F8FAFC] focus-visible:ring-2 focus-visible:ring-[#600a0f]/60"
                   : isSignaturePurple
-                    ? "bg-[#b85c6b]/16 hover:bg-[#b85c6b]/24 active:bg-[#b85c6b]/32 border border-[#b85c6b]/35 hover:border-[#b85c6b]/50 text-[#b85c6b] focus-visible:ring-2 focus-visible:ring-[#b85c6b]/60 shadow-xs"
-                    : "bg-[#b85c6b] hover:bg-[#6F3456] text-white border-transparent"
+                    ? "bg-[#600a0f]/16 hover:bg-[#600a0f]/24 active:bg-[#600a0f]/32 border border-[#600a0f]/35 hover:border-[#600a0f]/50 text-[#600a0f] focus-visible:ring-2 focus-visible:ring-[#600a0f]/60 shadow-xs"
+                    : "bg-[#600a0f] hover:bg-[#6F3456] text-white border-transparent"
                   }`}
               >
                 <span>Go to @{username}</span>
@@ -360,7 +360,7 @@ export function SeriesDetailClient({
         >
           <div className="flex-1 flex flex-col">
             {/* 1. Full-Width Hero Cover Header (Maroon Gradient or Valid Poster) */}
-            <div className="relative w-full aspect-[21/9] min-h-[120px] sm:min-h-[140px] overflow-hidden bg-gradient-to-r from-[#B85C6B] via-[#A24B5A] to-[#8C3F4D] m-0 p-0 shrink-0">
+            <div className="relative w-full aspect-[21/9] min-h-[120px] sm:min-h-[140px] overflow-hidden bg-gradient-to-r from-[#600a0f] via-[#A24B5A] to-[#600a0f] m-0 p-0 shrink-0">
               {hasValidCover && (
                 <>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -484,7 +484,7 @@ export function SeriesDetailClient({
                         {detectedPlatform === "Instagram" && <InstagramIcon className="h-2.5 w-2.5 text-pink-500" />}
                         {detectedPlatform === "Facebook" && <FacebookIcon className="h-2.5 w-2.5 text-blue-500" />}
                         {detectedPlatform !== "YouTube" && detectedPlatform !== "Instagram" && detectedPlatform !== "Facebook" && (
-                          <Globe className="h-2.5 w-2.5 text-[#8C3F4D]" />
+                          <Globe className="h-2.5 w-2.5 text-[#600a0f]" />
                         )}
                         <span>{detectedPlatform}</span>
                       </span>
@@ -595,7 +595,7 @@ export function SeriesDetailClient({
                             </span>
                             <span
                               style={{ color: c.primaryText }}
-                              className="text-xs sm:text-[13px] font-bold text-[#241618] truncate group-hover:text-[#8C3F4D] transition-colors"
+                              className="text-xs sm:text-[13px] font-bold text-[#241618] truncate group-hover:text-[#600a0f] transition-colors"
                             >
                               {epTitleStr}
                             </span>
@@ -607,7 +607,7 @@ export function SeriesDetailClient({
                               borderColor: c.border,
                               color: c.accentText,
                             }}
-                            className="h-8 w-8 rounded-full border border-[#E4DAD5] bg-white text-[#8C3F4D] flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-[#f3dde057] group-hover:border-[#B85C6B]/30 group-hover:scale-105 transition-all"
+                            className="h-8 w-8 rounded-full border border-[#E4DAD5] bg-white text-[#600a0f] flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-[#600b0f0f] group-hover:border-[#600a0f]/30 group-hover:scale-105 transition-all"
                           >
                             <Eye className="h-3.5 w-3.5" />
                           </div>
@@ -634,7 +634,7 @@ export function SeriesDetailClient({
               }}
               className="tap-scale inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#E4DAD5] bg-white text-[#6B5A5D] text-[11px] font-bold shadow-2xs hover:scale-105 transition-all"
             >
-              <span style={{ color: c.accentText }} className="inline-flex items-center text-[#8C3F4D]">
+              <span style={{ color: c.accentText }} className="inline-flex items-center text-[#600a0f]">
                 <LogoStadiumLinkI className="h-3.5 w-3.5" />
               </span>
               <span>Made with Inflixo</span>

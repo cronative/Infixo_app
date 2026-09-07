@@ -117,17 +117,17 @@ export function formatEmailBodyToHtml(text: string): string {
 
   let formatted = text
     // Replace Markdown headers ###
-    .replace(/^### (.*$)/gim, '<h3 style="color: #B85C6B; font-size: 16px; font-weight: 800; margin: 20px 0 10px 0;">$1</h3>')
+    .replace(/^### (.*$)/gim, '<h3 style="color: #600a0f; font-size: 16px; font-weight: 800; margin: 20px 0 10px 0;">$1</h3>')
     // Bold text **text**
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     // Italic text *text*
     .replace(/\*(.*?)\*/g, '<em style="color: #64748B;">$1</em>')
     // Links [text](url)
-    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" style="color: #B85C6B; font-weight: 700; text-decoration: underline;">$1</a>')
+    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" style="color: #600a0f; font-weight: 700; text-decoration: underline;">$1</a>')
     // Plain URLs (if not inside href)
     .replace(/(https?:\/\/[^\s<]+)/g, (url) => {
       if (url.includes('href=')) return url;
-      return `<a href="${url}" target="_blank" style="color: #B85C6B; font-weight: 700; text-decoration: underline;">${url}</a>`;
+      return `<a href="${url}" target="_blank" style="color: #600a0f; font-weight: 700; text-decoration: underline;">${url}</a>`;
     });
 
   // Split into paragraphs by double linebreaks

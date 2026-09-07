@@ -301,7 +301,7 @@ export default function DashboardOverviewPage() {
               name={displayName}
               className="w-12 h-12 rounded-full border border-[#E4DAD5] overflow-hidden object-cover aspect-square shrink-0"
               textClassName="text-sm font-bold text-[#241618]"
-              fallbackBgClass="bg-[#f3dde057]"
+              fallbackBgClass="bg-[#600b0f0f]"
             />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 flex-wrap">
@@ -309,13 +309,13 @@ export default function DashboardOverviewPage() {
                   {displayName}
                 </h2>
                 {profile.isVerified && (
-                  <ShieldCheck className="h-4 w-4 shrink-0 text-[#B85C6B]" />
+                  <ShieldCheck className="h-4 w-4 shrink-0 text-[#600a0f]" />
                 )}
                 {/* Live Badge with maroon pulsing dot */}
-                <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-[#8C3F4D] bg-[#f3dde057] px-2.5 py-0.5 rounded-full border border-[#B85C6B]/20 shrink-0">
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-[#600a0f] bg-[#600b0f0f] px-2.5 py-0.5 rounded-full border border-[#600a0f]/20 shrink-0">
                   <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#B85C6B] opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#B85C6B]" />
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#600a0f] opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#600a0f]" />
                   </span>
                   Live
                 </span>
@@ -347,7 +347,7 @@ export default function DashboardOverviewPage() {
               href={`/${handleStr}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-3.5 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+              className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#600a0f] hover:bg-[#600a0f] px-3.5 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
             >
               <span>View Profile</span>
               <ExternalLink className="h-3.5 w-3.5" />
@@ -361,13 +361,13 @@ export default function DashboardOverviewPage() {
             <span className="font-semibold text-[#241618]">
               Profile completion — {profileSteps.completedCount} of {profileSteps.totalCount} steps done
             </span>
-            <span className="font-display font-bold text-[#B85C6B] text-sm tabular-nums">
+            <span className="font-display font-bold text-[#600a0f] text-sm tabular-nums">
               {animatedPercentage}%
             </span>
           </div>
           <div className="w-full h-2 rounded-full bg-[#fbfbfb] border border-[#E4DAD5] overflow-hidden">
             <div
-              className="h-full bg-[#B85C6B] rounded-full transition-all duration-700 ease-out"
+              className="h-full bg-[#600a0f] rounded-full transition-all duration-700 ease-out"
               style={{ width: isLoaded ? `${profileSteps.percentage}%` : "0%" }}
             />
           </div>
@@ -382,7 +382,7 @@ export default function DashboardOverviewPage() {
                   <Link
                     key={step.id}
                     href={step.link}
-                    className="tap-scale inline-flex items-center gap-1 text-[11px] font-semibold text-[#B85C6B] bg-[#f3dde057]/70 hover:bg-[#f3dde057] border border-[#B85C6B]/20 px-2 py-0.5 rounded-lg transition-colors"
+                    className="tap-scale inline-flex items-center gap-1 text-[11px] font-semibold text-[#600a0f] bg-[#600b0f0f]/70 hover:bg-[#600b0f0f] border border-[#600a0f]/20 px-2 py-0.5 rounded-lg transition-colors"
                   >
                     <span>+ {step.label}</span>
                     <ChevronRight className="h-2.5 w-2.5" />
@@ -408,12 +408,12 @@ export default function DashboardOverviewPage() {
               <button
                 type="button"
                 onClick={handleRefreshStats}
-                className="p-1 rounded-lg text-[#6B5A5D] hover:text-[#B85C6B] hover:bg-[#f3dde057] transition-colors cursor-pointer"
+                className="p-1 rounded-lg text-[#6B5A5D] hover:text-[#600a0f] hover:bg-[#600b0f0f] transition-colors cursor-pointer"
                 title={`Last synced: ${formatSyncDate(socials.updatedAt)}. Click to refresh.`}
               >
-                <RefreshCw className={`h-3.5 w-3.5 ${isSyncing ? "animate-spin text-[#B85C6B]" : ""}`} />
+                <RefreshCw className={`h-3.5 w-3.5 ${isSyncing ? "animate-spin text-[#600a0f]" : ""}`} />
               </button>
-              <div className="h-8 w-8 rounded-xl bg-[#f3dde057] flex items-center justify-center text-[#8C3F4D]">
+              <div className="h-8 w-8 rounded-xl bg-[#600b0f0f] flex items-center justify-center text-[#600a0f]">
                 <Users className="h-4 w-4" />
               </div>
             </div>
@@ -428,7 +428,7 @@ export default function DashboardOverviewPage() {
           </div>
           <Link
             href="/dashboard/socials"
-            className="text-[11px] font-semibold text-[#B85C6B] hover:text-[#8C3F4D] hover:underline inline-flex items-center gap-1 pt-1"
+            className="text-[11px] font-semibold text-[#600a0f] hover:text-[#600a0f] hover:underline inline-flex items-center gap-1 pt-1"
           >
             <span>View breakdown</span>
             <ChevronRight className="h-3 w-3" />
@@ -444,7 +444,7 @@ export default function DashboardOverviewPage() {
             <span className="text-xs font-semibold text-[#6B5A5D]">
               Brand inquiries
             </span>
-            <div className="h-8 w-8 rounded-xl bg-[#f3dde057] flex items-center justify-center text-[#8C3F4D]">
+            <div className="h-8 w-8 rounded-xl bg-[#600b0f0f] flex items-center justify-center text-[#600a0f]">
               <Inbox className="h-4 w-4" />
             </div>
           </div>
@@ -465,7 +465,7 @@ export default function DashboardOverviewPage() {
           </div>
           <Link
             href="/dashboard/requests"
-            className="text-[11px] font-semibold text-[#B85C6B] hover:text-[#8C3F4D] hover:underline inline-flex items-center gap-1 pt-1"
+            className="text-[11px] font-semibold text-[#600a0f] hover:text-[#600a0f] hover:underline inline-flex items-center gap-1 pt-1"
           >
             <span>View inquiries</span>
             <ChevronRight className="h-3 w-3" />
@@ -481,7 +481,7 @@ export default function DashboardOverviewPage() {
             <span className="text-xs font-semibold text-[#6B5A5D]">
               Content series
             </span>
-            <div className="h-8 w-8 rounded-xl bg-[#f3dde057] flex items-center justify-center text-[#8C3F4D]">
+            <div className="h-8 w-8 rounded-xl bg-[#600b0f0f] flex items-center justify-center text-[#600a0f]">
               <Layers className="h-4 w-4" />
             </div>
           </div>
@@ -495,7 +495,7 @@ export default function DashboardOverviewPage() {
           </div>
           <Link
             href="/dashboard/series"
-            className="text-[11px] font-semibold text-[#B85C6B] hover:text-[#8C3F4D] hover:underline inline-flex items-center gap-1 pt-1"
+            className="text-[11px] font-semibold text-[#600a0f] hover:text-[#600a0f] hover:underline inline-flex items-center gap-1 pt-1"
           >
             <span>Manage series</span>
             <ChevronRight className="h-3 w-3" />
@@ -511,7 +511,7 @@ export default function DashboardOverviewPage() {
             <span className="text-xs font-semibold text-[#6B5A5D]">
               Services &amp; reviews
             </span>
-            <div className="h-8 w-8 rounded-xl bg-[#f3dde057] flex items-center justify-center text-[#8C3F4D]">
+            <div className="h-8 w-8 rounded-xl bg-[#600b0f0f] flex items-center justify-center text-[#600a0f]">
               <Briefcase className="h-4 w-4" />
             </div>
           </div>
@@ -525,7 +525,7 @@ export default function DashboardOverviewPage() {
           </div>
           <Link
             href="/dashboard/mediakit"
-            className="text-[11px] font-semibold text-[#B85C6B] hover:text-[#8C3F4D] hover:underline inline-flex items-center gap-1 pt-1"
+            className="text-[11px] font-semibold text-[#600a0f] hover:text-[#600a0f] hover:underline inline-flex items-center gap-1 pt-1"
           >
             <span>Manage services</span>
             <ChevronRight className="h-3 w-3" />
@@ -540,7 +540,7 @@ export default function DashboardOverviewPage() {
       >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1.5">
-            <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-[#8C3F4D] bg-[#f3dde057] px-2.5 py-0.5 rounded-full border border-[#B85C6B]/20">
+            <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-[#600a0f] bg-[#600b0f0f] px-2.5 py-0.5 rounded-full border border-[#600a0f]/20">
               Next best step
             </span>
             <h3 className="font-display text-base sm:text-lg font-bold text-[#241618]">
@@ -557,7 +557,7 @@ export default function DashboardOverviewPage() {
                 href={nextStep.ctaHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="tap-scale inline-flex items-center gap-2 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+                className="tap-scale inline-flex items-center gap-2 rounded-xl bg-[#600a0f] hover:bg-[#600a0f] px-4 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
               >
                 <span>{nextStep.ctaLabel}</span>
                 <ExternalLink className="h-3.5 w-3.5" />
@@ -566,7 +566,7 @@ export default function DashboardOverviewPage() {
               <button
                 type="button"
                 onClick={nextStep.onClick}
-                className="tap-scale inline-flex items-center gap-2 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2.5 text-xs font-semibold text-white transition-colors shadow-xs cursor-pointer"
+                className="tap-scale inline-flex items-center gap-2 rounded-xl bg-[#600a0f] hover:bg-[#600a0f] px-4 py-2.5 text-xs font-semibold text-white transition-colors shadow-xs cursor-pointer"
               >
                 <span>{nextStep.ctaLabel}</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -574,7 +574,7 @@ export default function DashboardOverviewPage() {
             ) : (
               <Link
                 href={nextStep.ctaHref}
-                className="tap-scale inline-flex items-center gap-2 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+                className="tap-scale inline-flex items-center gap-2 rounded-xl bg-[#600a0f] hover:bg-[#600a0f] px-4 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
               >
                 <span>{nextStep.ctaLabel}</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -588,33 +588,33 @@ export default function DashboardOverviewPage() {
           <span className="text-[11px] text-[#6B5A5D] uppercase tracking-wider font-bold">Quick shortcuts:</span>
           <Link
             href="/dashboard/series"
-            className="tap-scale hover:text-[#B85C6B] bg-[#FAF8F5] hover:bg-[#f3dde057]/50 border border-[#E4DAD5] px-2.5 py-1 rounded-lg transition-colors inline-flex items-center gap-1.5 text-[#241618]"
+            className="tap-scale hover:text-[#600a0f] bg-[#FAF8F5] hover:bg-[#600b0f0f]/50 border border-[#E4DAD5] px-2.5 py-1 rounded-lg transition-colors inline-flex items-center gap-1.5 text-[#241618]"
           >
-            <Plus className="h-3 w-3 text-[#B85C6B]" /> Add Episode
+            <Plus className="h-3 w-3 text-[#600a0f]" /> Add Episode
           </Link>
           <Link
             href="/dashboard/requests"
-            className="tap-scale hover:text-[#B85C6B] bg-[#FAF8F5] hover:bg-[#f3dde057]/50 border border-[#E4DAD5] px-2.5 py-1 rounded-lg transition-colors inline-flex items-center gap-1.5 text-[#241618]"
+            className="tap-scale hover:text-[#600a0f] bg-[#FAF8F5] hover:bg-[#600b0f0f]/50 border border-[#E4DAD5] px-2.5 py-1 rounded-lg transition-colors inline-flex items-center gap-1.5 text-[#241618]"
           >
-            <Inbox className="h-3 w-3 text-[#B85C6B]" /> Inquiries {unreadRequestsCount > 0 ? `(${unreadRequestsCount} new)` : ""}
+            <Inbox className="h-3 w-3 text-[#600a0f]" /> Inquiries {unreadRequestsCount > 0 ? `(${unreadRequestsCount} new)` : ""}
           </Link>
           <Link
             href="/dashboard/socials"
-            className="tap-scale hover:text-[#B85C6B] bg-[#FAF8F5] hover:bg-[#f3dde057]/50 border border-[#E4DAD5] px-2.5 py-1 rounded-lg transition-colors inline-flex items-center gap-1.5 text-[#241618]"
+            className="tap-scale hover:text-[#600a0f] bg-[#FAF8F5] hover:bg-[#600b0f0f]/50 border border-[#E4DAD5] px-2.5 py-1 rounded-lg transition-colors inline-flex items-center gap-1.5 text-[#241618]"
           >
-            <Link2 className="h-3 w-3 text-[#B85C6B]" /> Add Link
+            <Link2 className="h-3 w-3 text-[#600a0f]" /> Add Link
           </Link>
           <Link
             href="/dashboard/themes"
-            className="tap-scale hover:text-[#B85C6B] bg-[#FAF8F5] hover:bg-[#f3dde057]/50 border border-[#E4DAD5] px-2.5 py-1 rounded-lg transition-colors inline-flex items-center gap-1.5 text-[#241618]"
+            className="tap-scale hover:text-[#600a0f] bg-[#FAF8F5] hover:bg-[#600b0f0f]/50 border border-[#E4DAD5] px-2.5 py-1 rounded-lg transition-colors inline-flex items-center gap-1.5 text-[#241618]"
           >
-            <Palette className="h-3 w-3 text-[#B85C6B]" /> Change Theme
+            <Palette className="h-3 w-3 text-[#600a0f]" /> Change Theme
           </Link>
           <Link
             href="/dashboard/reviews"
-            className="tap-scale hover:text-[#B85C6B] bg-[#FAF8F5] hover:bg-[#f3dde057]/50 border border-[#E4DAD5] px-2.5 py-1 rounded-lg transition-colors inline-flex items-center gap-1.5 text-[#241618]"
+            className="tap-scale hover:text-[#600a0f] bg-[#FAF8F5] hover:bg-[#600b0f0f]/50 border border-[#E4DAD5] px-2.5 py-1 rounded-lg transition-colors inline-flex items-center gap-1.5 text-[#241618]"
           >
-            <Star className="h-3 w-3 text-[#B85C6B]" /> Request Review
+            <Star className="h-3 w-3 text-[#600a0f]" /> Request Review
           </Link>
         </div>
       </section>
@@ -635,7 +635,7 @@ export default function DashboardOverviewPage() {
           </div>
           <Link
             href="/dashboard/series"
-            className="text-xs font-semibold text-[#B85C6B] hover:text-[#8C3F4D] hover:underline inline-flex items-center gap-1"
+            className="text-xs font-semibold text-[#600a0f] hover:text-[#600a0f] hover:underline inline-flex items-center gap-1"
           >
             <span>Manage content</span>
             <ChevronRight className="h-3.5 w-3.5" />
@@ -644,7 +644,7 @@ export default function DashboardOverviewPage() {
 
         {series.length === 0 ? (
           <div className="rounded-2xl border border-[#E4DAD5] bg-white p-6 sm:p-8 text-center space-y-3 shadow-none">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f3dde057] text-[#8C3F4D] mx-auto">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#600b0f0f] text-[#600a0f] mx-auto">
               <Film className="h-5 w-5" />
             </div>
             <div className="space-y-1">
@@ -658,7 +658,7 @@ export default function DashboardOverviewPage() {
             <button
               type="button"
               onClick={handleCreateSeriesClick}
-              className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#B85C6B] hover:bg-[#8C3F4D] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+              className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#600a0f] hover:bg-[#600a0f] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Create First Series</span>
@@ -674,7 +674,7 @@ export default function DashboardOverviewPage() {
                   className="px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#FAF8F5]/60 transition-colors text-left"
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f3dde057] text-[#8C3F4D] shrink-0 font-bold text-xs">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#600b0f0f] text-[#600a0f] shrink-0 font-bold text-xs">
                       <Film className="h-4 w-4" />
                     </div>
                     <div className="min-w-0 flex-1">
@@ -699,7 +699,7 @@ export default function DashboardOverviewPage() {
                       href={`/${handleStr}/series/${s.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 rounded-xl border border-[#E4DAD5] bg-[#FAF8F5] hover:bg-white px-2.5 py-1 text-xs font-semibold text-[#B85C6B] transition-colors shadow-xs"
+                      className="inline-flex items-center gap-1 rounded-xl border border-[#E4DAD5] bg-[#FAF8F5] hover:bg-white px-2.5 py-1 text-xs font-semibold text-[#600a0f] transition-colors shadow-xs"
                     >
                       <span>View</span>
                       <ExternalLink className="h-3 w-3" />
@@ -729,7 +729,7 @@ export default function DashboardOverviewPage() {
             </div>
             <Link
               href="/dashboard/requests"
-              className="text-xs font-semibold text-[#B85C6B] hover:text-[#8C3F4D] hover:underline inline-flex items-center gap-1"
+              className="text-xs font-semibold text-[#600a0f] hover:text-[#600a0f] hover:underline inline-flex items-center gap-1"
             >
               <span>View all ({requests.length})</span>
               <ChevronRight className="h-3.5 w-3.5" />
@@ -744,12 +744,12 @@ export default function DashboardOverviewPage() {
                 className="px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#FAF8F5]/60 transition-colors text-left group"
               >
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f3dde057] text-[#8C3F4D] shrink-0 font-bold text-xs">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#600b0f0f] text-[#600a0f] shrink-0 font-bold text-xs">
                     {req.senderName.charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <h4 className="font-display text-xs sm:text-[13px] font-bold text-[#241618] group-hover:text-[#B85C6B] transition-colors truncate">
+                      <h4 className="font-display text-xs sm:text-[13px] font-bold text-[#241618] group-hover:text-[#600a0f] transition-colors truncate">
                         {req.senderName}
                       </h4>
                       {req.companyName && (
@@ -769,7 +769,7 @@ export default function DashboardOverviewPage() {
                   </div>
                 </div>
 
-                <ChevronRight className="h-4 w-4 text-[#6B5A5D] group-hover:text-[#B85C6B] transition-transform group-hover:translate-x-0.5 shrink-0" />
+                <ChevronRight className="h-4 w-4 text-[#6B5A5D] group-hover:text-[#600a0f] transition-transform group-hover:translate-x-0.5 shrink-0" />
               </Link>
             ))}
           </div>
@@ -782,7 +782,7 @@ export default function DashboardOverviewPage() {
         className="rounded-2xl border border-[#E4DAD5] bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-none animate-fade-in-up"
       >
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="h-8 w-8 rounded-xl bg-[#f3dde057] flex items-center justify-center text-[#8C3F4D] shrink-0">
+          <div className="h-8 w-8 rounded-xl bg-[#600b0f0f] flex items-center justify-center text-[#600a0f] shrink-0">
             <Sparkles className="h-4 w-4" />
           </div>
           <div className="min-w-0">
@@ -794,7 +794,7 @@ export default function DashboardOverviewPage() {
         </div>
         <Link
           href="/dashboard/subscription"
-          className="text-xs font-semibold text-[#B85C6B] hover:text-[#8C3F4D] hover:underline shrink-0"
+          className="text-xs font-semibold text-[#600a0f] hover:text-[#600a0f] hover:underline shrink-0"
         >
           View Plan →
         </Link>

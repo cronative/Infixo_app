@@ -50,8 +50,8 @@ export function PricingTable({ }: PricingTableProps) {
               type="button"
               onClick={() => setCycle("monthly")}
               className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${cycle === "monthly"
-                  ? "bg-white text-[#181716] shadow-xs border border-[#E4DAD5]"
-                  : "text-[#797570] hover:text-[#181716]"
+                ? "bg-white text-[#181716] shadow-xs border border-[#E4DAD5]"
+                : "text-[#797570] hover:text-[#181716]"
                 }`}
             >
               Monthly
@@ -60,12 +60,12 @@ export function PricingTable({ }: PricingTableProps) {
               type="button"
               onClick={() => setCycle("yearly")}
               className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${cycle === "yearly"
-                  ? "bg-[#B85C6B] text-white shadow-xs"
-                  : "text-[#797570] hover:text-[#181716]"
+                ? "bg-[#600a0f] text-white shadow-xs"
+                : "text-[#797570] hover:text-[#181716]"
                 }`}
             >
               <span>Yearly</span>
-              <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded-md ${cycle === "yearly" ? "bg-white/20 text-white" : "bg-[#B85C6B]/[0.09] text-[#B85C6B] border border-[#B85C6B]/20"
+              <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded-md ${cycle === "yearly" ? "bg-white/20 text-white" : "bg-[#600a0f]/[0.09] text-[#600a0f] border border-[#600a0f]/20"
                 }`}>
                 Save 16%
               </span>
@@ -140,11 +140,11 @@ export function PricingTable({ }: PricingTableProps) {
           </div>
 
           {/* Card 2: Pro (Recommended) */}
-          <div className="rounded-2xl border-2 border-[#B85C6B] bg-white p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xs text-left relative">
+          <div className="rounded-2xl border-2 border-[#600a0f] bg-white p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xs text-left relative">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-display text-base font-bold text-[#181716]">Pro</h3>
-                <span className="text-[10px] font-bold text-[#B85C6B] bg-[#B85C6B]/[0.09] px-2.5 py-0.5 rounded-full border border-[#B85C6B]/20">
+                <span className="text-[10px] font-bold text-[#600a0f] bg-[#600a0f]/[0.09] px-2.5 py-0.5 rounded-full border border-[#600a0f]/20">
                   Recommended
                 </span>
               </div>
@@ -199,7 +199,7 @@ export function PricingTable({ }: PricingTableProps) {
                 type="button"
                 onClick={() => handleNotifyMe("Pro Plan")}
                 disabled={notifiedPlan === "Pro Plan"}
-                className="w-full rounded-xl bg-[#B85C6B] hover:bg-[#6F3456] text-white py-2.5 px-3 text-xs font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-xs disabled:opacity-80"
+                className="w-full rounded-xl bg-[#600a0f] hover:bg-[#6F3456] text-white py-2.5 px-3 text-xs font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-xs disabled:opacity-80"
               >
                 <Bell className="h-3.5 w-3.5" />
                 <span>{notifiedPlan === "Pro Plan" ? "Notification Set ✓" : "Notify Me"}</span>
@@ -294,8 +294,8 @@ export function PricingTable({ }: PricingTableProps) {
             <thead>
               <tr className="border-b border-[#E4DAD5] bg-[#fbfbfb] text-xs font-bold text-[#181716]">
                 <th className="py-3.5 px-5 w-2/5">Feature</th>
-                <th className="py-3.5 px-4 w-1/5 text-center bg-[#B85C6B]/[0.05] border-x border-[#E4DAD5]">
-                  <div className="font-bold text-[#B85C6B]">Early Access</div>
+                <th className="py-3.5 px-4 w-1/5 text-center bg-[#600a0f]/[0.05] border-x border-[#E4DAD5]">
+                  <div className="font-bold text-[#600a0f]">Early Access</div>
                   <div className="text-[10px] font-medium text-[#797570] mt-0.5">Current</div>
                 </th>
                 <th className="py-3.5 px-4 w-1/5 text-center">
@@ -318,11 +318,11 @@ export function PricingTable({ }: PricingTableProps) {
                 <td className="py-3 px-5 font-semibold text-[#181716]">
                   Content Series
                 </td>
-                <td className="py-3 px-4 text-center bg-[#B85C6B]/[0.05] border-x border-[#E4DAD5]">
+                <td className="py-3 px-4 text-center bg-[#600a0f]/[0.05] border-x border-[#E4DAD5]">
                   3 series
                 </td>
                 <td className="py-3 px-4 text-center">30 series</td>
-                <td className="py-3 px-4 text-center font-semibold text-[#B85C6B]">Unlimited</td>
+                <td className="py-3 px-4 text-center font-semibold text-[#600a0f]">Unlimited</td>
               </tr>
 
               {/* Row 2: Total Episodes */}
@@ -330,11 +330,11 @@ export function PricingTable({ }: PricingTableProps) {
                 <td className="py-3 px-5 font-semibold text-[#181716]">
                   Total Episodes
                 </td>
-                <td className="py-3 px-4 text-center bg-[#B85C6B]/[0.05] border-x border-[#E4DAD5]">
+                <td className="py-3 px-4 text-center bg-[#600a0f]/[0.05] border-x border-[#E4DAD5]">
                   15 episodes
                 </td>
                 <td className="py-3 px-4 text-center">300 episodes</td>
-                <td className="py-3 px-4 text-center font-semibold text-[#B85C6B]">Unlimited</td>
+                <td className="py-3 px-4 text-center font-semibold text-[#600a0f]">Unlimited</td>
               </tr>
 
               {/* Row 3: Creator Services */}
@@ -342,11 +342,11 @@ export function PricingTable({ }: PricingTableProps) {
                 <td className="py-3 px-5 font-semibold text-[#181716]">
                   Creator Services
                 </td>
-                <td className="py-3 px-4 text-center bg-[#B85C6B]/[0.05] border-x border-[#E4DAD5]">
+                <td className="py-3 px-4 text-center bg-[#600a0f]/[0.05] border-x border-[#E4DAD5]">
                   1 service
                 </td>
                 <td className="py-3 px-4 text-center">3 services</td>
-                <td className="py-3 px-4 text-center font-semibold text-[#B85C6B]">Unlimited</td>
+                <td className="py-3 px-4 text-center font-semibold text-[#600a0f]">Unlimited</td>
               </tr>
 
               {/* Row 4: Total Fanbase */}
@@ -354,7 +354,7 @@ export function PricingTable({ }: PricingTableProps) {
                 <td className="py-3 px-5 font-semibold text-[#181716]">
                   Total Fanbase Counter
                 </td>
-                <td className="py-3 px-4 text-center bg-[#B85C6B]/[0.05] border-x border-[#E4DAD5]">
+                <td className="py-3 px-4 text-center bg-[#600a0f]/[0.05] border-x border-[#E4DAD5]">
                   <Check className="h-4 w-4 mx-auto text-[#17845B]" />
                 </td>
                 <td className="py-3 px-4 text-center">
@@ -370,7 +370,7 @@ export function PricingTable({ }: PricingTableProps) {
                 <td className="py-3 px-5 font-semibold text-[#181716]">
                   Direct Brand Enquiries (WhatsApp &amp; Email)
                 </td>
-                <td className="py-3 px-4 text-center bg-[#B85C6B]/[0.05] border-x border-[#E4DAD5]">
+                <td className="py-3 px-4 text-center bg-[#600a0f]/[0.05] border-x border-[#E4DAD5]">
                   <Minus className="h-4 w-4 mx-auto text-[#797570]/50" />
                 </td>
                 <td className="py-3 px-4 text-center">
@@ -386,7 +386,7 @@ export function PricingTable({ }: PricingTableProps) {
                 <td className="py-3 px-5 font-semibold text-[#181716]">
                   Client Reviews &amp; Invitations
                 </td>
-                <td className="py-3 px-4 text-center bg-[#B85C6B]/[0.05] border-x border-[#E4DAD5]">
+                <td className="py-3 px-4 text-center bg-[#600a0f]/[0.05] border-x border-[#E4DAD5]">
                   <Minus className="h-4 w-4 mx-auto text-[#797570]/50" />
                 </td>
                 <td className="py-3 px-4 text-center">
@@ -402,7 +402,7 @@ export function PricingTable({ }: PricingTableProps) {
                 <td className="py-3 px-5 font-semibold text-[#181716]">
                   Custom Links &amp; Social Presences
                 </td>
-                <td className="py-3 px-4 text-center bg-[#B85C6B]/[0.05] border-x border-[#E4DAD5]">
+                <td className="py-3 px-4 text-center bg-[#600a0f]/[0.05] border-x border-[#E4DAD5]">
                   <Check className="h-4 w-4 mx-auto text-[#17845B]" />
                 </td>
                 <td className="py-3 px-4 text-center">
@@ -418,7 +418,7 @@ export function PricingTable({ }: PricingTableProps) {
                 <td className="py-3 px-5 font-semibold text-[#181716]">
                   Remove Inflixo Branding
                 </td>
-                <td className="py-3 px-4 text-center bg-[#B85C6B]/[0.05] border-x border-[#E4DAD5]">
+                <td className="py-3 px-4 text-center bg-[#600a0f]/[0.05] border-x border-[#E4DAD5]">
                   <Minus className="h-4 w-4 mx-auto text-[#797570]/50" />
                 </td>
                 <td className="py-3 px-4 text-center">
