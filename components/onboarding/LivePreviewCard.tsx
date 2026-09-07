@@ -1533,10 +1533,20 @@ export function LivePreviewCard({
                     </div>
                     <div className="flex items-center gap-2.5 shrink-0">
                       {item.count > 0 && (
-                        <span style={{ color: c.primaryText }} className="text-xs sm:text-[13px] font-bold tabular-nums">
-                          {formatCount(item.count)}{" "}
-                          <span style={{ color: c.mutedText }} className="font-normal text-[11px]">{item.unit.toLowerCase()}</span>
-                        </span>
+                        <div className="text-right flex flex-col items-end justify-center">
+                          <span
+                            style={{ color: c.primaryText }}
+                            className="text-xs sm:text-sm font-extrabold tabular-nums leading-tight"
+                          >
+                            {formatCount(item.count)}
+                          </span>
+                          <span
+                            style={{ color: c.mutedText }}
+                            className="text-[10px] sm:text-[11px] font-medium leading-none"
+                          >
+                            {item.unit}
+                          </span>
+                        </div>
                       )}
                       <ExternalLink style={{ color: c.secondaryText }} className="h-3.5 w-3.5 transition-colors group-hover:translate-x-0.5" />
                     </div>
