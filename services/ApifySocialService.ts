@@ -54,7 +54,7 @@ export class ApifySocialService {
   private static youtubeCache = new Map<string, CacheEntry<ApifyYouTubeResult>>();
 
   private static getToken(): string | null {
-    return process.env.APIFY_API_TOKEN || process.env.APIFY_TOKEN || "apify_api_jze2DRxvgdmg6vUFKNGeg4Rmu8ut5z2890A8";
+    return process.env.APIFY_API_TOKEN || process.env.APIFY_TOKEN || null;
   }
 
   /**
