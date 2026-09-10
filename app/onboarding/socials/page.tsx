@@ -148,10 +148,10 @@ export default function SocialsStepPage() {
       <div className="w-full max-w-[540px] mx-auto pt-4 sm:pt-8 pb-12">
         {/* SINGLE UNIFIED WHITE CARD (Matching Step 1 & Step 2 design) */}
         <div className="rounded-[28px] border border-[#E7E3DC] bg-white p-6 sm:p-9 space-y-6 text-left shadow-[0_4px_24px_rgba(0,0,0,0.035)]">
-          
+
           {/* 1. Header Section */}
           <div className="space-y-1.5">
-            <span className="block text-[11px] font-bold uppercase tracking-widest text-[#3a2447]">
+            <span className="block text-[11px] font-bold uppercase tracking-widest text-[#151933]">
               STEP 3 OF 4 · YOUR SOCIALS
             </span>
             <h1 className="font-display text-2xl sm:text-[32px] font-extrabold text-[#181716] tracking-tight leading-tight">
@@ -175,7 +175,7 @@ export default function SocialsStepPage() {
 
           {/* 3. Social Platforms List */}
           <div className="space-y-4">
-            
+
             {/* Instagram Card */}
             <div className="rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] p-4 space-y-3">
               <div className="flex items-center gap-2.5">
@@ -210,7 +210,7 @@ export default function SocialsStepPage() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <div className="flex h-11 sm:h-12 items-center rounded-xl border border-[#cbd5e1] bg-white px-3.5 transition-all focus-within:border-[#3a2447] focus-within:ring-2 focus-within:ring-[#3a2447]/10">
+                  <div className="flex h-11 sm:h-12 items-center rounded-xl border border-[#cbd5e1] bg-white px-3.5 transition-all focus-within:border-[#151933] focus-within:ring-2 focus-within:ring-[#151933]/10">
                     <span className="text-xs sm:text-sm font-medium text-[#64748b] select-none shrink-0">
                       instagram.com/
                     </span>
@@ -261,7 +261,7 @@ export default function SocialsStepPage() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <div className="flex h-11 sm:h-12 items-center rounded-xl border border-[#cbd5e1] bg-white px-3.5 transition-all focus-within:border-[#3a2447] focus-within:ring-2 focus-within:ring-[#3a2447]/10">
+                  <div className="flex h-11 sm:h-12 items-center rounded-xl border border-[#cbd5e1] bg-white px-3.5 transition-all focus-within:border-[#151933] focus-within:ring-2 focus-within:ring-[#151933]/10">
                     <span className="text-xs sm:text-sm font-medium text-[#64748b] select-none shrink-0">
                       youtube.com/@
                     </span>
@@ -312,7 +312,7 @@ export default function SocialsStepPage() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <div className="flex h-11 sm:h-12 items-center rounded-xl border border-[#cbd5e1] bg-white px-3.5 transition-all focus-within:border-[#3a2447] focus-within:ring-2 focus-within:ring-[#3a2447]/10">
+                  <div className="flex h-11 sm:h-12 items-center rounded-xl border border-[#cbd5e1] bg-white px-3.5 transition-all focus-within:border-[#151933] focus-within:ring-2 focus-within:ring-[#151933]/10">
                     <span className="text-xs sm:text-sm font-medium text-[#64748b] select-none shrink-0">
                       facebook.com/
                     </span>
@@ -333,14 +333,14 @@ export default function SocialsStepPage() {
 
           {/* 4. Additional Platforms Note Box */}
           <div className="rounded-2xl border border-[#e2e8f0] bg-[#f8fafc]/70 p-3.5 text-left flex items-start gap-3">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white border border-[#e2e8f0] text-[#3a2447]">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white border border-[#e2e8f0] text-[#151933]">
               <Link2 className="h-3.5 w-3.5" />
             </div>
             <div className="space-y-0.5">
               <h4 className="text-xs font-bold text-[#181716]">Want to add more platforms?</h4>
               <p className="text-[11px] sm:text-xs text-[#64748b] leading-relaxed">
                 You can add TikTok, X (Twitter), Spotify, Twitch, and custom links anytime from{" "}
-                <span className="text-[#3a2447] font-semibold">Dashboard → Links &amp; Socials</span>.
+                <span className="text-[#151933] font-semibold">Dashboard → Links &amp; Socials</span>.
               </p>
             </div>
           </div>
@@ -358,7 +358,7 @@ export default function SocialsStepPage() {
               type="button"
               onClick={handleNext}
               disabled={submitting}
-              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-[#3a2447] hover:bg-[#2c1b36] text-white font-semibold text-xs sm:text-sm h-12 transition-all cursor-pointer shadow-xs disabled:opacity-60 active:scale-98"
+              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-[#151933] hover:bg-[#2c1b36] text-white font-semibold text-xs sm:text-sm h-12 transition-all cursor-pointer shadow-xs disabled:opacity-60 active:scale-98"
             >
               {submitting ? (
                 <>

@@ -50,7 +50,7 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   }
   return {
     name: platformStr || "Watch",
-    icon: <Film className="h-3.5 w-3.5 text-[#3a2447]" />,
+    icon: <Film className="h-3.5 w-3.5 text-[#151933]" />,
   };
 }
 
@@ -257,7 +257,7 @@ export function SeriesDetailClient({
       <div className={`min-h-dvh flex flex-col items-center justify-center p-4 py-6 sm:py-8 transition-colors duration-300 ${pageBgStyle}`}>
         <main className="mx-auto max-w-md w-full text-center space-y-6">
           <div className={`rounded-3xl border p-8 sm:p-10 shadow-2xs space-y-5 ${style.socialItemBg} ${style.socialItemBorder}`}>
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#3a2447] text-white shadow-md">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#151933] text-white shadow-md">
               <Film className="h-8 w-8" />
             </div>
 
@@ -275,10 +275,10 @@ export function SeriesDetailClient({
                 type="button"
                 onClick={() => router.push(profileUrl)}
                 className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold transition-all cursor-pointer border ${isDark
-                  ? "bg-[#3a2447]/22 hover:bg-[#3a2447]/32 active:bg-[#3a2447]/40 border-[#3a2447]/45 hover:border-[#3a2447]/60 text-[#F8FAFC] focus-visible:ring-2 focus-visible:ring-[#3a2447]/60"
+                  ? "bg-[#151933]/22 hover:bg-[#151933]/32 active:bg-[#151933]/40 border-[#151933]/45 hover:border-[#151933]/60 text-[#F8FAFC] focus-visible:ring-2 focus-visible:ring-[#151933]/60"
                   : isSignaturePurple
-                    ? "bg-[#3a2447]/16 hover:bg-[#3a2447]/24 active:bg-[#3a2447]/32 border border-[#3a2447]/35 hover:border-[#3a2447]/50 text-[#3a2447] focus-visible:ring-2 focus-visible:ring-[#3a2447]/60 shadow-xs"
-                    : "bg-[#3a2447] hover:bg-[#2c1937] text-white border-transparent"
+                    ? "bg-[#151933]/16 hover:bg-[#151933]/24 active:bg-[#151933]/32 border border-[#151933]/35 hover:border-[#151933]/50 text-[#151933] focus-visible:ring-2 focus-visible:ring-[#151933]/60 shadow-xs"
+                    : "bg-[#151933] hover:bg-[#2c1937] text-white border-transparent"
                   }`}
               >
                 <span>Go to @{username}</span>
@@ -344,7 +344,7 @@ export function SeriesDetailClient({
       <FocusOverlay overlay={themeMeta.focusOverlay} />
 
       {/* 4. Centered Content */}
-      <main className="relative z-10 flex-1 flex flex-col mx-auto max-w-[520px] w-full px-3 sm:px-4 py-4 sm:py-6 animate-fade-in-up">
+      <main className="relative z-10 flex-1 flex flex-col mx-auto max-w-[580px] w-full px-3 sm:px-4 py-4 sm:py-6 animate-fade-in-up">
         {/* Centered Theme Card with min-h-full & flex layout */}
         <div
           style={{
@@ -360,7 +360,7 @@ export function SeriesDetailClient({
         >
           <div className="flex-1 flex flex-col">
             {/* 1. Full-Width Hero Cover Header (Maroon Gradient or Valid Poster) */}
-            <div className="relative w-full aspect-[21/9] min-h-[120px] sm:min-h-[140px] overflow-hidden bg-gradient-to-r from-[#3a2447] via-[#A24B5A] to-[#3a2447] m-0 p-0 shrink-0">
+            <div className="relative w-full aspect-[21/9] min-h-[120px] sm:min-h-[140px] overflow-hidden bg-gradient-to-r from-[#151933] via-[#A24B5A] to-[#151933] m-0 p-0 shrink-0">
               {hasValidCover && (
                 <>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -467,57 +467,22 @@ export function SeriesDetailClient({
                   </p>
                 )}
 
-                {/* Category / Genre / Platform Pill Tags */}
-                {(detectedPlatform || genresList.length > 0 || langTag) && (
-                  <div className="mt-2.5 flex flex-wrap items-center justify-center gap-1.5">
-                    {/* Platform Pill */}
-                    {detectedPlatform && (
-                      <span
-                        style={{
-                          backgroundColor: c.accentSoft,
-                          borderColor: c.accentBorder,
-                          color: c.accentText,
-                        }}
-                        className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border transition-all"
-                      >
-                        {detectedPlatform === "YouTube" && <YoutubeIcon className="h-2.5 w-2.5 text-red-500" />}
-                        {detectedPlatform === "Instagram" && <InstagramIcon className="h-2.5 w-2.5 text-pink-500" />}
-                        {detectedPlatform === "Facebook" && <FacebookIcon className="h-2.5 w-2.5 text-blue-500" />}
-                        {detectedPlatform !== "YouTube" && detectedPlatform !== "Instagram" && detectedPlatform !== "Facebook" && (
-                          <Globe className="h-2.5 w-2.5 text-[#3a2447]" />
-                        )}
-                        <span>{detectedPlatform}</span>
-                      </span>
+                {/* Metadata — clean values, each on its own line */}
+                {(genresList.length > 0 || langTag || allEpisodes.length > 0) && (
+                  <div className="mt-3 space-y-1 text-center">
+                    {genresList.length > 0 && (
+                      <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-medium">
+                        {genresList.slice(0, 3).join(", ")}
+                      </p>
                     )}
-
-                    {/* Genre Pills */}
-                    {genresList.map((tag, idx) => (
-                      <span
-                        key={idx}
-                        style={{
-                          backgroundColor: c.accentSoft,
-                          borderColor: c.accentBorder,
-                          color: c.accentText,
-                        }}
-                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border transition-all"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-
-                    {/* Language Pill */}
                     {langTag && (
-                      <span
-                        style={{
-                          backgroundColor: c.accentSoft,
-                          borderColor: c.accentBorder,
-                          color: c.accentText,
-                        }}
-                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border transition-all"
-                      >
+                      <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-medium">
                         {langTag}
-                      </span>
+                      </p>
                     )}
+                    <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-medium">
+                      {allEpisodes.length} {allEpisodes.length === 1 ? "episode" : "episodes"}
+                    </p>
                   </div>
                 )}
               </div>
@@ -595,7 +560,7 @@ export function SeriesDetailClient({
                             </span>
                             <span
                               style={{ color: c.primaryText }}
-                              className="text-xs sm:text-[13px] font-bold text-[#241618] truncate group-hover:text-[#3a2447] transition-colors"
+                              className="text-xs sm:text-[13px] font-bold text-[#241618] truncate group-hover:text-[#151933] transition-colors"
                             >
                               {epTitleStr}
                             </span>
@@ -607,7 +572,7 @@ export function SeriesDetailClient({
                               borderColor: c.border,
                               color: c.accentText,
                             }}
-                            className="h-8 w-8 rounded-full border border-[#E4DAD5] bg-white text-[#3a2447] flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-[#600b0f0f] group-hover:border-[#3a2447]/30 group-hover:scale-105 transition-all"
+                            className="h-8 w-8 rounded-full border border-[#E4DAD5] bg-white text-[#151933] flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-[#600b0f0f] group-hover:border-[#151933]/30 group-hover:scale-105 transition-all"
                           >
                             <Eye className="h-3.5 w-3.5" />
                           </div>
@@ -634,7 +599,7 @@ export function SeriesDetailClient({
               }}
               className="tap-scale inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#E4DAD5] bg-white text-[#6B5A5D] text-[11px] font-bold shadow-2xs hover:scale-105 transition-all"
             >
-              <span style={{ color: c.accentText }} className="inline-flex items-center text-[#3a2447]">
+              <span style={{ color: c.accentText }} className="inline-flex items-center text-[#151933]">
                 <LogoStadiumLinkI className="h-3.5 w-3.5" />
               </span>
               <span>Made with Inflixo</span>

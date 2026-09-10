@@ -52,7 +52,7 @@ export default function ThemeStepPage() {
           type="button"
           onClick={() => setActiveGroup("all")}
           className={`tap-scale shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-colors cursor-pointer ${activeGroup === "all"
-            ? "bg-[#3a2447]/[0.08] text-[#3a2447] border border-[#3a2447]/25"
+            ? "bg-[#151933]/[0.08] text-[#151933] border border-[#151933]/25"
             : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#fbfbfb]"
             }`}
         >
@@ -63,7 +63,7 @@ export default function ThemeStepPage() {
           type="button"
           onClick={() => setActiveGroup("animated")}
           className={`tap-scale shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1 ${activeGroup === "animated"
-            ? "bg-[#3a2447]/[0.08] text-[#3a2447] border border-[#3a2447]/25"
+            ? "bg-[#151933]/[0.08] text-[#151933] border border-[#151933]/25"
             : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#fbfbfb]"
             }`}
         >
@@ -75,7 +75,7 @@ export default function ThemeStepPage() {
           type="button"
           onClick={() => setActiveGroup("light")}
           className={`tap-scale shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-colors cursor-pointer ${activeGroup === "light"
-            ? "bg-[#3a2447]/[0.08] text-[#3a2447] border border-[#3a2447]/25"
+            ? "bg-[#151933]/[0.08] text-[#151933] border border-[#151933]/25"
             : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#fbfbfb]"
             }`}
         >
@@ -86,7 +86,7 @@ export default function ThemeStepPage() {
           type="button"
           onClick={() => setActiveGroup("dark")}
           className={`tap-scale shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-colors cursor-pointer ${activeGroup === "dark"
-            ? "bg-[#3a2447]/[0.08] text-[#3a2447] border border-[#3a2447]/25"
+            ? "bg-[#151933]/[0.08] text-[#151933] border border-[#151933]/25"
             : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#fbfbfb]"
             }`}
         >
@@ -126,7 +126,7 @@ export default function ThemeStepPage() {
           size="lg"
           loading={submitting}
           onClick={handleNext}
-          className="w-full sm:flex-1 h-10 bg-[#3a2447] hover:bg-[#2c1937] text-white font-bold text-xs sm:text-sm rounded-xl cursor-pointer shadow-xs"
+          className="w-full sm:flex-1 h-10 bg-[#151933] hover:bg-[#2c1937] text-white font-bold text-xs sm:text-sm rounded-xl cursor-pointer shadow-xs"
         >
           Save &amp; Next →
         </Button>
@@ -153,7 +153,7 @@ function ThemeTile({
       type="button"
       onClick={onSelect}
       className={`tap-scale relative w-full h-24 sm:h-26 rounded-xl overflow-hidden p-2.5 sm:p-3 flex flex-col justify-between text-left transition-all cursor-pointer shadow-xs ${isSelected
-        ? "ring-2 ring-offset-2 ring-[#3a2447]"
+        ? "ring-2 ring-offset-2 ring-[#151933]"
         : "border border-gray-200/80 hover:border-gray-400 hover:shadow-sm"
         }`}
       style={{
@@ -180,7 +180,7 @@ function ThemeTile({
           )}
 
           {isSelected && (
-            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#3a2447] text-white shadow-md border border-white">
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#151933] text-white shadow-md border border-white">
               <Check className="h-3 w-3 stroke-[3]" />
             </div>
           )}

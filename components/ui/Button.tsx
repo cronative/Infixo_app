@@ -16,12 +16,12 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-[#3a2447] text-white hover:bg-[#1e293b] active:scale-[0.99] disabled:opacity-50 disabled:bg-[#f1f5f9] disabled:text-[#94a3b8] disabled:cursor-not-allowed shadow-xs",
+    "bg-[#151933] text-white hover:bg-[#1e293b] active:scale-[0.99] disabled:opacity-50 disabled:bg-[#f1f5f9] disabled:text-[#94a3b8] disabled:cursor-not-allowed shadow-xs",
   secondary:
-    "bg-[#ffffff] text-[#3a2447] border border-[#e2e8f0] hover:bg-[#f8fafc] hover:border-[#cbd5e1]",
+    "bg-[#ffffff] text-[#151933] border border-[#e2e8f0] hover:bg-[#f8fafc] hover:border-[#cbd5e1]",
   outline:
-    "bg-transparent text-[#3a2447] border border-[#e2e8f0] hover:bg-[#f8fafc] hover:border-[#cbd5e1]",
-  ghost: "bg-transparent text-[#475569] hover:text-[#3a2447] hover:bg-[#f1f5f9]",
+    "bg-transparent text-[#151933] border border-[#e2e8f0] hover:bg-[#f8fafc] hover:border-[#cbd5e1]",
+  ghost: "bg-transparent text-[#475569] hover:text-[#151933] hover:bg-[#f1f5f9]",
   danger: "bg-rose-50 text-[#ef4444] border border-rose-200 hover:bg-rose-100",
 };
 

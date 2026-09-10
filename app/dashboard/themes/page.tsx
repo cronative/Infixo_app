@@ -107,7 +107,7 @@ export default function DashboardThemesPage() {
     <div className="w-full pb-16 text-left">
       {/* 2-COLUMN SPLIT LAYOUT: Appearance + Themes on Left | Sticky Profile Preview on Right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
-        
+
         {/* LEFT COLUMN: APPEARANCE & THEMES (6 cols on lg, 5 cols on xl) */}
         <div className="lg:col-span-6 xl:col-span-5 space-y-4">
           {/* Header: Appearance title + Filter Pills aligned at top */}
@@ -129,21 +129,20 @@ export default function DashboardThemesPage() {
                   group === "all"
                     ? "All"
                     : group === "animated"
-                    ? "Animated"
-                    : group === "light"
-                    ? "Light"
-                    : "Dark";
+                      ? "Animated"
+                      : group === "light"
+                        ? "Light"
+                        : "Dark";
 
                 return (
                   <button
                     key={group}
                     type="button"
                     onClick={() => setActiveGroup(group)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${
-                      isSelected
-                        ? "bg-[#3a2447] text-white shadow-xs"
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${isSelected
+                        ? "bg-[#151933] text-white shadow-xs"
                         : "border border-[#E7E3DC] bg-white text-[#54514D] hover:text-[#181716] hover:bg-[#FAF8F5]"
-                    }`}
+                      }`}
                   >
                     {group === "animated" && <Sparkles className="inline h-3 w-3 mr-1" />}
                     <span>{label}</span>
@@ -210,7 +209,7 @@ export default function DashboardThemesPage() {
                     type="button"
                     onClick={handleApplyTheme}
                     disabled={isApplying}
-                    className="h-9 px-3.5 rounded-xl bg-[#3a2447] hover:bg-[#2c1937] text-white text-xs font-semibold transition-colors cursor-pointer shadow-xs disabled:opacity-50 inline-flex items-center gap-1.5"
+                    className="h-9 px-3.5 rounded-xl bg-[#151933] hover:bg-[#2c1937] text-white text-xs font-semibold transition-colors cursor-pointer shadow-xs disabled:opacity-50 inline-flex items-center gap-1.5"
                   >
                     {isApplying ? (
                       <>
@@ -313,13 +312,12 @@ function ThemeCard({
     <button
       type="button"
       onClick={onSelect}
-      className={`group relative flex flex-col justify-between w-full rounded-2xl border p-3 text-left transition-all cursor-pointer shadow-xs ${
-        isPreviewing
-          ? "border-[#3a2447] ring-2 ring-[#3a2447]/20 bg-[#3a2447]/[0.03]"
+      className={`group relative flex flex-col justify-between w-full rounded-2xl border p-3 text-left transition-all cursor-pointer shadow-xs ${isPreviewing
+          ? "border-[#151933] ring-2 ring-[#151933]/20 bg-[#151933]/[0.03]"
           : isActive
-          ? "border-[#17845B]/40 ring-1 ring-[#17845B]/20 bg-white"
-          : "border-[#E7E3DC] bg-white hover:border-[#3a2447]/30 hover:shadow-sm"
-      }`}
+            ? "border-[#17845B]/40 ring-1 ring-[#17845B]/20 bg-white"
+            : "border-[#E7E3DC] bg-white hover:border-[#151933]/30 hover:shadow-sm"
+        }`}
     >
       {/* Visual Thumbnail (Taller ~16:8 aspect ratio) */}
       <div
@@ -350,7 +348,7 @@ function ThemeCard({
               <span>Active</span>
             </span>
           ) : isPreviewing ? (
-            <span className="inline-flex items-center gap-1 rounded-full bg-[#3a2447] text-white px-2.5 py-0.5 text-[10px] font-bold shadow-xs">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#151933] text-white px-2.5 py-0.5 text-[10px] font-bold shadow-xs">
               <span>Previewing</span>
             </span>
           ) : null}

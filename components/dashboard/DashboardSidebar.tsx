@@ -35,24 +35,24 @@ export function DashboardSidebar() {
           src={profile.photoDataUrl}
           name={displayName}
           className="w-9 h-9 rounded-full overflow-hidden object-cover aspect-square border border-[#e2e8f0] shrink-0"
-          textClassName="text-xs font-bold text-[#3a2447]"
+          textClassName="text-xs font-bold text-[#151933]"
           fallbackBgClass="bg-[#f1f5f9]"
         />
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1">
-            <p className="truncate text-xs font-semibold text-[#3a2447]" title={displayName}>
+            <p className="truncate text-xs font-semibold text-[#151933]" title={displayName}>
               {displayName}
             </p>
             {profile.isVerified && (
-              <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-[#3a2447]" />
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-[#151933]" />
             )}
           </div>
           <div className="flex items-center gap-1.5 mt-0.5">
             <p className="truncate text-[11px] font-medium text-[#475569]">
               @{handleStr}
             </p>
-            <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-[#3a2447] bg-[#f1f5f9] border border-[#e2e8f0] px-1.5 py-0.2 rounded">
+            <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-[#151933] bg-[#f1f5f9] border border-[#e2e8f0] px-1.5 py-0.2 rounded">
               <span className="h-1 w-1 rounded-full bg-[#10b981]" />
               Live
             </span>
@@ -76,11 +76,11 @@ export function DashboardSidebar() {
                   key={item.href}
                   href={item.href}
                   className={`flex items-center gap-2.5 rounded-[10px] px-3 h-10 text-xs transition-colors ${active
-                    ? "bg-[#f8fafc] text-[#3a2447] font-semibold border border-[#E7E3DC]"
+                    ? "bg-[#f8fafc] text-[#151933] font-semibold border border-[#E7E3DC]"
                     : "text-[#54514D] hover:bg-[#FAF8F5] hover:text-[#181716] font-medium border border-transparent"
                     }`}
                 >
-                  <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#3a2447]" : "text-[#797570]"}`} />
+                  <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#151933]" : "text-[#797570]"}`} />
                   <span className="flex-1 truncate">{item.label}</span>
                 </Link>
               );
@@ -102,11 +102,11 @@ export function DashboardSidebar() {
                   key={item.href}
                   href={item.href}
                   className={`flex items-center gap-2.5 rounded-[10px] px-3 h-10 text-xs transition-colors ${active
-                    ? "bg-[#f8fafc] text-[#3a2447] font-semibold border border-[#E7E3DC]"
+                    ? "bg-[#f8fafc] text-[#151933] font-semibold border border-[#E7E3DC]"
                     : "text-[#54514D] hover:bg-[#FAF8F5] hover:text-[#181716] font-medium border border-transparent"
                     }`}
                 >
-                  <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#3a2447]" : "text-[#797570]"}`} />
+                  <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#151933]" : "text-[#797570]"}`} />
                   <span className="flex-1 truncate">{item.label}</span>
                 </Link>
               );
@@ -119,14 +119,14 @@ export function DashboardSidebar() {
       <div className="pt-3 border-t border-[#E7E3DC] space-y-2">
         <div className="flex items-center justify-between rounded-[10px] border border-[#E7E3DC] bg-[#FAF8F5] px-3 py-2 text-[11px] font-semibold text-[#181716]">
           <div className="flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-[#3a2447] shrink-0" />
+            <Sparkles className="h-3.5 w-3.5 text-[#151933] shrink-0" />
             <span>Early Access</span>
           </div>
           <Link
             href={`/${handleStr}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[10px] text-[#3a2447] hover:underline inline-flex items-center gap-0.5 font-semibold"
+            className="text-[10px] text-[#151933] hover:underline inline-flex items-center gap-0.5 font-semibold"
             title="View live profile"
           >
             <span>Preview</span>

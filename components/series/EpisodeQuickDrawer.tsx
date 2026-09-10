@@ -40,7 +40,7 @@ export function EpisodeQuickDrawer({ isOpen, onClose, series }: EpisodeQuickDraw
       case "facebook":
         return "bg-blue-600";
       default:
-        return "bg-[#3a2447]";
+        return "bg-[#151933]";
     }
   }
 
@@ -76,7 +76,7 @@ export function EpisodeQuickDrawer({ isOpen, onClose, series }: EpisodeQuickDraw
               {episodes.map((ep, idx) => (
                 <div
                   key={ep.id || idx}
-                  className="rounded-xl border border-[#E4DAD5] bg-white p-3 transition-all hover:border-[#3a2447]/30 hover:shadow-xs flex items-center justify-between gap-3"
+                  className="rounded-xl border border-[#E4DAD5] bg-white p-3 transition-all hover:border-[#151933]/30 hover:shadow-xs flex items-center justify-between gap-3"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-white shadow-xs ${getPlatformBadgeBg(ep.platform)}`}>
@@ -97,7 +97,7 @@ export function EpisodeQuickDrawer({ isOpen, onClose, series }: EpisodeQuickDraw
                       href={ep.externalUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-[#3a2447] hover:bg-[#2c1937] px-3.5 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+                      className="shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-[#2c1937] px-3.5 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
                     >
                       <Play className="h-3 w-3 fill-current" />
                       <span>Play Ep {ep.episodeNumber || idx + 1} →</span>

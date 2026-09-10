@@ -49,7 +49,7 @@ export default function LoginPage() {
       {/* Background Inflixo "I" Logo Mark & Radiating Waves */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden select-none">
         {/* Top-Left Inflixo "I" Logo Watermark */}
-        <div className="absolute -top-12 -left-12 sm:-top-16 sm:-left-16 text-[#3a2447] opacity-[0.06] -rotate-12">
+        <div className="absolute -top-12 -left-12 sm:-top-16 sm:-left-16 text-[#151933] opacity-[0.06] -rotate-12">
           <svg
             viewBox="0 0 100 100"
             fill="none"
@@ -84,7 +84,7 @@ export default function LoginPage() {
         </div>
 
         {/* Bottom-Right Inflixo "I" Logo Watermark */}
-        <div className="absolute -bottom-16 -right-16 sm:-bottom-20 sm:-right-20 text-[#3a2447] opacity-[0.05] rotate-12">
+        <div className="absolute -bottom-16 -right-16 sm:-bottom-20 sm:-right-20 text-[#151933] opacity-[0.05] rotate-12">
           <svg
             viewBox="0 0 100 100"
             fill="none"
@@ -128,8 +128,8 @@ export default function LoginPage() {
           </div>
 
           <div className="pt-1 w-full">
-            <div className="rounded-2xl bg-[#3a2447]/[0.05] border border-[#3a2447]/10 p-3 sm:p-3.5 text-center space-y-1.5">
-              <p className="text-xs sm:text-[13px] font-bold text-[#3a2447]">
+            <div className="rounded-2xl bg-[#151933]/[0.05] border border-[#151933]/10 p-3 sm:p-3.5 text-center space-y-1.5">
+              <p className="text-xs sm:text-[13px] font-bold text-[#151933]">
                 👋 Hello, Creator!
               </p>
               <p className="text-xs font-medium text-[#181716] leading-relaxed">
@@ -153,8 +153,8 @@ export default function LoginPage() {
         </div>
 
         {/* 3. Trust Pill */}
-        <div className="flex items-center justify-center gap-1.5 rounded-full bg-[#3a2447]/[0.06] px-3.5 py-1 text-xs font-medium text-[#54514D] mx-auto w-fit">
-          <Zap className="h-3.5 w-3.5 text-[#3a2447] fill-[#3a2447] shrink-0" />
+        <div className="flex items-center justify-center gap-1.5 rounded-full bg-[#151933]/[0.06] px-3.5 py-1 text-xs font-medium text-[#54514D] mx-auto w-fit">
+          <Zap className="h-3.5 w-3.5 text-[#151933] fill-[#151933] shrink-0" />
           <span>Password-free login • Under 60 seconds</span>
         </div>
 
@@ -169,7 +169,7 @@ export default function LoginPage() {
             </label>
 
             <div
-              className={`flex h-11 items-center rounded-xl border px-3.5 bg-[#f8fafc] transition-all duration-200 focus-within:border-[#3a2447] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#3a2447]/10 ${error
+              className={`flex h-11 items-center rounded-xl border px-3.5 bg-[#f8fafc] transition-all duration-200 focus-within:border-[#151933] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#151933]/10 ${error
                 ? "border-[#ef4444] bg-rose-50/20"
                 : "border-[#cbd5e1]"
                 } ${isShaking ? "animate-shake" : ""}`}
@@ -201,7 +201,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#3a2447] hover:bg-[#2c1937] text-white font-semibold text-xs sm:text-sm h-11 transition-all cursor-pointer shadow-xs disabled:opacity-75 disabled:cursor-not-allowed active:scale-98"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#151933] hover:bg-[#2c1937] text-white font-semibold text-xs sm:text-sm h-11 transition-all cursor-pointer shadow-xs disabled:opacity-75 disabled:cursor-not-allowed active:scale-98"
           >
             {loading ? (
               <>
@@ -220,7 +220,7 @@ export default function LoginPage() {
         {/* 5. 3 Benefit Checkpoints */}
         <div className="pt-3 border-t border-[#E7E3DC] space-y-2 text-left">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#3a2447]/10 text-[#3a2447] shrink-0">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#151933]/10 text-[#151933] shrink-0">
               <Check className="h-3 w-3 stroke-[2.5]" />
             </span>
             <span className="text-xs font-medium text-[#54514D]">
@@ -229,7 +229,7 @@ export default function LoginPage() {
           </div>
 
           <div className="flex items-center gap-2.5">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#3a2447]/10 text-[#3a2447] shrink-0">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#151933]/10 text-[#151933] shrink-0">
               <Check className="h-3 w-3 stroke-[2.5]" />
             </span>
             <span className="text-xs font-medium text-[#54514D]">
@@ -238,7 +238,7 @@ export default function LoginPage() {
           </div>
 
           <div className="flex items-center gap-2.5">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#3a2447]/10 text-[#3a2447] shrink-0">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#151933]/10 text-[#151933] shrink-0">
               <Check className="h-3 w-3 stroke-[2.5]" />
             </span>
             <span className="text-xs font-medium text-[#54514D]">
@@ -251,11 +251,11 @@ export default function LoginPage() {
         <div className="pt-2.5 border-t border-[#E7E3DC]/80">
           <p className="text-[11px] font-medium text-[#6B5A5D] text-center leading-relaxed">
             By continuing, you agree to Inflixo&apos;s{" "}
-            <Link href="/terms" className="text-[#3a2447] underline hover:text-[#2c1937] font-medium">
+            <Link href="/terms" className="text-[#151933] underline hover:text-[#2c1937] font-medium">
               Terms of Service
             </Link>{" "}
             and{" "}
-            <Link href="/privacy" className="text-[#3a2447] underline hover:text-[#2c1937] font-medium">
+            <Link href="/privacy" className="text-[#151933] underline hover:text-[#2c1937] font-medium">
               Privacy Policy
             </Link>
             .

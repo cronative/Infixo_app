@@ -23,7 +23,7 @@ export function AuthSplitLayout({ children }: { children: ReactNode }) {
       </div>
 
       {/* Right / visual column */}
-      <div className="relative hidden flex-1 overflow-hidden lg:block bg-[#3a2447]">
+      <div className="relative hidden flex-1 overflow-hidden lg:block bg-[#151933]">
         {/* Glow ambient background orbs */}
         <div className="absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-white/10 blur-3xl pointer-events-none animate-blob" />
         <div className="absolute bottom-10 right-10 h-80 w-80 rounded-full bg-white/5 blur-3xl pointer-events-none animate-blob" />

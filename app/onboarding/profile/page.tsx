@@ -150,10 +150,10 @@ export default function ProfileStepPage() {
       <div className="w-full max-w-[540px] mx-auto pt-4 sm:pt-8 pb-12">
         {/* SINGLE UNIFIED WHITE CARD */}
         <div className="rounded-[28px] border border-[#E7E3DC] bg-white p-6 sm:p-9 space-y-6 text-left shadow-[0_4px_24px_rgba(0,0,0,0.035)]">
-          
+
           {/* 1. Header Section */}
           <div className="space-y-1.5">
-            <span className="block text-[11px] font-bold uppercase tracking-widest text-[#3a2447]">
+            <span className="block text-[11px] font-bold uppercase tracking-widest text-[#151933]">
               STEP 2 OF 4 · YOUR PROFILE
             </span>
             <h1 className="font-display text-2xl sm:text-[32px] font-extrabold text-[#181716] tracking-tight leading-tight">
@@ -177,7 +177,7 @@ export default function ProfileStepPage() {
             <button
               type="button"
               onClick={() => router.push("/onboarding/username")}
-              className="text-xs sm:text-sm font-semibold text-[#181716] hover:text-[#3a2447] hover:underline cursor-pointer"
+              className="text-xs sm:text-sm font-semibold text-[#181716] hover:text-[#151933] hover:underline cursor-pointer"
             >
               Change
             </button>
@@ -241,9 +241,8 @@ export default function ProfileStepPage() {
               Creator or display name
             </label>
             <div
-              className={`flex h-12 items-center rounded-xl border bg-white px-3.5 transition-all focus-within:border-[#3a2447] focus-within:ring-2 focus-within:ring-[#3a2447]/10 ${
-                errors.displayName ? "border-[#ef4444]" : "border-[#cbd5e1]"
-              }`}
+              className={`flex h-12 items-center rounded-xl border bg-white px-3.5 transition-all focus-within:border-[#151933] focus-within:ring-2 focus-within:ring-[#151933]/10 ${errors.displayName ? "border-[#ef4444]" : "border-[#cbd5e1]"
+                }`}
             >
               {/* Concentric rings disc icon */}
               <svg
@@ -288,7 +287,7 @@ export default function ProfileStepPage() {
                   Choose up to 3 categories that describe your content.
                 </p>
               </div>
-              <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-[#3a2447]/[0.08] text-[#3a2447] border border-[#3a2447]/20 shrink-0">
+              <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-[#151933]/[0.08] text-[#151933] border border-[#151933]/20 shrink-0">
                 {selectedCategories.length} / 3 selected
               </span>
             </div>
@@ -301,7 +300,7 @@ export default function ProfileStepPage() {
                 value={categorySearch}
                 onChange={(e) => setCategorySearch(e.target.value)}
                 placeholder="Search categories..."
-                className="w-full h-11 rounded-xl border border-[#E7E3DC] pl-10 pr-8 text-xs sm:text-sm text-[#181716] placeholder:text-[#797570]/60 outline-none focus:border-[#3a2447] focus:ring-1 focus:ring-[#3a2447]/15 bg-white transition-colors"
+                className="w-full h-11 rounded-xl border border-[#E7E3DC] pl-10 pr-8 text-xs sm:text-sm text-[#181716] placeholder:text-[#797570]/60 outline-none focus:border-[#151933] focus:ring-1 focus:ring-[#151933]/15 bg-white transition-colors"
               />
               {categorySearch && (
                 <button
@@ -329,18 +328,17 @@ export default function ProfileStepPage() {
                       type="button"
                       disabled={isMaxReached}
                       onClick={() => handleToggleCategory(item.category)}
-                      className={`inline-flex items-center gap-2 text-xs sm:text-sm py-2 px-3.5 rounded-xl transition-all cursor-pointer ${
-                        isSelected
-                          ? "bg-[#3a2447]/10 border border-[#3a2447]/30 text-[#3a2447] font-medium shadow-xs"
+                      className={`inline-flex items-center gap-2 text-xs sm:text-sm py-2 px-3.5 rounded-xl transition-all cursor-pointer ${isSelected
+                          ? "bg-[#151933]/10 border border-[#151933]/30 text-[#151933] font-medium shadow-xs"
                           : isMaxReached
                             ? "opacity-40 cursor-not-allowed bg-white border border-[#E7E3DC] text-[#797570]"
-                            : "bg-white border border-[#E7E3DC] text-[#181716] hover:border-[#3a2447]/30 hover:bg-[#FAF8F5]"
-                      }`}
+                            : "bg-white border border-[#E7E3DC] text-[#181716] hover:border-[#151933]/30 hover:bg-[#FAF8F5]"
+                        }`}
                     >
                       <span className="shrink-0">{item.emoji}</span>
                       <span className="truncate">{item.category}</span>
                       {isSelected ? (
-                        <Check className="h-3.5 w-3.5 text-[#3a2447] shrink-0" />
+                        <Check className="h-3.5 w-3.5 text-[#151933] shrink-0" />
                       ) : (
                         <Plus className="h-3.5 w-3.5 text-[#797570] shrink-0" />
                       )}
@@ -354,7 +352,7 @@ export default function ProfileStepPage() {
             {selectedCategories.includes("Other") && (
               <div className="rounded-xl border border-[#E7E3DC] bg-[#FAF8F5] p-3.5 space-y-2">
                 <label className="block text-xs font-semibold text-[#181716] flex items-center gap-1.5">
-                  <Sparkles className="h-3.5 w-3.5 text-[#3a2447]" />
+                  <Sparkles className="h-3.5 w-3.5 text-[#151933]" />
                   <span>What type of content do you create?</span>
                 </label>
                 <input
@@ -367,7 +365,7 @@ export default function ProfileStepPage() {
                     setCustomOtherText(val);
                     updateProfile({ customCategory: val });
                   }}
-                  className="w-full h-11 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-sm font-medium text-[#181716] outline-none focus:border-[#3a2447] focus:ring-1 focus:ring-[#3a2447]/20"
+                  className="w-full h-11 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-sm font-medium text-[#181716] outline-none focus:border-[#151933] focus:ring-1 focus:ring-[#151933]/20"
                 />
               </div>
             )}
@@ -400,7 +398,7 @@ export default function ProfileStepPage() {
               value={profile?.bio || ""}
               onChange={(e) => updateProfile({ bio: e.target.value })}
               placeholder="Tell followers and brands what makes your content worth following."
-              className="w-full rounded-xl border border-[#cbd5e1] p-3.5 text-sm sm:text-base font-normal text-[#181716] placeholder:text-[#94a3b8] focus:border-[#3a2447] focus:ring-2 focus:ring-[#3a2447]/10 outline-none resize-none transition-all leading-relaxed"
+              className="w-full rounded-xl border border-[#cbd5e1] p-3.5 text-sm sm:text-base font-normal text-[#181716] placeholder:text-[#94a3b8] focus:border-[#151933] focus:ring-2 focus:ring-[#151933]/10 outline-none resize-none transition-all leading-relaxed"
             />
           </div>
 
@@ -410,7 +408,7 @@ export default function ProfileStepPage() {
               type="button"
               onClick={handleNext}
               disabled={submitting}
-              className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#3a2447] hover:bg-[#2c1b36] text-white font-semibold text-xs sm:text-sm h-12 transition-all cursor-pointer shadow-xs disabled:opacity-60 active:scale-98"
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#151933] hover:bg-[#2c1b36] text-white font-semibold text-xs sm:text-sm h-12 transition-all cursor-pointer shadow-xs disabled:opacity-60 active:scale-98"
             >
               {submitting ? (
                 <>

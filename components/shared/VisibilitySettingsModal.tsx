@@ -171,7 +171,7 @@ export function VisibilitySettingsModal({
             <button
               type="button"
               onClick={handleResetDefault}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-[#6B5A5D] hover:text-[#3a2447] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[#6B5A5D] hover:text-[#151933] transition-colors cursor-pointer"
             >
               <RotateCcw className="h-3 w-3" />
               <span>Reset Default</span>
@@ -208,7 +208,7 @@ export function VisibilitySettingsModal({
                         <p className="text-xs font-bold text-[#241618] truncate flex items-center gap-1.5">
                           {info.name}
                           {isAbout && (
-                            <span className="text-[9px] font-semibold text-[#3a2447] bg-[#3a244714] border border-[#3a2447]/20 px-1.5 py-0.2 rounded">
+                            <span className="text-[9px] font-semibold text-[#151933] bg-[#15193314] border border-[#151933]/20 px-1.5 py-0.2 rounded">
                               Locked
                             </span>
                           )}
@@ -224,7 +224,7 @@ export function VisibilitySettingsModal({
                         onClick={() => handleToggleVisibility(section.sectionKey)}
                         disabled={isAbout}
                         className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-colors cursor-pointer ${section.isVisible
-                          ? "border-[#E4DAD5] bg-[#fbfbfb] text-[#241618] hover:bg-[#3a244714] hover:text-[#3a2447]"
+                          ? "border-[#E4DAD5] bg-[#fbfbfb] text-[#241618] hover:bg-[#15193314] hover:text-[#151933]"
                           : "border-[#C1443A]/20 bg-[#C1443A]/10 text-[#C1443A]"
                           } disabled:opacity-40 disabled:cursor-not-allowed`}
                         title={section.isVisible ? "Hide section" : "Show section"}
@@ -276,7 +276,7 @@ export function VisibilitySettingsModal({
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="tap-scale bg-[#3a2447] hover:bg-[#2c1937] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
+            className="tap-scale bg-[#151933] hover:bg-[#2c1937] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
           >
             {saving ? (
               <>

@@ -117,17 +117,17 @@ export function formatEmailBodyToHtml(text: string): string {
 
   let formatted = text
     // Replace Markdown headers ###
-    .replace(/^### (.*$)/gim, '<h3 style="color: #3a2447; font-size: 16px; font-weight: 800; margin: 20px 0 10px 0;">$1</h3>')
+    .replace(/^### (.*$)/gim, '<h3 style="color: #151933; font-size: 16px; font-weight: 800; margin: 20px 0 10px 0;">$1</h3>')
     // Bold text **text**
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     // Italic text *text*
     .replace(/\*(.*?)\*/g, '<em style="color: #64748B;">$1</em>')
     // Links [text](url)
-    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" style="color: #3a2447; font-weight: 700; text-decoration: underline;">$1</a>')
+    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" style="color: #151933; font-weight: 700; text-decoration: underline;">$1</a>')
     // Plain URLs (if not inside href)
     .replace(/(https?:\/\/[^\s<]+)/g, (url) => {
       if (url.includes('href=')) return url;
-      return `<a href="${url}" target="_blank" style="color: #3a2447; font-weight: 700; text-decoration: underline;">${url}</a>`;
+      return `<a href="${url}" target="_blank" style="color: #151933; font-weight: 700; text-decoration: underline;">${url}</a>`;
     });
 
   // Split into paragraphs by double linebreaks
@@ -139,7 +139,7 @@ export function formatEmailBodyToHtml(text: string): string {
       return '<hr style="border: none; border-top: 1px solid #E2E8F0; margin: 24px 0;" />';
     }
     if (trimmed.includes("👉")) {
-      return `<div style="background-color: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 14px 16px; margin: 16px 0; color: #3a2447; font-weight: 600;">${trimmed.replace(/\n/g, "<br/>")}</div>`;
+      return `<div style="background-color: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 14px 16px; margin: 16px 0; color: #151933; font-weight: 600;">${trimmed.replace(/\n/g, "<br/>")}</div>`;
     }
     return `<p style="margin: 0 0 14px 0; line-height: 1.6; color: #1E293B; font-size: 14px;">${trimmed.replace(/\n/g, "<br/>")}</p>`;
   });

@@ -172,7 +172,7 @@ export default function UsernameStepPage() {
         <div className="rounded-[28px] border border-[#E7E3DC] bg-white p-7 sm:p-9 space-y-5 text-center shadow-[0_4px_24px_rgba(0,0,0,0.035)]">
           {/* 1. Pill Badge */}
           <div className="flex justify-center">
-            <span className="inline-block rounded-full bg-[#3a2447]/[0.05] border border-[#3a2447]/15 px-4 py-1 text-[11px] font-bold uppercase tracking-widest text-[#3a2447]">
+            <span className="inline-block rounded-full bg-[#151933]/[0.05] border border-[#151933]/15 px-4 py-1 text-[11px] font-bold uppercase tracking-widest text-[#151933]">
               CHOOSE YOUR USERNAME
             </span>
           </div>
@@ -200,9 +200,8 @@ export default function UsernameStepPage() {
             </label>
 
             <div
-              className={`flex h-12 items-center rounded-xl border px-3.5 bg-white transition-all focus-within:border-[#3a2447] focus-within:ring-2 focus-within:ring-[#3a2447]/10 ${
-                error ? "border-[#ef4444]" : "border-[#E7E3DC]"
-              }`}
+              className={`flex h-12 items-center rounded-xl border px-3.5 bg-white transition-all focus-within:border-[#151933] focus-within:ring-2 focus-within:ring-[#151933]/10 ${error ? "border-[#ef4444]" : "border-[#E7E3DC]"
+                }`}
             >
               <span className="text-sm sm:text-base font-medium text-[#64748b] select-none">
                 inflixo.com/
@@ -256,7 +255,7 @@ export default function UsernameStepPage() {
                       key={prefix}
                       type="button"
                       onClick={() => handlePickSuggestion(suggested)}
-                      className="rounded-lg bg-[#f8fafc] hover:bg-[#f1f5f9] hover:text-[#3a2447] border border-[#e2e8f0] px-2.5 py-1 text-xs font-semibold text-[#475569] transition-all cursor-pointer"
+                      className="rounded-lg bg-[#f8fafc] hover:bg-[#f1f5f9] hover:text-[#151933] border border-[#e2e8f0] px-2.5 py-1 text-xs font-semibold text-[#475569] transition-all cursor-pointer"
                     >
                       @{suggested}
                     </button>
@@ -271,7 +270,7 @@ export default function UsernameStepPage() {
             type="button"
             onClick={handleClaimUsername}
             disabled={!isReadyToClaim || submitting}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#3a2447] hover:bg-[#2c1b36] text-white font-semibold text-xs sm:text-sm h-12 transition-all cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#151933] hover:bg-[#2c1b36] text-white font-semibold text-xs sm:text-sm h-12 transition-all cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
           >
             {submitting ? (
               <>

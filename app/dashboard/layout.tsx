@@ -70,7 +70,7 @@ function DesktopTopHeader() {
           href={`/${handleStr}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="h-10 px-4 rounded-[10px] bg-[#3a2447] hover:bg-[#2c1937] text-xs sm:text-sm font-medium text-white transition-colors cursor-pointer shadow-xs inline-flex items-center gap-2"
+          className="h-10 px-4 rounded-[10px] bg-[#151933] hover:bg-[#2c1937] text-xs sm:text-sm font-medium text-white transition-colors cursor-pointer shadow-xs inline-flex items-center gap-2"
         >
           <span>View Profile</span>
           <ExternalLink className="h-4 w-4" />

@@ -39,7 +39,7 @@ export function BottomSheet({ isOpen, onClose, title, children }: BottomSheetPro
 
         {/* Header */}
         <div className="flex items-center justify-between pb-3 mb-2 border-b border-slate-100 shrink-0">
-          <h3 className="text-base font-black text-[#3a2447]">{title || ""}</h3>
+          <h3 className="text-base font-black text-[#151933]">{title || ""}</h3>
           <button
             type="button"
             onClick={onClose}

@@ -74,8 +74,8 @@ export function SyncingLoader({
       <div className="relative z-10 flex flex-col items-center max-w-lg w-full space-y-5">
         {/* Animated Brand Logo Container */}
         <div className="relative flex h-14 w-14 items-center justify-center">
-          <div className="absolute inset-0 rounded-2xl bg-[#3a2447]/20 animate-ping opacity-25" />
-          <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-[#3a2447] text-white shadow-md">
+          <div className="absolute inset-0 rounded-2xl bg-[#151933]/20 animate-ping opacity-25" />
+          <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-[#151933] text-white shadow-md">
             <InflixoLogoIcon className="h-6 w-6 text-white" />
           </div>
         </div>
@@ -86,7 +86,7 @@ export function SyncingLoader({
             <h3 className="font-display text-sm font-bold text-slate-900 tracking-tight">
               Inflixo
             </h3>
-            <span className="rounded-full bg-[#3a2447]/[0.08] border border-[#3a2447]/20 px-2 py-0.5 text-[9px] font-bold text-[#3a2447] uppercase tracking-wider">
+            <span className="rounded-full bg-[#151933]/[0.08] border border-[#151933]/20 px-2 py-0.5 text-[9px] font-bold text-[#151933] uppercase tracking-wider">
               Syncing
             </span>
           </div>
@@ -101,7 +101,7 @@ export function SyncingLoader({
           <div className="w-48 space-y-1">
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 border border-slate-200">
               <div
-                className="h-full bg-gradient-to-r from-[#3a2447] to-[#A24B5A] transition-all duration-300 ease-out"
+                className="h-full bg-gradient-to-r from-[#151933] to-[#A24B5A] transition-all duration-300 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -111,7 +111,7 @@ export function SyncingLoader({
         {/* Compact Motivational Quote */}
         <div className="min-h-[48px] flex items-center justify-center px-4 w-full">
           <p
-            className={`text-sm sm:text-base font-semibold italic text-[#3a2447] leading-snug text-center transition-opacity duration-300 ${isFading ? "opacity-0" : "opacity-100"
+            className={`text-sm sm:text-base font-semibold italic text-[#151933] leading-snug text-center transition-opacity duration-300 ${isFading ? "opacity-0" : "opacity-100"
               }`}
           >
             "{currentQuote}"
@@ -125,7 +125,7 @@ export function SyncingLoader({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => window.location.reload()}
-                className="inline-flex items-center gap-1 font-semibold text-[#3a2447] hover:underline"
+                className="inline-flex items-center gap-1 font-semibold text-[#151933] hover:underline"
               >
                 <RefreshCw className="h-3 w-3" /> Retry
               </button>

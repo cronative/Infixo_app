@@ -127,19 +127,19 @@ export const DEFAULT_THEME_STYLE: ThemeStyleConfig = {
 const MINIMAL_WHITE_STYLE: ThemeStyleConfig = DEFAULT_THEME_STYLE;
 
 const SIGNATURE_PURPLE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#FAF5FF] via-[#FDFBFE] to-[#F8F2F7] border border-[#3a2447]/18 text-slate-900 shadow-lg",
+  cardBg: "bg-gradient-to-b from-[#FAF5FF] via-[#FDFBFE] to-[#F8F2F7] border border-[#151933]/18 text-slate-900 shadow-lg",
   profBadgeBg: "bg-white/80 backdrop-blur-md",
-  profBadgeText: "text-[#3a2447]",
-  profBadgeBorder: "border-[#3a2447]/18",
+  profBadgeText: "text-[#151933]",
+  profBadgeBorder: "border-[#151933]/18",
   fanbaseBg: "bg-white/80 backdrop-blur-md",
   fanbaseText: "text-[#17131A]",
   socialItemBg: "bg-white/80 hover:bg-white/95 backdrop-blur-md",
-  socialItemBorder: "border-[#3a2447]/18 hover:border-[#3a2447]/30",
+  socialItemBorder: "border-[#151933]/18 hover:border-[#151933]/30",
   socialNameColor: "text-[#17131A]",
   socialUnitColor: "text-[#6F6872]",
   nameColor: "text-[#17131A]",
   bioColor: "text-[#6F6872]",
-  handleColor: "text-[#3a2447]",
+  handleColor: "text-[#151933]",
 };
 
 const MIDNIGHT_DARK_STYLE: ThemeStyleConfig = {
@@ -242,19 +242,19 @@ const SUNSET_STUDIO_STYLE: ThemeStyleConfig = {
 };
 
 const MINIMAL_SPARK_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-white to-[#FAF8FA] text-[#17131A] border border-[#3a2447]/16 shadow-2xs",
+  cardBg: "bg-gradient-to-b from-white to-[#FAF8FA] text-[#17131A] border border-[#151933]/16 shadow-2xs",
   profBadgeBg: "bg-white/90",
-  profBadgeText: "text-[#3a2447]",
-  profBadgeBorder: "border-[#3a2447]/20",
+  profBadgeText: "text-[#151933]",
+  profBadgeBorder: "border-[#151933]/20",
   fanbaseBg: "bg-white/90 backdrop-blur-md",
   fanbaseText: "text-[#17131A]",
   socialItemBg: "bg-white/80 hover:bg-white/95 backdrop-blur-md",
-  socialItemBorder: "border-[#3a2447]/16 hover:border-[#3a2447]/30",
+  socialItemBorder: "border-[#151933]/16 hover:border-[#151933]/30",
   socialNameColor: "text-[#17131A]",
   socialUnitColor: "text-[#6F6872]",
   nameColor: "text-[#17131A]",
   bioColor: "text-[#6F6872]",
-  handleColor: "text-[#3a2447]",
+  handleColor: "text-[#151933]",
 };
 
 const NEON_GRID_STYLE: ThemeStyleConfig = {
@@ -324,17 +324,17 @@ const SPOTLIGHT_STAGE_STYLE: ThemeStyleConfig = {
 const CREATIVE_PAPER_STYLE: ThemeStyleConfig = {
   cardBg: "bg-gradient-to-b from-[#FAF6F0] to-[#EDE5DB] text-[#29221D] border border-[#E3D9CC] shadow-xl",
   profBadgeBg: "bg-white/90",
-  profBadgeText: "text-[#3a2447]",
+  profBadgeText: "text-[#151933]",
   profBadgeBorder: "border-[#E3D9CC]",
   fanbaseBg: "bg-white/90 backdrop-blur-md",
   fanbaseText: "text-[#29221D]",
   socialItemBg: "bg-white/80 hover:bg-white/95 backdrop-blur-md",
-  socialItemBorder: "border-[#E3D9CC] hover:border-[#3a2447]/35",
+  socialItemBorder: "border-[#E3D9CC] hover:border-[#151933]/35",
   socialNameColor: "text-[#29221D]",
   socialUnitColor: "text-[#6A5E57]",
   nameColor: "text-[#29221D]",
   bioColor: "text-[#6A5E57]",
-  handleColor: "text-[#3a2447]",
+  handleColor: "text-[#151933]",
 };
 
 export const THEME_STYLES: Record<string, ThemeStyleConfig> = {
@@ -1000,11 +1000,10 @@ export function LivePreviewCard({
         letterSpacing: typ.letterSpacing,
         ["--desktop-surface-shadow" as any]: isFull ? "none" : surfaceShadow,
       }}
-      className={`relative overflow-hidden flex-1 flex flex-col ${
-        isFull
-          ? "p-0 border-0 shadow-none bg-transparent"
-          : `${cardPadding ? cardPadding : "p-4 sm:p-6 pt-6 sm:pt-8"} rounded-[24px] border shadow-md`
-      } transition-all`}
+      className={`relative overflow-hidden flex-1 flex flex-col ${isFull
+        ? "p-0 border-0 shadow-none bg-transparent"
+        : `${cardPadding ? cardPadding : "p-4 sm:p-6 pt-6 sm:pt-8"} rounded-[24px] border shadow-md`
+        } transition-all`}
     >
       {/* Ambient Animation in Preview mode when theme supports it */}
       {themeMeta.animation?.type !== "none" && !isFull && (
@@ -1059,7 +1058,7 @@ export function LivePreviewCard({
             className="w-24 h-24 sm:w-28 sm:h-28 rounded-full aspect-square object-cover overflow-hidden border-2 border-white/80 ring-4 ring-black/5 shadow-md mx-auto"
             style={{ borderColor: c.border || "#FFFFFF" }}
             textClassName="text-xl sm:text-2xl font-extrabold text-white"
-            fallbackBgClass="bg-[#3a2447]"
+            fallbackBgClass="bg-[#151933]"
           />
         </div>
 
@@ -1239,16 +1238,28 @@ export function LivePreviewCard({
       {/* 3. Series Section */}
       {visibilitySettings.showSeries !== false && (series.length > 0 || isOnboardingMode) && (
         <div id="series-section" className="relative z-10 mt-8 w-full text-left space-y-3">
-          <h2
-            style={{
-              color: c.primaryText,
-              fontFamily: typ.headingFontFamily,
-              fontWeight: 700,
-            }}
-            className="text-base sm:text-lg font-bold tracking-tight px-0.5"
-          >
-            Series
-          </h2>
+          {/* Section Header */}
+          <div className="flex items-center justify-between px-0.5">
+            <h2
+              style={{
+                color: c.primaryText,
+                fontFamily: typ.headingFontFamily,
+                fontWeight: 700,
+              }}
+              className="flex items-center gap-2 text-base sm:text-lg font-bold tracking-tight"
+            >
+              <Film className="h-4 w-4 opacity-70" style={{ color: c.primaryText }} />
+              Series &amp; Playlists
+            </h2>
+            {series.length > 0 && (
+              <span
+                style={{ color: c.mutedText }}
+                className="text-xs sm:text-[13px] font-medium"
+              >
+                {series.length} Curated {series.length === 1 ? "Series" : "Series"}
+              </span>
+            )}
+          </div>
 
           <div className="space-y-3 sm:space-y-4">
             {series.map((s) => {
@@ -1270,6 +1281,9 @@ export function LivePreviewCard({
               const subtitleParts: string[] = [epCountStr];
               if (detectedPlatform) subtitleParts.push(detectedPlatform);
               const subtitleStr = subtitleParts.join(" · ");
+              const seriesGenres = s.genre
+                ? s.genre.split(/[,•|/]/).map((g: string) => g.trim().replace(/^Genre:\s*/i, "")).filter(Boolean)
+                : [];
               const seriesUrl = `/${cleanHandle || "creator"}/series/${s.id}`;
 
               return (
@@ -1289,8 +1303,8 @@ export function LivePreviewCard({
                   }}
                   className="group rounded-[16px] border overflow-hidden transition-all hover:shadow-md cursor-pointer shadow-xs"
                 >
-                  {/* Sleek Compact Cover Image (reduced height) */}
-                  <div className="relative w-full aspect-[21/9] sm:aspect-[2.2/1] max-h-[190px] sm:max-h-[210px] min-h-[120px] overflow-hidden bg-slate-900/5">
+                  {/* Cover Image — 16:9, max 200px tall */}
+                  <div className="relative w-full aspect-video max-h-[200px] overflow-hidden bg-slate-900/5">
                     {s.posterDataUrl ? (
                       <>
                         <img
@@ -1301,7 +1315,7 @@ export function LivePreviewCard({
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       </>
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#241618] to-[#3a2447]">
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#241618] to-[#151933]">
                         <Film className="h-10 w-10 text-white/40" />
                       </div>
                     )}
@@ -1315,11 +1329,27 @@ export function LivePreviewCard({
                     >
                       {s.title}
                     </h3>
+                    {s.description && (
+                      <p
+                        style={{ color: c.secondaryText }}
+                        className="text-xs sm:text-[13px] leading-relaxed line-clamp-2"
+                      >
+                        {s.description}
+                      </p>
+                    )}
+                    {seriesGenres.length > 0 && (
+                      <p
+                        style={{ color: c.mutedText }}
+                        className="text-[11px] sm:text-xs font-medium"
+                      >
+                        {seriesGenres.slice(0, 3).join(" · ")}
+                      </p>
+                    )}
                     <p
                       style={{ color: c.secondaryText }}
-                      className="text-xs sm:text-[13px] font-medium"
+                      className="text-xs sm:text-[13px] font-medium opacity-70"
                     >
-                      {subtitleStr}
+                      {subtitleStr}{s.language ? ` · ${s.language}` : ""}
                     </p>
 
                     <div
@@ -1550,9 +1580,8 @@ export function LivePreviewCard({
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star
                         key={i}
-                        className={`h-3.5 w-3.5 ${
-                          i < ratingNum ? "fill-amber-400 text-amber-400" : "fill-slate-200 text-slate-200"
-                        }`}
+                        className={`h-3.5 w-3.5 ${i < ratingNum ? "fill-amber-400 text-amber-400" : "fill-slate-200 text-slate-200"
+                          }`}
                       />
                     ))}
                   </div>
@@ -1614,7 +1643,7 @@ export function LivePreviewCard({
   );
 
   return (
-    <div className={`relative w-full mx-auto flex-1 flex flex-col min-h-full transition-all ${isFull ? "max-w-[640px]" : "max-w-[520px]"}`}>
+    <div className={`relative w-full mx-auto flex-1 flex flex-col min-h-full transition-all ${isFull ? "max-w-[640px]" : "max-w-[600px]"}`}>
       {cardContent}
 
       {/* Collaboration Inquiry Modal */}
@@ -1692,9 +1721,9 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   return {
     name: platformStr || "Web",
     icon: <Film className="h-3 w-3 text-white" />,
-    badgeClass: "bg-[#3a2447] text-white shadow-2xs",
+    badgeClass: "bg-[#151933] text-white shadow-2xs",
     chipClass: "bg-indigo-50 text-indigo-700 border-indigo-200/80",
-    textColor: "text-[#3a2447]",
+    textColor: "text-[#151933]",
   };
 }
 
@@ -1756,7 +1785,6 @@ export function PreviewSeriesItem({
 
   const subtitleParts: string[] = [epCountStr];
   if (detectedPlatform) subtitleParts.push(detectedPlatform);
-  if (genresList.length > 0) subtitleParts.push(genresList[0]);
   const subtitleStr = subtitleParts.join(" • ");
 
   return (
@@ -1785,7 +1813,7 @@ export function PreviewSeriesItem({
                           ? "bg-emerald-600 shadow-xs text-white"
                           : detectedPlatform === "Twitch"
                             ? "bg-purple-600 shadow-xs text-white"
-                            : "bg-[#3a244714] text-[#3a2447]"
+                            : "bg-[#15193314] text-[#151933]"
             }`}
         >
           {detectedPlatform === "YouTube" ? (
@@ -1812,11 +1840,16 @@ export function PreviewSeriesItem({
             </span>
           )}
         </span>
-        <div className="min-w-0 text-left space-y-0.5">
-          <p style={{ color: c.primaryText }} className="truncate text-xs sm:text-[13px] font-bold">
+        <div className="min-w-0 text-left space-y-0">
+          <p style={{ color: c.primaryText }} className="truncate text-xs sm:text-[13px] font-bold leading-snug">
             {series.title}
           </p>
-          <p style={{ color: c.mutedText }} className="truncate text-[11px] font-medium">
+          {genresList.length > 0 && (
+            <p style={{ color: c.mutedText }} className="truncate text-[10px] font-medium leading-snug">
+              {genresList.slice(0, 3).join(" • ")}
+            </p>
+          )}
+          <p style={{ color: c.mutedText }} className="truncate text-[11px] font-medium leading-snug opacity-70">
             {subtitleStr}
           </p>
         </div>

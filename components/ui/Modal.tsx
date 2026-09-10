@@ -101,13 +101,13 @@ export function Modal({
           <div className="flex items-center justify-between border-b border-[#e2e8f0] bg-white px-5 sm:px-6 py-3.5 sm:py-4 shrink-0">
             <div className="flex items-center gap-3 min-w-0 pr-2">
               {icon && (
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f1f5f9] text-[#3a2447] shrink-0">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f1f5f9] text-[#151933] shrink-0">
                   {icon}
                 </div>
               )}
               <div className="min-w-0">
                 {title && (
-                  <h3 className="font-display text-base sm:text-lg font-bold text-[#3a2447] truncate">
+                  <h3 className="font-display text-base sm:text-lg font-bold text-[#151933] truncate">
                     {title}
                   </h3>
                 )}
@@ -124,7 +124,7 @@ export function Modal({
                 type="button"
                 onClick={onClose}
                 aria-label="Close modal"
-                className="flex h-9 w-9 items-center justify-center rounded-xl text-[#64748b] hover:text-[#3a2447] hover:bg-[#f1f5f9] transition-colors cursor-pointer shrink-0 border border-transparent hover:border-[#e2e8f0]"
+                className="flex h-9 w-9 items-center justify-center rounded-xl text-[#64748b] hover:text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer shrink-0 border border-transparent hover:border-[#e2e8f0]"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -159,12 +159,12 @@ export function ModalHeader({
     <div className={`flex items-center justify-between border-b border-[#e2e8f0] bg-white px-5 sm:px-6 py-3.5 sm:py-4 shrink-0 ${className}`}>
       <div className="flex items-center gap-3 min-w-0 pr-2">
         {icon && (
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f1f5f9] text-[#3a2447] shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f1f5f9] text-[#151933] shrink-0">
             {icon}
           </div>
         )}
         <div className="min-w-0">
-          <h3 className="font-display text-base sm:text-lg font-bold text-[#3a2447] truncate">
+          <h3 className="font-display text-base sm:text-lg font-bold text-[#151933] truncate">
             {title}
           </h3>
           {description && (
@@ -180,7 +180,7 @@ export function ModalHeader({
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="flex h-9 w-9 items-center justify-center rounded-xl text-[#64748b] hover:text-[#3a2447] hover:bg-[#f1f5f9] transition-colors cursor-pointer shrink-0 border border-transparent hover:border-[#e2e8f0]"
+          className="flex h-9 w-9 items-center justify-center rounded-xl text-[#64748b] hover:text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer shrink-0 border border-transparent hover:border-[#e2e8f0]"
         >
           <X className="h-4 w-4" />
         </button>

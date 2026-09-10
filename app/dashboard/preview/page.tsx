@@ -100,7 +100,7 @@ export default function DashboardPreviewPage() {
             onClick={() => setIsVisibilityModalOpen(true)}
             className="inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] px-3.5 py-2 text-xs font-semibold text-[#181716] transition-colors cursor-pointer shadow-xs"
           >
-            <Settings className="h-3.5 w-3.5 text-[#3a2447]" />
+            <Settings className="h-3.5 w-3.5 text-[#151933]" />
             <span>Display Settings</span>
           </button>
 
@@ -108,7 +108,7 @@ export default function DashboardPreviewPage() {
             href={canonicalUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-[#3a2447] hover:bg-[#2c1937] px-3.5 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-[#2c1937] px-3.5 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
           >
             <span>Open Public Profile</span>
             <ExternalLink className="h-3.5 w-3.5" />
@@ -120,8 +120,8 @@ export default function DashboardPreviewPage() {
       <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#E7E3DC] bg-white px-4 py-2.5 shadow-xs">
         {/* Left: Active Theme Info */}
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#3a2447] bg-[#3a2447]/[0.09] border border-[#3a2447]/20 px-3 py-1.5 rounded-xl">
-            <Sparkles className="h-3.5 w-3.5 text-[#3a2447]" />
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#151933] bg-[#151933]/[0.09] border border-[#151933]/20 px-3 py-1.5 rounded-xl">
+            <Sparkles className="h-3.5 w-3.5 text-[#151933]" />
             <span>Active theme: {activeThemeMeta.name}</span>
           </span>
         </div>
@@ -134,7 +134,7 @@ export default function DashboardPreviewPage() {
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#797570] hover:text-[#181716] px-3 py-1.5 rounded-xl hover:bg-[#fbfbfb] border border-transparent hover:border-[#E7E3DC] transition-colors cursor-pointer"
             title="Refresh preview canvas"
           >
-            <RotateCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-[#3a2447]" : ""}`} />
+            <RotateCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-[#151933]" : ""}`} />
             <span>Refresh</span>
           </button>
         </div>
@@ -144,7 +144,7 @@ export default function DashboardPreviewPage() {
       <div className="rounded-2xl border border-[#E7E3DC] overflow-hidden shadow-xs">
         <div
           style={{ backgroundColor: activeThemeMeta.colors.pageBackground }}
-          className={`relative w-full p-3 sm:p-6 md:p-8 transition-colors duration-300 ${pageBgStyle}`}
+          className={`relative w-full px-5 py-3 sm:py-6 md:py-8 transition-colors duration-300 ${pageBgStyle}`}
         >
           {/* Ambient Background Animation in Live Preview */}
           <AmbientAnimation

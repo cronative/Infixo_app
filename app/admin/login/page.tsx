@@ -40,7 +40,7 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center bg-[#FAFAFC] px-4 py-8 text-[#3a2447] selection:bg-purple-100 selection:text-[#6C2BFF] relative overflow-hidden">
+    <div className="flex min-h-dvh flex-col items-center justify-center bg-[#FAFAFC] px-4 py-8 text-[#151933] selection:bg-purple-100 selection:text-[#6C2BFF] relative overflow-hidden">
       {/* Very subtle purple radial background glow */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-[radial-gradient(circle_at_center,rgba(108,43,255,0.06)_0%,transparent_70%)]" />

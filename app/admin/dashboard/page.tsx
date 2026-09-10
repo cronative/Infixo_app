@@ -413,7 +413,7 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-[#FAF8FF] text-[#3a2447] font-sans selection:bg-rose-100 selection:text-[#7A1C3C]">
+    <div className="min-h-dvh bg-[#FAF8FF] text-[#151933] font-sans selection:bg-rose-100 selection:text-[#7A1C3C]">
       {/* 1. TOP MAROON ADMIN NAVBAR */}
       <header className="safe-top sticky top-0 z-40 border-b border-rose-100 bg-white/95 backdrop-blur-md px-4 sm:px-8 py-3.5 shadow-2xs">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">

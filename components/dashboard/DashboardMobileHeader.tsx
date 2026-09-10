@@ -39,7 +39,7 @@ export function DashboardMobileHeader({
         {showBack ? (
           <button
             onClick={() => router.back()}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-[#3a2447] active:scale-95 transition-transform cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-[#151933] active:scale-95 transition-transform cursor-pointer"
             aria-label="Back"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -47,7 +47,7 @@ export function DashboardMobileHeader({
         ) : (
           <button
             onClick={onOpenDrawer}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-[#3a2447] active:scale-95 transition-transform hover:bg-[#f1f5f9] cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-[#151933] active:scale-95 transition-transform hover:bg-[#f1f5f9] cursor-pointer"
             aria-label="Open menu drawer"
           >
             <Menu className="h-4 w-4" />
@@ -58,13 +58,13 @@ export function DashboardMobileHeader({
 
       <div className="flex items-center gap-1.5">
         {title ? (
-          <p className="text-xs font-bold text-[#3a2447] truncate max-w-[140px]">{title}</p>
+          <p className="text-xs font-bold text-[#151933] truncate max-w-[140px]">{title}</p>
         ) : (
           <>
             <button
               type="button"
               onClick={handleCopy}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-[#3a2447] bg-white hover:bg-[#f8fafc] border border-[#e2e8f0] px-2.5 py-1.5 rounded-lg active:scale-95 transition-transform cursor-pointer shadow-xs"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[#151933] bg-white hover:bg-[#f8fafc] border border-[#e2e8f0] px-2.5 py-1.5 rounded-lg active:scale-95 transition-transform cursor-pointer shadow-xs"
               title="Copy Profile Link"
             >
               <Copy className="h-3 w-3 text-[#64748b]" />
@@ -74,7 +74,7 @@ export function DashboardMobileHeader({
               href={`/${handleStr}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-[#3a2447] bg-[#f1f5f9] border border-[#e2e8f0] px-2.5 py-1.5 rounded-lg active:scale-95 transition-transform shadow-xs"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[#151933] bg-[#f1f5f9] border border-[#e2e8f0] px-2.5 py-1.5 rounded-lg active:scale-95 transition-transform shadow-xs"
             >
               <span className="text-[11px]">View</span>
               <ExternalLink className="h-3 w-3" />

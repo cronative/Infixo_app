@@ -8,20 +8,20 @@
   --color-muted-surface: #e2e8f0;
 
   /* TEXT */
-  --color-ink: #3a2447;
+  --color-ink: #151933;
   --color-ink-muted: #475569;
   --color-caption: #64748b;
   --color-very-muted: #94a3b8;
 
   /* BRAND & BUTTONS */
-  --color-primary: #3a2447;
+  --color-primary: #151933;
   --color-primary-hover: #2c1937;
   --color-primary-tint: #f1f5f9;
 
   /* BORDERS & DIVIDERS */
   --color-border: #e2e8f0;
   --color-border-hover: #cbd5e1;
-  --color-border-active: #3a2447;
+  --color-border-active: #151933;
 
   /* STATUS COLORS */
   --color-success: #10b981;
@@ -80,9 +80,9 @@
   --shadow-premium: 0 12px 30px rgba(15, 23, 42, 0.08);
   --shadow-hover: 0 4px 16px rgba(15, 23, 42, 0.06);
 
-  --gradient-premium: #3a2447;
-  --gradient-gold: #3a2447;
-  --gradient-energy: #3a2447;
+  --gradient-premium: #151933;
+  --gradient-gold: #151933;
+  --gradient-energy: #151933;
 
   /* Global Design Tokens */
   --bg-page: #f8fafc;
@@ -90,18 +90,18 @@
   --bg-card: #ffffff;
   --bg-card-hover: #f1f5f9;
   --bg-muted: #e2e8f0;
-  --text-primary: #3a2447;
+  --text-primary: #151933;
   --text-secondary: #475569;
   --text-muted: #64748b;
   --border-card: #e2e8f0;
   --border-card-hover: #cbd5e1;
-  --accent-color: #3a2447;
+  --accent-color: #151933;
   --accent-glow: rgba(15, 23, 42, 0.08);
-  --btn-primary-bg: #3a2447;
+  --btn-primary-bg: #151933;
   --btn-primary-hover: #2c1937;
   --btn-primary-text: #ffffff;
   --badge-bg: #f1f5f9;
-  --badge-text: #3a2447;
+  --badge-text: #151933;
   --badge-border: #e2e8f0;
   --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
   --radius-sm: 8px;
@@ -437,7 +437,7 @@ body {
 }
 
 .glass-card-dark {
-  background: #3a2447;
+  background: #151933;
   border: 1px solid #334155;
 }
 

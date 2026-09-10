@@ -6,7 +6,12 @@ import { ensureAnalyticsTable } from "@/lib/analyticsDb";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { creatorId: passedCreatorId, username, eventType, eventTarget, metadata } = body;
+    // Accept both camelCase and snake_case field names
+    const creatorId = body.creatorId || body.creator_id;
+    const username = body.username || body.creator_username;
+    const eventType = body.eventType || body.event_type;
+    const eventTarget = body.eventTarget || body.event_target;
+    const metadata = body.metadata;
 
     if (!eventType) {
       return NextResponse.json({ error: "eventType required" }, { status: 400 });
@@ -14,7 +19,7 @@ export async function POST(req: Request) {
 
     await ensureAnalyticsTable();
 
-    let targetCreatorId = passedCreatorId;
+    let targetCreatorId = creatorId;
     if (!targetCreatorId && username) {
       const [creators]: any = await db.query(
         "SELECT id FROM creators WHERE username = ? OR email = ? LIMIT 1",

@@ -527,7 +527,7 @@ export default function DashboardMediaKitPage() {
       );
     }
     return (
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#3a2447]/10 text-[#3a2447] shrink-0">
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#151933]/10 text-[#151933] shrink-0">
         <Briefcase className="h-5 w-5" />
       </div>
     );
@@ -574,7 +574,7 @@ export default function DashboardMediaKitPage() {
         <button
           type="button"
           onClick={() => setIsContactModalOpen(true)}
-          className="text-xs font-semibold text-[#3a2447] hover:underline cursor-pointer shrink-0"
+          className="text-xs font-semibold text-[#151933] hover:underline cursor-pointer shrink-0"
         >
           Manage
         </button>
@@ -598,7 +598,7 @@ export default function DashboardMediaKitPage() {
             <button
               type="button"
               onClick={handleOpenAddModal}
-              className="h-10 px-4 rounded-xl bg-[#3a2447] hover:bg-[#2c1937] text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 shrink-0 self-start sm:self-auto"
+              className="h-10 px-4 rounded-xl bg-[#151933] hover:bg-[#2c1937] text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 shrink-0 self-start sm:self-auto"
             >
               <Plus className="h-4 w-4" />
               <span>Create Collab Package</span>
@@ -622,7 +622,7 @@ export default function DashboardMediaKitPage() {
               <button
                 type="button"
                 onClick={handleOpenAddModal}
-                className="h-10 px-5 rounded-xl bg-[#3a2447] hover:bg-[#2c1937] text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+                className="h-10 px-5 rounded-xl bg-[#151933] hover:bg-[#2c1937] text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
               >
                 <Plus className="h-4 w-4" />
                 <span>Create Collab Package</span>
@@ -632,7 +632,7 @@ export default function DashboardMediaKitPage() {
             <button
               type="button"
               onClick={() => setIsExamplesModalOpen(true)}
-              className="text-xs font-semibold text-[#3a2447] hover:underline cursor-pointer inline-flex items-center gap-1 pt-1"
+              className="text-xs font-semibold text-[#151933] hover:underline cursor-pointer inline-flex items-center gap-1 pt-1"
             >
               <span>Not sure what to offer? See collab reel examples</span>
               <ArrowRight className="h-3 w-3" />
@@ -647,7 +647,7 @@ export default function DashboardMediaKitPage() {
               return (
                 <div
                   key={pkg.id}
-                  className={`rounded-2xl border border-[#E7E3DC] bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs transition-colors ${pkg.isActive ? "hover:border-[#3a2447]/30" : "opacity-70 bg-[#FAF8F5]/50"}`}
+                  className={`rounded-2xl border border-[#E7E3DC] bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs transition-colors ${pkg.isActive ? "hover:border-[#151933]/30" : "opacity-70 bg-[#FAF8F5]/50"}`}
                 >
                   {/* Left: Platform Icon & Hierarchy */}
                   <div className="flex items-center gap-3.5 min-w-0 flex-1">
@@ -791,7 +791,7 @@ export default function DashboardMediaKitPage() {
                 value={formTitle}
                 onChange={(e) => setFormTitle(e.target.value)}
                 placeholder="e.g., Cafe Visit Reel, Brand Promo Reel, or Store Launch"
-                className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#3a2447] focus:outline-none transition-colors"
+                className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:outline-none transition-colors"
                 required
               />
             </div>
@@ -802,7 +802,7 @@ export default function DashboardMediaKitPage() {
                 <select
                   value={formPlatform}
                   onChange={(e) => setFormPlatform(e.target.value)}
-                  className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3 text-xs sm:text-sm font-medium text-[#181716] focus:border-[#3a2447] focus:outline-none transition-colors"
+                  className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3 text-xs sm:text-sm font-medium text-[#181716] focus:border-[#151933] focus:outline-none transition-colors"
                 >
                   <option value="Instagram Reel">Instagram Reel</option>
                   <option value="Instagram Bundle">Instagram Bundle (Reels + Stories)</option>
@@ -825,7 +825,7 @@ export default function DashboardMediaKitPage() {
                   onChange={(e) => setFormTurnaround(Number(e.target.value))}
                   min={1}
                   max={30}
-                  className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] focus:border-[#3a2447] focus:outline-none transition-colors"
+                  className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] focus:border-[#151933] focus:outline-none transition-colors"
                 />
               </div>
             </div>
@@ -843,7 +843,7 @@ export default function DashboardMediaKitPage() {
                     value={formMinPrice}
                     onChange={(e) => setFormMinPrice(e.target.value)}
                     placeholder="₹10,000"
-                    className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#3a2447] focus:outline-none transition-colors"
+                    className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:outline-none transition-colors"
                     required
                   />
                 </div>
@@ -854,7 +854,7 @@ export default function DashboardMediaKitPage() {
                     value={formMaxPrice}
                     onChange={(e) => setFormMaxPrice(e.target.value)}
                     placeholder="₹15,000"
-                    className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#3a2447] focus:outline-none transition-colors"
+                    className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:outline-none transition-colors"
                   />
                 </div>
               </div>
@@ -875,12 +875,12 @@ export default function DashboardMediaKitPage() {
                     }
                   }}
                   placeholder="e.g. Brand Collaborator Tag"
-                  className="flex-1 h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#3a2447] focus:outline-none transition-colors"
+                  className="flex-1 h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:outline-none transition-colors"
                 />
                 <button
                   type="button"
                   onClick={handleAddDeliverable}
-                  className="h-10 px-4 rounded-xl bg-[#3a2447] text-white text-xs font-semibold hover:bg-[#2c1937] transition-colors cursor-pointer shrink-0"
+                  className="h-10 px-4 rounded-xl bg-[#151933] text-white text-xs font-semibold hover:bg-[#2c1937] transition-colors cursor-pointer shrink-0"
                 >
                   + Add
                 </button>
@@ -890,7 +890,7 @@ export default function DashboardMediaKitPage() {
               <div className="space-y-1 bg-[#FAF8F5] border border-[#E7E3DC] rounded-xl p-2.5">
                 <p className="text-[10px] font-bold text-[#797570] uppercase tracking-wider flex items-center justify-between">
                   <span>💡 Suggestions for {formPlatform}:</span>
-                  <span className="text-[9px] text-[#3a2447] font-bold">Click chip to add +</span>
+                  <span className="text-[9px] text-[#151933] font-bold">Click chip to add +</span>
                 </p>
                 <div className="flex flex-wrap items-center gap-1.5 max-h-24 overflow-y-auto pt-1">
                   {(DELIVERABLE_SUGGESTIONS[formPlatform] || DELIVERABLE_SUGGESTIONS["Instagram Reel"]).map((item, idx) => {
@@ -907,7 +907,7 @@ export default function DashboardMediaKitPage() {
                         disabled={isAdded}
                         className={`text-[11px] font-semibold px-2 py-0.5 rounded-lg border transition-colors cursor-pointer ${isAdded
                           ? "bg-[#EAF7F0] text-[#17845B] border-[#17845B]/20 cursor-default opacity-70"
-                          : "bg-white hover:bg-[#FAF8F5] text-[#181716] hover:text-[#3a2447] border-[#E7E3DC]"
+                          : "bg-white hover:bg-[#FAF8F5] text-[#181716] hover:text-[#151933] border-[#E7E3DC]"
                           }`}
                       >
                         {isAdded ? `✓ ${item}` : `+ ${item}`}
@@ -947,7 +947,7 @@ export default function DashboardMediaKitPage() {
                 value={formPackageName}
                 onChange={(e) => setFormPackageName(e.target.value)}
                 placeholder="e.g. Most Popular, Best Value"
-                className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#3a2447] focus:outline-none transition-colors"
+                className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:outline-none transition-colors"
               />
             </div>
           </ModalBody>
@@ -963,7 +963,7 @@ export default function DashboardMediaKitPage() {
             <button
               type="submit"
               form="service-form"
-              className="h-10 px-5 rounded-xl bg-[#3a2447] hover:bg-[#2c1937] text-white font-semibold text-xs transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+              className="h-10 px-5 rounded-xl bg-[#151933] hover:bg-[#2c1937] text-white font-semibold text-xs transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
             >
               <span>{editingPkgId ? "Save Changes" : "Create Collab Package"}</span>
             </button>
@@ -984,12 +984,12 @@ export default function DashboardMediaKitPage() {
           {SERVICE_EXAMPLES.map((example, idx) => (
             <div
               key={idx}
-              className="rounded-xl border border-[#E7E3DC] bg-white p-3.5 sm:p-4 space-y-2 hover:border-[#3a2447]/40 transition-colors"
+              className="rounded-xl border border-[#E7E3DC] bg-white p-3.5 sm:p-4 space-y-2 hover:border-[#151933]/40 transition-colors"
             >
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <h4 className="text-sm font-bold text-[#181716]">{example.title}</h4>
-                  <span className="text-[10px] font-semibold text-[#3a2447] bg-[#3a2447]/[0.08] px-2 py-0.5 rounded-md">
+                  <span className="text-[10px] font-semibold text-[#151933] bg-[#151933]/[0.08] px-2 py-0.5 rounded-md">
                     {example.badge}
                   </span>
                 </div>
@@ -1003,7 +1003,7 @@ export default function DashboardMediaKitPage() {
                 <button
                   type="button"
                   onClick={() => handleApplyTemplate(example)}
-                  className="px-3 py-1 rounded-lg bg-[#3a2447] text-white text-xs font-semibold hover:bg-[#2c1937] transition-colors cursor-pointer"
+                  className="px-3 py-1 rounded-lg bg-[#151933] text-white text-xs font-semibold hover:bg-[#2c1937] transition-colors cursor-pointer"
                 >
                   Use Template
                 </button>
@@ -1033,7 +1033,7 @@ export default function DashboardMediaKitPage() {
                   value={settings.whatsappNumber || ""}
                   onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })}
                   placeholder="+91 9876543210"
-                  className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#3a2447] focus:outline-none transition-colors"
+                  className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:outline-none transition-colors"
                 />
               </div>
               <p className="text-[11px] text-[#797570]">Enables instant WhatsApp collaboration inquiries.</p>
@@ -1048,7 +1048,7 @@ export default function DashboardMediaKitPage() {
                 value={settings.sponsorEmail || ""}
                 onChange={(e) => setSettings({ ...settings, sponsorEmail: e.target.value })}
                 placeholder={profile.email || "collabs@yourdomain.com"}
-                className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#3a2447] focus:outline-none transition-colors"
+                className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:outline-none transition-colors"
               />
               <p className="text-[11px] text-[#797570]">Brands will receive email routing to this address.</p>
             </div>
@@ -1062,7 +1062,7 @@ export default function DashboardMediaKitPage() {
                 value={settings.minBudget || ""}
                 onChange={(e) => setSettings({ ...settings, minBudget: e.target.value })}
                 placeholder="₹0 (Accept all deals)"
-                className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#3a2447] focus:outline-none transition-colors"
+                className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:outline-none transition-colors"
               />
               <p className="text-[11px] text-[#797570]">Filter out brand inquiries below this amount.</p>
             </div>
@@ -1078,7 +1078,7 @@ export default function DashboardMediaKitPage() {
             </button>
             <button
               type="submit"
-              className="h-10 px-5 rounded-xl bg-[#3a2447] hover:bg-[#2c1937] text-white font-semibold text-xs transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+              className="h-10 px-5 rounded-xl bg-[#151933] hover:bg-[#2c1937] text-white font-semibold text-xs transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
             >
               Save Settings
             </button>

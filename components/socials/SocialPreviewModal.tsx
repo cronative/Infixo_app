@@ -97,7 +97,7 @@ export function SocialPreviewCard({
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#3a2447] hover:bg-[#2c1b36] py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs disabled:opacity-60 active:scale-98"
+          className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#151933] hover:bg-[#2c1b36] py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs disabled:opacity-60 active:scale-98"
         >
           {loading ? (
             <>
@@ -198,7 +198,7 @@ export function SocialPreviewModal({
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className="flex-1 bg-[#3a2447] hover:bg-[#2c1b36] text-white font-semibold text-xs py-2 px-4 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center justify-center gap-1.5 disabled:opacity-60 active:scale-98"
+          className="flex-1 bg-[#151933] hover:bg-[#2c1b36] text-white font-semibold text-xs py-2 px-4 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center justify-center gap-1.5 disabled:opacity-60 active:scale-98"
         >
           {loading ? (
             <>

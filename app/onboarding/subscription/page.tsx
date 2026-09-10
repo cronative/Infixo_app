@@ -70,10 +70,10 @@ export default function SubscriptionStepPage() {
       <div className="w-full max-w-[540px] mx-auto pt-4 sm:pt-8 pb-12">
         {/* SINGLE UNIFIED WHITE CARD (Matching Step 1, 2, 3 design) */}
         <div className="rounded-[28px] border border-[#E7E3DC] bg-white p-6 sm:p-9 space-y-6 text-left shadow-[0_4px_24px_rgba(0,0,0,0.035)]">
-          
+
           {/* 1. Header Section */}
           <div className="space-y-1.5">
-            <span className="block text-[11px] font-bold uppercase tracking-widest text-[#3a2447]">
+            <span className="block text-[11px] font-bold uppercase tracking-widest text-[#151933]">
               STEP 4 OF 4 · PUBLIC PROFILE
             </span>
             <h1 className="font-display text-2xl sm:text-[32px] font-extrabold text-[#181716] tracking-tight leading-tight">
@@ -91,7 +91,7 @@ export default function SubscriptionStepPage() {
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                 Live Public Profile Preview
               </span>
-              <span className="text-[11px] font-semibold text-[#3a2447]">
+              <span className="text-[11px] font-semibold text-[#151933]">
                 inflixo.com/@{profile?.username || "username"}
               </span>
             </div>
@@ -118,19 +118,17 @@ export default function SubscriptionStepPage() {
             {/* Option A: Go Live Free */}
             <div
               onClick={() => setSelectedOption("free")}
-              className={`rounded-2xl border p-4 flex items-center justify-between transition-all cursor-pointer ${
-                selectedOption === "free"
-                  ? "border-2 border-[#3a2447] bg-[#f8fafc] shadow-2xs"
+              className={`rounded-2xl border p-4 flex items-center justify-between transition-all cursor-pointer ${selectedOption === "free"
+                  ? "border-2 border-[#151933] bg-[#f8fafc] shadow-2xs"
                   : "border-[#e2e8f0] bg-white hover:border-[#cbd5e1]"
-              }`}
+                }`}
             >
               <div className="flex items-center gap-3">
                 <div
-                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-all ${
-                    selectedOption === "free"
-                      ? "border-[#3a2447] bg-[#3a2447] text-white"
+                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-all ${selectedOption === "free"
+                      ? "border-[#151933] bg-[#151933] text-white"
                       : "border-[#cbd5e1] bg-white"
-                  }`}
+                    }`}
                 >
                   {selectedOption === "free" && <Check className="h-3 w-3 stroke-[3]" />}
                 </div>
@@ -156,19 +154,17 @@ export default function SubscriptionStepPage() {
             {/* Option B: Purchase Creator Pro */}
             <div
               onClick={() => setSelectedOption("pro")}
-              className={`rounded-2xl border p-4 flex items-center justify-between transition-all cursor-pointer ${
-                selectedOption === "pro"
-                  ? "border-2 border-[#3a2447] bg-[#f8fafc] shadow-2xs"
+              className={`rounded-2xl border p-4 flex items-center justify-between transition-all cursor-pointer ${selectedOption === "pro"
+                  ? "border-2 border-[#151933] bg-[#f8fafc] shadow-2xs"
                   : "border-[#e2e8f0] bg-white hover:border-[#cbd5e1]"
-              }`}
+                }`}
             >
               <div className="flex items-center gap-3">
                 <div
-                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-all ${
-                    selectedOption === "pro"
-                      ? "border-[#3a2447] bg-[#3a2447] text-white"
+                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-all ${selectedOption === "pro"
+                      ? "border-[#151933] bg-[#151933] text-white"
                       : "border-[#cbd5e1] bg-white"
-                  }`}
+                    }`}
                 >
                   {selectedOption === "pro" && <Check className="h-3 w-3 stroke-[3]" />}
                 </div>
@@ -177,7 +173,7 @@ export default function SubscriptionStepPage() {
                     <span className="text-sm font-bold text-[#181716]">
                       Purchase Creator Pro
                     </span>
-                    <span className="bg-[#3a2447]/[0.08] text-[#3a2447] border border-[#3a2447]/20 text-[10px] font-bold px-2 py-0.2 rounded-full">
+                    <span className="bg-[#151933]/[0.08] text-[#151933] border border-[#151933]/20 text-[10px] font-bold px-2 py-0.2 rounded-full">
                       PRO PLAN
                     </span>
                   </div>
@@ -210,7 +206,7 @@ export default function SubscriptionStepPage() {
               type="button"
               onClick={handleLaunch}
               disabled={submitting}
-              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-[#3a2447] hover:bg-[#2c1b36] text-white font-semibold text-xs sm:text-sm h-12 transition-all cursor-pointer shadow-xs disabled:opacity-60 active:scale-98"
+              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-[#151933] hover:bg-[#2c1b36] text-white font-semibold text-xs sm:text-sm h-12 transition-all cursor-pointer shadow-xs disabled:opacity-60 active:scale-98"
             >
               {submitting ? (
                 <>

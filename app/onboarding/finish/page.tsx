@@ -10,7 +10,7 @@ import { OnboardingLayout } from "@/layouts/OnboardingLayout";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { OnboardingService } from "@/services/OnboardingService";
 
-const CONFETTI_COLORS = ["#3a2447", "#3b82f6", "#10b981", "#f59e0b", "#6366f1", "#06b6d4"];
+const CONFETTI_COLORS = ["#151933", "#3b82f6", "#10b981", "#f59e0b", "#6366f1", "#06b6d4"];
 
 function ConfettiBurst() {
   const [pieces, setPieces] = useState<{ left: number; color: string; delay: number; rotate: number; scale: number }[]>([]);
@@ -118,7 +118,7 @@ export default function FinishStepPage() {
               name={profile.displayName || "Creator"}
               className="w-16 h-16 sm:w-18 sm:h-18 rounded-full aspect-square object-cover overflow-hidden border-2 border-white shadow-md mx-auto"
               textClassName="text-xl font-extrabold text-white"
-              fallbackBgClass="bg-[#3a2447]"
+              fallbackBgClass="bg-[#151933]"
             />
             <div
               className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-[#10b981] text-white ring-2 ring-white shadow-md"
@@ -128,7 +128,7 @@ export default function FinishStepPage() {
             </div>
           </div>
 
-          <h1 className="mt-1 text-xl sm:text-2xl font-bold leading-tight tracking-tight text-[#3a2447]">
+          <h1 className="mt-1 text-xl sm:text-2xl font-bold leading-tight tracking-tight text-[#151933]">
             You&apos;re Live on Inflixo 🎉
           </h1>
           <p className="mt-1 text-xs text-[#475569] font-medium leading-relaxed max-w-sm">
@@ -138,15 +138,15 @@ export default function FinishStepPage() {
           {/* Clean Public URL Box */}
           <div className="mt-4 flex w-full items-center justify-between gap-2.5 rounded-xl border border-[#e2e8f0] bg-white p-2.5 sm:p-3 shadow-xs">
             <div className="flex items-center gap-2 min-w-0">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#f1f5f9] text-[#3a2447]">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#f1f5f9] text-[#151933]">
                 <Sparkles className="h-3.5 w-3.5" />
               </span>
-              <span className="truncate text-xs sm:text-sm font-bold text-[#3a2447]">{displayUrl}</span>
+              <span className="truncate text-xs sm:text-sm font-bold text-[#151933]">{displayUrl}</span>
             </div>
             <button
               type="button"
               onClick={handleCopy}
-              className="tap-scale flex items-center gap-1.5 rounded-lg bg-[#3a2447] hover:bg-[#1e293b] px-3.5 py-1.5 text-xs font-bold text-white transition-all cursor-pointer shrink-0 shadow-xs"
+              className="tap-scale flex items-center gap-1.5 rounded-lg bg-[#151933] hover:bg-[#1e293b] px-3.5 py-1.5 text-xs font-bold text-white transition-all cursor-pointer shrink-0 shadow-xs"
             >
               {copied ? (
                 <>
@@ -169,7 +169,7 @@ export default function FinishStepPage() {
               type="button"
               onClick={handleGoToDashboard}
               disabled={isLoadingDashboard}
-              className="tap-scale w-full flex items-center justify-center gap-2 rounded-xl bg-[#3a2447] hover:bg-[#1e293b] text-white font-bold h-10 text-xs sm:text-sm transition-all cursor-pointer shadow-xs disabled:opacity-75"
+              className="tap-scale w-full flex items-center justify-center gap-2 rounded-xl bg-[#151933] hover:bg-[#1e293b] text-white font-bold h-10 text-xs sm:text-sm transition-all cursor-pointer shadow-xs disabled:opacity-75"
             >
               {isLoadingDashboard ? (
                 <>
@@ -190,7 +190,7 @@ export default function FinishStepPage() {
                 href={`/${handleStr}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] text-[#3a2447] font-semibold h-9 px-3 text-xs transition-colors cursor-pointer text-center shadow-xs"
+                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] text-[#151933] font-semibold h-9 px-3 text-xs transition-colors cursor-pointer text-center shadow-xs"
               >
                 <ExternalLink className="h-3.5 w-3.5 shrink-0" />
                 <span className="truncate">View Public Profile</span>
@@ -199,7 +199,7 @@ export default function FinishStepPage() {
               <button
                 type="button"
                 onClick={handleShare}
-                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] text-[#3a2447] font-semibold h-9 px-3 text-xs transition-colors cursor-pointer text-center shadow-xs"
+                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] text-[#151933] font-semibold h-9 px-3 text-xs transition-colors cursor-pointer text-center shadow-xs"
               >
                 <Share2 className="h-3.5 w-3.5 shrink-0" />
                 <span>Share Profile</span>

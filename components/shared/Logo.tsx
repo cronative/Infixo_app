@@ -132,10 +132,10 @@ export function Logo({
   const roundedStyle = size === "xl" ? "rounded-[24px]" : "rounded-xl";
 
   const badgeStyles = {
-    gradient: "bg-[#3a2447] text-white",
-    black: "bg-[#3a2447] text-white",
-    white: "bg-white border border-[#e2e8f0] text-[#3a2447]",
-    brand: "bg-[#3a2447] text-white",
+    gradient: "bg-[#151933] text-white",
+    black: "bg-[#151933] text-white",
+    white: "bg-white border border-[#e2e8f0] text-[#151933]",
+    brand: "bg-[#151933] text-white",
   }[variant];
 
   return (
@@ -160,7 +160,7 @@ export function Logo({
 
       {/* Brand Name Text */}
       <span
-        className={`font-display ${text} font-bold tracking-tight ${light ? "text-white" : "text-[#3a2447]"
+        className={`font-display ${text} font-bold tracking-tight ${light ? "text-white" : "text-[#151933]"
           } group-hover:text-[#1e293b] transition-colors`}
       >
         Inflixo

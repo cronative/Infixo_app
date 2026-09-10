@@ -147,7 +147,7 @@ export default function VerifyOtpPage() {
       {/* Background Inflixo "I" Logo Mark & Radiating Waves */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden select-none">
         {/* Top-Left Inflixo "I" Logo Watermark */}
-        <div className="absolute -top-12 -left-12 sm:-top-16 sm:-left-16 text-[#3a2447] opacity-[0.06] -rotate-12">
+        <div className="absolute -top-12 -left-12 sm:-top-16 sm:-left-16 text-[#151933] opacity-[0.06] -rotate-12">
           <svg
             viewBox="0 0 100 100"
             fill="none"
@@ -182,7 +182,7 @@ export default function VerifyOtpPage() {
         </div>
 
         {/* Bottom-Right Inflixo "I" Logo Watermark */}
-        <div className="absolute -bottom-16 -right-16 sm:-bottom-20 sm:-right-20 text-[#3a2447] opacity-[0.05] rotate-12">
+        <div className="absolute -bottom-16 -right-16 sm:-bottom-20 sm:-right-20 text-[#151933] opacity-[0.05] rotate-12">
           <svg
             viewBox="0 0 100 100"
             fill="none"
@@ -225,7 +225,7 @@ export default function VerifyOtpPage() {
             <Logo size="xl" orientation="vertical" />
           </div>
 
-          <span className="inline-block rounded-full bg-[#3a2447]/[0.08] px-3.5 py-0.5 text-[11px] font-bold uppercase tracking-widest text-[#3a2447]">
+          <span className="inline-block rounded-full bg-[#151933]/[0.08] px-3.5 py-0.5 text-[11px] font-bold uppercase tracking-widest text-[#151933]">
             VERIFICATION
           </span>
         </div>
@@ -266,8 +266,8 @@ export default function VerifyOtpPage() {
                 className={`h-12 w-12 sm:h-14 sm:w-14 rounded-xl border text-center text-xl font-bold transition-all duration-150 outline-none ${errorMessage
                   ? "border-[#ef4444] bg-rose-50/20 text-[#ef4444] ring-2 ring-rose-100"
                   : d
-                    ? "border-[#3a2447] bg-white text-[#181716] ring-2 ring-[#3a2447]/15"
-                    : "border-[#cbd5e1] bg-[#f8fafc] text-[#181716] focus:border-[#3a2447] focus:bg-white focus:ring-2 focus:ring-[#3a2447]/10"
+                    ? "border-[#151933] bg-white text-[#181716] ring-2 ring-[#151933]/15"
+                    : "border-[#cbd5e1] bg-[#f8fafc] text-[#181716] focus:border-[#151933] focus:bg-white focus:ring-2 focus:ring-[#151933]/10"
                   }`}
               />
             ))}
@@ -282,7 +282,7 @@ export default function VerifyOtpPage() {
 
           {/* Code Sent Notification Banner */}
           {codeSent && (
-            <p className="text-xs font-semibold text-[#3a2447] bg-[#3a2447]/[0.06] border border-[#3a2447]/20 py-1.5 px-3 rounded-xl text-center animate-fade-in">
+            <p className="text-xs font-semibold text-[#151933] bg-[#151933]/[0.06] border border-[#151933]/20 py-1.5 px-3 rounded-xl text-center animate-fade-in">
               New verification code sent 📩
             </p>
           )}
@@ -294,8 +294,8 @@ export default function VerifyOtpPage() {
           disabled={!isOtpComplete || submitting}
           onClick={() => submit(digits.join(""))}
           className={`w-full inline-flex items-center justify-center gap-2 rounded-xl font-semibold text-xs sm:text-sm h-11 transition-all cursor-pointer shadow-xs active:scale-98 ${isOtpComplete && !submitting
-            ? "bg-[#3a2447] text-white hover:bg-[#2c1937]"
-            : "bg-[#3a2447]/30 text-white/80 cursor-not-allowed"
+            ? "bg-[#151933] text-white hover:bg-[#2c1937]"
+            : "bg-[#151933]/30 text-white/80 cursor-not-allowed"
             }`}
         >
           {submitting ? (
@@ -316,7 +316,7 @@ export default function VerifyOtpPage() {
           {countdown > 0 ? (
             <p>
               Didn&apos;t receive code? Resend in{" "}
-              <span className="font-mono font-bold text-[#3a2447]">
+              <span className="font-mono font-bold text-[#151933]">
                 00:{countdown.toString().padStart(2, "0")}
               </span>
             </p>
@@ -327,7 +327,7 @@ export default function VerifyOtpPage() {
                 type="button"
                 onClick={handleResend}
                 disabled={resending}
-                className="font-bold text-[#3a2447] hover:text-[#2c1937] underline cursor-pointer"
+                className="font-bold text-[#151933] hover:text-[#2c1937] underline cursor-pointer"
               >
                 {resending ? "Sending..." : "Resend Code"}
               </button>
@@ -340,7 +340,7 @@ export default function VerifyOtpPage() {
           <button
             type="button"
             onClick={() => router.push("/login")}
-            className="inline-flex items-center gap-1.5 rounded-full bg-[#3a2447]/[0.06] px-3.5 py-1 text-xs font-medium text-[#54514D] hover:bg-[#3a2447]/10 hover:text-[#3a2447] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 rounded-full bg-[#151933]/[0.06] px-3.5 py-1 text-xs font-medium text-[#54514D] hover:bg-[#151933]/10 hover:text-[#151933] transition-colors cursor-pointer"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             <span>Change email address</span>

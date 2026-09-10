@@ -68,7 +68,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
           <Logo size="sm" />
           <button
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f8fafc] text-[#475569] hover:bg-[#f1f5f9] hover:text-[#3a2447] transition-all cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f8fafc] text-[#475569] hover:bg-[#f1f5f9] hover:text-[#151933] transition-all cursor-pointer"
             aria-label="Close menu"
           >
             <X className="h-4 w-4" />
@@ -81,17 +81,17 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
             src={profile.photoDataUrl}
             name={displayName}
             className="w-10 h-10 rounded-full border border-[#e2e8f0] overflow-hidden object-cover aspect-square shrink-0"
-            textClassName="text-sm font-bold text-[#3a2447]"
+            textClassName="text-sm font-bold text-[#151933]"
             fallbackBgClass="bg-[#f1f5f9]"
           />
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1">
-              <p className="truncate text-xs font-bold text-[#3a2447]">
+              <p className="truncate text-xs font-bold text-[#151933]">
                 {displayName}
               </p>
               {profile.isVerified && (
-                <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-[#3a2447]" />
+                <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-[#151933]" />
               )}
             </div>
             <div className="flex items-center gap-1.5 mt-0.5">
@@ -123,11 +123,11 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                     href={item.href}
                     onClick={onClose}
                     className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold min-h-[44px] transition-colors border ${active
-                      ? "bg-[#f1f5f9] text-[#3a2447] border-[#e2e8f0]"
-                      : "border-transparent text-[#475569] hover:bg-[#f8fafc] hover:text-[#3a2447]"
+                      ? "bg-[#f1f5f9] text-[#151933] border-[#e2e8f0]"
+                      : "border-transparent text-[#475569] hover:bg-[#f8fafc] hover:text-[#151933]"
                       }`}
                   >
-                    <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#3a2447]" : "text-[#475569]"}`} />
+                    <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#151933]" : "text-[#475569]"}`} />
                     <span className="flex-1 truncate">{item.label}</span>
                   </Link>
                 );
@@ -150,11 +150,11 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                     href={item.href}
                     onClick={onClose}
                     className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold min-h-[44px] transition-colors border ${active
-                      ? "bg-[#f1f5f9] text-[#3a2447] border-[#e2e8f0]"
-                      : "border-transparent text-[#475569] hover:bg-[#f8fafc] hover:text-[#3a2447]"
+                      ? "bg-[#f1f5f9] text-[#151933] border-[#e2e8f0]"
+                      : "border-transparent text-[#475569] hover:bg-[#f8fafc] hover:text-[#151933]"
                       }`}
                   >
-                    <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#3a2447]" : "text-[#475569]"}`} />
+                    <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#151933]" : "text-[#475569]"}`} />
                     <span className="flex-1 truncate">{item.label}</span>
                   </Link>
                 );
@@ -165,16 +165,16 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
 
         {/* Bottom Utility Area */}
         <div className="p-4 border-t border-[#e2e8f0] space-y-2 bg-[#f8fafc]">
-          <div className="flex items-center justify-between rounded-xl border border-[#e2e8f0] bg-white px-3 py-2 text-xs font-medium text-[#3a2447] shadow-xs">
+          <div className="flex items-center justify-between rounded-xl border border-[#e2e8f0] bg-white px-3 py-2 text-xs font-medium text-[#151933] shadow-xs">
             <div className="flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5 text-[#3a2447] shrink-0" />
+              <Sparkles className="h-3.5 w-3.5 text-[#151933] shrink-0" />
               <span className="text-[11px] font-semibold">Early Access</span>
             </div>
             <Link
               href={`/${handleStr}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[11px] font-semibold text-[#3a2447] hover:underline inline-flex items-center gap-1"
+              className="text-[11px] font-semibold text-[#151933] hover:underline inline-flex items-center gap-1"
             >
               <span>View Profile</span>
               <ExternalLink className="h-3 w-3" />

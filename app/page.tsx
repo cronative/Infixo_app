@@ -298,7 +298,7 @@ export default function LandingHomePage() {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-[#f8fafc]">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#3a2447] border-t-transparent" />
+          <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#151933] border-t-transparent" />
           <p className="text-xs font-medium text-[#64748b]">Redirecting to dashboard...</p>
         </div>
       </div>
@@ -306,7 +306,7 @@ export default function LandingHomePage() {
   }
 
   return (
-    <div className="relative min-h-dvh bg-[#f8fafc] text-[#3a2447] flex flex-col font-sans selection:bg-[#3a244714] selection:text-[#3a2447] overflow-x-hidden antialiased">
+    <div className="relative min-h-dvh bg-[#f8fafc] text-[#151933] flex flex-col font-sans selection:bg-[#15193314] selection:text-[#151933] overflow-x-hidden antialiased">
       {/* =========================================================================
           NAVIGATION BAR
          ========================================================================= */}
@@ -318,28 +318,28 @@ export default function LandingHomePage() {
               <button
                 type="button"
                 onClick={() => scrollToSection("total-fanbase")}
-                className="hover:text-[#3a2447] transition-colors cursor-pointer py-1"
+                className="hover:text-[#151933] transition-colors cursor-pointer py-1"
               >
                 Total Fanbase
               </button>
               <button
                 type="button"
                 onClick={() => scrollToSection("series")}
-                className="hover:text-[#3a2447] transition-colors cursor-pointer py-1"
+                className="hover:text-[#151933] transition-colors cursor-pointer py-1"
               >
                 Series Playlists
               </button>
               <button
                 type="button"
                 onClick={() => scrollToSection("collaborations")}
-                className="hover:text-[#3a2447] transition-colors cursor-pointer py-1"
+                className="hover:text-[#151933] transition-colors cursor-pointer py-1"
               >
                 Brand Collabs
               </button>
               <button
                 type="button"
                 onClick={() => scrollToSection("pricing")}
-                className="hover:text-[#3a2447] transition-colors cursor-pointer py-1"
+                className="hover:text-[#151933] transition-colors cursor-pointer py-1"
               >
                 Pricing
               </button>
@@ -349,14 +349,14 @@ export default function LandingHomePage() {
           <div className="flex items-center gap-3">
             <Link
               href="/login"
-              className="text-xs sm:text-sm font-semibold text-[#475569] hover:text-[#3a2447] px-3 py-1.5 transition-colors"
+              className="text-xs sm:text-sm font-semibold text-[#475569] hover:text-[#151933] px-3 py-1.5 transition-colors"
             >
               Log In
             </Link>
             <button
               type="button"
               onClick={() => handleClaim(username || "yourname")}
-              className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#3a2447] px-4 py-2 text-xs sm:text-sm font-semibold text-white hover:bg-[#1e293b] transition-colors cursor-pointer active:scale-98 shadow-sm"
+              className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#151933] px-4 py-2 text-xs sm:text-sm font-semibold text-white hover:bg-[#1e293b] transition-colors cursor-pointer active:scale-98 shadow-sm"
             >
               <span>Claim Your Handle</span>
               <ArrowRight className="h-3.5 w-3.5" />
@@ -372,13 +372,13 @@ export default function LandingHomePage() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="text-center space-y-6 max-w-3xl mx-auto">
             {/* Tag / Badge */}
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#f1f5f9] border border-[#e2e8f0] px-3.5 py-1 text-xs font-semibold text-[#3a2447]">
-              <Sparkles className="h-3.5 w-3.5 text-[#3a2447]" />
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#f1f5f9] border border-[#e2e8f0] px-3.5 py-1 text-xs font-semibold text-[#151933]">
+              <Sparkles className="h-3.5 w-3.5 text-[#151933]" />
               <span>The Link-in-Bio for Series Creators</span>
             </div>
 
             {/* Main Headline */}
-            <h1 className="font-display text-3xl sm:text-5xl md:text-5xl lg:text-[54px] font-bold leading-[1.12] tracking-tight text-[#3a2447]">
+            <h1 className="font-display text-3xl sm:text-5xl md:text-5xl lg:text-[54px] font-bold leading-[1.12] tracking-tight text-[#151933]">
               One profile for everything you&apos;ve built as a creator.
             </h1>
 
@@ -399,7 +399,7 @@ export default function LandingHomePage() {
                   e.preventDefault();
                   handleClaim(username);
                 }}
-                className="flex items-center rounded-[8px] border border-[#cbd5e1] bg-white p-1.5 focus-within:border-[#3a2447] focus-within:ring-2 focus-within:ring-[#3a2447]/10 transition-all shadow-sm"
+                className="flex items-center rounded-[8px] border border-[#cbd5e1] bg-white p-1.5 focus-within:border-[#151933] focus-within:ring-2 focus-within:ring-[#151933]/10 transition-all shadow-sm"
               >
                 <span className="pl-3 text-xs sm:text-sm font-medium text-[#64748b] select-none shrink-0">
                   inflixo.com/
@@ -409,11 +409,11 @@ export default function LandingHomePage() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="yourname"
-                  className="w-full bg-transparent px-2 py-1.5 text-xs sm:text-sm font-medium text-[#3a2447] outline-none placeholder:text-[#94a3b8] min-w-0"
+                  className="w-full bg-transparent px-2 py-1.5 text-xs sm:text-sm font-medium text-[#151933] outline-none placeholder:text-[#94a3b8] min-w-0"
                 />
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-1 shrink-0 rounded-[8px] bg-[#3a2447] px-4 py-2 text-xs sm:text-sm font-semibold text-white hover:bg-[#1e293b] transition-colors cursor-pointer active:scale-98"
+                  className="inline-flex items-center gap-1 shrink-0 rounded-[8px] bg-[#151933] px-4 py-2 text-xs sm:text-sm font-semibold text-white hover:bg-[#1e293b] transition-colors cursor-pointer active:scale-98"
                 >
                   <span>Claim</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -425,16 +425,16 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username)}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-[8px] bg-[#3a2447] hover:bg-[#1e293b] px-6 py-2.5 text-sm font-semibold text-white transition-colors cursor-pointer active:scale-98 shadow-sm"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-[8px] bg-[#151933] hover:bg-[#1e293b] px-6 py-2.5 text-sm font-semibold text-white transition-colors cursor-pointer active:scale-98 shadow-sm"
                 >
                   <span>Claim Your Handle</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => scrollToSection("hero-preview")}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-[8px] bg-white hover:bg-[#f8fafc] border border-[#e2e8f0] px-6 py-2.5 text-sm font-semibold text-[#3a2447] transition-colors cursor-pointer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-[8px] bg-white hover:bg-[#f8fafc] border border-[#e2e8f0] px-6 py-2.5 text-sm font-semibold text-[#151933] transition-colors cursor-pointer"
                 >
-                  <Eye className="h-4 w-4 text-[#3a2447]" />
+                  <Eye className="h-4 w-4 text-[#151933]" />
                   <span>See Creator Live Hub</span>
                 </button>
               </div>
@@ -448,33 +448,33 @@ export default function LandingHomePage() {
           >
             {/* Floating Badge: Total Fanbase */}
             <div className="hidden sm:block absolute top-4 -left-6 lg:-left-12 z-20">
-              <div className="flex items-center gap-2.5 rounded-[12px] bg-white border border-[#e2e8f0] px-3.5 py-2 text-xs font-semibold text-[#3a2447] shadow-sm">
-                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#f1f5f9] text-[#3a2447] shrink-0">
+              <div className="flex items-center gap-2.5 rounded-[12px] bg-white border border-[#e2e8f0] px-3.5 py-2 text-xs font-semibold text-[#151933] shadow-sm">
+                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#f1f5f9] text-[#151933] shrink-0">
                   <Users className="h-4 w-4" />
                 </span>
                 <div className="text-left">
                   <p className="text-[11px] text-[#64748b] leading-none">Total Fanbase</p>
-                  <p className="text-xs font-bold text-[#3a2447] leading-tight pt-0.5">20.5M Combined</p>
+                  <p className="text-xs font-bold text-[#151933] leading-tight pt-0.5">20.5M Combined</p>
                 </div>
               </div>
             </div>
 
             {/* Floating Badge: OTT Series */}
             <div className="hidden sm:block absolute top-6 -right-6 lg:-right-12 z-20">
-              <div className="flex items-center gap-2.5 rounded-[12px] bg-white border border-[#e2e8f0] px-3.5 py-2 text-xs font-semibold text-[#3a2447] shadow-sm">
-                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#f1f5f9] text-[#3a2447] shrink-0">
+              <div className="flex items-center gap-2.5 rounded-[12px] bg-white border border-[#e2e8f0] px-3.5 py-2 text-xs font-semibold text-[#151933] shadow-sm">
+                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#f1f5f9] text-[#151933] shrink-0">
                   <Tv className="h-4 w-4" />
                 </span>
                 <div className="text-left">
                   <p className="text-[11px] text-[#64748b] leading-none">OTT Series</p>
-                  <p className="text-xs font-bold text-[#3a2447] leading-tight pt-0.5">Part 01 • 02 • 03</p>
+                  <p className="text-xs font-bold text-[#151933] leading-tight pt-0.5">Part 01 • 02 • 03</p>
                 </div>
               </div>
             </div>
 
             {/* Floating Badge: Multi-Platform Sync with Live dot */}
             <div className="hidden md:flex absolute bottom-12 -left-8 lg:-left-14 z-20">
-              <div className="flex items-center gap-3 rounded-[12px] bg-white border border-[#e2e8f0] px-3.5 py-2 text-xs font-semibold text-[#3a2447] shadow-sm">
+              <div className="flex items-center gap-3 rounded-[12px] bg-white border border-[#e2e8f0] px-3.5 py-2 text-xs font-semibold text-[#151933] shadow-sm">
                 <div className="flex items-center -space-x-1.5 shrink-0">
                   <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#f8fafc] text-[#e1306c] border border-[#e2e8f0]">
                     <InstagramIcon className="h-3 w-3" />
@@ -482,7 +482,7 @@ export default function LandingHomePage() {
                   <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#f8fafc] text-[#ff0000] border border-[#e2e8f0]">
                     <YoutubeIcon className="h-3 w-3" />
                   </span>
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#f8fafc] text-[#3a2447] border border-[#e2e8f0]">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#f8fafc] text-[#151933] border border-[#e2e8f0]">
                     <TikTokIcon className="h-3 w-3" />
                   </span>
                 </div>
@@ -491,20 +491,20 @@ export default function LandingHomePage() {
                     <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
                     <p className="text-[11px] font-bold text-[#10b981]">LIVE SYNC</p>
                   </div>
-                  <p className="text-xs font-bold text-[#3a2447] leading-tight pt-0.5">3 Platforms</p>
+                  <p className="text-xs font-bold text-[#151933] leading-tight pt-0.5">3 Platforms</p>
                 </div>
               </div>
             </div>
 
             {/* Floating Badge: Collab Gigs */}
             <div className="hidden sm:block absolute bottom-12 -right-8 lg:-right-14 z-20">
-              <div className="flex items-center gap-2.5 rounded-[12px] bg-white border border-[#e2e8f0] px-3.5 py-2 text-xs font-semibold text-[#3a2447] shadow-sm">
-                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#f1f5f9] text-[#3a2447] shrink-0">
+              <div className="flex items-center gap-2.5 rounded-[12px] bg-white border border-[#e2e8f0] px-3.5 py-2 text-xs font-semibold text-[#151933] shadow-sm">
+                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#f1f5f9] text-[#151933] shrink-0">
                   <Briefcase className="h-4 w-4" />
                 </span>
                 <div className="text-left">
                   <p className="text-[11px] text-[#64748b] leading-none">Collab Gigs</p>
-                  <p className="text-xs font-bold text-[#3a2447] leading-tight pt-0.5">Direct Rate Card</p>
+                  <p className="text-xs font-bold text-[#151933] leading-tight pt-0.5">Direct Rate Card</p>
                 </div>
               </div>
             </div>
@@ -517,7 +517,7 @@ export default function LandingHomePage() {
                   <span className="h-2.5 w-2.5 rounded-full bg-[#cbd5e1]" />
                   <span className="h-2.5 w-2.5 rounded-full bg-[#cbd5e1]" />
                 </div>
-                <div className="flex items-center gap-1 rounded-[8px] bg-white px-3 py-0.5 text-xs font-medium text-[#3a2447] border border-[#e2e8f0]">
+                <div className="flex items-center gap-1 rounded-[8px] bg-white px-3 py-0.5 text-xs font-medium text-[#151933] border border-[#e2e8f0]">
                   <span className="text-[#64748b]">inflixo.com/</span>
                   <span className="font-bold">{username ? username.toLowerCase().replace(/[^a-z0-9_]/g, "") : "tonystark"}</span>
                 </div>
@@ -557,7 +557,7 @@ export default function LandingHomePage() {
               <button
                 type="button"
                 onClick={() => handleClaim(username || "yourname")}
-                className="w-full py-2.5 px-4 rounded-[8px] bg-[#3a2447] hover:bg-[#1e293b] text-white font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer active:scale-98 shadow-sm"
+                className="w-full py-2.5 px-4 rounded-[8px] bg-[#151933] hover:bg-[#1e293b] text-white font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer active:scale-98 shadow-sm"
               >
                 <span>Claim Your Handle</span>
                 <ArrowRight className="h-4 w-4" />
@@ -574,7 +574,7 @@ export default function LandingHomePage() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6 space-y-12">
           {/* Trimmed Insight Statement (2 lines only) */}
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-[#3a2447]">
+            <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-[#151933]">
               Link trees show links. Inflixo shows your story.
             </h2>
             <p className="text-sm sm:text-base text-[#475569]">
@@ -588,7 +588,7 @@ export default function LandingHomePage() {
               <div className="h-10 w-10 rounded-[8px] bg-red-100/60 text-[#ef4444] flex items-center justify-center">
                 <Users className="h-5 w-5" />
               </div>
-              <h3 className="font-display font-semibold text-base text-[#3a2447]">Audience Fragmented</h3>
+              <h3 className="font-display font-semibold text-base text-[#151933]">Audience Fragmented</h3>
               <p className="text-xs text-[#475569] leading-relaxed">
                 Followers spread across separate platform silos.
               </p>
@@ -598,7 +598,7 @@ export default function LandingHomePage() {
               <div className="h-10 w-10 rounded-[8px] bg-red-100/60 text-[#ef4444] flex items-center justify-center">
                 <Tv className="h-5 w-5" />
               </div>
-              <h3 className="font-display font-semibold text-base text-[#3a2447]">Multi-Part Videos Lost</h3>
+              <h3 className="font-display font-semibold text-base text-[#151933]">Multi-Part Videos Lost</h3>
               <p className="text-xs text-[#475569] leading-relaxed">
                 Episodic series get buried in rapid feeds.
               </p>
@@ -608,7 +608,7 @@ export default function LandingHomePage() {
               <div className="h-10 w-10 rounded-[8px] bg-red-100/60 text-[#ef4444] flex items-center justify-center">
                 <Briefcase className="h-5 w-5" />
               </div>
-              <h3 className="font-display font-semibold text-base text-[#3a2447]">Rate Cards in DMs</h3>
+              <h3 className="font-display font-semibold text-base text-[#151933]">Rate Cards in DMs</h3>
               <p className="text-xs text-[#475569] leading-relaxed">
                 Rates live in unformatted chat threads.
               </p>
@@ -618,7 +618,7 @@ export default function LandingHomePage() {
               <div className="h-10 w-10 rounded-[8px] bg-red-100/60 text-[#ef4444] flex items-center justify-center">
                 <Star className="h-5 w-5" />
               </div>
-              <h3 className="font-display font-semibold text-base text-[#3a2447]">Brand Proof Hidden</h3>
+              <h3 className="font-display font-semibold text-base text-[#151933]">Brand Proof Hidden</h3>
               <p className="text-xs text-[#475569] leading-relaxed">
                 Sponsor praise stays locked in private messages.
               </p>
@@ -635,10 +635,10 @@ export default function LandingHomePage() {
           {/* Part A: Unified Reach */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-6 space-y-4 text-left">
-              <span className="inline-block rounded-full bg-[#f1f5f9] border border-[#e2e8f0] text-[#3a2447] px-3 py-0.5 text-xs font-semibold">
+              <span className="inline-block rounded-full bg-[#f1f5f9] border border-[#e2e8f0] text-[#151933] px-3 py-0.5 text-xs font-semibold">
                 Unified Reach
               </span>
-              <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#3a2447] tracking-tight leading-tight">
+              <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#151933] tracking-tight leading-tight">
                 Your reach, unified — one number brands trust.
               </h2>
               <p className="text-sm text-[#475569] leading-relaxed">
@@ -662,7 +662,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#3a2447] hover:bg-[#1e293b] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white transition-colors cursor-pointer active:scale-98 shadow-sm"
+                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#151933] hover:bg-[#1e293b] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white transition-colors cursor-pointer active:scale-98 shadow-sm"
                 >
                   <span>Calculate My Total Reach</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -681,7 +681,7 @@ export default function LandingHomePage() {
                       className="h-10 w-10 rounded-full object-cover border border-[#e2e8f0]"
                     />
                     <div>
-                      <h4 className="font-bold text-sm text-[#3a2447]">{DEMO_PROFILE.displayName}</h4>
+                      <h4 className="font-bold text-sm text-[#151933]">{DEMO_PROFILE.displayName}</h4>
                       <p className="text-xs text-[#64748b]">@{DEMO_PROFILE.username}</p>
                     </div>
                   </div>
@@ -692,7 +692,7 @@ export default function LandingHomePage() {
                 </div>
 
                 <div className="rounded-[8px] p-5 text-center bg-[#f8fafc] border border-[#e2e8f0] space-y-1">
-                  <p className="text-3xl sm:text-4xl font-bold tracking-tight text-[#3a2447]">
+                  <p className="text-3xl sm:text-4xl font-bold tracking-tight text-[#151933]">
                     <AnimatedCounter end={20500000} />
                   </p>
                   <p className="text-[11px] font-bold tracking-wider uppercase text-[#64748b]">
@@ -702,25 +702,25 @@ export default function LandingHomePage() {
 
                 <div className="space-y-2 pt-1 text-xs">
                   <div className="flex items-center justify-between p-2.5 rounded-[8px] bg-[#f8fafc] border border-[#e2e8f0]">
-                    <div className="flex items-center gap-2 font-medium text-[#3a2447]">
+                    <div className="flex items-center gap-2 font-medium text-[#151933]">
                       <InstagramIcon className="h-4 w-4 text-[#e1306c]" />
                       <span>Instagram</span>
                     </div>
-                    <span className="font-bold text-[#3a2447]">4.8M Followers</span>
+                    <span className="font-bold text-[#151933]">4.8M Followers</span>
                   </div>
                   <div className="flex items-center justify-between p-2.5 rounded-[8px] bg-[#f8fafc] border border-[#e2e8f0]">
-                    <div className="flex items-center gap-2 font-medium text-[#3a2447]">
+                    <div className="flex items-center gap-2 font-medium text-[#151933]">
                       <YoutubeIcon className="h-4 w-4 text-[#ff0000]" />
                       <span>YouTube</span>
                     </div>
-                    <span className="font-bold text-[#3a2447]">12.5M Subscribers</span>
+                    <span className="font-bold text-[#151933]">12.5M Subscribers</span>
                   </div>
                   <div className="flex items-center justify-between p-2.5 rounded-[8px] bg-[#f8fafc] border border-[#e2e8f0]">
-                    <div className="flex items-center gap-2 font-medium text-[#3a2447]">
-                      <TikTokIcon className="h-4 w-4 text-[#3a2447]" />
+                    <div className="flex items-center gap-2 font-medium text-[#151933]">
+                      <TikTokIcon className="h-4 w-4 text-[#151933]" />
                       <span>TikTok</span>
                     </div>
-                    <span className="font-bold text-[#3a2447]">3.2M Followers</span>
+                    <span className="font-bold text-[#151933]">3.2M Followers</span>
                   </div>
                 </div>
               </div>
@@ -733,10 +733,10 @@ export default function LandingHomePage() {
               <div className="w-full max-w-md rounded-[12px] border border-[#e2e8f0] bg-white p-5 space-y-3 text-left shadow-sm">
                 <div className="flex items-center justify-between pb-2 border-b border-[#e2e8f0]">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#3a2447] bg-[#f1f5f9] border border-[#e2e8f0] px-2 py-0.5 rounded-[4px]">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#151933] bg-[#f1f5f9] border border-[#e2e8f0] px-2 py-0.5 rounded-[4px]">
                       OTT Playlist
                     </span>
-                    <h4 className="text-sm font-bold text-[#3a2447] pt-1">
+                    <h4 className="text-sm font-bold text-[#151933] pt-1">
                       Iron Tech Series
                     </h4>
                   </div>
@@ -753,25 +753,25 @@ export default function LandingHomePage() {
                     <div
                       key={ep.num}
                       className={`flex items-center gap-3 rounded-[8px] p-2.5 text-xs border ${ep.active
-                        ? "bg-[#f8fafc] border-[#3a2447]"
-                        : "bg-white border-[#e2e8f0] text-[#3a2447]"
+                        ? "bg-[#f8fafc] border-[#151933]"
+                        : "bg-white border-[#e2e8f0] text-[#151933]"
                         }`}
                     >
-                      <div className="flex h-7 w-7 items-center justify-center rounded-[6px] bg-[#f1f5f9] text-[#3a2447] shrink-0 font-bold">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-[6px] bg-[#f1f5f9] text-[#151933] shrink-0 font-bold">
                         <Play className="h-3 w-3 fill-current ml-0.5" />
                       </div>
                       <div className="min-w-0 flex-1 space-y-1">
                         <div className="flex items-center justify-between">
-                          <span className="font-semibold text-[#3a2447] truncate">{ep.title}</span>
+                          <span className="font-semibold text-[#151933] truncate">{ep.title}</span>
                           {ep.active && (
-                            <span className="text-[10px] font-bold text-[#3a2447]">
+                            <span className="text-[10px] font-bold text-[#151933]">
                               Next Up
                             </span>
                           )}
                         </div>
                         <div className="h-1 w-full rounded-full bg-[#e2e8f0] overflow-hidden">
                           <div
-                            className="h-full bg-[#3a2447] rounded-full transition-all duration-1000"
+                            className="h-full bg-[#151933] rounded-full transition-all duration-1000"
                             style={{ width: ep.progress }}
                           />
                         </div>
@@ -783,10 +783,10 @@ export default function LandingHomePage() {
             </div>
 
             <div className="lg:col-span-6 space-y-4 text-left order-1 lg:order-2">
-              <span className="inline-block rounded-full bg-[#f1f5f9] border border-[#e2e8f0] text-[#3a2447] px-3 py-0.5 text-xs font-semibold">
+              <span className="inline-block rounded-full bg-[#f1f5f9] border border-[#e2e8f0] text-[#151933] px-3 py-0.5 text-xs font-semibold">
                 Episodic Playlists
               </span>
-              <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#3a2447] tracking-tight leading-tight">
+              <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#151933] tracking-tight leading-tight">
                 Stop losing viewers between Part 1 and Part 4.
               </h2>
               <ul className="space-y-2 text-xs sm:text-sm text-[#475569]">
@@ -807,7 +807,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#3a2447] hover:bg-[#1e293b] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white transition-colors cursor-pointer active:scale-98 shadow-sm"
+                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#151933] hover:bg-[#1e293b] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white transition-colors cursor-pointer active:scale-98 shadow-sm"
                 >
                   <span>Build My Series Hub</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -826,10 +826,10 @@ export default function LandingHomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Left Copy */}
             <div className="lg:col-span-6 space-y-4 text-left">
-              <span className="inline-block rounded-full bg-[#f1f5f9] border border-[#e2e8f0] text-[#3a2447] px-3 py-0.5 text-xs font-semibold">
+              <span className="inline-block rounded-full bg-[#f1f5f9] border border-[#e2e8f0] text-[#151933] px-3 py-0.5 text-xs font-semibold">
                 Media Kit &amp; Credibility
               </span>
-              <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#3a2447] tracking-tight leading-tight">
+              <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#151933] tracking-tight leading-tight">
                 No more stale PDF decks.
               </h2>
               <p className="text-sm text-[#475569] leading-relaxed">
@@ -853,7 +853,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#3a2447] hover:bg-[#1e293b] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white transition-colors cursor-pointer active:scale-98 shadow-sm"
+                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#151933] hover:bg-[#1e293b] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white transition-colors cursor-pointer active:scale-98 shadow-sm"
                 >
                   <span>Build My Live Rate Card</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -866,34 +866,34 @@ export default function LandingHomePage() {
               <div className="rounded-[12px] border border-[#e2e8f0] bg-[#f8fafc] p-5 space-y-3 text-left shadow-sm">
                 <div className="flex items-center justify-between pb-2 border-b border-[#e2e8f0]">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-[4px] uppercase bg-[#f1f5f9] border border-[#e2e8f0] text-[#3a2447]">
+                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-[4px] uppercase bg-[#f1f5f9] border border-[#e2e8f0] text-[#151933]">
                       Instagram Reel
                     </span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-[4px] bg-white border border-[#e2e8f0] text-[#3a2447]">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-[4px] bg-white border border-[#e2e8f0] text-[#151933]">
                       ⭐ Most Popular
                     </span>
                   </div>
-                  <span className="font-display text-base font-bold text-[#3a2447]">
+                  <span className="font-display text-base font-bold text-[#151933]">
                     ₹25,000
                   </span>
                 </div>
 
                 <div>
-                  <h5 className="font-bold text-sm text-[#3a2447]">
+                  <h5 className="font-bold text-sm text-[#151933]">
                     1x Dedicated 4K Reel + Story Series
                   </h5>
                   <p className="text-xs text-[#64748b] mt-0.5 flex items-center gap-1">
-                    <Clock className="h-3 w-3 text-[#3a2447]" /> Turnaround: 3 Days
+                    <Clock className="h-3 w-3 text-[#151933]" /> Turnaround: 3 Days
                   </p>
                 </div>
 
                 <div className="pt-2 border-t border-[#e2e8f0] grid grid-cols-2 gap-2">
-                  <div className="bg-[#3a2447] text-white text-xs font-semibold py-2 px-3 rounded-[8px] inline-flex items-center justify-center gap-1.5 hover:bg-[#1e293b] transition-colors cursor-pointer">
+                  <div className="bg-[#151933] text-white text-xs font-semibold py-2 px-3 rounded-[8px] inline-flex items-center justify-center gap-1.5 hover:bg-[#1e293b] transition-colors cursor-pointer">
                     <MessageCircle className="h-3.5 w-3.5 fill-current" />
                     <span>WhatsApp Inquiry</span>
                   </div>
-                  <div className="bg-white border border-[#e2e8f0] text-[#3a2447] text-xs font-semibold py-2 px-3 rounded-[8px] inline-flex items-center justify-center gap-1.5 hover:bg-[#f8fafc] transition-colors cursor-pointer">
-                    <Mail className="h-3.5 w-3.5 text-[#3a2447]" />
+                  <div className="bg-white border border-[#e2e8f0] text-[#151933] text-xs font-semibold py-2 px-3 rounded-[8px] inline-flex items-center justify-center gap-1.5 hover:bg-[#f8fafc] transition-colors cursor-pointer">
+                    <Mail className="h-3.5 w-3.5 text-[#151933]" />
                     <span>Email Brief</span>
                   </div>
                 </div>
@@ -906,13 +906,13 @@ export default function LandingHomePage() {
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} className="h-3.5 w-3.5 fill-current" />
                     ))}
-                    <span className="font-bold text-[#3a2447] ml-1">5.0</span>
+                    <span className="font-bold text-[#151933] ml-1">5.0</span>
                   </div>
                   <span className="text-[10px] font-semibold text-[#059669] bg-[#ecfdf5] border border-[#a7f3d0] px-2 py-0.5 rounded-[4px]">
                     Verified Sponsor
                   </span>
                 </div>
-                <p className="text-xs italic text-[#3a2447] leading-relaxed">
+                <p className="text-xs italic text-[#151933] leading-relaxed">
                   &ldquo;Tony delivered our campaign in record time with 3.4x ROI on app installs. Incredible creator professionalism!&rdquo;
                 </p>
                 <p className="text-[11px] font-semibold text-[#64748b]">
@@ -929,7 +929,7 @@ export default function LandingHomePage() {
          ========================================================================= */}
       <section className="py-12 sm:py-16 bg-[#f8fafc] border-b border-[#e2e8f0]">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 text-center space-y-6">
-          <blockquote className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-[#3a2447] leading-snug tracking-tight">
+          <blockquote className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-[#151933] leading-snug tracking-tight">
             &ldquo;Creators deserve an identity bigger than any single platform.&rdquo;
           </blockquote>
         </div>
@@ -941,10 +941,10 @@ export default function LandingHomePage() {
       <section id="pricing" className="py-12 sm:py-16 bg-white border-b border-[#e2e8f0]">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 space-y-10">
           <div className="text-center max-w-2xl mx-auto space-y-3">
-            <span className="inline-block rounded-full bg-[#f1f5f9] border border-[#e2e8f0] text-[#3a2447] px-3 py-0.5 text-xs font-semibold">
+            <span className="inline-block rounded-full bg-[#f1f5f9] border border-[#e2e8f0] text-[#151933] px-3 py-0.5 text-xs font-semibold">
               Plans &amp; Pricing
             </span>
-            <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-[#3a2447]">
+            <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-[#151933]">
               Upgrade when you&apos;re ready.
             </h2>
             <p className="text-sm text-[#475569]">
@@ -958,8 +958,8 @@ export default function LandingHomePage() {
                   type="button"
                   onClick={() => setPricingCycle("monthly")}
                   className={`rounded-[6px] px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${pricingCycle === "monthly"
-                    ? "bg-[#3a2447] text-white shadow-sm"
-                    : "text-[#475569] hover:text-[#3a2447]"
+                    ? "bg-[#151933] text-white shadow-sm"
+                    : "text-[#475569] hover:text-[#151933]"
                     }`}
                 >
                   Monthly
@@ -968,12 +968,12 @@ export default function LandingHomePage() {
                   type="button"
                   onClick={() => setPricingCycle("yearly")}
                   className={`rounded-[6px] px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1 ${pricingCycle === "yearly"
-                    ? "bg-[#3a2447] text-white shadow-sm"
-                    : "text-[#475569] hover:text-[#3a2447]"
+                    ? "bg-[#151933] text-white shadow-sm"
+                    : "text-[#475569] hover:text-[#151933]"
                     }`}
                 >
                   <span>Yearly</span>
-                  <span className={`text-[10px] px-1 rounded ${pricingCycle === "yearly" ? "bg-white/20 text-white" : "bg-[#f1f5f9] text-[#3a2447]"
+                  <span className={`text-[10px] px-1 rounded ${pricingCycle === "yearly" ? "bg-white/20 text-white" : "bg-[#f1f5f9] text-[#151933]"
                     }`}>
                     -16%
                   </span>
@@ -985,8 +985,8 @@ export default function LandingHomePage() {
                   type="button"
                   onClick={() => setCurrency("INR")}
                   className={`rounded-[6px] px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${currency === "INR"
-                    ? "bg-[#3a2447] text-white shadow-sm"
-                    : "text-[#475569] hover:text-[#3a2447]"
+                    ? "bg-[#151933] text-white shadow-sm"
+                    : "text-[#475569] hover:text-[#151933]"
                     }`}
                 >
                   ₹ INR
@@ -995,8 +995,8 @@ export default function LandingHomePage() {
                   type="button"
                   onClick={() => setCurrency("USD")}
                   className={`rounded-[6px] px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${currency === "USD"
-                    ? "bg-[#3a2447] text-white shadow-sm"
-                    : "text-[#475569] hover:text-[#3a2447]"
+                    ? "bg-[#151933] text-white shadow-sm"
+                    : "text-[#475569] hover:text-[#151933]"
                     }`}
                 >
                   $ USD
@@ -1011,13 +1011,13 @@ export default function LandingHomePage() {
             <div className="p-6 rounded-[16px] border border-[#e2e8f0] bg-[#f8fafc] space-y-5 flex flex-col justify-between shadow-sm">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-display font-bold text-base text-[#3a2447]">Starter</h4>
-                  <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-[4px] bg-[#e2e8f0] text-[#3a2447]">
+                  <h4 className="font-display font-bold text-base text-[#151933]">Starter</h4>
+                  <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-[4px] bg-[#e2e8f0] text-[#151933]">
                     Free Forever
                   </span>
                 </div>
                 <div>
-                  <p className="font-display text-2xl font-bold text-[#3a2447]">{currency === "INR" ? "₹0" : "$0"}</p>
+                  <p className="font-display text-2xl font-bold text-[#151933]">{currency === "INR" ? "₹0" : "$0"}</p>
                   <p className="text-xs text-[#64748b] mt-0.5">No credit card required</p>
                 </div>
                 <ul className="space-y-2.5 text-xs text-[#475569] pt-3 border-t border-[#e2e8f0]">
@@ -1048,7 +1048,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="w-full py-2 px-4 rounded-[8px] bg-white hover:bg-[#f1f5f9] border border-[#e2e8f0] text-[#3a2447] font-semibold text-xs transition-colors cursor-pointer shadow-sm"
+                  className="w-full py-2 px-4 rounded-[8px] bg-white hover:bg-[#f1f5f9] border border-[#e2e8f0] text-[#151933] font-semibold text-xs transition-colors cursor-pointer shadow-sm"
                 >
                   Get Started Free
                 </button>
@@ -1056,16 +1056,16 @@ export default function LandingHomePage() {
             </div>
 
             {/* Plan 2: Pro (Featured Card) */}
-            <div className="p-6 rounded-[16px] border-2 border-[#3a2447] bg-white space-y-5 flex flex-col justify-between relative shadow-[0_12px_30px_rgba(15,23,42,0.08)]">
+            <div className="p-6 rounded-[16px] border-2 border-[#151933] bg-white space-y-5 flex flex-col justify-between relative shadow-[0_12px_30px_rgba(15,23,42,0.08)]">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-display font-bold text-base text-[#3a2447]">Pro</h4>
-                  <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-[4px] bg-[#3a2447] text-white">
+                  <h4 className="font-display font-bold text-base text-[#151933]">Pro</h4>
+                  <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-[4px] bg-[#151933] text-white">
                     Recommended
                   </span>
                 </div>
                 <div>
-                  <p className="font-display text-2xl font-bold text-[#3a2447]">
+                  <p className="font-display text-2xl font-bold text-[#151933]">
                     {currency === "INR"
                       ? pricingCycle === "yearly"
                         ? "₹1,999"
@@ -1079,7 +1079,7 @@ export default function LandingHomePage() {
                   </p>
                   <p className="text-xs text-[#64748b] mt-0.5">Taxes may apply</p>
                 </div>
-                <ul className="space-y-2.5 text-xs text-[#3a2447] font-medium pt-3 border-t border-[#e2e8f0]">
+                <ul className="space-y-2.5 text-xs text-[#151933] font-medium pt-3 border-t border-[#e2e8f0]">
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                     <span>Up to 30 content series</span>
@@ -1107,7 +1107,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="w-full py-2.5 px-4 rounded-[8px] bg-[#3a2447] hover:bg-[#1e293b] text-white font-semibold text-xs sm:text-sm transition-colors cursor-pointer active:scale-98 shadow-sm"
+                  className="w-full py-2.5 px-4 rounded-[8px] bg-[#151933] hover:bg-[#1e293b] text-white font-semibold text-xs sm:text-sm transition-colors cursor-pointer active:scale-98 shadow-sm"
                 >
                   Upgrade to Creator Pro
                 </button>
@@ -1118,13 +1118,13 @@ export default function LandingHomePage() {
             <div className="p-6 rounded-[16px] border border-[#e2e8f0] bg-[#f8fafc] space-y-5 flex flex-col justify-between shadow-sm">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-display font-bold text-base text-[#3a2447]">VIP</h4>
-                  <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-[4px] bg-[#e2e8f0] text-[#3a2447]">
+                  <h4 className="font-display font-bold text-base text-[#151933]">VIP</h4>
+                  <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-[4px] bg-[#e2e8f0] text-[#151933]">
                     Custom
                   </span>
                 </div>
                 <div>
-                  <p className="font-display text-2xl font-bold text-[#3a2447]">
+                  <p className="font-display text-2xl font-bold text-[#151933]">
                     {currency === "INR"
                       ? pricingCycle === "yearly"
                         ? "₹2,999"
@@ -1166,7 +1166,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="w-full py-2 px-4 rounded-[8px] bg-white hover:bg-[#f1f5f9] border border-[#e2e8f0] text-[#3a2447] font-semibold text-xs transition-colors cursor-pointer shadow-sm"
+                  className="w-full py-2 px-4 rounded-[8px] bg-white hover:bg-[#f1f5f9] border border-[#e2e8f0] text-[#151933] font-semibold text-xs transition-colors cursor-pointer shadow-sm"
                 >
                   Get VIP Access
                 </button>
@@ -1177,7 +1177,7 @@ export default function LandingHomePage() {
           {/* Final Bottom CTA (Final CTA Section BG: #f1f5f9) */}
           <div className="mt-8 sm:mt-10 rounded-[16px] border border-[#e2e8f0] bg-[#f1f5f9] p-6 sm:p-8 text-center space-y-5">
             <div className="space-y-2 max-w-xl mx-auto">
-              <h3 className="font-display text-2xl sm:text-4xl font-bold text-[#3a2447]">
+              <h3 className="font-display text-2xl sm:text-4xl font-bold text-[#151933]">
                 Your fanbase. Your content. Your work. One Inflixo link.
               </h3>
               <p className="text-xs sm:text-sm text-[#475569]">
@@ -1191,7 +1191,7 @@ export default function LandingHomePage() {
                   e.preventDefault();
                   handleClaim(bottomUsername);
                 }}
-                className="flex items-center rounded-[8px] border border-[#cbd5e1] bg-white p-1.5 focus-within:border-[#3a2447] focus-within:ring-2 focus-within:ring-[#3a2447]/10 transition-all shadow-sm"
+                className="flex items-center rounded-[8px] border border-[#cbd5e1] bg-white p-1.5 focus-within:border-[#151933] focus-within:ring-2 focus-within:ring-[#151933]/10 transition-all shadow-sm"
               >
                 <span className="pl-3 text-xs sm:text-sm font-medium text-[#64748b] select-none shrink-0">
                   inflixo.com/
@@ -1201,11 +1201,11 @@ export default function LandingHomePage() {
                   value={bottomUsername}
                   onChange={(e) => setBottomUsername(e.target.value)}
                   placeholder="yourname"
-                  className="w-full bg-transparent px-2 py-1.5 text-xs sm:text-sm font-medium text-[#3a2447] outline-none placeholder:text-[#94a3b8] min-w-0"
+                  className="w-full bg-transparent px-2 py-1.5 text-xs sm:text-sm font-medium text-[#151933] outline-none placeholder:text-[#94a3b8] min-w-0"
                 />
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-1 shrink-0 rounded-[8px] bg-[#3a2447] px-4 py-2 text-xs sm:text-sm font-semibold text-white hover:bg-[#1e293b] transition-colors cursor-pointer active:scale-98"
+                  className="inline-flex items-center gap-1 shrink-0 rounded-[8px] bg-[#151933] px-4 py-2 text-xs sm:text-sm font-semibold text-white hover:bg-[#1e293b] transition-colors cursor-pointer active:scale-98"
                 >
                   <span>Claim</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -1215,7 +1215,7 @@ export default function LandingHomePage() {
               <button
                 type="button"
                 onClick={() => handleClaim(bottomUsername)}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-[8px] bg-[#3a2447] hover:bg-[#1e293b] px-6 py-2.5 text-sm font-semibold text-white transition-colors cursor-pointer active:scale-98 shadow-sm"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-[8px] bg-[#151933] hover:bg-[#1e293b] px-6 py-2.5 text-sm font-semibold text-white transition-colors cursor-pointer active:scale-98 shadow-sm"
               >
                 <span>Claim Your Handle</span>
               </button>
@@ -1231,44 +1231,44 @@ export default function LandingHomePage() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-[#64748b]">
           <Logo size="sm" />
           <div className="flex flex-wrap items-center gap-4">
-            <Link href="/" className="hover:text-[#3a2447] transition-colors">
+            <Link href="/" className="hover:text-[#151933] transition-colors">
               Creator Home
             </Link>
             <button
               type="button"
               onClick={() => scrollToSection("total-fanbase")}
-              className="hover:text-[#3a2447] transition-colors cursor-pointer"
+              className="hover:text-[#151933] transition-colors cursor-pointer"
             >
               Total Fanbase
             </button>
             <button
               type="button"
               onClick={() => scrollToSection("series")}
-              className="hover:text-[#3a2447] transition-colors cursor-pointer"
+              className="hover:text-[#151933] transition-colors cursor-pointer"
             >
               Series Playlists
             </button>
             <button
               type="button"
               onClick={() => scrollToSection("pricing")}
-              className="hover:text-[#3a2447] transition-colors cursor-pointer"
+              className="hover:text-[#151933] transition-colors cursor-pointer"
             >
               Pricing
             </button>
-            <Link href="/privacy" className="hover:text-[#3a2447] transition-colors">
+            <Link href="/privacy" className="hover:text-[#151933] transition-colors">
               Privacy Policy
             </Link>
-            <Link href="/cookies" className="hover:text-[#3a2447] transition-colors">
+            <Link href="/cookies" className="hover:text-[#151933] transition-colors">
               Cookie Policy
             </Link>
             <button
               type="button"
               onClick={() => openCookiePreferences()}
-              className="hover:text-[#3a2447] transition-colors cursor-pointer"
+              className="hover:text-[#151933] transition-colors cursor-pointer"
             >
               Cookie Preferences
             </button>
-            <Link href="/terms" className="hover:text-[#3a2447] transition-colors">
+            <Link href="/terms" className="hover:text-[#151933] transition-colors">
               Terms of Service
             </Link>
           </div>
@@ -1287,9 +1287,9 @@ export default function LandingHomePage() {
           type="button"
           onClick={scrollToTop}
           aria-label="Scroll to top"
-          className="group flex items-center gap-1.5 rounded-full border border-[#e2e8f0] bg-white px-3 py-2 text-xs font-semibold text-[#3a2447] hover:border-[#cbd5e1] shadow-sm transition-colors cursor-pointer"
+          className="group flex items-center gap-1.5 rounded-full border border-[#e2e8f0] bg-white px-3 py-2 text-xs font-semibold text-[#151933] hover:border-[#cbd5e1] shadow-sm transition-colors cursor-pointer"
         >
-          <ArrowUp className="h-4 w-4 text-[#3a2447]" />
+          <ArrowUp className="h-4 w-4 text-[#151933]" />
           <span className="hidden sm:inline">Top</span>
         </button>
       </div>

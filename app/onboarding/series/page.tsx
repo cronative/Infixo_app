@@ -93,7 +93,7 @@ export default function SeriesStepPage() {
         <div className="rounded-xl border border-[#E7E3DC] bg-white p-3.5 sm:p-4 shadow-xs space-y-3.5">
           <div className="flex items-center justify-between border-b border-[#E7E3DC] pb-2">
             <p className="text-xs sm:text-sm font-bold text-[#181716] flex items-center gap-1.5">
-              <Film className="h-3.5 w-3.5 text-[#3a2447]" />
+              <Film className="h-3.5 w-3.5 text-[#151933]" />
               Series Information
             </p>
           </div>
@@ -132,14 +132,14 @@ export default function SeriesStepPage() {
                       type="button"
                       onClick={() => setSeriesPlatform(p)}
                       className={`tap-scale flex items-center justify-center gap-1.5 rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition-all cursor-pointer ${isSelected
-                        ? "border-[#3a2447] bg-[#3a2447]/[0.08] text-[#3a2447] font-bold"
+                        ? "border-[#151933] bg-[#151933]/[0.08] text-[#151933] font-bold"
                         : "border-[#E7E3DC] bg-white text-[#54514D] hover:bg-[#fbfbfb]"
                         }`}
                     >
-                      {p === "YouTube" && <YoutubeIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#3a2447]" : "text-red-500"}`} />}
-                      {p === "Instagram" && <InstagramIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#3a2447]" : "text-pink-500"}`} />}
-                      {p === "Facebook" && <FacebookIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#3a2447]" : "text-blue-600"}`} />}
-                      {p === "Other" && <Globe className={`h-3.5 w-3.5 ${isSelected ? "text-[#3a2447]" : "text-[#797570]"}`} />}
+                      {p === "YouTube" && <YoutubeIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#151933]" : "text-red-500"}`} />}
+                      {p === "Instagram" && <InstagramIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#151933]" : "text-pink-500"}`} />}
+                      {p === "Facebook" && <FacebookIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#151933]" : "text-blue-600"}`} />}
+                      {p === "Other" && <Globe className={`h-3.5 w-3.5 ${isSelected ? "text-[#151933]" : "text-[#797570]"}`} />}
                       <span>{p}</span>
                     </button>
                   );
@@ -185,7 +185,7 @@ export default function SeriesStepPage() {
 
         {/* Informational Box */}
         <div className="rounded-xl border border-[#E7E3DC] bg-white p-3 text-xs text-[#54514D] flex items-start gap-2">
-          <Sparkles className="h-3.5 w-3.5 text-[#3a2447] shrink-0 mt-0.5" />
+          <Sparkles className="h-3.5 w-3.5 text-[#151933] shrink-0 mt-0.5" />
           <p className="leading-relaxed">
             Episodes can be added anytime from your <strong className="text-[#181716]">Creator Dashboard</strong>. Early Access supports up to 3 series and 15 total episodes.
           </p>
@@ -219,7 +219,7 @@ export default function SeriesStepPage() {
           size="lg"
           loading={submitting}
           onClick={handleSaveAndContinue}
-          className="w-full sm:flex-1 sm:max-w-xs h-10 bg-[#3a2447] hover:bg-[#2c1937] text-white font-bold text-xs sm:text-sm rounded-xl cursor-pointer shadow-xs"
+          className="w-full sm:flex-1 sm:max-w-xs h-10 bg-[#151933] hover:bg-[#2c1937] text-white font-bold text-xs sm:text-sm rounded-xl cursor-pointer shadow-xs"
         >
           Save &amp; Next →
         </Button>

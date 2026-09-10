@@ -315,7 +315,7 @@ export default function DashboardSocialsPage() {
                         value={draftInsta}
                         onChange={(e) => setDraftInsta(e.target.value.trim().replace(/^@/, ""))}
                         placeholder="Instagram username"
-                        className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white pl-8 pr-3 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#3a2447] transition-colors"
+                        className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white pl-8 pr-3 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#151933] transition-colors"
                       />
                     </div>
                     <InstagramFetcher username={draftInsta} />
@@ -344,7 +344,7 @@ export default function DashboardSocialsPage() {
                         value={draftYt}
                         onChange={(e) => setDraftYt(e.target.value.trim().replace(/^@/, ""))}
                         placeholder="YouTube channel handle"
-                        className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white pl-8 pr-3 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#3a2447] transition-colors"
+                        className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white pl-8 pr-3 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#151933] transition-colors"
                       />
                     </div>
                     <YoutubeFetcher handle={draftYt} />
@@ -373,7 +373,7 @@ export default function DashboardSocialsPage() {
                         value={draftFb}
                         onChange={(e) => setDraftFb(e.target.value.trim().replace(/^@/, ""))}
                         placeholder="Facebook page username"
-                        className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white pl-8 pr-3 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#3a2447] transition-colors"
+                        className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white pl-8 pr-3 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#151933] transition-colors"
                       />
                     </div>
                     <FacebookFetcher username={draftFb} />
@@ -393,7 +393,7 @@ export default function DashboardSocialsPage() {
       {/* 17, 18, 19. HOW SOCIAL DATA WORKS (Compact Info Row + Learn more Modal) */}
       <section className="rounded-2xl border border-[#E7E3DC] bg-[#FAF8F5]/80 px-5 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-xs text-left">
         <div className="flex items-center gap-2 min-w-0">
-          <Info className="h-4 w-4 text-[#3a2447] shrink-0" />
+          <Info className="h-4 w-4 text-[#151933] shrink-0" />
           <span className="text-xs sm:text-sm font-semibold text-[#181716] shrink-0">How social data works</span>
           <span className="hidden sm:inline text-[#797570]/40">·</span>
           <span className="text-xs text-[#54514D] font-normal truncate">
@@ -403,7 +403,7 @@ export default function DashboardSocialsPage() {
         <button
           type="button"
           onClick={() => setIsInfoModalOpen(true)}
-          className="text-xs font-semibold text-[#3a2447] hover:underline cursor-pointer shrink-0 self-start sm:self-auto"
+          className="text-xs font-semibold text-[#151933] hover:underline cursor-pointer shrink-0 self-start sm:self-auto"
         >
           Learn more
         </button>
@@ -420,15 +420,15 @@ export default function DashboardSocialsPage() {
         <ModalBody className="p-5 space-y-3 text-left">
           <div className="space-y-2.5 text-xs text-[#54514D]">
             <div className="flex items-start gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#3a2447] mt-1.5 shrink-0" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#151933] mt-1.5 shrink-0" />
               <span>Reads supported public profile information to show follower and subscriber metrics.</span>
             </div>
             <div className="flex items-start gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#3a2447] mt-1.5 shrink-0" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#151933] mt-1.5 shrink-0" />
               <span>Never receives or stores your social platform passwords.</span>
             </div>
             <div className="flex items-start gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#3a2447] mt-1.5 shrink-0" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#151933] mt-1.5 shrink-0" />
               <span>Lets you disconnect an account at any time with one click.</span>
             </div>
           </div>
@@ -570,7 +570,7 @@ function ConnectedSocialCard({
                   }}
                   className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors cursor-pointer disabled:opacity-50"
                 >
-                  <RefreshCw className={`h-3.5 w-3.5 text-[#797570] ${isSyncing ? "animate-spin text-[#3a2447]" : ""}`} />
+                  <RefreshCw className={`h-3.5 w-3.5 text-[#797570] ${isSyncing ? "animate-spin text-[#151933]" : ""}`} />
                   <span>{isSyncing ? "Syncing..." : "Refresh data"}</span>
                 </button>
 

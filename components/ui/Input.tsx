@@ -22,7 +22,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           </label>
         )}
         <div
-          className={`flex h-10 items-center rounded-xl border px-3.5 transition-colors focus-within:border-[#3a2447] focus-within:ring-2 focus-within:ring-[#3a2447]/10 ${rest.disabled ? "bg-[#f8fafc] cursor-not-allowed text-[#94a3b8] border-[#e2e8f0]" : "bg-[#ffffff]"
+          className={`flex h-10 items-center rounded-xl border px-3.5 transition-colors focus-within:border-[#151933] focus-within:ring-2 focus-within:ring-[#151933]/10 ${rest.disabled ? "bg-[#f8fafc] cursor-not-allowed text-[#94a3b8] border-[#e2e8f0]" : "bg-[#ffffff]"
             } ${error ? "border-[#ef4444] bg-rose-50/20" : "border-[#cbd5e1]"}`}
         >
           {leftIcon && <span className="mr-2 shrink-0 text-[#64748b]">{leftIcon}</span>}
@@ -35,7 +35,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             id={inputId}
-            className={`h-full w-full min-w-0 flex-1 bg-transparent text-xs sm:text-sm font-semibold text-[#3a2447] outline-none placeholder:text-[#94a3b8] placeholder:font-normal ${className}`}
+            className={`h-full w-full min-w-0 flex-1 bg-transparent text-xs sm:text-sm font-semibold text-[#151933] outline-none placeholder:text-[#94a3b8] placeholder:font-normal ${className}`}
             {...rest}
           />
           {rightSlot && <div className="ml-1.5 shrink-0">{rightSlot}</div>}

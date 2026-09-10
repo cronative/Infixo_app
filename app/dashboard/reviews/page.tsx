@@ -192,7 +192,7 @@ export default function DashboardReviewsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, status }),
       }).catch((e) => console.warn("Failed API status update:", e));
-    } catch (e) {}
+    } catch (e) { }
 
     const updated = reviews.map((r) => (r.id === id ? { ...r, status } : r));
     updateReviews(updated);
@@ -212,7 +212,7 @@ export default function DashboardReviewsPage() {
       fetch(`/api/creator/reviews?id=${encodeURIComponent(id)}`, { method: "DELETE" }).catch((e) =>
         console.warn("Failed API delete:", e)
       );
-    } catch (e) {}
+    } catch (e) { }
 
     const updated = reviews.filter((r) => r.id !== id);
     updateReviews(updated);
@@ -264,7 +264,7 @@ export default function DashboardReviewsPage() {
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="h-10 px-4 rounded-xl bg-[#3a2447] hover:bg-[#2c1937] text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 shrink-0 self-start sm:self-auto"
+            className="h-10 px-4 rounded-xl bg-[#151933] hover:bg-[#2c1937] text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 shrink-0 self-start sm:self-auto"
           >
             <Plus className="h-4 w-4" />
             <span>Request Review</span>
@@ -288,7 +288,7 @@ export default function DashboardReviewsPage() {
             <button
               type="button"
               onClick={() => setIsModalOpen(true)}
-              className="h-10 px-5 rounded-xl bg-[#3a2447] hover:bg-[#2c1937] text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+              className="h-10 px-5 rounded-xl bg-[#151933] hover:bg-[#2c1937] text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
             >
               <Plus className="h-4 w-4" />
               <span>Request Review</span>
@@ -314,11 +314,10 @@ export default function DashboardReviewsPage() {
             <button
               type="button"
               onClick={() => setActiveTab("all")}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${
-                activeTab === "all"
-                  ? "bg-[#3a2447]/[0.09] text-[#3a2447] border border-[#3a2447]/20"
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "all"
+                  ? "bg-[#151933]/[0.09] text-[#151933] border border-[#151933]/20"
                   : "text-[#797570] hover:bg-[#FAF8F5] hover:text-[#181716]"
-              }`}
+                }`}
             >
               All ({reviews.length})
             </button>
@@ -326,11 +325,10 @@ export default function DashboardReviewsPage() {
             <button
               type="button"
               onClick={() => setActiveTab("approved")}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${
-                activeTab === "approved"
-                  ? "bg-[#3a2447]/[0.09] text-[#3a2447] border border-[#3a2447]/20"
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "approved"
+                  ? "bg-[#151933]/[0.09] text-[#151933] border border-[#151933]/20"
                   : "text-[#797570] hover:bg-[#FAF8F5] hover:text-[#181716]"
-              }`}
+                }`}
             >
               Published ({approvedCount})
             </button>
@@ -338,11 +336,10 @@ export default function DashboardReviewsPage() {
             <button
               type="button"
               onClick={() => setActiveTab("pending")}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${
-                activeTab === "pending"
-                  ? "bg-[#3a2447]/[0.09] text-[#3a2447] border border-[#3a2447]/20"
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "pending"
+                  ? "bg-[#151933]/[0.09] text-[#151933] border border-[#151933]/20"
                   : "text-[#797570] hover:bg-[#FAF8F5] hover:text-[#181716]"
-              }`}
+                }`}
             >
               Pending ({pendingCount})
             </button>
@@ -350,11 +347,10 @@ export default function DashboardReviewsPage() {
             <button
               type="button"
               onClick={() => setActiveTab("invited")}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${
-                activeTab === "invited"
-                  ? "bg-[#3a2447]/[0.09] text-[#3a2447] border border-[#3a2447]/20"
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "invited"
+                  ? "bg-[#151933]/[0.09] text-[#151933] border border-[#151933]/20"
                   : "text-[#797570] hover:bg-[#FAF8F5] hover:text-[#181716]"
-              }`}
+                }`}
             >
               Invitations ({invitedCount})
             </button>
@@ -384,9 +380,8 @@ export default function DashboardReviewsPage() {
                           {[1, 2, 3, 4, 5].map((i) => (
                             <Star
                               key={i}
-                              className={`h-3.5 w-3.5 ${
-                                i <= ratingValue ? "fill-amber-400 text-amber-400" : "text-zinc-200"
-                              }`}
+                              className={`h-3.5 w-3.5 ${i <= ratingValue ? "fill-amber-400 text-amber-400" : "text-zinc-200"
+                                }`}
                             />
                           ))}
                         </div>
@@ -452,7 +447,7 @@ export default function DashboardReviewsPage() {
                         <button
                           type="button"
                           onClick={() => handleUpdateStatus(rev.id, "approved")}
-                          className="px-3 py-1.5 rounded-xl bg-[#3a2447] hover:bg-[#2c1937] text-white text-xs font-semibold transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1"
+                          className="px-3 py-1.5 rounded-xl bg-[#151933] hover:bg-[#2c1937] text-white text-xs font-semibold transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1"
                         >
                           <Check className="h-3 w-3" />
                           <span>Publish</span>
@@ -558,7 +553,7 @@ export default function DashboardReviewsPage() {
                 value={clientName}
                 onChange={(e) => setClientName(e.target.value)}
                 placeholder="e.g. Puma India or Urban Cafe"
-                className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#3a2447] focus:outline-none transition-colors"
+                className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:outline-none transition-colors"
               />
             </div>
 
@@ -572,7 +567,7 @@ export default function DashboardReviewsPage() {
                 value={clientEmail}
                 onChange={(e) => setClientEmail(e.target.value)}
                 placeholder="collabs@brand.com"
-                className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#3a2447] focus:outline-none transition-colors"
+                className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:outline-none transition-colors"
               />
             </div>
 
@@ -586,7 +581,7 @@ export default function DashboardReviewsPage() {
                 value={projectTitle}
                 onChange={(e) => setProjectTitle(e.target.value)}
                 placeholder="e.g. Summer Campaign Reel or Store Launch"
-                className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#3a2447] focus:outline-none transition-colors"
+                className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:outline-none transition-colors"
               />
             </div>
           </ModalBody>
@@ -616,7 +611,7 @@ export default function DashboardReviewsPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="h-10 px-4 rounded-xl bg-[#3a2447] hover:bg-[#2c1937] text-white font-semibold text-xs transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
+                  className="h-10 px-4 rounded-xl bg-[#151933] hover:bg-[#2c1937] text-white font-semibold text-xs transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
                 >
                   <Send className="h-3.5 w-3.5" />
                   <span>{isSubmitting ? "Sending..." : "Send Invitation"}</span>

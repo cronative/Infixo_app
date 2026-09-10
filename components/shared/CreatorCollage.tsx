@@ -41,18 +41,18 @@ export function CreatorCollage() {
               className="h-11 w-11 rounded-full object-cover border-2 border-slate-100 shadow-xs"
             />
             <div>
-              <p className="text-sm font-extrabold text-[#3a2447]">Maya</p>
+              <p className="text-sm font-extrabold text-[#151933]">Maya</p>
               <p className="text-xs font-semibold text-slate-500">@maya · Travel Creator</p>
             </div>
           </div>
 
           {/* Total Fanbase Badge Pill */}
-          <div className="flex items-center justify-between rounded-xl bg-[#3a244714] px-3.5 py-2 border border-[#3a2447]/20">
+          <div className="flex items-center justify-between rounded-xl bg-[#15193314] px-3.5 py-2 border border-[#151933]/20">
             <div className="flex items-center gap-1.5">
-              <Users className="h-3.5 w-3.5 text-[#3a2447]" />
-              <span className="text-xs font-extrabold text-[#3a2447]">126K total fanbase</span>
+              <Users className="h-3.5 w-3.5 text-[#151933]" />
+              <span className="text-xs font-extrabold text-[#151933]">126K total fanbase</span>
             </div>
-            <span className="h-2 w-2 rounded-full bg-[#3a2447] animate-pulse" />
+            <span className="h-2 w-2 rounded-full bg-[#151933] animate-pulse" />
           </div>
 
           {/* Crisp 1px Border Platform Follower Pills */}
@@ -73,12 +73,12 @@ export function CreatorCollage() {
 
           {/* Creator Series Preview Card (Solid Dark Surface #241618) */}
           <div className="flex items-center gap-3 rounded-2xl bg-[#241618] text-white p-3 border border-white/10">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#3a2447]">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#151933]">
               <Play className="h-4 w-4 fill-white text-white" />
             </div>
             <div className="min-w-0">
               <p className="truncate text-xs font-extrabold text-white">Kashmir Diaries</p>
-              <p className="text-[11px] font-semibold text-[#3a244714]">Season 1 · 5 Episodes</p>
+              <p className="text-[11px] font-semibold text-[#15193314]">Season 1 · 5 Episodes</p>
             </div>
           </div>
         </div>

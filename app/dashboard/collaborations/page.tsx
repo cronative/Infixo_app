@@ -184,7 +184,7 @@ export default function DashboardCollaborationsPage() {
           <button
             type="button"
             onClick={() => handleOpenModal()}
-            className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#3a2447] hover:bg-[#2c1937] text-white font-semibold text-xs py-2 px-3.5 transition-colors cursor-pointer shadow-xs shrink-0 self-start sm:self-auto"
+            className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-[#2c1937] text-white font-semibold text-xs py-2 px-3.5 transition-colors cursor-pointer shadow-xs shrink-0 self-start sm:self-auto"
           >
             <Plus className="h-3.5 w-3.5" />
             <span>Add Collaboration</span>
@@ -200,7 +200,7 @@ export default function DashboardCollaborationsPage() {
       ) : collaborations.length === 0 ? (
         /* Empty State */
         <div className="rounded-2xl border-2 border-dashed border-[#E7E3DC] bg-white p-8 sm:p-10 text-center space-y-3 max-w-xl mx-auto shadow-xs">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#3a2447]/[0.09] text-[#3a2447]">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#151933]/[0.09] text-[#151933]">
             <Handshake className="h-6 w-6" />
           </div>
           <div className="space-y-1">
@@ -215,7 +215,7 @@ export default function DashboardCollaborationsPage() {
             <button
               type="button"
               onClick={() => handleOpenModal()}
-              className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#3a2447] hover:bg-[#2c1937] text-white font-semibold text-xs py-2 px-4 transition-colors cursor-pointer shadow-xs"
+              className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-[#2c1937] text-white font-semibold text-xs py-2 px-4 transition-colors cursor-pointer shadow-xs"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Add Collaboration</span>
@@ -240,7 +240,7 @@ export default function DashboardCollaborationsPage() {
                     className="h-9 w-9 rounded-xl object-cover border border-[#E7E3DC] shrink-0"
                   />
                 ) : (
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#3a244714] border border-[#E7D0D4] text-[#3a2447] font-bold text-xs shrink-0">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#15193314] border border-[#E7D0D4] text-[#151933] font-bold text-xs shrink-0">
                     <Handshake className="h-4 w-4" />
                   </div>
                 )}
@@ -249,7 +249,7 @@ export default function DashboardCollaborationsPage() {
                   <div className="flex items-center gap-2">
                     <h3 className="truncate font-bold text-xs sm:text-[13px] text-[#181716]">{collab.brandName}</h3>
                     {collab.campaignTitle && (
-                      <span className="text-[11px] font-semibold text-[#3a2447] truncate">
+                      <span className="text-[11px] font-semibold text-[#151933] truncate">
                         • {collab.campaignTitle}
                       </span>
                     )}
@@ -280,7 +280,7 @@ export default function DashboardCollaborationsPage() {
                       title="View Campaign Link"
                     >
                       <span>View</span>
-                      <ExternalLink className="h-3 w-3 text-[#3a2447]" />
+                      <ExternalLink className="h-3 w-3 text-[#151933]" />
                     </a>
                   )}
 
@@ -346,7 +346,7 @@ export default function DashboardCollaborationsPage() {
                           onClick={() => setActiveMenuId(null)}
                           className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors"
                         >
-                          <ExternalLink className="h-3.5 w-3.5 text-[#3a2447]" />
+                          <ExternalLink className="h-3.5 w-3.5 text-[#151933]" />
                           <span>View Campaign</span>
                         </a>
                       )}
@@ -440,7 +440,7 @@ export default function DashboardCollaborationsPage() {
                 value={brandName}
                 onChange={(e) => setBrandName(e.target.value)}
                 placeholder="e.g. Sony Music, Nike, or Boat Audio"
-                className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#3a2447] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
@@ -453,7 +453,7 @@ export default function DashboardCollaborationsPage() {
                 value={campaignTitle}
                 onChange={(e) => setCampaignTitle(e.target.value)}
                 placeholder="e.g. Summer Launch Reel Campaign"
-                className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#3a2447] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
@@ -466,7 +466,7 @@ export default function DashboardCollaborationsPage() {
                 value={campaignUrl}
                 onChange={(e) => setCampaignUrl(e.target.value)}
                 placeholder="https://instagram.com/reel/... or https://youtube.com/watch?v=..."
-                className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#3a2447] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
@@ -479,7 +479,7 @@ export default function DashboardCollaborationsPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Briefly mention key deliverables (e.g. 2x Instagram Reels, 1x YouTube dedicated video with 250K+ views)..."
-                className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 p-2.5 text-xs font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#3a2447] focus:bg-white focus:outline-none transition-colors resize-y"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 p-2.5 text-xs font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors resize-y"
               />
             </div>
           </ModalBody>
@@ -495,7 +495,7 @@ export default function DashboardCollaborationsPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-[#3a2447] hover:bg-[#2c1937] text-white font-semibold text-xs py-1.5 px-4 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="bg-[#151933] hover:bg-[#2c1937] text-white font-semibold text-xs py-1.5 px-4 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               <span>{isSubmitting ? "Saving..." : editingCollab ? "Save Changes" : "Add Collaboration"}</span>
             </button>
