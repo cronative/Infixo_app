@@ -34,13 +34,13 @@ export function PhotoUpload({
   return (
     <div className="flex flex-col items-center sm:items-start gap-2">
       <div
-        className={`group relative flex shrink-0 items-center justify-center overflow-hidden border border-[#E7E3DC] bg-[#fbfbfb] shadow-xs transition-colors hover:border-[#600a0f] ${shape === "circle"
-          ? "w-20 h-20 rounded-full aspect-square overflow-hidden shrink-0"
+        className={`group relative flex shrink-0 items-center justify-center overflow-hidden border border-[#E7E3DC] bg-[#fbfbfb] shadow-xs transition-colors hover:border-[#3a2447] ${shape === "circle"
+          ? "rounded-full aspect-square overflow-hidden shrink-0"
           : shape === "landscape"
             ? "aspect-video w-44 rounded-xl"
-            : "w-20 h-20 rounded-2xl overflow-hidden"
+            : "rounded-2xl overflow-hidden"
           } ${className}`}
-        style={!isLandscape && shape !== "circle" ? { width: size, height: size } : undefined}
+        style={!isLandscape ? { width: size, height: size } : undefined}
       >
         {value ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -58,11 +58,11 @@ export function PhotoUpload({
           <div className="flex flex-col items-center justify-center gap-1 p-2 text-center text-[#797570]">
             {isLandscape ? (
               <>
-                <Film className="h-5 w-5 text-[#600a0f]" />
-                <span className="text-[10px] font-bold text-[#600a0f] leading-tight">Upload Landscape Poster (16:9)</span>
+                <Film className="h-5 w-5 text-[#3a2447]" />
+                <span className="text-[10px] font-bold text-[#3a2447] leading-tight">Upload Landscape Poster (16:9)</span>
               </>
             ) : (
-              <ImagePlus className="h-6 w-6 text-[#600a0f]" />
+              <ImagePlus className="h-6 w-6 text-[#3a2447]" />
             )}
           </div>
         )}
@@ -78,7 +78,7 @@ export function PhotoUpload({
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="bg-[#600a0f]/[0.09] text-[#600a0f] hover:bg-[#600a0f]/15 text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#600a0f]/20 transition-colors cursor-pointer"
+        className="bg-[#3a2447]/[0.09] text-[#3a2447] hover:bg-[#2c1937]/15 text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#3a2447]/20 transition-colors cursor-pointer"
       >
         {label ?? (value ? (isLandscape ? "Change poster" : "Change Profile Photo") : (isLandscape ? "Upload poster preview" : "Upload Profile Photo"))}
       </button>

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { isAuthorizedAdmin } from "@/lib/adminAuth";
 
 async function ensureMediaKitTables() {
   try {
@@ -30,8 +31,12 @@ async function ensureMediaKitTables() {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    if (!(await isAuthorizedAdmin(req))) {
+      return NextResponse.json({ error: "Unauthorized admin access" }, { status: 401 });
+    }
+
     let creators: any[] = [];
     let stats = {
       totalCreators: 0,
@@ -114,6 +119,10 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
+    if (!(await isAuthorizedAdmin(req))) {
+      return NextResponse.json({ error: "Unauthorized admin access" }, { status: 401 });
+    }
+
     const body = await req.json();
     const { action, creatorId, email } = body;
 

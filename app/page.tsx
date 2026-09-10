@@ -26,7 +26,10 @@ import {
 import { Logo } from "@/components/shared/Logo";
 import { InstagramIcon, YoutubeIcon, TikTokIcon } from "@/components/shared/BrandIcons";
 import { AuthService } from "@/services/AuthService";
+import { OnboardingService } from "@/services/OnboardingService";
+import { ProfileService } from "@/services/ProfileService";
 import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
+
 import { CreatorProfile, SocialAccounts, Series, ThemeKey, MediaKitPackage, CreatorReview, BillingCycle } from "@/types";
 import { openCookiePreferences } from "@/lib/cookieConsent";
 
@@ -228,11 +231,25 @@ export default function LandingHomePage() {
 
   useEffect(() => {
     if (AuthService.isLoggedIn()) {
-      router.replace("/dashboard");
+      const step = OnboardingService.getStep();
+      const hasProf = ProfileService.hasProfile();
+      if (step === "finish" || hasProf) {
+        router.replace("/dashboard");
+      } else {
+        const stepRoutes: Record<string, string> = {
+          profile: "/onboarding/profile",
+          socials: "/onboarding/socials",
+          theme: "/onboarding/themes",
+          series: "/onboarding/subscription",
+          subscription: "/onboarding/subscription",
+        };
+        router.replace(stepRoutes[step] || "/onboarding/profile");
+      }
     } else {
       setCheckingAuth(false);
     }
   }, [router]);
+
 
   // Track scroll position to show/hide scroll to top button
   useEffect(() => {
@@ -279,50 +296,50 @@ export default function LandingHomePage() {
 
   if (checkingAuth && isLoggedIn) {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-[#fbfbfb]">
+      <div className="flex min-h-dvh items-center justify-center bg-[#f8fafc]">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#600a0f] border-t-transparent" />
-          <p className="text-xs font-medium text-[#6B5A5D]">Redirecting to dashboard...</p>
+          <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#3a2447] border-t-transparent" />
+          <p className="text-xs font-medium text-[#64748b]">Redirecting to dashboard...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="relative min-h-dvh bg-[#fbfbfb] text-[#241618] flex flex-col font-sans selection:bg-[#600b0f0f] selection:text-[#600a0f] overflow-x-hidden antialiased">
+    <div className="relative min-h-dvh bg-[#f8fafc] text-[#3a2447] flex flex-col font-sans selection:bg-[#3a244714] selection:text-[#3a2447] overflow-x-hidden antialiased">
       {/* =========================================================================
           NAVIGATION BAR
          ========================================================================= */}
-      <header className="sticky top-0 z-50 bg-[#FFFFFF] border-b border-[#E4DAD5] transition-all">
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#e2e8f0] transition-all">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5 sm:px-6">
           <div className="flex items-center gap-8">
             <Logo size="md" />
-            <nav className="hidden md:flex items-center gap-6 text-xs font-semibold text-[#6B5A5D]">
+            <nav className="hidden md:flex items-center gap-6 text-xs font-semibold text-[#475569]">
               <button
                 type="button"
                 onClick={() => scrollToSection("total-fanbase")}
-                className="hover:text-[#600a0f] transition-colors cursor-pointer py-1"
+                className="hover:text-[#3a2447] transition-colors cursor-pointer py-1"
               >
                 Total Fanbase
               </button>
               <button
                 type="button"
                 onClick={() => scrollToSection("series")}
-                className="hover:text-[#600a0f] transition-colors cursor-pointer py-1"
+                className="hover:text-[#3a2447] transition-colors cursor-pointer py-1"
               >
                 Series Playlists
               </button>
               <button
                 type="button"
                 onClick={() => scrollToSection("collaborations")}
-                className="hover:text-[#600a0f] transition-colors cursor-pointer py-1"
+                className="hover:text-[#3a2447] transition-colors cursor-pointer py-1"
               >
                 Brand Collabs
               </button>
               <button
                 type="button"
                 onClick={() => scrollToSection("pricing")}
-                className="hover:text-[#600a0f] transition-colors cursor-pointer py-1"
+                className="hover:text-[#3a2447] transition-colors cursor-pointer py-1"
               >
                 Pricing
               </button>
@@ -332,14 +349,14 @@ export default function LandingHomePage() {
           <div className="flex items-center gap-3">
             <Link
               href="/login"
-              className="text-xs sm:text-sm font-semibold text-[#6B5A5D] hover:text-[#241618] px-3 py-1.5 transition-colors"
+              className="text-xs sm:text-sm font-semibold text-[#475569] hover:text-[#3a2447] px-3 py-1.5 transition-colors"
             >
               Log In
             </Link>
             <button
               type="button"
               onClick={() => handleClaim(username || "yourname")}
-              className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#600a0f] px-4 py-2 text-xs sm:text-sm font-semibold text-[#fbfbfb] hover:bg-[#600a0f] transition-colors cursor-pointer active:scale-98"
+              className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#3a2447] px-4 py-2 text-xs sm:text-sm font-semibold text-white hover:bg-[#1e293b] transition-colors cursor-pointer active:scale-98 shadow-sm"
             >
               <span>Claim Your Handle</span>
               <ArrowRight className="h-3.5 w-3.5" />
@@ -351,27 +368,27 @@ export default function LandingHomePage() {
       {/* =========================================================================
           SECTION 1: HERO
          ========================================================================= */}
-      <section className="relative z-10 pt-12 pb-16 sm:pt-16 sm:pb-24 border-b border-[#E4DAD5] bg-[#fbfbfb]">
+      <section className="relative z-10 pt-10 pb-12 sm:pt-14 sm:pb-16 border-b border-[#e2e8f0] bg-white">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="text-center space-y-6 max-w-3xl mx-auto">
             {/* Tag / Badge */}
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#600b0f0f] px-3.5 py-1 text-xs font-semibold text-[#600a0f]">
-              <Sparkles className="h-3.5 w-3.5 text-[#600a0f]" />
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#f1f5f9] border border-[#e2e8f0] px-3.5 py-1 text-xs font-semibold text-[#3a2447]">
+              <Sparkles className="h-3.5 w-3.5 text-[#3a2447]" />
               <span>The Link-in-Bio for Series Creators</span>
             </div>
 
             {/* Main Headline */}
-            <h1 className="font-display text-3xl sm:text-5xl md:text-5xl lg:text-[54px] font-bold leading-[1.12] tracking-tight text-[#241618]">
+            <h1 className="font-display text-3xl sm:text-5xl md:text-5xl lg:text-[54px] font-bold leading-[1.12] tracking-tight text-[#3a2447]">
               One profile for everything you&apos;ve built as a creator.
             </h1>
 
             {/* Supporting Copy */}
-            <p className="text-base sm:text-lg font-normal text-[#6B5A5D] max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg font-normal text-[#475569] max-w-2xl mx-auto leading-relaxed">
               Your audience, content, series, collaborations and credibility — together in one link.
             </p>
 
             {/* Trimmed Reassurance Line */}
-            <p className="text-xs sm:text-sm font-medium text-[#6B5A5D]">
+            <p className="text-xs sm:text-sm font-medium text-[#64748b]">
               100% native credit — views &amp; revenue stay on your platform.
             </p>
 
@@ -382,9 +399,9 @@ export default function LandingHomePage() {
                   e.preventDefault();
                   handleClaim(username);
                 }}
-                className="flex items-center rounded-[8px] border border-[#E4DAD5] bg-[#FFFFFF] p-1.5 focus-within:border-[#600a0f] transition-colors"
+                className="flex items-center rounded-[8px] border border-[#cbd5e1] bg-white p-1.5 focus-within:border-[#3a2447] focus-within:ring-2 focus-within:ring-[#3a2447]/10 transition-all shadow-sm"
               >
-                <span className="pl-3 text-xs sm:text-sm font-medium text-[#6B5A5D] select-none shrink-0">
+                <span className="pl-3 text-xs sm:text-sm font-medium text-[#64748b] select-none shrink-0">
                   inflixo.com/
                 </span>
                 <input
@@ -392,11 +409,11 @@ export default function LandingHomePage() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="yourname"
-                  className="w-full bg-transparent px-2 py-1.5 text-xs sm:text-sm font-medium text-[#241618] outline-none placeholder:text-[#6B5A5D]/60 min-w-0"
+                  className="w-full bg-transparent px-2 py-1.5 text-xs sm:text-sm font-medium text-[#3a2447] outline-none placeholder:text-[#94a3b8] min-w-0"
                 />
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-1 shrink-0 rounded-[8px] bg-[#600a0f] px-4 py-2 text-xs sm:text-sm font-semibold text-[#fbfbfb] hover:bg-[#600a0f] transition-colors cursor-pointer active:scale-98"
+                  className="inline-flex items-center gap-1 shrink-0 rounded-[8px] bg-[#3a2447] px-4 py-2 text-xs sm:text-sm font-semibold text-white hover:bg-[#1e293b] transition-colors cursor-pointer active:scale-98"
                 >
                   <span>Claim</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -408,16 +425,16 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username)}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-[8px] bg-[#600a0f] hover:bg-[#600a0f] px-6 py-2.5 text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer active:scale-98"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-[8px] bg-[#3a2447] hover:bg-[#1e293b] px-6 py-2.5 text-sm font-semibold text-white transition-colors cursor-pointer active:scale-98 shadow-sm"
                 >
                   <span>Claim Your Handle</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => scrollToSection("hero-preview")}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-[8px] bg-transparent hover:bg-[#fbfbfb] border border-[#600a0f] px-6 py-2.5 text-sm font-semibold text-[#600a0f] transition-colors cursor-pointer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-[8px] bg-white hover:bg-[#f8fafc] border border-[#e2e8f0] px-6 py-2.5 text-sm font-semibold text-[#3a2447] transition-colors cursor-pointer"
                 >
-                  <Eye className="h-4 w-4 text-[#600a0f]" />
+                  <Eye className="h-4 w-4 text-[#3a2447]" />
                   <span>See Creator Live Hub</span>
                 </button>
               </div>
@@ -431,77 +448,77 @@ export default function LandingHomePage() {
           >
             {/* Floating Badge: Total Fanbase */}
             <div className="hidden sm:block absolute top-4 -left-6 lg:-left-12 z-20">
-              <div className="flex items-center gap-2.5 rounded-[12px] bg-[#FFFFFF] border border-[#E4DAD5] px-3.5 py-2 text-xs font-semibold text-[#241618]">
-                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#fbfbfb] text-[#600a0f] shrink-0">
+              <div className="flex items-center gap-2.5 rounded-[12px] bg-white border border-[#e2e8f0] px-3.5 py-2 text-xs font-semibold text-[#3a2447] shadow-sm">
+                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#f1f5f9] text-[#3a2447] shrink-0">
                   <Users className="h-4 w-4" />
                 </span>
                 <div className="text-left">
-                  <p className="text-[11px] text-[#6B5A5D] leading-none">Total Fanbase</p>
-                  <p className="text-xs font-bold text-[#241618] leading-tight pt-0.5">20.5M Combined</p>
+                  <p className="text-[11px] text-[#64748b] leading-none">Total Fanbase</p>
+                  <p className="text-xs font-bold text-[#3a2447] leading-tight pt-0.5">20.5M Combined</p>
                 </div>
               </div>
             </div>
 
             {/* Floating Badge: OTT Series */}
             <div className="hidden sm:block absolute top-6 -right-6 lg:-right-12 z-20">
-              <div className="flex items-center gap-2.5 rounded-[12px] bg-[#FFFFFF] border border-[#E4DAD5] px-3.5 py-2 text-xs font-semibold text-[#241618]">
-                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#fbfbfb] text-[#600a0f] shrink-0">
+              <div className="flex items-center gap-2.5 rounded-[12px] bg-white border border-[#e2e8f0] px-3.5 py-2 text-xs font-semibold text-[#3a2447] shadow-sm">
+                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#f1f5f9] text-[#3a2447] shrink-0">
                   <Tv className="h-4 w-4" />
                 </span>
                 <div className="text-left">
-                  <p className="text-[11px] text-[#6B5A5D] leading-none">OTT Series</p>
-                  <p className="text-xs font-bold text-[#241618] leading-tight pt-0.5">Part 01 • 02 • 03</p>
+                  <p className="text-[11px] text-[#64748b] leading-none">OTT Series</p>
+                  <p className="text-xs font-bold text-[#3a2447] leading-tight pt-0.5">Part 01 • 02 • 03</p>
                 </div>
               </div>
             </div>
 
-            {/* Floating Badge: Multi-Platform Sync with Live dot in primary maroon */}
+            {/* Floating Badge: Multi-Platform Sync with Live dot */}
             <div className="hidden md:flex absolute bottom-12 -left-8 lg:-left-14 z-20">
-              <div className="flex items-center gap-3 rounded-[12px] bg-[#FFFFFF] border border-[#E4DAD5] px-3.5 py-2 text-xs font-semibold text-[#241618]">
+              <div className="flex items-center gap-3 rounded-[12px] bg-white border border-[#e2e8f0] px-3.5 py-2 text-xs font-semibold text-[#3a2447] shadow-sm">
                 <div className="flex items-center -space-x-1.5 shrink-0">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#fbfbfb] text-[#600a0f] border border-[#E4DAD5]">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#f8fafc] text-[#e1306c] border border-[#e2e8f0]">
                     <InstagramIcon className="h-3 w-3" />
                   </span>
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#fbfbfb] text-[#600a0f] border border-[#E4DAD5]">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#f8fafc] text-[#ff0000] border border-[#e2e8f0]">
                     <YoutubeIcon className="h-3 w-3" />
                   </span>
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#fbfbfb] text-[#600a0f] border border-[#E4DAD5]">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#f8fafc] text-[#3a2447] border border-[#e2e8f0]">
                     <TikTokIcon className="h-3 w-3" />
                   </span>
                 </div>
                 <div className="text-left">
                   <div className="flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-[#600a0f] animate-pulse" />
-                    <p className="text-[11px] font-bold text-[#600a0f]">LIVE SYNC</p>
+                    <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
+                    <p className="text-[11px] font-bold text-[#10b981]">LIVE SYNC</p>
                   </div>
-                  <p className="text-xs font-bold text-[#241618] leading-tight pt-0.5">3 Platforms</p>
+                  <p className="text-xs font-bold text-[#3a2447] leading-tight pt-0.5">3 Platforms</p>
                 </div>
               </div>
             </div>
 
             {/* Floating Badge: Collab Gigs */}
             <div className="hidden sm:block absolute bottom-12 -right-8 lg:-right-14 z-20">
-              <div className="flex items-center gap-2.5 rounded-[12px] bg-[#FFFFFF] border border-[#E4DAD5] px-3.5 py-2 text-xs font-semibold text-[#241618]">
-                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#600b0f0f] text-[#600a0f] shrink-0">
+              <div className="flex items-center gap-2.5 rounded-[12px] bg-white border border-[#e2e8f0] px-3.5 py-2 text-xs font-semibold text-[#3a2447] shadow-sm">
+                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#f1f5f9] text-[#3a2447] shrink-0">
                   <Briefcase className="h-4 w-4" />
                 </span>
                 <div className="text-left">
-                  <p className="text-[11px] text-[#6B5A5D] leading-none">Collab Gigs</p>
-                  <p className="text-xs font-bold text-[#241618] leading-tight pt-0.5">Direct Rate Card</p>
+                  <p className="text-[11px] text-[#64748b] leading-none">Collab Gigs</p>
+                  <p className="text-xs font-bold text-[#3a2447] leading-tight pt-0.5">Direct Rate Card</p>
                 </div>
               </div>
             </div>
 
             {/* Center Profile Preview Container */}
-            <div className="w-full max-w-[560px] rounded-[12px] border border-[#E4DAD5] bg-[#FFFFFF] p-4 relative z-10 space-y-3">
-              <div className="flex items-center justify-between bg-[#fbfbfb] px-3.5 py-2 rounded-[8px] border border-[#E4DAD5]">
+            <div className="w-full max-w-[560px] rounded-[16px] border border-[#e2e8f0] bg-white p-4 relative z-10 space-y-3 shadow-md">
+              <div className="flex items-center justify-between bg-[#f8fafc] px-3.5 py-2 rounded-[8px] border border-[#e2e8f0]">
                 <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-[#E4DAD5]" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-[#E4DAD5]" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-[#E4DAD5]" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#cbd5e1]" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#cbd5e1]" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#cbd5e1]" />
                 </div>
-                <div className="flex items-center gap-1 rounded-[8px] bg-[#FFFFFF] px-3 py-0.5 text-xs font-medium text-[#241618] border border-[#E4DAD5]">
-                  <span className="text-[#6B5A5D]">inflixo.com/</span>
+                <div className="flex items-center gap-1 rounded-[8px] bg-white px-3 py-0.5 text-xs font-medium text-[#3a2447] border border-[#e2e8f0]">
+                  <span className="text-[#64748b]">inflixo.com/</span>
                   <span className="font-bold">{username ? username.toLowerCase().replace(/[^a-z0-9_]/g, "") : "tonystark"}</span>
                 </div>
                 <div className="w-6" />
@@ -540,7 +557,7 @@ export default function LandingHomePage() {
               <button
                 type="button"
                 onClick={() => handleClaim(username || "yourname")}
-                className="w-full py-2.5 px-4 rounded-[8px] bg-[#600a0f] hover:bg-[#600a0f] text-[#fbfbfb] font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                className="w-full py-2.5 px-4 rounded-[8px] bg-[#3a2447] hover:bg-[#1e293b] text-white font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer active:scale-98 shadow-sm"
               >
                 <span>Claim Your Handle</span>
                 <ArrowRight className="h-4 w-4" />
@@ -553,56 +570,56 @@ export default function LandingHomePage() {
       {/* =========================================================================
           SECTION 2: THE CORE INSIGHT & PROBLEM CARDS (MERGED)
          ========================================================================= */}
-      <section className="py-16 sm:py-24 bg-[#FFFFFF] border-b border-[#E4DAD5]">
+      <section className="py-12 sm:py-16 bg-white border-b border-[#e2e8f0]">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 space-y-12">
           {/* Trimmed Insight Statement (2 lines only) */}
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-[#241618]">
+            <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-[#3a2447]">
               Link trees show links. Inflixo shows your story.
             </h2>
-            <p className="text-sm sm:text-base text-[#6B5A5D]">
+            <p className="text-sm sm:text-base text-[#475569]">
               You built the audience. Why should your value be scattered across the internet?
             </p>
           </div>
 
-          {/* 4 Trimmed Problem Cards (6-8 words descriptions) */}
+          {/* 4 Problem Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] space-y-3 transition-colors hover:border-[#600a0f]">
-              <div className="h-10 w-10 rounded-[8px] bg-[#600b0f0f] text-[#600a0f] flex items-center justify-center">
+            <div className="p-5 rounded-[12px] border border-[#fecaca] bg-[#fff7f7] space-y-3 transition-colors">
+              <div className="h-10 w-10 rounded-[8px] bg-red-100/60 text-[#ef4444] flex items-center justify-center">
                 <Users className="h-5 w-5" />
               </div>
-              <h3 className="font-display font-semibold text-base text-[#241618]">Audience Fragmented</h3>
-              <p className="text-xs text-[#6B5A5D] leading-relaxed">
+              <h3 className="font-display font-semibold text-base text-[#3a2447]">Audience Fragmented</h3>
+              <p className="text-xs text-[#475569] leading-relaxed">
                 Followers spread across separate platform silos.
               </p>
             </div>
 
-            <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] space-y-3 transition-colors hover:border-[#600a0f]">
-              <div className="h-10 w-10 rounded-[8px] bg-[#600b0f0f] text-[#600a0f] flex items-center justify-center">
+            <div className="p-5 rounded-[12px] border border-[#fecaca] bg-[#fff7f7] space-y-3 transition-colors">
+              <div className="h-10 w-10 rounded-[8px] bg-red-100/60 text-[#ef4444] flex items-center justify-center">
                 <Tv className="h-5 w-5" />
               </div>
-              <h3 className="font-display font-semibold text-base text-[#241618]">Multi-Part Videos Lost</h3>
-              <p className="text-xs text-[#6B5A5D] leading-relaxed">
+              <h3 className="font-display font-semibold text-base text-[#3a2447]">Multi-Part Videos Lost</h3>
+              <p className="text-xs text-[#475569] leading-relaxed">
                 Episodic series get buried in rapid feeds.
               </p>
             </div>
 
-            <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] space-y-3 transition-colors hover:border-[#600a0f]">
-              <div className="h-10 w-10 rounded-[8px] bg-[#600b0f0f] text-[#600a0f] flex items-center justify-center">
+            <div className="p-5 rounded-[12px] border border-[#fecaca] bg-[#fff7f7] space-y-3 transition-colors">
+              <div className="h-10 w-10 rounded-[8px] bg-red-100/60 text-[#ef4444] flex items-center justify-center">
                 <Briefcase className="h-5 w-5" />
               </div>
-              <h3 className="font-display font-semibold text-base text-[#241618]">Rate Cards in DMs</h3>
-              <p className="text-xs text-[#6B5A5D] leading-relaxed">
+              <h3 className="font-display font-semibold text-base text-[#3a2447]">Rate Cards in DMs</h3>
+              <p className="text-xs text-[#475569] leading-relaxed">
                 Rates live in unformatted chat threads.
               </p>
             </div>
 
-            <div className="p-5 rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] space-y-3 transition-colors hover:border-[#600a0f]">
-              <div className="h-10 w-10 rounded-[8px] bg-[#600b0f0f] text-[#600a0f] flex items-center justify-center">
+            <div className="p-5 rounded-[12px] border border-[#fecaca] bg-[#fff7f7] space-y-3 transition-colors">
+              <div className="h-10 w-10 rounded-[8px] bg-red-100/60 text-[#ef4444] flex items-center justify-center">
                 <Star className="h-5 w-5" />
               </div>
-              <h3 className="font-display font-semibold text-base text-[#241618]">Brand Proof Hidden</h3>
-              <p className="text-xs text-[#6B5A5D] leading-relaxed">
+              <h3 className="font-display font-semibold text-base text-[#3a2447]">Brand Proof Hidden</h3>
+              <p className="text-xs text-[#475569] leading-relaxed">
                 Sponsor praise stays locked in private messages.
               </p>
             </div>
@@ -613,31 +630,31 @@ export default function LandingHomePage() {
       {/* =========================================================================
           SECTION 3: UNIFIED REACH & EPISODIC PLAYLISTS (SIDE-BY-SIDE)
          ========================================================================= */}
-      <section id="total-fanbase" className="py-16 sm:py-24 bg-[#fbfbfb] border-b border-[#E4DAD5]">
+      <section id="total-fanbase" className="py-12 sm:py-16 bg-[#f8fafc] border-b border-[#e2e8f0]">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 space-y-16">
           {/* Part A: Unified Reach */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-6 space-y-4 text-left">
-              <span className="inline-block rounded-full bg-[#600b0f0f] text-[#600a0f] px-3 py-0.5 text-xs font-semibold">
+              <span className="inline-block rounded-full bg-[#f1f5f9] border border-[#e2e8f0] text-[#3a2447] px-3 py-0.5 text-xs font-semibold">
                 Unified Reach
               </span>
-              <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#241618] tracking-tight leading-tight">
+              <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#3a2447] tracking-tight leading-tight">
                 Your reach, unified — one number brands trust.
               </h2>
-              <p className="text-sm text-[#6B5A5D] leading-relaxed">
+              <p className="text-sm text-[#475569] leading-relaxed">
                 Bring your audience from YouTube, Instagram, and TikTok under one roof. Inflixo aggregates your verified cross-platform reach into a single live stat.
               </p>
-              <ul className="space-y-2 text-xs sm:text-sm text-[#6B5A5D] pt-1">
+              <ul className="space-y-2 text-xs sm:text-sm text-[#475569] pt-1">
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                  <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                   <span>One live-verified reach counter for brand proposals</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                  <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                   <span>Instant breakdown by platform with live counts</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                  <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                   <span>Command higher sponsorship rates with total audience data</span>
                 </li>
               </ul>
@@ -645,7 +662,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#600a0f] hover:bg-[#600a0f] px-5 py-2.5 text-xs sm:text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer active:scale-98"
+                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#3a2447] hover:bg-[#1e293b] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white transition-colors cursor-pointer active:scale-98 shadow-sm"
                 >
                   <span>Calculate My Total Reach</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -654,56 +671,56 @@ export default function LandingHomePage() {
             </div>
 
             <div className="lg:col-span-6 flex justify-center">
-              <div className="w-full max-w-md rounded-[12px] border border-[#E4DAD5] bg-[#FFFFFF] p-6 space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-[#E4DAD5]">
+              <div className="w-full max-w-md rounded-[12px] border border-[#e2e8f0] bg-white p-6 space-y-4 shadow-sm">
+                <div className="flex items-center justify-between pb-3 border-b border-[#e2e8f0]">
                   <div className="flex items-center gap-2.5">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={DEMO_PROFILE.photoDataUrl || ""}
                       alt={DEMO_PROFILE.displayName}
-                      className="h-10 w-10 rounded-full object-cover border border-[#E4DAD5]"
+                      className="h-10 w-10 rounded-full object-cover border border-[#e2e8f0]"
                     />
                     <div>
-                      <h4 className="font-bold text-sm text-[#241618]">{DEMO_PROFILE.displayName}</h4>
-                      <p className="text-xs text-[#6B5A5D]">@{DEMO_PROFILE.username}</p>
+                      <h4 className="font-bold text-sm text-[#3a2447]">{DEMO_PROFILE.displayName}</h4>
+                      <p className="text-xs text-[#64748b]">@{DEMO_PROFILE.username}</p>
                     </div>
                   </div>
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#600a0f] bg-[#600b0f0f] px-2.5 py-0.5 rounded-full">
-                    <span className="h-2 w-2 rounded-full bg-[#600a0f] animate-pulse" />
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#059669] bg-[#ecfdf5] border border-[#a7f3d0] px-2.5 py-0.5 rounded-full">
+                    <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
                     Live Sync
                   </span>
                 </div>
 
-                <div className="rounded-[8px] p-5 text-center bg-[#fbfbfb] border border-[#E4DAD5] space-y-1">
-                  <p className="text-3xl sm:text-4xl font-bold tracking-tight text-[#241618]">
+                <div className="rounded-[8px] p-5 text-center bg-[#f8fafc] border border-[#e2e8f0] space-y-1">
+                  <p className="text-3xl sm:text-4xl font-bold tracking-tight text-[#3a2447]">
                     <AnimatedCounter end={20500000} />
                   </p>
-                  <p className="text-[11px] font-bold tracking-wider uppercase text-[#600a0f]">
+                  <p className="text-[11px] font-bold tracking-wider uppercase text-[#64748b]">
                     TOTAL UNIFIED REACH
                   </p>
                 </div>
 
                 <div className="space-y-2 pt-1 text-xs">
-                  <div className="flex items-center justify-between p-2.5 rounded-[8px] bg-[#fbfbfb] border border-[#E4DAD5]">
-                    <div className="flex items-center gap-2 font-medium text-[#241618]">
-                      <InstagramIcon className="h-4 w-4 text-[#600a0f]" />
+                  <div className="flex items-center justify-between p-2.5 rounded-[8px] bg-[#f8fafc] border border-[#e2e8f0]">
+                    <div className="flex items-center gap-2 font-medium text-[#3a2447]">
+                      <InstagramIcon className="h-4 w-4 text-[#e1306c]" />
                       <span>Instagram</span>
                     </div>
-                    <span className="font-bold text-[#241618]">4.8M Followers</span>
+                    <span className="font-bold text-[#3a2447]">4.8M Followers</span>
                   </div>
-                  <div className="flex items-center justify-between p-2.5 rounded-[8px] bg-[#fbfbfb] border border-[#E4DAD5]">
-                    <div className="flex items-center gap-2 font-medium text-[#241618]">
-                      <YoutubeIcon className="h-4 w-4 text-[#600a0f]" />
+                  <div className="flex items-center justify-between p-2.5 rounded-[8px] bg-[#f8fafc] border border-[#e2e8f0]">
+                    <div className="flex items-center gap-2 font-medium text-[#3a2447]">
+                      <YoutubeIcon className="h-4 w-4 text-[#ff0000]" />
                       <span>YouTube</span>
                     </div>
-                    <span className="font-bold text-[#241618]">12.5M Subscribers</span>
+                    <span className="font-bold text-[#3a2447]">12.5M Subscribers</span>
                   </div>
-                  <div className="flex items-center justify-between p-2.5 rounded-[8px] bg-[#fbfbfb] border border-[#E4DAD5]">
-                    <div className="flex items-center gap-2 font-medium text-[#241618]">
-                      <TikTokIcon className="h-4 w-4 text-[#600a0f]" />
+                  <div className="flex items-center justify-between p-2.5 rounded-[8px] bg-[#f8fafc] border border-[#e2e8f0]">
+                    <div className="flex items-center gap-2 font-medium text-[#3a2447]">
+                      <TikTokIcon className="h-4 w-4 text-[#3a2447]" />
                       <span>TikTok</span>
                     </div>
-                    <span className="font-bold text-[#241618]">3.2M Followers</span>
+                    <span className="font-bold text-[#3a2447]">3.2M Followers</span>
                   </div>
                 </div>
               </div>
@@ -711,19 +728,19 @@ export default function LandingHomePage() {
           </div>
 
           {/* Part B: Episodic Playlists */}
-          <div id="series" className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center pt-8 border-t border-[#E4DAD5]">
+          <div id="series" className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center pt-8 border-t border-[#e2e8f0]">
             <div className="lg:col-span-6 flex justify-center order-2 lg:order-1">
-              <div className="w-full max-w-md rounded-[12px] border border-[#E4DAD5] bg-[#FFFFFF] p-5 space-y-3 text-left">
-                <div className="flex items-center justify-between pb-2 border-b border-[#E4DAD5]">
+              <div className="w-full max-w-md rounded-[12px] border border-[#e2e8f0] bg-white p-5 space-y-3 text-left shadow-sm">
+                <div className="flex items-center justify-between pb-2 border-b border-[#e2e8f0]">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#600a0f] bg-[#600b0f0f] px-2 py-0.5 rounded-[4px]">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#3a2447] bg-[#f1f5f9] border border-[#e2e8f0] px-2 py-0.5 rounded-[4px]">
                       OTT Playlist
                     </span>
-                    <h4 className="text-sm font-bold text-[#241618] pt-1">
+                    <h4 className="text-sm font-bold text-[#3a2447] pt-1">
                       Iron Tech Series
                     </h4>
                   </div>
-                  <span className="text-xs text-[#6B5A5D]">4 Episodes</span>
+                  <span className="text-xs text-[#64748b]">4 Episodes</span>
                 </div>
 
                 <div className="space-y-2">
@@ -736,25 +753,25 @@ export default function LandingHomePage() {
                     <div
                       key={ep.num}
                       className={`flex items-center gap-3 rounded-[8px] p-2.5 text-xs border ${ep.active
-                        ? "bg-[#fbfbfb] border-[#600a0f]"
-                        : "bg-[#FFFFFF] border-[#E4DAD5] text-[#241618]"
+                        ? "bg-[#f8fafc] border-[#3a2447]"
+                        : "bg-white border-[#e2e8f0] text-[#3a2447]"
                         }`}
                     >
-                      <div className="flex h-7 w-7 items-center justify-center rounded-[6px] bg-[#600b0f0f] text-[#600a0f] shrink-0 font-bold">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-[6px] bg-[#f1f5f9] text-[#3a2447] shrink-0 font-bold">
                         <Play className="h-3 w-3 fill-current ml-0.5" />
                       </div>
                       <div className="min-w-0 flex-1 space-y-1">
                         <div className="flex items-center justify-between">
-                          <span className="font-semibold text-[#241618] truncate">{ep.title}</span>
+                          <span className="font-semibold text-[#3a2447] truncate">{ep.title}</span>
                           {ep.active && (
-                            <span className="text-[10px] font-bold text-[#600a0f]">
+                            <span className="text-[10px] font-bold text-[#3a2447]">
                               Next Up
                             </span>
                           )}
                         </div>
-                        <div className="h-1 w-full rounded-full bg-[#E4DAD5] overflow-hidden">
+                        <div className="h-1 w-full rounded-full bg-[#e2e8f0] overflow-hidden">
                           <div
-                            className="h-full bg-[#600a0f] rounded-full transition-all duration-1000"
+                            className="h-full bg-[#3a2447] rounded-full transition-all duration-1000"
                             style={{ width: ep.progress }}
                           />
                         </div>
@@ -766,23 +783,23 @@ export default function LandingHomePage() {
             </div>
 
             <div className="lg:col-span-6 space-y-4 text-left order-1 lg:order-2">
-              <span className="inline-block rounded-full bg-[#600b0f0f] text-[#600a0f] px-3 py-0.5 text-xs font-semibold">
+              <span className="inline-block rounded-full bg-[#f1f5f9] border border-[#e2e8f0] text-[#3a2447] px-3 py-0.5 text-xs font-semibold">
                 Episodic Playlists
               </span>
-              <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#241618] tracking-tight leading-tight">
+              <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#3a2447] tracking-tight leading-tight">
                 Stop losing viewers between Part 1 and Part 4.
               </h2>
-              <ul className="space-y-2 text-xs sm:text-sm text-[#6B5A5D]">
+              <ul className="space-y-2 text-xs sm:text-sm text-[#475569]">
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                  <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                   <span>Keep multi-part videos in sequential order</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                  <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                   <span>Enable season-style bingeing for evergreen content</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                  <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                   <span>Native YouTube &amp; Instagram views and ad revenue preserved</span>
                 </li>
               </ul>
@@ -790,7 +807,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#600a0f] hover:bg-[#600a0f] px-5 py-2.5 text-xs sm:text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer active:scale-98"
+                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#3a2447] hover:bg-[#1e293b] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white transition-colors cursor-pointer active:scale-98 shadow-sm"
                 >
                   <span>Build My Series Hub</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -804,31 +821,31 @@ export default function LandingHomePage() {
       {/* =========================================================================
           SECTION 4: DYNAMIC MEDIA KIT & BRAND CREDIBILITY
          ========================================================================= */}
-      <section id="collaborations" className="py-16 sm:py-24 bg-[#FFFFFF] border-b border-[#E4DAD5]">
+      <section id="collaborations" className="py-12 sm:py-16 bg-white border-b border-[#e2e8f0]">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 space-y-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Left Copy */}
             <div className="lg:col-span-6 space-y-4 text-left">
-              <span className="inline-block rounded-full bg-[#600b0f0f] text-[#600a0f] px-3 py-0.5 text-xs font-semibold">
+              <span className="inline-block rounded-full bg-[#f1f5f9] border border-[#e2e8f0] text-[#3a2447] px-3 py-0.5 text-xs font-semibold">
                 Media Kit &amp; Credibility
               </span>
-              <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#241618] tracking-tight leading-tight">
+              <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#3a2447] tracking-tight leading-tight">
                 No more stale PDF decks.
               </h2>
-              <p className="text-sm text-[#6B5A5D] leading-relaxed">
+              <p className="text-sm text-[#475569] leading-relaxed">
                 Don&apos;t let your credibility disappear when the campaign ends. Share custom rate cards, dynamic audience insights, and verified sponsor reviews right from your bio.
               </p>
-              <ul className="space-y-2 text-xs sm:text-sm text-[#6B5A5D]">
+              <ul className="space-y-2 text-xs sm:text-sm text-[#475569]">
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                  <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                   <span>Instant 1-click WhatsApp &amp; email brief routing</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                  <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                   <span>Transparent fixed rates and deliverables</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                  <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                   <span>Verified ratings and sponsor ROI case studies</span>
                 </li>
               </ul>
@@ -836,7 +853,7 @@ export default function LandingHomePage() {
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#600a0f] hover:bg-[#600a0f] px-5 py-2.5 text-xs sm:text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer active:scale-98"
+                  className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#3a2447] hover:bg-[#1e293b] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white transition-colors cursor-pointer active:scale-98 shadow-sm"
                 >
                   <span>Build My Live Rate Card</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -846,59 +863,59 @@ export default function LandingHomePage() {
 
             {/* Right Visuals: Rate Card + Review */}
             <div className="lg:col-span-6 space-y-4">
-              <div className="rounded-[12px] border border-[#E4DAD5] bg-[#fbfbfb] p-5 space-y-3 text-left">
-                <div className="flex items-center justify-between pb-2 border-b border-[#E4DAD5]">
+              <div className="rounded-[12px] border border-[#e2e8f0] bg-[#f8fafc] p-5 space-y-3 text-left shadow-sm">
+                <div className="flex items-center justify-between pb-2 border-b border-[#e2e8f0]">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-[4px] uppercase bg-[#600b0f0f] text-[#600a0f]">
+                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-[4px] uppercase bg-[#f1f5f9] border border-[#e2e8f0] text-[#3a2447]">
                       Instagram Reel
                     </span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-[4px] bg-[#FFFFFF] border border-[#E4DAD5] text-[#241618]">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-[4px] bg-white border border-[#e2e8f0] text-[#3a2447]">
                       ⭐ Most Popular
                     </span>
                   </div>
-                  <span className="font-display text-base font-bold text-[#241618]">
+                  <span className="font-display text-base font-bold text-[#3a2447]">
                     ₹25,000
                   </span>
                 </div>
 
                 <div>
-                  <h5 className="font-bold text-sm text-[#241618]">
+                  <h5 className="font-bold text-sm text-[#3a2447]">
                     1x Dedicated 4K Reel + Story Series
                   </h5>
-                  <p className="text-xs text-[#6B5A5D] mt-0.5 flex items-center gap-1">
-                    <Clock className="h-3 w-3 text-[#600a0f]" /> Turnaround: 3 Days
+                  <p className="text-xs text-[#64748b] mt-0.5 flex items-center gap-1">
+                    <Clock className="h-3 w-3 text-[#3a2447]" /> Turnaround: 3 Days
                   </p>
                 </div>
 
-                <div className="pt-2 border-t border-[#E4DAD5] grid grid-cols-2 gap-2">
-                  <div className="bg-[#600a0f] text-[#fbfbfb] text-xs font-semibold py-2 px-3 rounded-[8px] inline-flex items-center justify-center gap-1.5 hover:bg-[#600a0f] transition-colors cursor-pointer">
+                <div className="pt-2 border-t border-[#e2e8f0] grid grid-cols-2 gap-2">
+                  <div className="bg-[#3a2447] text-white text-xs font-semibold py-2 px-3 rounded-[8px] inline-flex items-center justify-center gap-1.5 hover:bg-[#1e293b] transition-colors cursor-pointer">
                     <MessageCircle className="h-3.5 w-3.5 fill-current" />
                     <span>WhatsApp Inquiry</span>
                   </div>
-                  <div className="bg-[#FFFFFF] border border-[#E4DAD5] text-[#241618] text-xs font-semibold py-2 px-3 rounded-[8px] inline-flex items-center justify-center gap-1.5 hover:bg-[#fbfbfb] transition-colors cursor-pointer">
-                    <Mail className="h-3.5 w-3.5 text-[#600a0f]" />
+                  <div className="bg-white border border-[#e2e8f0] text-[#3a2447] text-xs font-semibold py-2 px-3 rounded-[8px] inline-flex items-center justify-center gap-1.5 hover:bg-[#f8fafc] transition-colors cursor-pointer">
+                    <Mail className="h-3.5 w-3.5 text-[#3a2447]" />
                     <span>Email Brief</span>
                   </div>
                 </div>
               </div>
 
               {/* Review Card */}
-              <div className="rounded-[12px] border border-[#E4DAD5] bg-[#FFFFFF] p-4 space-y-2 text-left">
+              <div className="rounded-[12px] border border-[#e2e8f0] bg-white p-4 space-y-2 text-left shadow-sm">
                 <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-1 text-[#600a0f]">
+                  <div className="flex items-center gap-1 text-amber-500">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} className="h-3.5 w-3.5 fill-current" />
                     ))}
-                    <span className="font-bold text-[#241618] ml-1">5.0</span>
+                    <span className="font-bold text-[#3a2447] ml-1">5.0</span>
                   </div>
-                  <span className="text-[10px] font-semibold text-[#600a0f] bg-[#600b0f0f] px-2 py-0.5 rounded-[4px]">
+                  <span className="text-[10px] font-semibold text-[#059669] bg-[#ecfdf5] border border-[#a7f3d0] px-2 py-0.5 rounded-[4px]">
                     Verified Sponsor
                   </span>
                 </div>
-                <p className="text-xs italic text-[#241618] leading-relaxed">
+                <p className="text-xs italic text-[#3a2447] leading-relaxed">
                   &ldquo;Tony delivered our campaign in record time with 3.4x ROI on app installs. Incredible creator professionalism!&rdquo;
                 </p>
-                <p className="text-[11px] font-semibold text-[#6B5A5D]">
+                <p className="text-[11px] font-semibold text-[#64748b]">
                   Priya Sharma • Brand Marketing Lead, CultFit
                 </p>
               </div>
@@ -910,9 +927,9 @@ export default function LandingHomePage() {
       {/* =========================================================================
           SECTION 5: CREATOR QUOTE & COMPLETE PROFILE
          ========================================================================= */}
-      <section className="py-16 sm:py-24 bg-[#fbfbfb] border-b border-[#E4DAD5]">
+      <section className="py-12 sm:py-16 bg-[#f8fafc] border-b border-[#e2e8f0]">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 text-center space-y-6">
-          <blockquote className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-[#241618] leading-snug tracking-tight">
+          <blockquote className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-[#3a2447] leading-snug tracking-tight">
             &ldquo;Creators deserve an identity bigger than any single platform.&rdquo;
           </blockquote>
         </div>
@@ -921,28 +938,28 @@ export default function LandingHomePage() {
       {/* =========================================================================
           SECTION 6: PRICING & FINAL CONVERSION
          ========================================================================= */}
-      <section id="pricing" className="py-16 sm:py-24 bg-[#fbfbfb] border-b border-[#E4DAD5]">
+      <section id="pricing" className="py-12 sm:py-16 bg-white border-b border-[#e2e8f0]">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 space-y-10">
           <div className="text-center max-w-2xl mx-auto space-y-3">
-            <span className="inline-block rounded-full bg-[#600b0f0f] text-[#600a0f] px-3 py-0.5 text-xs font-semibold">
+            <span className="inline-block rounded-full bg-[#f1f5f9] border border-[#e2e8f0] text-[#3a2447] px-3 py-0.5 text-xs font-semibold">
               Plans &amp; Pricing
             </span>
-            <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-[#241618]">
+            <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-[#3a2447]">
               Upgrade when you&apos;re ready.
             </h2>
-            <p className="text-sm text-[#6B5A5D]">
+            <p className="text-sm text-[#475569]">
               Start building your Inflixo profile today.
             </p>
 
             {/* Billing Cycle + Currency Toggle */}
             <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-              <div className="inline-flex items-center rounded-[8px] bg-[#FFFFFF] p-1 border border-[#E4DAD5]">
+              <div className="inline-flex items-center rounded-[8px] bg-[#f8fafc] p-1 border border-[#e2e8f0]">
                 <button
                   type="button"
                   onClick={() => setPricingCycle("monthly")}
                   className={`rounded-[6px] px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${pricingCycle === "monthly"
-                    ? "bg-[#600a0f] text-[#fbfbfb]"
-                    : "text-[#6B5A5D] hover:text-[#241618]"
+                    ? "bg-[#3a2447] text-white shadow-sm"
+                    : "text-[#475569] hover:text-[#3a2447]"
                     }`}
                 >
                   Monthly
@@ -951,25 +968,25 @@ export default function LandingHomePage() {
                   type="button"
                   onClick={() => setPricingCycle("yearly")}
                   className={`rounded-[6px] px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1 ${pricingCycle === "yearly"
-                    ? "bg-[#600a0f] text-[#fbfbfb]"
-                    : "text-[#6B5A5D] hover:text-[#241618]"
+                    ? "bg-[#3a2447] text-white shadow-sm"
+                    : "text-[#475569] hover:text-[#3a2447]"
                     }`}
                 >
                   <span>Yearly</span>
-                  <span className={`text-[10px] px-1 rounded ${pricingCycle === "yearly" ? "bg-white/20 text-white" : "bg-[#600b0f0f] text-[#600a0f]"
+                  <span className={`text-[10px] px-1 rounded ${pricingCycle === "yearly" ? "bg-white/20 text-white" : "bg-[#f1f5f9] text-[#3a2447]"
                     }`}>
                     -16%
                   </span>
                 </button>
               </div>
 
-              <div className="inline-flex items-center rounded-[8px] bg-[#FFFFFF] p-1 border border-[#E4DAD5]">
+              <div className="inline-flex items-center rounded-[8px] bg-[#f8fafc] p-1 border border-[#e2e8f0]">
                 <button
                   type="button"
                   onClick={() => setCurrency("INR")}
                   className={`rounded-[6px] px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${currency === "INR"
-                    ? "bg-[#600a0f] text-[#fbfbfb]"
-                    : "text-[#6B5A5D] hover:text-[#241618]"
+                    ? "bg-[#3a2447] text-white shadow-sm"
+                    : "text-[#475569] hover:text-[#3a2447]"
                     }`}
                 >
                   ₹ INR
@@ -978,8 +995,8 @@ export default function LandingHomePage() {
                   type="button"
                   onClick={() => setCurrency("USD")}
                   className={`rounded-[6px] px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${currency === "USD"
-                    ? "bg-[#600a0f] text-[#fbfbfb]"
-                    : "text-[#6B5A5D] hover:text-[#241618]"
+                    ? "bg-[#3a2447] text-white shadow-sm"
+                    : "text-[#475569] hover:text-[#3a2447]"
                     }`}
                 >
                   $ USD
@@ -990,65 +1007,65 @@ export default function LandingHomePage() {
 
           {/* 3 Pricing Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-            {/* Plan 1: Starter */}
-            <div className="p-6 rounded-[12px] border border-[#E4DAD5] bg-[#FFFFFF] space-y-5 flex flex-col justify-between">
+            {/* Plan 1: Starter (Regular Card) */}
+            <div className="p-6 rounded-[16px] border border-[#e2e8f0] bg-[#f8fafc] space-y-5 flex flex-col justify-between shadow-sm">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-display font-bold text-base text-[#241618]">Starter</h4>
-                  <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-[4px] bg-[#600b0f0f] text-[#600a0f]">
+                  <h4 className="font-display font-bold text-base text-[#3a2447]">Starter</h4>
+                  <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-[4px] bg-[#e2e8f0] text-[#3a2447]">
                     Free Forever
                   </span>
                 </div>
                 <div>
-                  <p className="font-display text-2xl font-bold text-[#241618]">{currency === "INR" ? "₹0" : "$0"}</p>
-                  <p className="text-xs text-[#6B5A5D] mt-0.5">No credit card required</p>
+                  <p className="font-display text-2xl font-bold text-[#3a2447]">{currency === "INR" ? "₹0" : "$0"}</p>
+                  <p className="text-xs text-[#64748b] mt-0.5">No credit card required</p>
                 </div>
-                <ul className="space-y-2.5 text-xs text-[#6B5A5D] pt-3 border-t border-[#E4DAD5]">
+                <ul className="space-y-2.5 text-xs text-[#475569] pt-3 border-t border-[#e2e8f0]">
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                    <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                     <span>Up to 3 content series</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                    <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                     <span>Up to 15 total episodes</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                    <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                     <span>1 creator service rate card</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                    <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                     <span>Total Fanbase live counter</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                    <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                     <span>Social profiles &amp; custom links</span>
                   </li>
                 </ul>
               </div>
 
-              <div className="pt-4 border-t border-[#E4DAD5]">
+              <div className="pt-4 border-t border-[#e2e8f0]">
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="w-full py-2 px-4 rounded-[8px] bg-transparent hover:bg-[#fbfbfb] border border-[#600a0f] text-[#600a0f] font-semibold text-xs transition-colors cursor-pointer"
+                  className="w-full py-2 px-4 rounded-[8px] bg-white hover:bg-[#f1f5f9] border border-[#e2e8f0] text-[#3a2447] font-semibold text-xs transition-colors cursor-pointer shadow-sm"
                 >
                   Get Started Free
                 </button>
               </div>
             </div>
 
-            {/* Plan 2: Pro */}
-            <div className="p-6 rounded-[12px] border-2 border-[#600a0f] bg-[#FFFFFF] space-y-5 flex flex-col justify-between relative">
+            {/* Plan 2: Pro (Featured Card) */}
+            <div className="p-6 rounded-[16px] border-2 border-[#3a2447] bg-white space-y-5 flex flex-col justify-between relative shadow-[0_12px_30px_rgba(15,23,42,0.08)]">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-display font-bold text-base text-[#241618]">Pro</h4>
-                  <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-[4px] bg-[#600a0f] text-[#fbfbfb]">
+                  <h4 className="font-display font-bold text-base text-[#3a2447]">Pro</h4>
+                  <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-[4px] bg-[#3a2447] text-white">
                     Recommended
                   </span>
                 </div>
                 <div>
-                  <p className="font-display text-2xl font-bold text-[#241618]">
+                  <p className="font-display text-2xl font-bold text-[#3a2447]">
                     {currency === "INR"
                       ? pricingCycle === "yearly"
                         ? "₹1,999"
@@ -1056,58 +1073,58 @@ export default function LandingHomePage() {
                       : pricingCycle === "yearly"
                         ? "$24.99"
                         : "$2.99"}
-                    <span className="text-xs text-[#6B5A5D] font-normal">
+                    <span className="text-xs text-[#64748b] font-normal">
                       {pricingCycle === "yearly" ? " / year" : " / month"}
                     </span>
                   </p>
-                  <p className="text-xs text-[#6B5A5D] mt-0.5">Taxes may apply</p>
+                  <p className="text-xs text-[#64748b] mt-0.5">Taxes may apply</p>
                 </div>
-                <ul className="space-y-2.5 text-xs text-[#241618] font-medium pt-3 border-t border-[#E4DAD5]">
+                <ul className="space-y-2.5 text-xs text-[#3a2447] font-medium pt-3 border-t border-[#e2e8f0]">
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                    <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                     <span>Up to 30 content series</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                    <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                     <span>Up to 300 total episodes</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                    <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                     <span>Up to 3 active service rate cards</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                    <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                     <span>Remove Inflixo branding</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                    <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                     <span>Direct brand lead routing</span>
                   </li>
                 </ul>
               </div>
 
-              <div className="pt-4 border-t border-[#E4DAD5]">
+              <div className="pt-4 border-t border-[#e2e8f0]">
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="w-full py-2.5 px-4 rounded-[8px] bg-[#600a0f] hover:bg-[#600a0f] text-[#fbfbfb] font-semibold text-xs sm:text-sm transition-colors cursor-pointer active:scale-98"
+                  className="w-full py-2.5 px-4 rounded-[8px] bg-[#3a2447] hover:bg-[#1e293b] text-white font-semibold text-xs sm:text-sm transition-colors cursor-pointer active:scale-98 shadow-sm"
                 >
                   Upgrade to Creator Pro
                 </button>
               </div>
             </div>
 
-            {/* Plan 3: VIP */}
-            <div className="p-6 rounded-[12px] border border-[#E4DAD5] bg-[#FFFFFF] space-y-5 flex flex-col justify-between">
+            {/* Plan 3: VIP (Regular Card) */}
+            <div className="p-6 rounded-[16px] border border-[#e2e8f0] bg-[#f8fafc] space-y-5 flex flex-col justify-between shadow-sm">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-display font-bold text-base text-[#241618]">VIP</h4>
-                  <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-[4px] bg-[#600b0f0f] text-[#600a0f]">
+                  <h4 className="font-display font-bold text-base text-[#3a2447]">VIP</h4>
+                  <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-[4px] bg-[#e2e8f0] text-[#3a2447]">
                     Custom
                   </span>
                 </div>
                 <div>
-                  <p className="font-display text-2xl font-bold text-[#241618]">
+                  <p className="font-display text-2xl font-bold text-[#3a2447]">
                     {currency === "INR"
                       ? pricingCycle === "yearly"
                         ? "₹2,999"
@@ -1115,41 +1132,41 @@ export default function LandingHomePage() {
                       : pricingCycle === "yearly"
                         ? "$39.99"
                         : "$4.99"}
-                    <span className="text-xs text-[#6B5A5D] font-normal">
+                    <span className="text-xs text-[#64748b] font-normal">
                       {pricingCycle === "yearly" ? " / year" : " / month"}
                     </span>
                   </p>
-                  <p className="text-xs text-[#6B5A5D] mt-0.5">Taxes may apply</p>
+                  <p className="text-xs text-[#64748b] mt-0.5">Taxes may apply</p>
                 </div>
-                <ul className="space-y-2.5 text-xs text-[#6B5A5D] pt-3 border-t border-[#E4DAD5]">
+                <ul className="space-y-2.5 text-xs text-[#475569] pt-3 border-t border-[#e2e8f0]">
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                    <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                     <span>Unlimited content series</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                    <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                     <span>Unlimited total episodes</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                    <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                     <span>Unlimited creator services</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                    <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                     <span>Remove Inflixo branding</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[#600a0f] shrink-0" />
+                    <Check className="h-4 w-4 text-[#10b981] shrink-0" />
                     <span>Full feature access &amp; priority</span>
                   </li>
                 </ul>
               </div>
 
-              <div className="pt-4 border-t border-[#E4DAD5]">
+              <div className="pt-4 border-t border-[#e2e8f0]">
                 <button
                   type="button"
                   onClick={() => handleClaim(username || "yourname")}
-                  className="w-full py-2 px-4 rounded-[8px] bg-transparent hover:bg-[#fbfbfb] border border-[#600a0f] text-[#600a0f] font-semibold text-xs transition-colors cursor-pointer"
+                  className="w-full py-2 px-4 rounded-[8px] bg-white hover:bg-[#f1f5f9] border border-[#e2e8f0] text-[#3a2447] font-semibold text-xs transition-colors cursor-pointer shadow-sm"
                 >
                   Get VIP Access
                 </button>
@@ -1157,13 +1174,13 @@ export default function LandingHomePage() {
             </div>
           </div>
 
-          {/* Final Bottom CTA */}
-          <div className="mt-12 rounded-[12px] border border-[#E4DAD5] bg-[#FFFFFF] p-8 sm:p-12 text-center space-y-6">
+          {/* Final Bottom CTA (Final CTA Section BG: #f1f5f9) */}
+          <div className="mt-8 sm:mt-10 rounded-[16px] border border-[#e2e8f0] bg-[#f1f5f9] p-6 sm:p-8 text-center space-y-5">
             <div className="space-y-2 max-w-xl mx-auto">
-              <h3 className="font-display text-2xl sm:text-4xl font-bold text-[#241618]">
+              <h3 className="font-display text-2xl sm:text-4xl font-bold text-[#3a2447]">
                 Your fanbase. Your content. Your work. One Inflixo link.
               </h3>
-              <p className="text-xs sm:text-sm text-[#6B5A5D]">
+              <p className="text-xs sm:text-sm text-[#475569]">
                 Build the profile that shows the complete creator behind the content.
               </p>
             </div>
@@ -1174,9 +1191,9 @@ export default function LandingHomePage() {
                   e.preventDefault();
                   handleClaim(bottomUsername);
                 }}
-                className="flex items-center rounded-[8px] border border-[#E4DAD5] bg-[#fbfbfb] p-1.5 focus-within:border-[#600a0f] transition-colors"
+                className="flex items-center rounded-[8px] border border-[#cbd5e1] bg-white p-1.5 focus-within:border-[#3a2447] focus-within:ring-2 focus-within:ring-[#3a2447]/10 transition-all shadow-sm"
               >
-                <span className="pl-3 text-xs sm:text-sm font-medium text-[#6B5A5D] select-none shrink-0">
+                <span className="pl-3 text-xs sm:text-sm font-medium text-[#64748b] select-none shrink-0">
                   inflixo.com/
                 </span>
                 <input
@@ -1184,11 +1201,11 @@ export default function LandingHomePage() {
                   value={bottomUsername}
                   onChange={(e) => setBottomUsername(e.target.value)}
                   placeholder="yourname"
-                  className="w-full bg-transparent px-2 py-1.5 text-xs sm:text-sm font-medium text-[#241618] outline-none placeholder:text-[#6B5A5D]/60 min-w-0"
+                  className="w-full bg-transparent px-2 py-1.5 text-xs sm:text-sm font-medium text-[#3a2447] outline-none placeholder:text-[#94a3b8] min-w-0"
                 />
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-1 shrink-0 rounded-[8px] bg-[#600a0f] px-4 py-2 text-xs sm:text-sm font-semibold text-[#fbfbfb] hover:bg-[#600a0f] transition-colors cursor-pointer active:scale-98"
+                  className="inline-flex items-center gap-1 shrink-0 rounded-[8px] bg-[#3a2447] px-4 py-2 text-xs sm:text-sm font-semibold text-white hover:bg-[#1e293b] transition-colors cursor-pointer active:scale-98"
                 >
                   <span>Claim</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -1198,7 +1215,7 @@ export default function LandingHomePage() {
               <button
                 type="button"
                 onClick={() => handleClaim(bottomUsername)}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-[8px] bg-[#600a0f] hover:bg-[#600a0f] px-6 py-2.5 text-sm font-semibold text-[#fbfbfb] transition-colors cursor-pointer active:scale-98"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-[8px] bg-[#3a2447] hover:bg-[#1e293b] px-6 py-2.5 text-sm font-semibold text-white transition-colors cursor-pointer active:scale-98 shadow-sm"
               >
                 <span>Claim Your Handle</span>
               </button>
@@ -1208,54 +1225,54 @@ export default function LandingHomePage() {
       </section>
 
       {/* =========================================================================
-          FOOTER
+          FOOTER (Footer BG: #ffffff)
          ========================================================================= */}
-      <footer className="mt-auto border-t border-[#E4DAD5] bg-[#FFFFFF] py-8">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-[#6B5A5D]">
+      <footer className="mt-auto border-t border-[#e2e8f0] bg-white py-8">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-[#64748b]">
           <Logo size="sm" />
           <div className="flex flex-wrap items-center gap-4">
-            <Link href="/" className="hover:text-[#241618] transition-colors">
+            <Link href="/" className="hover:text-[#3a2447] transition-colors">
               Creator Home
             </Link>
             <button
               type="button"
               onClick={() => scrollToSection("total-fanbase")}
-              className="hover:text-[#241618] transition-colors cursor-pointer"
+              className="hover:text-[#3a2447] transition-colors cursor-pointer"
             >
               Total Fanbase
             </button>
             <button
               type="button"
               onClick={() => scrollToSection("series")}
-              className="hover:text-[#241618] transition-colors cursor-pointer"
+              className="hover:text-[#3a2447] transition-colors cursor-pointer"
             >
               Series Playlists
             </button>
             <button
               type="button"
               onClick={() => scrollToSection("pricing")}
-              className="hover:text-[#241618] transition-colors cursor-pointer"
+              className="hover:text-[#3a2447] transition-colors cursor-pointer"
             >
               Pricing
             </button>
-            <Link href="/privacy" className="hover:text-[#241618] transition-colors">
+            <Link href="/privacy" className="hover:text-[#3a2447] transition-colors">
               Privacy Policy
             </Link>
-            <Link href="/cookies" className="hover:text-[#241618] transition-colors">
+            <Link href="/cookies" className="hover:text-[#3a2447] transition-colors">
               Cookie Policy
             </Link>
             <button
               type="button"
               onClick={() => openCookiePreferences()}
-              className="hover:text-[#241618] transition-colors cursor-pointer"
+              className="hover:text-[#3a2447] transition-colors cursor-pointer"
             >
               Cookie Preferences
             </button>
-            <Link href="/terms" className="hover:text-[#241618] transition-colors">
+            <Link href="/terms" className="hover:text-[#3a2447] transition-colors">
               Terms of Service
             </Link>
           </div>
-          <p className="text-[#6B5A5D]">&copy; 2026 Inflixo. All rights reserved.</p>
+          <p className="text-[#64748b]">&copy; 2026 Inflixo. All rights reserved.</p>
         </div>
       </footer>
 
@@ -1270,9 +1287,9 @@ export default function LandingHomePage() {
           type="button"
           onClick={scrollToTop}
           aria-label="Scroll to top"
-          className="group flex items-center gap-1.5 rounded-full border border-[#E4DAD5] bg-[#FFFFFF] px-3 py-2 text-xs font-semibold text-[#241618] hover:border-[#600a0f] transition-colors cursor-pointer"
+          className="group flex items-center gap-1.5 rounded-full border border-[#e2e8f0] bg-white px-3 py-2 text-xs font-semibold text-[#3a2447] hover:border-[#cbd5e1] shadow-sm transition-colors cursor-pointer"
         >
-          <ArrowUp className="h-4 w-4 text-[#600a0f]" />
+          <ArrowUp className="h-4 w-4 text-[#3a2447]" />
           <span className="hidden sm:inline">Top</span>
         </button>
       </div>

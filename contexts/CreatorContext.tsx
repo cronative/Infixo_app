@@ -58,32 +58,39 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
     setSubscription(SubscriptionService.get());
     setSeries(SeriesService.getAllLocal());
 
-    // 2. Live DB sync (Profile, Social Accounts, Series & Subscription)
+    // 2. Live DB sync: First verify if a creator profile actually exists in DB
     try {
-      const [dbProfile, dbSocials, dbSeries, dbSub] = await Promise.all([
-        ProfileService.fetchFromDb().catch(() => null),
-        SocialService.fetchFromDb().catch(() => null),
-        SeriesService.fetchFromDb().catch(() => null),
-        SubscriptionService.fetchFromDb().catch(() => null),
-      ]);
+      const dbProfile = await ProfileService.fetchFromDb().catch(() => null);
 
       if (dbProfile) {
         setProfile(dbProfile);
-      }
-      if (dbSocials) {
-        setSocials(dbSocials);
-      }
-      if (dbSeries && Array.isArray(dbSeries)) {
-        setSeries(dbSeries);
-      }
-      if (dbSub) {
-        setSubscription(dbSub);
+
+        // Fetch sub-resources (socials, series, subscription) if creator exists in DB
+        if (dbProfile.id || dbProfile.email || dbProfile.username) {
+          const [dbSocials, dbSeries, dbSub] = await Promise.all([
+            SocialService.fetchFromDb({ email: dbProfile.email, username: dbProfile.username }).catch(() => null),
+            SeriesService.fetchFromDb().catch(() => null),
+            SubscriptionService.fetchFromDb().catch(() => null),
+          ]);
+
+          if (dbSocials) {
+            setSocials(dbSocials);
+          }
+          if (dbSeries && Array.isArray(dbSeries)) {
+            setSeries(dbSeries);
+          }
+          if (dbSub) {
+            setSubscription(dbSub);
+          }
+        }
       }
     } catch (e) {
       console.warn("Failed to sync DB in CreatorContext:", e);
     } finally {
       setLoading(false);
     }
+
+
   }, []);
 
   useEffect(() => {

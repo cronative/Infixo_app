@@ -81,7 +81,7 @@ export function BrandLeadQualifierModal({
         <ModalBody className="p-5 space-y-4 text-left">
           {/* Deliverable Summary Badge */}
           <div className="rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] p-3.5 flex items-center gap-3">
-            <Package className="h-4 w-4 text-[#600a0f] shrink-0" />
+            <Package className="h-4 w-4 text-[#3a2447] shrink-0" />
             <div className="min-w-0 text-xs">
               <p className="font-bold text-[#181716] truncate">{packageName}</p>
               {deliverableText && <p className="text-[#797570] font-medium truncate mt-0.5">{deliverableText}</p>}
@@ -90,7 +90,7 @@ export function BrandLeadQualifierModal({
 
           <div className="space-y-1">
             <label className="block text-xs font-bold text-[#181716] flex items-center gap-1.5">
-              <Building2 className="h-3.5 w-3.5 text-[#600a0f]" />
+              <Building2 className="h-3.5 w-3.5 text-[#3a2447]" />
               <span>Brand or Agency name</span> <span className="text-[#C2414B]">*</span>
             </label>
             <input
@@ -99,7 +99,7 @@ export function BrandLeadQualifierModal({
               value={brandName}
               onChange={(e) => setBrandName(e.target.value)}
               placeholder="e.g. Puma India / Nike"
-              className="w-full rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#600a0f] focus:bg-white focus:outline-none transition-colors"
+              className="w-full rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#3a2447] focus:bg-white focus:outline-none transition-colors"
             />
           </div>
 
@@ -114,7 +114,7 @@ export function BrandLeadQualifierModal({
               value={budget}
               onChange={(e) => setBudget(e.target.value)}
               placeholder="e.g. ₹25,000 / $500 USD"
-              className="w-full rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#600a0f] focus:bg-white focus:outline-none transition-colors"
+              className="w-full rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#3a2447] focus:bg-white focus:outline-none transition-colors"
             />
           </div>
 

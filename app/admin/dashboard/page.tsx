@@ -220,8 +220,8 @@ export default function AdminDashboardPage() {
     }
   }
 
-  function handleLogout() {
-    AdminService.logout();
+  async function handleLogout() {
+    await AdminService.logout();
     showToast("Admin logged out successfully 👋");
     router.push("/admin/login");
   }
@@ -295,7 +295,7 @@ export default function AdminDashboardPage() {
     setOpenActionMenuId(null);
     setViewGigsCreator(creator);
     try {
-      const res = await fetch(`/api/creator/mediakit?identifier=${encodeURIComponent(creator.email)}`);
+      const res = await fetch(`/api/creator/mediakit?email=${encodeURIComponent(creator.email)}`);
       const data = await res.json();
       if (data.success && Array.isArray(data.packages)) {
         setCreatorGigs(data.packages);
@@ -413,7 +413,7 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-[#FAF8FF] text-[#0F172A] font-sans selection:bg-rose-100 selection:text-[#7A1C3C]">
+    <div className="min-h-dvh bg-[#FAF8FF] text-[#3a2447] font-sans selection:bg-rose-100 selection:text-[#7A1C3C]">
       {/* 1. TOP MAROON ADMIN NAVBAR */}
       <header className="safe-top sticky top-0 z-40 border-b border-rose-100 bg-white/95 backdrop-blur-md px-4 sm:px-8 py-3.5 shadow-2xs">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
@@ -526,11 +526,10 @@ export default function AdminDashboardPage() {
             <button
               type="button"
               onClick={() => setActiveTab("creators")}
-              className={`tap-scale flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black transition-all cursor-pointer ${
-                activeTab === "creators"
-                  ? "bg-[#7A1C3C] text-white shadow-md shadow-[#7A1C3C]/20"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
+              className={`tap-scale flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black transition-all cursor-pointer ${activeTab === "creators"
+                ? "bg-[#7A1C3C] text-white shadow-md shadow-[#7A1C3C]/20"
+                : "text-slate-600 hover:text-slate-900"
+                }`}
             >
               <Users className="h-3.5 w-3.5" />
               <span>Creators ({creators.length})</span>
@@ -539,11 +538,10 @@ export default function AdminDashboardPage() {
             <button
               type="button"
               onClick={() => setActiveTab("series")}
-              className={`tap-scale flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black transition-all cursor-pointer ${
-                activeTab === "series"
-                  ? "bg-[#7A1C3C] text-white shadow-md shadow-[#7A1C3C]/20"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
+              className={`tap-scale flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black transition-all cursor-pointer ${activeTab === "series"
+                ? "bg-[#7A1C3C] text-white shadow-md shadow-[#7A1C3C]/20"
+                : "text-slate-600 hover:text-slate-900"
+                }`}
             >
               <Film className="h-3.5 w-3.5" />
               <span>All Series ({seriesList.length})</span>
@@ -552,11 +550,10 @@ export default function AdminDashboardPage() {
             <button
               type="button"
               onClick={() => setActiveTab("email")}
-              className={`tap-scale flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black transition-all cursor-pointer ${
-                activeTab === "email"
-                  ? "bg-[#7A1C3C] text-white shadow-md shadow-[#7A1C3C]/20"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
+              className={`tap-scale flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black transition-all cursor-pointer ${activeTab === "email"
+                ? "bg-[#7A1C3C] text-white shadow-md shadow-[#7A1C3C]/20"
+                : "text-slate-600 hover:text-slate-900"
+                }`}
             >
               <Mail className="h-3.5 w-3.5" />
               <span>Send Mails</span>
@@ -594,11 +591,10 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setCreatorFilter("all")}
-                className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors cursor-pointer border ${
-                  creatorFilter === "all"
-                    ? "bg-[#7A1C3C] text-white border-[#7A1C3C]"
-                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
-                }`}
+                className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors cursor-pointer border ${creatorFilter === "all"
+                  ? "bg-[#7A1C3C] text-white border-[#7A1C3C]"
+                  : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
+                  }`}
               >
                 All Creators ({totalCreatorsCount})
               </button>
@@ -606,11 +602,10 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setCreatorFilter("vip")}
-                className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors cursor-pointer border ${
-                  creatorFilter === "vip"
-                    ? "bg-[#7A1C3C] text-white border-[#7A1C3C]"
-                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
-                }`}
+                className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors cursor-pointer border ${creatorFilter === "vip"
+                  ? "bg-[#7A1C3C] text-white border-[#7A1C3C]"
+                  : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
+                  }`}
               >
                 ⭐ VIP Members ({vipCreatorsCount})
               </button>
@@ -618,11 +613,10 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setCreatorFilter("gigs")}
-                className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors cursor-pointer border ${
-                  creatorFilter === "gigs"
-                    ? "bg-[#7A1C3C] text-white border-[#7A1C3C]"
-                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
-                }`}
+                className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors cursor-pointer border ${creatorFilter === "gigs"
+                  ? "bg-[#7A1C3C] text-white border-[#7A1C3C]"
+                  : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
+                  }`}
               >
                 💼 With Active Gigs ({gigsCreatorsCount})
               </button>
@@ -630,11 +624,10 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setCreatorFilter("early")}
-                className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors cursor-pointer border ${
-                  creatorFilter === "early"
-                    ? "bg-[#7A1C3C] text-white border-[#7A1C3C]"
-                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
-                }`}
+                className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors cursor-pointer border ${creatorFilter === "early"
+                  ? "bg-[#7A1C3C] text-white border-[#7A1C3C]"
+                  : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
+                  }`}
               >
                 ⚡ Free / Early Bird ({earlyBirdCount})
               </button>
@@ -920,11 +913,10 @@ export default function AdminDashboardPage() {
                         setEmailSubject(tmpl.subject);
                         setEmailBody(tmpl.body);
                       }}
-                      className={`tap-scale p-3 rounded-2xl border text-left transition-all ${
-                        selectedTemplateId === tmpl.id
-                          ? "border-[#7A1C3C] bg-rose-50/80 text-[#7A1C3C] font-black shadow-2xs"
-                          : "border-slate-200 bg-slate-50/50 text-slate-700 hover:bg-slate-100 font-semibold"
-                      }`}
+                      className={`tap-scale p-3 rounded-2xl border text-left transition-all ${selectedTemplateId === tmpl.id
+                        ? "border-[#7A1C3C] bg-rose-50/80 text-[#7A1C3C] font-black shadow-2xs"
+                        : "border-slate-200 bg-slate-50/50 text-slate-700 hover:bg-slate-100 font-semibold"
+                        }`}
                     >
                       <p className="text-xs">{tmpl.name}</p>
                     </button>

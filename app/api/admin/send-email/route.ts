@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 import { sendBroadcastEmail } from "@/lib/email";
+import { isAuthorizedAdmin } from "@/lib/adminAuth";
 
 export async function POST(req: Request) {
   try {
+    if (!(await isAuthorizedAdmin(req))) {
+      return NextResponse.json({ error: "Unauthorized admin access" }, { status: 401 });
+    }
+
     const { recipients, subject, bodyHtml } = await req.json();
 
     if (!Array.isArray(recipients) || recipients.length === 0) {

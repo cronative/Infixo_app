@@ -75,7 +75,7 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
     <div className="w-full">
       <div className="flex items-center justify-between mb-2">
         <label className="block text-sm font-bold text-[#181716] flex items-center gap-1.5">
-          <Tag className="h-4 w-4 text-[#600a0f]" />
+          <Tag className="h-4 w-4 text-[#3a2447]" />
           Series Genres
         </label>
         <span className={`text-xs font-semibold ${selectedGenres.length >= max ? "text-[#B7791F] font-bold" : "text-[#797570]"}`}>
@@ -96,15 +96,15 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
               disabled={isMaxReached}
               onClick={() => toggleGenre(g)}
               className={`tap-scale flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs transition-all cursor-pointer shrink-0 ${isSelected
-                ? "bg-[#600a0f]/[0.09] text-[#600a0f] border border-[#600a0f] font-bold shadow-xs"
+                ? "bg-[#3a2447]/[0.09] text-[#3a2447] border border-[#3a2447] font-bold shadow-xs"
                 : isMaxReached
                   ? "opacity-40 cursor-not-allowed bg-white border border-[#E7E3DC] text-[#797570]"
-                  : "bg-white border border-[#E7E3DC] text-[#54514D] hover:border-[#600a0f]/40 hover:bg-[#fbfbfb] hover:text-[#600a0f]"
+                  : "bg-white border border-[#E7E3DC] text-[#54514D] hover:border-[#3a2447]/40 hover:bg-[#fbfbfb] hover:text-[#3a2447]"
                 }`}
             >
               {isSelected ? (
                 <>
-                  <Check className="h-3 w-3 stroke-[3] text-[#600a0f] shrink-0" />
+                  <Check className="h-3 w-3 stroke-[3] text-[#3a2447] shrink-0" />
                   <span>{g}</span>
                 </>
               ) : (

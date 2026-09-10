@@ -10,8 +10,8 @@ import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
 const STATUS_CONFIG: Record<CollaborationStatus, { label: string; bg: string; text: string; border: string }> = {
   NEW: { label: "New", bg: "bg-[#EAF7F0]", text: "text-[#17845B]", border: "border-[#17845B]/20" },
-  VIEWED: { label: "Viewed", bg: "bg-[#600a0f]/[0.09]", text: "text-[#600a0f]", border: "border-[#600a0f]/20" },
-  REPLIED: { label: "Replied", bg: "bg-[#600a0f]/[0.09]", text: "text-[#600a0f]", border: "border-[#600a0f]/20" },
+  VIEWED: { label: "Viewed", bg: "bg-[#3a2447]/[0.09]", text: "text-[#3a2447]", border: "border-[#3a2447]/20" },
+  REPLIED: { label: "Replied", bg: "bg-[#3a2447]/[0.09]", text: "text-[#3a2447]", border: "border-[#3a2447]/20" },
   CLOSED: { label: "Closed", bg: "bg-[#fbfbfb]", text: "text-[#797570]", border: "border-[#E7E3DC]" },
 };
 
@@ -181,7 +181,7 @@ export default function DashboardRequestsPage() {
               type="button"
               onClick={() => setActiveTab(tab)}
               className={`tap-scale flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${isSelected
-                ? "bg-[#600a0f] text-white shadow-xs"
+                ? "bg-[#3a2447] text-white shadow-xs"
                 : "text-[#797570] hover:text-[#181716] hover:bg-[#FAF8F5]"
                 }`}
             >
@@ -202,7 +202,7 @@ export default function DashboardRequestsPage() {
       ) : filteredRequests.length === 0 ? (
         /* Empty State */
         <div className="rounded-2xl border-2 border-dashed border-[#E7E3DC] bg-white p-8 sm:p-10 text-center space-y-3 max-w-xl mx-auto shadow-xs">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#600a0f]/[0.09] text-[#600a0f]">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#3a2447]/[0.09] text-[#3a2447]">
             <Inbox className="h-6 w-6" />
           </div>
           <div className="space-y-1">
@@ -225,20 +225,20 @@ export default function DashboardRequestsPage() {
                 className="group px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#FAF8F5]/60 transition-colors cursor-pointer text-left"
               >
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#600b0f0f] border border-[#E7D0D4] text-[#600a0f] font-bold text-xs shrink-0">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#3a244714] border border-[#E7D0D4] text-[#3a2447] font-bold text-xs shrink-0">
                     {req.senderName.charAt(0).toUpperCase()}
                   </div>
 
                   <div className="min-w-0 flex-1 space-y-0.5">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-bold text-xs sm:text-[13px] text-[#181716] truncate group-hover:text-[#600a0f] transition-colors">{req.senderName}</h3>
+                      <h3 className="font-bold text-xs sm:text-[13px] text-[#181716] truncate group-hover:text-[#3a2447] transition-colors">{req.senderName}</h3>
                       {req.companyName && (
                         <span className="text-[11px] font-semibold text-[#797570] truncate">
                           • {req.companyName}
                         </span>
                       )}
                       {req.approxBudget && (
-                        <span className="text-[10px] font-semibold text-[#600a0f] bg-[#600a0f]/[0.09] border border-[#600a0f]/20 px-1.5 py-0.5 rounded-md truncate">
+                        <span className="text-[10px] font-semibold text-[#3a2447] bg-[#3a2447]/[0.09] border border-[#3a2447]/20 px-1.5 py-0.5 rounded-md truncate">
                           {req.approxBudget}
                         </span>
                       )}
@@ -309,26 +309,26 @@ export default function DashboardRequestsPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#797570]">
                   {selectedRequest.companyName && (
                     <div className="flex items-center gap-1.5">
-                      <Building2 className="h-3.5 w-3.5 text-[#600a0f]" />
+                      <Building2 className="h-3.5 w-3.5 text-[#3a2447]" />
                       <span className="truncate"><strong>Company:</strong> {selectedRequest.companyName}</span>
                     </div>
                   )}
 
                   <div className="flex items-center gap-1.5">
-                    <Mail className="h-3.5 w-3.5 text-[#600a0f]" />
+                    <Mail className="h-3.5 w-3.5 text-[#3a2447]" />
                     <span className="truncate"><strong>Email:</strong> {selectedRequest.email}</span>
                   </div>
 
                   {selectedRequest.campaignType && (
                     <div className="flex items-center gap-1.5">
-                      <MessageSquare className="h-3.5 w-3.5 text-[#600a0f]" />
+                      <MessageSquare className="h-3.5 w-3.5 text-[#3a2447]" />
                       <span className="truncate"><strong>Type:</strong> {selectedRequest.campaignType}</span>
                     </div>
                   )}
 
                   {selectedRequest.approxBudget && (
                     <div className="flex items-center gap-1.5">
-                      <DollarSign className="h-3.5 w-3.5 text-[#600a0f]" />
+                      <DollarSign className="h-3.5 w-3.5 text-[#3a2447]" />
                       <span className="truncate"><strong>Budget:</strong> {selectedRequest.approxBudget}</span>
                     </div>
                   )}
@@ -358,7 +358,7 @@ export default function DashboardRequestsPage() {
                       disabled={isUpdating}
                       onClick={() => handleStatusChange(st)}
                       className={`tap-scale py-1.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${selectedRequest.status === st
-                        ? "bg-[#600a0f] text-white border-[#600a0f] shadow-xs"
+                        ? "bg-[#3a2447] text-white border-[#3a2447] shadow-xs"
                         : "border-[#E7E3DC] bg-white text-[#797570] hover:bg-[#FAF8F5]"
                         }`}
                     >
@@ -381,7 +381,7 @@ export default function DashboardRequestsPage() {
               <div className="flex items-center gap-2">
                 <a
                   href={`mailto:${selectedRequest.email}?subject=Collaboration with ${encodeURIComponent(profile.displayName || "Inflixo Creator")}`}
-                  className="tap-scale bg-[#600a0f] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-3.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+                  className="tap-scale bg-[#3a2447] hover:bg-[#2c1937] text-white font-semibold text-xs py-2 px-3.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
                 >
                   <Mail className="h-3.5 w-3.5" />
                   <span>Reply via Email</span>

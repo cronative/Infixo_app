@@ -20,11 +20,11 @@ export function SocialDataConsentCard({
   if (variant === "one-line") {
     return (
       <div
-        className={`rounded-xl border p-4 transition-colors text-left flex items-center gap-3 ${error
-            ? "border-rose-300 bg-rose-50"
-            : disabled || accepted
-              ? "border-indigo-100 bg-indigo-50/60"
-              : "border-gray-200 bg-white hover:border-gray-300"
+        className={`rounded-xl border p-3 sm:p-3.5 transition-colors text-left flex items-center gap-2.5 ${error
+          ? "border-rose-300 bg-rose-50"
+          : disabled || accepted
+            ? "border-[#3a2447]/20 bg-[#3a2447]/[0.05]"
+            : "border-gray-200 bg-white hover:border-gray-300"
           }`}
       >
         {/* Custom Interactive / Read-Only Checkbox */}
@@ -33,10 +33,10 @@ export function SocialDataConsentCard({
           disabled={disabled}
           onClick={() => !disabled && onToggle(!accepted)}
           className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-colors ${disabled || accepted
-              ? "border-[#600a0f] bg-[#600a0f] text-white cursor-default"
-              : error
-                ? "border-rose-400 bg-white"
-                : "border-slate-300 bg-white hover:border-[#600a0f]"
+            ? "border-[#3a2447] bg-[#3a2447] text-white cursor-default"
+            : error
+              ? "border-rose-400 bg-white"
+              : "border-slate-300 bg-white hover:border-[#3a2447]"
             }`}
         >
           {(accepted || disabled) && <Check className="h-3.5 w-3.5" />}
@@ -81,10 +81,10 @@ export function SocialDataConsentCard({
           disabled={disabled}
           onClick={() => !disabled && onToggle(!accepted)}
           className={`mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-md border transition-colors ${disabled || accepted
-              ? "border-[#600a0f] bg-[#600a0f] text-white cursor-default"
-              : error
-                ? "border-rose-400 bg-white"
-                : "border-slate-300 bg-white hover:border-[#600a0f]"
+            ? "border-[#3a2447] bg-[#3a2447] text-white cursor-default"
+            : error
+              ? "border-rose-400 bg-white"
+              : "border-slate-300 bg-white hover:border-[#3a2447]"
             }`}
         >
           {(accepted || disabled) && <Check className="h-3 w-3 stroke-[3]" />}

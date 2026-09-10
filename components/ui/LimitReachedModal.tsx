@@ -64,7 +64,7 @@ export function LimitReachedModal({
             <span className="font-display text-xs font-bold text-[#181716]">
               {isGig ? "Creator VIP Plan" : "Creator Pro Plan"}
             </span>
-            <span className="rounded-md bg-[#600a0f] px-2 py-0.5 text-[9px] font-bold text-white">
+            <span className="rounded-md bg-[#3a2447] px-2 py-0.5 text-[9px] font-bold text-white">
               RECOMMENDED
             </span>
           </div>
@@ -74,7 +74,7 @@ export function LimitReachedModal({
               {isGig ? "₹299" : "₹199"}
             </span>
             <span className="text-xs text-[#797570]">/ month</span>
-            <span className="text-xs font-semibold text-[#600a0f] ml-1">
+            <span className="text-xs font-semibold text-[#3a2447] ml-1">
               {isGig ? "or ₹2,999 / year" : "or ₹1,999 / year"}
             </span>
           </div>
@@ -85,10 +85,10 @@ export function LimitReachedModal({
               <span>{isGig ? "Unlimited Services & Media Kit" : "Unlimited Series & Episodes"}</span>
             </li>
             <li className="flex items-center gap-1.5">
-              <Check className="h-3.5 w-3.5 text-[#600a0f]" /> Remove Inflixo Footer Branding
+              <Check className="h-3.5 w-3.5 text-[#3a2447]" /> Remove Inflixo Footer Branding
             </li>
             <li className="flex items-center gap-1.5">
-              <Check className="h-3.5 w-3.5 text-[#600a0f]" /> Priority Support &amp; Analytics
+              <Check className="h-3.5 w-3.5 text-[#3a2447]" /> Priority Support &amp; Analytics
             </li>
           </ul>
         </div>
@@ -106,7 +106,7 @@ export function LimitReachedModal({
           type="button"
           onClick={handleNotifyMe}
           disabled={notified}
-          className="bg-[#600a0f] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+          className="bg-[#3a2447] hover:bg-[#2c1937] text-white font-semibold text-xs py-2 px-4 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
         >
           <Bell className="h-3.5 w-3.5" />
           <span>{notified ? "We'll Notify You! ✓" : "Notify Me"}</span>

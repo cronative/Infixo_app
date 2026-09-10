@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import { logDeviceLogin } from "@/lib/loginLogger";
+import { debugLog, debugError } from "@/lib/debugLogger";
 
 export async function POST(req: Request) {
   try {
@@ -52,8 +53,8 @@ export async function POST(req: Request) {
       );
     }
 
-    // 2. Cleanly delete OTP from database on successful verification (no duplicate/stale rows)
-    await db.query("DELETE FROM otps WHERE email = ?", [email]);
+    // 2. Mark OTP as used in database on successful verification (keep row in otps table)
+    await db.query("UPDATE otps SET is_used = TRUE WHERE email = ? AND otp_code = ?", [email, otp]);
 
     // 3. Fetch Creator details from MySQL database
     const [rows]: any = await db.query(
@@ -98,64 +99,69 @@ export async function POST(req: Request) {
       socialRows = sRows || [];
     }
 
-    // 4. Fetch current onboarding step strictly from DB & creators profile state
-    const hasCompletedProfile = Boolean(
-      creator &&
-      creator.username &&
-      creator.username.trim() !== "" &&
-      creator.display_name &&
-      creator.display_name.trim() !== ""
-    );
-
-    let currentStep = "profile";
+    // 4. Check creators table for existing completed record
+    let currentStep = "username";
     let isExistingProfile = false;
 
-    try {
-      const [stepRows]: any = await db.query(
-        "SELECT step_name FROM creator_onboarding_steps WHERE email = ? ORDER BY id DESC LIMIT 1",
-        [email]
-      );
-      const dbStep = (stepRows?.[0]?.step_name || "").trim().toLowerCase();
+    if (creator) {
+      // CASE A: Creator table HAS data for this email
+      debugLog("VERIFY_OTP", `Creator record found in DB for ${email}:`, { id: creator.id, username: creator.username });
 
-      if (hasCompletedProfile || dbStep === "finish") {
-        // Established creator with existing profile & handle -> Dashboard
-        currentStep = "finish";
-        isExistingProfile = true;
-        await recordOnboardingStep(email, "finish", creator?.id || null);
-      } else if (dbStep === "subscription") {
-        currentStep = "subscription";
-        isExistingProfile = false;
-      } else if (dbStep === "series") {
-        currentStep = "series";
-        isExistingProfile = false;
-      } else if (dbStep === "theme" || dbStep === "themes") {
-        currentStep = "theme";
-        isExistingProfile = false;
-      } else if (dbStep === "socials") {
-        currentStep = "socials";
-        isExistingProfile = false;
-      } else {
-        // First-time creator with empty profile -> Step 1 (Profile)
-        currentStep = "profile";
-        isExistingProfile = false;
-        await recordOnboardingStep(email, "profile", creator?.id || null);
+      try {
+        const [stepRows]: any = await db.query(
+          "SELECT step_name FROM creator_onboarding_steps WHERE email = ? ORDER BY id DESC LIMIT 1",
+          [email]
+        );
+        const dbStep = (stepRows?.[0]?.step_name || "").trim().toLowerCase();
+        debugLog("VERIFY_OTP", `Onboarding step in DB for ${email}:`, dbStep);
+
+        const hasCompletedProfile = Boolean(
+          creator.display_name && creator.display_name.trim() !== "" &&
+          creator.username && creator.username.trim() !== ""
+        );
+
+        // If creator has already completed profile or finished onboarding, route to dashboard
+        if (dbStep === "finish" || hasCompletedProfile) {
+          currentStep = "finish";
+          isExistingProfile = true;
+          await recordOnboardingStep(email, "finish", creator.id);
+          debugLog("VERIFY_OTP", `Creator has profile -> Routing to /dashboard`);
+        } else if (dbStep && dbStep !== "profile") {
+          currentStep = dbStep;
+          isExistingProfile = false;
+          debugLog("VERIFY_OTP", `Creator in-progress step '${dbStep}' -> Routing to step`);
+        } else if (creator.username && creator.username.trim() !== "") {
+          currentStep = "profile";
+          isExistingProfile = false;
+          debugLog("VERIFY_OTP", `Creator has username, continuing to personal profile`);
+        } else {
+          currentStep = "username";
+          isExistingProfile = false;
+        }
+      } catch (e: any) {
+        debugError("VERIFY_OTP", "Could not query creator_onboarding_steps:", e.message);
+        if (creator.display_name && creator.username) {
+          currentStep = "finish";
+          isExistingProfile = true;
+        } else {
+          currentStep = "username";
+          isExistingProfile = false;
+        }
       }
-    } catch (e: any) {
-      console.warn("⚠️ Could not read completed step:", e.message);
-      if (hasCompletedProfile) {
-        currentStep = "finish";
-        isExistingProfile = true;
-      } else {
-        currentStep = "profile";
-        isExistingProfile = false;
-      }
+    } else {
+      // CASE B: Creator table DOES NOT have data for this email -> Brand new user -> Start at username claim
+      debugLog("VERIFY_OTP", `No creator record in DB for ${email} -> Brand new user -> Routing to /onboarding/username`);
+      currentStep = "username";
+      isExistingProfile = false;
     }
 
     return NextResponse.json({
       success: true,
       message: "OTP verified successfully",
       isExistingProfile,
+      onboardingStep: currentStep,
       creator: creator
+
         ? {
             id: creator.id,
             email: creator.email,

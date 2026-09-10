@@ -1,4 +1,4 @@
-import { socialRepository, authRepository } from "@/repositories/localRepository";
+import { socialRepository, authRepository, customLinksRepository, profileRepository } from "@/repositories/localRepository";
 import { SocialAccounts, EMPTY_SOCIAL_ACCOUNTS, GenericSocialStats } from "@/types";
 
 const PLATFORMS_LIST: { key: keyof SocialAccounts; platform: string; urlPrefix: string }[] = [
@@ -103,59 +103,66 @@ export const SocialService = {
     return updated;
   },
 
-  async fetchFromDb(): Promise<SocialAccounts | null> {
-    const email = authRepository.getPendingEmail();
-    if (!email) return null;
+  async fetchFromDb(options?: { email?: string; username?: string }): Promise<SocialAccounts | null> {
+    const email = options?.email || authRepository.getPendingEmail() || profileRepository.get()?.email;
+    const username = options?.username || profileRepository.get()?.username;
+    if (!email && !username) return null;
 
     try {
-      const res = await fetch(`/api/creator/socials?email=${encodeURIComponent(email)}`);
+      const query = email
+        ? `email=${encodeURIComponent(email)}`
+        : `username=${encodeURIComponent(username || "")}`;
+      const res = await fetch(`/api/creator/socials?${query}`);
       const data = await res.json();
-      if (data.success && Array.isArray(data.socials) && data.socials.length > 0) {
+      if (data.success && Array.isArray(data.socials)) {
         const current = this.getAccounts();
         const updated: SocialAccounts = { ...current };
 
         data.socials.forEach((s: any) => {
-          if (s.platform === "instagram" && s.username) {
+          const platform = (s.platform || "").toLowerCase().trim();
+          const handle = (s.username || s.accountName || "").replace(/^@/, "").trim();
+
+          if (platform === "instagram" && handle) {
             updated.instagram = {
               ...updated.instagram,
-              username: s.username,
-              name: s.accountName || s.username,
-              followers: s.followerCount || updated.instagram.followers || 0,
-              posts: s.mediaCount || updated.instagram.posts || 0,
+              username: handle,
+              name: s.accountName || handle,
+              followers: s.followerCount ?? updated.instagram.followers ?? 0,
+              posts: s.mediaCount ?? updated.instagram.posts ?? 0,
               isVerified: Boolean(s.isVerified),
-              url: `https://instagram.com/${s.username.replace(/^@/, "")}`,
+              url: `https://instagram.com/${handle}`,
               lastSyncedAt: s.lastSyncedAt || new Date().toISOString(),
             };
-          } else if (s.platform === "youtube" && s.username) {
+          } else if (platform === "youtube" && handle) {
             updated.youtube = {
               ...updated.youtube,
-              username: s.username,
-              channelTitle: s.accountName || s.username,
-              subscribers: s.followerCount || updated.youtube.subscribers || 0,
-              videos: s.mediaCount || updated.youtube.videos || 0,
+              username: handle,
+              channelTitle: s.accountName || handle,
+              subscribers: s.followerCount ?? updated.youtube.subscribers ?? 0,
+              videos: s.mediaCount ?? updated.youtube.videos ?? 0,
               isVerified: Boolean(s.isVerified),
-              url: `https://youtube.com/@${s.username.replace(/^@/, "")}`,
+              url: `https://youtube.com/@${handle}`,
               lastSyncedAt: s.lastSyncedAt || new Date().toISOString(),
             };
-          } else if (s.platform === "facebook" && s.username) {
+          } else if (platform === "facebook" && handle) {
             updated.facebook = {
               ...updated.facebook,
-              username: s.username,
-              name: s.accountName || s.username,
-              followers: s.followerCount || updated.facebook.followers || 0,
-              posts: s.mediaCount || updated.facebook.posts || 0,
+              username: handle,
+              name: s.accountName || handle,
+              followers: s.followerCount ?? updated.facebook.followers ?? 0,
+              posts: s.mediaCount ?? updated.facebook.posts ?? 0,
               isVerified: Boolean(s.isVerified),
-              url: `https://facebook.com/${s.username.replace(/^@/, "")}`,
+              url: `https://facebook.com/${handle}`,
               lastSyncedAt: s.lastSyncedAt || new Date().toISOString(),
             };
-          } else if (s.username) {
-            const pInfo = PLATFORMS_LIST.find((p) => p.platform === s.platform);
+          } else if (handle) {
+            const pInfo = PLATFORMS_LIST.find((p) => p.platform === platform);
             if (pInfo) {
               const key = pInfo.key;
               (updated as any)[key] = {
-                url: `${pInfo.urlPrefix}${s.username.replace(/^@/, "")}`,
-                username: s.username,
-                name: s.accountName || s.username,
+                url: `${pInfo.urlPrefix}${handle}`,
+                username: handle,
+                name: s.accountName || handle,
                 followers: s.followerCount || 0,
                 isVerified: Boolean(s.isVerified),
                 lastSyncedAt: s.lastSyncedAt || new Date().toISOString(),
@@ -165,6 +172,12 @@ export const SocialService = {
         });
 
         socialRepository.save(updated);
+
+        // Also sync custom links if returned by socials endpoint
+        if (Array.isArray(data.customLinks) && data.customLinks.length > 0) {
+          customLinksRepository.save(data.customLinks);
+        }
+
         return updated;
       }
     } catch (err) {

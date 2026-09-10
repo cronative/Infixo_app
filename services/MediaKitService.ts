@@ -175,12 +175,19 @@ export class MediaKitService {
 
   static async fetchFromDb(identifier: string, creatorId?: string): Promise<{ settings: MediaKitSettings; packages: MediaKitPackage[] }> {
     try {
+      if (!identifier || typeof identifier !== "string" || !identifier.trim()) {
+        return {
+          settings: { sponsorEmail: "", whatsappNumber: "", minBudget: "", bioHighlight: "", acceptingSponsors: true, preferredCategories: [] },
+          packages: [],
+        };
+      }
       let queryUrl = `/api/creator/mediakit?`;
       if (creatorId) {
         queryUrl += `creatorId=${encodeURIComponent(creatorId)}&`;
       }
       const paramKey = identifier.includes("@") ? "email" : "username";
-      queryUrl += `${paramKey}=${encodeURIComponent(identifier)}`;
+      queryUrl += `${paramKey}=${encodeURIComponent(identifier.trim())}`;
+
 
       const res = await fetch(queryUrl);
       if (!res.ok) throw new Error("DB fetch failed");

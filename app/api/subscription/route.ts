@@ -60,10 +60,10 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email, planKey, planName, billingCycle } = body;
+    const { email, planKey, planName, billingCycle, status } = body;
 
-    if (!email || !planKey) {
-      return NextResponse.json({ error: "Email and planKey required" }, { status: 400 });
+    if (!email) {
+      return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
     const [creators]: any = await db.query("SELECT id FROM creators WHERE email = ?", [email]);
@@ -72,6 +72,15 @@ export async function POST(req: Request) {
     }
 
     const creatorId = creators[0].id;
+
+    if (status === "cancelled") {
+      await db.query("UPDATE subscriptions SET status = 'cancelled' WHERE creator_id = ?", [creatorId]);
+      return NextResponse.json({ success: true, message: "Subscription cancelled successfully" });
+    }
+
+    if (!planKey) {
+      return NextResponse.json({ error: "planKey required" }, { status: 400 });
+    }
 
     // Ensure plan_key column in MySQL DB accepts 'free', 'starter', 'pro', 'unlimited' without truncation
     try {

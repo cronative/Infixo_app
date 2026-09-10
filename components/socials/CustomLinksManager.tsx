@@ -11,6 +11,7 @@ import {
   MoreVertical,
   Copy,
   Pencil,
+  GripVertical,
 } from "lucide-react";
 import { CustomLink } from "@/types";
 import { customLinksRepository, authRepository } from "@/repositories/localRepository";
@@ -109,11 +110,11 @@ function getLinkPlatform(link: CustomLink): {
   // Fallback to title initials with pink/maroon squircle badge
   return {
     icon: (
-      <span className="text-[11px] font-bold tracking-tight text-[#600a0f]">
+      <span className="text-[11px] font-bold tracking-tight text-[#3a2447]">
         {getInitials(link.title)}
       </span>
     ),
-    bgClass: "bg-[#600b0f0f] border border-[#E7D0D4]",
+    bgClass: "bg-[#3a244714] border border-[#E7D0D4]",
   };
 }
 
@@ -209,14 +210,21 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
   const isVip = planKey.includes("vip") || planKey.includes("pro");
   const isLimitReached = !isVip && links.length >= MAX_FREE_LINKS;
 
+  const email = creatorCtx?.profile?.email || authRepository.getPendingEmail() || authRepository.get()?.email;
+  const username = creatorCtx?.profile?.username;
+
   useEffect(() => {
     const localLinks = customLinksRepository.get();
-    setLinks(Array.isArray(localLinks) ? localLinks : []);
+    if (Array.isArray(localLinks)) {
+      setLinks(localLinks);
+    }
 
-    // Fetch from MySQL DB table creator_custom_links if email available
-    const authSession = authRepository.get();
-    if (authSession?.email) {
-      fetch(`/api/creator/custom-links?email=${encodeURIComponent(authSession.email)}`)
+    // Fetch from MySQL DB table creator_custom_links if email or username available
+    if (email || username) {
+      const query = email
+        ? `email=${encodeURIComponent(email)}`
+        : `username=${encodeURIComponent(username || "")}`;
+      fetch(`/api/creator/custom-links?${query}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.success && Array.isArray(data.links)) {
@@ -227,7 +235,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
         })
         .catch(() => { });
     }
-  }, []);
+  }, [email, username]);
 
   // Click outside to close 3-dot menus
   useEffect(() => {
@@ -331,8 +339,8 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
   }
 
   async function syncToBackend(updatedLinks: CustomLink[]) {
-    const authSession = authRepository.get();
-    if (!authSession?.email) return;
+    const targetEmail = creatorCtx?.profile?.email || authRepository.getPendingEmail() || authRepository.get()?.email;
+    if (!targetEmail) return;
 
     try {
       setIsSaving(true);
@@ -340,7 +348,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: authSession.email,
+          email: targetEmail,
           links: updatedLinks,
         }),
       });
@@ -360,34 +368,35 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
   }
 
   return (
-    <div className="space-y-2.5 sm:space-y-3 text-left">
-      {/* Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-0.5">
+    <div className="space-y-3 text-left">
+      {/* 12 & 13. Section Header: Custom links + 1 / 3 links + + Add Link */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-0.5">
         <div>
-          <h2 className="font-display text-sm sm:text-base font-bold text-[#181716]">
+          <h2 className="text-base sm:text-lg font-bold text-[#181716]">
             Custom links
           </h2>
-          <p className="text-[11px] text-[#797570] font-medium">
-            Add the destinations you want followers and brands to find.
+          <p className="text-xs sm:text-[13px] text-[#54514D] font-normal mt-0.5">
+            Add links you want your audience to discover.
           </p>
         </div>
 
         <div className="flex items-center gap-3 shrink-0 self-start sm:self-auto">
-          <span className="text-xs font-semibold text-[#797570]">
-            Early Access • {links.length} of {MAX_FREE_LINKS} links
+          <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-[#3a2447]/[0.08] text-[#3a2447] border border-[#3a2447]/20">
+            {links.length} / {MAX_FREE_LINKS} links
           </span>
 
           <button
             type="button"
             onClick={(e) => handleOpenCreate(e.currentTarget)}
             disabled={isLimitReached}
-            className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-colors cursor-pointer shadow-xs ${isLimitReached
-              ? "bg-[#fbfbfb] border border-[#E7E3DC] text-[#797570] opacity-60 cursor-not-allowed"
-              : "bg-[#600a0f] hover:bg-[#600a0f] text-white"
-              }`}
-            title={isLimitReached ? "Early Access plan limit reached (3 links max)" : "Add new custom link"}
+            className={`inline-flex items-center gap-2 h-10 px-4 rounded-xl text-xs sm:text-sm font-medium transition-colors cursor-pointer shadow-xs ${
+              isLimitReached
+                ? "bg-[#FAF8F5] border border-[#E7E3DC] text-[#797570] opacity-60 cursor-not-allowed"
+                : "bg-[#3a2447] hover:bg-[#2c1937] text-white"
+            }`}
+            title={isLimitReached ? "Limit reached (3 links max)" : "Add new custom link"}
           >
-            <Plus className="h-3.5 w-3.5" />
+            <Plus className="h-4 w-4" />
             <span>Add Link</span>
           </button>
         </div>
@@ -395,8 +404,8 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
 
       {/* Links List / Empty State */}
       {links.length === 0 ? (
-        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-6 sm:p-8 text-center space-y-2 shadow-xs">
-          <p className="text-xs sm:text-[13px] font-bold text-[#181716]">Add your first custom link</p>
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-6 sm:p-8 text-center space-y-3 shadow-xs">
+          <p className="text-sm font-bold text-[#181716]">Add your first custom link</p>
           <p className="text-xs text-[#797570] max-w-sm mx-auto">
             Help people reach your latest content, website, booking page, store or community.
           </p>
@@ -404,7 +413,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
             <button
               type="button"
               onClick={(e) => handleOpenCreate(e.currentTarget)}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#600a0f] hover:bg-[#600a0f] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#3a2447] hover:bg-[#2c1937] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Add Link</span>
@@ -416,42 +425,61 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
           {links.map((item, idx) => {
             const domain = extractDomain(item.url);
             const platformInfo = getLinkPlatform(item);
+            const faviconUrl = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64` : "";
 
             return (
               <div
                 key={item.id || idx}
-                className="px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#FAF8F5]/60 transition-colors text-left"
+                className="px-4 sm:px-5 py-3.5 min-h-[64px] flex items-center justify-between gap-3 hover:bg-[#FAF8F5]/60 transition-colors text-left"
               >
-                {/* Left: Platform Squircle Badge / Initials & Title/Domain */}
+                {/* Left: 16. Drag handle + 15. Favicon/Icon + Title/Domain */}
                 <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <span className="text-[#797570]/40 cursor-grab active:cursor-grabbing shrink-0" title="Drag to reorder">
+                    <GripVertical className="h-4 w-4" />
+                  </span>
+
                   <div
-                    className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 ${platformInfo.bgClass}`}
+                    className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 overflow-hidden ${
+                      platformInfo.bgClass
+                    }`}
                   >
-                    {platformInfo.icon}
+                    {domain && !platformInfo.bgClass.includes("gradient") && !platformInfo.bgClass.includes("red") && !platformInfo.bgClass.includes("blue") ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={faviconUrl}
+                        alt=""
+                        className="h-5 w-5 object-contain"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLElement).style.display = "none";
+                        }}
+                      />
+                    ) : (
+                      platformInfo.icon
+                    )}
                   </div>
 
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-xs sm:text-[13px] font-bold text-[#181716]">
+                    <p className="truncate text-sm sm:text-[15px] font-semibold text-[#181716]">
                       {item.title}
                     </p>
-                    <p className="truncate text-[11px] font-medium text-[#797570] mt-0.5">
+                    <p className="truncate text-xs text-[#54514D]">
                       {domain}
                     </p>
                   </div>
                 </div>
 
-                {/* Right: Actions */}
+                {/* Right: Actions (Open ↗ + ⋮) */}
                 <div className="flex items-center gap-1.5 shrink-0">
                   {item.url && (
                     <a
                       href={item.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hidden sm:inline-flex items-center gap-1 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] px-2.5 py-1.5 text-xs font-semibold text-[#181716] transition-colors shadow-xs"
+                      className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-xs font-medium text-[#181716] transition-colors shadow-2xs"
                       title="Open link in new tab"
                     >
                       <span>Open</span>
-                      <ExternalLink className="h-3 w-3 text-[#600a0f]" />
+                      <ExternalLink className="h-3 w-3 text-[#797570]" />
                     </a>
                   )}
 
@@ -463,7 +491,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                         e.stopPropagation();
                         setActiveMenuId(activeMenuId === item.id ? null : item.id);
                       }}
-                      className="flex h-7 w-7 items-center justify-center rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer shadow-xs"
+                      className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer shadow-2xs"
                       aria-label="More actions"
                     >
                       <MoreVertical className="h-3.5 w-3.5" />
@@ -482,7 +510,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                             onClick={() => setActiveMenuId(null)}
                             className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors"
                           >
-                            <ExternalLink className="h-3.5 w-3.5 text-[#600a0f]" />
+                            <ExternalLink className="h-3.5 w-3.5 text-[#797570]" />
                             <span>Open Link</span>
                           </a>
                         )}
@@ -569,7 +597,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     id="custom-link-type"
                     value={selectedType}
                     onChange={(e) => handleTypeSelect(e.target.value)}
-                    className="w-full appearance-none rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 px-3.5 py-2 pr-9 text-xs font-semibold text-[#181716] focus:border-[#600a0f] focus:bg-white focus:outline-none transition-colors cursor-pointer"
+                    className="w-full appearance-none rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 px-3.5 py-2 pr-9 text-xs font-semibold text-[#181716] focus:border-[#3a2447] focus:bg-white focus:outline-none transition-colors cursor-pointer"
                   >
                     <option value="">— Select a link type (auto-fills title) —</option>
                     {LINK_TYPE_GROUPS.map((group) => (
@@ -601,7 +629,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     setIsTitleManuallyEdited(true);
                   }}
                   placeholder="e.g. Follow on Instagram or Watch Latest Video"
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#600a0f] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#3a2447] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
@@ -618,7 +646,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     value={formUrl}
                     onChange={(e) => setFormUrl(e.target.value)}
                     placeholder="https://example.com/your-destination"
-                    className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 pl-3.5 pr-9 py-2 text-xs font-mono font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#600a0f] focus:bg-white focus:outline-none transition-colors"
+                    className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 pl-3.5 pr-9 py-2 text-xs font-mono font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#3a2447] focus:bg-white focus:outline-none transition-colors"
                   />
                   {formUrl && (formUrl.startsWith("http://") || formUrl.startsWith("https://")) && (
                     <a
@@ -626,7 +654,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="Test link destination in new tab"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#797570] hover:text-[#600a0f] transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#797570] hover:text-[#3a2447] transition-colors"
                     >
                       <ExternalLink className="h-4 w-4" />
                     </a>
@@ -655,7 +683,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
               type="submit"
               form="custom-link-form"
               disabled={isSaving}
-              className="bg-[#600a0f] hover:bg-[#600a0f] text-white font-semibold text-xs py-1.5 px-4 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="bg-[#3a2447] hover:bg-[#2c1937] text-white font-semibold text-xs py-1.5 px-4 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               <Check className="h-3.5 w-3.5" />
               <span>{isSaving ? "Saving..." : editingLink ? "Save Changes" : "Save Link"}</span>

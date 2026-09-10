@@ -2,202 +2,237 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles, Check, ShieldCheck, Bell } from "lucide-react";
+import { ArrowRight, Loader2, Sparkles, Zap, Check, ExternalLink } from "lucide-react";
 import { OnboardingLayout } from "@/layouts/OnboardingLayout";
-import { Button } from "@/components/ui/Button";
+import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
 import { SubscriptionService } from "@/services/SubscriptionService";
 import { OnboardingService } from "@/services/OnboardingService";
-import { BillingCycle, PlanKey } from "@/types";
+import { useCreator } from "@/contexts/CreatorContext";
+import { PlanKey } from "@/types";
 import { useToast } from "@/contexts/ToastContext";
-
-const EARLY_ACCESS_FEATURES = [
-  "Up to 3 content series",
-  "Up to 15 total episodes",
-  "1 creator service and rate card",
-  "Total Fanbase",
-  "Social profiles and custom links",
-  "Public creator profile",
-];
+import { authRepository } from "@/repositories/localRepository";
 
 export default function SubscriptionStepPage() {
   const router = useRouter();
   const { showToast } = useToast();
-  const [selectedPlan] = useState<PlanKey>("creator");
-  const [cycle] = useState<BillingCycle>("monthly");
-  const [activating, setActivating] = useState(false);
+  const { profile, socials, series, theme, totalAudience } = useCreator();
 
-  function handleActivate() {
-    if (activating) return;
-    setActivating(true);
+  const [selectedOption, setSelectedOption] = useState<"free" | "pro">("free");
+  const [submitting, setSubmitting] = useState(false);
 
-    // Direct activation for Early Access phase (No payment/subscription required today).
-    setTimeout(() => {
-      SubscriptionService.activate(selectedPlan, cycle);
+  async function handleLaunch() {
+    if (submitting) return;
+    setSubmitting(true);
+
+    const planKey: PlanKey = selectedOption === "pro" ? "creator_pro" : "early_access";
+    const planName = selectedOption === "pro" ? "Creator Pro" : "Early Access";
+    const email = authRepository.getPendingEmail() || profile?.email || "";
+
+    try {
+      // 1. Activate plan locally
+      SubscriptionService.activate(planKey, "monthly");
+
+      // 2. Persist to MySQL database
+      if (email) {
+        await fetch("/api/subscription", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            planKey,
+            planName,
+            billingCycle: "monthly",
+          }),
+        }).catch((err) => console.warn("Subscription sync warning:", err));
+      }
+
+      // 3. Mark onboarding finished
       OnboardingService.setStep("finish");
-      setActivating(false);
-      showToast("Early Access Activated! Welcome to Inflixo 🚀");
-      router.push("/onboarding/finish");
-    }, 250);
+
+      if (selectedOption === "pro") {
+        showToast("🎉 Creator Pro activated! Welcome to your live profile.");
+      } else {
+        showToast("🚀 You are LIVE! Welcome to your Inflixo creator page.");
+      }
+
+      router.push("/dashboard");
+    } catch (err) {
+      console.error("Launch error:", err);
+      OnboardingService.setStep("finish");
+      router.push("/dashboard");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
     <OnboardingLayout step="subscription">
-      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-[#600a0f]/20 bg-[#600a0f]/[0.09] px-3 py-1 text-xs font-bold text-[#600a0f]">
-        <Sparkles className="h-3.5 w-3.5 text-[#600a0f] shrink-0" />
-        <span>Step 5 of 6 • Creator Plan</span>
-      </div>
-      <h1 className="text-2xl font-bold leading-tight tracking-tight text-[#181716] sm:text-3xl">
-        Activate your Early Access
-      </h1>
-      <p className="mt-1.5 text-xs sm:text-sm text-[#54514D] leading-relaxed">
-        Your public Inflixo profile goes live immediately. No credit card required.
-      </p>
-
-      {/* Primary Early Access Card */}
-      <div className="mt-6 rounded-2xl border-2 border-[#600a0f] bg-white p-6 sm:p-7 shadow-xs text-left relative overflow-hidden">
-        {/* Header inside card */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-[#E7E3DC]">
-          <div>
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#600a0f]/[0.09] px-3 py-1 text-xs font-bold text-[#600a0f] mb-2 border border-[#600a0f]/20">
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>Current Pass</span>
-            </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-[#181716]">Early Access</h2>
-            <p className="text-xs sm:text-sm text-[#54514D] mt-0.5">
-              Start building and sharing your complete creator profile.
+      <div className="w-full max-w-[540px] mx-auto pt-4 sm:pt-8 pb-12">
+        {/* SINGLE UNIFIED WHITE CARD (Matching Step 1, 2, 3 design) */}
+        <div className="rounded-[28px] border border-[#E7E3DC] bg-white p-6 sm:p-9 space-y-6 text-left shadow-[0_4px_24px_rgba(0,0,0,0.035)]">
+          
+          {/* 1. Header Section */}
+          <div className="space-y-1.5">
+            <span className="block text-[11px] font-bold uppercase tracking-widest text-[#3a2447]">
+              STEP 4 OF 4 · PUBLIC PROFILE
+            </span>
+            <h1 className="font-display text-2xl sm:text-[32px] font-extrabold text-[#181716] tracking-tight leading-tight">
+              Your profile is ready to go live!
+            </h1>
+            <p className="text-xs sm:text-[13px] font-normal text-[#54514D] leading-relaxed pt-0.5">
+              Review your public creator profile below. Go live for free or choose a plan to launch.
             </p>
           </div>
-          <div className="text-left sm:text-right">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#797570] block">Status</span>
-            <span className="text-xl sm:text-2xl font-bold text-[#600a0f]">Active</span>
-          </div>
-        </div>
 
-        {/* Included Features List */}
-        <div className="py-5 space-y-3">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-[#797570]">Included:</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {EARLY_ACCESS_FEATURES.map((feature, i) => (
-              <div key={i} className="flex items-center gap-2.5 text-xs sm:text-sm font-semibold text-[#181716]">
-                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#600a0f]/[0.09] text-[#600a0f]">
-                  <Check className="h-3 w-3 stroke-[3]" />
+          {/* 2. Public Profile Preview Box */}
+          <div className="rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] p-3 sm:p-4 space-y-2.5">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-xs font-bold text-[#181716] flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                Live Public Profile Preview
+              </span>
+              <span className="text-[11px] font-semibold text-[#3a2447]">
+                inflixo.com/@{profile?.username || "username"}
+              </span>
+            </div>
+
+            <div className="rounded-xl overflow-hidden shadow-xs border border-[#e2e8f0] bg-white max-h-[360px] overflow-y-auto scrollbar-thin">
+              <LivePreviewCard
+                profile={profile}
+                socials={socials}
+                series={series}
+                totalAudience={totalAudience}
+                themeKey={theme}
+                variant="compact"
+                isInformational={true}
+              />
+            </div>
+          </div>
+
+          {/* 3. Launch Options (Go Live Free or Purchase Plan - without details of plan) */}
+          <div className="space-y-2.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#64748b]">
+              Choose Launch Option
+            </label>
+
+            {/* Option A: Go Live Free */}
+            <div
+              onClick={() => setSelectedOption("free")}
+              className={`rounded-2xl border p-4 flex items-center justify-between transition-all cursor-pointer ${
+                selectedOption === "free"
+                  ? "border-2 border-[#3a2447] bg-[#f8fafc] shadow-2xs"
+                  : "border-[#e2e8f0] bg-white hover:border-[#cbd5e1]"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-all ${
+                    selectedOption === "free"
+                      ? "border-[#3a2447] bg-[#3a2447] text-white"
+                      : "border-[#cbd5e1] bg-white"
+                  }`}
+                >
+                  {selectedOption === "free" && <Check className="h-3 w-3 stroke-[3]" />}
                 </div>
-                <span>{feature}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Small Note Box */}
-        <div className="rounded-xl bg-[#fbfbfb] border border-[#E7E3DC] p-3.5 text-xs text-[#54514D] font-medium flex items-center gap-2">
-          <ShieldCheck className="h-4 w-4 text-[#600a0f] shrink-0" />
-          <span>No credit card required. You’ll be notified before paid plans become available.</span>
-        </div>
-      </div>
-
-      {/* Upcoming Plans (Compact Coming Soon Cards) */}
-      <div className="mt-8 space-y-3 text-left">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-[#797570]">
-            Upcoming Plans
-          </h3>
-          <span className="text-[11px] font-semibold text-[#797570] bg-[#fbfbfb] px-2.5 py-0.5 rounded-full border border-[#E7E3DC]">
-            Coming Soon
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Pro Card */}
-          <div className="rounded-2xl border border-[#E7E3DC] bg-white p-5 space-y-3 shadow-xs">
-            <div className="flex items-start justify-between gap-2">
-              <div>
-                <div className="flex items-center gap-2">
-                  <h4 className="text-base sm:text-lg font-bold text-[#181716]">Pro</h4>
-                  <span className="rounded-full bg-[#600a0f]/[0.09] border border-[#600a0f]/20 px-2 py-0.5 text-[10px] font-bold text-[#600a0f]">
-                    Coming Soon
-                  </span>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-[#181716]">
+                      Go Live (Free)
+                    </span>
+                    <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.2 rounded-full">
+                      FREE FOREVER
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#64748b] mt-0.5">
+                    Launch public profile with combined fanbase reach
+                  </p>
                 </div>
-                <p className="text-xs text-[#54514D] mt-1">
-                  For growing creators looking to monetize at scale.
-                </p>
               </div>
+              <span className="text-base font-extrabold text-[#181716] shrink-0">
+                ₹0
+              </span>
             </div>
 
-            <div className="flex items-baseline justify-between pt-2 border-t border-[#E7E3DC]">
-              <div>
-                <span className="text-lg font-bold text-[#181716]">₹499</span>
-                <span className="text-xs text-[#797570] font-medium"> / month</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => showToast("We'll notify you when Pro is available! 🚀")}
-                className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] hover:bg-[#E7E3DC] px-3 py-1.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer"
-              >
-                <Bell className="h-3.5 w-3.5 text-[#600a0f]" />
-                <span>Notify Me</span>
-              </button>
-            </div>
-          </div>
-
-          {/* VIP Card */}
-          <div className="rounded-2xl border border-[#E7E3DC] bg-white p-5 space-y-3 shadow-xs">
-            <div className="flex items-start justify-between gap-2">
-              <div>
-                <div className="flex items-center gap-2">
-                  <h4 className="text-base sm:text-lg font-bold text-[#181716]">VIP</h4>
-                  <span className="rounded-full bg-amber-50 border border-amber-200 px-2 py-0.5 text-[10px] font-bold text-amber-700">
-                    Coming Soon
-                  </span>
+            {/* Option B: Purchase Creator Pro */}
+            <div
+              onClick={() => setSelectedOption("pro")}
+              className={`rounded-2xl border p-4 flex items-center justify-between transition-all cursor-pointer ${
+                selectedOption === "pro"
+                  ? "border-2 border-[#3a2447] bg-[#f8fafc] shadow-2xs"
+                  : "border-[#e2e8f0] bg-white hover:border-[#cbd5e1]"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-all ${
+                    selectedOption === "pro"
+                      ? "border-[#3a2447] bg-[#3a2447] text-white"
+                      : "border-[#cbd5e1] bg-white"
+                  }`}
+                >
+                  {selectedOption === "pro" && <Check className="h-3 w-3 stroke-[3]" />}
                 </div>
-                <p className="text-xs text-[#54514D] mt-1">
-                  For top-tier talent, studios &amp; celebrity creators.
-                </p>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-[#181716]">
+                      Purchase Creator Pro
+                    </span>
+                    <span className="bg-[#3a2447]/[0.08] text-[#3a2447] border border-[#3a2447]/20 text-[10px] font-bold px-2 py-0.2 rounded-full">
+                      PRO PLAN
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#64748b] mt-0.5">
+                    Custom domain, watermark removal &amp; fast sync
+                  </p>
+                </div>
               </div>
-            </div>
-
-            <div className="flex items-baseline justify-between pt-2 border-t border-[#E7E3DC]">
-              <div>
-                <span className="text-lg font-bold text-[#181716]">₹1,499</span>
-                <span className="text-xs text-[#797570] font-medium"> / month</span>
+              <div className="text-right shrink-0">
+                <span className="text-base font-extrabold text-[#181716] block">
+                  ₹199
+                </span>
+                <span className="text-[10px] text-[#64748b] font-medium block">
+                  / month
+                </span>
               </div>
-              <button
-                type="button"
-                onClick={() => showToast("We'll notify you when VIP is available! 👑")}
-                className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] hover:bg-[#E7E3DC] px-3 py-1.5 text-xs font-semibold text-[#181716] transition-colors cursor-pointer"
-              >
-                <Bell className="h-3.5 w-3.5 text-[#600a0f]" />
-                <span>Notify Me</span>
-              </button>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Step 5 Form Bottom Navigation (Natural flow, Back + Activate) */}
-      <div className="pt-4 border-t border-[#E7E3DC] mt-8 flex flex-col-reverse sm:flex-row items-center gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          size="lg"
-          disabled={activating}
-          className="w-full sm:w-auto h-11 rounded-xl border-[#E7E3DC] text-[#181716] hover:bg-[#fbfbfb] font-semibold text-sm px-6"
-          onClick={() => router.push("/onboarding/series")}
-        >
-          Back
-        </Button>
-        <Button
-          type="button"
-          fullWidth
-          size="lg"
-          loading={activating}
-          disabled={activating}
-          onClick={handleActivate}
-          className="w-full sm:flex-1 h-11 bg-[#600a0f] hover:bg-[#6F3456] text-white font-bold text-sm rounded-xl cursor-pointer shadow-xs"
-        >
-          Activate Early Access &amp; Launch Profile →
-        </Button>
+          {/* 4. Action Buttons (Back + Go Live / Purchase CTA) */}
+          <div className="pt-2 flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => router.push("/onboarding/socials")}
+              className="rounded-xl border border-[#cbd5e1] bg-white text-[#181716] font-semibold text-xs sm:text-sm h-12 px-5 hover:bg-[#f8fafc] transition-all cursor-pointer shrink-0"
+            >
+              Back
+            </button>
+            <button
+              type="button"
+              onClick={handleLaunch}
+              disabled={submitting}
+              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-[#3a2447] hover:bg-[#2c1b36] text-white font-semibold text-xs sm:text-sm h-12 transition-all cursor-pointer shadow-xs disabled:opacity-60 active:scale-98"
+            >
+              {submitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Launching Profile...</span>
+                </>
+              ) : selectedOption === "pro" ? (
+                <>
+                  <span>Purchase Pro &amp; Go Live</span>
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              ) : (
+                <>
+                  <span>Go Live for Free</span>
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </button>
+          </div>
+
+        </div>
       </div>
     </OnboardingLayout>
   );
 }
-

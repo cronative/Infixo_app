@@ -14,6 +14,7 @@ import { copyToClipboard } from "@/lib/copyToClipboard";
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { OnboardingService } from "@/services/OnboardingService";
 import { ProfileService } from "@/services/ProfileService";
+import { debugLog } from "@/lib/debugLogger";
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -46,34 +47,33 @@ function DesktopTopHeader() {
   };
 
   return (
-    <header className="hidden items-center justify-between border-b border-[#E4DAD5] bg-white px-4 md:px-[100px] py-4 lg:flex shrink-0">
+    <header className="hidden items-center justify-between border-b border-[#E7E3DC] bg-white px-6 sm:px-8 py-4 lg:flex shrink-0">
       <div>
-        <h1 className="font-display text-lg font-bold text-[#241618] tracking-tight">
+        <h1 className="text-xl sm:text-2xl font-semibold text-[#181716] tracking-tight">
           {greeting}
         </h1>
-        <p className="text-xs text-[#6B5A5D] font-medium mt-0.5">
-          Here&apos;s how {displayName} is looking today.
+        <p className="text-xs sm:text-sm text-[#54514D] font-normal mt-0.5">
+          Here&apos;s how your Inflixo profile is looking today.
         </p>
       </div>
 
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={handleCopy}
-          className="flex items-center gap-1.5 rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#fbfbfb] px-3.5 py-2 text-xs font-semibold text-[#241618] transition-colors cursor-pointer"
+          className="h-10 px-3.5 rounded-[10px] border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-xs sm:text-sm font-medium text-[#181716] transition-colors cursor-pointer shadow-xs inline-flex items-center gap-2"
         >
-          <Copy className="h-3.5 w-3.5 text-[#6B5A5D]" />
+          <Copy className="h-4 w-4 text-[#797570]" />
           <span>Copy Link</span>
         </button>
-
         <a
           href={`/${handleStr}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 rounded-xl bg-[#600a0f] hover:bg-[#600a0f] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+          className="h-10 px-4 rounded-[10px] bg-[#3a2447] hover:bg-[#2c1937] text-xs sm:text-sm font-medium text-white transition-colors cursor-pointer shadow-xs inline-flex items-center gap-2"
         >
           <span>View Profile</span>
-          <ExternalLink className="h-3.5 w-3.5" />
+          <ExternalLink className="h-4 w-4" />
         </a>
       </div>
     </header>
@@ -81,21 +81,27 @@ function DesktopTopHeader() {
 }
 
 function Shell({ children }: { children: ReactNode }) {
+  const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { loading } = useCreator();
+  const { profile, loading } = useCreator();
 
   useEffect(() => {
     if (!loading) {
+      if (!profile.username || !profile.displayName) {
+        debugLog("DASHBOARD", "Profile incomplete on dashboard -> Redirecting to /onboarding/profile");
+        router.replace("/onboarding/profile");
+        return;
+      }
       OnboardingService.setStep("finish");
     }
-  }, [loading]);
+  }, [loading, profile.username, profile.displayName, router]);
 
   if (loading) {
     return <SyncingLoader message="Syncing your creator profile, series & stats..." fullScreen hideProgressBar={true} />;
   }
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#fbfbfb]">
+    <div className="flex h-screen w-screen overflow-hidden bg-[#f8fafc]">
       {/* Desktop Sidebar */}
       <DashboardSidebar />
 
@@ -108,8 +114,8 @@ function Shell({ children }: { children: ReactNode }) {
         <DashboardMobileHeader onOpenDrawer={() => setDrawerOpen(true)} />
 
         {/* Scrollable Content Viewport */}
-        <main className="flex-1 overflow-y-auto px-4 py-6 md:px-[100px] animate-fade-in-up">
-          <div className="w-full">
+        <main className="flex-1 overflow-y-auto px-6 sm:px-8 py-6">
+          <div className="mx-auto max-w-7xl w-full">
             {children}
           </div>
         </main>

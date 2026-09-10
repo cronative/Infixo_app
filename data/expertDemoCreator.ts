@@ -1,4 +1,4 @@
-import { CreatorProfile, SocialAccounts, Series, MediaKitPackage, CustomLink, ThemeKey } from "@/types";
+import { CreatorProfile, SocialAccounts, Series, MediaKitPackage, CustomLink, ThemeKey, CreatorReview } from "@/types";
 
 export const EXPERT_DEMO_PROFILE: CreatorProfile = {
   id: "cr_expert_demo_creator",
@@ -402,5 +402,47 @@ export const EXPERT_DEMO_CUSTOM_LINKS: CustomLink[] = [
     title: "Camera Gear & Studio Desk Setup",
     url: "https://amazon.in/shop/demo",
     isEnabled: true,
+  },
+];
+
+export const EXPERT_DEMO_REVIEWS: CreatorReview[] = [
+  {
+    id: "rev_makemytrip",
+    creatorId: "cr_expert_demo_creator",
+    token: "tok_mmt",
+    clientName: "MakeMyTrip",
+    clientEmail: "partnerships@makemytrip.com",
+    projectTitle: "Campaign: Monsoon Road Trips",
+    contentUrl: "https://instagram.com/reels/",
+    rating: 5,
+    comment: "Rahul was an absolute joy to work with! Our Gujarat tourism campaign saw an immediate 3.4x spike in inquiries, and his reel generated over 420,000 views with high fan engagement. Highly recommended for luxury stay properties.",
+    status: "approved",
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "rev_zomato",
+    creatorId: "cr_expert_demo_creator",
+    token: "tok_zomato",
+    clientName: "Zomato India",
+    clientEmail: "marketing@zomato.com",
+    projectTitle: "Food Festivals Season Partnership",
+    contentUrl: "https://youtube.com/watch",
+    rating: 5,
+    comment: "Exceptional creative storytelling! Rahul delivers brand integration that feels genuine instead of forced. His production value is top-tier and always delivers on schedule.",
+    status: "approved",
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "rev_gopro",
+    creatorId: "cr_expert_demo_creator",
+    token: "tok_gopro",
+    clientName: "GoPro India",
+    clientEmail: "creator@gopro.com",
+    projectTitle: "Product Launch: Action Cam Series",
+    contentUrl: "https://instagram.com/reels/",
+    rating: 5,
+    comment: "The authenticity in his content translates into actual conversions. His review generated over 150 bookings within 48 hours.",
+    status: "approved",
+    createdAt: new Date().toISOString(),
   },
 ];

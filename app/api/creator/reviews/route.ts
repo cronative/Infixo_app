@@ -77,9 +77,9 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { email, creatorId, clientName, clientEmail, clientDesignation, projectTitle, contentUrl } = body;
 
-    if (!clientName || !clientEmail || !projectTitle || !contentUrl) {
+    if (!clientName || !clientName.trim()) {
       return NextResponse.json(
-        { success: false, error: "clientName, clientEmail, projectTitle, and contentUrl are mandatory" },
+        { success: false, error: "Client or brand name is required" },
         { status: 400 }
       );
     }
@@ -107,6 +107,12 @@ export async function POST(req: Request) {
     const reviewId = `rev_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     const token = `tok_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
 
+    const cleanClientName = clientName.trim();
+    const cleanClientEmail = clientEmail?.trim() || "";
+    const cleanProjectTitle = projectTitle?.trim() || "Brand Collaboration";
+    const cleanContentUrl = contentUrl?.trim() || "";
+    const cleanDesignation = clientDesignation?.trim() || "";
+
     await db.query(
       `INSERT INTO creator_reviews 
        (id, creator_id, token, client_name, client_email, client_designation, project_title, content_url, rating, comment, status)
@@ -115,11 +121,11 @@ export async function POST(req: Request) {
         reviewId,
         resolvedCreatorId,
         token,
-        clientName.trim(),
-        clientEmail.trim(),
-        clientDesignation?.trim() || "",
-        projectTitle.trim(),
-        contentUrl.trim(),
+        cleanClientName,
+        cleanClientEmail,
+        cleanDesignation,
+        cleanProjectTitle,
+        cleanContentUrl,
       ]
     );
 
@@ -138,31 +144,33 @@ export async function POST(req: Request) {
     let emailSent = false;
     let emailError: string | undefined = undefined;
 
-    try {
-      const emailResult = await sendCollabReviewEmail(clientEmail.trim(), {
-        creatorName: creatorDisplayName,
-        clientName: clientName.trim(),
-        clientEmail: clientEmail.trim(),
-        projectTitle: projectTitle.trim(),
-        contentUrl: contentUrl.trim(),
-        reviewUrl,
-      });
-      emailSent = emailResult.success;
-      emailError = emailResult.error;
-    } catch (e: any) {
-      console.error("Failed to send review request email:", e);
-      emailError = e?.message || "Email dispatch failed";
+    if (cleanClientEmail && cleanClientEmail.includes("@")) {
+      try {
+        const emailResult = await sendCollabReviewEmail(cleanClientEmail, {
+          creatorName: creatorDisplayName,
+          clientName: cleanClientName,
+          clientEmail: cleanClientEmail,
+          projectTitle: cleanProjectTitle,
+          contentUrl: cleanContentUrl,
+          reviewUrl,
+        });
+        emailSent = emailResult.success;
+        emailError = emailResult.error;
+      } catch (e: any) {
+        console.error("Failed to send review request email:", e);
+        emailError = e?.message || "Email dispatch failed";
+      }
     }
 
     const reviewObj = {
       id: reviewId,
       creatorId: resolvedCreatorId,
       token,
-      clientName: clientName.trim(),
-      clientEmail: clientEmail.trim(),
-      clientDesignation: clientDesignation?.trim() || "",
-      projectTitle: projectTitle.trim(),
-      contentUrl: contentUrl.trim(),
+      clientName: cleanClientName,
+      clientEmail: cleanClientEmail,
+      clientDesignation: cleanDesignation,
+      projectTitle: cleanProjectTitle,
+      contentUrl: cleanContentUrl,
       rating: 5,
       comment: "",
       status: "pending_invite",

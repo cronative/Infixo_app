@@ -7,11 +7,10 @@ import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { OnboardingLayout } from "@/layouts/OnboardingLayout";
-import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { OnboardingService } from "@/services/OnboardingService";
 
-const CONFETTI_COLORS = ["#600a0f", "#d946ef", "#f59e0b", "#3b82f6", "#10b981", "#e6c583"];
+const CONFETTI_COLORS = ["#3a2447", "#3b82f6", "#10b981", "#f59e0b", "#6366f1", "#06b6d4"];
 
 function ConfettiBurst() {
   const [pieces, setPieces] = useState<{ left: number; color: string; delay: number; rotate: number; scale: number }[]>([]);
@@ -51,7 +50,7 @@ function ConfettiBurst() {
 
 export default function FinishStepPage() {
   const router = useRouter();
-  const { profile, socials, totalAudience, theme, series } = useCreator();
+  const { profile } = useCreator();
   const { showToast } = useToast();
   const [copied, setCopied] = useState(false);
   const [isLoadingDashboard, setIsLoadingDashboard] = useState(false);
@@ -107,68 +106,56 @@ export default function FinishStepPage() {
       : null;
 
   return (
-    <OnboardingLayout
-      step="finish"
-      preview={
-        <LivePreviewCard
-          profile={profile}
-          socials={socials}
-          totalAudience={totalAudience}
-          themeKey={theme}
-          series={series}
-          isFinishStep={true}
-        />
-      }
-    >
-      <div className="relative flex flex-col items-center justify-center overflow-hidden py-4">
+    <OnboardingLayout step="finish">
+      <div className="relative flex flex-col items-center justify-center overflow-hidden py-2 sm:py-3">
         <ConfettiBurst />
 
         <div className="pop-in relative z-10 flex w-full max-w-md flex-col items-center text-center">
           {/* Circular Creator Avatar with Green Success Check Badge */}
-          <div className="relative mb-3">
+          <div className="relative mb-2">
             <CreatorAvatar
               src={profile.photoDataUrl}
               name={profile.displayName || "Creator"}
-              className="w-20 h-20 sm:w-22 sm:h-22 rounded-full aspect-square object-cover overflow-hidden border-2 border-white shadow-md mx-auto"
-              textClassName="text-2xl font-extrabold text-white"
-              fallbackBgClass="bg-[#600a0f]"
+              className="w-16 h-16 sm:w-18 sm:h-18 rounded-full aspect-square object-cover overflow-hidden border-2 border-white shadow-md mx-auto"
+              textClassName="text-xl font-extrabold text-white"
+              fallbackBgClass="bg-[#3a2447]"
             />
             <div
-              className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500 text-white ring-2 ring-white shadow-md"
+              className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-[#10b981] text-white ring-2 ring-white shadow-md"
               title="Profile Ready"
             >
-              <Check className="h-4 w-4 stroke-[3]" />
+              <Check className="h-3 w-3 stroke-[3]" />
             </div>
           </div>
 
-          <h1 className="mt-2 text-2xl sm:text-3xl font-bold leading-tight tracking-tight text-[#181716]">
+          <h1 className="mt-1 text-xl sm:text-2xl font-bold leading-tight tracking-tight text-[#3a2447]">
             You&apos;re Live on Inflixo 🎉
           </h1>
-          <p className="mt-1.5 text-xs sm:text-sm text-[#54514D] font-medium leading-relaxed max-w-sm">
+          <p className="mt-1 text-xs text-[#475569] font-medium leading-relaxed max-w-sm">
             Your creator profile is ready. Share your Inflixo link with your audience and potential brand partners.
           </p>
 
           {/* Clean Public URL Box */}
-          <div className="mt-6 flex w-full items-center justify-between gap-3 rounded-xl border border-[#E7E3DC] bg-white p-3 shadow-xs">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#600a0f]/[0.09] text-[#600a0f]">
-                <Sparkles className="h-4 w-4" />
+          <div className="mt-4 flex w-full items-center justify-between gap-2.5 rounded-xl border border-[#e2e8f0] bg-white p-2.5 sm:p-3 shadow-xs">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#f1f5f9] text-[#3a2447]">
+                <Sparkles className="h-3.5 w-3.5" />
               </span>
-              <span className="truncate text-sm font-bold text-[#181716]">{displayUrl}</span>
+              <span className="truncate text-xs sm:text-sm font-bold text-[#3a2447]">{displayUrl}</span>
             </div>
             <button
               type="button"
               onClick={handleCopy}
-              className="tap-scale flex items-center gap-1.5 rounded-lg bg-[#600a0f] hover:bg-[#6F3456] px-4 py-2 text-xs font-bold text-white transition-all cursor-pointer shrink-0 shadow-xs"
+              className="tap-scale flex items-center gap-1.5 rounded-lg bg-[#3a2447] hover:bg-[#1e293b] px-3.5 py-1.5 text-xs font-bold text-white transition-all cursor-pointer shrink-0 shadow-xs"
             >
               {copied ? (
                 <>
-                  <Check className="h-3.5 w-3.5 stroke-[3]" />
+                  <Check className="h-3 w-3 stroke-[3]" />
                   <span>Copied</span>
                 </>
               ) : (
                 <>
-                  <Copy className="h-3.5 w-3.5" />
+                  <Copy className="h-3 w-3" />
                   <span>Copy</span>
                 </>
               )}
@@ -176,34 +163,34 @@ export default function FinishStepPage() {
           </div>
 
           {/* Primary & Secondary Action Buttons Hierarchy */}
-          <div className="mt-6 w-full space-y-3">
+          <div className="mt-4 w-full space-y-2.5">
             {/* Primary Action Button */}
             <button
               type="button"
               onClick={handleGoToDashboard}
               disabled={isLoadingDashboard}
-              className="tap-scale w-full flex items-center justify-center gap-2 rounded-xl bg-[#600a0f] hover:bg-[#6F3456] text-white font-bold h-11 text-sm transition-all cursor-pointer shadow-xs disabled:opacity-75"
+              className="tap-scale w-full flex items-center justify-center gap-2 rounded-xl bg-[#3a2447] hover:bg-[#1e293b] text-white font-bold h-10 text-xs sm:text-sm transition-all cursor-pointer shadow-xs disabled:opacity-75"
             >
               {isLoadingDashboard ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
                   <span>Opening Dashboard...</span>
                 </>
               ) : (
                 <>
-                  <LayoutDashboard className="h-4 w-4" />
+                  <LayoutDashboard className="h-3.5 w-3.5" />
                   <span>Go to Creator Dashboard →</span>
                 </>
               )}
             </button>
 
             {/* Secondary Action Buttons Side-by-Side */}
-            <div className="grid grid-cols-2 gap-3 w-full">
+            <div className="grid grid-cols-2 gap-2.5 w-full">
               <a
                 href={`/${handleStr}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] text-[#181716] font-semibold h-10 px-3 text-xs transition-colors cursor-pointer text-center"
+                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] text-[#3a2447] font-semibold h-9 px-3 text-xs transition-colors cursor-pointer text-center shadow-xs"
               >
                 <ExternalLink className="h-3.5 w-3.5 shrink-0" />
                 <span className="truncate">View Public Profile</span>
@@ -212,10 +199,10 @@ export default function FinishStepPage() {
               <button
                 type="button"
                 onClick={handleShare}
-                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#fbfbfb] text-[#181716] font-semibold h-10 px-3 text-xs transition-colors cursor-pointer text-center"
+                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] text-[#3a2447] font-semibold h-9 px-3 text-xs transition-colors cursor-pointer text-center shadow-xs"
               >
                 <Share2 className="h-3.5 w-3.5 shrink-0" />
-                <span className="truncate">Share Profile</span>
+                <span>Share Profile</span>
               </button>
             </div>
           </div>

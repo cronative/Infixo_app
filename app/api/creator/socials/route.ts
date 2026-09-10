@@ -24,7 +24,7 @@ export async function GET(req: Request) {
       [creators] = await db.query("SELECT id, email FROM creators WHERE LOWER(email) = LOWER(?)", [email?.trim()]);
     }
     if (creators.length === 0) {
-      return NextResponse.json({ socials: [] });
+      return NextResponse.json({ success: true, socials: [], customLinks: [] });
     }
 
     const creatorId = creators[0].id;
@@ -84,7 +84,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email, platform, and username required" }, { status: 400 });
     }
 
-    const [creators]: any = await db.query("SELECT id FROM creators WHERE email = ?", [email]);
+    const [creators]: any = await db.query(
+      "SELECT id FROM creators WHERE LOWER(email) = LOWER(?) OR username = ?",
+      [email.trim(), email.trim()]
+    );
     if (creators.length === 0) {
       return NextResponse.json({ error: "Creator not found" }, { status: 404 });
     }
@@ -135,7 +138,10 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "Email and platform query params required" }, { status: 400 });
     }
 
-    const [creators]: any = await db.query("SELECT id FROM creators WHERE email = ?", [email]);
+    const [creators]: any = await db.query(
+      "SELECT id FROM creators WHERE LOWER(email) = LOWER(?) OR username = ?",
+      [email.trim(), email.trim()]
+    );
     if (creators.length > 0) {
       await db.query("DELETE FROM social_accounts WHERE creator_id = ? AND platform = ?", [creators[0].id, platform]);
     }

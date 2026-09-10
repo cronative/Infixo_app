@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Layers, SkipForward, Sparkles, Film, ArrowRight, Eye, Globe } from "lucide-react";
+import { Layers, SkipForward, Sparkles, Film, ArrowRight, Globe } from "lucide-react";
 import { OnboardingLayout } from "@/layouts/OnboardingLayout";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
@@ -11,20 +11,22 @@ import { PhotoUpload } from "@/components/ui/PhotoUpload";
 import { SeriesCoverUpload } from "@/components/series/SeriesCoverUpload";
 import { SeriesService } from "@/services/SeriesService";
 import { OnboardingService } from "@/services/OnboardingService";
-import { EpisodePlatform, Series } from "@/types";
+import { EpisodePlatform } from "@/types";
 import { useToast } from "@/contexts/ToastContext";
 import { scrollToFirstError } from "@/utils/scroll";
-import { useCreator } from "@/contexts/CreatorContext";
-import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
 import { GenreMultiSelect } from "@/components/ui/GenreMultiSelect";
 import { LanguageSelect } from "@/components/ui/LanguageSelect";
 import { YoutubeIcon, InstagramIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 
 export default function SeriesStepPage() {
   const router = useRouter();
+
+  useEffect(() => {
+    OnboardingService.setStep("subscription");
+    router.replace("/onboarding/subscription");
+  }, [router]);
   const { showToast } = useToast();
   const [submitting, setSubmitting] = useState(false);
-  const [isMobilePreviewOpen, setIsMobilePreviewOpen] = useState(false);
 
   // Series-level fields
   const [title, setTitle] = useState("");
@@ -75,76 +77,23 @@ export default function SeriesStepPage() {
     }
   }
 
-  const { profile, socials, totalAudience, theme, series } = useCreator();
-
-  // Create active draft series array for live phone preview sync (only when title is entered)
-  const draftSeries: Series[] = title.trim()
-    ? [
-      {
-        id: "draft-1",
-        title: title.trim(),
-        posterDataUrl: poster,
-        description: description.trim(),
-        genre: genre || "Entertainment",
-        language: language || "English",
-        platform: seriesPlatform,
-        seasons: [],
-        createdAt: new Date().toISOString(),
-      },
-    ]
-    : [];
-
-  const preview = (
-    <LivePreviewCard
-      profile={profile}
-      socials={socials}
-      totalAudience={totalAudience}
-      themeKey={theme}
-      series={draftSeries}
-      isOnboarding={true}
-      isInformational={true}
-    />
-  );
-
   return (
-    <OnboardingLayout
-      step="series"
-      isMobilePreviewOpen={isMobilePreviewOpen}
-      setIsMobilePreviewOpen={setIsMobilePreviewOpen}
-      preview={preview}
-    >
-      <div className="flex items-center justify-between gap-2 mb-2.5">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#600a0f]/20 bg-[#600a0f]/[0.09] px-3 py-1 text-xs font-bold text-[#600a0f]">
-          <Sparkles className="h-3.5 w-3.5 text-[#600a0f] shrink-0" />
-          <span>Step 4 of 6 • Series &amp; Episodes</span>
-        </div>
+    <OnboardingLayout step="series">
 
-        {/* Mobile / Tablet Dedicated Preview Trigger */}
-        <button
-          type="button"
-          onClick={() => setIsMobilePreviewOpen(true)}
-          className="lg:hidden tap-scale inline-flex items-center gap-1.5 rounded-full border border-[#600a0f]/30 bg-[#600a0f]/[0.09] hover:bg-[#600a0f]/15 px-3 py-1 text-xs font-bold text-[#600a0f] transition-all cursor-pointer shadow-xs"
-          title="Preview public profile"
-        >
-          <Eye className="h-3.5 w-3.5 text-[#600a0f]" />
-          <span>Preview Profile</span>
-        </button>
-      </div>
-
-      <h1 className="text-2xl font-bold leading-tight tracking-tight text-[#181716] sm:text-3xl">
+      <h1 className="text-xl sm:text-2xl font-bold leading-snug tracking-tight text-[#181716]">
         Your content, your show
       </h1>
-      <p className="mt-1.5 text-xs sm:text-sm text-[#54514D] leading-relaxed">
+      <p className="mt-1 text-xs text-[#54514D] leading-relaxed">
         Organize your social videos into seasons and episodes, OTT-style on your public profile.
       </p>
 
       {/* CREATE SERIES FORM UI (DEFAULT OPEN) */}
-      <div className="mt-6 space-y-6 text-left">
+      <div className="mt-4 space-y-3.5 text-left">
         {/* Card 1: Series Information */}
-        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-5 sm:p-6 shadow-xs space-y-5">
-          <div className="flex items-center justify-between border-b border-[#E7E3DC] pb-3">
-            <p className="text-sm font-bold text-[#181716] flex items-center gap-2">
-              <Film className="h-4 w-4 text-[#600a0f]" />
+        <div className="rounded-xl border border-[#E7E3DC] bg-white p-3.5 sm:p-4 shadow-xs space-y-3.5">
+          <div className="flex items-center justify-between border-b border-[#E7E3DC] pb-2">
+            <p className="text-xs sm:text-sm font-bold text-[#181716] flex items-center gap-1.5">
+              <Film className="h-3.5 w-3.5 text-[#3a2447]" />
               Series Information
             </p>
           </div>
@@ -157,7 +106,7 @@ export default function SeriesStepPage() {
             label="Series Cover"
           />
 
-          <div className="w-full space-y-3" id="title">
+          <div className="w-full space-y-2.5" id="title">
             <Input
               label="Series title"
               placeholder="e.g. Kashmir Diaries or Tech Unboxed"
@@ -171,10 +120,10 @@ export default function SeriesStepPage() {
 
             {/* Platform Selector Pills */}
             <div>
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#54514D]">
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-[#54514D]">
                 Social Platform for Series
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
                 {(["YouTube", "Instagram", "Facebook", "Other"] as EpisodePlatform[]).map((p) => {
                   const isSelected = seriesPlatform === p;
                   return (
@@ -182,15 +131,15 @@ export default function SeriesStepPage() {
                       key={p}
                       type="button"
                       onClick={() => setSeriesPlatform(p)}
-                      className={`tap-scale flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-all cursor-pointer ${isSelected
-                        ? "border-[#600a0f] bg-[#600a0f]/[0.09] text-[#600a0f] font-bold"
+                      className={`tap-scale flex items-center justify-center gap-1.5 rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition-all cursor-pointer ${isSelected
+                        ? "border-[#3a2447] bg-[#3a2447]/[0.08] text-[#3a2447] font-bold"
                         : "border-[#E7E3DC] bg-white text-[#54514D] hover:bg-[#fbfbfb]"
                         }`}
                     >
-                      {p === "YouTube" && <YoutubeIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#600a0f]" : "text-red-500"}`} />}
-                      {p === "Instagram" && <InstagramIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#600a0f]" : "text-pink-500"}`} />}
-                      {p === "Facebook" && <FacebookIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#600a0f]" : "text-blue-600"}`} />}
-                      {p === "Other" && <Globe className={`h-3.5 w-3.5 ${isSelected ? "text-[#600a0f]" : "text-[#797570]"}`} />}
+                      {p === "YouTube" && <YoutubeIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#3a2447]" : "text-red-500"}`} />}
+                      {p === "Instagram" && <InstagramIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#3a2447]" : "text-pink-500"}`} />}
+                      {p === "Facebook" && <FacebookIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#3a2447]" : "text-blue-600"}`} />}
+                      {p === "Other" && <Globe className={`h-3.5 w-3.5 ${isSelected ? "text-[#3a2447]" : "text-[#797570]"}`} />}
                       <span>{p}</span>
                     </button>
                   );
@@ -200,7 +149,7 @@ export default function SeriesStepPage() {
           </div>
 
           {/* Vertical Stack for Genre Chips & Language Select */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div id="genre" data-field="genre">
               <GenreMultiSelect
                 value={genre}
@@ -210,7 +159,7 @@ export default function SeriesStepPage() {
                 }}
                 max={5}
               />
-              {errors.genre && <p className="mt-1.5 text-xs font-bold text-rose-500">{errors.genre}</p>}
+              {errors.genre && <p className="mt-1 text-xs font-bold text-rose-500">{errors.genre}</p>}
             </div>
 
             <div id="language" data-field="language">
@@ -235,8 +184,8 @@ export default function SeriesStepPage() {
         </div>
 
         {/* Informational Box */}
-        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-4 text-xs text-[#54514D] flex items-start gap-2.5">
-          <Sparkles className="h-4 w-4 text-[#600a0f] shrink-0 mt-0.5" />
+        <div className="rounded-xl border border-[#E7E3DC] bg-white p-3 text-xs text-[#54514D] flex items-start gap-2">
+          <Sparkles className="h-3.5 w-3.5 text-[#3a2447] shrink-0 mt-0.5" />
           <p className="leading-relaxed">
             Episodes can be added anytime from your <strong className="text-[#181716]">Creator Dashboard</strong>. Early Access supports up to 3 series and 15 total episodes.
           </p>
@@ -244,13 +193,13 @@ export default function SeriesStepPage() {
       </div>
 
       {/* Step 4 Form Bottom Navigation (Natural flow, Back + Skip + Next) */}
-      <div className="pt-4 border-t border-[#E7E3DC] mt-8 flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5 w-full sm:w-auto">
+      <div className="pt-3.5 border-t border-[#E7E3DC] mt-5 sm:mt-6 flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
           <Button
             type="button"
             variant="outline"
             size="lg"
-            className="w-full sm:w-auto h-11 rounded-xl border-[#E7E3DC] text-[#181716] hover:bg-[#fbfbfb] font-semibold text-sm px-6"
+            className="w-full sm:w-auto h-10 rounded-xl border-[#E7E3DC] text-[#181716] hover:bg-[#fbfbfb] font-semibold text-xs sm:text-sm px-5"
             onClick={() => router.push("/onboarding/themes")}
           >
             Back
@@ -258,9 +207,9 @@ export default function SeriesStepPage() {
           <button
             type="button"
             onClick={handleSkip}
-            className="w-full sm:w-auto h-11 px-4 rounded-xl text-xs font-semibold text-[#797570] hover:text-[#181716] hover:bg-[#fbfbfb] transition-colors flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+            className="w-full sm:w-auto h-10 px-3.5 rounded-xl text-xs font-semibold text-[#797570] hover:text-[#181716] hover:bg-[#fbfbfb] transition-colors flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
           >
-            <SkipForward className="h-3.5 w-3.5" />
+            <SkipForward className="h-3 w-3" />
             <span>Skip for Now</span>
           </button>
         </div>
@@ -270,7 +219,7 @@ export default function SeriesStepPage() {
           size="lg"
           loading={submitting}
           onClick={handleSaveAndContinue}
-          className="w-full sm:flex-1 sm:max-w-xs h-11 bg-[#600a0f] hover:bg-[#6F3456] text-white font-bold text-sm rounded-xl cursor-pointer shadow-xs"
+          className="w-full sm:flex-1 sm:max-w-xs h-10 bg-[#3a2447] hover:bg-[#2c1937] text-white font-bold text-xs sm:text-sm rounded-xl cursor-pointer shadow-xs"
         >
           Save &amp; Next →
         </Button>

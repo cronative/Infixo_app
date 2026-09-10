@@ -9,21 +9,40 @@ export interface AdminUser {
 }
 
 export const AdminService = {
-  login(email: string, pass: string): boolean {
-    if (email.trim().toLowerCase() === "admin@inflixo.com" && pass === "Devom@131130") {
-      const session = {
-        email: "admin@inflixo.com",
-        role: "admin",
-        name: "Inflixo Super Admin",
-        loggedInAt: new Date().toISOString(),
-      };
-      storage.set(ADMIN_TOKEN_KEY, session);
-      return true;
+  async login(email: string, pass: string): Promise<boolean> {
+    try {
+      const res = await fetch("/api/admin/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim().toLowerCase(), password: pass }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success && data.admin) {
+        const session = {
+          email: data.admin.email,
+          role: "admin",
+          name: data.admin.name || "Inflixo Super Admin",
+          token: data.token,
+          loggedInAt: new Date().toISOString(),
+        };
+        storage.set(ADMIN_TOKEN_KEY, session);
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
     }
-    return false;
   },
 
-  logout(): void {
+  async logout(): Promise<void> {
+    try {
+      await fetch("/api/admin/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "logout" }),
+      });
+    } catch {}
     storage.remove(ADMIN_TOKEN_KEY);
   },
 

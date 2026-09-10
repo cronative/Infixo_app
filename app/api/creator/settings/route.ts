@@ -88,10 +88,10 @@ export async function POST(req: Request) {
     if (!creatorId) {
       // Fallback: If creator row does not exist yet, generate ID
       creatorId = `cr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-      const cleanUsername = (username || email.split("@")[0]).replace(/[^a-z0-9_]/gi, "").toLowerCase();
+      const cleanUsername = username ? username.trim().replace(/[^a-z0-9_]/gi, "").toLowerCase() : "";
       await db.query(
-        "INSERT INTO creators (id, email, display_name, username) VALUES (?, ?, ?, ?)",
-        [creatorId, email || `${cleanUsername}@inflixo.com`, cleanUsername, cleanUsername]
+        "INSERT INTO creators (id, email, display_name, username) VALUES (?, ?, '', ?)",
+        [creatorId, email || "", cleanUsername]
       );
     }
 
