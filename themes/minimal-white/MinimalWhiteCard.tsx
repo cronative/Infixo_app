@@ -103,12 +103,12 @@ export function MinimalWhiteCard({ profile, socials, series, totalAudience, vari
                 </div>
                 {eps.slice(0, 3).map((ep, idx) => (
                   <div key={ep.id || idx} className="flex items-center gap-2.5 rounded-xl border border-slate-200/80 bg-white px-3 py-2 text-xs font-semibold text-slate-800">
-                    <Play className="h-3 w-3 fill-[#803D63] text-[#803D63]" />
-                    <span className="font-extrabold text-[#803D63]">Part {String(ep.episodeNumber || idx + 1).padStart(2, "0")}</span>
+                    <Play className="h-3 w-3 fill-[#151933] text-[#151933]" />
+                    <span className="font-extrabold text-[#151933]">Part {String(ep.episodeNumber || idx + 1).padStart(2, "0")}</span>
                     <span className="truncate flex-1">{ep.title || `Part ${idx + 1}`}</span>
                   </div>
                 ))}
-                <p className="text-center text-xs font-bold text-[#803D63]">
+                <p className="text-center text-xs font-bold text-[#151933]">
                   View All {eps.length} Episodes →
                 </p>
               </div>

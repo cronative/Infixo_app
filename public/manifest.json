@@ -6,9 +6,13 @@
   "id": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FFFFFF",
-  "theme_color": "#803D63",
-  "categories": ["entertainment", "social", "productivity"],
+  "background_color": "#fbfbfb",
+  "theme_color": "#151933",
+  "categories": [
+    "entertainment",
+    "social",
+    "productivity"
+  ],
   "icons": [
     {
       "src": "/logo-square.png",

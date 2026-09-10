@@ -11,6 +11,7 @@ import {
   Sparkles,
   Eye,
   ArrowLeft,
+  Globe,
 } from "lucide-react";
 import { LogoStadiumLinkI } from "@/components/shared/Logo";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
@@ -49,7 +50,7 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   }
   return {
     name: platformStr || "Watch",
-    icon: <Film className="h-3.5 w-3.5 text-[#803D63]" />,
+    icon: <Film className="h-3.5 w-3.5 text-[#151933]" />,
   };
 }
 
@@ -174,10 +175,27 @@ export function SeriesDetailClient({
     return allEpisodes;
   }, [seasonsList, activeSeasonIndex, allEpisodes]);
 
+  const detectedPlatform = useMemo(() => {
+    if (series?.platform && series.platform.trim()) {
+      const p = series.platform.trim();
+      if (/youtube/i.test(p)) return "YouTube";
+      if (/instagram/i.test(p)) return "Instagram";
+      if (/facebook/i.test(p)) return "Facebook";
+      return p;
+    }
+    const firstUrl = allEpisodes[0]?.externalUrl || "";
+    if (firstUrl) {
+      if (/youtube\.com|youtu\.be/i.test(firstUrl)) return "YouTube";
+      if (/instagram\.com/i.test(firstUrl)) return "Instagram";
+      if (/facebook\.com/i.test(firstUrl)) return "Facebook";
+    }
+    return null;
+  }, [series?.platform, allEpisodes]);
+
   const platformInfo = useMemo(() => {
-    if (!series?.platform) return null;
-    return getPlatformInfo(series.platform);
-  }, [series?.platform]);
+    if (!detectedPlatform) return null;
+    return getPlatformInfo(detectedPlatform, allEpisodes[0]?.externalUrl);
+  }, [detectedPlatform, allEpisodes]);
 
   // Valid cover image: only when genuinely available and not errored
   const hasValidCover = Boolean(
@@ -210,8 +228,8 @@ export function SeriesDetailClient({
           episodeId: ep.id,
           url: ep.externalUrl,
         }),
-      }).catch(() => {});
-    } catch {}
+      }).catch(() => { });
+    } catch { }
   };
 
   // ── LOADING SKELETON (THEME-AWARE) ──
@@ -239,7 +257,7 @@ export function SeriesDetailClient({
       <div className={`min-h-dvh flex flex-col items-center justify-center p-4 py-6 sm:py-8 transition-colors duration-300 ${pageBgStyle}`}>
         <main className="mx-auto max-w-md w-full text-center space-y-6">
           <div className={`rounded-3xl border p-8 sm:p-10 shadow-2xs space-y-5 ${style.socialItemBg} ${style.socialItemBorder}`}>
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#803D63] text-white shadow-md">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#151933] text-white shadow-md">
               <Film className="h-8 w-8" />
             </div>
 
@@ -256,13 +274,12 @@ export function SeriesDetailClient({
               <button
                 type="button"
                 onClick={() => router.push(profileUrl)}
-                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold transition-all cursor-pointer border ${
-                  isDark
-                    ? "bg-[#803D63]/22 hover:bg-[#803D63]/32 active:bg-[#803D63]/40 border-[#803D63]/45 hover:border-[#803D63]/60 text-[#F8FAFC] focus-visible:ring-2 focus-visible:ring-[#803D63]/60"
-                    : isSignaturePurple
-                    ? "bg-[#803D63]/16 hover:bg-[#803D63]/24 active:bg-[#803D63]/32 border border-[#803D63]/35 hover:border-[#803D63]/50 text-[#803D63] focus-visible:ring-2 focus-visible:ring-[#803D63]/60 shadow-xs"
-                    : "bg-[#803D63] hover:bg-[#6F3456] text-white border-transparent"
-                }`}
+                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold transition-all cursor-pointer border ${isDark
+                  ? "bg-[#151933]/22 hover:bg-[#151933]/32 active:bg-[#151933]/40 border-[#151933]/45 hover:border-[#151933]/60 text-[#F8FAFC] focus-visible:ring-2 focus-visible:ring-[#151933]/60"
+                  : isSignaturePurple
+                    ? "bg-[#151933]/16 hover:bg-[#151933]/24 active:bg-[#151933]/32 border border-[#151933]/35 hover:border-[#151933]/50 text-[#151933] focus-visible:ring-2 focus-visible:ring-[#151933]/60 shadow-xs"
+                    : "bg-[#151933] hover:bg-[#2c1937] text-white border-transparent"
+                  }`}
               >
                 <span>Go to @{username}</span>
               </button>
@@ -285,6 +302,20 @@ export function SeriesDetailClient({
   const c = themeMeta.colors;
   const typ = themeMeta.typography;
   const eff = themeMeta.effects;
+
+  const genresList = series.genre
+    ? series.genre
+      .split(/[,•|/]/)
+      .map((g) => g.trim().replace(/^Genre:\s*/i, ""))
+      .filter(Boolean)
+    : [];
+
+  const langTag =
+    series.language &&
+      series.language.trim() &&
+      !genresList.some((g) => g.toLowerCase() === series.language!.trim().toLowerCase())
+      ? series.language.trim()
+      : null;
 
   return (
     <div
@@ -313,7 +344,7 @@ export function SeriesDetailClient({
       <FocusOverlay overlay={themeMeta.focusOverlay} />
 
       {/* 4. Centered Content */}
-      <main className="relative z-10 flex-1 flex flex-col mx-auto max-w-2xl w-full px-0 sm:px-6 py-0 sm:py-8 animate-fade-in-up">
+      <main className="relative z-10 flex-1 flex flex-col mx-auto max-w-[580px] w-full px-3 sm:px-4 py-4 sm:py-6 animate-fade-in-up">
         {/* Centered Theme Card with min-h-full & flex layout */}
         <div
           style={{
@@ -323,100 +354,30 @@ export function SeriesDetailClient({
             color: c.primaryText,
             fontFamily: typ.fontFamily,
             letterSpacing: typ.letterSpacing,
-            ["--desktop-surface-shadow" as any]: themeMeta.profileSurface?.shadow || eff.shadow || "0 24px 70px rgba(0,0,0,0.15)",
+            ["--desktop-surface-shadow" as any]: themeMeta.profileSurface?.shadow || eff.shadow || "0 20px 60px rgba(36,22,24,0.06)",
           }}
-          className="flex-1 flex flex-col justify-between relative overflow-hidden border-0 sm:border rounded-none sm:rounded-[28px] shadow-none sm:shadow-[var(--desktop-surface-shadow)] transition-all"
+          className="flex-1 flex flex-col justify-between relative overflow-hidden rounded-3xl border border-[#E4DAD5] bg-white shadow-xl shadow-[#241618]/5 transition-all"
         >
           <div className="flex-1 flex flex-col">
-            {/* 1. Full-Width Hero Cover Image */}
-            {hasValidCover ? (
-              <div className="relative w-full aspect-[16/9] overflow-hidden bg-slate-950 m-0 p-0 shrink-0">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={series.posterDataUrl!}
-                  alt={series.title}
-                  onError={() => setCoverImageError(true)}
-                  className="block w-full h-full object-cover object-center m-0 p-0"
-                />
+            {/* 1. Full-Width Hero Cover Header (Maroon Gradient or Valid Poster) */}
+            <div className="relative w-full aspect-[21/9] min-h-[120px] sm:min-h-[140px] overflow-hidden bg-gradient-to-r from-[#151933] via-[#A24B5A] to-[#151933] m-0 p-0 shrink-0">
+              {hasValidCover && (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={series.posterDataUrl!}
+                    alt={series.title}
+                    onError={() => setCoverImageError(true)}
+                    className="block w-full h-full object-cover object-center m-0 p-0"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/60 pointer-events-none" />
+                </>
+              )}
 
-                {/* Gradient Overlays for top action contrast & smooth bottom fade */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-transparent to-black/70 pointer-events-none" />
-
-                {/* OVERLAY: Top Action Bar on top of the Cover Image */}
-                <header className="absolute top-3 inset-x-3 sm:top-4 sm:inset-x-4 z-20 flex items-center justify-between">
-                  {/* Top Left: Back Button + original circular Inflixo Logo */}
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (typeof window !== "undefined" && window.history.length > 1) {
-                          router.back();
-                        } else {
-                          router.push(profileUrl);
-                        }
-                      }}
-                      className="tap-scale flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-black/45 hover:bg-black/65 backdrop-blur-md border border-white/20 text-white transition-all shadow-md cursor-pointer"
-                      title={`Back to @${username}`}
-                      aria-label={`Back to @${username}`}
-                    >
-                      <ArrowLeft className="h-4 w-4" />
-                    </button>
-
-                    <Link
-                      href="/"
-                      style={{ backgroundColor: c.accent }}
-                      className="tap-scale flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full text-white shadow-xs transition-all shrink-0 border border-white/20 hover:scale-105 cursor-pointer select-none"
-                      title="Inflixo Home"
-                      aria-label="Inflixo Home"
-                    >
-                      <LogoStadiumLinkI className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
-                    </Link>
-                  </div>
-
-                  {/* Right: Copy & Share Action Buttons */}
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      type="button"
-                      onClick={handleCopyLink}
-                      className="tap-scale flex h-8 w-8 items-center justify-center rounded-full bg-black/45 hover:bg-black/65 backdrop-blur-md border border-white/20 text-white transition-all shadow-md cursor-pointer"
-                      title="Copy series link"
-                      aria-label="Copy series link"
-                    >
-                      <Copy className="h-3.5 w-3.5" />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setIsShareModalOpen(true)}
-                      style={{
-                        backgroundColor: c.accentSoft,
-                        borderColor: c.accentBorder,
-                        color: c.accentText,
-                      }}
-                      className="tap-scale flex h-8 w-8 items-center justify-center rounded-full backdrop-blur-md border transition-all shadow-md cursor-pointer"
-                      title="Share series"
-                      aria-label="Share series"
-                    >
-                      <Share2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                </header>
-
-                {/* Bottom Right Overlay: Platform */}
-                {series.platform && (
-                  <div className="absolute bottom-2.5 right-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold shadow-sm">
-                    {platformInfo?.icon}
-                    <span>{platformInfo?.name}</span>
-                  </div>
-                )}
-              </div>
-            ) : (
-              /* No-Cover State */
-              <header
-                style={{ borderColor: c.divider }}
-                className="flex items-center justify-between p-4 sm:p-6 pb-2 border-b shrink-0"
-              >
-                <div className="flex items-center gap-2 min-w-0">
+              {/* Top Action Bar on Cover */}
+              <header className="absolute top-3 inset-x-3 sm:top-3.5 sm:inset-x-3.5 z-20 flex items-center justify-between">
+                {/* Top Left: Back Button + circular Inflixo Logo */}
+                <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => {
@@ -426,39 +387,30 @@ export function SeriesDetailClient({
                         router.push(profileUrl);
                       }
                     }}
-                    style={{ backgroundColor: c.cardBackground, borderColor: c.border, color: c.secondaryText }}
-                    className="tap-scale flex h-8 w-8 items-center justify-center rounded-full border transition-all cursor-pointer shadow-2xs"
+                    className="tap-scale flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-black/55 active:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
                     title={`Back to @${username}`}
                     aria-label={`Back to @${username}`}
                   >
                     <ArrowLeft className="h-4 w-4" />
                   </button>
+
                   <Link
                     href="/"
                     style={{ backgroundColor: c.accent }}
-                    className="tap-scale flex h-8 w-8 items-center justify-center rounded-full text-white shadow-xs shrink-0 border border-white/20 select-none"
+                    className="tap-scale flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-full text-white shadow-xs transition-all shrink-0 border border-white/25 hover:scale-105 cursor-pointer select-none"
                     title="Inflixo Home"
+                    aria-label="Inflixo Home"
                   >
                     <LogoStadiumLinkI className="h-4 w-4 text-white" />
                   </Link>
-                  <span
-                    style={{
-                      color: c.primaryText,
-                      fontFamily: typ.headingFontFamily,
-                      fontWeight: typ.headingWeight as any,
-                    }}
-                    className="text-xs sm:text-sm font-bold truncate max-w-[140px] sm:max-w-[200px]"
-                  >
-                    {series.title}
-                  </span>
                 </div>
 
-                <div className="flex items-center gap-1.5 shrink-0">
+                {/* Right: Copy & Share Action Buttons */}
+                <div className="flex items-center gap-1.5">
                   <button
                     type="button"
                     onClick={handleCopyLink}
-                    style={{ backgroundColor: c.cardBackground, borderColor: c.border, color: c.secondaryText }}
-                    className="tap-scale flex h-8 w-8 items-center justify-center rounded-full border transition-all cursor-pointer shadow-2xs"
+                    className="tap-scale flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-black/55 active:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
                     title="Copy series link"
                     aria-label="Copy series link"
                   >
@@ -468,12 +420,7 @@ export function SeriesDetailClient({
                   <button
                     type="button"
                     onClick={() => setIsShareModalOpen(true)}
-                    style={{
-                      backgroundColor: c.accentSoft,
-                      borderColor: c.accentBorder,
-                      color: c.accentText,
-                    }}
-                    className="tap-scale flex h-8 w-8 items-center justify-center rounded-full border transition-all cursor-pointer shadow-2xs"
+                    className="tap-scale flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-black/55 active:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
                     title="Share series"
                     aria-label="Share series"
                   >
@@ -481,18 +428,32 @@ export function SeriesDetailClient({
                   </button>
                 </div>
               </header>
-            )}
 
-            {/* 2. TITLE, DESCRIPTION, DOT-SEPARATED GENRES & DETAILS */}
-            <div className="p-5 sm:p-8 pt-4 sm:pt-6 space-y-4 flex-1">
-              <div className="text-center space-y-1.5 px-1">
+              {/* Bottom Right Overlay: Platform */}
+              {detectedPlatform && (
+                <div className="absolute bottom-2.5 right-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold shadow-sm">
+                  {detectedPlatform === "YouTube" && <YoutubeIcon className="h-2.5 w-2.5 text-red-500" />}
+                  {detectedPlatform === "Instagram" && <InstagramIcon className="h-2.5 w-2.5 text-pink-500" />}
+                  {detectedPlatform === "Facebook" && <FacebookIcon className="h-2.5 w-2.5 text-blue-500" />}
+                  {detectedPlatform !== "YouTube" && detectedPlatform !== "Instagram" && detectedPlatform !== "Facebook" && (
+                    <Globe className="h-2.5 w-2.5 text-white" />
+                  )}
+                  <span>{detectedPlatform}</span>
+                </div>
+              )}
+            </div>
+
+            {/* 2. BODY CONTENT: TITLE, DESCRIPTION, PILL TAGS, EPISODES */}
+            <div className="p-4 sm:p-5 pt-4 sm:pt-5 flex-1 flex flex-col">
+              {/* Title & Description & Genre Tags */}
+              <div className="text-center px-1">
                 <h1
                   style={{
                     color: c.primaryText,
                     fontFamily: typ.headingFontFamily,
                     fontWeight: typ.headingWeight as any,
                   }}
-                  className="text-lg sm:text-xl font-extrabold leading-tight"
+                  className="text-lg sm:text-xl font-extrabold leading-snug tracking-tight text-[#241618]"
                 >
                   {series.title}
                 </h1>
@@ -500,40 +461,35 @@ export function SeriesDetailClient({
                 {series.description && series.description.trim() && (
                   <p
                     style={{ color: c.secondaryText }}
-                    className="text-xs leading-relaxed font-normal"
+                    className="mt-1.5 text-xs sm:text-[13px] leading-relaxed text-[#6B5A5D] font-normal max-w-md mx-auto"
                   >
                     {series.description}
                   </p>
                 )}
 
-                {/* Dot-separated Genres & Language */}
-                {(() => {
-                  const parts: string[] = [];
-                  if (series.genre) {
-                    const gItems = series.genre
-                      .split(/[,•|/]/)
-                      .map((g) => g.trim().replace(/^Genre:\s*/i, ""))
-                      .filter(Boolean);
-                    parts.push(...gItems);
-                  }
-                  if (series.language && series.language.trim()) {
-                    parts.push(series.language.trim());
-                  }
-                  const str = parts.join(" • ");
-                  return str ? (
-                    <p
-                      style={{ color: c.accentText }}
-                      className="text-[11.5px] font-semibold tracking-wide pt-0.5"
-                    >
-                      {str}
+                {/* Metadata — clean values, each on its own line */}
+                {(genresList.length > 0 || langTag || allEpisodes.length > 0) && (
+                  <div className="mt-3 space-y-1 text-center">
+                    {genresList.length > 0 && (
+                      <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-medium">
+                        {genresList.slice(0, 3).join(", ")}
+                      </p>
+                    )}
+                    {langTag && (
+                      <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-medium">
+                        {langTag}
+                      </p>
+                    )}
+                    <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-medium">
+                      {allEpisodes.length} {allEpisodes.length === 1 ? "episode" : "episodes"}
                     </p>
-                  ) : null;
-                })()}
+                  </div>
+                )}
               </div>
 
-              {/* Seasons Filter Tabs */}
+              {/* Seasons Filter Tabs (if multiple seasons) */}
               {seasonsList.length > 1 && (
-                <div className="flex items-center justify-center gap-2 overflow-x-auto pt-2 pb-1 scrollbar-none">
+                <div className="mt-3.5 flex items-center justify-center gap-2 overflow-x-auto pb-1 scrollbar-none">
                   {seasonsList.map((sn, idx) => (
                     <button
                       key={sn.id || idx}
@@ -544,7 +500,7 @@ export function SeriesDetailClient({
                           ? { backgroundColor: c.accentSoft, borderColor: c.accentBorder, color: c.accentText }
                           : { backgroundColor: c.cardBackground, borderColor: c.border, color: c.secondaryText }
                       }
-                      className="tap-scale px-3 py-1 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer border"
+                      className="tap-scale px-2.5 py-1 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer border"
                     >
                       {sn.title || `Season ${sn.seasonNumber || idx + 1}`} ({sn.episodes?.length || 0})
                     </button>
@@ -552,12 +508,12 @@ export function SeriesDetailClient({
                 </div>
               )}
 
-              {/* 3. EPISODES HEADER & LISTING */}
-              <div className="space-y-2.5 pt-1">
+              {/* 3. EPISODES HEADER & GROUPED LIST */}
+              <div className="mt-5 sm:mt-6 space-y-2">
                 <div className="flex items-center justify-between px-1">
                   <span
                     style={{ color: c.mutedText }}
-                    className="text-[10.5px] font-bold uppercase tracking-wider"
+                    className="text-[11px] font-bold uppercase tracking-wider text-[#6B5A5D]"
                   >
                     {seasonsList.length > 1
                       ? `${seasonsList[activeSeasonIndex]?.title || `Season ${activeSeasonIndex + 1}`} Episodes (${currentEpisodes.length})`
@@ -568,12 +524,18 @@ export function SeriesDetailClient({
                 {currentEpisodes.length === 0 ? (
                   <div
                     style={{ borderColor: c.border, color: c.mutedText }}
-                    className="p-6 text-center text-xs font-semibold rounded-xl border border-dashed"
+                    className="p-5 text-center text-xs font-semibold rounded-2xl border border-dashed border-[#E4DAD5] bg-[#F7F0EA]/30 text-[#6B5A5D]"
                   >
                     No episodes uploaded for this series yet.
                   </div>
                 ) : (
-                  <div className="space-y-2">
+                  <div
+                    style={{
+                      borderColor: c.divider,
+                      backgroundColor: c.cardBackground,
+                    }}
+                    className="rounded-2xl border border-[#E4DAD5] bg-white divide-y divide-[#E4DAD5] overflow-hidden shadow-xs"
+                  >
                     {currentEpisodes.map((ep: Episode, index: number) => {
                       const partNum = ep.episodeNumber || index + 1;
                       const partNumStr = partNum < 10 ? `0${partNum}` : `${partNum}`;
@@ -586,37 +548,34 @@ export function SeriesDetailClient({
                           target={ep.externalUrl ? "_blank" : undefined}
                           rel="noopener noreferrer"
                           onClick={() => trackEpisodeClick(ep)}
-                          style={{
-                            backgroundColor: c.cardBackground,
-                            borderColor: c.border,
-                            color: c.primaryText,
-                            boxShadow: eff.cardShadow,
-                          }}
-                          className="group relative flex items-center justify-between w-full px-3.5 py-3 rounded-xl transition-all duration-150 border cursor-pointer hover:scale-[1.005]"
+                          className="group flex items-center justify-between w-full px-3.5 py-2.5 sm:py-3 transition-colors hover:bg-[#F7F0EA]/50 cursor-pointer"
                         >
-                          {/* Left: Number */}
-                          <span
-                            style={{ color: c.mutedText }}
-                            className="w-6 text-left text-xs font-mono font-bold transition-colors shrink-0"
-                          >
-                            {partNumStr}
-                          </span>
+                          {/* Left: Number & Title */}
+                          <div className="flex items-center gap-3 min-w-0 pr-2">
+                            <span
+                              style={{ color: c.mutedText }}
+                              className="text-xs font-mono font-medium text-[#6B5A5D] w-5 shrink-0"
+                            >
+                              {partNumStr}
+                            </span>
+                            <span
+                              style={{ color: c.primaryText }}
+                              className="text-xs sm:text-[13px] font-bold text-[#241618] truncate group-hover:text-[#151933] transition-colors"
+                            >
+                              {epTitleStr}
+                            </span>
+                          </div>
 
-                          {/* Center: Title */}
-                          <span
-                            style={{ color: c.primaryText }}
-                            className="flex-1 text-center font-bold text-xs truncate px-2"
-                          >
-                            {epTitleStr}
-                          </span>
-
-                          {/* Right: View Icon */}
-                          <span
-                            style={{ color: c.accentText }}
-                            className="w-6 flex justify-end transition-transform group-hover:scale-110 shrink-0"
+                          {/* Right: Circular View Icon */}
+                          <div
+                            style={{
+                              borderColor: c.border,
+                              color: c.accentText,
+                            }}
+                            className="h-8 w-8 rounded-full border border-[#E4DAD5] bg-white text-[#151933] flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-[#600b0f0f] group-hover:border-[#151933]/30 group-hover:scale-105 transition-all"
                           >
                             <Eye className="h-3.5 w-3.5" />
-                          </span>
+                          </div>
                         </a>
                       );
                     })}
@@ -626,10 +585,10 @@ export function SeriesDetailClient({
             </div>
           </div>
 
-          {/* 4. MADE WITH INFLIXO FOOTER */}
+          {/* 4. PINNED MADE WITH INFLIXO FOOTER */}
           <div
             style={{ borderColor: c.divider }}
-            className="flex items-center justify-center px-5 pt-4 pb-5 select-none mt-auto border-t"
+            className="flex items-center justify-center px-5 pt-3 pb-4 select-none mt-6 border-t border-[#E4DAD5]"
           >
             <Link
               href="/"
@@ -638,11 +597,11 @@ export function SeriesDetailClient({
                 borderColor: c.border,
                 color: c.secondaryText,
               }}
-              className="tap-scale inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border text-[11px] font-bold shadow-2xs hover:scale-105 transition-all"
+              className="tap-scale inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#E4DAD5] bg-white text-[#6B5A5D] text-[11px] font-bold shadow-2xs hover:scale-105 transition-all"
             >
-              <span style={{ color: c.accentText }} className="inline-flex items-center">
-              <LogoStadiumLinkI className="h-3.5 w-3.5" />
-            </span>
+              <span style={{ color: c.accentText }} className="inline-flex items-center text-[#151933]">
+                <LogoStadiumLinkI className="h-3.5 w-3.5" />
+              </span>
               <span>Made with Inflixo</span>
             </Link>
           </div>

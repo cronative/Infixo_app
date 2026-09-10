@@ -8,30 +8,81 @@
 export type CreatorCategory = string;
 
 export const CREATOR_CATEGORIES: string[] = [
+  "Acting & Performance",
+  "Animation",
+  "Architecture",
+  "Art & Creativity",
+  "Astrology",
+  "Auto & Vehicles",
+  "Beauty",
+  "Books & Literature",
+  "Business",
+  "Career & Jobs",
+  "Coding & Development",
+  "Comedy",
+  "Commentary",
+  "Crafts",
+  "Dance",
+  "Design",
+  "Digital Marketing",
+  "DIY",
+  "Documentary",
+  "Education",
   "Entertainment",
-  "Filmmaking & Web Series",
-  "Technology & AI",
-  "Education & Career",
-  "Business & Finance",
-  "Lifestyle",
-  "Gaming & Esports",
-  "Health & Fitness",
-  "Real Estate & Home",
-  "Travel & Adventure",
+  "Entrepreneurship",
+  "Environment & Sustainability",
+  "Events",
+  "Family & Parenting",
+  "Fashion",
+  "Film & Filmmaking",
+  "Finance & Investing",
+  "Fitness",
   "Food & Cooking",
-  "Fashion & Beauty",
-  "Music & Performing Arts",
-  "Sports & Athletics",
-  "Photography & Video",
-  "DIY & Crafts",
-  "News & Media",
-  "Podcast & Talk Shows",
-  "Art & Design",
-  "Motivation & Self Growth",
-  "Automobile & EV",
+  "Gaming",
+  "Gardening",
+  "Health & Wellness",
+  "History",
+  "Home & Living",
+  "Interviews",
+  "Kids Content",
+  "Languages",
+  "Legal",
+  "Lifestyle",
+  "Live Streaming",
+  "Luxury",
+  "Marketing & Social Media",
+  "Memes",
+  "Motivation",
+  "Movies & TV",
+  "Music",
+  "News",
+  "Parenting",
+  "Personal Development",
   "Pets & Animals",
-  "Parenting & Family",
-  "Spirituality & Astrology",
+  "Photography",
+  "Podcasts",
+  "Politics",
+  "Product Reviews",
+  "Productivity",
+  "Relationships",
+  "Reviews & Reactions",
+  "Science",
+  "Self Growth",
+  "Shopping",
+  "Short Films",
+  "Shorts & Reels",
+  "Singing",
+  "Skincare",
+  "Social Awareness",
+  "Spirituality & Devotional",
+  "Sports",
+  "Stand-up Comedy",
+  "Storytelling",
+  "Technology & AI",
+  "Theatre",
+  "Travel",
+  "Tutorials & How-to",
+  "Vlogs",
   "Other",
 ];
 
@@ -67,6 +118,7 @@ export interface VisibilitySettings {
   showCollabGigs: boolean;
   showReviews: boolean;
   showCustomLinks: boolean;
+  showInSearchEngines?: boolean;
 }
 
 export const DEFAULT_VISIBILITY_SETTINGS: VisibilitySettings = {
@@ -86,6 +138,7 @@ export const DEFAULT_VISIBILITY_SETTINGS: VisibilitySettings = {
   showCollabGigs: true,
   showReviews: true,
   showCustomLinks: true,
+  showInSearchEngines: true,
 };
 
 export interface CreatorProfile {
@@ -321,7 +374,7 @@ export interface ThemeMeta {
 // Series / Seasons / Episodes
 // ---------------------------------------------------------------------------
 
-export type EpisodePlatform = "YouTube" | "Instagram" | "Facebook" | "Other";
+export type EpisodePlatform = "YouTube" | "Instagram" | "Facebook" | "Other" | "Web Video" | "X" | "Spotify" | string;
 
 export interface Episode {
   id: string;
@@ -430,6 +483,7 @@ export interface Subscription {
 // ---------------------------------------------------------------------------
 
 export type OnboardingStep =
+  | "username"
   | "profile"
   | "socials"
   | "theme"
@@ -438,12 +492,10 @@ export type OnboardingStep =
   | "finish";
 
 export const ONBOARDING_STEPS: { key: OnboardingStep; label: string; path: string }[] = [
+  { key: "username", label: "Username", path: "/onboarding/username" },
   { key: "profile", label: "Profile", path: "/onboarding/profile" },
   { key: "socials", label: "Socials", path: "/onboarding/socials" },
-  { key: "theme", label: "Theme", path: "/onboarding/themes" },
-  { key: "series", label: "Series", path: "/onboarding/series" },
-  { key: "subscription", label: "Subscription", path: "/onboarding/subscription" },
-  { key: "finish", label: "Finish", path: "/onboarding/finish" },
+  { key: "subscription", label: "Public Profile", path: "/onboarding/subscription" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -478,7 +530,7 @@ export interface CreatorReview {
   clientEmail: string;
   clientDesignation?: string;
   projectTitle: string;
-  contentUrl: string; // Mandatory link of reels, shoot, short etc.
+  contentUrl?: string;
   rating: number; // 1 to 5 Overall Experience
   ratingContentQuality?: number; // 1 to 5 Content Quality
   ratingProfessionalism?: number; // 1 to 5 Professionalism

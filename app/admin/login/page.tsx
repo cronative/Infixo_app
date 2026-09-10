@@ -20,24 +20,27 @@ export default function AdminLoginPage() {
     }
   }, [router]);
 
-  function handleAdminLogin(e: React.FormEvent) {
+  async function handleAdminLogin(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setSubmitting(true);
 
-    setTimeout(() => {
-      const success = AdminService.login(email, password);
+    try {
+      const success = await AdminService.login(email, password);
       if (success) {
         router.push("/admin/dashboard");
       } else {
         setError("Email or password is incorrect.");
         setSubmitting(false);
       }
-    }, 350);
+    } catch {
+      setError("Login failed. Please check your connection.");
+      setSubmitting(false);
+    }
   }
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center bg-[#FAFAFC] px-4 py-8 text-[#0F172A] selection:bg-purple-100 selection:text-[#6C2BFF] relative overflow-hidden">
+    <div className="flex min-h-dvh flex-col items-center justify-center bg-[#FAFAFC] px-4 py-8 text-[#151933] selection:bg-purple-100 selection:text-[#6C2BFF] relative overflow-hidden">
       {/* Very subtle purple radial background glow */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-[radial-gradient(circle_at_center,rgba(108,43,255,0.06)_0%,transparent_70%)]" />
@@ -167,7 +170,7 @@ export default function AdminLoginPage() {
         {/* 7. FOOTER */}
         <div className="text-center pt-2">
           <p className="text-xs text-slate-400 font-medium">
-            © 2026 Inflixo · TrustIQ Labs PVT LTD
+            © 2026 Inflixo
           </p>
         </div>
       </div>

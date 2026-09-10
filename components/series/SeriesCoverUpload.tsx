@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { ImagePlus, Camera, Trash2, MoveVertical, AlertCircle, Sparkles } from "lucide-react";
+import { ImagePlus, Camera, Trash2, MoveVertical, AlertCircle } from "lucide-react";
 
 export interface SeriesCoverUploadProps {
   value: string | null;
@@ -30,7 +30,6 @@ export function SeriesCoverUpload({
     setErrorMessage(null);
     if (!file) return;
 
-    // Validate MIME type or file extension
     const extension = `.${file.name.split(".").pop()?.toLowerCase()}`;
     const isValidType =
       ALLOWED_MIME_TYPES.includes(file.type.toLowerCase()) ||
@@ -41,14 +40,12 @@ export function SeriesCoverUpload({
       return;
     }
 
-    // Validate file size (maxSizeMB in bytes)
     const maxBytes = maxSizeMB * 1024 * 1024;
     if (file.size > maxBytes) {
       setErrorMessage(`File size exceeds ${maxSizeMB}MB limit. Please upload a smaller image.`);
       return;
     }
 
-    // Read and convert to Data URL
     const reader = new FileReader();
     reader.onload = (e) => {
       const result = e.target?.result as string;
@@ -105,10 +102,10 @@ export function SeriesCoverUpload({
     <div className={`w-full space-y-1.5 text-left ${className}`}>
       {/* Section Header */}
       <div className="flex items-center justify-between">
-        <label className="block text-xs font-bold text-[#17131A]">
-          {label} <span className="text-[11px] font-semibold text-[#6F6872]">(16:9 Landscape)</span>
+        <label className="block text-xs font-bold text-[#181716]">
+          {label} <span className="text-[11px] font-semibold text-[#797570]">(16:9 Landscape)</span>
         </label>
-        <span className="text-[11px] font-semibold text-[#6F6872]">
+        <span className="text-[11px] font-semibold text-[#797570]">
           Max {maxSizeMB}MB
         </span>
       </div>
@@ -136,13 +133,12 @@ export function SeriesCoverUpload({
             fileInputRef.current?.click();
           }
         }}
-        className={`group relative w-full aspect-[16/9] overflow-hidden rounded-2xl border transition-all cursor-pointer select-none ${
-          value
-            ? "border-[#ECE8EB] bg-slate-950 shadow-sm"
-            : isDragging
-            ? "border-2 border-dashed border-[#803D63] bg-[#F7EDF3]"
-            : "border-2 border-dashed border-[#E5E7EB] hover:border-[#803D63] bg-[#FAF8FA] hover:bg-[#FDF9FB]"
-        }`}
+        className={`group relative w-full aspect-[16/9] overflow-hidden rounded-2xl border transition-all cursor-pointer select-none ${value
+          ? "border-[#E4DAD5] bg-slate-950 shadow-sm"
+          : isDragging
+            ? "border-2 border-dashed border-[#151933] bg-[#151933]/[0.09]"
+            : "border-2 border-dashed border-[#E4DAD5] hover:border-[#151933] bg-[#fbfbfb] hover:bg-[#F5F3ED]"
+          }`}
       >
         {value ? (
           <>
@@ -158,7 +154,7 @@ export function SeriesCoverUpload({
             {/* Dark gradient overlay on hover for clear button contrast */}
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-transparent opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity" />
 
-            {/* Actions Bar (Change Cover, Reposition, Remove) */}
+            {/* Actions Bar */}
             <div className="absolute bottom-3 inset-x-3 flex items-center justify-between gap-2 z-10">
               <button
                 type="button"
@@ -166,9 +162,9 @@ export function SeriesCoverUpload({
                   e.stopPropagation();
                   fileInputRef.current?.click();
                 }}
-                className="tap-scale flex items-center gap-1.5 rounded-xl bg-white/95 hover:bg-white text-slate-900 px-3 py-1.5 text-xs font-bold shadow-md border border-white/60 backdrop-blur-md transition-all cursor-pointer"
+                className="tap-scale flex items-center gap-1.5 rounded-xl bg-white/95 hover:bg-white text-[#181716] px-3 py-1.5 text-xs font-bold shadow-md border border-white/60 backdrop-blur-md transition-all cursor-pointer"
               >
-                <Camera className="h-3.5 w-3.5 text-[#803D63]" />
+                <Camera className="h-3.5 w-3.5 text-[#151933]" />
                 <span>Change Cover</span>
               </button>
 
@@ -177,9 +173,9 @@ export function SeriesCoverUpload({
                   type="button"
                   onClick={cyclePosition}
                   title={`Position: ${position.toUpperCase()} (Click to toggle)`}
-                  className="tap-scale flex items-center gap-1 rounded-xl bg-white/95 hover:bg-white text-slate-800 px-2.5 py-1.5 text-xs font-semibold shadow-md border border-white/60 backdrop-blur-md transition-all cursor-pointer"
+                  className="tap-scale flex items-center gap-1 rounded-xl bg-white/95 hover:bg-white text-[#54514D] px-2.5 py-1.5 text-xs font-semibold shadow-md border border-white/60 backdrop-blur-md transition-all cursor-pointer"
                 >
-                  <MoveVertical className="h-3.5 w-3.5 text-slate-600" />
+                  <MoveVertical className="h-3.5 w-3.5 text-[#797570]" />
                   <span className="capitalize text-[11px]">{position}</span>
                 </button>
 
@@ -187,7 +183,7 @@ export function SeriesCoverUpload({
                   type="button"
                   onClick={handleRemove}
                   title="Remove cover"
-                  className="tap-scale flex h-8 w-8 items-center justify-center rounded-xl bg-white/95 hover:bg-rose-50 text-slate-700 hover:text-rose-600 shadow-md border border-white/60 backdrop-blur-md transition-all cursor-pointer"
+                  className="tap-scale flex h-8 w-8 items-center justify-center rounded-xl bg-white/95 hover:bg-rose-50 text-[#797570] hover:text-[#C2414B] shadow-md border border-white/60 backdrop-blur-md transition-all cursor-pointer"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
@@ -197,19 +193,19 @@ export function SeriesCoverUpload({
         ) : (
           /* Empty State - Full Width Landscape Dropzone */
           <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F7EDF3] text-[#803D63] shadow-xs group-hover:scale-105 transition-transform">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#151933]/[0.09] text-[#151933] border border-[#151933]/20 shadow-xs group-hover:scale-105 transition-transform">
               <ImagePlus className="h-6 w-6 stroke-[2]" />
             </div>
 
-            <p className="mt-2.5 text-xs sm:text-sm font-bold text-[#17131A] group-hover:text-[#803D63] transition-colors">
+            <p className="mt-2.5 text-xs sm:text-sm font-bold text-[#181716] group-hover:text-[#151933] transition-colors">
               Upload Series Cover
             </p>
 
-            <p className="mt-0.5 text-[11px] sm:text-xs font-semibold text-[#6F6872]">
+            <p className="mt-0.5 text-[11px] sm:text-xs font-semibold text-[#797570]">
               Recommended size: 1920 × 1080 px
             </p>
 
-            <p className="mt-1 text-[10px] sm:text-[11px] font-medium text-[#8C8490]">
+            <p className="mt-1 text-[10px] sm:text-[11px] font-medium text-[#797570]/70">
               JPG, PNG or WebP
             </p>
           </div>
@@ -218,7 +214,7 @@ export function SeriesCoverUpload({
 
       {/* Inline Error State */}
       {errorMessage && (
-        <div className="flex items-center gap-1.5 rounded-xl bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-600 border border-rose-100 animate-in fade-in duration-150">
+        <div className="flex items-center gap-1.5 rounded-xl bg-rose-50 px-3 py-2 text-xs font-semibold text-[#C2414B] border border-rose-100 animate-in fade-in duration-150">
           <AlertCircle className="h-3.5 w-3.5 shrink-0" />
           <span>{errorMessage}</span>
         </div>

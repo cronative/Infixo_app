@@ -1,4 +1,5 @@
-// Google Analytics 4 Custom Event Helper for Infixo
+// Google Analytics 4 Custom Event Helper for Infixo with Consent Enforcement
+import { isCategoryAllowed } from "./cookieConsent";
 
 export const GA_MEASUREMENT_ID = "G-HJCSX3TD2Q";
 
@@ -12,6 +13,10 @@ declare global {
 // Track pageviews
 export function trackPageView(url: string) {
   if (typeof window !== "undefined" && typeof window.gtag === "function") {
+    // Check if analytics cookies are permitted by user consent
+    if (!isCategoryAllowed("analytics")) {
+      return;
+    }
     window.gtag("config", GA_MEASUREMENT_ID, {
       page_path: url,
     });
@@ -24,6 +29,9 @@ export function trackEvent(
   params?: Record<string, any>
 ) {
   if (typeof window !== "undefined" && typeof window.gtag === "function") {
+    if (!isCategoryAllowed("analytics")) {
+      return;
+    }
     window.gtag("event", action, params);
   }
 }

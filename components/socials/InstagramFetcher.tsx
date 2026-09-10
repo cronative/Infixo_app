@@ -147,23 +147,23 @@ export function InstagramFetcher({ username, onConfirmSync, onBeforeFetch, varia
   }
 
   return (
-    <div className="mt-3">
+    <div className="mt-2">
       {/* Fetch Action Button */}
       <div className="flex items-center justify-between">
         <button
           type="button"
           onClick={fetchDetails}
           disabled={loading || !username.trim()}
-          className="tap-scale flex items-center gap-2 rounded-xl bg-pink-50 text-pink-700 hover:bg-pink-100 border border-pink-200 px-4 py-2.5 text-xs font-bold transition-all disabled:opacity-50 cursor-pointer"
+          className="tap-scale flex items-center gap-1.5 rounded-xl bg-pink-50 text-pink-700 hover:bg-pink-100 border border-pink-200 px-3.5 py-2 text-xs font-semibold transition-all disabled:opacity-50 cursor-pointer shadow-xs"
         >
           {loading ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
               Fetching Instagram Profile...
             </>
           ) : (
             <>
-              <Search className="h-4 w-4" />
+              <Search className="h-3.5 w-3.5" />
               Fetch Profile Details
             </>
           )}

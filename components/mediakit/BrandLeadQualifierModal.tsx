@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MessageCircle, Send, Building2, DollarSign, Package, ShieldCheck } from "lucide-react";
+import { MessageCircle, Send, Building2, DollarSign, Package } from "lucide-react";
 import { useToast } from "@/contexts/ToastContext";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 
@@ -59,7 +59,7 @@ export function BrandLeadQualifierModal({
     const briefText = `Hi ${creatorName || "Creator"}, I am from ${brandName.trim()}. We want to book your '${selectedDeliverable}' deliverable (Campaign Budget: ${budget.trim()}). Found your Inflixo Profile: ${mediaKitUrl}`;
 
     const waUrl = `https://wa.me/${cleanNum}?text=${encodeURIComponent(briefText)}`;
-    
+
     if (typeof window !== "undefined") {
       window.open(waUrl, "_blank", "noopener,noreferrer");
     }
@@ -75,23 +75,23 @@ export function BrandLeadQualifierModal({
       size="md"
       title="Book via WhatsApp"
       description={`Send a direct brand collaboration brief to ${creatorName || "Creator"}`}
-      icon={<MessageCircle className="h-4 w-4 text-emerald-600" />}
+      icon={<MessageCircle className="h-4 w-4 text-[#17845B]" />}
     >
       <form id="brand-lead-form" onSubmit={handleSendWhatsApp} className="flex flex-col flex-1 min-h-0">
         <ModalBody className="p-5 space-y-4 text-left">
           {/* Deliverable Summary Badge */}
-          <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3.5 flex items-center gap-3">
-            <Package className="h-4 w-4 text-[#803D63] shrink-0" />
+          <div className="rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] p-3.5 flex items-center gap-3">
+            <Package className="h-4 w-4 text-[#151933] shrink-0" />
             <div className="min-w-0 text-xs">
-              <p className="font-bold text-[#17131A] truncate">{packageName}</p>
-              {deliverableText && <p className="text-[#6F6872] font-medium truncate mt-0.5">{deliverableText}</p>}
+              <p className="font-bold text-[#181716] truncate">{packageName}</p>
+              {deliverableText && <p className="text-[#797570] font-medium truncate mt-0.5">{deliverableText}</p>}
             </div>
           </div>
 
           <div className="space-y-1">
-            <label className="block text-xs font-bold text-[#17131A] flex items-center gap-1.5">
-              <Building2 className="h-3.5 w-3.5 text-[#803D63]" />
-              <span>Brand or Agency name</span> <span className="text-rose-500">*</span>
+            <label className="block text-xs font-bold text-[#181716] flex items-center gap-1.5">
+              <Building2 className="h-3.5 w-3.5 text-[#151933]" />
+              <span>Brand or Agency name</span> <span className="text-[#C2414B]">*</span>
             </label>
             <input
               type="text"
@@ -99,14 +99,14 @@ export function BrandLeadQualifierModal({
               value={brandName}
               onChange={(e) => setBrandName(e.target.value)}
               placeholder="e.g. Puma India / Nike"
-              className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+              className="w-full rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
             />
           </div>
 
           <div className="space-y-1">
-            <label className="block text-xs font-bold text-[#17131A] flex items-center gap-1.5">
-              <DollarSign className="h-3.5 w-3.5 text-emerald-600" />
-              <span>Campaign budget</span> <span className="text-rose-500">*</span>
+            <label className="block text-xs font-bold text-[#181716] flex items-center gap-1.5">
+              <DollarSign className="h-3.5 w-3.5 text-[#17845B]" />
+              <span>Campaign budget</span> <span className="text-[#C2414B]">*</span>
             </label>
             <input
               type="text"
@@ -114,19 +114,19 @@ export function BrandLeadQualifierModal({
               value={budget}
               onChange={(e) => setBudget(e.target.value)}
               placeholder="e.g. ₹25,000 / $500 USD"
-              className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+              className="w-full rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
             />
           </div>
 
           <div className="space-y-1">
-            <label className="block text-xs font-bold text-[#17131A]">
+            <label className="block text-xs font-bold text-[#181716]">
               Selected package
             </label>
             <input
               type="text"
               value={selectedDeliverable}
               onChange={(e) => setSelectedDeliverable(e.target.value)}
-              className="w-full rounded-xl border border-[#ECE8EB] bg-white px-3.5 py-2.5 text-xs font-semibold text-[#17131A]"
+              className="w-full rounded-xl border border-[#E4DAD5] bg-white px-3.5 py-2.5 text-xs font-semibold text-[#181716]"
             />
           </div>
         </ModalBody>
@@ -135,14 +135,14 @@ export function BrandLeadQualifierModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-xl border border-[#E4DAD5] text-xs font-semibold text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716] transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
             form="brand-lead-form"
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5"
+            className="bg-[#17845B] hover:bg-[#146c4b] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
           >
             <Send className="h-3.5 w-3.5" />
             <span>Open WhatsApp with Brief →</span>

@@ -20,26 +20,24 @@ export function SocialDataConsentCard({
   if (variant === "one-line") {
     return (
       <div
-        className={`rounded-xl border p-4 transition-colors text-left flex items-center gap-3 ${
-          error
-            ? "border-rose-300 bg-rose-50"
-            : disabled || accepted
-            ? "border-indigo-100 bg-indigo-50/60"
+        className={`rounded-xl border p-3 sm:p-3.5 transition-colors text-left flex items-center gap-2.5 ${error
+          ? "border-rose-300 bg-rose-50"
+          : disabled || accepted
+            ? "border-[#151933]/20 bg-[#151933]/[0.05]"
             : "border-gray-200 bg-white hover:border-gray-300"
-        }`}
+          }`}
       >
         {/* Custom Interactive / Read-Only Checkbox */}
         <button
           type="button"
           disabled={disabled}
           onClick={() => !disabled && onToggle(!accepted)}
-          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-colors ${
-            disabled || accepted
-              ? "border-[#803D63] bg-[#803D63] text-white cursor-default"
-              : error
+          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-colors ${disabled || accepted
+            ? "border-[#151933] bg-[#151933] text-white cursor-default"
+            : error
               ? "border-rose-400 bg-white"
-              : "border-slate-300 bg-white hover:border-[#803D63]"
-          }`}
+              : "border-slate-300 bg-white hover:border-[#151933]"
+            }`}
         >
           {(accepted || disabled) && <Check className="h-3.5 w-3.5" />}
         </button>
@@ -47,9 +45,8 @@ export function SocialDataConsentCard({
         <div className="flex-1 flex flex-wrap items-center justify-between gap-2 min-w-0">
           <label
             onClick={() => !disabled && onToggle(!accepted)}
-            className={`text-xs sm:text-sm font-bold text-slate-900 leading-snug select-none ${
-              disabled ? "cursor-default" : "cursor-pointer"
-            }`}
+            className={`text-xs sm:text-sm font-bold text-slate-900 leading-snug select-none ${disabled ? "cursor-default" : "cursor-pointer"
+              }`}
           >
             I authorize Inflixo to fetch public stats (followers, subscribers &amp; metadata) for my social accounts.
           </label>
@@ -74,9 +71,8 @@ export function SocialDataConsentCard({
 
   return (
     <div
-      className={`bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-4 transition-colors text-left ${
-        error ? "border-rose-300 bg-rose-50" : ""
-      }`}
+      className={`bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-4 transition-colors text-left ${error ? "border-rose-300 bg-rose-50" : ""
+        }`}
     >
       <div className="flex items-start gap-3">
         {/* Custom Interactive / Read-Only Checkbox */}
@@ -84,13 +80,12 @@ export function SocialDataConsentCard({
           type="button"
           disabled={disabled}
           onClick={() => !disabled && onToggle(!accepted)}
-          className={`mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-md border transition-colors ${
-            disabled || accepted
-              ? "border-[#803D63] bg-[#803D63] text-white cursor-default"
-              : error
+          className={`mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-md border transition-colors ${disabled || accepted
+            ? "border-[#151933] bg-[#151933] text-white cursor-default"
+            : error
               ? "border-rose-400 bg-white"
-              : "border-slate-300 bg-white hover:border-[#803D63]"
-          }`}
+              : "border-slate-300 bg-white hover:border-[#151933]"
+            }`}
         >
           {(accepted || disabled) && <Check className="h-3 w-3 stroke-[3]" />}
         </button>
@@ -98,9 +93,8 @@ export function SocialDataConsentCard({
         <div className="space-y-1.5 min-w-0 flex-1">
           <label
             onClick={() => !disabled && onToggle(!accepted)}
-            className={`text-xs font-bold text-slate-900 leading-snug block select-none ${
-              disabled ? "cursor-default" : "cursor-pointer"
-            }`}
+            className={`text-xs font-bold text-slate-900 leading-snug block select-none ${disabled ? "cursor-default" : "cursor-pointer"
+              }`}
           >
             I authorize Inflixo to fetch public profile stats (followers, subscribers &amp; metadata) for my social accounts.
           </label>

@@ -40,6 +40,21 @@ export async function recordOnboardingStep(
   const cleanEmail = email.trim().toLowerCase();
 
   try {
+    // CRITICAL USER FLOW:
+    // "onboarding me agar creator table me data nai hai to onboarding steps k table me koi entry nai hogi"
+    let actualCreatorId = creatorId;
+    if (!actualCreatorId) {
+      const [creatorRows]: any = await db.query(
+        "SELECT id FROM creators WHERE LOWER(email) = LOWER(?) LIMIT 1",
+        [cleanEmail]
+      );
+      if (!creatorRows || creatorRows.length === 0) {
+        console.log(`ℹ️ [ONBOARDING_STEP] No creator record in 'creators' table for ${cleanEmail} -> No entry added to creator_onboarding_steps`);
+        return;
+      }
+      actualCreatorId = creatorRows[0].id;
+    }
+
     await ensureSingleOnboardingStepSchema();
 
     // Atomic upsert with ON DUPLICATE KEY UPDATE to guarantee 1 row per email without race conditions
@@ -51,7 +66,7 @@ export async function recordOnboardingStep(
          step_name = VALUES(step_name),
          is_completed = TRUE,
          completed_at = NOW()`,
-      [cleanEmail, creatorId || null, stepName]
+      [cleanEmail, actualCreatorId, stepName]
     );
 
     console.log(`✅ Onboarding step updated in DB for ${cleanEmail}: ${stepName}`);
@@ -59,4 +74,5 @@ export async function recordOnboardingStep(
     console.error("❌ Failed to record onboarding step:", err.message);
   }
 }
+
 

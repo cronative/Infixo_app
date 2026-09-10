@@ -135,11 +135,11 @@ export const SubscriptionService = {
 
     const email = authRepository.getPendingEmail();
     if (email) {
-      fetch("/api/razorpay/cancel-subscription", {
+      fetch("/api/subscription", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      }).catch((e) => console.error("Failed to cancel Razorpay subscription:", e));
+        body: JSON.stringify({ email, status: "cancelled" }),
+      }).catch((e) => console.error("Failed to cancel subscription:", e));
     }
 
     return sub;

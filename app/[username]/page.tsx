@@ -67,11 +67,15 @@ export default function PublicProfilePage() {
           EXPERT_DEMO_SERIES,
           EXPERT_DEMO_CUSTOM_LINKS,
           EXPERT_DEMO_THEME,
+          EXPERT_DEMO_GIGS,
+          EXPERT_DEMO_REVIEWS,
         } = await import("@/data/expertDemoCreator");
         setProfile(EXPERT_DEMO_PROFILE);
         setSocials(EXPERT_DEMO_SOCIALS);
         setSeries(EXPERT_DEMO_SERIES);
         setCustomLinks(EXPERT_DEMO_CUSTOM_LINKS);
+        setMediaKitPackages(EXPERT_DEMO_GIGS);
+        setReviews(EXPERT_DEMO_REVIEWS);
         setTheme(EXPERT_DEMO_THEME);
         setNotFound(false);
         setLoaded(true);
@@ -197,10 +201,10 @@ export default function PublicProfilePage() {
           try {
             const visitorKey = typeof window !== "undefined"
               ? (localStorage.getItem("inflixo_vid") || (() => {
-                  const vid = `v_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
-                  localStorage.setItem("inflixo_vid", vid);
-                  return vid;
-                })())
+                const vid = `v_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+                localStorage.setItem("inflixo_vid", vid);
+                return vid;
+              })())
               : undefined;
 
             fetch("/api/analytics/track", {
@@ -215,16 +219,18 @@ export default function PublicProfilePage() {
                   referrer: typeof document !== "undefined" ? document.referrer : "",
                 },
               }),
-            }).catch(() => {});
-          } catch {}
+            }).catch(() => { });
+          } catch { }
         } else {
           // Fallback to local profile if in same browser session for immediate view
           try {
             const {
               profileRepository,
+              socialRepository,
               seriesRepository,
               customLinksRepository,
               themeRepository,
+              reviewsRepository,
               teamRepository,
               brandsRepository,
               collaborationsRepository,
@@ -237,13 +243,15 @@ export default function PublicProfilePage() {
               setProfile({ ...local, username: local.username || usernameParam });
               const localTheme = themeRepository.get() || local.themeKey || "minimal-white";
               setTheme(localTheme as ThemeKey);
-              setSeries(seriesRepository.getAll());
-              setCustomLinks(customLinksRepository.get());
-              setTeam(teamRepository.get());
-              setBrands(brandsRepository.getAll());
-              setCollaborations(collaborationsRepository.getAll());
-              setOtherSocials(otherSocialsRepository.getAll());
-              setSections(sectionsRepository.getAll());
+              setSocials(socialRepository.get() || EMPTY_SOCIAL_ACCOUNTS);
+              setSeries(seriesRepository.getAll() || []);
+              setCustomLinks(customLinksRepository.get() || []);
+              setReviews(reviewsRepository.getAll() || []);
+              setTeam(teamRepository.get() || { members: [] });
+              setBrands(brandsRepository.getAll() || []);
+              setCollaborations(collaborationsRepository.getAll() || []);
+              setOtherSocials(otherSocialsRepository.getAll() || []);
+              setSections(sectionsRepository.getAll() || []);
               setNotFound(false);
               setLoaded(true);
               return;
@@ -385,7 +393,7 @@ export default function PublicProfilePage() {
     return (
       <div className="relative flex min-h-dvh flex-col items-center justify-center bg-gradient-to-b from-[#F6EBF1]/60 via-slate-50 to-white px-4 py-12 text-center text-slate-900 overflow-hidden">
         {/* Ambient Maroon Background Glow Orbs */}
-        <div className="pointer-events-none absolute -top-24 -left-20 h-96 w-96 rounded-full bg-[#803D63]/10 blur-3xl" />
+        <div className="pointer-events-none absolute -top-24 -left-20 h-96 w-96 rounded-full bg-[#151933]/10 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 -right-20 h-96 w-96 rounded-full bg-rose-200/40 blur-3xl" />
 
         <main className="relative z-10 w-full max-w-md space-y-6">
@@ -395,9 +403,9 @@ export default function PublicProfilePage() {
           </div>
 
           {/* Main Clean Light Theme Card */}
-          <div className="rounded-[32px] border border-[#E8DCE4] bg-white/95 p-8 sm:p-10 shadow-2xl shadow-[#803D63]/5 backdrop-blur-xl space-y-6 text-center">
+          <div className="rounded-[32px] border border-[#E8DCE4] bg-white/95 p-8 sm:p-10 shadow-2xl shadow-[#151933]/5 backdrop-blur-xl space-y-6 text-center">
             {/* Icon Badge */}
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#803D63] text-white shadow-xl shadow-[#803D63]/25 ring-4 ring-[#F6EBF1]">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#151933] text-white shadow-xl shadow-[#151933]/25 ring-4 ring-[#F6EBF1]">
               <UserX className="h-8 w-8 stroke-[2.2]" />
             </div>
 
@@ -415,7 +423,7 @@ export default function PublicProfilePage() {
             <div className="pt-2">
               <button
                 onClick={() => router.push("/login")}
-                className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6D3254] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#803D63]/20 transition-all border border-[#803D63] hover:scale-[1.02] cursor-pointer"
+                className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#151933] hover:bg-[#2c1937] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#151933]/20 transition-all border border-[#151933] hover:scale-[1.02] cursor-pointer"
               >
                 <Sparkles className="h-4 w-4" />
                 <span>Create Profile</span>
@@ -458,8 +466,8 @@ export default function PublicProfilePage() {
       {/* 3. Theme-aware Focus Overlay Layer */}
       <FocusOverlay overlay={themeMeta.focusOverlay} />
 
-      {/* 4. Centred Creator Profile Surface */}
-      <main className="relative z-10 flex-1 flex flex-col mx-auto w-full max-w-[640px] px-0 sm:px-4 py-0 sm:py-8 animate-fade-in-up">
+      {/* 4. Centred Creator Profile Surface: 640px centered, 24px desktop, 16px mobile */}
+      <main className="relative z-10 flex-1 flex flex-col mx-auto w-full max-w-[580px] px-4 sm:px-6 py-6 sm:py-10 animate-fade-in-up">
         {/* Main Theme Profile Card (Renders Profile, Socials, Series, Services, Reviews & Custom Links) */}
         <ThemeCard
           themeKey={theme}

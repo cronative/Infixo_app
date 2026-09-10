@@ -78,12 +78,14 @@ export function Logo({
   light = false,
   variant = "gradient",
   styleName = "stadium-link-i",
+  orientation = "horizontal",
 }: {
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
   href?: string;
   light?: boolean;
   variant?: "gradient" | "black" | "white" | "brand";
   styleName?: "stadium-link-i" | "universal-link-i";
+  orientation?: "horizontal" | "vertical";
 }) {
   const router = useRouter();
 
@@ -100,7 +102,7 @@ export function Logo({
           socials: "/onboarding/socials",
           theme: "/onboarding/themes",
           themes: "/onboarding/themes",
-          series: "/onboarding/series",
+          series: "/onboarding/subscription",
           subscription: "/onboarding/subscription",
         };
         const targetRoute = stepRoutes[step] || "/onboarding/profile";
@@ -109,22 +111,45 @@ export function Logo({
     }
   }
 
-  const dims = { sm: "h-8 w-8", md: "h-10 w-10", lg: "h-12 w-12" }[size];
-  const text = { sm: "text-lg", md: "text-xl", lg: "text-2xl" }[size];
-  const iconSize = { sm: "h-5 w-5", md: "h-6.5 w-6.5", lg: "h-8 w-8" }[size];
+  const dims = {
+    sm: "h-8 w-8",
+    md: "h-10 w-10",
+    lg: "h-12 w-12",
+    xl: "h-[100px] w-[100px]",
+  }[size];
+  const text = {
+    sm: "text-lg",
+    md: "text-xl",
+    lg: "text-2xl",
+    xl: "text-2xl",
+  }[size];
+  const iconSize = {
+    sm: "h-5 w-5",
+    md: "h-6.5 w-6.5",
+    lg: "h-8 w-8",
+    xl: "h-16 w-16",
+  }[size];
+  const roundedStyle = size === "xl" ? "rounded-[24px]" : "rounded-xl";
 
   const badgeStyles = {
-    gradient: "bg-[#803D63] text-white",
-    black: "bg-slate-900 text-white",
-    white: "bg-white border border-slate-200 text-[#111827]",
-    brand: "bg-[#803D63] text-white",
+    gradient: "bg-[#151933] text-white",
+    black: "bg-[#151933] text-white",
+    white: "bg-white border border-[#e2e8f0] text-[#151933]",
+    brand: "bg-[#151933] text-white",
   }[variant];
 
   return (
-    <Link href={href} onClick={handleClick} className="flex items-center gap-2.5 group cursor-pointer select-none">
+    <Link
+      href={href}
+      onClick={handleClick}
+      className={`flex ${orientation === "vertical"
+        ? "flex-col items-center gap-2 text-center"
+        : "items-center gap-2.5"
+        } group cursor-pointer select-none`}
+    >
       {/* Badge Squircle Container */}
       <div
-        className={`flex ${dims} items-center justify-center rounded-xl ${badgeStyles} transition-colors duration-200`}
+        className={`flex ${dims} items-center justify-center ${roundedStyle} ${badgeStyles} transition-colors duration-200 shadow-sm`}
       >
         {styleName === "universal-link-i" ? (
           <LogoUniversalLinkI className={iconSize} />
@@ -135,9 +160,8 @@ export function Logo({
 
       {/* Brand Name Text */}
       <span
-        className={`font-display ${text} font-bold tracking-tight ${
-          light ? "text-white" : "text-slate-900"
-        } group-hover:text-[#803D63] transition-colors`}
+        className={`font-display ${text} font-bold tracking-tight ${light ? "text-white" : "text-[#151933]"
+          } group-hover:text-[#1e293b] transition-colors`}
       >
         Inflixo
       </span>

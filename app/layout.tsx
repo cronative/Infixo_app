@@ -1,15 +1,23 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Plus_Jakarta_Sans, Outfit } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans, Outfit, Sora } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { ToastProvider } from "@/contexts/ToastContext";
 import { GA_MEASUREMENT_ID } from "@/lib/analytics";
 import { PwaInstallPrompt } from "@/components/shared/PwaInstallPrompt";
+import { CookieConsentBanner } from "@/components/shared/CookieConsentBanner";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
+});
+
+const sora = Sora({
+  subsets: ["latin"],
+  variable: "--font-sora",
+  display: "swap",
+  weight: ["400", "600", "700", "800"],
 });
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -64,7 +72,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
-  themeColor: "#803D63",
+  themeColor: "#151933",
 };
 
 export default function RootLayout({
@@ -75,7 +83,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`h-full antialiased ${inter.variable} ${plusJakartaSans.variable} ${outfit.variable}`}
+      className={`min-h-full antialiased ${inter.variable} ${sora.variable} ${plusJakartaSans.variable} ${outfit.variable}`}
     >
       <head>
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
@@ -85,7 +93,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="mobile-web-app-capable" content="yes" />
-        {/* Google Analytics 4 (GA4) */}
+        {/* Google Analytics 4 (GA4) with Consent Mode */}
         <Script
           strategy="afterInteractive"
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
@@ -97,6 +105,14 @@ export default function RootLayout({
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
+            gtag('consent', 'default', {
+              'analytics_storage': 'denied',
+              'ad_storage': 'denied',
+              'ad_user_data': 'denied',
+              'ad_personalization': 'denied',
+              'functionality_storage': 'denied',
+              'personalization_storage': 'denied'
+            });
             gtag('js', new Date());
             gtag('config', '${GA_MEASUREMENT_ID}', {
               page_path: window.location.pathname,
@@ -108,6 +124,7 @@ export default function RootLayout({
         <ToastProvider>
           {children}
           <PwaInstallPrompt />
+          <CookieConsentBanner />
         </ToastProvider>
       </body>
     </html>

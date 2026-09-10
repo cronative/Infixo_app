@@ -31,7 +31,7 @@ async function sendOtpEmail(toEmail, otpCode) {
           </div>
 
           <!-- Heading -->
-          <h1 style="margin: 0 0 8px 0; color: #0F172A; font-size: 20px; font-weight: 800; tracking-tight: -0.5px;">
+          <h1 style="margin: 0 0 8px 0; color: #151933; font-size: 20px; font-weight: 800; tracking-tight: -0.5px;">
             Your sign-in code
           </h1>
 

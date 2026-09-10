@@ -28,15 +28,9 @@ export const WORKSPACE_NAV: NavItem[] = [
   { href: "/dashboard/profile", label: "My Profile", icon: UserRound },
   { href: "/dashboard/series", label: "Content", icon: Layers },
   { href: "/dashboard/socials", label: "Links & Socials", icon: Share2 },
-  { href: "/dashboard/mediakit", label: "Services & Brand Work", icon: Briefcase },
-  // Selected Collabs & My Brands hidden as requested
-  // { href: "/dashboard/collaborations", label: "Selected Collabs", icon: Handshake },
-  // { href: "/dashboard/brands", label: "My Brands", icon: Building2 },
-  { href: "/dashboard/team", label: "Team", icon: Users },
-  { href: "/dashboard/requests", label: "Collab Inquiries", icon: Inbox },
+  { href: "/dashboard/mediakit", label: "Collab Services", icon: Briefcase },
   { href: "/dashboard/reviews", label: "Reviews", icon: Star },
   { href: "/dashboard/themes", label: "Appearance", icon: Palette },
-  { href: "/dashboard/preview", label: "Profile Preview", icon: Eye },
 ];
 
 export const ACCOUNT_NAV: NavItem[] = [
@@ -53,7 +47,7 @@ export const SIDEBAR_NAV: NavItem[] = [
 export const BOTTOM_NAV: NavItem[] = [
   { href: "/dashboard", label: "Home", icon: LayoutGrid },
   { href: "/dashboard/series", label: "Content", icon: Layers },
-  { href: "/dashboard/mediakit", label: "Services", icon: Briefcase },
+  { href: "/dashboard/mediakit", label: "Collab Services", icon: Briefcase },
   { href: "/dashboard/reviews", label: "Reviews", icon: Star },
   { href: "/dashboard/settings", label: "Account", icon: Settings },
 ];

@@ -86,9 +86,9 @@ export function PwaInstallPrompt() {
 
   return (
     <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md animate-fade-in-up">
-      <div className="relative overflow-hidden rounded-3xl border border-[#E8DCE4] bg-white/95 p-4 sm:p-5 shadow-2xl shadow-[#803D63]/15 backdrop-blur-xl">
+      <div className="relative overflow-hidden rounded-3xl border border-[#E4DAD5] bg-white/95 p-4 sm:p-5 shadow-2xl shadow-[#151933]/15 backdrop-blur-xl">
         {/* Ambient Top Glow */}
-        <div className="pointer-events-none absolute -top-10 left-1/2 h-20 w-40 -translate-x-1/2 rounded-full bg-[#803D63]/10 blur-xl" />
+        <div className="pointer-events-none absolute -top-10 left-1/2 h-20 w-40 -translate-x-1/2 rounded-full bg-[#151933]/10 blur-xl" />
 
         {/* Close Button */}
         <button
@@ -102,7 +102,7 @@ export function PwaInstallPrompt() {
 
         <div className="flex items-center gap-3.5 pr-6">
           {/* App Icon */}
-          <div className="relative h-13 w-13 shrink-0 overflow-hidden rounded-2xl border border-[#E8DCE4] shadow-md bg-[#803D63]">
+          <div className="relative h-13 w-13 shrink-0 overflow-hidden rounded-2xl border border-[#E4DAD5] shadow-md bg-[#151933]">
             <Image
               src="/logo-square.png"
               alt="Inflixo App Icon"
@@ -118,7 +118,7 @@ export function PwaInstallPrompt() {
               <h4 className="font-display text-sm font-black text-slate-900 truncate">
                 Install Inflixo App
               </h4>
-              <span className="inline-flex items-center gap-0.5 rounded-full bg-[#F6EBF1] px-2 py-0.5 text-[9px] font-black text-[#803D63] border border-[#E8DCE4]">
+              <span className="inline-flex items-center gap-0.5 rounded-full bg-[#F6EBF1] px-2 py-0.5 text-[9px] font-black text-[#151933] border border-[#E4DAD5]">
                 <Sparkles className="h-2.5 w-2.5" /> FREE
               </span>
             </div>
@@ -129,7 +129,7 @@ export function PwaInstallPrompt() {
         </div>
 
         {/* Instructions / Action Area */}
-        <div className="mt-3.5 pt-3 border-t border-[#E8DCE4]/60">
+        <div className="mt-3.5 pt-3 border-t border-[#E4DAD5]/60">
           {isIOS ? (
             /* iOS Safari Instructions */
             <div className="space-y-2 text-left">
@@ -142,7 +142,7 @@ export function PwaInstallPrompt() {
               </div>
               <div className="flex items-center gap-2 text-xs font-semibold text-slate-700">
                 <span>2. Select</span>
-                <span className="inline-flex items-center gap-1 rounded-md bg-[#F6EBF1] px-2 py-0.5 text-[11px] font-bold text-[#803D63] border border-[#E8DCE4]">
+                <span className="inline-flex items-center gap-1 rounded-md bg-[#F6EBF1] px-2 py-0.5 text-[11px] font-bold text-[#151933] border border-[#E4DAD5]">
                   <PlusSquare className="h-3 w-3" /> Add to Home Screen
                 </span>
               </div>
@@ -152,7 +152,7 @@ export function PwaInstallPrompt() {
             <button
               type="button"
               onClick={handleInstallClick}
-              className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#803D63] hover:bg-[#6D3254] py-2.5 px-4 text-xs font-black text-white shadow-md shadow-[#803D63]/20 transition-all hover:scale-[1.01] cursor-pointer"
+              className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#151933] hover:bg-[#2c1937] py-2.5 px-4 text-xs font-black text-white shadow-md shadow-[#151933]/20 transition-all hover:scale-[1.01] cursor-pointer"
             >
               <Download className="h-4 w-4" />
               <span>Add to Home Screen</span>

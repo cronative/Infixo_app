@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { isAuthorizedAdmin } from "@/lib/adminAuth";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    if (!(await isAuthorizedAdmin(req))) {
+      return NextResponse.json({ error: "Unauthorized admin access" }, { status: 401 });
+    }
+
     let seriesList: any[] = [];
     try {
       const [seriesRows]: any = await db.query(`

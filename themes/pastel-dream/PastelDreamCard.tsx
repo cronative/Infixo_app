@@ -22,17 +22,17 @@ export function PastelDreamCard({ profile, socials, series, totalAudience, varia
             {initials(profile.displayName) || "IN"}
           </div>
         )}
-        <p className={`mt-4 ${full ? "text-2xl" : "text-lg"} font-extrabold text-[#3a2447]`}>
+        <p className={`mt-4 ${full ? "text-2xl" : "text-lg"} font-extrabold text-[#151933]`}>
           {profile.displayName || "Your name"}
         </p>
-        <p className="text-sm text-[#3a2447]/55">
+        <p className="text-sm text-[#151933]/55">
           @{profile.username || "username"} {profile.category ? `· ${profile.category}` : ""}
         </p>
-        <p className="mt-3 max-w-sm text-sm leading-relaxed text-[#3a2447]/75">{profile.bio}</p>
+        <p className="mt-3 max-w-sm text-sm leading-relaxed text-[#151933]/75">{profile.bio}</p>
 
         <div className="mt-4 flex items-center gap-1.5 rounded-full bg-white/70 px-3.5 py-1.5 shadow-sm">
           <Users className="h-3.5 w-3.5 text-[#5b3a6b]" />
-          <span className="text-xs font-bold text-[#3a2447]">{formatCount(totalAudience)} total fanbase</span>
+          <span className="text-xs font-bold text-[#151933]">{formatCount(totalAudience)} total fanbase</span>
         </div>
       </div>
 
@@ -50,8 +50,8 @@ export function PastelDreamCard({ profile, socials, series, totalAudience, varia
                 <Play className="h-4 w-4 fill-[#5b3a6b] text-[#5b3a6b]" />
               </div>
               <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-[#3a2447]">{s.title}</p>
-                <p className="text-xs text-[#3a2447]/50">{s.seasons.length} season{s.seasons.length !== 1 ? "s" : ""}</p>
+                <p className="truncate text-sm font-bold text-[#151933]">{s.title}</p>
+                <p className="text-xs text-[#151933]/50">{s.seasons.length} season{s.seasons.length !== 1 ? "s" : ""}</p>
               </div>
             </div>
           ))}
@@ -63,7 +63,7 @@ export function PastelDreamCard({ profile, socials, series, totalAudience, varia
 
 function StatCell({ icon, value }: { icon: React.ReactNode; value: number }) {
   return (
-    <div className="flex flex-col items-center gap-1 rounded-2xl bg-white/70 py-3 text-[#3a2447] shadow-sm">
+    <div className="flex flex-col items-center gap-1 rounded-2xl bg-white/70 py-3 text-[#151933] shadow-sm">
       {icon}
       <span className="text-xs font-bold">{value > 0 ? formatCount(value) : "—"}</span>
     </div>

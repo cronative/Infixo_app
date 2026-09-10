@@ -38,9 +38,8 @@ function TaglineRotator() {
   return (
     <div className="flex items-center justify-center overflow-hidden px-2 text-center min-h-[24px]">
       <p
-        className={`text-xs sm:text-sm font-bold text-inflixo-purple-dark transition-all duration-300 transform ${
-          visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
-        }`}
+        className={`text-xs sm:text-sm font-bold text-inflixo-purple-dark transition-all duration-300 transform ${visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
+          }`}
       >
         {PRODUCT_TAGLINES[index]}
       </p>
@@ -86,37 +85,37 @@ export function OnboardingLayout({
   }
 
   return (
-    <div className="min-h-dvh bg-background scroll-pt-32">
-      {/* Sticky Header section with Top Navbar + Step Navigation */}
-      <header className="sticky top-0 z-40 w-full border-b border-gray-200 bg-white shadow-2xs safe-top">
-        {/* Top Navbar Row */}
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-3.5 py-2.5 sm:px-8 border-b border-slate-100">
+    <div className="min-h-dvh bg-[#f8fafc] scroll-pt-32">
+      {/* Sticky Header section with Top Navbar + Step Navigation (fixed/sticky so it never scrolls) */}
+      <header className="sticky top-0 z-50 w-full border-b border-[#e2e8f0] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+        {/* Top Navbar Row - Full Width with Increased Height */}
+        <div className="w-full flex items-center justify-between gap-4 px-4 sm:px-8 lg:px-12 py-3.5 sm:py-4.5 border-b border-[#e2e8f0] bg-white">
           {/* Left: Logo */}
           <div className="flex items-center gap-3">
-            <Logo size="sm" />
+            <Logo size="md" />
           </div>
 
           {/* Center: Subtle Verified Email Indicator */}
           {email && (
-            <div className="flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50/90 px-3 py-1 text-xs font-semibold text-emerald-800 shadow-2xs">
-              <Check className="h-3.5 w-3.5 text-emerald-600 stroke-[3]" />
-              <span className="truncate max-w-[140px] sm:max-w-xs">{email}</span>
+            <div className="flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3.5 py-1.5 text-xs font-semibold text-emerald-800 shadow-xs">
+              <Check className="h-4 w-4 text-emerald-600 stroke-[3]" />
+              <span className="truncate max-w-[160px] sm:max-w-xs font-medium">{email}</span>
             </div>
           )}
 
           {/* Right: Save & Logout */}
           <button
             onClick={handleSaveAndLogout}
-            className="tap-scale flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-100 shadow-2xs"
+            className="tap-scale flex shrink-0 items-center gap-2 rounded-full border border-[#e2e8f0] bg-white px-4 py-2 text-xs font-bold text-[#475569] transition-all hover:border-[#cbd5e1] hover:bg-[#f8fafc] hover:text-[#151933] shadow-xs cursor-pointer"
           >
-            <LogOut className="h-3.5 w-3.5 text-slate-500" />
+            <LogOut className="h-4 w-4 text-[#64748b]" />
             <span className="hidden sm:inline">Save &amp; logout</span>
             <span className="sm:hidden">Logout</span>
           </button>
         </div>
 
-        {/* Subheader bar below Top Navbar containing step progress */}
-        <div className="bg-white px-3.5 py-2.5 sm:px-8">
+        {/* Subheader bar below Top Navbar containing step progress - Centered */}
+        <div className="w-full bg-white px-3.5 py-3 sm:px-8">
           <div className="mx-auto max-w-6xl flex items-center justify-between">
             <ProgressSteps current={step} />
           </div>
@@ -142,8 +141,8 @@ export function OnboardingLayout({
 
             {/* Right live preview column - sticky below header and contained in viewport */}
             {preview && (
-              <aside className="hidden flex-1 border-l border-slate-200/80 bg-slate-50/50 px-6 py-4 pb-20 lg:block lg:w-[50%] min-w-[440px]">
-                <div className="sticky top-[116px] max-h-[calc(100vh-128px)] overflow-y-auto pr-1 pb-6 scrollbar-thin flex flex-col items-center">
+              <aside className="hidden flex-1 border-l border-[#E4DAD5] bg-[#fbfbfb] px-6 py-4 pb-20 lg:block lg:w-[50%] min-w-[440px]">
+                <div className="sticky top-[136px] max-h-[calc(100vh-148px)] overflow-y-auto pr-1 pb-6 scrollbar-thin flex flex-col items-center">
                   <div className="w-full max-w-[480px]">
                     {preview}
                   </div>
@@ -157,17 +156,17 @@ export function OnboardingLayout({
       {/* Dedicated Full-Screen Preview Sheet for Mobile & Tablet */}
       {preview && isMobilePreviewOpen && (
         <div className="fixed inset-0 z-50 flex flex-col bg-black/60 backdrop-blur-xs lg:hidden animate-fade-in">
-          <div className="relative flex flex-col w-full h-full max-h-dvh bg-slate-50 overflow-hidden shadow-2xl">
+          <div className="relative flex flex-col w-full h-full max-h-dvh bg-[#fbfbfb] overflow-hidden shadow-2xl">
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3.5 bg-white border-b border-slate-200 safe-top">
+            <div className="flex items-center justify-between px-4 py-3.5 bg-white border-b border-[#E4DAD5] safe-top">
               <div className="flex items-center gap-2">
                 <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-sm font-bold text-slate-900">Live Profile Preview</span>
+                <span className="text-sm font-bold text-[#241618]">Live Profile Preview</span>
               </div>
               <button
                 type="button"
                 onClick={() => setIsMobilePreviewOpen(false)}
-                className="tap-scale flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors cursor-pointer"
+                className="tap-scale flex h-8 w-8 items-center justify-center rounded-full bg-[#fbfbfb] text-[#6B5A5D] hover:bg-[#E4DAD5] transition-colors cursor-pointer"
                 aria-label="Close Preview"
               >
                 <X className="h-4 w-4" />
@@ -182,11 +181,11 @@ export function OnboardingLayout({
             </div>
 
             {/* Bottom Return Action */}
-            <div className="p-3.5 bg-white border-t border-slate-200 safe-bottom">
+            <div className="p-3.5 bg-white border-t border-[#E4DAD5] safe-bottom">
               <button
                 type="button"
                 onClick={() => setIsMobilePreviewOpen(false)}
-                className="w-full rounded-xl bg-[#803D63] hover:bg-[#6D3254] py-3 text-xs font-bold text-white transition-colors cursor-pointer text-center shadow-xs"
+                className="w-full rounded-xl bg-[#151933] hover:bg-[#151933] py-3 text-xs font-bold text-white transition-colors cursor-pointer text-center shadow-xs"
               >
                 Back to Editing Form
               </button>

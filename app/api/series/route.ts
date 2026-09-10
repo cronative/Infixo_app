@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 import { saveBase64Image } from "@/lib/imageStorage";
+import { debugLog } from "@/lib/debugLogger";
+
 
 // GET /api/series?email=... or ?username=...
 export async function GET(req: Request) {
@@ -65,7 +67,8 @@ export async function GET(req: Request) {
       return NextResponse.json({ success: true, series: singleSeries });
     }
 
-    console.log("📥 [GET /api/series] Received query for email/username:", { email, username });
+    debugLog("API_SERIES", "Received query for email/username:", { email, username });
+
 
     let creatorId: string | null = null;
 
@@ -84,17 +87,10 @@ export async function GET(req: Request) {
       const [creatorsByEmail]: any = await db.query("SELECT id FROM creators WHERE email = ?", [email]);
       if (creatorsByEmail.length > 0) {
         creatorId = creatorsByEmail[0].id;
-      } else {
-        const cleanUsername = email.split("@")[0].replace(/[^a-z0-9_]/gi, "").toLowerCase();
-        const [creatorsByUsername]: any = await db.query("SELECT id FROM creators WHERE username = ?", [cleanUsername]);
-        if (creatorsByUsername.length > 0) {
-          creatorId = creatorsByUsername[0].id;
-        }
       }
     }
 
     if (!creatorId) {
-      console.log("ℹ️ [GET /api/series] No matching creator found for query, returning empty series list.");
       return NextResponse.json({ success: true, series: [] });
     }
 
@@ -186,26 +182,21 @@ export async function POST(req: Request) {
     let creatorId = creators[0]?.id;
 
     if (!creatorId) {
-      const cleanUsername = email.split("@")[0].replace(/[^a-z0-9_]/gi, "").toLowerCase();
-      const [byUsername]: any = await db.query("SELECT id FROM creators WHERE username = ?", [cleanUsername]);
-      if (byUsername.length > 0) {
-        creatorId = byUsername[0].id;
-      }
-    }
-
-
-    if (!creatorId) {
       creatorId = `cr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-      const cleanUsername = email.split("@")[0].replace(/[^a-z0-9_]/gi, "").toLowerCase();
       await db.query(
-        `INSERT INTO creators (id, email, display_name, username) VALUES (?, ?, ?, ?)`,
-        [creatorId, email, cleanUsername, cleanUsername]
+        `INSERT INTO creators (id, email, display_name, username) VALUES (?, ?, '', '')`,
+        [creatorId, email]
       );
       console.log("✨ [POST /api/series] Created new creator in DB:", creatorId);
     }
 
     const seriesId = body.seriesId || `ser_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     const isEpisodeOnlyFlag = Boolean(isEpisodeOnly || body.title === "Update" || !title);
+
+    // Auto-migrate episodes table platform column to VARCHAR(50) if needed
+    try {
+      await db.query("ALTER TABLE episodes MODIFY COLUMN platform VARCHAR(50) NOT NULL DEFAULT 'YouTube'");
+    } catch {}
 
     if (!isEpisodeOnlyFlag) {
       const finalPosterUrl = saveBase64Image(posterDataUrl, "posters", "poster") || (posterDataUrl && !posterDataUrl.startsWith("data:") ? posterDataUrl : null);
@@ -230,23 +221,71 @@ export async function POST(req: Request) {
       for (let i = 0; i < episodes.length; i++) {
         const ep = episodes[i];
         const epId = ep.id || `ep_${Date.now()}_${i}`;
-        await db.query(
-          `INSERT INTO episodes (id, series_id, episode_number, title, external_url, platform)
-           VALUES (?, ?, ?, ?, ?, ?)
-           ON DUPLICATE KEY UPDATE
-             episode_number = VALUES(episode_number),
-             title = VALUES(title),
-             external_url = VALUES(external_url),
-             platform = VALUES(platform)`,
-          [
-            epId,
-            seriesId,
-            ep.episodeNumber || i + 1,
-            ep.title || `Episode ${i + 1}`,
-            ep.externalUrl || "",
-            ep.platform || "YouTube",
-          ]
-        );
+        const platformVal = (ep.platform || "YouTube").trim() || "YouTube";
+
+        try {
+          await db.query(
+            `INSERT INTO episodes (id, series_id, episode_number, title, external_url, platform)
+             VALUES (?, ?, ?, ?, ?, ?)
+             ON DUPLICATE KEY UPDATE
+               episode_number = VALUES(episode_number),
+               title = VALUES(title),
+               external_url = VALUES(external_url),
+               platform = VALUES(platform)`,
+            [
+              epId,
+              seriesId,
+              ep.episodeNumber || i + 1,
+              ep.title || `Episode ${i + 1}`,
+              ep.externalUrl || "",
+              platformVal,
+            ]
+          );
+        } catch (insertErr: any) {
+          if (insertErr?.code === "WARN_DATA_TRUNCATED" || insertErr?.errno === 1265) {
+            try {
+              await db.query("ALTER TABLE episodes MODIFY COLUMN platform VARCHAR(50) NOT NULL DEFAULT 'YouTube'");
+              await db.query(
+                `INSERT INTO episodes (id, series_id, episode_number, title, external_url, platform)
+                 VALUES (?, ?, ?, ?, ?, ?)
+                 ON DUPLICATE KEY UPDATE
+                   episode_number = VALUES(episode_number),
+                   title = VALUES(title),
+                   external_url = VALUES(external_url),
+                   platform = VALUES(platform)`,
+                [
+                  epId,
+                  seriesId,
+                  ep.episodeNumber || i + 1,
+                  ep.title || `Episode ${i + 1}`,
+                  ep.externalUrl || "",
+                  platformVal,
+                ]
+              );
+            } catch {
+              // Final safe fallback to 'YouTube' if legacy enum cannot be altered
+              await db.query(
+                `INSERT INTO episodes (id, series_id, episode_number, title, external_url, platform)
+                 VALUES (?, ?, ?, ?, ?, ?)
+                 ON DUPLICATE KEY UPDATE
+                   episode_number = VALUES(episode_number),
+                   title = VALUES(title),
+                   external_url = VALUES(external_url),
+                   platform = VALUES(platform)`,
+                [
+                  epId,
+                  seriesId,
+                  ep.episodeNumber || i + 1,
+                  ep.title || `Episode ${i + 1}`,
+                  ep.externalUrl || "",
+                  "YouTube",
+                ]
+              );
+            }
+          } else {
+            throw insertErr;
+          }
+        }
         console.log(`🎬 [POST /api/series] Saved Episode "${ep.title}" to Series ID: ${seriesId}`);
       }
     }

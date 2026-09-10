@@ -2,95 +2,78 @@
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   Briefcase,
-  Sparkles,
   Plus,
-  Edit2,
   Trash2,
-  Share2,
-  Download,
-  Eye,
-  CheckCircle2,
-  Clock,
-  Building2,
-  Mail,
-  MessageCircle,
-  Copy,
   ExternalLink,
-  ShieldCheck,
-  Zap,
-  Tag,
   Check,
   X,
-  FileSpreadsheet,
   Film,
-  Tv,
-  Play,
-  Layers,
-  Award,
-  Link2,
-  Globe,
   MoreVertical,
   Pencil,
-  Power,
+  Eye,
+  EyeOff,
+  Copy,
+  ArrowRight,
+  Sparkles,
   SlidersHorizontal,
+  Mail,
+  MessageCircle,
 } from "lucide-react";
 import {
   InstagramIcon,
   YoutubeIcon,
   FacebookIcon,
-  XTwitterIcon,
   LinkedinIcon,
-  ThreadsIcon,
+  XTwitterIcon,
+  SpotifyIcon,
 } from "@/components/shared/BrandIcons";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
-import { MediaKitService, SAMPLE_PACKAGES } from "@/services/MediaKitService";
-import { MediaKitPackage, MediaKitSettings, CustomLink } from "@/types";
-import { authRepository, customLinksRepository } from "@/repositories/localRepository";
-import { formatCount } from "@/utils/format";
+import { MediaKitService } from "@/services/MediaKitService";
+import { MediaKitPackage, MediaKitSettings } from "@/types";
+import { authRepository } from "@/repositories/localRepository";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { canCreateGig } from "@/services/subscriptionLimits";
 import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 
-// 10 Tailored Deliverable Suggestion Chips per Platform Type
+// 10 Tailored Deliverable Suggestion Chips for Reels, Cafe/Shop Visits & Brand Collabs
 const DELIVERABLE_SUGGESTIONS: Record<string, string[]> = {
   "Instagram Reel": [
-    "1x 30–60s Dedicated/Integrated Reel",
-    "Brand Collaborator Tag & Co-authoring",
+    "1x 30–60s Dedicated Promo Reel",
+    "On-site Cafe / Restaurant Visit & Food Tasting",
+    "Store / Shop Walkthrough & Product Showcase",
+    "Store / Cafe Location & Map Pin Tag",
+    "Brand Collaborator Tag on Post",
+    "Exclusive Discount Code in Caption",
     "Direct Promo Link in Bio (24 Hours)",
-    "30 Days Digital Usage Rights",
     "1x Companion Instagram Story with Link",
     "Pinned Comment with Tracked Link",
-    "Product Placement in Opening Hook",
     "Raw Video Footage Access for Brand Ads",
-    "Custom Audio / Sound Track Licensing",
-    "Detailed Impression & Reach Analytics",
   ],
   "Instagram Bundle": [
     "3x Targeted Instagram Reels",
     "3x Companion Stories with Direct Links",
+    "Store Visit + Unboxing + Dedicated Review",
     "Collaborator Co-Author Tag on all posts",
     "45 Days Digital Usage & Whitelisting Rights",
     "Bio Promo Link for Full Campaign Duration",
-    "Product Tagging in Reel & Stories",
-    "Dedicated Unboxing / First Impression Reel",
+    "Product / Store Tagging in Reel & Stories",
     "Pinned Comments with Promo Codes",
     "RAW High-Res Footage for Performance Ads",
     "Weekly Performance & Engagement Reporting",
   ],
   "Instagram Story": [
     "3x Sequential Story Slides with Direct Swipe/Link",
+    "Cafe / Store Location Map Tag",
     "Brand Mention Tag @BrandName",
     "Exclusive Discount Promo Code Display",
     "Interactive Poll / Question Sticker Engagement",
     "Story Saved to Creator's Profile Highlights",
     "Raw Story Analytics Screenshot Delivery",
-    "Swipe-Up Link Tracking",
     "Call-To-Action (CTA) Voiceover",
     "High-Resolution Product Closeups",
     "24-Hour Active Link Guarantee",
@@ -181,6 +164,81 @@ const DELIVERABLE_SUGGESTIONS: Record<string, string[]> = {
   ],
 };
 
+const SERVICE_EXAMPLES = [
+  {
+    title: "Brand Promo Reel",
+    platform: "Instagram Reel",
+    turnaroundDays: 3,
+    minPrice: "₹8,000",
+    maxPrice: "₹12,000",
+    badge: "Brand Favorite",
+    description: "Dedicated or integrated reel for brands & D2C products with collaborator tag and bio link.",
+    deliverables: [
+      "1x 30–60s Dedicated Promo Reel",
+      "Brand Collaborator Tag & Co-authoring",
+      "Direct Promo Link in Bio (24 Hours)",
+    ],
+  },
+  {
+    title: "Cafe / Restaurant Visit Reel",
+    platform: "Instagram Reel",
+    turnaroundDays: 2,
+    minPrice: "₹6,000",
+    maxPrice: "₹10,000",
+    badge: "Food & Dining",
+    description: "In-person visit, food tasting, ambiance showcase, and trending reel with map location.",
+    deliverables: [
+      "On-site Visit, Food Tasting & Video Shoot",
+      "1x High-Engagement Trending Reel",
+      "Store / Cafe Location & Map Tag",
+      "2x Instagram Story Slides with Direct Location",
+    ],
+  },
+  {
+    title: "Shop / Store Launch Reel",
+    platform: "Instagram Reel",
+    turnaroundDays: 2,
+    minPrice: "₹7,000",
+    maxPrice: "₹12,000",
+    badge: "Store Promo",
+    description: "Walkthrough of shop collection, customer experience, and special discount announcement.",
+    deliverables: [
+      "On-site Store Walkthrough & Collection Highlight",
+      "Store Location Tag & Google Maps Mention",
+      "Exclusive Promo Code in Caption",
+      "1x Companion Story with Address Sticker",
+    ],
+  },
+  {
+    title: "Instagram Story Shoutout",
+    platform: "Instagram Story",
+    turnaroundDays: 1,
+    minPrice: "₹2,500",
+    maxPrice: "₹4,000",
+    badge: "Quick Shoutout",
+    description: "Sequential story slides with swipe-up/link sticker, brand mention, and location tag.",
+    deliverables: [
+      "2x Sequential Story Slides with Direct Link",
+      "Brand / Store Mention Tag @Account",
+      "Direct Link Sticker for Instant Traffic",
+    ],
+  },
+  {
+    title: "Monthly Reel Pack (4 Reels)",
+    platform: "Instagram Bundle",
+    turnaroundDays: 30,
+    minPrice: "₹25,000",
+    maxPrice: "₹40,000",
+    badge: "Monthly Retainer",
+    description: "Weekly dedicated reels for cafes, restaurants, gyms, or retail shops.",
+    deliverables: [
+      "4x Dedicated Reels (1 Reel per week)",
+      "Collaborator Co-Author Tag on all reels",
+      "Story mentions with direct link for each reel",
+    ],
+  },
+];
+
 function formatCurrencyString(rawStr: string): string {
   if (!rawStr) return "";
   const trimmed = rawStr.trim();
@@ -201,27 +259,16 @@ function formatPriceClean(price: string): string {
 }
 
 export default function DashboardMediaKitPage() {
-  const router = useRouter();
-  const { profile, socials, totalAudience, series, subscription } = useCreator();
+  const { profile, subscription } = useCreator();
   const { showToast } = useToast();
-
-  const totalSeriesCount = series ? series.length : 0;
-  const totalEpisodesCount = series
-    ? series.reduce((acc: number, ser: any) => {
-        const epCount = ser.seasons
-          ? ser.seasons.reduce((sAcc: number, season: any) => sAcc + (season.episodes?.length || 0), 0)
-          : (ser.episodesCount || 0);
-        return acc + epCount;
-      }, 0)
-    : 0;
 
   const [packages, setPackages] = useState<MediaKitPackage[]>([]);
   const [settings, setSettings] = useState<MediaKitSettings>(MediaKitService.DEFAULT_SETTINGS);
-  const [isEditingSettings, setIsEditingSettings] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [isExamplesModalOpen, setIsExamplesModalOpen] = useState(false);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [packageToDelete, setPackageToDelete] = useState<MediaKitPackage | null>(null);
 
-  // Package Modal State (Unchanged functionality)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
   const [editingPkgId, setEditingPkgId] = useState<string | null>(null);
@@ -236,31 +283,13 @@ export default function DashboardMediaKitPage() {
   const [formDeliverableInput, setFormDeliverableInput] = useState("");
   const [formDeliverables, setFormDeliverables] = useState<string[]>([]);
 
-  // Public Preview Modal State (Unchanged functionality)
-  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
-  const [activePreviewTab, setActivePreviewTab] = useState<"mediakit" | "series">("mediakit");
-  const [customLinks, setCustomLinks] = useState<CustomLink[]>([]);
-
   const activeEmail = profile.email || authRepository.getPendingEmail() || "";
   const activeCreatorId = profile.id;
   const activeUsername = profile.username;
   const creatorQueryKey = activeCreatorId || activeEmail || activeUsername || "";
 
-  // Connected accounts calculation
-  const isInstaConnected = Boolean(socials?.instagram?.url || (socials?.instagram?.followers ?? 0) > 0);
-  const isYtConnected = Boolean(socials?.youtube?.url || (socials?.youtube?.subscribers ?? 0) > 0);
-  const isFbConnected = Boolean(socials?.facebook?.url || (socials?.facebook?.followers ?? 0) > 0);
-  const connectedPlatformsCount = [isInstaConnected, isYtConnected, isFbConnected].filter(Boolean).length;
-
-  const activeServicesCount = useMemo(() => packages.filter((p) => p.isActive).length, [packages]);
-
   const hasContactConfigured = Boolean(settings.whatsappNumber || settings.sponsorEmail || profile.email);
 
-  useEffect(() => {
-    setCustomLinks(customLinksRepository.get());
-  }, []);
-
-  // Click outside to close 3-dot dropdowns
   useEffect(() => {
     const handleClickOutside = () => setActiveMenuId(null);
     if (activeMenuId) document.addEventListener("mousedown", handleClickOutside);
@@ -283,13 +312,14 @@ export default function DashboardMediaKitPage() {
     initMediaKit();
   }, [creatorQueryKey, activeCreatorId]);
 
-  const handleSaveSettings = async () => {
+  const handleSaveContactSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
     MediaKitService.saveSettings(settings);
     if (activeEmail) {
       await MediaKitService.saveToDb(activeEmail, settings, packages, activeCreatorId);
     }
-    setIsEditingSettings(false);
-    showToast("Contact routing settings saved! 💼");
+    setIsContactModalOpen(false);
+    showToast("Brand contact options updated! 💼");
   };
 
   const handleOpenAddModal = () => {
@@ -332,6 +362,25 @@ export default function DashboardMediaKitPage() {
     setIsModalOpen(true);
   };
 
+  const handleApplyTemplate = (template: (typeof SERVICE_EXAMPLES)[0]) => {
+    if (!canCreateGig(packages.length, subscription?.planKey)) {
+      setIsExamplesModalOpen(false);
+      setIsLimitModalOpen(true);
+      return;
+    }
+    setEditingPkgId(null);
+    setFormTitle(template.title);
+    setFormPlatform(template.platform);
+    setFormMinPrice(template.minPrice);
+    setFormMaxPrice(template.maxPrice);
+    setFormPackageName(template.badge);
+    setFormTurnaround(template.turnaroundDays);
+    setFormDeliverables([...template.deliverables]);
+    setFormDeliverableInput("");
+    setIsExamplesModalOpen(false);
+    setIsModalOpen(true);
+  };
+
   const handleAddDeliverable = () => {
     if (!formDeliverableInput.trim()) return;
     setFormDeliverables([...formDeliverables, formDeliverableInput.trim()]);
@@ -345,7 +394,7 @@ export default function DashboardMediaKitPage() {
   const handleSavePackage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formTitle.trim() || !formMinPrice.trim()) {
-      showToast("Please enter a package title and minimum price", "error");
+      showToast("Please enter a service title and starting price", "error");
       return;
     }
 
@@ -360,18 +409,18 @@ export default function DashboardMediaKitPage() {
       updatedPkgs = packages.map((p) =>
         p.id === editingPkgId
           ? {
-              ...p,
-              title: formTitle.trim(),
-              platform: formPlatform,
-              price: formattedPrice,
-              minPrice: minStr,
-              maxPrice: maxStr || undefined,
-              packageName: formPackageName.trim() || undefined,
-              turnaroundDays: Number(formTurnaround) || 2,
-              deliverables: formDeliverables.length > 0 ? formDeliverables : ["Product Integration"],
-              badge: resolvedBadge,
-              isPopular: resolvedIsPopular,
-            }
+            ...p,
+            title: formTitle.trim(),
+            platform: formPlatform,
+            price: formattedPrice,
+            minPrice: minStr,
+            maxPrice: maxStr || undefined,
+            packageName: formPackageName.trim() || undefined,
+            turnaroundDays: Number(formTurnaround) || 2,
+            deliverables: formDeliverables.length > 0 ? formDeliverables : ["Product Integration"],
+            badge: resolvedBadge,
+            isPopular: resolvedIsPopular,
+          }
           : p
       );
     } else {
@@ -396,7 +445,7 @@ export default function DashboardMediaKitPage() {
     if (activeEmail) {
       await MediaKitService.saveToDb(activeEmail, settings, updatedPkgs, activeCreatorId);
     }
-    showToast(editingPkgId ? "Service updated! ✨" : "New service published! 🚀");
+    showToast(editingPkgId ? "Service updated! ✨" : "New service created! 🚀");
     setIsModalOpen(false);
   };
 
@@ -407,7 +456,7 @@ export default function DashboardMediaKitPage() {
     if (activeEmail) {
       await MediaKitService.saveToDb(activeEmail, settings, updated, activeCreatorId);
     }
-    showToast(`Service ${!currentActive ? "activated" : "paused"}.`);
+    showToast(`Service ${!currentActive ? "is now active" : "is now hidden"}.`);
   };
 
   const handleDeletePackage = async () => {
@@ -417,417 +466,304 @@ export default function DashboardMediaKitPage() {
     if (activeEmail) {
       await MediaKitService.saveToDb(activeEmail, settings, updated, activeCreatorId);
     }
-    showToast(`Service "${packageToDelete.title}" removed.`);
+    showToast(`Service "${packageToDelete.title}" deleted.`);
     setPackageToDelete(null);
-  };
-
-  const handleLoadSampleGigs = async () => {
-    setPackages(SAMPLE_PACKAGES);
-    if (activeEmail) {
-      await MediaKitService.saveToDb(activeEmail, settings, SAMPLE_PACKAGES, activeCreatorId);
-    }
-    showToast("Sample collaboration services loaded! ✨");
-  };
-
-  const handleShareMediaKit = async () => {
-    const handle = profile.username || "creator";
-    const shareUrl = typeof window !== "undefined"
-      ? `${window.location.origin}/${handle}?view=mediakit`
-      : `https://inflixo.com/${handle}?view=mediakit`;
-    const success = await copyToClipboard(shareUrl);
-    if (success) {
-      showToast("Profile link copied to clipboard! 💼✨");
-    } else {
-      showToast("Could not copy link", "error");
-    }
   };
 
   const handleShareService = async (pkg: MediaKitPackage) => {
     setActiveMenuId(null);
     const handle = profile.username || "creator";
     const shareUrl = typeof window !== "undefined"
-      ? `${window.location.origin}/${handle}?view=mediakit`
-      : `https://inflixo.com/${handle}?view=mediakit`;
+      ? `${window.location.origin}/${handle}`
+      : `https://inflixo.com/${handle}`;
     const success = await copyToClipboard(shareUrl);
     if (success) {
       showToast(`Link for "${pkg.title}" copied! ✨`);
     }
   };
 
-  const handleExportPDF = () => {
-    if (typeof window !== "undefined") {
-      window.print();
+  const getServicePlatformBadge = (pkg: MediaKitPackage) => {
+    const platform = (pkg.platform || "").toLowerCase();
+    if (platform.includes("instagram")) {
+      return (
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white shrink-0 shadow-xs">
+          <InstagramIcon className="h-5 w-5 text-white" />
+        </div>
+      );
     }
+    if (platform.includes("youtube")) {
+      return (
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FF0000] text-white shrink-0 shadow-xs">
+          <YoutubeIcon className="h-5 w-5 text-white" />
+        </div>
+      );
+    }
+    if (platform.includes("facebook")) {
+      return (
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1877F2] text-white shrink-0 shadow-xs">
+          <FacebookIcon className="h-5 w-5 text-white" />
+        </div>
+      );
+    }
+    if (platform.includes("linkedin")) {
+      return (
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0A66C2] text-white shrink-0 shadow-xs">
+          <LinkedinIcon className="h-5 w-5 text-white" />
+        </div>
+      );
+    }
+    if (platform.includes("twitter") || platform.includes("x ")) {
+      return (
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-black text-white shrink-0 shadow-xs">
+          <XTwitterIcon className="h-5 w-5 text-white" />
+        </div>
+      );
+    }
+    if (platform.includes("spotify") || platform.includes("podcast")) {
+      return (
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1DB954] text-white shrink-0 shadow-xs">
+          <SpotifyIcon className="h-5 w-5 text-white" />
+        </div>
+      );
+    }
+    return (
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#151933]/10 text-[#151933] shrink-0">
+        <Briefcase className="h-5 w-5" />
+      </div>
+    );
   };
 
-  const handleStr = profile.username || "username";
-  const cleanPhone = (settings.whatsappNumber || "").replace(/[^0-9]/g, "");
+  const contactMethodsLabel = [
+    settings.whatsappNumber ? "WhatsApp" : "",
+    (settings.sponsorEmail || profile.email) ? "Business email" : "",
+  ]
+    .filter(Boolean)
+    .join(" + ");
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-12">
-      {/* 1. PAGE HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
-        <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#17131A] tracking-tight">
-            Services &amp; Brand Work
-          </h1>
-          <p className="text-xs sm:text-sm text-[#6F6872] font-medium mt-1">
-            Show brands how they can work with you and manage your collaboration details.
+    <div className="space-y-6 w-full pb-12 text-left">
+      {/* 1. PAGE HEADER (Clean & Simple) */}
+      <div>
+        <h1 className="text-[28px] sm:text-[30px] font-bold tracking-tight text-[#181716] leading-tight">
+          Collab Services
+        </h1>
+        <p className="text-sm sm:text-[15px] text-[#54514D] font-normal mt-1">
+          Promotional packages and reel pricing for brands, restaurants, cafes, and shops.
+        </p>
+      </div>
+
+      {/* 2. COMPACT CONTACT STATUS ROW */}
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#E7E3DC] bg-white px-5 py-3.5 shadow-xs text-left">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <span className={`inline-flex items-center justify-center h-5 w-5 rounded-full shrink-0 ${hasContactConfigured ? "bg-[#EAF7F0] text-[#17845B]" : "bg-amber-100 text-amber-700"}`}>
+            {hasContactConfigured ? <Check className="h-3 w-3 stroke-[2.5]" /> : "!"}
+          </span>
+          <p className="text-sm font-medium text-[#181716] truncate">
+            {hasContactConfigured ? (
+              <>
+                <span className="font-semibold text-[#181716]">Brand contact enabled</span>
+                <span className="text-[#797570]/40 mx-2">·</span>
+                <span className="text-[#54514D]">{contactMethodsLabel}</span>
+              </>
+            ) : (
+              <span className="text-[#54514D]">Set up contact details to receive brand inquiries directly.</span>
+            )}
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 shrink-0 self-start sm:self-auto">
-          <button
-            type="button"
-            onClick={handleShareMediaKit}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer shadow-2xs"
-          >
-            <Share2 className="h-3.5 w-3.5 text-[#803D63]" />
-            <span>Share Profile</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setIsContactModalOpen(true)}
+          className="text-xs font-semibold text-[#151933] hover:underline cursor-pointer shrink-0"
+        >
+          Manage
+        </button>
       </div>
 
-      {/* 2. SECTION 1 — BRAND-READY COLLABORATION PROFILE SUMMARY */}
-      <section className="rounded-2xl border border-[#ECE8EB] bg-white p-5 sm:p-6 text-left space-y-5 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#ECE8EB] pb-4">
+      {/* 3. MAIN SECTION: YOUR COLLAB PACKAGES */}
+      <section className="space-y-4 text-left">
+        {/* Section Heading & Actions */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <h2 className="font-display text-base font-bold text-[#17131A]">
-              Your collaboration profile
+            <h2 className="text-lg font-bold text-[#181716]">
+              Your collab packages
             </h2>
-            <p className="text-xs text-[#6F6872] font-medium mt-0.5">
-              Give brands a clear view of your audience, services and ways to contact you.
+            <p className="text-xs sm:text-[13px] text-[#54514D] font-normal mt-0.5">
+              Set up rates for brand reels, restaurant visits, and store promotions.
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => {
-              setActivePreviewTab("mediakit");
-              setIsPreviewModalOpen(true);
-            }}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-[#F7EDF3] hover:bg-[#F7EDF3]/80 px-3.5 py-1.5 text-xs font-semibold text-[#803D63] transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
-          >
-            <Eye className="h-3.5 w-3.5" />
-            <span>Preview Profile</span>
-          </button>
-        </div>
-
-        {/* 3 Compact Metrics */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="space-y-1">
-            <span className="text-xs font-semibold text-[#6F6872] uppercase tracking-wider">
-              Total Fanbase
-            </span>
-            <p className="font-display text-2xl font-bold text-[#17131A]">
-              {formatCount(totalAudience || 0)}
-            </p>
-            <p className="text-[11px] text-[#6F6872] font-medium">
-              Across {connectedPlatformsCount || 1} connected {connectedPlatformsCount === 1 ? "account" : "accounts"}
-            </p>
-          </div>
-
-          <div className="space-y-1">
-            <span className="text-xs font-semibold text-[#6F6872] uppercase tracking-wider">
-              Active Services
-            </span>
-            <p className="font-display text-2xl font-bold text-[#17131A]">
-              {activeServicesCount}
-            </p>
-            <p className="text-[11px] text-[#6F6872] font-medium">
-              Available for brand enquiries
-            </p>
-          </div>
-
-          <div className="space-y-1">
-            <span className="text-xs font-semibold text-[#6F6872] uppercase tracking-wider">
-              Contact Setup
-            </span>
-            <div className="flex items-center gap-1.5 pt-0.5">
-              <span className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full ${
-                hasContactConfigured ? "bg-[#ECFDF3] text-[#16794A]" : "bg-amber-50 text-amber-800 border border-amber-200"
-              }`}>
-                <span className={`h-1.5 w-1.5 rounded-full ${hasContactConfigured ? "bg-[#16794A]" : "bg-amber-600"}`} />
-                {hasContactConfigured ? "Active" : "Action Needed"}
-              </span>
-            </div>
-            <p className="text-[11px] text-[#6F6872] font-medium">
-              {hasContactConfigured ? "WhatsApp and business email" : "Set up contact options below"}
-            </p>
-          </div>
-        </div>
-
-        {/* Connected Audience Breakdown */}
-        <div className="pt-4 border-t border-[#ECE8EB] space-y-2.5">
-          <div className="flex items-center justify-between">
-            <h3 className="font-display text-xs font-bold text-[#17131A] uppercase tracking-wider">
-              Connected audience overview
-            </h3>
-            <span className="text-[11px] text-[#6F6872] font-medium">
-              Audience counts from your connected social profiles
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {/* Instagram */}
-            <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3 flex items-center justify-between">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-pink-50 text-pink-600 shrink-0">
-                  <InstagramIcon className="h-4 w-4" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-bold text-[#17131A]">Instagram</p>
-                  <p className="text-[10px] text-[#6F6872] truncate">@{socials.instagram?.username || handleStr}</p>
-                </div>
-              </div>
-              <p className="font-display text-xs font-bold text-[#17131A] shrink-0">
-                {formatCount(socials.instagram?.followers || 0)}{" "}
-                <span className="font-normal text-[10px] text-[#6F6872]">followers</span>
-              </p>
-            </div>
-
-            {/* YouTube */}
-            <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3 flex items-center justify-between">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-50 text-red-600 shrink-0">
-                  <YoutubeIcon className="h-4 w-4" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-bold text-[#17131A]">YouTube</p>
-                  <p className="text-[10px] text-[#6F6872] truncate">
-                    {socials.youtube?.channelTitle || `@${socials.youtube?.username || handleStr}`}
-                  </p>
-                </div>
-              </div>
-              <p className="font-display text-xs font-bold text-[#17131A] shrink-0">
-                {formatCount(socials.youtube?.subscribers || 0)}{" "}
-                <span className="font-normal text-[10px] text-[#6F6872]">subscribers</span>
-              </p>
-            </div>
-
-            {/* Facebook */}
-            <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3 flex items-center justify-between">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-blue-600 shrink-0">
-                  <FacebookIcon className="h-4 w-4" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-bold text-[#17131A]">Facebook</p>
-                  <p className="text-[10px] text-[#6F6872] truncate">
-                    {socials.facebook?.name || `@${socials.facebook?.username || handleStr}`}
-                  </p>
-                </div>
-              </div>
-              <p className="font-display text-xs font-bold text-[#17131A] shrink-0">
-                {formatCount(socials.facebook?.followers || 0)}{" "}
-                <span className="font-normal text-[10px] text-[#6F6872]">followers</span>
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. SECTION 2 — COLLABORATION SERVICES */}
-      <section className="space-y-3.5 text-left">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-0.5">
-          <div>
-            <h2 className="font-display text-base font-bold text-[#17131A]">
-              Creator services
-            </h2>
-            <p className="text-xs text-[#6F6872] font-medium mt-0.5">
-              Create clear collaboration options with pricing, deliverables and turnaround time.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3 shrink-0 self-start sm:self-auto">
-            <span className="text-xs font-semibold text-[#6F6872]">
-              {packages.length} {packages.length === 1 ? "service" : "services"}
-            </span>
-
+          {/* Show top CTA only when services exist */}
+          {packages.length > 0 && (
             <button
               type="button"
               onClick={handleOpenAddModal}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-3.5 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
+              className="h-10 px-4 rounded-xl bg-[#151933] hover:bg-[#2c1937] text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 shrink-0 self-start sm:self-auto"
             >
-              <Plus className="h-3.5 w-3.5" />
-              <span>Create Service</span>
+              <Plus className="h-4 w-4" />
+              <span>Create Collab Package</span>
             </button>
-          </div>
+          )}
         </div>
 
-        {/* Services Grid or Empty State */}
+        {/* 4. SERVICES LIST OR COMPACT EMPTY STATE */}
         {packages.length === 0 ? (
-          <div className="rounded-2xl border border-[#ECE8EB] bg-white p-8 sm:p-10 text-center space-y-3 shadow-2xs">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F7EDF3] text-[#803D63]">
-              <Briefcase className="h-6 w-6" />
-            </div>
+          <div className="rounded-2xl border-2 border-dashed border-[#E7E3DC] bg-white p-7 sm:p-8 text-center space-y-3.5 shadow-xs max-w-xl mx-auto min-h-[220px] flex flex-col items-center justify-center">
             <div className="space-y-1">
-              <h3 className="font-display text-base font-bold text-[#17131A]">
-                Show brands how they can work with you
+              <h3 className="text-base font-bold text-[#181716]">
+                Create your first collab package
               </h3>
-              <p className="text-xs text-[#6F6872] max-w-md mx-auto">
-                Add your collaboration formats, starting rates, deliverables and turnaround time (sponsored reels, video integrations, story promotions).
+              <p className="text-xs sm:text-sm text-[#797570] max-w-md mx-auto">
+                Offer reels, store visits, and promotional packages for brands, cafes, and shops.
               </p>
             </div>
-            <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+
+            <div className="pt-1">
               <button
                 type="button"
                 onClick={handleOpenAddModal}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
+                className="h-10 px-5 rounded-xl bg-[#151933] hover:bg-[#2c1937] text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
               >
-                <Plus className="h-3.5 w-3.5" />
-                <span>Create First Service</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleLoadSampleGigs}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-4 py-2 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer"
-              >
-                <Sparkles className="h-3.5 w-3.5 text-[#803D63]" />
-                <span>Load Sample Services</span>
+                <Plus className="h-4 w-4" />
+                <span>Create Collab Package</span>
               </button>
             </div>
+
+            <button
+              type="button"
+              onClick={() => setIsExamplesModalOpen(true)}
+              className="text-xs font-semibold text-[#151933] hover:underline cursor-pointer inline-flex items-center gap-1 pt-1"
+            >
+              <span>Not sure what to offer? See collab reel examples</span>
+              <ArrowRight className="h-3 w-3" />
+            </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+          <div className="space-y-3">
             {packages.map((pkg) => {
               const displayPrice = formatPriceClean(pkg.price);
-              const isPopular = Boolean(pkg.isPopular || pkg.packageName?.toLowerCase().includes("popular"));
-              const visibleDeliverables = (pkg.deliverables || []).slice(0, 3);
-              const extraDeliverablesCount = Math.max(0, (pkg.deliverables?.length || 0) - 3);
+              const deliverableCount = (pkg.deliverables || []).length;
 
               return (
                 <div
                   key={pkg.id}
-                  className={`rounded-2xl border bg-white p-4 sm:p-5 flex flex-col justify-between space-y-3.5 shadow-2xs text-left transition-all ${
-                    pkg.isActive ? "border-[#ECE8EB] hover:border-[#803D63]/30" : "border-[#ECE8EB] opacity-60 bg-[#FAFAFB]"
-                  }`}
+                  className={`rounded-2xl border border-[#E7E3DC] bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs transition-colors ${pkg.isActive ? "hover:border-[#151933]/30" : "opacity-70 bg-[#FAF8F5]/50"}`}
                 >
-                  <div className="space-y-3">
-                    {/* Top Platform & Tier Row */}
-                    <div className="flex items-center justify-between gap-1.5">
-                      <span className="text-[11px] font-bold text-[#803D63] bg-[#F7EDF3] px-2 py-0.5 rounded-lg truncate">
-                        {pkg.platform}
-                      </span>
+                  {/* Left: Platform Icon & Hierarchy */}
+                  <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                    {getServicePlatformBadge(pkg)}
 
-                      <div className="flex items-center gap-1.5 shrink-0">
+                    <div className="min-w-0 flex-1 space-y-0.5">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="font-bold text-sm sm:text-base text-[#181716] truncate" title={pkg.title}>
+                          {pkg.title}
+                        </h3>
+
+                        {/* Status badge: Active vs Hidden */}
+                        <span
+                          className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full border ${pkg.isActive
+                            ? "bg-[#EAF7F0] text-[#17845B] border-[#17845B]/20"
+                            : "bg-[#FAF8F5] text-[#797570] border-[#E7E3DC]"
+                            }`}
+                        >
+                          <span className={`h-1.5 w-1.5 rounded-full ${pkg.isActive ? "bg-[#17845B]" : "bg-[#797570]"}`} />
+                          {pkg.isActive ? "Active" : "Hidden"}
+                        </span>
+
                         {(pkg.packageName || pkg.badge) && (
-                          <span className="text-[10px] font-semibold text-[#6F6872] bg-[#FAF8FA] border border-[#ECE8EB] px-2 py-0.5 rounded-md">
+                          <span className="text-[10px] font-semibold text-[#54514D] bg-[#FAF8F5] border border-[#E7E3DC] px-2 py-0.5 rounded-md truncate max-w-[120px]">
                             {pkg.packageName || pkg.badge}
                           </span>
                         )}
-                        <span
-                          className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                            pkg.isActive
-                              ? "bg-[#ECFDF3] text-[#16794A]"
-                              : "bg-slate-100 text-slate-500"
-                          }`}
-                        >
-                          {pkg.isActive ? "Active" : "Paused"}
-                        </span>
                       </div>
-                    </div>
 
-                    {/* Title & Price */}
-                    <div>
-                      <h3 className="font-display text-sm font-bold text-[#17131A] line-clamp-2 leading-snug">
-                        {pkg.title}
-                      </h3>
-                      <div className="flex items-baseline gap-2 mt-1.5">
-                        <span className="font-display text-lg font-bold text-[#803D63]">
-                          {displayPrice}
-                        </span>
-                        <span className="text-[11px] text-[#6F6872] font-medium">
-                          • {formatDeliveryDays(pkg.turnaroundDays)}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Included Deliverables */}
-                    <div className="space-y-1.5 pt-2 border-t border-[#ECE8EB]">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#6F6872]">
-                        Included
-                      </span>
-                      <ul className="space-y-1 text-xs text-[#17131A] font-medium">
-                        {visibleDeliverables.map((item, idx) => (
-                          <li key={idx} className="flex items-start gap-1.5">
-                            <Check className="h-3.5 w-3.5 text-[#16794A] shrink-0 mt-0.5" />
-                            <span className="line-clamp-1 leading-tight">{item}</span>
-                          </li>
-                        ))}
-                        {extraDeliverablesCount > 0 && (
-                          <li className="text-[11px] text-[#6F6872] font-semibold pl-5">
-                            +{extraDeliverablesCount} more
-                          </li>
-                        )}
-                      </ul>
+                      <p className="text-xs text-[#797570] font-normal truncate flex items-center gap-1.5 flex-wrap">
+                        <span>{pkg.platform}</span>
+                        <span>·</span>
+                        <span>{deliverableCount} {deliverableCount === 1 ? "deliverable" : "deliverables"}</span>
+                        <span>·</span>
+                        <span>{formatDeliveryDays(pkg.turnaroundDays)}</span>
+                      </p>
                     </div>
                   </div>
 
-                  {/* Card Bottom Actions */}
-                  <div className="pt-2 border-t border-[#ECE8EB] flex items-center justify-between gap-2">
-                    <button
-                      type="button"
-                      onClick={() => handleOpenEditModal(pkg)}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-[#803D63] hover:text-[#6F3456] transition-colors cursor-pointer"
-                    >
-                      <Pencil className="h-3 w-3" />
-                      <span>Edit Service</span>
-                    </button>
+                  {/* Right: Price & Quick Actions */}
+                  <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#E7E3DC]">
+                    <span className="text-base sm:text-lg font-bold text-[#181716] whitespace-nowrap">
+                      {displayPrice}
+                    </span>
 
-                    {/* Three-dot menu */}
-                    <div className="relative">
+                    <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setActiveMenuId(activeMenuId === pkg.id ? null : pkg.id);
-                        }}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#ECE8EB] bg-[#FAF8FA] text-[#6F6872] hover:text-[#17131A] transition-colors cursor-pointer"
-                        aria-label="More options"
+                        onClick={() => handleOpenEditModal(pkg)}
+                        className="px-3 py-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-xs font-semibold text-[#181716] transition-colors cursor-pointer shadow-xs"
                       >
-                        <MoreVertical className="h-3.5 w-3.5" />
+                        Edit
                       </button>
 
-                      {activeMenuId === pkg.id && (
-                        <div
-                          onClick={(e) => e.stopPropagation()}
-                          className="absolute right-0 bottom-full mb-1.5 w-38 rounded-xl border border-[#ECE8EB] bg-white p-1 shadow-lg z-20 space-y-0.5 animate-in fade-in"
+                      {/* Three-dot menu */}
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveMenuId(activeMenuId === pkg.id ? null : pkg.id);
+                          }}
+                          className="flex h-8 w-8 items-center justify-center rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer shadow-xs"
+                          aria-label="More options"
                         >
-                          <button
-                            type="button"
-                            onClick={() => handleShareService(pkg)}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#17131A] hover:bg-[#FAF8FA] transition-colors cursor-pointer"
-                          >
-                            <Copy className="h-3.5 w-3.5 text-[#6F6872]" />
-                            <span>Share Link</span>
-                          </button>
+                          <MoreVertical className="h-4 w-4" />
+                        </button>
 
-                          <button
-                            type="button"
-                            onClick={() => handleTogglePackageActive(pkg.id, pkg.isActive)}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#17131A] hover:bg-[#FAF8FA] transition-colors cursor-pointer"
+                        {activeMenuId === pkg.id && (
+                          <div
+                            onClick={(e) => e.stopPropagation()}
+                            className="absolute right-0 top-full mt-1.5 w-40 rounded-xl border border-[#E7E3DC] bg-white p-1.5 shadow-lg z-50 space-y-0.5 animate-in fade-in"
                           >
-                            <Power className="h-3.5 w-3.5 text-[#6F6872]" />
-                            <span>{pkg.isActive ? "Pause Service" : "Activate"}</span>
-                          </button>
+                            <button
+                              type="button"
+                              onClick={() => handleShareService(pkg)}
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
+                            >
+                              <Copy className="h-3.5 w-3.5 text-[#797570]" />
+                              <span>Share Link</span>
+                            </button>
 
-                          <div className="my-1 border-t border-[#ECE8EB]" />
+                            <button
+                              type="button"
+                              onClick={() => handleTogglePackageActive(pkg.id, pkg.isActive)}
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
+                            >
+                              {pkg.isActive ? (
+                                <>
+                                  <EyeOff className="h-3.5 w-3.5 text-[#797570]" />
+                                  <span>Hide from profile</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Eye className="h-3.5 w-3.5 text-[#797570]" />
+                                  <span>Set as active</span>
+                                </>
+                              )}
+                            </button>
 
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setActiveMenuId(null);
-                              setPackageToDelete(pkg);
-                            }}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                            <span>Delete Service</span>
-                          </button>
-                        </div>
-                      )}
+                            <div className="my-1 border-t border-[#E7E3DC]" />
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setActiveMenuId(null);
+                                setPackageToDelete(pkg);
+                              }}
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-rose-50 transition-colors cursor-pointer"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                              <span>Delete Service</span>
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -837,262 +773,36 @@ export default function DashboardMediaKitPage() {
         )}
       </section>
 
-      {/* 4. SECTION 3 — BRAND ENQUIRY ROUTING */}
-      <section className="rounded-2xl border border-[#ECE8EB] bg-white p-5 sm:p-6 text-left space-y-4 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#ECE8EB] pb-3.5">
-          <div>
-            <h2 className="font-display text-base font-bold text-[#17131A]">
-              Brand enquiries
-            </h2>
-            <p className="text-xs text-[#6F6872] font-medium mt-0.5">
-              Receive collaboration enquiries through your selected contact methods.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setIsEditingSettings(!isEditingSettings)}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-3.5 py-1.5 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
-          >
-            <SlidersHorizontal className="h-3.5 w-3.5 text-[#803D63]" />
-            <span>{isEditingSettings ? "Close Settings" : "Manage Contact Settings"}</span>
-          </button>
-        </div>
-
-        {/* Inline Edit Form when toggled */}
-        {isEditingSettings ? (
-          <div className="space-y-4 p-4 rounded-xl bg-[#FAF8FA] border border-[#ECE8EB] animate-in fade-in">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[#17131A]">
-                  Official WhatsApp Number
-                </label>
-                <input
-                  type="text"
-                  value={settings.whatsappNumber || ""}
-                  onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })}
-                  placeholder="+91 9XXXXXXXXX"
-                  className="w-full rounded-xl border border-[#ECE8EB] bg-white px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/60 focus:outline-none focus:border-[#803D63]"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[#17131A]">
-                  Business Email Address
-                </label>
-                <input
-                  type="email"
-                  value={settings.sponsorEmail || ""}
-                  onChange={(e) => setSettings({ ...settings, sponsorEmail: e.target.value })}
-                  placeholder={profile.email || "business@example.com"}
-                  className="w-full rounded-xl border border-[#ECE8EB] bg-white px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/60 focus:outline-none focus:border-[#803D63]"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[#17131A]">
-                  Minimum Sponsorship Budget Filter (Optional)
-                </label>
-                <input
-                  type="text"
-                  value={settings.minBudget || ""}
-                  onChange={(e) => setSettings({ ...settings, minBudget: e.target.value })}
-                  placeholder="₹0 (Accept all enquiries)"
-                  className="w-full rounded-xl border border-[#ECE8EB] bg-white px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/60 focus:outline-none focus:border-[#803D63]"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[#17131A]">
-                  Bio Pitch Tagline (Optional)
-                </label>
-                <input
-                  type="text"
-                  value={settings.bioHighlight || ""}
-                  onChange={(e) => setSettings({ ...settings, bioHighlight: e.target.value })}
-                  placeholder="Short pitch for brand partners..."
-                  className="w-full rounded-xl border border-[#ECE8EB] bg-white px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/60 focus:outline-none focus:border-[#803D63]"
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-2 border-t border-[#ECE8EB]">
-              <button
-                type="button"
-                onClick={() => setIsEditingSettings(false)}
-                className="px-3.5 py-2 rounded-xl text-xs font-semibold text-[#6F6872] hover:bg-white"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleSaveSettings}
-                className="bg-[#803D63] hover:bg-[#6F3456] text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors cursor-pointer shadow-2xs"
-              >
-                Save Settings
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-            {/* WhatsApp Tile */}
-            <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3.5 space-y-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#6F6872] block">
-                Official WhatsApp
-              </span>
-              {settings.whatsappNumber ? (
-                <div className="flex items-center justify-between gap-1.5">
-                  <p className="text-xs font-bold text-[#17131A] truncate">
-                    {settings.whatsappNumber}
-                  </p>
-                  <a
-                    href={`https://wa.me/${cleanPhone}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#803D63] p-1 rounded-md hover:bg-white transition-colors"
-                    title="Test WhatsApp Link"
-                  >
-                    <ExternalLink className="h-3.5 w-3.5" />
-                  </a>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setIsEditingSettings(true)}
-                  className="text-xs font-semibold text-[#803D63] hover:underline cursor-pointer"
-                >
-                  + Add WhatsApp Number
-                </button>
-              )}
-            </div>
-
-            {/* Business Email Tile */}
-            <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3.5 space-y-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#6F6872] block">
-                Business Email
-              </span>
-              {settings.sponsorEmail || profile.email ? (
-                <div className="flex items-center justify-between gap-1.5">
-                  <p className="text-xs font-bold text-[#17131A] truncate">
-                    {settings.sponsorEmail || profile.email}
-                  </p>
-                  <a
-                    href={`mailto:${settings.sponsorEmail || profile.email}`}
-                    className="text-[#803D63] p-1 rounded-md hover:bg-white transition-colors"
-                    title="Test Email Link"
-                  >
-                    <ExternalLink className="h-3.5 w-3.5" />
-                  </a>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setIsEditingSettings(true)}
-                  className="text-xs font-semibold text-[#803D63] hover:underline cursor-pointer"
-                >
-                  + Add Business Email
-                </button>
-              )}
-            </div>
-
-            {/* Min Budget Filter Tile */}
-            <div className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3.5 space-y-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#6F6872] block">
-                Min. Deal Filter
-              </span>
-              <p className="text-xs font-bold text-[#17131A]">
-                {settings.minBudget
-                  ? settings.minBudget === "0" || settings.minBudget === "₹0"
-                    ? "Accept all deals"
-                    : `${settings.minBudget}+`
-                  : "Accept all deals"}
-              </p>
-            </div>
-          </div>
-        )}
-      </section>
-
-      {/* 5. SECTION 4 — OTT PRODUCTION TRACK RECORD */}
-      <section className="rounded-2xl border border-[#ECE8EB] bg-white p-5 sm:p-6 text-left space-y-3.5 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#ECE8EB] pb-3">
-          <div className="flex items-center gap-2">
-            <Film className="h-4 w-4 text-[#803D63]" />
-            <h2 className="font-display text-base font-bold text-[#17131A]">
-              Production track record
-            </h2>
-          </div>
-          <span className="text-xs font-semibold text-[#6F6872]">
-            Series and episode catalog shown to brand partners
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          <div className="flex items-center gap-3.5 rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F7EDF3] text-[#803D63] shrink-0">
-              <Film className="h-5 w-5" />
-            </div>
-            <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#6F6872] block">
-                Total Created Series
-              </span>
-              <p className="font-display text-xl font-bold text-[#17131A]">
-                {totalSeriesCount} {totalSeriesCount === 1 ? "Series" : "Series"}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3.5 rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-[#803D63] shrink-0">
-              <Tv className="h-5 w-5" />
-            </div>
-            <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#6F6872] block">
-                Total Published Episodes
-              </span>
-              <p className="font-display text-xl font-bold text-[#17131A]">
-                {totalEpisodesCount} {totalEpisodesCount === 1 ? "Episode" : "Episodes"}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ==========================================================================
-         POPUP MODALS (100% PRESERVED & UNTOUCHED LOGIC)
-         ========================================================================== */}
-      
-      {/* 1. CREATE / EDIT GIG MODAL */}
+      {/* 5. CREATE / EDIT SERVICE MODAL */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         size="lg"
-        title={editingPkgId ? "Edit Service" : "Create Service"}
-        description="Set up your collaboration package, deliverables, and rates."
+        title={editingPkgId ? "Edit Collab Package" : "Create Collab Package"}
+        description="Set up your promotional reel package, deliverables, and rates for brands, cafes, and shops."
         icon={<Briefcase className="h-4 w-4" />}
       >
-        <form id="gig-form" onSubmit={handleSavePackage} className="flex flex-col flex-1 min-h-0">
-          <ModalBody className="p-5 sm:p-6 space-y-4 text-left">
+        <form id="service-form" onSubmit={handleSavePackage} className="flex flex-col flex-1 min-h-0">
+          <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#17131A]">Service title <span className="text-rose-500">*</span></label>
+              <label className="block text-xs font-bold text-[#181716]">Package title <span className="text-[#C2414B]">*</span></label>
               <input
                 type="text"
                 value={formTitle}
                 onChange={(e) => setFormTitle(e.target.value)}
-                placeholder="e.g., 1x Instagram Reel or 3x Reels Pack"
-                className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                placeholder="e.g., Cafe Visit Reel, Brand Promo Reel, or Store Launch"
+                className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:outline-none transition-colors"
                 required
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#17131A]">Platform type</label>
+                <label className="block text-xs font-bold text-[#181716]">Platform type</label>
                 <select
                   value={formPlatform}
                   onChange={(e) => setFormPlatform(e.target.value)}
-                  className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3 text-xs sm:text-sm font-medium text-[#181716] focus:border-[#151933] focus:outline-none transition-colors"
                 >
                   <option value="Instagram Reel">Instagram Reel</option>
                   <option value="Instagram Bundle">Instagram Bundle (Reels + Stories)</option>
@@ -1101,61 +811,58 @@ export default function DashboardMediaKitPage() {
                   <option value="YouTube Video Integration">YouTube Integration (60-90s)</option>
                   <option value="YouTube Shorts">YouTube Shorts</option>
                   <option value="Multi-Platform Campaign">Multi-Platform Campaign</option>
-                  <option value="Series Title Sponsorship">Series Title Sponsorship ("Presented by")</option>
+                  <option value="Series Title Sponsorship">Series Title Sponsorship</option>
                   <option value="Podcast Episode Integration">Podcast Episode Integration</option>
                   <option value="Monthly Creator Retainer">Monthly Creator Retainer</option>
                 </select>
               </div>
 
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#17131A]">Turnaround time (Days)</label>
+                <label className="block text-xs font-bold text-[#181716]">Turnaround time (Days)</label>
                 <input
                   type="number"
                   value={formTurnaround}
                   onChange={(e) => setFormTurnaround(Number(e.target.value))}
                   min={1}
                   max={30}
-                  className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] focus:border-[#151933] focus:outline-none transition-colors"
                 />
               </div>
             </div>
 
             {/* Min - Max Pricing Range Inputs */}
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#17131A]">
+              <label className="block text-xs font-bold text-[#181716]">
                 Pricing range (in INR)
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[10px] font-bold text-[#6F6872] mb-0.5">Min Price (₹) <span className="text-rose-500">*</span></label>
+                  <label className="block text-[10px] font-bold text-[#797570] mb-0.5">Min Price (₹) <span className="text-[#C2414B]">*</span></label>
                   <input
                     type="text"
                     value={formMinPrice}
                     onChange={(e) => setFormMinPrice(e.target.value)}
-                    placeholder="₹2,000"
-                    className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                    placeholder="₹10,000"
+                    className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:outline-none transition-colors"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-[#6F6872] mb-0.5">Max Price (Optional)</label>
+                  <label className="block text-[10px] font-bold text-[#797570] mb-0.5">Max Price (Optional)</label>
                   <input
                     type="text"
                     value={formMaxPrice}
                     onChange={(e) => setFormMaxPrice(e.target.value)}
-                    placeholder="₹5,000"
-                    className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                    placeholder="₹15,000"
+                    className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:outline-none transition-colors"
                   />
                 </div>
               </div>
-              <p className="text-[10px] text-[#6F6872]">
-                e.g. Min ₹2,000 – Max ₹5,000 (leave Max empty for fixed pricing)
-              </p>
             </div>
 
-            {/* Dynamic Deliverables List & 10 Suggestions */}
+            {/* Deliverables List & Suggestions */}
             <div className="space-y-2">
-              <label className="block text-xs font-bold text-[#17131A]">Included deliverables</label>
+              <label className="block text-xs font-bold text-[#181716]">Included deliverables</label>
               <div className="flex items-center gap-2">
                 <input
                   type="text"
@@ -1167,25 +874,25 @@ export default function DashboardMediaKitPage() {
                       handleAddDeliverable();
                     }
                   }}
-                  placeholder="Add deliverable (e.g. Brand Collaborator Tag)"
-                  className="flex-1 rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                  placeholder="e.g. Brand Collaborator Tag"
+                  className="flex-1 h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:outline-none transition-colors"
                 />
                 <button
                   type="button"
                   onClick={handleAddDeliverable}
-                  className="bg-[#803D63] text-white text-xs font-semibold px-3.5 py-2 rounded-xl hover:bg-[#6F3456] transition-colors cursor-pointer shrink-0"
+                  className="h-10 px-4 rounded-xl bg-[#151933] text-white text-xs font-semibold hover:bg-[#2c1937] transition-colors cursor-pointer shrink-0"
                 >
                   + Add
                 </button>
               </div>
 
-              {/* 10 Tailored Deliverable Suggestion Chips */}
-              <div className="space-y-1 bg-[#FAF8FA] border border-[#ECE8EB] rounded-xl p-2.5">
-                <p className="text-[10px] font-bold text-[#6F6872] uppercase tracking-wider flex items-center justify-between">
-                  <span>💡 Suggested Deliverables for {formPlatform}:</span>
-                  <span className="text-[9px] text-[#803D63] font-bold">Click chip to add +</span>
+              {/* Suggestions */}
+              <div className="space-y-1 bg-[#FAF8F5] border border-[#E7E3DC] rounded-xl p-2.5">
+                <p className="text-[10px] font-bold text-[#797570] uppercase tracking-wider flex items-center justify-between">
+                  <span>💡 Suggestions for {formPlatform}:</span>
+                  <span className="text-[9px] text-[#151933] font-bold">Click chip to add +</span>
                 </p>
-                <div className="flex flex-wrap items-center gap-1.5 max-h-28 overflow-y-auto pt-1">
+                <div className="flex flex-wrap items-center gap-1.5 max-h-24 overflow-y-auto pt-1">
                   {(DELIVERABLE_SUGGESTIONS[formPlatform] || DELIVERABLE_SUGGESTIONS["Instagram Reel"]).map((item, idx) => {
                     const isAdded = formDeliverables.includes(item);
                     return (
@@ -1198,11 +905,10 @@ export default function DashboardMediaKitPage() {
                           }
                         }}
                         disabled={isAdded}
-                        className={`text-[11px] font-semibold px-2 py-0.5 rounded-lg border transition-colors cursor-pointer ${
-                          isAdded
-                            ? "bg-emerald-50 text-emerald-700 border-emerald-200 cursor-default opacity-70"
-                            : "bg-white hover:bg-[#F7EDF3] text-[#17131A] hover:text-[#803D63] border-[#ECE8EB]"
-                        }`}
+                        className={`text-[11px] font-semibold px-2 py-0.5 rounded-lg border transition-colors cursor-pointer ${isAdded
+                          ? "bg-[#EAF7F0] text-[#17845B] border-[#17845B]/20 cursor-default opacity-70"
+                          : "bg-white hover:bg-[#FAF8F5] text-[#181716] hover:text-[#151933] border-[#E7E3DC]"
+                          }`}
                       >
                         {isAdded ? `✓ ${item}` : `+ ${item}`}
                       </button>
@@ -1211,17 +917,17 @@ export default function DashboardMediaKitPage() {
                 </div>
               </div>
 
-              {/* Included Items Chips */}
+              {/* Added Deliverables */}
               {formDeliverables.length > 0 && (
-                <div className="space-y-1.5 max-h-32 overflow-y-auto pt-1">
-                  <p className="text-[10px] font-bold text-[#6F6872] uppercase tracking-wider">Added Deliverables ({formDeliverables.length}):</p>
+                <div className="space-y-1.5 max-h-28 overflow-y-auto pt-1">
+                  <p className="text-[10px] font-bold text-[#797570] uppercase tracking-wider">Added Deliverables ({formDeliverables.length}):</p>
                   {formDeliverables.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between bg-white border border-[#ECE8EB] rounded-lg px-2.5 py-1 text-xs font-semibold text-[#17131A]">
+                    <div key={idx} className="flex items-center justify-between bg-[#FAF8F5] border border-[#E7E3DC] rounded-lg px-2.5 py-1 text-xs font-medium text-[#181716]">
                       <span>• {item}</span>
                       <button
                         type="button"
                         onClick={() => handleRemoveDeliverable(idx)}
-                        className="text-rose-500 hover:text-rose-700 p-0.5 cursor-pointer"
+                        className="text-[#C2414B] hover:text-rose-700 p-0.5 cursor-pointer"
                       >
                         <X className="h-3.5 w-3.5" />
                       </button>
@@ -1231,528 +937,169 @@ export default function DashboardMediaKitPage() {
               )}
             </div>
 
-            {/* Package Tier Name / Highlight Badge */}
-            <div className="space-y-2">
-              <label className="block text-xs font-bold text-[#17131A]">
-                Package name or badge tag <span className="text-[#6F6872] font-normal">(Optional)</span>
+            {/* Optional badge */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-[#181716]">
+                Highlight badge <span className="text-[#797570] font-normal">(Optional)</span>
               </label>
-
               <input
                 type="text"
                 value={formPackageName}
                 onChange={(e) => setFormPackageName(e.target.value)}
-                placeholder="e.g. 🥈 Silver Package, ⭐ MOST POPULAR, 🔥 BEST VALUE..."
-                className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                placeholder="e.g. Most Popular, Best Value"
+                className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:outline-none transition-colors"
               />
-
-              <div className="space-y-1 pt-0.5">
-                <p className="text-[10px] font-bold text-[#6F6872] uppercase tracking-wider">Selectable Suggestions:</p>
-                <div className="flex flex-wrap items-center gap-1.5">
-                  {["🥉 Bronze Package", "🥈 Silver Package", "🥇 Gold Package", "⭐ MOST POPULAR", "🔥 BEST VALUE (25% OFF)"].map((tag) => (
-                    <button
-                      key={tag}
-                      type="button"
-                      onClick={() => setFormPackageName(tag)}
-                      className="bg-[#FAF8FA] hover:bg-[#F7EDF3] text-[#17131A] hover:text-[#803D63] border border-[#ECE8EB] text-xs font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
-                    >
-                      {tag}
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
           </ModalBody>
 
-          <ModalFooter className="px-5 sm:px-6 py-3.5">
+          <ModalFooter className="px-4 sm:px-5 py-3">
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#FAF8F5] hover:text-[#181716] transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              form="gig-form"
-              className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5"
+              form="service-form"
+              className="h-10 px-5 rounded-xl bg-[#151933] hover:bg-[#2c1937] text-white font-semibold text-xs transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
             >
-              <span>{editingPkgId ? "Save Changes" : "Create Service"}</span>
+              <span>{editingPkgId ? "Save Changes" : "Create Collab Package"}</span>
             </button>
           </ModalFooter>
         </form>
       </Modal>
 
-      {/* 2. PUBLIC MEDIA KIT PREVIEW MODAL */}
+      {/* 6. EXAMPLES MODAL (Not sure what to offer? See examples) */}
       <Modal
-        isOpen={isPreviewModalOpen}
-        onClose={() => setIsPreviewModalOpen(false)}
-        size="xl"
-        title={`Media Kit & Rate Card — ${profile.displayName || "Creator"}`}
-        description="Verified creator portfolio, aggregated fanbase analytics & direct brand collab rates"
-        icon={<Briefcase className="h-4 w-4" />}
+        isOpen={isExamplesModalOpen}
+        onClose={() => setIsExamplesModalOpen(false)}
+        size="lg"
+        title="Collab Reel Examples"
+        description="Choose a pre-built package for brands, cafe/restaurant visits, or shop promotions."
+        icon={<Sparkles className="h-4 w-4" />}
       >
-        <ModalBody className="p-5 sm:p-6 space-y-5 text-left">
-          {/* Quick Actions Row */}
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex-1" />
-            <button
-              type="button"
-              onClick={handleExportPDF}
-              className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-colors inline-flex items-center gap-1.5 shadow-2xs cursor-pointer"
-              title="Print / Save as PDF"
+        <ModalBody className="p-4 sm:p-5 space-y-3 text-left max-h-[70vh] overflow-y-auto">
+          {SERVICE_EXAMPLES.map((example, idx) => (
+            <div
+              key={idx}
+              className="rounded-xl border border-[#E7E3DC] bg-white p-3.5 sm:p-4 space-y-2 hover:border-[#151933]/40 transition-colors"
             >
-              <Download className="h-3.5 w-3.5" />
-              <span>Export PDF</span>
-            </button>
-          </div>
-
-          {/* 2-Tab Navigation Bar */}
-          <div className="flex items-center gap-2 bg-[#FAF8FA] p-1.5 rounded-2xl border border-[#ECE8EB]">
-              <button
-                type="button"
-                onClick={() => setActivePreviewTab("mediakit")}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
-                  activePreviewTab === "mediakit"
-                    ? "bg-[#803D63] text-white shadow-2xs"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
-                }`}
-              >
-                <Briefcase className="h-4 w-4" />
-                <span>💼 Media Kit &amp; Rate Card</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActivePreviewTab("series")}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
-                  activePreviewTab === "series"
-                    ? "bg-[#803D63] text-white shadow-2xs"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
-                }`}
-              >
-                <Film className="h-4 w-4" />
-                <span>🎬 Series &amp; Shows ({series ? series.length : 0})</span>
-              </button>
-            </div>
-
-            {/* TAB 1: 💼 MEDIA KIT & RATE CARD */}
-            {activePreviewTab === "mediakit" && (
-              <div className="space-y-6 animate-in fade-in duration-200">
-                {/* Creator Identity Card */}
-                <div className="rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white p-6 space-y-5 relative overflow-hidden shadow-md">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                      {/* Avatar */}
-                      <div className="relative shrink-0">
-                        {profile.photoDataUrl ? (
-                          <img
-                            src={profile.photoDataUrl}
-                            alt={profile.displayName || "Creator"}
-                            className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl object-cover ring-2 ring-white/20 shadow-md"
-                          />
-                        ) : (
-                          <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500 to-[#803D63] text-2xl font-black text-white shadow-md">
-                            {(profile.displayName || "C").charAt(0).toUpperCase()}
-                          </div>
-                        )}
-                        <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xs" title="Verified Creator">
-                          <Check className="h-3 w-3 stroke-[3]" />
-                        </span>
-                      </div>
-
-                      {/* Name & Handle */}
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h2 className="font-display text-xl sm:text-2xl font-black text-white">
-                            {profile.displayName || "Creator Name"}
-                          </h2>
-                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 text-[10px] font-black">
-                            <ShieldCheck className="h-3 w-3" /> Verified by Inflixo
-                          </span>
-                        </div>
-                        <p className="text-xs text-indigo-200 font-medium">
-                          @{handleStr} • <span className="text-amber-300 font-bold">{profile.category || "Digital Creator"}</span>
-                        </p>
-                        <p className="text-[11px] text-slate-400 font-mono">
-                          inflixo.com/{handleStr}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Total Aggregated Reach Card */}
-                    <div className="bg-white/10 backdrop-blur-md border border-white/15 px-4 py-3 rounded-2xl text-left sm:text-right shrink-0">
-                      <p className="text-[10px] text-slate-300 uppercase font-extrabold tracking-wider flex items-center sm:justify-end gap-1">
-                        <span>❤️</span> TOTAL FANBASE
-                      </p>
-                      <p className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                        {formatCount(totalAudience)}
-                      </p>
-                      <p className="text-[10px] text-emerald-400 font-bold mt-0.5">
-                        ✓ Verified Aggregated Reach
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Bio Highlight */}
-                  {(profile.bio || settings.bioHighlight) && (
-                    <div className="pt-3 border-t border-white/10 space-y-2">
-                      {settings.bioHighlight && (
-                        <p className="text-xs sm:text-sm text-amber-200/90 font-semibold italic leading-relaxed">
-                          "{settings.bioHighlight}"
-                        </p>
-                      )}
-                      {profile.bio && (
-                        <p className="text-xs text-slate-300 font-normal leading-relaxed">
-                          {profile.bio}
-                        </p>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Direct Contact Routing Bar */}
-                  <div className="pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
-                    <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                      <Zap className="h-3.5 w-3.5 text-amber-400" /> Direct Brand Inquiry Routing:
-                    </span>
-                    <div className="flex items-center gap-2">
-                      {cleanPhone && (
-                        <a
-                          href={`https://wa.me/${cleanPhone}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs"
-                        >
-                          <MessageCircle className="h-3.5 w-3.5 fill-white" />
-                          <span>WhatsApp Direct</span>
-                        </a>
-                      )}
-                      {(settings.sponsorEmail || profile.email) && (
-                        <a
-                          href={`mailto:${settings.sponsorEmail || profile.email}`}
-                          className="bg-white hover:bg-slate-100 text-slate-900 text-xs font-extrabold px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs"
-                        >
-                          <Mail className="h-3.5 w-3.5 text-[#803D63]" />
-                          <span>Email Proposal</span>
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Connected Channels Grid */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                      <Layers className="h-4 w-4 text-[#803D63]" />
-                      <span>Connected Social Channels &amp; Metrics</span>
-                    </h4>
-                    <span className="text-[11px] font-bold text-slate-500">Live Synchronized</span>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div className="rounded-2xl border border-gray-200 bg-white p-3.5 flex items-center justify-between shadow-2xs">
-                      <div className="flex items-center gap-2.5">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 via-rose-500 to-orange-400 text-white shadow-2xs">
-                          <InstagramIcon className="h-4 w-4 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-slate-900">Instagram</p>
-                          <p className="text-[10px] text-slate-500 font-medium truncate max-w-[100px]">
-                            @{socials.instagram?.username || handleStr}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-display text-sm font-black text-slate-900">
-                          {formatCount(socials.instagram?.followers || 0)}
-                        </p>
-                        <p className="text-[9px] text-slate-400 uppercase font-bold">Followers</p>
-                      </div>
-                    </div>
-
-                    <div className="rounded-2xl border border-gray-200 bg-white p-3.5 flex items-center justify-between shadow-2xs">
-                      <div className="flex items-center gap-2.5">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#FF0000] text-white shadow-2xs">
-                          <YoutubeIcon className="h-4 w-4 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-slate-900">YouTube</p>
-                          <p className="text-[10px] text-slate-500 font-medium truncate max-w-[100px]">
-                            {socials.youtube?.channelTitle || `@${socials.youtube?.username || handleStr}`}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-display text-sm font-black text-slate-900">
-                          {formatCount(socials.youtube?.subscribers || 0)}
-                        </p>
-                        <p className="text-[9px] text-slate-400 uppercase font-bold">Subscribers</p>
-                      </div>
-                    </div>
-
-                    <div className="rounded-2xl border border-gray-200 bg-white p-3.5 flex items-center justify-between shadow-2xs">
-                      <div className="flex items-center gap-2.5">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1877F2] text-white shadow-2xs">
-                          <FacebookIcon className="h-4 w-4 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-slate-900">Facebook</p>
-                          <p className="text-[10px] text-slate-500 font-medium truncate max-w-[100px]">
-                            {socials.facebook?.name || `@${socials.facebook?.username || handleStr}`}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-display text-sm font-black text-slate-900">
-                          {formatCount(socials.facebook?.followers || 0)}
-                        </p>
-                        <p className="text-[9px] text-slate-400 uppercase font-bold">Followers</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Custom Creator Links */}
-                {customLinks && customLinks.filter((l) => l.isEnabled !== false).length > 0 && (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                        <Link2 className="h-4 w-4 text-[#803D63]" />
-                        <span>Official Portfolio &amp; Links ({customLinks.filter((l) => l.isEnabled !== false).length})</span>
-                      </h4>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                      {customLinks
-                        .filter((l) => l.isEnabled !== false)
-                        .map((link) => {
-                          const displayDomain = link.url.replace(/^https?:\/\//, "").split("/")[0];
-                          return (
-                            <a
-                              key={link.id}
-                              href={link.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center justify-between p-3 rounded-xl border border-gray-200 bg-white hover:border-[#803D63]/40 hover:bg-slate-50 transition-all text-left shadow-2xs group"
-                            >
-                              <div className="flex items-center gap-2.5 min-w-0">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] shrink-0">
-                                  <Globe className="h-4 w-4" />
-                                </div>
-                                <div className="min-w-0">
-                                  <p className="text-xs font-bold text-slate-900 truncate group-hover:text-[#803D63] transition-colors">
-                                    {link.title}
-                                  </p>
-                                  <p className="text-[10px] text-slate-400 truncate">{displayDomain}</p>
-                                </div>
-                              </div>
-                              <ExternalLink className="h-3.5 w-3.5 text-slate-400 group-hover:text-[#803D63] shrink-0" />
-                            </a>
-                          );
-                        })}
-                    </div>
-                  </div>
-                )}
-
-                {/* Collaboration Gigs Preview List */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                      <FileSpreadsheet className="h-4 w-4 text-[#803D63]" />
-                      <span>Official Collaboration Rate Cards (Top {Math.min(3, packages.filter((p) => p.isActive).length)})</span>
-                    </h4>
-                    <span className="text-[11px] font-bold text-[#803D63]">Verified Deliverables</span>
-                  </div>
-
-                  {packages.filter((p) => p.isActive).length === 0 ? (
-                    <div className="rounded-xl border border-dashed border-gray-200 bg-slate-50 p-6 text-center text-xs text-slate-500 font-medium">
-                      No active rate card packages published currently.
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                      {packages
-                        .filter((p) => p.isActive)
-                        .slice(0, 3)
-                        .map((pkg) => {
-                          const waText = encodeURIComponent(
-                            `Hi ${profile.displayName || "Creator"}, I saw your "${pkg.title}" (${pkg.price}) package on Inflixo and want to collaborate.`
-                          );
-                          const waUrl = `https://wa.me/${cleanPhone}?text=${waText}`;
-                          const mailSubject = encodeURIComponent(`[Inflixo Collab Inquiry] - ${pkg.title}`);
-                          const mailBody = encodeURIComponent(
-                            `Hi ${profile.displayName || "Creator"},\n\nI would like to inquire about collaborating on your "${pkg.title}" package listed on Inflixo.\n\nBest regards,\n[Brand Representative]`
-                          );
-                          const mailUrl = `mailto:${settings.sponsorEmail || profile.email}?subject=${mailSubject}&body=${mailBody}`;
-
-                          const hasPhone = Boolean(cleanPhone);
-                          const hasEmail = Boolean(settings?.sponsorEmail || profile.email);
-
-                          return (
-                            <div
-                              key={pkg.id}
-                              className="border border-slate-200 rounded-2xl p-4 space-y-3 bg-white text-left transition-all flex flex-col justify-between shadow-2xs hover:border-[#803D63]/30"
-                            >
-                              <div className="space-y-2.5">
-                                <div className="flex items-center justify-between gap-1.5">
-                                  <span className="bg-[#F6EBF1] text-[#803D63] border border-[#E8DCE4] text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider truncate">
-                                    {pkg.platform}
-                                  </span>
-                                  {(pkg.badge || pkg.packageName || pkg.isPopular) && (
-                                    <span className="bg-amber-100 text-amber-900 text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0">
-                                      {pkg.badge || pkg.packageName || "⭐ POPULAR"}
-                                    </span>
-                                  )}
-                                </div>
-
-                                <div>
-                                  <div className="flex items-baseline justify-between gap-1">
-                                    <span className="font-display text-base font-extrabold text-[#803D63]">
-                                      {pkg.price}
-                                    </span>
-                                  </div>
-                                  <h5 className="font-bold text-slate-900 text-xs leading-snug mt-0.5 line-clamp-2">
-                                    {pkg.title}
-                                  </h5>
-                                  <p className="text-[10px] text-slate-500 font-medium mt-1 flex items-center gap-1">
-                                    <Clock className="h-3 w-3 shrink-0" /> Turnaround: {pkg.turnaroundDays} Days
-                                  </p>
-                                </div>
-
-                                <ul className="text-[11px] text-slate-600 space-y-1 pt-2 border-t border-slate-100">
-                                  {pkg.deliverables.map((item, idx) => (
-                                    <li key={idx} className="flex items-start gap-1.5">
-                                      <CheckCircle2 className="h-3 w-3 text-emerald-500 shrink-0 mt-0.5" />
-                                      <span className="leading-tight line-clamp-2">{item}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-
-                              <div className="pt-2 border-t border-slate-100 flex gap-1.5">
-                                {hasPhone && (
-                                  <a
-                                    href={waUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold py-1.5 px-2 rounded-xl transition-colors inline-flex items-center justify-center gap-1 shadow-2xs"
-                                  >
-                                    <MessageCircle className="h-3 w-3 fill-white" />
-                                    <span>WhatsApp</span>
-                                  </a>
-                                )}
-                                {hasEmail && (
-                                  <a
-                                    href={mailUrl}
-                                    className="flex-1 bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold py-1.5 px-2 rounded-xl transition-colors inline-flex items-center justify-center gap-1 shadow-2xs"
-                                  >
-                                    <Mail className="h-3 w-3" />
-                                    <span>Email</span>
-                                  </a>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* TAB 2: 🎬 SERIES & SHOWS */}
-            {activePreviewTab === "series" && (
-              <div className="space-y-4 animate-in fade-in duration-200">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                    <Film className="h-4 w-4 text-[#803D63]" />
-                    <span>Featured Series &amp; Shows ({series ? series.length : 0})</span>
-                  </h4>
-                  <span className="text-[11px] font-semibold text-slate-500">
-                    Default Audience View
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <h4 className="text-sm font-bold text-[#181716]">{example.title}</h4>
+                  <span className="text-[10px] font-semibold text-[#151933] bg-[#151933]/[0.08] px-2 py-0.5 rounded-md">
+                    {example.badge}
                   </span>
                 </div>
-
-                {series && series.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {series.map((ser: any) => {
-                      const episodeCount = ser.seasons
-                        ? ser.seasons.reduce((acc: number, season: any) => acc + (season.episodes?.length || 0), 0)
-                        : (ser.episodesCount || 0);
-
-                      return (
-                        <div key={ser.id} className="rounded-2xl border border-gray-200 overflow-hidden bg-slate-950 text-white shadow-md flex flex-col justify-between group hover:border-[#803D63] transition-all">
-                          <div className="aspect-video relative bg-slate-900 flex items-center justify-center overflow-hidden">
-                            {ser.posterDataUrl ? (
-                              <img src={ser.posterDataUrl} alt={ser.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                            ) : (
-                              <div className="flex flex-col items-center gap-1 text-slate-500">
-                                <Film className="h-8 w-8 text-slate-600" />
-                                <span className="text-[10px] font-bold">16:9 WIDESCREEN POSTER</span>
-                              </div>
-                            )}
-                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
-                            <span className="absolute bottom-2 left-2 bg-[#803D63] text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-2xs">
-                              🎬 {ser.seasons?.length || 1} Season • {episodeCount} Episodes
-                            </span>
-                          </div>
-
-                          <div className="p-4 space-y-2">
-                            <div className="flex items-start justify-between gap-2">
-                              <div>
-                                <h5 className="font-bold text-sm text-white group-hover:text-amber-300 transition-colors line-clamp-1">{ser.title}</h5>
-                                <p className="text-[11px] text-slate-400 font-medium truncate">{ser.genre || "Web Series"} • {ser.language || "Hindi"}</p>
-                              </div>
-                              {ser.rating && (
-                                <span className="bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0">
-                                  ⭐ {ser.rating}
-                                </span>
-                              )}
-                            </div>
-                            {ser.description && (
-                              <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
-                                {ser.description}
-                              </p>
-                            )}
-
-                            <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px]">
-                              <span className="text-slate-400 font-medium flex items-center gap-1">
-                                <Play className="h-3 w-3 text-indigo-400 fill-indigo-400" /> Free Episode Playlist
-                              </span>
-                              <span className="text-[#803D63] font-bold">Watch Now →</span>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="rounded-2xl border-2 border-dashed border-gray-200 bg-slate-50 p-8 text-center space-y-2">
-                    <Film className="h-8 w-8 text-slate-400 mx-auto" />
-                    <h4 className="font-bold text-slate-800 text-sm">No Series Published Yet</h4>
-                    <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                      Create OTT Series in <Link href="/dashboard/series" className="text-[#803D63] font-bold underline">Series &amp; Episodes</Link> to show widescreen posters &amp; episode playlists to your fans!
-                    </p>
-                  </div>
-                )}
+                <span className="text-xs font-bold text-[#181716]">{example.minPrice}–{example.maxPrice}</span>
               </div>
-            )}
+
+              <p className="text-xs text-[#54514D] font-normal">{example.description}</p>
+
+              <div className="pt-1 flex items-center justify-between gap-2 border-t border-[#E7E3DC]">
+                <span className="text-[11px] text-[#797570]">{example.turnaroundDays}-day delivery · {example.deliverables.length} deliverables</span>
+                <button
+                  type="button"
+                  onClick={() => handleApplyTemplate(example)}
+                  className="px-3 py-1 rounded-lg bg-[#151933] text-white text-xs font-semibold hover:bg-[#2c1937] transition-colors cursor-pointer"
+                >
+                  Use Template
+                </button>
+              </div>
+            </div>
+          ))}
         </ModalBody>
       </Modal>
 
-      {/* 3. LIMIT REACHED MODAL */}
+      {/* 7. CONTACT SETUP MODAL */}
+      <Modal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+        title="Brand Contact Settings"
+        description="Configure how brands can reach you when inquiring about collaborations."
+        icon={<SlidersHorizontal className="h-4 w-4" />}
+      >
+        <form onSubmit={handleSaveContactSettings} className="flex flex-col flex-1 min-h-0">
+          <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
+            <div className="space-y-1">
+              <label className="block text-xs font-bold text-[#181716]">
+                Official WhatsApp Number
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={settings.whatsappNumber || ""}
+                  onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })}
+                  placeholder="+91 9876543210"
+                  className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:outline-none transition-colors"
+                />
+              </div>
+              <p className="text-[11px] text-[#797570]">Enables instant WhatsApp collaboration inquiries.</p>
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-xs font-bold text-[#181716]">
+                Business Email Address
+              </label>
+              <input
+                type="email"
+                value={settings.sponsorEmail || ""}
+                onChange={(e) => setSettings({ ...settings, sponsorEmail: e.target.value })}
+                placeholder={profile.email || "collabs@yourdomain.com"}
+                className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:outline-none transition-colors"
+              />
+              <p className="text-[11px] text-[#797570]">Brands will receive email routing to this address.</p>
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-xs font-bold text-[#181716]">
+                Minimum Campaign Budget (Optional)
+              </label>
+              <input
+                type="text"
+                value={settings.minBudget || ""}
+                onChange={(e) => setSettings({ ...settings, minBudget: e.target.value })}
+                placeholder="₹0 (Accept all deals)"
+                className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:outline-none transition-colors"
+              />
+              <p className="text-[11px] text-[#797570]">Filter out brand inquiries below this amount.</p>
+            </div>
+          </ModalBody>
+
+          <ModalFooter className="px-4 sm:px-5 py-3">
+            <button
+              type="button"
+              onClick={() => setIsContactModalOpen(false)}
+              className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#FAF8F5] hover:text-[#181716] transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="h-10 px-5 rounded-xl bg-[#151933] hover:bg-[#2c1937] text-white font-semibold text-xs transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+            >
+              Save Settings
+            </button>
+          </ModalFooter>
+        </form>
+      </Modal>
+
+      {/* 8. LIMIT REACHED MODAL */}
       <LimitReachedModal
         isOpen={isLimitModalOpen}
         onClose={() => setIsLimitModalOpen(false)}
         type="gig"
       />
 
-      {/* 4. DELETE SERVICE CONFIRMATION MODAL */}
+      {/* 9. DELETE SERVICE CONFIRMATION MODAL */}
       <ConfirmModal
         isOpen={Boolean(packageToDelete)}
         onClose={() => setPackageToDelete(null)}
         onConfirm={handleDeletePackage}
         title="Delete this service?"
-        description={`"${packageToDelete?.title}" will be removed from your collaboration profile and public rate card.`}
+        description={`"${packageToDelete?.title}" will be permanently removed from your services and public profile.`}
         confirmText="Delete Service"
         cancelText="Cancel"
       />

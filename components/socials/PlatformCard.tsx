@@ -13,8 +13,8 @@ export function PlatformCard({
   children: ReactNode;
 }) {
   return (
-    <div className="bg-white border border-[#E5E7EB] rounded-xl p-5 shadow-2xs">
-      <div className="space-y-3">{children}</div>
+    <div className="bg-white border border-[#E7E3DC] rounded-xl p-3.5 sm:p-4 shadow-xs">
+      <div className="space-y-2.5">{children}</div>
     </div>
   );
 }

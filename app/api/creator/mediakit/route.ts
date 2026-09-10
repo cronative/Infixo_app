@@ -77,11 +77,15 @@ async function resolveCreatorRecord(queryVal: string) {
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const creatorIdParam = searchParams.get("creatorId");
-    const emailParam = searchParams.get("email");
-    const usernameParam = searchParams.get("username");
+    const identifierParam = searchParams.get("identifier");
 
-    const lookupVal = creatorIdParam || emailParam || usernameParam;
+    // Support both specific params (creatorId, email, username) and generic `identifier`
+    // If `identifier` looks like an email → treat as email; otherwise → treat as creatorId
+    const resolvedCreatorIdParam = searchParams.get("creatorId") || (identifierParam && !identifierParam.includes("@") ? identifierParam : null);
+    const resolvedEmailParam = searchParams.get("email") || (identifierParam && identifierParam.includes("@") ? identifierParam : null);
+    const resolvedUsernameParam = searchParams.get("username");
+
+    const lookupVal = resolvedCreatorIdParam || resolvedEmailParam || resolvedUsernameParam;
     if (!lookupVal) {
       return NextResponse.json({ error: "creatorId, email, or username query param required" }, { status: 400 });
     }
@@ -89,8 +93,8 @@ export async function GET(req: Request) {
     await ensureMediaKitTables();
 
     const creatorRecord = await resolveCreatorRecord(lookupVal);
-    const resolvedCreatorId = creatorRecord?.creatorId || creatorIdParam || lookupVal;
-    const resolvedEmail = creatorRecord?.email || emailParam || lookupVal;
+    const resolvedCreatorId = creatorRecord?.creatorId || resolvedCreatorIdParam || lookupVal;
+    const resolvedEmail = creatorRecord?.email || resolvedEmailParam || lookupVal;
 
     // 1. Fetch Contact & Lead Routing Settings for THIS Creator only
     const [settingsRows]: any = await db.query(

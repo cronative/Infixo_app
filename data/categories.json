@@ -1,132 +1,78 @@
 [
-  {
-    "category": "Entertainment",
-    "emoji": "🎭",
-    "subtypes": ["Entertainer", "Sketch Creator", "Meme Creator", "Performer"]
-  },
-  {
-    "category": "Comedy",
-    "emoji": "😂",
-    "subtypes": ["Stand-up", "Funny Reels", "Satire", "Pranks", "Mimicry"]
-  },
-  {
-    "category": "Food & Cooking",
-    "emoji": "🍔",
-    "subtypes": ["Food Reviewer", "Home Cook", "Chef", "Recipes", "Street Food"]
-  },
-  {
-    "category": "Travel",
-    "emoji": "✈️",
-    "subtypes": ["Travel Vlogger", "Backpacker", "Luxury Travel", "Local Explorer"]
-  },
-  {
-    "category": "Fashion",
-    "emoji": "👗",
-    "subtypes": ["Fashion Creator", "Styling", "Streetwear", "Ethnic Wear", "Luxury Fashion"]
-  },
-  {
-    "category": "Beauty & Skincare",
-    "emoji": "💄",
-    "subtypes": ["Makeup", "Skincare", "Haircare", "Nail Art", "Beauty Reviews"]
-  },
-  {
-    "category": "Lifestyle",
-    "emoji": "🌿",
-    "subtypes": ["Daily Lifestyle", "Minimal Living", "Luxury Lifestyle", "Couple Lifestyle"]
-  },
-  {
-    "category": "Gaming",
-    "emoji": "🎮",
-    "subtypes": ["Mobile Gaming", "PC Gaming", "Console Gaming", "Streaming", "Esports"]
-  },
-  {
-    "category": "Technology & AI",
-    "emoji": "💻",
-    "subtypes": ["Tech Reviews", "AI Tools", "Gadgets", "Apps", "Tech News"]
-  },
-  {
-    "category": "Coding & Development",
-    "emoji": "👨‍💻",
-    "subtypes": ["Web Dev", "Mobile Dev", "Programming", "Tutorials", "No-Code"]
-  },
-  {
-    "category": "Education",
-    "emoji": "📚",
-    "subtypes": ["Teacher", "Tutorials", "Study Tips", "Exam Prep", "Learning"]
-  },
-  {
-    "category": "Business & Entrepreneurship",
-    "emoji": "💼",
-    "subtypes": ["Founder", "Startup", "Business Tips", "Entrepreneurship"]
-  },
-  {
-    "category": "Finance",
-    "emoji": "💰",
-    "subtypes": ["Personal Finance", "Investing", "Stock Market", "Tax", "Money Tips"]
-  },
-  {
-    "category": "Marketing & Social Media",
-    "emoji": "📈",
-    "subtypes": ["Digital Marketing", "Creator Growth", "SEO", "Branding", "Ads"]
-  },
-  {
-    "category": "Health & Fitness",
-    "emoji": "🏋️",
-    "subtypes": ["Fitness Coach", "Gym", "Yoga", "Nutrition", "Running"]
-  },
-  {
-    "category": "Self Growth & Motivation",
-    "emoji": "🧠",
-    "subtypes": ["Motivation", "Productivity", "Career Growth", "Life Advice"]
-  },
-  {
-    "category": "Music",
-    "emoji": "🎵",
-    "subtypes": ["Singer", "Musician", "Rapper", "Composer", "Covers"]
-  },
-  {
-    "category": "Dance",
-    "emoji": "💃",
-    "subtypes": ["Dancer", "Choreographer", "Dance Tutorials", "Traditional Dance"]
-  },
-  {
-    "category": "Film & Filmmaking",
-    "emoji": "🎬",
-    "subtypes": ["Filmmaker", "Actor", "Director", "Cinematography", "Short Films"]
-  },
-  {
-    "category": "Photography",
-    "emoji": "📸",
-    "subtypes": ["Photographer", "Mobile Photography", "Editing", "Wildlife", "Portrait"]
-  },
-  {
-    "category": "Art & Creativity",
-    "emoji": "🎨",
-    "subtypes": ["Artist", "Illustration", "Graphic Design", "DIY", "Crafts"]
-  },
-  {
-    "category": "Sports",
-    "emoji": "⚽",
-    "subtypes": ["Cricket", "Football", "Sports Analysis", "Athlete", "Sports News"]
-  },
-  {
-    "category": "Family & Parenting",
-    "emoji": "👨‍👩‍👧",
-    "subtypes": ["Parenting", "Mom Creator", "Dad Creator", "Family Vlogs", "Kids"]
-  },
-  {
-    "category": "Spirituality & Devotional",
-    "emoji": "🕉️",
-    "subtypes": ["Spirituality", "Devotional", "Astrology", "Meditation", "Mythology"]
-  },
-  {
-    "category": "Podcast & Conversations",
-    "emoji": "🎙️",
-    "subtypes": ["Podcaster", "Interviews", "Talk Shows", "Discussions"]
-  },
-  {
-    "category": "Other",
-    "emoji": "✨",
-    "subtypes": []
-  }
+  { "category": "Acting & Performance", "emoji": "🎭", "subtypes": ["Actor", "Performer", "Theatre"] },
+  { "category": "Animation", "emoji": "🎨", "subtypes": ["2D Animator", "3D Animator", "Motion Design"] },
+  { "category": "Architecture", "emoji": "🏛️", "subtypes": ["Architect", "Interior", "Urban Design"] },
+  { "category": "Art & Creativity", "emoji": "🎨", "subtypes": ["Artist", "Illustration", "Painting", "DIY", "Crafts"] },
+  { "category": "Astrology", "emoji": "🔮", "subtypes": ["Astrologer", "Horoscope", "Tarot"] },
+  { "category": "Auto & Vehicles", "emoji": "🚗", "subtypes": ["Car Reviews", "Bikes", "Motorsports", "Auto Vlogs"] },
+  { "category": "Beauty", "emoji": "💄", "subtypes": ["Makeup", "Cosmetics", "Beauty Tips"] },
+  { "category": "Books & Literature", "emoji": "📚", "subtypes": ["Book Reviews", "Author", "Reading", "Poetry"] },
+  { "category": "Business", "emoji": "💼", "subtypes": ["Business Tips", "Corporate", "Finance", "Strategy"] },
+  { "category": "Career & Jobs", "emoji": "🎯", "subtypes": ["Career Advice", "Job Search", "Interview Tips", "Resume"] },
+  { "category": "Coding & Development", "emoji": "👨‍💻", "subtypes": ["Web Dev", "Mobile Dev", "Programming", "Tutorials", "No-Code"] },
+  { "category": "Comedy", "emoji": "😂", "subtypes": ["Stand-up", "Funny Reels", "Satire", "Pranks", "Mimicry"] },
+  { "category": "Commentary", "emoji": "🎙️", "subtypes": ["Pop Culture", "Social Commentary", "Opinions"] },
+  { "category": "Crafts", "emoji": "✂️", "subtypes": ["Handmade", "DIY Crafts", "Origami", "Artisan"] },
+  { "category": "Dance", "emoji": "💃", "subtypes": ["Dancer", "Choreographer", "Dance Tutorials", "Traditional Dance"] },
+  { "category": "Design", "emoji": "📐", "subtypes": ["Graphic Design", "UI/UX", "Product Design", "Brand Identity"] },
+  { "category": "Digital Marketing", "emoji": "📈", "subtypes": ["SEO", "Performance Marketing", "Social Ads", "Email Marketing"] },
+  { "category": "DIY", "emoji": "🛠️", "subtypes": ["Home Improvement", "Woodworking", "Hacks", "Repairs"] },
+  { "category": "Documentary", "emoji": "📽️", "subtypes": ["Docuseries", "Real Stories", "Investigative", "Nature"] },
+  { "category": "Education", "emoji": "📖", "subtypes": ["Teacher", "Tutorials", "Study Tips", "Exam Prep", "Learning"] },
+  { "category": "Entertainment", "emoji": "🍿", "subtypes": ["Entertainer", "Sketch Creator", "Meme Creator", "Performer"] },
+  { "category": "Entrepreneurship", "emoji": "🚀", "subtypes": ["Founder", "Startup", "Business Growth", "Pitching"] },
+  { "category": "Environment & Sustainability", "emoji": "🌱", "subtypes": ["Eco Friendly", "Zero Waste", "Climate", "Nature"] },
+  { "category": "Events", "emoji": "🎉", "subtypes": ["Event Host", "Weddings", "Concerts", "Festivals"] },
+  { "category": "Family & Parenting", "emoji": "👨‍👩‍👧", "subtypes": ["Parenting", "Mom Creator", "Dad Creator", "Family Vlogs", "Kids"] },
+  { "category": "Fashion", "emoji": "👗", "subtypes": ["Fashion Creator", "Styling", "Streetwear", "Ethnic Wear", "Luxury Fashion"] },
+  { "category": "Film & Filmmaking", "emoji": "🎬", "subtypes": ["Filmmaker", "Director", "Cinematography", "Short Films"] },
+  { "category": "Finance & Investing", "emoji": "💰", "subtypes": ["Personal Finance", "Investing", "Stock Market", "Tax", "Crypto"] },
+  { "category": "Fitness", "emoji": "🏋️", "subtypes": ["Fitness Coach", "Gym", "Workouts", "Bodybuilding", "Crossfit"] },
+  { "category": "Food & Cooking", "emoji": "🍔", "subtypes": ["Food Reviewer", "Home Cook", "Chef", "Recipes", "Street Food"] },
+  { "category": "Gaming", "emoji": "🎮", "subtypes": ["Mobile Gaming", "PC Gaming", "Console Gaming", "Streaming", "Esports"] },
+  { "category": "Gardening", "emoji": "🪴", "subtypes": ["Plant Care", "Urban Garden", "Farming", "Bonsai"] },
+  { "category": "Health & Wellness", "emoji": "🧘", "subtypes": ["Nutrition", "Yoga", "Mental Health", "Holistic Living"] },
+  { "category": "History", "emoji": "📜", "subtypes": ["Historical Facts", "World History", "Mythology", "Civilizations"] },
+  { "category": "Home & Living", "emoji": "🏡", "subtypes": ["Home Decor", "Organizing", "Cleaning Hacks", "Aesthetic Living"] },
+  { "category": "Interviews", "emoji": "🎤", "subtypes": ["Guest Interviews", "Fireside Chats", "Conversations"] },
+  { "category": "Kids Content", "emoji": "🧸", "subtypes": ["Kids Learning", "Cartoons", "Toy Reviews", "Nursery Rhymes"] },
+  { "category": "Languages", "emoji": "🗣️", "subtypes": ["English Learning", "Language Tips", "Polyglot", "Grammar"] },
+  { "category": "Legal", "emoji": "⚖️", "subtypes": ["Lawyer", "Consumer Rights", "Legal Awareness", "Contracts"] },
+  { "category": "Lifestyle", "emoji": "🌿", "subtypes": ["Daily Lifestyle", "Minimal Living", "Luxury Lifestyle", "Couple Lifestyle"] },
+  { "category": "Live Streaming", "emoji": "📡", "subtypes": ["Live Chat", "IRL Streamer", "Community Streaming"] },
+  { "category": "Luxury", "emoji": "💎", "subtypes": ["Luxury Lifestyle", "Watches", "Supercars", "Real Estate"] },
+  { "category": "Marketing & Social Media", "emoji": "📣", "subtypes": ["Creator Growth", "Branding", "Content Strategy", "Social Media Tips"] },
+  { "category": "Memes", "emoji": "😹", "subtypes": ["Meme Page", "Shitposting", "Dank Memes", "Reel Memes"] },
+  { "category": "Motivation", "emoji": "🔥", "subtypes": ["Motivational Speaker", "Daily Drive", "Inspiration"] },
+  { "category": "Movies & TV", "emoji": "📺", "subtypes": ["Movie Reviews", "Web Series", "Recaps", "Cinema Analysis"] },
+  { "category": "Music", "emoji": "🎵", "subtypes": ["Singer", "Musician", "Rapper", "Composer", "Covers"] },
+  { "category": "News", "emoji": "📰", "subtypes": ["Current Affairs", "Daily News", "Geopolitics", "Breaking News"] },
+  { "category": "Parenting", "emoji": "🍼", "subtypes": ["Toddler Tips", "Baby Care", "Gentle Parenting"] },
+  { "category": "Personal Development", "emoji": "🧠", "subtypes": ["Self Improvement", "Habits", "Mindset", "Books"] },
+  { "category": "Pets & Animals", "emoji": "🐾", "subtypes": ["Dogs", "Cats", "Animal Rescue", "Pet Care"] },
+  { "category": "Photography", "emoji": "📸", "subtypes": ["Photographer", "Mobile Photography", "Editing", "Wildlife", "Portrait"] },
+  { "category": "Podcasts", "emoji": "🎙️", "subtypes": ["Podcaster", "Interviews", "Audio Shows", "Discussions"] },
+  { "category": "Politics", "emoji": "🏛️", "subtypes": ["Political Analysis", "Debates", "Public Policy"] },
+  { "category": "Product Reviews", "emoji": "⭐", "subtypes": ["Tech Reviews", "Unboxing", "Consumer Tech", "App Reviews"] },
+  { "category": "Productivity", "emoji": "⚡", "subtypes": ["Time Management", "Notion", "Productivity Hacks", "Focus"] },
+  { "category": "Relationships", "emoji": "❤️", "subtypes": ["Dating Advice", "Marriage", "Couples", "Friendships"] },
+  { "category": "Reviews & Reactions", "emoji": "😲", "subtypes": ["Reaction Videos", "Trailer Reactions", "Food Reactions"] },
+  { "category": "Science", "emoji": "🔬", "subtypes": ["Space", "Physics", "Biology", "Science Experiments"] },
+  { "category": "Self Growth", "emoji": "🌱", "subtypes": ["Mindfulness", "Meditation", "Goal Setting"] },
+  { "category": "Shopping", "emoji": "🛍️", "subtypes": ["Hauls", "Thrifting", "Deals & Discounts", "Amazon Finds"] },
+  { "category": "Short Films", "emoji": "🎞️", "subtypes": ["Indie Films", "Dramatic Shorts", "Thriller", "Experimental"] },
+  { "category": "Shorts & Reels", "emoji": "📱", "subtypes": ["Viral Shorts", "Quick Tips", "Trending Reels"] },
+  { "category": "Singing", "emoji": "🎤", "subtypes": ["Vocalist", "Covers", "Acoustic", "Classical Singing"] },
+  { "category": "Skincare", "emoji": "✨", "subtypes": ["Dermatology", "Skincare Routines", "Korean Skincare", "Acne Tips"] },
+  { "category": "Social Awareness", "emoji": "🌍", "subtypes": ["Social Causes", "Activism", "Human Rights", "Charity"] },
+  { "category": "Spirituality & Devotional", "emoji": "🕉️", "subtypes": ["Spirituality", "Devotional", "Meditation", "Bhajan", "Gita"] },
+  { "category": "Sports", "emoji": "⚽", "subtypes": ["Cricket", "Football", "Sports Analysis", "Athlete", "Sports News"] },
+  { "category": "Stand-up Comedy", "emoji": "🎙️", "subtypes": ["Standup Comedian", "Crowd Work", "Live Shows"] },
+  { "category": "Storytelling", "emoji": "📖", "subtypes": ["Audio Stories", "Real Life Stories", "Horror Stories", "Poetry"] },
+  { "category": "Technology & AI", "emoji": "💻", "subtypes": ["Tech Reviews", "AI Tools", "Gadgets", "Apps", "Tech News"] },
+  { "category": "Theatre", "emoji": "🎭", "subtypes": ["Stage Plays", "Drama", "Nukkad Natak", "Acting"] },
+  { "category": "Travel", "emoji": "✈️", "subtypes": ["Travel Vlogger", "Backpacker", "Luxury Travel", "Local Explorer"] },
+  { "category": "Tutorials & How-to", "emoji": "💡", "subtypes": ["Guides", "Step by Step", "Life Hacks", "Knowledge"] },
+  { "category": "Vlogs", "emoji": "📹", "subtypes": ["Daily Vlogs", "Travel Vlogs", "Family Vlogs", "Campus Life"] },
+  { "category": "Other", "emoji": "✨", "subtypes": [] }
 ]

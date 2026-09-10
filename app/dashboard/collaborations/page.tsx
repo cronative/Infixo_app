@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Handshake, Plus, Pencil, Trash2, Eye, EyeOff, ExternalLink } from "lucide-react";
+import { Handshake, Plus, Pencil, Trash2, Eye, EyeOff, ExternalLink, MoreVertical } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { CreatorCollaboration } from "@/types";
@@ -16,6 +16,7 @@ export default function DashboardCollaborationsPage() {
 
   const [collaborations, setCollaborations] = useState<CreatorCollaboration[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
 
   // Modals state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,6 +32,12 @@ export default function DashboardCollaborationsPage() {
   const [description, setDescription] = useState("");
 
   const creatorLookup = profile.id || profile.email || profile.username;
+
+  useEffect(() => {
+    const handleClickOutside = () => setActiveMenuId(null);
+    if (activeMenuId) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [activeMenuId]);
 
   const loadCollaborations = async () => {
     if (!creatorLookup) return;
@@ -157,18 +164,18 @@ export default function DashboardCollaborationsPage() {
       });
       showToast(updated ? "Collaboration visible on profile" : "Collaboration hidden from profile");
       loadCollaborations();
-    } catch {}
+    } catch { }
   };
 
   return (
-    <div className="space-y-6 text-left">
+    <div className="space-y-4 sm:space-y-5 w-full pb-8 text-left">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#ECE8EB] pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-xl font-bold text-[#17131A] tracking-tight">
+          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#181716]">
             Selected Collaborations
           </h1>
-          <p className="text-xs text-[#6F6872] font-medium mt-0.5">
+          <p className="text-xs sm:text-[13px] text-[#797570] font-medium mt-0.5">
             Showcase the brands, sponsor campaigns, and commercial partnerships you have worked with.
           </p>
         </div>
@@ -177,9 +184,9 @@ export default function DashboardCollaborationsPage() {
           <button
             type="button"
             onClick={() => handleOpenModal()}
-            className="tap-scale flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4 transition-colors cursor-pointer shadow-2xs shrink-0 self-start sm:self-auto"
+            className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-[#2c1937] text-white font-semibold text-xs py-2 px-3.5 transition-colors cursor-pointer shadow-xs shrink-0 self-start sm:self-auto"
           >
-            <Plus className="h-3.5 w-3.5 stroke-[2.5]" />
+            <Plus className="h-3.5 w-3.5" />
             <span>Add Collaboration</span>
           </button>
         )}
@@ -187,123 +194,211 @@ export default function DashboardCollaborationsPage() {
 
       {/* Main Content Area */}
       {loading ? (
-        <div className="rounded-2xl border border-[#ECE8EB] bg-white p-12 text-center text-xs text-[#6F6872]">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-8 text-center text-xs text-[#797570]">
           Loading collaborations...
         </div>
       ) : collaborations.length === 0 ? (
         /* Empty State */
-        <div className="rounded-3xl border-2 border-dashed border-[#ECE8EB] bg-white p-10 sm:p-14 text-center space-y-4 max-w-xl mx-auto shadow-xs">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F7EDF3] text-[#803D63]">
-            <Handshake className="h-7 w-7" />
+        <div className="rounded-2xl border-2 border-dashed border-[#E7E3DC] bg-white p-8 sm:p-10 text-center space-y-3 max-w-xl mx-auto shadow-xs">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#151933]/[0.09] text-[#151933]">
+            <Handshake className="h-6 w-6" />
           </div>
           <div className="space-y-1">
-            <h3 className="font-display text-base font-bold text-[#17131A]">
+            <h3 className="font-display text-sm sm:text-base font-bold text-[#181716]">
               Showcase the brands you&apos;ve worked with
             </h3>
-            <p className="text-xs text-[#6F6872] font-medium max-w-sm mx-auto leading-relaxed">
+            <p className="text-xs text-[#797570] font-medium max-w-sm mx-auto leading-relaxed">
               Feature logos and highlights from your past sponsor deals (e.g. Nike, Spotify, Sony, Boat). Builds instant credibility with prospective sponsors.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => handleOpenModal()}
-            className="tap-scale inline-flex items-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2.5 px-5 transition-colors cursor-pointer shadow-2xs"
-          >
-            <Plus className="h-4 w-4 stroke-[2.5]" />
-            <span>Add Collaboration</span>
-          </button>
+          <div className="pt-1">
+            <button
+              type="button"
+              onClick={() => handleOpenModal()}
+              className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-[#2c1937] text-white font-semibold text-xs py-2 px-4 transition-colors cursor-pointer shadow-xs"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              <span>Add Collaboration</span>
+            </button>
+          </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="rounded-2xl border border-[#E7E3DC] bg-white divide-y divide-[#E7E3DC] shadow-xs">
           {collaborations.map((collab) => (
             <div
               key={collab.id}
-              className={`relative flex flex-col justify-between rounded-2xl border p-4 bg-white shadow-2xs transition-all ${
-                collab.isActive ? "border-[#ECE8EB]" : "border-slate-200 opacity-60 bg-slate-50"
-              }`}
+              className={`px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#FAF8F5]/60 transition-colors text-left ${collab.isActive ? "" : "opacity-60 bg-[#FAF8F5]/40"
+                }`}
             >
-              <div className="space-y-3">
-                <div className="flex items-start gap-3.5">
-                  {collab.brandLogoUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={collab.brandLogoUrl}
-                      alt={collab.brandName}
-                      className="h-12 w-12 rounded-xl object-cover border border-[#ECE8EB] shrink-0"
-                    />
-                  ) : (
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#F7EDF3] text-[#803D63] font-bold text-sm shrink-0">
-                      <Handshake className="h-6 w-6" />
-                    </div>
-                  )}
+              {/* Left: Brand Logo / Handshake badge + Details */}
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                {collab.brandLogoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={collab.brandLogoUrl}
+                    alt={collab.brandName}
+                    className="h-9 w-9 rounded-xl object-cover border border-[#E7E3DC] shrink-0"
+                  />
+                ) : (
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#15193314] border border-[#E7D0D4] text-[#151933] font-bold text-xs shrink-0">
+                    <Handshake className="h-4 w-4" />
+                  </div>
+                )}
 
-                  <div className="min-w-0 flex-1">
-                    <h3 className="truncate font-bold text-xs text-[#17131A]">{collab.brandName}</h3>
+                <div className="min-w-0 flex-1 space-y-0.5">
+                  <div className="flex items-center gap-2">
+                    <h3 className="truncate font-bold text-xs sm:text-[13px] text-[#181716]">{collab.brandName}</h3>
                     {collab.campaignTitle && (
-                      <p className="truncate text-[11px] font-semibold text-[#803D63] mt-0.5">
-                        {collab.campaignTitle}
-                      </p>
+                      <span className="text-[11px] font-semibold text-[#151933] truncate">
+                        • {collab.campaignTitle}
+                      </span>
+                    )}
+                    {!collab.isActive && (
+                      <span className="text-[10px] font-semibold text-[#797570] bg-zinc-100 px-1.5 py-0.2 rounded shrink-0">
+                        Hidden
+                      </span>
                     )}
                   </div>
+                  {collab.description ? (
+                    <p className="text-[11px] text-[#797570] line-clamp-1 leading-snug">{collab.description}</p>
+                  ) : (
+                    <p className="text-[11px] font-medium text-[#797570]">Brand Partnership</p>
+                  )}
                 </div>
-
-                {collab.description && (
-                  <p className="text-xs text-[#6F6872] line-clamp-2 leading-relaxed">
-                    {collab.description}
-                  </p>
-                )}
-
-                {collab.campaignUrl && (
-                  <a
-                    href={collab.campaignUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#803D63] hover:underline"
-                  >
-                    <span>View Campaign</span>
-                    <ExternalLink className="h-3 w-3" />
-                  </a>
-                )}
               </div>
 
-              {/* Actions Bar */}
-              <div className="mt-4 pt-3 border-t border-[#ECE8EB] flex items-center justify-between text-xs">
-                <button
-                  type="button"
-                  onClick={() => handleToggleCollab(collab)}
-                  className="flex items-center gap-1 text-[11px] font-semibold text-[#6F6872] hover:text-[#17131A] transition-colors cursor-pointer"
-                >
-                  {collab.isActive ? (
-                    <>
-                      <Eye className="h-3.5 w-3.5 text-emerald-600" />
-                      <span>Visible</span>
-                    </>
-                  ) : (
-                    <>
-                      <EyeOff className="h-3.5 w-3.5 text-slate-400" />
-                      <span>Hidden</span>
-                    </>
+              {/* Right: Actions */}
+              <div className="flex items-center gap-2 shrink-0">
+                {/* Desktop Buttons */}
+                <div className="hidden sm:flex items-center gap-2">
+                  {collab.campaignUrl && (
+                    <a
+                      href={collab.campaignUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] px-2.5 py-1 text-xs font-semibold text-[#181716] transition-colors shadow-xs"
+                      title="View Campaign Link"
+                    >
+                      <span>View</span>
+                      <ExternalLink className="h-3 w-3 text-[#151933]" />
+                    </a>
                   )}
-                </button>
 
-                <div className="flex items-center gap-1.5">
+                  {/* Toggle Visibility */}
+                  <button
+                    type="button"
+                    onClick={() => handleToggleCollab(collab)}
+                    className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-1 rounded-lg border transition-colors cursor-pointer ${collab.isActive
+                      ? "bg-[#EAF7F0] text-[#17845B] border-[#17845B]/20"
+                      : "bg-zinc-100 text-[#797570] border-[#E7E3DC]"
+                      }`}
+                    title={collab.isActive ? "Visible on profile" : "Hidden from profile"}
+                  >
+                    {collab.isActive ? <Eye className="h-3 w-3 text-[#17845B]" /> : <EyeOff className="h-3 w-3" />}
+                    <span className="hidden md:inline">{collab.isActive ? "Visible" : "Hidden"}</span>
+                  </button>
+
+                  {/* Edit Button */}
                   <button
                     type="button"
                     onClick={() => handleOpenModal(collab)}
-                    className="p-1 text-[#6F6872] hover:text-[#17131A] hover:bg-[#FAF8FA] rounded-lg transition-colors cursor-pointer"
+                    className="flex h-7 w-7 items-center justify-center rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer shadow-xs"
                     title="Edit collaboration"
                   >
                     <Pencil className="h-3.5 w-3.5" />
                   </button>
 
+                  {/* Delete Button */}
                   <button
                     type="button"
                     onClick={() => setCollabToDelete(collab)}
-                    className="p-1 text-[#6F6872] hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                    className="flex h-7 w-7 items-center justify-center rounded-xl border border-rose-100 bg-white hover:bg-rose-50 text-[#C2414B] transition-colors cursor-pointer shadow-xs"
                     title="Remove collaboration"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
+                </div>
+
+                {/* Mobile 3-Dot Dropdown */}
+                <div className="relative sm:hidden">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveMenuId(activeMenuId === collab.id ? null : collab.id);
+                    }}
+                    className="tap-scale flex h-7 w-7 items-center justify-center rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer shadow-xs"
+                    aria-label="More actions"
+                  >
+                    <MoreVertical className="h-3.5 w-3.5" />
+                  </button>
+
+                  {activeMenuId === collab.id && (
+                    <div
+                      onClick={(e) => e.stopPropagation()}
+                      className="absolute right-0 top-full mt-1.5 w-44 rounded-xl border border-[#E7E3DC] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in text-left"
+                    >
+                      {collab.campaignUrl && (
+                        <a
+                          href={collab.campaignUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setActiveMenuId(null)}
+                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors"
+                        >
+                          <ExternalLink className="h-3.5 w-3.5 text-[#151933]" />
+                          <span>View Campaign</span>
+                        </a>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveMenuId(null);
+                          handleToggleCollab(collab);
+                        }}
+                        className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
+                      >
+                        {collab.isActive ? (
+                          <>
+                            <EyeOff className="h-3.5 w-3.5 text-[#797570]" />
+                            <span>Hide from Profile</span>
+                          </>
+                        ) : (
+                          <>
+                            <Eye className="h-3.5 w-3.5 text-[#17845B]" />
+                            <span>Show on Profile</span>
+                          </>
+                        )}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveMenuId(null);
+                          handleOpenModal(collab);
+                        }}
+                        className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
+                      >
+                        <Pencil className="h-3.5 w-3.5 text-[#797570]" />
+                        <span>Edit Collaboration</span>
+                      </button>
+
+                      <div className="my-1 border-t border-[#E7E3DC]" />
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveMenuId(null);
+                          setCollabToDelete(collab);
+                        }}
+                        className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-rose-50 transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        <span>Delete Collaboration</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -321,23 +416,23 @@ export default function DashboardCollaborationsPage() {
         icon={<Handshake className="h-4 w-4" />}
       >
         <form onSubmit={handleSaveCollaboration} className="flex flex-col flex-1 min-h-0">
-          <ModalBody className="p-5 sm:p-6 space-y-4 text-left">
+          <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
             <div>
-              <label className="block text-xs font-bold text-[#17131A] mb-1.5">
+              <label className="block text-xs font-bold text-[#181716] mb-1">
                 Brand Logo / Image (Optional)
               </label>
               <PhotoUpload
                 value={brandLogo}
                 onChange={setBrandLogo}
                 shape="rounded"
-                size={80}
+                size={70}
                 label="Upload Brand Logo"
               />
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-[#17131A] mb-1.5">
-                Brand / Partner Name <span className="text-rose-500">*</span>
+            <div className="space-y-1">
+              <label className="block text-xs font-bold text-[#181716]">
+                Brand / Partner Name <span className="text-[#C2414B]">*</span>
               </label>
               <input
                 type="text"
@@ -345,12 +440,12 @@ export default function DashboardCollaborationsPage() {
                 value={brandName}
                 onChange={(e) => setBrandName(e.target.value)}
                 placeholder="e.g. Sony Music, Nike, or Boat Audio"
-                className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-[#17131A] mb-1.5">
+            <div className="space-y-1">
+              <label className="block text-xs font-bold text-[#181716]">
                 Campaign Title (Optional)
               </label>
               <input
@@ -358,12 +453,12 @@ export default function DashboardCollaborationsPage() {
                 value={campaignTitle}
                 onChange={(e) => setCampaignTitle(e.target.value)}
                 placeholder="e.g. Summer Launch Reel Campaign"
-                className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-[#17131A] mb-1.5">
+            <div className="space-y-1">
+              <label className="block text-xs font-bold text-[#181716]">
                 Campaign URL / Live Reel Link (Optional)
               </label>
               <input
@@ -371,12 +466,12 @@ export default function DashboardCollaborationsPage() {
                 value={campaignUrl}
                 onChange={(e) => setCampaignUrl(e.target.value)}
                 placeholder="https://instagram.com/reel/... or https://youtube.com/watch?v=..."
-                className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-[#17131A] mb-1.5">
+            <div className="space-y-1">
+              <label className="block text-xs font-bold text-[#181716]">
                 Short Description (Optional)
               </label>
               <textarea
@@ -384,23 +479,23 @@ export default function DashboardCollaborationsPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Briefly mention key deliverables (e.g. 2x Instagram Reels, 1x YouTube dedicated video with 250K+ views)..."
-                className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3 text-xs font-medium text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors resize-y"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 p-2.5 text-xs font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors resize-y"
               />
             </div>
           </ModalBody>
 
-          <ModalFooter className="px-5 sm:px-6 py-3.5">
+          <ModalFooter className="px-4 sm:px-5 py-3">
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
+              className="px-3.5 py-1.5 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#FAF8F5] hover:text-[#181716] transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="bg-[#151933] hover:bg-[#2c1937] text-white font-semibold text-xs py-1.5 px-4 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               <span>{isSubmitting ? "Saving..." : editingCollab ? "Save Changes" : "Add Collaboration"}</span>
             </button>

@@ -53,9 +53,9 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
   // Parse existing selected genres
   const selectedGenres = value
     ? value
-        .split(",")
-        .map((g) => g.trim())
-        .filter(Boolean)
+      .split(",")
+      .map((g) => g.trim())
+      .filter(Boolean)
     : [];
 
   function toggleGenre(genre: string) {
@@ -74,17 +74,17 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-2">
-        <label className="block text-sm font-bold text-slate-900 flex items-center gap-1.5">
-          <Tag className="h-4 w-4 text-[#803D63]" />
+        <label className="block text-sm font-bold text-[#181716] flex items-center gap-1.5">
+          <Tag className="h-4 w-4 text-[#151933]" />
           Series Genres
         </label>
-        <span className={`text-xs font-semibold ${selectedGenres.length >= max ? "text-amber-600 font-bold" : "text-slate-400"}`}>
+        <span className={`text-xs font-semibold ${selectedGenres.length >= max ? "text-[#B7791F] font-bold" : "text-[#797570]"}`}>
           {selectedGenres.length} / {max} selected
         </span>
       </div>
 
       {/* Direct Interactive Chips List (Natural Expansion, No Clipping) */}
-      <div className="flex flex-wrap gap-2 rounded-2xl border border-slate-200 bg-slate-50/60 p-3.5">
+      <div className="flex flex-wrap gap-2 rounded-2xl border border-[#E7E3DC] bg-[#fbfbfb] p-3.5">
         {ALL_SERIES_GENRES.map((g) => {
           const isSelected = selectedGenres.includes(g);
           const isMaxReached = !isSelected && selectedGenres.length >= max;
@@ -95,22 +95,21 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
               type="button"
               disabled={isMaxReached}
               onClick={() => toggleGenre(g)}
-              className={`tap-scale flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs transition-all cursor-pointer shrink-0 ${
-                isSelected
-                  ? "bg-[#F6EBF1] text-[#803D63] border border-[#803D63] font-bold shadow-2xs"
-                  : isMaxReached
-                  ? "opacity-40 cursor-not-allowed bg-white border border-slate-200 text-slate-400"
-                  : "bg-white border border-slate-200 text-slate-700 hover:border-[#803D63]/40 hover:bg-slate-50 hover:text-[#803D63]"
-              }`}
+              className={`tap-scale flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs transition-all cursor-pointer shrink-0 ${isSelected
+                ? "bg-[#151933]/[0.09] text-[#151933] border border-[#151933] font-bold shadow-xs"
+                : isMaxReached
+                  ? "opacity-40 cursor-not-allowed bg-white border border-[#E7E3DC] text-[#797570]"
+                  : "bg-white border border-[#E7E3DC] text-[#54514D] hover:border-[#151933]/40 hover:bg-[#fbfbfb] hover:text-[#151933]"
+                }`}
             >
               {isSelected ? (
                 <>
-                  <Check className="h-3 w-3 stroke-[3] text-[#803D63] shrink-0" />
+                  <Check className="h-3 w-3 stroke-[3] text-[#151933] shrink-0" />
                   <span>{g}</span>
                 </>
               ) : (
                 <>
-                  <span className="text-slate-400 text-xs leading-none">+</span>
+                  <span className="text-[#797570] text-xs leading-none">+</span>
                   <span>{g}</span>
                 </>
               )}

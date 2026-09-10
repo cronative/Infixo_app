@@ -1,16 +1,9 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect, useCallback } from "react";
-import Link from "next/link";
+import { useState, useMemo, useEffect } from "react";
 import {
   Check,
-  Eye,
-  Search,
-  X,
-  Palette,
   ExternalLink,
-  ChevronLeft,
-  ChevronRight,
   Sparkles,
   Loader2,
   Undo2,
@@ -24,6 +17,23 @@ import { FocusOverlay } from "@/components/theme/FocusOverlay";
 import { ThemeKey, ThemeMeta } from "@/types";
 import { buildProfileUrl } from "@/utils/format";
 
+const THEME_SUBTITLES: Record<string, string> = {
+  "minimal-white": "Clean & Minimal",
+  "signature-purple": "Inflixo Signature",
+  "midnight-dark": "Bold & Dark",
+  "cyberpunk-neon": "Animated & Futuristic",
+  "cosmic-void": "Deep Space & Stars",
+  "sunset-creator": "Warm Gradient & Glow",
+  "editorial-noir": "Monochrome & Sharp",
+  "vintage-sepia": "Earthy & Warm",
+  "galaxy-nebula": "Cosmic Dust & Glow",
+  "matrix-code": "Digital & Tech Grid",
+  "party-glam": "Gold & Luxury",
+  "orbs-flow": "Liquid Float & Orbs",
+  "diwali-glow": "Festive Lights & Spark",
+  "sparkle-minimal": "Subtle Stars & Clean",
+};
+
 export default function DashboardThemesPage() {
   const { profile, socials, series, totalAudience, theme, setTheme } = useCreator();
   const { showToast } = useToast();
@@ -31,17 +41,12 @@ export default function DashboardThemesPage() {
   // Active theme vs Interactive Preview theme
   const [previewThemeKey, setPreviewThemeKey] = useState<ThemeKey>(theme);
   const [isApplying, setIsApplying] = useState(false);
+  const [justApplied, setJustApplied] = useState(false);
 
-  // Search & Filter state
+  // Category Filter state
   const [activeGroup, setActiveGroup] = useState<"all" | "animated" | "light" | "dark">("all");
-  const [searchQuery, setSearchQuery] = useState("");
 
-  // Horizontal Carousel Scrolling state
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
-
-  // Sync preview theme if global theme changes from external context
+  // Sync preview theme if global theme changes
   useEffect(() => {
     setPreviewThemeKey(theme);
   }, [theme]);
@@ -59,81 +64,16 @@ export default function DashboardThemesPage() {
   const canonicalUrl = buildProfileUrl(profile?.username || "creator");
   const pageBgStyle = previewThemeMeta.outerBgClass || THEME_PAGE_BACKGROUNDS[previewThemeKey] || THEME_PAGE_BACKGROUNDS["minimal-white"];
 
-  // Filter themes based on search & category
+  // Filter themes based on group
   const filteredThemes = useMemo(() => {
     return THEME_LIST.filter((t) => {
-      const matchesGroup =
-        activeGroup === "all" ||
-        (activeGroup === "animated" ? Boolean(t.isAnimated || t.group === "animated") : t.group === activeGroup);
-      const q = searchQuery.toLowerCase().trim();
-      const matchesQuery =
-        !q ||
-        t.name.toLowerCase().includes(q) ||
-        t.description.toLowerCase().includes(q) ||
-        t.group.toLowerCase().includes(q);
-      return matchesGroup && matchesQuery;
+      if (activeGroup === "all") return true;
+      if (activeGroup === "animated") return Boolean(t.isAnimated || t.group === "animated");
+      return t.group === activeGroup;
     });
-  }, [activeGroup, searchQuery]);
+  }, [activeGroup]);
 
-  // Group counts for filter pills
-  const groupCounts = useMemo(() => {
-    return {
-      all: THEME_LIST.length,
-      animated: THEME_LIST.filter((t) => t.isAnimated || t.group === "animated").length,
-      light: THEME_LIST.filter((t) => t.group === "light").length,
-      dark: THEME_LIST.filter((t) => t.group === "dark").length,
-    };
-  }, []);
-
-  // Update carousel scroll state
-  const checkScrollState = useCallback(() => {
-    const el = carouselRef.current;
-    if (!el) return;
-    const { scrollLeft, scrollWidth, clientWidth } = el;
-    setCanScrollLeft(scrollLeft > 4);
-    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 4);
-  }, []);
-
-  useEffect(() => {
-    checkScrollState();
-    window.addEventListener("resize", checkScrollState);
-    return () => window.removeEventListener("resize", checkScrollState);
-  }, [checkScrollState, filteredThemes]);
-
-  // Mouse wheel horizontal scroll handler
-  useEffect(() => {
-    const el = carouselRef.current;
-    if (!el) return;
-
-    const handleWheel = (e: WheelEvent) => {
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        if (
-          (e.deltaY > 0 && el.scrollLeft + el.clientWidth < el.scrollWidth - 2) ||
-          (e.deltaY < 0 && el.scrollLeft > 2)
-        ) {
-          e.preventDefault();
-          el.scrollLeft += e.deltaY;
-          checkScrollState();
-        }
-      }
-    };
-
-    el.addEventListener("wheel", handleWheel, { passive: false });
-    return () => el.removeEventListener("wheel", handleWheel);
-  }, [checkScrollState]);
-
-  const scrollCarousel = (direction: "left" | "right") => {
-    const el = carouselRef.current;
-    if (!el) return;
-    const scrollAmount = 300;
-    el.scrollBy({
-      left: direction === "left" ? -scrollAmount : scrollAmount,
-      behavior: "smooth",
-    });
-    setTimeout(checkScrollState, 350);
-  };
-
-  // Preview click handler (instant preview, not applied yet)
+  // Preview click handler (instant preview, does not apply immediately)
   const handleThemePreview = (tKey: ThemeKey) => {
     setPreviewThemeKey(tKey);
   };
@@ -146,7 +86,9 @@ export default function DashboardThemesPage() {
     try {
       setTheme(previewThemeKey);
       ThemeService.setSelectedTheme(previewThemeKey, true);
-      showToast(`${previewThemeMeta.name} applied as your live theme! ✨`);
+      setJustApplied(true);
+      showToast(`${previewThemeMeta.name} applied to your profile! ✨`);
+      setTimeout(() => setJustApplied(false), 2000);
     } catch (err) {
       console.error("Failed to apply theme:", err);
       showToast("Failed to apply theme. Please try again.", "error");
@@ -159,361 +101,227 @@ export default function DashboardThemesPage() {
   // Cancel preview and revert to active theme
   const handleCancelPreview = () => {
     setPreviewThemeKey(theme);
-    showToast(`Reverted preview to ${activeThemeMeta.name}`);
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-16 text-left">
-      {/* =========================================================================
-         1. APPEARANCE PAGE HEADING
-         ========================================================================= */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
-        <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#17131A] tracking-tight">
-            Appearance
-          </h1>
-          <p className="text-xs sm:text-sm text-[#6F6872] font-medium mt-1">
-            Choose how your public creator profile looks.
-          </p>
-        </div>
+    <div className="w-full pb-16 text-left">
+      {/* 2-COLUMN SPLIT LAYOUT: Appearance + Themes on Left | Sticky Profile Preview on Right */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
 
-        {/* Retained active-theme badge on the right */}
-        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-          <span className="inline-flex items-center gap-1.5 rounded-xl bg-[#F7EDF3] border border-[#ECE8EB] px-3.5 py-1.5 text-xs font-semibold text-[#803D63] shadow-2xs">
-            <span className="h-2 w-2 rounded-full bg-[#803D63]" />
-            Active theme: {activeThemeMeta.name}
-          </span>
-        </div>
-      </div>
-
-      {/* =========================================================================
-         2. SEARCH AND THEME FILTERS TOOLBAR
-         ========================================================================= */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 rounded-2xl border border-[#ECE8EB] bg-white p-2 sm:p-2.5 shadow-2xs">
-        {/* Search Input */}
-        <div className="relative flex-1 min-w-[220px]">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6F6872] pointer-events-none" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search themes by name or style..."
-            className="w-full pl-9 pr-8 py-2 bg-[#FAF8FA] border border-[#ECE8EB] rounded-xl text-xs font-medium text-[#17131A] placeholder:text-[#6F6872]/60 focus:outline-none focus:border-[#803D63] focus:bg-white focus:ring-1 focus:ring-[#803D63]/20 transition-all"
-          />
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={() => setSearchQuery("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#6F6872] hover:text-[#17131A] p-0.5 rounded-full cursor-pointer"
-              title="Clear search"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
-
-        {/* Category Filter Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 sm:pb-0 scrollbar-none shrink-0">
-          <button
-            type="button"
-            onClick={() => setActiveGroup("all")}
-            className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${
-              activeGroup === "all"
-                ? "bg-[#803D63] text-white shadow-2xs"
-                : "bg-[#FAF8FA] border border-[#ECE8EB] text-[#6F6872] hover:text-[#17131A] hover:bg-white"
-            }`}
-          >
-            All ({groupCounts.all})
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveGroup("animated")}
-            className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-              activeGroup === "animated"
-                ? "bg-[#803D63] text-white shadow-2xs"
-                : "bg-[#FAF8FA] border border-[#ECE8EB] text-[#803D63] hover:text-[#17131A] hover:bg-white"
-            }`}
-          >
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Animated ({groupCounts.animated})</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveGroup("light")}
-            className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${
-              activeGroup === "light"
-                ? "bg-[#803D63] text-white shadow-2xs"
-                : "bg-[#FAF8FA] border border-[#ECE8EB] text-[#6F6872] hover:text-[#17131A] hover:bg-white"
-            }`}
-          >
-            Light ({groupCounts.light})
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveGroup("dark")}
-            className={`tap-scale shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${
-              activeGroup === "dark"
-                ? "bg-[#803D63] text-white shadow-2xs"
-                : "bg-[#FAF8FA] border border-[#ECE8EB] text-[#6F6872] hover:text-[#17131A] hover:bg-white"
-            }`}
-          >
-            Dark ({groupCounts.dark})
-          </button>
-        </div>
-      </div>
-
-      {/* =========================================================================
-         3. HORIZONTALLY SCROLLABLE THEME LISTING
-         ========================================================================= */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between px-0.5">
-          <h2 className="font-display text-xs font-bold uppercase tracking-wider text-[#6F6872] flex items-center gap-1.5">
-            <Palette className="h-3.5 w-3.5 text-[#803D63]" />
-            <span>Select theme to preview</span>
-          </h2>
-          <span className="text-[11px] text-[#6F6872] font-semibold">
-            {filteredThemes.length} {filteredThemes.length === 1 ? "theme" : "themes"}
-          </span>
-        </div>
-
-        {/* Carousel Outer Wrapper with Navigation Arrows and Edge Fades */}
-        <div className="relative w-full overflow-hidden rounded-2xl group/carousel">
-          {/* Left Navigation Arrow */}
-          {canScrollLeft && (
-            <button
-              type="button"
-              onClick={() => scrollCarousel("left")}
-              className="absolute left-2 top-1/2 -translate-y-1/2 z-20 hidden md:flex h-8 w-8 items-center justify-center rounded-full bg-white/95 border border-[#ECE8EB] text-[#17131A] shadow-md hover:bg-white hover:scale-105 transition-all cursor-pointer"
-              title="Scroll left"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-          )}
-
-          {/* Right Navigation Arrow */}
-          {canScrollRight && (
-            <button
-              type="button"
-              onClick={() => scrollCarousel("right")}
-              className="absolute right-2 top-1/2 -translate-y-1/2 z-20 hidden md:flex h-8 w-8 items-center justify-center rounded-full bg-white/95 border border-[#ECE8EB] text-[#17131A] shadow-md hover:bg-white hover:scale-105 transition-all cursor-pointer"
-              title="Scroll right"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          )}
-
-          {/* Soft Left Edge Fade */}
-          <div
-            className={`absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#FAF8FA] to-transparent pointer-events-none z-10 transition-opacity duration-200 ${
-              canScrollLeft ? "opacity-100" : "opacity-0"
-            }`}
-          />
-
-          {/* Soft Right Edge Fade */}
-          <div
-            className={`absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#FAF8FA] to-transparent pointer-events-none z-10 transition-opacity duration-200 ${
-              canScrollRight ? "opacity-100" : "opacity-0"
-            }`}
-          />
-
-          {/* Scrollable Track */}
-          {filteredThemes.length === 0 ? (
-            <div className="rounded-2xl border border-[#ECE8EB] bg-white p-8 text-center space-y-2 shadow-2xs">
-              <Palette className="h-8 w-8 text-[#6F6872] mx-auto opacity-50" />
-              <h3 className="font-display text-sm font-bold text-[#17131A]">No themes found</h3>
-              <p className="text-xs text-[#6F6872] max-w-xs mx-auto">
-                Try searching for a different name or select another style category.
+        {/* LEFT COLUMN: APPEARANCE & THEMES (6 cols on lg, 5 cols on xl) */}
+        <div className="lg:col-span-6 xl:col-span-5 space-y-4">
+          {/* Header: Appearance title + Filter Pills aligned at top */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 min-h-[52px]">
+            <div className="space-y-0.5">
+              <h1 className="text-[22px] sm:text-[24px] font-bold tracking-tight text-[#181716] leading-tight">
+                Appearance
+              </h1>
+              <p className="text-xs sm:text-[13px] text-[#54514D] font-normal">
+                Choose how your public creator profile looks.
               </p>
-              <div className="pt-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchQuery("");
-                    setActiveGroup("all");
-                  }}
-                  className="text-xs font-semibold text-[#803D63] hover:underline cursor-pointer"
-                >
-                  Reset filters
-                </button>
-              </div>
             </div>
-          ) : (
-            <div
-              ref={carouselRef}
-              onScroll={checkScrollState}
-              tabIndex={0}
-              role="region"
-              aria-label="Theme list carousel"
-              className="flex items-stretch gap-3 overflow-x-auto py-1 px-0.5 scrollbar-none snap-x snap-mandatory focus:outline-none"
-            >
-              {filteredThemes.map((t) => {
-                const isActive = theme === t.key;
-                const isPreviewing = previewThemeKey === t.key;
+
+            {/* Simple Filter Pills (No Counts) */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 sm:pb-0 scrollbar-none shrink-0">
+              {(["all", "animated", "light", "dark"] as const).map((group) => {
+                const isSelected = activeGroup === group;
+                const label =
+                  group === "all"
+                    ? "All"
+                    : group === "animated"
+                      ? "Animated"
+                      : group === "light"
+                        ? "Light"
+                        : "Dark";
 
                 return (
-                  <ThemeCarouselCard
-                    key={t.key}
-                    theme={t}
-                    isActive={isActive}
-                    isPreviewing={isPreviewing}
-                    onSelect={() => handleThemePreview(t.key)}
-                  />
+                  <button
+                    key={group}
+                    type="button"
+                    onClick={() => setActiveGroup(group)}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${isSelected
+                        ? "bg-[#151933] text-white shadow-xs"
+                        : "border border-[#E7E3DC] bg-white text-[#54514D] hover:text-[#181716] hover:bg-[#FAF8F5]"
+                      }`}
+                  >
+                    {group === "animated" && <Sparkles className="inline h-3 w-3 mr-1" />}
+                    <span>{label}</span>
+                  </button>
                 );
               })}
             </div>
-          )}
-        </div>
-      </div>
+          </div>
 
-      {/* =========================================================================
-         4. THEME INTERACTION & LIVE PROFILE PREVIEW ACTION BAR
-         ========================================================================= */}
-      <div className="space-y-3 pt-2">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-[#ECE8EB] bg-white p-3 sm:p-4 shadow-2xs">
-          {/* Left: Section Title & Current Preview Status */}
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <div className="flex items-center gap-2">
-              <Eye className="h-4 w-4 text-[#803D63]" />
-              <h2 className="font-display text-sm sm:text-base font-bold text-[#17131A]">
-                Live Profile Preview
+          {/* 2-Column Responsive Grid for Themes */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            {filteredThemes.map((t) => {
+              const isActive = theme === t.key;
+              const isPreviewing = previewThemeKey === t.key;
+
+              return (
+                <ThemeCard
+                  key={t.key}
+                  theme={t}
+                  isActive={isActive}
+                  isPreviewing={isPreviewing}
+                  onSelect={() => handleThemePreview(t.key)}
+                />
+              );
+            })}
+          </div>
+        </div>
+
+        {/* RIGHT COLUMN: STICKY PROFILE PREVIEW (6 cols on lg, 7 cols on xl) */}
+        <div className="lg:col-span-6 xl:col-span-7 lg:sticky lg:top-6 space-y-4">
+          {/* Header: Profile preview title + Action Controls aligned at top */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 min-h-[52px]">
+            <div className="space-y-0.5">
+              <h2 className="text-[22px] sm:text-[24px] font-bold tracking-tight text-[#181716] leading-tight">
+                Profile preview
               </h2>
+              <p className="text-xs sm:text-[13px] text-[#54514D] font-normal">
+                {isPreviewDifferent ? (
+                  <span>
+                    Previewing: <strong className="text-[#181716] font-semibold">{previewThemeMeta.name}</strong>
+                  </span>
+                ) : (
+                  <span>
+                    Active theme: <strong className="text-[#181716] font-semibold">{previewThemeMeta.name}</strong>
+                  </span>
+                )}
+              </p>
             </div>
 
-            {isPreviewDifferent ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#803D63]/10 border border-[#803D63]/30 px-2.5 py-0.5 text-xs font-bold text-[#803D63] animate-pulse">
-                <Sparkles className="h-3 w-3 text-[#803D63]" />
-                Previewing: {previewThemeMeta.name}
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#16794A] bg-[#ECFDF3] px-2.5 py-0.5 rounded-full">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#16794A]" />
-                Showing active theme
-              </span>
-            )}
+            <div className="flex items-center gap-2 shrink-0 flex-wrap">
+              {isPreviewDifferent && (
+                <>
+                  <button
+                    type="button"
+                    onClick={handleCancelPreview}
+                    disabled={isApplying}
+                    className="h-9 px-3 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-[#54514D] hover:text-[#181716] text-xs font-semibold transition-colors cursor-pointer shadow-xs disabled:opacity-50 inline-flex items-center gap-1.5"
+                  >
+                    <Undo2 className="h-3.5 w-3.5" />
+                    <span>Cancel</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleApplyTheme}
+                    disabled={isApplying}
+                    className="h-9 px-3.5 rounded-xl bg-[#151933] hover:bg-[#2c1937] text-white text-xs font-semibold transition-colors cursor-pointer shadow-xs disabled:opacity-50 inline-flex items-center gap-1.5"
+                  >
+                    {isApplying ? (
+                      <>
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        <span>Applying...</span>
+                      </>
+                    ) : justApplied ? (
+                      <>
+                        <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+                        <span>Applied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+                        <span>Apply Theme</span>
+                      </>
+                    )}
+                  </button>
+                </>
+              )}
+
+              <a
+                href={canonicalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-9 px-3 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-[#181716] text-xs font-semibold transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+                title="View public profile in new tab"
+              >
+                <span>View Profile</span>
+                <ExternalLink className="h-3.5 w-3.5 text-[#797570]" />
+              </a>
+            </div>
           </div>
 
-          {/* Right: Actions (Apply / Cancel when previewing, or Open Public Profile) */}
-          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap shrink-0">
-            {isPreviewDifferent && (
-              <>
-                <button
-                  type="button"
-                  onClick={handleCancelPreview}
-                  disabled={isApplying}
-                  className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] text-[#6F6872] hover:text-[#17131A] px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer shadow-2xs disabled:opacity-50"
-                  title="Cancel preview and revert to active theme"
-                >
-                  <Undo2 className="h-3.5 w-3.5" />
-                  <span>Cancel Preview</span>
-                </button>
+          {/* Clean Phone Mockup Frame (Expanded width & height, redundant outer container removed) */}
+          <div className="w-full flex justify-center pt-1">
+            <div className="w-full max-w-[450px] sm:max-w-[470px] xl:max-w-[490px] rounded-[38px] border-[6px] border-[#181716] bg-black shadow-2xl overflow-hidden relative">
+              {/* Phone Top Notch/Island */}
+              <div className="absolute top-2.5 left-1/2 -translate-x-1/2 h-4 w-28 bg-[#181716] rounded-full z-30 pointer-events-none" />
 
-                <button
-                  type="button"
-                  onClick={handleApplyTheme}
-                  disabled={isApplying}
-                  className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6D3254] text-white px-4 py-2 text-xs font-bold transition-all cursor-pointer shadow-2xs disabled:opacity-50"
-                  title="Save and apply this theme permanently"
-                >
-                  {isApplying ? (
-                    <>
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                      <span>Applying...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Check className="h-3.5 w-3.5 stroke-[2.5]" />
-                      <span>Apply Theme</span>
-                    </>
-                  )}
-                </button>
-              </>
-            )}
+              {/* Scrollable Viewport inside phone */}
+              <div
+                style={{ backgroundColor: previewThemeMeta.colors.pageBackground }}
+                className={`relative w-full h-[640px] lg:h-[690px] xl:h-[740px] overflow-y-auto overflow-x-hidden scrollbar-thin transition-colors duration-300 px-1 sm:px-1.5 pt-6 pb-6 ${pageBgStyle}`}
+              >
+                {/* Ambient Background Animation */}
+                <AmbientAnimation
+                  type={previewThemeMeta.animation?.type || previewThemeMeta.animationType}
+                  colors={previewThemeMeta.animation?.colors || previewThemeMeta.particleColors}
+                  themeKey={previewThemeKey}
+                  contained={true}
+                />
 
-            <a
-              href={canonicalUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="tap-scale inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] hover:bg-white text-[#17131A] px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer shadow-2xs hover:border-[#803D63]/30"
-              title="Open public profile in new tab"
-            >
-              <span>Open Public Profile</span>
-              <ExternalLink className="h-3.5 w-3.5 text-[#803D63]" />
-            </a>
+                {/* Theme-aware Focus Overlay */}
+                <FocusOverlay overlay={previewThemeMeta.focusOverlay} contained={true} />
+
+                <div className="relative z-10 w-full">
+                  <LivePreviewCard
+                    profile={profile}
+                    socials={socials}
+                    series={series}
+                    totalAudience={totalAudience}
+                    themeKey={previewThemeKey}
+                    variant="full"
+                    isInformational={true}
+                    cardPadding="px-3.5 sm:px-4 py-5 sm:py-6"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* =========================================================================
-           5. FULL-WIDTH LIVE PROFILE PREVIEW CONTAINER
-           ========================================================================= */}
-        <div className="rounded-2xl sm:rounded-3xl border border-[#ECE8EB] bg-[#FAF8FA] p-3 sm:p-6 md:p-8 shadow-2xs transition-all">
-          <div
-            style={{ backgroundColor: previewThemeMeta.colors.pageBackground }}
-            className={`relative w-full rounded-2xl border border-black/5 overflow-hidden transition-colors duration-300 p-3 sm:p-6 md:p-8 ${pageBgStyle}`}
-          >
-            {/* Ambient Background Animation in Live Preview */}
-            <AmbientAnimation
-              type={previewThemeMeta.animation?.type || previewThemeMeta.animationType}
-              colors={previewThemeMeta.animation?.colors || previewThemeMeta.particleColors}
-              themeKey={previewThemeKey}
-              contained={true}
-            />
-
-            {/* Theme-aware Focus Overlay */}
-            <FocusOverlay overlay={previewThemeMeta.focusOverlay} contained={true} />
-
-            <div className="relative z-10 w-full max-w-[620px] mx-auto">
-              <LivePreviewCard
-                profile={profile}
-                socials={socials}
-                series={series}
-                totalAudience={totalAudience}
-                themeKey={previewThemeKey}
-                variant="full"
-                isInformational={true}
-              />
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
 }
 
 /* ==========================================================================
-   THEME CAROUSEL CARD COMPONENT
+   THEME CARD SUB-COMPONENT (Identical size, clean thumbnail, single active badge)
    ========================================================================== */
-interface ThemeCarouselCardProps {
+interface ThemeCardProps {
   theme: ThemeMeta;
   isActive: boolean;
   isPreviewing: boolean;
   onSelect: () => void;
 }
 
-function ThemeCarouselCard({
+function ThemeCard({
   theme,
   isActive,
   isPreviewing,
   onSelect,
-}: ThemeCarouselCardProps) {
-  const [bg, accent, text] = theme.swatch || ["#7c3aed", "#ede9fe", "#14121a"];
+}: ThemeCardProps) {
+  const [bg, accent] = theme.swatch || ["#7c3aed", "#ede9fe"];
   const isThemeAnimated = Boolean(theme.isAnimated || theme.group === "animated");
+  const subtitle = THEME_SUBTITLES[theme.key] || theme.tag || (theme.mode === "dark" ? "Bold & Dark" : "Clean & Light");
 
   return (
     <button
       type="button"
       onClick={onSelect}
-      className={`group relative flex flex-col justify-between w-[260px] sm:w-[280px] shrink-0 rounded-2xl border p-3 text-left transition-all cursor-pointer shadow-2xs snap-start ${
-        isPreviewing
-          ? "border-[#803D63] ring-2 ring-[#803D63]/25 bg-[#F7EDF3]/30"
-          : "border-[#ECE8EB] bg-white hover:border-[#803D63]/40 hover:shadow-xs"
-      }`}
+      className={`group relative flex flex-col justify-between w-full rounded-2xl border p-3 text-left transition-all cursor-pointer shadow-xs ${isPreviewing
+          ? "border-[#151933] ring-2 ring-[#151933]/20 bg-[#151933]/[0.03]"
+          : isActive
+            ? "border-[#17845B]/40 ring-1 ring-[#17845B]/20 bg-white"
+            : "border-[#E7E3DC] bg-white hover:border-[#151933]/30 hover:shadow-sm"
+        }`}
     >
-      {/* Mini Visual Palette / Swatch Banner */}
+      {/* Visual Thumbnail (Taller ~16:8 aspect ratio) */}
       <div
-        className="relative w-full h-24 sm:h-28 rounded-xl overflow-hidden p-2.5 flex flex-col justify-between transition-transform duration-300 group-hover:scale-[1.01]"
+        className="relative w-full h-28 sm:h-32 rounded-xl overflow-hidden p-2.5 flex flex-col justify-between transition-transform duration-300 group-hover:scale-[1.01]"
         style={{
           background:
             theme.key === "minimal-white"
@@ -521,57 +329,37 @@ function ThemeCarouselCard({
               : `linear-gradient(135deg, ${bg} 0%, ${accent} 100%)`,
         }}
       >
-        {/* Top Row: Swatches & Animated / Active Badge */}
+        {/* Top Badges */}
         <div className="flex items-center justify-between w-full z-10">
-          {/* Swatches Pill */}
-          <div className="flex items-center gap-1.5 rounded-full bg-black/25 backdrop-blur-md px-2.5 py-1 border border-white/20 shadow-2xs">
-            <span
-              className="h-2.5 w-2.5 rounded-full border border-white/40 shadow-2xs"
-              style={{ backgroundColor: bg }}
-              title="Card background"
-            />
-            <span
-              className="h-2.5 w-2.5 rounded-full border border-white/40 shadow-2xs"
-              style={{ backgroundColor: accent }}
-              title="Accent color"
-            />
-            <span
-              className="h-2.5 w-2.5 rounded-full border border-white/40 shadow-2xs"
-              style={{ backgroundColor: text }}
-              title="Text color"
-            />
-          </div>
+          {/* Animated badge (Left) */}
+          {isThemeAnimated ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-black/40 text-amber-300 px-2 py-0.5 text-[10px] font-bold shadow-xs border border-amber-300/30 backdrop-blur-xs">
+              <Sparkles className="h-2.5 w-2.5 text-amber-300" />
+              <span>Animated</span>
+            </span>
+          ) : (
+            <span />
+          )}
 
-          {/* Right Badges */}
-          <div className="flex items-center gap-1">
-            {isThemeAnimated && (
-              <span className="flex items-center gap-1 rounded-full bg-black/40 text-amber-300 px-2 py-0.5 text-[9px] font-bold shadow-2xs border border-amber-300/30 backdrop-blur-xs">
-                <Sparkles className="h-2.5 w-2.5 text-amber-300" />
-                <span>Animated</span>
-              </span>
-            )}
-
-            {/* Active Badge (only when applied) */}
-            {isActive ? (
-              <span className="flex items-center gap-1 rounded-full bg-[#803D63] text-white px-2.5 py-0.5 text-[10px] font-bold shadow-xs border border-white/30">
-                <Check className="h-3 w-3 stroke-[3]" />
-                <span>Active</span>
-              </span>
-            ) : isPreviewing ? (
-              <span className="flex items-center gap-1 rounded-full bg-white/90 text-[#803D63] px-2 py-0.5 text-[10px] font-bold shadow-2xs border border-[#803D63]/30 backdrop-blur-xs">
-                <Eye className="h-2.5 w-2.5" />
-                <span>Previewing</span>
-              </span>
-            ) : null}
-          </div>
+          {/* Status badge: ✓ Active vs Previewing */}
+          {isActive ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#EAF7F0] text-[#17845B] border border-[#17845B]/20 px-2.5 py-0.5 text-[10px] font-bold shadow-xs">
+              <Check className="h-3 w-3 stroke-[3]" />
+              <span>Active</span>
+            </span>
+          ) : isPreviewing ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#151933] text-white px-2.5 py-0.5 text-[10px] font-bold shadow-xs">
+              <span>Previewing</span>
+            </span>
+          ) : null}
         </div>
 
         {/* Center: Clean Mini Profile Skeleton */}
         <div className="flex items-center gap-2 opacity-70 z-10">
-          <div className="h-5 w-5 rounded-full bg-white/60 border border-white/30 shrink-0" />
+          <div className="h-5 w-5 rounded-full bg-white/70 border border-white/40 shrink-0" />
           <div className="space-y-1 flex-1 min-w-0">
-            <div className="h-1.5 w-14 rounded-full bg-white/70" />
-            <div className="h-1 w-9 rounded-full bg-white/50" />
+            <div className="h-1.5 w-16 rounded-full bg-white/70" />
+            <div className="h-1 w-10 rounded-full bg-white/50" />
           </div>
         </div>
 
@@ -580,34 +368,16 @@ function ThemeCarouselCard({
       </div>
 
       {/* Card Info Footer */}
-      <div className="pt-2.5 px-0.5 flex items-center justify-between gap-2 w-full">
+      <div className="pt-2 px-0.5 flex items-center justify-between gap-2 w-full">
         <div className="min-w-0 flex-1">
-          <p className="truncate text-xs font-bold text-[#17131A] flex items-center gap-1">
-            <span>{theme.name}</span>
+          <p className="truncate text-xs sm:text-[13px] font-bold text-[#181716]">
+            {theme.name}
           </p>
-          <p className="truncate text-[10px] text-[#6F6872] capitalize font-medium">
-            {theme.tag || `${theme.group} theme`}
+          <p className="truncate text-[11px] text-[#797570] font-normal">
+            {subtitle}
           </p>
-        </div>
-
-        {/* Action Button/Indicator */}
-        <div>
-          {isActive ? (
-            <span className="text-[11px] font-bold text-[#803D63] bg-[#F7EDF3] px-2 py-1 rounded-lg">
-              Active
-            </span>
-          ) : isPreviewing ? (
-            <span className="text-[11px] font-bold text-[#803D63] bg-[#803D63]/10 px-2 py-1 rounded-lg">
-              Previewing
-            </span>
-          ) : (
-            <span className="text-[11px] font-semibold text-[#6F6872] group-hover:text-[#803D63] transition-colors">
-              Preview →
-            </span>
-          )}
         </div>
       </div>
     </button>
   );
 }
-

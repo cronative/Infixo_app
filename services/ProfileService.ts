@@ -1,6 +1,8 @@
 import { profileRepository, authRepository, themeRepository } from "@/repositories/localRepository";
 import { CreatorProfile } from "@/types";
 import { ThemeService } from "@/services/ThemeService";
+import { debugLog, debugError } from "@/lib/debugLogger";
+
 
 const EMPTY_PROFILE: CreatorProfile = {
   photoDataUrl: null,
@@ -25,44 +27,9 @@ export const ProfileService = {
 
     if (local) return local;
 
-    // Fetch from backend API if email is present and no local record exists yet
-    if (email) {
-      fetch(`/api/creator/profile?email=${encodeURIComponent(email)}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success && data.profile) {
-            const currentLocal: Partial<CreatorProfile> = profileRepository.get() || {};
-            profileRepository.save({
-              ...currentLocal,
-              email: data.profile.email || email,
-              photoDataUrl: currentLocal.photoDataUrl || data.profile.photoDataUrl || null,
-              displayName: currentLocal.displayName || data.profile.displayName || "",
-              username: currentLocal.username || data.profile.username || "",
-              category: currentLocal.category || data.profile.category || null,
-              customCategory: currentLocal.customCategory || data.profile.customCategory || "",
-              profession: currentLocal.profession || data.profile.profession || "",
-              bio: currentLocal.bio || data.profile.bio || "",
-              city: currentLocal.city || data.profile.city || "",
-              state: currentLocal.state || data.profile.state || "",
-              country: currentLocal.country || data.profile.country || "",
-              visibilitySettings: currentLocal.visibilitySettings || data.profile.visibilitySettings || null,
-              updatedAt: new Date().toISOString(),
-            } as CreatorProfile);
-
-            // Sync theme from DB only if local storage has no active user theme selection
-            if (data.profile.themeKey) {
-              const existingLocalTheme = themeRepository.get();
-              if (!existingLocalTheme || existingLocalTheme === "minimal-white") {
-                ThemeService.setSelectedTheme(data.profile.themeKey);
-              }
-            }
-          }
-        })
-        .catch((e) => console.warn("Failed to sync profile from DB:", e));
-    }
-
-    return local ?? { ...EMPTY_PROFILE, email };
+    return { ...EMPTY_PROFILE, email };
   },
+
 
   async fetchFromDb(): Promise<CreatorProfile | null> {
     const email = authRepository.getPendingEmail();
@@ -75,35 +42,40 @@ export const ProfileService = {
         const currentLocal: Partial<CreatorProfile> = profileRepository.get() || {};
         const updated: CreatorProfile = {
           ...currentLocal,
-          email: data.profile.email || email,
-          photoDataUrl: currentLocal.photoDataUrl || data.profile.photoDataUrl || null,
-          displayName: currentLocal.displayName || data.profile.displayName || "",
-          username: currentLocal.username || data.profile.username || "",
-          category: currentLocal.category || data.profile.category || null,
-          customCategory: currentLocal.customCategory || data.profile.customCategory || "",
-          profession: currentLocal.profession || data.profile.profession || "",
-          bio: currentLocal.bio || data.profile.bio || "",
-          city: currentLocal.city || data.profile.city || "",
-          state: currentLocal.state || data.profile.state || "",
-          country: currentLocal.country || data.profile.country || "",
+          id: data.profile.id ? String(data.profile.id) : (currentLocal.id || undefined),
+          email: data.profile.email || currentLocal.email || email,
+          photoDataUrl: data.profile.photoDataUrl || currentLocal.photoDataUrl || null,
+          displayName: data.profile.displayName || currentLocal.displayName || "",
+          username: data.profile.username || currentLocal.username || "",
+          category: data.profile.category || currentLocal.category || null,
+          customCategory: data.profile.customCategory || currentLocal.customCategory || "",
+          profession: data.profile.profession || currentLocal.profession || "",
+          bio: data.profile.bio ?? currentLocal.bio ?? "",
+          city: data.profile.city || currentLocal.city || "",
+          state: data.profile.state || currentLocal.state || "",
+          country: data.profile.country || currentLocal.country || "",
           visibilitySettings: data.profile.visibilitySettings || currentLocal.visibilitySettings || null,
           updatedAt: new Date().toISOString(),
         } as CreatorProfile;
 
-        profileRepository.save(updated);
+        // Only save to localStorage if creator actually exists in DB (not a brand new user)
+        if (!data.isNewUser && data.profile.id) {
+          profileRepository.save(updated);
 
-        if (typeof data.profile.themeChangesCount === "number") {
-          ThemeService.syncThemeChangesCount(data.profile.themeChangesCount);
-        }
+          if (typeof data.profile.themeChangesCount === "number") {
+            ThemeService.syncThemeChangesCount(data.profile.themeChangesCount);
+          }
 
-        if (data.profile.themeKey) {
-          const existingLocalTheme = themeRepository.get();
-          if (!existingLocalTheme || existingLocalTheme === "minimal-white") {
-            ThemeService.setSelectedTheme(data.profile.themeKey);
+          if (data.profile.themeKey) {
+            const existingLocalTheme = themeRepository.get();
+            if (!existingLocalTheme || existingLocalTheme === "minimal-white") {
+              ThemeService.setSelectedTheme(data.profile.themeKey);
+            }
           }
         }
 
         return updated;
+
       }
     } catch (e) {
       console.warn("Failed to sync profile from DB:", e);
@@ -118,6 +90,7 @@ export const ProfileService = {
     const updated: CreatorProfile = {
       ...current,
       ...profile,
+      id: profile.id || current.id,
       email: profile.email || current.email || email,
       updatedAt: new Date().toISOString(),
     };
@@ -160,6 +133,12 @@ export const ProfileService = {
 
     if (email || updated.username) {
       try {
+        debugLog("PROFILE_SERVICE", "Saving profile to DB on Next click:", {
+          email: email || `${updated.username}@inflixo.com`,
+          displayName: updated.displayName,
+          username: updated.username,
+        });
+
         const res = await fetch("/api/creator/profile", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -181,10 +160,12 @@ export const ProfileService = {
         });
         const data = await res.json();
         if (data.success && data.profile) {
-          console.log("✅ Profile saved to MySQL Database on Next click:", data.profile);
+          debugLog("PROFILE_SERVICE", "✅ Profile saved to MySQL Database successfully:", data.profile);
+        } else {
+          debugError("PROFILE_SERVICE", "❌ Profile save response failed:", data.error);
         }
       } catch (e: any) {
-        console.error("Failed to save profile to MySQL DB:", e);
+        debugError("PROFILE_SERVICE", "Failed to save profile to MySQL DB:", e);
       }
     }
 
@@ -193,6 +174,7 @@ export const ProfileService = {
 
   hasProfile(): boolean {
     const p = profileRepository.get();
-    return !!p && p.displayName.trim().length > 0 && p.username.trim().length > 0;
+    return !!p && Boolean((p.displayName || "").trim()) && Boolean((p.username || "").trim());
   },
+
 };

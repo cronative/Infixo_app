@@ -26,46 +26,24 @@ export async function POST(req: Request) {
     let creator: any = null;
 
     try {
-      // 1. Check if creator exists in MySQL database
-      let [rows]: any = await db.query("SELECT * FROM creators WHERE email = ?", [email]);
-      creator = rows[0];
-
-      // 2. If creator does not exist, auto-register new creator row in MySQL with EMPTY profile
-      if (!creator) {
-        const creatorId = `cr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-
-        await db.query(
-          `INSERT INTO creators (id, email, display_name, username) 
-           VALUES (?, ?, '', '')`,
-          [creatorId, email]
-        );
-
-        // Create default empty subscription row
-        await db.query(
-          `INSERT INTO subscriptions (creator_id, plan_key, plan_name, billing_cycle, status) 
-           VALUES (?, 'pro', 'Pro Plan', 'yearly', 'trial')
-           ON DUPLICATE KEY UPDATE status = VALUES(status)`,
-          [creatorId]
-        );
-
-        const [newRows]: any = await db.query("SELECT * FROM creators WHERE id = ?", [creatorId]);
-        creator = newRows[0];
-      }
+      // 1. Check if creator exists in MySQL database (for existing creators)
+      const [rows]: any = await db.query("SELECT * FROM creators WHERE email = ?", [email]);
+      creator = rows[0] || null;
     } catch (dbErr: any) {
-      console.warn("⚠️ MySQL server not running or connection refused. Falling back to local mode:", dbErr.code || dbErr.message);
-      creator = { email, username: "" };
+      console.warn("⚠️ MySQL query warning in auth login:", dbErr.code || dbErr.message);
+      creator = null;
     }
 
     // 3. Generate dynamic random 4-digit OTP code (e.g. 4819)
     const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
 
     try {
-      // 1. Delete all previous OTP entries for this email so there is only 1 clean active OTP row
-      await db.query("DELETE FROM otps WHERE email = ?", [email]);
+      // 1. Invalidate any previous unused OTP entries for this email
+      await db.query("UPDATE otps SET is_used = TRUE WHERE email = ? AND is_used = FALSE", [email]);
 
-      // 2. Insert new single fresh OTP with 5-minute expiration
+      // 2. Insert new fresh OTP with 5-minute expiration
       await db.query(
-        "INSERT INTO otps (email, otp_code, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 5 MINUTE))",
+        "INSERT INTO otps (email, otp_code, expires_at, is_used) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 5 MINUTE), FALSE)",
         [email, otpCode]
       );
 

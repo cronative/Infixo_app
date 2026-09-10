@@ -1,17 +1,13 @@
 "use client";
 
 import { useState, useMemo, useEffect, useRef } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   Layers,
   Plus,
   Trash2,
   ChevronDown,
   ChevronUp,
-  Eye,
   Pencil,
-  X,
   Sparkles,
   Film,
   ExternalLink,
@@ -21,20 +17,25 @@ import {
   Search,
   MoreVertical,
   Play,
-  ArrowRight,
-  AlertCircle,
-  HelpCircle,
   Globe,
 } from "lucide-react";
-import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
-import { PhotoUpload } from "@/components/ui/PhotoUpload";
 import { SeriesCoverUpload } from "@/components/series/SeriesCoverUpload";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { SeriesService } from "@/services/SeriesService";
 import { Episode, EpisodePlatform, Series } from "@/types";
-import { YoutubeIcon, InstagramIcon, FacebookIcon } from "@/components/shared/BrandIcons";
+import {
+  YoutubeIcon,
+  InstagramIcon,
+  FacebookIcon,
+  XTwitterIcon,
+  LinkedinIcon,
+  ThreadsIcon,
+  SnapchatIcon,
+  SpotifyIcon,
+  TwitchIcon,
+} from "@/components/shared/BrandIcons";
+import { getInitials } from "@/lib/avatar";
 import { GenreMultiSelect } from "@/components/ui/GenreMultiSelect";
 import { LanguageSelect } from "@/components/ui/LanguageSelect";
 import { ShareSeriesModal } from "@/components/shared/ShareSeriesModal";
@@ -55,11 +56,28 @@ const PLATFORM_ICONS: Record<EpisodePlatform, React.ReactNode> = {
   YouTube: <YoutubeIcon className="h-4 w-4 text-red-500" />,
   Instagram: <InstagramIcon className="h-4 w-4 text-pink-500" />,
   Facebook: <FacebookIcon className="h-4 w-4 text-blue-600" />,
-  Other: <Globe className="h-4 w-4 text-[#803D63]" />,
+  Other: <Globe className="h-4 w-4 text-[#151933]" />,
 };
 
 function formatEpisodeNumber(num: number): string {
-  return num < 10 ? `Part 0${num}` : `Part ${num}`;
+  return num < 10 ? `0${num}` : `${num}`;
+}
+
+function getSeriesPlatform(series: Series, firstEpUrl: string = ""): string | null {
+  const p = (series.platform || "").toLowerCase();
+  const u = (firstEpUrl || "").toLowerCase();
+
+  if (p.includes("youtube") || u.includes("youtube.com") || u.includes("youtu.be")) return "YouTube";
+  if (p.includes("instagram") || u.includes("instagram.com")) return "Instagram";
+  if (p.includes("facebook") || u.includes("facebook.com") || u.includes("fb.watch")) return "Facebook";
+  if (p.includes("twitter") || p.includes("x.com") || u.includes("twitter.com") || u.includes("x.com")) return "X";
+  if (p.includes("linkedin") || u.includes("linkedin.com")) return "LinkedIn";
+  if (p.includes("threads") || u.includes("threads.net")) return "Threads";
+  if (p.includes("snapchat") || u.includes("snapchat.com")) return "Snapchat";
+  if (p.includes("spotify") || u.includes("spotify.com")) return "Spotify";
+  if (p.includes("twitch") || u.includes("twitch.tv")) return "Twitch";
+  if (series.platform && series.platform.trim()) return series.platform.trim();
+  return null;
 }
 
 function getPlatformInfo(url: string = ""): { name: string; host: string; icon: React.ReactNode } {
@@ -73,7 +91,13 @@ function getPlatformInfo(url: string = ""): { name: string; host: string; icon: 
   if (lower.includes("facebook.com") || lower.includes("fb.watch")) {
     return { name: "Facebook", host: "facebook.com", icon: <FacebookIcon className="h-3.5 w-3.5 text-blue-600" /> };
   }
-  return { name: "Web Video", host: "external link", icon: <Play className="h-3.5 w-3.5 text-[#803D63]" /> };
+  if (lower.includes("twitter.com") || lower.includes("x.com")) {
+    return { name: "X", host: "x.com", icon: <XTwitterIcon className="h-3.5 w-3.5 text-slate-800" /> };
+  }
+  if (lower.includes("spotify.com")) {
+    return { name: "Spotify", host: "spotify.com", icon: <SpotifyIcon className="h-3.5 w-3.5 text-emerald-600" /> };
+  }
+  return { name: "Web Video", host: "external link", icon: <Play className="h-3.5 w-3.5 text-[#151933]" /> };
 }
 
 /* ==========================================================================
@@ -124,7 +148,6 @@ function SeriesDrawer({
     }
   }, [seriesToEdit, isOpen]);
 
-  // Keyboard Escape listener
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -212,8 +235,8 @@ function SeriesDrawer({
 
           {/* Series Title */}
           <div className="space-y-1">
-            <label className="block text-xs font-bold text-[#17131A]">
-              Series title <span className="text-rose-500">*</span>
+            <label className="block text-xs font-bold text-[#181716]">
+              Series title <span className="text-[#C2414B]">*</span>
             </label>
             <input
               type="text"
@@ -221,13 +244,13 @@ function SeriesDrawer({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Kashmir Diaries or Tech Masterclass"
-              className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+              className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
             />
           </div>
 
           {/* Description */}
           <div className="space-y-1">
-            <label className="block text-xs font-bold text-[#17131A]">
+            <label className="block text-xs font-bold text-[#181716]">
               Short description
             </label>
             <textarea
@@ -235,14 +258,14 @@ function SeriesDrawer({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Tell your audience what this series is about..."
-              className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-3 text-xs font-medium text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors resize-y"
+              className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-3 text-xs font-medium text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors resize-y"
             />
           </div>
 
           {/* Primary Platform */}
           {!isEditing && (
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#17131A]">
+              <label className="block text-xs font-bold text-[#181716]">
                 Primary content platform
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -253,11 +276,10 @@ function SeriesDrawer({
                       key={p}
                       type="button"
                       onClick={() => setSeriesPlatform(p)}
-                      className={`flex items-center justify-center gap-1.5 rounded-xl border p-2 text-xs font-semibold transition-all cursor-pointer ${
-                        isSelected
-                          ? "border-[#803D63] bg-[#F7EDF3] text-[#803D63]"
-                          : "border-[#ECE8EB] bg-white text-[#6F6872] hover:bg-[#FAF8FA]"
-                      }`}
+                      className={`flex items-center justify-center gap-1.5 rounded-xl border p-2 text-xs font-semibold transition-all cursor-pointer ${isSelected
+                        ? "border-[#151933] bg-[#151933]/[0.09] text-[#151933]"
+                        : "border-[#E7E3DC] bg-white text-[#797570] hover:bg-[#fbfbfb]"
+                        }`}
                     >
                       {PLATFORM_ICONS[p]}
                       <span>{p}</span>
@@ -279,7 +301,7 @@ function SeriesDrawer({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716] transition-colors cursor-pointer"
           >
             Cancel
           </button>
@@ -287,7 +309,7 @@ function SeriesDrawer({
             type="submit"
             form="series-form"
             disabled={submitting}
-            className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5 disabled:opacity-50"
+            className="bg-[#151933] hover:bg-[#2c1937] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
           >
             <span>{submitting ? "Saving..." : isEditing ? "Save Changes" : "Create Series"}</span>
           </button>
@@ -339,7 +361,6 @@ function EpisodeDrawer({
     }
   }, [episodeToEdit, series, isOpen]);
 
-  // Keyboard Escape listener
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -426,17 +447,17 @@ function EpisodeDrawer({
       <form id="episode-form" onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
         <ModalBody className="p-5 space-y-4 text-left">
           {/* Episode Number Display */}
-          <div className="flex items-center justify-between rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-4 py-2.5">
-            <span className="text-xs font-semibold text-[#6F6872]">Episode Order</span>
-            <span className="text-xs font-bold text-[#803D63] bg-[#F7EDF3] border border-[#ECE8EB] px-2.5 py-0.5 rounded-md">
+          <div className="flex items-center justify-between rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-4 py-2.5">
+            <span className="text-xs font-semibold text-[#797570]">Episode Order</span>
+            <span className="text-xs font-bold text-[#151933] bg-[#151933]/[0.09] border border-[#151933]/20 px-2.5 py-0.5 rounded-md">
               {formatEpisodeNumber(epNumber)}
             </span>
           </div>
 
           {/* Episode Title */}
           <div className="space-y-1">
-            <label className="block text-xs font-bold text-[#17131A]">
-              Episode title <span className="text-rose-500">*</span>
+            <label className="block text-xs font-bold text-[#181716]">
+              Episode title <span className="text-[#C2414B]">*</span>
             </label>
             <input
               type="text"
@@ -444,17 +465,17 @@ function EpisodeDrawer({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. The journey begins"
-              className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] px-3.5 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+              className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
             />
-            <p className="text-[11px] text-[#6F6872]">
+            <p className="text-[11px] text-[#797570]">
               A concise title for this episode or reel.
             </p>
           </div>
 
           {/* Video URL */}
           <div className="space-y-1">
-            <label className="block text-xs font-bold text-[#17131A]">
-              Video or content link <span className="text-rose-500">*</span>
+            <label className="block text-xs font-bold text-[#181716]">
+              Video or content link <span className="text-[#C2414B]">*</span>
             </label>
             <div className="relative">
               <input
@@ -463,14 +484,14 @@ function EpisodeDrawer({
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="Paste a YouTube, Instagram, or Facebook link"
-                className="w-full rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] pl-3.5 pr-9 py-2.5 text-xs font-semibold text-[#17131A] placeholder:text-[#6F6872]/50 focus:border-[#803D63] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] pl-3.5 pr-9 py-2.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2">
                 {platformInfo.icon}
               </div>
             </div>
             {url.trim() && (
-              <p className="text-[11px] font-semibold text-emerald-700 flex items-center gap-1">
+              <p className="text-[11px] font-semibold text-[#17845B] flex items-center gap-1">
                 <Check className="h-3 w-3" />
                 <span>Detected: {platformInfo.name} ({platformInfo.host})</span>
               </p>
@@ -482,7 +503,7 @@ function EpisodeDrawer({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl border border-[#ECE8EB] text-xs font-semibold text-[#6F6872] hover:bg-[#FAF8FA] hover:text-[#17131A] transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716] transition-colors cursor-pointer"
           >
             Cancel
           </button>
@@ -490,7 +511,7 @@ function EpisodeDrawer({
             type="submit"
             form="episode-form"
             disabled={submitting}
-            className="bg-[#803D63] hover:bg-[#6F3456] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5 disabled:opacity-50"
+            className="bg-[#151933] hover:bg-[#2c1937] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
           >
             <span>{submitting ? "Saving..." : isEditing ? "Save Changes" : "Add Episode"}</span>
           </button>
@@ -500,9 +521,6 @@ function EpisodeDrawer({
   );
 }
 
-/* ==========================================================================
-   3. SERIES CARD ROW COMPONENT
-   ========================================================================== */
 interface SeriesCardProps {
   series: Series;
   username: string;
@@ -530,21 +548,24 @@ function SeriesCard({
 }: SeriesCardProps) {
   const { showToast } = useToast();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeEpMenuId, setActiveEpMenuId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const epUsage = getEpisodeUsage(series);
   const episodes = series.seasons?.flatMap((sn) => sn.episodes) || (series as any).episodes || [];
+  const firstEpUrl = episodes[0]?.externalUrl || "";
+  const detectedPlatform = getSeriesPlatform(series, firstEpUrl);
 
-  // Close menu on click outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setMenuOpen(false);
       }
+      setActiveEpMenuId(null);
     };
-    if (menuOpen) document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [menuOpen]);
+  }, []);
 
   const handleCopyLink = async () => {
     setMenuOpen(false);
@@ -558,112 +579,174 @@ function SeriesCard({
     }
   };
 
+  const subtitleParts: string[] = [`${episodes.length} ${episodes.length === 1 ? "episode" : "episodes"}`];
+  if (detectedPlatform) subtitleParts.push(detectedPlatform);
+  if (series.genre) subtitleParts.push(series.genre.split(/[,•|/]/)[0].trim());
+  if (series.language) subtitleParts.push(series.language.trim());
+  const subtitleStr = subtitleParts.join(" · ");
+
   return (
-    <div
-      id={`series-${series.id}`}
-      className="rounded-2xl border border-[#ECE8EB] bg-white transition-all shadow-2xs overflow-hidden"
-    >
-      {/* Collapsed / Header Card Content */}
-      <div className="p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        {/* Left: Thumbnail & Series Info */}
-        <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
-          <SeriesPoster
-            src={series.posterDataUrl}
-            title={series.title}
-            className="w-28 sm:w-36 aspect-video rounded-xl border border-[#ECE8EB] shrink-0 object-cover"
-            textClassName="text-xs font-bold text-white"
-          />
-
-          <div className="min-w-0 flex-1 space-y-1 text-left">
-            <h3 className="font-display text-base font-bold text-[#17131A] truncate" title={series.title}>
-              {series.title}
-            </h3>
-            <p className="text-xs text-[#6F6872] font-medium truncate">
-              {series.genre || "General"} • {series.language || "All Languages"} • {episodes.length} {episodes.length === 1 ? "episode" : "episodes"}
-            </p>
-            {series.description && (
-              <p className="text-xs text-[#6F6872]/80 font-normal line-clamp-1">
-                {series.description}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Middle: Progress Indicator */}
-        <div className="hidden lg:flex flex-col items-center justify-center px-4 shrink-0 space-y-1">
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#17131A]">
-            <span>{episodes.length} of {EARLY_ACCESS_LIMITS.maxEpisodesPerSeries} episodes</span>
-          </div>
-          <div className="h-1.5 w-28 rounded-full bg-[#FAF8FA] border border-[#ECE8EB] overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all duration-300 ${
-                epUsage.isLimitReached ? "bg-amber-500" : "bg-[#803D63]"
-              }`}
-              style={{ width: `${(episodes.length / EARLY_ACCESS_LIMITS.maxEpisodesPerSeries) * 100}%` }}
+    <div id={`series-${series.id}`} className="transition-colors first:rounded-t-2xl last:rounded-b-2xl">
+      {/* Series Row Header */}
+      <div
+        onClick={onToggle}
+        className={`px-4 sm:px-5 py-3.5 sm:py-4 flex items-center justify-between gap-3.5 cursor-pointer hover:bg-[#FAF8F5]/80 transition-colors group first:rounded-t-2xl ${!expanded ? "last:rounded-b-2xl" : ""
+          }`}
+      >
+        {/* Left: 48-52px Thumbnail + Title & Subtitle */}
+        <div className="flex items-center gap-3.5 min-w-0 flex-1">
+          {series.posterDataUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={series.posterDataUrl}
+              alt={series.title}
+              className="w-12 h-12 sm:w-[52px] sm:h-[52px] rounded-xl border border-[#E7E3DC] shrink-0 object-cover"
             />
+          ) : (
+            <span
+              className={`flex h-12 w-12 sm:h-[52px] sm:w-[52px] shrink-0 items-center justify-center rounded-xl ${detectedPlatform === "YouTube"
+                  ? "bg-red-600 shadow-xs text-white"
+                  : detectedPlatform === "Instagram"
+                    ? "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-xs text-white"
+                    : detectedPlatform === "Facebook"
+                      ? "bg-blue-600 shadow-xs text-white"
+                      : detectedPlatform === "X"
+                        ? "bg-slate-900 shadow-xs text-white"
+                        : detectedPlatform === "LinkedIn"
+                          ? "bg-sky-700 shadow-xs text-white"
+                          : detectedPlatform === "Threads"
+                            ? "bg-slate-900 shadow-xs text-white"
+                            : detectedPlatform === "Snapchat"
+                              ? "bg-[#FFFC00] shadow-xs text-black"
+                              : detectedPlatform === "Spotify"
+                                ? "bg-[#1DB954] shadow-xs text-white"
+                                : detectedPlatform === "Twitch"
+                                  ? "bg-[#9146FF] shadow-xs text-white"
+                                  : "bg-[#15193314] border border-[#E7D0D4] text-[#151933]"
+                }`}
+            >
+              {detectedPlatform === "YouTube" ? (
+                <YoutubeIcon className="h-5 w-5 text-white" />
+              ) : detectedPlatform === "Instagram" ? (
+                <InstagramIcon className="h-5 w-5 text-white" />
+              ) : detectedPlatform === "Facebook" ? (
+                <FacebookIcon className="h-5 w-5 text-white" />
+              ) : detectedPlatform === "X" ? (
+                <XTwitterIcon className="h-4 w-4 text-white" />
+              ) : detectedPlatform === "LinkedIn" ? (
+                <LinkedinIcon className="h-4 w-4 text-white" />
+              ) : detectedPlatform === "Threads" ? (
+                <ThreadsIcon className="h-4 w-4 text-white" />
+              ) : detectedPlatform === "Snapchat" ? (
+                <SnapchatIcon className="h-5 w-5 text-black" />
+              ) : detectedPlatform === "Spotify" ? (
+                <SpotifyIcon className="h-5 w-5 text-white" />
+              ) : detectedPlatform === "Twitch" ? (
+                <TwitchIcon className="h-5 w-5 text-white" />
+              ) : (
+                <span className="text-xs font-bold tracking-tight select-none">
+                  {getInitials(series.title)}
+                </span>
+              )}
+            </span>
+          )}
+
+          <div className="min-w-0 flex-1 text-left space-y-0.5">
+            <p className="truncate text-sm sm:text-base font-bold text-[#181716] group-hover:text-[#151933] transition-colors" title={series.title}>
+              {series.title}
+            </p>
+            <p className="truncate text-xs sm:text-[13px] text-[#54514D] font-normal">
+              {subtitleStr}
+            </p>
           </div>
         </div>
 
-        {/* Right: Actions & Overflow Menu */}
-        <div className="flex items-center gap-2 shrink-0 self-start md:self-center">
-          {/* Primary Action: Add Episode */}
+        {/* Right: + Add Episode | View | ⋮ | Chevron */}
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="flex items-center gap-1.5 sm:gap-2 shrink-0"
+        >
+          {/* Add Episode Button */}
           <button
             type="button"
             onClick={() => onAddEpisode(series)}
             disabled={epUsage.isLimitReached}
-            className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-colors cursor-pointer shadow-2xs ${
-              epUsage.isLimitReached
-                ? "bg-[#FAF8FA] border border-[#ECE8EB] text-[#6F6872] cursor-not-allowed opacity-60"
-                : "bg-[#803D63] hover:bg-[#6F3456] text-white"
-            }`}
+            className={`hidden sm:inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer shadow-xs ${epUsage.isLimitReached
+                ? "bg-[#FAF8F5] border border-[#E7E3DC] text-[#797570] cursor-not-allowed opacity-60"
+                : "bg-[#151933] hover:bg-[#2c1937] text-white"
+              }`}
           >
             <Plus className="h-3.5 w-3.5" />
-            <span>{episodes.length === 0 ? "Add First Episode" : "Add Episode"}</span>
+            <span>Add Episode</span>
           </button>
 
-          {/* Secondary Action: View Series */}
+          {/* View Series Button */}
           <a
             href={`/${username}/series/${series.id}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-3 py-2 text-xs font-semibold text-[#17131A] transition-colors"
+            className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] px-3 py-1.5 text-xs font-semibold text-[#181716] transition-colors shadow-xs"
             title="View public series page"
           >
-            <span className="hidden sm:inline">View</span>
-            <ExternalLink className="h-3 w-3 text-[#803D63]" />
+            <span>View</span>
+            <ExternalLink className="h-3 w-3 text-[#151933]" />
           </a>
 
-          {/* Three-dot Overflow Dropdown */}
+          {/* 3-Dot Overflow Menu */}
           <div className="relative" ref={menuRef}>
             <button
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
-              className="flex h-8 w-8 items-center justify-center rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] text-[#6F6872] hover:text-[#17131A] transition-colors cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer shadow-xs"
               aria-label="More actions"
             >
-              <MoreVertical className="h-4 w-4" />
+              <MoreVertical className="h-3.5 w-3.5" />
             </button>
 
             {menuOpen && (
-              <div className="absolute right-0 top-full mt-1.5 w-44 rounded-xl border border-[#ECE8EB] bg-white p-1 shadow-lg z-20 space-y-0.5 animate-in fade-in">
+              <div className="absolute right-0 top-full mt-1.5 w-44 rounded-xl border border-[#E7E3DC] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in">
+                <button
+                  type="button"
+                  disabled={epUsage.isLimitReached}
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onAddEpisode(series);
+                  }}
+                  className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#151933] hover:bg-[#FAF8F5] transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  <Plus className="h-3.5 w-3.5 text-[#151933]" />
+                  <span>Add Episode</span>
+                </button>
+
+                <a
+                  href={`/${username}/series/${series.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMenuOpen(false)}
+                  className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
+                >
+                  <ExternalLink className="h-3.5 w-3.5 text-[#797570]" />
+                  <span>View Series</span>
+                </a>
+
                 <button
                   type="button"
                   onClick={() => {
                     setMenuOpen(false);
                     onEditSeries(series);
                   }}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#17131A] hover:bg-[#FAF8FA] transition-colors cursor-pointer"
+                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
                 >
-                  <Pencil className="h-3.5 w-3.5 text-[#6F6872]" />
+                  <Pencil className="h-3.5 w-3.5 text-[#797570]" />
                   <span>Edit Series</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handleCopyLink}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#17131A] hover:bg-[#FAF8FA] transition-colors cursor-pointer"
+                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
                 >
-                  <Copy className="h-3.5 w-3.5 text-[#6F6872]" />
+                  <Copy className="h-3.5 w-3.5 text-[#797570]" />
                   <span>Copy Link</span>
                 </button>
 
@@ -673,13 +756,13 @@ function SeriesCard({
                     setMenuOpen(false);
                     onShareSeries(series);
                   }}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#17131A] hover:bg-[#FAF8FA] transition-colors cursor-pointer"
+                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
                 >
-                  <Share2 className="h-3.5 w-3.5 text-[#6F6872]" />
+                  <Share2 className="h-3.5 w-3.5 text-[#797570]" />
                   <span>Share Series</span>
                 </button>
 
-                <div className="my-1 border-t border-[#ECE8EB]" />
+                <div className="my-1 border-t border-[#E7E3DC]" />
 
                 <button
                   type="button"
@@ -687,7 +770,7 @@ function SeriesCard({
                     setMenuOpen(false);
                     onDeleteSeries(series);
                   }}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-rose-50 transition-colors cursor-pointer"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   <span>Delete Series</span>
@@ -696,15 +779,14 @@ function SeriesCard({
             )}
           </div>
 
-          {/* Expand / Collapse Control */}
+          {/* Expand / Collapse Chevron */}
           <button
             type="button"
             onClick={onToggle}
-            className="inline-flex items-center gap-1 rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] hover:bg-[#F7EDF3] hover:text-[#803D63] px-2.5 py-2 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer"
+            className="flex h-8 w-8 items-center justify-center rounded-xl border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer shadow-xs"
             aria-expanded={expanded}
             title={expanded ? "Hide episodes" : "Show episodes"}
           >
-            <span className="hidden sm:inline">{expanded ? "Hide" : "Episodes"}</span>
             {expanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
           </button>
         </div>
@@ -712,92 +794,134 @@ function SeriesCard({
 
       {/* Expanded Episodes List */}
       {expanded && (
-        <div className="border-t border-[#ECE8EB] bg-[#FAFAFB]/60 p-4 sm:p-5 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#6F6872]">
-              Episodes ({episodes.length} of {EARLY_ACCESS_LIMITS.maxEpisodesPerSeries})
+        <div className="border-t border-[#E7E3DC] bg-[#FAF8F5]/50 last:rounded-b-2xl">
+          {/* Header strip: Episodes · 1/5 */}
+          <div className="px-5 py-2 bg-[#FAF8F5] flex items-center justify-between border-b border-[#E7E3DC]">
+            <span className="text-xs font-medium text-[#181716]">
+              Episodes · {episodes.length}/{EARLY_ACCESS_LIMITS.maxEpisodesPerSeries}
             </span>
             {epUsage.isLimitReached && (
-              <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md">
+              <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md">
                 Episode limit reached
               </span>
             )}
           </div>
 
           {episodes.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-[#ECE8EB] bg-white p-6 text-center space-y-2">
-              <p className="text-xs font-bold text-[#17131A]">No episodes added yet</p>
-              <p className="text-xs text-[#6F6872] max-w-sm mx-auto">
+            <div className="p-6 text-center space-y-2.5 bg-white last:rounded-b-2xl">
+              <p className="text-sm font-bold text-[#181716]">No episodes added yet</p>
+              <p className="text-xs text-[#797570] max-w-sm mx-auto">
                 Add the first part so followers can begin this series.
               </p>
               <button
                 type="button"
                 onClick={() => onAddEpisode(series)}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-3.5 py-1.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-[#2c1937] px-3.5 py-1.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span>Add First Episode</span>
               </button>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="divide-y divide-[#E7E3DC] bg-white last:rounded-b-2xl">
               {series.seasons.flatMap((season) =>
-                season.episodes.map((ep) => {
+                season.episodes.map((ep, idx) => {
                   const plat = getPlatformInfo(ep.externalUrl);
+                  const epNumStr = formatEpisodeNumber(ep.episodeNumber || idx + 1);
+
                   return (
                     <div
                       key={ep.id}
-                      className="flex items-center justify-between gap-3 rounded-xl border border-[#ECE8EB] bg-white p-3 transition-colors hover:border-[#803D63]/30 shadow-2xs"
+                      className="px-5 py-3 transition-colors flex items-center justify-between hover:bg-[#FAF8F5]/60 group last:rounded-b-2xl"
                     >
-                      {/* Left: Part Badge & Episode Info */}
-                      <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <span className="flex h-7 w-16 items-center justify-center rounded-lg bg-[#F7EDF3] text-[#803D63] text-xs font-bold shrink-0">
-                          {formatEpisodeNumber(ep.episodeNumber)}
+                      {/* Left: 01 & Episode Info */}
+                      <div className="flex items-center gap-3.5 min-w-0 flex-1 pr-3">
+                        <span className="text-xs font-mono font-bold text-[#797570] w-6 shrink-0">
+                          {epNumStr}
                         </span>
 
-                        <div className="min-w-0 flex-1 text-left">
-                          <p className="truncate text-xs font-bold text-[#17131A]">
-                            {ep.title}
+                        <div className="min-w-0 flex-1 text-left space-y-0.5">
+                          <p className="truncate text-sm sm:text-[15px] font-semibold text-[#181716]">
+                            {ep.title || `Episode ${epNumStr}`}
                           </p>
-                          <div className="flex items-center gap-1.5 text-[11px] text-[#6F6872] font-medium mt-0.5">
+                          <div className="flex items-center gap-1.5 text-[13px] text-[#54514D] font-normal">
                             {plat.icon}
-                            <span>{plat.name} • {plat.host}</span>
+                            <span>{plat.name}</span>
                           </div>
                         </div>
                       </div>
 
-                      {/* Right: Actions */}
+                      {/* Right: Actions (View, Edit, ⋮ with Delete inside) */}
                       <div className="flex items-center gap-1.5 shrink-0">
                         {ep.externalUrl && (
                           <a
                             href={ep.externalUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 rounded-lg border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-2.5 py-1 text-xs font-medium text-[#17131A] transition-colors"
-                            title="Open original video link"
+                            className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-xs font-medium text-[#181716] transition-colors shadow-2xs"
+                            title="Open original link"
                           >
-                            <span className="hidden sm:inline">Open Original</span>
-                            <ExternalLink className="h-3 w-3 text-[#803D63]" />
+                            <span>View</span>
+                            <ExternalLink className="h-3 w-3 text-[#797570]" />
                           </a>
                         )}
 
                         <button
                           type="button"
                           onClick={() => onEditEpisode(series, season.id, ep)}
-                          className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] text-[#6F6872] hover:text-[#17131A] transition-colors cursor-pointer"
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-xs font-medium text-[#181716] transition-colors cursor-pointer shadow-2xs"
                           title="Edit Episode"
                         >
-                          <Pencil className="h-3 w-3" />
+                          <Pencil className="h-3 w-3 text-[#797570]" />
+                          <span>Edit</span>
                         </button>
 
-                        <button
-                          type="button"
-                          onClick={() => onDeleteEpisode(series, season.id, ep)}
-                          className="flex h-7 w-7 items-center justify-center rounded-lg border border-rose-100 bg-white hover:bg-rose-50 text-rose-500 transition-colors cursor-pointer"
-                          title="Remove Episode"
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </button>
+                        {/* ⋮ Menu for Episode (Contains Delete episode per #11) */}
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveEpMenuId(activeEpMenuId === ep.id ? null : ep.id);
+                            }}
+                            className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer shadow-2xs"
+                            aria-label="Episode options"
+                          >
+                            <MoreVertical className="h-3.5 w-3.5" />
+                          </button>
+
+                          {activeEpMenuId === ep.id && (
+                            <div
+                              onClick={(e) => e.stopPropagation()}
+                              className="absolute right-0 top-full mt-1.5 w-36 rounded-xl border border-[#E7E3DC] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in"
+                            >
+                              {ep.externalUrl && (
+                                <a
+                                  href={ep.externalUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={() => setActiveEpMenuId(null)}
+                                  className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors"
+                                >
+                                  <ExternalLink className="h-3.5 w-3.5 text-[#797570]" />
+                                  <span>View</span>
+                                </a>
+                              )}
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setActiveEpMenuId(null);
+                                  onDeleteEpisode(series, season.id, ep);
+                                }}
+                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-rose-50 transition-colors cursor-pointer"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                                <span>Delete episode</span>
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   );
@@ -924,24 +1048,24 @@ export default function DashboardContentPage() {
   const promptDeleteEpisode = (s: Series, seasonId: string, ep: Episode) => {
     setConfirmModal({
       title: "Remove this episode?",
-      description: `${formatEpisodeNumber(ep.episodeNumber)} will be removed from this series. The original content will remain on its platform.`,
+      description: `Episode ${formatEpisodeNumber(ep.episodeNumber)} will be removed from this series. The original content will remain on its platform.`,
       action: async () => {
         await SeriesService.removeEpisode(s.id, seasonId, ep.id);
-        showToast(`${formatEpisodeNumber(ep.episodeNumber)} removed! 🗑️`);
+        showToast(`Episode ${formatEpisodeNumber(ep.episodeNumber)} removed! 🗑️`);
         refresh();
       },
     });
   };
 
   return (
-    <div className="space-y-6">
-      {/* 1. PAGE HEADER */}
+    <div className="space-y-6 w-full pb-12 text-left">
+      {/* 1. PAGE HEADER: Content + description + Create Series button (h-11 rounded-xl) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#17131A] tracking-tight">
+          <h1 className="text-[28px] sm:text-[30px] font-bold tracking-tight text-[#181716] leading-tight">
             Content
           </h1>
-          <p className="text-xs sm:text-sm text-[#6F6872] font-medium mt-1">
+          <p className="text-sm sm:text-[15px] text-[#54514D] font-normal mt-1">
             Organize your multi-part content into series your audience can watch in order.
           </p>
         </div>
@@ -951,11 +1075,10 @@ export default function DashboardContentPage() {
             type="button"
             onClick={handleOpenCreateSeries}
             disabled={seriesUsage.isLimitReached}
-            className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-colors shadow-2xs cursor-pointer ${
-              seriesUsage.isLimitReached
-                ? "bg-[#FAF8FA] border border-[#ECE8EB] text-[#6F6872] opacity-60 cursor-not-allowed"
-                : "bg-[#803D63] hover:bg-[#6F3456] text-white"
-            }`}
+            className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 h-11 px-5 rounded-xl text-sm font-medium transition-colors shadow-xs cursor-pointer ${seriesUsage.isLimitReached
+                ? "bg-[#FAF8F5] border border-[#E7E3DC] text-[#797570] opacity-60 cursor-not-allowed"
+                : "bg-[#151933] hover:bg-[#2c1937] text-white"
+              }`}
           >
             <Plus className="h-4 w-4" />
             <span>Create Series</span>
@@ -963,137 +1086,80 @@ export default function DashboardContentPage() {
         </div>
       </div>
 
-      {/* 2. COMPACT CONTENT SUMMARY (3 cards) */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-        {/* Card 1: Series Created */}
-        <div className="rounded-2xl border border-[#ECE8EB] bg-white p-4 space-y-1.5 shadow-2xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#6F6872] uppercase tracking-wider">
-              Series Created
-            </span>
-            <Film className="h-4 w-4 text-[#803D63]" />
-          </div>
-          <p className="font-display text-2xl font-bold text-[#17131A]">
-            {series.length} of {EARLY_ACCESS_LIMITS.maxSeries}
-          </p>
-          <p className="text-[11px] text-[#6F6872] font-medium">
-            {EARLY_ACCESS_LIMITS.maxSeries - series.length} series slots remaining
-          </p>
+      {/* 3 & 4. COMPACT CONTENT INFO ROW (Replaces the 3 big metric cards) */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#E7E3DC] bg-white px-5 py-3.5 shadow-xs">
+        <div className="flex flex-wrap items-center gap-2.5 text-sm font-medium text-[#181716]">
+          <span className="font-semibold text-[#181716]">
+            {series.length} / {EARLY_ACCESS_LIMITS.maxSeries} Series
+          </span>
+          <span className="text-[#797570]/40">·</span>
+          <span className="font-semibold text-[#181716]">
+            {totalEpisodesCount} {totalEpisodesCount === 1 ? "Episode" : "Episodes"}
+          </span>
+          <span className="text-[#797570]/40">·</span>
+          <span className="inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#151933]/[0.08] text-[#151933] border border-[#151933]/20">
+            Early Access
+          </span>
         </div>
 
-        {/* Card 2: Total Episodes */}
-        <div className="rounded-2xl border border-[#ECE8EB] bg-white p-4 space-y-1.5 shadow-2xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#6F6872] uppercase tracking-wider">
-              Total Episodes
-            </span>
-            <Layers className="h-4 w-4 text-[#803D63]" />
-          </div>
-          <p className="font-display text-2xl font-bold text-[#17131A]">
-            {totalEpisodesCount} total
-          </p>
-          <p className="text-[11px] text-[#6F6872] font-medium">
-            Across {series.length} {series.length === 1 ? "series" : "series"}
-          </p>
-        </div>
-
-        {/* Card 3: Early Access Status */}
-        <div className="rounded-2xl border border-[#ECE8EB] bg-white p-4 space-y-1.5 shadow-2xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#6F6872] uppercase tracking-wider">
-              Early Access
-            </span>
-            <Sparkles className="h-4 w-4 text-[#803D63]" />
-          </div>
-          <p className="font-display text-2xl font-bold text-[#17131A]">
-            Active
-          </p>
-          <p className="text-[11px] text-[#6F6872] font-medium">
-            Up to 5 episodes per series
-          </p>
+        <div className="text-xs text-[#797570] font-normal">
+          {EARLY_ACCESS_LIMITS.maxSeries - series.length > 0
+            ? `${EARLY_ACCESS_LIMITS.maxSeries - series.length} series slots remaining`
+            : "All series slots filled"}
         </div>
       </div>
 
-      {/* 3. TOOLBAR (Search) */}
+      {/* TOOLBAR (Search) if multiple series */}
       {series.length > 1 && (
         <div className="flex items-center justify-between gap-3">
           <div className="relative max-w-xs w-full">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#6F6872]" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#797570]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search series"
-              className="w-full rounded-xl border border-[#ECE8EB] bg-white pl-9 pr-3.5 py-2 text-xs text-[#17131A] placeholder:text-[#6F6872]/60 focus:outline-none focus:border-[#803D63] focus:ring-1 focus:ring-[#803D63]/20 transition-colors"
+              placeholder="Search series..."
+              className="w-full h-10 rounded-xl border border-[#E7E3DC] bg-white pl-9 pr-3 text-xs sm:text-sm text-[#181716] placeholder:text-[#797570]/60 focus:outline-none focus:border-[#151933] focus:ring-1 focus:ring-[#151933]/20 transition-colors"
             />
           </div>
         </div>
       )}
 
-      {/* 4. SERIES LIST SECTION */}
+      {/* 5 & 6. SERIES LIST SECTION: Simple "Series" heading, no duplicate counts/descriptions */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between px-0.5">
-          <div>
-            <h2 className="font-display text-base font-bold text-[#17131A]">
-              Your Series
-            </h2>
-            <p className="text-xs text-[#6F6872] font-medium mt-0.5">
-              Manage your series and keep every episode in the correct order.
-            </p>
-          </div>
-          <span className="text-xs font-semibold text-[#6F6872]">
-            {filteredSeries.length} {filteredSeries.length === 1 ? "series" : "series"}
-          </span>
-        </div>
+        <h2 className="text-base sm:text-lg font-bold text-[#181716]">
+          Series
+        </h2>
 
-        {/* Empty State */}
+        {/* 15. Clean Empty State */}
         {series.length === 0 ? (
-          <div className="rounded-2xl border border-[#ECE8EB] bg-white p-8 text-center space-y-4 shadow-2xs">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F7EDF3] text-[#803D63] mx-auto">
-              <Film className="h-6 w-6" />
-            </div>
-
+          <div className="rounded-2xl border border-[#E7E3DC] bg-white p-8 sm:p-12 text-center space-y-4 shadow-xs">
             <div className="space-y-1 max-w-md mx-auto">
-              <h3 className="font-display text-base font-bold text-[#17131A]">
-                Create your first content series
+              <h3 className="text-base sm:text-lg font-bold text-[#181716]">
+                Create your first series
               </h3>
-              <p className="text-xs text-[#6F6872] font-medium leading-relaxed">
-                Bring related reels and videos together so followers can start from Part 1 and find every next episode.
+              <p className="text-xs sm:text-sm text-[#54514D] font-normal leading-relaxed">
+                Organize multi-part content so your audience can watch it in order.
               </p>
-            </div>
-
-            {/* Guided Steps */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 max-w-xl mx-auto text-left">
-              {[
-                { num: "01", label: "Name your series" },
-                { num: "02", label: "Add content links" },
-                { num: "03", label: "Arrange in order" },
-                { num: "04", label: "Share one link" },
-              ].map((step) => (
-                <div key={step.num} className="rounded-xl border border-[#ECE8EB] bg-[#FAF8FA] p-2.5 space-y-0.5">
-                  <span className="text-[10px] font-bold text-[#803D63]">{step.num}</span>
-                  <p className="text-xs font-semibold text-[#17131A]">{step.label}</p>
-                </div>
-              ))}
             </div>
 
             <div className="pt-2">
               <button
                 type="button"
                 onClick={handleOpenCreateSeries}
-                className="inline-flex items-center gap-2 rounded-xl bg-[#803D63] hover:bg-[#6F3456] px-5 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
+                className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-[#151933] hover:bg-[#2c1937] text-sm font-medium text-white transition-colors cursor-pointer shadow-xs"
               >
                 <Plus className="h-4 w-4" />
-                <span>Create First Series</span>
+                <span>Create Series</span>
               </button>
             </div>
           </div>
         ) : filteredSeries.length === 0 ? (
-          <div className="rounded-2xl border border-[#ECE8EB] bg-white p-8 text-center text-xs text-[#6F6872]">
+          <div className="rounded-2xl border border-[#E7E3DC] bg-white p-6 text-center text-xs text-[#797570]">
             No series matching &ldquo;{searchQuery}&rdquo;.
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="rounded-2xl border border-[#E7E3DC] bg-white divide-y divide-[#E7E3DC] shadow-xs">
             {filteredSeries.map((s) => (
               <SeriesCard
                 key={s.id}
@@ -1114,7 +1180,6 @@ export default function DashboardContentPage() {
       </div>
 
       {/* 5. DRAWERS & MODALS */}
-      {/* Create / Edit Series Drawer */}
       <SeriesDrawer
         isOpen={isSeriesDrawerOpen}
         onClose={() => setIsSeriesDrawerOpen(false)}
@@ -1124,7 +1189,6 @@ export default function DashboardContentPage() {
         onLimitTrigger={() => setLimitModalState({ isOpen: true, type: "series" })}
       />
 
-      {/* Add / Edit Episode Drawer */}
       <EpisodeDrawer
         isOpen={isEpisodeDrawerOpen}
         onClose={() => setIsEpisodeDrawerOpen(false)}
@@ -1134,7 +1198,6 @@ export default function DashboardContentPage() {
         onLimitTrigger={(seriesTitle) => setLimitModalState({ isOpen: true, type: "episode", seriesTitle })}
       />
 
-      {/* Share Series Modal */}
       {shareSeriesData && (
         <ShareSeriesModal
           isOpen={Boolean(shareSeriesData)}
@@ -1144,7 +1207,6 @@ export default function DashboardContentPage() {
         />
       )}
 
-      {/* Limit Reached Modal Popup */}
       <LimitReachedModal
         isOpen={limitModalState.isOpen}
         onClose={() => setLimitModalState({ ...limitModalState, isOpen: false })}
@@ -1152,7 +1214,6 @@ export default function DashboardContentPage() {
         seriesTitle={limitModalState.seriesTitle}
       />
 
-      {/* Confirmation Modal */}
       <ConfirmModal
         isOpen={Boolean(confirmModal)}
         onClose={() => setConfirmModal(null)}

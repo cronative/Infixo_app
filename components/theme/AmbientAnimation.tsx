@@ -152,7 +152,7 @@ const DETERMINISTIC_SHAPES = [
 
 export const AmbientAnimation = memo(function AmbientAnimation({
   type = "floating-particles",
-  colors = ["#803D63", "#C084FC", "#60A5FA"],
+  colors = ["#151933", "#C084FC", "#60A5FA"],
   themeKey,
   contained = false,
 }: AmbientAnimationProps) {

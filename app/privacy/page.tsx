@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck, Lock, Eye, FileText, CheckCircle2 } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
+import { CookiePreferencesButton } from "@/components/shared/CookiePreferencesButton";
 
 export const metadata = {
   title: "Privacy Policy — Inflixo",
@@ -9,14 +10,14 @@ export const metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="min-h-dvh bg-[#FAF8FF] text-[#0F172A] flex flex-col font-sans selection:bg-purple-100 selection:text-[#803D63]">
+    <div className="min-h-dvh bg-[#FAF9F6] text-[#181716] flex flex-col font-sans selection:bg-[#151933]/10 selection:text-[#151933]">
       {/* Navbar */}
-      <header className="safe-top sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-purple-100/80">
+      <header className="safe-top sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#E7E3DC]">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 sm:px-8">
           <Logo size="md" />
           <Link
             href="/"
-            className="inline-flex items-center gap-2 rounded-full border border-purple-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:text-[#803D63] hover:border-purple-300 transition-all"
+            className="inline-flex items-center gap-2 rounded-full border border-[#E7E3DC] bg-white px-4 py-2 text-xs font-bold text-[#54514D] hover:text-[#151933] hover:border-[#151933]/30 transition-all"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Back to Home
@@ -27,23 +28,23 @@ export default function PrivacyPolicyPage() {
       {/* Main Content */}
       <main className="mx-auto max-w-4xl px-5 sm:px-8 py-12 sm:py-16 flex-1 text-left space-y-10">
         {/* Header Banner */}
-        <div className="space-y-3 border-b border-purple-200/80 pb-8">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-purple-100 px-3 py-1 text-xs font-bold text-[#803D63]">
+        <div className="space-y-3 border-b border-[#E7E3DC] pb-8">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#151933]/[0.09] border border-[#151933]/20 px-3 py-1 text-xs font-bold text-[#151933]">
             <ShieldCheck className="h-4 w-4" />
             <span>LEGAL &amp; PRIVACY</span>
           </div>
-          <h1 className="font-display text-4xl sm:text-5xl font-bold text-slate-900 tracking-normal">
+          <h1 className="font-display text-4xl sm:text-5xl font-bold text-[#181716] tracking-tight">
             Privacy Policy
           </h1>
-          <p className="text-sm font-semibold text-slate-500">
-            Last Updated: August 19, 2026 • TrustIQ Labs PVT LTD / Inflixo
+          <p className="text-sm font-semibold text-[#797570]">
+            Last Updated: August 19, 2026 • Inflixo
           </p>
         </div>
 
         {/* Policy Body */}
-        <div className="space-y-8 text-sm sm:text-base leading-relaxed text-slate-700 font-normal">
+        <div className="space-y-8 text-sm sm:text-base leading-relaxed text-[#54514D] font-normal">
           <section className="space-y-3">
-            <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
               1. Overview &amp; Commitment
             </h2>
             <p>
@@ -52,23 +53,23 @@ export default function PrivacyPolicyPage() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
               2. Information We Collect
             </h2>
             <div className="space-y-2">
-              <p className="font-semibold text-slate-900">A. Account Information:</p>
+              <p className="font-semibold text-[#181716]">A. Account Information:</p>
               <p>
                 When you create an account, we collect your email address, creator handle (username), display name, profile photo URL, and bio information.
               </p>
             </div>
             <div className="space-y-2 pt-2">
-              <p className="font-semibold text-slate-900">B. Connected Social Platform Data:</p>
+              <p className="font-semibold text-[#181716]">B. Connected Social Platform Data:</p>
               <p>
                 When you connect your Instagram, YouTube, or Facebook accounts via authorized OAuth APIs, we fetch publicly available metrics such as follower/subscriber counts, channel titles, and post counts solely to calculate and display your <strong>Total Fanbase</strong> on your public profile.
               </p>
             </div>
             <div className="space-y-2 pt-2">
-              <p className="font-semibold text-slate-900">C. Content &amp; Series Metadata:</p>
+              <p className="font-semibold text-[#181716]">C. Content &amp; Series Metadata:</p>
               <p>
                 Titles, descriptions, poster thumbnails, and external video URLs added to your organized content <strong>Series</strong>.
               </p>
@@ -76,7 +77,7 @@ export default function PrivacyPolicyPage() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
               3. How We Use Your Information
             </h2>
             <ul className="list-disc pl-5 space-y-2">
@@ -88,7 +89,7 @@ export default function PrivacyPolicyPage() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
               4. Data Protection &amp; Security
             </h2>
             <p>
@@ -97,7 +98,7 @@ export default function PrivacyPolicyPage() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
               5. Third-Party API Services
             </h2>
             <p>
@@ -106,40 +107,42 @@ export default function PrivacyPolicyPage() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
               6. Your Rights &amp; Account Erasure
             </h2>
             <p>
-              You maintain full ownership of your profile data. You have the right to inspect, edit, or request complete deletion of your Inflixo creator profile, series listings, and connected social tokens. To request complete account erasure, email us at <strong className="text-[#803D63]">privacy@inflixo.com</strong>.
+              You maintain full ownership of your profile data. You have the right to inspect, edit, or request complete deletion of your Inflixo creator profile, series listings, and connected social tokens. To request complete account erasure, email us at <strong className="text-[#151933]">privacy@inflixo.com</strong>.
             </p>
           </section>
 
-          <section className="space-y-3 border-t border-purple-200/80 pt-6">
-            <h2 className="font-display text-xl font-bold text-slate-900">
+          <section className="space-y-3 border-t border-[#E7E3DC] pt-6">
+            <h2 className="font-display text-xl font-bold text-[#181716]">
               7. Contact Privacy Team
             </h2>
-            <p className="text-sm font-medium text-slate-600">
+            <p className="text-sm font-medium text-[#54514D]">
               If you have any questions or concerns regarding this Privacy Policy, please reach out to our privacy compliance office at:
             </p>
-            <div className="rounded-2xl bg-white border border-purple-200 p-4 space-y-1 text-xs sm:text-sm font-semibold text-slate-800">
+            <div className="rounded-2xl bg-white border border-[#E7E3DC] p-4 space-y-1 text-xs sm:text-sm font-semibold text-[#181716]">
               <p>TrustIQ Labs PVT LTD — Inflixo Legal Division</p>
-              <p className="text-[#803D63]">Email: privacy@inflixo.com</p>
+              <p className="text-[#151933]">Email: privacy@inflixo.com</p>
             </div>
           </section>
         </div>
       </main>
 
       {/* Public Footer */}
-      <footer className="border-t border-purple-100 bg-white py-8">
-        <div className="mx-auto max-w-[1200px] px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-slate-600">
+      <footer className="border-t border-[#E7E3DC] bg-white py-8">
+        <div className="mx-auto max-w-[1200px] px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-[#54514D]">
           <Logo size="sm" />
-          <div className="flex items-center gap-6">
-            <Link href="/" className="hover:text-[#803D63] transition-colors">Home</Link>
-            <Link href="/#pricing" className="hover:text-[#803D63] transition-colors">Pricing</Link>
-            <Link href="/privacy" className="text-[#803D63] font-bold">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-[#803D63] transition-colors">Terms of Service</Link>
+          <div className="flex flex-wrap items-center gap-6">
+            <Link href="/" className="hover:text-[#151933] transition-colors">Home</Link>
+            <Link href="/#pricing" className="hover:text-[#151933] transition-colors">Pricing</Link>
+            <Link href="/privacy" className="text-[#151933] font-bold">Privacy Policy</Link>
+            <Link href="/cookies" className="hover:text-[#151933] transition-colors">Cookie Policy</Link>
+            <CookiePreferencesButton className="hover:text-[#151933] transition-colors cursor-pointer font-semibold" />
+            <Link href="/terms" className="hover:text-[#151933] transition-colors">Terms of Service</Link>
           </div>
-          <p className="text-slate-400">&copy; 2026 Inflixo · TrustIQ Labs PVT LTD</p>
+          <p className="text-[#797570]">&copy; 2026 Inflixo. All rights reserved.</p>
         </div>
       </footer>
     </div>

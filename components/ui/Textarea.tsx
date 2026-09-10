@@ -16,7 +16,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className="w-full">
         {label && (
-          <label htmlFor={inputId} className="mb-1.5 block text-sm font-semibold text-inflixo-navy">
+          <label htmlFor={inputId} className="mb-1 block text-xs font-semibold uppercase tracking-wider text-[#334155]">
             {label}
           </label>
         )}
@@ -25,21 +25,20 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={inputId}
           value={value}
           maxLength={maxLength}
-          className={`w-full resize-none rounded-xl border bg-white px-3.5 py-2.5 text-xs sm:text-sm font-bold text-[#0F172A] outline-none transition-colors placeholder:text-slate-400 placeholder:font-normal focus:border-[#803D63] focus:ring-1 focus:ring-[#803D63] ${
-            error ? "border-red-400 bg-red-50/10" : "border-[#E5E7EB]"
-          } ${className}`}
+          className={`w-full resize-none rounded-xl border bg-white px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-[#151933] outline-none transition-colors placeholder:text-[#94a3b8] placeholder:font-normal border-[#cbd5e1] focus:border-[#151933] focus:ring-2 focus:ring-[#151933]/10 ${error ? "border-[#ef4444] bg-rose-50/20" : "border-[#cbd5e1]"
+            } ${className}`}
           {...rest}
         />
         <div className="mt-1.5 flex items-center justify-between">
           {error ? (
-            <p className="text-xs font-medium text-rose-500">{error}</p>
+            <p className="text-xs font-semibold text-[#ef4444]">{error}</p>
           ) : hint ? (
-            <p className="text-xs text-muted">{hint}</p>
+            <p className="text-xs text-[#64748b]">{hint}</p>
           ) : (
             <span />
           )}
           {maxLength && (
-            <span className="text-xs text-muted">
+            <span className="text-xs text-[#94a3b8]">
               {currentLength}/{maxLength}
             </span>
           )}
