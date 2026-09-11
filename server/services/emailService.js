@@ -7,12 +7,17 @@ const transporter = nodemailer.createTransport({
   secure: process.env.SMTP_SECURE === "true",
   auth: {
     user: process.env.SMTP_USER || "inflixoapp@gmail.com",
-    pass: process.env.SMTP_PASS || "ftiddrjlspvjiodl",
+    pass: process.env.SMTP_PASS,
   },
 });
 
 async function sendOtpEmail(toEmail, otpCode) {
   const from = process.env.EMAIL_FROM || '"Inflixo" <inflixoapp@gmail.com>';
+
+  if (!process.env.SMTP_PASS) {
+    console.error("❌ SMTP_PASS is missing. OTP email was not sent.");
+    return false;
+  }
 
   const html = `
     <!DOCTYPE html>
@@ -22,10 +27,10 @@ async function sendOtpEmail(toEmail, otpCode) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
       </head>
       <body style="margin:0; padding:32px 16px; background-color:#ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-        <div style="max-width: 440px; margin: 0 auto; padding: 32px 24px; border-radius: 20px; background-color: #ffffff; border: 1px solid #E9E3F5; text-align: center;">
+        <div style="max-width: 440px; margin: 0 auto; padding: 32px 24px; border-radius: 20px; background-color: #ffffff; border: 1px solid #D9DEE8; text-align: center;">
           <!-- Inflixo Logo -->
           <div style="margin-bottom: 24px;">
-            <span style="font-size: 22px; font-weight: 900; color: #651FFF; letter-spacing: -0.5px;">
+            <span style="font-size: 22px; font-weight: 900; color: #151933; letter-spacing: -0.5px;">
               Inflixo
             </span>
           </div>
@@ -41,8 +46,8 @@ async function sendOtpEmail(toEmail, otpCode) {
           </p>
 
           <!-- 4-Digit Code Box -->
-          <div style="background-color: #FAF9FF; border: 1px solid #E9E3F5; border-radius: 16px; padding: 18px; margin-bottom: 20px;">
-            <span style="font-size: 36px; font-weight: 900; letter-spacing: 12px; color: #651FFF; font-family: monospace;">
+          <div style="background-color: #F4F6F8; border: 1px solid #D9DEE8; border-radius: 16px; padding: 18px; margin-bottom: 20px;">
+            <span style="font-size: 36px; font-weight: 900; letter-spacing: 12px; color: #151933; font-family: monospace;">
               ${otpCode}
             </span>
           </div>

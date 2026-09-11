@@ -13,7 +13,7 @@ export function PlatformCard({
   children: ReactNode;
 }) {
   return (
-    <div className="bg-white border border-[#E7E3DC] rounded-xl p-3.5 sm:p-4 shadow-xs">
+    <div className="rounded-2xl border border-[#e2e8f0] bg-white p-3.5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:shadow-md sm:p-4">
       <div className="space-y-2.5">{children}</div>
     </div>
   );

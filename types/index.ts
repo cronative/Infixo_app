@@ -248,6 +248,16 @@ export interface CustomLink {
   url: string;
   icon?: string;
   isEnabled?: boolean;
+  kind?: "link" | "collection";
+  items?: CustomLinkItem[];
+}
+
+export interface CustomLinkItem {
+  id: string;
+  title: string;
+  url: string;
+  icon?: string;
+  isEnabled?: boolean;
 }
 
 export const DEFAULT_CUSTOM_LINKS: CustomLink[] = [];
@@ -273,6 +283,25 @@ export type ThemeAnimationType =
 
 export type ThemeKey =
   | "minimal-white"
+  | "sage-studio"
+  | "blush-paper"
+  | "studio-frost"
+  | "taj-mahal"
+  | "marine-drive"
+  | "burj-khalifa"
+  | "somnath-temple"
+  | "dwarka-temple"
+  | "goa-beach"
+  | "creator-studio"
+  | "neon-reels"
+  | "podcast-lounge"
+  | "food-vlog"
+  | "gamer-stream"
+  | "love-letter"
+  | "christmas-snow"
+  | "mountain-mist"
+  | "street-food"
+  | "cafe-mocha"
   | "signature-purple"
   | "midnight"
   | "neon-grid"
@@ -707,5 +736,3 @@ export type AnalyticsEventType =
   | "brand_click"
   | "team_social_click"
   | "collaboration_click";
-
-

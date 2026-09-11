@@ -208,16 +208,16 @@ export default function CreatorEmailSenderPage() {
   const progressPercentage = parsedEmails.length > 0 ? Math.round(((currentIndex + (isDispatching ? 1 : 0)) / parsedEmails.length) * 100) : 0;
 
   return (
-    <div className="min-h-dvh bg-gradient-to-b from-indigo-50/70 via-slate-50 to-purple-50/60 text-slate-900 selection:bg-[#151933]/20">
+    <div className="min-h-dvh bg-[#f8fafc] text-slate-900 selection:bg-[#151933]/20">
       {/* Light Top Navigation Bar */}
-      <header className="sticky top-0 z-50 border-b border-purple-100 bg-white/90 backdrop-blur-md px-4 py-3 shadow-2xs">
+      <header className="sticky top-0 z-50 border-b border-[#e2e8f0] bg-white/90 backdrop-blur-md px-4 py-3 shadow-2xs">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Link href="/admin/dashboard" className="text-slate-500 hover:text-[#151933] transition-colors">
+            <Link href="/admin/dashboard" className="text-slate-500 hover:text-brand-primary transition-colors">
               <ArrowLeft className="h-5 w-5" />
             </Link>
             <Logo size="sm" />
-            <div className="hidden sm:flex items-center gap-1.5 rounded-full bg-purple-50 border border-purple-200 px-3 py-1 text-xs font-bold text-[#151933]">
+            <div className="hidden sm:flex items-center gap-1.5 rounded-full bg-[#f1f5f9] border border-[#151933]/20 px-3 py-1 text-xs font-bold text-[#151933]">
               <Mail className="h-3.5 w-3.5 text-[#151933]" />
               <span>Creator Email Dispatch Engine</span>
             </div>
@@ -236,7 +236,7 @@ export default function CreatorEmailSenderPage() {
       <main className="mx-auto max-w-6xl px-4 py-8 space-y-8">
         {/* Intro Header */}
         <div className="space-y-2 text-left">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-purple-100/80 border border-purple-200 px-3.5 py-1 text-xs font-bold text-[#151933]">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#151933]/[0.08] border border-[#151933]/20 px-3.5 py-1 text-xs font-bold text-[#151933]">
             <Sparkles className="h-3.5 w-3.5 text-[#151933]" />
             <span>Sequential Dispatch Engine</span>
           </div>
@@ -268,12 +268,12 @@ export default function CreatorEmailSenderPage() {
                       type="button"
                       onClick={() => handleSelectTemplate(tmpl.id)}
                       className={`p-4 rounded-2xl border text-left transition-all cursor-pointer relative ${isSelected
-                        ? "bg-purple-50/80 border-[#151933] ring-2 ring-[#151933]/20 shadow-md"
-                        : "bg-white border-slate-200 hover:border-purple-300 text-slate-800 shadow-2xs"
+                        ? "bg-[#151933]/[0.06] border-[#151933] ring-2 ring-[#151933]/20 shadow-md"
+                        : "bg-white border-slate-200 hover:border-brand-border text-slate-800 shadow-2xs"
                         }`}
                     >
                       <div className="flex items-center justify-between pb-1">
-                        <span className={`text-xs font-extrabold uppercase tracking-wide ${isSelected ? "text-[#151933]" : "text-purple-600"}`}>
+                        <span className={`text-xs font-extrabold uppercase tracking-wide ${isSelected ? "text-[#151933]" : "text-[#151933]"}`}>
                           {tmpl.language}
                         </span>
                         {isSelected && <Check className="h-4 w-4 text-[#151933] stroke-[3]" />}
@@ -326,7 +326,7 @@ export default function CreatorEmailSenderPage() {
           {/* Right Column: Recipient Email Input & Dispatch Progress */}
           <div className="lg:col-span-5 space-y-6">
             {/* Recipient Emails Area */}
-            <div className="rounded-3xl border border-purple-100 bg-white p-6 space-y-4 shadow-xl shadow-purple-500/5">
+            <div className="rounded-3xl border border-[#e2e8f0] bg-white p-6 space-y-4 shadow-xl shadow-slate-500/5">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-extrabold uppercase tracking-wider text-[#151933] flex items-center gap-1.5">
                   <Users className="h-4 w-4" />
@@ -334,7 +334,7 @@ export default function CreatorEmailSenderPage() {
                 </label>
 
                 {parsedEmails.length > 0 && (
-                  <span className="rounded-full bg-purple-50 border border-purple-200 px-2.5 py-0.5 text-[11px] font-extrabold text-[#151933]">
+                  <span className="rounded-full bg-[#f1f5f9] border border-[#151933]/20 px-2.5 py-0.5 text-[11px] font-extrabold text-[#151933]">
                     {parsedEmails.length} {parsedEmails.length === 1 ? "Email" : "Emails"} Ready
                   </span>
                 )}
@@ -356,7 +356,7 @@ export default function CreatorEmailSenderPage() {
                   </span>
                   <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
                     {parsedEmails.map((em, idx) => (
-                      <span key={idx} className="bg-white text-[#151933] border border-purple-200 text-[10px] font-bold px-2 py-0.5 rounded-md shadow-2xs">
+                      <span key={idx} className="bg-white text-[#151933] border border-[#151933]/20 text-[10px] font-bold px-2 py-0.5 rounded-md shadow-2xs">
                         {em}
                       </span>
                     ))}
@@ -371,7 +371,7 @@ export default function CreatorEmailSenderPage() {
                     type="button"
                     onClick={handleStartDispatch}
                     disabled={parsedEmails.length === 0 || !subject.trim() || !bodyText.trim()}
-                    className="w-full rounded-xl bg-[#151933] hover:bg-[#6d3354] px-5 py-3 text-sm font-bold text-white shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full rounded-xl bg-[#151933] hover:bg-brand-hover px-5 py-3 text-sm font-bold text-white shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Send className="h-4 w-4" />
                     <span>Send {parsedEmails.length} Email{parsedEmails.length === 1 ? "" : "s"} One-by-One</span>
@@ -381,7 +381,7 @@ export default function CreatorEmailSenderPage() {
                     <button
                       type="button"
                       onClick={handleTogglePause}
-                      className="flex-1 rounded-xl bg-amber-600 hover:bg-amber-500 px-4 py-2.5 text-xs font-bold text-white transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                      className="flex-1 rounded-xl bg-amber-600 hover:bg-brand-hover px-4 py-2.5 text-xs font-bold text-white transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
                     >
                       {isPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
                       <span>{isPaused ? "Resume Queue" : "Pause Queue"}</span>
@@ -390,7 +390,7 @@ export default function CreatorEmailSenderPage() {
                     <button
                       type="button"
                       onClick={handleStopDispatch}
-                      className="rounded-xl bg-rose-600 hover:bg-rose-500 px-4 py-2.5 text-xs font-bold text-white transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                      className="rounded-xl bg-rose-600 hover:bg-rose-700 px-4 py-2.5 text-xs font-bold text-white transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
                     >
                       <XCircle className="h-4 w-4" />
                       <span>Stop</span>
@@ -402,7 +402,7 @@ export default function CreatorEmailSenderPage() {
 
             {/* Real-time Dispatch Progress & Logs Console */}
             {dispatchLogs.length > 0 && (
-              <div className="rounded-3xl border border-purple-100 bg-white p-6 space-y-4 shadow-xl shadow-purple-500/5">
+              <div className="rounded-3xl border border-[#e2e8f0] bg-white p-6 space-y-4 shadow-xl shadow-slate-500/5">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xs font-extrabold uppercase tracking-wider text-[#151933] flex items-center gap-1.5">
                     <RotateCcw className={`h-4 w-4 ${isDispatching ? "animate-spin text-[#151933]" : ""}`} />

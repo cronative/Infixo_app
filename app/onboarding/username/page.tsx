@@ -255,7 +255,7 @@ export default function UsernameStepPage() {
                       key={prefix}
                       type="button"
                       onClick={() => handlePickSuggestion(suggested)}
-                      className="rounded-lg bg-[#f8fafc] hover:bg-[#f1f5f9] hover:text-[#151933] border border-[#e2e8f0] px-2.5 py-1 text-xs font-semibold text-[#475569] transition-all cursor-pointer"
+                      className="rounded-lg bg-[#f8fafc] hover:bg-surface-soft hover:text-brand-primary border border-[#e2e8f0] px-2.5 py-1 text-xs font-semibold text-[#475569] transition-all cursor-pointer"
                     >
                       @{suggested}
                     </button>
@@ -270,7 +270,7 @@ export default function UsernameStepPage() {
             type="button"
             onClick={handleClaimUsername}
             disabled={!isReadyToClaim || submitting}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#151933] hover:bg-[#2c1b36] text-white font-semibold text-xs sm:text-sm h-12 transition-all cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#151933] hover:bg-brand-hover text-white font-semibold text-xs sm:text-sm h-12 transition-all cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
           >
             {submitting ? (
               <>

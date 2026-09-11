@@ -92,13 +92,13 @@ export function LocationSearchModal({
       icon={<MapPin className="h-4 w-4" />}
     >
       {/* Mode Tabs */}
-      <div className="flex border-b border-[#E7E3DC] bg-[#fbfbfb] p-1 px-4 gap-1.5 shrink-0">
+      <div className="flex border-b border-[#e2e8f0] bg-[#f8fafc] p-1 px-4 gap-1.5 shrink-0">
         <button
           type="button"
           onClick={() => setMode("search")}
           className={`flex-1 rounded-lg py-1.5 text-xs font-semibold transition-colors cursor-pointer ${mode === "search"
-            ? "bg-white text-[#151933] shadow-xs border border-[#E7E3DC]"
-            : "text-[#797570] hover:text-[#181716]"
+            ? "bg-white text-[#151933] shadow-xs border border-[#e2e8f0]"
+            : "text-[#64748b] hover:text-[#151933]"
             }`}
         >
           Search Cities
@@ -107,8 +107,8 @@ export function LocationSearchModal({
           type="button"
           onClick={() => setMode("custom")}
           className={`flex-1 rounded-lg py-1.5 text-xs font-semibold transition-colors cursor-pointer ${mode === "custom"
-            ? "bg-white text-[#151933] shadow-xs border border-[#E7E3DC]"
-            : "text-[#797570] hover:text-[#181716]"
+            ? "bg-white text-[#151933] shadow-xs border border-[#e2e8f0]"
+            : "text-[#64748b] hover:text-[#151933]"
             }`}
         >
           Custom Location
@@ -120,20 +120,20 @@ export function LocationSearchModal({
           <div className="space-y-3">
             {/* Search Input */}
             <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#797570]" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
               <input
                 type="text"
                 autoFocus
                 placeholder="Search city, state, or country..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] py-2.5 pl-10 pr-4 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] py-2.5 pl-10 pr-4 text-xs font-semibold text-[#151933] placeholder:text-[#64748b]/60 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
             {/* Results List */}
             <div className="space-y-1.5 pt-1">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-[#797570] mb-1.5 text-left">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#64748b] mb-1.5 text-left">
                 {query ? `Matching Results (${filteredLocations.length})` : "Popular Locations"}
               </p>
 
@@ -143,17 +143,17 @@ export function LocationSearchModal({
                     key={idx}
                     type="button"
                     onClick={() => handleSelect(loc)}
-                    className="w-full flex items-center justify-between rounded-xl p-2.5 text-left border border-[#E7E3DC] bg-white hover:border-[#151933]/30 hover:bg-[#FAF8F5] transition-colors group cursor-pointer"
+                    className="w-full flex items-center justify-between rounded-xl p-2.5 text-left border border-[#e2e8f0] bg-white hover:border-[#cbd5e1] hover:bg-[#f1f5f9] transition-colors group cursor-pointer"
                   >
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#fbfbfb] text-[#797570] group-hover:bg-[#151933]/[0.08] group-hover:text-[#151933] transition-colors shrink-0">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#f8fafc] text-[#64748b] group-hover:bg-[#f1f5f9] group-hover:text-[#151933] transition-colors shrink-0">
                         <Building className="h-3.5 w-3.5" />
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-[#181716] group-hover:text-[#151933] transition-colors">
+                        <p className="text-xs font-bold text-[#151933] group-hover:text-[#151933] transition-colors">
                           {loc.city}
                         </p>
-                        <p className="text-[11px] text-[#797570] font-medium">
+                        <p className="text-[11px] text-[#64748b] font-medium">
                           {loc.state}, {loc.country}
                         </p>
                       </div>
@@ -165,8 +165,8 @@ export function LocationSearchModal({
                 ))
               ) : (
                 <div className="py-6 text-center space-y-2">
-                  <p className="text-xs font-bold text-[#181716]">No matching location found</p>
-                  <p className="text-xs text-[#797570]">
+                  <p className="text-xs font-bold text-[#151933]">No matching location found</p>
+                  <p className="text-xs text-[#64748b]">
                     Switch to the <b>Custom Location</b> tab above to enter your exact city.
                   </p>
                 </div>
@@ -176,43 +176,43 @@ export function LocationSearchModal({
         ) : (
           <div className="space-y-3.5 text-left">
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#181716]">City <span className="text-rose-500">*</span></label>
+              <label className="block text-xs font-bold text-[#151933]">City <span className="text-rose-500">*</span></label>
               <div className="relative">
-                <Building className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#797570]" />
+                <Building className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
                 <input
                   type="text"
                   placeholder="e.g. Surat, Austin, Kyoto"
                   value={customCity}
                   onChange={(e) => setCustomCity(e.target.value)}
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] py-2.5 pl-10 pr-3.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] py-2.5 pl-10 pr-3.5 text-xs font-semibold text-[#151933] placeholder:text-[#64748b]/60 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#181716]">State or Region <span className="text-[#797570] font-normal">(Optional)</span></label>
+              <label className="block text-xs font-bold text-[#151933]">State or Region <span className="text-[#64748b] font-normal">(Optional)</span></label>
               <div className="relative">
-                <Navigation className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#797570]" />
+                <Navigation className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
                 <input
                   type="text"
                   placeholder="e.g. Gujarat, California"
                   value={customState}
                   onChange={(e) => setCustomState(e.target.value)}
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] py-2.5 pl-10 pr-3.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] py-2.5 pl-10 pr-3.5 text-xs font-semibold text-[#151933] placeholder:text-[#64748b]/60 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#181716]">Country <span className="text-rose-500">*</span></label>
+              <label className="block text-xs font-bold text-[#151933]">Country <span className="text-rose-500">*</span></label>
               <div className="relative">
-                <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#797570]" />
+                <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
                 <input
                   type="text"
                   placeholder="e.g. India, United States, Japan"
                   value={customCountry}
                   onChange={(e) => setCustomCountry(e.target.value)}
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] py-2.5 pl-10 pr-3.5 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/60 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] py-2.5 pl-10 pr-3.5 text-xs font-semibold text-[#151933] placeholder:text-[#64748b]/60 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
             </div>
@@ -221,7 +221,7 @@ export function LocationSearchModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716] transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-xl border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#151933] transition-colors cursor-pointer"
               >
                 Cancel
               </button>
@@ -229,7 +229,7 @@ export function LocationSearchModal({
                 type="button"
                 onClick={handleSaveCustom}
                 disabled={!customCity.trim() || !customCountry.trim()}
-                className="bg-[#151933] hover:bg-[#2c1937] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
+                className="bg-[#151933] hover:bg-brand-hover text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
               >
                 Save Location
               </button>

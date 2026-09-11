@@ -43,7 +43,7 @@ export function BottomSheet({ isOpen, onClose, title, children }: BottomSheetPro
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-[#f1f5f9] transition-colors"
             aria-label="Close"
           >
             <X className="h-4 w-4" />

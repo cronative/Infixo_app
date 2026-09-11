@@ -16,13 +16,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-[#151933] text-white hover:bg-[#1e293b] active:scale-[0.99] disabled:opacity-50 disabled:bg-[#f1f5f9] disabled:text-[#94a3b8] disabled:cursor-not-allowed shadow-xs",
+    "bg-[#151933] text-white shadow-sm hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-md active:scale-[0.99] disabled:translate-y-0 disabled:opacity-50 disabled:bg-[#f1f5f9] disabled:text-[#94a3b8] disabled:cursor-not-allowed disabled:shadow-none",
   secondary:
-    "bg-[#ffffff] text-[#151933] border border-[#e2e8f0] hover:bg-[#f8fafc] hover:border-[#cbd5e1]",
+    "bg-[#ffffff] text-[#151933] border border-[#e2e8f0] shadow-xs hover:-translate-y-0.5 hover:bg-[#f8fafc] hover:border-[#cbd5e1] hover:shadow-sm",
   outline:
-    "bg-transparent text-[#151933] border border-[#e2e8f0] hover:bg-[#f8fafc] hover:border-[#cbd5e1]",
+    "bg-transparent text-[#151933] border border-[#e2e8f0] hover:-translate-y-0.5 hover:bg-[#f8fafc] hover:border-[#cbd5e1]",
   ghost: "bg-transparent text-[#475569] hover:text-[#151933] hover:bg-[#f1f5f9]",
-  danger: "bg-rose-50 text-[#ef4444] border border-rose-200 hover:bg-rose-100",
+  danger: "bg-rose-50 text-[#ef4444] border border-rose-200 hover:-translate-y-0.5 hover:bg-rose-100",
 };
 
 const sizeClasses: Record<Size, string> = {
@@ -41,7 +41,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         style={style}
-        className={`inline-flex items-center justify-center font-bold tracking-tight transition-all duration-150 cursor-pointer ${variantClasses[variant]} ${sizeClasses[size]} ${fullWidth ? "w-full" : ""} ${className}`}
+        className={`inline-flex items-center justify-center font-bold tracking-tight transition-all duration-200 cursor-pointer ${variantClasses[variant]} ${sizeClasses[size]} ${fullWidth ? "w-full" : ""} ${className}`}
         {...rest}
       >
         {loading ? <Loader2 className="h-4 w-4 animate-spin shrink-0" /> : icon}

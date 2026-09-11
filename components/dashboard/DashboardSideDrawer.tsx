@@ -62,13 +62,13 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
       />
 
       {/* Drawer Container (Slides in from Left) */}
-      <aside className="relative z-10 flex h-full w-[300px] max-w-[85vw] flex-col overflow-y-auto rounded-r-2xl bg-white shadow-xl transition-transform duration-300 animate-in slide-in-from-left">
+      <aside className="animate-in slide-in-from-left relative z-10 flex h-full w-[300px] max-w-[85vw] flex-col overflow-y-auto rounded-r-3xl border-r border-white/70 bg-white/95 shadow-2xl shadow-slate-950/15 backdrop-blur-xl transition-transform duration-300">
         {/* Top Header: Logo + Close Button */}
         <div className="flex items-center justify-between border-b border-[#e2e8f0] px-5 py-4">
           <Logo size="sm" />
           <button
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f8fafc] text-[#475569] hover:bg-[#f1f5f9] hover:text-[#151933] transition-all cursor-pointer"
+            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-[#475569] transition-all hover:border-[#cbd5e1] hover:bg-[#f1f5f9] hover:text-[#151933]"
             aria-label="Close menu"
           >
             <X className="h-4 w-4" />
@@ -122,12 +122,12 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                     key={item.href}
                     href={item.href}
                     onClick={onClose}
-                    className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold min-h-[44px] transition-colors border ${active
-                      ? "bg-[#f1f5f9] text-[#151933] border-[#e2e8f0]"
-                      : "border-transparent text-[#475569] hover:bg-[#f8fafc] hover:text-[#151933]"
+                    className={`flex min-h-[44px] items-center gap-3 rounded-xl border px-3 py-2.5 text-xs font-semibold transition-all ${active
+                      ? "border-[#cbd5e1] bg-[#151933] text-white shadow-sm"
+                      : "border-transparent text-[#475569] hover:translate-x-0.5 hover:border-[#e2e8f0] hover:bg-[#f8fafc] hover:text-[#151933]"
                       }`}
                   >
-                    <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#151933]" : "text-[#475569]"}`} />
+                    <Icon className={`h-4 w-4 shrink-0 ${active ? "text-white" : "text-[#475569]"}`} />
                     <span className="flex-1 truncate">{item.label}</span>
                   </Link>
                 );
@@ -149,12 +149,12 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                     key={item.href}
                     href={item.href}
                     onClick={onClose}
-                    className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold min-h-[44px] transition-colors border ${active
-                      ? "bg-[#f1f5f9] text-[#151933] border-[#e2e8f0]"
-                      : "border-transparent text-[#475569] hover:bg-[#f8fafc] hover:text-[#151933]"
+                    className={`flex min-h-[44px] items-center gap-3 rounded-xl border px-3 py-2.5 text-xs font-semibold transition-all ${active
+                      ? "border-[#cbd5e1] bg-[#151933] text-white shadow-sm"
+                      : "border-transparent text-[#475569] hover:translate-x-0.5 hover:border-[#e2e8f0] hover:bg-[#f8fafc] hover:text-[#151933]"
                       }`}
                   >
-                    <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#151933]" : "text-[#475569]"}`} />
+                    <Icon className={`h-4 w-4 shrink-0 ${active ? "text-white" : "text-[#475569]"}`} />
                     <span className="flex-1 truncate">{item.label}</span>
                   </Link>
                 );
@@ -168,7 +168,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
           <div className="flex items-center justify-between rounded-xl border border-[#e2e8f0] bg-white px-3 py-2 text-xs font-medium text-[#151933] shadow-xs">
             <div className="flex items-center gap-1.5">
               <Sparkles className="h-3.5 w-3.5 text-[#151933] shrink-0" />
-              <span className="text-[11px] font-semibold">Early Access</span>
+              <span className="text-[11px] font-semibold">Free Trial</span>
             </div>
             <Link
               href={`/${handleStr}`}
@@ -186,7 +186,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
               AuthService.logout();
               router.push("/login");
             }}
-            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-[#475569] hover:bg-rose-50 hover:text-[#ef4444] transition-colors min-h-[44px] cursor-pointer"
+            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-[#475569] hover:bg-[#f1f5f9] hover:text-[#151933] transition-colors min-h-[44px] cursor-pointer"
           >
             <LogOut className="h-4 w-4 shrink-0" />
             <span>Logout</span>

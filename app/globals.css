@@ -15,7 +15,7 @@
 
   /* BRAND & BUTTONS */
   --color-primary: #151933;
-  --color-primary-hover: #2c1937;
+  --color-primary-hover: #0f1329;
   --color-primary-tint: #f1f5f9;
 
   /* BORDERS & DIVIDERS */
@@ -98,7 +98,7 @@
   --accent-color: #151933;
   --accent-glow: rgba(15, 23, 42, 0.08);
   --btn-primary-bg: #151933;
-  --btn-primary-hover: #2c1937;
+  --btn-primary-hover: #0f1329;
   --btn-primary-text: #ffffff;
   --badge-bg: #f1f5f9;
   --badge-text: #151933;
@@ -107,6 +107,215 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
+}
+
+.theme-bg-taj-mahal {
+  background-color: #e6d7bc;
+  background-image:
+    linear-gradient(180deg, rgba(255, 253, 247, 0.72) 0%, rgba(246, 239, 226, 0.82) 44%, rgba(230, 215, 188, 0.90) 100%),
+    radial-gradient(circle at 50% 8%, rgba(255, 255, 255, 0.55), transparent 38%),
+    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Front_far_view_of_taj_mahal.jpg?width=1600");
+  background-position: center top, center top, center top;
+  background-repeat: no-repeat;
+  background-size: cover, cover, cover;
+  background-attachment: fixed;
+}
+
+@media (max-width: 768px) {
+  .theme-bg-taj-mahal {
+    background-attachment: scroll;
+    background-position: center top, center top, center top;
+  }
+}
+
+.theme-bg-marine-drive {
+  background-color: #061320;
+  background-image:
+    linear-gradient(180deg, rgba(2, 8, 18, 0.40) 0%, rgba(6, 19, 32, 0.58) 45%, rgba(2, 8, 18, 0.86) 100%),
+    radial-gradient(circle at 50% 5%, rgba(125, 211, 252, 0.28), transparent 36%),
+    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Mumbai_Skyline_Marine_Drive_Night.jpg?width=1600");
+  background-position: center top, center top, center top;
+  background-repeat: no-repeat;
+  background-size: cover, cover, cover;
+  background-attachment: fixed;
+}
+
+@media (max-width: 768px) {
+  .theme-bg-marine-drive {
+    background-attachment: scroll;
+    background-position: center top, center top, center top;
+  }
+}
+
+.theme-bg-burj-khalifa {
+  background-color: #05070d;
+  background-image:
+    linear-gradient(180deg, rgba(2, 3, 10, 0.32) 0%, rgba(5, 7, 13, 0.58) 48%, rgba(2, 3, 10, 0.90) 100%),
+    radial-gradient(circle at 52% 8%, rgba(245, 199, 107, 0.28), transparent 34%),
+    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Night_view_of_Dubai_from_the_Burj_Khalifa,_April_2012_(31004629).jpg?width=1600");
+  background-position: center top, center top, center top;
+  background-repeat: no-repeat;
+  background-size: cover, cover, cover;
+  background-attachment: fixed;
+}
+
+@media (max-width: 768px) {
+  .theme-bg-burj-khalifa {
+    background-attachment: scroll;
+    background-position: center top, center top, center top;
+  }
+}
+
+.theme-bg-somnath-temple {
+  background-color: #d8b77a;
+  background-image:
+    linear-gradient(180deg, rgba(255, 248, 236, 0.52) 0%, rgba(243, 216, 168, 0.68) 46%, rgba(104, 66, 30, 0.74) 100%),
+    radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.44), transparent 34%),
+    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Somnath_Temple_Gujarat.jpg?width=1600");
+  background-position: center top, center top, center top;
+  background-repeat: no-repeat;
+  background-size: cover, cover, cover;
+  background-attachment: fixed;
+}
+
+@media (max-width: 768px) {
+  .theme-bg-somnath-temple {
+    background-attachment: scroll;
+    background-position: center top, center top, center top;
+  }
+}
+
+.theme-bg-dwarka-temple {
+  background-color: #bfd5c9;
+  background-image:
+    linear-gradient(180deg, rgba(247, 251, 248, 0.50) 0%, rgba(232, 240, 230, 0.68) 45%, rgba(49, 84, 68, 0.72) 100%),
+    radial-gradient(circle at 50% 9%, rgba(255, 255, 255, 0.42), transparent 34%),
+    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Dwarkadhish_Temple,_Dwarka,_Gujarat.JPG?width=1600");
+  background-position: center top, center top, center top;
+  background-repeat: no-repeat;
+  background-size: cover, cover, cover;
+  background-attachment: fixed;
+}
+
+@media (max-width: 768px) {
+  .theme-bg-dwarka-temple {
+    background-attachment: scroll;
+    background-position: center top, center top, center top;
+  }
+}
+
+.theme-bg-goa-beach {
+  background-color: #e8c88e;
+  background-image:
+    linear-gradient(180deg, rgba(255, 248, 239, 0.48) 0%, rgba(247, 217, 166, 0.62) 44%, rgba(57, 83, 76, 0.70) 100%),
+    radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.38), transparent 34%),
+    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Goa_Beach_-_Baga_Beach.jpg?width=1600");
+  background-position: center top, center top, center top;
+  background-repeat: no-repeat;
+  background-size: cover, cover, cover;
+  background-attachment: fixed;
+}
+
+@media (max-width: 768px) {
+  .theme-bg-goa-beach {
+    background-attachment: scroll;
+    background-position: center top, center top, center top;
+  }
+}
+
+.theme-bg-love-letter {
+  background-color: #f8dde4;
+  background-image:
+    linear-gradient(180deg, rgba(255, 246, 248, 0.58) 0%, rgba(253, 236, 239, 0.70) 46%, rgba(88, 20, 42, 0.62) 100%),
+    radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.42), transparent 34%),
+    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Love_Locks_(15125921667).jpg?width=1600");
+  background-position: center top, center top, center center;
+  background-repeat: no-repeat;
+  background-size: cover, cover, cover;
+  background-attachment: fixed;
+}
+
+@media (max-width: 768px) {
+  .theme-bg-love-letter {
+    background-attachment: scroll;
+    background-position: center top, center top, center center;
+  }
+}
+
+.theme-bg-christmas-snow {
+  background-color: #e7f3ea;
+  background-image:
+    linear-gradient(180deg, rgba(248, 255, 251, 0.54) 0%, rgba(239, 248, 242, 0.64) 42%, rgba(20, 58, 36, 0.74) 100%),
+    radial-gradient(circle at 50% 8%, rgba(255, 255, 255, 0.46), transparent 34%),
+    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Snowy_tree_with_Christmas_lights.jpg?width=1600");
+  background-position: center top, center top, center center;
+  background-repeat: no-repeat;
+  background-size: cover, cover, cover;
+  background-attachment: fixed;
+}
+
+@media (max-width: 768px) {
+  .theme-bg-christmas-snow {
+    background-attachment: scroll;
+    background-position: center top, center top, center center;
+  }
+}
+
+.theme-bg-mountain-mist {
+  background-color: #d7e6e1;
+  background-image:
+    linear-gradient(180deg, rgba(243, 250, 248, 0.50) 0%, rgba(232, 242, 239, 0.64) 42%, rgba(17, 45, 46, 0.74) 100%),
+    radial-gradient(circle at 50% 8%, rgba(255, 255, 255, 0.38), transparent 34%),
+    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Misty_Mountains_(29990500236).jpg?width=1600");
+  background-position: center top, center top, center center;
+  background-repeat: no-repeat;
+  background-size: cover, cover, cover;
+  background-attachment: fixed;
+}
+
+@media (max-width: 768px) {
+  .theme-bg-mountain-mist {
+    background-attachment: scroll;
+    background-position: center top, center top, center center;
+  }
+}
+
+.theme-bg-street-food {
+  background-color: #f5c777;
+  background-image:
+    linear-gradient(180deg, rgba(255, 248, 234, 0.42) 0%, rgba(255, 236, 203, 0.56) 44%, rgba(77, 37, 8, 0.70) 100%),
+    radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.32), transparent 34%),
+    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Indian_street_food-2.jpg?width=1600");
+  background-position: center top, center top, center center;
+  background-repeat: no-repeat;
+  background-size: cover, cover, cover;
+  background-attachment: fixed;
+}
+
+@media (max-width: 768px) {
+  .theme-bg-street-food {
+    background-attachment: scroll;
+    background-position: center top, center top, center center;
+  }
+}
+
+.theme-bg-cafe-mocha {
+  background-color: #201611;
+  background-image:
+    linear-gradient(180deg, rgba(32, 22, 17, 0.30) 0%, rgba(32, 22, 17, 0.58) 45%, rgba(12, 7, 4, 0.90) 100%),
+    radial-gradient(circle at 50% 8%, rgba(235, 203, 154, 0.22), transparent 34%),
+    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/India-coffee-house-kolkata.jpg?width=1600");
+  background-position: center top, center top, center center;
+  background-repeat: no-repeat;
+  background-size: cover, cover, cover;
+  background-attachment: fixed;
+}
+
+@media (max-width: 768px) {
+  .theme-bg-cafe-mocha {
+    background-attachment: scroll;
+    background-position: center top, center top, center center;
+  }
 }
 
 @theme inline {
@@ -162,6 +371,15 @@ body {
   max-width: 100vw;
 }
 
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 /* Tabular Figures for lining numbers, prices & fanbase counters */
 .tabular-nums,
 [data-tabular-nums],
@@ -209,6 +427,26 @@ body {
   100% {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes infixo-scan-x {
+  0% {
+    transform: translateX(-45%);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(45%);
+    opacity: 0;
   }
 }
 
@@ -770,6 +1008,58 @@ body {
   will-change: transform, opacity;
 }
 
+@keyframes creatorToolFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  35% {
+    transform: translate3d(8px, -10px, 0);
+  }
+
+  70% {
+    transform: translate3d(-7px, 8px, 0);
+  }
+}
+
+.creator-tool-float {
+  animation: creatorToolFloat var(--float-duration, 18s) ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
+  will-change: transform;
+}
+
+@keyframes heroCopySlide {
+  0% {
+    transform: translate3d(34px, 0, 0);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+.hero-copy-slide {
+  animation: heroCopySlide 720ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+[data-scroll-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 26px, 0);
+  transition:
+    opacity 760ms ease,
+    transform 760ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+[data-scroll-reveal].is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
 @media (prefers-reduced-motion: reduce) {
 
   .floating-particle,
@@ -785,8 +1075,16 @@ body {
   .galaxy-core,
   .galaxy-dust-item,
   .firework-spark-item,
-  .firework-ember-item {
+  .firework-ember-item,
+  .creator-tool-float,
+  .hero-copy-slide {
     animation: none !important;
     transform: none !important;
+  }
+
+  [data-scroll-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
 }

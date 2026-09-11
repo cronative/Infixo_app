@@ -144,7 +144,7 @@ export const AuthService = {
       if (data.creator.subscription) {
         subscriptionRepository.save({
           planKey: data.creator.subscription.planKey || "early_access",
-          planName: data.creator.subscription.planName || "Early Access",
+          planName: data.creator.subscription.planName || "Free Trial",
           billingCycle: data.creator.subscription.billingCycle || "yearly",
           status: data.creator.subscription.status || "active",
           activatedAt: new Date().toISOString(),
@@ -181,4 +181,3 @@ export const AuthService = {
     storage.clearAll();
   },
 };
-

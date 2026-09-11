@@ -164,14 +164,14 @@ export function VisibilitySettingsModal({
       <div className="flex flex-col flex-1 min-h-0">
         <ModalBody className="p-4 sm:p-5 space-y-3 text-left max-h-[60vh] overflow-y-auto">
           {/* Header Action: Reset Default */}
-          <div className="flex items-center justify-between pb-2 border-b border-[#E4DAD5]">
-            <span className="text-[11px] font-bold text-[#6B5A5D] uppercase tracking-wider">
+          <div className="flex items-center justify-between pb-2 border-b border-[#e2e8f0]">
+            <span className="text-[11px] font-bold text-[#64748b] uppercase tracking-wider">
               Sections ({sections.length})
             </span>
             <button
               type="button"
               onClick={handleResetDefault}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-[#6B5A5D] hover:text-[#151933] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[#64748b] hover:text-[#151933] transition-colors cursor-pointer"
             >
               <RotateCcw className="h-3 w-3" />
               <span>Reset Default</span>
@@ -195,17 +195,17 @@ export function VisibilitySettingsModal({
                   <div
                     key={section.sectionKey}
                     className={`flex items-center justify-between p-2.5 sm:p-3 rounded-xl border transition-all ${section.isVisible
-                      ? "bg-white border-[#E4DAD5] shadow-xs"
-                      : "bg-[#fbfbfb] border-[#E4DAD5]/60 opacity-60"
+                      ? "bg-white border-[#e2e8f0] shadow-xs"
+                      : "bg-[#f8fafc] border-[#e2e8f0]/60 opacity-60"
                       }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[#fbfbfb] border border-[#E4DAD5] text-[10px] font-bold text-[#6B5A5D]">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[#f8fafc] border border-[#e2e8f0] text-[10px] font-bold text-[#64748b]">
                         {idx + 1}
                       </span>
 
                       <div className="min-w-0 flex-1 space-y-0.5">
-                        <p className="text-xs font-bold text-[#241618] truncate flex items-center gap-1.5">
+                        <p className="text-xs font-bold text-[#151933] truncate flex items-center gap-1.5">
                           {info.name}
                           {isAbout && (
                             <span className="text-[9px] font-semibold text-[#151933] bg-[#15193314] border border-[#151933]/20 px-1.5 py-0.2 rounded">
@@ -213,7 +213,7 @@ export function VisibilitySettingsModal({
                             </span>
                           )}
                         </p>
-                        <p className="text-[10px] text-[#6B5A5D] truncate">{info.desc}</p>
+                        <p className="text-[10px] text-[#64748b] truncate">{info.desc}</p>
                       </div>
                     </div>
 
@@ -224,7 +224,7 @@ export function VisibilitySettingsModal({
                         onClick={() => handleToggleVisibility(section.sectionKey)}
                         disabled={isAbout}
                         className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-colors cursor-pointer ${section.isVisible
-                          ? "border-[#E4DAD5] bg-[#fbfbfb] text-[#241618] hover:bg-[#15193314] hover:text-[#151933]"
+                          ? "border-[#e2e8f0] bg-[#f8fafc] text-[#151933] hover:bg-[#f1f5f9] hover:text-[#151933]"
                           : "border-[#C1443A]/20 bg-[#C1443A]/10 text-[#C1443A]"
                           } disabled:opacity-40 disabled:cursor-not-allowed`}
                         title={section.isVisible ? "Hide section" : "Show section"}
@@ -241,7 +241,7 @@ export function VisibilitySettingsModal({
                         type="button"
                         onClick={() => handleMove(idx, "up")}
                         disabled={isFirst}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E4DAD5] bg-[#fbfbfb] text-[#6B5A5D] hover:text-[#241618] hover:bg-white transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-[#64748b] hover:text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                         title="Move up"
                       >
                         <ArrowUp className="h-3.5 w-3.5" />
@@ -252,7 +252,7 @@ export function VisibilitySettingsModal({
                         type="button"
                         onClick={() => handleMove(idx, "down")}
                         disabled={isLast}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E4DAD5] bg-[#fbfbfb] text-[#6B5A5D] hover:text-[#241618] hover:bg-white transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-[#64748b] hover:text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                         title="Move down"
                       >
                         <ArrowDown className="h-3.5 w-3.5" />
@@ -268,7 +268,7 @@ export function VisibilitySettingsModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-3.5 py-2 rounded-xl border border-[#E4DAD5] text-xs font-semibold text-[#6B5A5D] hover:bg-[#FAF8F5] hover:text-[#241618] transition-colors cursor-pointer"
+            className="px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#151933] transition-colors cursor-pointer"
           >
             Cancel
           </button>
@@ -276,7 +276,7 @@ export function VisibilitySettingsModal({
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="tap-scale bg-[#151933] hover:bg-[#2c1937] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
+            className="tap-scale bg-[#151933] hover:bg-brand-hover text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
           >
             {saving ? (
               <>

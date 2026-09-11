@@ -2,6 +2,50 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 
+function normalizeCustomLinks(rows: any[]) {
+  const parents: any[] = [];
+  const childrenByParent = new Map<string, any[]>();
+
+  for (const r of rows || []) {
+    const row = {
+      id: r.id,
+      title: r.title,
+      url: r.url || "",
+      icon: r.icon || "link",
+      isEnabled: Boolean(r.isEnabled),
+      kind: r.linkType === "collection" ? "collection" : "link",
+      parentId: r.parentId || null,
+    };
+
+    if (row.parentId) {
+      const childList = childrenByParent.get(row.parentId) || [];
+      childList.push({
+        id: row.id,
+        title: row.title,
+        url: row.url,
+        icon: row.icon,
+        isEnabled: row.isEnabled,
+      });
+      childrenByParent.set(row.parentId, childList);
+    } else {
+      parents.push(row);
+    }
+  }
+
+  return parents.map((link) => {
+    if (link.kind !== "collection") {
+      const { parentId, ...rest } = link;
+      return rest;
+    }
+    const { parentId, ...rest } = link;
+    return {
+      ...rest,
+      url: rest.url || "",
+      items: childrenByParent.get(link.id) || [],
+    };
+  });
+}
+
 // GET /api/creator/socials?email=... or ?username=...
 export async function GET(req: Request) {
   try {
@@ -38,19 +82,13 @@ export async function GET(req: Request) {
     let customLinks: any[] = [];
     try {
       const [linkRows]: any = await db.query(
-        `SELECT id, title, url, icon, is_enabled AS isEnabled, sort_order AS sortOrder
+        `SELECT id, parent_id AS parentId, link_type AS linkType, title, url, icon, is_enabled AS isEnabled, sort_order AS sortOrder
          FROM creator_custom_links 
          WHERE creator_id = ? OR email = ?
-         ORDER BY sort_order ASC, created_at ASC`,
+         ORDER BY COALESCE(parent_id, id) ASC, parent_id IS NOT NULL ASC, sort_order ASC, created_at ASC`,
         [creatorId, targetEmail]
       );
-      customLinks = (linkRows || []).map((r: any) => ({
-        id: r.id,
-        title: r.title,
-        url: r.url,
-        icon: r.icon || "link",
-        isEnabled: Boolean(r.isEnabled),
-      }));
+      customLinks = normalizeCustomLinks(linkRows || []);
     } catch {}
 
     return NextResponse.json({

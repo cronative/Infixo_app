@@ -30,5 +30,7 @@ export interface ThemeCardProps {
   totalAudience: number;
   /** Compact renders a smaller preview card; full renders the public-profile-scale layout. */
   variant?: "compact" | "full";
+  containedScroll?: boolean;
+  seriesOpenMode?: "internal" | "page";
   onShare?: () => void;
 }

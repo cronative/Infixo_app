@@ -31,7 +31,7 @@ export function QRCodeWidget({ username, className = "" }: QRCodeWidgetProps) {
 
   return (
     <div
-      className={`rounded-3xl border border-white/20 bg-slate-950/80 backdrop-blur-xl p-5 text-white shadow-2xl transition-all hover:border-white/30 ${className}`}
+      className={`rounded-3xl border border-white/20 bg-slate-950/80 backdrop-blur-xl p-5 text-white shadow-2xl transition-all hover:border-brand-border ${className}`}
     >
       <div className="flex flex-col items-center text-center space-y-3.5">
         {/* Header Badge */}
@@ -65,7 +65,7 @@ export function QRCodeWidget({ username, className = "" }: QRCodeWidgetProps) {
           <button
             type="button"
             onClick={handleCopy}
-            className="tap-scale flex w-full items-center justify-center gap-1.5 rounded-2xl bg-white/15 hover:bg-white/25 py-2.5 text-xs font-extrabold text-white border border-white/20 transition-all shadow-xs"
+            className="tap-scale flex w-full items-center justify-center gap-1.5 rounded-2xl bg-white/15 hover:bg-[#f1f5f9] py-2.5 text-xs font-extrabold text-white border border-white/20 transition-all shadow-xs"
           >
             {copied ? (
               <>

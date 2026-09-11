@@ -80,12 +80,12 @@ export async function POST(req: Request) {
     });
 
     if (creator) {
-      // Ensure Early Access subscription is active in MySQL
+      // Ensure Free Trial subscription is active in MySQL
       try {
         await db.query(
           `INSERT INTO subscriptions (creator_id, plan_key, plan_name, billing_cycle, status, activated_at)
-           VALUES (?, 'early_access', 'Early Access', 'yearly', 'active', NOW())
-           ON DUPLICATE KEY UPDATE plan_key = 'early_access', plan_name = 'Early Access', status = 'active'`,
+           VALUES (?, 'early_access', 'Free Trial', 'yearly', 'active', NOW())
+           ON DUPLICATE KEY UPDATE plan_key = 'early_access', plan_name = 'Free Trial', status = 'active'`,
           [creator.id]
         );
       } catch (e: any) {
@@ -175,7 +175,7 @@ export async function POST(req: Request) {
             isVerified: Boolean(creator.is_verified),
             subscription: {
               planKey: creator.plan_key || "early_access",
-              planName: creator.plan_name || "Early Access",
+              planName: creator.plan_name || "Free Trial",
               billingCycle: creator.billing_cycle || "yearly",
               status: creator.sub_status || "active",
             },

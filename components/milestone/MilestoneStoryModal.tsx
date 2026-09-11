@@ -207,7 +207,7 @@ export function MilestoneStoryModal({
         <button
           onClick={onClose}
           type="button"
-          className="absolute top-4 right-4 z-30 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+          className="absolute top-4 right-4 z-30 p-2 rounded-full bg-white/10 hover:bg-brand-soft text-white transition-colors cursor-pointer"
           title="Close modal"
         >
           <X className="w-5 h-5" />
@@ -291,7 +291,7 @@ export function MilestoneStoryModal({
                     className={`flex items-center gap-2.5 p-2.5 rounded-xl border text-xs font-semibold text-left transition-all cursor-pointer ${
                       theme === t.id
                         ? "bg-white/10 border-white/40 ring-2 ring-white/30 text-white"
-                        : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10 hover:text-white"
+                        : "bg-white/5 border-white/10 text-white/60 hover:bg-brand-soft hover:text-brand-primary"
                     }`}
                   >
                     <span
@@ -362,7 +362,7 @@ export function MilestoneStoryModal({
                 type="button"
                 onClick={handleDownload}
                 disabled={isExporting}
-                className="w-full py-3 px-4 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50"
+                className="w-full py-3 px-4 rounded-xl bg-white/10 hover:bg-brand-soft border border-white/20 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50"
               >
                 <Download className="w-4 h-4" />
                 <span>Download HD (1080p)</span>
@@ -374,7 +374,7 @@ export function MilestoneStoryModal({
               <button
                 type="button"
                 onClick={handleCopyImage}
-                className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white flex items-center justify-center gap-1.5 text-xs font-semibold transition-colors cursor-pointer"
+                className="p-2.5 rounded-xl bg-white/5 hover:bg-brand-soft border border-white/10 text-white/80 hover:text-brand-primary flex items-center justify-center gap-1.5 text-xs font-semibold transition-colors cursor-pointer"
                 title="Copy Image to Clipboard"
               >
                 {copiedImage ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -384,7 +384,7 @@ export function MilestoneStoryModal({
               <button
                 type="button"
                 onClick={handleShareWhatsApp}
-                className="p-2.5 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/30 text-[#25D366] flex items-center justify-center gap-1.5 text-xs font-semibold transition-colors cursor-pointer"
+                className="p-2.5 rounded-xl bg-[#25D366]/15 hover:bg-brand-soft border border-[#25D366]/30 text-[#25D366] flex items-center justify-center gap-1.5 text-xs font-semibold transition-colors cursor-pointer"
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>WhatsApp</span>
@@ -393,7 +393,7 @@ export function MilestoneStoryModal({
               <button
                 type="button"
                 onClick={handleShareTwitter}
-                className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white flex items-center justify-center gap-1.5 text-xs font-semibold transition-colors cursor-pointer"
+                className="p-2.5 rounded-xl bg-white/5 hover:bg-brand-soft border border-white/10 text-white/80 hover:text-brand-primary flex items-center justify-center gap-1.5 text-xs font-semibold transition-colors cursor-pointer"
               >
                 <XTwitterIcon className="w-3.5 h-3.5" />
                 <span>Post on X</span>
@@ -404,7 +404,7 @@ export function MilestoneStoryModal({
             <button
               type="button"
               onClick={handleCopyCaption}
-              className="w-full py-2 px-3 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] border border-white/5 text-white/60 hover:text-white/90 text-[11px] flex items-center justify-between transition-colors cursor-pointer"
+              className="w-full py-2 px-3 rounded-lg bg-white/[0.03] hover:bg-brand-soft border border-white/5 text-white/60 hover:text-brand-primary text-[11px] flex items-center justify-between transition-colors cursor-pointer"
             >
               <span className="truncate pr-2">
                 Caption: &ldquo;{milestoneInfo.captions.storyText.slice(0, 60)}...&rdquo;

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, FileText, CheckCircle2, AlertCircle } from "lucide-react";
+import { ArrowLeft, FileText } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 import { CookiePreferencesButton } from "@/components/shared/CookiePreferencesButton";
 
@@ -17,7 +17,7 @@ export default function TermsOfServicePage() {
           <Logo size="md" />
           <Link
             href="/"
-            className="inline-flex items-center gap-2 rounded-full border border-[#E7E3DC] bg-white px-4 py-2 text-xs font-bold text-[#54514D] hover:text-[#151933] hover:border-[#151933]/30 transition-all"
+            className="inline-flex items-center gap-2 rounded-full border border-[#E7E3DC] bg-white px-4 py-2 text-xs font-bold text-[#54514D] hover:text-brand-primary hover:border-brand-primary/30 transition-all"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Back to Home
@@ -76,10 +76,10 @@ export default function TermsOfServicePage() {
 
           <section className="space-y-3">
             <h2 className="font-display text-xl sm:text-2xl font-bold text-[#181716]">
-              4. Subscriptions, Payments &amp; Early Access
+              4. Subscriptions, Payments &amp; Free Trial
             </h2>
             <p>
-              During the <strong>Early Access Phase</strong>, Inflixo features (including profile creation, connected socials, and content Series) are provided <strong>100% Free</strong> of charge.
+              Inflixo may offer a <strong>7-day Free Trial</strong> where your public creator profile is live without payment. After the trial, your profile may become private until you upgrade to a paid plan.
             </p>
             <p>
               When paid subscriptions or services are activated, billing and payment processing are handled by our registered legal entity, <strong>TrustIQ Labs PVT LTD</strong>. Charges on your bank or credit card statement will appear under <strong>TrustIQ Labs PVT LTD</strong> or <strong>Inflixo</strong>. Advance notification and transparent pricing will always be provided before any billing occurs.
@@ -124,11 +124,11 @@ export default function TermsOfServicePage() {
         <div className="mx-auto max-w-[1200px] px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-[#54514D]">
           <Logo size="sm" />
           <div className="flex flex-wrap items-center gap-6">
-            <Link href="/" className="hover:text-[#151933] transition-colors">Home</Link>
-            <Link href="/#pricing" className="hover:text-[#151933] transition-colors">Pricing</Link>
-            <Link href="/privacy" className="hover:text-[#151933] transition-colors">Privacy Policy</Link>
-            <Link href="/cookies" className="hover:text-[#151933] transition-colors">Cookie Policy</Link>
-            <CookiePreferencesButton className="hover:text-[#151933] transition-colors cursor-pointer font-semibold" />
+            <Link href="/" className="hover:text-brand-primary transition-colors">Home</Link>
+            <Link href="/#pricing" className="hover:text-brand-primary transition-colors">Pricing</Link>
+            <Link href="/privacy" className="hover:text-brand-primary transition-colors">Privacy Policy</Link>
+            <Link href="/cookies" className="hover:text-brand-primary transition-colors">Cookie Policy</Link>
+            <CookiePreferencesButton className="hover:text-brand-primary transition-colors cursor-pointer font-semibold" />
             <Link href="/terms" className="text-[#151933] font-bold">Terms of Service</Link>
           </div>
           <p className="text-[#797570]">&copy; 2026 Inflixo. All rights reserved.</p>

@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     `Watch all ${episodeCount} episodes of ${seriesTitle} by ${creatorName} on Inflixo.`;
 
   const canonicalUrl = `https://inflixo.com/${username}/series/${seriesId}`;
-  const ogImage = series?.posterDataUrl || creator?.photoDataUrl || "https://inflixo.com/og-image.jpg";
+  const ogImage = series?.posterDataUrl || creator?.photoDataUrl || "https://inflixo.com/og-image.png";
 
   return {
     title: `${seriesTitle} by ${creatorName} | Inflixo`,
@@ -79,7 +79,7 @@ export default async function SeriesDetailPage({ params }: PageProps) {
           url: `https://inflixo.com/${username}`,
         },
         url: `https://inflixo.com/${username}/series/${series.id}`,
-        image: series.posterDataUrl || creator?.photoDataUrl || "https://inflixo.com/og-image.jpg",
+        image: series.posterDataUrl || creator?.photoDataUrl || "https://inflixo.com/og-image.png",
         hasPart: allEpisodes.map((ep, idx) => ({
           "@type": "Episode",
           episodeNumber: ep.episodeNumber || idx + 1,

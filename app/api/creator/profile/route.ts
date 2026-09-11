@@ -18,7 +18,7 @@ export async function GET(req: Request) {
     }
 
     let query = `
-       SELECT c.*, s.plan_key, s.plan_name, s.billing_cycle, s.status AS sub_status, cs.visibility_settings AS settings_visibility
+       SELECT c.*, s.plan_key, s.plan_name, s.billing_cycle, s.status AS sub_status, s.activated_at AS sub_activated_at, s.created_at AS sub_created_at, cs.visibility_settings AS settings_visibility
        FROM creators c
        LEFT JOIN subscriptions s ON c.id = s.creator_id
        LEFT JOIN creator_settings cs ON c.id = cs.creator_id
@@ -92,6 +92,13 @@ export async function GET(req: Request) {
         isVerified: Boolean(creator.is_verified),
         visibilitySettings,
         updatedAt: creator.updated_at,
+      },
+      subscription: {
+        planKey: creator.plan_key || "early_access",
+        planName: creator.plan_name || "Free Trial",
+        billingCycle: creator.billing_cycle || "yearly",
+        status: creator.sub_status || "active",
+        activatedAt: creator.sub_activated_at || creator.sub_created_at || creator.created_at,
       },
     });
   } catch (err: any) {
@@ -222,11 +229,11 @@ export async function POST(req: Request) {
         ]
       );
 
-      // Create default Early Access subscription record in MySQL DB
+      // Create default Free Trial subscription record in MySQL DB
       await db.query(
         `INSERT INTO subscriptions (creator_id, plan_key, plan_name, billing_cycle, status, activated_at)
-         VALUES (?, 'early_access', 'Early Access', 'yearly', 'active', NOW())
-         ON DUPLICATE KEY UPDATE plan_key = 'early_access', plan_name = 'Early Access', status = 'active'`,
+         VALUES (?, 'early_access', 'Free Trial', 'yearly', 'active', NOW())
+         ON DUPLICATE KEY UPDATE plan_key = 'early_access', plan_name = 'Free Trial', status = 'active'`,
         [creatorId]
       );
     }

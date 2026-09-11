@@ -94,7 +94,7 @@ export const subscriptionRepository = {
   get(): Subscription {
     return storage.get<Subscription>(STORAGE_KEYS.subscription, {
       planKey: "early_access",
-      planName: "Early Access",
+      planName: "Free Trial",
       billingCycle: "yearly",
       status: "active",
       activatedAt: new Date().toISOString(),
@@ -169,5 +169,4 @@ export const sectionsRepository = {
     storage.set(STORAGE_KEYS.sections, sections);
   },
 };
-
 

@@ -157,7 +157,7 @@ export function FacebookFetcher({ username, onConfirmSync, onBeforeFetch, varian
           type="button"
           onClick={fetchDetails}
           disabled={loading || !username.trim()}
-          className="tap-scale flex items-center gap-1.5 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 px-3.5 py-2 text-xs font-semibold transition-all disabled:opacity-50 cursor-pointer shadow-xs"
+          className="tap-scale flex items-center gap-1.5 rounded-xl bg-blue-50 text-blue-700 hover:bg-[#f1f5f9] border border-blue-200 px-3.5 py-2 text-xs font-semibold transition-all disabled:opacity-50 cursor-pointer shadow-xs"
         >
           {loading ? (
             <>

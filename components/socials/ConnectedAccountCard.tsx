@@ -50,7 +50,7 @@ export function ConnectedAccountCard({
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <span className="font-display text-sm font-bold text-[#181716] truncate">
+            <span className="font-display text-sm font-bold text-[#151933] truncate">
               {cleanHandle}
             </span>
             <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-semibold px-2 py-0.5 rounded-full inline-flex items-center gap-1 shrink-0">
@@ -60,7 +60,7 @@ export function ConnectedAccountCard({
           </div>
 
           <p className="text-xs font-semibold text-[#64748b] mt-0.5">
-            <span className="font-bold text-[#181716]">{formatCount(count)}</span> {countLabel}
+            <span className="font-bold text-[#151933]">{formatCount(count)}</span> {countLabel}
           </p>
         </div>
       </div>
@@ -70,7 +70,7 @@ export function ConnectedAccountCard({
         type="button"
         onClick={onDisconnect}
         disabled={loading}
-        className="text-red-500 hover:text-red-700 hover:bg-red-50 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors cursor-pointer self-start sm:self-auto shrink-0 disabled:opacity-50 inline-flex items-center gap-1"
+        className="text-red-500 hover:text-[#151933] hover:bg-[#f1f5f9] text-xs font-medium px-3 py-1.5 rounded-lg transition-colors cursor-pointer self-start sm:self-auto shrink-0 disabled:opacity-50 inline-flex items-center gap-1"
       >
         <Trash2 className="h-3.5 w-3.5" />
         <span>Disconnect</span>

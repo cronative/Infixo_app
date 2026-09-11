@@ -245,7 +245,7 @@ export default function PublicMediaKitPage() {
             <p className="text-xs text-[#6F6872]">No creator media kit registered for @{handle}.</p>
             <button
               onClick={() => router.push("/")}
-              className="w-full py-2.5 rounded-xl bg-[#151933] text-white text-xs font-semibold hover:bg-[#6D3254] transition-colors"
+              className="w-full py-2.5 rounded-xl bg-[#151933] text-white text-xs font-semibold hover:bg-brand-hover transition-colors"
             >
               Back to Home
             </button>
@@ -278,7 +278,7 @@ export default function PublicMediaKitPage() {
             <button
               type="button"
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-3.5 py-1.5 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer shadow-2xs"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-surface-soft px-3.5 py-1.5 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer shadow-2xs"
             >
               <Share2 className="h-3.5 w-3.5 text-[#151933]" />
               <span className="hidden sm:inline">Share Media Kit</span>
@@ -287,7 +287,7 @@ export default function PublicMediaKitPage() {
             <button
               type="button"
               onClick={handlePrint}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-[#FAF8FA] px-3.5 py-1.5 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer shadow-2xs"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-surface-soft px-3.5 py-1.5 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer shadow-2xs"
             >
               <Printer className="h-3.5 w-3.5 text-[#6F6872]" />
               <span className="hidden sm:inline">Export PDF</span>
@@ -296,7 +296,7 @@ export default function PublicMediaKitPage() {
             <button
               type="button"
               onClick={() => setIsInquiryOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-[#6D3254] px-4 py-1.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-brand-hover px-4 py-1.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
             >
               <span>Work With Me</span>
             </button>
@@ -454,7 +454,7 @@ export default function PublicMediaKitPage() {
                   <button
                     type="button"
                     onClick={() => setIsInquiryOpen(true)}
-                    className="w-full py-2 rounded-xl bg-[#151933] hover:bg-[#6D3254] text-white text-xs font-semibold transition-colors cursor-pointer"
+                    className="w-full py-2 rounded-xl bg-[#151933] hover:bg-brand-hover text-white text-xs font-semibold transition-colors cursor-pointer"
                   >
                     Request Booking
                   </button>
@@ -530,7 +530,7 @@ export default function PublicMediaKitPage() {
             <button
               type="button"
               onClick={() => setIsInquiryOpen(true)}
-              className="inline-flex items-center gap-2 rounded-xl bg-[#151933] hover:bg-[#6D3254] px-6 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#151933] hover:bg-brand-hover px-6 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
             >
               <span>Submit Brand Inquiry</span>
               <ChevronRight className="h-3.5 w-3.5" />

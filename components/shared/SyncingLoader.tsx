@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { Sparkles, RefreshCw, ArrowRight } from "lucide-react";
-import { InflixoLogoIcon } from "@/components/shared/Logo";
+import { RefreshCw, ArrowRight } from "lucide-react";
+import { CreatorGridBackground } from "@/components/shared/CreatorGridBackground";
 import { CREATOR_QUOTES, getRandomQuoteIndex } from "@/data/creatorQuotes";
 
 export function SyncingLoader({
@@ -16,15 +17,10 @@ export function SyncingLoader({
   hideProgressBar?: boolean;
 }) {
   const [dots, setDots] = useState(".");
-  const [quoteIndex, setQuoteIndex] = useState(0);
+  const [quoteIndex, setQuoteIndex] = useState(() => getRandomQuoteIndex());
   const [isFading, setIsFading] = useState(false);
   const [progress, setProgress] = useState(20);
   const [showTimeoutFallback, setShowTimeoutFallback] = useState(false);
-
-  // Pick a random starting quote on every mount / page load
-  useEffect(() => {
-    setQuoteIndex(getRandomQuoteIndex());
-  }, []);
 
   // Syncing dots animation (every 450ms)
   useEffect(() => {
@@ -64,34 +60,44 @@ export function SyncingLoader({
   }, []);
 
   const containerClass = fullScreen
-    ? "fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white/95 backdrop-blur-md px-4 text-center selection:bg-purple-100"
+    ? "fixed inset-0 z-[9999] flex flex-col items-center justify-center px-4 text-center selection:bg-slate-200 overflow-hidden"
     : "flex flex-col items-center justify-center p-8 text-center w-full min-h-[320px]";
 
   const currentQuote = CREATOR_QUOTES[quoteIndex] || CREATOR_QUOTES[0];
 
   return (
     <div className={containerClass}>
-      <div className="relative z-10 flex flex-col items-center max-w-lg w-full space-y-5">
+      {/* Same background as login page */}
+      {fullScreen && <CreatorGridBackground showWordmark variant="soft" />}
+      <div className="relative z-10 flex flex-col items-center max-w-lg w-full space-y-4">
         {/* Animated Brand Logo Container */}
-        <div className="relative flex h-14 w-14 items-center justify-center">
-          <div className="absolute inset-0 rounded-2xl bg-[#151933]/20 animate-ping opacity-25" />
-          <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-[#151933] text-white shadow-md">
-            <InflixoLogoIcon className="h-6 w-6 text-white" />
+        <div className="relative flex h-16 w-16 items-center justify-center">
+          <div className="absolute inset-0 rounded-[22px] bg-[#151933]/10 blur-xl" />
+          <div className="absolute inset-1 rounded-[18px] bg-[#151933]/12 animate-ping opacity-20" />
+          <div className="relative flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#151933] shadow-[0_14px_36px_rgba(21,25,51,0.16)]">
+            <Image
+              src="/images/inflixo-logo-icon-white-transparent.png"
+              alt="Inflixo"
+              width={64}
+              height={64}
+              className="h-8 w-8 object-contain"
+              priority
+            />
           </div>
         </div>
 
         {/* Syncing Status Information */}
         <div className="space-y-1 text-center">
           <div className="flex items-center justify-center gap-1.5">
-            <h3 className="font-display text-sm font-bold text-slate-900 tracking-tight">
+            <h3 className="font-display text-sm font-black text-[#151933] tracking-tight">
               Inflixo
             </h3>
-            <span className="rounded-full bg-[#151933]/[0.08] border border-[#151933]/20 px-2 py-0.5 text-[9px] font-bold text-[#151933] uppercase tracking-wider">
+            <span className="rounded-full bg-[#151933]/[0.07] border border-[#151933]/15 px-2 py-0.5 text-[9px] font-black text-[#151933] uppercase tracking-wider">
               Syncing
             </span>
           </div>
 
-          <p className="text-xs font-medium text-slate-600 min-h-[18px]">
+          <p className="text-xs font-semibold text-[#64748b] min-h-[18px]">
             {message}{dots}
           </p>
         </div>
@@ -109,12 +115,12 @@ export function SyncingLoader({
         )}
 
         {/* Compact Motivational Quote */}
-        <div className="min-h-[48px] flex items-center justify-center px-4 w-full">
+        <div className="min-h-[52px] flex items-center justify-center px-4 w-full">
           <p
-            className={`text-sm sm:text-base font-semibold italic text-[#151933] leading-snug text-center transition-opacity duration-300 ${isFading ? "opacity-0" : "opacity-100"
+            className={`max-w-xl text-base sm:text-xl font-black italic text-[#151933] leading-snug text-center transition-opacity duration-300 ${isFading ? "opacity-0" : "opacity-100"
               }`}
           >
-            "{currentQuote}"
+            &ldquo;{currentQuote}&rdquo;
           </p>
         </div>
 
@@ -132,7 +138,7 @@ export function SyncingLoader({
               <span className="text-slate-300">•</span>
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-1 font-semibold text-slate-700 hover:text-slate-900 hover:underline"
+                className="inline-flex items-center gap-1 font-semibold text-slate-700 hover:text-[#151933] hover:underline"
               >
                 Go to Dashboard <ArrowRight className="h-3 w-3" />
               </Link>

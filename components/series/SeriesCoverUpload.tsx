@@ -102,10 +102,10 @@ export function SeriesCoverUpload({
     <div className={`w-full space-y-1.5 text-left ${className}`}>
       {/* Section Header */}
       <div className="flex items-center justify-between">
-        <label className="block text-xs font-bold text-[#181716]">
-          {label} <span className="text-[11px] font-semibold text-[#797570]">(16:9 Landscape)</span>
+        <label className="block text-xs font-bold text-[#151933]">
+          {label} <span className="text-[11px] font-semibold text-[#64748b]">(16:9 Landscape)</span>
         </label>
-        <span className="text-[11px] font-semibold text-[#797570]">
+        <span className="text-[11px] font-semibold text-[#64748b]">
           Max {maxSizeMB}MB
         </span>
       </div>
@@ -134,10 +134,10 @@ export function SeriesCoverUpload({
           }
         }}
         className={`group relative w-full aspect-[16/9] overflow-hidden rounded-2xl border transition-all cursor-pointer select-none ${value
-          ? "border-[#E4DAD5] bg-slate-950 shadow-sm"
+          ? "border-[#e2e8f0] bg-slate-950 shadow-sm"
           : isDragging
             ? "border-2 border-dashed border-[#151933] bg-[#151933]/[0.09]"
-            : "border-2 border-dashed border-[#E4DAD5] hover:border-[#151933] bg-[#fbfbfb] hover:bg-[#F5F3ED]"
+            : "border-2 border-dashed border-[#e2e8f0] hover:border-[#151933] bg-[#f8fafc] hover:bg-[#f1f5f9]"
           }`}
       >
         {value ? (
@@ -162,7 +162,7 @@ export function SeriesCoverUpload({
                   e.stopPropagation();
                   fileInputRef.current?.click();
                 }}
-                className="tap-scale flex items-center gap-1.5 rounded-xl bg-white/95 hover:bg-white text-[#181716] px-3 py-1.5 text-xs font-bold shadow-md border border-white/60 backdrop-blur-md transition-all cursor-pointer"
+                className="tap-scale flex items-center gap-1.5 rounded-xl bg-white/95 hover:bg-[#f1f5f9] text-[#151933] px-3 py-1.5 text-xs font-bold shadow-md border border-white/60 backdrop-blur-md transition-all cursor-pointer"
               >
                 <Camera className="h-3.5 w-3.5 text-[#151933]" />
                 <span>Change Cover</span>
@@ -173,9 +173,9 @@ export function SeriesCoverUpload({
                   type="button"
                   onClick={cyclePosition}
                   title={`Position: ${position.toUpperCase()} (Click to toggle)`}
-                  className="tap-scale flex items-center gap-1 rounded-xl bg-white/95 hover:bg-white text-[#54514D] px-2.5 py-1.5 text-xs font-semibold shadow-md border border-white/60 backdrop-blur-md transition-all cursor-pointer"
+                  className="tap-scale flex items-center gap-1 rounded-xl bg-white/95 hover:bg-[#f1f5f9] text-[#475569] px-2.5 py-1.5 text-xs font-semibold shadow-md border border-white/60 backdrop-blur-md transition-all cursor-pointer"
                 >
-                  <MoveVertical className="h-3.5 w-3.5 text-[#797570]" />
+                  <MoveVertical className="h-3.5 w-3.5 text-[#64748b]" />
                   <span className="capitalize text-[11px]">{position}</span>
                 </button>
 
@@ -183,7 +183,7 @@ export function SeriesCoverUpload({
                   type="button"
                   onClick={handleRemove}
                   title="Remove cover"
-                  className="tap-scale flex h-8 w-8 items-center justify-center rounded-xl bg-white/95 hover:bg-rose-50 text-[#797570] hover:text-[#C2414B] shadow-md border border-white/60 backdrop-blur-md transition-all cursor-pointer"
+                  className="tap-scale flex h-8 w-8 items-center justify-center rounded-xl bg-white/95 hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#151933] shadow-md border border-white/60 backdrop-blur-md transition-all cursor-pointer"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
@@ -197,15 +197,15 @@ export function SeriesCoverUpload({
               <ImagePlus className="h-6 w-6 stroke-[2]" />
             </div>
 
-            <p className="mt-2.5 text-xs sm:text-sm font-bold text-[#181716] group-hover:text-[#151933] transition-colors">
+            <p className="mt-2.5 text-xs sm:text-sm font-bold text-[#151933] group-hover:text-[#151933] transition-colors">
               Upload Series Cover
             </p>
 
-            <p className="mt-0.5 text-[11px] sm:text-xs font-semibold text-[#797570]">
+            <p className="mt-0.5 text-[11px] sm:text-xs font-semibold text-[#64748b]">
               Recommended size: 1920 × 1080 px
             </p>
 
-            <p className="mt-1 text-[10px] sm:text-[11px] font-medium text-[#797570]/70">
+            <p className="mt-1 text-[10px] sm:text-[11px] font-medium text-[#64748b]/70">
               JPG, PNG or WebP
             </p>
           </div>

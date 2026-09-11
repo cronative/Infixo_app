@@ -127,7 +127,7 @@ export function CollaborationInquiryModal({
             <button
               type="button"
               onClick={handleClose}
-              className="bg-[#151933] hover:bg-[#151933] text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition-colors cursor-pointer"
+              className="bg-[#151933] hover:bg-brand-hover text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition-colors cursor-pointer"
             >
               Done
             </button>
@@ -276,14 +276,14 @@ export function CollaborationInquiryModal({
             <button
               type="button"
               onClick={handleClose}
-              className="px-3.5 py-2 text-xs font-semibold text-[#6B5A5D] hover:text-[#241618] cursor-pointer"
+              className="px-3.5 py-2 text-xs font-semibold text-[#6B5A5D] hover:text-foreground cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-[#151933] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-brand-hover px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs disabled:opacity-50"
             >
               {submitting ? (
                 <>

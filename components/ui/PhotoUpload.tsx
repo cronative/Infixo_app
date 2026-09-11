@@ -34,7 +34,7 @@ export function PhotoUpload({
   return (
     <div className="flex flex-col items-center sm:items-start gap-2">
       <div
-        className={`group relative flex shrink-0 items-center justify-center overflow-hidden border border-[#E7E3DC] bg-[#fbfbfb] shadow-xs transition-colors hover:border-[#151933] ${shape === "circle"
+        className={`group relative flex shrink-0 items-center justify-center overflow-hidden border border-[#e2e8f0] bg-[#f8fafc] shadow-xs transition-colors hover:border-[#151933] ${shape === "circle"
           ? "rounded-full aspect-square overflow-hidden shrink-0"
           : shape === "landscape"
             ? "aspect-video w-44 rounded-xl"
@@ -55,7 +55,7 @@ export function PhotoUpload({
               }`}
           />
         ) : (
-          <div className="flex flex-col items-center justify-center gap-1 p-2 text-center text-[#797570]">
+          <div className="flex flex-col items-center justify-center gap-1 p-2 text-center text-[#64748b]">
             {isLandscape ? (
               <>
                 <Film className="h-5 w-5 text-[#151933]" />
@@ -78,7 +78,7 @@ export function PhotoUpload({
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="bg-[#151933]/[0.09] text-[#151933] hover:bg-[#2c1937]/15 text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#151933]/20 transition-colors cursor-pointer"
+        className="bg-[#151933]/[0.09] text-[#151933] hover:bg-brand-hover/15 text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#151933]/20 transition-colors cursor-pointer"
       >
         {label ?? (value ? (isLandscape ? "Change poster" : "Change Profile Photo") : (isLandscape ? "Upload poster preview" : "Upload Profile Photo"))}
       </button>

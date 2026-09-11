@@ -468,7 +468,7 @@ export default function PublicReviewSubmissionPage() {
                 href={reviewData.contentUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-[#151933] hover:bg-[#2c1937] text-white font-extrabold text-xs px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1 shrink-0 shadow-xs"
+                className="bg-[#151933] hover:bg-brand-hover text-white font-extrabold text-xs px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1 shrink-0 shadow-xs"
               >
                 <Video className="h-3.5 w-3.5" />
                 <span>View Work ↗</span>
@@ -495,7 +495,7 @@ export default function PublicReviewSubmissionPage() {
             <div className="pt-3 border-t border-amber-200/80 text-xs">
               <Link
                 href={`/${creatorData?.username || "creator"}`}
-                className="bg-[#151933] hover:bg-[#2c1937] text-white font-extrabold px-4 py-2.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-sm"
+                className="bg-[#151933] hover:bg-brand-hover text-white font-extrabold px-4 py-2.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-sm"
               >
                 <span>Visit Creator Profile →</span>
               </Link>
@@ -519,7 +519,7 @@ export default function PublicReviewSubmissionPage() {
             <div className="pt-3 border-t border-[#17845B]/20 text-xs">
               <Link
                 href={`/${creatorData?.username || "creator"}`}
-                className="bg-[#17845B] hover:bg-[#136c4b] text-white font-extrabold px-4 py-2.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-sm"
+                className="bg-[#17845B] hover:bg-brand-hover text-white font-extrabold px-4 py-2.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-sm"
               >
                 <span>Visit Creator Profile Page →</span>
               </Link>
@@ -589,7 +589,7 @@ export default function PublicReviewSubmissionPage() {
                     type="button"
                     onClick={handleGenerateAiReview}
                     disabled={isGeneratingAi}
-                    className="inline-flex items-center gap-1 bg-[#151933]/[0.09] hover:bg-[#151933]/15 text-[#151933] text-[11px] font-extrabold px-2.5 py-1 rounded-lg border border-[#151933]/20 transition-all cursor-pointer shadow-2xs"
+                    className="inline-flex items-center gap-1 bg-[#151933]/[0.09] hover:bg-brand-hover/15 text-[#151933] text-[11px] font-extrabold px-2.5 py-1 rounded-lg border border-[#151933]/20 transition-all cursor-pointer shadow-2xs"
                   >
                     <Wand2 className={`h-3 w-3 ${isGeneratingAi ? "animate-spin" : ""}`} />
                     <span>{isGeneratingAi ? "Generating..." : "✨ Auto-Write with AI"}</span>
@@ -624,7 +624,7 @@ export default function PublicReviewSubmissionPage() {
                         key={idx}
                         type="button"
                         onClick={() => handleSelectSuggestion(suggestion)}
-                        className="bg-[#fbfbfb] hover:bg-[#151933]/[0.09] hover:border-[#151933]/40 text-[#54514D] hover:text-[#151933] text-[10.5px] font-semibold px-2.5 py-1 rounded-xl border border-[#E7E3DC] transition-all text-left cursor-pointer"
+                        className="bg-[#fbfbfb] hover:bg-brand-hover/[0.09] hover:border-brand-primary/40 text-[#54514D] hover:text-brand-primary text-[10.5px] font-semibold px-2.5 py-1 rounded-xl border border-[#E7E3DC] transition-all text-left cursor-pointer"
                       >
                         {suggestion}
                       </button>
@@ -650,7 +650,7 @@ export default function PublicReviewSubmissionPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-[#151933] hover:bg-[#2c1937] text-white font-extrabold text-sm py-3.5 px-4 rounded-xl transition-all shadow-xs cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full bg-[#151933] hover:bg-brand-hover text-white font-extrabold text-sm py-3.5 px-4 rounded-xl transition-all shadow-xs cursor-pointer flex items-center justify-center gap-2"
                 >
                   <Send className="h-4 w-4" />
                   <span>{submitting ? "Submitting Review..." : "Submit Brand Review →"}</span>
