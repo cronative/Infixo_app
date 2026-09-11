@@ -133,7 +133,7 @@ export default function SeriesStepPage() {
                       onClick={() => setSeriesPlatform(p)}
                       className={`tap-scale flex items-center justify-center gap-1.5 rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition-all cursor-pointer ${isSelected
                         ? "border-[#151933] bg-[#151933]/[0.08] text-[#151933] font-bold"
-                        : "border-[#E7E3DC] bg-white text-[#54514D] hover:bg-[#fbfbfb]"
+                        : "border-[#E7E3DC] bg-white text-[#54514D] hover:bg-surface-soft"
                         }`}
                     >
                       {p === "YouTube" && <YoutubeIcon className={`h-3.5 w-3.5 ${isSelected ? "text-[#151933]" : "text-red-500"}`} />}
@@ -187,7 +187,7 @@ export default function SeriesStepPage() {
         <div className="rounded-xl border border-[#E7E3DC] bg-white p-3 text-xs text-[#54514D] flex items-start gap-2">
           <Sparkles className="h-3.5 w-3.5 text-[#151933] shrink-0 mt-0.5" />
           <p className="leading-relaxed">
-            Episodes can be added anytime from your <strong className="text-[#181716]">Creator Dashboard</strong>. Early Access supports up to 3 series and 15 total episodes.
+            Episodes can be added anytime from your <strong className="text-[#181716]">Creator Dashboard</strong>. Free Trial supports up to 3 series and 15 total episode links.
           </p>
         </div>
       </div>
@@ -199,7 +199,7 @@ export default function SeriesStepPage() {
             type="button"
             variant="outline"
             size="lg"
-            className="w-full sm:w-auto h-10 rounded-xl border-[#E7E3DC] text-[#181716] hover:bg-[#fbfbfb] font-semibold text-xs sm:text-sm px-5"
+            className="w-full sm:w-auto h-10 rounded-xl border-[#E7E3DC] text-[#181716] hover:bg-surface-soft font-semibold text-xs sm:text-sm px-5"
             onClick={() => router.push("/onboarding/themes")}
           >
             Back
@@ -207,7 +207,7 @@ export default function SeriesStepPage() {
           <button
             type="button"
             onClick={handleSkip}
-            className="w-full sm:w-auto h-10 px-3.5 rounded-xl text-xs font-semibold text-[#797570] hover:text-[#181716] hover:bg-[#fbfbfb] transition-colors flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+            className="w-full sm:w-auto h-10 px-3.5 rounded-xl text-xs font-semibold text-[#797570] hover:text-foreground hover:bg-surface-soft transition-colors flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
           >
             <SkipForward className="h-3 w-3" />
             <span>Skip for Now</span>
@@ -219,7 +219,7 @@ export default function SeriesStepPage() {
           size="lg"
           loading={submitting}
           onClick={handleSaveAndContinue}
-          className="w-full sm:flex-1 sm:max-w-xs h-10 bg-[#151933] hover:bg-[#2c1937] text-white font-bold text-xs sm:text-sm rounded-xl cursor-pointer shadow-xs"
+          className="w-full sm:flex-1 sm:max-w-xs h-10 bg-[#151933] hover:bg-brand-hover text-white font-bold text-xs sm:text-sm rounded-xl cursor-pointer shadow-xs"
         >
           Save &amp; Next →
         </Button>

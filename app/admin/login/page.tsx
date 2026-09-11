@@ -40,7 +40,7 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center bg-[#FAFAFC] px-4 py-8 text-[#151933] selection:bg-purple-100 selection:text-[#6C2BFF] relative overflow-hidden">
+    <div className="flex min-h-dvh flex-col items-center justify-center bg-[#FAFAFC] px-4 py-8 text-[#151933] selection:bg-slate-200 selection:text-[#151933] relative overflow-hidden">
       {/* Very subtle purple radial background glow */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-[radial-gradient(circle_at_center,rgba(108,43,255,0.06)_0%,transparent_70%)]" />
@@ -52,7 +52,7 @@ export default function AdminLoginPage() {
           {/* Logo + Subtle ADMIN Pill */}
           <div className="flex items-center justify-center gap-2">
             <Logo size="md" />
-            <span className="rounded-md bg-purple-50 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-[#6C2BFF] border border-purple-100/80">
+            <span className="rounded-md bg-[#f1f5f9] px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-[#151933] border border-[#e2e8f0]">
               ADMIN
             </span>
           </div>
@@ -104,7 +104,7 @@ export default function AdminLoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@inflixo.com"
-                  className="h-13 w-full rounded-2xl border border-slate-200 bg-slate-50/70 pl-10 pr-4 text-sm font-semibold text-slate-900 placeholder-slate-400 transition-all focus:border-[#6C2BFF] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6C2BFF]/20"
+                  className="h-13 w-full rounded-2xl border border-slate-200 bg-slate-50/70 pl-10 pr-4 text-sm font-semibold text-slate-900 placeholder-slate-400 transition-all focus:border-[#151933] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#151933]/20"
                 />
               </div>
             </div>
@@ -126,12 +126,12 @@ export default function AdminLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="h-13 w-full rounded-2xl border border-slate-200 bg-slate-50/70 pl-10 pr-10 text-sm font-semibold text-slate-900 placeholder-slate-400 transition-all focus:border-[#6C2BFF] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6C2BFF]/20"
+                  className="h-13 w-full rounded-2xl border border-slate-200 bg-slate-50/70 pl-10 pr-10 text-sm font-semibold text-slate-900 placeholder-slate-400 transition-all focus:border-[#151933] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#151933]/20"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-700 transition-colors"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-brand-primary transition-colors"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -143,7 +143,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="tap-scale h-13 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#6C2BFF] hover:bg-[#581cdb] text-sm font-bold text-white shadow-sm transition-all disabled:opacity-60 cursor-pointer"
+              className="tap-scale h-13 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#151933] hover:bg-brand-hover text-sm font-bold text-white shadow-sm transition-all disabled:opacity-60 cursor-pointer"
             >
               {submitting ? (
                 <>

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Users,
   Sparkles,
@@ -126,6 +127,230 @@ export const DEFAULT_THEME_STYLE: ThemeStyleConfig = {
 
 const MINIMAL_WHITE_STYLE: ThemeStyleConfig = DEFAULT_THEME_STYLE;
 
+const SAGE_STUDIO_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-[#F7F1E4] border border-[#254334]/20 text-[#1E2A20] shadow-xl",
+  profBadgeBg: "bg-[#FFFDF6]/85",
+  profBadgeText: "text-[#254334]",
+  profBadgeBorder: "border-[#254334]/20",
+  fanbaseBg: "bg-[#FFFDF6]",
+  fanbaseText: "text-[#1E2A20]",
+  socialItemBg: "bg-[#FFFDF6] hover:bg-[#ECEFDB]",
+  socialItemBorder: "border-[#254334]/18 hover:border-[#254334]/30",
+  socialNameColor: "text-[#1E2A20]",
+  socialUnitColor: "text-[#75806D]",
+  nameColor: "text-[#1E2A20]",
+  bioColor: "text-[#4D5A47]",
+  handleColor: "text-[#B96A45]",
+};
+
+const BLUSH_PAPER_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-[#FFF7F6] border border-[#4A2434]/15 text-[#2A1720] shadow-xl",
+  profBadgeBg: "bg-white/88",
+  profBadgeText: "text-[#4A2434]",
+  profBadgeBorder: "border-[#4A2434]/15",
+  fanbaseBg: "bg-white",
+  fanbaseText: "text-[#2A1720]",
+  socialItemBg: "bg-white hover:bg-[#FBECE8]",
+  socialItemBorder: "border-[#4A2434]/14 hover:border-[#4A2434]/28",
+  socialNameColor: "text-[#2A1720]",
+  socialUnitColor: "text-[#9A7E86]",
+  nameColor: "text-[#2A1720]",
+  bioColor: "text-[#6B4C57]",
+  handleColor: "text-[#C75D53]",
+};
+
+const STUDIO_FROST_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-b from-[#F8FAFC] via-white to-[#EEF4FF] border border-[#D8E2F0] text-[#151933] shadow-xl",
+  profBadgeBg: "bg-white/92 backdrop-blur-md",
+  profBadgeText: "text-[#151933]",
+  profBadgeBorder: "border-[#D8E2F0]",
+  fanbaseBg: "bg-white/92 backdrop-blur-md",
+  fanbaseText: "text-[#151933]",
+  socialItemBg: "bg-white/88 hover:bg-[#F1F5F9] backdrop-blur-md",
+  socialItemBorder: "border-[#D8E2F0] hover:border-[#151933]/24",
+  socialNameColor: "text-[#151933]",
+  socialUnitColor: "text-[#64748B]",
+  nameColor: "text-[#151933]",
+  bioColor: "text-[#475569]",
+  handleColor: "text-[#64748B]",
+};
+
+const TAJ_MAHAL_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-[#FFFDF7]/56 border border-white/45 text-[#221A12] shadow-xl backdrop-blur-lg",
+  profBadgeBg: "bg-white/72 backdrop-blur-md",
+  profBadgeText: "text-[#151933]",
+  profBadgeBorder: "border-[#DCCDB2]/70",
+  fanbaseBg: "bg-white/80 backdrop-blur-md",
+  fanbaseText: "text-[#221A12]",
+  socialItemBg: "bg-white/78 hover:bg-[#F7F0E4]/88 backdrop-blur-md",
+  socialItemBorder: "border-[#DCCDB2]/70 hover:border-[#151933]/28",
+  socialNameColor: "text-[#221A12]",
+  socialUnitColor: "text-[#766A58]",
+  nameColor: "text-[#221A12]",
+  bioColor: "text-[#5F5446]",
+  handleColor: "text-[#8C6A3E]",
+};
+
+const MARINE_DRIVE_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-[#071827]/64 border border-white/18 text-[#F8FAFC] shadow-2xl backdrop-blur-xl",
+  profBadgeBg: "bg-white/12 backdrop-blur-md",
+  profBadgeText: "text-[#F8FAFC]",
+  profBadgeBorder: "border-white/18",
+  fanbaseBg: "bg-white/12 backdrop-blur-md",
+  fanbaseText: "text-[#F8FAFC]",
+  socialItemBg: "bg-white/10 hover:bg-white/16 backdrop-blur-md",
+  socialItemBorder: "border-white/16 hover:border-[#7DD3FC]/40",
+  socialNameColor: "text-[#F8FAFC]",
+  socialUnitColor: "text-[#B8D7E8]",
+  nameColor: "text-[#F8FAFC]",
+  bioColor: "text-[#C7D7E5]",
+  handleColor: "text-[#7DD3FC]",
+};
+
+const BURJ_KHALIFA_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-[#090B12]/68 border border-[#F5C76B]/22 text-[#FFF8E7] shadow-2xl backdrop-blur-xl",
+  profBadgeBg: "bg-white/10 backdrop-blur-md",
+  profBadgeText: "text-[#FFF8E7]",
+  profBadgeBorder: "border-[#F5C76B]/22",
+  fanbaseBg: "bg-white/10 backdrop-blur-md",
+  fanbaseText: "text-[#FFF8E7]",
+  socialItemBg: "bg-white/10 hover:bg-white/16 backdrop-blur-md",
+  socialItemBorder: "border-[#F5C76B]/18 hover:border-[#F5C76B]/42",
+  socialNameColor: "text-[#FFF8E7]",
+  socialUnitColor: "text-[#D9C69C]",
+  nameColor: "text-[#FFF8E7]",
+  bioColor: "text-[#D7DCE7]",
+  handleColor: "text-[#F5C76B]",
+};
+
+const SOMNATH_TEMPLE_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-[#FFF8EC]/60 border border-white/42 text-[#261A0F] shadow-xl backdrop-blur-lg",
+  profBadgeBg: "bg-white/74 backdrop-blur-md",
+  profBadgeText: "text-[#151933]",
+  profBadgeBorder: "border-[#E6C58B]/55",
+  fanbaseBg: "bg-white/80 backdrop-blur-md",
+  fanbaseText: "text-[#261A0F]",
+  socialItemBg: "bg-white/78 hover:bg-[#FFF0D4]/90 backdrop-blur-md",
+  socialItemBorder: "border-[#E6C58B]/55 hover:border-[#151933]/28",
+  socialNameColor: "text-[#261A0F]",
+  socialUnitColor: "text-[#7B664E]",
+  nameColor: "text-[#261A0F]",
+  bioColor: "text-[#64523E]",
+  handleColor: "text-[#A35A18]",
+};
+
+const DWARKA_TEMPLE_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-[#F7FBF8]/58 border border-white/42 text-[#14251D] shadow-xl backdrop-blur-lg",
+  profBadgeBg: "bg-white/74 backdrop-blur-md",
+  profBadgeText: "text-[#151933]",
+  profBadgeBorder: "border-[#B7D0C0]/60",
+  fanbaseBg: "bg-white/80 backdrop-blur-md",
+  fanbaseText: "text-[#14251D]",
+  socialItemBg: "bg-white/78 hover:bg-[#EAF4ED]/90 backdrop-blur-md",
+  socialItemBorder: "border-[#B7D0C0]/60 hover:border-[#151933]/28",
+  socialNameColor: "text-[#14251D]",
+  socialUnitColor: "text-[#597163]",
+  nameColor: "text-[#14251D]",
+  bioColor: "text-[#465C50]",
+  handleColor: "text-[#0E766A]",
+};
+
+const GOA_BEACH_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-[#FFF8EF]/58 border border-white/44 text-[#241A12] shadow-xl backdrop-blur-lg",
+  profBadgeBg: "bg-white/74 backdrop-blur-md",
+  profBadgeText: "text-[#151933]",
+  profBadgeBorder: "border-[#F0C98D]/60",
+  fanbaseBg: "bg-white/80 backdrop-blur-md",
+  fanbaseText: "text-[#241A12]",
+  socialItemBg: "bg-white/78 hover:bg-[#FFF0D8]/90 backdrop-blur-md",
+  socialItemBorder: "border-[#F0C98D]/60 hover:border-[#151933]/28",
+  socialNameColor: "text-[#241A12]",
+  socialUnitColor: "text-[#7A5F49]",
+  nameColor: "text-[#241A12]",
+  bioColor: "text-[#5F4B3A]",
+  handleColor: "text-[#0F766E]",
+};
+
+const CREATOR_STUDIO_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-[#F8FAFC] border border-[#D8E2F0] text-[#151933] shadow-xl",
+  profBadgeBg: "bg-white",
+  profBadgeText: "text-[#151933]",
+  profBadgeBorder: "border-[#D8E2F0]",
+  fanbaseBg: "bg-white",
+  fanbaseText: "text-[#151933]",
+  socialItemBg: "bg-white hover:bg-[#F1F5F9]",
+  socialItemBorder: "border-[#D8E2F0] hover:border-[#151933]/25",
+  socialNameColor: "text-[#151933]",
+  socialUnitColor: "text-[#64748B]",
+  nameColor: "text-[#151933]",
+  bioColor: "text-[#475569]",
+  handleColor: "text-[#64748B]",
+};
+
+const NEON_REELS_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-[#070A18]/82 border border-[#FF3B8D]/24 text-[#F8FAFC] shadow-2xl backdrop-blur-xl",
+  profBadgeBg: "bg-white/10 backdrop-blur-md",
+  profBadgeText: "text-[#F8FAFC]",
+  profBadgeBorder: "border-[#FF3B8D]/24",
+  fanbaseBg: "bg-white/10 backdrop-blur-md",
+  fanbaseText: "text-[#F8FAFC]",
+  socialItemBg: "bg-white/10 hover:bg-white/16 backdrop-blur-md",
+  socialItemBorder: "border-[#FF3B8D]/20 hover:border-[#38BDF8]/45",
+  socialNameColor: "text-[#F8FAFC]",
+  socialUnitColor: "text-[#C4B5FD]",
+  nameColor: "text-[#F8FAFC]",
+  bioColor: "text-[#CBD5E1]",
+  handleColor: "text-[#38BDF8]",
+};
+
+const PODCAST_LOUNGE_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-[#17110D]/82 border border-[#D9A441]/24 text-[#FFF7ED] shadow-2xl backdrop-blur-xl",
+  profBadgeBg: "bg-white/10 backdrop-blur-md",
+  profBadgeText: "text-[#FFF7ED]",
+  profBadgeBorder: "border-[#D9A441]/24",
+  fanbaseBg: "bg-white/10 backdrop-blur-md",
+  fanbaseText: "text-[#FFF7ED]",
+  socialItemBg: "bg-white/10 hover:bg-white/16 backdrop-blur-md",
+  socialItemBorder: "border-[#D9A441]/20 hover:border-[#D9A441]/45",
+  socialNameColor: "text-[#FFF7ED]",
+  socialUnitColor: "text-[#D6C2A4]",
+  nameColor: "text-[#FFF7ED]",
+  bioColor: "text-[#D6C2A4]",
+  handleColor: "text-[#D9A441]",
+};
+
+const FOOD_VLOG_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-[#FFF9F0] border border-[#F2D8B6] text-[#2D1E12] shadow-xl",
+  profBadgeBg: "bg-white",
+  profBadgeText: "text-[#2D1E12]",
+  profBadgeBorder: "border-[#F2D8B6]",
+  fanbaseBg: "bg-white",
+  fanbaseText: "text-[#2D1E12]",
+  socialItemBg: "bg-white hover:bg-[#FFF0D9]",
+  socialItemBorder: "border-[#F2D8B6] hover:border-[#C45A25]/35",
+  socialNameColor: "text-[#2D1E12]",
+  socialUnitColor: "text-[#7A5A3A]",
+  nameColor: "text-[#2D1E12]",
+  bioColor: "text-[#684A2F]",
+  handleColor: "text-[#C45A25]",
+};
+
+const GAMER_STREAM_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-[#070B13]/86 border border-[#34D399]/22 text-[#ECFDF5] shadow-2xl backdrop-blur-xl",
+  profBadgeBg: "bg-white/10 backdrop-blur-md",
+  profBadgeText: "text-[#ECFDF5]",
+  profBadgeBorder: "border-[#34D399]/24",
+  fanbaseBg: "bg-white/10 backdrop-blur-md",
+  fanbaseText: "text-[#ECFDF5]",
+  socialItemBg: "bg-white/10 hover:bg-white/16 backdrop-blur-md",
+  socialItemBorder: "border-[#34D399]/20 hover:border-[#22D3EE]/45",
+  socialNameColor: "text-[#ECFDF5]",
+  socialUnitColor: "text-[#A7F3D0]",
+  nameColor: "text-[#ECFDF5]",
+  bioColor: "text-[#BAE6FD]",
+  handleColor: "text-[#22D3EE]",
+};
+
 const SIGNATURE_PURPLE_STYLE: ThemeStyleConfig = {
   cardBg: "bg-gradient-to-b from-[#FAF5FF] via-[#FDFBFE] to-[#F8F2F7] border border-[#151933]/18 text-slate-900 shadow-lg",
   profBadgeBg: "bg-white/80 backdrop-blur-md",
@@ -133,8 +358,8 @@ const SIGNATURE_PURPLE_STYLE: ThemeStyleConfig = {
   profBadgeBorder: "border-[#151933]/18",
   fanbaseBg: "bg-white/80 backdrop-blur-md",
   fanbaseText: "text-[#17131A]",
-  socialItemBg: "bg-white/80 hover:bg-white/95 backdrop-blur-md",
-  socialItemBorder: "border-[#151933]/18 hover:border-[#151933]/30",
+  socialItemBg: "bg-white/80 hover:bg-surface-soft backdrop-blur-md",
+  socialItemBorder: "border-[#151933]/18 hover:border-brand-primary/30",
   socialNameColor: "text-[#17131A]",
   socialUnitColor: "text-[#6F6872]",
   nameColor: "text-[#17131A]",
@@ -149,7 +374,7 @@ const MIDNIGHT_DARK_STYLE: ThemeStyleConfig = {
   profBadgeBorder: "border-white/[0.14]",
   fanbaseBg: "bg-[#111B2D]",
   fanbaseText: "text-[#F8FAFC]",
-  socialItemBg: "bg-[#111B2D] hover:bg-[#162238]",
+  socialItemBg: "bg-[#111B2D] hover:bg-brand-hover",
   socialItemBorder: "border-white/[0.14]",
   socialNameColor: "text-[#F8FAFC]",
   socialUnitColor: "text-[#7F8A9D]",
@@ -168,8 +393,8 @@ const COSMIC_PURPLE_STYLE: ThemeStyleConfig = {
   profBadgeBorder: "border-purple-400/25",
   fanbaseBg: "bg-[#25173B]/85 backdrop-blur-md",
   fanbaseText: "text-[#FAF5FF]",
-  socialItemBg: "bg-[#25173B]/80 hover:bg-[#32204D]/90 backdrop-blur-md",
-  socialItemBorder: "border-purple-400/20 hover:border-purple-400/40",
+  socialItemBg: "bg-[#25173B]/80 hover:bg-brand-hover backdrop-blur-md",
+  socialItemBorder: "border-purple-400/20 hover:border-brand-primary/40",
   socialNameColor: "text-[#FAF5FF]",
   socialUnitColor: "text-[#C4B5FD]",
   nameColor: "text-[#FAF5FF]",
@@ -184,7 +409,7 @@ const AURORA_NIGHT_STYLE: ThemeStyleConfig = {
   profBadgeBorder: "border-teal-400/25",
   fanbaseBg: "bg-[#0F1E33]/85 backdrop-blur-md",
   fanbaseText: "text-[#F0FDF4]",
-  socialItemBg: "bg-[#0F1E33]/80 hover:bg-[#162D4C]/90 backdrop-blur-md",
+  socialItemBg: "bg-[#0F1E33]/80 hover:bg-brand-hover backdrop-blur-md",
   socialItemBorder: "border-teal-400/20 hover:border-teal-400/40",
   socialNameColor: "text-[#F0FDF4]",
   socialUnitColor: "text-[#94A3B8]",
@@ -200,8 +425,8 @@ const ROSE_GLOW_STYLE: ThemeStyleConfig = {
   profBadgeBorder: "border-rose-300/25",
   fanbaseBg: "bg-[#361928]/85 backdrop-blur-md",
   fanbaseText: "text-[#FFF1F2]",
-  socialItemBg: "bg-[#361928]/80 hover:bg-[#482236]/90 backdrop-blur-md",
-  socialItemBorder: "border-rose-300/20 hover:border-rose-300/40",
+  socialItemBg: "bg-[#361928]/80 hover:bg-brand-hover backdrop-blur-md",
+  socialItemBorder: "border-rose-300/20 hover:border-brand-border/40",
   socialNameColor: "text-[#FFF1F2]",
   socialUnitColor: "text-[#FDA4AF]",
   nameColor: "text-[#FFF1F2]",
@@ -216,8 +441,8 @@ const OCEAN_MOTION_STYLE: ThemeStyleConfig = {
   profBadgeBorder: "border-blue-400/25",
   fanbaseBg: "bg-[#102B4E]/85 backdrop-blur-md",
   fanbaseText: "text-[#F0F9FF]",
-  socialItemBg: "bg-[#102B4E]/80 hover:bg-[#183B68]/90 backdrop-blur-md",
-  socialItemBorder: "border-blue-400/20 hover:border-blue-400/40",
+  socialItemBg: "bg-[#102B4E]/80 hover:bg-brand-hover backdrop-blur-md",
+  socialItemBorder: "border-blue-400/20 hover:border-brand-primary/40",
   socialNameColor: "text-[#F0F9FF]",
   socialUnitColor: "text-[#93C5FD]",
   nameColor: "text-[#F0F9FF]",
@@ -232,8 +457,8 @@ const SUNSET_STUDIO_STYLE: ThemeStyleConfig = {
   profBadgeBorder: "border-amber-400/25",
   fanbaseBg: "bg-[#381827]/85 backdrop-blur-md",
   fanbaseText: "text-[#FFFBEB]",
-  socialItemBg: "bg-[#381827]/80 hover:bg-[#4B2236]/90 backdrop-blur-md",
-  socialItemBorder: "border-amber-400/20 hover:border-amber-400/40",
+  socialItemBg: "bg-[#381827]/80 hover:bg-brand-hover backdrop-blur-md",
+  socialItemBorder: "border-amber-400/20 hover:border-brand-primary/40",
   socialNameColor: "text-[#FFFBEB]",
   socialUnitColor: "text-[#FDE68A]",
   nameColor: "text-[#FFFBEB]",
@@ -248,8 +473,8 @@ const MINIMAL_SPARK_STYLE: ThemeStyleConfig = {
   profBadgeBorder: "border-[#151933]/20",
   fanbaseBg: "bg-white/90 backdrop-blur-md",
   fanbaseText: "text-[#17131A]",
-  socialItemBg: "bg-white/80 hover:bg-white/95 backdrop-blur-md",
-  socialItemBorder: "border-[#151933]/16 hover:border-[#151933]/30",
+  socialItemBg: "bg-white/80 hover:bg-surface-soft backdrop-blur-md",
+  socialItemBorder: "border-[#151933]/16 hover:border-brand-primary/30",
   socialNameColor: "text-[#17131A]",
   socialUnitColor: "text-[#6F6872]",
   nameColor: "text-[#17131A]",
@@ -264,8 +489,8 @@ const NEON_GRID_STYLE: ThemeStyleConfig = {
   profBadgeBorder: "border-cyan-400/30",
   fanbaseBg: "bg-[#0E162C]/85 backdrop-blur-md",
   fanbaseText: "text-[#F8FAFC]",
-  socialItemBg: "bg-[#0E162C]/80 hover:bg-[#162244]/90 backdrop-blur-md",
-  socialItemBorder: "border-cyan-400/22 hover:border-cyan-400/45",
+  socialItemBg: "bg-[#0E162C]/80 hover:bg-brand-hover backdrop-blur-md",
+  socialItemBorder: "border-cyan-400/22 hover:border-brand-primary/45",
   socialNameColor: "text-[#F8FAFC]",
   socialUnitColor: "text-[#94A3B8]",
   nameColor: "text-[#F8FAFC]",
@@ -280,7 +505,7 @@ const LIQUID_AURORA_STYLE: ThemeStyleConfig = {
   profBadgeBorder: "border-teal-400/30",
   fanbaseBg: "bg-[#0F2638]/85 backdrop-blur-md",
   fanbaseText: "text-[#F0FDF4]",
-  socialItemBg: "bg-[#0F2638]/80 hover:bg-[#15344C]/90 backdrop-blur-md",
+  socialItemBg: "bg-[#0F2638]/80 hover:bg-brand-hover backdrop-blur-md",
   socialItemBorder: "border-teal-400/22 hover:border-teal-400/45",
   socialNameColor: "text-[#F0FDF4]",
   socialUnitColor: "text-[#99F6E4]",
@@ -296,8 +521,8 @@ const FLOATING_STUDIO_STYLE: ThemeStyleConfig = {
   profBadgeBorder: "border-[#E5E0D8]",
   fanbaseBg: "bg-white/90 backdrop-blur-md",
   fanbaseText: "text-[#2D2824]",
-  socialItemBg: "bg-white/80 hover:bg-white/95 backdrop-blur-md",
-  socialItemBorder: "border-[#E5E0D8] hover:border-[#E05D44]/35",
+  socialItemBg: "bg-white/80 hover:bg-surface-soft backdrop-blur-md",
+  socialItemBorder: "border-[#E5E0D8] hover:border-brand-primary/35",
   socialNameColor: "text-[#2D2824]",
   socialUnitColor: "text-[#6B635B]",
   nameColor: "text-[#2D2824]",
@@ -312,8 +537,8 @@ const SPOTLIGHT_STAGE_STYLE: ThemeStyleConfig = {
   profBadgeBorder: "border-amber-400/30",
   fanbaseBg: "bg-[#1C1F26]/90 backdrop-blur-md",
   fanbaseText: "text-[#FAF8F5]",
-  socialItemBg: "bg-[#1C1F26]/80 hover:bg-[#282C36]/90 backdrop-blur-md",
-  socialItemBorder: "border-amber-400/20 hover:border-amber-400/45",
+  socialItemBg: "bg-[#1C1F26]/80 hover:bg-brand-hover backdrop-blur-md",
+  socialItemBorder: "border-amber-400/20 hover:border-brand-primary/45",
   socialNameColor: "text-[#FAF8F5]",
   socialUnitColor: "text-[#C7CAD1]",
   nameColor: "text-[#FAF8F5]",
@@ -328,8 +553,8 @@ const CREATIVE_PAPER_STYLE: ThemeStyleConfig = {
   profBadgeBorder: "border-[#E3D9CC]",
   fanbaseBg: "bg-white/90 backdrop-blur-md",
   fanbaseText: "text-[#29221D]",
-  socialItemBg: "bg-white/80 hover:bg-white/95 backdrop-blur-md",
-  socialItemBorder: "border-[#E3D9CC] hover:border-[#151933]/35",
+  socialItemBg: "bg-white/80 hover:bg-surface-soft backdrop-blur-md",
+  socialItemBorder: "border-[#E3D9CC] hover:border-brand-primary/35",
   socialNameColor: "text-[#29221D]",
   socialUnitColor: "text-[#6A5E57]",
   nameColor: "text-[#29221D]",
@@ -337,8 +562,107 @@ const CREATIVE_PAPER_STYLE: ThemeStyleConfig = {
   handleColor: "text-[#151933]",
 };
 
+const LOVE_LETTER_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-b from-[#FFF6F8] via-white to-[#FDECEF] border border-[#F4C9D2] text-[#33151D] shadow-xl",
+  profBadgeBg: "bg-white/90 backdrop-blur-md",
+  profBadgeText: "text-[#33151D]",
+  profBadgeBorder: "border-[#F4C9D2]",
+  fanbaseBg: "bg-white/90 backdrop-blur-md",
+  fanbaseText: "text-[#33151D]",
+  socialItemBg: "bg-white/84 hover:bg-[#FFF0F3] backdrop-blur-md",
+  socialItemBorder: "border-[#F4C9D2] hover:border-[#B4234A]/35",
+  socialNameColor: "text-[#33151D]",
+  socialUnitColor: "text-[#8A5360]",
+  nameColor: "text-[#33151D]",
+  bioColor: "text-[#6F3F4B]",
+  handleColor: "text-[#B4234A]",
+};
+
+const CHRISTMAS_SNOW_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-b from-[#F8FFFB] via-white to-[#EFF8F2] border border-[#CDE4D3] text-[#173322] shadow-xl",
+  profBadgeBg: "bg-white/90 backdrop-blur-md",
+  profBadgeText: "text-[#173322]",
+  profBadgeBorder: "border-[#CDE4D3]",
+  fanbaseBg: "bg-white/90 backdrop-blur-md",
+  fanbaseText: "text-[#173322]",
+  socialItemBg: "bg-white/84 hover:bg-[#EFF8F2] backdrop-blur-md",
+  socialItemBorder: "border-[#CDE4D3] hover:border-[#0F6B3D]/35",
+  socialNameColor: "text-[#173322]",
+  socialUnitColor: "text-[#5C7465]",
+  nameColor: "text-[#173322]",
+  bioColor: "text-[#496153]",
+  handleColor: "text-[#B4232A]",
+};
+
+const MOUNTAIN_MIST_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-b from-[#F3FAF8] via-white to-[#E8F2EF] border border-[#C7DBD5] text-[#102A2B] shadow-xl",
+  profBadgeBg: "bg-white/90 backdrop-blur-md",
+  profBadgeText: "text-[#102A2B]",
+  profBadgeBorder: "border-[#C7DBD5]",
+  fanbaseBg: "bg-white/90 backdrop-blur-md",
+  fanbaseText: "text-[#102A2B]",
+  socialItemBg: "bg-white/84 hover:bg-[#E8F2EF] backdrop-blur-md",
+  socialItemBorder: "border-[#C7DBD5] hover:border-[#236B64]/35",
+  socialNameColor: "text-[#102A2B]",
+  socialUnitColor: "text-[#58706D]",
+  nameColor: "text-[#102A2B]",
+  bioColor: "text-[#435C59]",
+  handleColor: "text-[#236B64]",
+};
+
+const STREET_FOOD_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-gradient-to-b from-[#FFF8EA] via-white to-[#FFECCB] border border-[#F5C777] text-[#35200C] shadow-xl",
+  profBadgeBg: "bg-white/90 backdrop-blur-md",
+  profBadgeText: "text-[#35200C]",
+  profBadgeBorder: "border-[#F5C777]",
+  fanbaseBg: "bg-white/90 backdrop-blur-md",
+  fanbaseText: "text-[#35200C]",
+  socialItemBg: "bg-white/84 hover:bg-[#FFF0CF] backdrop-blur-md",
+  socialItemBorder: "border-[#F5C777] hover:border-[#D85B19]/35",
+  socialNameColor: "text-[#35200C]",
+  socialUnitColor: "text-[#7A5429]",
+  nameColor: "text-[#35200C]",
+  bioColor: "text-[#65431F]",
+  handleColor: "text-[#D85B19]",
+};
+
+const CAFE_MOCHA_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-[#201611]/86 border border-[#C89B6B]/24 text-[#FFF7ED] shadow-2xl backdrop-blur-xl",
+  profBadgeBg: "bg-white/10 backdrop-blur-md",
+  profBadgeText: "text-[#FFF7ED]",
+  profBadgeBorder: "border-[#C89B6B]/24",
+  fanbaseBg: "bg-white/10 backdrop-blur-md",
+  fanbaseText: "text-[#FFF7ED]",
+  socialItemBg: "bg-white/10 hover:bg-white/16 backdrop-blur-md",
+  socialItemBorder: "border-[#C89B6B]/20 hover:border-[#EBCB9A]/45",
+  socialNameColor: "text-[#FFF7ED]",
+  socialUnitColor: "text-[#D7BFA6]",
+  nameColor: "text-[#FFF7ED]",
+  bioColor: "text-[#D7BFA6]",
+  handleColor: "text-[#EBCB9A]",
+};
+
 export const THEME_STYLES: Record<string, ThemeStyleConfig> = {
   "minimal-white": MINIMAL_WHITE_STYLE,
+  "sage-studio": SAGE_STUDIO_STYLE,
+  "blush-paper": BLUSH_PAPER_STYLE,
+  "studio-frost": STUDIO_FROST_STYLE,
+  "taj-mahal": TAJ_MAHAL_STYLE,
+  "marine-drive": MARINE_DRIVE_STYLE,
+  "burj-khalifa": BURJ_KHALIFA_STYLE,
+  "somnath-temple": SOMNATH_TEMPLE_STYLE,
+  "dwarka-temple": DWARKA_TEMPLE_STYLE,
+  "goa-beach": GOA_BEACH_STYLE,
+  "creator-studio": CREATOR_STUDIO_STYLE,
+  "neon-reels": NEON_REELS_STYLE,
+  "podcast-lounge": PODCAST_LOUNGE_STYLE,
+  "food-vlog": FOOD_VLOG_STYLE,
+  "gamer-stream": GAMER_STREAM_STYLE,
+  "love-letter": LOVE_LETTER_STYLE,
+  "christmas-snow": CHRISTMAS_SNOW_STYLE,
+  "mountain-mist": MOUNTAIN_MIST_STYLE,
+  "street-food": STREET_FOOD_STYLE,
+  "cafe-mocha": CAFE_MOCHA_STYLE,
   "signature-purple": SIGNATURE_PURPLE_STYLE,
   midnight: MIDNIGHT_DARK_STYLE,
   "neon-grid": NEON_GRID_STYLE,
@@ -432,6 +756,9 @@ export interface LivePreviewCardProps {
   compact?: boolean;
   variant?: "compact" | "full";
   cardPadding?: string;
+  containedScroll?: boolean;
+  onSeriesPreviewOpen?: (series: Series) => void;
+  seriesOpenMode?: "internal" | "page";
   showSettingsIcon?: boolean;
   onShare?: () => void;
   isInformational?: boolean;
@@ -456,6 +783,12 @@ const DARK_THEME_KEYS = new Set([
   "rose-glow",
   "ocean-motion",
   "sunset-studio",
+  "marine-drive",
+  "burj-khalifa",
+  "neon-reels",
+  "podcast-lounge",
+  "gamer-stream",
+  "cafe-mocha",
 ]);
 
 const EMPTY_PROFILE_FALLBACK: CreatorProfile = {
@@ -489,12 +822,16 @@ export function LivePreviewCard({
   compact = false,
   variant,
   cardPadding,
+  containedScroll = false,
+  onSeriesPreviewOpen,
+  seriesOpenMode = "internal",
   showSettingsIcon: showSettingsIconProp,
   onShare,
   isInformational: isInformationalProp,
   isOnboarding: isOnboardingProp,
   isFinishStep: isFinishStepProp,
 }: LivePreviewCardProps) {
+  const router = useRouter();
   const profile: CreatorProfile = incomingProfile || EMPTY_PROFILE_FALLBACK;
   const socials: SocialAccounts = incomingSocials || EMPTY_SOCIAL_ACCOUNTS;
   const series: Series[] = incomingSeries || [];
@@ -644,6 +981,8 @@ export function LivePreviewCard({
   const [drawerSeries, setDrawerSeries] = useState<Series | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [showAllGigs, setShowAllGigs] = useState(false);
+  const profileScrollRef = useRef<HTMLDivElement | null>(null);
+  const [showMoveToTop, setShowMoveToTop] = useState(false);
 
   const safeProfile: CreatorProfile = Object.assign(
     {
@@ -972,6 +1311,17 @@ export function LivePreviewCard({
     }
   };
 
+  const handleContainedScroll = (event: { currentTarget: HTMLDivElement }) => {
+    if (!containedScroll) return;
+    const el = event.currentTarget;
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    setShowMoveToTop(el.scrollTop > 180 && distanceFromBottom < 220);
+  };
+
+  const handleMoveToTop = () => {
+    profileScrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const isFull = variant === "full";
   const bleedMargins = isFull ? "-mx-5 -mt-5 sm:-mx-8 sm:-mt-8" : "-mx-4 -mt-4 sm:-mx-6 sm:-mt-6";
   const bleedRadius = isFull ? "rounded-t-3xl" : "rounded-t-[28px]";
@@ -980,6 +1330,7 @@ export function LivePreviewCard({
   const c = themeMeta.colors;
   const typ = themeMeta.typography;
   const eff = themeMeta.effects;
+  const isDefaultCleanLayout = themeKey === "minimal-white" || themeKey === "sage-studio" || themeKey === "blush-paper" || themeKey === "studio-frost" || themeKey === "taj-mahal" || themeKey === "somnath-temple" || themeKey === "dwarka-temple" || themeKey === "goa-beach" || themeKey === "creator-studio" || themeKey === "food-vlog" || themeKey === "love-letter" || themeKey === "christmas-snow" || themeKey === "mountain-mist" || themeKey === "street-food";
 
   const surfaceShadow = themeMeta.profileSurface?.shadow || eff.shadow || "0 24px 70px rgba(0,0,0,0.14)";
   const surfaceBorder = themeMeta.profileSurface?.border || c.border;
@@ -993,15 +1344,17 @@ export function LivePreviewCard({
     <div
       style={{
         ...themeCssVars,
-        backgroundColor: isFull ? "transparent" : surfaceBg,
-        borderColor: isFull ? "transparent" : surfaceBorder,
+        backgroundColor: isFull && !isDefaultCleanLayout ? "transparent" : surfaceBg,
+        borderColor: isFull && !isDefaultCleanLayout ? "transparent" : surfaceBorder,
         color: c.primaryText,
         fontFamily: typ.fontFamily,
         letterSpacing: typ.letterSpacing,
-        ["--desktop-surface-shadow" as any]: isFull ? "none" : surfaceShadow,
+        ["--desktop-surface-shadow" as any]: isFull && !isDefaultCleanLayout ? "none" : surfaceShadow,
       }}
-      className={`relative overflow-hidden flex-1 flex flex-col ${isFull
-        ? "p-0 border-0 shadow-none bg-transparent"
+      className={`relative flex-1 flex flex-col min-h-0 overflow-hidden ${isFull
+        ? isDefaultCleanLayout
+          ? "px-3.5 py-5 sm:px-7 sm:py-7 rounded-[28px] border shadow-xl"
+          : "p-0 border-0 shadow-none bg-transparent"
         : `${cardPadding ? cardPadding : "p-4 sm:p-6 pt-6 sm:pt-8"} rounded-[24px] border shadow-md`
         } transition-all`}
     >
@@ -1019,15 +1372,17 @@ export function LivePreviewCard({
       {!isFull && <FocusOverlay overlay={themeMeta.focusOverlay} contained={true} />}
 
       {/* Top Action Bar (Left Inflixo Logo Squircle, Right Share Icon Squircle) */}
-      <div className="relative z-10 flex items-center justify-between w-full mb-6 px-0.5">
+      <div
+        className={`relative z-30 flex items-center justify-between w-full px-0.5 bg-transparent ${containedScroll ? "shrink-0 pt-0 pb-2" : "mb-2"}`}
+      >
         <Link
           href="/"
           style={{ backgroundColor: c.accent }}
-          className="tap-scale flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl text-white shadow-xs transition-all shrink-0 border border-white/20 select-none hover:scale-105 cursor-pointer"
+          className="tap-scale flex h-11 w-11 shrink-0 cursor-pointer select-none items-center justify-center rounded-xl border border-white/25 text-white shadow-sm shadow-black/10 transition-all hover:scale-105 sm:h-12 sm:w-12"
           title="Inflixo"
           aria-label="Inflixo"
         >
-          <InflixoLogoIcon className="h-5 w-5 text-white" />
+          <InflixoLogoIcon light className="h-7 w-7 object-contain sm:h-8 sm:w-8" />
         </Link>
 
         {!isOnboardingMode && (
@@ -1039,14 +1394,20 @@ export function LivePreviewCard({
               borderColor: c.border,
               color: c.primaryText,
             }}
-            className="tap-scale flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border shadow-2xs transition-all hover:scale-105 cursor-pointer"
+            className="tap-scale flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl border shadow-sm shadow-black/10 transition-all hover:scale-105 sm:h-12 sm:w-12"
             title="Share profile"
             aria-label="Share profile"
           >
-            <Share2 className="h-4 w-4" />
+            <Share2 className="h-5 w-5 sm:h-[22px] sm:w-[22px]" />
           </button>
         )}
       </div>
+
+      <div
+        ref={containedScroll ? profileScrollRef : undefined}
+        onScroll={containedScroll ? handleContainedScroll : undefined}
+        className={containedScroll ? "relative z-10 flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain pt-1 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" : "contents"}
+      >
 
       {/* 1. Profile Header Section */}
       <div className="relative z-10 flex flex-col items-center text-center">
@@ -1055,15 +1416,15 @@ export function LivePreviewCard({
           <CreatorAvatar
             src={profile.photoDataUrl}
             name={profile.displayName || "Creator"}
-            className="w-24 h-24 sm:w-28 sm:h-28 rounded-full aspect-square object-cover overflow-hidden border-2 border-white/80 ring-4 ring-black/5 shadow-md mx-auto"
-            style={{ borderColor: c.border || "#FFFFFF" }}
+            className="h-[74px] w-[74px] sm:h-[82px] sm:w-[82px] rounded-full aspect-square object-contain object-center overflow-hidden border-2 border-white/80 ring-4 ring-black/5 shadow-md mx-auto bg-white"
+            style={{ borderColor: c.border || "#FFFFFF", backgroundColor: c.cardBackground }}
             textClassName="text-xl sm:text-2xl font-extrabold text-white"
             fallbackBgClass="bg-[#151933]"
           />
         </div>
 
         {/* Creator Name & Verified Checkmark */}
-        <div className="mt-3.5 sm:mt-4 flex items-center justify-center gap-1.5 max-w-full">
+        <div className="mt-2 flex items-center justify-center gap-1.5 max-w-full">
           <h1
             style={{
               color: c.primaryText,
@@ -1095,7 +1456,7 @@ export function LivePreviewCard({
         {visibilitySettings.showContentCategory !== false && formattedCategories && (
           <p
             style={{ color: c.secondaryText }}
-            className="mt-1.5 text-xs sm:text-[13px] font-medium text-center tracking-normal"
+            className="mt-1 text-xs sm:text-[13px] font-medium text-center tracking-normal"
           >
             {formattedCategories}
           </p>
@@ -1105,7 +1466,7 @@ export function LivePreviewCard({
         {profile.bio && profile.bio.trim() && (
           <p
             style={{ color: c.secondaryText }}
-            className="mt-2.5 text-xs sm:text-sm leading-relaxed max-w-lg mx-auto font-normal px-2 text-center"
+            className="mt-1.5 text-xs sm:text-sm leading-relaxed max-w-lg mx-auto font-normal px-1 text-center"
           >
             {profile.bio}
           </p>
@@ -1113,7 +1474,7 @@ export function LivePreviewCard({
 
         {/* Clickable Social Icons Row */}
         {headerSocialList.length > 0 && (
-          <div className="mt-3.5 flex items-center justify-center gap-2.5 sm:gap-3 flex-wrap">
+          <div className="mt-2 flex items-center justify-center gap-3 sm:gap-3.5 flex-wrap">
             {headerSocialList.map((item) => (
               <a
                 key={item.platform}
@@ -1126,27 +1487,23 @@ export function LivePreviewCard({
                     showToast(`Redirects to ${item.label} on live profile ✨`);
                   }
                 }}
-                style={{
-                  backgroundColor: c.cardBackground,
-                  borderColor: c.border,
-                  color: c.primaryText,
-                }}
-                className="tap-scale flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full border shadow-2xs transition-all hover:scale-110 cursor-pointer"
+                style={{ color: c.primaryText }}
+                className="tap-scale flex h-6 w-6 items-center justify-center transition-all hover:scale-110 cursor-pointer"
                 title={`Visit ${item.label}`}
                 aria-label={item.label}
               >
                 <span className="flex items-center justify-center">
-                  {item.platform === "instagram" && <InstagramIcon className="h-4 w-4 text-pink-500" />}
-                  {item.platform === "youtube" && <YoutubeIcon className="h-4 w-4 text-red-500" />}
-                  {item.platform === "facebook" && <FacebookIcon className="h-4 w-4 text-blue-500" />}
-                  {item.platform === "twitter" && <XTwitterIcon className="h-3.5 w-3.5" style={{ color: c.primaryText }} />}
-                  {item.platform === "linkedin" && <LinkedinIcon className="h-4 w-4 text-sky-600" />}
-                  {item.platform === "threads" && <ThreadsIcon className="h-4 w-4" style={{ color: c.primaryText }} />}
-                  {item.platform === "snapchat" && <SnapchatIcon className="h-4 w-4 text-amber-400" />}
-                  {item.platform === "spotify" && <SpotifyIcon className="h-4 w-4 text-emerald-500" />}
-                  {item.platform === "twitch" && <TwitchIcon className="h-4 w-4 text-purple-500" />}
+                  {item.platform === "instagram" && <InstagramIcon className="h-[18px] w-[18px] text-pink-500" />}
+                  {item.platform === "youtube" && <YoutubeIcon className="h-[18px] w-[18px] text-red-500" />}
+                  {item.platform === "facebook" && <FacebookIcon className="h-[18px] w-[18px] text-blue-500" />}
+                  {item.platform === "twitter" && <XTwitterIcon className="h-4 w-4" style={{ color: c.primaryText }} />}
+                  {item.platform === "linkedin" && <LinkedinIcon className="h-[18px] w-[18px] text-sky-600" />}
+                  {item.platform === "threads" && <ThreadsIcon className="h-[18px] w-[18px]" style={{ color: c.primaryText }} />}
+                  {item.platform === "snapchat" && <SnapchatIcon className="h-[18px] w-[18px] text-amber-400" />}
+                  {item.platform === "spotify" && <SpotifyIcon className="h-[18px] w-[18px] text-emerald-500" />}
+                  {item.platform === "twitch" && <TwitchIcon className="h-[18px] w-[18px] text-purple-500" />}
                   {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch"].includes(item.platform) && (
-                    <Globe className="h-4 w-4" style={{ color: c.accentText }} />
+                    <Globe className="h-[18px] w-[18px]" style={{ color: c.accentText }} />
                   )}
                 </span>
               </a>
@@ -1157,36 +1514,42 @@ export function LivePreviewCard({
 
       {/* 2. Total Fanbase USP Block */}
       {visibilitySettings.showFanbase !== false && (
-        <div
-          style={{
-            backgroundColor: c.cardBackground,
-            borderColor: c.border,
-            boxShadow: eff.cardShadow,
-          }}
-          className="relative z-10 mt-8 rounded-[16px] p-5 sm:p-6 border text-center w-full shadow-xs"
-        >
-          <div className="space-y-1">
+        <div className="relative z-10 mt-5 sm:mt-6 w-full space-y-2.5">
+          <div
+            style={{
+              backgroundColor: c.cardBackground,
+              borderColor: c.border,
+              boxShadow: eff.cardShadow,
+            }}
+            className="rounded-[14px] border px-4 py-4 sm:py-5 text-center shadow-xs"
+          >
+            <span
+              style={{ color: c.mutedText }}
+              className="block text-[11px] sm:text-xs font-extrabold tracking-[0.16em] uppercase"
+            >
+              Total Fanbase
+            </span>
             <p
               style={{
                 color: c.primaryText,
                 fontFamily: typ.headingFontFamily,
-                fontWeight: 800,
+                fontWeight: 900,
               }}
-              className="text-3xl sm:text-4xl leading-none font-extrabold tabular-nums tracking-tight"
+              className="mt-1.5 text-3xl sm:text-4xl leading-none font-black tabular-nums tracking-tight"
             >
               {formatCount(totalAudience)}
             </p>
-            <span
+            <p
               style={{ color: c.secondaryText }}
-              className="text-xs sm:text-[13px] font-semibold tracking-wider uppercase block mt-1"
+              className="mt-1.5 text-xs sm:text-[13px] font-medium"
             >
-              Total Fanbase
-            </span>
+              Total Fanbase Across Primary Platforms
+            </p>
           </div>
 
-          {/* Clickable Platform Pills */}
+          {/* Clickable Platform Cards */}
           {activeSocialList.filter((s) => s.hasAccount || s.count > 0).length > 0 && (
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
+            <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
               {activeSocialList
                 .filter((s) => s.hasAccount || s.count > 0)
                 .map((item) => (
@@ -1202,31 +1565,46 @@ export function LivePreviewCard({
                       }
                     }}
                     style={{
-                      backgroundColor: "var(--color-surface-alt, rgba(0,0,0,0.03))",
+                      backgroundColor: c.cardBackground,
                       borderColor: c.border,
+                      boxShadow: eff.cardShadow,
                     }}
-                    className="tap-scale inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full border transition-all hover:scale-105 cursor-pointer text-xs sm:text-[13px] font-semibold"
+                    className="tap-scale flex min-h-[112px] flex-col rounded-[10px] border text-center transition-all hover:scale-[1.02] cursor-pointer shadow-xs overflow-hidden"
                     title={`Visit ${item.label}`}
                   >
-                    <span className="flex items-center justify-center shrink-0">
-                      {item.platform === "instagram" && <InstagramIcon className="h-3.5 w-3.5 text-pink-500" />}
-                      {item.platform === "youtube" && <YoutubeIcon className="h-3.5 w-3.5 text-red-500" />}
-                      {item.platform === "facebook" && <FacebookIcon className="h-3.5 w-3.5 text-blue-500" />}
-                      {item.platform === "twitter" && <XTwitterIcon className="h-3 w-3" style={{ color: c.primaryText }} />}
-                      {item.platform === "linkedin" && <LinkedinIcon className="h-3.5 w-3.5 text-sky-600" />}
-                      {item.platform === "threads" && <ThreadsIcon className="h-3.5 w-3.5" style={{ color: c.primaryText }} />}
-                      {item.platform === "snapchat" && <SnapchatIcon className="h-3.5 w-3.5 text-amber-400" />}
-                      {item.platform === "spotify" && <SpotifyIcon className="h-3.5 w-3.5 text-emerald-500" />}
-                      {item.platform === "twitch" && <TwitchIcon className="h-3.5 w-3.5 text-purple-500" />}
-                      {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch"].includes(item.platform) && (
-                        <Globe className="h-3.5 w-3.5" style={{ color: c.accentText }} />
-                      )}
+                    <span className="flex flex-1 flex-col items-center justify-center px-2 py-2.5">
+                      <span className="mb-2 flex h-5 items-center justify-center shrink-0">
+                        {item.platform === "instagram" && <InstagramIcon className="h-5 w-5 text-pink-500" />}
+                        {item.platform === "youtube" && <YoutubeIcon className="h-5 w-5 text-red-500" />}
+                        {item.platform === "facebook" && <FacebookIcon className="h-5 w-5 text-blue-500" />}
+                        {item.platform === "twitter" && <XTwitterIcon className="h-[18px] w-[18px]" style={{ color: c.primaryText }} />}
+                        {item.platform === "linkedin" && <LinkedinIcon className="h-5 w-5 text-sky-600" />}
+                        {item.platform === "threads" && <ThreadsIcon className="h-5 w-5" style={{ color: c.primaryText }} />}
+                        {item.platform === "snapchat" && <SnapchatIcon className="h-5 w-5 text-amber-400" />}
+                        {item.platform === "spotify" && <SpotifyIcon className="h-5 w-5 text-emerald-500" />}
+                        {item.platform === "twitch" && <TwitchIcon className="h-5 w-5 text-purple-500" />}
+                        {item.platform === "pinterest" && <PinterestIcon className="h-5 w-5 text-red-600" />}
+                        {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch", "pinterest"].includes(item.platform) && (
+                          <Globe className="h-5 w-5" style={{ color: c.accentText }} />
+                        )}
+                      </span>
+                      <span style={{ color: c.primaryText }} className="text-sm sm:text-base font-black tabular-nums leading-none">
+                        {formatCount(item.count)}
+                      </span>
+                      <span style={{ color: c.secondaryText }} className="mt-1 text-[10px] sm:text-[11px] font-semibold leading-none">
+                        {item.unit}
+                      </span>
                     </span>
-                    <span style={{ color: c.secondaryText }} className="font-medium text-xs">
-                      {item.label}
-                    </span>
-                    <span style={{ color: c.primaryText }} className="font-extrabold tabular-nums ml-0.5">
-                      {formatCount(item.count)}
+                    <span
+                      style={{ color: c.mutedText, borderColor: c.divider }}
+                      className="block w-full border-t px-2 py-2 text-[10px] sm:text-[11px] font-medium leading-none"
+                    >
+                      <span className="inline-flex max-w-full items-center justify-center gap-2">
+                        <span className="block min-w-0 truncate">
+                        {(item.handle || item.name || item.label).replace(/^@/, "")}
+                        </span>
+                        <ExternalLink className="h-3 w-3 shrink-0 opacity-75" />
+                      </span>
                     </span>
                   </a>
                 ))}
@@ -1235,9 +1613,119 @@ export function LivePreviewCard({
         </div>
       )}
 
-      {/* 3. Series Section */}
+      {/* 3. Links Section */}
+      {visibilitySettings.showCustomLinks !== false && customLinksList && customLinksList.filter((l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url)))).length > 0 && (
+        <div id="links-section" className="relative z-10 mt-6 w-full text-left space-y-2.5">
+          <h2
+            style={{
+              color: c.primaryText,
+              fontFamily: typ.headingFontFamily,
+              fontWeight: 700,
+            }}
+            className="text-base sm:text-lg font-bold tracking-tight px-0.5"
+          >
+            Links
+          </h2>
+
+          <div className="space-y-2">
+            {customLinksList
+              .filter((l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url))))
+              .map((link) => {
+                const collectionItems = link.items?.filter((item) => item.isEnabled !== false && item.title && item.url) || [];
+                if (link.kind === "collection") {
+                  return (
+                    <div
+                      key={link.id}
+                      style={{
+                        backgroundColor: c.cardBackground,
+                        borderColor: c.border,
+                        boxShadow: eff.cardShadow,
+                      }}
+                      className="rounded-[12px] border p-3 shadow-2xs"
+                    >
+                      <div className="mb-2 flex items-center gap-2">
+                        <Globe
+                          style={{ color: c.accentText }}
+                          className="h-4 w-4 shrink-0"
+                        />
+                        <span
+                          style={{ color: c.primaryText }}
+                          className="block truncate text-xs sm:text-sm font-semibold"
+                        >
+                          {link.title}
+                        </span>
+                      </div>
+                      <div className="space-y-2">
+                        {collectionItems.map((item) => (
+                          <a
+                            key={item.id}
+                            href={item.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
+                            style={{
+                              borderColor: c.border,
+                              color: c.primaryText,
+                            }}
+                            className="tap-scale flex min-h-[42px] items-center justify-between gap-3 rounded-[10px] border px-3 py-2 text-xs font-semibold transition-all hover:scale-[1.01]"
+                          >
+                            <span className="min-w-0 truncate">{item.title}</span>
+                            <ExternalLink
+                              style={{ color: c.secondaryText }}
+                              className="h-3.5 w-3.5 shrink-0"
+                            />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+                return (
+                  <a
+                    key={link.id}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
+                    style={{
+                      backgroundColor: c.cardBackground,
+                      borderColor: c.border,
+                      boxShadow: eff.cardShadow,
+                    }}
+                    className={`tap-scale relative h-[52px] sm:h-[56px] border flex items-center transition-all hover:scale-[1.01] hover:shadow-xs group cursor-pointer shadow-2xs ${isDefaultCleanLayout
+                      ? "rounded-[12px] px-5 justify-center"
+                      : "rounded-[12px] px-3.5 justify-between"
+                      }`}
+                  >
+                    <div className={`flex items-center gap-3 min-w-0 ${isDefaultCleanLayout ? "absolute left-5" : "pr-2"}`}>
+                      <Globe
+                        style={{ color: c.accentText }}
+                        className="h-4 w-4 shrink-0"
+                      />
+                    </div>
+                    <div className={isDefaultCleanLayout ? "max-w-[72%] px-2 text-center" : "min-w-0 flex-1"}>
+                      <span
+                        style={{ color: c.primaryText }}
+                        className="block truncate text-xs sm:text-sm font-semibold"
+                      >
+                        {link.title}
+                      </span>
+                    </div>
+
+                    <ExternalLink
+                      style={{ color: c.secondaryText }}
+                      className={`h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 ${isDefaultCleanLayout ? "absolute right-5" : ""}`}
+                    />
+                  </a>
+                );
+              })}
+          </div>
+        </div>
+      )}
+
+      {/* 4. Series Section */}
       {visibilitySettings.showSeries !== false && (series.length > 0 || isOnboardingMode) && (
-        <div id="series-section" className="relative z-10 mt-8 w-full text-left space-y-3">
+        <div id="series-section" className="relative z-10 mt-6 w-full text-left space-y-2.5">
           {/* Section Header */}
           <div className="flex items-center justify-between px-0.5">
             <h2
@@ -1261,7 +1749,7 @@ export function LivePreviewCard({
             )}
           </div>
 
-          <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-2.5 sm:space-y-3">
             {series.map((s) => {
               const allEps = getSeriesEpisodes(s);
               const epCount = allEps.length;
@@ -1285,15 +1773,21 @@ export function LivePreviewCard({
                 ? s.genre.split(/[,•|/]/).map((g: string) => g.trim().replace(/^Genre:\s*/i, "")).filter(Boolean)
                 : [];
               const seriesUrl = `/${cleanHandle || "creator"}/series/${s.id}`;
+              const hasPoster = Boolean(s.posterDataUrl);
 
               return (
                 <div
                   key={s.id}
                   onClick={() => {
-                    if (isInformationalMode) {
+                    if (onSeriesPreviewOpen) {
+                      onSeriesPreviewOpen(s);
+                    } else if (isInformationalMode) {
                       showToast(`Opens ${s.title} dedicated series page ✨`);
-                    } else if (typeof window !== "undefined") {
-                      window.location.href = seriesUrl;
+                    } else if (seriesOpenMode === "internal") {
+                      setDrawerSeries(s);
+                      setIsDrawerOpen(true);
+                    } else {
+                      router.push(seriesUrl);
                     }
                   }}
                   style={{
@@ -1303,8 +1797,8 @@ export function LivePreviewCard({
                   }}
                   className="group rounded-[16px] border overflow-hidden transition-all hover:shadow-md cursor-pointer shadow-xs"
                 >
-                  {/* Cover Image — 16:9, max 200px tall */}
-                  <div className="relative w-full aspect-video max-h-[200px] overflow-hidden bg-slate-900/5">
+                  {/* Cover Image */}
+                  <div className="relative w-full h-[145px] sm:h-[165px] overflow-hidden bg-slate-900/5">
                     {s.posterDataUrl ? (
                       <>
                         <img
@@ -1312,7 +1806,24 @@ export function LivePreviewCard({
                           alt={s.title}
                           className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-300"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/88 via-black/42 to-transparent" />
+                        <div className="absolute inset-x-0 bottom-3 px-4 sm:px-5">
+                          <div className="flex items-end justify-between gap-3">
+                            <div className="min-w-0 flex-1">
+                              <h3 className="line-clamp-2 text-lg sm:text-xl font-black leading-tight tracking-tight text-white drop-shadow-md">
+                                {s.title}
+                              </h3>
+                              {s.description && (
+                                <p className="mt-1 line-clamp-1 text-[11px] sm:text-xs font-medium text-white/72">
+                                  {s.description}
+                                </p>
+                              )}
+                            </div>
+                            <span className="mb-0.5 shrink-0 rounded-full border border-white/18 bg-black/35 px-2.5 py-1 text-[10px] sm:text-[11px] font-bold text-white/90 backdrop-blur-sm">
+                              {detectedPlatform || "Series"}
+                            </span>
+                          </div>
+                        </div>
                       </>
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#241618] to-[#151933]">
@@ -1322,14 +1833,16 @@ export function LivePreviewCard({
                   </div>
 
                   {/* Content */}
-                  <div className="p-4 sm:p-5 space-y-1.5">
-                    <h3
-                      style={{ color: c.primaryText }}
-                      className="text-base sm:text-[17px] font-bold tracking-tight"
-                    >
-                      {s.title}
-                    </h3>
-                    {s.description && (
+                  <div className="px-3.5 pb-3.5 pt-2.5 sm:px-4 sm:pb-4 sm:pt-3 space-y-0.5">
+                    {!hasPoster && (
+                      <h3
+                        style={{ color: c.primaryText }}
+                        className="text-base sm:text-[17px] font-bold tracking-tight"
+                      >
+                        {s.title}
+                      </h3>
+                    )}
+                    {s.description && !hasPoster && (
                       <p
                         style={{ color: c.secondaryText }}
                         className="text-xs sm:text-[13px] leading-relaxed line-clamp-2"
@@ -1354,7 +1867,7 @@ export function LivePreviewCard({
 
                     <div
                       style={{ color: c.accentText }}
-                      className="pt-1.5 flex items-center gap-1 text-xs sm:text-[13px] font-bold"
+                      className="pt-1 flex items-center gap-1 text-xs sm:text-[13px] font-bold"
                     >
                       <span>View Series</span>
                       <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
@@ -1363,60 +1876,6 @@ export function LivePreviewCard({
                 </div>
               );
             })}
-          </div>
-        </div>
-      )}
-
-      {/* 4. Links Section */}
-      {visibilitySettings.showCustomLinks !== false && customLinksList && customLinksList.filter((l) => l.isEnabled !== false && l.title && l.url).length > 0 && (
-        <div id="links-section" className="relative z-10 mt-8 w-full text-left space-y-3">
-          <h2
-            style={{
-              color: c.primaryText,
-              fontFamily: typ.headingFontFamily,
-              fontWeight: 700,
-            }}
-            className="text-base sm:text-lg font-bold tracking-tight px-0.5"
-          >
-            Links
-          </h2>
-
-          <div className="space-y-2.5">
-            {customLinksList
-              .filter((l) => l.isEnabled !== false && l.title && l.url)
-              .map((link) => (
-                <a
-                  key={link.id}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
-                  style={{
-                    backgroundColor: c.cardBackground,
-                    borderColor: c.border,
-                    boxShadow: eff.cardShadow,
-                  }}
-                  className="tap-scale h-[56px] sm:h-[60px] rounded-[14px] border px-4 flex items-center justify-between transition-all hover:scale-[1.01] hover:shadow-xs group cursor-pointer shadow-2xs"
-                >
-                  <div className="flex items-center gap-3 min-w-0 pr-2">
-                    <Globe
-                      style={{ color: c.accentText }}
-                      className="h-4 w-4 shrink-0"
-                    />
-                    <span
-                      style={{ color: c.primaryText }}
-                      className="text-xs sm:text-sm font-semibold truncate"
-                    >
-                      {link.title}
-                    </span>
-                  </div>
-
-                  <ExternalLink
-                    style={{ color: c.secondaryText }}
-                    className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                  />
-                </a>
-              ))}
           </div>
         </div>
       )}
@@ -1432,7 +1891,7 @@ export function LivePreviewCard({
         if (!hasWhatsApp && !hasEmail) return null;
 
         return (
-          <div id="work-with-me-section" className="relative z-10 mt-8 w-full text-left space-y-3">
+          <div id="work-with-me-section" className="relative z-10 mt-6 w-full text-left space-y-2.5">
             <div className="space-y-1 px-0.5">
               <h2
                 style={{
@@ -1454,7 +1913,7 @@ export function LivePreviewCard({
 
             {/* Services if creator created any */}
             {visibilitySettings.showCollabGigs !== false && mediaKitPackages.filter((p) => p.isActive).length > 0 && (
-              <div className="space-y-2.5">
+              <div className="space-y-2">
                 {mediaKitPackages
                   .filter((p) => p.isActive)
                   .map((pkg) => {
@@ -1482,7 +1941,7 @@ export function LivePreviewCard({
                           borderColor: c.border,
                           boxShadow: eff.cardShadow,
                         }}
-                        className="tap-scale rounded-[14px] border p-3.5 sm:p-4 flex items-center justify-between gap-3 cursor-pointer transition-all hover:scale-[1.01] hover:shadow-xs group shadow-2xs"
+                        className="tap-scale rounded-[12px] border p-3 sm:p-3.5 flex items-center justify-between gap-3 cursor-pointer transition-all hover:scale-[1.01] hover:shadow-xs group shadow-2xs"
                       >
                         <div className="min-w-0 pr-2 space-y-0.5">
                           <h3
@@ -1551,7 +2010,7 @@ export function LivePreviewCard({
 
       {/* 6. Reviews (Compact, only when reviews exist) */}
       {visibilitySettings.showReviews !== false && approvedReviews.length > 0 && (
-        <div id="reviews-section" className="relative z-10 mt-8 w-full text-left space-y-3">
+        <div id="reviews-section" className="relative z-10 mt-6 w-full text-left space-y-2.5">
           <h2
             style={{
               color: c.primaryText,
@@ -1563,7 +2022,7 @@ export function LivePreviewCard({
             Reviews
           </h2>
 
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {approvedReviews.slice(0, 3).map((rev) => {
               const ratingNum = Number(rev.rating) || 5;
               return (
@@ -1574,7 +2033,7 @@ export function LivePreviewCard({
                     borderColor: c.border,
                     boxShadow: eff.cardShadow,
                   }}
-                  className="rounded-[16px] border p-4 sm:p-5 space-y-2.5 text-left shadow-xs"
+                  className="rounded-[14px] border p-3.5 sm:p-4 space-y-2 text-left shadow-xs"
                 >
                   <div className="flex items-center gap-1 text-amber-400">
                     {Array.from({ length: 5 }).map((_, i) => (
@@ -1624,21 +2083,65 @@ export function LivePreviewCard({
         </div>
       )}
 
-      {/* 7. Subtle Inflixo Attribution */}
-      <div className="relative z-10 mt-10 mb-4 flex items-center justify-center select-none">
-        <a
-          href="/"
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
-          style={{ color: c.mutedText }}
-          className="tap-scale inline-flex items-center gap-1.5 text-xs font-medium hover:opacity-100 opacity-60 transition-opacity cursor-pointer"
-        >
-          <InflixoLogoIcon className="h-3.5 w-3.5" />
-          <span>Made with Inflixo</span>
-          <ExternalLink className="h-3 w-3" />
-        </a>
+      {!containedScroll && (
+        <div className="relative z-10 mt-7 mb-3 flex items-center justify-center select-none">
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
+            style={{ color: c.mutedText }}
+            className="tap-scale inline-flex items-center gap-1.5 text-xs font-medium hover:opacity-100 opacity-60 transition-opacity cursor-pointer"
+          >
+            <InflixoLogoIcon className="h-3.5 w-3.5" />
+            <span>Made with Inflixo</span>
+            <ExternalLink className="h-3 w-3" />
+          </a>
+        </div>
+      )}
+      {containedScroll && <div className="h-[30px] shrink-0" aria-hidden="true" />}
       </div>
+
+      {containedScroll && (
+        <div
+          className="relative z-30 -mx-3.5 h-[30px] shrink-0 select-none sm:-mx-7"
+        >
+          <div
+            style={{ backgroundColor: c.divider }}
+            className="h-0.5 w-full"
+            aria-hidden="true"
+          />
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
+            style={{ color: c.secondaryText }}
+            className="tap-scale flex h-[28px] items-center justify-center gap-1.5 text-xs font-semibold leading-none opacity-85 transition-opacity hover:opacity-100 cursor-pointer"
+          >
+            <InflixoLogoIcon className="h-3.5 w-3.5" />
+            <span>Made with Inflixo</span>
+            <ExternalLink className="h-3 w-3" />
+          </a>
+        </div>
+      )}
+
+      {containedScroll && showMoveToTop && (
+        <button
+          type="button"
+          onClick={handleMoveToTop}
+          style={{
+            backgroundColor: c.accent,
+            color: "#FFFFFF",
+            boxShadow: eff.shadow,
+          }}
+          className="tap-scale absolute bottom-4 left-1/2 z-40 inline-flex h-10 -translate-x-1/2 items-center justify-center gap-1.5 rounded-full px-4 text-xs font-bold shadow-lg transition-all hover:scale-[1.03] cursor-pointer"
+          aria-label="Move to top"
+        >
+          <ChevronUp className="h-4 w-4" />
+          <span>Top</span>
+        </button>
+      )}
     </div>
   );
 
@@ -1674,6 +2177,7 @@ export function LivePreviewCard({
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         series={drawerSeries}
+        themeKey={themeKey}
       />
 
       {/* Page Display Settings Modal */}
@@ -1791,7 +2295,7 @@ export function PreviewSeriesItem({
     <div
       id={`series-${series.id}`}
       onClick={() => (onSelectSeries ? onSelectSeries(series) : onToggle ? onToggle() : null)}
-      className="px-3.5 py-2.5 sm:py-3 transition-colors flex items-center justify-between hover:bg-[#F7F0EA]/50 group cursor-pointer"
+      className="px-3.5 py-2.5 sm:py-3 transition-colors flex items-center justify-between hover:bg-[var(--theme-accent-soft)] group cursor-pointer"
     >
       <div className="flex items-center gap-3 min-w-0">
         <span

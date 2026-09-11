@@ -9,11 +9,6 @@ import {
   LogOut,
   Briefcase,
   Star,
-  Eye,
-  Users,
-  Building2,
-  Handshake,
-  Inbox,
 } from "lucide-react";
 
 export interface NavItem {
@@ -25,12 +20,12 @@ export interface NavItem {
 
 export const WORKSPACE_NAV: NavItem[] = [
   { href: "/dashboard", label: "Home", icon: LayoutGrid },
-  { href: "/dashboard/profile", label: "My Profile", icon: UserRound },
-  { href: "/dashboard/series", label: "Content", icon: Layers },
-  { href: "/dashboard/socials", label: "Links & Socials", icon: Share2 },
-  { href: "/dashboard/mediakit", label: "Collab Services", icon: Briefcase },
+  { href: "/dashboard/profile", label: "Profile", icon: UserRound },
+  { href: "/dashboard/series", label: "Series", icon: Layers },
+  { href: "/dashboard/socials", label: "Links", icon: Share2 },
+  { href: "/dashboard/mediakit", label: "Collabs", icon: Briefcase },
   { href: "/dashboard/reviews", label: "Reviews", icon: Star },
-  { href: "/dashboard/themes", label: "Appearance", icon: Palette },
+  { href: "/dashboard/themes", label: "Themes", icon: Palette },
 ];
 
 export const ACCOUNT_NAV: NavItem[] = [
@@ -46,8 +41,8 @@ export const SIDEBAR_NAV: NavItem[] = [
 
 export const BOTTOM_NAV: NavItem[] = [
   { href: "/dashboard", label: "Home", icon: LayoutGrid },
-  { href: "/dashboard/series", label: "Content", icon: Layers },
-  { href: "/dashboard/mediakit", label: "Collab Services", icon: Briefcase },
+  { href: "/dashboard/series", label: "Series", icon: Layers },
+  { href: "/dashboard/mediakit", label: "Collabs", icon: Briefcase },
   { href: "/dashboard/reviews", label: "Reviews", icon: Star },
   { href: "/dashboard/settings", label: "Account", icon: Settings },
 ];

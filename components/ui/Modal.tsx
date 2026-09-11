@@ -124,7 +124,7 @@ export function Modal({
                 type="button"
                 onClick={onClose}
                 aria-label="Close modal"
-                className="flex h-9 w-9 items-center justify-center rounded-xl text-[#64748b] hover:text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer shrink-0 border border-transparent hover:border-[#e2e8f0]"
+                className="flex h-9 w-9 items-center justify-center rounded-xl text-[#64748b] hover:text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer shrink-0 border border-transparent hover:border-brand-border"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -180,7 +180,7 @@ export function ModalHeader({
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="flex h-9 w-9 items-center justify-center rounded-xl text-[#64748b] hover:text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer shrink-0 border border-transparent hover:border-[#e2e8f0]"
+          className="flex h-9 w-9 items-center justify-center rounded-xl text-[#64748b] hover:text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer shrink-0 border border-transparent hover:border-brand-border"
         >
           <X className="h-4 w-4" />
         </button>

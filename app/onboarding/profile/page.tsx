@@ -177,7 +177,7 @@ export default function ProfileStepPage() {
             <button
               type="button"
               onClick={() => router.push("/onboarding/username")}
-              className="text-xs sm:text-sm font-semibold text-[#181716] hover:text-[#151933] hover:underline cursor-pointer"
+              className="text-xs sm:text-sm font-semibold text-[#181716] hover:text-brand-primary hover:underline cursor-pointer"
             >
               Change
             </button>
@@ -217,7 +217,7 @@ export default function ProfileStepPage() {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="rounded-xl border border-[#cbd5e1] bg-white px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-[#181716] hover:bg-[#f8fafc] transition-colors cursor-pointer shrink-0"
+              className="rounded-xl border border-[#cbd5e1] bg-white px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-[#181716] hover:bg-surface-soft transition-colors cursor-pointer shrink-0"
             >
               {profile?.photoDataUrl ? "Change photo" : "Upload photo"}
             </button>
@@ -276,15 +276,15 @@ export default function ProfileStepPage() {
             )}
           </div>
 
-          {/* 5. Creator categories (Exact same categories, order, emojis, chips as Dashboard Profile) */}
+          {/* 5. What do you create? */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <label className="text-sm font-bold text-[#181716]">
+                <label className="text-sm font-extrabold text-[#151933]">
                   What do you create?
                 </label>
-                <p className="text-xs text-[#54514D] font-normal">
-                  Choose up to 3 categories that describe your content.
+                <p className="text-xs italic text-[#64748b] font-normal">
+                  Choose up to 3 categories that best describe your content.
                 </p>
               </div>
               <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-[#151933]/[0.08] text-[#151933] border border-[#151933]/20 shrink-0">
@@ -306,7 +306,7 @@ export default function ProfileStepPage() {
                 <button
                   type="button"
                   onClick={() => setCategorySearch("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#797570] hover:text-[#181716] cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#797570] hover:text-foreground cursor-pointer"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -314,9 +314,9 @@ export default function ProfileStepPage() {
             </div>
 
             {/* Category Pills Container (Same popular ordering & emojis) */}
-            <div className="max-h-[220px] overflow-y-auto pr-1 flex flex-wrap gap-2 pt-0.5">
+            <div className="max-h-[220px] overflow-y-auto flex flex-wrap gap-2 rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] p-3">
               {filteredCategories.length === 0 ? (
-                <p className="text-xs text-[#797570] p-2">No matching categories found.</p>
+                <p className="text-xs text-[#64748b] p-2">No matching categories found.</p>
               ) : (
                 filteredCategories.map((item) => {
                   const isSelected = selectedCategories.includes(item.category);
@@ -328,19 +328,19 @@ export default function ProfileStepPage() {
                       type="button"
                       disabled={isMaxReached}
                       onClick={() => handleToggleCategory(item.category)}
-                      className={`inline-flex items-center gap-2 text-xs sm:text-sm py-2 px-3.5 rounded-xl transition-all cursor-pointer ${isSelected
-                          ? "bg-[#151933]/10 border border-[#151933]/30 text-[#151933] font-medium shadow-xs"
+                      className={`inline-flex min-h-9 items-center gap-2 rounded-full border px-3.5 py-2 text-xs sm:text-[13px] font-semibold transition-all cursor-pointer ${isSelected
+                          ? "border-[#151933] bg-[#151933] text-white shadow-sm"
                           : isMaxReached
-                            ? "opacity-40 cursor-not-allowed bg-white border border-[#E7E3DC] text-[#797570]"
-                            : "bg-white border border-[#E7E3DC] text-[#181716] hover:border-[#151933]/30 hover:bg-[#FAF8F5]"
+                            ? "opacity-40 cursor-not-allowed bg-white border border-[#e2e8f0] text-[#64748b]"
+                            : "bg-white border border-[#e2e8f0] text-[#475569] hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-white hover:text-[#151933] hover:shadow-sm"
                         }`}
                     >
                       <span className="shrink-0">{item.emoji}</span>
                       <span className="truncate">{item.category}</span>
                       {isSelected ? (
-                        <Check className="h-3.5 w-3.5 text-[#151933] shrink-0" />
+                        <Check className="h-3.5 w-3.5 text-white shrink-0" />
                       ) : (
-                        <Plus className="h-3.5 w-3.5 text-[#797570] shrink-0" />
+                        <Plus className="h-3.5 w-3.5 text-[#64748b] shrink-0" />
                       )}
                     </button>
                   );
@@ -348,10 +348,30 @@ export default function ProfileStepPage() {
               )}
             </div>
 
+            <div className="rounded-2xl border border-[#e2e8f0] bg-white px-3.5 py-3">
+              <p className="mb-2 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#64748b]">
+                Selected categories
+              </p>
+              {selectedCategories.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {selectedCategories.map((category) => (
+                    <span
+                      key={category}
+                      className="inline-flex items-center rounded-full bg-[#151933]/[0.08] px-3 py-1.5 text-xs font-bold text-[#151933]"
+                    >
+                      {category === "Other" && customOtherText ? customOtherText : category}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs font-medium text-[#94a3b8]">No categories selected yet.</p>
+              )}
+            </div>
+
             {/* Custom specification if "Other" is selected */}
             {selectedCategories.includes("Other") && (
-              <div className="rounded-xl border border-[#E7E3DC] bg-[#FAF8F5] p-3.5 space-y-2">
-                <label className="block text-xs font-semibold text-[#181716] flex items-center gap-1.5">
+              <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
+                <label className="block text-xs font-semibold text-[#151933] flex items-center gap-1.5">
                   <Sparkles className="h-3.5 w-3.5 text-[#151933]" />
                   <span>What type of content do you create?</span>
                 </label>
@@ -365,7 +385,7 @@ export default function ProfileStepPage() {
                     setCustomOtherText(val);
                     updateProfile({ customCategory: val });
                   }}
-                  className="w-full h-11 rounded-xl border border-[#E7E3DC] bg-white px-3.5 text-sm font-medium text-[#181716] outline-none focus:border-[#151933] focus:ring-1 focus:ring-[#151933]/20"
+                  className="w-full h-11 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-sm font-medium text-[#151933] outline-none focus:border-[#151933] focus:ring-2 focus:ring-[#151933]/10"
                 />
               </div>
             )}
@@ -408,7 +428,7 @@ export default function ProfileStepPage() {
               type="button"
               onClick={handleNext}
               disabled={submitting}
-              className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#151933] hover:bg-[#2c1b36] text-white font-semibold text-xs sm:text-sm h-12 transition-all cursor-pointer shadow-xs disabled:opacity-60 active:scale-98"
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#151933] hover:bg-brand-hover text-white font-semibold text-xs sm:text-sm h-12 transition-all cursor-pointer shadow-xs disabled:opacity-60 active:scale-98"
             >
               {submitting ? (
                 <>

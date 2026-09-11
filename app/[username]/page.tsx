@@ -27,6 +27,22 @@ const EMPTY_PROFILE: CreatorProfile = {
   updatedAt: new Date().toISOString(),
 };
 
+function isFreeTrialExpired(subscription?: {
+  planKey?: string;
+  status?: string;
+  activatedAt?: string | Date | null;
+}) {
+  if (!subscription || subscription.planKey !== "early_access") return false;
+  if (subscription.status && subscription.status !== "active") return true;
+  if (!subscription.activatedAt) return false;
+
+  const activatedMs = new Date(subscription.activatedAt).getTime();
+  if (Number.isNaN(activatedMs)) return false;
+
+  const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+  return Date.now() - activatedMs > sevenDaysMs;
+}
+
 export default function PublicProfilePage() {
   const params = useParams<{ username: string }>();
   const router = useRouter();
@@ -47,6 +63,7 @@ export default function PublicProfilePage() {
   const [sections, setSections] = useState<any[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const [profilePrivate, setProfilePrivate] = useState(false);
   const [copied, setCopied] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
 
@@ -56,6 +73,7 @@ export default function PublicProfilePage() {
       const usernameParam = rawUser.replace(/^@/, "").toLowerCase();
       if (!usernameParam) {
         setNotFound(true);
+        setProfilePrivate(false);
         setLoaded(true);
         return;
       }
@@ -78,6 +96,7 @@ export default function PublicProfilePage() {
         setReviews(EXPERT_DEMO_REVIEWS);
         setTheme(EXPERT_DEMO_THEME);
         setNotFound(false);
+        setProfilePrivate(false);
         setLoaded(true);
         return;
       }
@@ -111,11 +130,19 @@ export default function PublicProfilePage() {
         ]);
 
         if (profRes.success && profRes.profile && profRes.profile.username) {
+          if (isFreeTrialExpired(profRes.subscription)) {
+            setProfilePrivate(true);
+            setNotFound(false);
+            setLoaded(true);
+            return;
+          }
+
           setProfile(profRes.profile);
           if (profRes.profile.themeKey) {
             setTheme(profRes.profile.themeKey as ThemeKey);
           }
           setNotFound(false);
+          setProfilePrivate(false);
 
           if (linkRes.success && Array.isArray(linkRes.links)) {
             setCustomLinks(linkRes.links);
@@ -253,6 +280,7 @@ export default function PublicProfilePage() {
               setOtherSocials(otherSocialsRepository.getAll() || []);
               setSections(sectionsRepository.getAll() || []);
               setNotFound(false);
+              setProfilePrivate(false);
               setLoaded(true);
               return;
             }
@@ -261,10 +289,12 @@ export default function PublicProfilePage() {
           }
 
           setNotFound(true);
+          setProfilePrivate(false);
         }
       } catch (e) {
         console.warn("Failed to load creator profile from DB deeplink:", e);
         setNotFound(true);
+        setProfilePrivate(false);
       } finally {
         setLoaded(true);
       }
@@ -296,7 +326,7 @@ export default function PublicProfilePage() {
     const pageTitle = `${displayName} (@${handle}) — Official Inflixo Creator Profile`;
     const pageDesc = profile.bio || `Check out ${displayName}'s official fanbase stats, connected social channels & original series on Inflixo.`;
     const pageUrl = `https://inflixo.com/${handle}`;
-    const pageImg = profile.photoDataUrl || "https://inflixo.com/apple-icon.png";
+    const pageImg = profile.photoDataUrl || "https://inflixo.com/logo-square.png";
 
     document.title = pageTitle;
 
@@ -388,7 +418,7 @@ export default function PublicProfilePage() {
     return <SyncingLoader message={syncMessage} fullScreen hideProgressBar={true} />;
   }
 
-  if (notFound) {
+  if (notFound || profilePrivate) {
     const handle = decodeURIComponent(params.username ?? "");
     return (
       <div className="relative flex min-h-dvh flex-col items-center justify-center bg-gradient-to-b from-[#F6EBF1]/60 via-slate-50 to-white px-4 py-12 text-center text-slate-900 overflow-hidden">
@@ -412,10 +442,12 @@ export default function PublicProfilePage() {
             {/* Title & Description */}
             <div className="space-y-2.5">
               <h1 className="font-display text-xl sm:text-2xl font-black text-slate-900 leading-tight">
-                No Profile Found for @{handle}
+                {profilePrivate ? "This profile is private" : `No Profile Found for @${handle}`}
               </h1>
               <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-sm mx-auto">
-                Using this username on Inflixo, no profile has been created yet. If you want to create your creator profile with this handle, click below to get started.
+                {profilePrivate
+                  ? "This creator's free trial has ended, so their public profile is currently private."
+                  : "Using this username on Inflixo, no profile has been created yet. If you want to create your creator profile with this handle, click below to get started."}
               </p>
             </div>
 
@@ -423,7 +455,7 @@ export default function PublicProfilePage() {
             <div className="pt-2">
               <button
                 onClick={() => router.push("/login")}
-                className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#151933] hover:bg-[#2c1937] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#151933]/20 transition-all border border-[#151933] hover:scale-[1.02] cursor-pointer"
+                className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#151933] hover:bg-brand-hover px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#151933]/20 transition-all border border-[#151933] hover:scale-[1.02] cursor-pointer"
               >
                 <Sparkles className="h-4 w-4" />
                 <span>Create Profile</span>
@@ -466,8 +498,8 @@ export default function PublicProfilePage() {
       {/* 3. Theme-aware Focus Overlay Layer */}
       <FocusOverlay overlay={themeMeta.focusOverlay} />
 
-      {/* 4. Centred Creator Profile Surface: 640px centered, 24px desktop, 16px mobile */}
-      <main className="relative z-10 flex-1 flex flex-col mx-auto w-full max-w-[580px] px-4 sm:px-6 py-6 sm:py-10 animate-fade-in-up">
+      {/* 4. Centred Creator Profile Surface */}
+      <main className="relative z-10 h-dvh min-h-0 flex flex-col mx-auto w-full max-w-[580px] px-4 py-4 overflow-hidden animate-fade-in-up">
         {/* Main Theme Profile Card (Renders Profile, Socials, Series, Services, Reviews & Custom Links) */}
         <ThemeCard
           themeKey={theme}
@@ -485,6 +517,8 @@ export default function PublicProfilePage() {
           sections={sections}
           totalAudience={totalAudience}
           variant="full"
+          containedScroll
+          seriesOpenMode="page"
           onShare={handleShare}
         />
       </main>

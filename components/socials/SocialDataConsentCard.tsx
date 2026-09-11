@@ -24,7 +24,7 @@ export function SocialDataConsentCard({
           ? "border-rose-300 bg-rose-50"
           : disabled || accepted
             ? "border-[#151933]/20 bg-[#151933]/[0.05]"
-            : "border-gray-200 bg-white hover:border-gray-300"
+            : "border-gray-200 bg-white hover:border-brand-border"
           }`}
       >
         {/* Custom Interactive / Read-Only Checkbox */}

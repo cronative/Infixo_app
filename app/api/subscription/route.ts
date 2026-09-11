@@ -12,7 +12,7 @@ export async function GET(req: Request) {
       return NextResponse.json({
         subscription: {
           planKey: "early_access",
-          planName: "Early Access",
+          planName: "Free Trial",
           billingCycle: "yearly",
           status: "active",
           activatedAt: new Date().toISOString(),
@@ -31,7 +31,7 @@ export async function GET(req: Request) {
       return NextResponse.json({
         subscription: {
           planKey: "early_access",
-          planName: "Early Access",
+          planName: "Free Trial",
           billingCycle: "yearly",
           status: "active",
           activatedAt: new Date().toISOString(),
@@ -44,7 +44,7 @@ export async function GET(req: Request) {
       success: true,
       subscription: {
         planKey: s.plan_key || "early_access",
-        planName: s.plan_name || "Early Access",
+        planName: s.plan_name || "Free Trial",
         billingCycle: s.billing_cycle || "yearly",
         status: s.status || "active",
         activatedAt: s.activated_at || s.created_at,
@@ -82,9 +82,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "planKey required" }, { status: 400 });
     }
 
-    // Ensure plan_key column in MySQL DB accepts 'free', 'starter', 'pro', 'unlimited' without truncation
+    // Ensure plan_key column in MySQL DB accepts the current Inflixo plan keys without truncation.
     try {
-      await db.query(`ALTER TABLE subscriptions MODIFY COLUMN plan_key VARCHAR(32) NOT NULL DEFAULT 'free'`);
+      await db.query(`ALTER TABLE subscriptions MODIFY COLUMN plan_key VARCHAR(32) NOT NULL DEFAULT 'early_access'`);
     } catch (e: any) {
       // Silently continue if already modified
     }

@@ -58,7 +58,7 @@ export function ConfirmModal({
           type="button"
           onClick={onClose}
           disabled={loading}
-          className="px-4 py-2 rounded-xl border border-[#e2e8f0] bg-white text-xs font-semibold text-[#151933] hover:bg-[#f8fafc] transition-colors cursor-pointer disabled:opacity-50"
+          className="px-4 py-2 rounded-xl border border-[#e2e8f0] bg-white text-xs font-semibold text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-50"
         >
           {cancelText}
         </button>
@@ -66,7 +66,7 @@ export function ConfirmModal({
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className={`font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50 text-white ${isDestructive ? "bg-[#ef4444] hover:bg-rose-600" : "bg-[#151933] hover:bg-[#1e293b]"
+          className={`font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50 text-white ${isDestructive ? "bg-[#ef4444] hover:bg-brand-hover" : "bg-[#151933] hover:bg-brand-hover"
             }`}
         >
           <span>{loading ? "Processing..." : confirmText}</span>

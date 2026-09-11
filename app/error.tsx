@@ -30,13 +30,13 @@ export default function GlobalError({
         <div className="flex gap-3 justify-center pt-2">
           <button
             onClick={() => reset()}
-            className="rounded-xl bg-[#151933] hover:bg-[#2c1937] px-5 py-2.5 text-xs font-bold text-white transition-colors cursor-pointer"
+            className="rounded-xl bg-[#151933] hover:bg-brand-hover px-5 py-2.5 text-xs font-bold text-white transition-colors cursor-pointer"
           >
             Try Again
           </button>
           <button
             onClick={() => window.location.reload()}
-            className="rounded-xl border border-[#E4DAD5] bg-white hover:bg-slate-50 px-5 py-2.5 text-xs font-bold text-[#241618] transition-colors cursor-pointer"
+            className="rounded-xl border border-[#E4DAD5] bg-white hover:bg-surface-soft px-5 py-2.5 text-xs font-bold text-[#241618] transition-colors cursor-pointer"
           >
             Reload Page
           </button>

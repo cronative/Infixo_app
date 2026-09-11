@@ -9,7 +9,7 @@ import {
   Copy,
   Layers,
   Sparkles,
-  Eye,
+  ExternalLink,
   ArrowLeft,
   Globe,
 } from "lucide-react";
@@ -275,10 +275,10 @@ export function SeriesDetailClient({
                 type="button"
                 onClick={() => router.push(profileUrl)}
                 className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold transition-all cursor-pointer border ${isDark
-                  ? "bg-[#151933]/22 hover:bg-[#151933]/32 active:bg-[#151933]/40 border-[#151933]/45 hover:border-[#151933]/60 text-[#F8FAFC] focus-visible:ring-2 focus-visible:ring-[#151933]/60"
+                  ? "bg-[#151933]/22 hover:bg-brand-hover/32 active:bg-brand-primary/40 border-[#151933]/45 hover:border-brand-primary/60 text-[#F8FAFC] focus-visible:ring-2 focus-visible:ring-brand-primary/60"
                   : isSignaturePurple
-                    ? "bg-[#151933]/16 hover:bg-[#151933]/24 active:bg-[#151933]/32 border border-[#151933]/35 hover:border-[#151933]/50 text-[#151933] focus-visible:ring-2 focus-visible:ring-[#151933]/60 shadow-xs"
-                    : "bg-[#151933] hover:bg-[#2c1937] text-white border-transparent"
+                    ? "bg-[#151933]/16 hover:bg-brand-hover/24 active:bg-brand-primary/32 border border-[#151933]/35 hover:border-brand-primary/50 text-[#151933] focus-visible:ring-2 focus-visible:ring-brand-primary/60 shadow-xs"
+                    : "bg-[#151933] hover:bg-brand-hover text-white border-transparent"
                   }`}
               >
                 <span>Go to @{username}</span>
@@ -344,7 +344,7 @@ export function SeriesDetailClient({
       <FocusOverlay overlay={themeMeta.focusOverlay} />
 
       {/* 4. Centered Content */}
-      <main className="relative z-10 flex-1 flex flex-col mx-auto max-w-[580px] w-full px-3 sm:px-4 py-4 sm:py-6 animate-fade-in-up">
+      <main className="relative z-10 flex-1 flex flex-col mx-auto max-w-[580px] w-full px-3 sm:px-4 py-3 sm:py-4 animate-fade-in-up">
         {/* Centered Theme Card with min-h-full & flex layout */}
         <div
           style={{
@@ -360,7 +360,7 @@ export function SeriesDetailClient({
         >
           <div className="flex-1 flex flex-col">
             {/* 1. Full-Width Hero Cover Header (Maroon Gradient or Valid Poster) */}
-            <div className="relative w-full aspect-[21/9] min-h-[120px] sm:min-h-[140px] overflow-hidden bg-gradient-to-r from-[#151933] via-[#A24B5A] to-[#151933] m-0 p-0 shrink-0">
+            <div className={`relative w-full overflow-hidden bg-gradient-to-r from-[#151933] via-[#A24B5A] to-[#151933] m-0 p-0 shrink-0 ${hasValidCover ? "aspect-[21/10] min-h-[158px] sm:min-h-[184px]" : "aspect-[21/9] min-h-[108px] sm:min-h-[124px]"}`}>
               {hasValidCover && (
                 <>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -370,7 +370,7 @@ export function SeriesDetailClient({
                     onError={() => setCoverImageError(true)}
                     className="block w-full h-full object-cover object-center m-0 p-0"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/60 pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/30 pointer-events-none" />
                 </>
               )}
 
@@ -387,7 +387,7 @@ export function SeriesDetailClient({
                         router.push(profileUrl);
                       }
                     }}
-                    className="tap-scale flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-black/55 active:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
+                    className="tap-scale flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-[var(--theme-accent)] active:bg-[var(--theme-accent)] backdrop-blur-md border border-white/25 hover:border-[var(--theme-accent-border)] text-white transition-all shadow-md cursor-pointer"
                     title={`Back to @${username}`}
                     aria-label={`Back to @${username}`}
                   >
@@ -410,7 +410,7 @@ export function SeriesDetailClient({
                   <button
                     type="button"
                     onClick={handleCopyLink}
-                    className="tap-scale flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-black/55 active:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
+                    className="tap-scale flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-[var(--theme-accent)] active:bg-[var(--theme-accent)] backdrop-blur-md border border-white/25 hover:border-[var(--theme-accent-border)] text-white transition-all shadow-md cursor-pointer"
                     title="Copy series link"
                     aria-label="Copy series link"
                   >
@@ -420,7 +420,7 @@ export function SeriesDetailClient({
                   <button
                     type="button"
                     onClick={() => setIsShareModalOpen(true)}
-                    className="tap-scale flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-black/55 active:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
+                    className="tap-scale flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-[var(--theme-accent)] active:bg-[var(--theme-accent)] backdrop-blur-md border border-white/25 hover:border-[var(--theme-accent-border)] text-white transition-all shadow-md cursor-pointer"
                     title="Share series"
                     aria-label="Share series"
                   >
@@ -429,47 +429,77 @@ export function SeriesDetailClient({
                 </div>
               </header>
 
-              {/* Bottom Right Overlay: Platform */}
-              {detectedPlatform && (
-                <div className="absolute bottom-2.5 right-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold shadow-sm">
-                  {detectedPlatform === "YouTube" && <YoutubeIcon className="h-2.5 w-2.5 text-red-500" />}
-                  {detectedPlatform === "Instagram" && <InstagramIcon className="h-2.5 w-2.5 text-pink-500" />}
-                  {detectedPlatform === "Facebook" && <FacebookIcon className="h-2.5 w-2.5 text-blue-500" />}
-                  {detectedPlatform !== "YouTube" && detectedPlatform !== "Instagram" && detectedPlatform !== "Facebook" && (
-                    <Globe className="h-2.5 w-2.5 text-white" />
+              {hasValidCover ? (
+                <div className="absolute inset-x-4 bottom-6 z-10 flex flex-col items-center text-center sm:inset-x-8 sm:bottom-7">
+                  <h1
+                    style={{ fontFamily: typ.headingFontFamily, fontWeight: 900 }}
+                    className="max-w-[92%] text-balance text-2xl sm:text-3xl font-black leading-tight tracking-tight text-white drop-shadow-lg"
+                  >
+                    {series.title}
+                  </h1>
+                  {series.description && series.description.trim() && (
+                    <p className="mt-1.5 line-clamp-2 max-w-md text-xs sm:text-sm font-medium leading-relaxed text-white/76">
+                      {series.description}
+                    </p>
                   )}
-                  <span>{detectedPlatform}</span>
+                  {detectedPlatform && (
+                    <div className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-white/18 bg-black/35 px-3 py-1 text-[10px] sm:text-[11px] font-bold text-white/90 shadow-sm backdrop-blur-sm">
+                      {detectedPlatform === "YouTube" && <YoutubeIcon className="h-3 w-3 text-red-500" />}
+                      {detectedPlatform === "Instagram" && <InstagramIcon className="h-3 w-3 text-pink-500" />}
+                      {detectedPlatform === "Facebook" && <FacebookIcon className="h-3 w-3 text-blue-500" />}
+                      {detectedPlatform !== "YouTube" && detectedPlatform !== "Instagram" && detectedPlatform !== "Facebook" && (
+                        <Globe className="h-3 w-3 text-white" />
+                      )}
+                      <span>{detectedPlatform}</span>
+                    </div>
+                  )}
                 </div>
+              ) : (
+                detectedPlatform && (
+                  <div className="absolute bottom-2.5 right-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold shadow-sm">
+                    {detectedPlatform === "YouTube" && <YoutubeIcon className="h-2.5 w-2.5 text-red-500" />}
+                    {detectedPlatform === "Instagram" && <InstagramIcon className="h-2.5 w-2.5 text-pink-500" />}
+                    {detectedPlatform === "Facebook" && <FacebookIcon className="h-2.5 w-2.5 text-blue-500" />}
+                    {detectedPlatform !== "YouTube" && detectedPlatform !== "Instagram" && detectedPlatform !== "Facebook" && (
+                      <Globe className="h-2.5 w-2.5 text-white" />
+                    )}
+                    <span>{detectedPlatform}</span>
+                  </div>
+                )
               )}
             </div>
 
             {/* 2. BODY CONTENT: TITLE, DESCRIPTION, PILL TAGS, EPISODES */}
-            <div className="p-4 sm:p-5 pt-4 sm:pt-5 flex-1 flex flex-col">
+            <div className="p-3.5 sm:p-4 flex-1 flex flex-col">
               {/* Title & Description & Genre Tags */}
               <div className="text-center px-1">
-                <h1
-                  style={{
-                    color: c.primaryText,
-                    fontFamily: typ.headingFontFamily,
-                    fontWeight: typ.headingWeight as any,
-                  }}
-                  className="text-lg sm:text-xl font-extrabold leading-snug tracking-tight text-[#241618]"
-                >
-                  {series.title}
-                </h1>
+                {!hasValidCover && (
+                  <>
+                    <h1
+                      style={{
+                        color: c.primaryText,
+                        fontFamily: typ.headingFontFamily,
+                        fontWeight: typ.headingWeight as any,
+                      }}
+                      className="text-lg sm:text-xl font-extrabold leading-snug tracking-tight text-[#241618]"
+                    >
+                      {series.title}
+                    </h1>
 
-                {series.description && series.description.trim() && (
-                  <p
-                    style={{ color: c.secondaryText }}
-                    className="mt-1.5 text-xs sm:text-[13px] leading-relaxed text-[#6B5A5D] font-normal max-w-md mx-auto"
-                  >
-                    {series.description}
-                  </p>
+                    {series.description && series.description.trim() && (
+                      <p
+                        style={{ color: c.secondaryText }}
+                        className="mt-1.5 text-xs sm:text-[13px] leading-relaxed text-[#6B5A5D] font-normal max-w-md mx-auto"
+                      >
+                        {series.description}
+                      </p>
+                    )}
+                  </>
                 )}
 
                 {/* Metadata — clean values, each on its own line */}
                 {(genresList.length > 0 || langTag || allEpisodes.length > 0) && (
-                  <div className="mt-3 space-y-1 text-center">
+                  <div className={`${hasValidCover ? "mt-0" : "mt-3"} space-y-1 text-center`}>
                     {genresList.length > 0 && (
                       <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-medium">
                         {genresList.slice(0, 3).join(", ")}
@@ -489,7 +519,7 @@ export function SeriesDetailClient({
 
               {/* Seasons Filter Tabs (if multiple seasons) */}
               {seasonsList.length > 1 && (
-                <div className="mt-3.5 flex items-center justify-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                <div className="mt-2.5 flex items-center justify-center gap-2 overflow-x-auto pb-0.5 scrollbar-none">
                   {seasonsList.map((sn, idx) => (
                     <button
                       key={sn.id || idx}
@@ -509,7 +539,7 @@ export function SeriesDetailClient({
               )}
 
               {/* 3. EPISODES HEADER & GROUPED LIST */}
-              <div className="mt-5 sm:mt-6 space-y-2">
+              <div className="mt-4 sm:mt-5 space-y-1.5">
                 <div className="flex items-center justify-between px-1">
                   <span
                     style={{ color: c.mutedText }}
@@ -524,7 +554,7 @@ export function SeriesDetailClient({
                 {currentEpisodes.length === 0 ? (
                   <div
                     style={{ borderColor: c.border, color: c.mutedText }}
-                    className="p-5 text-center text-xs font-semibold rounded-2xl border border-dashed border-[#E4DAD5] bg-[#F7F0EA]/30 text-[#6B5A5D]"
+                    className="p-4 text-center text-xs font-semibold rounded-2xl border border-dashed border-[#E4DAD5] bg-[#F7F0EA]/30 text-[#6B5A5D]"
                   >
                     No episodes uploaded for this series yet.
                   </div>
@@ -548,7 +578,7 @@ export function SeriesDetailClient({
                           target={ep.externalUrl ? "_blank" : undefined}
                           rel="noopener noreferrer"
                           onClick={() => trackEpisodeClick(ep)}
-                          className="group flex items-center justify-between w-full px-3.5 py-2.5 sm:py-3 transition-colors hover:bg-[#F7F0EA]/50 cursor-pointer"
+                          className="group flex items-center justify-between w-full px-3.5 py-2 sm:py-2.5 transition-colors hover:bg-[var(--theme-accent-soft)] cursor-pointer"
                         >
                           {/* Left: Number & Title */}
                           <div className="flex items-center gap-3 min-w-0 pr-2">
@@ -560,21 +590,20 @@ export function SeriesDetailClient({
                             </span>
                             <span
                               style={{ color: c.primaryText }}
-                              className="text-xs sm:text-[13px] font-bold text-[#241618] truncate group-hover:text-[#151933] transition-colors"
+                              className="text-xs sm:text-[13px] font-bold text-[#241618] truncate group-hover:text-[var(--theme-accent-text)] transition-colors"
                             >
                               {epTitleStr}
                             </span>
                           </div>
 
-                          {/* Right: Circular View Icon */}
+                          {/* Right: Open Link Icon */}
                           <div
                             style={{
-                              borderColor: c.border,
                               color: c.accentText,
                             }}
-                            className="h-8 w-8 rounded-full border border-[#E4DAD5] bg-white text-[#151933] flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-[#600b0f0f] group-hover:border-[#151933]/30 group-hover:scale-105 transition-all"
+                            className="flex h-7 w-7 items-center justify-center shrink-0 text-[#151933] opacity-70 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
                           >
-                            <Eye className="h-3.5 w-3.5" />
+                            <ExternalLink className="h-3.5 w-3.5" />
                           </div>
                         </a>
                       );
@@ -588,7 +617,7 @@ export function SeriesDetailClient({
           {/* 4. PINNED MADE WITH INFLIXO FOOTER */}
           <div
             style={{ borderColor: c.divider }}
-            className="flex items-center justify-center px-5 pt-3 pb-4 select-none mt-6 border-t border-[#E4DAD5]"
+            className="flex items-center justify-center px-5 pt-2.5 pb-3 select-none mt-4 border-t border-[#E4DAD5]"
           >
             <Link
               href="/"
@@ -620,5 +649,3 @@ export function SeriesDetailClient({
     </div>
   );
 }
-
-

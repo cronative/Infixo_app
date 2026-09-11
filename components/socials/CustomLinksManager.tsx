@@ -12,11 +12,14 @@ import {
   Copy,
   Pencil,
   GripVertical,
+  FolderOpen,
+  X,
 } from "lucide-react";
-import { CustomLink } from "@/types";
+import { CustomLink, CustomLinkItem } from "@/types";
 import { customLinksRepository, authRepository } from "@/repositories/localRepository";
 import { useToast } from "@/contexts/ToastContext";
 import { useCreator } from "@/contexts/CreatorContext";
+import { getPlanQuota } from "@/services/subscriptionLimits";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
@@ -35,8 +38,6 @@ import {
 interface CustomLinksManagerProps {
   onChange?: (links: CustomLink[]) => void;
 }
-
-const MAX_FREE_LINKS = 3;
 
 function getInitials(name: string): string {
   if (!name) return "LK";
@@ -114,7 +115,7 @@ function getLinkPlatform(link: CustomLink): {
         {getInitials(link.title)}
       </span>
     ),
-    bgClass: "bg-[#15193314] border border-[#E7D0D4]",
+    bgClass: "bg-[#15193314] border border-[#e2e8f0]",
   };
 }
 
@@ -196,8 +197,10 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingLink, setEditingLink] = useState<CustomLink | null>(null);
   const [selectedType, setSelectedType] = useState<string>("");
+  const [formMode, setFormMode] = useState<"link" | "collection">("link");
   const [formTitle, setFormTitle] = useState("");
   const [formUrl, setFormUrl] = useState("");
+  const [collectionItems, setCollectionItems] = useState<CustomLinkItem[]>([]);
   const [isTitleManuallyEdited, setIsTitleManuallyEdited] = useState<boolean>(false);
   const [lastSuggestedTitle, setLastSuggestedTitle] = useState<string>("");
   const [isSaving, setIsSaving] = useState(false);
@@ -206,9 +209,9 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
 
   const triggerButtonRef = useRef<HTMLButtonElement | null>(null);
 
-  const planKey = (subscription?.planKey || "").toLowerCase();
-  const isVip = planKey.includes("vip") || planKey.includes("pro");
-  const isLimitReached = !isVip && links.length >= MAX_FREE_LINKS;
+  const quota = getPlanQuota(subscription?.planKey || "early_access");
+  const maxLinks = quota.maxCustomLinks;
+  const isLimitReached = maxLinks !== Infinity && links.length >= maxLinks;
 
   const email = creatorCtx?.profile?.email || authRepository.getPendingEmail() || authRepository.get()?.email;
   const username = creatorCtx?.profile?.username;
@@ -248,15 +251,17 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
     if (btnElement) triggerButtonRef.current = btnElement;
     if (isLimitReached) {
       showToast(
-        `Early Access plan is limited to ${MAX_FREE_LINKS} custom links. Upgrade to VIP Plan for unlimited links! ⭐`,
+        `${quota.name} is limited to ${maxLinks} custom links. Upgrade to Pro for 20 links or VIP for unlimited links.`,
         "info"
       );
       return;
     }
     setEditingLink(null);
     setSelectedType("");
+    setFormMode("link");
     setFormTitle("");
     setFormUrl("");
+    setCollectionItems([{ id: `item_${Date.now()}`, title: "", url: "", isEnabled: true }]);
     setIsTitleManuallyEdited(false);
     setLastSuggestedTitle("");
     setIsModalOpen(true);
@@ -265,8 +270,14 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
   function handleOpenEdit(link: CustomLink) {
     setEditingLink(link);
     setSelectedType("");
+    setFormMode(link.kind === "collection" ? "collection" : "link");
     setFormTitle(link.title);
     setFormUrl(link.url);
+    setCollectionItems(
+      link.items && link.items.length > 0
+        ? link.items.map((item) => ({ ...item }))
+        : [{ id: `item_${Date.now()}`, title: "", url: "", isEnabled: true }]
+    );
     setIsTitleManuallyEdited(true);
     setLastSuggestedTitle("");
     setIsModalOpen(true);
@@ -296,24 +307,58 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
       showToast("Please enter a link title", "error");
       return;
     }
-    if (!cleanUrl) {
+    if (formMode === "link" && !cleanUrl) {
       showToast("Please enter a destination URL", "error");
       return;
     }
 
-    if (!cleanUrl.startsWith("http://") && !cleanUrl.startsWith("https://")) {
+    if (formMode === "link" && !cleanUrl.startsWith("http://") && !cleanUrl.startsWith("https://")) {
       cleanUrl = `https://${cleanUrl}`;
+    }
+
+    const cleanedItems = collectionItems
+      .map((item) => {
+        const title = item.title.trim();
+        let url = item.url.trim();
+        if (url && !url.startsWith("http://") && !url.startsWith("https://")) {
+          url = `https://${url}`;
+        }
+        return {
+          ...item,
+          id: item.id || `item_${Date.now()}_${Math.random().toString(16).slice(2)}`,
+          title,
+          url,
+          isEnabled: item.isEnabled !== false,
+        };
+      })
+      .filter((item) => item.title && item.url);
+
+    if (formMode === "collection" && cleanedItems.length === 0) {
+      showToast("Please add at least one link inside this collection", "error");
+      return;
     }
 
     let updatedList: CustomLink[] = [];
     if (editingLink) {
-      updatedList = links.map((l) => (l.id === editingLink.id ? { ...l, title: cleanTitle, url: cleanUrl } : l));
+      updatedList = links.map((l) => (
+        l.id === editingLink.id
+          ? {
+              ...l,
+              title: cleanTitle,
+              url: formMode === "collection" ? "" : cleanUrl,
+              kind: formMode,
+              items: formMode === "collection" ? cleanedItems : [],
+            }
+          : l
+      ));
     } else {
       const newLink: CustomLink = {
         id: `link_${Date.now()}`,
         title: cleanTitle,
-        url: cleanUrl,
+        url: formMode === "collection" ? "" : cleanUrl,
         isEnabled: true,
+        kind: formMode,
+        items: formMode === "collection" ? cleanedItems : [],
       };
       updatedList = [...links, newLink];
     }
@@ -323,7 +368,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
     if (onChange) onChange(updatedList);
 
     setIsModalOpen(false);
-    showToast(editingLink ? "Updated custom link! ✨" : "Added custom link & saved to DB! 🔗");
+    showToast(editingLink ? "Updated custom link! ✨" : formMode === "collection" ? "Added link collection! 🔗" : "Added custom link & saved to DB! 🔗");
 
     await syncToBackend(updatedList);
   }
@@ -367,31 +412,51 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
     }
   }
 
+  function updateCollectionItem(id: string, patch: Partial<CustomLinkItem>) {
+    setCollectionItems((items) => items.map((item) => (item.id === id ? { ...item, ...patch } : item)));
+  }
+
+  function addCollectionItem() {
+    setCollectionItems((items) => [
+      ...items,
+      { id: `item_${Date.now()}_${items.length}`, title: "", url: "", isEnabled: true },
+    ]);
+  }
+
+  function removeCollectionItem(id: string) {
+    setCollectionItems((items) => {
+      if (items.length <= 1) {
+        return [{ id: `item_${Date.now()}`, title: "", url: "", isEnabled: true }];
+      }
+      return items.filter((item) => item.id !== id);
+    });
+  }
+
   return (
     <div className="space-y-3 text-left">
       {/* 12 & 13. Section Header: Custom links + 1 / 3 links + + Add Link */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-0.5">
         <div>
-          <h2 className="text-base sm:text-lg font-bold text-[#181716]">
+          <h2 className="text-base sm:text-lg font-bold text-[#151933]">
             Custom links
           </h2>
-          <p className="text-xs sm:text-[13px] text-[#54514D] font-normal mt-0.5">
+          <p className="text-xs sm:text-[13px] text-[#475569] font-normal mt-0.5">
             Add links you want your audience to discover.
           </p>
         </div>
 
         <div className="flex items-center gap-3 shrink-0 self-start sm:self-auto">
           <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-[#151933]/[0.08] text-[#151933] border border-[#151933]/20">
-            {links.length} / {MAX_FREE_LINKS} links
+            {links.length} / {maxLinks === Infinity ? "Unlimited" : maxLinks} links
           </span>
 
           <button
             type="button"
             onClick={(e) => handleOpenCreate(e.currentTarget)}
             disabled={isLimitReached}
-            className={`inline-flex items-center gap-2 h-10 px-4 rounded-xl text-xs sm:text-sm font-medium transition-colors cursor-pointer shadow-xs ${isLimitReached
-                ? "bg-[#FAF8F5] border border-[#E7E3DC] text-[#797570] opacity-60 cursor-not-allowed"
-                : "bg-[#151933] hover:bg-[#2c1937] text-white"
+            className={`inline-flex items-center gap-2 h-10 px-4 rounded-xl text-xs sm:text-sm font-medium transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm ${isLimitReached
+                ? "bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b] opacity-60 cursor-not-allowed"
+                : "bg-[#151933] hover:bg-brand-hover text-white"
               }`}
             title={isLimitReached ? "Limit reached (3 links max)" : "Add new custom link"}
           >
@@ -403,16 +468,16 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
 
       {/* Links List / Empty State */}
       {links.length === 0 ? (
-        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-6 sm:p-8 text-center space-y-3 shadow-xs">
-          <p className="text-sm font-bold text-[#181716]">Add your first custom link</p>
-          <p className="text-xs text-[#797570] max-w-sm mx-auto">
+        <div className="rounded-2xl border border-[#e2e8f0] bg-white p-6 sm:p-8 text-center space-y-3 shadow-xs">
+          <p className="text-sm font-bold text-[#151933]">Add your first custom link</p>
+          <p className="text-xs text-[#64748b] max-w-sm mx-auto">
             Help people reach your latest content, website, booking page, store or community.
           </p>
           <div className="pt-1">
             <button
               type="button"
               onClick={(e) => handleOpenCreate(e.currentTarget)}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-[#2c1937] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-brand-hover px-4 py-2 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Add Link</span>
@@ -420,64 +485,69 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
           </div>
         </div>
       ) : (
-        <div className="rounded-2xl border border-[#E7E3DC] bg-white divide-y divide-[#E7E3DC] shadow-xs">
+        <div className="rounded-2xl border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0] shadow-xs">
           {links.map((item, idx) => {
-            const domain = extractDomain(item.url);
+            const isCollection = item.kind === "collection";
+            const enabledItems = item.items?.filter((child) => child.isEnabled !== false && child.title && child.url) || [];
+            const domain = isCollection ? `${enabledItems.length} links in collection` : extractDomain(item.url);
             const platformInfo = getLinkPlatform(item);
             const faviconUrl = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64` : "";
 
             return (
               <div
                 key={item.id || idx}
-                className="px-4 sm:px-5 py-3.5 min-h-[64px] flex items-center justify-between gap-3 hover:bg-[#FAF8F5]/60 transition-colors text-left"
+                className="px-4 sm:px-5 py-3.5 min-h-[64px] hover:bg-[#f1f5f9] transition-colors text-left"
               >
-                {/* Left: 16. Drag handle + 15. Favicon/Icon + Title/Domain */}
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <span className="text-[#797570]/40 cursor-grab active:cursor-grabbing shrink-0" title="Drag to reorder">
-                    <GripVertical className="h-4 w-4" />
-                  </span>
+                <div className="flex items-center justify-between gap-3">
+                  {/* Left: 16. Drag handle + 15. Favicon/Icon + Title/Domain */}
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <span className="text-[#64748b]/40 cursor-grab active:cursor-grabbing shrink-0" title="Drag to reorder">
+                      <GripVertical className="h-4 w-4" />
+                    </span>
 
-                  <div
-                    className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 overflow-hidden ${platformInfo.bgClass
-                      }`}
-                  >
-                    {domain && !platformInfo.bgClass.includes("gradient") && !platformInfo.bgClass.includes("red") && !platformInfo.bgClass.includes("blue") ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={faviconUrl}
-                        alt=""
-                        className="h-5 w-5 object-contain"
-                        onError={(e) => {
-                          (e.currentTarget as HTMLElement).style.display = "none";
-                        }}
-                      />
-                    ) : (
-                      platformInfo.icon
-                    )}
+                    <div
+                      className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 overflow-hidden ${isCollection ? "bg-[#151933] text-white shadow-xs" : platformInfo.bgClass
+                        }`}
+                    >
+                      {isCollection ? (
+                        <FolderOpen className="h-4 w-4" />
+                      ) : domain && !platformInfo.bgClass.includes("gradient") && !platformInfo.bgClass.includes("red") && !platformInfo.bgClass.includes("blue") ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={faviconUrl}
+                          alt=""
+                          className="h-5 w-5 object-contain"
+                          onError={(e) => {
+                            (e.currentTarget as HTMLElement).style.display = "none";
+                          }}
+                        />
+                      ) : (
+                        platformInfo.icon
+                      )}
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm sm:text-[15px] font-semibold text-[#151933]">
+                        {item.title}
+                      </p>
+                      <p className="truncate text-xs text-[#475569]">
+                        {domain}
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm sm:text-[15px] font-semibold text-[#181716]">
-                      {item.title}
-                    </p>
-                    <p className="truncate text-xs text-[#54514D]">
-                      {domain}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Right: Actions (Open ↗ + ⋮) */}
-                <div className="flex items-center gap-1.5 shrink-0">
-                  {item.url && (
+                  {/* Right: Actions (Open ↗ + ⋮) */}
+                  <div className="flex items-center gap-1.5 shrink-0">
+                  {!isCollection && item.url && (
                     <a
                       href={item.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-xs font-medium text-[#181716] transition-colors shadow-2xs"
+                      className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs font-medium text-[#151933] transition-colors shadow-2xs"
                       title="Open link in new tab"
                     >
                       <span>Open</span>
-                      <ExternalLink className="h-3 w-3 text-[#797570]" />
+                      <ExternalLink className="h-3 w-3 text-[#64748b]" />
                     </a>
                   )}
 
@@ -489,7 +559,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                         e.stopPropagation();
                         setActiveMenuId(activeMenuId === item.id ? null : item.id);
                       }}
-                      className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E7E3DC] bg-white hover:bg-[#FAF8F5] text-[#797570] hover:text-[#181716] transition-colors cursor-pointer shadow-2xs"
+                      className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#151933] transition-colors cursor-pointer shadow-2xs"
                       aria-label="More actions"
                     >
                       <MoreVertical className="h-3.5 w-3.5" />
@@ -498,7 +568,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     {activeMenuId === item.id && (
                       <div
                         onClick={(e) => e.stopPropagation()}
-                        className="absolute right-0 top-full mt-1.5 w-36 rounded-xl border border-[#E7E3DC] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in"
+                        className="absolute right-0 top-full mt-1.5 w-36 rounded-xl border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in"
                       >
                         {item.url && (
                           <a
@@ -506,9 +576,9 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={() => setActiveMenuId(null)}
-                            className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors"
+                            className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#151933] hover:bg-[#f1f5f9] transition-colors"
                           >
-                            <ExternalLink className="h-3.5 w-3.5 text-[#797570]" />
+                            <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
                             <span>Open Link</span>
                           </a>
                         )}
@@ -519,22 +589,24 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                             setActiveMenuId(null);
                             handleOpenEdit(item);
                           }}
-                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
+                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                         >
-                          <Pencil className="h-3.5 w-3.5 text-[#797570]" />
+                          <Pencil className="h-3.5 w-3.5 text-[#64748b]" />
                           <span>Edit Link</span>
                         </button>
 
-                        <button
-                          type="button"
-                          onClick={() => handleCopy(item.url)}
-                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#181716] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
-                        >
-                          <Copy className="h-3.5 w-3.5 text-[#797570]" />
-                          <span>Copy Link</span>
-                        </button>
+                        {!isCollection && (
+                          <button
+                            type="button"
+                            onClick={() => handleCopy(item.url)}
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                          >
+                            <Copy className="h-3.5 w-3.5 text-[#64748b]" />
+                            <span>Copy Link</span>
+                          </button>
+                        )}
 
-                        <div className="my-1 border-t border-[#E7E3DC]" />
+                        <div className="my-1 border-t border-[#e2e8f0]" />
 
                         <button
                           type="button"
@@ -542,7 +614,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                             setActiveMenuId(null);
                             setLinkToDelete(item);
                           }}
-                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-rose-50 transition-colors cursor-pointer"
+                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                           <span>Delete Link</span>
@@ -551,6 +623,28 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     )}
                   </div>
                 </div>
+                </div>
+                {isCollection && enabledItems.length > 0 && (
+                  <div className="ml-7 mt-3 grid gap-2 sm:ml-12">
+                    {enabledItems.slice(0, 4).map((child) => (
+                      <a
+                        key={child.id}
+                        href={child.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between gap-3 rounded-xl border border-[#e2e8f0] bg-white px-3 py-2 text-xs font-semibold text-[#151933] transition-colors hover:border-[#151933]/25 hover:bg-[#f8fafc]"
+                      >
+                        <span className="truncate">{child.title}</span>
+                        <ExternalLink className="h-3.5 w-3.5 shrink-0 text-[#64748b]" />
+                      </a>
+                    ))}
+                    {enabledItems.length > 4 && (
+                      <p className="px-1 text-[11px] font-semibold text-[#64748b]">
+                        +{enabledItems.length - 4} more links
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             );
           })}
@@ -585,9 +679,27 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
         <div className="flex flex-col flex-1 min-h-0">
           <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
             <form id="custom-link-form" onSubmit={handleSaveModalLink} className="space-y-3.5">
+              <div className="grid grid-cols-2 gap-2 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-1">
+                <button
+                  type="button"
+                  onClick={() => setFormMode("link")}
+                  className={`rounded-lg px-3 py-2 text-xs font-bold transition-colors ${formMode === "link" ? "bg-white text-[#151933] shadow-xs" : "text-[#64748b] hover:text-[#151933]"}`}
+                >
+                  Single link
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormMode("collection")}
+                  className={`rounded-lg px-3 py-2 text-xs font-bold transition-colors ${formMode === "collection" ? "bg-[#151933] text-white shadow-xs" : "text-[#64748b] hover:text-[#151933]"}`}
+                >
+                  Link collection
+                </button>
+              </div>
+
               {/* Link Type Selector */}
+              {formMode === "link" && (
               <div className="space-y-1">
-                <label htmlFor="custom-link-type" className="block text-xs font-bold text-[#181716]">
+                <label htmlFor="custom-link-type" className="block text-xs font-bold text-[#151933]">
                   Link type
                 </label>
                 <div className="relative">
@@ -595,7 +707,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     id="custom-link-type"
                     value={selectedType}
                     onChange={(e) => handleTypeSelect(e.target.value)}
-                    className="w-full appearance-none rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 px-3.5 py-2 pr-9 text-xs font-semibold text-[#181716] focus:border-[#151933] focus:bg-white focus:outline-none transition-colors cursor-pointer"
+                    className="w-full appearance-none rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3.5 py-2 pr-9 text-xs font-semibold text-[#151933] focus:border-[#151933] focus:bg-white focus:outline-none transition-colors cursor-pointer"
                   >
                     <option value="">— Select a link type (auto-fills title) —</option>
                     {LINK_TYPE_GROUPS.map((group) => (
@@ -608,14 +720,15 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                       </optgroup>
                     ))}
                   </select>
-                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#797570]" />
+                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
                 </div>
               </div>
+              )}
 
               {/* Link Title Field */}
               <div className="space-y-1">
-                <label htmlFor="custom-link-title" className="block text-xs font-bold text-[#181716]">
-                  Link title <span className="text-[#C2414B]">*</span>
+                <label htmlFor="custom-link-title" className="block text-xs font-bold text-[#151933]">
+                  {formMode === "collection" ? "Collection title" : "Link title"} <span className="text-[#C2414B]">*</span>
                 </label>
                 <input
                   id="custom-link-title"
@@ -626,14 +739,15 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     setFormTitle(e.target.value);
                     setIsTitleManuallyEdited(true);
                   }}
-                  placeholder="e.g. Follow on Instagram or Watch Latest Video"
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 px-3.5 py-2 text-xs font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
+                  placeholder={formMode === "collection" ? "e.g. World Tour Tickets" : "e.g. Follow on Instagram or Watch Latest Video"}
+                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3.5 py-2 text-xs font-semibold text-[#151933] placeholder:text-[#64748b]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
               {/* Destination URL Field */}
+              {formMode === "link" ? (
               <div className="space-y-1">
-                <label htmlFor="custom-link-url" className="block text-xs font-bold text-[#181716]">
+                <label htmlFor="custom-link-url" className="block text-xs font-bold text-[#151933]">
                   Destination URL <span className="text-[#C2414B]">*</span>
                 </label>
                 <div className="relative">
@@ -644,7 +758,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     value={formUrl}
                     onChange={(e) => setFormUrl(e.target.value)}
                     placeholder="https://example.com/your-destination"
-                    className="w-full rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/80 pl-3.5 pr-9 py-2 text-xs font-mono font-semibold text-[#181716] placeholder:text-[#797570]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
+                    className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 pl-3.5 pr-9 py-2 text-xs font-mono font-semibold text-[#151933] placeholder:text-[#64748b]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
                   />
                   {formUrl && (formUrl.startsWith("http://") || formUrl.startsWith("https://")) && (
                     <a
@@ -652,13 +766,65 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="Test link destination in new tab"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#797570] hover:text-[#151933] transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#64748b] hover:text-[#151933] transition-colors"
                     >
                       <ExternalLink className="h-4 w-4" />
                     </a>
                   )}
                 </div>
               </div>
+              ) : (
+                <div className="space-y-2 rounded-2xl border border-[#e2e8f0] bg-[#f8fafc]/80 p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-xs font-bold text-[#151933]">Collection links</p>
+                      <p className="text-[11px] font-medium text-[#64748b]">Add city tickets, tour stops, resources, or grouped links.</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={addCollectionItem}
+                      className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-[#151933] px-3 text-[11px] font-bold text-white transition-colors hover:bg-brand-hover"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                      Add
+                    </button>
+                  </div>
+
+                  <div className="space-y-2">
+                    {collectionItems.map((item, index) => (
+                      <div key={item.id} className="rounded-xl border border-[#e2e8f0] bg-white p-2.5">
+                        <div className="mb-2 flex items-center justify-between gap-2">
+                          <span className="text-[11px] font-bold text-[#64748b]">Link {index + 1}</span>
+                          <button
+                            type="button"
+                            onClick={() => removeCollectionItem(item.id)}
+                            className="inline-flex h-7 w-7 items-center justify-center rounded-lg text-[#64748b] transition-colors hover:bg-[#f1f5f9] hover:text-[#151933]"
+                            aria-label="Remove collection link"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                        <div className="grid gap-2 sm:grid-cols-[0.85fr_1.15fr]">
+                          <input
+                            type="text"
+                            value={item.title}
+                            onChange={(e) => updateCollectionItem(item.id, { title: e.target.value })}
+                            placeholder="Ahmedabad tickets"
+                            className="w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-2 text-xs font-semibold text-[#151933] placeholder:text-[#64748b]/50 focus:border-[#151933] focus:bg-white focus:outline-none"
+                          />
+                          <input
+                            type="url"
+                            value={item.url}
+                            onChange={(e) => updateCollectionItem(item.id, { url: e.target.value })}
+                            placeholder="https://bookmyshow.com/..."
+                            className="w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-2 text-xs font-mono font-semibold text-[#151933] placeholder:text-[#64748b]/50 focus:border-[#151933] focus:bg-white focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </form>
           </ModalBody>
 
@@ -673,7 +839,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                 }
               }}
               disabled={isSaving}
-              className="px-3.5 py-1.5 rounded-xl border border-[#E7E3DC] text-xs font-semibold text-[#797570] hover:bg-[#FAF8F5] hover:text-[#181716] transition-colors cursor-pointer disabled:opacity-50"
+              className="px-3.5 py-1.5 rounded-xl border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#151933] transition-colors cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>
@@ -681,7 +847,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
               type="submit"
               form="custom-link-form"
               disabled={isSaving}
-              className="bg-[#151933] hover:bg-[#2c1937] text-white font-semibold text-xs py-1.5 px-4 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="bg-[#151933] hover:bg-brand-hover text-white font-semibold text-xs py-1.5 px-4 rounded-xl transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               <Check className="h-3.5 w-3.5" />
               <span>{isSaving ? "Saving..." : editingLink ? "Save Changes" : "Save Link"}</span>

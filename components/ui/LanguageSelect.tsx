@@ -126,7 +126,7 @@ export function LanguageSelect({
                     className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-xs transition-colors ${
                       isSelected
                         ? "bg-inflixo-purple-light text-inflixo-purple font-bold"
-                        : "text-inflixo-navy hover:bg-slate-50"
+                        : "text-inflixo-navy hover:bg-[#f1f5f9]"
                     }`}
                   >
                     <div className="flex items-center gap-2">

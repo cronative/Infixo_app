@@ -146,7 +146,7 @@ export default function FinishStepPage() {
             <button
               type="button"
               onClick={handleCopy}
-              className="tap-scale flex items-center gap-1.5 rounded-lg bg-[#151933] hover:bg-[#1e293b] px-3.5 py-1.5 text-xs font-bold text-white transition-all cursor-pointer shrink-0 shadow-xs"
+              className="tap-scale flex items-center gap-1.5 rounded-lg bg-[#151933] hover:bg-brand-hover px-3.5 py-1.5 text-xs font-bold text-white transition-all cursor-pointer shrink-0 shadow-xs"
             >
               {copied ? (
                 <>
@@ -169,7 +169,7 @@ export default function FinishStepPage() {
               type="button"
               onClick={handleGoToDashboard}
               disabled={isLoadingDashboard}
-              className="tap-scale w-full flex items-center justify-center gap-2 rounded-xl bg-[#151933] hover:bg-[#1e293b] text-white font-bold h-10 text-xs sm:text-sm transition-all cursor-pointer shadow-xs disabled:opacity-75"
+              className="tap-scale w-full flex items-center justify-center gap-2 rounded-xl bg-[#151933] hover:bg-brand-hover text-white font-bold h-10 text-xs sm:text-sm transition-all cursor-pointer shadow-xs disabled:opacity-75"
             >
               {isLoadingDashboard ? (
                 <>
@@ -190,7 +190,7 @@ export default function FinishStepPage() {
                 href={`/${handleStr}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] text-[#151933] font-semibold h-9 px-3 text-xs transition-colors cursor-pointer text-center shadow-xs"
+                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white hover:bg-surface-soft text-[#151933] font-semibold h-9 px-3 text-xs transition-colors cursor-pointer text-center shadow-xs"
               >
                 <ExternalLink className="h-3.5 w-3.5 shrink-0" />
                 <span className="truncate">View Public Profile</span>
@@ -199,7 +199,7 @@ export default function FinishStepPage() {
               <button
                 type="button"
                 onClick={handleShare}
-                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] text-[#151933] font-semibold h-9 px-3 text-xs transition-colors cursor-pointer text-center shadow-xs"
+                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white hover:bg-surface-soft text-[#151933] font-semibold h-9 px-3 text-xs transition-colors cursor-pointer text-center shadow-xs"
               >
                 <Share2 className="h-3.5 w-3.5 shrink-0" />
                 <span>Share Profile</span>
@@ -212,7 +212,7 @@ export default function FinishStepPage() {
             <p className="font-bold text-[#181716] text-xs">Creator Mission 2027</p>
             <p className="mt-1 text-[#54514D] font-medium leading-relaxed">
               {verifiedCreatorNumber ? (
-                `You’re creator #${verifiedCreatorNumber.toLocaleString()} joining Inflixo’s journey to empower 10,000 creators with Early Access.`
+                `You’re creator #${verifiedCreatorNumber.toLocaleString()} joining Inflixo’s journey to empower Indian creators with a better public profile.`
               ) : (
                 "Welcome to Inflixo’s creator community. Let’s build your creator identity together."
               )}

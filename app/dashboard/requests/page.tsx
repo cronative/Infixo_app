@@ -12,7 +12,7 @@ const STATUS_CONFIG: Record<CollaborationStatus, { label: string; bg: string; te
   NEW: { label: "New", bg: "bg-[#EAF7F0]", text: "text-[#17845B]", border: "border-[#17845B]/20" },
   VIEWED: { label: "Viewed", bg: "bg-[#151933]/[0.09]", text: "text-[#151933]", border: "border-[#151933]/20" },
   REPLIED: { label: "Replied", bg: "bg-[#151933]/[0.09]", text: "text-[#151933]", border: "border-[#151933]/20" },
-  CLOSED: { label: "Closed", bg: "bg-[#fbfbfb]", text: "text-[#797570]", border: "border-[#E7E3DC]" },
+  CLOSED: { label: "Closed", bg: "bg-[#f8fafc]", text: "text-[#64748b]", border: "border-[#e2e8f0]" },
 };
 
 function formatDate(dateStr: string): string {
@@ -155,7 +155,7 @@ export default function DashboardRequestsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#181716] flex items-center gap-2">
+          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#151933] flex items-center gap-2">
             <span>Collaboration Inquiries</span>
             {unreadCount > 0 && (
               <span className="rounded-full bg-[#17845B] text-white text-[10px] font-bold px-2 py-0.5">
@@ -163,14 +163,14 @@ export default function DashboardRequestsPage() {
               </span>
             )}
           </h1>
-          <p className="text-xs sm:text-[13px] text-[#797570] font-medium mt-0.5">
+          <p className="text-xs sm:text-[13px] text-[#64748b] font-medium mt-0.5">
             Incoming brand enquiries, partnership briefs, and messages received via your &quot;Work With Me&quot; profile form.
           </p>
         </div>
       </div>
 
       {/* Tabs Filter */}
-      <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-white border border-[#E7E3DC] shadow-xs overflow-x-auto">
+      <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-white border border-[#e2e8f0] shadow-xs overflow-x-auto">
         {(["ALL", "NEW", "VIEWED", "REPLIED", "CLOSED"] as const).map((tab) => {
           const isSelected = activeTab === tab;
           const count = tab === "ALL" ? requests.length : requests.filter((r) => r.status === tab).length;
@@ -182,11 +182,11 @@ export default function DashboardRequestsPage() {
               onClick={() => setActiveTab(tab)}
               className={`tap-scale flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${isSelected
                 ? "bg-[#151933] text-white shadow-xs"
-                : "text-[#797570] hover:text-[#181716] hover:bg-[#FAF8F5]"
+                : "text-[#64748b] hover:text-[#151933] hover:bg-[#f1f5f9]"
                 }`}
             >
               <span>{tab === "ALL" ? "All Inquiries" : STATUS_CONFIG[tab].label}</span>
-              <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-[#FAF8F5] text-[#797570]"}`}>
+              <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-[#f8fafc] text-[#64748b]"}`}>
                 {count}
               </span>
             </button>
@@ -196,44 +196,44 @@ export default function DashboardRequestsPage() {
 
       {/* Requests List */}
       {loading ? (
-        <div className="rounded-2xl border border-[#E7E3DC] bg-white p-8 text-center text-xs text-[#797570]">
+        <div className="rounded-2xl border border-[#e2e8f0] bg-white p-8 text-center text-xs text-[#64748b]">
           Loading collaboration requests...
         </div>
       ) : filteredRequests.length === 0 ? (
         /* Empty State */
-        <div className="rounded-2xl border-2 border-dashed border-[#E7E3DC] bg-white p-8 sm:p-10 text-center space-y-3 max-w-xl mx-auto shadow-xs">
+        <div className="rounded-2xl border-2 border-dashed border-[#e2e8f0] bg-white p-8 sm:p-10 text-center space-y-3 max-w-xl mx-auto shadow-xs">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#151933]/[0.09] text-[#151933]">
             <Inbox className="h-6 w-6" />
           </div>
           <div className="space-y-1">
-            <h3 className="font-display text-sm sm:text-base font-bold text-[#181716]">
+            <h3 className="font-display text-sm sm:text-base font-bold text-[#151933]">
               No collaboration requests yet
             </h3>
-            <p className="text-xs text-[#797570] font-medium max-w-sm mx-auto leading-relaxed">
+            <p className="text-xs text-[#64748b] font-medium max-w-sm mx-auto leading-relaxed">
               When brands or sponsors reach out through the &quot;Work With Me&quot; button on your public Inflixo profile, their inquiries will appear here.
             </p>
           </div>
         </div>
       ) : (
-        <div className="rounded-2xl border border-[#E7E3DC] bg-white divide-y divide-[#E7E3DC] shadow-xs">
+        <div className="rounded-2xl border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0] shadow-xs">
           {filteredRequests.map((req) => {
             const conf = STATUS_CONFIG[req.status] || STATUS_CONFIG.NEW;
             return (
               <div
                 key={req.id}
                 onClick={() => handleOpenDetail(req)}
-                className="group px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#FAF8F5]/60 transition-colors cursor-pointer text-left"
+                className="group px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#f1f5f9] transition-colors cursor-pointer text-left"
               >
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#15193314] border border-[#E7D0D4] text-[#151933] font-bold text-xs shrink-0">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#15193314] border border-[#e2e8f0] text-[#151933] font-bold text-xs shrink-0">
                     {req.senderName.charAt(0).toUpperCase()}
                   </div>
 
                   <div className="min-w-0 flex-1 space-y-0.5">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-bold text-xs sm:text-[13px] text-[#181716] truncate group-hover:text-[#151933] transition-colors">{req.senderName}</h3>
+                      <h3 className="font-bold text-xs sm:text-[13px] text-[#151933] truncate group-hover:text-[#151933] transition-colors">{req.senderName}</h3>
                       {req.companyName && (
-                        <span className="text-[11px] font-semibold text-[#797570] truncate">
+                        <span className="text-[11px] font-semibold text-[#64748b] truncate">
                           • {req.companyName}
                         </span>
                       )}
@@ -244,18 +244,18 @@ export default function DashboardRequestsPage() {
                       )}
                     </div>
 
-                    <p className="text-[11px] text-[#797570] truncate max-w-xl">
+                    <p className="text-[11px] text-[#64748b] truncate max-w-xl">
                       {req.message}
                     </p>
 
-                    <div className="flex items-center gap-2.5 pt-0.5 text-[10px] text-[#797570]">
+                    <div className="flex items-center gap-2.5 pt-0.5 text-[10px] text-[#64748b]">
                       <span className="inline-flex items-center gap-1 font-medium truncate max-w-[180px]">
-                        <Mail className="h-3 w-3 text-[#797570]" />
+                        <Mail className="h-3 w-3 text-[#64748b]" />
                         {req.email}
                       </span>
                       <span>•</span>
                       <span className="inline-flex items-center gap-1">
-                        <Calendar className="h-3 w-3 text-[#797570]" />
+                        <Calendar className="h-3 w-3 text-[#64748b]" />
                         {formatDate(req.createdAt)}
                       </span>
                     </div>
@@ -273,7 +273,7 @@ export default function DashboardRequestsPage() {
                       e.stopPropagation();
                       setRequestToDelete(req);
                     }}
-                    className="tap-scale flex h-7 w-7 items-center justify-center rounded-xl border border-[#E7E3DC] bg-white hover:bg-rose-50 text-[#797570] hover:text-[#C2414B] transition-colors cursor-pointer shadow-xs"
+                    className="tap-scale flex h-7 w-7 items-center justify-center rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#151933] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
                     title="Delete inquiry"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -298,15 +298,15 @@ export default function DashboardRequestsPage() {
           <div className="flex flex-col flex-1 min-h-0">
             <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
               {/* Sender summary card */}
-              <div className="rounded-xl border border-[#E7E3DC] bg-[#FAF8F5]/60 p-3 space-y-2">
+              <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 p-3 space-y-2">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-xs sm:text-sm text-[#181716]">{selectedRequest.senderName}</h3>
+                  <h3 className="font-bold text-xs sm:text-sm text-[#151933]">{selectedRequest.senderName}</h3>
                   <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border ${STATUS_CONFIG[selectedRequest.status].bg} ${STATUS_CONFIG[selectedRequest.status].text} ${STATUS_CONFIG[selectedRequest.status].border}`}>
                     {STATUS_CONFIG[selectedRequest.status].label}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#797570]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#64748b]">
                   {selectedRequest.companyName && (
                     <div className="flex items-center gap-1.5">
                       <Building2 className="h-3.5 w-3.5 text-[#151933]" />
@@ -337,17 +337,17 @@ export default function DashboardRequestsPage() {
 
               {/* Message Content */}
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#181716]">
+                <label className="block text-xs font-bold text-[#151933]">
                   Message / Requirement:
                 </label>
-                <div className="rounded-xl border border-[#E7E3DC] bg-white p-3 text-xs text-[#181716] leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto">
+                <div className="rounded-xl border border-[#e2e8f0] bg-white p-3 text-xs text-[#151933] leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto">
                   {selectedRequest.message}
                 </div>
               </div>
 
               {/* Status Update Selector */}
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#181716]">
+                <label className="block text-xs font-bold text-[#151933]">
                   Update Request Status:
                 </label>
                 <div className="grid grid-cols-4 gap-2">
@@ -359,7 +359,7 @@ export default function DashboardRequestsPage() {
                       onClick={() => handleStatusChange(st)}
                       className={`tap-scale py-1.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${selectedRequest.status === st
                         ? "bg-[#151933] text-white border-[#151933] shadow-xs"
-                        : "border-[#E7E3DC] bg-white text-[#797570] hover:bg-[#FAF8F5]"
+                        : "border-[#e2e8f0] bg-white text-[#64748b] hover:bg-[#f1f5f9]"
                         }`}
                     >
                       {STATUS_CONFIG[st].label}
@@ -381,7 +381,7 @@ export default function DashboardRequestsPage() {
               <div className="flex items-center gap-2">
                 <a
                   href={`mailto:${selectedRequest.email}?subject=Collaboration with ${encodeURIComponent(profile.displayName || "Inflixo Creator")}`}
-                  className="tap-scale bg-[#151933] hover:bg-[#2c1937] text-white font-semibold text-xs py-2 px-3.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+                  className="tap-scale bg-[#151933] hover:bg-brand-hover text-white font-semibold text-xs py-2 px-3.5 rounded-xl transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5"
                 >
                   <Mail className="h-3.5 w-3.5" />
                   <span>Reply via Email</span>

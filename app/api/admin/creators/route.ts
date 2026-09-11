@@ -146,8 +146,8 @@ export async function POST(req: Request) {
     if (action === "grant_vip") {
       await db.query(
         `INSERT INTO subscriptions (creator_id, plan_key, plan_name, billing_cycle, status, activated_at)
-         VALUES (?, 'creator_VIP', 'Creator VIP', 'yearly', 'active', NOW())
-         ON DUPLICATE KEY UPDATE plan_key = 'creator_VIP', plan_name = 'Creator VIP', status = 'active', activated_at = NOW()`,
+         VALUES (?, 'creator_VIP', 'VIP', 'yearly', 'active', NOW())
+         ON DUPLICATE KEY UPDATE plan_key = 'creator_VIP', plan_name = 'VIP', status = 'active', activated_at = NOW()`,
         [targetCreatorId]
       );
       return NextResponse.json({ success: true, message: "VIP Plan granted successfully!" });

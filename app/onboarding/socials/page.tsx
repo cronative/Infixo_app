@@ -350,7 +350,7 @@ export default function SocialsStepPage() {
             <button
               type="button"
               onClick={() => router.push("/onboarding/profile")}
-              className="rounded-xl border border-[#cbd5e1] bg-white text-[#181716] font-semibold text-xs sm:text-sm h-12 px-5 hover:bg-[#f8fafc] transition-all cursor-pointer shrink-0"
+              className="rounded-xl border border-[#cbd5e1] bg-white text-[#181716] font-semibold text-xs sm:text-sm h-12 px-5 hover:bg-surface-soft transition-all cursor-pointer shrink-0"
             >
               Back
             </button>
@@ -358,7 +358,7 @@ export default function SocialsStepPage() {
               type="button"
               onClick={handleNext}
               disabled={submitting}
-              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-[#151933] hover:bg-[#2c1b36] text-white font-semibold text-xs sm:text-sm h-12 transition-all cursor-pointer shadow-xs disabled:opacity-60 active:scale-98"
+              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-[#151933] hover:bg-brand-hover text-white font-semibold text-xs sm:text-sm h-12 transition-all cursor-pointer shadow-xs disabled:opacity-60 active:scale-98"
             >
               {submitting ? (
                 <>

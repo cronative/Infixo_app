@@ -1,10 +1,16 @@
-import { Series, PlanKey } from "@/types";
+import { Series } from "@/types";
 
 export interface PlanQuota {
   name: string;
   maxSeries: number;
+  maxEpisodesPerSeries: number;
   maxTotalEpisodes: number;
   maxGigs: number;
+  maxReviews: number;
+  maxCustomLinks: number;
+  hasRateCard: boolean;
+  hasMediaKit: boolean;
+  publicProfileDays?: number;
   description: string;
 }
 
@@ -17,25 +23,53 @@ export const EARLY_ACCESS_LIMITS = {
 
 export const PLAN_QUOTAS: Record<string, PlanQuota> = {
   early_access: {
-    name: "Creator Early Access",
+    name: "Free Trial",
     maxSeries: 3,
+    maxEpisodesPerSeries: 5,
     maxTotalEpisodes: 15,
     maxGigs: 1,
-    description: "Free Early Access. 1 Collab Gig, Live Rate Cards, WhatsApp Lead Routing & 3 OTT Series.",
+    maxReviews: 1,
+    maxCustomLinks: 5,
+    hasRateCard: false,
+    hasMediaKit: false,
+    publicProfileDays: 7,
+    description: "7-day public profile trial with Inflixo branding, social stats, 3 series, 5 links, 1 review and 1 collab package.",
+  },
+  starter: {
+    name: "Starter",
+    maxSeries: 3,
+    maxEpisodesPerSeries: 5,
+    maxTotalEpisodes: 15,
+    maxGigs: 1,
+    maxReviews: 1,
+    maxCustomLinks: 5,
+    hasRateCard: false,
+    hasMediaKit: false,
+    description: "Keep your public profile live after trial with the same starter limits.",
   },
   creator_pro: {
-    name: "Creator Pro",
-    maxSeries: 30,
-    maxTotalEpisodes: 300,
+    name: "Pro",
+    maxSeries: 20,
+    maxEpisodesPerSeries: 20,
+    maxTotalEpisodes: 400,
     maxGigs: 3,
-    description: "30 Series, 300 Episodes, 3 Collab Gigs & Zero Inflixo Branding.",
+    maxReviews: 10,
+    maxCustomLinks: 20,
+    hasRateCard: true,
+    hasMediaKit: true,
+    description: "20 series, 20 episodes per series, 20 links, 3 collab packages, 10 reviews, rate card and default media kit.",
   },
   creator_VIP: {
-    name: "Creator VIP",
+    name: "VIP",
     maxSeries: Infinity,
+    maxEpisodesPerSeries: Infinity,
     maxTotalEpisodes: Infinity,
-    maxGigs: Infinity,
-    description: "Unlimited Series, Episodes, Collab Gigs & Media Kit.",
+    maxGigs: 10,
+    maxReviews: Infinity,
+    maxCustomLinks: Infinity,
+    hasRateCard: true,
+    hasMediaKit: true,
+    description: "Unlimited series, episodes, links and reviews, 10 collab packages, custom media kit and premium features.",
   },
 };
 
@@ -83,7 +117,7 @@ export function getEpisodeUsage(seriesItem: Series, planKey: string = "early_acc
     ? seriesItem.seasons.reduce((acc, season) => acc + (season.episodes ? season.episodes.length : 0), 0)
     : 0;
   const quota = getPlanQuota(planKey);
-  const max = quota.maxTotalEpisodes;
+  const max = quota.maxEpisodesPerSeries;
   const isLimitReached = totalEpisodes >= max;
   return {
     current: totalEpisodes,

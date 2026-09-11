@@ -135,14 +135,14 @@ export function BrandLeadQualifierModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl border border-[#E4DAD5] text-xs font-semibold text-[#797570] hover:bg-[#fbfbfb] hover:text-[#181716] transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-xl border border-[#E4DAD5] text-xs font-semibold text-[#797570] hover:bg-surface-soft hover:text-foreground transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
             form="brand-lead-form"
-            className="bg-[#17845B] hover:bg-[#146c4b] text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+            className="bg-[#17845B] hover:bg-brand-hover text-white font-semibold text-xs py-2 px-4.5 rounded-xl transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
           >
             <Send className="h-3.5 w-3.5" />
             <span>Open WhatsApp with Brief →</span>

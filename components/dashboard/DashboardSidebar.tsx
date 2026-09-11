@@ -23,14 +23,14 @@ export function DashboardSidebar() {
   const displayName = profile.displayName || profile.email?.split("@")[0] || "Creator";
 
   return (
-    <aside className="hidden w-64 shrink-0 flex-col border-r border-[#e2e8f0] bg-white px-4 py-5 lg:flex h-full overflow-y-auto select-none">
+    <aside className="hidden h-full w-64 shrink-0 select-none flex-col overflow-y-auto border-r border-[#e2e8f0] bg-white/95 px-4 py-5 shadow-[1px_0_0_rgba(15,23,42,0.02)] lg:flex">
       {/* Brand Logo */}
       <div className="px-2 pb-2">
         <Logo size="sm" />
       </div>
 
       {/* Creator Header Strip */}
-      <div className="my-3 -mx-4 px-4 py-2.5 border-y border-[#e2e8f0] flex items-center gap-2.5 bg-[#f8fafc]">
+      <div className="my-3 -mx-2 flex items-center gap-2.5 rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-3 py-2.5">
         <CreatorAvatar
           src={profile.photoDataUrl}
           name={displayName}
@@ -64,7 +64,7 @@ export function DashboardSidebar() {
       <nav className="flex-1 space-y-5 pt-1">
         {/* WORKSPACE GROUP */}
         <div>
-          <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-[#797570] mb-1.5">
+          <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-[#64748b] mb-1.5">
             Workspace
           </p>
           <div className="space-y-1">
@@ -75,12 +75,12 @@ export function DashboardSidebar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2.5 rounded-[10px] px-3 h-10 text-xs transition-colors ${active
-                    ? "bg-[#f8fafc] text-[#151933] font-semibold border border-[#E7E3DC]"
-                    : "text-[#54514D] hover:bg-[#FAF8F5] hover:text-[#181716] font-medium border border-transparent"
+                  className={`flex h-10 items-center gap-2.5 rounded-[10px] border px-3 text-xs transition-all ${active
+                    ? "border-[#cbd5e1] bg-[#151933] font-semibold text-white shadow-sm"
+                    : "border-transparent font-medium text-[#475569] hover:translate-x-0.5 hover:border-[#e2e8f0] hover:bg-[#f8fafc] hover:text-[#151933]"
                     }`}
                 >
-                  <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#151933]" : "text-[#797570]"}`} />
+                  <Icon className={`h-4 w-4 shrink-0 ${active ? "text-white" : "text-[#64748b]"}`} />
                   <span className="flex-1 truncate">{item.label}</span>
                 </Link>
               );
@@ -90,7 +90,7 @@ export function DashboardSidebar() {
 
         {/* ACCOUNT GROUP */}
         <div>
-          <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-[#797570] mb-1.5">
+          <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-[#64748b] mb-1.5">
             Account
           </p>
           <div className="space-y-1">
@@ -101,12 +101,12 @@ export function DashboardSidebar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2.5 rounded-[10px] px-3 h-10 text-xs transition-colors ${active
-                    ? "bg-[#f8fafc] text-[#151933] font-semibold border border-[#E7E3DC]"
-                    : "text-[#54514D] hover:bg-[#FAF8F5] hover:text-[#181716] font-medium border border-transparent"
+                  className={`flex h-10 items-center gap-2.5 rounded-[10px] border px-3 text-xs transition-all ${active
+                    ? "border-[#cbd5e1] bg-[#151933] font-semibold text-white shadow-sm"
+                    : "border-transparent font-medium text-[#475569] hover:translate-x-0.5 hover:border-[#e2e8f0] hover:bg-[#f8fafc] hover:text-[#151933]"
                     }`}
                 >
-                  <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#151933]" : "text-[#797570]"}`} />
+                  <Icon className={`h-4 w-4 shrink-0 ${active ? "text-white" : "text-[#64748b]"}`} />
                   <span className="flex-1 truncate">{item.label}</span>
                 </Link>
               );
@@ -115,18 +115,18 @@ export function DashboardSidebar() {
         </div>
       </nav>
 
-      {/* Bottom Utility Area: Early Access & Logout */}
-      <div className="pt-3 border-t border-[#E7E3DC] space-y-2">
-        <div className="flex items-center justify-between rounded-[10px] border border-[#E7E3DC] bg-[#FAF8F5] px-3 py-2 text-[11px] font-semibold text-[#181716]">
+      {/* Bottom Utility Area: Trial & Logout */}
+      <div className="pt-3 border-t border-[#e2e8f0] space-y-2">
+        <div className="flex items-center justify-between rounded-[10px] border border-[#e2e8f0] bg-[#f8fafc] px-3 py-2 text-[11px] font-semibold text-[#151933] shadow-inner shadow-white/80">
           <div className="flex items-center gap-1.5">
             <Sparkles className="h-3.5 w-3.5 text-[#151933] shrink-0" />
-            <span>Early Access</span>
+            <span>Free Trial</span>
           </div>
           <Link
             href={`/${handleStr}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[10px] text-[#151933] hover:underline inline-flex items-center gap-0.5 font-semibold"
+            className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-[#151933] transition-colors hover:text-brand-hover hover:underline"
             title="View live profile"
           >
             <span>Preview</span>
@@ -139,7 +139,7 @@ export function DashboardSidebar() {
             AuthService.logout();
             router.push("/login");
           }}
-          className="flex w-full items-center gap-2 rounded-[10px] px-3 py-1.5 text-xs font-semibold text-[#64748b] hover:bg-rose-50 hover:text-[#ef4444] transition-colors cursor-pointer"
+          className="flex w-full cursor-pointer items-center gap-2 rounded-[10px] px-3 py-2 text-xs font-semibold text-[#64748b] transition-colors hover:bg-[#f1f5f9] hover:text-[#151933]"
         >
           <LogOut className="h-3.5 w-3.5 shrink-0" />
           <span>Logout</span>

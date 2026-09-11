@@ -57,22 +57,22 @@ export function CreatorCollage() {
 
           {/* Crisp 1px Border Platform Follower Pills */}
           <div className="grid grid-cols-3 gap-2">
-            <div className="flex flex-col items-center justify-center rounded-xl bg-[#fbfbfb] border border-[#E4DAD5] p-2 text-center">
+            <div className="flex flex-col items-center justify-center rounded-xl bg-[#f8fafc] border border-[#e2e8f0] p-2 text-center">
               <InstagramIcon className="h-4 w-4 text-pink-500 mb-0.5" />
-              <span className="text-xs font-black text-[#241618]">48.7K</span>
+              <span className="text-xs font-black text-[#151933]">48.7K</span>
             </div>
-            <div className="flex flex-col items-center justify-center rounded-xl bg-[#fbfbfb] border border-[#E4DAD5] p-2 text-center">
+            <div className="flex flex-col items-center justify-center rounded-xl bg-[#f8fafc] border border-[#e2e8f0] p-2 text-center">
               <YoutubeIcon className="h-4 w-4 text-red-500 mb-0.5" />
-              <span className="text-xs font-black text-[#241618]">62.3K</span>
+              <span className="text-xs font-black text-[#151933]">62.3K</span>
             </div>
-            <div className="flex flex-col items-center justify-center rounded-xl bg-[#fbfbfb] border border-[#E4DAD5] p-2 text-center">
+            <div className="flex flex-col items-center justify-center rounded-xl bg-[#f8fafc] border border-[#e2e8f0] p-2 text-center">
               <FacebookIcon className="h-4 w-4 text-blue-600 mb-0.5" />
-              <span className="text-xs font-black text-[#241618]">15K</span>
+              <span className="text-xs font-black text-[#151933]">15K</span>
             </div>
           </div>
 
-          {/* Creator Series Preview Card (Solid Dark Surface #241618) */}
-          <div className="flex items-center gap-3 rounded-2xl bg-[#241618] text-white p-3 border border-white/10">
+          {/* Creator Series Preview Card (Solid Dark Surface #151933) */}
+          <div className="flex items-center gap-3 rounded-2xl bg-[#151933] text-white p-3 border border-white/10">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#151933]">
               <Play className="h-4 w-4 fill-white text-white" />
             </div>

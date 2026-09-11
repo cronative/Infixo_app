@@ -76,28 +76,28 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
     >
       <ModalBody className="p-5 space-y-4 text-left">
         {/* Series Title Badge */}
-        <div className="rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] p-3 flex items-center gap-3">
+        <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3 flex items-center gap-3">
           <span className="text-base">🎬</span>
           <div className="min-w-0 text-left">
-            <p className="text-xs font-bold text-[#241618] truncate">{series.title}</p>
-            <p className="text-[11px] text-[#6B5A5D] font-medium truncate">inflixo.com/{handleStr}/series/{series.id}</p>
+            <p className="text-xs font-bold text-[#151933] truncate">{series.title}</p>
+            <p className="text-[11px] text-[#64748b] font-medium truncate">inflixo.com/{handleStr}/series/{series.id}</p>
           </div>
         </div>
 
         {/* Copy Direct Link Section */}
         <div className="space-y-1 text-left">
-          <label className="block text-xs font-bold text-[#241618]">Series Public Link</label>
+          <label className="block text-xs font-bold text-[#151933]">Series Public Link</label>
           <div className="flex items-center gap-2">
             <input
               type="text"
               readOnly
               value={seriesUrl}
-              className="flex-1 rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] px-3.5 py-2 text-xs font-mono text-[#241618] select-all focus:border-[#151933] focus:bg-white focus:outline-none"
+              className="flex-1 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-3.5 py-2 text-xs font-mono text-[#151933] select-all focus:border-[#151933] focus:bg-white focus:outline-none"
             />
             <button
               type="button"
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-[#2c1937] px-3.5 py-2 text-xs font-semibold text-white shadow-2xs transition-colors shrink-0 cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-brand-hover px-3.5 py-2 text-xs font-semibold text-white shadow-2xs transition-colors shrink-0 cursor-pointer"
             >
               {copiedLink ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               <span>{copiedLink ? "Copied" : "Copy"}</span>
@@ -106,7 +106,7 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
         </div>
 
         {/* Caption Box */}
-        <div className="space-y-2 rounded-xl border border-[#E4DAD5] bg-[#fbfbfb] p-3.5 text-left">
+        <div className="space-y-2 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5 text-left">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-[#151933] font-bold text-xs">
               <Sparkles className="h-3.5 w-3.5" />
@@ -115,14 +115,14 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
             <span className="text-[10px] bg-[#15193314] text-[#151933] px-2 py-0.5 rounded-md font-bold">Recommended</span>
           </div>
 
-          <div className="rounded-lg border border-[#E4DAD5] bg-white p-2.5 text-xs font-mono text-[#241618] leading-relaxed whitespace-pre-wrap select-all">
+          <div className="rounded-lg border border-[#e2e8f0] bg-white p-2.5 text-xs font-mono text-[#151933] leading-relaxed whitespace-pre-wrap select-all">
             {reelCaption}
           </div>
 
           <button
             type="button"
             onClick={handleCopyCaption}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#151933] hover:bg-[#2c1937] px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors cursor-pointer"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#151933] hover:bg-brand-hover px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors cursor-pointer"
           >
             {copiedCaption ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
             <span>{copiedCaption ? "Caption Copied ✓" : "Copy Reel Caption"}</span>
@@ -131,7 +131,7 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
 
         {/* Social Share Buttons */}
         <div className="space-y-1.5 text-left pt-1">
-          <label className="block text-xs font-bold text-[#241618]">Share Directly</label>
+          <label className="block text-xs font-bold text-[#151933]">Share Directly</label>
           <div className="grid grid-cols-3 gap-2">
             <button
               type="button"
@@ -144,7 +144,7 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
             <button
               type="button"
               onClick={handleFacebookShare}
-              className="flex items-center justify-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-800 px-3 py-2 text-xs font-semibold transition-colors cursor-pointer"
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 hover:bg-[#f1f5f9] text-blue-800 px-3 py-2 text-xs font-semibold transition-colors cursor-pointer"
             >
               <FacebookIcon className="h-3.5 w-3.5 text-blue-600 shrink-0" />
               <span>Facebook</span>
@@ -152,9 +152,9 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
             <button
               type="button"
               onClick={handleTwitterShare}
-              className="flex items-center justify-center gap-1.5 rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#fbfbfb] text-[#241618] px-3 py-2 text-xs font-semibold transition-colors cursor-pointer"
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#151933] px-3 py-2 text-xs font-semibold transition-colors cursor-pointer"
             >
-              <XTwitterIcon className="h-3.5 w-3.5 text-[#241618] shrink-0" />
+              <XTwitterIcon className="h-3.5 w-3.5 text-[#151933] shrink-0" />
               <span>X (Twitter)</span>
             </button>
           </div>
@@ -165,7 +165,7 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
         <button
           type="button"
           onClick={onClose}
-          className="px-4 py-2 rounded-xl border border-[#E4DAD5] text-xs font-semibold text-[#6B5A5D] hover:bg-[#fbfbfb] hover:text-[#241618] transition-colors cursor-pointer"
+          className="px-4 py-2 rounded-xl border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#151933] transition-colors cursor-pointer"
         >
           Close
         </button>

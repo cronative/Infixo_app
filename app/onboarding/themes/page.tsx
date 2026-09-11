@@ -12,6 +12,23 @@ import { ThemeKey } from "@/types";
 
 const THEME_TAGS: Record<string, string> = {
   "minimal-white": "🍃 Clean • Minimalist White",
+  "studio-frost": "🧊 Premium • Studio Frost",
+  "taj-mahal": "🏛️ Heritage • Taj Mahal",
+  "marine-drive": "🌊 Mumbai • Marine Drive",
+  "burj-khalifa": "🌆 Dubai • Burj Khalifa",
+  "somnath-temple": "🛕 Gujarat • Somnath Temple",
+  "dwarka-temple": "🛕 Gujarat • Dwarka Temple",
+  "goa-beach": "🏖️ Goa • Beach",
+  "creator-studio": "🎬 Creator • Studio",
+  "neon-reels": "⚡ Reels • Neon",
+  "podcast-lounge": "🎙️ Podcast • Lounge",
+  "food-vlog": "🍜 Food • Vlog",
+  "gamer-stream": "🎮 Gaming • Stream",
+  "love-letter": "💌 Love • Lifestyle",
+  "christmas-snow": "🎄 Festive • Christmas",
+  "mountain-mist": "🏔️ Travel • Mountains",
+  "street-food": "🍲 Food • Street",
+  "cafe-mocha": "☕ Cafe • Stories",
   "signature-purple": "✨ Popular • Signature Purple",
   midnight: "🌙 Bold • Midnight Dark",
 };
@@ -53,7 +70,7 @@ export default function ThemeStepPage() {
           onClick={() => setActiveGroup("all")}
           className={`tap-scale shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-colors cursor-pointer ${activeGroup === "all"
             ? "bg-[#151933]/[0.08] text-[#151933] border border-[#151933]/25"
-            : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#fbfbfb]"
+            : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-surface-soft"
             }`}
         >
           All
@@ -64,7 +81,7 @@ export default function ThemeStepPage() {
           onClick={() => setActiveGroup("animated")}
           className={`tap-scale shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1 ${activeGroup === "animated"
             ? "bg-[#151933]/[0.08] text-[#151933] border border-[#151933]/25"
-            : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#fbfbfb]"
+            : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-surface-soft"
             }`}
         >
           <Sparkles className="h-3 w-3" />
@@ -76,7 +93,7 @@ export default function ThemeStepPage() {
           onClick={() => setActiveGroup("light")}
           className={`tap-scale shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-colors cursor-pointer ${activeGroup === "light"
             ? "bg-[#151933]/[0.08] text-[#151933] border border-[#151933]/25"
-            : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#fbfbfb]"
+            : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-surface-soft"
             }`}
         >
           Light
@@ -87,7 +104,7 @@ export default function ThemeStepPage() {
           onClick={() => setActiveGroup("dark")}
           className={`tap-scale shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-colors cursor-pointer ${activeGroup === "dark"
             ? "bg-[#151933]/[0.08] text-[#151933] border border-[#151933]/25"
-            : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-[#fbfbfb]"
+            : "bg-white border border-[#E7E3DC] text-[#54514D] hover:bg-surface-soft"
             }`}
         >
           Dark
@@ -115,7 +132,7 @@ export default function ThemeStepPage() {
           type="button"
           variant="outline"
           size="lg"
-          className="w-full sm:w-auto h-10 rounded-xl border-[#E7E3DC] text-[#181716] hover:bg-[#fbfbfb] font-semibold text-xs sm:text-sm px-5"
+          className="w-full sm:w-auto h-10 rounded-xl border-[#E7E3DC] text-[#181716] hover:bg-surface-soft font-semibold text-xs sm:text-sm px-5"
           onClick={() => router.push("/onboarding/socials")}
         >
           Back
@@ -126,7 +143,7 @@ export default function ThemeStepPage() {
           size="lg"
           loading={submitting}
           onClick={handleNext}
-          className="w-full sm:flex-1 h-10 bg-[#151933] hover:bg-[#2c1937] text-white font-bold text-xs sm:text-sm rounded-xl cursor-pointer shadow-xs"
+          className="w-full sm:flex-1 h-10 bg-[#151933] hover:bg-brand-hover text-white font-bold text-xs sm:text-sm rounded-xl cursor-pointer shadow-xs"
         >
           Save &amp; Next →
         </Button>
@@ -154,7 +171,7 @@ function ThemeTile({
       onClick={onSelect}
       className={`tap-scale relative w-full h-24 sm:h-26 rounded-xl overflow-hidden p-2.5 sm:p-3 flex flex-col justify-between text-left transition-all cursor-pointer shadow-xs ${isSelected
         ? "ring-2 ring-offset-2 ring-[#151933]"
-        : "border border-gray-200/80 hover:border-gray-400 hover:shadow-sm"
+        : "border border-gray-200/80 hover:border-brand-border hover:shadow-sm"
         }`}
       style={{
         background:
@@ -203,4 +220,3 @@ function ThemeTile({
     </button>
   );
 }
-

@@ -32,7 +32,7 @@ export const OnboardingService = {
           body: JSON.stringify({
             email,
             planKey: "early_access",
-            planName: "Early Access",
+            planName: "Free Trial",
             billingCycle: "yearly",
           }),
         }).catch(() => {});
@@ -58,7 +58,7 @@ export const OnboardingService = {
     seriesRepository.saveAll([]);
     subscriptionRepository.save({
       planKey: "early_access",
-      planName: "Early Access",
+      planName: "Free Trial",
       billingCycle: "yearly",
       status: "active",
       activatedAt: new Date().toISOString(),

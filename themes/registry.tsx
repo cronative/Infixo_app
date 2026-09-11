@@ -19,6 +19,8 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
     sections,
     totalAudience,
     variant,
+    containedScroll,
+    seriesOpenMode,
     onShare,
   } = props;
   return (
@@ -38,8 +40,9 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
       totalAudience={totalAudience}
       compact={variant === "compact"}
       themeKey={themeKey}
+      containedScroll={containedScroll}
+      seriesOpenMode={seriesOpenMode}
       onShare={onShare}
     />
   );
 }
-
