@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { Check, ChevronDown, Search, Tag, X } from "lucide-react";
 import { CREATOR_TAXONOMY } from "@/data/categories";
+import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 
 interface CategorySelectProps {
   value: string | null; // Comma separated string e.g. "Food & Cooking, Travel"
@@ -21,7 +22,6 @@ export function CategorySelect({
 }: CategorySelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const selectedCategories = value
     ? value.split(",").map((c) => c.trim()).filter(Boolean)
@@ -44,17 +44,6 @@ export function CategorySelect({
       }))
       .filter((group) => group.subtypes.length > 0);
   }, [searchQuery]);
-
-  useEffect(() => {
-    function handlePointerDown(event: PointerEvent) {
-      if (!dropdownRef.current?.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-
-    document.addEventListener("pointerdown", handlePointerDown);
-    return () => document.removeEventListener("pointerdown", handlePointerDown);
-  }, []);
 
   function toggleCategory(catName: string) {
     let updated: string[];
@@ -89,7 +78,7 @@ export function CategorySelect({
 
       {error && <p className="text-xs font-bold text-rose-500">{error}</p>}
 
-      <div ref={dropdownRef} className="relative space-y-2">
+      <div className="space-y-2">
         <button
           type="button"
           onClick={() => setIsOpen((open) => !open)}
@@ -123,9 +112,18 @@ export function CategorySelect({
           </div>
         )}
 
-        {isOpen && (
-          <div className="absolute left-0 right-0 z-40 mt-1 overflow-hidden rounded-xl border border-[#dbe3ee] bg-white shadow-xl shadow-[#151933]/10">
-            <div className="border-b border-[#e2e8f0] bg-[#f8fafc] px-3 py-2">
+        <Modal
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          size="xl"
+          title="Choose creator type"
+          description={`Select up to ${max} professions/types that best describe you.`}
+          icon={<Tag className="h-4 w-4" />}
+          className="max-sm:h-[100dvh] max-sm:max-h-[100dvh] max-sm:rounded-none"
+          headerClassName="px-4 sm:px-5 py-3"
+        >
+          <div className="flex min-h-0 flex-1 flex-col">
+            <div className="border-b border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 sm:px-5">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#64748b]" />
                 <input
@@ -133,66 +131,106 @@ export function CategorySelect({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search actor, singer, YouTuber, food reviewer..."
-                  className="h-9 w-full rounded-lg border border-[#dbe3ee] bg-white pl-9 pr-3 text-xs font-semibold text-[#151933] placeholder:text-[#94a3b8] focus:border-[#151933] focus:outline-none focus:ring-2 focus:ring-[#151933]/10"
+                  className="h-10 w-full rounded-xl border border-[#dbe3ee] bg-white pl-9 pr-3 text-sm font-semibold text-[#151933] placeholder:text-[#94a3b8] focus:border-[#151933] focus:outline-none focus:ring-2 focus:ring-[#151933]/10"
+                  autoFocus
                 />
               </div>
-              <p className="mt-2 text-[11px] font-bold text-[#475569]">
-                Select up to {max}. Tap selected type again to remove.
-              </p>
+              <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+                <p className="text-[11px] font-bold text-[#475569]">
+                  Tap selected type again to remove.
+                </p>
+                <span className="rounded-full border border-[#151933]/20 bg-[#151933]/[0.08] px-2.5 py-0.5 text-xs font-bold text-[#151933]">
+                  {selectedCategories.length} / {max} selected
+                </span>
+              </div>
             </div>
-            <div className="max-h-72 overflow-y-auto p-2">
+
+            <ModalBody className="p-3 sm:p-4">
+              {selectedCategories.length > 0 && (
+                <div className="mb-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-2.5">
+                  <p className="mb-2 text-[10px] font-extrabold uppercase tracking-[0.12em] text-[#64748b]">
+                    Selected creator types
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {selectedCategories.map((category) => (
+                      <button
+                        key={category}
+                        type="button"
+                        onClick={() => removeCategory(category)}
+                        className="inline-flex min-h-7 items-center gap-1.5 rounded-full border border-[#151933]/20 bg-white px-2.5 py-1 text-[11px] font-bold text-[#151933] transition-colors hover:bg-[#f1f5f9]"
+                      >
+                        <span>{category === "Other" && customValue ? customValue : category}</span>
+                        <X className="h-3 w-3 stroke-[3] text-[#64748b]" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {filteredTaxonomy.length === 0 ? (
-                <div className="px-3 py-6 text-center text-xs font-semibold text-[#64748b]">
+                <div className="rounded-xl border border-dashed border-[#cbd5e1] px-3 py-8 text-center text-xs font-semibold text-[#64748b]">
                   No creator types found.
                 </div>
               ) : (
-                filteredTaxonomy.map((group) => (
-                  <div key={group.category} className="space-y-1.5 py-1.5">
-                    <div className="flex items-center gap-2 px-2">
-                      <span className="text-sm">{group.emoji}</span>
-                      <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-[#64748b]">
-                        {group.category}
-                      </p>
-                    </div>
-                    <div className="grid gap-1 sm:grid-cols-2">
-                      {group.subtypes.map((type) => {
-                        const isSelected = selectedCategories.includes(type);
-                        const isMaxReached = !isSelected && selectedCategories.length >= max;
+                <div className="space-y-3">
+                  {filteredTaxonomy.map((group) => (
+                    <div key={group.category} className="rounded-xl border border-[#e2e8f0] bg-white p-2.5">
+                      <div className="mb-2 flex items-center gap-2 px-1">
+                        <span className="text-sm">{group.emoji}</span>
+                        <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-[#64748b]">
+                          {group.category}
+                        </p>
+                      </div>
+                      <div className="grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
+                        {group.subtypes.map((type) => {
+                          const isSelected = selectedCategories.includes(type);
+                          const isMaxReached = !isSelected && selectedCategories.length >= max;
 
-                        return (
-                          <button
-                            key={`${group.category}-${type}`}
-                            type="button"
-                            disabled={isMaxReached}
-                            onClick={() => toggleCategory(type)}
-                            className={`flex min-h-9 w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left transition-all cursor-pointer ${
-                              isSelected
-                                ? "bg-[#151933] text-white shadow-xs"
-                                : isMaxReached
-                                  ? "cursor-not-allowed opacity-35"
-                                  : "bg-white text-[#475569] hover:bg-[#f1f5f9] hover:text-[#151933]"
-                            }`}
-                          >
-                            <span
-                              className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
-                                isSelected ? "border-white bg-white text-[#151933]" : "border-[#cbd5e1] bg-white"
+                          return (
+                            <button
+                              key={`${group.category}-${type}`}
+                              type="button"
+                              disabled={isMaxReached}
+                              onClick={() => toggleCategory(type)}
+                              className={`flex min-h-10 w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left transition-all cursor-pointer ${
+                                isSelected
+                                  ? "bg-[#151933] text-white shadow-xs"
+                                  : isMaxReached
+                                    ? "cursor-not-allowed opacity-35"
+                                    : "bg-[#f8fafc] text-[#475569] hover:bg-[#f1f5f9] hover:text-[#151933]"
                               }`}
                             >
-                              {isSelected && <Check className="h-3 w-3 stroke-[3]" />}
-                            </span>
-                            <span className="min-w-0 flex-1 text-xs font-bold leading-snug">
-                              {type}
-                            </span>
-                          </button>
-                        );
-                      })}
+                              <span
+                                className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
+                                  isSelected ? "border-white bg-white text-[#151933]" : "border-[#cbd5e1] bg-white"
+                                }`}
+                              >
+                                {isSelected && <Check className="h-3 w-3 stroke-[3]" />}
+                              </span>
+                              <span className="min-w-0 flex-1 text-xs font-bold leading-snug">
+                                {type}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                ))
+                  ))}
+                </div>
               )}
-            </div>
+            </ModalBody>
+
+            <ModalFooter className="px-4 sm:px-5 py-2.5">
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="rounded-xl bg-[#151933] px-5 py-2 text-xs font-bold text-white shadow-xs transition-all hover:-translate-y-0.5 hover:bg-brand-hover"
+              >
+                Done
+              </button>
+            </ModalFooter>
           </div>
-        )}
+        </Modal>
       </div>
     </div>
   );
