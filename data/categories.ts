@@ -12,6 +12,9 @@ export const BROAD_CATEGORIES: string[] = CREATOR_TAXONOMY.map((item) => item.ca
 
 export const CATEGORY_EMOJIS: Record<string, string> = CREATOR_TAXONOMY.reduce((acc, curr) => {
   acc[curr.category] = curr.emoji;
+  curr.subtypes.forEach((subtype) => {
+    acc[subtype] = curr.emoji;
+  });
   return acc;
 }, {} as Record<string, string>);
 
@@ -33,6 +36,14 @@ export function getSubtypesForCategories(selectedCategories: string[] | string |
     const found = CREATOR_TAXONOMY.find((item) => item.category.toLowerCase() === catName.toLowerCase());
     if (found && found.subtypes) {
       found.subtypes.forEach((st) => subtypesSet.add(st));
+      return;
+    }
+
+    const groupForSubtype = CREATOR_TAXONOMY.find((item) =>
+      item.subtypes.some((subtype) => subtype.toLowerCase() === catName.toLowerCase())
+    );
+    if (groupForSubtype) {
+      groupForSubtype.subtypes.forEach((st) => subtypesSet.add(st));
     }
   });
 

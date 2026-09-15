@@ -40,7 +40,7 @@ export default function DashboardProfilePage() {
   const handleStr = profile.username || "username";
   const displayName = profile.displayName || "";
 
-  // Selected categories list
+  // Selected creator type/profession list
   const selectedCategories = useMemo(() => {
     return profile.category
       ? profile.category.split(",").map((c) => c.trim()).filter(Boolean)
@@ -76,7 +76,7 @@ export default function DashboardProfilePage() {
       newErrors.displayName = "Enter your display name.";
     }
     if (selectedCategories.length === 0) {
-      newErrors.category = "Choose up to 3 categories that best describe your content.";
+      newErrors.category = "Choose at least 1 creator type that best describes you.";
     }
     if (profile.bio && profile.bio.length > 160) {
       newErrors.bio = "Bio must be 160 characters or fewer.";
@@ -225,7 +225,7 @@ export default function DashboardProfilePage() {
         </div>
       </section>
 
-      {/* SECTION 2 — CREATOR CATEGORIES CARD */}
+      {/* SECTION 2 — CREATOR TYPE / PROFESSION CARD */}
       <section className="rounded-2xl border border-[#e2e8f0] bg-white p-6 shadow-xs transition-all duration-200 hover:border-[#cbd5e1] hover:shadow-sm space-y-4">
         <CategorySelect
           value={profile.category || null}
