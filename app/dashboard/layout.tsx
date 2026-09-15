@@ -9,10 +9,10 @@ import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { DashboardMobileHeader } from "@/components/dashboard/DashboardMobileHeader";
 import { DashboardSideDrawer } from "@/components/dashboard/DashboardSideDrawer";
 import { DashboardBottomNav } from "@/components/dashboard/DashboardBottomNav";
-import { Copy, ExternalLink } from "lucide-react";
+import { Copy, ExternalLink, Zap } from "lucide-react";
 import { useToast } from "@/contexts/ToastContext";
 import { copyToClipboard } from "@/lib/copyToClipboard";
-import { getFreeTrialStatus, getTrialHeaderMessage } from "@/lib/trialStatus";
+import { getFreeTrialStatus } from "@/lib/trialStatus";
 
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { OnboardingService } from "@/services/OnboardingService";
@@ -26,14 +26,11 @@ function getGreeting(): string {
 }
 
 function DesktopTopHeader() {
-  const { profile, subscription } = useCreator();
+  const { profile } = useCreator();
   const { showToast } = useToast();
 
   const handleStr = profile.username || "username";
   const [greeting] = useState(() => getGreeting());
-  const [nowMs] = useState(() => Date.now());
-  const trialStatus = getFreeTrialStatus(subscription, nowMs);
-  const headerMessage = getTrialHeaderMessage(subscription, nowMs);
 
   const handleCopy = async () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
@@ -47,23 +44,15 @@ function DesktopTopHeader() {
   };
 
   return (
-    <header className="hidden shrink-0 items-center justify-between border-b border-[#e2e8f0] bg-white/90 px-6 py-3.5 shadow-[0_1px_0_rgba(15,23,42,0.02)] backdrop-blur-xl sm:px-8 lg:flex">
+    <header className="hidden shrink-0 items-center justify-between border-b border-[#e2e8f0] bg-white/90 px-6 py-3.5 shadow-[0_1px_0_rgba(15,23,42,0.02)] backdrop-blur-xl sm:px-8 lg:flex lg:px-[50px]">
       <div>
         <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#151933]">
           {greeting}
         </h1>
         <div className="mt-0.5 flex flex-wrap items-center gap-2">
-          <p className={`text-xs font-medium sm:text-sm ${trialStatus.shouldWarn ? "text-[#B45309]" : "text-[#475569]"}`}>
-            {headerMessage}
+          <p className="text-xs font-medium text-[#475569] sm:text-sm">
+            Here&apos;s how your Inflixo profile is looking today.
           </p>
-          {trialStatus.shouldWarn && (
-            <Link
-              href="/dashboard/subscription"
-              className="inline-flex items-center rounded-full border border-[#151933]/15 bg-[#151933] px-2.5 py-0.5 text-[10px] font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-brand-hover"
-            >
-              View Plans
-            </Link>
-          )}
         </div>
       </div>
 
@@ -87,6 +76,41 @@ function DesktopTopHeader() {
         </a>
       </div>
     </header>
+  );
+}
+
+function TrialAccessBar() {
+  const { subscription } = useCreator();
+  const [nowMs] = useState(() => Date.now());
+  const trialStatus = getFreeTrialStatus(subscription, nowMs);
+
+  if (!trialStatus.isFreeTrial) return null;
+
+  const daysLeft = trialStatus.daysLeft ?? 0;
+  const dayText = daysLeft === 1 ? "1 day" : `${daysLeft} days`;
+  const message = trialStatus.isExpired
+    ? "Your Free Trial has ended"
+    : `${dayText} left in Free Trial`;
+  const cta = trialStatus.isExpired ? "Choose a plan" : "Keep access";
+
+  return (
+    <div className="sticky top-0 z-40 flex h-11 shrink-0 items-center justify-center border-b border-black bg-[#111111] px-4 text-white shadow-[0_1px_0_rgba(255,255,255,0.08)]">
+      <div className="flex w-full max-w-5xl items-center justify-center gap-3 text-center">
+        <span className="hidden h-5 w-5 items-center justify-center rounded-md text-[#38E869] sm:inline-flex">
+          <Zap className="h-4 w-4 fill-current" />
+        </span>
+        <p className="truncate text-sm font-black tracking-tight sm:text-base">
+          {message}
+        </p>
+        <Link
+          href="/dashboard/subscription"
+          className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border border-[#38E869] px-3 text-xs font-black text-[#38E869] shadow-[0_0_0_1px_rgba(56,232,105,0.16)] transition-all hover:-translate-y-0.5 hover:bg-[#38E869] hover:text-[#111111] sm:px-4 sm:text-sm"
+        >
+          <Zap className="h-3.5 w-3.5 fill-current" />
+          <span>{cta}</span>
+        </Link>
+      </div>
+    </div>
   );
 }
 
@@ -117,6 +141,8 @@ function Shell({ children }: { children: ReactNode }) {
 
       {/* Main Content Area */}
       <div className="flex h-dvh flex-1 flex-col overflow-hidden min-w-0">
+        <TrialAccessBar />
+
         {/* Desktop Top Header */}
         <DesktopTopHeader />
 
@@ -124,8 +150,8 @@ function Shell({ children }: { children: ReactNode }) {
         <DashboardMobileHeader onOpenDrawer={() => setDrawerOpen(true)} />
 
         {/* Scrollable Content Viewport */}
-        <main className="flex-1 overflow-y-auto overscroll-contain px-4 pb-[calc(env(safe-area-inset-bottom)+6rem)] pt-4 sm:px-6 sm:py-5 lg:px-8 lg:py-6">
-          <div className="mx-auto max-w-7xl w-full">
+        <main className="flex-1 overflow-y-auto overscroll-contain px-4 pb-[calc(env(safe-area-inset-bottom)+6rem)] pt-4 sm:px-6 sm:py-5 lg:px-[50px] lg:py-6">
+          <div className="w-full">
             {children}
           </div>
         </main>
@@ -141,15 +167,13 @@ function Shell({ children }: { children: ReactNode }) {
 
 export default function DashboardRootLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
-  const [checked, setChecked] = useState(false);
+  const [checked] = useState(() => AuthService.isLoggedIn());
 
   useEffect(() => {
-    if (!AuthService.isLoggedIn()) {
+    if (!checked) {
       router.replace("/login");
-      return;
     }
-    setChecked(true);
-  }, [router]);
+  }, [checked, router]);
 
   if (!checked) {
     return <SyncingLoader message="Authenticating account..." fullScreen hideProgressBar={true} />;

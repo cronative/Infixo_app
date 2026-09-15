@@ -2,10 +2,9 @@ import { onboardingRepository, profileRepository, authRepository } from "@/repos
 import { ProfileService } from "@/services/ProfileService";
 import { SocialService } from "@/services/SocialService";
 import { ThemeService } from "@/services/ThemeService";
-import { SubscriptionService } from "@/services/SubscriptionService";
+import { SubscriptionService, createSubscriptionLifecycle } from "@/services/SubscriptionService";
 import {
   seriesRepository,
-  socialRepository,
   subscriptionRepository,
 } from "@/repositories/localRepository";
 import { OnboardingStep } from "@/types";
@@ -26,14 +25,14 @@ export const OnboardingService = {
       }).catch(() => {});
 
       if (step === "finish") {
+        // Finishing onboarding starts the free-trial subscription lifecycle.
+        const subscription = createSubscriptionLifecycle("early_access", "yearly");
         fetch("/api/subscription", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             email,
-            planKey: "early_access",
-            planName: "Free Trial",
-            billingCycle: "yearly",
+            ...subscription,
           }),
         }).catch(() => {});
       }
@@ -41,7 +40,9 @@ export const OnboardingService = {
   },
 
   isComplete(): boolean {
-    return SubscriptionService.get().status === "active" && ProfileService.hasProfile();
+    const status = SubscriptionService.get().status;
+    // Trial users should enter the dashboard immediately after onboarding.
+    return (status === "active" || status === "trial") && ProfileService.hasProfile();
   },
 
   reset(): void {
@@ -57,11 +58,7 @@ export const OnboardingService = {
     ThemeService.setSelectedTheme("minimal-white");
     seriesRepository.saveAll([]);
     subscriptionRepository.save({
-      planKey: "early_access",
-      planName: "Free Trial",
-      billingCycle: "yearly",
-      status: "active",
-      activatedAt: new Date().toISOString(),
+      ...createSubscriptionLifecycle("early_access", "yearly"),
     });
     onboardingRepository.saveStep("profile");
   },

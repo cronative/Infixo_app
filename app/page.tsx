@@ -37,115 +37,17 @@ import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
 import { CreatorProfile, CreatorReview, MediaKitPackage, Series, SocialAccounts, ThemeKey } from "@/types";
 import { openCookiePreferences } from "@/lib/cookieConsent";
 import { formatPlanPrice, usePricingCurrency } from "@/lib/pricing";
+import {
+  EXPERT_DEMO_PROFILE,
+  EXPERT_DEMO_SOCIALS,
+  EXPERT_DEMO_SERIES,
+  EXPERT_DEMO_GIGS,
+  EXPERT_DEMO_CUSTOM_LINKS,
+  EXPERT_DEMO_REVIEWS,
+  EXPERT_DEMO_THEME,
+} from "@/data/expertDemoCreator";
 
-const DEMO_PROFILE: CreatorProfile = {
-  displayName: "Rahul Mehta",
-  username: "rahul",
-  category: "Food • Travel • Vlogs",
-  bio: "Food stories, city guides and video links arranged for fans in one clean place.",
-  photoDataUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80",
-  updatedAt: new Date().toISOString(),
-};
-
-const DEMO_SOCIALS: SocialAccounts = {
-  instagram: {
-    url: "https://instagram.com/rahul",
-    followers: 100000,
-    posts: 420,
-    username: "rahulmehta",
-    name: "Rahul Mehta",
-  },
-  youtube: {
-    url: "https://youtube.com/@rahul",
-    subscribers: 28000,
-    videos: 86,
-    totalViews: 5400000,
-    username: "rahul",
-    channelTitle: "Rahul Eats",
-  },
-  facebook: {
-    url: "https://facebook.com/rahul",
-    followers: 48400,
-    posts: 210,
-    username: "rahulmehta",
-    name: "Rahul Mehta",
-  },
-  updatedAt: new Date().toISOString(),
-};
-
-const DEMO_SERIES: Series[] = [
-  {
-    id: "gujarat-food",
-    title: "Gujarat Food Journey",
-    posterDataUrl: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=80",
-    description: "A 4-part culinary expedition through Ahmedabad, Surat night bazaars, and Kathiyawadi classics.",
-    genre: "Food • Travel",
-    language: "English",
-    seasons: [
-      {
-        id: "season-1",
-        seasonNumber: 1,
-        title: "Season 1",
-        episodes: [
-          {
-            id: "ep-1",
-            episodeNumber: 1,
-            title: "Ahmedabad Midnight Manek Chowk Street Food Tour",
-            platform: "YouTube",
-            externalUrl: "https://youtube.com",
-            thumbnailDataUrl: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=500&q=80",
-            description: "A late-night walkthrough of Ahmedabad's iconic street food lane.",
-          },
-          {
-            id: "ep-2",
-            episodeNumber: 2,
-            title: "Surat Locho & Ghari Deep Dive",
-            platform: "YouTube",
-            externalUrl: "https://youtube.com",
-            thumbnailDataUrl: "https://images.unsplash.com/photo-1628294895950-9805252327bc?auto=format&fit=crop&w=500&q=80",
-            description: "Signature Gujarati sweets and snacks explained for first-time visitors.",
-          },
-        ],
-      },
-    ],
-    createdAt: new Date().toISOString(),
-  },
-];
-
-const DEMO_PACKAGES: MediaKitPackage[] = [
-  {
-    id: "pkg-demo-reel",
-    platform: "Instagram",
-    title: "1x Dedicated Reel + Story Link",
-    price: "₹25,000",
-    turnaroundDays: 3,
-    deliverables: ["Dedicated Reel", "Story CTA", "30-day analytics summary"],
-    badge: "Popular",
-    isPopular: true,
-    isActive: true,
-  },
-];
-
-const DEMO_REVIEWS: CreatorReview[] = [
-  {
-    id: "review-demo",
-    creatorId: "rahul-demo",
-    token: "demo",
-    clientName: "Ananya Shah",
-    clientEmail: "ananya@example.com",
-    clientDesignation: "Brand Manager",
-    projectTitle: "Food Festival Launch",
-    rating: 5,
-    ratingContentQuality: 5,
-    ratingProfessionalism: 5,
-    ratingTimelyDelivery: 5,
-    comment: "Clear rates, strong delivery and a profile that made approval easy for our internal team.",
-    status: "approved",
-    createdAt: new Date().toISOString(),
-  },
-];
-
-const DEFAULT_THEME: ThemeKey = "minimal-white";
+const DEFAULT_THEME: ThemeKey = EXPERT_DEMO_THEME;
 
 const PILLARS = [
   {
@@ -297,8 +199,6 @@ export default function LandingHomePage() {
   const isLoggedIn = AuthService.isLoggedIn();
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [username, setUsername] = useState("");
-  const [previewSeries, setPreviewSeries] = useState<Series | null>(null);
-  const [isSeriesPreviewLoading, setIsSeriesPreviewLoading] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number>(0);
   const [heroMessageIndex, setHeroMessageIndex] = useState(0);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -339,7 +239,7 @@ export default function LandingHomePage() {
   }, []);
 
   useEffect(() => {
-    DEMO_SERIES.forEach((series) => {
+    EXPERT_DEMO_SERIES.forEach((series) => {
       if (!series.posterDataUrl) return;
       const img = new window.Image();
       img.src = series.posterDataUrl;
@@ -388,7 +288,7 @@ export default function LandingHomePage() {
     );
   }
 
-  const previewHandle = cleanHandle(username) || "rahul";
+  const previewHandle = cleanHandle(username) || EXPERT_DEMO_PROFILE.username || "demo_creator";
   const previewProfile: CreatorProfile = username.trim()
     ? {
       displayName: username.trim().charAt(0).toUpperCase() + username.trim().slice(1),
@@ -398,9 +298,8 @@ export default function LandingHomePage() {
       photoDataUrl: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(previewHandle)}`,
       updatedAt: new Date().toISOString(),
     }
-    : DEMO_PROFILE;
-  const activePreviewSeries = previewSeries || DEMO_SERIES[0];
-  const previewEpisodes = activePreviewSeries?.seasons?.flatMap((season) => season.episodes || []) || [];
+    : EXPERT_DEMO_PROFILE;
+
   const heroMessage = HERO_MESSAGES[heroMessageIndex];
   const previewSocials = useMemo<SocialAccounts>(() => (
     username.trim()
@@ -410,35 +309,8 @@ export default function LandingHomePage() {
         facebook: { url: `https://facebook.com/${previewHandle}`, followers: 48400, posts: 112, username: previewHandle },
         updatedAt: new Date().toISOString(),
       }
-      : DEMO_SOCIALS
+      : EXPERT_DEMO_SOCIALS
   ), [previewHandle, username]);
-
-  const openPreviewSeries = useCallback((series: Series) => {
-    setPreviewSeries(series);
-    setIsSeriesPreviewLoading(true);
-
-    const posterUrl = series.posterDataUrl;
-    if (!posterUrl || typeof window === "undefined") {
-      setTimeout(() => setIsSeriesPreviewLoading(false), 80);
-      return;
-    }
-
-    const img = new window.Image();
-    const finish = () => setIsSeriesPreviewLoading(false);
-    img.onload = finish;
-    img.onerror = finish;
-    img.src = posterUrl;
-    if ("decode" in img) {
-      img.decode().then(finish).catch(finish);
-    }
-
-    window.setTimeout(finish, 450);
-  }, []);
-
-  const closePreviewSeries = useCallback(() => {
-    setIsSeriesPreviewLoading(false);
-    setPreviewSeries(null);
-  }, []);
 
   return (
     <div className="min-h-dvh bg-[#f8fafc] text-[#151933] antialiased selection:bg-[#15193314] selection:text-[#151933]">
@@ -545,10 +417,10 @@ export default function LandingHomePage() {
         <div data-scroll-reveal className="mx-auto max-w-4xl px-4 text-center sm:px-6">
           <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#94a3b8]">Live Demo</p>
           <h2 className="mt-2 font-display text-2xl font-black tracking-tight text-[#151933] sm:text-4xl">
-            See Rahul&apos;s Video Series
+            {username.trim() ? `See @${previewHandle}'s Profile Preview` : "See Live Creator Profile"}
           </h2>
           <p className="mt-2 text-sm font-medium text-[#64748b]">
-            Click a series and see how fans can open the right video on its original platform.
+            Explore complete creator series, brand collaboration packages & verified reviews.
           </p>
 
           <div data-scroll-reveal style={{ "--reveal-delay": "120ms" } as CSSProperties} className="group mx-auto mt-8 max-w-[650px] rounded-[24px] border border-[#151933]/12 bg-[#151933] p-2 shadow-[0_30px_90px_rgba(21,25,51,0.22)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_42px_110px_rgba(21,25,51,0.28)] sm:p-3">
@@ -564,126 +436,19 @@ export default function LandingHomePage() {
               <span className="w-10" />
             </div>
 
-            <div className="grid rounded-[18px] bg-white p-2">
-              <div
-                className={`relative col-start-1 row-start-1 overflow-hidden rounded-[20px] border border-[#e4e4e7] bg-white text-left shadow-xl transition-all duration-300 ease-out ${previewSeries
-                  ? "pointer-events-auto translate-x-0 opacity-100"
-                  : "pointer-events-none translate-x-4 opacity-0"
-                  }`}
-                aria-hidden={!previewSeries}
-              >
-                  <div className="relative h-[230px] overflow-hidden bg-[#151933]">
-                    {activePreviewSeries?.posterDataUrl && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={activePreviewSeries.posterDataUrl}
-                        alt={activePreviewSeries.title}
-                        className="h-full w-full object-cover"
-                      />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/10" />
-                    <button
-                      type="button"
-                      onClick={closePreviewSeries}
-                      className="absolute left-4 top-4 inline-flex h-9 items-center gap-1.5 rounded-full border border-white/20 bg-black/35 px-3 text-xs font-black text-white backdrop-blur-md transition-transform hover:scale-[1.02]"
-                    >
-                      <ArrowLeft className="h-3.5 w-3.5" />
-                      Profile
-                    </button>
-                    <div className="absolute inset-x-0 bottom-0 p-5">
-                      <div className="flex items-end justify-between gap-4">
-                        <div className="min-w-0">
-                          <p className="text-[11px] font-black uppercase tracking-[0.16em] text-white/65">
-                            Series Detail
-                          </p>
-                          <h3 className="mt-1 font-display text-2xl font-black leading-tight text-white">
-                            {activePreviewSeries?.title}
-                          </h3>
-                          {activePreviewSeries?.description && (
-                            <p className="mt-2 line-clamp-2 text-xs font-medium leading-relaxed text-white/75">
-                              {activePreviewSeries.description}
-                            </p>
-                          )}
-                        </div>
-                        <span className="shrink-0 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-black text-white backdrop-blur-md">
-                          YouTube
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4 p-5">
-                    <div className="grid grid-cols-3 gap-2 text-center">
-                      <div className="rounded-[10px] bg-[#f8fafc] p-3 transition-all hover:-translate-y-0.5 hover:bg-white hover:shadow-sm">
-                        <p className="font-display text-lg font-black text-[#151933]">{previewEpisodes.length}</p>
-                        <p className="text-[10px] font-black uppercase tracking-wide text-[#94a3b8]">Episodes</p>
-                      </div>
-                      <div className="rounded-[10px] bg-[#f8fafc] p-3 transition-all hover:-translate-y-0.5 hover:bg-white hover:shadow-sm">
-                        <p className="font-display text-lg font-black text-[#151933]">01</p>
-                        <p className="text-[10px] font-black uppercase tracking-wide text-[#94a3b8]">Season</p>
-                      </div>
-                      <div className="rounded-[10px] bg-[#f8fafc] p-3 transition-all hover:-translate-y-0.5 hover:bg-white hover:shadow-sm">
-                        <p className="font-display text-lg font-black text-[#151933]">Original</p>
-                        <p className="text-[10px] font-black uppercase tracking-wide text-[#94a3b8]">Views</p>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h4 className="font-display text-sm font-black text-[#151933]">Episodes</h4>
-                      <div className="mt-2 space-y-2">
-                        {previewEpisodes.map((episode) => (
-                          <a
-                            key={episode.id}
-                            href={episode.externalUrl || "#"}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="group flex items-center gap-3 rounded-[12px] border border-[#e2e8f0] bg-white p-3 transition-all hover:border-[#151933]/30 hover:bg-[#f8fafc]"
-                          >
-                            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-[#151933] text-white">
-                              <Play className="h-4 w-4 fill-current" />
-                            </span>
-                            <span className="min-w-0 flex-1">
-                              <span className="block truncate text-xs font-black text-[#151933]">{episode.title}</span>
-                              <span className="mt-0.5 block truncate text-[11px] font-semibold text-[#64748b]">
-                                {episode.platform || "Watch"} • opens original post
-                              </span>
-                            </span>
-                            <ExternalLink className="h-4 w-4 shrink-0 text-[#94a3b8] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  {isSeriesPreviewLoading && (
-                    <div className="absolute inset-0 z-30 flex items-center justify-center rounded-[20px] bg-white/72 backdrop-blur-md">
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#151933] border-t-transparent" />
-                        <span className="text-[11px] font-black uppercase tracking-[0.14em] text-[#151933]">
-                          Loading series
-                        </span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              <div
-                className={`col-start-1 row-start-1 transition-all duration-300 ease-out ${previewSeries
-                  ? "pointer-events-none -translate-x-4 opacity-0"
-                  : "pointer-events-auto translate-x-0 opacity-100"
-                  }`}
-                aria-hidden={Boolean(previewSeries)}
-              >
-                <LivePreviewCard
-                  profile={previewProfile}
-                  socials={previewSocials}
-                  series={DEMO_SERIES}
-                  mediaKitPackages={DEMO_PACKAGES}
-                  reviews={DEMO_REVIEWS}
-                  totalAudience={176400}
-                  themeKey={DEFAULT_THEME}
-                  variant="full"
-                  onSeriesPreviewOpen={openPreviewSeries}
-                />
-              </div>
+            <div className="rounded-[18px] bg-white p-2">
+              <LivePreviewCard
+                profile={previewProfile}
+                socials={previewSocials}
+                series={EXPERT_DEMO_SERIES}
+                customLinks={EXPERT_DEMO_CUSTOM_LINKS}
+                mediaKitPackages={EXPERT_DEMO_GIGS}
+                reviews={EXPERT_DEMO_REVIEWS}
+                totalAudience={1345000}
+                themeKey={EXPERT_DEMO_THEME}
+                variant="full"
+                seriesOpenMode="internal"
+              />
             </div>
           </div>
         </div>
@@ -819,7 +584,7 @@ export default function LandingHomePage() {
       </section>
 
       <section id="pricing" className="bg-white py-14 sm:py-20">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <div data-scroll-reveal className="text-center">
             <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#94a3b8]">Simple Pricing</p>
             <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-[#151933] sm:text-5xl">
@@ -828,7 +593,7 @@ export default function LandingHomePage() {
             <p className="mt-3 text-sm font-medium text-[#64748b]">Create your creator page for free. Upgrade when you need more series, more links and better earning tools.</p>
           </div>
 
-          <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div data-scroll-reveal style={{ "--reveal-delay": "80ms" } as CSSProperties} className="rounded-[14px] border border-[#e2e8f0] bg-[#f8fafc] p-7 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-[#151933]/20 hover:shadow-[0_22px_60px_rgba(21,25,51,0.10)]">
               <h3 className="font-display text-xl font-black text-[#151933]">Free Trial</h3>
               <p className="mt-1 text-sm font-medium text-[#64748b]">Try your public creator profile for 7 days.</p>
@@ -877,7 +642,7 @@ export default function LandingHomePage() {
 
             <div data-scroll-reveal style={{ "--reveal-delay": "200ms" } as CSSProperties} className="group relative overflow-hidden rounded-[14px] border-2 border-[#151933] bg-white p-7 text-left shadow-[0_16px_40px_rgba(15,23,42,0.10)] transition-all hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(21,25,51,0.16)]">
               <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#151933]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
-              <span className="absolute -top-3 right-5 rounded-full bg-[#151933] px-3 py-1 text-[10px] font-black uppercase tracking-wide text-white">Recommended</span>
+              <span className="absolute top-5 right-5 rounded-full bg-[#151933] px-3 py-1 text-[10px] font-black uppercase tracking-wide text-white">Recommended</span>
               <h3 className="font-display text-xl font-black text-[#151933]">VIP</h3>
               <p className="mt-1 text-sm font-medium text-[#64748b]">For creators who want maximum profile freedom.</p>
               <p className="mt-7 font-display text-5xl font-black text-[#151933]">{formatPlanPrice("vip", "monthly", pricingCurrency)}</p>

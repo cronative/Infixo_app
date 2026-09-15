@@ -28,7 +28,7 @@ export function PricingTable({ }: PricingTableProps) {
   const currentPeriod = cycle === "yearly" ? "yearly" : "monthly";
 
   return (
-    <div className="w-full space-y-8 max-w-6xl mx-auto text-left">
+    <div className="w-full space-y-8 text-left">
 
       {/* 1. UPCOMING PLANS INTRO & BILLING PERIOD TOGGLE */}
       <div className="space-y-4">

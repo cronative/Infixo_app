@@ -4,8 +4,6 @@ import { useEffect, useState, useMemo } from "react";
 import {
   Star,
   Check,
-  X,
-  Mail,
   Trash2,
   Plus,
   ExternalLink,
@@ -13,9 +11,7 @@ import {
   Eye,
   EyeOff,
   Copy,
-  Clock,
   Send,
-  Building2,
   Share2,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
@@ -45,7 +41,6 @@ export default function DashboardReviewsPage() {
   const { showToast } = useToast();
 
   const [reviews, setReviews] = useState<CreatorReview[]>([]);
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"all" | "approved" | "pending" | "invited">("all");
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [reviewToDelete, setReviewToDelete] = useState<CreatorReview | null>(null);
@@ -74,7 +69,6 @@ export default function DashboardReviewsPage() {
           if (res && res.success && Array.isArray(res.reviews)) {
             setReviews(res.reviews);
             reviewsRepository.saveAll(res.reviews);
-            setLoading(false);
             return;
           }
         }
@@ -83,7 +77,6 @@ export default function DashboardReviewsPage() {
       }
 
       setReviews(reviewsRepository.getAll());
-      setLoading(false);
     }
 
     loadReviews();
@@ -147,7 +140,7 @@ export default function DashboardReviewsPage() {
       } else {
         throw new Error(res.error || "Failed to create review request");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.warn("Backend error, saving locally:", err);
 
       const reviewId = `rev_${Date.now()}`;
@@ -192,7 +185,7 @@ export default function DashboardReviewsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, status }),
       }).catch((e) => console.warn("Failed API status update:", e));
-    } catch (e) { }
+    } catch { }
 
     const updated = reviews.map((r) => (r.id === id ? { ...r, status } : r));
     updateReviews(updated);
@@ -212,7 +205,7 @@ export default function DashboardReviewsPage() {
       fetch(`/api/creator/reviews?id=${encodeURIComponent(id)}`, { method: "DELETE" }).catch((e) =>
         console.warn("Failed API delete:", e)
       );
-    } catch (e) { }
+    } catch { }
 
     const updated = reviews.filter((r) => r.id !== id);
     updateReviews(updated);
@@ -231,6 +224,31 @@ export default function DashboardReviewsPage() {
     const success = await copyToClipboard(link);
     if (success) {
       showToast("Review submission link copied! 🔗");
+    }
+  };
+
+  const cleanHandle = (profile.username || "creator").replace(/^@/, "");
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
+  const publicReviewsUrl = `${origin}/${cleanHandle}/reviews`;
+
+  const handleCopyPublicReviewsLink = async () => {
+    const success = await copyToClipboard(publicReviewsUrl);
+    showToast(success ? "Reviews listing link copied! ⭐" : "Could not copy reviews link", success ? "success" : "error");
+  };
+
+  const handleSharePublicReviewsLink = async () => {
+    const title = `${profile.displayName || cleanHandle}'s Reviews on Inflixo`;
+    const text = `Read verified reviews for ${profile.displayName || cleanHandle} on Inflixo.`;
+
+    try {
+      if (typeof navigator !== "undefined" && navigator.share) {
+        await navigator.share({ title, text, url: publicReviewsUrl });
+        return;
+      }
+
+      await handleCopyPublicReviewsLink();
+    } catch {
+      // User dismissed native share sheet.
     }
   };
 
@@ -307,6 +325,42 @@ export default function DashboardReviewsPage() {
             <span className="text-[#475569]">{pendingCount} pending</span>
             <span className="text-[#64748b]/40">·</span>
             <span className="text-[#475569]">{invitedCount} {invitedCount === 1 ? "invitation" : "invitations"}</span>
+          </div>
+
+          <div className="rounded-2xl border border-[#e2e8f0] bg-white p-3.5 shadow-xs">
+            <div className="flex flex-col gap-2 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0">
+                <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#64748b]">Public reviews link</p>
+                <p className="mt-1 truncate text-xs font-semibold text-[#151933]">{publicReviewsUrl}</p>
+              </div>
+              <div className="flex shrink-0 items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleCopyPublicReviewsLink}
+                  className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-[#151933] transition-colors hover:bg-[#f1f5f9]"
+                >
+                  <Copy className="h-3.5 w-3.5 text-[#64748b]" />
+                  <span>Copy</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSharePublicReviewsLink}
+                  className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-[#151933] px-2.5 text-xs font-semibold text-white transition-colors hover:bg-brand-hover"
+                >
+                  <Share2 className="h-3.5 w-3.5" />
+                  <span>Share</span>
+                </button>
+                <a
+                  href={publicReviewsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-[#151933] transition-colors hover:bg-[#f1f5f9]"
+                >
+                  <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
+                  <span>View</span>
+                </a>
+              </div>
+            </div>
           </div>
 
           {/* Filter Tabs */}

@@ -8,6 +8,7 @@ interface CreatorAvatarProps {
   name?: string;
   className?: string;
   textClassName?: string;
+  textStyle?: React.CSSProperties;
   fallbackBgClass?: string;
   style?: React.CSSProperties;
 }
@@ -17,32 +18,48 @@ export function CreatorAvatar({
   name = "Creator",
   className = "h-20 w-20 rounded-full",
   textClassName = "text-xl font-extrabold text-white",
+  textStyle,
   fallbackBgClass = "bg-[#151933]",
   style,
 }: CreatorAvatarProps) {
-  const [imgError, setImgError] = useState(false);
+  const [imageState, setImageState] = useState({ src: src || "", loaded: false, error: false });
   const initials = getInitials(name);
+  const currentSrc = src || "";
+  const isCurrentImage = imageState.src === currentSrc;
+  const imgLoaded = isCurrentImage && imageState.loaded;
+  const imgError = isCurrentImage && imageState.error;
 
-  // If no source provided or error encountered while loading image
   if (!src || imgError) {
     return (
       <div
         className={`flex items-center justify-center font-display select-none shadow-md shrink-0 border border-white/20 ${fallbackBgClass} ${className}`}
         style={style}
       >
-        <span className={textClassName}>{initials}</span>
+        <span className={textClassName} style={textStyle}>{initials}</span>
       </div>
     );
   }
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={src}
-      alt={name}
-      onError={() => setImgError(true)}
-      className={`w-20 h-20 rounded-full object-cover overflow-hidden aspect-square shrink-0 ${className}`}
+    <div
+      className={`relative flex items-center justify-center overflow-hidden font-display select-none shadow-md shrink-0 border border-white/20 ${fallbackBgClass} ${className}`}
       style={style}
-    />
+    >
+      <span
+        className={`${textClassName} transition-opacity duration-200 ${imgLoaded ? "opacity-0" : "opacity-100"}`}
+        style={textStyle}
+      >
+        {initials}
+      </span>
+      {/* Keep initials visible until the remote/local avatar has fully loaded. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={name}
+        onLoad={() => setImageState({ src: currentSrc, loaded: true, error: false })}
+        onError={() => setImageState({ src: currentSrc, loaded: false, error: true })}
+        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-200 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+      />
+    </div>
   );
 }

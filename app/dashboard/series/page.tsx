@@ -36,7 +36,6 @@ import {
 import { getInitials } from "@/lib/avatar";
 import { GenreMultiSelect } from "@/components/ui/GenreMultiSelect";
 import { LanguageSelect } from "@/components/ui/LanguageSelect";
-import { ShareSeriesModal } from "@/components/shared/ShareSeriesModal";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
@@ -97,6 +96,12 @@ function getPlatformInfo(url: string = ""): { name: string; host: string; icon: 
   return { name: "Web Video", host: "external link", icon: <Play className="h-3.5 w-3.5 text-[#151933]" /> };
 }
 
+type LegacySeries = Series & { episodes?: Episode[] };
+
+function getSeriesEpisodes(series: Series): Episode[] {
+  return series.seasons?.flatMap((season) => season.episodes) || (series as LegacySeries).episodes || [];
+}
+
 /* ==========================================================================
    1. CREATE / EDIT SERIES SLIDE-OVER DRAWER
    ========================================================================== */
@@ -121,31 +126,31 @@ function SeriesDrawer({
 }: SeriesDrawerProps) {
   const { showToast } = useToast();
   const isEditing = Boolean(seriesToEdit);
+  const initialForm = seriesToEdit
+    ? {
+        title: seriesToEdit.title || "",
+        poster: seriesToEdit.posterDataUrl || null,
+        description: seriesToEdit.description || "",
+        genre: seriesToEdit.genre || "",
+        language: seriesToEdit.language || "",
+        platform: (seriesToEdit.platform || "YouTube") as EpisodePlatform,
+      }
+    : {
+        title: "",
+        poster: null,
+        description: "",
+        genre: "",
+        language: "",
+        platform: "YouTube" as EpisodePlatform,
+      };
 
-  const [title, setTitle] = useState("");
-  const [poster, setPoster] = useState<string | null>(null);
-  const [description, setDescription] = useState("");
-  const [genre, setGenre] = useState("");
-  const [language, setLanguage] = useState("");
-  const [seriesPlatform, setSeriesPlatform] = useState<EpisodePlatform>("YouTube");
+  const [title, setTitle] = useState(initialForm.title);
+  const [poster, setPoster] = useState<string | null>(initialForm.poster);
+  const [description, setDescription] = useState(initialForm.description);
+  const [genre, setGenre] = useState(initialForm.genre);
+  const [language, setLanguage] = useState(initialForm.language);
+  const [seriesPlatform, setSeriesPlatform] = useState<EpisodePlatform>(initialForm.platform);
   const [submitting, setSubmitting] = useState(false);
-
-  useEffect(() => {
-    if (seriesToEdit) {
-      setTitle(seriesToEdit.title || "");
-      setPoster(seriesToEdit.posterDataUrl || null);
-      setDescription(seriesToEdit.description || "");
-      setGenre(seriesToEdit.genre || "");
-      setLanguage(seriesToEdit.language || "");
-    } else {
-      setTitle("");
-      setPoster(null);
-      setDescription("");
-      setGenre("");
-      setLanguage("");
-      setSeriesPlatform("YouTube");
-    }
-  }, [seriesToEdit, isOpen]);
 
   useEffect(() => {
     if (isOpen) {
@@ -342,25 +347,16 @@ function EpisodeDrawer({
 }: EpisodeDrawerProps) {
   const { showToast } = useToast();
   const isEditing = Boolean(episodeToEdit);
+  const initialEpNumber = episodeToEdit
+    ? episodeToEdit.episode.episodeNumber
+    : series
+      ? getEpisodeUsage(series, planKey).current + 1
+      : 1;
 
-  const [epNumber, setEpNumber] = useState(1);
-  const [title, setTitle] = useState("");
-  const [url, setUrl] = useState("");
+  const [epNumber] = useState(initialEpNumber);
+  const [title, setTitle] = useState(episodeToEdit?.episode.title || "");
+  const [url, setUrl] = useState(episodeToEdit?.episode.externalUrl || "");
   const [submitting, setSubmitting] = useState(false);
-
-  const epUsage = series ? getEpisodeUsage(series, planKey) : { current: 0, max: getPlanQuota(planKey).maxEpisodesPerSeries, isLimitReached: false };
-
-  useEffect(() => {
-    if (episodeToEdit) {
-      setEpNumber(episodeToEdit.episode.episodeNumber);
-      setTitle(episodeToEdit.episode.title);
-      setUrl(episodeToEdit.episode.externalUrl || "");
-    } else if (series) {
-      setEpNumber(epUsage.current + 1);
-      setTitle("");
-      setUrl("");
-    }
-  }, [episodeToEdit, series, isOpen]);
 
   useEffect(() => {
     if (isOpen) {
@@ -533,7 +529,6 @@ interface SeriesCardProps {
   onAddEpisode: (s: Series) => void;
   onEditEpisode: (series: Series, seasonId: string, ep: Episode) => void;
   onDeleteEpisode: (series: Series, seasonId: string, ep: Episode) => void;
-  onShareSeries: (s: Series) => void;
 }
 
 function SeriesCard({
@@ -547,17 +542,40 @@ function SeriesCard({
   onAddEpisode,
   onEditEpisode,
   onDeleteEpisode,
-  onShareSeries,
 }: SeriesCardProps) {
-  const { showToast } = useToast();
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeEpMenuId, setActiveEpMenuId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const { showToast } = useToast();
 
   const epUsage = getEpisodeUsage(series, planKey);
-  const episodes = series.seasons?.flatMap((sn) => sn.episodes) || (series as any).episodes || [];
+  const episodes = getSeriesEpisodes(series);
   const firstEpUrl = episodes[0]?.externalUrl || "";
   const detectedPlatform = getSeriesPlatform(series, firstEpUrl);
+  const cleanUsername = username.replace(/^@/, "") || "creator";
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
+  const publicSeriesUrl = `${origin}/${cleanUsername}/series/${series.id}`;
+
+  const handleCopySeriesLink = async () => {
+    const success = await copyToClipboard(publicSeriesUrl);
+    showToast(success ? "Series link copied!" : "Could not copy series link", success ? "success" : "error");
+  };
+
+  const handleShareSeriesLink = async () => {
+    const title = `${series.title} on Inflixo`;
+    const text = `Open ${series.title} series on Inflixo.`;
+
+    try {
+      if (typeof navigator !== "undefined" && navigator.share) {
+        await navigator.share({ title, text, url: publicSeriesUrl });
+        return;
+      }
+
+      await handleCopySeriesLink();
+    } catch {
+      // User dismissed native share sheet.
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -569,18 +587,6 @@ function SeriesCard({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const handleCopyLink = async () => {
-    setMenuOpen(false);
-    const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
-    const shareUrl = `${origin}/${username}/series/${series.id}`;
-    const success = await copyToClipboard(shareUrl);
-    if (success) {
-      showToast("Series link copied! 🎬");
-    } else {
-      showToast("Could not copy series link", "error");
-    }
-  };
 
   const subtitleParts: string[] = [`${episodes.length} ${episodes.length === 1 ? "episode" : "episodes"}`];
   if (detectedPlatform) subtitleParts.push(detectedPlatform);
@@ -664,7 +670,7 @@ function SeriesCard({
           </div>
         </div>
 
-        {/* Right: + Add Episode | View | ⋮ | Chevron */}
+        {/* Right: + Add Episode | View | Copy | Share | ⋮ | Chevron */}
         <div
           onClick={(e) => e.stopPropagation()}
           className="flex items-center gap-1.5 sm:gap-2 shrink-0"
@@ -688,12 +694,32 @@ function SeriesCard({
             href={`/${username}/series/${series.id}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] px-3 py-1.5 text-xs font-semibold text-[#151933] transition-all hover:shadow-sm"
+            className="hidden sm:inline-flex h-8 w-8 items-center justify-center rounded-xl border border-[#e2e8f0] bg-white text-[#64748b] transition-all hover:-translate-y-0.5 hover:bg-[#f1f5f9] hover:text-[#151933] hover:shadow-sm"
             title="View public series page"
+            aria-label="View public series page"
           >
-            <span>View</span>
-            <ExternalLink className="h-3 w-3 text-[#151933]" />
+            <ExternalLink className="h-3.5 w-3.5" />
           </a>
+
+          <button
+            type="button"
+            onClick={handleCopySeriesLink}
+            className="hidden sm:inline-flex h-8 w-8 items-center justify-center rounded-xl border border-[#e2e8f0] bg-white text-[#64748b] transition-all hover:-translate-y-0.5 hover:bg-[#f1f5f9] hover:text-[#151933] hover:shadow-sm"
+            title="Copy series link"
+            aria-label="Copy series link"
+          >
+            <Copy className="h-3.5 w-3.5" />
+          </button>
+
+          <button
+            type="button"
+            onClick={handleShareSeriesLink}
+            className="hidden sm:inline-flex h-8 w-8 items-center justify-center rounded-xl border border-[#e2e8f0] bg-white text-[#64748b] transition-all hover:-translate-y-0.5 hover:bg-[#f1f5f9] hover:text-[#151933] hover:shadow-sm"
+            title="Share series link"
+            aria-label="Share series link"
+          >
+            <Share2 className="h-3.5 w-3.5" />
+          </button>
 
           {/* 3-Dot Overflow Menu */}
           <div className="relative" ref={menuRef}>
@@ -722,7 +748,7 @@ function SeriesCard({
                 </button>
 
                 <a
-                  href={`/${username}/series/${series.id}`}
+                  href={publicSeriesUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMenuOpen(false)}
@@ -736,18 +762,9 @@ function SeriesCard({
                   type="button"
                   onClick={() => {
                     setMenuOpen(false);
-                    onEditSeries(series);
+                    handleCopySeriesLink();
                   }}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
-                >
-                  <Pencil className="h-3.5 w-3.5 text-[#64748b]" />
-                  <span>Edit Series</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleCopyLink}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                  className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                 >
                   <Copy className="h-3.5 w-3.5 text-[#64748b]" />
                   <span>Copy Link</span>
@@ -757,15 +774,25 @@ function SeriesCard({
                   type="button"
                   onClick={() => {
                     setMenuOpen(false);
-                    onShareSeries(series);
+                    handleShareSeriesLink();
+                  }}
+                  className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                >
+                  <Share2 className="h-3.5 w-3.5 text-[#64748b]" />
+                  <span>Share Link</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onEditSeries(series);
                   }}
                   className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                 >
-                  <Share2 className="h-3.5 w-3.5 text-[#64748b]" />
-                  <span>Share Series</span>
+                  <Pencil className="h-3.5 w-3.5 text-[#64748b]" />
+                  <span>Edit Series</span>
                 </button>
-
-                <div className="my-1 border-t border-[#e2e8f0]" />
 
                 <button
                   type="button"
@@ -946,6 +973,9 @@ export default function DashboardContentPage() {
   const { showToast } = useToast();
 
   const handleStr = profile.username || "creator";
+  const cleanHandle = handleStr.replace(/^@/, "") || "creator";
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
+  const publicSeriesListingUrl = `${origin}/${cleanHandle}/series`;
   const planKey = subscription?.planKey || "early_access";
   const quota = getPlanQuota(planKey);
   const seriesUsage = getSeriesUsage(series, planKey);
@@ -953,6 +983,7 @@ export default function DashboardContentPage() {
   // States
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedSeriesId, setExpandedSeriesId] = useState<string | null>(null);
+  const visibleExpandedSeriesId = expandedSeriesId ?? (series.length === 1 ? series[0].id : null);
 
   // Drawer States
   const [isSeriesDrawerOpen, setIsSeriesDrawerOpen] = useState(false);
@@ -962,8 +993,7 @@ export default function DashboardContentPage() {
   const [activeSeriesForEpisode, setActiveSeriesForEpisode] = useState<Series | null>(null);
   const [episodeToEdit, setEpisodeToEdit] = useState<{ seasonId: string; episode: Episode } | null>(null);
 
-  // Share & Confirm Modals
-  const [shareSeriesData, setShareSeriesData] = useState<Series | null>(null);
+  // Confirm Modals
   const [confirmModal, setConfirmModal] = useState<{
     title: string;
     description: string;
@@ -982,7 +1012,7 @@ export default function DashboardContentPage() {
   // Calculate total episodes across all series
   const totalEpisodesCount = useMemo(() => {
     return series.reduce((acc, s) => {
-      const eps = s.seasons?.flatMap((sn) => sn.episodes) || (s as any).episodes || [];
+      const eps = getSeriesEpisodes(s);
       return acc + eps.length;
     }, 0);
   }, [series]);
@@ -998,13 +1028,6 @@ export default function DashboardContentPage() {
         (s.language && s.language.toLowerCase().includes(query))
     );
   }, [series, searchQuery]);
-
-  // Automatically expand if only 1 series exists
-  useEffect(() => {
-    if (series.length === 1 && expandedSeriesId === null) {
-      setExpandedSeriesId(series[0].id);
-    }
-  }, [series, expandedSeriesId]);
 
   // Handlers
   const handleOpenCreateSeries = () => {
@@ -1062,6 +1085,27 @@ export default function DashboardContentPage() {
     });
   };
 
+  const handleCopySeriesListingLink = async () => {
+    const success = await copyToClipboard(publicSeriesListingUrl);
+    showToast(success ? "All series listing link copied! 🎬" : "Could not copy series listing link", success ? "success" : "error");
+  };
+
+  const handleShareSeriesListingLink = async () => {
+    const title = `${profile.displayName || cleanHandle}'s Series on Inflixo`;
+    const text = `Explore ${profile.displayName || cleanHandle}'s video series and playlists on Inflixo.`;
+
+    try {
+      if (typeof navigator !== "undefined" && navigator.share) {
+        await navigator.share({ title, text, url: publicSeriesListingUrl });
+        return;
+      }
+
+      await handleCopySeriesListingLink();
+    } catch {
+      // User dismissed native share sheet.
+    }
+  };
+
   return (
     <div className="space-y-6 w-full pb-12 text-left">
       {/* 1. PAGE HEADER: Series + description + Create Series button (h-11 rounded-xl) */}
@@ -1092,27 +1136,63 @@ export default function DashboardContentPage() {
       </div>
 
       {/* 3 & 4. COMPACT CONTENT INFO ROW (Replaces the 3 big metric cards) */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#e2e8f0] bg-white px-5 py-3.5 shadow-xs">
-        <div className="flex flex-wrap items-center gap-2.5 text-sm font-medium text-[#151933]">
-          <span className="font-semibold text-[#151933]">
-            {series.length} / {seriesUsage.max === Infinity ? "Unlimited" : seriesUsage.max} Series
-          </span>
-          <span className="text-[#64748b]/40">·</span>
-          <span className="font-semibold text-[#151933]">
-            {totalEpisodesCount} {totalEpisodesCount === 1 ? "Episode" : "Episodes"}
-          </span>
-          <span className="text-[#64748b]/40">·</span>
-          <span className="inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#151933]/[0.08] text-[#151933] border border-[#151933]/20">
-            {quota.name}
-          </span>
+      <div className="flex flex-col gap-3 rounded-2xl border border-[#e2e8f0] bg-white px-5 py-3.5 shadow-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2.5 text-sm font-medium text-[#151933]">
+            <span className="font-semibold text-[#151933]">
+              {series.length} / {seriesUsage.max === Infinity ? "Unlimited" : seriesUsage.max} Series
+            </span>
+            <span className="text-[#64748b]/40">·</span>
+            <span className="font-semibold text-[#151933]">
+              {totalEpisodesCount} {totalEpisodesCount === 1 ? "Episode" : "Episodes"}
+            </span>
+            <span className="text-[#64748b]/40">·</span>
+            <span className="inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#151933]/[0.08] text-[#151933] border border-[#151933]/20">
+              {quota.name}
+            </span>
+          </div>
+
+          <div className="text-xs text-[#64748b] font-normal">
+            {seriesUsage.max === Infinity
+              ? "Unlimited series slots"
+              : seriesUsage.max - series.length > 0
+                ? `${seriesUsage.max - series.length} series slots remaining`
+                : "All series slots filled"}
+          </div>
         </div>
 
-        <div className="text-xs text-[#64748b] font-normal">
-          {seriesUsage.max === Infinity
-            ? "Unlimited series slots"
-            : seriesUsage.max - series.length > 0
-              ? `${seriesUsage.max - series.length} series slots remaining`
-            : "All series slots filled"}
+        <div className="flex flex-col gap-2 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#64748b]">All series listing link</p>
+            <p className="mt-1 truncate text-xs font-semibold text-[#151933]">{publicSeriesListingUrl}</p>
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={handleCopySeriesListingLink}
+              className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-[#151933] transition-colors hover:bg-[#f1f5f9]"
+            >
+              <Copy className="h-3.5 w-3.5 text-[#64748b]" />
+              <span>Copy</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleShareSeriesListingLink}
+              className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-[#151933] px-2.5 text-xs font-semibold text-white transition-colors hover:bg-brand-hover"
+            >
+              <Share2 className="h-3.5 w-3.5" />
+              <span>Share</span>
+            </button>
+            <a
+              href={publicSeriesListingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-[#151933] transition-colors hover:bg-[#f1f5f9]"
+            >
+              <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
+              <span>View</span>
+            </a>
+          </div>
         </div>
       </div>
 
@@ -1173,14 +1253,13 @@ export default function DashboardContentPage() {
                 series={s}
                 username={handleStr}
                 planKey={planKey}
-                expanded={expandedSeriesId === s.id}
-                onToggle={() => setExpandedSeriesId(expandedSeriesId === s.id ? null : s.id)}
+                expanded={visibleExpandedSeriesId === s.id}
+                onToggle={() => setExpandedSeriesId(visibleExpandedSeriesId === s.id ? null : s.id)}
                 onEditSeries={handleOpenEditSeries}
                 onDeleteSeries={promptDeleteSeries}
                 onAddEpisode={handleOpenAddEpisode}
                 onEditEpisode={handleOpenEditEpisode}
                 onDeleteEpisode={promptDeleteEpisode}
-                onShareSeries={setShareSeriesData}
               />
             ))}
           </div>
@@ -1189,6 +1268,7 @@ export default function DashboardContentPage() {
 
       {/* 5. DRAWERS & MODALS */}
       <SeriesDrawer
+        key={seriesToEdit ? `edit-${seriesToEdit.id}` : `create-${isSeriesDrawerOpen ? "open" : "closed"}`}
         isOpen={isSeriesDrawerOpen}
         onClose={() => setIsSeriesDrawerOpen(false)}
         seriesToEdit={seriesToEdit}
@@ -1199,6 +1279,7 @@ export default function DashboardContentPage() {
       />
 
       <EpisodeDrawer
+        key={episodeToEdit ? `edit-${episodeToEdit.episode.id}` : `create-${activeSeriesForEpisode?.id || "none"}-${isEpisodeDrawerOpen ? "open" : "closed"}`}
         isOpen={isEpisodeDrawerOpen}
         onClose={() => setIsEpisodeDrawerOpen(false)}
         series={activeSeriesForEpisode}
@@ -1207,15 +1288,6 @@ export default function DashboardContentPage() {
         onSaved={refresh}
         onLimitTrigger={(seriesTitle) => setLimitModalState({ isOpen: true, type: "episode", seriesTitle })}
       />
-
-      {shareSeriesData && (
-        <ShareSeriesModal
-          isOpen={Boolean(shareSeriesData)}
-          onClose={() => setShareSeriesData(null)}
-          series={shareSeriesData}
-          username={handleStr}
-        />
-      )}
 
       <LimitReachedModal
         isOpen={limitModalState.isOpen}

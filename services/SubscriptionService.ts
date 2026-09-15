@@ -1,6 +1,79 @@
 import { subscriptionRepository, authRepository } from "@/repositories/localRepository";
 import { BillingCycle, PlanKey, PlanMeta, Subscription } from "@/types";
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+export const FIRST_MONTH_OFFER_AMOUNT_INR = 99;
+
+function addDays(date: Date, days: number) {
+  return new Date(date.getTime() + days * DAY_MS);
+}
+
+function addMonths(date: Date, months: number) {
+  const next = new Date(date);
+  next.setMonth(next.getMonth() + months);
+  return next;
+}
+
+export function createSubscriptionLifecycle(
+  planKey: PlanKey = "early_access",
+  billingCycle: BillingCycle = "monthly",
+  startedAt = new Date()
+): Subscription {
+  const plan = INFLIXO_PLANS.find((p) => p.key === planKey) || INFLIXO_PLANS[0];
+  const activatedAt = startedAt.toISOString();
+
+  // Free trial is real access, but it does not schedule any renewal.
+  if (planKey === "early_access") {
+    const trialEndsAt = addDays(startedAt, plan.freeTrialDays || 7).toISOString();
+
+    return {
+      planKey,
+      planName: plan.name,
+      billingCycle,
+      status: "trial",
+      activatedAt,
+      trialStartedAt: activatedAt,
+      trialEndsAt,
+      currentPeriodStartedAt: activatedAt,
+      currentPeriodEndsAt: trialEndsAt,
+      renewsAt: null,
+      endsAt: trialEndsAt,
+      cancelledAt: null,
+      cancelAtPeriodEnd: false,
+      paymentMode: "free_trial",
+      firstMonthOffer: true,
+      firstMonthAmount: FIRST_MONTH_OFFER_AMOUNT_INR,
+      firstMonthCurrency: "INR",
+      autoRenew: false,
+    };
+  }
+
+  // Paid launch offer: charge the first month once, then stop unless the creator upgrades again.
+  const currentPeriodEndsAt =
+    billingCycle === "yearly" ? addMonths(startedAt, 12).toISOString() : addMonths(startedAt, 1).toISOString();
+
+  return {
+    planKey,
+    planName: plan.name,
+    billingCycle,
+    status: "active",
+    activatedAt,
+    trialStartedAt: null,
+    trialEndsAt: null,
+    currentPeriodStartedAt: activatedAt,
+    currentPeriodEndsAt,
+    renewsAt: null,
+    endsAt: currentPeriodEndsAt,
+    cancelledAt: null,
+    cancelAtPeriodEnd: true,
+    paymentMode: "one_time_first_month",
+    firstMonthOffer: true,
+    firstMonthAmount: FIRST_MONTH_OFFER_AMOUNT_INR,
+    firstMonthCurrency: "INR",
+    autoRenew: false,
+  };
+}
+
 export const INFLIXO_PLANS: PlanMeta[] = [
   {
     key: "early_access",
@@ -96,28 +169,16 @@ export const SubscriptionService = {
 
   activate(planKey: PlanKey = "early_access", billingCycle: BillingCycle = "yearly"): Subscription {
     const email = authRepository.getPendingEmail();
-    const plan = this.getPlan(planKey);
-    const sub: Subscription = {
-      planKey,
-      planName: plan.name,
-      billingCycle,
-      status: "active",
-      activatedAt: new Date().toISOString(),
-    };
+    const sub = createSubscriptionLifecycle(planKey, billingCycle);
 
     subscriptionRepository.save(sub);
 
-    // Save activation to Live MySQL Database via API
+    // Keep local onboarding fast, then mirror the lifecycle to MySQL in the background.
     if (email) {
       fetch("/api/subscription", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          planKey,
-          planName: plan.name,
-          billingCycle,
-        }),
+        body: JSON.stringify({ email, ...sub }),
       }).catch((e) => console.error("Failed to save Subscription to MySQL DB:", e));
     }
 
@@ -136,8 +197,21 @@ export const SubscriptionService = {
           planKey: data.subscription.planKey || "early_access",
           planName: data.subscription.planName || "Free Trial",
           billingCycle: data.subscription.billingCycle || "yearly",
-          status: data.subscription.status || "active",
+          status: data.subscription.status || "trial",
           activatedAt: data.subscription.activatedAt || new Date().toISOString(),
+          trialStartedAt: data.subscription.trialStartedAt || null,
+          trialEndsAt: data.subscription.trialEndsAt || null,
+          currentPeriodStartedAt: data.subscription.currentPeriodStartedAt || null,
+          currentPeriodEndsAt: data.subscription.currentPeriodEndsAt || null,
+          renewsAt: data.subscription.renewsAt || null,
+          endsAt: data.subscription.endsAt || null,
+          cancelledAt: data.subscription.cancelledAt || null,
+          cancelAtPeriodEnd: Boolean(data.subscription.cancelAtPeriodEnd),
+          paymentMode: data.subscription.paymentMode || "free_trial",
+          firstMonthOffer: Boolean(data.subscription.firstMonthOffer),
+          firstMonthAmount: data.subscription.firstMonthAmount ?? FIRST_MONTH_OFFER_AMOUNT_INR,
+          firstMonthCurrency: data.subscription.firstMonthCurrency || "INR",
+          autoRenew: Boolean(data.subscription.autoRenew),
         };
         subscriptionRepository.save(sub);
         return sub;
@@ -150,7 +224,14 @@ export const SubscriptionService = {
 
   cancel(): Subscription {
     const current = subscriptionRepository.get();
-    const sub: Subscription = { ...current, status: "cancelled" };
+    const cancelledAt = new Date().toISOString();
+    const sub: Subscription = {
+      ...current,
+      status: "cancelled",
+      cancelledAt,
+      autoRenew: false,
+      renewsAt: null,
+    };
     subscriptionRepository.save(sub);
 
     const email = authRepository.getPendingEmail();
@@ -158,7 +239,7 @@ export const SubscriptionService = {
       fetch("/api/subscription", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, status: "cancelled" }),
+        body: JSON.stringify({ email, status: "cancelled", cancelledAt }),
       }).catch((e) => console.error("Failed to cancel subscription:", e));
     }
 

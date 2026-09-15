@@ -16,6 +16,9 @@ import {
   ChevronRight,
   Copy,
   Briefcase,
+  Eye,
+  MousePointerClick,
+  BarChart3,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -26,6 +29,13 @@ import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
 import { reviewsRepository, customLinksRepository } from "@/repositories/localRepository";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { MediaKitPackage, CreatorReview, CustomLink, Episode } from "@/types";
+
+type DashboardAnalytics = {
+  profileViews: number;
+  uniqueVisitors: number;
+  episodeClicks: number;
+  topTargets: { event_type: string; event_target: string | null; clicks: number }[];
+};
 
 // Smooth count-up animation hook for metric reveals
 function useCountUp(target: number, durationMs = 800, delayMs = 150): number {
@@ -72,6 +82,12 @@ export default function DashboardOverviewPage() {
   const [packages, setPackages] = useState<MediaKitPackage[]>([]);
   const [reviews] = useState<CreatorReview[]>(() => reviewsRepository.getAll());
   const [customLinks, setCustomLinks] = useState<CustomLink[]>(() => customLinksRepository.get());
+  const [analytics, setAnalytics] = useState<DashboardAnalytics>({
+    profileViews: 0,
+    uniqueVisitors: 0,
+    episodeClicks: 0,
+    topTargets: [],
+  });
 
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
@@ -123,6 +139,19 @@ export default function DashboardOverviewPage() {
         })
         .catch(() => { });
 
+      fetch(`/api/creator/analytics?${query}&period=30d`)
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.success) {
+            setAnalytics({
+              profileViews: Number(data.metrics?.profileViews || 0),
+              uniqueVisitors: Number(data.metrics?.uniqueVisitors || 0),
+              episodeClicks: Number(data.metrics?.episodeClicks || 0),
+              topTargets: Array.isArray(data.topTargets) ? data.topTargets : [],
+            });
+          }
+        })
+        .catch(() => { });
     }
   }, [profile]);
 
@@ -468,6 +497,95 @@ export default function DashboardOverviewPage() {
             <ChevronRight className="h-3.5 w-3.5" />
           </Link>
         </div>
+      </section>
+
+      <section className="rounded-[16px] border border-[#e2e8f0] bg-white p-5 sm:p-6 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748b] uppercase tracking-wider">
+              <BarChart3 className="h-3.5 w-3.5 text-[#151933]" />
+              Public analytics
+            </span>
+            <h3 className="mt-1 text-base sm:text-lg font-semibold text-[#151933]">
+              Last 30 days
+            </h3>
+            <p className="mt-0.5 text-xs sm:text-sm text-[#475569]">
+              Counts only public profile opens and public series part clicks.
+            </p>
+          </div>
+          <Link
+            href={`/${handleStr}`}
+            target="_blank"
+            className="h-9 px-3.5 rounded-[10px] border border-[#e2e8f0] bg-[#f8fafc] text-xs font-semibold text-[#151933] transition-all hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-[#f1f5f9] inline-flex items-center gap-1.5 self-start sm:self-center"
+          >
+            <span>Open public page</span>
+            <ExternalLink className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="rounded-[14px] border border-[#e2e8f0] bg-[#f8fafc] p-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-[#64748b]">Profile opens</span>
+              <Eye className="h-4 w-4 text-[#151933]" />
+            </div>
+            <p className="mt-2 text-2xl font-semibold text-[#151933] tabular-nums">
+              {analytics.profileViews.toLocaleString("en-IN")}
+            </p>
+            <p className="mt-1 text-[11px] text-[#64748b]">
+              Public profile link opened
+            </p>
+          </div>
+          <div className="rounded-[14px] border border-[#e2e8f0] bg-[#f8fafc] p-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-[#64748b]">Unique visitors</span>
+              <Users className="h-4 w-4 text-[#151933]" />
+            </div>
+            <p className="mt-2 text-2xl font-semibold text-[#151933] tabular-nums">
+              {analytics.uniqueVisitors.toLocaleString("en-IN")}
+            </p>
+            <p className="mt-1 text-[11px] text-[#64748b]">
+              Approx browser visitors
+            </p>
+          </div>
+          <div className="rounded-[14px] border border-[#e2e8f0] bg-[#f8fafc] p-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-[#64748b]">Series part clicks</span>
+              <MousePointerClick className="h-4 w-4 text-[#151933]" />
+            </div>
+            <p className="mt-2 text-2xl font-semibold text-[#151933] tabular-nums">
+              {analytics.episodeClicks.toLocaleString("en-IN")}
+            </p>
+            <p className="mt-1 text-[11px] text-[#64748b]">
+              Public series episode links clicked
+            </p>
+          </div>
+        </div>
+
+        {analytics.topTargets.length > 0 && (
+          <div className="rounded-[14px] border border-[#e2e8f0] overflow-hidden">
+            <div className="flex items-center justify-between bg-[#f8fafc] px-3.5 py-2.5 border-b border-[#e2e8f0]">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#64748b]">
+                Top clicked series parts
+              </span>
+            </div>
+            <div className="divide-y divide-[#e2e8f0]">
+              {analytics.topTargets
+                .filter((item) => item.event_type === "episode_click")
+                .slice(0, 5)
+                .map((item, index) => (
+                  <div key={`${item.event_target}-${index}`} className="flex items-center justify-between gap-3 px-3.5 py-2.5">
+                    <span className="min-w-0 truncate text-xs font-semibold text-[#151933]">
+                      {item.event_target || "Series part"}
+                    </span>
+                    <span className="shrink-0 rounded-full bg-[#151933]/[0.08] border border-[#151933]/10 px-2 py-0.5 text-[11px] font-bold text-[#151933]">
+                      {Number(item.clicks || 0).toLocaleString("en-IN")} clicks
+                    </span>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
       </section>
 
       {showQuotaPanel && (

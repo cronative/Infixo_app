@@ -12,6 +12,7 @@ import {
   CreatorCollaboration,
   OtherSocialAccount,
   CreatorProfileSection,
+  CreatorSetupItem,
 } from "@/types";
 
 export interface ThemeCardProps {
@@ -25,6 +26,7 @@ export interface ThemeCardProps {
   team?: { team?: CreatorTeam | null; members: TeamMember[] };
   brands?: CreatorBrand[];
   collaborations?: CreatorCollaboration[];
+  setupItems?: CreatorSetupItem[];
   otherSocials?: OtherSocialAccount[];
   sections?: CreatorProfileSection[];
   totalAudience: number;
@@ -32,5 +34,11 @@ export interface ThemeCardProps {
   variant?: "compact" | "full";
   containedScroll?: boolean;
   seriesOpenMode?: "internal" | "page";
+  seriesPreviewLimit?: number;
+  allSeriesHref?: string;
+  seriesOnlyMode?: boolean;
+  reviewsPreviewLimit?: number;
+  allReviewsHref?: string;
+  reviewsOnlyMode?: boolean;
   onShare?: () => void;
 }

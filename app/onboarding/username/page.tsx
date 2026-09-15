@@ -167,9 +167,9 @@ export default function UsernameStepPage() {
 
   return (
     <OnboardingLayout step="username">
-      <div className="w-full max-w-[490px] mx-auto pt-4 sm:pt-8">
+      <div className="w-full max-w-[500px] mx-auto pt-4 sm:pt-8">
         {/* SINGLE UNIFIED WHITE CARD (Matching Screenshot) */}
-        <div className="rounded-[28px] border border-[#E7E3DC] bg-white p-7 sm:p-9 space-y-5 text-center shadow-[0_4px_24px_rgba(0,0,0,0.035)]">
+        <div className="rounded-[28px] border border-[#E7E3DC] bg-white p-6 sm:p-8 space-y-5 text-center shadow-[0_12px_38px_rgba(21,25,51,0.06)]">
           {/* 1. Pill Badge */}
           <div className="flex justify-center">
             <span className="inline-block rounded-full bg-[#151933]/[0.05] border border-[#151933]/15 px-4 py-1 text-[11px] font-bold uppercase tracking-widest text-[#151933]">

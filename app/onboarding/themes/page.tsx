@@ -2,36 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Sparkles, Palette } from "lucide-react";
+import { Check, Sparkles } from "lucide-react";
 import { OnboardingLayout } from "@/layouts/OnboardingLayout";
 import { Button } from "@/components/ui/Button";
 import { useCreator } from "@/contexts/CreatorContext";
 import { THEME_LIST } from "@/services/ThemeService";
 import { OnboardingService } from "@/services/OnboardingService";
-import { ThemeKey } from "@/types";
-
-const THEME_TAGS: Record<string, string> = {
-  "minimal-white": "🍃 Clean • Minimalist White",
-  "studio-frost": "🧊 Premium • Studio Frost",
-  "taj-mahal": "🏛️ Heritage • Taj Mahal",
-  "marine-drive": "🌊 Mumbai • Marine Drive",
-  "burj-khalifa": "🌆 Dubai • Burj Khalifa",
-  "somnath-temple": "🛕 Gujarat • Somnath Temple",
-  "dwarka-temple": "🛕 Gujarat • Dwarka Temple",
-  "goa-beach": "🏖️ Goa • Beach",
-  "creator-studio": "🎬 Creator • Studio",
-  "neon-reels": "⚡ Reels • Neon",
-  "podcast-lounge": "🎙️ Podcast • Lounge",
-  "food-vlog": "🍜 Food • Vlog",
-  "gamer-stream": "🎮 Gaming • Stream",
-  "love-letter": "💌 Love • Lifestyle",
-  "christmas-snow": "🎄 Festive • Christmas",
-  "mountain-mist": "🏔️ Travel • Mountains",
-  "street-food": "🍲 Food • Street",
-  "cafe-mocha": "☕ Cafe • Stories",
-  "signature-purple": "✨ Popular • Signature Purple",
-  midnight: "🌙 Bold • Midnight Dark",
-};
 
 export default function ThemeStepPage() {
   const router = useRouter();
@@ -162,7 +138,7 @@ function ThemeTile({
   onSelect: () => void;
 }) {
   const [bg, accent, text] = theme.swatch || ["#7c3aed", "#ede9fe", "#14121a"];
-  const isDark = theme.group === "dark" || theme.key === "midnight" || theme.key === "cosmic-purple" || theme.key === "aurora-night" || theme.key === "rose-glow" || theme.key === "ocean-motion" || theme.key === "sunset-studio";
+  const isDark = theme.mode === "dark" || theme.group === "dark";
   const isAnimated = Boolean(theme.isAnimated || theme.group === "animated");
 
   return (

@@ -1,15 +1,16 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Loader2, Search, X, Check, Plus, Sparkles } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { OnboardingLayout } from "@/layouts/OnboardingLayout";
 import { useCreator } from "@/contexts/CreatorContext";
 import { OnboardingService } from "@/services/OnboardingService";
 import { ProfileService } from "@/services/ProfileService";
 import { useToast } from "@/contexts/ToastContext";
 import { debugLog, debugError } from "@/lib/debugLogger";
-import { CREATOR_TAXONOMY } from "@/data/categories";
+import { CategorySelect } from "@/components/ui/CategorySelect";
+import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 
 export default function ProfileStepPage() {
   const router = useRouter();
@@ -19,7 +20,6 @@ export default function ProfileStepPage() {
 
   const [submitting, setSubmitting] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [categorySearch, setCategorySearch] = useState("");
   const [customOtherText, setCustomOtherText] = useState("");
   const [errors, setErrors] = useState<{
     displayName?: string;
@@ -49,17 +49,6 @@ export default function ProfileStepPage() {
     }
   }, [profile?.username, router]);
 
-  // Filtered categories for search (matching dashboard profile)
-  const filteredCategories = useMemo(() => {
-    if (!categorySearch.trim()) return CREATOR_TAXONOMY;
-    const query = categorySearch.trim().toLowerCase();
-    return CREATOR_TAXONOMY.filter(
-      (item) =>
-        item.category.toLowerCase().includes(query) ||
-        item.subtypes.some((st) => st.toLowerCase().includes(query))
-    );
-  }, [categorySearch]);
-
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -75,29 +64,6 @@ export default function ProfileStepPage() {
       showToast("Profile photo selected! 📸");
     };
     reader.readAsDataURL(file);
-  }
-
-  function handleToggleCategory(category: string) {
-    setSelectedCategories((prev) => {
-      let next: string[];
-      if (prev.includes(category)) {
-        next = prev.filter((c) => c !== category);
-      } else {
-        if (prev.length >= 3) {
-          showToast("You can select up to 3 categories", "error");
-          return prev;
-        }
-        next = [...prev, category];
-      }
-      updateProfile({
-        category: next.length > 0 ? next.join(", ") : null,
-        customCategory: next.includes("Other") ? customOtherText : "",
-      });
-      if (errors.categories) {
-        setErrors((e) => ({ ...e, categories: undefined }));
-      }
-      return next;
-    });
   }
 
   async function handleNext() {
@@ -147,9 +113,9 @@ export default function ProfileStepPage() {
 
   return (
     <OnboardingLayout step="profile">
-      <div className="w-full max-w-[540px] mx-auto pt-4 sm:pt-8 pb-12">
+      <div className="w-full max-w-[500px] mx-auto pt-4 sm:pt-8 pb-12">
         {/* SINGLE UNIFIED WHITE CARD */}
-        <div className="rounded-[28px] border border-[#E7E3DC] bg-white p-6 sm:p-9 space-y-6 text-left shadow-[0_4px_24px_rgba(0,0,0,0.035)]">
+        <div className="rounded-[28px] border border-[#E7E3DC] bg-white p-6 sm:p-8 space-y-5 text-left shadow-[0_12px_38px_rgba(21,25,51,0.06)]">
 
           {/* 1. Header Section */}
           <div className="space-y-1.5">
@@ -165,7 +131,7 @@ export default function ProfileStepPage() {
           </div>
 
           {/* 2. Claimed Username Box */}
-          <div className="flex items-center justify-between rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] p-4">
+          <div className="flex items-center justify-between rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5">
             <div className="space-y-0.5">
               <span className="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#64748b]">
                 CLAIMED USERNAME
@@ -184,27 +150,23 @@ export default function ProfileStepPage() {
           </div>
 
           {/* 3. Profile Photo Section (Dashed Border Card) */}
-          <div className="flex items-center justify-between rounded-2xl border border-dashed border-[#cbd5e1] p-4 bg-white">
+          <div className="flex items-center justify-between gap-3 rounded-2xl border border-dashed border-[#cbd5e1] p-3.5 bg-white">
             <div className="flex items-center gap-3.5">
               {/* Circular Avatar */}
-              <div
+              <button
+                type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="h-12 w-12 rounded-full overflow-hidden shrink-0 flex items-center justify-center bg-[#2d1a38] text-white cursor-pointer transition-transform hover:scale-105"
+                className="rounded-full transition-transform hover:scale-105"
+                aria-label="Upload profile photo"
               >
-                {profile?.photoDataUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={profile.photoDataUrl}
-                    alt="Profile Avatar"
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex flex-col items-center justify-center leading-tight">
-                    <span className="text-[10px] font-bold text-white tracking-tight">Creator</span>
-                    <span className="text-[10px] font-bold text-white tracking-tight">profile</span>
-                  </div>
-                )}
-              </div>
+                <CreatorAvatar
+                  src={profile?.photoDataUrl}
+                  name={profile?.displayName || profile?.username || "Creator"}
+                  className="h-11 w-11 rounded-full"
+                  textClassName="text-sm font-extrabold text-white"
+                  fallbackBgClass="bg-[#2d1a38]"
+                />
+              </button>
 
               {/* Text Information */}
               <div className="space-y-0.5">
@@ -217,7 +179,7 @@ export default function ProfileStepPage() {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="rounded-xl border border-[#cbd5e1] bg-white px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-[#181716] hover:bg-surface-soft transition-colors cursor-pointer shrink-0"
+              className="rounded-xl border border-[#cbd5e1] bg-white px-3 sm:px-3.5 py-2 text-xs font-semibold text-[#181716] hover:bg-surface-soft transition-colors cursor-pointer shrink-0"
             >
               {profile?.photoDataUrl ? "Change photo" : "Upload photo"}
             </button>
@@ -277,125 +239,26 @@ export default function ProfileStepPage() {
           </div>
 
           {/* 5. What do you create? */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <label className="text-sm font-extrabold text-[#151933]">
-                  What do you create?
-                </label>
-                <p className="text-xs italic text-[#64748b] font-normal">
-                  Choose up to 3 categories that best describe your content.
-                </p>
-              </div>
-              <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-[#151933]/[0.08] text-[#151933] border border-[#151933]/20 shrink-0">
-                {selectedCategories.length} / 3 selected
-              </span>
-            </div>
-
-            {/* Quick Search Filter */}
-            <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#797570]" />
-              <input
-                type="text"
-                value={categorySearch}
-                onChange={(e) => setCategorySearch(e.target.value)}
-                placeholder="Search categories..."
-                className="w-full h-11 rounded-xl border border-[#E7E3DC] pl-10 pr-8 text-xs sm:text-sm text-[#181716] placeholder:text-[#797570]/60 outline-none focus:border-[#151933] focus:ring-1 focus:ring-[#151933]/15 bg-white transition-colors"
-              />
-              {categorySearch && (
-                <button
-                  type="button"
-                  onClick={() => setCategorySearch("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#797570] hover:text-foreground cursor-pointer"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
-            </div>
-
-            {/* Category Pills Container (Same popular ordering & emojis) */}
-            <div className="max-h-[220px] overflow-y-auto flex flex-wrap gap-2 rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] p-3">
-              {filteredCategories.length === 0 ? (
-                <p className="text-xs text-[#64748b] p-2">No matching categories found.</p>
-              ) : (
-                filteredCategories.map((item) => {
-                  const isSelected = selectedCategories.includes(item.category);
-                  const isMaxReached = !isSelected && selectedCategories.length >= 3;
-
-                  return (
-                    <button
-                      key={item.category}
-                      type="button"
-                      disabled={isMaxReached}
-                      onClick={() => handleToggleCategory(item.category)}
-                      className={`inline-flex min-h-9 items-center gap-2 rounded-full border px-3.5 py-2 text-xs sm:text-[13px] font-semibold transition-all cursor-pointer ${isSelected
-                          ? "border-[#151933] bg-[#151933] text-white shadow-sm"
-                          : isMaxReached
-                            ? "opacity-40 cursor-not-allowed bg-white border border-[#e2e8f0] text-[#64748b]"
-                            : "bg-white border border-[#e2e8f0] text-[#475569] hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-white hover:text-[#151933] hover:shadow-sm"
-                        }`}
-                    >
-                      <span className="shrink-0">{item.emoji}</span>
-                      <span className="truncate">{item.category}</span>
-                      {isSelected ? (
-                        <Check className="h-3.5 w-3.5 text-white shrink-0" />
-                      ) : (
-                        <Plus className="h-3.5 w-3.5 text-[#64748b] shrink-0" />
-                      )}
-                    </button>
-                  );
-                })
-              )}
-            </div>
-
-            <div className="rounded-2xl border border-[#e2e8f0] bg-white px-3.5 py-3">
-              <p className="mb-2 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#64748b]">
-                Selected categories
-              </p>
-              {selectedCategories.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                  {selectedCategories.map((category) => (
-                    <span
-                      key={category}
-                      className="inline-flex items-center rounded-full bg-[#151933]/[0.08] px-3 py-1.5 text-xs font-bold text-[#151933]"
-                    >
-                      {category === "Other" && customOtherText ? customOtherText : category}
-                    </span>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-xs font-medium text-[#94a3b8]">No categories selected yet.</p>
-              )}
-            </div>
-
-            {/* Custom specification if "Other" is selected */}
-            {selectedCategories.includes("Other") && (
-              <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
-                <label className="block text-xs font-semibold text-[#151933] flex items-center gap-1.5">
-                  <Sparkles className="h-3.5 w-3.5 text-[#151933]" />
-                  <span>What type of content do you create?</span>
-                </label>
-                <input
-                  type="text"
-                  maxLength={40}
-                  placeholder="e.g. Magic, Farming, ASMR, Collectibles"
-                  value={customOtherText}
-                  onChange={(e) => {
-                    const val = e.target.value.slice(0, 40);
-                    setCustomOtherText(val);
-                    updateProfile({ customCategory: val });
-                  }}
-                  className="w-full h-11 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-sm font-medium text-[#151933] outline-none focus:border-[#151933] focus:ring-2 focus:ring-[#151933]/10"
-                />
-              </div>
-            )}
-
-            {errors.categories && (
-              <p className="text-xs text-[#ef4444] font-medium pt-0.5">
-                {errors.categories}
-              </p>
-            )}
-          </div>
+          <CategorySelect
+            value={profile?.category || selectedCategories.join(", ")}
+            customValue={profile?.customCategory || customOtherText}
+            error={errors.categories}
+            max={3}
+            onChange={(category, customCategory) => {
+              const nextCategories = category
+                ? category.split(",").map((item) => item.trim()).filter(Boolean)
+                : [];
+              setSelectedCategories(nextCategories);
+              setCustomOtherText(customCategory || "");
+              updateProfile({
+                category: category || null,
+                customCategory: customCategory || "",
+              });
+              if (errors.categories) {
+                setErrors((prev) => ({ ...prev, categories: undefined }));
+              }
+            }}
+          />
 
           {/* 6. Short Bio */}
           <div className="space-y-2">

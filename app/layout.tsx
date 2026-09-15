@@ -38,6 +38,25 @@ export const metadata: Metadata = {
   title: "Inflixo — One Link for Your Content & Fanbase",
   description:
     "Build your creator page, bring your social fanbase together, and organize your content into binge-worthy series with Inflixo.",
+  keywords: [
+    "Inflixo",
+    "creator profile",
+    "link in bio",
+    "Linktree alternative",
+    "video series links",
+    "creator media kit",
+    "Instagram follower count",
+    "YouTube subscriber count",
+    "Facebook followers",
+    "creator collaboration profile",
+    "Indian content creators",
+  ],
+  applicationName: "Inflixo",
+  creator: "Inflixo",
+  publisher: "Inflixo",
+  alternates: {
+    canonical: "https://inflixo.com",
+  },
   metadataBase: new URL("https://inflixo.com"),
   manifest: "/manifest.json",
   appleWebApp: {
@@ -47,9 +66,11 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
+      { url: "/favicon.ico", sizes: "any" },
       { url: "/favicon.png", type: "image/png" },
       { url: "/icon.svg", type: "image/svg+xml" },
     ],
+    shortcut: "/favicon.png",
     apple: "/logo-square.png",
   },
   openGraph: {
@@ -86,6 +107,7 @@ export default function RootLayout({
       className={`min-h-full antialiased ${inter.variable} ${sora.variable} ${plusJakartaSans.variable} ${outfit.variable}`}
     >
       <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/favicon.png" type="image/png" />
         <link rel="shortcut icon" href="/favicon.png" type="image/png" />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />

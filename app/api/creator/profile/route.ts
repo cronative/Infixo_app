@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 import { ensureCreatorSettingsTable } from "@/lib/settingsDb";
-import { saveBase64Image } from "@/lib/imageStorage";
+import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 
 // GET /api/creator/profile?email=... or ?username=...
 export async function GET(req: Request) {
@@ -18,7 +18,10 @@ export async function GET(req: Request) {
     }
 
     let query = `
-       SELECT c.*, s.plan_key, s.plan_name, s.billing_cycle, s.status AS sub_status, s.activated_at AS sub_activated_at, s.created_at AS sub_created_at, cs.visibility_settings AS settings_visibility
+       SELECT c.*, s.plan_key, s.plan_name, s.billing_cycle, s.status AS sub_status,
+              s.activated_at AS sub_activated_at, s.created_at AS sub_created_at,
+              s.trial_ends_at AS sub_trial_ends_at,
+              cs.visibility_settings AS settings_visibility
        FROM creators c
        LEFT JOIN subscriptions s ON c.id = s.creator_id
        LEFT JOIN creator_settings cs ON c.id = cs.creator_id
@@ -97,8 +100,9 @@ export async function GET(req: Request) {
         planKey: creator.plan_key || "early_access",
         planName: creator.plan_name || "Free Trial",
         billingCycle: creator.billing_cycle || "yearly",
-        status: creator.sub_status || "active",
+        status: creator.sub_status || "trial",
         activatedAt: creator.sub_activated_at || creator.sub_created_at || creator.created_at,
+        trialEndsAt: creator.sub_trial_ends_at || null,
       },
     });
   } catch (err: any) {
@@ -144,7 +148,7 @@ export async function POST(req: Request) {
     const safeCustomCategory = customCategory ? String(customCategory).substring(0, 490) : "";
     const safeProfession = profession ? String(profession).substring(0, 490) : null;
     const visibilityJson = visibilitySettings ? JSON.stringify(visibilitySettings) : null;
-    const finalPhotoUrl = saveBase64Image(photoDataUrl, "avatars", "avatar") || (photoDataUrl && !photoDataUrl.startsWith("data:") ? photoDataUrl : null);
+    const finalPhotoUrl = await saveBase64ImageToStorage(photoDataUrl, "avatars", "avatar") || (photoDataUrl && !photoDataUrl.startsWith("data:") ? photoDataUrl : null);
 
     // If only updating onboarding step (e.g. from setStep("profile") / setStep("finish")):
     const isStepOnlyUpdate = Boolean(

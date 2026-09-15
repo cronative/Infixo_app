@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
-import { saveBase64Image, ImageFolder } from "@/lib/imageStorage";
+import { saveBase64ImageToStorage, saveImageBufferToStorage, ImageFolder } from "@/lib/imageStorage";
 
 export async function POST(req: Request) {
   try {
@@ -30,23 +28,17 @@ export async function POST(req: Request) {
       else if (mime.includes("gif")) extension = "gif";
       else if (mime.includes("svg")) extension = "svg";
 
-      const uploadsDir = path.join(process.cwd(), "public", "uploads", validFolder);
-      if (!fs.existsSync(uploadsDir)) {
-        fs.mkdirSync(uploadsDir, { recursive: true });
-      }
-
       const prefix = validFolder.slice(0, -1);
-      const fileName = `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${extension}`;
-      const filePath = path.join(uploadsDir, fileName);
+      const storedUrl = await saveImageBufferToStorage(fileBuffer, validFolder, prefix, extension, mime);
 
-      fs.writeFileSync(filePath, fileBuffer);
-      const relativeUrl = `/uploads/${validFolder}/${fileName}`;
-      console.log(`✅ Image uploaded to disk: ${filePath} (${relativeUrl})`);
+      if (!storedUrl) {
+        return NextResponse.json({ error: "Failed to store uploaded image" }, { status: 500 });
+      }
 
       return NextResponse.json({
         success: true,
         message: "Image uploaded successfully",
-        url: relativeUrl,
+        url: storedUrl,
       });
     }
 
@@ -63,12 +55,12 @@ export async function POST(req: Request) {
     }
 
     // If already a relative server URL (e.g. /uploads/...), return as is
-    if (photoDataUrl.startsWith("/uploads/")) {
+    if (photoDataUrl.startsWith("/uploads/") || photoDataUrl.startsWith("/api/assets/")) {
       return NextResponse.json({ success: true, url: photoDataUrl });
     }
 
     const prefix = validFolder.slice(0, -1);
-    const relativeUrl = saveBase64Image(photoDataUrl, validFolder, prefix);
+    const relativeUrl = await saveBase64ImageToStorage(photoDataUrl, validFolder, prefix);
 
     if (!relativeUrl) {
       return NextResponse.json({ error: "Failed to process image data" }, { status: 400 });
@@ -79,9 +71,8 @@ export async function POST(req: Request) {
       message: "Image saved successfully",
       url: relativeUrl,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Image Upload Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: err instanceof Error ? err.message : "Image upload failed" }, { status: 500 });
   }
 }
-

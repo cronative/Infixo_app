@@ -15,12 +15,19 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
     team,
     brands,
     collaborations,
+    setupItems,
     otherSocials,
     sections,
     totalAudience,
     variant,
     containedScroll,
     seriesOpenMode,
+    seriesPreviewLimit,
+    allSeriesHref,
+    seriesOnlyMode,
+    reviewsPreviewLimit,
+    allReviewsHref,
+    reviewsOnlyMode,
     onShare,
   } = props;
   return (
@@ -35,6 +42,7 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
       team={team}
       brands={brands}
       collaborations={collaborations}
+      setupItems={setupItems}
       otherSocials={otherSocials}
       sections={sections}
       totalAudience={totalAudience}
@@ -42,6 +50,12 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
       themeKey={themeKey}
       containedScroll={containedScroll}
       seriesOpenMode={seriesOpenMode}
+      seriesPreviewLimit={seriesPreviewLimit}
+      allSeriesHref={allSeriesHref}
+      seriesOnlyMode={seriesOnlyMode}
+      reviewsPreviewLimit={reviewsPreviewLimit}
+      allReviewsHref={allReviewsHref}
+      reviewsOnlyMode={reviewsOnlyMode}
       onShare={onShare}
     />
   );

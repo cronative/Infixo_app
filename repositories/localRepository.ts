@@ -17,6 +17,7 @@ import {
   ThemeKey,
   EMPTY_SOCIAL_ACCOUNTS,
   CreatorReview,
+  CreatorSetupItem,
 } from "@/types";
 
 export const authRepository = {
@@ -92,12 +93,27 @@ export const seriesRepository = {
 
 export const subscriptionRepository = {
   get(): Subscription {
+    const now = new Date();
+    const trialEndsAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
     return storage.get<Subscription>(STORAGE_KEYS.subscription, {
       planKey: "early_access",
       planName: "Free Trial",
       billingCycle: "yearly",
-      status: "active",
-      activatedAt: new Date().toISOString(),
+      status: "trial",
+      activatedAt: now.toISOString(),
+      trialStartedAt: now.toISOString(),
+      trialEndsAt,
+      currentPeriodStartedAt: now.toISOString(),
+      currentPeriodEndsAt: trialEndsAt,
+      renewsAt: null,
+      endsAt: trialEndsAt,
+      cancelledAt: null,
+      cancelAtPeriodEnd: false,
+      paymentMode: "free_trial",
+      firstMonthOffer: true,
+      firstMonthAmount: 99,
+      firstMonthCurrency: "INR",
+      autoRenew: false,
     });
   },
   save(sub: Subscription) {
@@ -143,6 +159,15 @@ export const teamRepository = {
   },
 };
 
+export const creatorSetupRepository = {
+  getAll(): CreatorSetupItem[] {
+    return storage.get<CreatorSetupItem[]>(STORAGE_KEYS.creatorSetup, []);
+  },
+  saveAll(items: CreatorSetupItem[]) {
+    storage.set(STORAGE_KEYS.creatorSetup, items);
+  },
+};
+
 export const brandsRepository = {
   getAll(): any[] {
     return storage.get<any[]>(STORAGE_KEYS.brands, []);
@@ -169,4 +194,3 @@ export const sectionsRepository = {
     storage.set(STORAGE_KEYS.sections, sections);
   },
 };
-

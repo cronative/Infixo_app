@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { RefreshCw, ArrowRight } from "lucide-react";
 import { CreatorGridBackground } from "@/components/shared/CreatorGridBackground";
 import { CREATOR_QUOTES, getRandomQuoteIndex } from "@/data/creatorQuotes";
 
@@ -20,7 +18,6 @@ export function SyncingLoader({
   const [quoteIndex, setQuoteIndex] = useState(() => getRandomQuoteIndex());
   const [isFading, setIsFading] = useState(false);
   const [progress, setProgress] = useState(20);
-  const [showTimeoutFallback, setShowTimeoutFallback] = useState(false);
 
   // Syncing dots animation (every 450ms)
   useEffect(() => {
@@ -36,14 +33,6 @@ export function SyncingLoader({
       setProgress((prev) => (prev >= 92 ? 96 : prev + Math.floor(Math.random() * 6) + 2));
     }, 350);
     return () => clearInterval(pInterval);
-  }, []);
-
-  // 10-second timeout fallback
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setShowTimeoutFallback(true);
-    }, 10000);
-    return () => clearTimeout(timeout);
   }, []);
 
   // 5-second smooth quote rotation timer with fade effect
@@ -68,7 +57,7 @@ export function SyncingLoader({
   return (
     <div className={containerClass}>
       {/* Same background as login page */}
-      {fullScreen && <CreatorGridBackground showWordmark variant="soft" />}
+      {fullScreen && <CreatorGridBackground showWordmark variant="soft" wordmarkPlacement="center-bottom" />}
       <div className="relative z-10 flex flex-col items-center max-w-lg w-full space-y-4">
         {/* Animated Brand Logo Container */}
         <div className="relative flex h-16 w-16 items-center justify-center">
@@ -123,28 +112,6 @@ export function SyncingLoader({
             &ldquo;{currentQuote}&rdquo;
           </p>
         </div>
-
-        {/* 10-Second Fallback Action */}
-        {showTimeoutFallback && (
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2 text-xs animate-fadeIn">
-            <span className="text-slate-500">Taking longer than usual?</span>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => window.location.reload()}
-                className="inline-flex items-center gap-1 font-semibold text-[#151933] hover:underline"
-              >
-                <RefreshCw className="h-3 w-3" /> Retry
-              </button>
-              <span className="text-slate-300">•</span>
-              <Link
-                href="/dashboard"
-                className="inline-flex items-center gap-1 font-semibold text-slate-700 hover:text-[#151933] hover:underline"
-              >
-                Go to Dashboard <ArrowRight className="h-3 w-3" />
-              </Link>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -160,21 +160,6 @@ export default function PublicMediaKitPage() {
             setCollaborations(collabRes.collaborations);
           }
 
-          // Track Media Kit View
-          try {
-            fetch("/api/analytics/track", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                creator_id: profRes.profile.id,
-                creator_username: usernameParam,
-                event_type: "mediakit_view",
-                metadata: {
-                  referrer: typeof document !== "undefined" ? document.referrer : "",
-                },
-              }),
-            }).catch(() => { });
-          } catch { }
         } else {
           try {
             const {

@@ -13,7 +13,7 @@ export function getFreeTrialStatus(subscription?: Subscription | null, nowMs = D
     };
   }
 
-  if (subscription.status && subscription.status !== "active") {
+  if (subscription.status && !["active", "trial"].includes(subscription.status)) {
     return {
       isFreeTrial: true,
       isExpired: true,
@@ -24,7 +24,11 @@ export function getFreeTrialStatus(subscription?: Subscription | null, nowMs = D
 
   const activatedMs = subscription.activatedAt ? new Date(subscription.activatedAt).getTime() : nowMs;
   const safeActivatedMs = Number.isNaN(activatedMs) ? nowMs : activatedMs;
-  const expiresAtMs = safeActivatedMs + TRIAL_DAYS * DAY_MS;
+  const explicitExpiresAt = subscription.trialEndsAt || subscription.endsAt || subscription.currentPeriodEndsAt;
+  const explicitExpiresAtMs = explicitExpiresAt ? new Date(explicitExpiresAt).getTime() : Number.NaN;
+  const expiresAtMs = Number.isNaN(explicitExpiresAtMs)
+    ? safeActivatedMs + TRIAL_DAYS * DAY_MS
+    : explicitExpiresAtMs;
   const daysLeft = Math.max(0, Math.ceil((expiresAtMs - nowMs) / DAY_MS));
 
   return {
@@ -53,4 +57,3 @@ export function getTrialHeaderMessage(subscription?: Subscription | null, nowMs 
 
   return "Here's how your Inflixo profile is looking today.";
 }
-

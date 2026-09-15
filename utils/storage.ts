@@ -64,6 +64,7 @@ export const STORAGE_KEYS = {
   visibilitySettings: "visibility_settings",
   otherSocials: "other_socials",
   team: "team",
+  creatorSetup: "creator_setup",
   brands: "brands",
   collaborations: "collaborations",
   sections: "sections",
