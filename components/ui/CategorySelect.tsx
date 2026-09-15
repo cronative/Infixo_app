@@ -61,13 +61,22 @@ export function CategorySelect({
     onChange(updated.join(", "), "");
   }
 
+  function openPicker() {
+    setIsOpen(true);
+  }
+
+  function closePicker() {
+    setIsOpen(false);
+    setSearchQuery("");
+  }
+
   return (
     <div className="w-full space-y-2.5">
       <div className="flex flex-wrap items-center justify-between gap-1.5">
         <div>
           <label className="text-sm font-extrabold text-[#151933] flex items-center gap-1.5">
             <Tag className="h-4 w-4 text-[#151933]" />
-            What kind of creator are you (profession/type)?
+            What kind of creator are you(profession/type)?
           </label>
           <p className="text-xs italic text-[#64748b]">Choose up to {max} creator types that best describe you.</p>
         </div>
@@ -81,7 +90,7 @@ export function CategorySelect({
       <div className="space-y-2">
         <button
           type="button"
-          onClick={() => setIsOpen((open) => !open)}
+          onClick={openPicker}
           className={`flex min-h-10 w-full items-center justify-between gap-3 rounded-xl border bg-white px-3.5 py-2.5 text-left shadow-xs transition-all cursor-pointer ${isOpen
             ? "border-[#151933] ring-2 ring-[#151933]/[0.06]"
             : error
@@ -114,13 +123,13 @@ export function CategorySelect({
 
         <Modal
           isOpen={isOpen}
-          onClose={() => setIsOpen(false)}
+          onClose={closePicker}
           size="xl"
           title="Choose creator type"
           description={`Select up to ${max} professions/types that best describe you.`}
           icon={<Tag className="h-4 w-4" />}
-          className="max-sm:h-[100dvh] max-sm:max-h-[100dvh] max-sm:rounded-none"
-          headerClassName="px-4 sm:px-5 py-3"
+          className="max-sm:h-[100dvh] max-sm:max-h-[100dvh] max-sm:rounded-none sm:max-w-3xl"
+          headerClassName="px-4 py-3 sm:px-5"
         >
           <div className="flex min-h-0 flex-1 flex-col">
             <div className="border-b border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 sm:px-5">
@@ -221,9 +230,12 @@ export function CategorySelect({
             </ModalBody>
 
             <ModalFooter className="px-4 sm:px-5 py-2.5">
+              <span className="mr-auto text-xs font-bold text-[#64748b]">
+                {selectedCategories.length} / {max} selected
+              </span>
               <button
                 type="button"
-                onClick={() => setIsOpen(false)}
+                onClick={closePicker}
                 className="rounded-xl bg-[#151933] px-5 py-2 text-xs font-bold text-white shadow-xs transition-all hover:-translate-y-0.5 hover:bg-brand-hover"
               >
                 Done
