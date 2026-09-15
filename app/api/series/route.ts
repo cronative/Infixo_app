@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { recordOnboardingStep } from "@/lib/onboardingStepDb";
-import { saveBase64Image } from "@/lib/imageStorage";
+import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 import { debugLog } from "@/lib/debugLogger";
 
 
@@ -199,7 +199,7 @@ export async function POST(req: Request) {
     } catch {}
 
     if (!isEpisodeOnlyFlag) {
-      const finalPosterUrl = saveBase64Image(posterDataUrl, "posters", "poster") || (posterDataUrl && !posterDataUrl.startsWith("data:") ? posterDataUrl : null);
+      const finalPosterUrl = await saveBase64ImageToStorage(posterDataUrl, "posters", "poster") || (posterDataUrl && !posterDataUrl.startsWith("data:") ? posterDataUrl : null);
 
       // Upsert Series into MySQL DB
       await db.query(

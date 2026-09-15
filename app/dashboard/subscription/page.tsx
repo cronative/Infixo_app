@@ -1,11 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Layers, Film, Briefcase } from "lucide-react";
+import { Layers, Film, Briefcase, CalendarClock, CreditCard, ShieldCheck, XCircle } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { PricingTable } from "@/components/subscription/PricingTable";
 import { getSeriesUsage, getTotalEpisodesUsage, getGigUsage, getPlanQuota } from "@/services/subscriptionLimits";
 import { MediaKitService } from "@/services/MediaKitService";
+
+function formatSubscriptionDate(value?: string | null) {
+  if (!value) return "Not scheduled";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Not scheduled";
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
 
 export default function DashboardSubscriptionPage() {
   const { profile, series, subscription } = useCreator();
@@ -26,6 +37,12 @@ export default function DashboardSubscriptionPage() {
   const quota = getPlanQuota(planKey);
   const planName = quota.name;
   const isTrial = planKey === "early_access";
+  const renewalText = subscription?.autoRenew && subscription?.renewsAt
+    ? formatSubscriptionDate(subscription.renewsAt)
+    : "No auto-renewal";
+  const finishDate =
+    subscription?.endsAt || subscription?.currentPeriodEndsAt || subscription?.trialEndsAt || subscription?.activatedAt;
+  const statusLabel = subscription?.status === "trial" ? "Free Trial" : subscription?.status || "Trial";
 
   return (
     <div className="space-y-6 w-full pb-12">
@@ -47,6 +64,58 @@ export default function DashboardSubscriptionPage() {
           </span>
         </div>
       </div>
+
+      <section className="rounded-2xl border border-[#e2e8f0] bg-white p-4 sm:p-5 text-left shadow-xs">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[#f8fafc] border border-[#e2e8f0] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#64748b]">
+              <ShieldCheck className="h-3.5 w-3.5 text-[#151933]" />
+              Subscription check
+            </span>
+            <h2 className="font-display text-lg font-bold text-[#151933]">
+              {statusLabel} access for Inflixo {planName}
+            </h2>
+            <p className="text-xs sm:text-[13px] text-[#64748b] font-medium">
+              First month offer is ₹99 only. It is a one-time first-month payment and will not renew automatically.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2.5 lg:min-w-[620px]">
+            <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3">
+              <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-[#64748b]">
+                <CalendarClock className="h-3.5 w-3.5 text-[#151933]" />
+                Finish date
+              </div>
+              <p className="mt-1 text-sm font-bold text-[#151933]">{formatSubscriptionDate(finishDate)}</p>
+            </div>
+            <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3">
+              <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-[#64748b]">
+                <CreditCard className="h-3.5 w-3.5 text-[#151933]" />
+                Renewal
+              </div>
+              <p className="mt-1 text-sm font-bold text-[#151933]">{renewalText}</p>
+            </div>
+            <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3">
+              <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-[#64748b]">
+                <XCircle className="h-3.5 w-3.5 text-[#151933]" />
+                Cancel date
+              </div>
+              <p className="mt-1 text-sm font-bold text-[#151933]">
+                {formatSubscriptionDate(subscription?.cancelledAt)}
+              </p>
+            </div>
+            <div className="rounded-xl border border-[#17845B]/20 bg-[#EAF7F0] p-3">
+              <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-[#17845B]">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                First month
+              </div>
+              <p className="mt-1 text-sm font-bold text-[#151933]">
+                ₹{subscription?.firstMonthAmount ?? 99} one-time
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* 2. SECTION 1 — CURRENT PLAN & REAL-TIME USAGE CARD */}
       <section className="rounded-2xl border border-[#e2e8f0] bg-white p-5 sm:p-6 text-left space-y-5 shadow-xs">

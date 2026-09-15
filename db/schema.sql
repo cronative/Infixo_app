@@ -136,18 +136,24 @@ CREATE TABLE IF NOT EXISTS otps (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================================
--- 7. ANALYTICS EVENTS TABLE (Profile Views & Video Plays Tracking)
+-- 7. ANALYTICS EVENTS TABLE (Public Profile Views & Episode Click Tracking)
 -- ============================================================================
 CREATE TABLE analytics_events (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   creator_id VARCHAR(64) NOT NULL,
-  event_type ENUM('profile_view', 'social_click', 'episode_play', 'share_click') NOT NULL,
-  event_target VARCHAR(255) DEFAULT NULL COMMENT 'Platform clicked or Episode ID played',
+  event_id VARCHAR(128) DEFAULT NULL COMMENT 'Client-generated idempotency key for duplicate-safe tracking',
+  event_type VARCHAR(50) NOT NULL,
+  event_target VARCHAR(255) DEFAULT NULL COMMENT 'Series/Episode target clicked',
+  visitor_id VARCHAR(128) DEFAULT NULL COMMENT 'Anonymous browser visitor id',
+  source VARCHAR(50) DEFAULT NULL COMMENT 'public_profile or public_series',
   user_agent TEXT DEFAULT NULL,
   ip_address VARCHAR(45) DEFAULT NULL,
+  metadata JSON DEFAULT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (creator_id) REFERENCES creators(id) ON DELETE CASCADE,
-  INDEX idx_creator_analytics (creator_id, event_type, created_at)
+  UNIQUE KEY unique_analytics_event_id (event_id),
+  INDEX idx_creator_analytics (creator_id, event_type, created_at),
+  INDEX idx_creator_created (creator_id, created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================================
@@ -199,48 +205,26 @@ ALTER TABLE creators ADD COLUMN IF NOT EXISTS country VARCHAR(100) DEFAULT NULL;
 -- Migration 7: Add specific profession / creator type column to creators table
 ALTER TABLE creators ADD COLUMN IF NOT EXISTS profession VARCHAR(100) DEFAULT NULL;
 
--- Migration 8: Razorpay Payment Gateway Integration (Recurring Subscriptions)
+-- Migration 8: Subscription Lifecycle Fields
 -- ----------------------------------------------------------------------------
 -- 8a. Fix plan_key ENUM — was missing 'free' and had a stale 'growth' value
 --     that doesn't exist in the app's plan catalog (free/starter/pro/unlimited).
 ALTER TABLE subscriptions MODIFY COLUMN plan_key ENUM('early_access', 'creator_pro', 'creator_VIP', 'free', 'starter', 'pro', 'unlimited') NOT NULL DEFAULT 'early_access';
 
--- 8b. Track the Razorpay subscription/customer/plan behind each row.
---     razorpay_status mirrors Razorpay's own subscription status vocabulary
---     (created/authenticated/active/paused/cancelled/completed/expired) so
---     webhook events can be recorded without lossy mapping onto our simpler
---     app-level `status` enum.
-ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS razorpay_subscription_id VARCHAR(64) DEFAULT NULL COMMENT 'Razorpay subscription ID (sub_xxx) for paid plans';
-ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS razorpay_customer_id VARCHAR(64) DEFAULT NULL COMMENT 'Razorpay customer ID (cust_xxx)';
-ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS razorpay_plan_id VARCHAR(64) DEFAULT NULL COMMENT 'Razorpay plan ID (plan_xxx) currently mapped to this row';
-ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS razorpay_status VARCHAR(32) DEFAULT NULL COMMENT 'Raw Razorpay subscription status from last webhook/verify call';
-ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS trial_ends_at TIMESTAMP NULL DEFAULT NULL;
-ALTER TABLE subscriptions ADD UNIQUE KEY IF NOT EXISTS unique_razorpay_subscription (razorpay_subscription_id);
-
--- 8c. Cache table mapping our (plan_key, billing_cycle) pairs to the Razorpay
---     Plan resource created for them on first use, so we don't create a
---     duplicate Razorpay Plan every time someone checks out.
-CREATE TABLE IF NOT EXISTS razorpay_plans (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  plan_key ENUM('starter', 'pro', 'unlimited') NOT NULL COMMENT 'Free plan never gets a Razorpay plan',
-  billing_cycle ENUM('monthly', 'yearly') NOT NULL,
-  razorpay_plan_id VARCHAR(64) NOT NULL,
-  amount_paise INT NOT NULL COMMENT 'Plan amount in paise (Razorpay base unit)',
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE KEY unique_plan_cycle (plan_key, billing_cycle)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- 8d. Raw webhook event log for audit + idempotency (skip re-processing an
---     event_id we've already seen).
-CREATE TABLE IF NOT EXISTS razorpay_webhook_events (
-  id BIGINT AUTO_INCREMENT PRIMARY KEY,
-  event_id VARCHAR(64) DEFAULT NULL COMMENT 'Razorpay X-Razorpay-Event-Id header, when present',
-  event_type VARCHAR(64) NOT NULL COMMENT 'e.g. subscription.activated, subscription.charged',
-  razorpay_subscription_id VARCHAR(64) DEFAULT NULL,
-  payload JSON NOT NULL,
-  processed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE KEY unique_event_id (event_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- 8b. Track trial, paid period, cancellation, and non-renewing first-month offer.
+ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS trial_started_at DATETIME NULL;
+ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS trial_ends_at DATETIME NULL;
+ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS current_period_started_at DATETIME NULL;
+ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS current_period_ends_at DATETIME NULL;
+ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS renews_at DATETIME NULL;
+ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS ends_at DATETIME NULL;
+ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS cancelled_at DATETIME NULL;
+ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS cancel_at_period_end TINYINT(1) NOT NULL DEFAULT 0;
+ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS payment_mode VARCHAR(32) NOT NULL DEFAULT 'free_trial';
+ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS first_month_offer TINYINT(1) NOT NULL DEFAULT 0;
+ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS first_month_amount INT NULL;
+ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS first_month_currency VARCHAR(8) NULL;
+ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS auto_renew TINYINT(1) NOT NULL DEFAULT 0;
 
 -- 9. CREATOR REVIEWS & TESTIMONIALS TABLE
 -- ----------------------------------------------------------------------------

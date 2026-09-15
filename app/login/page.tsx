@@ -122,7 +122,7 @@ export default function LoginPage() {
       </div>
 
       {/* SINGLE UNIFIED WHITE CARD: Everything from Logo to Legal Text inside */}
-      <div className="relative z-10 my-auto w-full max-w-[430px] rounded-[28px] border border-white/80 bg-white/70 p-5 text-center shadow-[0_26px_90px_rgba(21,25,51,0.12)] backdrop-blur-xl sm:p-7">
+      <div className="relative z-10 my-auto w-full max-w-[500px] rounded-[28px] border border-white/80 bg-white/70 p-5 text-center shadow-[0_26px_90px_rgba(21,25,51,0.12)] backdrop-blur-xl sm:p-7">
         {/* 1. Header: Logo (Vertical: 100px x 100px Icon on top, Inflixo text below) & Creator Greeting */}
         <div className="flex flex-col items-center text-center">
           <div className="flex items-center justify-center">
@@ -138,7 +138,7 @@ export default function LoginPage() {
               <p className="text-[13px] font-extrabold text-[#151933]">
                 Your old videos can still find new fans.
               </p>
-              <p className="mx-auto mt-1.5 max-w-[310px] text-[12px] font-medium leading-relaxed text-[#5d6575]">
+              <p className="mx-auto mt-1.5 max-w-[440px] text-[12px] font-medium leading-relaxed text-[#5d6575]">
                 Save your YouTube, Instagram and Facebook video links as clean series that fans can open anytime.
               </p>
             </div>
@@ -150,7 +150,7 @@ export default function LoginPage() {
           <h1 className="font-display text-[28px] font-black leading-[1.05] tracking-tight text-[#181716] sm:text-[32px]">
             Build your creator link
           </h1>
-          <p className="mx-auto max-w-[350px] text-[13px] font-medium leading-relaxed text-[#5d6575] sm:text-sm">
+          <p className="mx-auto max-w-[460px] text-[13px] font-medium leading-relaxed text-[#5d6575] sm:text-sm">
             Organize your uploaded video links into playlists, show your fanbase, and look ready for brands.
           </p>
         </div>

@@ -54,6 +54,23 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   };
 }
 
+function getPublicVisitorId() {
+  if (typeof window === "undefined") return "";
+  const existing = localStorage.getItem("inflixo_vid");
+  if (existing) return existing;
+  const next = `v_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+  localStorage.setItem("inflixo_vid", next);
+  return next;
+}
+
+function createEpisodeClickEventId(seriesId: string, episodeId: string) {
+  const randomPart =
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  return `episode:${seriesId}:${episodeId}:${randomPart}`;
+}
+
 interface SeriesDetailClientProps {
   username: string;
   seriesId: string;
@@ -218,14 +235,21 @@ export function SeriesDetailClient({
 
   const trackEpisodeClick = (ep: Episode) => {
     try {
+      const visitorId = getPublicVisitorId();
+      const episodeId = ep.id || `${ep.episodeNumber || ep.title || "episode"}`;
+      const currentSeriesId = series?.id || seriesId;
       fetch("/api/analytics/track", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           eventType: "episode_click",
           username,
+          eventId: createEpisodeClickEventId(currentSeriesId, episodeId),
+          visitorId,
+          source: "public_series",
+          eventTarget: `${currentSeriesId}:${episodeId}`,
           seriesId: series?.id,
-          episodeId: ep.id,
+          episodeId,
           url: ep.externalUrl,
         }),
       }).catch(() => { });

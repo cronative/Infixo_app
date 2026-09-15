@@ -1,7 +1,51 @@
 import { NextResponse } from "next/server";
+import type { RowDataPacket } from "mysql2";
 import { db } from "@/lib/db";
-import { sendBroadcastEmail, sendCollabReviewEmail } from "@/lib/email";
+import { sendCollabReviewEmail } from "@/lib/email";
 import { ensureReviewsTable } from "@/lib/reviewsDb";
+
+interface CreatorIdRow extends RowDataPacket {
+  id: string;
+  display_name?: string | null;
+}
+
+interface CreatorReviewRow extends RowDataPacket {
+  id: string;
+  creator_id: string;
+  token: string;
+  client_name: string;
+  client_email: string;
+  client_designation?: string | null;
+  project_title: string;
+  content_url?: string | null;
+  rating?: number | null;
+  rating_content_quality?: number | null;
+  rating_professionalism?: number | null;
+  rating_timely_delivery?: number | null;
+  comment?: string | null;
+  status: string;
+  created_at: string | Date;
+  updated_at: string | Date;
+}
+
+interface ReviewRequestBody {
+  email?: string;
+  creatorId?: string;
+  clientName?: string;
+  clientEmail?: string;
+  clientDesignation?: string;
+  projectTitle?: string;
+  contentUrl?: string;
+}
+
+interface ReviewStatusBody {
+  id?: string;
+  status?: string;
+}
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : "Unexpected server error";
+}
 
 // GET /api/creator/reviews?email=... or ?username=...
 export async function GET(req: Request) {
@@ -16,10 +60,14 @@ export async function GET(req: Request) {
     let creatorId: string | null = null;
 
     if (username) {
-      const [rows]: any = await db.query("SELECT id FROM creators WHERE username = ?", [username]);
+      const cleanUsername = username.trim().replace(/^@/, "").toLowerCase();
+      const [rows] = await db.query<CreatorIdRow[]>(
+        "SELECT id FROM creators WHERE LOWER(username) = ? OR username = ? OR LOWER(username) = ? LIMIT 1",
+        [cleanUsername, username.trim(), `@${cleanUsername}`]
+      );
       if (rows && rows.length > 0) creatorId = rows[0].id;
     } else if (email) {
-      const [rows]: any = await db.query("SELECT id FROM creators WHERE email = ?", [email]);
+      const [rows] = await db.query<CreatorIdRow[]>("SELECT id FROM creators WHERE email = ?", [email]);
       if (rows && rows.length > 0) creatorId = rows[0].id;
     }
 
@@ -32,7 +80,7 @@ export async function GET(req: Request) {
     }
 
     let sql = "SELECT * FROM creator_reviews WHERE creator_id = ?";
-    const queryParams: any[] = [creatorId];
+    const queryParams: string[] = [creatorId];
 
     if (status) {
       sql += " AND status = ?";
@@ -41,9 +89,9 @@ export async function GET(req: Request) {
 
     sql += " ORDER BY created_at DESC";
 
-    const [rows]: any = await db.query(sql, queryParams);
+    const [rows] = await db.query<CreatorReviewRow[]>(sql, queryParams);
 
-    const reviews = (rows || []).map((r: any) => ({
+    const reviews = (rows || []).map((r) => ({
       id: r.id,
       creatorId: r.creator_id,
       token: r.token,
@@ -63,9 +111,9 @@ export async function GET(req: Request) {
     }));
 
     return NextResponse.json({ success: true, reviews });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("GET /api/creator/reviews error:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: getErrorMessage(error) }, { status: 500 });
   }
 }
 
@@ -74,7 +122,7 @@ export async function POST(req: Request) {
   try {
     await ensureReviewsTable();
 
-    const body = await req.json();
+    const body = (await req.json()) as ReviewRequestBody;
     const { email, creatorId, clientName, clientEmail, clientDesignation, projectTitle, contentUrl } = body;
 
     if (!clientName || !clientName.trim()) {
@@ -88,7 +136,7 @@ export async function POST(req: Request) {
     let creatorDisplayName = "Creator";
 
     if (email || resolvedCreatorId) {
-      const [rows]: any = await db.query(
+      const [rows] = await db.query<CreatorIdRow[]>(
         "SELECT id, display_name FROM creators WHERE email = ? OR id = ?",
         [email || "", resolvedCreatorId || ""]
       );
@@ -156,9 +204,9 @@ export async function POST(req: Request) {
         });
         emailSent = emailResult.success;
         emailError = emailResult.error;
-      } catch (e: any) {
+      } catch (e: unknown) {
         console.error("Failed to send review request email:", e);
-        emailError = e?.message || "Email dispatch failed";
+        emailError = getErrorMessage(e) || "Email dispatch failed";
       }
     }
 
@@ -180,15 +228,15 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       message: emailSent
-        ? `Review request email successfully sent to ${clientEmail.trim()}!`
+        ? `Review request email successfully sent to ${cleanClientEmail}!`
         : `Review request created. (Note: Email attempt error: ${emailError || "check SMTP setup"})`,
       emailSent,
       review: reviewObj,
       reviewUrl,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("POST /api/creator/reviews error:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: getErrorMessage(error) }, { status: 500 });
   }
 }
 
@@ -197,7 +245,7 @@ export async function PATCH(req: Request) {
   try {
     await ensureReviewsTable();
 
-    const body = await req.json();
+    const body = (await req.json()) as ReviewStatusBody;
     const { id, status } = body;
 
     if (!id || !status) {
@@ -211,9 +259,9 @@ export async function PATCH(req: Request) {
     await db.query("UPDATE creator_reviews SET status = ? WHERE id = ?", [status, id]);
 
     return NextResponse.json({ success: true, message: `Review status updated to ${status}` });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("PATCH /api/creator/reviews error:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: getErrorMessage(error) }, { status: 500 });
   }
 }
 
@@ -232,8 +280,8 @@ export async function DELETE(req: Request) {
     await db.query("DELETE FROM creator_reviews WHERE id = ?", [id]);
 
     return NextResponse.json({ success: true, message: "Review deleted successfully" });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("DELETE /api/creator/reviews error:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: getErrorMessage(error) }, { status: 500 });
   }
 }

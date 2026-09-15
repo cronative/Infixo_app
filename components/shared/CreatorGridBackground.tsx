@@ -15,6 +15,7 @@ import {
   Video,
   WandSparkles,
 } from "lucide-react";
+import { InflixoLogoIcon } from "@/components/shared/Logo";
 
 const CREATOR_TOOLS = [
   { icon: Camera, label: "Camera", className: "left-[6%] top-[12%] rotate-[-6deg]", duration: "17s", delay: "-1s" },
@@ -34,11 +35,15 @@ const CREATOR_TOOLS = [
 export function CreatorGridBackground({
   showWordmark = false,
   variant = "default",
+  wordmarkPlacement = "bottom-left",
 }: {
   showWordmark?: boolean;
   variant?: "default" | "soft";
+  wordmarkPlacement?: "bottom-left" | "center" | "center-bottom";
 }) {
   const isSoft = variant === "soft";
+  const isCenteredWordmark = wordmarkPlacement === "center";
+  const isCenterBottomWordmark = wordmarkPlacement === "center-bottom";
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden select-none" aria-hidden="true">
@@ -47,10 +52,31 @@ export function CreatorGridBackground({
       <div className={`absolute left-0 top-0 h-px w-full bg-[linear-gradient(90deg,transparent,rgba(21,25,51,0.45),transparent)] [animation:infixo-scan-x_5s_ease-in-out_infinite] ${isSoft ? "opacity-25" : ""}`} />
 
       {showWordmark && (
-        <div className="absolute bottom-[10%] left-[-7%] flex items-center justify-start sm:bottom-[8%] md:left-[2%] lg:left-[5%]">
-          <span className={`creator-tool-float font-display text-[42px] font-black uppercase leading-none tracking-[0.12em] text-transparent [-webkit-text-stroke:1.5px_rgba(255,255,255,0.95)] [text-shadow:0_10px_40px_rgba(21,25,51,0.08)] sm:text-[60px] md:text-[80px] lg:text-[100px] ${isSoft ? "opacity-45" : "opacity-75"}`}>
-            INFLIXO
-          </span>
+        <div
+          className={
+            isCenteredWordmark
+              ? "absolute inset-x-0 top-1/2 flex -translate-y-1/2 items-center justify-center"
+              : isCenterBottomWordmark
+                ? "absolute inset-x-0 bottom-[9%] flex items-center justify-center"
+              : "absolute bottom-[10%] left-[-7%] flex items-center justify-start sm:bottom-[8%] md:left-[2%] lg:left-[5%]"
+          }
+        >
+          <div className={`creator-tool-float flex items-center ${(isCenteredWordmark || isCenterBottomWordmark) ? "gap-3 sm:gap-5" : ""}`}>
+            {(isCenteredWordmark || isCenterBottomWordmark) && (
+              <div className="flex h-12 w-12 items-center justify-center rounded-[14px] border border-white/70 bg-white/10 shadow-[0_10px_40px_rgba(21,25,51,0.05)] sm:h-16 sm:w-16 sm:rounded-[18px]">
+                <InflixoLogoIcon
+                  light
+                  className="h-8 w-8 opacity-75 drop-shadow-[0_10px_24px_rgba(21,25,51,0.08)] sm:h-11 sm:w-11"
+                />
+              </div>
+            )}
+            <span
+              className={`font-display text-[42px] font-black uppercase leading-none tracking-[0.12em] text-transparent [-webkit-text-stroke:1.5px_rgba(255,255,255,0.95)] [text-shadow:0_10px_40px_rgba(21,25,51,0.08)] sm:text-[60px] md:text-[80px] lg:text-[100px] ${isSoft ? "opacity-45" : "opacity-75"
+                } ${isCenteredWordmark ? "text-[44px] sm:text-[72px] md:text-[100px] lg:text-[128px]" : ""} ${isCenterBottomWordmark ? "text-[40px] sm:text-[64px] md:text-[84px] lg:text-[104px]" : ""}`}
+            >
+              INFLIXO
+            </span>
+          </div>
         </div>
       )}
 

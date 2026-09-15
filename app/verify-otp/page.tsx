@@ -220,7 +220,7 @@ export default function VerifyOtpPage() {
       </div>
 
       {/* SINGLE UNIFIED WHITE CARD */}
-      <div className="relative z-10 my-auto w-full max-w-[430px] rounded-[28px] border border-white/80 bg-white/70 p-5 text-center shadow-[0_26px_90px_rgba(21,25,51,0.12)] backdrop-blur-xl sm:p-7">
+      <div className="relative z-10 my-auto w-full max-w-[500px] rounded-[28px] border border-white/80 bg-white/70 p-5 text-center shadow-[0_26px_90px_rgba(21,25,51,0.12)] backdrop-blur-xl sm:p-7">
         {/* 1. Header: Logo (100px x 100px) & Badge */}
         <div className="flex flex-col items-center text-center">
           <div className="flex items-center justify-center">
@@ -238,7 +238,7 @@ export default function VerifyOtpPage() {
           <h1 className="font-display text-[28px] font-black leading-[1.05] tracking-tight text-[#181716] sm:text-[32px]">
             Check your email
           </h1>
-          <p className="mx-auto max-w-[350px] text-[13px] font-medium leading-relaxed text-[#5d6575] sm:text-sm">
+          <p className="mx-auto max-w-[460px] text-[13px] font-medium leading-relaxed text-[#5d6575] sm:text-sm">
             We sent a 4-digit verification code to{" "}
             <span className="font-semibold text-[#181716]">
               {email || "your email"}

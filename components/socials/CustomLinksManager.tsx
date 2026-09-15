@@ -189,11 +189,23 @@ function extractDomain(url: string): string {
   }
 }
 
+function createClientId(prefix: string) {
+  return `${prefix}_${globalThis.crypto?.randomUUID?.() || `${Date.now()}_${Math.random().toString(16).slice(2)}`}`;
+}
+
+function createEmptyCollectionItem(): CustomLinkItem {
+  return { id: createClientId("item"), title: "", url: "", isEnabled: true };
+}
+
 export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
   const { showToast } = useToast();
   const creatorCtx = useCreator();
   const subscription = creatorCtx?.subscription;
-  const [links, setLinks] = useState<CustomLink[]>([]);
+  const onChangeRef = useRef(onChange);
+  const [links, setLinks] = useState<CustomLink[]>(() => {
+    const localLinks = customLinksRepository.get();
+    return Array.isArray(localLinks) ? localLinks : [];
+  });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingLink, setEditingLink] = useState<CustomLink | null>(null);
   const [selectedType, setSelectedType] = useState<string>("");
@@ -217,11 +229,10 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
   const username = creatorCtx?.profile?.username;
 
   useEffect(() => {
-    const localLinks = customLinksRepository.get();
-    if (Array.isArray(localLinks)) {
-      setLinks(localLinks);
-    }
+    onChangeRef.current = onChange;
+  }, [onChange]);
 
+  useEffect(() => {
     // Fetch from MySQL DB table creator_custom_links if email or username available
     if (email || username) {
       const query = email
@@ -233,7 +244,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
           if (data.success && Array.isArray(data.links)) {
             setLinks(data.links);
             customLinksRepository.save(data.links);
-            if (onChange) onChange(data.links);
+            onChangeRef.current?.(data.links);
           }
         })
         .catch(() => { });
@@ -261,7 +272,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
     setFormMode("link");
     setFormTitle("");
     setFormUrl("");
-    setCollectionItems([{ id: `item_${Date.now()}`, title: "", url: "", isEnabled: true }]);
+    setCollectionItems([createEmptyCollectionItem()]);
     setIsTitleManuallyEdited(false);
     setLastSuggestedTitle("");
     setIsModalOpen(true);
@@ -276,7 +287,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
     setCollectionItems(
       link.items && link.items.length > 0
         ? link.items.map((item) => ({ ...item }))
-        : [{ id: `item_${Date.now()}`, title: "", url: "", isEnabled: true }]
+        : [createEmptyCollectionItem()]
     );
     setIsTitleManuallyEdited(true);
     setLastSuggestedTitle("");
@@ -316,6 +327,17 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
       cleanUrl = `https://${cleanUrl}`;
     }
 
+    const hasIncompleteCollectionItem = collectionItems.some((item) => {
+      const hasTitle = Boolean(item.title.trim());
+      const hasUrl = Boolean(item.url.trim());
+      return hasTitle !== hasUrl;
+    });
+
+    if (formMode === "collection" && hasIncompleteCollectionItem) {
+      showToast("Please add both title and URL for each collection link, or leave the row blank", "error");
+      return;
+    }
+
     const cleanedItems = collectionItems
       .map((item) => {
         const title = item.title.trim();
@@ -325,7 +347,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
         }
         return {
           ...item,
-          id: item.id || `item_${Date.now()}_${Math.random().toString(16).slice(2)}`,
+          id: item.id || createClientId("item"),
           title,
           url,
           isEnabled: item.isEnabled !== false,
@@ -335,6 +357,21 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
 
     if (formMode === "collection" && cleanedItems.length === 0) {
       showToast("Please add at least one link inside this collection", "error");
+      return;
+    }
+
+    const urlsToValidate = formMode === "collection" ? cleanedItems.map((item) => item.url) : [cleanUrl];
+    const hasInvalidUrl = urlsToValidate.some((url) => {
+      try {
+        const parsed = new URL(url);
+        return !["http:", "https:"].includes(parsed.protocol);
+      } catch {
+        return true;
+      }
+    });
+
+    if (hasInvalidUrl) {
+      showToast("Please enter valid link URLs", "error");
       return;
     }
 
@@ -353,7 +390,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
       ));
     } else {
       const newLink: CustomLink = {
-        id: `link_${Date.now()}`,
+        id: createClientId("link"),
         title: cleanTitle,
         url: formMode === "collection" ? "" : cleanUrl,
         isEnabled: true,
@@ -363,24 +400,40 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
       updatedList = [...links, newLink];
     }
 
+    const previousLinks = links;
     setLinks(updatedList);
     customLinksRepository.save(updatedList);
-    if (onChange) onChange(updatedList);
+    onChangeRef.current?.(updatedList);
 
-    setIsModalOpen(false);
-    showToast(editingLink ? "Updated custom link! ✨" : formMode === "collection" ? "Added link collection! 🔗" : "Added custom link & saved to DB! 🔗");
-
-    await syncToBackend(updatedList);
+    try {
+      await syncToBackend(updatedList);
+      setIsModalOpen(false);
+      showToast(editingLink ? "Updated custom link! ✨" : formMode === "collection" ? "Added link collection! 🔗" : "Added custom link & saved to DB! 🔗");
+    } catch {
+      setLinks(previousLinks);
+      customLinksRepository.save(previousLinks);
+      onChangeRef.current?.(previousLinks);
+      showToast("Could not save custom link. Please try again.", "error");
+    }
   }
 
-  function handleDeleteLink(id: string) {
+  async function handleDeleteLink(id: string) {
+    const previousLinks = links;
     const updatedList = links.filter((l) => l.id !== id);
     setLinks(updatedList);
     customLinksRepository.save(updatedList);
-    if (onChange) onChange(updatedList);
-    showToast("Custom link removed! 🗑️");
-    setLinkToDelete(null);
-    syncToBackend(updatedList);
+    onChangeRef.current?.(updatedList);
+
+    try {
+      await syncToBackend(updatedList);
+      showToast("Custom link removed! 🗑️");
+      setLinkToDelete(null);
+    } catch {
+      setLinks(previousLinks);
+      customLinksRepository.save(previousLinks);
+      onChangeRef.current?.(previousLinks);
+      showToast("Could not delete custom link. Please try again.", "error");
+    }
   }
 
   async function syncToBackend(updatedLinks: CustomLink[]) {
@@ -389,7 +442,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
 
     try {
       setIsSaving(true);
-      await fetch("/api/creator/custom-links", {
+      const res = await fetch("/api/creator/custom-links", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -397,8 +450,13 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
           links: updatedLinks,
         }),
       });
+      const data = await res.json().catch(() => null);
+      if (!res.ok || data?.success === false || data?.error) {
+        throw new Error(data?.error || "Custom links sync failed");
+      }
     } catch (e) {
       console.warn("Backend custom links sync error:", e);
+      throw e;
     } finally {
       setIsSaving(false);
     }
@@ -419,14 +477,14 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
   function addCollectionItem() {
     setCollectionItems((items) => [
       ...items,
-      { id: `item_${Date.now()}_${items.length}`, title: "", url: "", isEnabled: true },
+      createEmptyCollectionItem(),
     ]);
   }
 
   function removeCollectionItem(id: string) {
     setCollectionItems((items) => {
       if (items.length <= 1) {
-        return [{ id: `item_${Date.now()}`, title: "", url: "", isEnabled: true }];
+        return [createEmptyCollectionItem()];
       }
       return items.filter((item) => item.id !== id);
     });
@@ -655,11 +713,15 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
       <ConfirmModal
         isOpen={Boolean(linkToDelete)}
         onClose={() => setLinkToDelete(null)}
-        onConfirm={() => linkToDelete && handleDeleteLink(linkToDelete.id)}
+        onConfirm={() => {
+          if (linkToDelete) void handleDeleteLink(linkToDelete.id);
+        }}
         title="Delete this link?"
         description={`"${linkToDelete?.title}" will be removed from your public creator profile.`}
         confirmText="Delete Link"
         cancelText="Cancel"
+        loading={isSaving}
+        isDestructive
       />
 
       {/* MODAL FOR ADDING / EDITING CUSTOM LINK */}
@@ -675,22 +737,23 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
         title={editingLink ? "Edit Custom Link" : "Add Custom Link"}
         description="Add a useful destination to your public creator profile."
         icon={<LinkIcon className="h-4 w-4" />}
+        headerClassName="px-4 sm:px-5 py-3"
       >
         <div className="flex flex-col flex-1 min-h-0">
-          <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
-            <form id="custom-link-form" onSubmit={handleSaveModalLink} className="space-y-3.5">
-              <div className="grid grid-cols-2 gap-2 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-1">
+          <ModalBody className="p-3.5 sm:p-4 space-y-3 text-left">
+            <form id="custom-link-form" onSubmit={handleSaveModalLink} className="space-y-3">
+              <div className="grid grid-cols-2 gap-1 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-1">
                 <button
                   type="button"
                   onClick={() => setFormMode("link")}
-                  className={`rounded-lg px-3 py-2 text-xs font-bold transition-colors ${formMode === "link" ? "bg-white text-[#151933] shadow-xs" : "text-[#64748b] hover:text-[#151933]"}`}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-colors ${formMode === "link" ? "bg-white text-[#151933] shadow-xs" : "text-[#64748b] hover:text-[#151933]"}`}
                 >
                   Single link
                 </button>
                 <button
                   type="button"
                   onClick={() => setFormMode("collection")}
-                  className={`rounded-lg px-3 py-2 text-xs font-bold transition-colors ${formMode === "collection" ? "bg-[#151933] text-white shadow-xs" : "text-[#64748b] hover:text-[#151933]"}`}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-colors ${formMode === "collection" ? "bg-[#151933] text-white shadow-xs" : "text-[#64748b] hover:text-[#151933]"}`}
                 >
                   Link collection
                 </button>
@@ -707,7 +770,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     id="custom-link-type"
                     value={selectedType}
                     onChange={(e) => handleTypeSelect(e.target.value)}
-                    className="w-full appearance-none rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3.5 py-2 pr-9 text-xs font-semibold text-[#151933] focus:border-[#151933] focus:bg-white focus:outline-none transition-colors cursor-pointer"
+                    className="w-full appearance-none rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-1.5 pr-9 text-xs font-semibold text-[#151933] focus:border-[#151933] focus:bg-white focus:outline-none transition-colors cursor-pointer"
                   >
                     <option value="">— Select a link type (auto-fills title) —</option>
                     {LINK_TYPE_GROUPS.map((group) => (
@@ -740,7 +803,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     setIsTitleManuallyEdited(true);
                   }}
                   placeholder={formMode === "collection" ? "e.g. World Tour Tickets" : "e.g. Follow on Instagram or Watch Latest Video"}
-                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3.5 py-2 text-xs font-semibold text-[#151933] placeholder:text-[#64748b]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-1.5 text-xs font-semibold text-[#151933] placeholder:text-[#64748b]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
@@ -753,12 +816,13 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                 <div className="relative">
                   <input
                     id="custom-link-url"
-                    type="url"
+                    type="text"
+                    inputMode="url"
                     required
                     value={formUrl}
                     onChange={(e) => setFormUrl(e.target.value)}
                     placeholder="https://example.com/your-destination"
-                    className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 pl-3.5 pr-9 py-2 text-xs font-mono font-semibold text-[#151933] placeholder:text-[#64748b]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
+                    className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 pl-3 pr-9 py-1.5 text-xs font-mono font-semibold text-[#151933] placeholder:text-[#64748b]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
                   />
                   {formUrl && (formUrl.startsWith("http://") || formUrl.startsWith("https://")) && (
                     <a
@@ -774,16 +838,16 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                 </div>
               </div>
               ) : (
-                <div className="space-y-2 rounded-2xl border border-[#e2e8f0] bg-[#f8fafc]/80 p-3">
-                  <div className="flex items-center justify-between gap-3">
+                <div className="space-y-2 rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 p-2.5">
+                  <div className="flex items-center justify-between gap-2">
                     <div>
                       <p className="text-xs font-bold text-[#151933]">Collection links</p>
-                      <p className="text-[11px] font-medium text-[#64748b]">Add city tickets, tour stops, resources, or grouped links.</p>
+                      <p className="text-[10px] font-medium text-[#64748b]">Add grouped links for tickets, tour stops, or resources.</p>
                     </div>
                     <button
                       type="button"
                       onClick={addCollectionItem}
-                      className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-[#151933] px-3 text-[11px] font-bold text-white transition-colors hover:bg-brand-hover"
+                      className="inline-flex h-7 items-center gap-1.5 rounded-lg bg-[#151933] px-2.5 text-[11px] font-bold text-white transition-colors hover:bg-brand-hover"
                     >
                       <Plus className="h-3.5 w-3.5" />
                       Add
@@ -792,33 +856,44 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
 
                   <div className="space-y-2">
                     {collectionItems.map((item, index) => (
-                      <div key={item.id} className="rounded-xl border border-[#e2e8f0] bg-white p-2.5">
-                        <div className="mb-2 flex items-center justify-between gap-2">
+                      <div key={item.id} className="rounded-xl border border-[#e2e8f0] bg-white p-2">
+                        <div className="mb-1.5 flex items-center justify-between gap-2">
                           <span className="text-[11px] font-bold text-[#64748b]">Link {index + 1}</span>
                           <button
                             type="button"
                             onClick={() => removeCollectionItem(item.id)}
-                            className="inline-flex h-7 w-7 items-center justify-center rounded-lg text-[#64748b] transition-colors hover:bg-[#f1f5f9] hover:text-[#151933]"
+                            className="inline-flex h-6 w-6 items-center justify-center rounded-lg text-[#64748b] transition-colors hover:bg-[#f1f5f9] hover:text-[#151933]"
                             aria-label="Remove collection link"
                           >
                             <X className="h-3.5 w-3.5" />
                           </button>
                         </div>
-                        <div className="grid gap-2 sm:grid-cols-[0.85fr_1.15fr]">
-                          <input
-                            type="text"
-                            value={item.title}
-                            onChange={(e) => updateCollectionItem(item.id, { title: e.target.value })}
-                            placeholder="Ahmedabad tickets"
-                            className="w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-2 text-xs font-semibold text-[#151933] placeholder:text-[#64748b]/50 focus:border-[#151933] focus:bg-white focus:outline-none"
-                          />
-                          <input
-                            type="url"
-                            value={item.url}
-                            onChange={(e) => updateCollectionItem(item.id, { url: e.target.value })}
-                            placeholder="https://bookmyshow.com/..."
-                            className="w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-2 text-xs font-mono font-semibold text-[#151933] placeholder:text-[#64748b]/50 focus:border-[#151933] focus:bg-white focus:outline-none"
-                          />
+                        <div className="space-y-1.5">
+                          <label className="block space-y-0.5">
+                            <span className="text-[9px] font-extrabold uppercase tracking-[0.12em] text-[#64748b]">
+                              Link title
+                            </span>
+                            <input
+                              type="text"
+                              value={item.title}
+                              onChange={(e) => updateCollectionItem(item.id, { title: e.target.value })}
+                              placeholder="Ahmedabad tickets"
+                              className="w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-1.5 text-xs font-semibold text-[#151933] placeholder:text-[#64748b]/50 focus:border-[#151933] focus:bg-white focus:outline-none"
+                            />
+                          </label>
+                          <label className="block space-y-0.5">
+                            <span className="text-[9px] font-extrabold uppercase tracking-[0.12em] text-[#64748b]">
+                              Link URL
+                            </span>
+                            <input
+                              type="text"
+                              inputMode="url"
+                              value={item.url}
+                              onChange={(e) => updateCollectionItem(item.id, { url: e.target.value })}
+                              placeholder="https://bookmyshow.com/..."
+                              className="w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-1.5 text-xs font-mono font-semibold text-[#151933] placeholder:text-[#64748b]/50 focus:border-[#151933] focus:bg-white focus:outline-none"
+                            />
+                          </label>
                         </div>
                       </div>
                     ))}
@@ -829,7 +904,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
           </ModalBody>
 
           {/* Modal Actions Footer */}
-          <ModalFooter className="px-4 sm:px-5 py-3">
+          <ModalFooter className="px-4 sm:px-5 py-2.5">
             <button
               type="button"
               onClick={() => {

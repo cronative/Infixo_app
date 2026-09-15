@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureBrandsTable } from "@/lib/brandsDb";
-import { saveBase64Image } from "@/lib/imageStorage";
+import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -96,7 +96,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Brand name is required" }, { status: 400 });
     }
 
-    const finalLogoUrl = saveBase64Image(b.brandLogoUrl, "brands", "brand") || (b.brandLogoUrl && !b.brandLogoUrl.startsWith("data:") ? b.brandLogoUrl : null);
+    const finalLogoUrl = await saveBase64ImageToStorage(b.brandLogoUrl, "brands", "brand") || (b.brandLogoUrl && !b.brandLogoUrl.startsWith("data:") ? b.brandLogoUrl : null);
     const brandId = b.id || `br_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     await db.query(
       `INSERT INTO creator_brands (id, creator_id, brand_name, brand_logo_url, instagram_url, youtube_url, facebook_url, website_url, sort_order, is_active)

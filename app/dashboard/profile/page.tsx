@@ -6,13 +6,13 @@ import {
   Camera,
   Sparkles,
   Lock,
-  ImagePlus,
   RefreshCw,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { ProfileService } from "@/services/ProfileService";
 import { CategorySelect } from "@/components/ui/CategorySelect";
+import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 
 const BIO_SUGGESTIONS = [
   "🎬 Creating cinematic vlogs & travel stories for curious minds.",
@@ -136,21 +136,13 @@ export default function DashboardProfilePage() {
           {/* Left ~30%: Profile photo (104-112px), Change Photo directly below */}
           <div className="md:col-span-3 flex flex-col items-center sm:items-start text-center sm:text-left">
             <div className="relative group">
-              <div className="w-[104px] h-[104px] sm:w-[110px] sm:h-[110px] rounded-full overflow-hidden border-2 border-[#e2e8f0] bg-[#f8fafc] flex items-center justify-center shadow-xs">
-                {profile.photoDataUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={profile.photoDataUrl}
-                    alt="Profile Preview"
-                    className="w-full h-full object-cover rounded-full"
-                  />
-                ) : (
-                  <div className="flex flex-col items-center justify-center text-[#64748b] gap-1">
-                    <ImagePlus className="h-6 w-6 text-[#151933]" />
-                    <span className="text-[10px] font-semibold text-[#151933]">Upload Photo</span>
-                  </div>
-                )}
-              </div>
+              <CreatorAvatar
+                src={profile.photoDataUrl}
+                name={profile.displayName || profile.username || "Creator"}
+                className="w-[104px] h-[104px] sm:w-[110px] sm:h-[110px] rounded-full border-2 border-[#e2e8f0] shadow-xs"
+                textClassName="text-2xl font-extrabold text-[#151933]"
+                fallbackBgClass="bg-[#f8fafc]"
+              />
 
               {/* Hover overlay */}
               <button

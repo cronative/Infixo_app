@@ -28,8 +28,7 @@
 | `/api/series` | `GET / POST` | Creates & fetches OTT Series, Seasons & Episodes | ✅ Done | Yes (`series`, `episodes`) |
 | `/api/series` | `PUT / DELETE` | Updates and deletes series & episode items | ✅ Done | Yes (`series`, `episodes`) |
 | `/api/upload` | `POST` | Uploads profile avatars & series posters | ✅ Done | Local File Storage |
-| `/api/subscription` | `GET / POST` | Activates creator subscription plans | ✅ Done | Yes (`subscriptions`) |
-| `/api/razorpay/*` | `POST` | Razorpay subscription gateway (create/verify/cancel/webhook) | ✅ Built (On Hold) | Yes (`razorpay_plans`, `subscriptions`) |
+| `/api/subscription` | `GET / POST` | Activates creator subscription plans and tracks trial/payment lifecycle | ✅ Done | Yes (`subscriptions`) |
 
 ---
 
@@ -43,7 +42,7 @@
 | **Step 2: Social Connections** | `/onboarding/socials` | IG/YT/FB handles with clickable profile links in preview | ✅ Done |
 | **Step 3: OTT Series Builder** | `/onboarding/series` | Auto-increment episode numbers, optional series save & poster uploads | ✅ Done |
 | **Step 4: Design Themes** | `/onboarding/themes` | 20 aesthetic card themes with live interactive preview | ✅ Done |
-| **Step 5: Subscription Pricing** | `/onboarding/subscription` | Linktree-style cards, Free Basic ₹0 plan & Razorpay fallback | ✅ Done |
+| **Step 5: Subscription Pricing** | `/onboarding/subscription` | Linktree-style cards, free trial, Starter/Pro/VIP plan selection | ✅ Done |
 | **Creator Dashboard Overview** | `/dashboard` | Minimalist Stat cards with `@username` handles & count | ✅ Done |
 | **Dashboard Profile Editor** | `/dashboard/profile` | All onboarding fields, live handle check, location modal, Save Confirm popup & MySQL save | ✅ Done |
 | **Step 5: Subscription Plan** | `/onboarding/subscription` | Redesigned 3-card grid (Starter, Pro, Premium) + Free Basic tier | ✅ Done |
@@ -85,7 +84,7 @@
 | Task ID | Feature Name | Description | Priority | Target Status |
 | :---: | :--- | :--- | :---: | :---: |
 | **TASK-01** | **Automated Data Sync Cron** | Background cron service to auto-refresh IG/YT/FB follower counts every 24h/12h/3h | 🟡 Medium | Pending |
-| **TASK-02** | **Razorpay Live Secret Activation** | Unholding Razorpay once live merchant API keys are provided in `.env` | 🟢 On Hold | Ready to activate |
+| **TASK-02** | **Payment Gateway Integration** | Connect Cashfree checkout and webhook flow after merchant approval | 🟢 On Hold | Ready to activate |
 | **TASK-03** | **Analytics & Visit Counters** | Track total profile visits & episode click counts on creator cards | 🔵 Low | Planned |
 | **TASK-04** | **Custom Domain Mapping** | Allow Pro creators to connect custom domains (e.g. `creator.com`) | 🔵 Low | Planned |
 

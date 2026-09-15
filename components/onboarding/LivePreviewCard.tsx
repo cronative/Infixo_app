@@ -33,6 +33,7 @@ import {
   UserCheck,
   Send,
   AtSign,
+  Laptop,
 } from "lucide-react";
 import {
   CreatorProfile,
@@ -51,6 +52,7 @@ import {
   CreatorCollaboration,
   OtherSocialAccount,
   CreatorProfileSection,
+  CreatorSetupItem,
   DEFAULT_PROFILE_SECTIONS,
   EMPTY_SOCIAL_ACCOUNTS,
 } from "@/types";
@@ -64,6 +66,7 @@ import {
   collaborationsRepository,
   otherSocialsRepository,
   sectionsRepository,
+  creatorSetupRepository,
 } from "@/repositories/localRepository";
 import {
   InstagramIcon,
@@ -663,6 +666,11 @@ export const THEME_STYLES: Record<string, ThemeStyleConfig> = {
   "mountain-mist": MOUNTAIN_MIST_STYLE,
   "street-food": STREET_FOOD_STYLE,
   "cafe-mocha": CAFE_MOCHA_STYLE,
+  "aurora-gradient": NEON_REELS_STYLE,
+  "sunrise-pop": STREET_FOOD_STYLE,
+  "candy-flow": LOVE_LETTER_STYLE,
+  "mint-wave": MOUNTAIN_MIST_STYLE,
+  "royal-glow": CAFE_MOCHA_STYLE,
   "signature-purple": SIGNATURE_PURPLE_STYLE,
   midnight: MIDNIGHT_DARK_STYLE,
   "neon-grid": NEON_GRID_STYLE,
@@ -749,6 +757,7 @@ export interface LivePreviewCardProps {
   team?: { team?: CreatorTeam | null; members: TeamMember[] };
   brands?: CreatorBrand[];
   collaborations?: CreatorCollaboration[];
+  setupItems?: CreatorSetupItem[];
   otherSocials?: OtherSocialAccount[];
   sections?: CreatorProfileSection[];
   totalAudience?: number;
@@ -759,6 +768,12 @@ export interface LivePreviewCardProps {
   containedScroll?: boolean;
   onSeriesPreviewOpen?: (series: Series) => void;
   seriesOpenMode?: "internal" | "page";
+  seriesPreviewLimit?: number;
+  allSeriesHref?: string;
+  seriesOnlyMode?: boolean;
+  reviewsPreviewLimit?: number;
+  allReviewsHref?: string;
+  reviewsOnlyMode?: boolean;
   showSettingsIcon?: boolean;
   onShare?: () => void;
   isInformational?: boolean;
@@ -789,6 +804,8 @@ const DARK_THEME_KEYS = new Set([
   "podcast-lounge",
   "gamer-stream",
   "cafe-mocha",
+  "aurora-gradient",
+  "royal-glow",
 ]);
 
 const EMPTY_PROFILE_FALLBACK: CreatorProfile = {
@@ -815,6 +832,7 @@ export function LivePreviewCard({
   team: passedTeam,
   brands: passedBrands,
   collaborations: passedCollaborations,
+  setupItems: passedSetupItems,
   otherSocials: passedOtherSocials,
   sections: passedSections,
   totalAudience: passedTotalAudience,
@@ -825,6 +843,12 @@ export function LivePreviewCard({
   containedScroll = false,
   onSeriesPreviewOpen,
   seriesOpenMode = "internal",
+  seriesPreviewLimit,
+  allSeriesHref,
+  seriesOnlyMode = false,
+  reviewsPreviewLimit,
+  allReviewsHref,
+  reviewsOnlyMode = false,
   showSettingsIcon: showSettingsIconProp,
   onShare,
   isInformational: isInformationalProp,
@@ -835,6 +859,7 @@ export function LivePreviewCard({
   const profile: CreatorProfile = incomingProfile || EMPTY_PROFILE_FALLBACK;
   const socials: SocialAccounts = incomingSocials || EMPTY_SOCIAL_ACCOUNTS;
   const series: Series[] = incomingSeries || [];
+  const displayedSeries = typeof seriesPreviewLimit === "number" ? series.slice(0, seriesPreviewLimit) : series;
 
   const { showToast } = useToast();
   const [expandedSeriesMap, setExpandedSeriesMap] = useState<Record<string, boolean>>(() => {
@@ -861,6 +886,7 @@ export function LivePreviewCard({
   );
   const [brandsList, setBrandsList] = useState<CreatorBrand[]>(passedBrands || []);
   const [collaborationsList, setCollaborationsList] = useState<CreatorCollaboration[]>(passedCollaborations || []);
+  const [setupList, setSetupList] = useState<CreatorSetupItem[]>(passedSetupItems || []);
   const [otherSocialsList, setOtherSocialsList] = useState<OtherSocialAccount[]>(passedOtherSocials || []);
   const [sectionsList, setSectionsList] = useState<CreatorProfileSection[]>(passedSections || DEFAULT_PROFILE_SECTIONS);
   const [isCollabInquiryOpen, setIsCollabInquiryOpen] = useState(false);
@@ -958,6 +984,14 @@ export function LivePreviewCard({
   }, [passedCollaborations, isDashboardPreview]);
 
   useEffect(() => {
+    if (passedSetupItems !== undefined) {
+      setSetupList(passedSetupItems);
+    } else if (isDashboardPreview) {
+      setSetupList(creatorSetupRepository.getAll());
+    }
+  }, [passedSetupItems, isDashboardPreview]);
+
+  useEffect(() => {
     if (passedOtherSocials !== undefined) {
       setOtherSocialsList(passedOtherSocials);
     } else if (isDashboardPreview) {
@@ -1008,6 +1042,26 @@ export function LivePreviewCard({
     }
   }, [safeProfile.visibilitySettings]);
 
+  const effectiveVisibilitySettings: VisibilitySettings = seriesOnlyMode
+    ? {
+        ...visibilitySettings,
+        showFanbase: false,
+        showCustomLinks: false,
+        showCollabGigs: false,
+        showReviews: false,
+        showSeries: true,
+      }
+    : reviewsOnlyMode
+      ? {
+          ...visibilitySettings,
+          showFanbase: false,
+          showCustomLinks: false,
+          showCollabGigs: false,
+          showSeries: false,
+          showReviews: true,
+        }
+    : visibilitySettings;
+
 
   const handleSaveVisibilitySettings = async (newSettings: VisibilitySettings) => {
     setVisibilitySettings(newSettings);
@@ -1050,6 +1104,7 @@ export function LivePreviewCard({
   const isSignaturePurple = themeKey === "signature-purple";
   const themeMeta = ThemeService.getThemeMeta(themeKey);
   const style = THEME_STYLES[themeKey] || DEFAULT_THEME_STYLE;
+  const usesDarkControls = isDark || themeMeta.mode === "dark";
 
   useEffect(() => {
     if (passedCustomLinks) {
@@ -1257,6 +1312,8 @@ export function LivePreviewCard({
     },
   ].filter((item) => item.visible && (item.hasAccount || item.count > 0 || (item.url && item.url !== "#")));
 
+  const fanbaseSocialCards = activeSocialList.filter((s) => s.hasAccount || s.count > 0);
+  const fanbaseSocialGridColumns = `repeat(${Math.min(Math.max(fanbaseSocialCards.length, 1), 3)}, minmax(0, 1fr))`;
 
   const handleCopyClick = async (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
@@ -1330,7 +1387,7 @@ export function LivePreviewCard({
   const c = themeMeta.colors;
   const typ = themeMeta.typography;
   const eff = themeMeta.effects;
-  const isDefaultCleanLayout = themeKey === "minimal-white" || themeKey === "sage-studio" || themeKey === "blush-paper" || themeKey === "studio-frost" || themeKey === "taj-mahal" || themeKey === "somnath-temple" || themeKey === "dwarka-temple" || themeKey === "goa-beach" || themeKey === "creator-studio" || themeKey === "food-vlog" || themeKey === "love-letter" || themeKey === "christmas-snow" || themeKey === "mountain-mist" || themeKey === "street-food";
+  const isDefaultCleanLayout = themeKey === "minimal-white" || themeKey === "sage-studio" || themeKey === "blush-paper" || themeKey === "studio-frost" || themeKey === "taj-mahal" || themeKey === "somnath-temple" || themeKey === "dwarka-temple" || themeKey === "goa-beach" || themeKey === "creator-studio" || themeKey === "food-vlog" || themeKey === "love-letter" || themeKey === "christmas-snow" || themeKey === "mountain-mist" || themeKey === "street-food" || themeKey === "aurora-gradient" || themeKey === "sunrise-pop" || themeKey === "candy-flow" || themeKey === "mint-wave" || themeKey === "royal-glow";
 
   const surfaceShadow = themeMeta.profileSurface?.shadow || eff.shadow || "0 24px 70px rgba(0,0,0,0.14)";
   const surfaceBorder = themeMeta.profileSurface?.border || c.border;
@@ -1339,6 +1396,9 @@ export function LivePreviewCard({
   const cleanHandle = (profile.username || "").replace(/^@/, "");
   const formattedCategories = formatCategoryDots(profile.category, profile.customCategory);
   const headerSocialList = activeSocialList.filter((s) => s.hasAccount || s.count > 0 || (s.url && s.url !== "#"));
+  const activeTeamMembers = teamData.team?.isActive === false
+    ? []
+    : (teamData.members || []).filter((member) => member.isActive !== false && member.name?.trim());
 
   const cardContent = (
     <div
@@ -1377,7 +1437,7 @@ export function LivePreviewCard({
       >
         <Link
           href="/"
-          style={{ backgroundColor: c.accent }}
+          style={{ backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.accent }}
           className="tap-scale flex h-11 w-11 shrink-0 cursor-pointer select-none items-center justify-center rounded-xl border border-white/25 text-white shadow-sm shadow-black/10 transition-all hover:scale-105 sm:h-12 sm:w-12"
           title="Inflixo"
           aria-label="Inflixo"
@@ -1390,9 +1450,9 @@ export function LivePreviewCard({
             type="button"
             onClick={handleShareClick}
             style={{
-              backgroundColor: c.cardBackground,
-              borderColor: c.border,
-              color: c.primaryText,
+              backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.cardBackground,
+              borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : c.border,
+              color: usesDarkControls ? "#FFFFFF" : c.primaryText,
             }}
             className="tap-scale flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl border shadow-sm shadow-black/10 transition-all hover:scale-105 sm:h-12 sm:w-12"
             title="Share profile"
@@ -1406,7 +1466,7 @@ export function LivePreviewCard({
       <div
         ref={containedScroll ? profileScrollRef : undefined}
         onScroll={containedScroll ? handleContainedScroll : undefined}
-        className={containedScroll ? "relative z-10 flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain pt-1 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" : "contents"}
+        className={containedScroll ? "relative z-10 flex flex-1 min-h-0 flex-col overflow-y-auto overflow-x-hidden overscroll-contain pt-1 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" : "contents"}
       >
 
       {/* 1. Profile Header Section */}
@@ -1418,7 +1478,8 @@ export function LivePreviewCard({
             name={profile.displayName || "Creator"}
             className="h-[74px] w-[74px] sm:h-[82px] sm:w-[82px] rounded-full aspect-square object-contain object-center overflow-hidden border-2 border-white/80 ring-4 ring-black/5 shadow-md mx-auto bg-white"
             style={{ borderColor: c.border || "#FFFFFF", backgroundColor: c.cardBackground }}
-            textClassName="text-xl sm:text-2xl font-extrabold text-white"
+            textClassName="text-xl sm:text-2xl font-extrabold"
+            textStyle={{ color: c.primaryText }}
             fallbackBgClass="bg-[#151933]"
           />
         </div>
@@ -1453,7 +1514,7 @@ export function LivePreviewCard({
         )}
 
         {/* Categories: Dot-separated text without pill */}
-        {visibilitySettings.showContentCategory !== false && formattedCategories && (
+      {effectiveVisibilitySettings.showContentCategory !== false && formattedCategories && (
           <p
             style={{ color: c.secondaryText }}
             className="mt-1 text-xs sm:text-[13px] font-medium text-center tracking-normal"
@@ -1513,7 +1574,7 @@ export function LivePreviewCard({
       </div>
 
       {/* 2. Total Fanbase USP Block */}
-      {visibilitySettings.showFanbase !== false && (
+      {effectiveVisibilitySettings.showFanbase !== false && (
         <div className="relative z-10 mt-5 sm:mt-6 w-full space-y-2.5">
           <div
             style={{
@@ -1548,11 +1609,12 @@ export function LivePreviewCard({
           </div>
 
           {/* Clickable Platform Cards */}
-          {activeSocialList.filter((s) => s.hasAccount || s.count > 0).length > 0 && (
-            <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
-              {activeSocialList
-                .filter((s) => s.hasAccount || s.count > 0)
-                .map((item) => (
+          {fanbaseSocialCards.length > 0 && (
+            <div
+              className="grid gap-2.5 sm:gap-3"
+              style={{ gridTemplateColumns: fanbaseSocialGridColumns }}
+            >
+              {fanbaseSocialCards.map((item) => (
                   <a
                     key={item.platform}
                     href={item.url}
@@ -1614,8 +1676,8 @@ export function LivePreviewCard({
       )}
 
       {/* 3. Links Section */}
-      {visibilitySettings.showCustomLinks !== false && customLinksList && customLinksList.filter((l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url)))).length > 0 && (
-        <div id="links-section" className="relative z-10 mt-6 w-full text-left space-y-2.5">
+      {effectiveVisibilitySettings.showCustomLinks !== false && customLinksList && customLinksList.filter((l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url)))).length > 0 && (
+        <div id="links-section" className="relative z-10 order-[5] mt-6 w-full text-left space-y-2.5">
           <h2
             style={{
               color: c.primaryText,
@@ -1724,8 +1786,8 @@ export function LivePreviewCard({
       )}
 
       {/* 4. Series Section */}
-      {visibilitySettings.showSeries !== false && (series.length > 0 || isOnboardingMode) && (
-        <div id="series-section" className="relative z-10 mt-6 w-full text-left space-y-2.5">
+      {effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || isOnboardingMode) && (
+        <div id="series-section" className="relative z-10 order-[10] mt-6 w-full text-left space-y-2.5">
           {/* Section Header */}
           <div className="flex items-center justify-between px-0.5">
             <h2
@@ -1750,7 +1812,7 @@ export function LivePreviewCard({
           </div>
 
           <div className="space-y-2.5 sm:space-y-3">
-            {series.map((s) => {
+            {displayedSeries.map((s) => {
               const allEps = getSeriesEpisodes(s);
               const epCount = allEps.length;
               const epCountStr = `${epCount} ${epCount === 1 ? "episode" : "episodes"}`;
@@ -1877,21 +1939,139 @@ export function LivePreviewCard({
               );
             })}
           </div>
+
+          {allSeriesHref && series.length > 0 && (
+            <div className="pt-1 text-center">
+              <button
+                type="button"
+                onClick={() => {
+                  if (isInformationalMode) {
+                    showToast("Opens all creator series on live profile ✨");
+                    return;
+                  }
+                  router.push(allSeriesHref);
+                }}
+                style={{ color: c.accentText }}
+                className="tap-scale inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs sm:text-[13px] font-bold transition-all hover:translate-y-[-1px] hover:opacity-85 cursor-pointer"
+              >
+                <span>See all series</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 5. Creator Team */}
+      {activeTeamMembers.length > 0 && (
+        <div id="team-section" className="relative z-10 order-[20] mt-6 w-full text-left space-y-2.5">
+          <div className="flex items-center justify-between gap-3 px-0.5">
+            <h2
+              style={{
+                color: c.primaryText,
+                fontFamily: typ.headingFontFamily,
+                fontWeight: 700,
+              }}
+              className="flex items-center gap-2 text-base sm:text-lg font-bold tracking-tight"
+            >
+              <Users className="h-4 w-4 opacity-70" style={{ color: c.primaryText }} />
+              {teamData.team?.teamName || "Creator Team"}
+            </h2>
+            <span
+              style={{ color: c.mutedText }}
+              className="text-xs sm:text-[13px] font-medium"
+            >
+              {activeTeamMembers.length} {activeTeamMembers.length === 1 ? "member" : "members"}
+            </span>
+          </div>
+
+          <div className="space-y-2.5">
+            {activeTeamMembers.map((member) => {
+              const memberLinks = [
+                { url: member.instagramUrl, icon: <InstagramIcon className="h-3.5 w-3.5 text-pink-500" />, label: "Instagram" },
+                { url: member.youtubeUrl, icon: <YoutubeIcon className="h-3.5 w-3.5 text-red-500" />, label: "YouTube" },
+                { url: member.facebookUrl, icon: <FacebookIcon className="h-3.5 w-3.5 text-blue-500" />, label: "Facebook" },
+              ].filter((item) => item.url);
+
+              return (
+                <div
+                  key={member.id}
+                  style={{
+                    backgroundColor: c.cardBackground,
+                    borderColor: c.border,
+                    boxShadow: eff.cardShadow,
+                  }}
+                  className="rounded-[14px] border p-3 shadow-xs"
+                >
+                  <div className="flex items-center gap-3">
+                    <CreatorAvatar
+                      src={member.avatarUrl || null}
+                      name={member.name || "Team"}
+                      className="h-11 w-11 shrink-0 rounded-[12px] object-cover"
+                      fallbackBgClass="bg-[#151933]"
+                      textClassName="text-xs font-black tracking-tight text-white"
+                      style={{ backgroundColor: c.accent }}
+                    />
+
+                    <div className="min-w-0 flex-1">
+                      <p
+                        style={{ color: c.primaryText }}
+                        className="truncate text-sm font-bold leading-tight"
+                      >
+                        {member.name}
+                      </p>
+                      <p
+                        style={{ color: c.secondaryText }}
+                        className="mt-0.5 truncate text-xs font-medium"
+                      >
+                        {member.role || "Team member"}
+                      </p>
+                    </div>
+
+                    {memberLinks.length > 0 && (
+                      <div className="flex shrink-0 items-center gap-1.5">
+                        {memberLinks.map((link) => (
+                          <a
+                            key={link.label}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`${member.name} ${link.label}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (isInformationalMode) e.preventDefault();
+                            }}
+                            style={{ borderColor: c.border, backgroundColor: c.profileBackground }}
+                            className="tap-scale flex h-8 w-8 items-center justify-center rounded-[10px] border transition-all hover:scale-105"
+                          >
+                            {link.icon}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 
       {/* 5. Work with Me Section (Only shown if WhatsApp or Email is available) */}
       {(() => {
+        if (effectiveVisibilitySettings.showCollabGigs === false) return null;
+
         const whatsappNum = mediaKitSettings?.whatsappNumber?.trim() || (profile as any).whatsappNumber?.trim() || "";
         const hasWhatsApp = Boolean(whatsappNum);
 
         const contactEmail = mediaKitSettings?.sponsorEmail?.trim() || profile.email?.trim() || "";
         const hasEmail = Boolean(contactEmail);
+        const activePackages = mediaKitPackages.filter((p) => p.isActive);
 
-        if (!hasWhatsApp && !hasEmail) return null;
+        if (!hasWhatsApp && !hasEmail && activePackages.length === 0) return null;
 
         return (
-          <div id="work-with-me-section" className="relative z-10 mt-6 w-full text-left space-y-2.5">
+          <div id="work-with-me-section" className="relative z-10 order-[40] mt-6 w-full text-left space-y-2.5">
             <div className="space-y-1 px-0.5">
               <h2
                 style={{
@@ -1912,11 +2092,9 @@ export function LivePreviewCard({
             </div>
 
             {/* Services if creator created any */}
-            {visibilitySettings.showCollabGigs !== false && mediaKitPackages.filter((p) => p.isActive).length > 0 && (
+            {activePackages.length > 0 && (
               <div className="space-y-2">
-                {mediaKitPackages
-                  .filter((p) => p.isActive)
-                  .map((pkg) => {
+                {activePackages.map((pkg) => {
                     const formattedPrice = pkg.price
                       ? pkg.price.startsWith("₹") || pkg.price.toLowerCase().includes("contact")
                         ? pkg.price
@@ -2009,8 +2187,8 @@ export function LivePreviewCard({
       })()}
 
       {/* 6. Reviews (Compact, only when reviews exist) */}
-      {visibilitySettings.showReviews !== false && approvedReviews.length > 0 && (
-        <div id="reviews-section" className="relative z-10 mt-6 w-full text-left space-y-2.5">
+      {effectiveVisibilitySettings.showReviews !== false && approvedReviews.length > 0 && (
+        <div id="reviews-section" className="relative z-10 order-[30] mt-6 w-full text-left space-y-2.5">
           <h2
             style={{
               color: c.primaryText,
@@ -2023,7 +2201,7 @@ export function LivePreviewCard({
           </h2>
 
           <div className="space-y-2.5">
-            {approvedReviews.slice(0, 3).map((rev) => {
+            {(typeof reviewsPreviewLimit === "number" ? approvedReviews.slice(0, reviewsPreviewLimit) : approvedReviews).map((rev) => {
               const ratingNum = Number(rev.rating) || 5;
               return (
                 <div
@@ -2065,17 +2243,21 @@ export function LivePreviewCard({
             })}
           </div>
 
-          {approvedReviews.length > 3 && (
+          {allReviewsHref && approvedReviews.length > 0 && (
             <div className="pt-1 text-center">
               <button
                 type="button"
                 onClick={() => {
-                  showToast("Showing verified creator reviews ✨");
+                  if (isInformationalMode) {
+                    showToast("Opens all creator reviews on live profile ✨");
+                    return;
+                  }
+                  router.push(allReviewsHref);
                 }}
                 style={{ color: c.accentText }}
-                className="text-xs sm:text-[13px] font-bold hover:underline cursor-pointer inline-flex items-center gap-1"
+                className="tap-scale inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs sm:text-[13px] font-bold transition-all hover:translate-y-[-1px] hover:opacity-85 cursor-pointer"
               >
-                <span>View all reviews</span>
+                <span>See all reviews</span>
                 <ArrowRight className="h-3.5 w-3.5" />
               </button>
             </div>
@@ -2083,8 +2265,112 @@ export function LivePreviewCard({
         </div>
       )}
 
+      {/* 7. Setup & Gear Section */}
+      {setupList && setupList.filter((it) => it.isActive !== false).length > 0 && (
+        <div id="setup-section" className="relative z-10 order-[45] mt-6 w-full text-left space-y-2.5">
+          <div className="flex items-center justify-between px-0.5">
+            <h2
+              style={{
+                color: c.primaryText,
+                fontFamily: typ.headingFontFamily,
+                fontWeight: 700,
+              }}
+              className="flex items-center gap-2 text-base sm:text-lg font-bold tracking-tight"
+            >
+              <Laptop className="h-4 w-4 opacity-70" style={{ color: c.primaryText }} />
+              Gear &amp; Tools
+            </h2>
+            <span
+              style={{ color: c.mutedText }}
+              className="text-xs sm:text-[13px] font-medium"
+            >
+              {setupList.filter((it) => it.isActive !== false).length} Items
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {setupList
+              .filter((it) => it.isActive !== false)
+              .map((item) => (
+                <div
+                  key={item.id}
+                  style={{
+                    backgroundColor: c.cardBackground,
+                    borderColor: c.border,
+                    boxShadow: eff.cardShadow,
+                  }}
+                  className="rounded-[14px] border p-3 flex flex-col justify-between space-y-2 shadow-2xs transition-all hover:scale-[1.01]"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-1.5 mb-1.5">
+                      <span
+                        style={{
+                          backgroundColor: `${c.border}40`,
+                          color: c.secondaryText,
+                        }}
+                        className="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider"
+                      >
+                        {item.category}
+                      </span>
+                      {item.brand && (
+                        <span
+                          style={{ color: c.mutedText }}
+                          className="text-[10px] font-semibold truncate"
+                        >
+                          {item.brand}
+                        </span>
+                      )}
+                    </div>
+
+                    <h4
+                      style={{ color: c.primaryText }}
+                      className="text-xs sm:text-sm font-bold truncate"
+                      title={item.name}
+                    >
+                      {item.name}
+                    </h4>
+
+                    {item.modelOrPlan && (
+                      <p
+                        style={{ color: c.secondaryText }}
+                        className="text-[11px] truncate mt-0.5"
+                      >
+                        {item.modelOrPlan}
+                      </p>
+                    )}
+
+                    {item.usedFor && (
+                      <p
+                        style={{ color: c.secondaryText }}
+                        className="text-[10px] line-clamp-2 mt-1.5 opacity-90"
+                      >
+                        <span className="font-semibold">Used for: </span>
+                        {item.usedFor}
+                      </p>
+                    )}
+                  </div>
+
+                  {item.linkUrl && (
+                    <a
+                      href={item.linkUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
+                      style={{ color: c.accentText }}
+                      className="inline-flex items-center gap-1 text-[11px] font-bold pt-1 transition-opacity hover:opacity-80"
+                    >
+                      <span>View Gear</span>
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  )}
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
+
       {!containedScroll && (
-        <div className="relative z-10 mt-7 mb-3 flex items-center justify-center select-none">
+        <div className="relative z-10 order-[60] mt-7 mb-3 flex items-center justify-center select-none">
           <a
             href="/"
             target="_blank"
@@ -2099,7 +2385,7 @@ export function LivePreviewCard({
           </a>
         </div>
       )}
-      {containedScroll && <div className="h-[30px] shrink-0" aria-hidden="true" />}
+      {containedScroll && <div className="order-[70] h-[30px] shrink-0" aria-hidden="true" />}
       </div>
 
       {containedScroll && (

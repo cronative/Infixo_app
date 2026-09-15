@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
@@ -20,6 +20,7 @@ export interface ModalProps {
   role?: "dialog" | "alertdialog";
   ariaLabel?: string;
   className?: string;
+  headerClassName?: string;
 }
 
 const SIZE_CLASSES: Record<ModalSize, string> = {
@@ -43,13 +44,9 @@ export function Modal({
   role = "dialog",
   ariaLabel,
   className = "",
+  headerClassName = "",
 }: ModalProps) {
-  const [mounted, setMounted] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Background Scroll Lock & Escape Key Handler
   useEffect(() => {
@@ -75,7 +72,7 @@ export function Modal({
     };
   }, [isOpen, closeOnEscape, onClose]);
 
-  if (!mounted || !isOpen) return null;
+  if (!isOpen || typeof document === "undefined") return null;
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (closeOnBackdropClick && e.target === e.currentTarget) {
@@ -98,7 +95,7 @@ export function Modal({
       >
         {/* Optional Automatic Header */}
         {(title || showCloseButton) && (
-          <div className="flex items-center justify-between border-b border-[#e2e8f0] bg-white px-5 sm:px-6 py-3.5 sm:py-4 shrink-0">
+          <div className={`flex items-center justify-between border-b border-[#e2e8f0] bg-white px-5 sm:px-6 py-3.5 sm:py-4 shrink-0 ${headerClassName}`}>
             <div className="flex items-center gap-3 min-w-0 pr-2">
               {icon && (
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f1f5f9] text-[#151933] shrink-0">

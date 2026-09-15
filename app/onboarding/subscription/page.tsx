@@ -13,21 +13,77 @@ import { useToast } from "@/contexts/ToastContext";
 import { authRepository } from "@/repositories/localRepository";
 import { formatPlanPrice, usePricingCurrency } from "@/lib/pricing";
 
+type LaunchOption = "free" | "starter" | "pro" | "vip";
+
 export default function SubscriptionStepPage() {
   const router = useRouter();
   const { showToast } = useToast();
   const { profile, socials, series, theme, totalAudience } = useCreator();
   const pricingCurrency = usePricingCurrency();
 
-  const [selectedOption, setSelectedOption] = useState<"free" | "pro">("free");
+  const [selectedOption, setSelectedOption] = useState<LaunchOption>("free");
   const [submitting, setSubmitting] = useState(false);
+
+  const launchOptions: Array<{
+    id: LaunchOption;
+    name: string;
+    badge: string;
+    description: string;
+    price: string;
+    period?: string;
+    planKey: PlanKey;
+    planName: string;
+    recommended?: boolean;
+  }> = [
+    {
+      id: "free",
+      name: "Start Free Trial",
+      badge: "7 DAYS PUBLIC",
+      description: "Try your public profile first. After 7 days, upgrade to keep it public.",
+      price: "₹0",
+      planKey: "early_access",
+      planName: "Free Trial",
+    },
+    {
+      id: "starter",
+      name: "Starter Trial",
+      badge: "7 DAYS TRIAL",
+      description: "Keep your profile public with 3 series, 5 custom links, 1 package and 1 review.",
+      price: formatPlanPrice("starter", "monthly", pricingCurrency),
+      period: "/ month",
+      planKey: "starter",
+      planName: "Starter",
+    },
+    {
+      id: "pro",
+      name: "Pro Trial",
+      badge: "7 DAYS TRIAL",
+      description: "20 series, 20 custom links, rate card and default media kit.",
+      price: formatPlanPrice("pro", "monthly", pricingCurrency),
+      period: "/ month",
+      planKey: "creator_pro",
+      planName: "Pro",
+    },
+    {
+      id: "vip",
+      name: "VIP Trial",
+      badge: "RECOMMENDED",
+      description: "Unlimited series, links and reviews, plus custom media kit and premium tools.",
+      price: formatPlanPrice("vip", "monthly", pricingCurrency),
+      period: "/ month",
+      planKey: "creator_VIP",
+      planName: "VIP",
+      recommended: true,
+    },
+  ];
 
   async function handleLaunch() {
     if (submitting) return;
     setSubmitting(true);
 
-    const planKey: PlanKey = selectedOption === "pro" ? "creator_pro" : "early_access";
-    const planName = selectedOption === "pro" ? "Pro" : "Free Trial";
+    const selectedPlan = launchOptions.find((option) => option.id === selectedOption) || launchOptions[0];
+    const planKey: PlanKey = selectedPlan.planKey;
+    const planName = selectedPlan.planName;
     const email = authRepository.getPendingEmail() || profile?.email || "";
 
     try {
@@ -51,10 +107,10 @@ export default function SubscriptionStepPage() {
       // 3. Mark onboarding finished
       OnboardingService.setStep("finish");
 
-      if (selectedOption === "pro") {
-        showToast("🎉 Pro activated! Welcome to your live profile.");
-      } else {
+      if (selectedOption === "free") {
         showToast("🚀 You are LIVE! Welcome to your Inflixo creator page.");
+      } else {
+        showToast(`🎉 ${planName} trial activated! Welcome to your live profile.`);
       }
 
       router.push("/dashboard");
@@ -69,7 +125,7 @@ export default function SubscriptionStepPage() {
 
   return (
     <OnboardingLayout step="subscription">
-      <div className="w-full max-w-[540px] mx-auto pt-4 sm:pt-8 pb-12">
+      <div className="w-full max-w-[500px] mx-auto pt-4 sm:pt-8 pb-12">
         {/* SINGLE UNIFIED WHITE CARD (Matching Step 1, 2, 3 design) */}
         <div className="rounded-[28px] border border-[#E7E3DC] bg-white p-6 sm:p-9 space-y-6 text-left shadow-[0_4px_24px_rgba(0,0,0,0.035)]">
 
@@ -117,81 +173,59 @@ export default function SubscriptionStepPage() {
               Choose Launch Option
             </label>
 
-            {/* Option A: Free Trial */}
-            <div
-              onClick={() => setSelectedOption("free")}
-              className={`rounded-2xl border p-4 flex items-center justify-between transition-all cursor-pointer ${selectedOption === "free"
-                  ? "border-2 border-[#151933] bg-[#f8fafc] shadow-2xs"
-                  : "border-[#e2e8f0] bg-white hover:border-brand-border"
-                }`}
-            >
-              <div className="flex items-center gap-3">
-                <div
-                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-all ${selectedOption === "free"
-                      ? "border-[#151933] bg-[#151933] text-white"
-                      : "border-[#cbd5e1] bg-white"
-                    }`}
-                >
-                  {selectedOption === "free" && <Check className="h-3 w-3 stroke-[3]" />}
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-[#181716]">
-                      Start Free Trial
-                    </span>
-                    <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.2 rounded-full">
-                      7 DAYS PUBLIC
-                    </span>
-                  </div>
-                  <p className="text-xs text-[#64748b] mt-0.5">
-                    Try your public profile first. After 7 days, upgrade to keep it public.
-                  </p>
-                </div>
-              </div>
-              <span className="text-base font-extrabold text-[#181716] shrink-0">
-                ₹0
-              </span>
-            </div>
-
-            {/* Option B: Purchase Pro */}
-            <div
-              onClick={() => setSelectedOption("pro")}
-              className={`rounded-2xl border p-4 flex items-center justify-between transition-all cursor-pointer ${selectedOption === "pro"
-                  ? "border-2 border-[#151933] bg-[#f8fafc] shadow-2xs"
-                  : "border-[#e2e8f0] bg-white hover:border-brand-border"
-                }`}
-            >
-              <div className="flex items-center gap-3">
-                <div
-                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-all ${selectedOption === "pro"
-                      ? "border-[#151933] bg-[#151933] text-white"
-                      : "border-[#cbd5e1] bg-white"
-                    }`}
-                >
-                  {selectedOption === "pro" && <Check className="h-3 w-3 stroke-[3]" />}
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-[#181716]">
-                      Purchase Pro
-                    </span>
-                    <span className="bg-[#151933]/[0.08] text-[#151933] border border-[#151933]/20 text-[10px] font-bold px-2 py-0.2 rounded-full">
-                      PRO PLAN
-                    </span>
-                  </div>
-                  <p className="text-xs text-[#64748b] mt-0.5">
-                    20 series, 20 custom links, rate card and default media kit.
-                  </p>
-                </div>
-              </div>
-              <div className="text-right shrink-0">
-                <span className="text-base font-extrabold text-[#181716] block">
-                  {formatPlanPrice("pro", "monthly", pricingCurrency)}
-                </span>
-                <span className="text-[10px] text-[#64748b] font-medium block">
-                  / month
-                </span>
-              </div>
+            <div className="space-y-2.5">
+              {launchOptions.map((option) => {
+                const isSelected = selectedOption === option.id;
+                return (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => setSelectedOption(option.id)}
+                    className={`w-full rounded-2xl border p-3.5 text-left transition-all cursor-pointer ${isSelected
+                        ? "border-2 border-[#151933] bg-[#f8fafc] shadow-2xs"
+                        : option.recommended
+                          ? "border-[#151933]/30 bg-white hover:border-[#151933]"
+                          : "border-[#e2e8f0] bg-white hover:border-brand-border"
+                      }`}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex min-w-0 items-start gap-3">
+                        <div
+                          className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-all ${isSelected
+                              ? "border-[#151933] bg-[#151933] text-white"
+                              : "border-[#cbd5e1] bg-white"
+                            }`}
+                        >
+                          {isSelected && <Check className="h-3 w-3 stroke-[3]" />}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-sm font-bold text-[#181716]">
+                              {option.name}
+                            </span>
+                            <span className={`${option.recommended ? "bg-[#151933] text-white border-[#151933]" : option.id === "free" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-[#151933]/[0.08] text-[#151933] border-[#151933]/20"} border text-[10px] font-bold px-2 py-0.5 rounded-full`}>
+                              {option.badge}
+                            </span>
+                          </div>
+                          <p className="mt-1 text-xs leading-snug text-[#64748b]">
+                            {option.description}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <span className="block text-base font-extrabold text-[#181716]">
+                          {option.price}
+                        </span>
+                        {option.period && (
+                          <span className="block text-[10px] font-medium text-[#64748b]">
+                            {option.period}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -215,14 +249,14 @@ export default function SubscriptionStepPage() {
                   <Loader2 className="h-4 w-4 animate-spin" />
                   <span>Launching Profile...</span>
                 </>
-              ) : selectedOption === "pro" ? (
+              ) : selectedOption === "free" ? (
                 <>
-                  <span>Purchase Pro &amp; Go Live</span>
+                  <span>Go Live for Free</span>
                   <ArrowRight className="h-4 w-4" />
                 </>
               ) : (
                 <>
-                  <span>Go Live for Free</span>
+                  <span>Start {launchOptions.find((option) => option.id === selectedOption)?.planName || "Plan"} Trial</span>
                   <ArrowRight className="h-4 w-4" />
                 </>
               )}

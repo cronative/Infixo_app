@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { buildStorageKey, isR2Configured, uploadBufferToR2 } from "@/lib/r2Storage";
 
 export type ImageFolder =
   | "avatars"
@@ -69,6 +70,93 @@ export function saveBase64Image(
     return relativeUrl;
   } catch (err) {
     console.error("❌ [imageStorage] Failed to save base64 image to disk:", err);
+    return null;
+  }
+}
+
+function getImageExtension(mimeExtension: string) {
+  let extension = mimeExtension.toLowerCase();
+  if (extension === "jpeg") extension = "jpg";
+  if (extension === "svg+xml") extension = "svg";
+  return extension;
+}
+
+/**
+ * Saves a base64 image to the configured object storage when R2 env is present.
+ * Falls back to local /public/uploads for local development.
+ */
+export async function saveBase64ImageToStorage(
+  dataUrlOrPath: string | null | undefined,
+  folder: ImageFolder = "avatars",
+  prefix: string = "img"
+): Promise<string | null> {
+  if (!dataUrlOrPath || typeof dataUrlOrPath !== "string") {
+    return null;
+  }
+
+  const trimmed = dataUrlOrPath.trim();
+  if (!trimmed) return null;
+
+  if (
+    trimmed.startsWith("/uploads/") ||
+    trimmed.startsWith("/api/assets/") ||
+    trimmed.startsWith("http://") ||
+    trimmed.startsWith("https://") ||
+    trimmed.startsWith("/")
+  ) {
+    return trimmed;
+  }
+
+  const matches = trimmed.match(/^data:image\/([a-zA-Z0-9\+\-]+);base64,(.+)$/);
+  if (!matches) return null;
+
+  const extension = getImageExtension(matches[1]);
+  const fileBuffer = Buffer.from(matches[2], "base64");
+  const contentType = `image/${extension === "jpg" ? "jpeg" : extension}`;
+
+  if (isR2Configured()) {
+    try {
+      const key = buildStorageKey(folder, prefix, extension);
+      return await uploadBufferToR2(key, fileBuffer, contentType);
+    } catch (err) {
+      console.error("❌ [imageStorage] R2 upload failed, falling back to local disk:", err);
+    }
+  }
+
+  return saveBase64Image(trimmed, folder, prefix);
+}
+
+export async function saveImageBufferToStorage(
+  fileBuffer: Buffer,
+  folder: ImageFolder = "avatars",
+  prefix: string = "img",
+  extension: string = "png",
+  contentType: string = "image/png"
+): Promise<string | null> {
+  const cleanExtension = getImageExtension(extension);
+
+  if (isR2Configured()) {
+    try {
+      const key = buildStorageKey(folder, prefix, cleanExtension);
+      return await uploadBufferToR2(key, fileBuffer, contentType);
+    } catch (err) {
+      console.error("❌ [imageStorage] R2 buffer upload failed, falling back to local disk:", err);
+    }
+  }
+
+  try {
+    const uploadsDir = path.join(process.cwd(), "public", "uploads", folder);
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+
+    const fileName = `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${cleanExtension}`;
+    const filePath = path.join(uploadsDir, fileName);
+
+    fs.writeFileSync(filePath, fileBuffer);
+    return `/uploads/${folder}/${fileName}`;
+  } catch (err) {
+    console.error("❌ [imageStorage] Failed to save image buffer:", err);
     return null;
   }
 }

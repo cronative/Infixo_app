@@ -9,6 +9,8 @@ import {
   LogOut,
   Briefcase,
   Star,
+  BarChart3,
+  Laptop,
 } from "lucide-react";
 
 export interface NavItem {
@@ -23,8 +25,10 @@ export const WORKSPACE_NAV: NavItem[] = [
   { href: "/dashboard/profile", label: "Profile", icon: UserRound },
   { href: "/dashboard/series", label: "Series", icon: Layers },
   { href: "/dashboard/socials", label: "Links", icon: Share2 },
+  { href: "/dashboard/setup", label: "Setup", icon: Laptop },
   { href: "/dashboard/mediakit", label: "Collabs", icon: Briefcase },
   { href: "/dashboard/reviews", label: "Reviews", icon: Star },
+  { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/dashboard/themes", label: "Themes", icon: Palette },
 ];
 

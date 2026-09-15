@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
-import { Series } from "@/types";
+import type { RowDataPacket } from "mysql2";
+import { Series, VisibilitySettings } from "@/types";
 
 export interface PublicCreatorInfo {
   displayName: string;
@@ -16,11 +17,80 @@ export interface PublicSeriesData {
   creator: PublicCreatorInfo | null;
 }
 
+interface PublicSeriesRow extends RowDataPacket {
+  id: string;
+  creator_id: string;
+  title: string;
+  poster_url?: string | null;
+  description?: string | null;
+  genres?: string | null;
+  language?: string | null;
+  created_at?: string | Date | null;
+}
+
+interface PublicEpisodeRow extends RowDataPacket {
+  id: string;
+  episode_number: number;
+  title: string;
+  platform?: string | null;
+  external_url?: string | null;
+}
+
+interface PublicCreatorRow extends RowDataPacket {
+  id: string;
+  username?: string | null;
+  display_name?: string | null;
+  photo_url?: string | null;
+  bio?: string | null;
+  category?: string | null;
+  theme_key?: string | null;
+  visibility_settings?: string | null;
+  settings_visibility?: string | null;
+  plan_key?: string | null;
+  sub_status?: string | null;
+  sub_activated_at?: string | Date | null;
+  sub_trial_ends_at?: string | Date | null;
+}
+
+interface TotalFanbaseRow extends RowDataPacket {
+  total?: number | string | null;
+}
+
+function parseVisibilitySettings(value: unknown): VisibilitySettings | null {
+  if (!value) return null;
+  if (typeof value === "object") return value as VisibilitySettings;
+  if (typeof value !== "string") return null;
+
+  try {
+    return JSON.parse(value) as VisibilitySettings;
+  } catch {
+    return null;
+  }
+}
+
+function toDateMs(value?: string | Date | null) {
+  if (!value) return null;
+  const ms = new Date(value).getTime();
+  return Number.isNaN(ms) ? null : ms;
+}
+
+function isTrialPrivate(creator?: PublicCreatorRow | null) {
+  if (!creator || creator.plan_key !== "early_access") return false;
+  if (creator.sub_status && !["active", "trial"].includes(creator.sub_status)) return true;
+
+  const explicitEndMs = toDateMs(creator.sub_trial_ends_at);
+  if (explicitEndMs) return Date.now() > explicitEndMs;
+
+  const activatedMs = toDateMs(creator.sub_activated_at);
+  return activatedMs ? Date.now() - activatedMs > 7 * 24 * 60 * 60 * 1000 : false;
+}
+
 export async function getPublicSeriesData(
   usernameParam: string,
   seriesIdParam: string
 ): Promise<PublicSeriesData> {
-  const cleanUsername = decodeURIComponent(usernameParam || "").trim().toLowerCase();
+  const rawUsername = decodeURIComponent(usernameParam || "").trim();
+  const cleanUsername = rawUsername.replace(/^@/, "").toLowerCase();
   const cleanSeriesId = decodeURIComponent(seriesIdParam || "").trim();
 
   if (!cleanSeriesId) {
@@ -53,7 +123,7 @@ export async function getPublicSeriesData(
 
   // Query MySQL DB
   try {
-    const [seriesRows]: any = await db.query(
+    const [seriesRows] = await db.query<PublicSeriesRow[]>(
       "SELECT * FROM series WHERE id = ?",
       [cleanSeriesId]
     );
@@ -64,37 +134,39 @@ export async function getPublicSeriesData(
 
     const s = seriesRows[0];
 
-    const [epRows]: any = await db.query(
+    const [epRows] = await db.query<PublicEpisodeRow[]>(
       "SELECT * FROM episodes WHERE series_id = ? ORDER BY episode_number ASC",
       [s.id]
     );
 
-    const [creatorRows]: any = await db.query(
-      "SELECT * FROM creators WHERE LOWER(username) = ?",
-      [cleanUsername]
+    const [creatorRows] = await db.query<PublicCreatorRow[]>(
+      `SELECT c.*, cs.visibility_settings AS settings_visibility,
+              sub.plan_key, sub.status AS sub_status,
+              sub.activated_at AS sub_activated_at,
+              sub.trial_ends_at AS sub_trial_ends_at
+       FROM creators c
+       LEFT JOIN creator_settings cs ON c.id = cs.creator_id
+       LEFT JOIN subscriptions sub ON c.id = sub.creator_id
+       WHERE LOWER(c.username) = ? OR c.username = ? OR LOWER(c.username) = ?
+       LIMIT 1`,
+      [cleanUsername, rawUsername, `@${cleanUsername}`]
     );
 
     const creator = creatorRows[0] || null;
 
     // Verify creator exists and owns this series
     if (!creator || String(creator.id) !== String(s.creator_id)) {
-      // If cleanUsername wasn't found directly, try fallback by creator_id if cleanUsername was empty
-      if (!cleanUsername && s.creator_id) {
-        const [idCreatorRows]: any = await db.query(
-          "SELECT * FROM creators WHERE id = ?",
-          [s.creator_id]
-        );
-        if (!idCreatorRows || idCreatorRows.length === 0) {
-          return { series: null, creator: null };
-        }
-      } else {
-        return { series: null, creator: null };
-      }
+      return { series: null, creator: null };
+    }
+
+    const visibilitySettings = parseVisibilitySettings(creator.settings_visibility || creator.visibility_settings);
+    if (visibilitySettings?.showSeries === false || visibilitySettings?.showInSearchEngines === false || isTrialPrivate(creator)) {
+      return { series: null, creator: null };
     }
 
     let totalFanbase = 0;
     if (creator) {
-      const [socRows]: any = await db.query(
+      const [socRows] = await db.query<TotalFanbaseRow[]>(
         "SELECT SUM(follower_count) as total FROM social_accounts WHERE creator_id = ?",
         [creator.id]
       );
@@ -104,7 +176,7 @@ export async function getPublicSeriesData(
     const formattedSeries: Series = {
       id: s.id,
       title: s.title,
-      posterDataUrl: s.poster_url,
+      posterDataUrl: s.poster_url || null,
       description: s.description || "",
       genre: s.genres || "",
       language: s.language || "Hindi",
@@ -114,7 +186,7 @@ export async function getPublicSeriesData(
           id: `sn_1_${s.id}`,
           title: "Season 1",
           seasonNumber: 1,
-          episodes: (epRows || []).map((ep: any) => ({
+          episodes: (epRows || []).map((ep) => ({
             id: ep.id,
             episodeNumber: ep.episode_number,
             title: ep.title,

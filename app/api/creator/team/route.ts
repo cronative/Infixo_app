@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureTeamTables } from "@/lib/teamDb";
-import { saveBase64Image } from "@/lib/imageStorage";
+import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -110,7 +110,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Team name is required" }, { status: 400 });
       }
 
-      const finalTeamLogoUrl = saveBase64Image(teamLogoUrl, "team", "team_logo") || (teamLogoUrl && !teamLogoUrl.startsWith("data:") ? teamLogoUrl : null);
+      const finalTeamLogoUrl = await saveBase64ImageToStorage(teamLogoUrl, "team", "team_logo") || (teamLogoUrl && !teamLogoUrl.startsWith("data:") ? teamLogoUrl : null);
       const teamId = body.id || `team_${Date.now()}`;
       await db.query(
         `INSERT INTO creator_teams (id, creator_id, team_name, team_logo_url, is_active)
@@ -133,7 +133,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Member name and role are required" }, { status: 400 });
       }
 
-      const finalAvatarUrl = saveBase64Image(m.avatarUrl, "team", "member") || (m.avatarUrl && !m.avatarUrl.startsWith("data:") ? m.avatarUrl : null);
+      const finalAvatarUrl = await saveBase64ImageToStorage(m.avatarUrl, "team", "member") || (m.avatarUrl && !m.avatarUrl.startsWith("data:") ? m.avatarUrl : null);
 
       // Ensure team exists first
       const [existingTeam]: any = await db.query("SELECT id FROM creator_teams WHERE creator_id = ? LIMIT 1", [targetId]);

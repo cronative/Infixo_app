@@ -302,6 +302,11 @@ export type ThemeKey =
   | "mountain-mist"
   | "street-food"
   | "cafe-mocha"
+  | "aurora-gradient"
+  | "sunrise-pop"
+  | "candy-flow"
+  | "mint-wave"
+  | "royal-glow"
   | "signature-purple"
   | "midnight"
   | "neon-grid"
@@ -478,6 +483,7 @@ export type PlanKey =
   | "unlimited";
 export type BillingCycle = "monthly" | "yearly";
 export type SubscriptionStatus = "trial" | "active" | "expired" | "cancelled";
+export type SubscriptionPaymentMode = "free_trial" | "one_time_first_month" | "recurring";
 
 export interface PlanMeta {
   key: PlanKey;
@@ -505,6 +511,19 @@ export interface Subscription {
   billingCycle: BillingCycle;
   status: SubscriptionStatus;
   activatedAt: string | null;
+  trialStartedAt?: string | null;
+  trialEndsAt?: string | null;
+  currentPeriodStartedAt?: string | null;
+  currentPeriodEndsAt?: string | null;
+  renewsAt?: string | null;
+  endsAt?: string | null;
+  cancelledAt?: string | null;
+  cancelAtPeriodEnd?: boolean;
+  paymentMode?: SubscriptionPaymentMode;
+  firstMonthOffer?: boolean;
+  firstMonthAmount?: number;
+  firstMonthCurrency?: string;
+  autoRenew?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -613,6 +632,45 @@ export interface CreatorTeam {
   teamName: string;
   teamLogoUrl?: string | null;
   members: TeamMember[];
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Creator Setup / Gear & Tools
+// ---------------------------------------------------------------------------
+
+export type CreatorSetupCategory =
+  | "Camera / Phone"
+  | "Lens"
+  | "Mic"
+  | "Light"
+  | "Tripod / Stand"
+  | "Gimbal / Stabilizer"
+  | "Drone"
+  | "Editing Software"
+  | "AI Tool"
+  | "Design Tool"
+  | "Audio Tool"
+  | "Analytics Tool"
+  | "Scheduling Tool"
+  | "Storage / Backup"
+  | "Studio / Accessory"
+  | "Other";
+
+export interface CreatorSetupItem {
+  id: string;
+  creatorId: string;
+  category: CreatorSetupCategory | string;
+  name: string;
+  brand?: string;
+  modelOrPlan?: string;
+  usedFor?: string;
+  note?: string;
+  linkUrl?: string;
+  imageUrl?: string | null;
+  sortOrder: number;
   isActive: boolean;
   createdAt?: string;
   updatedAt?: string;

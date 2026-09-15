@@ -15,6 +15,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const seriesId = decodeURIComponent(rawSeriesId || "").trim();
 
   const { series, creator } = await getPublicSeriesData(username, seriesId);
+  const canonicalUrl = `https://inflixo.com/${username}/series/${seriesId}`;
+
+  if (!series || !creator) {
+    return {
+      title: "Series not available | Inflixo",
+      description: "This Inflixo creator series is not publicly available right now.",
+      alternates: {
+        canonical: canonicalUrl,
+      },
+      robots: { index: false, follow: false },
+    };
+  }
 
   const creatorName = creator?.displayName || username || "Creator";
   const seriesTitle = series?.title || "Series";
@@ -23,7 +35,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     series?.description?.trim() ||
     `Watch all ${episodeCount} episodes of ${seriesTitle} by ${creatorName} on Inflixo.`;
 
-  const canonicalUrl = `https://inflixo.com/${username}/series/${seriesId}`;
   const ogImage = series?.posterDataUrl || creator?.photoDataUrl || "https://inflixo.com/og-image.png";
 
   return {
@@ -53,6 +64,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       images: [ogImage],
     },
+    robots: { index: true, follow: true },
   };
 }
 

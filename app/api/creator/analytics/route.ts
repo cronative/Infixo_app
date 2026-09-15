@@ -38,7 +38,7 @@ export async function GET(req: Request) {
 
     // 1. Total event counts by type
     const [eventCounts]: any = await db.query(
-      `SELECT event_type, COUNT(*) as total_count, COUNT(DISTINCT ip_address) as unique_count
+      `SELECT event_type, COUNT(*) as total_count, COUNT(DISTINCT COALESCE(visitor_id, ip_address)) as unique_count
        FROM analytics_events
        WHERE creator_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
        GROUP BY event_type`,

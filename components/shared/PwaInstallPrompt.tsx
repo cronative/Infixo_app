@@ -4,51 +4,74 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Download, X, Share, PlusSquare, Sparkles } from "lucide-react";
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
+}
+
+const PWA_DISMISSED_KEY = "inflixo_pwa_prompt_dismissed";
+const PWA_INSTALLED_KEY = "inflixo_pwa_installed";
+
+function isStandaloneMode() {
+  if (typeof window === "undefined") return false;
+  return (
+    window.matchMedia("(display-mode: standalone)").matches ||
+    ("standalone" in window.navigator && window.navigator.standalone === true)
+  );
+}
+
+function isIOSDevice() {
+  if (typeof window === "undefined") return false;
+  const userAgent = window.navigator.userAgent.toLowerCase();
+  return /iphone|ipad|ipod/.test(userAgent) && !("MSStream" in window);
+}
+
 export function PwaInstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
-  const [isStandalone, setIsStandalone] = useState(false);
+  const [isIOS] = useState(isIOSDevice);
+  const [isStandalone] = useState(isStandaloneMode);
 
   useEffect(() => {
     // 1. Check if already installed / running in standalone PWA mode
-    const isRunningStandalone =
-      typeof window !== "undefined" &&
-      (window.matchMedia("(display-mode: standalone)").matches ||
-        (window.navigator as any).standalone === true);
+    if (isStandalone) return;
 
-    if (isRunningStandalone) {
-      setIsStandalone(true);
-      return;
-    }
-
-    // 2. Check if user recently dismissed prompt in this session
-    const isDismissed = sessionStorage.getItem("inflixo_pwa_dismissed");
-    if (isDismissed) return;
+    // 2. Show only once. If user closes/cancels/installs, do not show again.
+    const isDismissed = localStorage.getItem(PWA_DISMISSED_KEY);
+    const isInstalled = localStorage.getItem(PWA_INSTALLED_KEY);
+    if (isDismissed || isInstalled) return;
 
     // 3. Detect iOS device
-    const userAgent = typeof window !== "undefined" ? window.navigator.userAgent.toLowerCase() : "";
-    const isIosDevice = /iphone|ipad|ipod/.test(userAgent) && !(window as any).MSStream;
-    setIsIOS(isIosDevice);
-
     // 4. Capture native Android / Chrome beforeinstallprompt event
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e);
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
       // Wait 1.5s after load to smoothly show bottom banner
       setTimeout(() => {
-        setShowPrompt(true);
+        if (!localStorage.getItem(PWA_DISMISSED_KEY) && !localStorage.getItem(PWA_INSTALLED_KEY)) {
+          setShowPrompt(true);
+        }
       }, 1500);
     };
 
+    const handleAppInstalled = () => {
+      localStorage.setItem(PWA_INSTALLED_KEY, "true");
+      localStorage.setItem(PWA_DISMISSED_KEY, "true");
+      setShowPrompt(false);
+      setDeferredPrompt(null);
+    };
+
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("appinstalled", handleAppInstalled);
 
     // 5. If iOS, show prompt after 2 seconds on mobile
-    if (isIosDevice) {
+    if (isIOS) {
       const isMobile = window.innerWidth <= 768;
       if (isMobile) {
         setTimeout(() => {
-          setShowPrompt(true);
+          if (!localStorage.getItem(PWA_DISMISSED_KEY) && !localStorage.getItem(PWA_INSTALLED_KEY)) {
+            setShowPrompt(true);
+          }
         }, 2000);
       }
     }
@@ -63,23 +86,24 @@ export function PwaInstallPrompt() {
 
     return () => {
       window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", handleAppInstalled);
     };
-  }, []);
+  }, [isIOS, isStandalone]);
 
   const handleInstallClick = async () => {
     if (deferredPrompt) {
-      deferredPrompt.prompt();
+      await deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === "accepted") {
-        setShowPrompt(false);
-      }
+      localStorage.setItem(PWA_DISMISSED_KEY, "true");
+      if (outcome === "accepted") localStorage.setItem(PWA_INSTALLED_KEY, "true");
+      setShowPrompt(false);
       setDeferredPrompt(null);
     }
   };
 
   const handleDismiss = () => {
     setShowPrompt(false);
-    sessionStorage.setItem("inflixo_pwa_dismissed", "true");
+    localStorage.setItem(PWA_DISMISSED_KEY, "true");
   };
 
   if (!showPrompt || isStandalone) return null;

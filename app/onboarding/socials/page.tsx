@@ -145,7 +145,7 @@ export default function SocialsStepPage() {
 
   return (
     <OnboardingLayout step="socials">
-      <div className="w-full max-w-[540px] mx-auto pt-4 sm:pt-8 pb-12">
+      <div className="w-full max-w-[500px] mx-auto pt-4 sm:pt-8 pb-12">
         {/* SINGLE UNIFIED WHITE CARD (Matching Step 1 & Step 2 design) */}
         <div className="rounded-[28px] border border-[#E7E3DC] bg-white p-6 sm:p-9 space-y-6 text-left shadow-[0_4px_24px_rgba(0,0,0,0.035)]">
 
@@ -337,10 +337,9 @@ export default function SocialsStepPage() {
               <Link2 className="h-3.5 w-3.5" />
             </div>
             <div className="space-y-0.5">
-              <h4 className="text-xs font-bold text-[#181716]">Want to add more platforms?</h4>
+              <h4 className="text-xs font-bold text-[#181716]">Want to add more links?</h4>
               <p className="text-[11px] sm:text-xs text-[#64748b] leading-relaxed">
-                You can add TikTok, X (Twitter), Spotify, Twitch, and custom links anytime from{" "}
-                <span className="text-[#151933] font-semibold">Dashboard → Links &amp; Socials</span>.
+                You can create link collections, add more custom links from your dashboard, and continue anytime.
               </p>
             </div>
           </div>

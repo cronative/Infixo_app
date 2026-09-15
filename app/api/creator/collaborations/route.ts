@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureCollaborationsTable } from "@/lib/collaborationsDb";
-import { saveBase64Image } from "@/lib/imageStorage";
+import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -95,7 +95,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Brand name is required" }, { status: 400 });
     }
 
-    const finalLogoUrl = saveBase64Image(c.brandLogoUrl, "collaborations", "collab_logo") || (c.brandLogoUrl && !c.brandLogoUrl.startsWith("data:") ? c.brandLogoUrl : null);
+    const finalLogoUrl = await saveBase64ImageToStorage(c.brandLogoUrl, "collaborations", "collab_logo") || (c.brandLogoUrl && !c.brandLogoUrl.startsWith("data:") ? c.brandLogoUrl : null);
     const collabId = c.id || `collab_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     await db.query(
       `INSERT INTO creator_collaborations (id, creator_id, brand_name, brand_logo_url, campaign_title, campaign_url, description, sort_order, is_active)

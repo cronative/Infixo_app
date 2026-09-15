@@ -7,7 +7,6 @@ import { Logo } from "@/components/shared/Logo";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { copyToClipboard } from "@/lib/copyToClipboard";
-import { getFreeTrialStatus, getTrialHeaderMessage } from "@/lib/trialStatus";
 
 export function DashboardMobileHeader({
   title,
@@ -19,11 +18,9 @@ export function DashboardMobileHeader({
   onOpenDrawer?: () => void;
 }) {
   const router = useRouter();
-  const { profile, subscription } = useCreator();
+  const { profile } = useCreator();
   const { showToast } = useToast();
   const handleStr = profile.username || "username";
-  const trialStatus = getFreeTrialStatus(subscription);
-  const headerMessage = getTrialHeaderMessage(subscription);
 
   const handleCopy = async () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
@@ -87,15 +84,6 @@ export function DashboardMobileHeader({
           )}
         </div>
       </div>
-
-      {trialStatus.shouldWarn && !title && (
-        <div className="mt-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-left">
-          <p className="text-[11px] font-semibold leading-snug text-[#92400E]">{headerMessage}</p>
-          <Link href="/dashboard/subscription" className="mt-1 inline-flex text-[11px] font-bold text-[#151933] underline">
-            View plans
-          </Link>
-        </div>
-      )}
     </header>
   );
 }

@@ -24,7 +24,20 @@ export async function ensureAnalyticsTable() {
     try {
       await db.query("ALTER TABLE analytics_events ADD COLUMN metadata JSON DEFAULT NULL");
     } catch {}
-  } catch (err: any) {
-    console.warn("ensureAnalyticsTable error:", err.message);
+    try {
+      await db.query("ALTER TABLE analytics_events ADD COLUMN event_id VARCHAR(128) DEFAULT NULL");
+    } catch {}
+    try {
+      await db.query("ALTER TABLE analytics_events ADD COLUMN visitor_id VARCHAR(128) DEFAULT NULL");
+    } catch {}
+    try {
+      await db.query("ALTER TABLE analytics_events ADD COLUMN source VARCHAR(50) DEFAULT NULL");
+    } catch {}
+    try {
+      await db.query("ALTER TABLE analytics_events ADD UNIQUE KEY unique_analytics_event_id (event_id)");
+    } catch {}
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown analytics schema error";
+    console.warn("ensureAnalyticsTable error:", message);
   }
 }
