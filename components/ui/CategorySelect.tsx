@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Check, ChevronDown, Sparkles, Tag, X } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Check, ChevronDown, Search, Tag, X } from "lucide-react";
 import { CREATOR_TAXONOMY } from "@/data/categories";
+import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 
 interface CategorySelectProps {
   value: string | null; // Comma separated string e.g. "Food & Cooking, Travel"
@@ -20,27 +21,29 @@ export function CategorySelect({
   max = 3,
 }: CategorySelectProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const selectedCategories = value
     ? value.split(",").map((c) => c.trim()).filter(Boolean)
     : [];
 
-  const isOtherSelected = selectedCategories.includes("Other");
   const selectedLabel = selectedCategories.length > 0
     ? selectedCategories.map((category) => category === "Other" && customValue ? customValue : category).join(", ")
-    : "Select creator categories";
+    : "Select creator type";
 
-  useEffect(() => {
-    function handlePointerDown(event: PointerEvent) {
-      if (!dropdownRef.current?.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
+  const filteredTaxonomy = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return CREATOR_TAXONOMY;
 
-    document.addEventListener("pointerdown", handlePointerDown);
-    return () => document.removeEventListener("pointerdown", handlePointerDown);
-  }, []);
+    return CREATOR_TAXONOMY
+      .map((group) => ({
+        ...group,
+        subtypes: group.subtypes.filter((type) =>
+          type.toLowerCase().includes(query) || group.category.toLowerCase().includes(query)
+        ),
+      }))
+      .filter((group) => group.subtypes.length > 0);
+  }, [searchQuery]);
 
   function toggleCategory(catName: string) {
     let updated: string[];
@@ -50,19 +53,12 @@ export function CategorySelect({
       if (selectedCategories.length >= max) return; // Limit max 3
       updated = [...selectedCategories, catName];
     }
-    const updatedCustom = updated.includes("Other") ? customValue || "" : "";
-    onChange(updated.join(", "), updatedCustom);
+    onChange(updated.join(", "), "");
   }
 
   function removeCategory(catName: string) {
     const updated = selectedCategories.filter((c) => c !== catName);
-    const updatedCustom = updated.includes("Other") ? customValue || "" : "";
-    onChange(updated.join(", "), updatedCustom);
-  }
-
-  function handleCustomChange(newCustomText: string) {
-    const trimmed = newCustomText.slice(0, 40); // Max 40 chars
-    onChange(selectedCategories.join(", "), trimmed);
+    onChange(updated.join(", "), "");
   }
 
   return (
@@ -71,9 +67,9 @@ export function CategorySelect({
         <div>
           <label className="text-sm font-extrabold text-[#151933] flex items-center gap-1.5">
             <Tag className="h-4 w-4 text-[#151933]" />
-            What do you create?
+            What kind of creator are you (profession/type)?
           </label>
-          <p className="text-xs italic text-[#64748b]">Choose up to {max} categories that best describe your content.</p>
+          <p className="text-xs italic text-[#64748b]">Choose up to {max} creator types that best describe you.</p>
         </div>
         <span className="bg-[#151933]/[0.08] text-[#151933] border border-[#151933]/20 text-xs font-semibold px-2.5 py-0.5 rounded-full shrink-0">
           {selectedCategories.length} / {max} selected
@@ -82,7 +78,7 @@ export function CategorySelect({
 
       {error && <p className="text-xs font-bold text-rose-500">{error}</p>}
 
-      <div ref={dropdownRef} className="relative space-y-2">
+      <div className="space-y-2">
         <button
           type="button"
           onClick={() => setIsOpen((open) => !open)}
@@ -116,74 +112,126 @@ export function CategorySelect({
           </div>
         )}
 
-        {isOpen && (
-          <div className="absolute left-0 right-0 z-40 mt-1 overflow-hidden rounded-xl border border-[#dbe3ee] bg-white shadow-xl shadow-[#151933]/10">
-            <div className="border-b border-[#e2e8f0] bg-[#f8fafc] px-3 py-2">
-              <p className="text-[11px] font-bold text-[#475569]">
-                Select up to {max}. Tap again to remove.
-              </p>
+        <Modal
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          size="xl"
+          title="Choose creator type"
+          description={`Select up to ${max} professions/types that best describe you.`}
+          icon={<Tag className="h-4 w-4" />}
+          className="max-sm:h-[100dvh] max-sm:max-h-[100dvh] max-sm:rounded-none"
+          headerClassName="px-4 sm:px-5 py-3"
+        >
+          <div className="flex min-h-0 flex-1 flex-col">
+            <div className="border-b border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 sm:px-5">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#64748b]" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search actor, singer, YouTuber, food reviewer..."
+                  className="h-10 w-full rounded-xl border border-[#dbe3ee] bg-white pl-9 pr-3 text-sm font-semibold text-[#151933] placeholder:text-[#94a3b8] focus:border-[#151933] focus:outline-none focus:ring-2 focus:ring-[#151933]/10"
+                  autoFocus
+                />
+              </div>
+              <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+                <p className="text-[11px] font-bold text-[#475569]">
+                  Tap selected type again to remove.
+                </p>
+                <span className="rounded-full border border-[#151933]/20 bg-[#151933]/[0.08] px-2.5 py-0.5 text-xs font-bold text-[#151933]">
+                  {selectedCategories.length} / {max} selected
+                </span>
+              </div>
             </div>
-            <div className="max-h-56 overflow-y-auto p-1.5">
-              {CREATOR_TAXONOMY.map((item) => {
-                const isSelected = selectedCategories.includes(item.category);
-                const isMaxReached = !isSelected && selectedCategories.length >= max;
 
-                return (
-                  <button
-                    key={item.category}
-                    type="button"
-                    disabled={isMaxReached}
-                    onClick={() => toggleCategory(item.category)}
-                    className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-all cursor-pointer ${isSelected
-                      ? "bg-[#151933]/[0.06] text-[#151933]"
-                      : isMaxReached
-                        ? "cursor-not-allowed opacity-40"
-                        : "text-[#475569] hover:bg-[#f1f5f9] hover:text-[#151933]"
-                      }`}
-                  >
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#f8fafc] text-sm">
-                      {item.emoji}
-                    </span>
-                    <span className="min-w-0 flex-1 truncate text-sm font-semibold">
-                      {item.category}
-                    </span>
-                    <span
-                      className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${isSelected
-                        ? "border-[#151933] bg-[#151933] text-white"
-                        : "border-[#cbd5e1] bg-white"
-                        }`}
-                    >
-                      {isSelected && <Check className="h-3 w-3 stroke-[3]" />}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+            <ModalBody className="p-3 sm:p-4">
+              {selectedCategories.length > 0 && (
+                <div className="mb-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-2.5">
+                  <p className="mb-2 text-[10px] font-extrabold uppercase tracking-[0.12em] text-[#64748b]">
+                    Selected creator types
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {selectedCategories.map((category) => (
+                      <button
+                        key={category}
+                        type="button"
+                        onClick={() => removeCategory(category)}
+                        className="inline-flex min-h-7 items-center gap-1.5 rounded-full border border-[#151933]/20 bg-white px-2.5 py-1 text-[11px] font-bold text-[#151933] transition-colors hover:bg-[#f1f5f9]"
+                      >
+                        <span>{category === "Other" && customValue ? customValue : category}</span>
+                        <X className="h-3 w-3 stroke-[3] text-[#64748b]" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {filteredTaxonomy.length === 0 ? (
+                <div className="rounded-xl border border-dashed border-[#cbd5e1] px-3 py-8 text-center text-xs font-semibold text-[#64748b]">
+                  No creator types found.
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {filteredTaxonomy.map((group) => (
+                    <div key={group.category} className="rounded-xl border border-[#e2e8f0] bg-white p-2.5">
+                      <div className="mb-2 flex items-center gap-2 px-1">
+                        <span className="text-sm">{group.emoji}</span>
+                        <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-[#64748b]">
+                          {group.category}
+                        </p>
+                      </div>
+                      <div className="grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
+                        {group.subtypes.map((type) => {
+                          const isSelected = selectedCategories.includes(type);
+                          const isMaxReached = !isSelected && selectedCategories.length >= max;
+
+                          return (
+                            <button
+                              key={`${group.category}-${type}`}
+                              type="button"
+                              disabled={isMaxReached}
+                              onClick={() => toggleCategory(type)}
+                              className={`flex min-h-10 w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left transition-all cursor-pointer ${
+                                isSelected
+                                  ? "bg-[#151933] text-white shadow-xs"
+                                  : isMaxReached
+                                    ? "cursor-not-allowed opacity-35"
+                                    : "bg-[#f8fafc] text-[#475569] hover:bg-[#f1f5f9] hover:text-[#151933]"
+                              }`}
+                            >
+                              <span
+                                className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
+                                  isSelected ? "border-white bg-white text-[#151933]" : "border-[#cbd5e1] bg-white"
+                                }`}
+                              >
+                                {isSelected && <Check className="h-3 w-3 stroke-[3]" />}
+                              </span>
+                              <span className="min-w-0 flex-1 text-xs font-bold leading-snug">
+                                {type}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </ModalBody>
+
+            <ModalFooter className="px-4 sm:px-5 py-2.5">
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="rounded-xl bg-[#151933] px-5 py-2 text-xs font-bold text-white shadow-xs transition-all hover:-translate-y-0.5 hover:bg-brand-hover"
+              >
+                Done
+              </button>
+            </ModalFooter>
           </div>
-        )}
+        </Modal>
       </div>
-
-      {/* Custom input field when "Other" is selected */}
-      {isOtherSelected && (
-        <div className="animate-fade-in space-y-1.5 rounded-xl border border-[#dbe3ee] bg-[#f8fafc] p-3">
-          <label className="block text-xs font-extrabold uppercase tracking-wider text-indigo-900 flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-[#151933]" />
-            What type of content do you create? <span className="text-rose-500">*</span>
-          </label>
-          <input
-            type="text"
-            maxLength={40}
-            placeholder="e.g. Magic, Farming, ASMR, Collectibles, Local Culture"
-            value={customValue || ""}
-            onChange={(e) => handleCustomChange(e.target.value)}
-            className="w-full rounded-xl border border-[#dbe3ee] bg-white px-3.5 py-2 text-xs font-bold text-slate-900 placeholder:text-slate-400 focus:border-[#151933] focus:outline-none focus:ring-2 focus:ring-[#151933]/10"
-          />
-          <div className="flex justify-between text-[10px] text-slate-500">
-            <span>Will be displayed on your public profile instead of &ldquo;Other&rdquo;.</span>
-            <span>{(customValue || "").length} / 40</span>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

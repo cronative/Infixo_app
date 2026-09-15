@@ -79,11 +79,20 @@ export const metadata: Metadata = {
     url: "https://inflixo.com",
     siteName: "Inflixo",
     type: "website",
+    images: [
+      {
+        url: "https://inflixo.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Inflixo — One Link for Your Content & Fanbase",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Inflixo — One Link for Your Content & Fanbase",
     description: "Build your creator page, bring your social fanbase together, and organize your content into binge-worthy series.",
+    images: ["https://inflixo.com/og-image.png"],
   },
 };
 
@@ -94,6 +103,27 @@ export const viewport: Viewport = {
   userScalable: false,
   viewportFit: "cover",
   themeColor: "#151933",
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://inflixo.com/#organization",
+      "name": "Inflixo",
+      "url": "https://inflixo.com",
+      "logo": "https://inflixo.com/logo-square.png",
+      "description": "Build your creator page, bring your social fanbase together, and organize your content into binge-worthy series.",
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://inflixo.com/#website",
+      "url": "https://inflixo.com",
+      "name": "Inflixo",
+      "publisher": { "@id": "https://inflixo.com/#organization" },
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -116,6 +146,10 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="mobile-web-app-capable" content="yes" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         {/* Google Analytics 4 (GA4) with Consent Mode */}
         <Script
           strategy="afterInteractive"

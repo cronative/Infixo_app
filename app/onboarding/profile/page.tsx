@@ -19,28 +19,17 @@ export default function ProfileStepPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [submitting, setSubmitting] = useState(false);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [customOtherText, setCustomOtherText] = useState("");
   const [errors, setErrors] = useState<{
     displayName?: string;
     categories?: string;
   }>({});
 
-  // Sync initial categories from profile
-  useEffect(() => {
-    if (profile?.category) {
-      const list = profile.category
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
-      if (list.length > 0) {
-        setSelectedCategories(list);
-      }
-    }
-    if (profile?.customCategory) {
-      setCustomOtherText(profile.customCategory);
-    }
-  }, [profile?.category, profile?.customCategory]);
+  const selectedCategories = profile?.category
+    ? profile.category
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean)
+    : [];
 
   // If no username claimed yet, redirect to step 1
   useEffect(() => {
@@ -75,7 +64,7 @@ export default function ProfileStepPage() {
     }
 
     if (selectedCategories.length === 0) {
-      newErrors.categories = "Please select at least 1 category";
+      newErrors.categories = "Please select at least 1 creator type";
     }
 
     setErrors(newErrors);
@@ -97,13 +86,13 @@ export default function ProfileStepPage() {
         ...profile,
         displayName,
         category: selectedCategories.join(", "),
-        customCategory: selectedCategories.includes("Other") ? customOtherText.trim() : "",
+        customCategory: "",
       });
 
       OnboardingService.setStep("socials");
       showToast("Profile saved! Next: Connect your social accounts 🚀");
       router.push("/onboarding/socials");
-    } catch (err: any) {
+    } catch (err: unknown) {
       debugError("ONBOARDING_PROFILE", "Failed to save profile:", err);
       showToast("Couldn't save profile details. Let's try again! 💡", "error");
     } finally {
@@ -238,18 +227,13 @@ export default function ProfileStepPage() {
             )}
           </div>
 
-          {/* 5. What do you create? */}
+          {/* 5. Creator profession/type */}
           <CategorySelect
             value={profile?.category || selectedCategories.join(", ")}
-            customValue={profile?.customCategory || customOtherText}
+            customValue={profile?.customCategory || ""}
             error={errors.categories}
             max={3}
             onChange={(category, customCategory) => {
-              const nextCategories = category
-                ? category.split(",").map((item) => item.trim()).filter(Boolean)
-                : [];
-              setSelectedCategories(nextCategories);
-              setCustomOtherText(customCategory || "");
               updateProfile({
                 category: category || null,
                 customCategory: customCategory || "",

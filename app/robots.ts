@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/", "/dashboard/", "/onboarding/"],
+      disallow: ["/api/", "/dashboard/", "/onboarding/", "/verify-otp/", "/review/"],
     },
     sitemap: "https://inflixo.com/sitemap.xml",
   };
