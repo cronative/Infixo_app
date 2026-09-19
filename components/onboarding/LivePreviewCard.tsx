@@ -1437,12 +1437,16 @@ export function LivePreviewCard({
       >
         <Link
           href="/"
-          style={{ backgroundColor: "#043084" }}
-          className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 shrink-0 cursor-pointer select-none items-center justify-center rounded-[10px] border border-white/20 text-white shadow-xs transition-all hover:scale-105"
+          style={{
+            backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.cardBackground,
+            borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : c.border,
+            color: usesDarkControls ? "#FFFFFF" : c.primaryText,
+          }}
+          className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 shrink-0 cursor-pointer select-none items-center justify-center rounded-[10px] border shadow-xs transition-all hover:scale-105"
           title="Inflixo"
           aria-label="Inflixo"
         >
-          <InflixoLogoIcon light className="h-5 w-5 sm:h-5.5 sm:w-5.5 object-contain" />
+          <InflixoLogoIcon light={usesDarkControls} className="h-5 w-5 sm:h-5.5 sm:w-5.5 object-contain" />
         </Link>
 
         {!isOnboardingMode && (
