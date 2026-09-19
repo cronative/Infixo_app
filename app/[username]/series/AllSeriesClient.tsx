@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, UserX } from "lucide-react";
 import { ThemeCard } from "@/themes/registry";
@@ -27,36 +27,32 @@ const EMPTY_PROFILE: CreatorProfile = {
   updatedAt: new Date().toISOString(),
 };
 
-function isFreeTrialExpired(subscription?: {
-  planKey?: string;
-  status?: string;
-  activatedAt?: string | Date | null;
-  trialEndsAt?: string | Date | null;
-  endsAt?: string | Date | null;
-  currentPeriodEndsAt?: string | Date | null;
-}) {
-  if (!subscription || subscription.planKey !== "early_access") return false;
-  if (subscription.status && !["active", "trial"].includes(subscription.status)) return true;
+function isFreeTrialExpired(subscription?: { status?: string; plan_key?: string; activated_at?: string; trial_ends_at?: string } | null) {
+  if (!subscription) return false;
+  if (subscription.plan_key && subscription.plan_key !== "free_trial") return false;
+  if (subscription.status && subscription.status !== "active") return true;
 
-  const explicitEnd = subscription.trialEndsAt || subscription.endsAt || subscription.currentPeriodEndsAt;
-  const explicitEndMs = explicitEnd ? new Date(explicitEnd).getTime() : Number.NaN;
-  if (!Number.isNaN(explicitEndMs)) return Date.now() > explicitEndMs;
+  const toDateMs = (val?: string) => {
+    if (!val) return 0;
+    const direct = new Date(val).getTime();
+    if (!Number.isNaN(direct)) return direct;
+    return new Date(val.replace(" ", "T") + "Z").getTime() || 0;
+  };
 
-  if (!subscription.activatedAt) return false;
-  const activatedMs = new Date(subscription.activatedAt).getTime();
-  if (Number.isNaN(activatedMs)) return false;
+  const explicitEndMs = toDateMs(subscription.trial_ends_at);
+  if (explicitEndMs) return Date.now() > explicitEndMs;
 
-  return Date.now() - activatedMs > 7 * 24 * 60 * 60 * 1000;
+  const activatedMs = toDateMs(subscription.activated_at);
+  return activatedMs ? Date.now() - activatedMs > 7 * 24 * 60 * 60 * 1000 : false;
 }
 
 function buildSocialAccounts(rows: Array<Record<string, unknown>>): SocialAccounts {
   const accounts: SocialAccounts = { ...EMPTY_SOCIAL_ACCOUNTS };
-
   rows.forEach((row) => {
-    const platform = String(row.platform || "");
+    const platform = String(row.platform || "").toLowerCase();
     const handle = String(row.username || row.accountName || "");
     const cleanHandle = handle.replace(/^@/, "");
-    const count = Number(row.followerCount || 0);
+    const count = Number(row.followerCount || row.followers || 0);
 
     if (platform === "instagram") {
       accounts.instagram = {
@@ -81,7 +77,6 @@ function buildSocialAccounts(rows: Array<Record<string, unknown>>): SocialAccoun
       };
     }
   });
-
   return accounts;
 }
 
@@ -90,6 +85,7 @@ interface SeriesCacheData {
   socials: SocialAccounts;
   series: Series[];
   theme: ThemeKey;
+  cachedAt: number;
 }
 
 // Module-level in-memory cache: prevents white screen & re-fetching on back navigation
@@ -110,6 +106,8 @@ export default function AllSeriesClient() {
   const [theme, setTheme] = useState<ThemeKey>(cachedData?.theme || "minimal-white");
   const [loaded, setLoaded] = useState(Boolean(cachedData));
   const [notFound, setNotFound] = useState(false);
+  const fetchingRef = useRef(false);
+  const prefetchedUserRef = useRef<string | null>(null);
 
   useEffect(() => {
     async function loadSeriesPage() {
@@ -118,6 +116,21 @@ export default function AllSeriesClient() {
         setLoaded(true);
         return;
       }
+
+      // If we have fresh cached data (less than 60s old), skip network fetch completely
+      const existingCache = seriesListingMemoryCache.get(username);
+      if (existingCache && Date.now() - existingCache.cachedAt < 60000) {
+        setProfile(existingCache.profile);
+        setSocials(existingCache.socials);
+        setSeries(existingCache.series);
+        setTheme(existingCache.theme);
+        setLoaded(true);
+        setNotFound(false);
+        return;
+      }
+
+      if (fetchingRef.current) return;
+      fetchingRef.current = true;
 
       if (username === "demo_creator") {
         const {
@@ -135,8 +148,10 @@ export default function AllSeriesClient() {
           socials: EXPERT_DEMO_SOCIALS,
           series: EXPERT_DEMO_SERIES,
           theme: EXPERT_DEMO_THEME,
+          cachedAt: Date.now(),
         });
         setLoaded(true);
+        fetchingRef.current = false;
         return;
       }
 
@@ -155,6 +170,7 @@ export default function AllSeriesClient() {
         ) {
           setNotFound(true);
           setLoaded(true);
+          fetchingRef.current = false;
           return;
         }
 
@@ -169,29 +185,32 @@ export default function AllSeriesClient() {
         setSeries(freshSeries);
         setNotFound(false);
 
-        // Update in-memory cache for instant zero-latency back navigation
+        // Update in-memory cache with timestamp
         seriesListingMemoryCache.set(username, {
           profile: freshProfile,
           socials: freshSocials,
           series: freshSeries,
           theme: freshTheme,
+          cachedAt: Date.now(),
         });
       } catch (error) {
         console.warn("Failed to load all series page:", error);
-        if (!cachedData) {
+        if (!seriesListingMemoryCache.has(username)) {
           setNotFound(true);
         }
       } finally {
         setLoaded(true);
+        fetchingRef.current = false;
       }
     }
 
     loadSeriesPage();
-  }, [username, cachedData]);
+  }, [username]);
 
-  // Pre-fetch all series detail pages and main profile for instant navigation
+  // Pre-fetch all series detail pages and main profile for instant navigation (only once per username)
   useEffect(() => {
-    if (series && series.length > 0 && username) {
+    if (series && series.length > 0 && username && prefetchedUserRef.current !== username) {
+      prefetchedUserRef.current = username;
       series.forEach((s) => {
         router.prefetch(`/${username}/series/${s.id}`);
       });

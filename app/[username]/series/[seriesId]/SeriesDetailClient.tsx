@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -95,10 +95,14 @@ export function SeriesDetailClient({
   const [coverImageError, setCoverImageError] = useState(false);
   const [activeSeasonIndex, setActiveSeasonIndex] = useState<number>(0);
 
-  // Warm up and prefetch series listing & profile routes for instant back navigation
+  const prefetchedBackRef = useRef(false);
+
+  // Warm up and prefetch series listing & profile routes for instant back navigation (runs once)
   useEffect(() => {
+    if (prefetchedBackRef.current) return;
     const userHandle = creator?.username || initialUsername;
     if (userHandle) {
+      prefetchedBackRef.current = true;
       router.prefetch(`/${userHandle}/series`);
       router.prefetch(`/${userHandle}`);
     }
