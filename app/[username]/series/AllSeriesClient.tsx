@@ -27,23 +27,34 @@ const EMPTY_PROFILE: CreatorProfile = {
   updatedAt: new Date().toISOString(),
 };
 
-function isFreeTrialExpired(subscription?: { status?: string; plan_key?: string; activated_at?: string; trial_ends_at?: string } | null) {
-  if (!subscription) return false;
-  if (subscription.plan_key && subscription.plan_key !== "free_trial") return false;
-  if (subscription.status && subscription.status !== "active") return true;
+function isFreeTrialExpired(subscription?: {
+  planKey?: string;
+  status?: string;
+  activatedAt?: string | Date | null;
+  trialEndsAt?: string | Date | null;
+  endsAt?: string | Date | null;
+  currentPeriodEndsAt?: string | Date | null;
+}) {
+  if (!subscription || subscription.planKey !== "early_access") return false;
+  if (subscription.status && !["active", "trial"].includes(subscription.status)) return true;
 
-  const toDateMs = (val?: string) => {
-    if (!val) return 0;
-    const direct = new Date(val).getTime();
-    if (!Number.isNaN(direct)) return direct;
-    return new Date(val.replace(" ", "T") + "Z").getTime() || 0;
-  };
+  const nowMs = Date.now();
+  const trialEndMs = subscription.trialEndsAt ? new Date(subscription.trialEndsAt).getTime() : 0;
+  if (trialEndMs && nowMs > trialEndMs) return true;
 
-  const explicitEndMs = toDateMs(subscription.trial_ends_at);
-  if (explicitEndMs) return Date.now() > explicitEndMs;
+  const periodEndMs = subscription.currentPeriodEndsAt
+    ? new Date(subscription.currentPeriodEndsAt).getTime()
+    : subscription.endsAt
+      ? new Date(subscription.endsAt).getTime()
+      : 0;
+  if (periodEndMs && nowMs > periodEndMs) return true;
 
-  const activatedMs = toDateMs(subscription.activated_at);
-  return activatedMs ? Date.now() - activatedMs > 7 * 24 * 60 * 60 * 1000 : false;
+  if (subscription.activatedAt) {
+    const actMs = new Date(subscription.activatedAt).getTime();
+    const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+    if (nowMs - actMs > thirtyDaysMs) return true;
+  }
+  return false;
 }
 
 function buildSocialAccounts(rows: Array<Record<string, unknown>>): SocialAccounts {
