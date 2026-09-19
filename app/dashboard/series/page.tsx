@@ -1110,22 +1110,37 @@ export default function DashboardContentPage() {
   return (
     <div className="space-y-4 sm:space-y-4.5 w-full pb-8 text-left">
       {/* 1. PAGE HEADER: Series + description + Create Series button */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#e2e8f0] pb-4">
         <div>
-          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#043084]">
-            Series
-          </h1>
-          <p className="text-xs sm:text-sm text-[#475569] font-normal mt-0.5">
+          <div className="flex items-center gap-2">
+            <h1 className="font-display text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+              Series
+            </h1>
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#043084]/10 px-2.5 py-0.5 text-xs font-bold text-[#043084]">
+              <Film className="h-3 w-3" />
+              <span>{series.length} {series.length === 1 ? "Series" : "Series"}</span>
+            </span>
+          </div>
+          <p className="mt-1 text-xs sm:text-sm font-medium text-slate-500">
             Group your related video links from Instagram, YouTube, and Facebook into one clean collection fans can follow easily.
           </p>
         </div>
 
-        <div className="shrink-0 self-start sm:self-auto w-full sm:w-auto">
+        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+          <a
+            href={publicSeriesListingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#043084] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
+          >
+            <span>Live Series</span>
+            <ExternalLink className="h-3.5 w-3.5" />
+          </a>
           <button
             type="button"
             onClick={handleOpenCreateSeries}
             disabled={seriesUsage.isLimitReached}
-            className={`w-full sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 px-4 rounded-lg text-xs font-semibold transition-all hover:shadow-xs cursor-pointer ${seriesUsage.isLimitReached
+            className={`inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold transition-all shadow-2xs cursor-pointer ${seriesUsage.isLimitReached
               ? "bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b] opacity-60 cursor-not-allowed"
               : "bg-[#043084] hover:bg-brand-hover text-white"
               }`}

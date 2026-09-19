@@ -94,9 +94,9 @@ function TrialAccessBar() {
   const cta = trialStatus.isExpired ? "Choose a plan" : "Keep access";
 
   return (
-    <div className="sticky top-0 z-40 flex h-11 shrink-0 items-center justify-center border-b border-black bg-[#111111] px-4 text-white shadow-[0_1px_0_rgba(255,255,255,0.08)]">
+    <div className="sticky top-0 z-40 flex h-11 shrink-0 items-center justify-center border-b border-[#032363] bg-[#043084] px-4 text-white shadow-[0_1px_0_rgba(255,255,255,0.08)]">
       <div className="flex w-full max-w-5xl items-center justify-center gap-3 text-center">
-        <span className="hidden h-5 w-5 items-center justify-center rounded-md text-[#38E869] sm:inline-flex">
+        <span className="hidden h-5 w-5 items-center justify-center rounded-md text-white sm:inline-flex">
           <Zap className="h-4 w-4 fill-current" />
         </span>
         <p className="truncate text-sm font-black tracking-tight sm:text-base">
@@ -104,7 +104,7 @@ function TrialAccessBar() {
         </p>
         <Link
           href="/dashboard/subscription"
-          className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border border-[#38E869] px-3 text-xs font-black text-[#38E869] shadow-[0_0_0_1px_rgba(56,232,105,0.16)] transition-all hover:-translate-y-0.5 hover:bg-[#38E869] hover:text-[#111111] sm:px-4 sm:text-sm"
+          className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border border-white/60 px-3 text-xs font-black text-white shadow-[0_0_0_1px_rgba(255,255,255,0.12)] transition-all hover:-translate-y-0.5 hover:bg-white hover:text-[#043084] sm:px-4 sm:text-sm"
         >
           <Zap className="h-3.5 w-3.5 fill-current" />
           <span>{cta}</span>

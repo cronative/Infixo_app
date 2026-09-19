@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import {
   Check,
   ExternalLink,
   Sparkles,
   Loader2,
+  Palette,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -186,24 +188,63 @@ export default function DashboardThemesPage() {
   };
 
   return (
-    <div className="w-full pb-8 text-left">
+    <div className="w-full pb-8 text-left space-y-5">
+      {/* 1. Full-Width Page Header with Divider */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#e2e8f0] pb-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="font-display text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+              Themes &amp; Styling
+            </h1>
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#043084]/10 px-2.5 py-0.5 text-xs font-bold text-[#043084]">
+              <Sparkles className="h-3 w-3" />
+              <span>{previewThemeMeta.name}</span>
+            </span>
+          </div>
+          <p className="mt-1 text-xs sm:text-sm font-medium text-slate-500">
+            Choose the aesthetic of your public profile. Preview in real-time, then apply when it feels right.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+          <Link
+            href={`/${profile.username || "creator"}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#043084] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
+          >
+            <span>Live Profile</span>
+            <ExternalLink className="h-3.5 w-3.5" />
+          </Link>
+          <button
+            type="button"
+            onClick={handleApplyTheme}
+            disabled={isApplying || previewThemeKey === theme}
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#043084] px-4 py-2 text-xs font-bold text-white shadow-2xs transition-all hover:bg-[#032363] disabled:opacity-50 cursor-pointer"
+          >
+            {isApplying ? (
+              <>
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                <span>Applying...</span>
+              </>
+            ) : justApplied ? (
+              <>
+                <Check className="h-3.5 w-3.5" />
+                <span>Applied!</span>
+              </>
+            ) : (
+              <span>Apply Theme</span>
+            )}
+          </button>
+        </div>
+      </div>
+
       {/* 2-COLUMN SPLIT LAYOUT: Appearance + Themes on Left | Sticky Profile Preview on Right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
 
         {/* LEFT COLUMN: APPEARANCE & THEMES (6 cols on lg, 5 cols on xl) */}
         <div className="lg:col-span-6 xl:col-span-6 space-y-3.5">
-          {/* Header: Themes title */}
-          <div className="flex flex-col gap-2.5">
-            <div className="space-y-0.5">
-              <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#043084]">
-                Themes
-              </h1>
-              <p className="max-w-xl text-xs sm:text-[13px] text-[#475569] font-medium">
-                Choose the look of your public profile. Preview first, then apply when it feels right.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
               {THEME_FILTERS.map((filter) => {
                 const isSelected = activeFilter === filter.key;
                 return (
@@ -221,7 +262,6 @@ export default function DashboardThemesPage() {
                 );
               })}
             </div>
-          </div>
 
           {/* Grouped Theme List */}
           <div className="space-y-4">

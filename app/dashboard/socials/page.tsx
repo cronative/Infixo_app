@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import {
   ExternalLink,
   MoreVertical,
@@ -9,6 +10,7 @@ import {
   AtSign,
   RefreshCw,
   Info,
+  Link as LinkIcon,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -22,9 +24,6 @@ import { YoutubeFetcher } from "@/components/socials/YoutubeFetcher";
 import { FacebookFetcher } from "@/components/socials/FacebookFetcher";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { Modal, ModalBody } from "@/components/ui/Modal";
-import { CustomLinksManager } from "@/components/socials/CustomLinksManager";
-import { customLinksRepository, authRepository } from "@/repositories/localRepository";
-import { getPlanQuota } from "@/services/subscriptionLimits";
 import { formatCount } from "@/utils/format";
 import { SocialService } from "@/services/SocialService";
 
@@ -65,23 +64,13 @@ type ConfirmDisconnectModal = {
 } | null;
 
 export default function DashboardSocialsPage() {
-  const { profile, socials, totalAudience, updateSocials, subscription } = useCreator();
+  const { profile, socials, totalAudience, updateSocials } = useCreator();
   const { showToast } = useToast();
 
   const [syncingPlatform, setSyncingPlatform] = useState<string | null>(null);
   const [disconnectModal, setDisconnectModal] = useState<ConfirmDisconnectModal>(null);
   const [submittingDisconnect, setSubmittingDisconnect] = useState(false);
-  const [customLinksCount, setCustomLinksCount] = useState(0);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
-  const customLinksLimit = getPlanQuota(subscription?.planKey || "early_access").maxCustomLinks;
-
-  // Sync initial custom links count
-  useEffect(() => {
-    const local = customLinksRepository.get();
-    if (Array.isArray(local)) {
-      setCustomLinksCount(local.length);
-    }
-  }, []);
 
   // Draft handles for unconnected platforms
   const [draftInsta, setDraftInsta] = useState(() => extractUsername(socials?.instagram?.url || ""));
@@ -116,16 +105,88 @@ export default function DashboardSocialsPage() {
   const handleSyncPlatform = async (platform: "instagram" | "youtube" | "facebook") => {
     setSyncingPlatform(platform);
     try {
-      const email = profile.email || authRepository.getPendingEmail();
-      const updated = await SocialService.fetchFromDb({ email, username: profile.username });
-      if (updated) {
-        updateSocials(updated);
+      if (platform === "instagram" && instaConnectedHandle) {
+        const res = await fetch("/api/instagram/userInfo", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: instaConnectedHandle }),
+        });
+        const data = await res.json();
+        if (data.success && data.user) {
+          const u = data.user;
+          updateSocials({
+            instagram: {
+              ...socials.instagram,
+              username: u.username,
+              name: u.full_name,
+              followers: u.follower_count,
+              posts: u.media_count,
+              isVerified: u.is_verified,
+              lastSyncedAt: new Date().toISOString(),
+            },
+          });
+          showToast("Instagram profile synced! 📸");
+        } else {
+          showToast("Could not refresh Instagram. Please check handle.", "error");
+        }
+      } else if (platform === "youtube" && ytConnectedHandle) {
+        const res = await fetch("/api/youtube/channelInfo", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ channelName: ytConnectedHandle }),
+        });
+        const data = await res.json();
+        if (data.success && data.channel) {
+          const c = data.channel;
+          updateSocials({
+            youtube: {
+              ...socials.youtube,
+              username: c.channel_name || ytConnectedHandle,
+              channelTitle: c.title,
+              subscribers: c.subscribers,
+              videos: c.video_count,
+              isVerified: c.verified,
+              lastSyncedAt: new Date().toISOString(),
+            },
+          });
+          showToast("YouTube channel synced! 📺");
+        } else {
+          showToast("Could not refresh YouTube. Please check handle.", "error");
+        }
+      } else if (platform === "facebook" && fbConnectedHandle) {
+        const res = await fetch("/api/facebook/pageInfo", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: fbConnectedHandle }),
+        });
+        const data = await res.json();
+        if (data.success && data.page) {
+          const p = data.page;
+          updateSocials({
+            facebook: {
+              ...socials.facebook,
+              username: p.username || fbConnectedHandle,
+              name: p.name,
+              followers: p.followers,
+              isVerified: p.verified,
+              lastSyncedAt: new Date().toISOString(),
+            },
+          });
+          showToast("Facebook page synced! 📘");
+        } else {
+          showToast("Could not refresh Facebook. Please check handle.", "error");
+        }
+      } else {
+        const updated = await SocialService.fetchFromDb({ email: profile.email, username: profile.username });
+        if (updated) {
+          updateSocials(updated);
+        }
+        showToast(`${platform.charAt(0).toUpperCase() + platform.slice(1)} stats refreshed! ✨`);
       }
-      showToast(`${platform.charAt(0).toUpperCase() + platform.slice(1)} audience stats refreshed! ✨`);
     } catch {
-      showToast(`${platform.charAt(0).toUpperCase() + platform.slice(1)} audience stats refreshed! ✨`);
+      showToast(`Could not refresh ${platform}. Please check handle.`, "error");
     } finally {
-      setTimeout(() => setSyncingPlatform(null), 300);
+      setSyncingPlatform(null);
     }
   };
 
@@ -134,7 +195,7 @@ export default function DashboardSocialsPage() {
     if (!disconnectModal) return;
     setSubmittingDisconnect(true);
     const { platform } = disconnectModal;
-    const email = authRepository.getPendingEmail() || profile.email;
+    const email = profile.email;
 
     try {
       if (platform === "instagram") {
@@ -166,13 +227,40 @@ export default function DashboardSocialsPage() {
   return (
     <div className="space-y-4 sm:space-y-4.5 w-full pb-8 text-left">
       {/* 1. PAGE HEADER */}
-      <div>
-        <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#043084]">
-          Links &amp; Socials
-        </h1>
-        <p className="text-xs sm:text-sm text-[#475569] font-normal mt-0.5">
-          Connect your platforms and manage the links shown on your creator profile.
-        </p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#e2e8f0] pb-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="font-display text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+              Social Accounts
+            </h1>
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#10b981]/10 px-2.5 py-0.5 text-xs font-bold text-[#059669]">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
+              <span>Live Fanbase Sync</span>
+            </span>
+          </div>
+          <p className="mt-1 text-xs sm:text-sm font-medium text-slate-500">
+            Connect YouTube, Instagram, and Facebook to verify your audience and calculate your Total Fanbase.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <Link
+            href="/dashboard/links"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#043084] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
+          >
+            <LinkIcon className="h-3.5 w-3.5" />
+            <span>Custom Links</span>
+          </Link>
+          <Link
+            href={`/${profile.username || "username"}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#043084] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
+          >
+            <span>Live Profile</span>
+            <ExternalLink className="h-3.5 w-3.5" />
+          </Link>
+        </div>
       </div>
 
       {/* 2. COMPACT SUMMARY LINE */}
@@ -181,11 +269,14 @@ export default function DashboardSocialsPage() {
           <span className="font-semibold text-[#043084]">{connectedCount} social accounts connected</span>
           <span className="text-[#64748b]/40">·</span>
           <span className="font-semibold text-[#043084]">{formatCount(totalAudience || 0)} total fanbase</span>
-          <span className="text-[#64748b]/40">·</span>
-          <span className="text-[#475569] font-medium">
-            {customLinksCount}/{customLinksLimit === Infinity ? "Unlimited" : customLinksLimit} custom links
-          </span>
         </div>
+        <Link
+          href="/dashboard/links"
+          className="text-xs font-bold text-[#043084] hover:underline inline-flex items-center gap-1"
+        >
+          <span>Manage custom links</span>
+          <ExternalLink className="h-3 w-3" />
+        </Link>
       </div>
 
       {/* 3. SOCIAL ACCOUNTS SECTION */}
@@ -387,12 +478,27 @@ export default function DashboardSocialsPage() {
         )}
       </section>
 
-      {/* 4. CUSTOM LINKS SECTION */}
-      <section className="text-left">
-        <CustomLinksManager onChange={(links) => setCustomLinksCount(links.length)} />
+      {/* 4. SHORTCUT TO CUSTOM LINKS */}
+      <section className="rounded-2xl border border-slate-200/80 bg-white p-4 sm:p-5 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#043084]/10 text-[#043084]">
+            <ExternalLink className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="text-xs sm:text-sm font-bold text-slate-900">Looking to add custom links &amp; bio buttons?</h3>
+            <p className="text-[11px] text-slate-500 font-medium">Add affiliate products, brand stores, WhatsApp, and custom website links on your profile.</p>
+          </div>
+        </div>
+        <Link
+          href="/dashboard/links"
+          className="inline-flex items-center gap-1.5 rounded-xl bg-[#043084] px-4 py-2 text-xs font-bold text-white shadow-2xs hover:bg-[#032363] transition-colors shrink-0 self-start sm:self-auto"
+        >
+          <span>Custom Links Manager</span>
+          <ExternalLink className="h-3.5 w-3.5" />
+        </Link>
       </section>
 
-      {/* 17, 18, 19. HOW SOCIAL DATA WORKS (Compact Info Row + Learn more Modal) */}
+      {/* 5. HOW SOCIAL DATA WORKS (Compact Info Row + Learn more Modal) */}
       <section className="rounded-2xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-5 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-xs text-left">
         <div className="flex items-center gap-2 min-w-0">
           <Info className="h-4 w-4 text-[#043084] shrink-0" />

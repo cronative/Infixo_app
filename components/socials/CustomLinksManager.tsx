@@ -492,37 +492,26 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
   }
 
   return (
-    <div className="space-y-3 text-left">
-      {/* 12 & 13. Section Header: Custom links + 1 / 3 links + + Add Link */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-0.5">
-        <div>
-          <h2 className="text-base sm:text-lg font-bold text-[#043084]">
-            Custom links
-          </h2>
-          <p className="text-xs sm:text-[13px] text-[#475569] font-normal mt-0.5">
-            Add links you want your audience to discover.
-          </p>
-        </div>
+    <div className="w-full space-y-3 text-left">
+      {/* Section Header: count badge + Add Link button */}
+      <div className="flex items-center justify-between gap-3">
+        <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-[#043084]/[0.08] text-[#043084] border border-[#043084]/20">
+          {links.length} / {maxLinks === Infinity ? "Unlimited" : maxLinks} links
+        </span>
 
-        <div className="flex items-center gap-3 shrink-0 self-start sm:self-auto">
-          <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-[#043084]/[0.08] text-[#043084] border border-[#043084]/20">
-            {links.length} / {maxLinks === Infinity ? "Unlimited" : maxLinks} links
-          </span>
-
-          <button
-            type="button"
-            onClick={(e) => handleOpenCreate(e.currentTarget)}
-            disabled={isLimitReached}
-            className={`inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm ${isLimitReached
-              ? "bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b] opacity-60 cursor-not-allowed"
-              : "bg-[#043084] hover:bg-brand-hover text-white"
-              }`}
-            title={isLimitReached ? "Limit reached (3 links max)" : "Add new custom link"}
-          >
-            <Plus className="h-4 w-4" />
-            <span>Add Link</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={(e) => handleOpenCreate(e.currentTarget)}
+          disabled={isLimitReached}
+          className={`inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm ${isLimitReached
+            ? "bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b] opacity-60 cursor-not-allowed"
+            : "bg-[#043084] hover:bg-brand-hover text-white"
+            }`}
+          title={isLimitReached ? "Limit reached (3 links max)" : "Add new custom link"}
+        >
+          <Plus className="h-4 w-4" />
+          <span>Add Link</span>
+        </button>
       </div>
 
       {/* Links List / Empty State */}

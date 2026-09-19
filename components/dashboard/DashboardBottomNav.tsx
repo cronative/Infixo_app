@@ -8,46 +8,30 @@ export function DashboardBottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 flex items-center border-t border-[#e2e8f0] bg-white/95 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] shadow-[0_-8px_28px_rgba(15,23,42,0.08)] backdrop-blur-xl lg:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-[#e2e8f0] bg-white pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_20px_rgba(15,23,42,0.06)] lg:hidden h-14">
       {BOTTOM_NAV.map((item) => {
-        const active = pathname === item.href;
-        const isSeries = item.href === "/dashboard/series";
+        const active =
+          item.href === "/dashboard"
+            ? pathname === "/dashboard"
+            : pathname.startsWith(item.href);
         const Icon = item.icon;
-
-        if (isSeries) {
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="flex flex-1 flex-col items-center justify-center -mt-4 pb-1 group"
-            >
-              <div
-                className={`flex h-11 w-11 items-center justify-center rounded-xl text-white shadow-lg shadow-[#043084]/18 transition-all ${active
-                  ? "bg-[#043084]"
-                  : "bg-[#043084] group-hover:-translate-y-0.5 group-hover:bg-brand-hover"
-                  }`}
-              >
-                <Icon className="h-5 w-5 stroke-[2.5]" />
-              </div>
-              <span
-                className={`text-[10px] font-bold mt-1 ${active ? "text-[#043084]" : "text-[#64748b]"
-                  }`}
-              >
-                {item.label}
-              </span>
-            </Link>
-          );
-        }
 
         return (
           <Link
             key={item.href}
             href={item.href}
-            className={`flex flex-1 flex-col items-center justify-center gap-1 pt-3 pb-2 text-[10px] font-bold transition-colors ${active ? "text-[#043084]" : "text-[#64748b] hover:text-[#043084]"
-              }`}
+            className={`flex h-full w-full flex-col items-center justify-center gap-1 text-[10px] font-bold transition-colors ${
+              active
+                ? "bg-[#043084] text-white"
+                : "text-[#64748b] hover:bg-slate-50 hover:text-[#043084]"
+            }`}
           >
-            <Icon className={`h-5 w-5 transition-colors ${active ? "text-[#043084]" : ""}`} />
-            <span>{item.label}</span>
+            <Icon
+              className={`h-5 w-5 shrink-0 transition-colors ${
+                active ? "text-white stroke-[2.2]" : "text-[#64748b]"
+              }`}
+            />
+            <span className="truncate leading-none">{item.label}</span>
           </Link>
         );
       })}

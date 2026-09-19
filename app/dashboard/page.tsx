@@ -218,7 +218,7 @@ export default function DashboardOverviewPage() {
     const items = [
       { id: "profile", label: "Profile details", completed: hasProfileDetails, link: "/dashboard/profile" },
       { id: "socials", label: "Connected social channel", completed: hasSocials, link: "/dashboard/socials" },
-      { id: "links", label: "Important links", completed: hasCustomLinks, link: "/dashboard/socials" },
+      { id: "links", label: "Important links", completed: hasCustomLinks, link: "/dashboard/links" },
       { id: "series", label: "Series", completed: hasSeries, link: "/dashboard/series" },
       { id: "services", label: "Collab packages", completed: hasPackages, link: "/dashboard/mediakit" },
       { id: "reviews", label: "Client reviews", completed: hasReviews, link: "/dashboard/reviews" },
@@ -261,7 +261,7 @@ export default function DashboardOverviewPage() {
       label: "Custom links",
       current: customLinks.length,
       max: quota.maxCustomLinks,
-      href: "/dashboard/socials",
+      href: "/dashboard/links",
     },
     {
       label: "Collab packages",

@@ -40,18 +40,31 @@ export async function GET(req: Request) {
     let creators: any[] = [];
     const stats = {
       totalCreators: 0,
+      activeCreators: 0,
+      suspendedCreators: 0,
+      newThisWeek: 0,
       totalSeries: 0,
       totalEpisodes: 0,
       totalActiveGigs: 0,
+      totalProfileViews: 0,
+      totalEpisodeClicks: 0,
+      totalReviews: 0,
       vipSubscribers: 0,
+      proSubscribers: 0,
+      starterSubscribers: 0,
+      freeTrialSubscribers: 0,
+      estimatedMRR: 0,
     };
 
     await ensureMediaKitTables();
 
     try {
-      // Ensure status column exists on creators table
+      // Ensure status and is_verified columns exist on creators table
       try {
         await db.query("ALTER TABLE creators ADD COLUMN status VARCHAR(20) DEFAULT 'active'");
+      } catch {}
+      try {
+        await db.query("ALTER TABLE creators ADD COLUMN is_verified TINYINT(1) DEFAULT 0");
       } catch {}
 
       const [rows]: any = await db.query(`
@@ -70,7 +83,7 @@ export async function GET(req: Request) {
           c.country,
           c.theme_key AS themeKey,
           c.theme_changes_count AS themeChangesCount,
-          c.is_verified AS isVerified,
+          COALESCE(c.is_verified, 0) AS isVerified,
           COALESCE(c.status, 'active') AS accountStatus,
           c.created_at AS createdAt,
           c.updated_at AS updatedAt,
@@ -81,7 +94,10 @@ export async function GET(req: Request) {
           (SELECT COUNT(*) FROM series WHERE creator_id = c.id) AS seriesCount,
           (SELECT COUNT(*) FROM mediakit_gigs WHERE (creator_id = c.id OR email = c.email) AND is_active = 1) AS gigsCount,
           (SELECT MIN(price) FROM mediakit_gigs WHERE (creator_id = c.id OR email = c.email) AND is_active = 1) AS minGigPrice,
-          (SELECT MAX(price) FROM mediakit_gigs WHERE (creator_id = c.id OR email = c.email) AND is_active = 1) AS maxGigPrice
+          (SELECT MAX(price) FROM mediakit_gigs WHERE (creator_id = c.id OR email = c.email) AND is_active = 1) AS maxGigPrice,
+          (SELECT COUNT(*) FROM analytics_events WHERE creator_id = c.id AND event_type = 'profile_view') AS profileViews,
+          (SELECT COUNT(*) FROM analytics_events WHERE creator_id = c.id AND event_type = 'episode_click') AS episodeClicks,
+          (SELECT COUNT(*) FROM creator_reviews WHERE creator_id = c.id OR email = c.email) AS reviewsCount
         FROM creators c
         LEFT JOIN subscriptions s ON c.id = s.creator_id
         ORDER BY c.id DESC
@@ -89,13 +105,34 @@ export async function GET(req: Request) {
 
       creators = rows || [];
 
-      // Calculate summary metrics
+      // Calculate founder summary metrics
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
       stats.totalCreators = creators.length;
+      stats.activeCreators = creators.filter((c) => c.accountStatus !== "suspended").length;
+      stats.suspendedCreators = creators.filter((c) => c.accountStatus === "suspended").length;
+      stats.newThisWeek = creators.filter((c) => c.createdAt && new Date(c.createdAt) >= oneWeekAgo).length;
+
       stats.vipSubscribers = creators.filter(
         (c) => c.planKey === "creator_VIP" || (c.planName && c.planName.toLowerCase().includes("vip"))
       ).length;
+      stats.proSubscribers = creators.filter(
+        (c) => c.planKey === "pro" || (c.planName && c.planName.toLowerCase().includes("pro"))
+      ).length;
+      stats.starterSubscribers = creators.filter(
+        (c) => c.planKey === "starter" || (c.planName && c.planName.toLowerCase().includes("starter"))
+      ).length;
+      stats.freeTrialSubscribers = stats.totalCreators - (stats.vipSubscribers + stats.proSubscribers + stats.starterSubscribers);
+
+      // Estimated MRR: Starter = ₹199/mo, Pro = ₹599/mo, VIP = ₹1499/mo
+      stats.estimatedMRR = (stats.starterSubscribers * 199) + (stats.proSubscribers * 599) + (stats.vipSubscribers * 1499);
+
       stats.totalActiveGigs = creators.reduce((acc, c) => acc + Number(c.gigsCount || 0), 0);
       stats.totalSeries = creators.reduce((acc, c) => acc + Number(c.seriesCount || 0), 0);
+      stats.totalProfileViews = creators.reduce((acc, c) => acc + Number(c.profileViews || 0), 0);
+      stats.totalEpisodeClicks = creators.reduce((acc, c) => acc + Number(c.episodeClicks || 0), 0);
+      stats.totalReviews = creators.reduce((acc, c) => acc + Number(c.reviewsCount || 0), 0);
 
       try {
         const [epRows]: any = await db.query("SELECT COUNT(*) AS total FROM episodes");
@@ -124,7 +161,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { action, creatorId, email } = body;
+    const { action, creatorId, email, planKey, planName } = body;
 
     if (!creatorId && !email) {
       return NextResponse.json({ error: "creatorId or email required" }, { status: 400 });
@@ -143,14 +180,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Creator not found" }, { status: 404 });
     }
 
-    if (action === "grant_vip") {
+    if (action === "grant_vip" || action === "set_plan") {
+      const targetPlanKey = planKey || (action === "grant_vip" ? "creator_VIP" : "starter");
+      const targetPlanName = planName || (targetPlanKey === "creator_VIP" ? "VIP" : targetPlanKey === "pro" ? "Pro" : "Starter");
+
       await db.query(
         `INSERT INTO subscriptions (creator_id, plan_key, plan_name, billing_cycle, status, activated_at)
-         VALUES (?, 'creator_VIP', 'VIP', 'yearly', 'active', NOW())
-         ON DUPLICATE KEY UPDATE plan_key = 'creator_VIP', plan_name = 'VIP', status = 'active', activated_at = NOW()`,
-        [targetCreatorId]
+         VALUES (?, ?, ?, 'monthly', 'active', NOW())
+         ON DUPLICATE KEY UPDATE plan_key = VALUES(plan_key), plan_name = VALUES(plan_name), status = 'active', activated_at = NOW()`,
+        [targetCreatorId, targetPlanKey, targetPlanName]
       );
-      return NextResponse.json({ success: true, message: "VIP Plan granted successfully!" });
+      return NextResponse.json({ success: true, message: `${targetPlanName} Plan assigned successfully!` });
     }
 
     if (action === "toggle_status") {
@@ -163,6 +203,19 @@ export async function POST(req: Request) {
         success: true,
         newStatus,
         message: `Account status updated to ${newStatus}`,
+      });
+    }
+
+    if (action === "toggle_verified") {
+      const [current]: any = await db.query("SELECT is_verified FROM creators WHERE id = ?", [targetCreatorId]);
+      const currentVal = Boolean(current?.[0]?.is_verified);
+      const newVal = currentVal ? 0 : 1;
+
+      await db.query("UPDATE creators SET is_verified = ? WHERE id = ?", [newVal, targetCreatorId]);
+      return NextResponse.json({
+        success: true,
+        isVerified: Boolean(newVal),
+        message: newVal ? "Creator verified badge granted!" : "Creator verified badge removed",
       });
     }
 

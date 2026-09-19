@@ -77,25 +77,31 @@ export default function DashboardAnalyticsPage() {
 
   return (
     <div className="space-y-4 sm:space-y-4.5 w-full pb-8 text-left">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#e2e8f0] pb-4">
         <div>
-          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#043084]">
-            Analytics
-          </h1>
-          <p className="text-xs sm:text-[13px] text-[#475569] font-medium mt-0.5">
-            Public profile opens and public series part clicks only.
+          <div className="flex items-center gap-2">
+            <h1 className="font-display text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+              Analytics
+            </h1>
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#043084]/10 px-2.5 py-0.5 text-xs font-bold text-[#043084]">
+              <BarChart3 className="h-3 w-3" />
+              <span>{period === "7d" ? "Past 7 Days" : "Past 30 Days"}</span>
+            </span>
+          </div>
+          <p className="mt-1 text-xs sm:text-sm font-medium text-slate-500">
+            Public profile opens, unique visitors, and series link click engagement.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="rounded-lg border border-[#e2e8f0] bg-white p-0.5 shadow-xs flex items-center">
+        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+          <div className="rounded-xl border border-slate-200 bg-white p-1 shadow-2xs flex items-center">
             {(["7d", "30d"] as const).map((value) => (
               <button
                 key={value}
                 type="button"
                 onClick={() => setPeriod(value)}
-                className={`h-7.5 rounded-md px-2.5 text-xs font-semibold transition-colors cursor-pointer ${period === value
-                    ? "bg-[#043084] text-white"
+                className={`h-7.5 rounded-lg px-2.5 text-xs font-bold transition-all cursor-pointer ${period === value
+                    ? "bg-[#043084] text-white shadow-xs"
                     : "text-[#64748b] hover:bg-[#f8fafc] hover:text-[#043084]"
                   }`}
               >
@@ -106,9 +112,10 @@ export default function DashboardAnalyticsPage() {
           <Link
             href={`/${handleStr}`}
             target="_blank"
-            className="h-8.5 px-3 rounded-lg bg-[#043084] hover:bg-brand-hover text-xs font-semibold text-white transition-colors inline-flex items-center gap-1.5 shadow-xs"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#043084] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
           >
-            <span>Open page</span>
+            <span>Live Profile</span>
             <ExternalLink className="h-3.5 w-3.5" />
           </Link>
         </div>

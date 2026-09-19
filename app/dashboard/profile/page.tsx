@@ -2,11 +2,14 @@
 
 import { useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   Camera,
   Sparkles,
   Lock,
   RefreshCw,
+  UserRound,
+  ExternalLink,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -102,14 +105,42 @@ export default function DashboardProfilePage() {
 
   return (
     <div className="space-y-4 sm:space-y-4.5 w-full pb-8 text-left">
-      {/* 3. Page Header: Compact font, tight gap */}
-      <div>
-        <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#043084]">
-          Profile
-        </h1>
-        <p className="text-xs sm:text-sm text-[#475569] font-normal mt-0.5">
-          Keep your creator identity clear, searchable, and ready to share.
-        </p>
+      {/* 3. Page Header: Full-width divider + actions */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#e2e8f0] pb-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="font-display text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+              Profile
+            </h1>
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#043084]/10 px-2.5 py-0.5 text-xs font-bold text-[#043084]">
+              <UserRound className="h-3 w-3" />
+              <span>@{handleStr}</span>
+            </span>
+          </div>
+          <p className="mt-1 text-xs sm:text-sm font-medium text-slate-500">
+            Keep your creator identity clear, searchable, and ready to share.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+          <Link
+            href={`/${handleStr}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#043084] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
+          >
+            <span>Live Profile</span>
+            <ExternalLink className="h-3.5 w-3.5" />
+          </Link>
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={submitting}
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#043084] px-4 py-2 text-xs font-bold text-white shadow-2xs transition-all hover:bg-brand-hover cursor-pointer disabled:opacity-60"
+          >
+            {submitting ? "Saving..." : "Save Changes"}
+          </button>
+        </div>
       </div>
 
       {/* SECTION 1 — PROFILE IDENTITY CARD */}

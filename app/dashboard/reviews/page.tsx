@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import Link from "next/link";
 import {
   Star,
   Check,
@@ -267,28 +268,42 @@ export default function DashboardReviewsPage() {
 
   return (
     <div className="space-y-4 sm:space-y-4.5 w-full pb-8 text-left">
-      {/* 1. PAGE HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      {/* 1. PAGE HEADER with Full-Width Divider */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#e2e8f0] pb-4">
         <div>
-          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#043084]">
-            Reviews
-          </h1>
-          <p className="text-xs sm:text-sm text-[#475569] font-normal mt-0.5">
+          <div className="flex items-center gap-2">
+            <h1 className="font-display text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+              Reviews
+            </h1>
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#043084]/10 px-2.5 py-0.5 text-xs font-bold text-[#043084]">
+              <Star className="h-3 w-3" />
+              <span>{reviews.length} {reviews.length === 1 ? "Review" : "Reviews"}</span>
+            </span>
+          </div>
+          <p className="mt-1 text-xs sm:text-sm font-medium text-slate-500">
             Collect reviews from brands you&apos;ve worked with and choose which ones appear on your profile.
           </p>
         </div>
 
-        {/* Top CTA: Only visible when reviews exist */}
-        {reviews.length > 0 && (
+        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+          <Link
+            href={`/${cleanHandle}/reviews`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#043084] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
+          >
+            <span>Live Reviews</span>
+            <ExternalLink className="h-3.5 w-3.5" />
+          </Link>
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="h-9 px-3.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-xs font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5 shrink-0 self-start sm:self-auto"
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#043084] px-4 py-2 text-xs font-bold text-white shadow-2xs transition-all hover:bg-brand-hover cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             <span>Request Review</span>
           </button>
-        )}
+        </div>
       </div>
 
       {/* 2. ZERO STATE: When 0 reviews, show unified empty state directly */}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -14,7 +14,7 @@ import { Logo } from "@/components/shared/Logo";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { useCreator } from "@/contexts/CreatorContext";
 import { AuthService } from "@/services/AuthService";
-import { WORKSPACE_NAV, ACCOUNT_NAV } from "@/components/dashboard/navConfig";
+import { NAV_GROUPS } from "@/components/dashboard/navConfig";
 
 interface DashboardSideDrawerProps {
   isOpen: boolean;
@@ -26,141 +26,115 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
   const router = useRouter();
   const { profile } = useCreator();
 
-  // Close drawer automatically on route change
+  // Close drawer ONLY when user actually navigates to a new pathname
+  const prevPathRef = useRef(pathname);
   useEffect(() => {
-    onClose();
-  }, [pathname]);
+    if (prevPathRef.current !== pathname) {
+      prevPathRef.current = pathname;
+      onClose();
+    }
+  }, [pathname, onClose]);
 
-  // Lock body scroll & escape listener when drawer is open
+  // Lock background scroll when drawer is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
-      const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === "Escape") onClose();
-      };
-      window.addEventListener("keydown", handleKeyDown);
-      return () => {
-        document.body.style.overflow = "";
-        window.removeEventListener("keydown", handleKeyDown);
-      };
     } else {
       document.body.style.overflow = "";
     }
-  }, [isOpen, onClose]);
-
-  if (!isOpen) return null;
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   const handleStr = profile.username || "username";
   const displayName = profile.displayName || profile.email?.split("@")[0] || "Creator";
 
+  if (!isOpen) return null;
+
   return (
-    <div className="fixed inset-0 z-50 flex animate-in fade-in duration-200 lg:hidden">
-      {/* Dark Backdrop Overlay */}
+    <div className="fixed inset-0 z-50 flex lg:hidden">
+      {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity"
         onClick={onClose}
+        aria-hidden="true"
       />
 
-      {/* Drawer Container (Slides in from Left) */}
-      <aside className="animate-in slide-in-from-left relative z-10 flex h-full w-[300px] max-w-[85vw] flex-col overflow-y-auto rounded-r-3xl border-r border-white/70 bg-white/95 shadow-2xl shadow-slate-950/15 backdrop-blur-xl transition-transform duration-300">
-        {/* Top Header: Logo + Close Button */}
-        <div className="flex items-center justify-between border-b border-[#e2e8f0] px-5 py-4">
+      {/* Drawer Canvas */}
+      <aside className="relative flex h-full w-[280px] max-w-[85vw] flex-col bg-white shadow-2xl z-10">
+        {/* Header: Logo & Close Button */}
+        <div className="flex items-center justify-between border-b border-[#e2e8f0] p-4">
           <Logo size="sm" />
           <button
             onClick={onClose}
-            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-[#475569] transition-all hover:border-[#cbd5e1] hover:bg-[#f1f5f9] hover:text-[#043084]"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#043084] transition-colors cursor-pointer"
             aria-label="Close menu"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
-        {/* Creator Info Header */}
-        <div className="px-5 py-3 border-b border-[#e2e8f0] flex items-center gap-3 bg-[#f8fafc]">
-          <CreatorAvatar
-            src={profile.photoDataUrl}
-            name={displayName}
-            className="w-10 h-10 rounded-full border border-[#e2e8f0] overflow-hidden object-cover aspect-square shrink-0"
-            textClassName="text-sm font-bold text-[#043084]"
-            fallbackBgClass="bg-[#f1f5f9]"
-          />
-
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1">
-              <p className="truncate text-xs font-bold text-[#043084]">
-                {displayName}
-              </p>
-              {profile.isVerified && (
-                <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-[#043084]" />
-              )}
-            </div>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <p className="truncate text-[11px] font-medium text-[#64748b]">
-                @{handleStr}
-              </p>
-              <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-[#059669] bg-[#ecfdf5] px-1.5 py-0.2 rounded border border-[#a7f3d0]">
-                <span className="h-1 w-1 rounded-full bg-[#10b981]" />
-                Live
-              </span>
+        {/* Creator Info Card */}
+        <div className="p-4 border-b border-[#e2e8f0] bg-[#f8fafc]/50">
+          <div className="flex items-center gap-3">
+            <CreatorAvatar
+              src={profile.photoDataUrl}
+              name={displayName}
+              className="h-10 w-10 shrink-0 rounded-full border border-[#e2e8f0] shadow-xs"
+            />
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1">
+                <p className="truncate text-xs font-bold text-[#181716]">
+                  {displayName}
+                </p>
+                {profile.isVerified && (
+                  <ShieldCheck className="h-3.5 w-3.5 shrink-0 fill-[#043084] text-white" />
+                )}
+              </div>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <p className="truncate text-[11px] font-medium text-[#475569]">
+                  @{handleStr}
+                </p>
+                <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-[#059669] bg-[#ecfdf5] px-1.5 py-0.2 rounded border border-[#a7f3d0]">
+                  <span className="h-1 w-1 rounded-full bg-[#10b981]" />
+                  Live
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Navigation List */}
-        <nav className="flex-1 space-y-4 p-4">
-          {/* WORKSPACE */}
-          <div>
-            <p className="px-3 text-[10px] font-semibold uppercase tracking-wider text-[#64748b] mb-1.5">
-              Workspace
-            </p>
-            <div className="space-y-1">
-              {WORKSPACE_NAV.map((item) => {
-                const active = pathname === item.href;
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={onClose}
-                    className={`flex min-h-[44px] items-center gap-3 rounded-xl border px-3 py-2.5 text-xs font-semibold transition-all ${active
-                      ? "border-[#cbd5e1] bg-[#043084] text-white shadow-sm"
-                      : "border-transparent text-[#475569] hover:translate-x-0.5 hover:border-[#e2e8f0] hover:bg-[#f8fafc] hover:text-[#043084]"
+        {/* Navigation List: 3 Creator-First Groups (Studio, Growth, Account) */}
+        <nav className="flex-1 space-y-4 p-4 overflow-y-auto no-scrollbar">
+          {NAV_GROUPS.map((group) => (
+            <div key={group.id}>
+              <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#64748b] mb-1.5">
+                {group.title}
+              </p>
+              <div className="space-y-1">
+                {group.items.map((item) => {
+                  const active = pathname === item.href;
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={onClose}
+                      className={`flex min-h-[42px] items-center gap-3 rounded-xl border px-3 py-2 text-xs font-semibold transition-all ${
+                        active
+                          ? "border-[#cbd5e1] bg-[#043084] text-white shadow-sm"
+                          : "border-transparent text-[#475569] hover:translate-x-0.5 hover:border-[#e2e8f0] hover:bg-[#f8fafc] hover:text-[#043084]"
                       }`}
-                  >
-                    <Icon className={`h-4 w-4 shrink-0 ${active ? "text-white" : "text-[#475569]"}`} />
-                    <span className="flex-1 truncate">{item.label}</span>
-                  </Link>
-                );
-              })}
+                    >
+                      <Icon className={`h-4 w-4 shrink-0 ${active ? "text-white" : "text-[#475569]"}`} />
+                      <span className="flex-1 truncate">{item.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-
-          {/* ACCOUNT */}
-          <div>
-            <p className="px-3 text-[10px] font-semibold uppercase tracking-wider text-[#64748b] mb-1.5">
-              Account
-            </p>
-            <div className="space-y-1">
-              {ACCOUNT_NAV.map((item) => {
-                const active = pathname === item.href;
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={onClose}
-                    className={`flex min-h-[44px] items-center gap-3 rounded-xl border px-3 py-2.5 text-xs font-semibold transition-all ${active
-                      ? "border-[#cbd5e1] bg-[#043084] text-white shadow-sm"
-                      : "border-transparent text-[#475569] hover:translate-x-0.5 hover:border-[#e2e8f0] hover:bg-[#f8fafc] hover:text-[#043084]"
-                      }`}
-                  >
-                    <Icon className={`h-4 w-4 shrink-0 ${active ? "text-white" : "text-[#475569]"}`} />
-                    <span className="flex-1 truncate">{item.label}</span>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
+          ))}
         </nav>
 
         {/* Bottom Utility Area */}
