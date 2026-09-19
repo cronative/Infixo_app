@@ -310,13 +310,13 @@ export default function AllSeriesClient() {
       )}
       <FocusOverlay overlay={themeMeta.focusOverlay} />
 
-      <main className="relative z-10 h-dvh min-h-0 flex flex-col mx-auto w-full max-w-[580px] px-4 py-4 overflow-hidden animate-fade-in-up">
+      <main className="relative z-10 h-dvh min-h-0 flex flex-col mx-auto w-full max-w-[520px] px-2.5 py-2.5 sm:px-4 sm:py-3.5 overflow-hidden animate-fade-in-up">
         <button
           type="button"
           onClick={() => router.push(`/${cleanHandle}`)}
-          className="tap-scale mb-3 inline-flex h-10 w-fit items-center gap-2 rounded-full border border-white/40 bg-white/75 px-3 text-xs font-bold text-[#043084] shadow-sm backdrop-blur-md transition-all hover:bg-white"
+          className="tap-scale mb-2 inline-flex h-8 w-fit items-center gap-1.5 rounded-full border border-black/10 bg-white/85 px-3 text-xs font-bold text-[#043084] shadow-xs backdrop-blur-md transition-all hover:bg-white cursor-pointer"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-3.5 w-3.5" />
           <span>Profile</span>
         </button>
 

@@ -1413,9 +1413,9 @@ export function LivePreviewCard({
       }}
       className={`relative flex-1 flex flex-col min-h-0 overflow-hidden ${isFull
         ? isDefaultCleanLayout
-          ? "px-3.5 py-5 sm:px-7 sm:py-7 rounded-[28px] border shadow-xl"
+          ? "px-3.5 py-4 sm:px-5 sm:py-5 rounded-[22px] border shadow-lg"
           : "p-0 border-0 shadow-none bg-transparent"
-        : `${cardPadding ? cardPadding : "p-4 sm:p-6 pt-6 sm:pt-8"} rounded-[24px] border shadow-md`
+        : `${cardPadding ? cardPadding : "p-3.5 sm:p-5 pt-4 sm:pt-6"} rounded-[20px] border shadow-md`
         } transition-all`}
     >
       {/* Ambient Animation in Preview mode when theme supports it */}
@@ -1476,28 +1476,28 @@ export function LivePreviewCard({
             <CreatorAvatar
               src={profile.photoDataUrl}
               name={profile.displayName || "Creator"}
-              className="h-[74px] w-[74px] sm:h-[82px] sm:w-[82px] rounded-full aspect-square object-contain object-center overflow-hidden border-2 border-white/80 ring-4 ring-black/5 shadow-md mx-auto bg-white"
+              className="h-[68px] w-[68px] sm:h-[76px] sm:w-[76px] rounded-full aspect-square object-contain object-center overflow-hidden border-2 border-white/80 ring-3 ring-black/5 shadow-sm mx-auto bg-white"
               style={{ borderColor: c.border || "#FFFFFF", backgroundColor: c.cardBackground }}
-              textClassName="text-xl sm:text-2xl font-extrabold"
+              textClassName="text-lg sm:text-xl font-extrabold"
               textStyle={{ color: c.primaryText }}
               fallbackBgClass="bg-[#043084]"
             />
           </div>
 
           {/* Creator Name & Verified Checkmark */}
-          <div className="mt-2 flex items-center justify-center gap-1.5 max-w-full">
+          <div className="mt-1.5 flex items-center justify-center gap-1.5 max-w-full">
             <h1
               style={{
                 color: c.primaryText,
                 fontFamily: typ.headingFontFamily,
                 fontWeight: 700,
               }}
-              className="text-[22px] sm:text-[24px] font-bold tracking-tight"
+              className="text-xl sm:text-[22px] font-bold tracking-tight"
             >
               {profile.displayName || "Creator Name"}
             </h1>
             {Boolean(profile.isVerified) && (
-              <svg className="w-5 h-5 text-emerald-500 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-label="Verified Creator">
+              <svg className="w-4.5 h-4.5 text-emerald-500 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-label="Verified Creator">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L9 14.17l9.59-9.59L20 6l-10 11z" />
               </svg>
             )}
@@ -1517,7 +1517,7 @@ export function LivePreviewCard({
           {effectiveVisibilitySettings.showContentCategory !== false && formattedCategories && (
             <p
               style={{ color: c.secondaryText }}
-              className="mt-1 text-xs sm:text-[13px] font-medium text-center tracking-normal"
+              className="mt-0.5 text-xs font-medium text-center tracking-normal opacity-85"
             >
               {formattedCategories}
             </p>
@@ -1527,7 +1527,7 @@ export function LivePreviewCard({
           {profile.bio && profile.bio.trim() && (
             <p
               style={{ color: c.secondaryText }}
-              className="mt-1.5 text-xs sm:text-sm leading-relaxed max-w-lg mx-auto font-normal px-1 text-center"
+              className="mt-1 text-xs sm:text-[13px] leading-relaxed max-w-md mx-auto font-normal px-1 text-center"
             >
               {profile.bio}
             </p>
@@ -1535,7 +1535,7 @@ export function LivePreviewCard({
 
           {/* Clickable Social Icons Row */}
           {headerSocialList.length > 0 && (
-            <div className="mt-2 flex items-center justify-center gap-3 sm:gap-3.5 flex-wrap">
+            <div className="mt-2 flex items-center justify-center gap-2.5 sm:gap-3 flex-wrap">
               {headerSocialList.map((item) => (
                 <a
                   key={item.platform}
@@ -1575,18 +1575,18 @@ export function LivePreviewCard({
 
         {/* 2. Total Fanbase USP Block */}
         {effectiveVisibilitySettings.showFanbase !== false && (
-          <div className="relative z-10 mt-5 sm:mt-6 w-full space-y-2.5">
+          <div className="relative z-10 mt-3.5 sm:mt-4 w-full space-y-2">
             <div
               style={{
                 backgroundColor: c.cardBackground,
                 borderColor: c.border,
                 boxShadow: eff.cardShadow,
               }}
-              className="rounded-[14px] border px-4 py-4 sm:py-5 text-center shadow-xs"
+              className="rounded-[14px] border px-3.5 py-3 text-center shadow-xs"
             >
               <span
                 style={{ color: c.mutedText }}
-                className="block text-[11px] sm:text-xs font-extrabold tracking-[0.16em] uppercase"
+                className="block text-[10px] sm:text-[11px] font-extrabold tracking-[0.14em] uppercase"
               >
                 Total Fanbase
               </span>
@@ -1596,13 +1596,13 @@ export function LivePreviewCard({
                   fontFamily: typ.headingFontFamily,
                   fontWeight: 900,
                 }}
-                className="mt-1.5 text-3xl sm:text-4xl leading-none font-black tabular-nums tracking-tight"
+                className="mt-0.5 text-2xl sm:text-3xl leading-tight font-black tabular-nums tracking-tight"
               >
                 {formatCount(totalAudience)}
               </p>
               <p
                 style={{ color: c.secondaryText }}
-                className="mt-1.5 text-xs sm:text-[13px] font-medium"
+                className="mt-0.5 text-[11px] sm:text-xs font-medium opacity-80"
               >
                 Total Fanbase Across Primary Platforms
               </p>
@@ -1611,7 +1611,7 @@ export function LivePreviewCard({
             {/* Clickable Platform Cards */}
             {fanbaseSocialCards.length > 0 && (
               <div
-                className="grid gap-2.5 sm:gap-3"
+                className="grid gap-2 sm:gap-2.5"
                 style={{ gridTemplateColumns: fanbaseSocialGridColumns }}
               >
                 {fanbaseSocialCards.map((item) => (
@@ -1631,41 +1631,41 @@ export function LivePreviewCard({
                       borderColor: c.border,
                       boxShadow: eff.cardShadow,
                     }}
-                    className="tap-scale flex min-h-[112px] flex-col rounded-[10px] border text-center transition-all hover:scale-[1.02] cursor-pointer shadow-xs overflow-hidden"
+                    className="tap-scale flex min-h-[84px] sm:min-h-[92px] flex-col rounded-[12px] border text-center transition-all hover:scale-[1.02] cursor-pointer shadow-xs overflow-hidden"
                     title={`Visit ${item.label}`}
                   >
-                    <span className="flex flex-1 flex-col items-center justify-center px-2 py-2.5">
-                      <span className="mb-2 flex h-5 items-center justify-center shrink-0">
-                        {item.platform === "instagram" && <InstagramIcon className="h-5 w-5 text-pink-500" />}
-                        {item.platform === "youtube" && <YoutubeIcon className="h-5 w-5 text-red-500" />}
-                        {item.platform === "facebook" && <FacebookIcon className="h-5 w-5 text-blue-500" />}
-                        {item.platform === "twitter" && <XTwitterIcon className="h-[18px] w-[18px]" style={{ color: c.primaryText }} />}
-                        {item.platform === "linkedin" && <LinkedinIcon className="h-5 w-5 text-sky-600" />}
-                        {item.platform === "threads" && <ThreadsIcon className="h-5 w-5" style={{ color: c.primaryText }} />}
-                        {item.platform === "snapchat" && <SnapchatIcon className="h-5 w-5 text-amber-400" />}
-                        {item.platform === "spotify" && <SpotifyIcon className="h-5 w-5 text-emerald-500" />}
-                        {item.platform === "twitch" && <TwitchIcon className="h-5 w-5 text-purple-500" />}
-                        {item.platform === "pinterest" && <PinterestIcon className="h-5 w-5 text-red-600" />}
+                    <span className="flex flex-1 flex-col items-center justify-center px-2 py-2">
+                      <span className="mb-1 flex h-4.5 items-center justify-center shrink-0">
+                        {item.platform === "instagram" && <InstagramIcon className="h-4.5 w-4.5 text-pink-500" />}
+                        {item.platform === "youtube" && <YoutubeIcon className="h-4.5 w-4.5 text-red-500" />}
+                        {item.platform === "facebook" && <FacebookIcon className="h-4.5 w-4.5 text-blue-500" />}
+                        {item.platform === "twitter" && <XTwitterIcon className="h-4 w-4" style={{ color: c.primaryText }} />}
+                        {item.platform === "linkedin" && <LinkedinIcon className="h-4.5 w-4.5 text-sky-600" />}
+                        {item.platform === "threads" && <ThreadsIcon className="h-4.5 w-4.5" style={{ color: c.primaryText }} />}
+                        {item.platform === "snapchat" && <SnapchatIcon className="h-4.5 w-4.5 text-amber-400" />}
+                        {item.platform === "spotify" && <SpotifyIcon className="h-4.5 w-4.5 text-emerald-500" />}
+                        {item.platform === "twitch" && <TwitchIcon className="h-4.5 w-4.5 text-purple-500" />}
+                        {item.platform === "pinterest" && <PinterestIcon className="h-4.5 w-4.5 text-red-600" />}
                         {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch", "pinterest"].includes(item.platform) && (
-                          <Globe className="h-5 w-5" style={{ color: c.accentText }} />
+                          <Globe className="h-4.5 w-4.5" style={{ color: c.accentText }} />
                         )}
                       </span>
-                      <span style={{ color: c.primaryText }} className="text-sm sm:text-base font-black tabular-nums leading-none">
+                      <span style={{ color: c.primaryText }} className="text-xs sm:text-[13px] font-bold tabular-nums leading-tight">
                         {formatCount(item.count)}
                       </span>
-                      <span style={{ color: c.secondaryText }} className="mt-1 text-[10px] sm:text-[11px] font-semibold leading-none">
+                      <span style={{ color: c.secondaryText }} className="mt-0.5 text-[10px] sm:text-[11px] font-semibold leading-none">
                         {item.unit}
                       </span>
                     </span>
                     <span
                       style={{ color: c.mutedText, borderColor: c.divider }}
-                      className="block w-full border-t px-2 py-2 text-[10px] sm:text-[11px] font-medium leading-none"
+                      className="block w-full border-t px-2 py-1.5 text-[9px] sm:text-[10px] font-medium leading-none"
                     >
-                      <span className="inline-flex max-w-full items-center justify-center gap-2">
+                      <span className="inline-flex max-w-full items-center justify-center gap-1">
                         <span className="block min-w-0 truncate">
                           {(item.handle || item.name || item.label).replace(/^@/, "")}
                         </span>
-                        <ExternalLink className="h-3 w-3 shrink-0 opacity-75" />
+                        <ExternalLink className="h-2.5 w-2.5 shrink-0 opacity-75" />
                       </span>
                     </span>
                   </a>
@@ -1787,7 +1787,7 @@ export function LivePreviewCard({
 
         {/* 4. Series Section */}
         {effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || isOnboardingMode || seriesOnlyMode) && (
-          <div id="series-section" className="relative z-10 order-[10] mt-6 w-full text-left space-y-2.5">
+          <div id="series-section" className="relative z-10 order-[10] mt-4 sm:mt-5 w-full text-left space-y-2">
             {/* Section Header */}
             <div className="flex items-center justify-between px-0.5">
               <h2
@@ -1796,17 +1796,17 @@ export function LivePreviewCard({
                   fontFamily: typ.headingFontFamily,
                   fontWeight: 700,
                 }}
-                className="flex items-center gap-2 text-base sm:text-lg font-bold tracking-tight"
+                className="flex items-center gap-1.5 text-sm sm:text-base font-bold tracking-tight"
               >
-                <Film className="h-4 w-4 opacity-70" style={{ color: c.primaryText }} />
-                Series &amp; Playlists
+                <Film className="h-3.5 w-3.5 opacity-70" style={{ color: c.primaryText }} />
+                <span>Series &amp; Playlists</span>
               </h2>
               {series.length > 0 && (
                 <span
                   style={{ color: c.mutedText }}
-                  className="text-xs sm:text-[13px] font-medium"
+                  className="text-[11px] sm:text-xs font-medium"
                 >
-                  {series.length} Curated {series.length === 1 ? "Series" : "Series"}
+                  {series.length} {series.length === 1 ? "Series" : "Series"}
                 </span>
               )}
             </div>
@@ -1817,160 +1817,161 @@ export function LivePreviewCard({
                   backgroundColor: c.elevatedBackground,
                   borderColor: c.border,
                 }}
-                className="rounded-[16px] border p-6 text-center space-y-1"
+                className="rounded-[14px] border p-4 sm:p-5 text-center space-y-0.5"
               >
                 <p
                   style={{ color: c.primaryText }}
-                  className="text-sm font-semibold"
+                  className="text-xs sm:text-sm font-semibold"
                 >
                   No series added yet
                 </p>
                 <p
                   style={{ color: c.mutedText }}
-                  className="text-xs"
+                  className="text-[11px] sm:text-xs"
                 >
                   Stay tuned! Episodes and playlists will appear here soon.
                 </p>
               </div>
             ) : (
-              <div className="space-y-2.5 sm:space-y-3">
+              <div className="space-y-2 sm:space-y-2.5">
                 {displayedSeries.map((s) => {
-                const allEps = getSeriesEpisodes(s);
-                const epCount = allEps.length;
-                const epCountStr = `${epCount} ${epCount === 1 ? "episode" : "episodes"}`;
+                  const allEps = getSeriesEpisodes(s);
+                  const epCount = allEps.length;
+                  const epCountStr = `${epCount} ${epCount === 1 ? "episode" : "episodes"}`;
 
-                const firstEpUrl = allEps[0]?.externalUrl || "";
-                const detectedPlatform = (() => {
-                  const p = (s.platform || "").toLowerCase();
-                  const u = (firstEpUrl || "").toLowerCase();
-                  if (p.includes("youtube") || u.includes("youtube.com") || u.includes("youtu.be")) return "YouTube";
-                  if (p.includes("instagram") || u.includes("instagram.com")) return "Instagram";
-                  if (p.includes("facebook") || u.includes("facebook.com")) return "Facebook";
-                  if (s.platform && s.platform.trim()) return s.platform.trim();
-                  return null;
-                })();
+                  const firstEpUrl = allEps[0]?.externalUrl || "";
+                  const detectedPlatform = (() => {
+                    const p = (s.platform || "").toLowerCase();
+                    const u = (firstEpUrl || "").toLowerCase();
+                    if (p.includes("youtube") || u.includes("youtube.com") || u.includes("youtu.be")) return "YouTube";
+                    if (p.includes("instagram") || u.includes("instagram.com")) return "Instagram";
+                    if (p.includes("facebook") || u.includes("facebook.com")) return "Facebook";
+                    if (s.platform && s.platform.trim()) return s.platform.trim();
+                    return null;
+                  })();
 
-                const subtitleParts: string[] = [epCountStr];
-                if (detectedPlatform) subtitleParts.push(detectedPlatform);
-                const subtitleStr = subtitleParts.join(" · ");
-                const seriesGenres = s.genre
-                  ? s.genre.split(/[,•|/]/).map((g: string) => g.trim().replace(/^Genre:\s*/i, "")).filter(Boolean)
-                  : [];
-                const seriesUrl = `/${cleanHandle || "creator"}/series/${s.id}`;
-                const hasPoster = Boolean(s.posterDataUrl);
+                  const subtitleParts: string[] = [epCountStr];
+                  if (detectedPlatform) subtitleParts.push(detectedPlatform);
+                  const subtitleStr = subtitleParts.join(" · ");
+                  const seriesGenres = s.genre
+                    ? s.genre.split(/[,•|/]/).map((g: string) => g.trim().replace(/^Genre:\s*/i, "")).filter(Boolean)
+                    : [];
+                  const seriesUrl = `/${cleanHandle || "creator"}/series/${s.id}`;
+                  const hasPoster = Boolean(s.posterDataUrl && s.posterDataUrl.trim() !== "");
 
-                return (
-                  <div
-                    key={s.id}
-                    onPointerEnter={() => {
-                      if (seriesUrl && seriesOpenMode === "page") {
-                        router.prefetch(seriesUrl);
-                      }
-                    }}
-                    onClick={() => {
-                      if (onSeriesPreviewOpen) {
-                        onSeriesPreviewOpen(s);
-                      } else if (isInformationalMode) {
-                        showToast(`Opens ${s.title} dedicated series page ✨`);
-                      } else if (seriesOpenMode === "internal") {
-                        setDrawerSeries(s);
-                        setIsDrawerOpen(true);
-                      } else {
-                        router.push(seriesUrl);
-                      }
-                    }}
-                    style={{
-                      backgroundColor: c.cardBackground,
-                      borderColor: c.border,
-                      boxShadow: eff.cardShadow,
-                    }}
-                    className="group rounded-[16px] border overflow-hidden transition-all hover:shadow-md cursor-pointer shadow-xs"
-                  >
-                    {/* Cover Image */}
-                    <div className="relative w-full h-[145px] sm:h-[165px] overflow-hidden bg-slate-900/5">
-                      {s.posterDataUrl ? (
-                        <>
+                  return (
+                    <div
+                      key={s.id}
+                      onPointerEnter={() => {
+                        if (seriesUrl && seriesOpenMode === "page") {
+                          router.prefetch(seriesUrl);
+                        }
+                      }}
+                      onClick={() => {
+                        if (onSeriesPreviewOpen) {
+                          onSeriesPreviewOpen(s);
+                        } else if (isInformationalMode) {
+                          showToast(`Opens ${s.title} dedicated series page ✨`);
+                        } else if (seriesOpenMode === "internal") {
+                          setDrawerSeries(s);
+                          setIsDrawerOpen(true);
+                        } else {
+                          router.push(seriesUrl);
+                        }
+                      }}
+                      style={{
+                        backgroundColor: c.cardBackground,
+                        borderColor: c.border,
+                        boxShadow: eff.cardShadow,
+                      }}
+                      className="group rounded-[14px] border overflow-hidden transition-all hover:shadow-md cursor-pointer"
+                    >
+                      {/* Cover Image: ONLY rendered if genuine posterDataUrl exists */}
+                      {hasPoster && (
+                        <div className="relative w-full h-[105px] sm:h-[118px] overflow-hidden bg-slate-900/5">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
-                            src={s.posterDataUrl}
+                            src={s.posterDataUrl!}
                             alt={s.title}
                             className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-300"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/88 via-black/42 to-transparent" />
-                          <div className="absolute inset-x-0 bottom-3 px-4 sm:px-5">
-                            <div className="flex items-end justify-between gap-3">
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+                          <div className="absolute inset-x-0 bottom-2.5 px-3.5 sm:px-4">
+                            <div className="flex items-end justify-between gap-2">
                               <div className="min-w-0 flex-1">
-                                <h3 className="line-clamp-2 text-lg sm:text-xl font-black leading-tight tracking-tight text-white drop-shadow-md">
+                                <h3 className="line-clamp-1 text-sm sm:text-base font-bold leading-tight text-white drop-shadow-sm">
                                   {s.title}
                                 </h3>
-                                {s.description && (
-                                  <p className="mt-1 line-clamp-1 text-[11px] sm:text-xs font-medium text-white/72">
-                                    {s.description}
-                                  </p>
-                                )}
                               </div>
-                              <span className="mb-0.5 shrink-0 rounded-full border border-white/18 bg-black/35 px-2.5 py-1 text-[10px] sm:text-[11px] font-bold text-white/90 backdrop-blur-sm">
+                              <span className="shrink-0 rounded-full border border-white/20 bg-black/40 px-2 py-0.5 text-[10px] font-bold text-white/90 backdrop-blur-xs">
                                 {detectedPlatform || "Series"}
                               </span>
                             </div>
                           </div>
-                        </>
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#241618] to-[#043084]">
-                          <Film className="h-10 w-10 text-white/40" />
                         </div>
                       )}
-                    </div>
 
-                    {/* Content */}
-                    <div className="px-3.5 pb-3.5 pt-2.5 sm:px-4 sm:pb-4 sm:pt-3 space-y-0.5">
-                      {!hasPoster && (
-                        <h3
-                          style={{ color: c.primaryText }}
-                          className="text-base sm:text-[17px] font-bold tracking-tight"
-                        >
-                          {s.title}
-                        </h3>
-                      )}
-                      {s.description && !hasPoster && (
-                        <p
-                          style={{ color: c.secondaryText }}
-                          className="text-xs sm:text-[13px] leading-relaxed line-clamp-2"
-                        >
-                          {s.description}
-                        </p>
-                      )}
-                      {seriesGenres.length > 0 && (
-                        <p
-                          style={{ color: c.mutedText }}
-                          className="text-[11px] sm:text-xs font-medium"
-                        >
-                          {seriesGenres.slice(0, 3).join(" · ")}
-                        </p>
-                      )}
-                      <p
-                        style={{ color: c.secondaryText }}
-                        className="text-xs sm:text-[13px] font-medium opacity-70"
-                      >
-                        {subtitleStr}{s.language ? ` · ${s.language}` : ""}
-                      </p>
+                      {/* Content */}
+                      <div className="p-3 sm:p-3.5 space-y-1">
+                        {!hasPoster && (
+                          <div className="flex items-start justify-between gap-2">
+                            <h3
+                              style={{ color: c.primaryText }}
+                              className="text-sm sm:text-base font-bold tracking-tight leading-snug"
+                            >
+                              {s.title}
+                            </h3>
+                            <span
+                              style={{
+                                backgroundColor: c.elevatedBackground || "rgba(0,0,0,0.04)",
+                                borderColor: c.border,
+                                color: c.secondaryText,
+                              }}
+                              className="shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold"
+                            >
+                              {detectedPlatform || "Series"}
+                            </span>
+                          </div>
+                        )}
 
-                      <div
-                        style={{ color: c.accentText }}
-                        className="pt-1 flex items-center gap-1 text-xs sm:text-[13px] font-bold"
-                      >
-                        <span>View Series</span>
-                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                        {s.description && (
+                          <p
+                            style={{ color: c.secondaryText }}
+                            className="text-xs sm:text-[13px] leading-relaxed line-clamp-2"
+                          >
+                            {s.description}
+                          </p>
+                        )}
+
+                        <div className="flex items-center justify-between gap-2 pt-1">
+                          <div className="min-w-0 flex-1 flex items-center gap-1.5 text-[11px] sm:text-xs font-medium truncate">
+                            {seriesGenres.length > 0 && (
+                              <span style={{ color: c.mutedText }} className="shrink-0">
+                                {seriesGenres.slice(0, 2).join(" · ")} •
+                              </span>
+                            )}
+                            <span style={{ color: c.secondaryText }} className="opacity-75 truncate">
+                              {subtitleStr}{s.language ? ` · ${s.language}` : ""}
+                            </span>
+                          </div>
+
+                          <div
+                            style={{ color: c.accentText }}
+                            className="shrink-0 flex items-center gap-1 text-xs font-bold"
+                          >
+                            <span>Watch</span>
+                            <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
             )}
 
             {allSeriesHref && series.length > 0 && (
-              <div className="pt-1 text-center">
+              <div className="pt-0.5 text-center">
                 <button
                   type="button"
                   onPointerEnter={() => {
@@ -1986,10 +1987,10 @@ export function LivePreviewCard({
                     router.push(allSeriesHref);
                   }}
                   style={{ color: c.accentText }}
-                  className="tap-scale inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs sm:text-[13px] font-bold transition-all hover:translate-y-[-1px] hover:opacity-85 cursor-pointer"
+                  className="tap-scale inline-flex items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition-all hover:opacity-85 cursor-pointer"
                 >
                   <span>See all series</span>
-                  <ArrowRight className="h-3.5 w-3.5" />
+                  <ArrowRight className="h-3 w-3" />
                 </button>
               </div>
             )}
