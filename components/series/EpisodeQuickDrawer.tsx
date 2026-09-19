@@ -187,10 +187,11 @@ export function EpisodeQuickDrawer({
               )}
 
               <div
-                className="flex h-8.5 w-8.5 items-center justify-center rounded-full bg-black/45 backdrop-blur-md border border-white/25 text-white shadow-md select-none"
+                style={{ backgroundColor: "#043084" }}
+                className="flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] border border-white/20 text-white shadow-md select-none"
                 title="Inflixo Series"
               >
-                <InflixoLogoIcon className="h-4 w-4" />
+                <InflixoLogoIcon light className="h-5 w-5 sm:h-5.5 sm:w-5.5 object-contain" />
               </div>
             </div>
           </div>

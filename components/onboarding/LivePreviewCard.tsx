@@ -1437,8 +1437,8 @@ export function LivePreviewCard({
       >
         <Link
           href="/"
-          style={{ backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.accent }}
-          className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 shrink-0 cursor-pointer select-none items-center justify-center rounded-[10px] border border-white/25 text-white shadow-xs transition-all hover:scale-105"
+          style={{ backgroundColor: "#043084" }}
+          className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 shrink-0 cursor-pointer select-none items-center justify-center rounded-[10px] border border-white/20 text-white shadow-xs transition-all hover:scale-105"
           title="Inflixo"
           aria-label="Inflixo"
         >

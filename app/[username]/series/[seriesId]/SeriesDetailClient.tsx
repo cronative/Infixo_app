@@ -428,12 +428,12 @@ export function SeriesDetailClient({
 
                 <Link
                   href="/"
-                  style={{ backgroundColor: c.accent }}
+                  style={{ backgroundColor: "#043084" }}
                   className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] text-white shadow-xs transition-all shrink-0 border border-white/20 hover:scale-105 cursor-pointer select-none"
                   title="Inflixo Home"
                   aria-label="Inflixo Home"
                 >
-                  <LogoStadiumLinkI className="h-4.5 w-4.5 text-white" />
+                  <InflixoLogoIcon light className="h-5 w-5 sm:h-5.5 sm:w-5.5 object-contain" />
                 </Link>
               </div>
 
@@ -510,12 +510,12 @@ export function SeriesDetailClient({
 
                     <Link
                       href="/"
-                      style={{ backgroundColor: c.accent }}
-                      className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] text-white shadow-xs transition-all shrink-0 border border-white/25 hover:scale-105 cursor-pointer select-none"
+                      style={{ backgroundColor: "#043084" }}
+                      className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] text-white shadow-xs transition-all shrink-0 border border-white/20 hover:scale-105 cursor-pointer select-none"
                       title="Inflixo Home"
                       aria-label="Inflixo Home"
                     >
-                      <LogoStadiumLinkI className="h-4.5 w-4.5 text-white" />
+                      <InflixoLogoIcon light className="h-5 w-5 sm:h-5.5 sm:w-5.5 object-contain" />
                     </Link>
                   </div>
 
