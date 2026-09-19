@@ -381,8 +381,9 @@ export function SeriesDetailClient({
       <FocusOverlay overlay={themeMeta.focusOverlay} />
 
       {/* 4. Centered Content */}
-      <main className="relative z-10 flex-1 flex flex-col mx-auto max-w-[580px] w-full px-3 sm:px-4 py-3 sm:py-4 animate-fade-in-up">
-        {/* Centered Theme Card with min-h-full & flex layout */}
+      {/* 4. Centered Content */}
+      <main className="relative z-10 h-dvh min-h-0 flex flex-col mx-auto w-full max-w-[520px] px-2.5 py-2.5 sm:px-4 sm:py-3.5 overflow-hidden animate-fade-in-up">
+        {/* Centered Theme Card with flex layout & contained scroll */}
         <div
           style={{
             ...themeCssVars,
@@ -391,125 +392,173 @@ export function SeriesDetailClient({
             color: c.primaryText,
             fontFamily: typ.fontFamily,
             letterSpacing: typ.letterSpacing,
-            ["--desktop-surface-shadow" as any]: themeMeta.profileSurface?.shadow || eff.shadow || "0 20px 60px rgba(36,22,24,0.06)",
+            ["--desktop-surface-shadow" as any]: themeMeta.profileSurface?.shadow || eff.shadow || "0 20px 60px rgba(0,0,0,0.06)",
           }}
-          className="flex-1 flex flex-col justify-between relative overflow-hidden rounded-3xl border border-[#E4DAD5] bg-white shadow-xl shadow-[#241618]/5 transition-all"
+          className="flex-1 flex flex-col justify-between relative overflow-hidden rounded-[22px] border shadow-lg transition-all"
         >
-          <div className="flex-1 flex flex-col">
-            {/* 1. Full-Width Hero Cover Header (Maroon Gradient or Valid Poster) */}
-            <div className={`relative w-full overflow-hidden bg-gradient-to-r from-[#043084] via-[#A24B5A] to-[#043084] m-0 p-0 shrink-0 ${hasValidCover ? "aspect-[21/10] min-h-[158px] sm:min-h-[184px]" : "aspect-[21/9] min-h-[108px] sm:min-h-[124px]"}`}>
-              {hasValidCover && (
-                <>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={series.posterDataUrl!}
-                    alt={series.title}
-                    onError={() => setCoverImageError(true)}
-                    className="block w-full h-full object-cover object-center m-0 p-0"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/30 pointer-events-none" />
-                </>
-              )}
+          {/* Top Action Bar (Dedicated when no cover, or overlaid when cover exists) */}
+          {!hasValidCover && (
+            <header className="relative z-20 flex items-center justify-between w-full px-3.5 pt-3 pb-1.5 shrink-0 bg-transparent">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onPointerEnter={() => {
+                    if (username) {
+                      router.prefetch(`/${username}/series`);
+                    }
+                  }}
+                  onClick={() => {
+                    if (typeof window !== "undefined" && window.history.length > 1) {
+                      router.back();
+                    } else {
+                      router.push(profileUrl);
+                    }
+                  }}
+                  style={{
+                    backgroundColor: c.cardBackground,
+                    borderColor: c.border,
+                    color: c.primaryText,
+                  }}
+                  className="tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-xs transition-all hover:opacity-85 cursor-pointer"
+                  title={`Back to @${username}`}
+                  aria-label={`Back to @${username}`}
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </button>
 
-              {/* Top Action Bar on Cover */}
-              <header className="absolute top-3 inset-x-3 sm:top-3.5 sm:inset-x-3.5 z-20 flex items-center justify-between">
-                {/* Top Left: Back Button + circular Inflixo Logo */}
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onPointerEnter={() => {
-                      if (username) {
-                        router.prefetch(`/${username}/series`);
-                      }
-                    }}
-                    onClick={() => {
-                      if (typeof window !== "undefined" && window.history.length > 1) {
-                        router.back();
-                      } else {
-                        router.push(profileUrl);
-                      }
-                    }}
-                    className="tap-scale flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-[var(--theme-accent)] active:bg-[var(--theme-accent)] backdrop-blur-md border border-white/25 hover:border-[var(--theme-accent-border)] text-white transition-all shadow-md cursor-pointer"
-                    title={`Back to @${username}`}
-                    aria-label={`Back to @${username}`}
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                  </button>
+                <Link
+                  href="/"
+                  style={{ backgroundColor: c.accent }}
+                  className="tap-scale flex h-8 w-8 items-center justify-center rounded-full text-white shadow-xs transition-all shrink-0 border border-white/20 hover:scale-105 cursor-pointer select-none"
+                  title="Inflixo Home"
+                  aria-label="Inflixo Home"
+                >
+                  <LogoStadiumLinkI className="h-4 w-4 text-white" />
+                </Link>
+              </div>
 
-                  <Link
-                    href="/"
-                    style={{ backgroundColor: c.accent }}
-                    className="tap-scale flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-full text-white shadow-xs transition-all shrink-0 border border-white/25 hover:scale-105 cursor-pointer select-none"
-                    title="Inflixo Home"
-                    aria-label="Inflixo Home"
-                  >
-                    <LogoStadiumLinkI className="h-4 w-4 text-white" />
-                  </Link>
-                </div>
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  style={{
+                    backgroundColor: c.cardBackground,
+                    borderColor: c.border,
+                    color: c.primaryText,
+                  }}
+                  className="tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-xs transition-all hover:opacity-85 cursor-pointer"
+                  title="Copy series link"
+                  aria-label="Copy series link"
+                >
+                  <Copy className="h-3.5 w-3.5" />
+                </button>
 
-                {/* Right: Copy & Share Action Buttons */}
-                <div className="flex items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={handleCopyLink}
-                    className="tap-scale flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-[var(--theme-accent)] active:bg-[var(--theme-accent)] backdrop-blur-md border border-white/25 hover:border-[var(--theme-accent-border)] text-white transition-all shadow-md cursor-pointer"
-                    title="Copy series link"
-                    aria-label="Copy series link"
-                  >
-                    <Copy className="h-3.5 w-3.5" />
-                  </button>
+                <button
+                  type="button"
+                  onClick={() => setIsShareModalOpen(true)}
+                  style={{
+                    backgroundColor: c.cardBackground,
+                    borderColor: c.border,
+                    color: c.primaryText,
+                  }}
+                  className="tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-xs transition-all hover:opacity-85 cursor-pointer"
+                  title="Share series"
+                  aria-label="Share series"
+                >
+                  <Share2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </header>
+          )}
 
-                  <button
-                    type="button"
-                    onClick={() => setIsShareModalOpen(true)}
-                    className="tap-scale flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-full bg-black/35 hover:bg-[var(--theme-accent)] active:bg-[var(--theme-accent)] backdrop-blur-md border border-white/25 hover:border-[var(--theme-accent-border)] text-white transition-all shadow-md cursor-pointer"
-                    title="Share series"
-                    aria-label="Share series"
-                  >
-                    <Share2 className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              </header>
+          <div className="flex-1 flex flex-col min-h-0 overflow-y-auto scrollbar-none">
+            {/* 1. Compact Cover Image (ONLY rendered if genuine cover exists) */}
+            {hasValidCover && (
+              <div className="relative w-full h-[115px] sm:h-[130px] overflow-hidden bg-slate-900/10 shrink-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={series.posterDataUrl!}
+                  alt={series.title}
+                  onError={() => setCoverImageError(true)}
+                  className="block w-full h-full object-cover object-center"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/25 pointer-events-none" />
 
-              {hasValidCover ? (
-                <div className="absolute inset-x-4 bottom-6 z-10 flex flex-col items-center text-center sm:inset-x-8 sm:bottom-7">
-                  <h1
-                    style={{ fontFamily: typ.headingFontFamily, fontWeight: 900 }}
-                    className="max-w-[92%] text-balance text-2xl sm:text-3xl font-black leading-tight tracking-tight text-white drop-shadow-lg"
-                  >
-                    {series.title}
-                  </h1>
-                  {series.description && series.description.trim() && (
-                    <p className="mt-1.5 line-clamp-2 max-w-md text-xs sm:text-sm font-medium leading-relaxed text-white/76">
-                      {series.description}
-                    </p>
-                  )}
-                  {detectedPlatform && (
-                    <div className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-white/18 bg-black/35 px-3 py-1 text-[10px] sm:text-[11px] font-bold text-white/90 shadow-sm backdrop-blur-sm">
-                      {detectedPlatform === "YouTube" && <YoutubeIcon className="h-3 w-3 text-red-500" />}
-                      {detectedPlatform === "Instagram" && <InstagramIcon className="h-3 w-3 text-pink-500" />}
-                      {detectedPlatform === "Facebook" && <FacebookIcon className="h-3 w-3 text-blue-500" />}
-                      {detectedPlatform !== "YouTube" && detectedPlatform !== "Instagram" && detectedPlatform !== "Facebook" && (
-                        <Globe className="h-3 w-3 text-white" />
-                      )}
-                      <span>{detectedPlatform}</span>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                detectedPlatform && (
-                  <div className="absolute bottom-2.5 right-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold shadow-sm">
-                    {detectedPlatform === "YouTube" && <YoutubeIcon className="h-2.5 w-2.5 text-red-500" />}
-                    {detectedPlatform === "Instagram" && <InstagramIcon className="h-2.5 w-2.5 text-pink-500" />}
-                    {detectedPlatform === "Facebook" && <FacebookIcon className="h-2.5 w-2.5 text-blue-500" />}
-                    {detectedPlatform !== "YouTube" && detectedPlatform !== "Instagram" && detectedPlatform !== "Facebook" && (
-                      <Globe className="h-2.5 w-2.5 text-white" />
-                    )}
-                    <span>{detectedPlatform}</span>
+                {/* Overlaid Top Action Bar on Cover */}
+                <header className="absolute top-2.5 inset-x-3 sm:top-3 sm:inset-x-3.5 z-20 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onPointerEnter={() => {
+                        if (username) {
+                          router.prefetch(`/${username}/series`);
+                        }
+                      }}
+                      onClick={() => {
+                        if (typeof window !== "undefined" && window.history.length > 1) {
+                          router.back();
+                        } else {
+                          router.push(profileUrl);
+                        }
+                      }}
+                      className="tap-scale flex h-8 w-8 items-center justify-center rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
+                      title={`Back to @${username}`}
+                      aria-label={`Back to @${username}`}
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                    </button>
+
+                    <Link
+                      href="/"
+                      style={{ backgroundColor: c.accent }}
+                      className="tap-scale flex h-8 w-8 items-center justify-center rounded-full text-white shadow-xs transition-all shrink-0 border border-white/25 hover:scale-105 cursor-pointer select-none"
+                      title="Inflixo Home"
+                      aria-label="Inflixo Home"
+                    >
+                      <LogoStadiumLinkI className="h-4 w-4 text-white" />
+                    </Link>
                   </div>
-                )
-              )}
-            </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={handleCopyLink}
+                      className="tap-scale flex h-8 w-8 items-center justify-center rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
+                      title="Copy series link"
+                      aria-label="Copy series link"
+                    >
+                      <Copy className="h-3.5 w-3.5" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsShareModalOpen(true)}
+                      className="tap-scale flex h-8 w-8 items-center justify-center rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
+                      title="Share series"
+                      aria-label="Share series"
+                    >
+                      <Share2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </header>
+
+                <div className="absolute inset-x-3.5 bottom-2.5 z-10 flex items-end justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <h1
+                      style={{ fontFamily: typ.headingFontFamily, fontWeight: 800 }}
+                      className="line-clamp-1 text-base sm:text-lg font-bold leading-tight tracking-tight text-white drop-shadow-sm"
+                    >
+                      {series.title}
+                    </h1>
+                  </div>
+                  {detectedPlatform && (
+                    <span className="shrink-0 rounded-full border border-white/20 bg-black/40 px-2 py-0.5 text-[10px] font-bold text-white/90 backdrop-blur-xs">
+                      {detectedPlatform}
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* 2. BODY CONTENT: TITLE, DESCRIPTION, PILL TAGS, EPISODES */}
             <div className="p-3.5 sm:p-4 flex-1 flex flex-col">
@@ -521,17 +570,38 @@ export function SeriesDetailClient({
                       style={{
                         color: c.primaryText,
                         fontFamily: typ.headingFontFamily,
-                        fontWeight: typ.headingWeight as any,
+                        fontWeight: 700,
                       }}
-                      className="text-lg sm:text-xl font-extrabold leading-snug tracking-tight text-[#241618]"
+                      className="text-lg sm:text-xl font-bold leading-snug tracking-tight"
                     >
                       {series.title}
                     </h1>
 
+                    {detectedPlatform && (
+                      <div className="mt-1.5 flex justify-center">
+                        <span
+                          style={{
+                            backgroundColor: c.elevatedBackground || "rgba(0,0,0,0.04)",
+                            borderColor: c.border,
+                            color: c.secondaryText,
+                          }}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[11px] font-semibold"
+                        >
+                          {detectedPlatform === "YouTube" && <YoutubeIcon className="h-3 w-3 text-red-500" />}
+                          {detectedPlatform === "Instagram" && <InstagramIcon className="h-3 w-3 text-pink-500" />}
+                          {detectedPlatform === "Facebook" && <FacebookIcon className="h-3 w-3 text-blue-500" />}
+                          {detectedPlatform !== "YouTube" && detectedPlatform !== "Instagram" && detectedPlatform !== "Facebook" && (
+                            <Globe className="h-3 w-3 opacity-75" />
+                          )}
+                          <span>{detectedPlatform}</span>
+                        </span>
+                      </div>
+                    )}
+
                     {series.description && series.description.trim() && (
                       <p
                         style={{ color: c.secondaryText }}
-                        className="mt-1.5 text-xs sm:text-[13px] leading-relaxed text-[#6B5A5D] font-normal max-w-md mx-auto"
+                        className="mt-1.5 text-xs sm:text-[13px] leading-relaxed font-normal max-w-md mx-auto"
                       >
                         {series.description}
                       </p>
@@ -539,21 +609,16 @@ export function SeriesDetailClient({
                   </>
                 )}
 
-                {/* Metadata — clean values, each on its own line */}
+                {/* Metadata — clean values */}
                 {(genresList.length > 0 || langTag || allEpisodes.length > 0) && (
-                  <div className={`${hasValidCover ? "mt-0" : "mt-3"} space-y-1 text-center`}>
+                  <div className={`${hasValidCover ? "mt-0" : "mt-2"} space-y-0.5 text-center`}>
                     {genresList.length > 0 && (
                       <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-medium">
                         {genresList.slice(0, 3).join(", ")}
                       </p>
                     )}
-                    {langTag && (
-                      <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-medium">
-                        {langTag}
-                      </p>
-                    )}
-                    <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-medium">
-                      {allEpisodes.length} {allEpisodes.length === 1 ? "episode" : "episodes"}
+                    <p style={{ color: c.secondaryText }} className="text-[11px] sm:text-xs font-medium opacity-80">
+                      {allEpisodes.length} {allEpisodes.length === 1 ? "episode" : "episodes"}{langTag ? ` · ${langTag}` : ""}
                     </p>
                   </div>
                 )}
@@ -581,11 +646,11 @@ export function SeriesDetailClient({
               )}
 
               {/* 3. EPISODES HEADER & GROUPED LIST */}
-              <div className="mt-4 sm:mt-5 space-y-1.5">
+              <div className="mt-3.5 sm:mt-4 space-y-1.5">
                 <div className="flex items-center justify-between px-1">
                   <span
                     style={{ color: c.mutedText }}
-                    className="text-[11px] font-bold uppercase tracking-wider text-[#6B5A5D]"
+                    className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider"
                   >
                     {seasonsList.length > 1
                       ? `${seasonsList[activeSeasonIndex]?.title || `Season ${activeSeasonIndex + 1}`} Episodes (${currentEpisodes.length})`
@@ -595,18 +660,22 @@ export function SeriesDetailClient({
 
                 {currentEpisodes.length === 0 ? (
                   <div
-                    style={{ borderColor: c.border, color: c.mutedText }}
-                    className="p-4 text-center text-xs font-semibold rounded-2xl border border-dashed border-[#E4DAD5] bg-[#F7F0EA]/30 text-[#6B5A5D]"
+                    style={{
+                      borderColor: c.border,
+                      color: c.mutedText,
+                      backgroundColor: c.elevatedBackground || "rgba(0,0,0,0.02)",
+                    }}
+                    className="p-4 text-center text-xs font-semibold rounded-[14px] border border-dashed"
                   >
                     No episodes uploaded for this series yet.
                   </div>
                 ) : (
                   <div
                     style={{
-                      borderColor: c.divider,
+                      borderColor: c.border,
                       backgroundColor: c.cardBackground,
                     }}
-                    className="rounded-2xl border border-[#E4DAD5] bg-white divide-y divide-[#E4DAD5] overflow-hidden shadow-xs"
+                    className="rounded-[14px] border divide-y overflow-hidden shadow-xs"
                   >
                     {currentEpisodes.map((ep: Episode, index: number) => {
                       const partNum = ep.episodeNumber || index + 1;
@@ -620,19 +689,20 @@ export function SeriesDetailClient({
                           target={ep.externalUrl ? "_blank" : undefined}
                           rel="noopener noreferrer"
                           onClick={() => trackEpisodeClick(ep)}
-                          className="group flex items-center justify-between w-full px-3.5 py-2 sm:py-2.5 transition-colors hover:bg-[var(--theme-accent-soft)] cursor-pointer"
+                          style={{ borderColor: c.divider }}
+                          className="group flex items-center justify-between w-full px-3.5 py-2 sm:py-2.5 transition-colors hover:opacity-85 cursor-pointer"
                         >
                           {/* Left: Number & Title */}
-                          <div className="flex items-center gap-3 min-w-0 pr-2">
+                          <div className="flex items-center gap-2.5 min-w-0 pr-2">
                             <span
                               style={{ color: c.mutedText }}
-                              className="text-xs font-mono font-medium text-[#6B5A5D] w-5 shrink-0"
+                              className="text-xs font-mono font-medium w-5 shrink-0"
                             >
                               {partNumStr}
                             </span>
                             <span
                               style={{ color: c.primaryText }}
-                              className="text-xs sm:text-[13px] font-bold text-[#241618] truncate group-hover:text-[var(--theme-accent-text)] transition-colors"
+                              className="text-xs sm:text-[13px] font-bold truncate transition-colors"
                             >
                               {epTitleStr}
                             </span>
@@ -640,10 +710,8 @@ export function SeriesDetailClient({
 
                           {/* Right: Open Link Icon */}
                           <div
-                            style={{
-                              color: c.accentText,
-                            }}
-                            className="flex h-7 w-7 items-center justify-center shrink-0 text-[#043084] opacity-70 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
+                            style={{ color: c.accentText }}
+                            className="flex h-6 w-6 items-center justify-center shrink-0 opacity-75 transition-all group-hover:translate-x-0.5 group-hover:opacity-100"
                           >
                             <ExternalLink className="h-3.5 w-3.5" />
                           </div>
@@ -659,7 +727,7 @@ export function SeriesDetailClient({
           {/* 4. PINNED MADE WITH INFLIXO FOOTER */}
           <div
             style={{ borderColor: c.divider }}
-            className="flex items-center justify-center px-5 pt-2.5 pb-3 select-none mt-4 border-t border-[#E4DAD5]"
+            className="flex items-center justify-center px-4 pt-2 pb-2.5 select-none shrink-0 border-t"
           >
             <Link
               href="/"
@@ -668,9 +736,9 @@ export function SeriesDetailClient({
                 borderColor: c.border,
                 color: c.secondaryText,
               }}
-              className="tap-scale inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#E4DAD5] bg-white text-[#6B5A5D] text-[13px] font-bold shadow-2xs hover:scale-105 transition-all"
+              className="tap-scale inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-bold shadow-2xs hover:scale-105 transition-all"
             >
-              <InflixoLogoIcon className="h-4.5 w-4.5 shrink-0" />
+              <InflixoLogoIcon className="h-4 w-4 shrink-0" />
               <span>Made with Inflixo</span>
             </Link>
           </div>
