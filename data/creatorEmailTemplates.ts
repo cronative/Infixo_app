@@ -115,7 +115,7 @@ Aapke ongoing success ki shubhkaamnaayein,
 export function formatEmailBodyToHtml(text: string): string {
   if (!text) return "";
 
-  let formatted = text
+  const formatted = text
     // Replace Markdown headers ###
     .replace(/^### (.*$)/gim, '<h3 style="color: #043084; font-size: 16px; font-weight: 800; margin: 20px 0 10px 0;">$1</h3>')
     // Bold text **text**

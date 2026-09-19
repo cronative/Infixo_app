@@ -38,7 +38,7 @@ export async function GET(req: Request) {
     }
 
     let creators: any[] = [];
-    let stats = {
+    const stats = {
       totalCreators: 0,
       totalSeries: 0,
       totalEpisodes: 0,

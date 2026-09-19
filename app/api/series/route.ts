@@ -161,7 +161,8 @@ export async function POST(req: Request) {
     const body = await req.json();
     console.log("📥 [POST /api/series] Request payload:", body);
 
-    let { email, title, posterDataUrl, description, genre, language, episodes, isEpisodeOnly } = body;
+    let { email } = body;
+    const { title, posterDataUrl, description, genre, language, episodes, isEpisodeOnly } = body;
 
     if (!isEpisodeOnly && !title) {
       console.error("❌ [POST /api/series] Missing series title!");
@@ -178,7 +179,7 @@ export async function POST(req: Request) {
       }
     }
 
-    let [creators]: any = await db.query("SELECT id FROM creators WHERE email = ?", [email]);
+    const [creators]: any = await db.query("SELECT id FROM creators WHERE email = ?", [email]);
     let creatorId = creators[0]?.id;
 
     if (!creatorId) {

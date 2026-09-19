@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -55,6 +55,59 @@ function generateContextualSuggestions(
   // Random shuffle to pick 5 unique items every time
   const shuffled = [...validPool].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, 5);
+}
+
+// Star Rating Selector Helper Component (defined at module level to avoid "component in render" lint error)
+function StarRatingRow({
+  label,
+  icon: Icon,
+  val,
+  setVal,
+  hoverVal,
+  setHoverVal,
+  isRequired = true,
+}: {
+  label: string;
+  icon: React.ElementType;
+  val: number;
+  setVal: (n: number) => void;
+  hoverVal: number;
+  setHoverVal: (n: number) => void;
+  isRequired?: boolean;
+}) {
+  return (
+    <div className="space-y-1 py-2.5 px-3.5 bg-[#fbfbfb] rounded-xl border border-[#E7E3DC]">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <Icon className="h-4 w-4 text-[#043084] shrink-0" />
+          <span className="text-xs font-bold text-[#181716] truncate">
+            {label} {isRequired && <span className="text-[#C2414B]">*</span>}
+          </span>
+        </div>
+
+        {/* Star Rating Buttons */}
+        <div className="flex items-center gap-1 shrink-0">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <button
+              key={star}
+              type="button"
+              onMouseEnter={() => setHoverVal(star)}
+              onMouseLeave={() => setHoverVal(0)}
+              onClick={() => setVal(star)}
+              className="p-1 transition-transform hover:scale-125 focus:outline-none cursor-pointer"
+            >
+              <Star
+                className={`h-5 w-5 transition-colors ${star <= (hoverVal || val)
+                  ? "fill-amber-400 text-amber-400"
+                  : "text-[#E7E3DC] fill-[#E7E3DC]"
+                  }`}
+              />
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function PublicReviewSubmissionPage() {
@@ -338,56 +391,6 @@ export default function PublicReviewSubmissionPage() {
     );
   }
 
-  // Star Rating Selector Helper Component
-  const StarRatingRow = ({
-    label,
-    icon: Icon,
-    val,
-    setVal,
-    hoverVal,
-    setHoverVal,
-    isRequired = true,
-  }: {
-    label: string;
-    icon: any;
-    val: number;
-    setVal: (n: number) => void;
-    hoverVal: number;
-    setHoverVal: (n: number) => void;
-    isRequired?: boolean;
-  }) => (
-    <div className="space-y-1 py-2.5 px-3.5 bg-[#fbfbfb] rounded-xl border border-[#E7E3DC]">
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-1.5 min-w-0">
-          <Icon className="h-4 w-4 text-[#043084] shrink-0" />
-          <span className="text-xs font-bold text-[#181716] truncate">
-            {label} {isRequired && <span className="text-[#C2414B]">*</span>}
-          </span>
-        </div>
-
-        {/* Star Rating Buttons */}
-        <div className="flex items-center gap-1 shrink-0">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <button
-              key={star}
-              type="button"
-              onMouseEnter={() => setHoverVal(star)}
-              onMouseLeave={() => setHoverVal(0)}
-              onClick={() => setVal(star)}
-              className="p-1 transition-transform hover:scale-125 focus:outline-none cursor-pointer"
-            >
-              <Star
-                className={`h-5 w-5 transition-colors ${star <= (hoverVal || val)
-                  ? "fill-amber-400 text-amber-400"
-                  : "text-[#E7E3DC] fill-[#E7E3DC]"
-                  }`}
-              />
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="min-h-dvh bg-[#FAF9F6] text-[#181716] flex flex-col items-center justify-center p-4 sm:p-6 text-left relative">

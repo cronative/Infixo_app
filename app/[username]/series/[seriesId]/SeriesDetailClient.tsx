@@ -207,7 +207,7 @@ export function SeriesDetailClient({
       if (/facebook\.com/i.test(firstUrl)) return "Facebook";
     }
     return null;
-  }, [series?.platform, allEpisodes]);
+  }, [series, allEpisodes]);
 
   const platformInfo = useMemo(() => {
     if (!detectedPlatform) return null;
