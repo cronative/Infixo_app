@@ -450,6 +450,17 @@ body {
   }
 }
 
+@keyframes infixo-sheen {
+  0% {
+    transform: translateX(-150%);
+  }
+
+  30%,
+  100% {
+    transform: translateX(150%);
+  }
+}
+
 @keyframes scale-in {
   0% {
     opacity: 0;

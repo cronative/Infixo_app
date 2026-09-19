@@ -326,9 +326,11 @@ export default function LandingHomePage() {
           <div className="flex items-center gap-2">
             <Link
               href="/login"
-              className="tap-scale inline-flex items-center justify-center rounded-[10px] bg-[#043084] px-4 py-2 text-xs font-bold text-white shadow-xs transition-all hover:bg-[#03256c] hover:scale-[1.02] cursor-pointer"
+              className="tap-scale group relative inline-flex items-center gap-1.5 overflow-hidden rounded-[10px] bg-[#043084] px-4 py-2 text-xs font-bold text-white shadow-xs shadow-[#043084]/20 ring-2 ring-[#043084]/15 transition-all hover:-translate-y-0.5 hover:bg-[#03256c] hover:shadow-md hover:shadow-[#043084]/30 hover:ring-[#043084]/35 cursor-pointer"
             >
-              Get Started
+              <span className="absolute inset-0 -translate-x-full animate-[infixo-sheen_3s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
+              <span className="relative z-10">Get Started</span>
+              <ArrowRight className="relative z-10 h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
             </Link>
           </div>
         </div>
@@ -596,16 +598,16 @@ export default function LandingHomePage() {
           </div>
 
           <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div data-scroll-reveal style={{ "--reveal-delay": "80ms" } as CSSProperties} className="rounded-[14px] border border-[#e2e8f0] bg-[#f8fafc] p-7 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-[#043084]/20 hover:shadow-[0_22px_60px_rgba(21,25,51,0.10)]">
-              <h3 className="font-display text-xl font-black text-[#043084]">Free Trial</h3>
-              <p className="mt-1 text-sm font-medium text-[#64748b]">Try your public creator profile for 7 days.</p>
-              <p className="mt-7 font-display text-5xl font-black text-[#043084]">₹0</p>
-              <p className="mt-1 text-xs font-semibold text-[#64748b]">7 days public</p>
-              <ul className="mt-7 space-y-2 text-sm font-semibold text-[#334155]">
-                {["inflixo.com/yourname link", "3 series with 15 total episodes", "5 custom links", "1 collab package", "1 review", "Free themes", "Total Fanbase calculator", "Inflixo branding"].map((item) => (
-                  <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-[#043084]" />{item}</li>
-                ))}
-              </ul>
+            <div data-scroll-reveal style={{ "--reveal-delay": "80ms" } as CSSProperties} className="flex flex-col justify-between rounded-[14px] border border-[#e2e8f0] bg-[#f8fafc] p-7 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-[#043084]/20 hover:shadow-[0_22px_60px_rgba(21,25,51,0.10)]">
+              <div>
+                <h3 className="font-display text-xl font-black text-[#043084]">Free Trial</h3>
+                <p className="mt-1 text-sm font-medium text-[#64748b]">Try your public creator profile for 7 days.</p>
+                <p className="mt-7 font-display text-5xl font-black text-[#043084]">₹0</p>
+                <p className="mt-1 text-xs font-semibold text-[#64748b]">7 days public</p>
+                <p className="mt-7 text-sm font-semibold text-[#475569] leading-relaxed">
+                  After 7 days trial, your profile would be private, your fans can&apos;t see it.
+                </p>
+              </div>
               <button onClick={() => handleClaim(username)} className="group mt-7 w-full rounded-[8px] bg-[#043084] px-5 py-3 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-[0_14px_35px_rgba(21,25,51,0.20)]">
                 Build Free Profile
               </button>
