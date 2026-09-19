@@ -2225,8 +2225,8 @@ export function LivePreviewCard({
           );
         })()}
 
-        {/* 6. Reviews (Compact, only when reviews exist) */}
-        {effectiveVisibilitySettings.showReviews !== false && approvedReviews.length > 0 && (
+        {/* 6. Reviews (Compact, only when reviews exist, or when reviewsOnlyMode is true) */}
+        {effectiveVisibilitySettings.showReviews !== false && (approvedReviews.length > 0 || reviewsOnlyMode) && (
           <div id="reviews-section" className="relative z-10 order-[30] mt-6 w-full text-left space-y-2.5">
             <h2
               style={{
@@ -2239,8 +2239,30 @@ export function LivePreviewCard({
               Reviews
             </h2>
 
-            <div className="space-y-2.5">
-              {(typeof reviewsPreviewLimit === "number" ? approvedReviews.slice(0, reviewsPreviewLimit) : approvedReviews).map((rev) => {
+            {approvedReviews.length === 0 ? (
+              <div
+                style={{
+                  backgroundColor: c.elevatedBackground,
+                  borderColor: c.border,
+                }}
+                className="rounded-[14px] border p-4 sm:p-5 text-center space-y-0.5"
+              >
+                <p
+                  style={{ color: c.primaryText }}
+                  className="text-xs sm:text-sm font-semibold"
+                >
+                  No reviews yet
+                </p>
+                <p
+                  style={{ color: c.mutedText }}
+                  className="text-[11px] sm:text-xs"
+                >
+                  Verified client and brand reviews will appear here.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2.5">
+                {(typeof reviewsPreviewLimit === "number" ? approvedReviews.slice(0, reviewsPreviewLimit) : approvedReviews).map((rev) => {
                 const ratingNum = Number(rev.rating) || 5;
                 return (
                   <div
@@ -2281,6 +2303,7 @@ export function LivePreviewCard({
                 );
               })}
             </div>
+            )}
 
             {allReviewsHref && approvedReviews.length > 0 && (
               <div className="pt-1 text-center">

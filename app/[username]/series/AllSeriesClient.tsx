@@ -10,6 +10,7 @@ import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
 import { FocusOverlay } from "@/components/theme/FocusOverlay";
 import { useToast } from "@/contexts/ToastContext";
 import { copyToClipboard } from "@/lib/copyToClipboard";
+import { isDarkTheme } from "@/components/onboarding/LivePreviewCard";
 import {
   CreatorProfile,
   EMPTY_SOCIAL_ACCOUNTS,
@@ -288,6 +289,9 @@ export default function AllSeriesClient() {
     }
   }
 
+  const isDark = isDarkTheme(theme);
+  const usesDarkControls = isDark || themeMeta.mode === "dark";
+
   return (
     <div
       style={{ backgroundColor: themeMeta.colors.pageBackground }}
@@ -314,7 +318,12 @@ export default function AllSeriesClient() {
         <button
           type="button"
           onClick={() => router.push(`/${cleanHandle}`)}
-          className="tap-scale mb-2 inline-flex h-8 w-fit items-center gap-1.5 rounded-[10px] border border-black/10 bg-white/85 px-3 text-xs font-bold text-[#043084] shadow-xs backdrop-blur-md transition-all hover:bg-white cursor-pointer"
+          style={{
+            backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 0.85)",
+            borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : "rgba(0, 0, 0, 0.1)",
+            color: usesDarkControls ? "#FFFFFF" : themeMeta.colors.primaryText,
+          }}
+          className="tap-scale mb-2 inline-flex h-8 w-fit items-center gap-1.5 rounded-[10px] border px-3 text-xs font-bold shadow-xs backdrop-blur-md transition-all hover:opacity-90 cursor-pointer"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           <span>Profile</span>

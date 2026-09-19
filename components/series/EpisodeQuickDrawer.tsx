@@ -140,7 +140,7 @@ export function EpisodeQuickDrawer({
       <div
         ref={modalRef}
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-[560px] max-h-[calc(100dvh-28px)] sm:max-h-[calc(100dvh-44px)] bg-white rounded-[28px] border border-slate-200/90 shadow-2xl shadow-black/25 flex flex-col overflow-hidden text-left animate-in zoom-in-95 duration-200"
+        className="relative w-full max-w-[520px] max-h-[calc(100dvh-28px)] sm:max-h-[calc(100dvh-44px)] bg-white rounded-[22px] border border-slate-200/90 shadow-2xl shadow-black/25 flex flex-col overflow-hidden text-left animate-in zoom-in-95 duration-200"
       >
         {/* 1. Full-Width Hero Cover Header (Styled like Center Profile Card Hero) */}
         <div className={`relative w-full overflow-hidden shrink-0 ${hasValidCover
@@ -167,7 +167,7 @@ export function EpisodeQuickDrawer({
               type="button"
               onClick={onClose}
               aria-label="Close details"
-              className="tap-scale flex h-8.5 w-8.5 items-center justify-center rounded-full bg-black/45 hover:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
+              className="tap-scale flex h-8.5 w-8.5 items-center justify-center rounded-[10px] bg-black/45 hover:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
             >
               <X className="h-4 w-4 stroke-[2.5]" />
             </button>
