@@ -314,7 +314,7 @@ export default function AllSeriesClient() {
         <button
           type="button"
           onClick={() => router.push(`/${cleanHandle}`)}
-          className="tap-scale mb-2 inline-flex h-8 w-fit items-center gap-1.5 rounded-full border border-black/10 bg-white/85 px-3 text-xs font-bold text-[#043084] shadow-xs backdrop-blur-md transition-all hover:bg-white cursor-pointer"
+          className="tap-scale mb-2 inline-flex h-8 w-fit items-center gap-1.5 rounded-[10px] border border-black/10 bg-white/85 px-3 text-xs font-bold text-[#043084] shadow-xs backdrop-blur-md transition-all hover:bg-white cursor-pointer"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           <span>Profile</span>

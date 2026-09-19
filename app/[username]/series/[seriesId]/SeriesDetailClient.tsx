@@ -419,7 +419,7 @@ export function SeriesDetailClient({
                     borderColor: c.border,
                     color: c.primaryText,
                   }}
-                  className="tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-xs transition-all hover:opacity-85 cursor-pointer"
+                  className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] border shadow-xs transition-all hover:opacity-85 cursor-pointer"
                   title={`Back to @${username}`}
                   aria-label={`Back to @${username}`}
                 >
@@ -429,11 +429,11 @@ export function SeriesDetailClient({
                 <Link
                   href="/"
                   style={{ backgroundColor: c.accent }}
-                  className="tap-scale flex h-8 w-8 items-center justify-center rounded-full text-white shadow-xs transition-all shrink-0 border border-white/20 hover:scale-105 cursor-pointer select-none"
+                  className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] text-white shadow-xs transition-all shrink-0 border border-white/20 hover:scale-105 cursor-pointer select-none"
                   title="Inflixo Home"
                   aria-label="Inflixo Home"
                 >
-                  <LogoStadiumLinkI className="h-4 w-4 text-white" />
+                  <LogoStadiumLinkI className="h-4.5 w-4.5 text-white" />
                 </Link>
               </div>
 
@@ -446,7 +446,7 @@ export function SeriesDetailClient({
                     borderColor: c.border,
                     color: c.primaryText,
                   }}
-                  className="tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-xs transition-all hover:opacity-85 cursor-pointer"
+                  className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] border shadow-xs transition-all hover:opacity-85 cursor-pointer"
                   title="Copy series link"
                   aria-label="Copy series link"
                 >
@@ -461,7 +461,7 @@ export function SeriesDetailClient({
                     borderColor: c.border,
                     color: c.primaryText,
                   }}
-                  className="tap-scale flex h-8 w-8 items-center justify-center rounded-full border shadow-xs transition-all hover:opacity-85 cursor-pointer"
+                  className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] border shadow-xs transition-all hover:opacity-85 cursor-pointer"
                   title="Share series"
                   aria-label="Share series"
                 >
@@ -501,7 +501,7 @@ export function SeriesDetailClient({
                           router.push(profileUrl);
                         }
                       }}
-                      className="tap-scale flex h-8 w-8 items-center justify-center rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
+                      className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
                       title={`Back to @${username}`}
                       aria-label={`Back to @${username}`}
                     >
@@ -511,11 +511,11 @@ export function SeriesDetailClient({
                     <Link
                       href="/"
                       style={{ backgroundColor: c.accent }}
-                      className="tap-scale flex h-8 w-8 items-center justify-center rounded-full text-white shadow-xs transition-all shrink-0 border border-white/25 hover:scale-105 cursor-pointer select-none"
+                      className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] text-white shadow-xs transition-all shrink-0 border border-white/25 hover:scale-105 cursor-pointer select-none"
                       title="Inflixo Home"
                       aria-label="Inflixo Home"
                     >
-                      <LogoStadiumLinkI className="h-4 w-4 text-white" />
+                      <LogoStadiumLinkI className="h-4.5 w-4.5 text-white" />
                     </Link>
                   </div>
 
@@ -523,7 +523,7 @@ export function SeriesDetailClient({
                     <button
                       type="button"
                       onClick={handleCopyLink}
-                      className="tap-scale flex h-8 w-8 items-center justify-center rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
+                      className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
                       title="Copy series link"
                       aria-label="Copy series link"
                     >
@@ -533,7 +533,7 @@ export function SeriesDetailClient({
                     <button
                       type="button"
                       onClick={() => setIsShareModalOpen(true)}
-                      className="tap-scale flex h-8 w-8 items-center justify-center rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
+                      className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
                       title="Share series"
                       aria-label="Share series"
                     >

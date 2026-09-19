@@ -1431,18 +1431,18 @@ export function LivePreviewCard({
       {/* Focus Overlay between animated background and content */}
       {!isFull && <FocusOverlay overlay={themeMeta.focusOverlay} contained={true} />}
 
-      {/* Top Action Bar (Left Inflixo Logo Squircle, Right Share Icon Squircle) */}
+      {/* Top Action Bar (Left Inflixo Logo Square with radius, Right Share Icon Square with radius) */}
       <div
         className={`relative z-30 flex items-center justify-between w-full px-0.5 bg-transparent ${containedScroll ? "shrink-0 pt-0 pb-2" : "mb-2"}`}
       >
         <Link
           href="/"
           style={{ backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.accent }}
-          className="tap-scale flex h-11 w-11 shrink-0 cursor-pointer select-none items-center justify-center rounded-xl border border-white/25 text-white shadow-sm shadow-black/10 transition-all hover:scale-105 sm:h-12 sm:w-12"
+          className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 shrink-0 cursor-pointer select-none items-center justify-center rounded-[10px] border border-white/25 text-white shadow-xs transition-all hover:scale-105"
           title="Inflixo"
           aria-label="Inflixo"
         >
-          <InflixoLogoIcon light className="h-7 w-7 object-contain sm:h-8 sm:w-8" />
+          <InflixoLogoIcon light className="h-5 w-5 sm:h-5.5 sm:w-5.5 object-contain" />
         </Link>
 
         {!isOnboardingMode && (
@@ -1454,11 +1454,11 @@ export function LivePreviewCard({
               borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : c.border,
               color: usesDarkControls ? "#FFFFFF" : c.primaryText,
             }}
-            className="tap-scale flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl border shadow-sm shadow-black/10 transition-all hover:scale-105 sm:h-12 sm:w-12"
+            className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 cursor-pointer items-center justify-center rounded-[10px] border shadow-xs transition-all hover:scale-105"
             title="Share profile"
             aria-label="Share profile"
           >
-            <Share2 className="h-5 w-5 sm:h-[22px] sm:w-[22px]" />
+            <Share2 className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
           </button>
         )}
       </div>
