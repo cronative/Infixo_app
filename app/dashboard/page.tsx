@@ -28,6 +28,7 @@ import { canCreateSeries, getPlanQuota } from "@/services/subscriptionLimits";
 import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
 import { reviewsRepository, customLinksRepository } from "@/repositories/localRepository";
 import { copyToClipboard } from "@/lib/copyToClipboard";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { MediaKitPackage, CreatorReview, CustomLink, Episode } from "@/types";
 
 type DashboardAnalytics = {
@@ -321,42 +322,42 @@ export default function DashboardOverviewPage() {
   }, [packages, series, totalEpisodesCount, reviews, handleStr, handleCreateSeriesClick]);
 
   return (
-    <div className="space-y-6 w-full pb-8 text-left">
+    <div className="space-y-4 sm:space-y-4.5 w-full pb-6 text-left">
 
       {/* 1. COMPACT PROFILE CARD */}
-      <section className="rounded-[16px] border border-[#e2e8f0] bg-white p-5 sm:p-6 shadow-xs space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5 min-w-0 flex-1">
+      <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 shadow-xs space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
             <CreatorAvatar
               src={profile.photoDataUrl}
               name={displayName}
-              className="w-12 h-12 rounded-full border border-[#e2e8f0] overflow-hidden object-cover aspect-square shrink-0"
-              textClassName="text-sm font-semibold text-[#151933]"
+              className="w-11 h-11 rounded-full border border-[#e2e8f0] overflow-hidden object-cover aspect-square shrink-0"
+              textClassName="text-sm font-semibold text-[#043084]"
               fallbackBgClass="bg-[#f8fafc]"
             />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-base sm:text-lg font-semibold text-[#151933]">
+                <h2 className="text-base font-semibold text-[#043084]">
                   {displayName}
                 </h2>
                 {profile.isVerified && (
-                  <ShieldCheck className="h-4 w-4 shrink-0 text-[#151933]" />
+                  <ShieldCheck className="h-4 w-4 shrink-0 text-[#043084]" />
                 )}
-                <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#17845B] bg-[#EAF7F0] border border-[#17845B]/20 px-2 py-0.5 rounded-full shrink-0">
+                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#17845B] bg-[#EAF7F0] border border-[#17845B]/20 px-2 py-0.5 rounded-full shrink-0">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#17845B]" />
                   Live
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-[#475569] font-normal mt-0.5">
+              <p className="text-xs text-[#475569] font-normal mt-0.5">
                 @{handleStr}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0 flex-wrap">
+          <div className="flex items-center gap-2 shrink-0 flex-wrap">
             <Link
               href="/dashboard/profile"
-              className="h-10 px-3.5 rounded-[10px] border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs sm:text-sm font-medium text-[#151933] transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
+              className="h-8.5 sm:h-9 px-3 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs font-medium text-[#043084] transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
             >
               <Edit2 className="h-3.5 w-3.5 text-[#64748b]" />
               <span>Edit Profile</span>
@@ -364,7 +365,7 @@ export default function DashboardOverviewPage() {
             <button
               type="button"
               onClick={handleCopy}
-              className="h-10 px-3.5 rounded-[10px] border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs sm:text-sm font-medium text-[#151933] transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
+              className="h-8.5 sm:h-9 px-3 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs font-medium text-[#043084] transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
             >
               <Copy className="h-3.5 w-3.5 text-[#64748b]" />
               <span>Copy Link</span>
@@ -373,7 +374,7 @@ export default function DashboardOverviewPage() {
               href={`/${handleStr}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="h-10 px-3.5 rounded-[10px] bg-[#151933] hover:bg-brand-hover text-xs sm:text-sm font-medium text-white transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
+              className="h-8.5 sm:h-9 px-3 rounded-lg bg-[#043084] hover:bg-brand-hover text-xs font-medium text-white transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
             >
               <span>View Profile</span>
               <ExternalLink className="h-3.5 w-3.5" />
@@ -381,22 +382,22 @@ export default function DashboardOverviewPage() {
           </div>
         </div>
 
-        <div className="pt-4 border-t border-[#e2e8f0] space-y-2">
-          <div className="flex items-center justify-between text-xs sm:text-sm">
-            <span className="font-medium text-[#151933]">
+        <div className="pt-3 border-t border-[#e2e8f0] space-y-1.5">
+          <div className="flex items-center justify-between text-xs">
+            <span className="font-medium text-[#043084]">
               Your profile is {animatedPercentage}% complete
             </span>
             <Link
               href="/dashboard/profile"
-              className="font-medium text-xs sm:text-sm text-[#151933] hover:underline inline-flex items-center gap-1"
+              className="font-medium text-xs text-[#043084] hover:underline inline-flex items-center gap-1"
             >
               <span>Complete profile</span>
-              <ArrowRight className="h-3.5 w-3.5" />
+              <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
-          <div className="w-full h-2 rounded-full bg-[#f8fafc] border border-[#e2e8f0] overflow-hidden">
+          <div className="w-full h-1.5 rounded-full bg-[#f8fafc] border border-[#e2e8f0] overflow-hidden">
             <div
-              className="h-full bg-[#151933] rounded-full transition-all duration-700 ease-out"
+              className="h-full bg-[#043084] rounded-full transition-all duration-700 ease-out"
               style={{ width: isLoaded ? `${profileSteps.percentage}%` : "0%" }}
             />
           </div>
@@ -404,32 +405,32 @@ export default function DashboardOverviewPage() {
       </section>
 
       {/* 2. OVERVIEW (3 EQUAL CARDS) */}
-      <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+      <section className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         {/* Card 1: Total Fanbase */}
-        <div className="rounded-[16px] border border-[#e2e8f0] bg-white p-5 sm:p-6 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:shadow-md flex flex-col justify-between space-y-4">
+        <div className="rounded-xl border border-[#e2e8f0] bg-white p-3.5 sm:p-4 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:shadow-sm flex flex-col justify-between space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-[#64748b]">
+            <span className="text-xs sm:text-sm font-medium text-[#64748b]">
               Total Fanbase
             </span>
             <div className="flex items-center gap-1.5">
               <button
                 type="button"
                 onClick={handleRefreshStats}
-                className="p-1 rounded-lg text-[#64748b] hover:text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                className="p-1 rounded-lg text-[#64748b] hover:text-[#043084] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                 title={`Last synced: ${formatSyncDate(socials.updatedAt)}. Click to refresh.`}
               >
-                <RefreshCw className={`h-3.5 w-3.5 ${isSyncing ? "animate-spin text-[#151933]" : ""}`} />
+                <RefreshCw className={`h-3.5 w-3.5 ${isSyncing ? "animate-spin text-[#043084]" : ""}`} />
               </button>
-              <div className="h-8 w-8 rounded-[10px] bg-[#f8fafc] border border-[#e2e8f0] flex items-center justify-center text-[#151933]">
-                <Users className="h-4 w-4" />
+              <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] flex items-center justify-center text-[#043084]">
+                <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </div>
             </div>
           </div>
           <div>
-            <p className="text-[32px] font-semibold text-[#151933] leading-none tracking-tight tabular-nums">
+            <p className="text-2xl sm:text-[28px] font-semibold text-[#043084] leading-none tracking-tight tabular-nums">
               {formatCount(animatedFanbase)}
             </p>
-            <p className="text-xs sm:text-[13px] text-[#64748b] font-normal mt-1.5">
+            <p className="text-xs text-[#64748b] font-normal mt-1">
               {connectedSocialsCount > 0
                 ? `${connectedSocialsCount} connected ${connectedSocialsCount === 1 ? "social" : "socials"}`
                 : "Connect your social platforms"}
@@ -437,7 +438,7 @@ export default function DashboardOverviewPage() {
           </div>
           <Link
             href="/dashboard/socials"
-            className="text-xs sm:text-[13px] font-medium text-[#151933] hover:underline inline-flex items-center gap-1 pt-1"
+            className="text-xs font-medium text-[#043084] hover:underline inline-flex items-center gap-1 pt-0.5"
           >
             <span>View socials</span>
             <ChevronRight className="h-3.5 w-3.5" />
@@ -445,26 +446,26 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* Card 2: Series */}
-        <div className="rounded-[16px] border border-[#e2e8f0] bg-white p-5 sm:p-6 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:shadow-md flex flex-col justify-between space-y-4">
+        <div className="rounded-xl border border-[#e2e8f0] bg-white p-3.5 sm:p-4 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:shadow-sm flex flex-col justify-between space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-[#64748b]">
+            <span className="text-xs sm:text-sm font-medium text-[#64748b]">
               Series
             </span>
-            <div className="h-8 w-8 rounded-[10px] bg-[#f8fafc] border border-[#e2e8f0] flex items-center justify-center text-[#151933]">
-              <Layers className="h-4 w-4" />
+            <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] flex items-center justify-center text-[#043084]">
+              <Layers className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </div>
           </div>
           <div>
-            <p className="text-[32px] font-semibold text-[#151933] leading-none tracking-tight">
+            <p className="text-2xl sm:text-[28px] font-semibold text-[#043084] leading-none tracking-tight">
               {series.length} {series.length === 1 ? "Series" : "Series"}
             </p>
-            <p className="text-xs sm:text-[13px] text-[#64748b] font-normal mt-1.5">
+            <p className="text-xs text-[#64748b] font-normal mt-1">
               {totalEpisodesCount} {totalEpisodesCount === 1 ? "episode" : "episodes"}
             </p>
           </div>
           <Link
             href="/dashboard/series"
-            className="text-xs sm:text-[13px] font-medium text-[#151933] hover:underline inline-flex items-center gap-1 pt-1"
+            className="text-xs font-medium text-[#043084] hover:underline inline-flex items-center gap-1 pt-0.5"
           >
             <span>Manage series</span>
             <ChevronRight className="h-3.5 w-3.5" />
@@ -472,26 +473,26 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* Card 3: Collab Packages */}
-        <div className="rounded-[16px] border border-[#e2e8f0] bg-white p-5 sm:p-6 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:shadow-md flex flex-col justify-between space-y-4">
+        <div className="rounded-xl border border-[#e2e8f0] bg-white p-3.5 sm:p-4 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:shadow-sm flex flex-col justify-between space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-[#64748b]">
+            <span className="text-xs sm:text-sm font-medium text-[#64748b]">
               Collabs
             </span>
-            <div className="h-8 w-8 rounded-[10px] bg-[#f8fafc] border border-[#e2e8f0] flex items-center justify-center text-[#151933]">
-              <Briefcase className="h-4 w-4" />
+            <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] flex items-center justify-center text-[#043084]">
+              <Briefcase className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </div>
           </div>
           <div>
-            <p className="text-[32px] font-semibold text-[#151933] leading-none tracking-tight">
+            <p className="text-2xl sm:text-[28px] font-semibold text-[#043084] leading-none tracking-tight">
               {packages.length} {packages.length === 1 ? "Package" : "Packages"}
             </p>
-            <p className="text-xs sm:text-[13px] text-[#64748b] font-normal mt-1.5">
+            <p className="text-xs text-[#64748b] font-normal mt-1">
               {activePackagesCount} active collab {activePackagesCount === 1 ? "package" : "packages"}
             </p>
           </div>
           <Link
             href="/dashboard/mediakit"
-            className="text-xs sm:text-[13px] font-medium text-[#151933] hover:underline inline-flex items-center gap-1 pt-1"
+            className="text-xs font-medium text-[#043084] hover:underline inline-flex items-center gap-1 pt-0.5"
           >
             <span>Manage collabs</span>
             <ChevronRight className="h-3.5 w-3.5" />
@@ -499,24 +500,24 @@ export default function DashboardOverviewPage() {
         </div>
       </section>
 
-      <section className="rounded-[16px] border border-[#e2e8f0] bg-white p-5 sm:p-6 shadow-xs space-y-4">
+      <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 shadow-xs space-y-3.5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748b] uppercase tracking-wider">
-              <BarChart3 className="h-3.5 w-3.5 text-[#151933]" />
+              <BarChart3 className="h-3.5 w-3.5 text-[#043084]" />
               Public analytics
             </span>
-            <h3 className="mt-1 text-base sm:text-lg font-semibold text-[#151933]">
+            <h3 className="mt-0.5 text-base font-semibold text-[#043084]">
               Last 30 days
             </h3>
-            <p className="mt-0.5 text-xs sm:text-sm text-[#475569]">
+            <p className="text-xs text-[#475569]">
               Counts only public profile opens and public series part clicks.
             </p>
           </div>
           <Link
             href={`/${handleStr}`}
             target="_blank"
-            className="h-9 px-3.5 rounded-[10px] border border-[#e2e8f0] bg-[#f8fafc] text-xs font-semibold text-[#151933] transition-all hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-[#f1f5f9] inline-flex items-center gap-1.5 self-start sm:self-center"
+            className="h-8.5 px-3 rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-xs font-semibold text-[#043084] transition-all hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-[#f1f5f9] inline-flex items-center gap-1.5 self-start sm:self-center"
           >
             <span>Open public page</span>
             <ExternalLink className="h-3.5 w-3.5" />
@@ -524,47 +525,47 @@ export default function DashboardOverviewPage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="rounded-[14px] border border-[#e2e8f0] bg-[#f8fafc] p-4">
+          <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3 sm:p-3.5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-[#64748b]">Profile opens</span>
-              <Eye className="h-4 w-4 text-[#151933]" />
+              <Eye className="h-3.5 w-3.5 text-[#043084]" />
             </div>
-            <p className="mt-2 text-2xl font-semibold text-[#151933] tabular-nums">
+            <p className="mt-1.5 text-xl sm:text-2xl font-semibold text-[#043084] tabular-nums">
               {analytics.profileViews.toLocaleString("en-IN")}
             </p>
-            <p className="mt-1 text-[11px] text-[#64748b]">
+            <p className="mt-0.5 text-[11px] text-[#64748b]">
               Public profile link opened
             </p>
           </div>
-          <div className="rounded-[14px] border border-[#e2e8f0] bg-[#f8fafc] p-4">
+          <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3 sm:p-3.5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-[#64748b]">Unique visitors</span>
-              <Users className="h-4 w-4 text-[#151933]" />
+              <Users className="h-3.5 w-3.5 text-[#043084]" />
             </div>
-            <p className="mt-2 text-2xl font-semibold text-[#151933] tabular-nums">
+            <p className="mt-1.5 text-xl sm:text-2xl font-semibold text-[#043084] tabular-nums">
               {analytics.uniqueVisitors.toLocaleString("en-IN")}
             </p>
-            <p className="mt-1 text-[11px] text-[#64748b]">
+            <p className="mt-0.5 text-[11px] text-[#64748b]">
               Approx browser visitors
             </p>
           </div>
-          <div className="rounded-[14px] border border-[#e2e8f0] bg-[#f8fafc] p-4">
+          <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3 sm:p-3.5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-[#64748b]">Series part clicks</span>
-              <MousePointerClick className="h-4 w-4 text-[#151933]" />
+              <MousePointerClick className="h-3.5 w-3.5 text-[#043084]" />
             </div>
-            <p className="mt-2 text-2xl font-semibold text-[#151933] tabular-nums">
+            <p className="mt-1.5 text-xl sm:text-2xl font-semibold text-[#043084] tabular-nums">
               {analytics.episodeClicks.toLocaleString("en-IN")}
             </p>
-            <p className="mt-1 text-[11px] text-[#64748b]">
+            <p className="mt-0.5 text-[11px] text-[#64748b]">
               Public series episode links clicked
             </p>
           </div>
         </div>
 
         {analytics.topTargets.length > 0 && (
-          <div className="rounded-[14px] border border-[#e2e8f0] overflow-hidden">
-            <div className="flex items-center justify-between bg-[#f8fafc] px-3.5 py-2.5 border-b border-[#e2e8f0]">
+          <div className="rounded-xl border border-[#e2e8f0] overflow-hidden">
+            <div className="flex items-center justify-between bg-[#f8fafc] px-3.5 py-2 border-b border-[#e2e8f0]">
               <span className="text-xs font-bold uppercase tracking-wider text-[#64748b]">
                 Top clicked series parts
               </span>
@@ -574,11 +575,11 @@ export default function DashboardOverviewPage() {
                 .filter((item) => item.event_type === "episode_click")
                 .slice(0, 5)
                 .map((item, index) => (
-                  <div key={`${item.event_target}-${index}`} className="flex items-center justify-between gap-3 px-3.5 py-2.5">
-                    <span className="min-w-0 truncate text-xs font-semibold text-[#151933]">
+                  <div key={`${item.event_target}-${index}`} className="flex items-center justify-between gap-3 px-3.5 py-2 text-xs">
+                    <span className="min-w-0 truncate font-semibold text-[#043084]">
                       {item.event_target || "Series part"}
                     </span>
-                    <span className="shrink-0 rounded-full bg-[#151933]/[0.08] border border-[#151933]/10 px-2 py-0.5 text-[11px] font-bold text-[#151933]">
+                    <span className="shrink-0 rounded-full bg-[#043084]/[0.08] border border-[#043084]/10 px-2 py-0.5 text-[11px] font-bold text-[#043084]">
                       {Number(item.clicks || 0).toLocaleString("en-IN")} clicks
                     </span>
                   </div>
@@ -589,29 +590,29 @@ export default function DashboardOverviewPage() {
       </section>
 
       {showQuotaPanel && (
-        <section className="rounded-[16px] border border-[#e2e8f0] bg-white p-5 sm:p-6 shadow-xs space-y-4">
+        <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 shadow-xs space-y-3.5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <span className="text-xs font-semibold text-[#64748b] uppercase tracking-wider">
                 {quota.name} usage
               </span>
-              <h3 className="mt-1 text-base sm:text-lg font-semibold text-[#151933]">
+              <h3 className="mt-0.5 text-base font-semibold text-[#043084]">
                 Your plan quota
               </h3>
-              <p className="mt-0.5 text-xs sm:text-sm text-[#475569]">
+              <p className="text-xs text-[#475569]">
                 See what you have used and what is still available in your current plan.
               </p>
             </div>
             <Link
               href="/dashboard/subscription"
-              className="h-9 px-3.5 rounded-[10px] border border-[#e2e8f0] bg-[#f8fafc] text-xs font-semibold text-[#151933] transition-all hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-[#f1f5f9] inline-flex items-center gap-1.5 self-start sm:self-center"
+              className="h-8.5 px-3 rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-xs font-semibold text-[#043084] transition-all hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-[#f1f5f9] inline-flex items-center gap-1.5 self-start sm:self-center"
             >
               <span>View plan</span>
               <ChevronRight className="h-3.5 w-3.5" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-2.5">
             {quotaItems.map((item) => {
               const percentage = item.max === Infinity ? 0 : Math.min(100, Math.round((item.current / item.max) * 100));
               const isNearLimit = item.max !== Infinity && percentage >= 80;
@@ -620,28 +621,28 @@ export default function DashboardOverviewPage() {
                 <Link
                   key={item.label}
                   href={item.href}
-                  className="rounded-[14px] border border-[#e2e8f0] bg-[#f8fafc] p-3.5 transition-all hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-white hover:shadow-sm"
+                  className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3 transition-all hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-white hover:shadow-xs"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="text-xs font-semibold text-[#64748b]">{item.label}</p>
-                      <p className="mt-1 text-lg font-semibold tabular-nums text-[#151933]">
+                      <p className="mt-0.5 text-base font-semibold tabular-nums text-[#043084]">
                         {item.current.toLocaleString("en-IN")}
                         <span className="text-xs font-medium text-[#64748b]">
                           {" "}of {formatQuotaLimit(item.max)}
                         </span>
                       </p>
                     </div>
-                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${isNearLimit
+                    <span className={`rounded-full px-1.5 py-0.2 text-[10px] font-bold ${isNearLimit
                       ? "bg-amber-50 text-amber-700 border border-amber-200"
-                      : "bg-[#151933]/[0.08] text-[#151933] border border-[#151933]/15"
+                      : "bg-[#043084]/[0.08] text-[#043084] border border-[#043084]/15"
                       }`}>
                       {formatQuotaRemaining(item.current, item.max)}
                     </span>
                   </div>
-                  <div className="mt-3 h-1.5 rounded-full bg-white border border-[#e2e8f0] overflow-hidden">
+                  <div className="mt-2.5 h-1.5 rounded-full bg-white border border-[#e2e8f0] overflow-hidden">
                     <div
-                      className={`h-full rounded-full transition-all duration-700 ${isNearLimit ? "bg-amber-500" : "bg-[#151933]"}`}
+                      className={`h-full rounded-full transition-all duration-700 ${isNearLimit ? "bg-amber-500" : "bg-[#043084]"}`}
                       style={{ width: item.max === Infinity ? "100%" : `${percentage}%` }}
                     />
                   </div>
@@ -653,16 +654,16 @@ export default function DashboardOverviewPage() {
       )}
 
       {/* 3. NEXT BEST STEP (COMPACT & FOCUSED) */}
-      <section className="rounded-[16px] border border-[#e2e8f0] bg-white p-5 sm:p-6 shadow-xs space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-1">
+      <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 shadow-xs space-y-2.5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="space-y-0.5">
             <span className="text-xs font-semibold text-[#64748b] uppercase tracking-wider">
               Next best step
             </span>
-            <h3 className="text-base sm:text-lg font-semibold text-[#151933]">
+            <h3 className="text-base font-semibold text-[#043084]">
               {nextStep.title}
             </h3>
-            <p className="text-xs sm:text-sm text-[#475569] font-normal">
+            <p className="text-xs text-[#475569] font-normal">
               {nextStep.description}
             </p>
           </div>
@@ -673,7 +674,7 @@ export default function DashboardOverviewPage() {
                 href={nextStep.ctaHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-10 px-4 rounded-[10px] bg-[#151933] hover:bg-brand-hover text-white text-xs sm:text-sm font-medium inline-flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
+                className="h-9 px-3.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-white text-xs font-medium inline-flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
               >
                 <span>{nextStep.ctaLabel}</span>
                 <ExternalLink className="h-3.5 w-3.5" />
@@ -682,7 +683,7 @@ export default function DashboardOverviewPage() {
               <button
                 type="button"
                 onClick={nextStep.onClick}
-                className="h-10 px-4 rounded-[10px] bg-[#151933] hover:bg-brand-hover text-white text-xs sm:text-sm font-medium inline-flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
+                className="h-9 px-3.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-white text-xs font-medium inline-flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
               >
                 <span>{nextStep.ctaLabel}</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -690,7 +691,7 @@ export default function DashboardOverviewPage() {
             ) : (
               <Link
                 href={nextStep.ctaHref}
-                className="h-10 px-4 rounded-[10px] bg-[#151933] hover:bg-brand-hover text-white text-xs sm:text-sm font-medium inline-flex items-center gap-1.5 transition-colors shadow-xs"
+                className="h-9 px-3.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-white text-xs font-medium inline-flex items-center gap-1.5 transition-colors shadow-xs"
               >
                 <span>{nextStep.ctaLabel}</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -701,14 +702,14 @@ export default function DashboardOverviewPage() {
       </section>
 
       {/* 4. RECENT SERIES (MAX 3 ITEMS + VIEW ALL LINK) */}
-      <section className="space-y-3">
+      <section className="space-y-2.5">
         <div className="flex items-center justify-between px-0.5">
-          <h3 className="text-lg font-semibold text-[#151933]">
+          <h3 className="text-base font-semibold text-[#043084]">
             Recent series
           </h3>
           <Link
             href="/dashboard/series"
-            className="text-xs sm:text-sm font-medium text-[#151933] hover:underline inline-flex items-center gap-1"
+            className="text-xs font-medium text-[#043084] hover:underline inline-flex items-center gap-1"
           >
             <span>View all series</span>
             <ChevronRight className="h-3.5 w-3.5" />
@@ -716,29 +717,23 @@ export default function DashboardOverviewPage() {
         </div>
 
         {series.length === 0 ? (
-          <div className="rounded-[16px] border border-[#e2e8f0] bg-white p-6 sm:p-8 text-center space-y-3 shadow-xs">
-            <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[#f8fafc] border border-[#e2e8f0] text-[#151933] mx-auto">
-              <Film className="h-5 w-5" />
-            </div>
-            <div className="space-y-1">
-              <h4 className="text-sm font-semibold text-[#151933]">
-                Start your first content series
-              </h4>
-              <p className="text-xs sm:text-sm text-[#475569] font-normal max-w-sm mx-auto">
-                Organize related reels and videos so followers can watch in order.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={handleCreateSeriesClick}
-              className="h-10 px-4 rounded-[10px] bg-[#151933] hover:bg-brand-hover text-white text-xs sm:text-sm font-medium inline-flex items-center gap-1.5 transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              <span>Create Series</span>
-            </button>
-          </div>
+          <EmptyState
+            icon={<Film className="h-7 w-7" />}
+            title="Start your first content series"
+            description="Organize related reels and videos so followers can watch in order."
+            action={
+              <button
+                type="button"
+                onClick={handleCreateSeriesClick}
+                className="inline-flex items-center gap-2 rounded-[10px] bg-[#043084] px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-md cursor-pointer"
+              >
+                <Plus className="h-4 w-4" />
+                <span>Create Your First Series</span>
+              </button>
+            }
+          />
         ) : (
-          <div className="rounded-[16px] border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0] shadow-xs overflow-hidden">
+          <div className="rounded-xl border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0] shadow-xs overflow-hidden">
             {series.slice(0, 3).map((s) => {
               const legacyEpisodes = (s as unknown as { episodes?: Episode[] }).episodes;
               const eps = s.seasons?.flatMap((sn) => sn.episodes) || legacyEpisodes || [];
@@ -746,17 +741,17 @@ export default function DashboardOverviewPage() {
               return (
                 <div
                   key={s.id}
-                  className="px-5 py-3.5 sm:py-4 flex items-center justify-between gap-3 hover:bg-[#f1f5f9] transition-colors text-left"
+                  className="px-4 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#f1f5f9] transition-colors text-left"
                 >
-                  <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[#f8fafc] border border-[#e2e8f0] text-[#151933] shrink-0">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[#043084] shrink-0">
                       <Film className="h-4 w-4" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h4 className="text-sm font-semibold text-[#151933] truncate">
+                      <h4 className="text-xs sm:text-sm font-semibold text-[#043084] truncate">
                         {s.title}
                       </h4>
-                      <p className="text-xs text-[#64748b] font-normal mt-0.5">
+                      <p className="text-[11px] text-[#64748b] font-normal mt-0.5">
                         {eps.length} {eps.length === 1 ? "episode" : "episodes"} • {platformLabel}
                       </p>
                     </div>
@@ -765,7 +760,7 @@ export default function DashboardOverviewPage() {
                   <div className="flex items-center gap-2 shrink-0">
                     <Link
                       href="/dashboard/series"
-                      className="text-xs sm:text-sm font-medium text-[#151933] hover:underline inline-flex items-center gap-1"
+                      className="text-xs font-medium text-[#043084] hover:underline inline-flex items-center gap-1"
                     >
                       <span>Manage</span>
                       <ChevronRight className="h-3.5 w-3.5" />

@@ -40,14 +40,14 @@ export function SubtypeMultiSelect({
   return (
     <div className="w-full space-y-2.5">
       <div className="flex flex-wrap items-center justify-between gap-1.5">
-        <label className="text-xs font-bold uppercase tracking-wider text-[#151933] flex items-center gap-1.5">
-          <Sparkles className="h-3.5 w-3.5 text-[#151933]" />
+        <label className="text-xs font-bold uppercase tracking-wider text-[#043084] flex items-center gap-1.5">
+          <Sparkles className="h-3.5 w-3.5 text-[#043084]" />
           <span>{label}</span>
         </label>
         <span
           className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border transition-all shrink-0 ${selectedSubtypes.length >= max
             ? "bg-amber-50 text-amber-700 border-amber-200"
-            : "bg-[#151933]/[0.08] text-[#151933] border-[#151933]/25"
+            : "bg-[#043084]/[0.08] text-[#043084] border-[#043084]/25"
             }`}
         >
           {selectedSubtypes.length} / {max} selected
@@ -67,10 +67,10 @@ export function SubtypeMultiSelect({
               disabled={isMaxReached}
               onClick={() => toggleSubtype(st)}
               className={`tap-scale flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${isSelected
-                ? "bg-[#151933] text-white shadow-xs ring-2 ring-[#151933]/25"
+                ? "bg-[#043084] text-white shadow-xs ring-2 ring-[#043084]/25"
                 : isMaxReached
                   ? "opacity-40 cursor-not-allowed bg-white border border-[#e2e8f0] text-[#64748b]"
-                  : "bg-white border border-[#e2e8f0] text-[#475569] hover:border-[#cbd5e1] hover:text-[#151933]"
+                  : "bg-white border border-[#e2e8f0] text-[#475569] hover:border-[#cbd5e1] hover:text-[#043084]"
                 }`}
             >
               {isSelected ? (

@@ -41,44 +41,44 @@ export function CreatorCollage() {
               className="h-11 w-11 rounded-full object-cover border-2 border-slate-100 shadow-xs"
             />
             <div>
-              <p className="text-sm font-extrabold text-[#151933]">Maya</p>
+              <p className="text-sm font-extrabold text-[#043084]">Maya</p>
               <p className="text-xs font-semibold text-slate-500">@maya · Travel Creator</p>
             </div>
           </div>
 
           {/* Total Fanbase Badge Pill */}
-          <div className="flex items-center justify-between rounded-xl bg-[#15193314] px-3.5 py-2 border border-[#151933]/20">
+          <div className="flex items-center justify-between rounded-xl bg-[#04308414] px-3.5 py-2 border border-[#043084]/20">
             <div className="flex items-center gap-1.5">
-              <Users className="h-3.5 w-3.5 text-[#151933]" />
-              <span className="text-xs font-extrabold text-[#151933]">126K total fanbase</span>
+              <Users className="h-3.5 w-3.5 text-[#043084]" />
+              <span className="text-xs font-extrabold text-[#043084]">126K total fanbase</span>
             </div>
-            <span className="h-2 w-2 rounded-full bg-[#151933] animate-pulse" />
+            <span className="h-2 w-2 rounded-full bg-[#043084] animate-pulse" />
           </div>
 
           {/* Crisp 1px Border Platform Follower Pills */}
           <div className="grid grid-cols-3 gap-2">
             <div className="flex flex-col items-center justify-center rounded-xl bg-[#f8fafc] border border-[#e2e8f0] p-2 text-center">
               <InstagramIcon className="h-4 w-4 text-pink-500 mb-0.5" />
-              <span className="text-xs font-black text-[#151933]">48.7K</span>
+              <span className="text-xs font-black text-[#043084]">48.7K</span>
             </div>
             <div className="flex flex-col items-center justify-center rounded-xl bg-[#f8fafc] border border-[#e2e8f0] p-2 text-center">
               <YoutubeIcon className="h-4 w-4 text-red-500 mb-0.5" />
-              <span className="text-xs font-black text-[#151933]">62.3K</span>
+              <span className="text-xs font-black text-[#043084]">62.3K</span>
             </div>
             <div className="flex flex-col items-center justify-center rounded-xl bg-[#f8fafc] border border-[#e2e8f0] p-2 text-center">
               <FacebookIcon className="h-4 w-4 text-blue-600 mb-0.5" />
-              <span className="text-xs font-black text-[#151933]">15K</span>
+              <span className="text-xs font-black text-[#043084]">15K</span>
             </div>
           </div>
 
-          {/* Creator Series Preview Card (Solid Dark Surface #151933) */}
-          <div className="flex items-center gap-3 rounded-2xl bg-[#151933] text-white p-3 border border-white/10">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#151933]">
+          {/* Creator Series Preview Card (Solid Dark Surface #043084) */}
+          <div className="flex items-center gap-3 rounded-2xl bg-[#043084] text-white p-3 border border-white/10">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#043084]">
               <Play className="h-4 w-4 fill-white text-white" />
             </div>
             <div className="min-w-0">
               <p className="truncate text-xs font-extrabold text-white">Kashmir Diaries</p>
-              <p className="text-[11px] font-semibold text-[#15193314]">Season 1 · 5 Episodes</p>
+              <p className="text-[11px] font-semibold text-[#04308414]">Season 1 · 5 Episodes</p>
             </div>
           </div>
         </div>

@@ -104,43 +104,43 @@ export default function DashboardSettingsPage() {
   }
 
   return (
-    <div className="space-y-6 w-full max-w-3xl pb-16 text-left">
+    <div className="space-y-4 sm:space-y-4.5 w-full max-w-3xl pb-8 text-left">
       {/* 1. PAGE HEADER */}
       <div>
-        <h1 className="text-[28px] sm:text-[30px] font-bold tracking-tight text-[#151933] leading-tight">
+        <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#043084]">
           Settings
         </h1>
-        <p className="text-sm sm:text-[15px] text-[#475569] font-normal mt-1">
+        <p className="text-xs sm:text-[13px] text-[#475569] font-medium mt-0.5">
           Manage your account and profile visibility.
         </p>
       </div>
 
       {/* 2. ACCOUNT SECTION */}
-      <section className="rounded-2xl border border-[#e2e8f0] bg-white p-5 sm:p-6 space-y-4 shadow-xs">
-        <div className="border-b border-[#e2e8f0] pb-3">
-          <h2 className="text-base font-bold text-[#151933]">Account</h2>
+      <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 space-y-3 shadow-xs">
+        <div className="border-b border-[#e2e8f0] pb-2.5">
+          <h2 className="text-sm font-bold text-[#043084]">Account</h2>
         </div>
 
-        <div className="space-y-1">
-          <p className="text-xs font-medium text-[#64748b]">Email</p>
-          <p className="text-sm font-semibold text-[#151933] break-all">
+        <div className="space-y-0.5">
+          <p className="text-[11px] font-medium text-[#64748b]">Email</p>
+          <p className="text-xs sm:text-sm font-semibold text-[#043084] break-all">
             {accountEmail}
           </p>
         </div>
       </section>
 
       {/* 3. PROFILE VISIBILITY SECTION */}
-      <section className="rounded-2xl border border-[#e2e8f0] bg-white p-5 sm:p-6 space-y-4 shadow-xs">
-        <div className="border-b border-[#e2e8f0] pb-3">
-          <h2 className="text-base font-bold text-[#151933]">Profile visibility</h2>
+      <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 space-y-3 shadow-xs">
+        <div className="border-b border-[#e2e8f0] pb-2.5">
+          <h2 className="text-sm font-bold text-[#043084]">Profile visibility</h2>
         </div>
 
         <div className="flex items-center justify-between gap-4">
           <div className="space-y-0.5 max-w-xl">
-            <p className="text-sm font-semibold text-[#151933]">
+            <p className="text-xs sm:text-sm font-semibold text-[#043084]">
               Show profile in search engines
             </p>
-            <p className="text-xs text-[#475569] leading-relaxed">
+            <p className="text-[11px] sm:text-xs text-[#475569] leading-relaxed">
               Allow Google and other search engines to show your Inflixo profile.
             </p>
           </div>
@@ -155,17 +155,17 @@ export default function DashboardSettingsPage() {
       </section>
 
       {/* 4. DELETE ACCOUNT SECTION (Simple row, no massive red banner) */}
-      <section className="rounded-2xl border border-[#e2e8f0] bg-white p-5 sm:p-6 space-y-4 shadow-xs">
-        <div className="border-b border-[#e2e8f0] pb-3">
-          <h2 className="text-base font-bold text-[#151933]">Delete account</h2>
+      <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 space-y-3 shadow-xs">
+        <div className="border-b border-[#e2e8f0] pb-2.5">
+          <h2 className="text-sm font-bold text-[#043084]">Delete account</h2>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-0.5 max-w-xl">
-            <p className="text-sm font-semibold text-[#151933]">
+            <p className="text-xs sm:text-sm font-semibold text-[#043084]">
               Permanently delete your account
             </p>
-            <p className="text-xs text-[#475569] leading-relaxed">
+            <p className="text-[11px] sm:text-xs text-[#475569] leading-relaxed">
               Permanently delete your Inflixo account and profile.
             </p>
           </div>
@@ -173,7 +173,7 @@ export default function DashboardSettingsPage() {
           <button
             type="button"
             onClick={() => setShowDeleteModal(true)}
-            className="h-10 px-4 rounded-xl border border-rose-200 bg-rose-50/80 hover:bg-[#f1f5f9] text-rose-700 text-xs font-semibold transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
+            className="h-8.5 px-3.5 rounded-lg border border-rose-200 bg-rose-50/80 hover:bg-rose-100 text-rose-700 text-xs font-semibold transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
           >
             Delete Account
           </button>
@@ -183,15 +183,15 @@ export default function DashboardSettingsPage() {
       {/* CONFIRM DELETE MODAL */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fade-in">
-          <div className="relative w-full max-w-md rounded-2xl border border-[#e2e8f0] bg-white p-6 shadow-2xl space-y-5 text-left">
+          <div className="relative w-full max-w-md rounded-xl border border-[#e2e8f0] bg-white p-5 sm:p-6 shadow-2xl space-y-4 text-left">
             {/* Header */}
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-100 text-rose-600 shrink-0">
+                <div className="flex h-8.5 w-8.5 items-center justify-center rounded-lg bg-rose-100 text-rose-600 shrink-0">
                   <AlertTriangle className="h-4 w-4" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-[#151933]">
+                  <h3 className="text-sm sm:text-base font-bold text-[#043084]">
                     Delete account
                   </h3>
                   <p className="text-xs text-[#64748b]">
@@ -203,7 +203,7 @@ export default function DashboardSettingsPage() {
               <button
                 type="button"
                 onClick={() => !isDeleting && setShowDeleteModal(false)}
-                className="text-[#64748b] hover:text-[#151933] p-1 rounded-lg transition-colors cursor-pointer"
+                className="text-[#64748b] hover:text-[#043084] p-1 rounded-lg transition-colors cursor-pointer"
                 aria-label="Close modal"
               >
                 <X className="h-4 w-4" />
@@ -218,12 +218,12 @@ export default function DashboardSettingsPage() {
             </p>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[#e2e8f0]">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#e2e8f0]">
               <button
                 type="button"
                 disabled={isDeleting}
                 onClick={() => setShowDeleteModal(false)}
-                className="h-9 px-4 rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#151933] text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50"
+                className="h-8.5 px-3.5 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#043084] text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -232,7 +232,7 @@ export default function DashboardSettingsPage() {
                 type="button"
                 disabled={isDeleting}
                 onClick={handleConfirmDelete}
-                className="h-9 px-4 rounded-xl bg-rose-600 hover:bg-brand-hover text-white text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm disabled:opacity-50 inline-flex items-center gap-1.5"
+                className="h-8.5 px-3.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm disabled:opacity-50 inline-flex items-center gap-1.5"
               >
                 {isDeleting ? (
                   <>
@@ -275,7 +275,7 @@ function SwitchToggle({
       aria-label={label}
       disabled={disabled}
       onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-[#151933]/20 disabled:cursor-not-allowed disabled:opacity-50 ${checked ? "bg-[#151933]" : "bg-[#e2e8f0]"
+      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-[#043084]/20 disabled:cursor-not-allowed disabled:opacity-50 ${checked ? "bg-[#043084]" : "bg-[#e2e8f0]"
         }`}
     >
       <span

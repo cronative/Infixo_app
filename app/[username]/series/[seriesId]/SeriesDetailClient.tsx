@@ -13,7 +13,7 @@ import {
   ArrowLeft,
   Globe,
 } from "lucide-react";
-import { LogoStadiumLinkI } from "@/components/shared/Logo";
+import { InflixoLogoIcon, LogoStadiumLinkI } from "@/components/shared/Logo";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 import { Series, Episode, ThemeKey, Season } from "@/types";
 import { useToast } from "@/contexts/ToastContext";
@@ -50,7 +50,7 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   }
   return {
     name: platformStr || "Watch",
-    icon: <Film className="h-3.5 w-3.5 text-[#151933]" />,
+    icon: <Film className="h-3.5 w-3.5 text-[#043084]" />,
   };
 }
 
@@ -281,7 +281,7 @@ export function SeriesDetailClient({
       <div className={`min-h-dvh flex flex-col items-center justify-center p-4 py-6 sm:py-8 transition-colors duration-300 ${pageBgStyle}`}>
         <main className="mx-auto max-w-md w-full text-center space-y-6">
           <div className={`rounded-3xl border p-8 sm:p-10 shadow-2xs space-y-5 ${style.socialItemBg} ${style.socialItemBorder}`}>
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#151933] text-white shadow-md">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#043084] text-white shadow-md">
               <Film className="h-8 w-8" />
             </div>
 
@@ -299,10 +299,10 @@ export function SeriesDetailClient({
                 type="button"
                 onClick={() => router.push(profileUrl)}
                 className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold transition-all cursor-pointer border ${isDark
-                  ? "bg-[#151933]/22 hover:bg-brand-hover/32 active:bg-brand-primary/40 border-[#151933]/45 hover:border-brand-primary/60 text-[#F8FAFC] focus-visible:ring-2 focus-visible:ring-brand-primary/60"
+                  ? "bg-[#043084]/22 hover:bg-brand-hover/32 active:bg-brand-primary/40 border-[#043084]/45 hover:border-brand-primary/60 text-[#F8FAFC] focus-visible:ring-2 focus-visible:ring-brand-primary/60"
                   : isSignaturePurple
-                    ? "bg-[#151933]/16 hover:bg-brand-hover/24 active:bg-brand-primary/32 border border-[#151933]/35 hover:border-brand-primary/50 text-[#151933] focus-visible:ring-2 focus-visible:ring-brand-primary/60 shadow-xs"
-                    : "bg-[#151933] hover:bg-brand-hover text-white border-transparent"
+                    ? "bg-[#043084]/16 hover:bg-brand-hover/24 active:bg-brand-primary/32 border border-[#043084]/35 hover:border-brand-primary/50 text-[#043084] focus-visible:ring-2 focus-visible:ring-brand-primary/60 shadow-xs"
+                    : "bg-[#043084] hover:bg-brand-hover text-white border-transparent"
                   }`}
               >
                 <span>Go to @{username}</span>
@@ -384,7 +384,7 @@ export function SeriesDetailClient({
         >
           <div className="flex-1 flex flex-col">
             {/* 1. Full-Width Hero Cover Header (Maroon Gradient or Valid Poster) */}
-            <div className={`relative w-full overflow-hidden bg-gradient-to-r from-[#151933] via-[#A24B5A] to-[#151933] m-0 p-0 shrink-0 ${hasValidCover ? "aspect-[21/10] min-h-[158px] sm:min-h-[184px]" : "aspect-[21/9] min-h-[108px] sm:min-h-[124px]"}`}>
+            <div className={`relative w-full overflow-hidden bg-gradient-to-r from-[#043084] via-[#A24B5A] to-[#043084] m-0 p-0 shrink-0 ${hasValidCover ? "aspect-[21/10] min-h-[158px] sm:min-h-[184px]" : "aspect-[21/9] min-h-[108px] sm:min-h-[124px]"}`}>
               {hasValidCover && (
                 <>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -625,7 +625,7 @@ export function SeriesDetailClient({
                             style={{
                               color: c.accentText,
                             }}
-                            className="flex h-7 w-7 items-center justify-center shrink-0 text-[#151933] opacity-70 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
+                            className="flex h-7 w-7 items-center justify-center shrink-0 text-[#043084] opacity-70 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
                           >
                             <ExternalLink className="h-3.5 w-3.5" />
                           </div>
@@ -650,11 +650,9 @@ export function SeriesDetailClient({
                 borderColor: c.border,
                 color: c.secondaryText,
               }}
-              className="tap-scale inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#E4DAD5] bg-white text-[#6B5A5D] text-[11px] font-bold shadow-2xs hover:scale-105 transition-all"
+              className="tap-scale inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#E4DAD5] bg-white text-[#6B5A5D] text-[13px] font-bold shadow-2xs hover:scale-105 transition-all"
             >
-              <span style={{ color: c.accentText }} className="inline-flex items-center text-[#151933]">
-                <LogoStadiumLinkI className="h-3.5 w-3.5" />
-              </span>
+              <InflixoLogoIcon className="h-4.5 w-4.5 shrink-0" />
               <span>Made with Inflixo</span>
             </Link>
           </div>

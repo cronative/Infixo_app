@@ -7,6 +7,8 @@ interface PageProps {
   params: Promise<{ username: string }>;
 }
 
+export const revalidate = 60;
+
 interface CreatorSeoRow extends RowDataPacket {
   username: string;
   display_name: string | null;
@@ -132,7 +134,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       [categoryText, locationText, `Explore ${displayName}'s social fanbase, video series, links and collaboration profile on Inflixo.`]
         .filter(Boolean)
         .join(" — ");
-    const image = creator.photo_url || `${SITE_URL}/logo-square.png`;
+    const rawImage = creator.photo_url || `${SITE_URL}/logo-square.png`;
+    const image = rawImage.startsWith("http")
+      ? rawImage
+      : `${SITE_URL}${rawImage.startsWith("/") ? "" : "/"}${rawImage}`;
 
     return {
       title: `${displayName} (@${creator.username || username}) — Inflixo Creator Profile`,
@@ -174,6 +179,11 @@ export default async function PublicProfilePage({ params }: PageProps) {
 
   const displayName = creator?.display_name || creator?.username || username || "Creator";
   const canonicalUrl = `${SITE_URL}/${username}`;
+  const rawImage = creator?.photo_url || `${SITE_URL}/logo-square.png`;
+  const absoluteImage = rawImage.startsWith("http")
+    ? rawImage
+    : `${SITE_URL}${rawImage.startsWith("/") ? "" : "/"}${rawImage}`;
+
   const jsonLd = creator && !isTrialPrivate(creator)
     ? {
         "@context": "https://schema.org",
@@ -185,7 +195,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
           name: displayName,
           alternateName: `@${creator.username || username}`,
           description: creator.bio || undefined,
-          image: creator.photo_url || undefined,
+          image: absoluteImage,
           url: canonicalUrl,
           sameAs,
         },

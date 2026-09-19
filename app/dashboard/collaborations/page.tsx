@@ -9,6 +9,7 @@ import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { PhotoUpload } from "@/components/ui/PhotoUpload";
 import { collaborationsRepository } from "@/repositories/localRepository";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export default function DashboardCollaborationsPage() {
   const { profile } = useCreator();
@@ -168,14 +169,14 @@ export default function DashboardCollaborationsPage() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-5 w-full pb-8 text-left">
+    <div className="space-y-4 sm:space-y-4.5 w-full pb-8 text-left">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#151933]">
+          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#043084]">
             Selected Collaborations
           </h1>
-          <p className="text-xs sm:text-[13px] text-[#64748b] font-medium mt-0.5">
+          <p className="text-xs sm:text-[13px] text-[#475569] font-medium mt-0.5">
             Showcase the brands, sponsor campaigns, and commercial partnerships you have worked with.
           </p>
         </div>
@@ -184,7 +185,7 @@ export default function DashboardCollaborationsPage() {
           <button
             type="button"
             onClick={() => handleOpenModal()}
-            className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-brand-hover text-white font-semibold text-xs py-2 px-3.5 transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm shrink-0 self-start sm:self-auto"
+            className="tap-scale inline-flex items-center gap-1.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-white font-semibold text-xs h-9 px-3.5 transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm shrink-0 self-start sm:self-auto"
           >
             <Plus className="h-3.5 w-3.5" />
             <span>Add Collaboration</span>
@@ -194,36 +195,28 @@ export default function DashboardCollaborationsPage() {
 
       {/* Main Content Area */}
       {loading ? (
-        <div className="rounded-2xl border border-[#e2e8f0] bg-white p-8 text-center text-xs text-[#64748b]">
+        <div className="rounded-xl border border-[#e2e8f0] bg-white p-6 text-center text-xs text-[#64748b]">
           Loading collaborations...
         </div>
       ) : collaborations.length === 0 ? (
         /* Empty State */
-        <div className="rounded-2xl border-2 border-dashed border-[#e2e8f0] bg-white p-8 sm:p-10 text-center space-y-3 max-w-xl mx-auto shadow-xs">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#151933]/[0.09] text-[#151933]">
-            <Handshake className="h-6 w-6" />
-          </div>
-          <div className="space-y-1">
-            <h3 className="font-display text-sm sm:text-base font-bold text-[#151933]">
-              Showcase the brands you&apos;ve worked with
-            </h3>
-            <p className="text-xs text-[#64748b] font-medium max-w-sm mx-auto leading-relaxed">
-              Feature logos and highlights from your past sponsor deals (e.g. Nike, Spotify, Sony, Boat). Builds instant credibility with prospective sponsors.
-            </p>
-          </div>
-          <div className="pt-1">
+        <EmptyState
+          icon={<Handshake className="h-7 w-7" />}
+          title="Showcase the brands you've worked with"
+          description="Feature logos and highlights from your past sponsor deals (e.g. Nike, Spotify, Sony, Boat). Builds instant credibility with prospective sponsors."
+          action={
             <button
               type="button"
               onClick={() => handleOpenModal()}
-              className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-brand-hover text-white font-semibold text-xs py-2 px-4 transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#043084] h-9 px-4 text-xs font-semibold text-white shadow-xs transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-sm cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
-              <span>Add Collaboration</span>
+              <span>Add Your First Collaboration</span>
             </button>
-          </div>
-        </div>
+          }
+        />
       ) : (
-        <div className="rounded-2xl border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0] shadow-xs">
+        <div className="rounded-xl border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0] shadow-xs">
           {collaborations.map((collab) => (
             <div
               key={collab.id}
@@ -231,25 +224,25 @@ export default function DashboardCollaborationsPage() {
                 }`}
             >
               {/* Left: Brand Logo / Handshake badge + Details */}
-              <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="flex items-center gap-2.5 min-w-0 flex-1">
                 {collab.brandLogoUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={collab.brandLogoUrl}
                     alt={collab.brandName}
-                    className="h-9 w-9 rounded-xl object-cover border border-[#e2e8f0] shrink-0"
+                    className="h-8.5 w-8.5 rounded-lg object-cover border border-[#e2e8f0] shrink-0"
                   />
                 ) : (
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#15193314] border border-[#e2e8f0] text-[#151933] font-bold text-xs shrink-0">
+                  <div className="flex h-8.5 w-8.5 items-center justify-center rounded-lg bg-[#04308414] border border-[#e2e8f0] text-[#043084] font-bold text-xs shrink-0">
                     <Handshake className="h-4 w-4" />
                   </div>
                 )}
 
                 <div className="min-w-0 flex-1 space-y-0.5">
                   <div className="flex items-center gap-2">
-                    <h3 className="truncate font-bold text-xs sm:text-[13px] text-[#151933]">{collab.brandName}</h3>
+                    <h3 className="truncate font-bold text-xs sm:text-[13px] text-[#043084]">{collab.brandName}</h3>
                     {collab.campaignTitle && (
-                      <span className="text-[11px] font-semibold text-[#151933] truncate">
+                      <span className="text-[11px] font-semibold text-[#043084] truncate">
                         • {collab.campaignTitle}
                       </span>
                     )}
@@ -268,19 +261,19 @@ export default function DashboardCollaborationsPage() {
               </div>
 
               {/* Right: Actions */}
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-1.5 shrink-0">
                 {/* Desktop Buttons */}
-                <div className="hidden sm:flex items-center gap-2">
+                <div className="hidden sm:flex items-center gap-1.5">
                   {collab.campaignUrl && (
                     <a
                       href={collab.campaignUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] px-2.5 py-1 text-xs font-semibold text-[#151933] transition-all hover:shadow-sm"
+                      className="inline-flex items-center gap-1 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] px-2.5 py-1 text-xs font-semibold text-[#043084] transition-all hover:shadow-xs"
                       title="View Campaign Link"
                     >
                       <span>View</span>
-                      <ExternalLink className="h-3 w-3 text-[#151933]" />
+                      <ExternalLink className="h-3 w-3 text-[#043084]" />
                     </a>
                   )}
 
@@ -302,7 +295,7 @@ export default function DashboardCollaborationsPage() {
                   <button
                     type="button"
                     onClick={() => handleOpenModal(collab)}
-                    className="flex h-7 w-7 items-center justify-center rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#151933] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                    className="flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#043084] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
                     title="Edit collaboration"
                   >
                     <Pencil className="h-3.5 w-3.5" />
@@ -312,7 +305,7 @@ export default function DashboardCollaborationsPage() {
                   <button
                     type="button"
                     onClick={() => setCollabToDelete(collab)}
-                    className="flex h-7 w-7 items-center justify-center rounded-xl border border-rose-100 bg-white hover:bg-[#f1f5f9] text-[#C2414B] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                    className="flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-rose-100 bg-white hover:bg-[#f1f5f9] text-[#C2414B] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
                     title="Remove collaboration"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -327,7 +320,7 @@ export default function DashboardCollaborationsPage() {
                       e.stopPropagation();
                       setActiveMenuId(activeMenuId === collab.id ? null : collab.id);
                     }}
-                    className="tap-scale flex h-7 w-7 items-center justify-center rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#151933] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                    className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#043084] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
                     aria-label="More actions"
                   >
                     <MoreVertical className="h-3.5 w-3.5" />
@@ -344,9 +337,9 @@ export default function DashboardCollaborationsPage() {
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={() => setActiveMenuId(null)}
-                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#151933] hover:bg-[#f1f5f9] transition-colors"
+                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#043084] hover:bg-[#f1f5f9] transition-colors"
                         >
-                          <ExternalLink className="h-3.5 w-3.5 text-[#151933]" />
+                          <ExternalLink className="h-3.5 w-3.5 text-[#043084]" />
                           <span>View Campaign</span>
                         </a>
                       )}
@@ -357,7 +350,7 @@ export default function DashboardCollaborationsPage() {
                           setActiveMenuId(null);
                           handleToggleCollab(collab);
                         }}
-                        className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                        className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#043084] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                       >
                         {collab.isActive ? (
                           <>
@@ -378,7 +371,7 @@ export default function DashboardCollaborationsPage() {
                           setActiveMenuId(null);
                           handleOpenModal(collab);
                         }}
-                        className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                        className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#043084] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                       >
                         <Pencil className="h-3.5 w-3.5 text-[#64748b]" />
                         <span>Edit Collaboration</span>
@@ -418,7 +411,7 @@ export default function DashboardCollaborationsPage() {
         <form onSubmit={handleSaveCollaboration} className="flex flex-col flex-1 min-h-0">
           <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
             <div>
-              <label className="block text-xs font-bold text-[#151933] mb-1">
+              <label className="block text-xs font-bold text-[#043084] mb-1">
                 Brand Logo / Image (Optional)
               </label>
               <PhotoUpload
@@ -431,7 +424,7 @@ export default function DashboardCollaborationsPage() {
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#151933]">
+              <label className="block text-xs font-bold text-[#043084]">
                 Brand / Partner Name <span className="text-[#C2414B]">*</span>
               </label>
               <input
@@ -440,12 +433,12 @@ export default function DashboardCollaborationsPage() {
                 value={brandName}
                 onChange={(e) => setBrandName(e.target.value)}
                 placeholder="e.g. Sony Music, Nike, or Boat Audio"
-                className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3.5 py-2 text-xs font-semibold text-[#151933] placeholder:text-[#64748b]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-2 text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#151933]">
+              <label className="block text-xs font-bold text-[#043084]">
                 Campaign Title (Optional)
               </label>
               <input
@@ -453,12 +446,12 @@ export default function DashboardCollaborationsPage() {
                 value={campaignTitle}
                 onChange={(e) => setCampaignTitle(e.target.value)}
                 placeholder="e.g. Summer Launch Reel Campaign"
-                className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3.5 py-2 text-xs font-semibold text-[#151933] placeholder:text-[#64748b]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-2 text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#151933]">
+              <label className="block text-xs font-bold text-[#043084]">
                 Campaign URL / Live Reel Link (Optional)
               </label>
               <input
@@ -466,12 +459,12 @@ export default function DashboardCollaborationsPage() {
                 value={campaignUrl}
                 onChange={(e) => setCampaignUrl(e.target.value)}
                 placeholder="https://instagram.com/reel/... or https://youtube.com/watch?v=..."
-                className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3.5 py-2 text-xs font-semibold text-[#151933] placeholder:text-[#64748b]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-2 text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#151933]">
+              <label className="block text-xs font-bold text-[#043084]">
                 Short Description (Optional)
               </label>
               <textarea
@@ -479,7 +472,7 @@ export default function DashboardCollaborationsPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Briefly mention key deliverables (e.g. 2x Instagram Reels, 1x YouTube dedicated video with 250K+ views)..."
-                className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 p-2.5 text-xs font-medium text-[#151933] placeholder:text-[#64748b]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors resize-y"
+                className="w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 p-2.5 text-xs font-medium text-[#043084] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors resize-y"
               />
             </div>
           </ModalBody>
@@ -488,14 +481,14 @@ export default function DashboardCollaborationsPage() {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-3.5 py-1.5 rounded-xl border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#151933] transition-colors cursor-pointer"
+              className="h-9 px-3.5 rounded-lg border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#043084] transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-[#151933] hover:bg-brand-hover text-white font-semibold text-xs py-1.5 px-4 rounded-xl transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="h-9 bg-[#043084] hover:bg-brand-hover text-white font-semibold text-xs px-4 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               <span>{isSubmitting ? "Saving..." : editingCollab ? "Save Changes" : "Add Collaboration"}</span>
             </button>

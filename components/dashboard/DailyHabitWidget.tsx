@@ -182,12 +182,12 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
 
         {/* Streak Counter */}
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#151933] via-rose-500 to-[#151933] text-white shadow-md animate-pulse shrink-0">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#043084] via-rose-500 to-[#043084] text-white shadow-md animate-pulse shrink-0">
             <Flame className="h-6 w-6 fill-white" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-black text-lg text-[#151933]">
+              <span className="font-black text-lg text-[#043084]">
                 🔥 {streakCount}-Day Creator Streak
               </span>
               <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
@@ -202,12 +202,12 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
 
         {/* Peak Best Time to Post Badge */}
         <div className="flex items-center gap-2.5 bg-[#f8fafc] px-3.5 py-2 rounded-xl border border-[#e2e8f0] shadow-xs shrink-0">
-          <Clock className="h-4 w-4 text-[#151933]" />
+          <Clock className="h-4 w-4 text-[#043084]" />
           <div>
             <p className="text-[10px] font-extrabold uppercase tracking-wider text-[#64748b]">
               Today's Peak Window
             </p>
-            <p className="text-xs font-black text-[#151933]">
+            <p className="text-xs font-black text-[#043084]">
               6:30 PM – 8:45 PM
             </p>
           </div>
@@ -217,8 +217,8 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
       {/* Main Section Header */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-[#151933]" />
-          <h3 className="font-extrabold text-sm text-[#151933]">
+          <Sparkles className="h-4 w-4 text-[#043084]" />
+          <h3 className="font-extrabold text-sm text-[#043084]">
             Today's Fresh AI Reel Ideas &amp; Viral Hooks (24h Daily Feed)
           </h3>
         </div>
@@ -227,7 +227,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
           type="button"
           onClick={handleRefreshIdeas}
           disabled={isRefreshing}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#151933] hover:underline cursor-pointer"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#043084] hover:underline cursor-pointer"
         >
           <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
           <span>Refresh</span>
@@ -243,7 +243,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
           >
             <div className="space-y-1.5">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-[#15193314] text-[#151933] border border-[#151933]/20">
+                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-[#04308414] text-[#043084] border border-[#043084]/20">
                   Idea #{idx + 1} • {item.category}
                 </span>
                 <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-0.5">
@@ -251,7 +251,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
                 </span>
               </div>
 
-              <h4 className="font-extrabold text-xs text-[#151933] leading-snug">
+              <h4 className="font-extrabold text-xs text-[#043084] leading-snug">
                 {item.title}
               </h4>
 
@@ -267,7 +267,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
               <button
                 type="button"
                 onClick={() => handleCopyHook(item)}
-                className="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#151933] hover:text-[#151933] bg-[#15193314] border border-[#151933]/20 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#043084] hover:text-[#043084] bg-[#04308414] border border-[#043084]/20 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
               >
                 {copiedId === item.id ? (
                   <>
@@ -292,7 +292,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
           <Award className="h-3.5 w-3.5 text-amber-500" />
           <span>Keep your streak active for 7 days to unlock exclusive brand collab badges!</span>
         </div>
-        <span className="font-bold text-[#151933]">
+        <span className="font-bold text-[#043084]">
           Updated daily at 12:00 AM
         </span>
       </div>

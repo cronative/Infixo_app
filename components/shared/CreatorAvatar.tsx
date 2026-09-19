@@ -19,7 +19,7 @@ export function CreatorAvatar({
   className = "h-20 w-20 rounded-full",
   textClassName = "text-xl font-extrabold text-white",
   textStyle,
-  fallbackBgClass = "bg-[#151933]",
+  fallbackBgClass = "bg-[#043084]",
   style,
 }: CreatorAvatarProps) {
   const [imageState, setImageState] = useState({ src: src || "", loaded: false, error: false });

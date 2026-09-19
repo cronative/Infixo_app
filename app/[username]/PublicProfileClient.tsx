@@ -45,8 +45,8 @@ function isFreeTrialExpired(subscription?: {
   const periodEndMs = subscription.currentPeriodEndsAt
     ? new Date(subscription.currentPeriodEndsAt).getTime()
     : subscription.endsAt
-    ? new Date(subscription.endsAt).getTime()
-    : 0;
+      ? new Date(subscription.endsAt).getTime()
+      : 0;
   if (periodEndMs && nowMs > periodEndMs) return true;
 
   if (subscription.activatedAt) {
@@ -459,7 +459,7 @@ export default function PublicProfileClient() {
     return (
       <div className="relative flex min-h-dvh flex-col items-center justify-center bg-gradient-to-b from-[#F6EBF1]/60 via-slate-50 to-white px-4 py-12 text-center text-slate-900 overflow-hidden">
         {/* Ambient Maroon Background Glow Orbs */}
-        <div className="pointer-events-none absolute -top-24 -left-20 h-96 w-96 rounded-full bg-[#151933]/10 blur-3xl" />
+        <div className="pointer-events-none absolute -top-24 -left-20 h-96 w-96 rounded-full bg-[#043084]/10 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 -right-20 h-96 w-96 rounded-full bg-rose-200/40 blur-3xl" />
 
         <main className="relative z-10 w-full max-w-md space-y-6">
@@ -469,9 +469,9 @@ export default function PublicProfileClient() {
           </div>
 
           {/* Main Clean Light Theme Card */}
-          <div className="rounded-[32px] border border-[#E8DCE4] bg-white/95 p-8 sm:p-10 shadow-2xl shadow-[#151933]/5 backdrop-blur-xl space-y-6 text-center">
+          <div className="rounded-[32px] border border-[#E8DCE4] bg-white/95 p-8 sm:p-10 shadow-2xl shadow-[#043084]/5 backdrop-blur-xl space-y-6 text-center">
             {/* Icon Badge */}
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#151933] text-white shadow-xl shadow-[#151933]/25 ring-4 ring-[#F6EBF1]">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#043084] text-white shadow-xl shadow-[#043084]/25 ring-4 ring-[#F6EBF1]">
               <UserX className="h-8 w-8 stroke-[2.2]" />
             </div>
 
@@ -491,7 +491,7 @@ export default function PublicProfileClient() {
             <div className="pt-2">
               <button
                 onClick={() => router.push("/login")}
-                className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#151933] hover:bg-brand-hover px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#151933]/20 transition-all border border-[#151933] hover:scale-[1.02] cursor-pointer"
+                className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#043084] hover:bg-brand-hover px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#043084]/20 transition-all border border-[#043084] hover:scale-[1.02] cursor-pointer"
               >
                 <Sparkles className="h-4 w-4" />
                 <span>Create Profile</span>

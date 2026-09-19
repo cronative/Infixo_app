@@ -45,71 +45,71 @@ export default function DashboardSubscriptionPage() {
   const statusLabel = subscription?.status === "trial" ? "Free Trial" : subscription?.status || "Trial";
 
   return (
-    <div className="space-y-6 w-full pb-12">
+    <div className="space-y-4 sm:space-y-4.5 w-full pb-8 text-left">
       {/* 1. PAGE HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
         <div>
-          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#151933]">
+          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#043084]">
             Plan
           </h1>
-          <p className="text-xs sm:text-[13px] text-[#64748b] font-medium mt-0.5">
+          <p className="text-xs sm:text-[13px] text-[#475569] font-medium mt-0.5">
             View your current access, usage limits and upcoming Inflixo plans.
           </p>
         </div>
 
         <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-          <span className="inline-flex items-center gap-1.5 rounded-xl bg-[#EAF7F0] border border-[#17845B]/20 px-3.5 py-1.5 text-xs font-semibold text-[#17845B]">
+          <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#EAF7F0] border border-[#17845B]/20 px-3 py-1 text-xs font-semibold text-[#17845B]">
             <span className="h-1.5 w-1.5 rounded-full bg-[#17845B]" />
             {planName} Active
           </span>
         </div>
       </div>
 
-      <section className="rounded-2xl border border-[#e2e8f0] bg-white p-4 sm:p-5 text-left shadow-xs">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <section className="rounded-xl border border-[#e2e8f0] bg-white p-3.5 sm:p-4 text-left shadow-xs">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4">
           <div className="space-y-1">
-            <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[#f8fafc] border border-[#e2e8f0] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#64748b]">
-              <ShieldCheck className="h-3.5 w-3.5 text-[#151933]" />
+            <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[#f8fafc] border border-[#e2e8f0] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#64748b]">
+              <ShieldCheck className="h-3.5 w-3.5 text-[#043084]" />
               Subscription check
             </span>
-            <h2 className="font-display text-lg font-bold text-[#151933]">
+            <h2 className="font-display text-base sm:text-lg font-bold text-[#043084]">
               {statusLabel} access for Inflixo {planName}
             </h2>
-            <p className="text-xs sm:text-[13px] text-[#64748b] font-medium">
+            <p className="text-xs sm:text-[13px] text-[#475569] font-medium">
               First month offer is ₹99 only. It is a one-time first-month payment and will not renew automatically.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2.5 lg:min-w-[620px]">
-            <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3">
-              <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-[#64748b]">
-                <CalendarClock className="h-3.5 w-3.5 text-[#151933]" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2 lg:min-w-[580px]">
+            <div className="rounded-lg border border-[#e2e8f0] bg-[#f8fafc] p-2.5">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#64748b]">
+                <CalendarClock className="h-3.5 w-3.5 text-[#043084]" />
                 Finish date
               </div>
-              <p className="mt-1 text-sm font-bold text-[#151933]">{formatSubscriptionDate(finishDate)}</p>
+              <p className="mt-0.5 text-xs sm:text-sm font-bold text-[#043084]">{formatSubscriptionDate(finishDate)}</p>
             </div>
-            <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3">
-              <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-[#64748b]">
-                <CreditCard className="h-3.5 w-3.5 text-[#151933]" />
+            <div className="rounded-lg border border-[#e2e8f0] bg-[#f8fafc] p-2.5">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#64748b]">
+                <CreditCard className="h-3.5 w-3.5 text-[#043084]" />
                 Renewal
               </div>
-              <p className="mt-1 text-sm font-bold text-[#151933]">{renewalText}</p>
+              <p className="mt-0.5 text-xs sm:text-sm font-bold text-[#043084]">{renewalText}</p>
             </div>
-            <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3">
-              <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-[#64748b]">
-                <XCircle className="h-3.5 w-3.5 text-[#151933]" />
+            <div className="rounded-lg border border-[#e2e8f0] bg-[#f8fafc] p-2.5">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#64748b]">
+                <XCircle className="h-3.5 w-3.5 text-[#043084]" />
                 Cancel date
               </div>
-              <p className="mt-1 text-sm font-bold text-[#151933]">
+              <p className="mt-0.5 text-xs sm:text-sm font-bold text-[#043084]">
                 {formatSubscriptionDate(subscription?.cancelledAt)}
               </p>
             </div>
-            <div className="rounded-xl border border-[#17845B]/20 bg-[#EAF7F0] p-3">
-              <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-[#17845B]">
+            <div className="rounded-lg border border-[#17845B]/20 bg-[#EAF7F0] p-2.5">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#17845B]">
                 <ShieldCheck className="h-3.5 w-3.5" />
                 First month
               </div>
-              <p className="mt-1 text-sm font-bold text-[#151933]">
+              <p className="mt-0.5 text-xs sm:text-sm font-bold text-[#043084]">
                 ₹{subscription?.firstMonthAmount ?? 99} one-time
               </p>
             </div>
@@ -118,17 +118,17 @@ export default function DashboardSubscriptionPage() {
       </section>
 
       {/* 2. SECTION 1 — CURRENT PLAN & REAL-TIME USAGE CARD */}
-      <section className="rounded-2xl border border-[#e2e8f0] bg-white p-5 sm:p-6 text-left space-y-5 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#e2e8f0] pb-4">
-          <div className="space-y-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#151933] block">
+      <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 text-left space-y-4 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-[#e2e8f0] pb-3">
+          <div className="space-y-0.5">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#043084] block">
               CURRENT ACCESS
             </span>
             <div className="flex items-center gap-2">
-              <h2 className="font-display text-lg font-bold text-[#151933]">
+              <h2 className="font-display text-base sm:text-lg font-bold text-[#043084]">
                 Inflixo {planName}
               </h2>
-              <span className="text-[10px] font-bold text-[#17845B] bg-[#EAF7F0] px-2 py-0.5 rounded-full border border-[#17845B]/20">
+              <span className="text-[10px] font-bold text-[#17845B] bg-[#EAF7F0] px-2 py-0.2 rounded-full border border-[#17845B]/20">
                 Active
               </span>
             </div>
@@ -145,22 +145,22 @@ export default function DashboardSubscriptionPage() {
         </div>
 
         {/* Real-time Usage Metrics (3 Columns) */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {/* Metric 1: Content Series */}
-          <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
+          <div className="rounded-lg border border-[#e2e8f0] bg-[#f8fafc] p-3 space-y-1.5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-[#64748b] flex items-center gap-1.5">
-                <Layers className="h-3.5 w-3.5 text-[#151933]" />
+                <Layers className="h-3.5 w-3.5 text-[#043084]" />
                 <span>Series / Playlists</span>
               </span>
-              <span className="text-xs font-bold text-[#151933]">
+              <span className="text-xs font-bold text-[#043084]">
                 {seriesUsage.current} of {seriesUsage.max === Infinity ? "Unlimited" : seriesUsage.max}
               </span>
             </div>
             {/* Progress Bar */}
             <div className="w-full bg-[#e2e8f0] h-1.5 rounded-full overflow-hidden">
               <div
-                className="bg-[#151933] h-full rounded-full transition-all"
+                className="bg-[#043084] h-full rounded-full transition-all"
                 style={{ width: `${Math.min(100, seriesUsage.percentage)}%` }}
               />
             </div>
@@ -172,20 +172,20 @@ export default function DashboardSubscriptionPage() {
           </div>
 
           {/* Metric 2: Total Episodes */}
-          <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
+          <div className="rounded-lg border border-[#e2e8f0] bg-[#f8fafc] p-3 space-y-1.5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-[#64748b] flex items-center gap-1.5">
-                <Film className="h-3.5 w-3.5 text-[#151933]" />
+                <Film className="h-3.5 w-3.5 text-[#043084]" />
                 <span>Total Episodes</span>
               </span>
-              <span className="text-xs font-bold text-[#151933]">
+              <span className="text-xs font-bold text-[#043084]">
                 {episodeUsage.current} of {episodeUsage.max === Infinity ? "Unlimited" : episodeUsage.max}
               </span>
             </div>
             {/* Progress Bar */}
             <div className="w-full bg-[#e2e8f0] h-1.5 rounded-full overflow-hidden">
               <div
-                className="bg-[#151933] h-full rounded-full transition-all"
+                className="bg-[#043084] h-full rounded-full transition-all"
                 style={{ width: `${Math.min(100, episodeUsage.percentage)}%` }}
               />
             </div>
@@ -197,20 +197,20 @@ export default function DashboardSubscriptionPage() {
           </div>
 
           {/* Metric 3: Creator Services */}
-          <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
+          <div className="rounded-lg border border-[#e2e8f0] bg-[#f8fafc] p-3 space-y-1.5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-[#64748b] flex items-center gap-1.5">
-                <Briefcase className="h-3.5 w-3.5 text-[#151933]" />
+                <Briefcase className="h-3.5 w-3.5 text-[#043084]" />
                 <span>Collab Packages</span>
               </span>
-              <span className="text-xs font-bold text-[#151933]">
+              <span className="text-xs font-bold text-[#043084]">
                 {gigUsage.current} of {gigUsage.max === Infinity ? "Unlimited" : gigUsage.max}
               </span>
             </div>
             {/* Progress Bar */}
             <div className="w-full bg-[#e2e8f0] h-1.5 rounded-full overflow-hidden">
               <div
-                className="bg-[#151933] h-full rounded-full transition-all"
+                className="bg-[#043084] h-full rounded-full transition-all"
                 style={{ width: `${Math.min(100, gigUsage.percentage)}%` }}
               />
             </div>

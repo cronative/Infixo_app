@@ -34,7 +34,7 @@ export function PhotoUpload({
   return (
     <div className="flex flex-col items-center sm:items-start gap-2">
       <div
-        className={`group relative flex shrink-0 items-center justify-center overflow-hidden border border-[#e2e8f0] bg-[#f8fafc] shadow-xs transition-colors hover:border-[#151933] ${shape === "circle"
+        className={`group relative flex shrink-0 items-center justify-center overflow-hidden border border-[#e2e8f0] bg-[#f8fafc] shadow-xs transition-colors hover:border-[#043084] ${shape === "circle"
           ? "rounded-full aspect-square overflow-hidden shrink-0"
           : shape === "landscape"
             ? "aspect-video w-44 rounded-xl"
@@ -58,11 +58,11 @@ export function PhotoUpload({
           <div className="flex flex-col items-center justify-center gap-1 p-2 text-center text-[#64748b]">
             {isLandscape ? (
               <>
-                <Film className="h-5 w-5 text-[#151933]" />
-                <span className="text-[10px] font-bold text-[#151933] leading-tight">Upload Landscape Poster (16:9)</span>
+                <Film className="h-5 w-5 text-[#043084]" />
+                <span className="text-[10px] font-bold text-[#043084] leading-tight">Upload Landscape Poster (16:9)</span>
               </>
             ) : (
-              <ImagePlus className="h-6 w-6 text-[#151933]" />
+              <ImagePlus className="h-6 w-6 text-[#043084]" />
             )}
           </div>
         )}
@@ -78,7 +78,7 @@ export function PhotoUpload({
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="bg-[#151933]/[0.09] text-[#151933] hover:bg-brand-hover/15 text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#151933]/20 transition-colors cursor-pointer"
+        className="bg-[#043084]/[0.09] text-[#043084] hover:bg-brand-hover/15 text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#043084]/20 transition-colors cursor-pointer"
       >
         {label ?? (value ? (isLandscape ? "Change poster" : "Change Profile Photo") : (isLandscape ? "Upload poster preview" : "Upload Profile Photo"))}
       </button>

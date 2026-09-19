@@ -12,6 +12,7 @@ import {
   SnapchatIcon,
 } from "@/components/shared/BrandIcons";
 import { PlatformStatItem } from "@/services/MilestoneService";
+import { InflixoLogoIcon } from "@/components/shared/Logo";
 import { initials } from "@/utils/format";
 
 export type StoryThemeKey = "midnight-gold" | "neon-cyber" | "sunset-velvet" | "minimal-luxe";
@@ -343,7 +344,7 @@ export const MilestoneStoryCard = forwardRef<HTMLDivElement, MilestoneStoryCardP
           {/* Subtle Virality Watermark (THE VIRAL ENGINE) */}
           <div className="flex items-center justify-between pt-3 border-t border-white/10 text-xs text-white/60">
             <div className="flex items-center gap-1.5 font-medium">
-              <Zap className="w-3.5 h-3.5 fill-current text-white/80" />
+              <InflixoLogoIcon className="w-3.5 h-3.5 text-white/80" />
               <span className="font-semibold text-white/80">Made with Inflixo</span>
             </div>
             <span className="text-[11px] text-white/50">

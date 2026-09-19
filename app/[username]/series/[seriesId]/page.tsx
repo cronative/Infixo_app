@@ -9,6 +9,8 @@ interface PageProps {
   }>;
 }
 
+export const revalidate = 60;
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { username: rawUsername, seriesId: rawSeriesId } = await params;
   const username = decodeURIComponent(rawUsername || "").trim();
@@ -35,7 +37,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     series?.description?.trim() ||
     `Watch all ${episodeCount} episodes of ${seriesTitle} by ${creatorName} on Inflixo.`;
 
-  const ogImage = series?.posterDataUrl || creator?.photoDataUrl || "https://inflixo.com/og-image.png";
+  const rawOgImage = series?.posterDataUrl || creator?.photoDataUrl || "https://inflixo.com/og-image.png";
+  const ogImage = rawOgImage.startsWith("http")
+    ? rawOgImage
+    : `https://inflixo.com${rawOgImage.startsWith("/") ? "" : "/"}${rawOgImage}`;
 
   return {
     title: `${seriesTitle} by ${creatorName} | Inflixo`,
@@ -78,6 +83,11 @@ export default async function SeriesDetailPage({ params }: PageProps) {
   const allEpisodes = series?.seasons?.flatMap((s) => s.episodes) || [];
 
   // JSON-LD Structured Data
+  const rawSeriesImage = series?.posterDataUrl || creator?.photoDataUrl || "https://inflixo.com/logo-square.png";
+  const seriesImage = rawSeriesImage.startsWith("http")
+    ? rawSeriesImage
+    : `https://inflixo.com${rawSeriesImage.startsWith("/") ? "" : "/"}${rawSeriesImage}`;
+
   const jsonLdSeries = series
     ? {
         "@context": "https://schema.org",
@@ -91,7 +101,7 @@ export default async function SeriesDetailPage({ params }: PageProps) {
           url: `https://inflixo.com/${username}`,
         },
         url: `https://inflixo.com/${username}/series/${series.id}`,
-        image: series.posterDataUrl || creator?.photoDataUrl || "https://inflixo.com/og-image.png",
+        image: seriesImage,
         hasPart: allEpisodes.map((ep, idx) => ({
           "@type": "Episode",
           episodeNumber: ep.episodeNumber || idx + 1,

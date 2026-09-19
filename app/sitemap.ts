@@ -91,7 +91,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
          cs.visibility_settings AS settings_visibility,
          (SELECT COUNT(*) FROM series sx WHERE sx.creator_id = c.id) AS series_count,
          (SELECT COUNT(*) FROM creator_reviews rx WHERE rx.creator_id = c.id AND rx.status = 'approved') AS review_count,
-         (SELECT COUNT(*) FROM mediakit_gigs mx WHERE mx.creator_id = c.id AND mx.is_active = 1) AS active_gig_count
+         (SELECT COUNT(*) FROM mediakit_gigs mx WHERE mx.creator_id COLLATE utf8mb4_unicode_ci = c.id AND mx.is_active = 1) AS active_gig_count
        FROM creators c
        LEFT JOIN creator_settings cs ON c.id = cs.creator_id
        LEFT JOIN subscriptions s ON c.id = s.creator_id

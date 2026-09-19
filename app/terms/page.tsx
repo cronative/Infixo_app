@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function TermsOfServicePage() {
   return (
-    <div className="min-h-dvh bg-[#FAF9F6] text-[#181716] flex flex-col font-sans selection:bg-[#151933]/10 selection:text-[#151933]">
+    <div className="min-h-dvh bg-[#FAF9F6] text-[#181716] flex flex-col font-sans selection:bg-[#043084]/10 selection:text-[#043084]">
       {/* Navbar */}
       <header className="safe-top sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#E7E3DC]">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 sm:px-8">
@@ -29,7 +29,7 @@ export default function TermsOfServicePage() {
       <main className="mx-auto max-w-4xl px-5 sm:px-8 py-12 sm:py-16 flex-1 text-left space-y-10">
         {/* Header Banner */}
         <div className="space-y-3 border-b border-[#E7E3DC] pb-8">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#151933]/[0.09] border border-[#151933]/20 px-3 py-1 text-xs font-bold text-[#151933]">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#043084]/[0.09] border border-[#043084]/20 px-3 py-1 text-xs font-bold text-[#043084]">
             <FileText className="h-4 w-4" />
             <span>TERMS &amp; CONDITIONS</span>
           </div>
@@ -113,7 +113,7 @@ export default function TermsOfServicePage() {
             </p>
             <div className="rounded-2xl bg-white border border-[#E7E3DC] p-4 space-y-1 text-xs sm:text-sm font-semibold text-[#181716]">
               <p>TrustIQ Labs PVT LTD — Inflixo Terms &amp; Compliance</p>
-              <p className="text-[#151933]">Email: legal@inflixo.com</p>
+              <p className="text-[#043084]">Email: legal@inflixo.com</p>
             </div>
           </section>
         </div>
@@ -129,7 +129,7 @@ export default function TermsOfServicePage() {
             <Link href="/privacy" className="hover:text-brand-primary transition-colors">Privacy Policy</Link>
             <Link href="/cookies" className="hover:text-brand-primary transition-colors">Cookie Policy</Link>
             <CookiePreferencesButton className="hover:text-brand-primary transition-colors cursor-pointer font-semibold" />
-            <Link href="/terms" className="text-[#151933] font-bold">Terms of Service</Link>
+            <Link href="/terms" className="text-[#043084] font-bold">Terms of Service</Link>
           </div>
           <p className="text-[#797570]">&copy; 2026 Inflixo. All rights reserved.</p>
         </div>

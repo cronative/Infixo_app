@@ -149,7 +149,7 @@ export default function VerifyOtpPage() {
       {/* Background Inflixo "I" Logo Mark & Radiating Waves */}
       <div className="hidden">
         {/* Top-Left Inflixo "I" Logo Watermark */}
-        <div className="absolute -top-12 -left-12 sm:-top-16 sm:-left-16 text-[#151933] opacity-[0.06] -rotate-12">
+        <div className="absolute -top-12 -left-12 sm:-top-16 sm:-left-16 text-[#043084] opacity-[0.06] -rotate-12">
           <svg
             viewBox="0 0 100 100"
             fill="none"
@@ -184,7 +184,7 @@ export default function VerifyOtpPage() {
         </div>
 
         {/* Bottom-Right Inflixo "I" Logo Watermark */}
-        <div className="absolute -bottom-16 -right-16 sm:-bottom-20 sm:-right-20 text-[#151933] opacity-[0.05] rotate-12">
+        <div className="absolute -bottom-16 -right-16 sm:-bottom-20 sm:-right-20 text-[#043084] opacity-[0.05] rotate-12">
           <svg
             viewBox="0 0 100 100"
             fill="none"
@@ -227,7 +227,7 @@ export default function VerifyOtpPage() {
             <Logo size="xl" orientation="vertical" />
           </div>
 
-          <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-[#151933]/[0.08] px-3.5 py-1 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#151933]">
+          <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-[#043084]/[0.08] px-3.5 py-1 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#043084]">
             <ShieldCheck className="h-3 w-3" />
             Verification
           </span>
@@ -269,8 +269,8 @@ export default function VerifyOtpPage() {
                 className={`h-14 w-14 rounded-[14px] border text-center text-2xl font-black transition-all duration-150 outline-none sm:h-[60px] sm:w-[60px] ${errorMessage
                   ? "border-[#ef4444] bg-rose-50/20 text-[#ef4444] ring-2 ring-rose-100"
                   : d
-                    ? "border-[#151933] bg-white text-[#181716] ring-4 ring-[#151933]/12"
-                    : "border-[#cbd5e1] bg-[#f8fafc] text-[#181716] focus:border-[#151933] focus:bg-white focus:ring-4 focus:ring-[#151933]/10"
+                    ? "border-[#043084] bg-white text-[#181716] ring-4 ring-[#043084]/12"
+                    : "border-[#cbd5e1] bg-[#f8fafc] text-[#181716] focus:border-[#043084] focus:bg-white focus:ring-4 focus:ring-[#043084]/10"
                   }`}
               />
             ))}
@@ -285,7 +285,7 @@ export default function VerifyOtpPage() {
 
           {/* Code Sent Notification Banner */}
           {codeSent && (
-            <p className="animate-fade-in rounded-[14px] border border-[#151933]/20 bg-[#151933]/[0.06] px-3 py-2 text-center text-xs font-bold text-[#151933]">
+            <p className="animate-fade-in rounded-[14px] border border-[#043084]/20 bg-[#043084]/[0.06] px-3 py-2 text-center text-xs font-bold text-[#043084]">
               New verification code sent 📩
             </p>
           )}
@@ -297,8 +297,8 @@ export default function VerifyOtpPage() {
           disabled={!isOtpComplete || submitting}
           onClick={() => submit(digits.join(""))}
           className={`mt-7 inline-flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-[14px] text-sm font-extrabold shadow-[0_14px_28px_rgba(21,25,51,0.18)] transition-all active:scale-[0.985] ${isOtpComplete && !submitting
-            ? "bg-[#151933] text-white hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-[0_18px_34px_rgba(21,25,51,0.22)]"
-            : "bg-[#151933]/30 text-white/80 cursor-not-allowed"
+            ? "bg-[#043084] text-white hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-[0_18px_34px_rgba(21,25,51,0.22)]"
+            : "bg-[#043084]/30 text-white/80 cursor-not-allowed"
             }`}
         >
           {submitting ? (
@@ -319,7 +319,7 @@ export default function VerifyOtpPage() {
           {countdown > 0 ? (
             <p>
               Didn&apos;t receive code? Resend in{" "}
-              <span className="font-mono font-bold text-[#151933]">
+              <span className="font-mono font-bold text-[#043084]">
                 00:{countdown.toString().padStart(2, "0")}
               </span>
             </p>
@@ -330,7 +330,7 @@ export default function VerifyOtpPage() {
                 type="button"
                 onClick={handleResend}
                 disabled={resending}
-                className="cursor-pointer font-extrabold text-[#151933] underline transition-colors hover:text-brand-hover"
+                className="cursor-pointer font-extrabold text-[#043084] underline transition-colors hover:text-brand-hover"
               >
                 {resending ? "Sending..." : "Resend Code"}
               </button>
@@ -343,7 +343,7 @@ export default function VerifyOtpPage() {
           <button
             type="button"
             onClick={() => router.push("/login")}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-[#151933]/[0.06] px-4 py-1.5 text-xs font-bold text-[#54514D] transition-colors hover:bg-brand-hover/10 hover:text-brand-primary"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-[#043084]/[0.06] px-4 py-1.5 text-xs font-bold text-[#54514D] transition-colors hover:bg-brand-hover/10 hover:text-brand-primary"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             <span>Change email address</span>

@@ -22,15 +22,15 @@ export function DashboardBottomNav() {
               className="flex flex-1 flex-col items-center justify-center -mt-4 pb-1 group"
             >
               <div
-                className={`flex h-11 w-11 items-center justify-center rounded-xl text-white shadow-lg shadow-[#151933]/18 transition-all ${active
-                  ? "bg-[#151933]"
-                  : "bg-[#151933] group-hover:-translate-y-0.5 group-hover:bg-brand-hover"
+                className={`flex h-11 w-11 items-center justify-center rounded-xl text-white shadow-lg shadow-[#043084]/18 transition-all ${active
+                  ? "bg-[#043084]"
+                  : "bg-[#043084] group-hover:-translate-y-0.5 group-hover:bg-brand-hover"
                   }`}
               >
                 <Icon className="h-5 w-5 stroke-[2.5]" />
               </div>
               <span
-                className={`text-[10px] font-bold mt-1 ${active ? "text-[#151933]" : "text-[#64748b]"
+                className={`text-[10px] font-bold mt-1 ${active ? "text-[#043084]" : "text-[#64748b]"
                   }`}
               >
                 {item.label}
@@ -43,10 +43,10 @@ export function DashboardBottomNav() {
           <Link
             key={item.href}
             href={item.href}
-            className={`flex flex-1 flex-col items-center justify-center gap-1 pt-3 pb-2 text-[10px] font-bold transition-colors ${active ? "text-[#151933]" : "text-[#64748b] hover:text-[#151933]"
+            className={`flex flex-1 flex-col items-center justify-center gap-1 pt-3 pb-2 text-[10px] font-bold transition-colors ${active ? "text-[#043084]" : "text-[#64748b] hover:text-[#043084]"
               }`}
           >
-            <Icon className={`h-5 w-5 transition-colors ${active ? "text-[#151933]" : ""}`} />
+            <Icon className={`h-5 w-5 transition-colors ${active ? "text-[#043084]" : ""}`} />
             <span>{item.label}</span>
           </Link>
         );

@@ -10,7 +10,7 @@ import { OnboardingLayout } from "@/layouts/OnboardingLayout";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { OnboardingService } from "@/services/OnboardingService";
 
-const CONFETTI_COLORS = ["#151933", "#3b82f6", "#10b981", "#f59e0b", "#6366f1", "#06b6d4"];
+const CONFETTI_COLORS = ["#043084", "#3b82f6", "#10b981", "#f59e0b", "#6366f1", "#06b6d4"];
 
 function ConfettiBurst() {
   const [pieces, setPieces] = useState<{ left: number; color: string; delay: number; rotate: number; scale: number }[]>([]);
@@ -107,46 +107,46 @@ export default function FinishStepPage() {
 
   return (
     <OnboardingLayout step="finish">
-      <div className="relative flex flex-col items-center justify-center overflow-hidden py-2 sm:py-3">
+      <div className="relative flex flex-col items-center justify-center overflow-hidden py-1 sm:py-2">
         <ConfettiBurst />
 
-        <div className="pop-in relative z-10 flex w-full max-w-md flex-col items-center text-center">
+        <div className="pop-in relative z-10 flex w-full max-w-[420px] flex-col items-center text-center">
           {/* Circular Creator Avatar with Green Success Check Badge */}
-          <div className="relative mb-2">
+          <div className="relative mb-1.5">
             <CreatorAvatar
               src={profile.photoDataUrl}
               name={profile.displayName || "Creator"}
-              className="w-16 h-16 sm:w-18 sm:h-18 rounded-full aspect-square object-cover overflow-hidden border-2 border-white shadow-md mx-auto"
-              textClassName="text-xl font-extrabold text-white"
-              fallbackBgClass="bg-[#151933]"
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full aspect-square object-cover overflow-hidden border-2 border-white shadow-md mx-auto"
+              textClassName="text-lg font-extrabold text-white"
+              fallbackBgClass="bg-[#043084]"
             />
             <div
-              className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-[#10b981] text-white ring-2 ring-white shadow-md"
+              className="absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#10b981] text-white ring-2 ring-white shadow-md"
               title="Profile Ready"
             >
-              <Check className="h-3 w-3 stroke-[3]" />
+              <Check className="h-2.5 w-2.5 stroke-[3]" />
             </div>
           </div>
 
-          <h1 className="mt-1 text-xl sm:text-2xl font-bold leading-tight tracking-tight text-[#151933]">
+          <h1 className="text-xl sm:text-2xl font-bold leading-tight tracking-tight text-[#043084]">
             You&apos;re Live on Inflixo 🎉
           </h1>
-          <p className="mt-1 text-xs text-[#475569] font-medium leading-relaxed max-w-sm">
-            Your creator profile is ready. Share your Inflixo link with your audience and potential brand partners.
+          <p className="mt-1 text-xs text-[#475569] font-medium leading-relaxed max-w-xs">
+            Your creator profile is ready. Share your Inflixo link with your audience and brand partners.
           </p>
 
           {/* Clean Public URL Box */}
-          <div className="mt-4 flex w-full items-center justify-between gap-2.5 rounded-xl border border-[#e2e8f0] bg-white p-2.5 sm:p-3 shadow-xs">
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#f1f5f9] text-[#151933]">
-                <Sparkles className="h-3.5 w-3.5" />
+          <div className="mt-2.5 flex w-full items-center justify-between gap-2 rounded-xl border border-[#e2e8f0] bg-white p-2 shadow-2xs">
+            <div className="flex items-center gap-1.5 min-w-0">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-[#eff6ff] text-[#043084]">
+                <Sparkles className="h-3 w-3" />
               </span>
-              <span className="truncate text-xs sm:text-sm font-bold text-[#151933]">{displayUrl}</span>
+              <span className="truncate text-xs sm:text-sm font-bold text-[#043084]">{displayUrl}</span>
             </div>
             <button
               type="button"
               onClick={handleCopy}
-              className="tap-scale flex items-center gap-1.5 rounded-lg bg-[#151933] hover:bg-brand-hover px-3.5 py-1.5 text-xs font-bold text-white transition-all cursor-pointer shrink-0 shadow-xs"
+              className="tap-scale flex items-center gap-1 rounded-lg bg-[#043084] hover:bg-brand-hover px-2.5 py-1 text-xs font-bold text-white transition-all cursor-pointer shrink-0 shadow-2xs"
             >
               {copied ? (
                 <>
@@ -163,13 +163,13 @@ export default function FinishStepPage() {
           </div>
 
           {/* Primary & Secondary Action Buttons Hierarchy */}
-          <div className="mt-4 w-full space-y-2.5">
+          <div className="mt-2.5 w-full space-y-1.5">
             {/* Primary Action Button */}
             <button
               type="button"
               onClick={handleGoToDashboard}
               disabled={isLoadingDashboard}
-              className="tap-scale w-full flex items-center justify-center gap-2 rounded-xl bg-[#151933] hover:bg-brand-hover text-white font-bold h-10 text-xs sm:text-sm transition-all cursor-pointer shadow-xs disabled:opacity-75"
+              className="tap-scale w-full flex items-center justify-center gap-2 rounded-xl bg-[#043084] hover:bg-brand-hover text-white font-bold h-10 text-xs sm:text-sm transition-all cursor-pointer shadow-xs disabled:opacity-75"
             >
               {isLoadingDashboard ? (
                 <>
@@ -185,34 +185,34 @@ export default function FinishStepPage() {
             </button>
 
             {/* Secondary Action Buttons Side-by-Side */}
-            <div className="grid grid-cols-2 gap-2.5 w-full">
+            <div className="grid grid-cols-2 gap-1.5 w-full">
               <a
                 href={`/${handleStr}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white hover:bg-surface-soft text-[#151933] font-semibold h-9 px-3 text-xs transition-colors cursor-pointer text-center shadow-xs"
+                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white hover:bg-surface-soft text-[#043084] font-semibold h-8.5 px-2.5 text-xs transition-colors cursor-pointer text-center shadow-2xs"
               >
-                <ExternalLink className="h-3.5 w-3.5 shrink-0" />
+                <ExternalLink className="h-3 w-3 shrink-0" />
                 <span className="truncate">View Public Profile</span>
               </a>
 
               <button
                 type="button"
                 onClick={handleShare}
-                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white hover:bg-surface-soft text-[#151933] font-semibold h-9 px-3 text-xs transition-colors cursor-pointer text-center shadow-xs"
+                className="tap-scale flex items-center justify-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white hover:bg-surface-soft text-[#043084] font-semibold h-8.5 px-2.5 text-xs transition-colors cursor-pointer text-center shadow-2xs"
               >
-                <Share2 className="h-3.5 w-3.5 shrink-0" />
+                <Share2 className="h-3 w-3 shrink-0" />
                 <span>Share Profile</span>
               </button>
             </div>
           </div>
 
           {/* Creator Summit Mission Notice */}
-          <div className="mt-6 w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] p-4 text-center text-xs shadow-xs">
+          <div className="mt-2.5 w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-2.5 text-center text-xs shadow-2xs">
             <p className="font-bold text-[#181716] text-xs">Creator Mission 2027</p>
-            <p className="mt-1 text-[#54514D] font-medium leading-relaxed">
+            <p className="mt-0.5 text-[#54514D] font-medium leading-relaxed text-[11px]">
               {verifiedCreatorNumber ? (
-                `You’re creator #${verifiedCreatorNumber.toLocaleString()} joining Inflixo’s journey to empower Indian creators with a better public profile.`
+                `You’re creator #${verifiedCreatorNumber.toLocaleString()} joining Inflixo’s journey to empower creators with a better public profile.`
               ) : (
                 "Welcome to Inflixo’s creator community. Let’s build your creator identity together."
               )}

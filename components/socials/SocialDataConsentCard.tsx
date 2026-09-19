@@ -20,10 +20,10 @@ export function SocialDataConsentCard({
   if (variant === "one-line") {
     return (
       <div
-        className={`rounded-xl border p-3 sm:p-3.5 transition-colors text-left flex items-center gap-2.5 ${error
+        className={`rounded-xl border p-2.5 sm:p-3 transition-colors text-left flex items-center gap-2.5 ${error
           ? "border-rose-300 bg-rose-50"
           : disabled || accepted
-            ? "border-[#151933]/20 bg-[#151933]/[0.05]"
+            ? "border-[#043084]/20 bg-[#043084]/[0.04]"
             : "border-gray-200 bg-white hover:border-brand-border"
           }`}
       >
@@ -32,33 +32,33 @@ export function SocialDataConsentCard({
           type="button"
           disabled={disabled}
           onClick={() => !disabled && onToggle(!accepted)}
-          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-colors ${disabled || accepted
-            ? "border-[#151933] bg-[#151933] text-white cursor-default"
+          className={`flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-md border transition-colors cursor-pointer ${disabled || accepted
+            ? "border-[#043084] bg-[#043084] text-white"
             : error
               ? "border-rose-400 bg-white"
-              : "border-slate-300 bg-white hover:border-[#151933]"
+              : "border-slate-300 bg-white hover:border-[#043084]"
             }`}
         >
-          {(accepted || disabled) && <Check className="h-3.5 w-3.5" />}
+          {(accepted || disabled) && <Check className="h-3 w-3 stroke-[2.5]" />}
         </button>
 
-        <div className="flex-1 flex flex-wrap items-center justify-between gap-2 min-w-0">
+        <div className="flex-1 flex flex-wrap items-center justify-between gap-1.5 min-w-0">
           <label
             onClick={() => !disabled && onToggle(!accepted)}
-            className={`text-xs sm:text-sm font-bold text-slate-900 leading-snug select-none ${disabled ? "cursor-default" : "cursor-pointer"
+            className={`text-xs font-semibold text-slate-800 leading-snug select-none ${disabled ? "cursor-default" : "cursor-pointer"
               }`}
           >
-            I authorize Inflixo to fetch public stats (followers, subscribers &amp; metadata) for my social accounts.
+            I authorize Inflixo to fetch public stats (followers &amp; info) for my social accounts.
           </label>
 
-          <div className="flex items-center gap-2 text-[11px] font-medium shrink-0">
+          <div className="flex items-center gap-1.5 text-[10.5px] font-semibold shrink-0">
             {disabled ? (
-              <span className="inline-flex items-center gap-1 text-emerald-700 font-medium bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+              <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
                 <Check className="h-3 w-3 text-emerald-600 shrink-0" />
                 Authorized
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-emerald-700 font-medium bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+              <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
                 <ShieldCheck className="h-3 w-3 text-emerald-600 shrink-0" />
                 100% Public Data
               </span>
@@ -81,10 +81,10 @@ export function SocialDataConsentCard({
           disabled={disabled}
           onClick={() => !disabled && onToggle(!accepted)}
           className={`mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-md border transition-colors ${disabled || accepted
-            ? "border-[#151933] bg-[#151933] text-white cursor-default"
+            ? "border-[#043084] bg-[#043084] text-white cursor-default"
             : error
               ? "border-rose-400 bg-white"
-              : "border-slate-300 bg-white hover:border-[#151933]"
+              : "border-slate-300 bg-white hover:border-[#043084]"
             }`}
         >
           {(accepted || disabled) && <Check className="h-3 w-3 stroke-[3]" />}

@@ -76,12 +76,12 @@ export default function DashboardPreviewPage() {
   };
 
   return (
-    <div className="space-y-5 w-full pb-12 text-left">
+    <div className="space-y-4 sm:space-y-4.5 w-full pb-8 text-left">
       {/* 1. PAGE HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
         <div>
           <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#151933]">
+            <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#043084]">
               Profile Preview
             </h1>
             <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#17845B] bg-[#EAF7F0] px-2.5 py-0.5 rounded-full border border-[#17845B]/20">
@@ -89,18 +89,18 @@ export default function DashboardPreviewPage() {
               Public profile is live
             </span>
           </div>
-          <p className="text-xs sm:text-[13px] text-[#64748b] font-medium mt-0.5">
+          <p className="text-xs sm:text-[13px] text-[#475569] font-medium mt-0.5">
             See exactly how your public creator profile appears to visitors.
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 shrink-0 self-start sm:self-auto">
+        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
           <button
             type="button"
             onClick={() => setIsVisibilityModalOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] px-3.5 py-2 text-xs font-semibold text-[#151933] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] h-9 px-3.5 text-xs font-semibold text-[#043084] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
           >
-            <Settings className="h-3.5 w-3.5 text-[#151933]" />
+            <Settings className="h-3.5 w-3.5 text-[#043084]" />
             <span>Display Settings</span>
           </button>
 
@@ -108,7 +108,7 @@ export default function DashboardPreviewPage() {
             href={canonicalUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-brand-hover px-3.5 py-2 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[#043084] hover:bg-brand-hover h-9 px-3.5 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
           >
             <span>Open Public Profile</span>
             <ExternalLink className="h-3.5 w-3.5" />
@@ -117,11 +117,11 @@ export default function DashboardPreviewPage() {
       </div>
 
       {/* 2. COMPACT PREVIEW TOOLBAR */}
-      <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#e2e8f0] bg-white px-4 py-2.5 shadow-xs">
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-[#e2e8f0] bg-white px-3.5 py-2 shadow-xs">
         {/* Left: Active Theme Info */}
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#151933] bg-[#151933]/[0.09] border border-[#151933]/20 px-3 py-1.5 rounded-xl">
-            <Sparkles className="h-3.5 w-3.5 text-[#151933]" />
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#043084] bg-[#043084]/[0.09] border border-[#043084]/20 px-2.5 py-1 rounded-lg">
+            <Sparkles className="h-3.5 w-3.5 text-[#043084]" />
             <span>Active theme: {activeThemeMeta.name}</span>
           </span>
         </div>
@@ -131,17 +131,17 @@ export default function DashboardPreviewPage() {
           <button
             type="button"
             onClick={handleRefresh}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748b] hover:text-[#151933] px-3 py-1.5 rounded-xl hover:bg-[#f1f5f9] border border-transparent hover:border-brand-border transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748b] hover:text-[#043084] px-2.5 py-1 rounded-lg hover:bg-[#f1f5f9] border border-transparent hover:border-brand-border transition-colors cursor-pointer"
             title="Refresh preview canvas"
           >
-            <RotateCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-[#151933]" : ""}`} />
+            <RotateCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-[#043084]" : ""}`} />
             <span>Refresh</span>
           </button>
         </div>
       </div>
 
       {/* 3. FULL SCREEN / FULL WIDTH PREVIEW CANVAS */}
-      <div className="rounded-2xl border border-[#e2e8f0] overflow-hidden shadow-xs">
+      <div className="rounded-xl border border-[#e2e8f0] overflow-hidden shadow-xs">
         <div
           style={{ backgroundColor: activeThemeMeta.colors.pageBackground }}
           className={`relative w-full px-5 py-3 sm:py-6 md:py-8 transition-colors duration-300 ${pageBgStyle}`}

@@ -58,7 +58,7 @@ export function CreatorGridBackground({
               ? "absolute inset-x-0 top-1/2 flex -translate-y-1/2 items-center justify-center"
               : isCenterBottomWordmark
                 ? "absolute inset-x-0 bottom-[9%] flex items-center justify-center"
-              : "absolute bottom-[10%] left-[-7%] flex items-center justify-start sm:bottom-[8%] md:left-[2%] lg:left-[5%]"
+                : "absolute bottom-[10%] left-[-7%] flex items-center justify-start sm:bottom-[8%] md:left-[2%] lg:left-[5%]"
           }
         >
           <div className={`creator-tool-float flex items-center ${(isCenteredWordmark || isCenterBottomWordmark) ? "gap-3 sm:gap-5" : ""}`}>
@@ -84,8 +84,8 @@ export function CreatorGridBackground({
         <div key={tool.label} className={`absolute hidden md:block ${tool.className}`}>
           <div
             className={`creator-tool-float flex h-12 w-12 items-center justify-center rounded-[10px] border backdrop-blur-md ${isSoft
-              ? "border-[#151933]/5 bg-white/42 text-[#151933]/26 shadow-[0_14px_35px_rgba(21,25,51,0.035)] opacity-70"
-              : "border-[#151933]/10 bg-white/65 text-[#151933]/45 shadow-[0_14px_35px_rgba(21,25,51,0.06)]"
+              ? "border-[#043084]/5 bg-white/42 text-[#043084]/26 shadow-[0_14px_35px_rgba(21,25,51,0.035)] opacity-70"
+              : "border-[#043084]/10 bg-white/65 text-[#043084]/45 shadow-[0_14px_35px_rgba(21,25,51,0.06)]"
               }`}
             style={{
               "--float-duration": tool.duration,

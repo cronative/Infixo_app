@@ -30,13 +30,13 @@ async function sendOtpEmail(toEmail, otpCode) {
         <div style="max-width: 440px; margin: 0 auto; padding: 32px 24px; border-radius: 20px; background-color: #ffffff; border: 1px solid #D9DEE8; text-align: center;">
           <!-- Inflixo Logo -->
           <div style="margin-bottom: 24px;">
-            <span style="font-size: 22px; font-weight: 900; color: #151933; letter-spacing: -0.5px;">
+            <span style="font-size: 22px; font-weight: 900; color: #043084; letter-spacing: -0.5px;">
               Inflixo
             </span>
           </div>
 
           <!-- Heading -->
-          <h1 style="margin: 0 0 8px 0; color: #151933; font-size: 20px; font-weight: 800; tracking-tight: -0.5px;">
+          <h1 style="margin: 0 0 8px 0; color: #043084; font-size: 20px; font-weight: 800; tracking-tight: -0.5px;">
             Your sign-in code
           </h1>
 
@@ -47,7 +47,7 @@ async function sendOtpEmail(toEmail, otpCode) {
 
           <!-- 4-Digit Code Box -->
           <div style="background-color: #F4F6F8; border: 1px solid #D9DEE8; border-radius: 16px; padding: 18px; margin-bottom: 20px;">
-            <span style="font-size: 36px; font-weight: 900; letter-spacing: 12px; color: #151933; font-family: monospace;">
+            <span style="font-size: 36px; font-weight: 900; letter-spacing: 12px; color: #043084; font-family: monospace;">
               ${otpCode}
             </span>
           </div>

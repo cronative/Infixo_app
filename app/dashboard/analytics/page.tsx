@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { BarChart3, Eye, MousePointerClick, Users, ExternalLink, RefreshCw } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 type AnalyticsTarget = {
   event_type: string;
@@ -75,29 +76,28 @@ export default function DashboardAnalyticsPage() {
   const clickedParts = analytics.topTargets.filter((item) => item.event_type === "episode_click");
 
   return (
-    <div className="space-y-6 w-full pb-12 text-left">
+    <div className="space-y-4 sm:space-y-4.5 w-full pb-8 text-left">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#151933]">
+          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#043084]">
             Analytics
           </h1>
-          <p className="text-xs sm:text-[13px] text-[#64748b] font-medium mt-0.5">
+          <p className="text-xs sm:text-[13px] text-[#475569] font-medium mt-0.5">
             Public profile opens and public series part clicks only.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="rounded-xl border border-[#e2e8f0] bg-white p-1 shadow-xs">
+          <div className="rounded-lg border border-[#e2e8f0] bg-white p-0.5 shadow-xs flex items-center">
             {(["7d", "30d"] as const).map((value) => (
               <button
                 key={value}
                 type="button"
                 onClick={() => setPeriod(value)}
-                className={`h-8 rounded-lg px-3 text-xs font-bold transition-colors ${
-                  period === value
-                    ? "bg-[#151933] text-white"
-                    : "text-[#64748b] hover:bg-[#f8fafc] hover:text-[#151933]"
-                }`}
+                className={`h-7.5 rounded-md px-2.5 text-xs font-semibold transition-colors cursor-pointer ${period === value
+                    ? "bg-[#043084] text-white"
+                    : "text-[#64748b] hover:bg-[#f8fafc] hover:text-[#043084]"
+                  }`}
               >
                 {value === "7d" ? "7 days" : "30 days"}
               </button>
@@ -106,7 +106,7 @@ export default function DashboardAnalyticsPage() {
           <Link
             href={`/${handleStr}`}
             target="_blank"
-            className="h-10 px-3.5 rounded-[10px] bg-[#151933] hover:bg-brand-hover text-xs sm:text-sm font-semibold text-white transition-colors inline-flex items-center gap-1.5 shadow-xs"
+            className="h-8.5 px-3 rounded-lg bg-[#043084] hover:bg-brand-hover text-xs font-semibold text-white transition-colors inline-flex items-center gap-1.5 shadow-xs"
           >
             <span>Open page</span>
             <ExternalLink className="h-3.5 w-3.5" />
@@ -114,7 +114,7 @@ export default function DashboardAnalyticsPage() {
         </div>
       </div>
 
-      <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <MetricCard
           icon={<Eye className="h-4 w-4" />}
           label="Profile opens"
@@ -138,34 +138,33 @@ export default function DashboardAnalyticsPage() {
         />
       </section>
 
-      <section className="rounded-[16px] border border-[#e2e8f0] bg-white shadow-xs overflow-hidden">
-        <div className="flex items-center justify-between gap-3 border-b border-[#e2e8f0] bg-[#f8fafc] px-4 py-3">
+      <section className="rounded-xl border border-[#e2e8f0] bg-white shadow-xs overflow-hidden">
+        <div className="flex items-center justify-between gap-3 border-b border-[#e2e8f0] bg-[#f8fafc] px-3.5 py-2.5">
           <div>
-            <h2 className="text-sm font-bold text-[#151933]">Top clicked series parts</h2>
-            <p className="text-xs text-[#64748b]">Only clicks from public series pages are counted.</p>
+            <h2 className="text-xs sm:text-sm font-bold text-[#043084]">Top clicked series parts</h2>
+            <p className="text-[11px] text-[#64748b]">Only clicks from public series pages are counted.</p>
           </div>
-          {analytics.loading && <RefreshCw className="h-4 w-4 animate-spin text-[#64748b]" />}
+          {analytics.loading && <RefreshCw className="h-3.5 w-3.5 animate-spin text-[#64748b]" />}
         </div>
 
         {clickedParts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center px-4 py-10 text-center">
-            <BarChart3 className="h-7 w-7 text-[#94a3b8]" />
-            <p className="mt-3 text-sm font-semibold text-[#151933]">No series clicks yet</p>
-            <p className="mt-1 max-w-sm text-xs text-[#64748b]">
-              Share your public profile and series links. Clicks will appear here after fans open episode links.
-            </p>
-          </div>
+          <EmptyState
+            icon={<BarChart3 className="h-7 w-7" />}
+            title="No series clicks yet"
+            description="Share your public profile and series links. Clicks will appear here after fans open episode links."
+            className="border-none bg-transparent"
+          />
         ) : (
           <div className="divide-y divide-[#e2e8f0]">
             {clickedParts.slice(0, 10).map((item, index) => (
-              <div key={`${item.event_target}-${index}`} className="flex items-center justify-between gap-3 px-4 py-3">
+              <div key={`${item.event_target}-${index}`} className="flex items-center justify-between gap-3 px-3.5 py-2.5">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-[#151933]">
+                  <p className="truncate text-xs sm:text-sm font-semibold text-[#043084]">
                     {item.event_target || "Series part"}
                   </p>
-                  <p className="text-xs text-[#64748b]">Public series episode link</p>
+                  <p className="text-[11px] text-[#64748b]">Public series episode link</p>
                 </div>
-                <span className="shrink-0 rounded-full bg-[#151933]/[0.08] border border-[#151933]/10 px-2.5 py-1 text-xs font-bold text-[#151933]">
+                <span className="shrink-0 rounded-full bg-[#043084]/[0.08] border border-[#043084]/10 px-2 py-0.5 text-[11px] font-bold text-[#043084]">
                   {Number(item.clicks || 0).toLocaleString("en-IN")} clicks
                 </span>
               </div>
@@ -191,17 +190,17 @@ function MetricCard({
   loading: boolean;
 }) {
   return (
-    <div className="rounded-[16px] border border-[#e2e8f0] bg-white p-5 shadow-xs">
+    <div className="rounded-xl border border-[#e2e8f0] bg-white p-3.5 sm:p-4 shadow-xs">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-semibold text-[#64748b]">{label}</span>
-        <span className="flex h-8 w-8 items-center justify-center rounded-[10px] border border-[#e2e8f0] bg-[#f8fafc] text-[#151933]">
+        <span className="text-xs font-semibold text-[#64748b]">{label}</span>
+        <span className="flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-[#043084]">
           {icon}
         </span>
       </div>
-      <p className="mt-3 text-[32px] font-semibold leading-none tracking-tight text-[#151933] tabular-nums">
+      <p className="mt-2 text-2xl sm:text-[28px] font-bold leading-none tracking-tight text-[#043084] tabular-nums">
         {loading ? "..." : value.toLocaleString("en-IN")}
       </p>
-      <p className="mt-2 text-xs text-[#64748b]">{helper}</p>
+      <p className="mt-1.5 text-[11px] text-[#64748b]">{helper}</p>
     </div>
   );
 }

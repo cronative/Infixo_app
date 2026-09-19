@@ -51,7 +51,7 @@ export default function LoginPage() {
       {/* Background Inflixo "I" Logo Mark & Radiating Waves */}
       <div className="hidden">
         {/* Top-Left Inflixo "I" Logo Watermark */}
-        <div className="absolute -top-12 -left-12 sm:-top-16 sm:-left-16 text-[#151933] opacity-[0.06] -rotate-12">
+        <div className="absolute -top-12 -left-12 sm:-top-16 sm:-left-16 text-[#043084] opacity-[0.06] -rotate-12">
           <svg
             viewBox="0 0 100 100"
             fill="none"
@@ -86,7 +86,7 @@ export default function LoginPage() {
         </div>
 
         {/* Bottom-Right Inflixo "I" Logo Watermark */}
-        <div className="absolute -bottom-16 -right-16 sm:-bottom-20 sm:-right-20 text-[#151933] opacity-[0.05] rotate-12">
+        <div className="absolute -bottom-16 -right-16 sm:-bottom-20 sm:-right-20 text-[#043084] opacity-[0.05] rotate-12">
           <svg
             viewBox="0 0 100 100"
             fill="none"
@@ -130,12 +130,12 @@ export default function LoginPage() {
           </div>
 
           <div className="mt-5 w-full">
-            <div className="rounded-[18px] border border-[#151933]/10 bg-[#151933]/[0.035] px-4 py-4 text-center shadow-inner shadow-white/70">
-              <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#151933] shadow-sm">
+            <div className="rounded-[18px] border border-[#043084]/10 bg-[#043084]/[0.035] px-4 py-4 text-center shadow-inner shadow-white/70">
+              <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#043084] shadow-sm">
                 <Sparkles className="h-3 w-3" />
                 Creator first
               </div>
-              <p className="text-[13px] font-extrabold text-[#151933]">
+              <p className="text-[13px] font-extrabold text-[#043084]">
                 Your old videos can still find new fans.
               </p>
               <p className="mx-auto mt-1.5 max-w-[440px] text-[12px] font-medium leading-relaxed text-[#5d6575]">
@@ -156,8 +156,8 @@ export default function LoginPage() {
         </div>
 
         {/* 3. Trust Pill */}
-        <div className="mx-auto mt-5 flex w-fit items-center justify-center gap-1.5 rounded-full bg-[#151933]/[0.07] px-4 py-1.5 text-xs font-bold text-[#54514D]">
-          <Zap className="h-3.5 w-3.5 text-[#151933] fill-[#151933] shrink-0" />
+        <div className="mx-auto mt-5 flex w-fit items-center justify-center gap-1.5 rounded-full bg-[#043084]/[0.07] px-4 py-1.5 text-xs font-bold text-[#54514D]">
+          <Zap className="h-3.5 w-3.5 text-[#043084] fill-[#043084] shrink-0" />
           <span>No password • OTP login • Under 60 seconds</span>
         </div>
 
@@ -172,7 +172,7 @@ export default function LoginPage() {
             </label>
 
             <div
-              className={`flex h-12 items-center rounded-[14px] border px-3.5 bg-[#f8fafc] transition-all duration-200 focus-within:border-[#151933] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#151933]/10 ${error
+              className={`flex h-12 items-center rounded-[14px] border px-3.5 bg-[#f8fafc] transition-all duration-200 focus-within:border-[#043084] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#043084]/10 ${error
                 ? "border-[#ef4444] bg-rose-50/20"
                 : "border-[#cbd5e1]"
                 } ${isShaking ? "animate-shake" : ""}`}
@@ -204,7 +204,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-[14px] bg-[#151933] text-sm font-extrabold text-white shadow-[0_14px_28px_rgba(21,25,51,0.18)] transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-[0_18px_34px_rgba(21,25,51,0.22)] active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-75 disabled:hover:translate-y-0"
+            className="inline-flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-[14px] bg-[#043084] text-sm font-extrabold text-white shadow-[0_14px_28px_rgba(21,25,51,0.18)] transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-[0_18px_34px_rgba(21,25,51,0.22)] active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-75 disabled:hover:translate-y-0"
           >
             {loading ? (
               <>
@@ -223,7 +223,7 @@ export default function LoginPage() {
         {/* 5. 3 Benefit Checkpoints */}
         <div className="mt-7 space-y-3 border-t border-[#E7E3DC] pt-4 text-left">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#151933]/10 text-[#151933]">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#043084]/10 text-[#043084]">
               <Check className="h-3 w-3 stroke-[2.5]" />
             </span>
             <span className="text-[13px] font-semibold text-[#54514D]">
@@ -232,7 +232,7 @@ export default function LoginPage() {
           </div>
 
           <div className="flex items-center gap-2.5">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#151933]/10 text-[#151933]">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#043084]/10 text-[#043084]">
               <Check className="h-3 w-3 stroke-[2.5]" />
             </span>
             <span className="text-[13px] font-semibold text-[#54514D]">
@@ -241,7 +241,7 @@ export default function LoginPage() {
           </div>
 
           <div className="flex items-center gap-2.5">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#151933]/10 text-[#151933]">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#043084]/10 text-[#043084]">
               <Check className="h-3 w-3 stroke-[2.5]" />
             </span>
             <span className="text-[13px] font-semibold text-[#54514D]">
@@ -254,11 +254,11 @@ export default function LoginPage() {
         <div className="mt-5 border-t border-[#E7E3DC]/80 pt-4">
           <p className="text-[11px] font-medium text-[#6B5A5D] text-center leading-relaxed">
             By continuing, you agree to Inflixo&apos;s{" "}
-            <Link href="/terms" className="text-[#151933] underline hover:text-brand-hover font-medium">
+            <Link href="/terms" className="text-[#043084] underline hover:text-brand-hover font-medium">
               Terms of Service
             </Link>{" "}
             and{" "}
-            <Link href="/privacy" className="text-[#151933] underline hover:text-brand-hover font-medium">
+            <Link href="/privacy" className="text-[#043084] underline hover:text-brand-hover font-medium">
               Privacy Policy
             </Link>
             .
