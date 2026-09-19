@@ -145,25 +145,25 @@ export default function SocialsStepPage() {
 
   return (
     <OnboardingLayout step="socials">
-      <div className="w-full max-w-[500px] mx-auto pt-4 sm:pt-8 pb-12">
-        {/* SINGLE UNIFIED WHITE CARD (Matching Step 1 & Step 2 design) */}
-        <div className="rounded-[28px] border border-[#E7E3DC] bg-white p-6 sm:p-9 space-y-6 text-left shadow-[0_4px_24px_rgba(0,0,0,0.035)]">
+      <div className="w-full max-w-[460px] mx-auto pt-0 sm:pt-1 pb-4">
+        {/* SINGLE UNIFIED WHITE CARD */}
+        <div className="rounded-2xl border border-[#e2e8f0] bg-white p-4 sm:p-5 space-y-3 text-left shadow-xs">
 
           {/* 1. Header Section */}
-          <div className="space-y-1.5">
-            <span className="block text-[11px] font-bold uppercase tracking-widest text-[#151933]">
+          <div className="space-y-1">
+            <span className="block text-[10px] font-bold uppercase tracking-wider text-[#043084]">
               STEP 3 OF 4 · YOUR SOCIALS
             </span>
-            <h1 className="font-display text-2xl sm:text-[32px] font-extrabold text-[#181716] tracking-tight leading-tight">
+            <h1 className="font-display text-xl sm:text-[24px] font-extrabold text-[#181716] tracking-tight leading-tight">
               Add your social handles
             </h1>
-            <p className="text-xs sm:text-[13px] font-normal text-[#54514D] leading-relaxed pt-0.5">
+            <p className="text-xs font-normal text-[#54514D] leading-relaxed">
               Enter your handles to link your social accounts and showcase your fanbase and content.
             </p>
           </div>
 
           {/* 2. Public Data Scraping Permission Card */}
-          <div className="pt-0.5">
+          <div>
             <SocialDataConsentCard
               variant="one-line"
               accepted={consentAccepted}
@@ -174,26 +174,26 @@ export default function SocialsStepPage() {
           </div>
 
           {/* 3. Social Platforms List */}
-          <div className="space-y-4">
+          <div className="space-y-2">
 
             {/* Instagram Card */}
-            <div className="rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] p-4 space-y-3">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 shadow-2xs">
-                  <InstagramIcon className="h-4 w-4 text-white" />
+            <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-2.5 sm:p-3 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 shadow-2xs">
+                  <InstagramIcon className="h-3.5 w-3.5 text-white" />
                 </div>
                 <div>
                   <span className="text-xs font-bold text-[#181716] block">
                     Instagram
                   </span>
-                  <span className="text-[11px] text-[#64748b]">
+                  <span className="text-[10.5px] text-[#64748b]">
                     Fetch followers &amp; profile details
                   </span>
                 </div>
               </div>
 
               {isInstaConnected ? (
-                <div className="bg-white rounded-xl p-3 border border-[#e2e8f0]">
+                <div className="bg-white rounded-xl p-2.5 border border-[#e2e8f0]">
                   <ConnectedAccountCard
                     platform="instagram"
                     icon={<InstagramIcon className="h-4 w-4 text-white" />}
@@ -209,8 +209,8 @@ export default function SocialsStepPage() {
                   />
                 </div>
               ) : (
-                <div className="space-y-2">
-                  <div className="flex h-11 sm:h-12 items-center rounded-xl border border-[#cbd5e1] bg-white px-3.5 transition-all focus-within:border-[#151933] focus-within:ring-2 focus-within:ring-[#151933]/10">
+                <div className="space-y-1.5">
+                  <div className="flex h-10.5 sm:h-11 items-center rounded-xl border border-[#cbd5e1] bg-white px-3 transition-all focus-within:border-[#043084] focus-within:ring-2 focus-within:ring-[#043084]/10">
                     <span className="text-xs sm:text-sm font-medium text-[#64748b] select-none shrink-0">
                       instagram.com/
                     </span>
@@ -228,23 +228,23 @@ export default function SocialsStepPage() {
             </div>
 
             {/* YouTube Card */}
-            <div className="rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] p-4 space-y-3">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-red-600 shadow-2xs">
-                  <YoutubeIcon className="h-4 w-4 text-white" />
+            <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-2.5 sm:p-3 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-600 shadow-2xs">
+                  <YoutubeIcon className="h-3.5 w-3.5 text-white" />
                 </div>
                 <div>
                   <span className="text-xs font-bold text-[#181716] block">
                     YouTube Channel
                   </span>
-                  <span className="text-[11px] text-[#64748b]">
+                  <span className="text-[10.5px] text-[#64748b]">
                     Fetch subscribers &amp; channel info
                   </span>
                 </div>
               </div>
 
               {isYtConnected ? (
-                <div className="bg-white rounded-xl p-3 border border-[#e2e8f0]">
+                <div className="bg-white rounded-xl p-2.5 border border-[#e2e8f0]">
                   <ConnectedAccountCard
                     platform="youtube"
                     icon={<YoutubeIcon className="h-4 w-4 text-white" />}
@@ -260,8 +260,8 @@ export default function SocialsStepPage() {
                   />
                 </div>
               ) : (
-                <div className="space-y-2">
-                  <div className="flex h-11 sm:h-12 items-center rounded-xl border border-[#cbd5e1] bg-white px-3.5 transition-all focus-within:border-[#151933] focus-within:ring-2 focus-within:ring-[#151933]/10">
+                <div className="space-y-1.5">
+                  <div className="flex h-10.5 sm:h-11 items-center rounded-xl border border-[#cbd5e1] bg-white px-3 transition-all focus-within:border-[#043084] focus-within:ring-2 focus-within:ring-[#043084]/10">
                     <span className="text-xs sm:text-sm font-medium text-[#64748b] select-none shrink-0">
                       youtube.com/@
                     </span>
@@ -279,23 +279,23 @@ export default function SocialsStepPage() {
             </div>
 
             {/* Facebook Card */}
-            <div className="rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] p-4 space-y-3">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-600 shadow-2xs">
-                  <FacebookIcon className="h-4 w-4 text-white" />
+            <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-2.5 sm:p-3 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 shadow-2xs">
+                  <FacebookIcon className="h-3.5 w-3.5 text-white" />
                 </div>
                 <div>
                   <span className="text-xs font-bold text-[#181716] block">
                     Facebook Page
                   </span>
-                  <span className="text-[11px] text-[#64748b]">
+                  <span className="text-[10.5px] text-[#64748b]">
                     Fetch page followers &amp; details
                   </span>
                 </div>
               </div>
 
               {isFbConnected ? (
-                <div className="bg-white rounded-xl p-3 border border-[#e2e8f0]">
+                <div className="bg-white rounded-xl p-2.5 border border-[#e2e8f0]">
                   <ConnectedAccountCard
                     platform="facebook"
                     icon={<FacebookIcon className="h-4 w-4 text-white" />}
@@ -311,8 +311,8 @@ export default function SocialsStepPage() {
                   />
                 </div>
               ) : (
-                <div className="space-y-2">
-                  <div className="flex h-11 sm:h-12 items-center rounded-xl border border-[#cbd5e1] bg-white px-3.5 transition-all focus-within:border-[#151933] focus-within:ring-2 focus-within:ring-[#151933]/10">
+                <div className="space-y-1.5">
+                  <div className="flex h-10.5 sm:h-11 items-center rounded-xl border border-[#cbd5e1] bg-white px-3 transition-all focus-within:border-[#043084] focus-within:ring-2 focus-within:ring-[#043084]/10">
                     <span className="text-xs sm:text-sm font-medium text-[#64748b] select-none shrink-0">
                       facebook.com/
                     </span>
@@ -332,24 +332,24 @@ export default function SocialsStepPage() {
           </div>
 
           {/* 4. Additional Platforms Note Box */}
-          <div className="rounded-2xl border border-[#e2e8f0] bg-[#f8fafc]/70 p-3.5 text-left flex items-start gap-3">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white border border-[#e2e8f0] text-[#151933]">
-              <Link2 className="h-3.5 w-3.5" />
+          <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/70 p-2 sm:p-2.5 text-left flex items-start gap-2">
+            <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-white border border-[#e2e8f0] text-[#043084] mt-0.5">
+              <Link2 className="h-3 w-3" />
             </div>
             <div className="space-y-0.5">
               <h4 className="text-xs font-bold text-[#181716]">Want to add more links?</h4>
-              <p className="text-[11px] sm:text-xs text-[#64748b] leading-relaxed">
-                You can create link collections, add more custom links from your dashboard, and continue anytime.
+              <p className="text-[10.5px] text-[#64748b] leading-relaxed">
+                You can add custom links &amp; collections anytime from your dashboard.
               </p>
             </div>
           </div>
 
           {/* 5. Navigation Buttons (Back + Next) */}
-          <div className="pt-2 flex items-center gap-3">
+          <div className="pt-0.5 flex items-center gap-2">
             <button
               type="button"
               onClick={() => router.push("/onboarding/profile")}
-              className="rounded-xl border border-[#cbd5e1] bg-white text-[#181716] font-semibold text-xs sm:text-sm h-12 px-5 hover:bg-surface-soft transition-all cursor-pointer shrink-0"
+              className="rounded-xl border border-[#cbd5e1] bg-white text-[#181716] font-semibold text-xs sm:text-sm h-10.5 sm:h-11 px-3.5 hover:bg-surface-soft transition-all cursor-pointer shrink-0"
             >
               Back
             </button>
@@ -357,7 +357,7 @@ export default function SocialsStepPage() {
               type="button"
               onClick={handleNext}
               disabled={submitting}
-              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-[#151933] hover:bg-brand-hover text-white font-semibold text-xs sm:text-sm h-12 transition-all cursor-pointer shadow-xs disabled:opacity-60 active:scale-98"
+              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-[#043084] hover:bg-brand-hover text-white font-semibold text-xs sm:text-sm h-10.5 sm:h-11 transition-all cursor-pointer shadow-xs disabled:opacity-60 active:scale-98"
             >
               {submitting ? (
                 <>

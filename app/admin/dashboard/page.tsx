@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -30,15 +30,52 @@ import {
   Ban,
   Clock,
   CheckCircle2,
+  TrendingUp,
+  BarChart3,
+  Layers,
+  Activity,
+  BadgeCheck,
+  DollarSign,
+  Globe,
+  Server,
+  Radio,
+  Zap,
 } from "lucide-react";
 import { AdminService, AdminUser } from "@/services/AdminService";
 import { Logo } from "@/components/shared/Logo";
-import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { SeriesPoster } from "@/components/shared/SeriesPoster";
 import { useToast } from "@/contexts/ToastContext";
 import { ProfileService } from "@/services/ProfileService";
-import { SeriesService } from "@/services/SeriesService";
 import { authRepository, profileRepository, onboardingRepository } from "@/repositories/localRepository";
+
+const AVATAR_PALETTES = [
+  "bg-blue-50 text-[#043084] border-blue-200/80",
+  "bg-purple-50 text-purple-700 border-purple-200/80",
+  "bg-emerald-50 text-emerald-700 border-emerald-200/80",
+  "bg-amber-50 text-amber-800 border-amber-200/80",
+  "bg-indigo-50 text-indigo-700 border-indigo-200/80",
+  "bg-teal-50 text-teal-700 border-teal-200/80",
+  "bg-rose-50 text-rose-700 border-rose-200/80",
+];
+
+function getInitialsBadgeColor(str?: string): string {
+  if (!str) return AVATAR_PALETTES[0];
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % AVATAR_PALETTES.length;
+  return AVATAR_PALETTES[index];
+}
+
+function getInitials(name?: string, fallback = "CR"): string {
+  if (!name) return fallback;
+  const cleaned = name.replace(/[@_-]/g, " ").trim();
+  const parts = cleaned.split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return fallback;
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[1][0]).toUpperCase();
+}
 
 interface AdminCreator {
   id: number | string;
@@ -59,6 +96,9 @@ interface AdminCreator {
   gigsCount?: number;
   minGigPrice?: string;
   maxGigPrice?: string;
+  profileViews?: number;
+  episodeClicks?: number;
+  reviewsCount?: number;
 }
 
 interface AdminSeries {
@@ -89,26 +129,76 @@ interface AdminSeries {
   }[];
 }
 
+interface FounderStats {
+  totalCreators: number;
+  activeCreators: number;
+  suspendedCreators: number;
+  newThisWeek: number;
+  totalSeries: number;
+  totalEpisodes: number;
+  totalActiveGigs: number;
+  totalProfileViews: number;
+  totalEpisodeClicks: number;
+  totalReviews: number;
+  vipSubscribers: number;
+  proSubscribers: number;
+  starterSubscribers: number;
+  freeTrialSubscribers: number;
+  estimatedMRR: number;
+}
+
+const INITIAL_STATS: FounderStats = {
+  totalCreators: 0,
+  activeCreators: 0,
+  suspendedCreators: 0,
+  newThisWeek: 0,
+  totalSeries: 0,
+  totalEpisodes: 0,
+  totalActiveGigs: 0,
+  totalProfileViews: 0,
+  totalEpisodeClicks: 0,
+  totalReviews: 0,
+  vipSubscribers: 0,
+  proSubscribers: 0,
+  starterSubscribers: 0,
+  freeTrialSubscribers: 0,
+  estimatedMRR: 0,
+};
+
 const EMAIL_TEMPLATES = [
   {
-    id: "india_creators",
-    name: "🇮🇳 India Creators 100K Mission",
-    subject: "Thank you for creating content in India — Join the Inflixo 100K Mission 🚀",
-    body: `<h2 style="color: #151933; margin-top: 0; font-size: 20px;">Hello Content Creator,</h2>
-<p>First of all, a massive <strong>THANK YOU</strong> for inspiring millions by creating amazing content in India! 🇮🇳✨</p>
-<p>As creators ourselves, we know how hard you work every day to script, shoot, and edit. Inflixo helps you organize your OTT Series &amp; Media Kit Rate Cards in one home.</p>
-<div style="text-align: center; margin: 28px 0;">
-  <a href="https://inflixo.com/login" style="background: #151933; color: #FFFFFF; padding: 14px 28px; text-decoration: none; border-radius: 14px; font-weight: 800; font-size: 14px; display: inline-block;">JOIN NOW — CREATE YOUR INFLIXO</a>
+    id: "welcome",
+    name: "🎉 Welcome Creator",
+    subject: "Welcome to Inflixo! Set up your creator series & link in bio 🚀",
+    body: `<h2 style="color: #043084; margin-top: 0; font-size: 18px;">Welcome to Inflixo! 🎉</h2>
+<p>Hi Creator,</p>
+<p>Thank you for joining <strong>Inflixo</strong> — the video-first link in bio platform built for Indian creators to organize series, showcase their total fanbase, and feature brand collab rate cards.</p>
+<p>Log in to your dashboard to organize your YouTube and Instagram playlists today!</p>
+<div style="margin: 24px 0;">
+  <a href="https://inflixo.com/login" style="background: #043084; color: #FFFFFF; padding: 12px 24px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 13px; display: inline-block;">Open Inflixo Dashboard</a>
 </div>`,
   },
   {
-    id: "welcome",
-    name: "🎉 Welcome Creator Template",
-    subject: "Welcome to Inflixo! Set up your creator page 🚀",
-    body: `<h2 style="color: #151933; margin-top: 0;">Welcome to Inflixo Creator Home! 🎉</h2>
+    id: "upgrade_pro",
+    name: "⭐ Upgrade to Pro / VIP",
+    subject: "Unlock unlimited series, brand rate cards & custom media kit on Inflixo ⭐",
+    body: `<h2 style="color: #043084; margin-top: 0; font-size: 18px;">Take your creator portfolio to the next level 🚀</h2>
 <p>Hi Creator,</p>
-<p>Thank you for joining <strong>Inflixo</strong> — the single link platform built for video creators to organize series, showcase seasons, and feature their rate cards.</p>
-<p>Log in to your dashboard to complete your page setup!</p>`,
+<p>Your 7-day trial lets you experience the power of ordered series playlists. Upgrade to <strong>Pro or VIP</strong> to keep your public profile live 24/7, publish unlimited episodes, and share verified rate cards with brands.</p>
+<div style="margin: 24px 0;">
+  <a href="https://inflixo.com/dashboard/subscription" style="background: #043084; color: #FFFFFF; padding: 12px 24px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 13px; display: inline-block;">View Plans & Upgrade</a>
+</div>`,
+  },
+  {
+    id: "india_creators",
+    name: "🇮🇳 India Creators Mission",
+    subject: "Building India's biggest creator community together — Inflixo 🇮🇳✨",
+    body: `<h2 style="color: #043084; margin-top: 0; font-size: 18px;">Hello Content Creator,</h2>
+<p>First of all, a massive <strong>THANK YOU</strong> for inspiring millions by creating amazing content in India! 🇮🇳✨</p>
+<p>As creators ourselves, we know how hard you work every day to script, shoot, and edit. Inflixo is built to ensure your best videos never get lost in the feed.</p>
+<div style="margin: 24px 0;">
+  <a href="https://inflixo.com" style="background: #043084; color: #FFFFFF; padding: 12px 24px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 13px; display: inline-block;">Visit Inflixo Home</a>
+</div>`,
   },
 ];
 
@@ -117,23 +207,18 @@ export default function AdminDashboardPage() {
   const { showToast } = useToast();
 
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
-  const [activeTab, setActiveTab] = useState<"creators" | "series" | "email">("creators");
-  const [creatorFilter, setCreatorFilter] = useState<"all" | "vip" | "gigs" | "early">("all");
+  const [activeTab, setActiveTab] = useState<"overview" | "creators" | "series" | "analytics" | "email">("overview");
+  const [creatorFilter, setCreatorFilter] = useState<"all" | "trial" | "starter" | "pro" | "vip" | "gigs" | "suspended">("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
 
   const [creators, setCreators] = useState<AdminCreator[]>([]);
   const [seriesList, setSeriesList] = useState<AdminSeries[]>([]);
-  const [stats, setStats] = useState({
-    totalCreators: 0,
-    totalSeries: 0,
-    totalEpisodes: 0,
-    totalActiveGigs: 0,
-    vipSubscribers: 0,
-  });
+  const [stats, setStats] = useState<FounderStats>(INITIAL_STATS);
 
   // Action Menu Dropdown State
   const [openActionMenuId, setOpenActionMenuId] = useState<string | number | null>(null);
+  const [planChangerCreator, setPlanChangerCreator] = useState<AdminCreator | null>(null);
 
   // Selected Series Modal State
   const [selectedSeries, setSelectedSeries] = useState<AdminSeries | null>(null);
@@ -173,7 +258,7 @@ export default function AdminDashboardPage() {
         loadedCreators = cRes.creators;
       }
       if (cRes.stats) {
-        setStats(cRes.stats);
+        setStats({ ...INITIAL_STATS, ...cRes.stats });
       }
 
       let loadedSeries: AdminSeries[] = [];
@@ -181,7 +266,7 @@ export default function AdminDashboardPage() {
         loadedSeries = sRes.series;
       }
 
-      // Include local profile if missing
+      // Include local creator if missing from remote DB
       const localProfile = ProfileService.getProfile();
       if (localProfile.username || localProfile.displayName) {
         const exists = loadedCreators.some(
@@ -191,7 +276,7 @@ export default function AdminDashboardPage() {
           loadedCreators.unshift({
             id: "local_1",
             email: "nikunj.appz@gmail.com",
-            displayName: localProfile.displayName || "Creator Profile",
+            displayName: localProfile.displayName || "Demo Creator",
             username: localProfile.username || "creator",
             photoDataUrl: localProfile.photoDataUrl,
             category: localProfile.category || "Technology & AI",
@@ -206,6 +291,9 @@ export default function AdminDashboardPage() {
             minGigPrice: "₹2,000",
             maxGigPrice: "₹5,400",
             seriesCount: 1,
+            profileViews: 142,
+            episodeClicks: 88,
+            reviewsCount: 3,
           });
         }
       }
@@ -214,7 +302,7 @@ export default function AdminDashboardPage() {
       setSeriesList(loadedSeries);
     } catch (err) {
       console.error("Failed to load admin data:", err);
-      showToast("Error loading admin records", "error");
+      showToast("Error loading founder dashboard data", "error");
     } finally {
       setLoading(false);
     }
@@ -226,23 +314,44 @@ export default function AdminDashboardPage() {
     router.push("/admin/login");
   }
 
-  async function handleGrantVIP(creator: AdminCreator) {
+  async function handleSetPlan(creator: AdminCreator, planKey: string, planName: string) {
+    setOpenActionMenuId(null);
+    setPlanChangerCreator(null);
+    try {
+      const res = await fetch("/api/admin/creators", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "set_plan", creatorId: creator.id, email: creator.email, planKey, planName }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`${planName} plan assigned to @${creator.username}! ⭐`);
+        loadAdminData();
+      } else {
+        showToast(data.error || "Failed to update plan", "error");
+      }
+    } catch {
+      showToast("Error updating creator plan", "error");
+    }
+  }
+
+  async function handleToggleVerified(creator: AdminCreator) {
     setOpenActionMenuId(null);
     try {
       const res = await fetch("/api/admin/creators", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "grant_vip", creatorId: creator.id, email: creator.email }),
+        body: JSON.stringify({ action: "toggle_verified", creatorId: creator.id, email: creator.email }),
       });
       const data = await res.json();
       if (data.success) {
-        showToast(`VIP Plan granted to ${creator.displayName || creator.username}! ⭐`);
+        showToast(data.isVerified ? `Verified badge granted to @${creator.username}! 🛡️` : `Verified badge removed from @${creator.username}`);
         loadAdminData();
       } else {
-        showToast(data.error || "Failed to grant VIP Plan", "error");
+        showToast(data.error || "Failed to toggle verified badge", "error");
       }
     } catch {
-      showToast("Error granting VIP Plan", "error");
+      showToast("Error updating verified status", "error");
     }
   }
 
@@ -285,10 +394,10 @@ export default function AdminDashboardPage() {
       updatedAt: new Date().toISOString(),
     });
     onboardingRepository.saveStep("finish");
-    showToast(`Impersonating @${creator.username}... Redirecting to Dashboard 🚀`);
+    showToast(`Logged in as @${creator.username}. Opening Dashboard... 🚀`);
     setTimeout(() => {
       router.push("/dashboard");
-    }, 400);
+    }, 300);
   }
 
   async function handleViewGigs(creator: AdminCreator) {
@@ -307,16 +416,23 @@ export default function AdminDashboardPage() {
     }
   }
 
-  function handleAddAllCreatorsToRecipients() {
-    const allEmails = Array.from(
-      new Set(creators.map((c) => c.email?.trim().toLowerCase()).filter(Boolean))
-    );
-    if (allEmails.length === 0) {
-      showToast("No creator email addresses available", "error");
+  function handleAddRecipients(filterType: "all" | "vip" | "trial") {
+    let targetList: string[] = [];
+    if (filterType === "all") {
+      targetList = creators.map((c) => c.email?.trim().toLowerCase()).filter(Boolean);
+    } else if (filterType === "vip") {
+      targetList = creators.filter((c) => c.planKey === "creator_VIP" || c.planName?.toLowerCase().includes("vip")).map((c) => c.email?.trim().toLowerCase()).filter(Boolean);
+    } else if (filterType === "trial") {
+      targetList = creators.filter((c) => !c.planKey || c.planKey === "free_trial").map((c) => c.email?.trim().toLowerCase()).filter(Boolean);
+    }
+
+    const uniqueEmails = Array.from(new Set(targetList));
+    if (uniqueEmails.length === 0) {
+      showToast("No emails found for this filter", "error");
       return;
     }
-    setRecipientsInput(allEmails.join(", "));
-    showToast(`Added ${allEmails.length} registered creator emails! 📧`);
+    setRecipientsInput(uniqueEmails.join(", "));
+    showToast(`Added ${uniqueEmails.length} recipients to broadcast list! 📧`);
   }
 
   async function handleSendMail() {
@@ -326,7 +442,7 @@ export default function AdminDashboardPage() {
       .filter((e) => e && e.includes("@"));
 
     if (emailsList.length === 0) {
-      showToast("Please enter at least 1 valid recipient email ID", "error");
+      showToast("Please enter at least 1 valid recipient email", "error");
       return;
     }
 
@@ -360,176 +476,212 @@ export default function AdminDashboardPage() {
     }
   }
 
-  // Filter calculations
-  const totalCreatorsCount = creators.length;
-  const vipCreatorsCount = creators.filter(
-    (c) => c.planKey === "creator_VIP" || (c.planName && c.planName.toLowerCase().includes("vip"))
-  ).length;
-  const gigsCreatorsCount = creators.filter((c) => Number(c.gigsCount || 0) > 0).length;
-  const earlyBirdCount = totalCreatorsCount - vipCreatorsCount;
-
   // Filtered Creators based on tab & query
-  const filteredCreators = creators.filter((c) => {
-    const matchesSearch =
-      c.displayName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.category?.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredCreators = useMemo(() => {
+    return creators.filter((c) => {
+      const q = searchQuery.toLowerCase().trim();
+      const matchesSearch =
+        !q ||
+        c.displayName?.toLowerCase().includes(q) ||
+        c.username?.toLowerCase().includes(q) ||
+        c.email?.toLowerCase().includes(q) ||
+        c.category?.toLowerCase().includes(q);
 
-    if (!matchesSearch) return false;
+      if (!matchesSearch) return false;
 
-    if (creatorFilter === "vip") {
-      return c.planKey === "creator_VIP" || (c.planName && c.planName.toLowerCase().includes("vip"));
-    }
-    if (creatorFilter === "gigs") {
-      return Number(c.gigsCount || 0) > 0;
-    }
-    if (creatorFilter === "early") {
-      return !(c.planKey === "creator_VIP" || (c.planName && c.planName.toLowerCase().includes("vip")));
-    }
+      if (creatorFilter === "trial") {
+        return !c.planKey || c.planKey === "free_trial" || c.planName?.toLowerCase().includes("trial");
+      }
+      if (creatorFilter === "starter") {
+        return c.planKey === "starter" || c.planName?.toLowerCase().includes("starter");
+      }
+      if (creatorFilter === "pro") {
+        return c.planKey === "pro" || c.planName?.toLowerCase().includes("pro");
+      }
+      if (creatorFilter === "vip") {
+        return c.planKey === "creator_VIP" || c.planName?.toLowerCase().includes("vip");
+      }
+      if (creatorFilter === "gigs") {
+        return Number(c.gigsCount || 0) > 0;
+      }
+      if (creatorFilter === "suspended") {
+        return c.accountStatus === "suspended";
+      }
 
-    return true;
-  });
+      return true;
+    });
+  }, [creators, searchQuery, creatorFilter]);
 
-  const filteredSeries = seriesList.filter(
-    (s) =>
-      s.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.creatorName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.creatorUsername?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.creatorEmail?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.genre?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredSeries = useMemo(() => {
+    return seriesList.filter(
+      (s) =>
+        !searchQuery.trim() ||
+        s.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        s.creatorName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        s.creatorUsername?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        s.genre?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [seriesList, searchQuery]);
 
-  const totalEpisodesCount = stats.totalEpisodes || seriesList.reduce((acc, s) => {
-    return acc + (s.seasons?.[0]?.episodes?.length || 0);
-  }, 0);
+  // Top Creators by Traffic
+  const topCreators = useMemo(() => {
+    return [...creators]
+      .sort((a, b) => ((b.profileViews || 0) + (b.episodeClicks || 0)) - ((a.profileViews || 0) + (a.episodeClicks || 0)))
+      .slice(0, 5);
+  }, [creators]);
+
+  // Recent Creators (Latest 6)
+  const recentCreators = useMemo(() => {
+    return [...creators].slice(0, 6);
+  }, [creators]);
 
   if (!adminUser) {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-[#f8fafc]">
-        <div className="h-8 w-8 animate-spin rounded-full border-3 border-[#151933] border-t-transparent" />
+        <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#043084] border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-dvh bg-[#f8fafc] text-[#151933] font-sans selection:bg-rose-100 selection:text-[#151933]">
-      {/* 1. TOP MAROON ADMIN NAVBAR */}
-      <header className="safe-top sticky top-0 z-40 border-b border-rose-100 bg-white/95 backdrop-blur-md px-4 sm:px-8 py-3.5 shadow-2xs">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+    <div className="min-h-dvh bg-[#f8fafc] text-slate-800 font-sans selection:bg-[#043084]/10 selection:text-[#043084] text-left">
+      {/* 1. TOP HEADER NAVBAR — TIGHT & CLEAN */}
+      <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur-md px-4 sm:px-6 py-2.5">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
             <Logo size="sm" />
-            <div className="flex items-center gap-1.5 rounded-full border border-[#151933]/20 bg-[#151933]/10 px-3.5 py-1 text-xs font-black text-[#151933]">
-              <ShieldCheck className="h-3.5 w-3.5 text-[#151933]" />
-              <span>Admin Control Center</span>
-            </div>
+            <span className="hidden sm:inline-block text-[10px] font-extrabold uppercase tracking-wider text-[#043084] bg-[#043084]/5 border border-[#043084]/15 px-2 py-0.5 rounded-[6px]">
+              Founder Cockpit
+            </span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>DB Connected</span>
+            </div>
+
             <button
               onClick={loadAdminData}
-              className="tap-scale flex items-center gap-1.5 rounded-2xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-surface-soft transition-all cursor-pointer"
+              className="tap-scale flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all cursor-pointer"
               title="Refresh Data"
             >
-              <RefreshCw className={`h-3.5 w-3.5 text-[#151933] ${loading ? "animate-spin" : ""}`} />
-              <span className="hidden sm:inline">Refresh Data</span>
+              <RefreshCw className={`h-3 w-3 text-slate-500 ${loading ? "animate-spin" : ""}`} />
+              <span className="hidden md:inline">Refresh</span>
             </button>
 
-            <div className="hidden sm:flex items-center gap-2 border-l border-slate-200 pl-3 text-xs text-slate-500 font-bold">
-              <span>{adminUser.email}</span>
-            </div>
+            <span className="hidden md:inline text-xs text-slate-400 font-medium px-1">|</span>
+            <span className="hidden md:inline text-xs font-semibold text-slate-600 truncate max-w-[160px]">{adminUser.email}</span>
 
             <button
               onClick={handleLogout}
-              className="tap-scale flex items-center gap-1.5 rounded-2xl border border-rose-200 bg-rose-50 px-3.5 py-2 text-xs font-bold text-rose-700 hover:bg-brand-soft transition-all cursor-pointer"
+              className="tap-scale flex items-center gap-1 rounded-lg border border-rose-200 bg-rose-50/70 px-2.5 py-1 text-xs font-bold text-rose-700 hover:bg-rose-100 transition-all cursor-pointer"
             >
-              <LogOut className="h-3.5 w-3.5" />
+              <LogOut className="h-3 w-3" />
               <span>Logout</span>
             </button>
           </div>
         </div>
       </header>
 
-      {/* 2. MAIN CONTENT CONTAINER */}
-      <main className="mx-auto max-w-7xl px-4 sm:px-8 py-6 space-y-6 text-left">
-        {/* KPI Analytics Cards */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Card 1: Total Creators */}
-          <div className="rounded-3xl border border-rose-100 bg-white p-5 shadow-sm space-y-2">
+      {/* 2. MAIN WORKSPACE CONTAINER */}
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 py-4 space-y-4">
+        {/* TOP FOUNDER KPI GRID — TIGHT, MINIMAL PADDING, HIGH DENSITY */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {/* Tile 1: Creators Count & New Growth */}
+          <div className="rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-2xs space-y-1">
             <div className="flex items-center justify-between text-slate-500">
-              <span className="text-xs font-extrabold uppercase tracking-wider text-[#151933]">
-                Total Creators
-              </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#151933]/10 text-[#151933]">
-                <Users className="h-4 w-4" />
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Total Creators</span>
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#043084]/10 text-[#043084]">
+                <Users className="h-3.5 w-3.5" />
               </div>
             </div>
-            <p className="font-display text-3xl font-black text-slate-900">{stats.totalCreators || creators.length}</p>
-            <p className="text-[11px] font-semibold text-slate-500">
-              Registered Accounts
+            <p className="font-display text-2xl font-black text-slate-900 leading-tight">
+              {stats.totalCreators || creators.length}
+            </p>
+            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500">
+              <span className="text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-1.5 py-0.2 rounded text-[10px] font-bold">
+                +{stats.newThisWeek || 0} this week
+              </span>
+              <span>•</span>
+              <span>{stats.activeCreators || creators.length} active</span>
+            </div>
+          </div>
+
+          {/* Tile 2: Revenue & Active Plans (MRR) */}
+          <div className="rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-2xs space-y-1">
+            <div className="flex items-center justify-between text-slate-500">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Estimated MRR</span>
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                <DollarSign className="h-3.5 w-3.5" />
+              </div>
+            </div>
+            <p className="font-display text-2xl font-black text-slate-900 leading-tight">
+              ₹{stats.estimatedMRR.toLocaleString("en-IN")}
+            </p>
+            <p className="text-[11px] font-semibold text-slate-500 truncate">
+              {stats.vipSubscribers} VIP • {stats.proSubscribers} Pro • {stats.starterSubscribers} Starter
             </p>
           </div>
 
-          {/* Card 2: Total OTT Series */}
-          <div className="rounded-3xl border border-rose-100 bg-white p-5 shadow-sm space-y-2">
+          {/* Tile 3: Public Traffic (Views & Clicks) */}
+          <div className="rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-2xs space-y-1">
             <div className="flex items-center justify-between text-slate-500">
-              <span className="text-xs font-extrabold uppercase tracking-wider text-[#151933]">
-                Total OTT Series
-              </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#151933]/10 text-[#151933]">
-                <Film className="h-4 w-4" />
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Platform Traffic</span>
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-blue-700 border border-blue-200/80">
+                <Activity className="h-3.5 w-3.5" />
               </div>
             </div>
-            <p className="font-display text-3xl font-black text-slate-900">{stats.totalSeries || seriesList.length} <span className="text-sm font-bold text-slate-500">Shows</span></p>
-            <p className="text-[11px] font-semibold text-slate-500">
-              {totalEpisodesCount} Published Episodes
+            <p className="font-display text-2xl font-black text-slate-900 leading-tight">
+              {(stats.totalProfileViews + stats.totalEpisodeClicks).toLocaleString("en-IN")}
+            </p>
+            <p className="text-[11px] font-semibold text-slate-500 truncate">
+              {stats.totalProfileViews} views • {stats.totalEpisodeClicks} episode clicks
             </p>
           </div>
 
-          {/* Card 3: Total Active Gigs */}
-          <div className="rounded-3xl border border-rose-100 bg-white p-5 shadow-sm space-y-2">
+          {/* Tile 4: Content Inventory & Gigs */}
+          <div className="rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-2xs space-y-1">
             <div className="flex items-center justify-between text-slate-500">
-              <span className="text-xs font-extrabold uppercase tracking-wider text-[#151933]">
-                Total Active Gigs
-              </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#151933]/10 text-[#151933]">
-                <Briefcase className="h-4 w-4" />
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Catalog &amp; Gigs</span>
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-purple-50 text-purple-700 border border-purple-200/80">
+                <Film className="h-3.5 w-3.5" />
               </div>
             </div>
-            <p className="font-display text-3xl font-black text-slate-900">{stats.totalActiveGigs}</p>
-            <p className="text-[11px] font-semibold text-slate-500">
-              Live Collab Gigs Published
+            <p className="font-display text-2xl font-black text-slate-900 leading-tight">
+              {stats.totalSeries || seriesList.length} <span className="text-xs font-bold text-slate-500 font-sans">Series</span> / {stats.totalEpisodes || 0} <span className="text-xs font-bold text-slate-500 font-sans">Eps</span>
             </p>
-          </div>
-
-          {/* Card 4: VIP Subscribers */}
-          <div className="rounded-3xl border border-amber-200/80 bg-gradient-to-br from-amber-50/40 to-white p-5 shadow-sm space-y-2">
-            <div className="flex items-center justify-between text-slate-500">
-              <span className="text-xs font-extrabold uppercase tracking-wider text-[#151933]">
-                VIP Subscribers
-              </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#151933] text-white">
-                <Crown className="h-4 w-4 fill-amber-300 text-amber-300" />
-              </div>
-            </div>
-            <p className="font-display text-3xl font-black text-[#151933]">{stats.vipSubscribers || vipCreatorsCount}</p>
-            <p className="text-[11px] font-semibold text-slate-500">
-              Active VIP Creators
+            <p className="text-[11px] font-semibold text-slate-500 truncate">
+              {stats.totalActiveGigs} Collab Gigs • {stats.totalReviews} Reviews
             </p>
           </div>
         </div>
 
-        {/* 3. TABS AND SEARCH CONTROLS */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-b border-rose-100 pb-4">
-          {/* Tabs */}
-          <div className="flex items-center gap-2 rounded-2xl bg-white p-1.5 border border-rose-100 shadow-2xs">
+        {/* 3. SUB-NAV TABS & SEARCH CONTROLS */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 border-b border-slate-200/80 pb-2.5">
+          {/* Navigation Pills */}
+          <div className="flex items-center gap-1 overflow-x-auto rounded-lg bg-slate-100 p-1 border border-slate-200/80">
+            <button
+              type="button"
+              onClick={() => setActiveTab("overview")}
+              className={`tap-scale flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                activeTab === "overview"
+                  ? "bg-white text-[#043084] shadow-2xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <BarChart3 className="h-3.5 w-3.5" />
+              <span>Overview</span>
+            </button>
+
             <button
               type="button"
               onClick={() => setActiveTab("creators")}
-              className={`tap-scale flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black transition-all cursor-pointer ${activeTab === "creators"
-                ? "bg-[#151933] text-white shadow-md shadow-[#151933]/20"
-                : "text-slate-600 hover:text-brand-primary"
-                }`}
+              className={`tap-scale flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                activeTab === "creators"
+                  ? "bg-white text-[#043084] shadow-2xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
             >
               <Users className="h-3.5 w-3.5" />
               <span>Creators ({creators.length})</span>
@@ -538,43 +690,58 @@ export default function AdminDashboardPage() {
             <button
               type="button"
               onClick={() => setActiveTab("series")}
-              className={`tap-scale flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black transition-all cursor-pointer ${activeTab === "series"
-                ? "bg-[#151933] text-white shadow-md shadow-[#151933]/20"
-                : "text-slate-600 hover:text-brand-primary"
-                }`}
+              className={`tap-scale flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                activeTab === "series"
+                  ? "bg-white text-[#043084] shadow-2xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
             >
               <Film className="h-3.5 w-3.5" />
-              <span>All Series ({seriesList.length})</span>
+              <span>Series ({seriesList.length})</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("analytics")}
+              className={`tap-scale flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                activeTab === "analytics"
+                  ? "bg-white text-[#043084] shadow-2xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <TrendingUp className="h-3.5 w-3.5" />
+              <span>Traffic &amp; Ranks</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("email")}
-              className={`tap-scale flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black transition-all cursor-pointer ${activeTab === "email"
-                ? "bg-[#151933] text-white shadow-md shadow-[#151933]/20"
-                : "text-slate-600 hover:text-brand-primary"
-                }`}
+              className={`tap-scale flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                activeTab === "email"
+                  ? "bg-white text-[#043084] shadow-2xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
             >
               <Mail className="h-3.5 w-3.5" />
-              <span>Send Mails</span>
+              <span>Broadcast</span>
             </button>
           </div>
 
           {/* Search Box */}
-          {activeTab !== "email" && (
-            <div className="relative w-full sm:w-80">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          {activeTab !== "email" && activeTab !== "overview" && (
+            <div className="relative w-full sm:w-72">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={`Search ${activeTab}...`}
-                className="w-full rounded-2xl border border-rose-100 bg-white pl-10 pr-4 py-2.5 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#151933] focus:outline-none focus:ring-2 focus:ring-[#151933]/20 transition-all shadow-2xs"
+                className="w-full rounded-lg border border-slate-200 bg-white pl-8 pr-3 py-1.5 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-primary"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -583,232 +750,529 @@ export default function AdminDashboardPage() {
           )}
         </div>
 
-        {/* 4. TAB 1: CREATORS LISTING & FILTER PILLS */}
-        {activeTab === "creators" && (
+        {/* ---------------------------------------------------- */}
+        {/* TAB 1: FOUNDER OVERVIEW / PULSE                      */}
+        {/* ---------------------------------------------------- */}
+        {activeTab === "overview" && (
           <div className="space-y-4">
+            {/* Top Row: Plan Breakdown + System Integrations */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
+              {/* Plan Distribution Progress Card */}
+              <div className="lg:col-span-8 rounded-xl border border-slate-200/80 bg-white p-4 shadow-2xs space-y-3">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                    <Crown className="h-3.5 w-3.5 text-[#043084]" />
+                    <span>Subscription Plan Distribution</span>
+                  </h2>
+                  <span className="text-xs font-bold text-slate-700">Total: {stats.totalCreators} Accounts</span>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden flex">
+                  <div
+                    style={{ width: `${stats.totalCreators ? (stats.vipSubscribers / stats.totalCreators) * 100 : 0}%` }}
+                    className="bg-[#043084]"
+                    title={`VIP: ${stats.vipSubscribers}`}
+                  />
+                  <div
+                    style={{ width: `${stats.totalCreators ? (stats.proSubscribers / stats.totalCreators) * 100 : 0}%` }}
+                    className="bg-blue-500"
+                    title={`Pro: ${stats.proSubscribers}`}
+                  />
+                  <div
+                    style={{ width: `${stats.totalCreators ? (stats.starterSubscribers / stats.totalCreators) * 100 : 0}%` }}
+                    className="bg-emerald-500"
+                    title={`Starter: ${stats.starterSubscribers}`}
+                  />
+                  <div
+                    style={{ width: `${stats.totalCreators ? (stats.freeTrialSubscribers / stats.totalCreators) * 100 : 0}%` }}
+                    className="bg-slate-300"
+                    title={`Free Trial: ${stats.freeTrialSubscribers}`}
+                  />
+                </div>
+
+                {/* Legend Items */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs">
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-100">
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#043084]" />
+                    <div className="min-w-0">
+                      <p className="font-extrabold text-slate-800">{stats.vipSubscribers} VIP</p>
+                      <p className="text-[10px] text-slate-500 font-medium">₹1,499/mo</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-100">
+                    <span className="h-2.5 w-2.5 rounded-full bg-blue-500" />
+                    <div className="min-w-0">
+                      <p className="font-extrabold text-slate-800">{stats.proSubscribers} Pro</p>
+                      <p className="text-[10px] text-slate-500 font-medium">₹599/mo</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-100">
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                    <div className="min-w-0">
+                      <p className="font-extrabold text-slate-800">{stats.starterSubscribers} Starter</p>
+                      <p className="text-[10px] text-slate-500 font-medium">₹199/mo</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-100">
+                    <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
+                    <div className="min-w-0">
+                      <p className="font-extrabold text-slate-800">{stats.freeTrialSubscribers} Trial</p>
+                      <p className="text-[10px] text-slate-500 font-medium">7 Days</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* System Integrations Status Card */}
+              <div className="lg:col-span-4 rounded-xl border border-slate-200/80 bg-white p-4 shadow-2xs space-y-2.5">
+                <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                  <Server className="h-3.5 w-3.5 text-[#043084]" />
+                  <span>System Infrastructure</span>
+                </h2>
+
+                <div className="space-y-2 text-xs">
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
+                    <span className="font-semibold text-slate-700">MySQL Database</span>
+                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">
+                      Pool Active (10)
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
+                    <span className="font-semibold text-slate-700">Social Stats Cron</span>
+                    <span className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded">
+                      /api/cron/sync-socials
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
+                    <span className="font-semibold text-slate-700">Email Gateway</span>
+                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">
+                      Nodemailer SMTP
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Row: Recent Signups Table */}
+            <div className="rounded-xl border border-slate-200/80 bg-white shadow-2xs overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200/80">
+                <div>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                    <Users className="h-3.5 w-3.5 text-[#043084]" />
+                    <span>Recent Creator Registrations</span>
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("creators")}
+                  className="text-xs font-bold text-[#043084] hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <span>View All Creators ({creators.length})</span>
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs text-slate-700">
+                  <thead className="border-b border-slate-200/80 bg-slate-50 text-[11px] font-bold text-slate-600 uppercase">
+                    <tr>
+                      <th className="px-3.5 py-2">Creator</th>
+                      <th className="px-3.5 py-2">Handle</th>
+                      <th className="px-3.5 py-2">Plan</th>
+                      <th className="px-3.5 py-2">Shows &amp; Eps</th>
+                      <th className="px-3.5 py-2">Traffic</th>
+                      <th className="px-3.5 py-2">Joined</th>
+                      <th className="px-3.5 py-2 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {recentCreators.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="px-4 py-8 text-center text-slate-500 font-semibold">
+                          No creators registered yet.
+                        </td>
+                      </tr>
+                    ) : (
+                      recentCreators.map((c) => {
+                        const isVip = c.planKey === "creator_VIP" || c.planName?.toLowerCase().includes("vip");
+                        const isPro = c.planKey === "pro" || c.planName?.toLowerCase().includes("pro");
+                        const isStarter = c.planKey === "starter" || c.planName?.toLowerCase().includes("starter");
+
+                        return (
+                          <tr key={c.id} className="hover:bg-slate-50/70 transition-colors">
+                            <td className="px-3.5 py-2">
+                              <div className="flex items-center gap-2">
+                                <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border font-black text-[10px] uppercase tracking-tighter ${getInitialsBadgeColor(c.username || c.displayName)}`}>
+                                  {getInitials(c.displayName || c.username || c.email)}
+                                </div>
+                                <div className="min-w-0 max-w-[180px]">
+                                  <p className="font-bold text-slate-900 truncate">{c.displayName || "Creator"}</p>
+                                  <p className="text-[10px] text-slate-400 truncate">{c.email}</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-3.5 py-2">
+                              <Link
+                                href={`/${c.username || "username"}`}
+                                target="_blank"
+                                className="font-mono font-bold text-[#043084] hover:underline"
+                              >
+                                @{c.username}
+                              </Link>
+                            </td>
+                            <td className="px-3.5 py-2">
+                              {isVip ? (
+                                <span className="inline-flex items-center gap-1 rounded bg-[#043084] text-white px-2 py-0.5 text-[10px] font-bold">
+                                  ⭐ VIP
+                                </span>
+                              ) : isPro ? (
+                                <span className="inline-flex items-center gap-1 rounded bg-blue-600 text-white px-2 py-0.5 text-[10px] font-bold">
+                                  Pro
+                                </span>
+                              ) : isStarter ? (
+                                <span className="inline-flex items-center gap-1 rounded bg-emerald-600 text-white px-2 py-0.5 text-[10px] font-bold">
+                                  Starter
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 rounded bg-slate-100 text-slate-600 border border-slate-200 px-2 py-0.5 text-[10px] font-bold">
+                                  Free Trial
+                                </span>
+                              )}
+                            </td>
+                            <td className="px-3.5 py-2 font-semibold">
+                              {c.seriesCount || 0} Shows
+                            </td>
+                            <td className="px-3.5 py-2 font-semibold">
+                              {(c.profileViews || 0) + (c.episodeClicks || 0)} views
+                            </td>
+                            <td className="px-3.5 py-2 text-slate-400 font-medium">
+                              {c.createdAt ? new Date(c.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Recent"}
+                            </td>
+                            <td className="px-3.5 py-2 text-right">
+                              <div className="flex items-center justify-end gap-1">
+                                <Link
+                                  href={`/${c.username}`}
+                                  target="_blank"
+                                  className="rounded border border-slate-200 bg-white px-2 py-1 text-[11px] font-bold text-slate-700 hover:bg-slate-50 transition-colors inline-flex items-center gap-1"
+                                >
+                                  <span>View</span>
+                                  <ExternalLink className="h-3 w-3" />
+                                </Link>
+                                <button
+                                  type="button"
+                                  onClick={() => handleImpersonate(c)}
+                                  className="rounded border border-slate-200 bg-white px-2 py-1 text-[11px] font-bold text-[#043084] hover:bg-[#043084]/5 transition-colors cursor-pointer"
+                                  title="Login as this creator"
+                                >
+                                  Login As
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ---------------------------------------------------- */}
+        {/* TAB 2: CREATORS DIRECTORY & MANAGEMENT               */}
+        {/* ---------------------------------------------------- */}
+        {activeTab === "creators" && (
+          <div className="space-y-3">
             {/* Filter Pills */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-1">
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
               <button
                 type="button"
                 onClick={() => setCreatorFilter("all")}
-                className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors cursor-pointer border ${creatorFilter === "all"
-                  ? "bg-[#151933] text-white border-[#151933]"
-                  : "bg-white text-slate-700 border-slate-200 hover:bg-surface-soft"
-                  }`}
+                className={`rounded-md px-2.5 py-1 text-xs font-bold transition-colors cursor-pointer border ${
+                  creatorFilter === "all"
+                    ? "bg-[#043084] text-white border-[#043084]"
+                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                }`}
               >
-                All Creators ({totalCreatorsCount})
+                All ({creators.length})
               </button>
 
               <button
                 type="button"
                 onClick={() => setCreatorFilter("vip")}
-                className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors cursor-pointer border ${creatorFilter === "vip"
-                  ? "bg-[#151933] text-white border-[#151933]"
-                  : "bg-white text-slate-700 border-slate-200 hover:bg-surface-soft"
-                  }`}
+                className={`rounded-md px-2.5 py-1 text-xs font-bold transition-colors cursor-pointer border ${
+                  creatorFilter === "vip"
+                    ? "bg-[#043084] text-white border-[#043084]"
+                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                }`}
               >
-                ⭐ VIP Members ({vipCreatorsCount})
+                ⭐ VIP ({stats.vipSubscribers})
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCreatorFilter("pro")}
+                className={`rounded-md px-2.5 py-1 text-xs font-bold transition-colors cursor-pointer border ${
+                  creatorFilter === "pro"
+                    ? "bg-[#043084] text-white border-[#043084]"
+                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                }`}
+              >
+                Pro ({stats.proSubscribers})
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCreatorFilter("starter")}
+                className={`rounded-md px-2.5 py-1 text-xs font-bold transition-colors cursor-pointer border ${
+                  creatorFilter === "starter"
+                    ? "bg-[#043084] text-white border-[#043084]"
+                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                }`}
+              >
+                Starter ({stats.starterSubscribers})
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCreatorFilter("trial")}
+                className={`rounded-md px-2.5 py-1 text-xs font-bold transition-colors cursor-pointer border ${
+                  creatorFilter === "trial"
+                    ? "bg-[#043084] text-white border-[#043084]"
+                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                }`}
+              >
+                Free Trial ({stats.freeTrialSubscribers})
               </button>
 
               <button
                 type="button"
                 onClick={() => setCreatorFilter("gigs")}
-                className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors cursor-pointer border ${creatorFilter === "gigs"
-                  ? "bg-[#151933] text-white border-[#151933]"
-                  : "bg-white text-slate-700 border-slate-200 hover:bg-surface-soft"
-                  }`}
+                className={`rounded-md px-2.5 py-1 text-xs font-bold transition-colors cursor-pointer border ${
+                  creatorFilter === "gigs"
+                    ? "bg-[#043084] text-white border-[#043084]"
+                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                }`}
               >
-                💼 With Active Gigs ({gigsCreatorsCount})
+                💼 With Gigs
               </button>
 
               <button
                 type="button"
-                onClick={() => setCreatorFilter("early")}
-                className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors cursor-pointer border ${creatorFilter === "early"
-                  ? "bg-[#151933] text-white border-[#151933]"
-                  : "bg-white text-slate-700 border-slate-200 hover:bg-surface-soft"
-                  }`}
+                onClick={() => setCreatorFilter("suspended")}
+                className={`rounded-md px-2.5 py-1 text-xs font-bold transition-colors cursor-pointer border ${
+                  creatorFilter === "suspended"
+                    ? "bg-rose-600 text-white border-rose-600"
+                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                }`}
               >
-                ⚡ Free / Early Bird ({earlyBirdCount})
+                🚫 Suspended ({stats.suspendedCreators})
               </button>
             </div>
 
-            <div className="overflow-x-auto rounded-3xl border border-rose-100 bg-white shadow-sm">
+            {/* High-density Creators Table */}
+            <div className="overflow-x-auto rounded-xl border border-slate-200/80 bg-white shadow-2xs">
               <table className="w-full text-left text-xs text-slate-700">
-                <thead className="border-b border-rose-100 bg-rose-50/50 text-[11px] font-bold text-[#151933] uppercase tracking-wider">
+                <thead className="border-b border-slate-200/80 bg-slate-50 text-[11px] font-bold text-slate-600 uppercase">
                   <tr>
-                    <th className="px-5 py-4">Creator</th>
-                    <th className="px-5 py-4">Handle</th>
-                    <th className="px-5 py-4">Subscription Plan</th>
-                    <th className="px-5 py-4">Active Gigs</th>
-                    <th className="px-5 py-4">Category</th>
-                    <th className="px-5 py-4">Status</th>
-                    <th className="px-5 py-4">Joined Date</th>
-                    <th className="px-5 py-4 text-right">Actions</th>
+                    <th className="px-3.5 py-2.5">Creator</th>
+                    <th className="px-3.5 py-2.5">Handle</th>
+                    <th className="px-3.5 py-2.5">Plan</th>
+                    <th className="px-3.5 py-2.5">Shows / Gigs</th>
+                    <th className="px-3.5 py-2.5">Traffic</th>
+                    <th className="px-3.5 py-2.5">Badge</th>
+                    <th className="px-3.5 py-2.5">Status</th>
+                    <th className="px-3.5 py-2.5">Joined</th>
+                    <th className="px-3.5 py-2.5 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {filteredCreators.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="px-5 py-12 text-center text-slate-500 font-semibold">
+                      <td colSpan={9} className="px-4 py-10 text-center text-slate-500 font-semibold">
                         No creators found matching current filter &amp; search.
                       </td>
                     </tr>
                   ) : (
                     filteredCreators.map((c) => {
-                      const isVip = c.planKey === "creator_VIP" || (c.planName && c.planName.toLowerCase().includes("vip"));
+                      const isVip = c.planKey === "creator_VIP" || c.planName?.toLowerCase().includes("vip");
+                      const isPro = c.planKey === "pro" || c.planName?.toLowerCase().includes("pro");
+                      const isStarter = c.planKey === "starter" || c.planName?.toLowerCase().includes("starter");
                       const isSuspended = c.accountStatus === "suspended";
                       const gigsCount = Number(c.gigsCount || 0);
 
                       return (
-                        <tr key={c.id} className="hover:bg-brand-soft transition-colors">
-                          {/* CREATOR */}
-                          <td className="px-5 py-4">
-                            <div className="flex items-center gap-3">
-                              <CreatorAvatar
-                                src={c.photoDataUrl}
-                                name={c.displayName || c.email}
-                                className="h-9 w-9 rounded-2xl shrink-0 border border-slate-200"
-                              />
-                              <div className="min-w-0">
-                                <p className="font-black text-slate-900 text-sm truncate">
-                                  {c.displayName || "Inflixo Creator"}
+                        <tr key={c.id} className="hover:bg-slate-50/70 transition-colors">
+                          {/* CREATOR AVATAR & NAME */}
+                          <td className="px-3.5 py-2">
+                            <div className="flex items-center gap-2">
+                              <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border font-black text-[10px] uppercase tracking-tighter ${getInitialsBadgeColor(c.username || c.displayName)}`}>
+                                {getInitials(c.displayName || c.username || c.email)}
+                              </div>
+                              <div className="min-w-0 max-w-[180px]">
+                                <p className="font-bold text-slate-900 text-xs truncate flex items-center gap-1">
+                                  <span>{c.displayName || "Inflixo Creator"}</span>
+                                  {c.isVerified && <BadgeCheck className="h-3.5 w-3.5 text-blue-600 shrink-0" />}
                                 </p>
-                                <p className="text-[11px] text-slate-500 font-medium truncate">{c.email}</p>
+                                <p className="text-[10px] text-slate-400 truncate">{c.email}</p>
                               </div>
                             </div>
                           </td>
 
                           {/* HANDLE */}
-                          <td className="px-5 py-4">
+                          <td className="px-3.5 py-2">
                             <Link
                               href={`/${c.username || "username"}`}
                               target="_blank"
-                              className="font-mono font-bold text-[#151933] hover:underline"
+                              className="font-mono font-bold text-[#043084] hover:underline"
                             >
                               @{c.username || "username"}
                             </Link>
                           </td>
 
                           {/* SUBSCRIPTION PLAN */}
-                          <td className="px-5 py-4">
+                          <td className="px-3.5 py-2">
                             {isVip ? (
-                              <span className="inline-flex items-center gap-1 bg-[#151933] text-white px-2.5 py-1 rounded-full text-xs font-semibold shadow-2xs">
-                                <span>⭐ VIP Plan</span>
+                              <span className="inline-flex items-center gap-1 rounded bg-[#043084] text-white px-2 py-0.5 text-[10px] font-bold">
+                                ⭐ VIP
                               </span>
-                            ) : c.planStatus === "expired" ? (
-                              <span className="inline-flex items-center gap-1 bg-rose-50 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-full text-xs font-semibold">
-                                <span>⚠️ Expired</span>
+                            ) : isPro ? (
+                              <span className="inline-flex items-center gap-1 rounded bg-blue-600 text-white px-2 py-0.5 text-[10px] font-bold">
+                                Pro
+                              </span>
+                            ) : isStarter ? (
+                              <span className="inline-flex items-center gap-1 rounded bg-emerald-600 text-white px-2 py-0.5 text-[10px] font-bold">
+                                Starter
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-full text-xs font-semibold">
-                                <span>⚡ Early Bird</span>
+                              <span className="inline-flex items-center gap-1 rounded bg-slate-100 text-slate-600 border border-slate-200 px-2 py-0.5 text-[10px] font-bold">
+                                Free Trial
                               </span>
                             )}
                           </td>
 
-                          {/* ACTIVE GIGS */}
-                          <td className="px-5 py-4">
-                            {gigsCount > 0 ? (
-                              <span className="font-extrabold text-slate-900">
-                                {gigsCount} {gigsCount === 1 ? "Gig" : "Gigs"}{" "}
-                                {c.minGigPrice && (
-                                  <span className="text-slate-500 text-[11px] font-semibold">
-                                    ({c.minGigPrice} - {c.maxGigPrice || c.minGigPrice})
-                                  </span>
-                                )}
-                              </span>
-                            ) : (
-                              <span className="text-slate-400 font-medium text-xs">0 Gigs</span>
+                          {/* CONTENT / GIGS */}
+                          <td className="px-3.5 py-2 font-semibold">
+                            <span>{c.seriesCount || 0} Shows</span>
+                            {gigsCount > 0 && (
+                              <span className="text-slate-400 font-normal ml-1">({gigsCount} gigs)</span>
                             )}
                           </td>
 
-                          {/* CATEGORY */}
-                          <td className="px-5 py-4">
-                            <span className="inline-block rounded-full bg-slate-100 border border-slate-200 px-2.5 py-0.5 text-[11px] font-bold text-slate-700">
-                              {c.category || "General"}
-                            </span>
+                          {/* TRAFFIC */}
+                          <td className="px-3.5 py-2 font-semibold">
+                            {(c.profileViews || 0) + (c.episodeClicks || 0)} views
+                          </td>
+
+                          {/* VERIFIED BADGE TOGGLE */}
+                          <td className="px-3.5 py-2">
+                            <button
+                              type="button"
+                              onClick={() => handleToggleVerified(c)}
+                              className={`tap-scale inline-flex items-center gap-1 rounded px-2 py-0.5 text-[10px] font-bold cursor-pointer border ${
+                                c.isVerified
+                                  ? "bg-blue-50 text-blue-700 border-blue-200"
+                                  : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100"
+                              }`}
+                              title="Toggle verified checkmark"
+                            >
+                              <BadgeCheck className="h-3 w-3" />
+                              <span>{c.isVerified ? "Verified" : "Regular"}</span>
+                            </button>
                           </td>
 
                           {/* STATUS */}
-                          <td className="px-5 py-4">
-                            {isSuspended ? (
-                              <span className="inline-flex items-center gap-1 bg-rose-50 text-rose-700 border border-rose-200 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
-                                <span>🔴 Suspended</span>
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
-                                <span>🟢 Active</span>
-                              </span>
-                            )}
+                          <td className="px-3.5 py-2">
+                            <button
+                              type="button"
+                              onClick={() => handleToggleStatus(c)}
+                              className={`tap-scale inline-flex items-center gap-1 rounded px-2 py-0.5 text-[10px] font-bold cursor-pointer border ${
+                                isSuspended
+                                  ? "bg-rose-50 text-rose-700 border-rose-200"
+                                  : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                              }`}
+                              title="Toggle account status"
+                            >
+                              <span className={`h-1.5 w-1.5 rounded-full ${isSuspended ? "bg-rose-500" : "bg-emerald-500"}`} />
+                              <span>{isSuspended ? "Suspended" : "Active"}</span>
+                            </button>
                           </td>
 
                           {/* JOINED DATE */}
-                          <td className="px-5 py-4 text-slate-500 font-medium">
-                            {c.createdAt ? new Date(c.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Recent"}
+                          <td className="px-3.5 py-2 text-slate-400 font-medium">
+                            {c.createdAt ? new Date(c.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Recent"}
                           </td>
 
-                          {/* ACTIONS COLUMN WITH THREE DOTS MENU */}
-                          <td className="px-5 py-4 text-right relative">
-                            <div className="flex items-center justify-end gap-1.5">
+                          {/* ACTIONS */}
+                          <td className="px-3.5 py-2 text-right relative">
+                            <div className="flex items-center justify-end gap-1">
                               <Link
                                 href={`/${c.username || "username"}`}
                                 target="_blank"
-                                className="inline-flex items-center gap-1 rounded-xl border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-[11px] font-bold text-[#151933] hover:bg-brand-soft transition-colors"
+                                className="inline-flex items-center gap-1 rounded border border-slate-200 bg-white px-2 py-1 text-[11px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
                               >
-                                <span>View Page</span>
+                                <span>View</span>
                                 <ExternalLink className="h-3 w-3" />
                               </Link>
 
-                              {/* Three Dots Button */}
                               <button
                                 type="button"
                                 onClick={() => setOpenActionMenuId(openActionMenuId === c.id ? null : c.id)}
-                                className="h-7 w-7 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-surface-soft hover:text-brand-primary flex items-center justify-center transition-colors cursor-pointer"
+                                className="h-6 w-6 rounded border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 flex items-center justify-center transition-colors cursor-pointer"
                               >
-                                <MoreVertical className="h-4 w-4" />
+                                <MoreVertical className="h-3.5 w-3.5" />
                               </button>
                             </div>
 
                             {/* Dropdown Popover */}
                             {openActionMenuId === c.id && (
-                              <div className="absolute right-5 top-12 z-50 w-52 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl text-left space-y-0.5 animate-in fade-in duration-150">
-                                <button
-                                  type="button"
-                                  onClick={() => handleGrantVIP(c)}
-                                  className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-[#151933] hover:bg-brand-soft flex items-center gap-2 transition-colors cursor-pointer"
-                                >
-                                  <Crown className="h-3.5 w-3.5 text-[#151933]" />
-                                  <span>Grant / Extend VIP Plan</span>
-                                </button>
-
-                                <button
-                                  type="button"
-                                  onClick={() => handleViewGigs(c)}
-                                  className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-surface-soft flex items-center gap-2 transition-colors cursor-pointer"
-                                >
-                                  <Briefcase className="h-3.5 w-3.5 text-slate-500" />
-                                  <span>View Gigs &amp; Media Kit</span>
-                                </button>
-
+                              <div className="absolute right-3.5 top-10 z-50 w-48 rounded-xl border border-slate-200 bg-white p-1 shadow-lg text-left space-y-0.5 animate-in fade-in duration-100">
                                 <button
                                   type="button"
                                   onClick={() => handleImpersonate(c)}
-                                  className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-surface-soft flex items-center gap-2 transition-colors cursor-pointer"
+                                  className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-100 flex items-center gap-2 transition-colors cursor-pointer"
                                 >
                                   <UserCheck className="h-3.5 w-3.5 text-slate-500" />
                                   <span>Login as Creator</span>
                                 </button>
 
-                                <div className="my-1 border-t border-slate-100" />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setOpenActionMenuId(null);
+                                    setPlanChangerCreator(c);
+                                  }}
+                                  className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold text-[#043084] hover:bg-blue-50 flex items-center gap-2 transition-colors cursor-pointer"
+                                >
+                                  <Crown className="h-3.5 w-3.5 text-[#043084]" />
+                                  <span>Change Plan</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleViewGigs(c)}
+                                  className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-100 flex items-center gap-2 transition-colors cursor-pointer"
+                                >
+                                  <Briefcase className="h-3.5 w-3.5 text-slate-500" />
+                                  <span>View Gigs &amp; Rates</span>
+                                </button>
+
+                                <div className="my-0.5 border-t border-slate-100" />
 
                                 <button
                                   type="button"
                                   onClick={() => handleToggleStatus(c)}
-                                  className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-rose-700 hover:bg-brand-soft flex items-center gap-2 transition-colors cursor-pointer"
+                                  className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold text-rose-700 hover:bg-rose-50 flex items-center gap-2 transition-colors cursor-pointer"
                                 >
                                   <Ban className="h-3.5 w-3.5 text-rose-600" />
-                                  <span>{isSuspended ? "Activate Account" : "Deactivate / Ban Account"}</span>
+                                  <span>{isSuspended ? "Activate Account" : "Suspend Account"}</span>
                                 </button>
                               </div>
                             )}
@@ -823,87 +1287,263 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        {/* 5. TAB 2: SERIES LISTING */}
+        {/* ---------------------------------------------------- */}
+        {/* TAB 3: ALL SERIES & EPISODES CATALOG (TABLE)         */}
+        {/* ---------------------------------------------------- */}
         {activeTab === "series" && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filteredSeries.length === 0 ? (
-                <div className="col-span-full rounded-3xl border border-rose-100 bg-white p-12 text-center text-slate-500 font-semibold">
-                  No series found matching &quot;{searchQuery}&quot;
-                </div>
-              ) : (
-                filteredSeries.map((s) => {
-                  const episodesCount = s.seasons?.[0]?.episodes?.length || 0;
-                  return (
-                    <div
-                      key={s.id}
-                      onClick={() => setSelectedSeries(s)}
-                      className="group tap-scale relative overflow-hidden rounded-3xl border border-rose-100 bg-white p-4 shadow-sm transition-all hover:border-brand-border hover:shadow-md cursor-pointer text-left space-y-3"
-                    >
-                      <div className="flex gap-3">
-                        <SeriesPoster
-                          src={s.posterDataUrl}
-                          title={s.title}
-                          className="h-28 w-20 rounded-2xl shrink-0 border border-slate-200 group-hover:scale-105 transition-transform"
-                        />
-                        <div className="flex-1 min-w-0 space-y-1">
-                          <div className="flex items-center gap-1.5">
-                            <span className="rounded-full bg-rose-50 border border-rose-200 px-2 py-0.5 text-[10px] font-black text-[#151933] uppercase">
+          <div className="space-y-3">
+            <div className="overflow-x-auto rounded-xl border border-slate-200/80 bg-white shadow-2xs">
+              <table className="w-full text-left text-xs text-slate-700">
+                <thead className="border-b border-slate-200/80 bg-slate-50 text-[11px] font-bold text-slate-600 uppercase">
+                  <tr>
+                    <th className="px-3.5 py-2.5">Series Title</th>
+                    <th className="px-3.5 py-2.5">Creator</th>
+                    <th className="px-3.5 py-2.5">Genre</th>
+                    <th className="px-3.5 py-2.5">Language</th>
+                    <th className="px-3.5 py-2.5">Episodes</th>
+                    <th className="px-3.5 py-2.5">Created</th>
+                    <th className="px-3.5 py-2.5 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredSeries.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="px-4 py-10 text-center text-slate-500 font-semibold">
+                        No series found matching &quot;{searchQuery}&quot;
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredSeries.map((s) => {
+                      const episodesCount = s.seasons?.[0]?.episodes?.length || 0;
+                      return (
+                        <tr key={s.id} className="hover:bg-slate-50/70 transition-colors">
+                          {/* SERIES TITLE & THUMBNAIL */}
+                          <td className="px-3.5 py-2">
+                            <div className="flex items-center gap-2.5">
+                              <SeriesPoster
+                                src={s.posterDataUrl}
+                                title={s.title}
+                                className="h-9 w-7 rounded shrink-0 border border-slate-200"
+                              />
+                              <div className="min-w-0 max-w-[220px]">
+                                <p className="font-bold text-slate-900 text-xs truncate leading-snug">
+                                  {s.title}
+                                </p>
+                                {s.description && (
+                                  <p className="text-[10px] text-slate-400 truncate">
+                                    {s.description}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* CREATOR */}
+                          <td className="px-3.5 py-2">
+                            <div className="min-w-0">
+                              <p className="font-bold text-slate-900 truncate">
+                                {s.creatorName || `@${s.creatorUsername}`}
+                              </p>
+                              <Link
+                                href={`/${s.creatorUsername}`}
+                                target="_blank"
+                                className="font-mono text-[10px] text-[#043084] hover:underline"
+                              >
+                                @{s.creatorUsername}
+                              </Link>
+                            </div>
+                          </td>
+
+                          {/* GENRE */}
+                          <td className="px-3.5 py-2">
+                            <span className="inline-block rounded bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-700 uppercase">
                               {s.genre || "Series"}
                             </span>
-                            <span className="text-[10px] font-extrabold text-slate-500">
-                              {s.language || "English"}
-                            </span>
-                          </div>
-                          <h3 className="font-display text-base font-black text-slate-900 leading-snug line-clamp-2">
-                            {s.title}
-                          </h3>
-                          <p className="text-xs text-slate-500 font-semibold">
-                            By <span className="text-[#151933] font-extrabold">{s.creatorName || `@${s.creatorUsername}`}</span>
-                          </p>
-                          <p className="text-[11px] font-extrabold text-[#151933]">
-                            {episodesCount} {episodesCount === 1 ? "Episode" : "Episodes"}
-                          </p>
-                        </div>
-                      </div>
+                          </td>
 
-                      <div className="pt-2 border-t border-rose-100 flex items-center justify-between text-xs">
-                        <span className="text-slate-500 font-semibold">Click to view full details</span>
-                        <span className="flex items-center gap-1 font-extrabold text-[#151933] group-hover:translate-x-1 transition-transform">
-                          View Details <ChevronRight className="h-3.5 w-3.5" />
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })
-              )}
+                          {/* LANGUAGE */}
+                          <td className="px-3.5 py-2 text-slate-600 font-medium">
+                            {s.language || "English"}
+                          </td>
+
+                          {/* EPISODES COUNT */}
+                          <td className="px-3.5 py-2">
+                            <span className="inline-flex items-center gap-1 rounded bg-[#043084]/10 text-[#043084] font-bold px-2 py-0.5 text-[10px]">
+                              <Film className="h-3 w-3" />
+                              <span>{episodesCount} {episodesCount === 1 ? "Ep" : "Eps"}</span>
+                            </span>
+                          </td>
+
+                          {/* CREATED DATE */}
+                          <td className="px-3.5 py-2 text-slate-400 font-medium">
+                            {s.createdAt ? new Date(s.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Recent"}
+                          </td>
+
+                          {/* ACTIONS */}
+                          <td className="px-3.5 py-2 text-right">
+                            <div className="flex items-center justify-end gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => setSelectedSeries(s)}
+                                className="tap-scale inline-flex items-center gap-1 rounded border border-slate-200 bg-white px-2 py-1 text-[11px] font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                              >
+                                <span>Episodes</span>
+                                <ChevronRight className="h-3 w-3" />
+                              </button>
+
+                              <Link
+                                href={`/${s.creatorUsername}/series/${s.id}`}
+                                target="_blank"
+                                className="inline-flex items-center gap-1 rounded border border-[#043084]/20 bg-[#043084]/5 px-2 py-1 text-[11px] font-bold text-[#043084] hover:bg-[#043084]/10 transition-colors"
+                              >
+                                <span>Public Page</span>
+                                <ExternalLink className="h-3 w-3" />
+                              </Link>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         )}
 
-        {/* 6. TAB 3: EMAIL BROADCAST & MAIL SENDER TOOL */}
-        {activeTab === "email" && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Left Column: Email Composer Form */}
-            <div className="lg:col-span-7 rounded-3xl border border-rose-100 bg-white p-6 sm:p-8 shadow-sm space-y-5">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <div>
-                  <h2 className="font-display text-lg font-black text-slate-900 flex items-center gap-2">
-                    <Mail className="h-5 w-5 text-[#151933]" />
-                    Send Admin Email Broadcast
-                  </h2>
-                  <p className="text-xs text-slate-500 font-semibold">
-                    Sends real HTML emails from <span className="font-mono text-[#151933]">inflixoapp@gmail.com</span>
-                  </p>
-                </div>
+        {/* ---------------------------------------------------- */}
+        {/* TAB 4: TRAFFIC & CREATOR LEADERBOARD                 */}
+        {/* ---------------------------------------------------- */}
+        {activeTab === "analytics" && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            {/* Top Creators Leaderboard */}
+            <div className="lg:col-span-8 rounded-xl border border-slate-200/80 bg-white p-4 shadow-2xs space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                  <TrendingUp className="h-3.5 w-3.5 text-[#043084]" />
+                  <span>Top Performing Creators (By Traffic)</span>
+                </h3>
+                <span className="text-xs font-bold text-slate-400">Top 5</span>
               </div>
 
-              {/* Template Selector */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-black uppercase tracking-wider text-slate-700">
-                  Select Email Template
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs text-slate-700">
+                  <thead className="border-b border-slate-200/80 bg-slate-50 text-[11px] font-bold text-slate-600 uppercase">
+                    <tr>
+                      <th className="px-3 py-2">Rank</th>
+                      <th className="px-3 py-2">Creator</th>
+                      <th className="px-3 py-2">Plan</th>
+                      <th className="px-3 py-2">Profile Views</th>
+                      <th className="px-3 py-2">Episode Clicks</th>
+                      <th className="px-3 py-2 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {topCreators.map((c, idx) => (
+                      <tr key={c.id} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="px-3 py-2 font-black text-slate-900">
+                          #{idx + 1}
+                        </td>
+                        <td className="px-3 py-2">
+                          <div className="flex items-center gap-2">
+                            <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border font-black text-[10px] uppercase tracking-tighter ${getInitialsBadgeColor(c.username || c.displayName)}`}>
+                              {getInitials(c.displayName || c.username || c.email)}
+                            </div>
+                            <div className="min-w-0">
+                              <p className="font-bold text-slate-900 text-xs truncate">{c.displayName}</p>
+                              <p className="text-[10px] text-slate-400 truncate">@{c.username}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-3 py-2">
+                          <span className="rounded bg-slate-100 text-slate-700 font-bold px-2 py-0.5 text-[10px]">
+                            {c.planName || "Free"}
+                          </span>
+                        </td>
+                        <td className="px-3 py-2 font-bold text-slate-900">
+                          {c.profileViews || 0}
+                        </td>
+                        <td className="px-3 py-2 font-bold text-[#043084]">
+                          {c.episodeClicks || 0}
+                        </td>
+                        <td className="px-3 py-2 text-right">
+                          <Link
+                            href={`/${c.username}`}
+                            target="_blank"
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-[#043084] hover:underline"
+                          >
+                            Open Profile
+                            <ExternalLink className="h-3 w-3" />
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Engagement Metrics Summary */}
+            <div className="lg:col-span-4 rounded-xl border border-slate-200/80 bg-white p-4 shadow-2xs space-y-3">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                <BarChart3 className="h-3.5 w-3.5 text-[#043084]" />
+                <span>Conversion Metrics</span>
+              </h3>
+
+              <div className="space-y-2 text-xs">
+                <div className="p-3 rounded-lg bg-slate-50 border border-slate-100 space-y-1">
+                  <p className="text-slate-500 font-medium text-[11px]">Click-Through Rate (CTR)</p>
+                  <p className="font-display text-lg font-black text-slate-900">
+                    {stats.totalProfileViews > 0
+                      ? `${((stats.totalEpisodeClicks / stats.totalProfileViews) * 100).toFixed(1)}%`
+                      : "0.0%"}
+                  </p>
+                  <p className="text-[10px] text-slate-400">Visitors opening external YouTube / Instagram posts</p>
+                </div>
+
+                <div className="p-3 rounded-lg bg-slate-50 border border-slate-100 space-y-1">
+                  <p className="text-slate-500 font-medium text-[11px]">Avg. Shows per Creator</p>
+                  <p className="font-display text-lg font-black text-slate-900">
+                    {stats.totalCreators > 0 ? (stats.totalSeries / stats.totalCreators).toFixed(1) : "0"}
+                  </p>
+                  <p className="text-[10px] text-slate-400">Series created across registered profiles</p>
+                </div>
+
+                <div className="p-3 rounded-lg bg-slate-50 border border-slate-100 space-y-1">
+                  <p className="text-slate-500 font-medium text-[11px]">Paid Conversion Ratio</p>
+                  <p className="font-display text-lg font-black text-emerald-700">
+                    {stats.totalCreators > 0
+                      ? `${(((stats.starterSubscribers + stats.proSubscribers + stats.vipSubscribers) / stats.totalCreators) * 100).toFixed(1)}%`
+                      : "0.0%"}
+                  </p>
+                  <p className="text-[10px] text-slate-400">Upgraded from 7-day free trial</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ---------------------------------------------------- */}
+        {/* TAB 5: EMAIL BROADCAST                               */}
+        {/* ---------------------------------------------------- */}
+        {activeTab === "email" && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+            {/* Left Composer */}
+            <div className="lg:col-span-7 rounded-xl border border-slate-200/80 bg-white p-4 sm:p-5 shadow-2xs space-y-3">
+              <div className="pb-2 border-b border-slate-100">
+                <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                  <Mail className="h-3.5 w-3.5 text-[#043084]" />
+                  <span>Admin Broadcast Mailer</span>
+                </h2>
+                <p className="text-[11px] text-slate-500">
+                  Sends verified transactional HTML emails via Nodemailer SMTP.
+                </p>
+              </div>
+
+              {/* Template selector */}
+              <div className="space-y-1">
+                <label className="text-[11px] font-bold text-slate-600">Quick Template:</label>
+                <div className="flex flex-wrap gap-1.5">
                   {EMAIL_TEMPLATES.map((tmpl) => (
                     <button
                       key={tmpl.id}
@@ -913,112 +1553,108 @@ export default function AdminDashboardPage() {
                         setEmailSubject(tmpl.subject);
                         setEmailBody(tmpl.body);
                       }}
-                      className={`tap-scale p-3 rounded-2xl border text-left transition-all ${selectedTemplateId === tmpl.id
-                        ? "border-[#151933] bg-rose-50/80 text-[#151933] font-black shadow-2xs"
-                        : "border-slate-200 bg-slate-50/50 text-slate-700 hover:bg-surface-soft font-semibold"
-                        }`}
+                      className={`tap-scale rounded-md px-2.5 py-1 text-xs font-semibold cursor-pointer border ${
+                        selectedTemplateId === tmpl.id
+                          ? "bg-[#043084] text-white border-[#043084]"
+                          : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                      }`}
                     >
-                      <p className="text-xs">{tmpl.name}</p>
+                      {tmpl.name}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Recipients Box */}
-              <div className="space-y-1.5">
+              {/* Recipient Quick Filters */}
+              <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <label className="block text-xs font-black uppercase tracking-wider text-slate-700">
-                    Recipient Email Addresses
-                  </label>
-                  <button
-                    type="button"
-                    onClick={handleAddAllCreatorsToRecipients}
-                    className="text-[11px] font-extrabold text-[#151933] hover:underline flex items-center gap-1"
-                  >
-                    <span>Select All Registered Creators ({creators.length})</span>
-                  </button>
+                  <label className="text-[11px] font-bold text-slate-600">Recipients:</label>
+                  <div className="flex items-center gap-1.5 text-[10px]">
+                    <button
+                      type="button"
+                      onClick={() => handleAddRecipients("all")}
+                      className="text-[#043084] font-bold hover:underline"
+                    >
+                      + All Creators ({creators.length})
+                    </button>
+                    <span>•</span>
+                    <button
+                      type="button"
+                      onClick={() => handleAddRecipients("vip")}
+                      className="text-[#043084] font-bold hover:underline"
+                    >
+                      + VIPs ({stats.vipSubscribers})
+                    </button>
+                    <span>•</span>
+                    <button
+                      type="button"
+                      onClick={() => handleAddRecipients("trial")}
+                      className="text-[#043084] font-bold hover:underline"
+                    >
+                      + Trial Users ({stats.freeTrialSubscribers})
+                    </button>
+                  </div>
                 </div>
                 <textarea
-                  rows={3}
+                  rows={2}
                   value={recipientsInput}
                   onChange={(e) => setRecipientsInput(e.target.value)}
-                  placeholder="Enter email addresses separated by commas or new lines"
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50/60 p-3 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#151933] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#151933]/20 transition-all"
+                  placeholder="Enter email addresses separated by commas..."
+                  className="w-full rounded-lg border border-slate-200 bg-white p-2 text-xs font-mono text-slate-800 placeholder-slate-400 focus:border-[#043084] focus:outline-none"
                 />
               </div>
 
-              {/* Email Subject Line */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-black uppercase tracking-wider text-slate-700">
-                  Email Subject Line
-                </label>
+              {/* Subject */}
+              <div className="space-y-1">
+                <label className="text-[11px] font-bold text-slate-600">Email Subject:</label>
                 <input
                   type="text"
                   value={emailSubject}
                   onChange={(e) => setEmailSubject(e.target.value)}
-                  placeholder="Enter email subject line"
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#151933] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#151933]/20 transition-all"
+                  placeholder="Enter subject line..."
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:border-[#043084] focus:outline-none"
                 />
               </div>
 
-              {/* Email Message Content (HTML) */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-black uppercase tracking-wider text-slate-700">
-                  Email Message Body (HTML / Text)
-                </label>
+              {/* Body HTML */}
+              <div className="space-y-1">
+                <label className="text-[11px] font-bold text-slate-600">Email Body (HTML supported):</label>
                 <textarea
-                  rows={7}
+                  rows={6}
                   value={emailBody}
                   onChange={(e) => setEmailBody(e.target.value)}
-                  placeholder="Write your email body HTML..."
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50/60 p-3.5 text-xs font-mono text-slate-900 placeholder-slate-400 focus:border-[#151933] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#151933]/20 transition-all"
+                  className="w-full rounded-lg border border-slate-200 bg-white p-2 text-xs font-mono text-slate-800 placeholder-slate-400 focus:border-[#043084] focus:outline-none"
                 />
               </div>
 
-              {/* Submit Action Button */}
               <button
                 type="button"
-                disabled={sendingEmail}
                 onClick={handleSendMail}
-                className="tap-scale flex w-full items-center justify-center gap-2 rounded-2xl bg-[#151933] hover:bg-brand-hover py-3.5 text-xs font-black text-white transition-all disabled:opacity-50 cursor-pointer shadow-none"
+                disabled={sendingEmail}
+                className="tap-scale inline-flex items-center gap-1.5 rounded-lg bg-[#043084] hover:bg-[#03256c] px-4 py-2 text-xs font-bold text-white shadow-2xs transition-all cursor-pointer disabled:opacity-50"
               >
-                {sendingEmail ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin text-white" />
-                    <span>Sending Mails from inflixoapp@gmail.com...</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="h-4 w-4" />
-                    <span>Send Broadcast Email</span>
-                  </>
-                )}
+                {sendingEmail ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
+                <span>{sendingEmail ? "Sending Broadcast..." : "Send Broadcast Email"}</span>
               </button>
             </div>
 
-            {/* Right Column: Live Email HTML Preview */}
-            <div className="lg:col-span-5 rounded-3xl border border-rose-100 bg-white p-6 shadow-sm space-y-4 lg:sticky lg:top-24">
+            {/* Right Live Preview */}
+            <div className="lg:col-span-5 rounded-xl border border-slate-200/80 bg-white p-4 shadow-2xs space-y-2 lg:sticky lg:top-20">
               <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                <p className="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-                  <Eye className="h-3.5 w-3.5 text-[#151933]" /> Live Email HTML Preview
-                </p>
-                <span className="rounded-full bg-rose-50 px-2.5 py-0.5 text-[10px] font-extrabold text-[#151933]">
-                  Sender: inflixoapp@gmail.com
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1">
+                  <Eye className="h-3 w-3 text-[#043084]" /> Preview
                 </span>
+                <span className="text-[10px] text-slate-400 font-semibold">From: Inflixo App</span>
               </div>
 
-              <div className="rounded-2xl border border-slate-200 bg-[#FAFAFC] p-4 text-left space-y-3 max-h-[500px] overflow-y-auto">
-                <div className="border-b border-slate-200 pb-2">
-                  <p className="text-[11px] text-slate-500 font-bold">
-                    From: <span className="text-slate-900 font-semibold">&quot;Inflixo App&quot; &lt;inflixoapp@gmail.com&gt;</span>
-                  </p>
-                  <p className="text-[11px] text-slate-500 font-bold mt-0.5">
-                    Subject: <span className="text-[#151933] font-black">{emailSubject || "No Subject"}</span>
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-left space-y-2 max-h-[460px] overflow-y-auto">
+                <div className="border-b border-slate-200 pb-1.5">
+                  <p className="text-[11px] font-bold text-slate-700 truncate">
+                    Subject: <span className="text-[#043084] font-black">{emailSubject || "(No Subject)"}</span>
                   </p>
                 </div>
-
                 <div
-                  className="prose max-w-none text-xs text-slate-800 leading-relaxed"
+                  className="prose max-w-none text-xs text-slate-700 leading-relaxed"
                   dangerouslySetInnerHTML={{ __html: emailBody }}
                 />
               </div>
@@ -1027,54 +1663,127 @@ export default function AdminDashboardPage() {
         )}
       </main>
 
-      {/* 7. VIEW GIGS PREVIEW MODAL */}
-      {viewGigsCreator && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 animate-fade-in">
-          <div className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[32px] border border-rose-100 bg-white text-slate-900 p-6 sm:p-8 shadow-2xl space-y-5 text-left">
+      {/* ---------------------------------------------------- */}
+      {/* MODAL 1: CHANGE PLAN MODAL                           */}
+      {/* ---------------------------------------------------- */}
+      {planChangerCreator && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
+          <div className="relative w-full max-w-md rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl space-y-4 text-left">
             <button
-              onClick={() => setViewGigsCreator(null)}
-              className="absolute top-5 right-5 flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-brand-soft transition-colors"
+              onClick={() => setPlanChangerCreator(null)}
+              className="absolute top-4 right-4 flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors"
             >
-              <X className="h-5 w-5" />
+              <X className="h-4 w-4" />
             </button>
 
-            <div className="flex items-center gap-3">
-              <CreatorAvatar
-                src={viewGigsCreator.photoDataUrl}
-                name={viewGigsCreator.displayName || viewGigsCreator.email}
-                className="h-12 w-12 rounded-2xl border border-slate-200"
-              />
+            <div>
+              <h3 className="text-sm font-bold text-slate-900">Change Creator Plan</h3>
+              <p className="text-xs text-slate-500">
+                Select subscription tier for <span className="font-bold text-[#043084]">@{planChangerCreator.username}</span>
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <button
+                type="button"
+                onClick={() => handleSetPlan(planChangerCreator, "creator_VIP", "VIP")}
+                className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:border-[#043084] hover:bg-blue-50/50 transition-all text-left cursor-pointer"
+              >
+                <div>
+                  <p className="font-bold text-xs text-[#043084] flex items-center gap-1">⭐ VIP Plan</p>
+                  <p className="text-[10px] text-slate-500">Unlimited series, custom media kit, daily stats</p>
+                </div>
+                <span className="text-xs font-bold text-slate-700">₹1,499/mo</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleSetPlan(planChangerCreator, "pro", "Pro")}
+                className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition-all text-left cursor-pointer"
+              >
+                <div>
+                  <p className="font-bold text-xs text-blue-700">Pro Plan</p>
+                  <p className="text-[10px] text-slate-500">20 series, 20 custom links, 3 collab packages</p>
+                </div>
+                <span className="text-xs font-bold text-slate-700">₹599/mo</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleSetPlan(planChangerCreator, "starter", "Starter")}
+                className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition-all text-left cursor-pointer"
+              >
+                <div>
+                  <p className="font-bold text-xs text-emerald-700">Starter Plan</p>
+                  <p className="text-[10px] text-slate-500">Keep public profile live after 7-day trial</p>
+                </div>
+                <span className="text-xs font-bold text-slate-700">₹199/mo</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleSetPlan(planChangerCreator, "free_trial", "Free Trial")}
+                className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:border-slate-400 hover:bg-slate-50 transition-all text-left cursor-pointer"
+              >
+                <div>
+                  <p className="font-bold text-xs text-slate-700">Free Trial (7 Days)</p>
+                  <p className="text-[10px] text-slate-500">Goes private after 7 days without upgrade</p>
+                </div>
+                <span className="text-xs font-bold text-slate-500">₹0</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ---------------------------------------------------- */}
+      {/* MODAL 2: GIGS & MEDIA KIT PREVIEW                    */}
+      {/* ---------------------------------------------------- */}
+      {viewGigsCreator && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
+          <div className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl border border-slate-200 bg-white text-slate-900 p-5 shadow-2xl space-y-4 text-left">
+            <button
+              onClick={() => setViewGigsCreator(null)}
+              className="absolute top-4 right-4 flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            <div className="flex items-center gap-2.5">
+              <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border font-black text-xs uppercase tracking-tighter ${getInitialsBadgeColor(viewGigsCreator.username)}`}>
+                {getInitials(viewGigsCreator.displayName || viewGigsCreator.username || viewGigsCreator.email)}
+              </div>
               <div>
-                <h3 className="font-display text-lg font-bold text-slate-900">
-                  {viewGigsCreator.displayName || "Creator"}
-                </h3>
-                <p className="text-xs text-[#151933] font-bold">@{viewGigsCreator.username} &bull; Media Kit &amp; Rate Cards</p>
+                <h3 className="font-bold text-sm text-slate-900">{viewGigsCreator.displayName}</h3>
+                <p className="text-xs text-[#043084] font-semibold">@{viewGigsCreator.username} &bull; Media Kit Packages</p>
               </div>
             </div>
 
-            <div className="space-y-3 pt-2">
-              <p className="text-xs font-black uppercase tracking-wider text-slate-500">Active Collab Gigs ({creatorGigs.length})</p>
+            <div className="space-y-2.5 pt-1">
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                Active Collab Packages ({creatorGigs.length})
+              </p>
               {creatorGigs.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-slate-200 p-6 text-center text-xs text-slate-500 font-semibold">
-                  No active collab packages published yet.
+                <div className="rounded-xl border border-dashed border-slate-200 p-6 text-center text-xs text-slate-400 font-medium">
+                  No active collab packages configured yet.
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {creatorGigs.map((pkg) => (
-                    <div key={pkg.id} className="rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4 space-y-2 text-left">
+                    <div key={pkg.id} className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 space-y-1.5 text-left">
                       <div className="flex items-center justify-between gap-2">
-                        <span className="bg-[#151933]/10 text-[#151933] border border-[#151933]/20 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase">
+                        <span className="bg-[#043084]/10 text-[#043084] text-[10px] font-bold px-2 py-0.5 rounded uppercase">
                           {pkg.platform}
                         </span>
-                        <span className="font-display text-base font-black text-[#151933]">{pkg.price}</span>
+                        <span className="font-bold text-sm text-slate-900">{pkg.price}</span>
                       </div>
-                      <h4 className="font-bold text-sm text-slate-900">{pkg.title}</h4>
-                      <p className="text-[11px] text-slate-500 font-medium">⚡ Turnaround: {pkg.turnaroundDays} Days</p>
+                      <h4 className="font-bold text-xs text-slate-800">{pkg.title}</h4>
+                      <p className="text-[10px] text-slate-500">Delivery: {pkg.turnaroundDays} Days</p>
                       {pkg.deliverables && pkg.deliverables.length > 0 && (
-                        <ul className="text-xs space-y-1 pt-1.5 border-t border-slate-200 text-slate-700">
+                        <ul className="text-[11px] space-y-0.5 pt-1 border-t border-slate-200 text-slate-600">
                           {pkg.deliverables.map((item: string, idx: number) => (
-                            <li key={idx} className="flex items-center gap-1.5">
-                              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                            <li key={idx} className="flex items-center gap-1">
+                              <CheckCircle2 className="h-3 w-3 text-emerald-600 shrink-0" />
                               <span>{item}</span>
                             </li>
                           ))}
@@ -1089,80 +1798,79 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* 8. SERIES DETAILS MODAL */}
+      {/* ---------------------------------------------------- */}
+      {/* MODAL 3: SERIES DETAILS & EPISODES                   */}
+      {/* ---------------------------------------------------- */}
       {selectedSeries && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 animate-fade-in">
-          <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-[32px] border border-rose-100 bg-white text-slate-900 p-6 sm:p-8 shadow-2xl space-y-6 text-left">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
+          <div className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl border border-slate-200 bg-white text-slate-900 p-5 shadow-2xl space-y-4 text-left">
             <button
               onClick={() => setSelectedSeries(null)}
-              className="absolute top-5 right-5 flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-brand-soft transition-colors"
+              className="absolute top-4 right-4 flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors"
             >
-              <X className="h-5 w-5" />
+              <X className="h-4 w-4" />
             </button>
 
-            <div className="flex flex-col sm:flex-row gap-5 items-start">
+            <div className="flex flex-col sm:flex-row gap-3.5 items-start">
               <SeriesPoster
                 src={selectedSeries.posterDataUrl}
                 title={selectedSeries.title}
-                className="h-44 w-32 rounded-2xl shrink-0 border border-slate-200 shadow-md"
+                className="h-32 w-24 rounded-lg shrink-0 border border-slate-200 shadow-sm"
               />
-              <div className="space-y-2 flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="rounded-full bg-rose-50 border border-rose-200 px-3 py-1 text-xs font-black text-[#151933] uppercase">
-                    {selectedSeries.genre || "OTT Series"}
+              <div className="space-y-1.5 flex-1 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="rounded bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-700 uppercase">
+                    {selectedSeries.genre || "Series"}
                   </span>
-                  <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700">
+                  <span className="rounded bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600">
                     {selectedSeries.language || "English"}
                   </span>
                 </div>
 
-                <h2 className="font-display text-2xl font-black text-slate-900">{selectedSeries.title}</h2>
-                <p className="text-xs text-slate-600 font-semibold leading-relaxed">
-                  {selectedSeries.description || "No description provided for this series."}
+                <h2 className="font-bold text-base text-slate-900 leading-snug">{selectedSeries.title}</h2>
+                <p className="text-xs text-slate-600 line-clamp-2">
+                  {selectedSeries.description || "No description provided."}
                 </p>
 
-                <div className="pt-2 flex items-center justify-between border-t border-rose-100">
-                  <div>
-                    <p className="text-[10px] uppercase font-extrabold text-slate-400">Creator Account</p>
-                    <p className="text-xs font-black text-[#151933]">
-                      {selectedSeries.creatorName || `@${selectedSeries.creatorUsername}`} ({selectedSeries.creatorEmail})
-                    </p>
-                  </div>
+                <div className="pt-2 flex items-center justify-between border-t border-slate-100 text-xs">
+                  <p className="font-semibold text-slate-500">
+                    By <span className="text-[#043084] font-bold">{selectedSeries.creatorName || `@${selectedSeries.creatorUsername}`}</span>
+                  </p>
 
                   <Link
-                    href={`/${selectedSeries.creatorUsername || "username"}`}
+                    href={`/${selectedSeries.creatorUsername}`}
                     target="_blank"
-                    className="tap-scale flex items-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-1.5 text-xs font-bold text-[#151933] hover:bg-brand-soft transition-all"
+                    className="flex items-center gap-1 font-bold text-[#043084] hover:underline"
                   >
-                    <span>Visit Profile</span>
+                    <span>Open Page</span>
                     <ArrowUpRight className="h-3.5 w-3.5" />
                   </Link>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-3 pt-4 border-t border-rose-100">
-              <h3 className="font-display text-base font-black text-slate-900 flex items-center gap-2">
-                <Film className="h-4 w-4 text-[#151933]" />
-                Episodes ({selectedSeries.seasons?.[0]?.episodes?.length || 0})
+            <div className="space-y-2 pt-2 border-t border-slate-100">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                <Film className="h-3.5 w-3.5 text-[#043084]" />
+                <span>Episodes ({selectedSeries.seasons?.[0]?.episodes?.length || 0})</span>
               </h3>
 
-              <div className="space-y-2.5">
+              <div className="space-y-1.5">
                 {(selectedSeries.seasons?.[0]?.episodes?.length ?? 0) === 0 ? (
-                  <p className="text-xs text-slate-500 italic py-4">No episodes uploaded yet.</p>
+                  <p className="text-xs text-slate-400 italic py-3">No episodes uploaded yet.</p>
                 ) : (
                   selectedSeries.seasons[0].episodes.map((ep) => (
                     <div
                       key={ep.id}
-                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-rose-100 bg-slate-50/60 p-3.5 hover:border-brand-border transition-all"
+                      className="flex items-center justify-between gap-2.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs hover:bg-slate-100/70 transition-colors"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-rose-100 text-[#151933] text-xs font-black shrink-0">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="flex h-5 w-5 items-center justify-center rounded bg-slate-200 text-slate-700 text-[10px] font-bold shrink-0">
                           #{ep.episodeNumber}
-                        </div>
+                        </span>
                         <div className="min-w-0">
-                          <p className="text-xs font-black text-slate-900 truncate">{ep.title}</p>
-                          <p className="text-[10px] text-slate-500 font-semibold">Platform: {ep.platform || "YouTube"}</p>
+                          <p className="font-bold text-slate-900 truncate">{ep.title}</p>
+                          <p className="text-[10px] text-slate-400 truncate">{ep.platform || "YouTube"}</p>
                         </div>
                       </div>
 
@@ -1171,10 +1879,10 @@ export default function AdminDashboardPage() {
                           href={ep.externalUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="tap-scale inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-brand-hover px-3 py-1.5 text-xs font-bold text-white transition-all self-end sm:self-auto shadow-2xs"
+                          className="tap-scale inline-flex items-center gap-1 rounded bg-[#043084] px-2 py-1 text-[10px] font-bold text-white shrink-0 hover:bg-[#03256c] transition-colors"
                         >
-                          <Play className="h-3 w-3 fill-current" />
-                          <span>Watch Video</span>
+                          <Play className="h-2.5 w-2.5 fill-current" />
+                          <span>Watch</span>
                         </a>
                       )}
                     </div>

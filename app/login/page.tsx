@@ -3,7 +3,7 @@
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Mail, ArrowRight, Loader2, Check, Zap, Sparkles } from "lucide-react";
+import { Mail, ArrowRight, Loader2, Sparkles, Zap } from "lucide-react";
 import { AuthService } from "@/services/AuthService";
 import { useToast } from "@/contexts/ToastContext";
 import { Logo } from "@/components/shared/Logo";
@@ -46,219 +46,124 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-x-hidden overflow-y-auto bg-[#f8fafc] px-4 py-8 text-center text-[#181716]">
+    <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-x-hidden overflow-y-auto bg-[#f8fafc] px-4 py-6 sm:py-10 text-[#181716]">
       <CreatorGridBackground showWordmark />
-      {/* Background Inflixo "I" Logo Mark & Radiating Waves */}
-      <div className="hidden">
-        {/* Top-Left Inflixo "I" Logo Watermark */}
-        <div className="absolute -top-12 -left-12 sm:-top-16 sm:-left-16 text-[#151933] opacity-[0.06] -rotate-12">
-          <svg
-            viewBox="0 0 100 100"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-[320px] h-[320px] sm:w-[460px] sm:h-[460px]"
-          >
-            {/* Concentric Radiating Outer Squircle Echoes */}
-            <g stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" fill="none">
-              <rect x="-30" y="-30" width="160" height="160" rx="44" strokeOpacity="0.65" />
-              <rect x="-65" y="-65" width="230" height="230" rx="60" strokeOpacity="0.45" />
-              <rect x="-105" y="-105" width="310" height="310" rx="80" strokeOpacity="0.3" />
-              <rect x="-155" y="-155" width="410" height="410" rx="104" strokeOpacity="0.18" />
-            </g>
 
-            {/* Inflixo Outer Stadium Link Frame */}
-            <g stroke="currentColor" strokeWidth="5.5" strokeLinecap="round" strokeLinejoin="round" fill="none">
-              <path d="M 28 42 L 28 24 C 28 14 38 10 50 10 C 62 10 72 14 72 24 L 72 42" />
-              <path d="M 28 58 L 28 76 C 28 86 38 90 50 90 C 62 90 72 86 72 76 L 72 58" />
-              <path d="M 28 34 C 28 38 34 42 40 42" />
-              <path d="M 72 34 C 72 38 66 42 60 42" />
-              <path d="M 28 66 C 28 62 34 58 40 58" />
-              <path d="M 72 66 C 72 62 66 58 60 58" />
-            </g>
-
-            {/* Inflixo Center Letter 'I' */}
-            <g fill="currentColor">
-              <rect x="36" y="25" width="28" height="7" rx="3.5" />
-              <rect x="45.5" y="32" width="9" height="36" rx="4.5" />
-              <rect x="36" y="68" width="28" height="7" rx="3.5" />
-            </g>
-          </svg>
-        </div>
-
-        {/* Bottom-Right Inflixo "I" Logo Watermark */}
-        <div className="absolute -bottom-16 -right-16 sm:-bottom-20 sm:-right-20 text-[#151933] opacity-[0.05] rotate-12">
-          <svg
-            viewBox="0 0 100 100"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-[360px] h-[360px] sm:w-[500px] sm:h-[500px]"
-          >
-            {/* Concentric Radiating Outer Squircle Echoes */}
-            <g stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" fill="none">
-              <rect x="-30" y="-30" width="160" height="160" rx="44" strokeOpacity="0.65" />
-              <rect x="-65" y="-65" width="230" height="230" rx="60" strokeOpacity="0.45" />
-              <rect x="-105" y="-105" width="310" height="310" rx="80" strokeOpacity="0.3" />
-              <rect x="-155" y="-155" width="410" height="410" rx="104" strokeOpacity="0.18" />
-            </g>
-
-            {/* Inflixo Outer Stadium Link Frame */}
-            <g stroke="currentColor" strokeWidth="5.5" strokeLinecap="round" strokeLinejoin="round" fill="none">
-              <path d="M 28 42 L 28 24 C 28 14 38 10 50 10 C 62 10 72 14 72 24 L 72 42" />
-              <path d="M 28 58 L 28 76 C 28 86 38 90 50 90 C 62 90 72 86 72 76 L 72 58" />
-              <path d="M 28 34 C 28 38 34 42 40 42" />
-              <path d="M 72 34 C 72 38 66 42 60 42" />
-              <path d="M 28 66 C 28 62 34 58 40 58" />
-              <path d="M 72 66 C 72 62 66 58 60 58" />
-            </g>
-
-            {/* Inflixo Center Letter 'I' */}
-            <g fill="currentColor">
-              <rect x="36" y="25" width="28" height="7" rx="3.5" />
-              <rect x="45.5" y="32" width="9" height="36" rx="4.5" />
-              <rect x="36" y="68" width="28" height="7" rx="3.5" />
-            </g>
-          </svg>
-        </div>
-      </div>
-
-      {/* SINGLE UNIFIED WHITE CARD: Everything from Logo to Legal Text inside */}
-      <div className="relative z-10 my-auto w-full max-w-[500px] rounded-[28px] border border-white/80 bg-white/70 p-5 text-center shadow-[0_26px_90px_rgba(21,25,51,0.12)] backdrop-blur-xl sm:p-7">
-        {/* 1. Header: Logo (Vertical: 100px x 100px Icon on top, Inflixo text below) & Creator Greeting */}
-        <div className="flex flex-col items-center text-center">
-          <div className="flex items-center justify-center">
-            <Logo size="xl" orientation="vertical" />
-          </div>
-
-          <div className="mt-5 w-full">
-            <div className="rounded-[18px] border border-[#151933]/10 bg-[#151933]/[0.035] px-4 py-4 text-center shadow-inner shadow-white/70">
-              <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#151933] shadow-sm">
-                <Sparkles className="h-3 w-3" />
-                Creator first
-              </div>
-              <p className="text-[13px] font-extrabold text-[#151933]">
-                Your old videos can still find new fans.
-              </p>
-              <p className="mx-auto mt-1.5 max-w-[440px] text-[12px] font-medium leading-relaxed text-[#5d6575]">
-                Save your YouTube, Instagram and Facebook video links as clean series that fans can open anytime.
-              </p>
+      {/* UNIFIED CENTER CARD: EXACT 420px WIDTH & MATCHING FIXED HEIGHT FOR BOTH SCREENS */}
+      <div className="relative z-10 my-auto flex min-h-[530px] w-full max-w-[420px] flex-col justify-between rounded-[24px] border border-slate-200/80 bg-white/95 p-5 text-center shadow-[0_20px_60px_-15px_rgba(4,48,132,0.12)] backdrop-blur-xl transition-all sm:min-h-[550px] sm:p-6">
+        
+        {/* TOP BLOCK: Header & Trust Badge */}
+        <div>
+          {/* 1. Header: Logo & Badge */}
+          <div className="flex flex-col items-center text-center">
+            <Logo size="lg" orientation="vertical" />
+            <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-[#043084]/[0.07] px-3 py-0.5 text-[11px] font-extrabold uppercase tracking-wider text-[#043084]">
+              <Sparkles className="h-3 w-3" />
+              <span>Creator Studio</span>
             </div>
           </div>
+
+          {/* 2. Creator-Focused Punchy Headline & Subtitle */}
+          <div className="mt-3.5 space-y-1">
+            <h1 className="font-display text-xl font-black tracking-tight text-slate-900 sm:text-2xl">
+              Sign in or Sign up
+            </h1>
+            <p className="mx-auto max-w-[340px] text-xs font-medium leading-relaxed text-slate-500 sm:text-[13px]">
+              Your video series, total fanbase &amp; brand rate cards in one clean link.
+            </p>
+          </div>
+
+          {/* 3. Passwordless Trust Pill */}
+          <div className="mx-auto mt-3 flex w-fit items-center justify-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold text-slate-600">
+            <Zap className="h-3 w-3 fill-[#043084] text-[#043084]" />
+            <span>Passwordless • 4-digit OTP • Instant access</span>
+          </div>
         </div>
 
-        {/* 2. Creator-focused Headline & Subtitle */}
-        <div className="mt-8 space-y-2">
-          <h1 className="font-display text-[28px] font-black leading-[1.05] tracking-tight text-[#181716] sm:text-[32px]">
-            Build your creator link
-          </h1>
-          <p className="mx-auto max-w-[460px] text-[13px] font-medium leading-relaxed text-[#5d6575] sm:text-sm">
-            Organize your uploaded video links into playlists, show your fanbase, and look ready for brands.
-          </p>
-        </div>
+        {/* MIDDLE BLOCK: Form & Creator Micro-Chips */}
+        <div className="my-auto py-2">
+          {/* 4. Form */}
+          <form onSubmit={handleSubmit} className="space-y-2.5 text-left">
+            <div className="w-full space-y-1">
+              <label
+                htmlFor="creator-email-input"
+                className="block text-[11px] font-bold uppercase tracking-wider text-slate-600"
+              >
+                Creator Email
+              </label>
 
-        {/* 3. Trust Pill */}
-        <div className="mx-auto mt-5 flex w-fit items-center justify-center gap-1.5 rounded-full bg-[#151933]/[0.07] px-4 py-1.5 text-xs font-bold text-[#54514D]">
-          <Zap className="h-3.5 w-3.5 text-[#151933] fill-[#151933] shrink-0" />
-          <span>No password • OTP login • Under 60 seconds</span>
-        </div>
-
-        {/* 4. Form */}
-        <form onSubmit={handleSubmit} className="mt-6 space-y-3.5 text-left">
-          <div className="w-full space-y-2">
-            <label
-              htmlFor="creator-email-input"
-              className="block text-xs font-bold text-[#54514D]"
-            >
-              Creator email address
-            </label>
-
-            <div
-              className={`flex h-12 items-center rounded-[14px] border px-3.5 bg-[#f8fafc] transition-all duration-200 focus-within:border-[#151933] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#151933]/10 ${error
-                ? "border-[#ef4444] bg-rose-50/20"
-                : "border-[#cbd5e1]"
+              <div
+                className={`flex h-11.5 items-center rounded-xl border bg-slate-50/80 px-3.5 transition-all duration-150 focus-within:border-[#043084] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#043084]/10 ${
+                  error ? "border-rose-500 bg-rose-50/30" : "border-slate-300"
                 } ${isShaking ? "animate-shake" : ""}`}
-            >
-              <Mail className="mr-2.5 h-4 w-4 shrink-0 text-[#6B5A5D]" />
-              <input
-                id="creator-email-input"
-                type="email"
-                name="email"
-                placeholder="name@example.com"
-                value={email}
-                disabled={loading}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (error) setError("");
-                }}
-                autoFocus
-                className="h-full w-full min-w-0 flex-1 bg-transparent text-sm font-semibold text-[#181716] outline-none placeholder:text-[#94a3b8]"
-              />
+              >
+                <Mail className="mr-2.5 h-4 w-4 shrink-0 text-slate-400" />
+                <input
+                  id="creator-email-input"
+                  type="email"
+                  name="email"
+                  placeholder="yourname@gmail.com"
+                  value={email}
+                  disabled={loading}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (error) setError("");
+                  }}
+                  autoFocus
+                  autoComplete="email"
+                  className="h-full w-full min-w-0 flex-1 bg-transparent text-base font-semibold text-slate-900 outline-none placeholder:text-slate-400 sm:text-sm"
+                />
+              </div>
+
+              {error && (
+                <p className="animate-fade-in pt-0.5 text-xs font-semibold text-rose-500">
+                  {error}
+                </p>
+              )}
             </div>
 
-            {error && (
-              <p className="text-xs font-semibold text-[#ef4444] pt-0.5 animate-fade-in">
-                {error}
-              </p>
-            )}
-          </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="tap-scale flex h-11.5 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#043084] text-sm font-bold text-white shadow-md shadow-[#043084]/20 transition-all hover:bg-[#032363] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-75"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Sending code...</span>
+                </>
+              ) : (
+                <>
+                  <span>Get Login Code</span>
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </button>
+          </form>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="inline-flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-[14px] bg-[#151933] text-sm font-extrabold text-white shadow-[0_14px_28px_rgba(21,25,51,0.18)] transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-[0_18px_34px_rgba(21,25,51,0.22)] active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-75 disabled:hover:translate-y-0"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Sending...</span>
-              </>
-            ) : (
-              <>
-                <span>Continue with Email</span>
-                <ArrowRight className="h-4 w-4" />
-              </>
-            )}
-          </button>
-        </form>
-
-        {/* 5. 3 Benefit Checkpoints */}
-        <div className="mt-7 space-y-3 border-t border-[#E7E3DC] pt-4 text-left">
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#151933]/10 text-[#151933]">
-              <Check className="h-3 w-3 stroke-[2.5]" />
+          {/* 5. Creator Micro-Badges (Tight, minimal 1-row layout) */}
+          <div className="mt-3.5 flex flex-wrap items-center justify-center gap-1.5 text-[11px] font-semibold text-slate-600">
+            <span className="inline-flex items-center gap-1 rounded-md bg-slate-100/90 px-2.5 py-1 text-slate-600">
+              🎬 Video Series
             </span>
-            <span className="text-[13px] font-semibold text-[#54514D]">
-              Turn uploaded videos into neat series
+            <span className="inline-flex items-center gap-1 rounded-md bg-slate-100/90 px-2.5 py-1 text-slate-600">
+              📈 Total Fanbase
             </span>
-          </div>
-
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#151933]/10 text-[#151933]">
-              <Check className="h-3 w-3 stroke-[2.5]" />
-            </span>
-            <span className="text-[13px] font-semibold text-[#54514D]">
-              Show Instagram, Facebook and YouTube audience
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#151933]/10 text-[#151933]">
-              <Check className="h-3 w-3 stroke-[2.5]" />
-            </span>
-            <span className="text-[13px] font-semibold text-[#54514D]">
-              Add collab packages, rate cards and links
+            <span className="inline-flex items-center gap-1 rounded-md bg-slate-100/90 px-2.5 py-1 text-slate-600">
+              💼 Rate Cards
             </span>
           </div>
         </div>
 
-        {/* 6. Legal Text Inside Single Card */}
-        <div className="mt-5 border-t border-[#E7E3DC]/80 pt-4">
-          <p className="text-[11px] font-medium text-[#6B5A5D] text-center leading-relaxed">
+        {/* BOTTOM BLOCK: Legal Text */}
+        <div className="border-t border-slate-100 pt-3">
+          <p className="text-center text-[11px] font-medium text-slate-400">
             By continuing, you agree to Inflixo&apos;s{" "}
-            <Link href="/terms" className="text-[#151933] underline hover:text-brand-hover font-medium">
-              Terms of Service
+            <Link href="/terms" className="text-slate-600 underline hover:text-[#043084]">
+              Terms
             </Link>{" "}
             and{" "}
-            <Link href="/privacy" className="text-[#151933] underline hover:text-brand-hover font-medium">
+            <Link href="/privacy" className="text-slate-600 underline hover:text-[#043084]">
               Privacy Policy
             </Link>
             .

@@ -1,7 +1,10 @@
 import { db } from "@/lib/db";
 
-// Helper to auto-create dedicated creator_settings table
+let isEnsured = false;
+
+// Helper to auto-create dedicated creator_settings table (cached in-memory)
 export async function ensureCreatorSettingsTable() {
+  if (isEnsured) return;
   try {
     await db.query(`
       CREATE TABLE IF NOT EXISTS creator_settings (
@@ -14,6 +17,7 @@ export async function ensureCreatorSettingsTable() {
         INDEX idx_creator_settings (creator_id)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
+    isEnsured = true;
   } catch (e) {
     console.warn("Could not ensure creator_settings table:", e);
   }

@@ -91,25 +91,25 @@ export function Modal({
       <div
         ref={modalRef}
         onClick={(e) => e.stopPropagation()}
-        className={`relative w-full ${SIZE_CLASSES[size]} max-h-[calc(100dvh-32px)] sm:max-h-[calc(100dvh-48px)] bg-white rounded-2xl border border-[#e2e8f0] shadow-xl flex flex-col overflow-hidden text-left animate-in zoom-in-95 duration-150 ${className}`}
+        className={`relative w-full ${SIZE_CLASSES[size]} max-h-[calc(100dvh-32px)] sm:max-h-[calc(100dvh-48px)] bg-white rounded-[10px] border border-[#e2e8f0] shadow-xl flex flex-col overflow-hidden text-left animate-in zoom-in-95 duration-150 ${className}`}
       >
         {/* Optional Automatic Header */}
         {(title || showCloseButton) && (
           <div className={`flex items-center justify-between border-b border-[#e2e8f0] bg-white px-5 sm:px-6 py-3.5 sm:py-4 shrink-0 ${headerClassName}`}>
             <div className="flex items-center gap-3 min-w-0 pr-2">
               {icon && (
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f1f5f9] text-[#151933] shrink-0">
+                <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[#043084]/[0.08] text-[#043084] shrink-0 border border-[#043084]/10">
                   {icon}
                 </div>
               )}
               <div className="min-w-0">
                 {title && (
-                  <h3 className="font-display text-base sm:text-lg font-bold text-[#151933] truncate">
+                  <h3 className="font-display text-base font-bold text-[#043084] truncate">
                     {title}
                   </h3>
                 )}
                 {description && (
-                  <p className="text-xs text-[#475569] font-medium truncate mt-0.5">
+                  <p className="text-xs text-[#64748b] font-medium truncate mt-0.5">
                     {description}
                   </p>
                 )}
@@ -121,7 +121,7 @@ export function Modal({
                 type="button"
                 onClick={onClose}
                 aria-label="Close modal"
-                className="flex h-9 w-9 items-center justify-center rounded-xl text-[#64748b] hover:text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer shrink-0 border border-transparent hover:border-brand-border"
+                className="flex h-8 w-8 items-center justify-center rounded-[10px] text-[#64748b] hover:text-[#043084] hover:bg-[#043084]/[0.06] transition-colors cursor-pointer shrink-0 border border-transparent hover:border-[#043084]/10"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -156,16 +156,16 @@ export function ModalHeader({
     <div className={`flex items-center justify-between border-b border-[#e2e8f0] bg-white px-5 sm:px-6 py-3.5 sm:py-4 shrink-0 ${className}`}>
       <div className="flex items-center gap-3 min-w-0 pr-2">
         {icon && (
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f1f5f9] text-[#151933] shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[#043084]/[0.08] text-[#043084] shrink-0 border border-[#043084]/10">
             {icon}
           </div>
         )}
         <div className="min-w-0">
-          <h3 className="font-display text-base sm:text-lg font-bold text-[#151933] truncate">
+          <h3 className="font-display text-base font-bold text-[#043084] truncate">
             {title}
           </h3>
           {description && (
-            <p className="text-xs text-[#475569] font-medium truncate mt-0.5">
+            <p className="text-xs text-[#64748b] font-medium truncate mt-0.5">
               {description}
             </p>
           )}
@@ -177,7 +177,7 @@ export function ModalHeader({
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="flex h-9 w-9 items-center justify-center rounded-xl text-[#64748b] hover:text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer shrink-0 border border-transparent hover:border-brand-border"
+          className="flex h-8 w-8 items-center justify-center rounded-[10px] text-[#64748b] hover:text-[#043084] hover:bg-[#043084]/[0.06] transition-colors cursor-pointer shrink-0 border border-transparent hover:border-[#043084]/10"
         >
           <X className="h-4 w-4" />
         </button>

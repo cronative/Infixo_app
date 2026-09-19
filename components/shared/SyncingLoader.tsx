@@ -61,9 +61,9 @@ export function SyncingLoader({
       <div className="relative z-10 flex flex-col items-center max-w-lg w-full space-y-4">
         {/* Animated Brand Logo Container */}
         <div className="relative flex h-16 w-16 items-center justify-center">
-          <div className="absolute inset-0 rounded-[22px] bg-[#151933]/10 blur-xl" />
-          <div className="absolute inset-1 rounded-[18px] bg-[#151933]/12 animate-ping opacity-20" />
-          <div className="relative flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#151933] shadow-[0_14px_36px_rgba(21,25,51,0.16)]">
+          <div className="absolute inset-0 rounded-[22px] bg-[#043084]/10 blur-xl" />
+          <div className="absolute inset-1 rounded-[18px] bg-[#043084]/12 animate-ping opacity-20" />
+          <div className="relative flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#043084] shadow-[0_14px_36px_rgba(21,25,51,0.16)]">
             <Image
               src="/images/inflixo-logo-icon-white-transparent.png"
               alt="Inflixo"
@@ -78,10 +78,10 @@ export function SyncingLoader({
         {/* Syncing Status Information */}
         <div className="space-y-1 text-center">
           <div className="flex items-center justify-center gap-1.5">
-            <h3 className="font-display text-sm font-black text-[#151933] tracking-tight">
+            <h3 className="font-display text-sm font-black text-[#043084] tracking-tight">
               Inflixo
             </h3>
-            <span className="rounded-full bg-[#151933]/[0.07] border border-[#151933]/15 px-2 py-0.5 text-[9px] font-black text-[#151933] uppercase tracking-wider">
+            <span className="rounded-full bg-[#043084]/[0.07] border border-[#043084]/15 px-2 py-0.5 text-[9px] font-black text-[#043084] uppercase tracking-wider">
               Syncing
             </span>
           </div>
@@ -96,7 +96,7 @@ export function SyncingLoader({
           <div className="w-48 space-y-1">
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 border border-slate-200">
               <div
-                className="h-full bg-gradient-to-r from-[#151933] to-[#A24B5A] transition-all duration-300 ease-out"
+                className="h-full bg-gradient-to-r from-[#043084] to-[#A24B5A] transition-all duration-300 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -106,7 +106,7 @@ export function SyncingLoader({
         {/* Compact Motivational Quote */}
         <div className="min-h-[52px] flex items-center justify-center px-4 w-full">
           <p
-            className={`max-w-xl text-base sm:text-xl font-black italic text-[#151933] leading-snug text-center transition-opacity duration-300 ${isFading ? "opacity-0" : "opacity-100"
+            className={`max-w-xl text-base sm:text-xl font-black italic text-[#043084] leading-snug text-center transition-opacity duration-300 ${isFading ? "opacity-0" : "opacity-100"
               }`}
           >
             &ldquo;{currentQuote}&rdquo;

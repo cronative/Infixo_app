@@ -23,6 +23,7 @@ import { getPlanQuota } from "@/services/subscriptionLimits";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
+import { EmptyState } from "@/components/ui/EmptyState";
 import {
   InstagramIcon,
   YoutubeIcon,
@@ -111,11 +112,11 @@ function getLinkPlatform(link: CustomLink): {
   // Fallback to title initials with pink/maroon squircle badge
   return {
     icon: (
-      <span className="text-[11px] font-bold tracking-tight text-[#151933]">
+      <span className="text-[11px] font-bold tracking-tight text-[#043084]">
         {getInitials(link.title)}
       </span>
     ),
-    bgClass: "bg-[#15193314] border border-[#e2e8f0]",
+    bgClass: "bg-[#04308414] border border-[#e2e8f0]",
   };
 }
 
@@ -378,14 +379,14 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
     let updatedList: CustomLink[] = [];
     if (editingLink) {
       updatedList = links.map((l) => (
-        l.id === editingLink.id
+        String(l.id) === String(editingLink.id)
           ? {
-              ...l,
-              title: cleanTitle,
-              url: formMode === "collection" ? "" : cleanUrl,
-              kind: formMode,
-              items: formMode === "collection" ? cleanedItems : [],
-            }
+            ...l,
+            title: cleanTitle,
+            url: formMode === "collection" ? "" : cleanUrl,
+            kind: formMode,
+            items: formMode === "collection" ? cleanedItems : [],
+          }
           : l
       ));
     } else {
@@ -437,7 +438,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
   }
 
   async function syncToBackend(updatedLinks: CustomLink[]) {
-    const targetEmail = creatorCtx?.profile?.email || authRepository.getPendingEmail() || authRepository.get()?.email;
+    const targetEmail = creatorCtx?.profile?.email || authRepository.getPendingEmail() || authRepository.get()?.email || creatorCtx?.profile?.username;
     if (!targetEmail) return;
 
     try {
@@ -491,59 +492,47 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
   }
 
   return (
-    <div className="space-y-3 text-left">
-      {/* 12 & 13. Section Header: Custom links + 1 / 3 links + + Add Link */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-0.5">
-        <div>
-          <h2 className="text-base sm:text-lg font-bold text-[#151933]">
-            Custom links
-          </h2>
-          <p className="text-xs sm:text-[13px] text-[#475569] font-normal mt-0.5">
-            Add links you want your audience to discover.
-          </p>
-        </div>
+    <div className="w-full space-y-3 text-left">
+      {/* Section Header: count badge + Add Link button */}
+      <div className="flex items-center justify-between gap-3">
+        <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-[#043084]/[0.08] text-[#043084] border border-[#043084]/20">
+          {links.length} / {maxLinks === Infinity ? "Unlimited" : maxLinks} links
+        </span>
 
-        <div className="flex items-center gap-3 shrink-0 self-start sm:self-auto">
-          <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-[#151933]/[0.08] text-[#151933] border border-[#151933]/20">
-            {links.length} / {maxLinks === Infinity ? "Unlimited" : maxLinks} links
-          </span>
-
-          <button
-            type="button"
-            onClick={(e) => handleOpenCreate(e.currentTarget)}
-            disabled={isLimitReached}
-            className={`inline-flex items-center gap-2 h-10 px-4 rounded-xl text-xs sm:text-sm font-medium transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm ${isLimitReached
-                ? "bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b] opacity-60 cursor-not-allowed"
-                : "bg-[#151933] hover:bg-brand-hover text-white"
-              }`}
-            title={isLimitReached ? "Limit reached (3 links max)" : "Add new custom link"}
-          >
-            <Plus className="h-4 w-4" />
-            <span>Add Link</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={(e) => handleOpenCreate(e.currentTarget)}
+          disabled={isLimitReached}
+          className={`inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm ${isLimitReached
+            ? "bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b] opacity-60 cursor-not-allowed"
+            : "bg-[#043084] hover:bg-brand-hover text-white"
+            }`}
+          title={isLimitReached ? "Limit reached (3 links max)" : "Add new custom link"}
+        >
+          <Plus className="h-4 w-4" />
+          <span>Add Link</span>
+        </button>
       </div>
 
       {/* Links List / Empty State */}
       {links.length === 0 ? (
-        <div className="rounded-2xl border border-[#e2e8f0] bg-white p-6 sm:p-8 text-center space-y-3 shadow-xs">
-          <p className="text-sm font-bold text-[#151933]">Add your first custom link</p>
-          <p className="text-xs text-[#64748b] max-w-sm mx-auto">
-            Help people reach your latest content, website, booking page, store or community.
-          </p>
-          <div className="pt-1">
+        <EmptyState
+          icon={<LinkIcon className="h-7 w-7" />}
+          title="Add your first custom link"
+          description="Help people reach your latest content, website, booking page, store or community."
+          action={
             <button
               type="button"
               onClick={(e) => handleOpenCreate(e.currentTarget)}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-brand-hover px-4 py-2 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+              className="inline-flex items-center gap-2 rounded-[10px] bg-[#043084] px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-md cursor-pointer"
             >
-              <Plus className="h-3.5 w-3.5" />
-              <span>Add Link</span>
+              <Plus className="h-4 w-4" />
+              <span>Add Your First Link</span>
             </button>
-          </div>
-        </div>
+          }
+        />
       ) : (
-        <div className="rounded-2xl border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0] shadow-xs">
+        <div className="rounded-xl border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0] shadow-xs">
           {links.map((item, idx) => {
             const isCollection = item.kind === "collection";
             const enabledItems = item.items?.filter((child) => child.isEnabled !== false && child.title && child.url) || [];
@@ -554,17 +543,17 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
             return (
               <div
                 key={item.id || idx}
-                className="px-4 sm:px-5 py-3.5 min-h-[64px] hover:bg-[#f1f5f9] transition-colors text-left"
+                className="px-3.5 sm:px-4 py-2.5 min-h-[52px] hover:bg-[#f1f5f9] transition-colors text-left"
               >
                 <div className="flex items-center justify-between gap-3">
-                  {/* Left: 16. Drag handle + 15. Favicon/Icon + Title/Domain */}
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                  {/* Left: Drag handle + Favicon/Icon + Title/Domain */}
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
                     <span className="text-[#64748b]/40 cursor-grab active:cursor-grabbing shrink-0" title="Drag to reorder">
                       <GripVertical className="h-4 w-4" />
                     </span>
 
                     <div
-                      className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 overflow-hidden ${isCollection ? "bg-[#151933] text-white shadow-xs" : platformInfo.bgClass
+                      className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 overflow-hidden ${isCollection ? "bg-[#043084] text-white shadow-xs" : platformInfo.bgClass
                         }`}
                     >
                       {isCollection ? (
@@ -584,8 +573,12 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                       )}
                     </div>
 
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm sm:text-[15px] font-semibold text-[#151933]">
+                    <div
+                      onClick={() => handleOpenEdit(item)}
+                      className="min-w-0 flex-1 cursor-pointer group"
+                      title="Click to edit link"
+                    >
+                      <p className="truncate text-sm sm:text-[15px] font-semibold text-[#043084] group-hover:underline">
                         {item.title}
                       </p>
                       <p className="truncate text-xs text-[#475569]">
@@ -594,93 +587,103 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     </div>
                   </div>
 
-                  {/* Right: Actions (Open ↗ + ⋮) */}
+                  {/* Right: Actions (Edit + Open ↗ + ⋮) */}
                   <div className="flex items-center gap-1.5 shrink-0">
-                  {!isCollection && item.url && (
-                    <a
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs font-medium text-[#151933] transition-colors shadow-2xs"
-                      title="Open link in new tab"
-                    >
-                      <span>Open</span>
-                      <ExternalLink className="h-3 w-3 text-[#64748b]" />
-                    </a>
-                  )}
-
-                  {/* Three-dot menu */}
-                  <div className="relative">
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setActiveMenuId(activeMenuId === item.id ? null : item.id);
-                      }}
-                      className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#151933] transition-colors cursor-pointer shadow-2xs"
-                      aria-label="More actions"
+                      onClick={() => handleOpenEdit(item)}
+                      className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-[8px] border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs font-semibold text-[#043084] transition-colors shadow-2xs cursor-pointer"
+                      title="Edit this link"
                     >
-                      <MoreVertical className="h-3.5 w-3.5" />
+                      <Pencil className="h-3 w-3 text-[#64748b]" />
+                      <span className="hidden xs:inline">Edit</span>
                     </button>
 
-                    {activeMenuId === item.id && (
-                      <div
-                        onClick={(e) => e.stopPropagation()}
-                        className="absolute right-0 top-full mt-1.5 w-36 rounded-xl border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in"
+                    {!isCollection && item.url && (
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hidden sm:inline-flex items-center gap-1.5 h-7 px-2.5 rounded-[8px] border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs font-medium text-[#043084] transition-colors shadow-2xs"
+                        title="Open link in new tab"
                       >
-                        {item.url && (
-                          <a
-                            href={item.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={() => setActiveMenuId(null)}
-                            className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#151933] hover:bg-[#f1f5f9] transition-colors"
-                          >
-                            <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
-                            <span>Open Link</span>
-                          </a>
-                        )}
+                        <span>Open</span>
+                        <ExternalLink className="h-3 w-3 text-[#64748b]" />
+                      </a>
+                    )}
 
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setActiveMenuId(null);
-                            handleOpenEdit(item);
-                          }}
-                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                    {/* Three-dot menu */}
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveMenuId(activeMenuId === item.id ? null : item.id);
+                        }}
+                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#043084] transition-colors cursor-pointer shadow-2xs"
+                        aria-label="More actions"
+                      >
+                        <MoreVertical className="h-3.5 w-3.5" />
+                      </button>
+
+                      {activeMenuId === item.id && (
+                        <div
+                          onClick={(e) => e.stopPropagation()}
+                          className="absolute right-0 top-full mt-1.5 w-36 rounded-xl border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in"
                         >
-                          <Pencil className="h-3.5 w-3.5 text-[#64748b]" />
-                          <span>Edit Link</span>
-                        </button>
+                          {item.url && (
+                            <a
+                              href={item.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() => setActiveMenuId(null)}
+                              className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#043084] hover:bg-[#f1f5f9] transition-colors"
+                            >
+                              <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
+                              <span>Open Link</span>
+                            </a>
+                          )}
 
-                        {!isCollection && (
                           <button
                             type="button"
-                            onClick={() => handleCopy(item.url)}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#151933] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                            onClick={() => {
+                              setActiveMenuId(null);
+                              handleOpenEdit(item);
+                            }}
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#043084] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                           >
-                            <Copy className="h-3.5 w-3.5 text-[#64748b]" />
-                            <span>Copy Link</span>
+                            <Pencil className="h-3.5 w-3.5 text-[#64748b]" />
+                            <span>Edit Link</span>
                           </button>
-                        )}
 
-                        <div className="my-1 border-t border-[#e2e8f0]" />
+                          {!isCollection && (
+                            <button
+                              type="button"
+                              onClick={() => handleCopy(item.url)}
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#043084] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                            >
+                              <Copy className="h-3.5 w-3.5 text-[#64748b]" />
+                              <span>Copy Link</span>
+                            </button>
+                          )}
 
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setActiveMenuId(null);
-                            setLinkToDelete(item);
-                          }}
-                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                          <span>Delete Link</span>
-                        </button>
-                      </div>
-                    )}
+                          <div className="my-1 border-t border-[#e2e8f0]" />
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setActiveMenuId(null);
+                              setLinkToDelete(item);
+                            }}
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            <span>Delete Link</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
                 </div>
                 {isCollection && enabledItems.length > 0 && (
                   <div className="ml-7 mt-3 grid gap-2 sm:ml-12">
@@ -690,7 +693,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                         href={child.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-between gap-3 rounded-xl border border-[#e2e8f0] bg-white px-3 py-2 text-xs font-semibold text-[#151933] transition-colors hover:border-[#151933]/25 hover:bg-[#f8fafc]"
+                        className="flex items-center justify-between gap-3 rounded-xl border border-[#e2e8f0] bg-white px-3 py-2 text-xs font-semibold text-[#043084] transition-colors hover:border-[#043084]/25 hover:bg-[#f8fafc]"
                       >
                         <span className="truncate">{child.title}</span>
                         <ExternalLink className="h-3.5 w-3.5 shrink-0 text-[#64748b]" />
@@ -739,30 +742,38 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
         icon={<LinkIcon className="h-4 w-4" />}
         headerClassName="px-4 sm:px-5 py-3"
       >
-        <div className="flex flex-col flex-1 min-h-0">
-          <ModalBody className="p-3.5 sm:p-4 space-y-3 text-left">
-            <form id="custom-link-form" onSubmit={handleSaveModalLink} className="space-y-3">
-              <div className="grid grid-cols-2 gap-1 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-1">
-                <button
-                  type="button"
-                  onClick={() => setFormMode("link")}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-colors ${formMode === "link" ? "bg-white text-[#151933] shadow-xs" : "text-[#64748b] hover:text-[#151933]"}`}
-                >
-                  Single link
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFormMode("collection")}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-colors ${formMode === "collection" ? "bg-[#151933] text-white shadow-xs" : "text-[#64748b] hover:text-[#151933]"}`}
-                >
-                  Link collection
-                </button>
-              </div>
+        <form onSubmit={handleSaveModalLink} className="flex flex-col flex-1 min-h-0">
+          <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
+            {/* Clean Segmented Control */}
+            <div className="flex rounded-[10px] border border-[#e2e8f0] bg-[#f8fafc] p-1 gap-1">
+              <button
+                type="button"
+                onClick={() => setFormMode("link")}
+                className={`flex-1 py-1.5 px-3 rounded-[8px] text-xs font-bold transition-all cursor-pointer ${
+                  formMode === "link"
+                    ? "bg-white text-[#043084] shadow-xs border border-[#e2e8f0]/80"
+                    : "text-[#64748b] hover:text-[#043084] hover:bg-white/40"
+                }`}
+              >
+                Single link
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormMode("collection")}
+                className={`flex-1 py-1.5 px-3 rounded-[8px] text-xs font-bold transition-all cursor-pointer ${
+                  formMode === "collection"
+                    ? "bg-white text-[#043084] shadow-xs border border-[#e2e8f0]/80"
+                    : "text-[#64748b] hover:text-[#043084] hover:bg-white/40"
+                }`}
+              >
+                Link collection
+              </button>
+            </div>
 
-              {/* Link Type Selector */}
-              {formMode === "link" && (
+            {/* Link Type Selector */}
+            {formMode === "link" && (
               <div className="space-y-1">
-                <label htmlFor="custom-link-type" className="block text-xs font-bold text-[#151933]">
+                <label htmlFor="custom-link-type" className="block text-xs font-bold text-[#043084]">
                   Link type
                 </label>
                 <div className="relative">
@@ -770,7 +781,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     id="custom-link-type"
                     value={selectedType}
                     onChange={(e) => handleTypeSelect(e.target.value)}
-                    className="w-full appearance-none rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-1.5 pr-9 text-xs font-semibold text-[#151933] focus:border-[#151933] focus:bg-white focus:outline-none transition-colors cursor-pointer"
+                    className="h-9.5 w-full appearance-none rounded-[10px] border border-[#e2e8f0] bg-white px-3 pr-9 text-xs font-semibold text-[#043084] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all cursor-pointer shadow-2xs"
                   >
                     <option value="">— Select a link type (auto-fills title) —</option>
                     {LINK_TYPE_GROUPS.map((group) => (
@@ -786,43 +797,42 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                   <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
                 </div>
               </div>
-              )}
+            )}
 
-              {/* Link Title Field */}
-              <div className="space-y-1">
-                <label htmlFor="custom-link-title" className="block text-xs font-bold text-[#151933]">
-                  {formMode === "collection" ? "Collection title" : "Link title"} <span className="text-[#C2414B]">*</span>
-                </label>
-                <input
-                  id="custom-link-title"
-                  type="text"
-                  required
-                  value={formTitle}
-                  onChange={(e) => {
-                    setFormTitle(e.target.value);
-                    setIsTitleManuallyEdited(true);
-                  }}
-                  placeholder={formMode === "collection" ? "e.g. World Tour Tickets" : "e.g. Follow on Instagram or Watch Latest Video"}
-                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-1.5 text-xs font-semibold text-[#151933] placeholder:text-[#64748b]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
-                />
-              </div>
+            {/* Link Title Field */}
+            <div className="space-y-1">
+              <label htmlFor="custom-link-title" className="block text-xs font-bold text-[#043084]">
+                {formMode === "collection" ? "Collection title" : "Link title"} <span className="text-[#C2414B] font-bold">*</span>
+              </label>
+              <input
+                id="custom-link-title"
+                type="text"
+                required
+                value={formTitle}
+                onChange={(e) => {
+                  setFormTitle(e.target.value);
+                  setIsTitleManuallyEdited(true);
+                }}
+                placeholder={formMode === "collection" ? "e.g. World Tour Tickets" : "e.g. Follow on Instagram or Watch Latest Video"}
+                className="h-9.5 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#043084] placeholder:text-[#94a3b8] placeholder:font-normal focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
+              />
+            </div>
 
-              {/* Destination URL Field */}
-              {formMode === "link" ? (
+            {/* Destination URL Field */}
+            {formMode === "link" ? (
               <div className="space-y-1">
-                <label htmlFor="custom-link-url" className="block text-xs font-bold text-[#151933]">
-                  Destination URL <span className="text-[#C2414B]">*</span>
+                <label htmlFor="custom-link-url" className="block text-xs font-bold text-[#043084]">
+                  Destination URL <span className="text-[#C2414B] font-bold">*</span>
                 </label>
                 <div className="relative">
                   <input
                     id="custom-link-url"
-                    type="text"
-                    inputMode="url"
+                    type="url"
                     required
                     value={formUrl}
                     onChange={(e) => setFormUrl(e.target.value)}
                     placeholder="https://example.com/your-destination"
-                    className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 pl-3 pr-9 py-1.5 text-xs font-mono font-semibold text-[#151933] placeholder:text-[#64748b]/50 focus:border-[#151933] focus:bg-white focus:outline-none transition-colors"
+                    className="h-9.5 w-full rounded-[10px] border border-[#e2e8f0] bg-white pl-3 pr-9 text-xs font-mono font-medium text-[#043084] placeholder:text-[#94a3b8] placeholder:font-normal focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
                   />
                   {formUrl && (formUrl.startsWith("http://") || formUrl.startsWith("https://")) && (
                     <a
@@ -830,81 +840,85 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="Test link destination in new tab"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#64748b] hover:text-[#151933] transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#64748b] hover:text-[#043084] transition-colors p-1"
                     >
-                      <ExternalLink className="h-4 w-4" />
+                      <ExternalLink className="h-3.5 w-3.5" />
                     </a>
                   )}
                 </div>
               </div>
-              ) : (
-                <div className="space-y-2 rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 p-2.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <div>
-                      <p className="text-xs font-bold text-[#151933]">Collection links</p>
-                      <p className="text-[10px] font-medium text-[#64748b]">Add grouped links for tickets, tour stops, or resources.</p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={addCollectionItem}
-                      className="inline-flex h-7 items-center gap-1.5 rounded-lg bg-[#151933] px-2.5 text-[11px] font-bold text-white transition-colors hover:bg-brand-hover"
-                    >
-                      <Plus className="h-3.5 w-3.5" />
-                      Add
-                    </button>
+            ) : (
+              <div className="space-y-2.5 rounded-[10px] border border-[#e2e8f0] bg-[#f8fafc] p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <div>
+                    <p className="text-xs font-bold text-[#043084]">Collection links</p>
+                    <p className="text-[11px] text-[#64748b]">Add grouped links for tickets, tour stops, or resources.</p>
                   </div>
+                  <button
+                    type="button"
+                    onClick={addCollectionItem}
+                    className="inline-flex h-7.5 items-center gap-1.5 rounded-[8px] bg-[#043084] px-3 text-xs font-semibold text-white transition-all hover:bg-brand-hover hover:shadow-xs cursor-pointer"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    <span>Add Link</span>
+                  </button>
+                </div>
 
-                  <div className="space-y-2">
-                    {collectionItems.map((item, index) => (
-                      <div key={item.id} className="rounded-xl border border-[#e2e8f0] bg-white p-2">
-                        <div className="mb-1.5 flex items-center justify-between gap-2">
-                          <span className="text-[11px] font-bold text-[#64748b]">Link {index + 1}</span>
-                          <button
-                            type="button"
-                            onClick={() => removeCollectionItem(item.id)}
-                            className="inline-flex h-6 w-6 items-center justify-center rounded-lg text-[#64748b] transition-colors hover:bg-[#f1f5f9] hover:text-[#151933]"
-                            aria-label="Remove collection link"
-                          >
-                            <X className="h-3.5 w-3.5" />
-                          </button>
+                <div className="space-y-2">
+                  {collectionItems.map((item, index) => (
+                    <div key={item.id} className="rounded-[10px] border border-[#e2e8f0] bg-white p-2.5 sm:p-3 space-y-2 shadow-2xs">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="flex items-center gap-1.5 text-xs font-bold text-[#043084]">
+                          <span className="flex h-5 w-5 items-center justify-center rounded-[6px] bg-[#043084]/10 text-[10px] font-extrabold text-[#043084]">
+                            {index + 1}
+                          </span>
+                          <span>Link {index + 1}</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => removeCollectionItem(item.id)}
+                          className="inline-flex h-6 w-6 items-center justify-center rounded-[6px] text-[#64748b] transition-colors hover:bg-rose-50 hover:text-rose-600 cursor-pointer"
+                          aria-label="Remove collection link"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                      {/* Separate rows for Title and URL */}
+                      <div className="space-y-2.5">
+                        <div className="space-y-1">
+                          <label className="block text-xs font-bold text-[#043084]">
+                            Link title <span className="text-[#C2414B] font-bold">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={item.title}
+                            onChange={(e) => updateCollectionItem(item.id, { title: e.target.value })}
+                            placeholder="e.g. Ahmedabad tickets"
+                            className="h-9 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#043084] placeholder:text-[#94a3b8] placeholder:font-normal focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
+                          />
                         </div>
-                        <div className="space-y-1.5">
-                          <label className="block space-y-0.5">
-                            <span className="text-[9px] font-extrabold uppercase tracking-[0.12em] text-[#64748b]">
-                              Link title
-                            </span>
-                            <input
-                              type="text"
-                              value={item.title}
-                              onChange={(e) => updateCollectionItem(item.id, { title: e.target.value })}
-                              placeholder="Ahmedabad tickets"
-                              className="w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-1.5 text-xs font-semibold text-[#151933] placeholder:text-[#64748b]/50 focus:border-[#151933] focus:bg-white focus:outline-none"
-                            />
+                        <div className="space-y-1">
+                          <label className="block text-xs font-bold text-[#043084]">
+                            Link URL <span className="text-[#C2414B] font-bold">*</span>
                           </label>
-                          <label className="block space-y-0.5">
-                            <span className="text-[9px] font-extrabold uppercase tracking-[0.12em] text-[#64748b]">
-                              Link URL
-                            </span>
-                            <input
-                              type="text"
-                              inputMode="url"
-                              value={item.url}
-                              onChange={(e) => updateCollectionItem(item.id, { url: e.target.value })}
-                              placeholder="https://bookmyshow.com/..."
-                              className="w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-1.5 text-xs font-mono font-semibold text-[#151933] placeholder:text-[#64748b]/50 focus:border-[#151933] focus:bg-white focus:outline-none"
-                            />
-                          </label>
+                          <input
+                            type="url"
+                            value={item.url}
+                            onChange={(e) => updateCollectionItem(item.id, { url: e.target.value })}
+                            placeholder="https://bookmyshow.com/..."
+                            className="h-9 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs font-mono font-medium text-[#043084] placeholder:text-[#94a3b8] placeholder:font-normal focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
+                          />
                         </div>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
-              )}
-            </form>
+              </div>
+            )}
           </ModalBody>
 
           {/* Modal Actions Footer */}
-          <ModalFooter className="px-4 sm:px-5 py-2.5">
+          <ModalFooter className="px-4 sm:px-5 py-3 flex items-center justify-end gap-2 border-t border-[#e2e8f0]">
             <button
               type="button"
               onClick={() => {
@@ -914,21 +928,20 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                 }
               }}
               disabled={isSaving}
-              className="px-3.5 py-1.5 rounded-xl border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#151933] transition-colors cursor-pointer disabled:opacity-50"
+              className="h-9 px-4 rounded-[10px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#043084] transition-colors cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
-              form="custom-link-form"
               disabled={isSaving}
-              className="bg-[#151933] hover:bg-brand-hover text-white font-semibold text-xs py-1.5 px-4 rounded-xl transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="h-9 px-4.5 rounded-[10px] bg-[#043084] hover:bg-brand-hover text-white font-semibold text-xs transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5 disabled:opacity-50"
             >
-              <Check className="h-3.5 w-3.5" />
+              <Check className="h-3.5 w-3.5 stroke-[2.5]" />
               <span>{isSaving ? "Saving..." : editingLink ? "Save Changes" : "Save Link"}</span>
             </button>
           </ModalFooter>
-        </div>
+        </form>
       </Modal>
     </div>
   );

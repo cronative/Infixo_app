@@ -102,7 +102,7 @@ export function SeriesCoverUpload({
     <div className={`w-full space-y-1.5 text-left ${className}`}>
       {/* Section Header */}
       <div className="flex items-center justify-between">
-        <label className="block text-xs font-bold text-[#151933]">
+        <label className="block text-xs font-bold text-[#043084]">
           {label} <span className="text-[11px] font-semibold text-[#64748b]">(16:9 Landscape)</span>
         </label>
         <span className="text-[11px] font-semibold text-[#64748b]">
@@ -136,8 +136,8 @@ export function SeriesCoverUpload({
         className={`group relative w-full aspect-[16/9] overflow-hidden rounded-2xl border transition-all cursor-pointer select-none ${value
           ? "border-[#e2e8f0] bg-slate-950 shadow-sm"
           : isDragging
-            ? "border-2 border-dashed border-[#151933] bg-[#151933]/[0.09]"
-            : "border-2 border-dashed border-[#e2e8f0] hover:border-[#151933] bg-[#f8fafc] hover:bg-[#f1f5f9]"
+            ? "border-2 border-dashed border-[#043084] bg-[#043084]/[0.09]"
+            : "border-2 border-dashed border-[#e2e8f0] hover:border-[#043084] bg-[#f8fafc] hover:bg-[#f1f5f9]"
           }`}
       >
         {value ? (
@@ -162,9 +162,9 @@ export function SeriesCoverUpload({
                   e.stopPropagation();
                   fileInputRef.current?.click();
                 }}
-                className="tap-scale flex items-center gap-1.5 rounded-xl bg-white/95 hover:bg-[#f1f5f9] text-[#151933] px-3 py-1.5 text-xs font-bold shadow-md border border-white/60 backdrop-blur-md transition-all cursor-pointer"
+                className="tap-scale flex items-center gap-1.5 rounded-xl bg-white/95 hover:bg-[#f1f5f9] text-[#043084] px-3 py-1.5 text-xs font-bold shadow-md border border-white/60 backdrop-blur-md transition-all cursor-pointer"
               >
-                <Camera className="h-3.5 w-3.5 text-[#151933]" />
+                <Camera className="h-3.5 w-3.5 text-[#043084]" />
                 <span>Change Cover</span>
               </button>
 
@@ -183,7 +183,7 @@ export function SeriesCoverUpload({
                   type="button"
                   onClick={handleRemove}
                   title="Remove cover"
-                  className="tap-scale flex h-8 w-8 items-center justify-center rounded-xl bg-white/95 hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#151933] shadow-md border border-white/60 backdrop-blur-md transition-all cursor-pointer"
+                  className="tap-scale flex h-8 w-8 items-center justify-center rounded-xl bg-white/95 hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#043084] shadow-md border border-white/60 backdrop-blur-md transition-all cursor-pointer"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
@@ -193,11 +193,11 @@ export function SeriesCoverUpload({
         ) : (
           /* Empty State - Full Width Landscape Dropzone */
           <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#151933]/[0.09] text-[#151933] border border-[#151933]/20 shadow-xs group-hover:scale-105 transition-transform">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#043084]/[0.09] text-[#043084] border border-[#043084]/20 shadow-xs group-hover:scale-105 transition-transform">
               <ImagePlus className="h-6 w-6 stroke-[2]" />
             </div>
 
-            <p className="mt-2.5 text-xs sm:text-sm font-bold text-[#151933] group-hover:text-[#151933] transition-colors">
+            <p className="mt-2.5 text-xs sm:text-sm font-bold text-[#043084] group-hover:text-[#043084] transition-colors">
               Upload Series Cover
             </p>
 

@@ -11,6 +11,7 @@ import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
 import { FocusOverlay } from "@/components/theme/FocusOverlay";
 import { useToast } from "@/contexts/ToastContext";
 import { copyToClipboard } from "@/lib/copyToClipboard";
+import { isDarkTheme } from "@/components/onboarding/LivePreviewCard";
 import {
   CreatorProfile,
   CreatorReview,
@@ -165,18 +166,18 @@ export default function AllReviewsClient() {
   if (notFound) {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-[#f8fafc] px-4 text-center">
-        <div className="w-full max-w-sm rounded-[24px] border border-[#e2e8f0] bg-white p-8 shadow-xl shadow-[#151933]/5">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#151933] text-white">
+        <div className="w-full max-w-sm rounded-[24px] border border-[#e2e8f0] bg-white p-8 shadow-xl shadow-[#043084]/5">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#043084] text-white">
             <UserX className="h-7 w-7" />
           </div>
-          <h1 className="mt-5 font-display text-xl font-black text-[#151933]">Reviews not available</h1>
+          <h1 className="mt-5 font-display text-xl font-black text-[#043084]">Reviews not available</h1>
           <p className="mt-2 text-sm font-medium text-[#64748b]">
             This creator profile is private or the handle does not exist.
           </p>
           <button
             type="button"
             onClick={() => router.push("/")}
-            className="mt-5 inline-flex h-11 items-center justify-center rounded-xl bg-[#151933] px-5 text-sm font-bold text-white"
+            className="mt-5 inline-flex h-11 items-center justify-center rounded-xl bg-[#043084] px-5 text-sm font-bold text-white"
           >
             Go home
           </button>
@@ -210,6 +211,9 @@ export default function AllReviewsClient() {
     }
   }
 
+  const isDark = isDarkTheme(theme);
+  const usesDarkControls = isDark || themeMeta.mode === "dark";
+
   return (
     <div
       style={{ backgroundColor: themeMeta.colors.pageBackground }}
@@ -232,13 +236,18 @@ export default function AllReviewsClient() {
       )}
       <FocusOverlay overlay={themeMeta.focusOverlay} />
 
-      <main className="relative z-10 h-dvh min-h-0 flex flex-col mx-auto w-full max-w-[580px] px-4 py-4 overflow-hidden animate-fade-in-up">
+      <main className="relative z-10 h-dvh min-h-0 flex flex-col mx-auto w-full max-w-[520px] px-2.5 py-2.5 sm:px-4 sm:py-3.5 overflow-hidden animate-fade-in-up">
         <button
           type="button"
           onClick={() => router.push(`/${cleanHandle}`)}
-          className="tap-scale mb-3 inline-flex h-10 w-fit items-center gap-2 rounded-full border border-white/40 bg-white/75 px-3 text-xs font-bold text-[#151933] shadow-sm backdrop-blur-md transition-all hover:bg-white"
+          style={{
+            backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 0.85)",
+            borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : "rgba(0, 0, 0, 0.1)",
+            color: usesDarkControls ? "#FFFFFF" : themeMeta.colors.primaryText,
+          }}
+          className="tap-scale mb-2 inline-flex h-8 w-fit items-center gap-1.5 rounded-[10px] border px-3 text-xs font-bold shadow-xs backdrop-blur-md transition-all hover:opacity-90 cursor-pointer"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-3.5 w-3.5" />
           <span>Profile</span>
         </button>
 

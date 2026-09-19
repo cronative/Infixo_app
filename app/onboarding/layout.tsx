@@ -14,7 +14,6 @@ export default function OnboardingRootLayout({ children }: { children: ReactNode
       router.replace("/login");
       return;
     }
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time auth gate after mount
     setChecked(true);
   }, [router]);
 

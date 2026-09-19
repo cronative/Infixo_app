@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import {
   Check,
   ExternalLink,
   Sparkles,
   Loader2,
+  Palette,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -81,49 +83,49 @@ const THEME_GROUPS: Array<{
   description: string;
   themeKeys: ThemeKey[];
 }> = [
-  {
-    key: "light",
-    title: "Essential Themes",
-    description: "Clean, premium defaults that work for almost every creator.",
-    themeKeys: ["minimal-white", "sage-studio", "blush-paper", "studio-frost"],
-  },
-  {
-    key: "places",
-    title: "Places & Travel",
-    description: "Location-inspired looks with stronger visual identity.",
-    themeKeys: ["taj-mahal", "marine-drive", "burj-khalifa", "somnath-temple", "dwarka-temple", "goa-beach", "mountain-mist"],
-  },
-  {
-    key: "creators",
-    title: "Creator Styles",
-    description: "Designed around niches like reels, podcasts, food, gaming and cafe stories.",
-    themeKeys: ["creator-studio", "neon-reels", "podcast-lounge", "food-vlog", "gamer-stream", "street-food", "cafe-mocha"],
-  },
-  {
-    key: "moments",
-    title: "Moments & Seasonal",
-    description: "Themes for emotion, festivals and special campaigns.",
-    themeKeys: ["love-letter", "christmas-snow"],
-  },
-  {
-    key: "gradients",
-    title: "Gradient Colors",
-    description: "Color-forward profiles with smooth, expressive gradient backgrounds.",
-    themeKeys: Array.from(GRADIENT_THEME_KEYS),
-  },
-  {
-    key: "classics",
-    title: "Classic & Editorial",
-    description: "Sharp, premium themes for minimal, dark, editorial and portfolio looks.",
-    themeKeys: ["signature-purple", "midnight", "floating-studio", "creative-paper"],
-  },
-  {
-    key: "animated",
-    title: "Animated Themes",
-    description: "Motion-led themes for creators who want extra energy.",
-    themeKeys: DEFAULT_THEME_LIST.filter((item) => item.isAnimated || item.group === "animated").map((item) => item.key),
-  },
-];
+    {
+      key: "light",
+      title: "Essential Themes",
+      description: "Clean, premium defaults that work for almost every creator.",
+      themeKeys: ["minimal-white", "sage-studio", "blush-paper", "studio-frost"],
+    },
+    {
+      key: "places",
+      title: "Places & Travel",
+      description: "Location-inspired looks with stronger visual identity.",
+      themeKeys: ["taj-mahal", "marine-drive", "burj-khalifa", "somnath-temple", "dwarka-temple", "goa-beach", "mountain-mist"],
+    },
+    {
+      key: "creators",
+      title: "Creator Styles",
+      description: "Designed around niches like reels, podcasts, food, gaming and cafe stories.",
+      themeKeys: ["creator-studio", "neon-reels", "podcast-lounge", "food-vlog", "gamer-stream", "street-food", "cafe-mocha"],
+    },
+    {
+      key: "moments",
+      title: "Moments & Seasonal",
+      description: "Themes for emotion, festivals and special campaigns.",
+      themeKeys: ["love-letter", "christmas-snow"],
+    },
+    {
+      key: "gradients",
+      title: "Gradient Colors",
+      description: "Color-forward profiles with smooth, expressive gradient backgrounds.",
+      themeKeys: Array.from(GRADIENT_THEME_KEYS),
+    },
+    {
+      key: "classics",
+      title: "Classic & Editorial",
+      description: "Sharp, premium themes for minimal, dark, editorial and portfolio looks.",
+      themeKeys: ["signature-purple", "midnight", "floating-studio", "creative-paper"],
+    },
+    {
+      key: "animated",
+      title: "Animated Themes",
+      description: "Motion-led themes for creators who want extra energy.",
+      themeKeys: DEFAULT_THEME_LIST.filter((item) => item.isAnimated || item.group === "animated").map((item) => item.key),
+    },
+  ];
 
 export default function DashboardThemesPage() {
   const { profile, socials, series, totalAudience, theme, setTheme } = useCreator();
@@ -186,24 +188,63 @@ export default function DashboardThemesPage() {
   };
 
   return (
-    <div className="w-full pb-16 text-left">
+    <div className="w-full pb-8 text-left space-y-5">
+      {/* 1. Full-Width Page Header with Divider */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#e2e8f0] pb-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="font-display text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+              Themes &amp; Styling
+            </h1>
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#043084]/10 px-2.5 py-0.5 text-xs font-bold text-[#043084]">
+              <Sparkles className="h-3 w-3" />
+              <span>{previewThemeMeta.name}</span>
+            </span>
+          </div>
+          <p className="mt-1 text-xs sm:text-sm font-medium text-slate-500">
+            Choose the aesthetic of your public profile. Preview in real-time, then apply when it feels right.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+          <Link
+            href={`/${profile.username || "creator"}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#043084] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
+          >
+            <span>Live Profile</span>
+            <ExternalLink className="h-3.5 w-3.5" />
+          </Link>
+          <button
+            type="button"
+            onClick={handleApplyTheme}
+            disabled={isApplying || previewThemeKey === theme}
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#043084] px-4 py-2 text-xs font-bold text-white shadow-2xs transition-all hover:bg-[#032363] disabled:opacity-50 cursor-pointer"
+          >
+            {isApplying ? (
+              <>
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                <span>Applying...</span>
+              </>
+            ) : justApplied ? (
+              <>
+                <Check className="h-3.5 w-3.5" />
+                <span>Applied!</span>
+              </>
+            ) : (
+              <span>Apply Theme</span>
+            )}
+          </button>
+        </div>
+      </div>
+
       {/* 2-COLUMN SPLIT LAYOUT: Appearance + Themes on Left | Sticky Profile Preview on Right */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
 
         {/* LEFT COLUMN: APPEARANCE & THEMES (6 cols on lg, 5 cols on xl) */}
-        <div className="lg:col-span-6 xl:col-span-6 space-y-4">
-          {/* Header: Themes title */}
-          <div className="flex flex-col gap-3">
-            <div className="space-y-1">
-              <h1 className="text-[28px] sm:text-[32px] font-bold tracking-tight text-[#151933] leading-tight">
-                Themes
-              </h1>
-              <p className="max-w-xl text-sm sm:text-[15px] text-[#475569] font-normal leading-relaxed">
-                Choose the look of your public profile. Preview first, then apply when it feels right.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+        <div className="lg:col-span-6 xl:col-span-6 space-y-3.5">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
               {THEME_FILTERS.map((filter) => {
                 const isSelected = activeFilter === filter.key;
                 return (
@@ -211,9 +252,9 @@ export default function DashboardThemesPage() {
                     key={filter.key}
                     type="button"
                     onClick={() => setActiveFilter(filter.key)}
-                    className={`shrink-0 rounded-full border px-3.5 py-2 text-xs font-bold transition-all cursor-pointer ${isSelected
-                      ? "border-[#151933] bg-[#151933] text-white shadow-sm"
-                      : "border-[#dbe3ee] bg-white text-[#64748b] hover:border-[#151933]/30 hover:bg-[#f8fafc] hover:text-[#151933]"
+                    className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer ${isSelected
+                      ? "border-[#043084] bg-[#043084] text-white shadow-xs"
+                      : "border-[#dbe3ee] bg-white text-[#64748b] hover:border-[#043084]/30 hover:bg-[#f8fafc] hover:text-[#043084]"
                       }`}
                   >
                     {filter.label}
@@ -221,27 +262,26 @@ export default function DashboardThemesPage() {
                 );
               })}
             </div>
-          </div>
 
           {/* Grouped Theme List */}
-          <div className="space-y-5">
+          <div className="space-y-4">
             {groupedThemes.map((group) => (
-              <section key={group.key} className="space-y-2.5">
+              <section key={group.key} className="space-y-2">
                 <div className="flex items-end justify-between gap-3">
                   <div>
-                    <h2 className="text-[15px] font-extrabold tracking-tight text-[#151933]">
+                    <h2 className="text-sm font-bold tracking-tight text-[#043084]">
                       {group.title}
                     </h2>
-                    <p className="mt-0.5 text-xs leading-relaxed text-[#64748b]">
+                    <p className="mt-0.5 text-[11px] leading-relaxed text-[#64748b]">
                       {group.description}
                     </p>
                   </div>
-                  <span className="shrink-0 rounded-full border border-[#e2e8f0] bg-white px-2.5 py-1 text-[11px] font-bold text-[#64748b]">
+                  <span className="shrink-0 rounded-full border border-[#e2e8f0] bg-white px-2 py-0.5 text-[10px] font-bold text-[#64748b]">
                     {group.themes.length}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                   {group.themes.map((t) => {
                     const isActive = theme === t.key;
                     const isPreviewing = previewThemeKey === t.key;
@@ -265,19 +305,19 @@ export default function DashboardThemesPage() {
         {/* RIGHT COLUMN: STICKY PROFILE PREVIEW (6 cols on lg, 7 cols on xl) */}
         <div className="lg:col-span-6 xl:col-span-6 lg:sticky lg:top-6 space-y-4">
           {/* Header: Profile preview title + Action Controls aligned at top */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 min-h-[52px]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 min-h-[46px]">
             <div className="space-y-0.5">
-              <h2 className="text-[22px] sm:text-[24px] font-bold tracking-tight text-[#151933] leading-tight">
+              <h2 className="text-lg sm:text-xl font-bold tracking-tight text-[#043084] leading-tight">
                 Profile preview
               </h2>
               <p className="text-xs sm:text-[13px] text-[#475569] font-normal">
                 {isPreviewDifferent ? (
                   <span>
-                    Previewing: <strong className="text-[#151933] font-semibold">{previewThemeMeta.name}</strong>
+                    Previewing: <strong className="text-[#043084] font-semibold">{previewThemeMeta.name}</strong>
                   </span>
                 ) : (
                   <span>
-                    Active theme: <strong className="text-[#151933] font-semibold">{previewThemeMeta.name}</strong>
+                    Active theme: <strong className="text-[#043084] font-semibold">{previewThemeMeta.name}</strong>
                   </span>
                 )}
               </p>
@@ -290,7 +330,7 @@ export default function DashboardThemesPage() {
                     type="button"
                     onClick={handleApplyTheme}
                     disabled={isApplying}
-                    className="h-9 px-3.5 rounded-xl bg-[#151933] hover:bg-brand-hover text-white text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm disabled:opacity-50 inline-flex items-center gap-1.5"
+                    className="h-9 px-3.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-white text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm disabled:opacity-50 inline-flex items-center gap-1.5"
                   >
                     {isApplying ? (
                       <>
@@ -316,7 +356,7 @@ export default function DashboardThemesPage() {
                 href={canonicalUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-9 px-3 rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#151933] text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5"
+                className="h-9 px-3 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#043084] text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5"
                 title="View public profile in new tab"
               >
                 <span>View Profile</span>
@@ -327,9 +367,9 @@ export default function DashboardThemesPage() {
 
           {/* Clean Phone Mockup Frame (Expanded width & height, redundant outer container removed) */}
           <div className="w-full flex justify-center pt-1">
-            <div className="w-full max-w-[450px] sm:max-w-[470px] xl:max-w-[490px] rounded-[38px] border-[6px] border-[#151933] bg-black shadow-2xl overflow-hidden relative">
+            <div className="w-full max-w-[450px] sm:max-w-[470px] xl:max-w-[490px] rounded-[38px] border-[6px] border-[#043084] bg-black shadow-2xl overflow-hidden relative">
               {/* Phone Top Notch/Island */}
-              <div className="absolute top-2.5 left-1/2 -translate-x-1/2 h-4 w-28 bg-[#151933] rounded-full z-30 pointer-events-none" />
+              <div className="absolute top-2.5 left-1/2 -translate-x-1/2 h-4 w-28 bg-[#043084] rounded-full z-30 pointer-events-none" />
 
               {/* Scrollable Viewport inside phone */}
               <div
@@ -385,7 +425,7 @@ function ThemeCard({
   isPreviewing,
   onSelect,
 }: ThemeCardProps) {
-  const [bg, accent, text] = theme.swatch || ["#7c3aed", "#ede9fe", "#151933"];
+  const [bg, accent, text] = theme.swatch || ["#7c3aed", "#ede9fe", "#043084"];
   const isThemeAnimated = Boolean(theme.isAnimated || theme.group === "animated");
   const subtitle = THEME_SUBTITLES[theme.key] || theme.tag || (theme.mode === "dark" ? "Bold & Dark" : "Clean & Light");
   const hasImageBackground = Boolean(theme.outerBgClass?.includes("theme-bg-"));
@@ -399,16 +439,16 @@ function ThemeCard({
     <button
       type="button"
       onClick={onSelect}
-      className={`group relative flex flex-col justify-between w-full rounded-[22px] border p-2.5 text-left transition-all duration-200 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-md ${isPreviewing
-          ? "border-[#151933] ring-2 ring-[#151933]/20 bg-[#151933]/[0.03]"
-          : isActive
-            ? "border-[#17845B]/40 ring-1 ring-[#17845B]/20 bg-white"
-            : "border-[#e2e8f0] bg-white hover:border-[#cbd5e1] hover:shadow-sm"
+      className={`group relative flex flex-col justify-between w-full rounded-xl border p-2 text-left transition-all duration-200 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-md ${isPreviewing
+        ? "border-[#043084] ring-2 ring-[#043084]/20 bg-[#043084]/[0.03]"
+        : isActive
+          ? "border-[#17845B]/40 ring-1 ring-[#17845B]/20 bg-white"
+          : "border-[#e2e8f0] bg-white hover:border-[#cbd5e1] hover:shadow-sm"
         }`}
     >
       {/* Visual Thumbnail: theme background only */}
       <div
-        className={`relative w-full h-32 rounded-[18px] overflow-hidden transition-transform duration-300 group-hover:scale-[1.01] ${hasImageBackground ? theme.outerBgClass : ""}`}
+        className={`relative w-full h-28 rounded-lg overflow-hidden transition-transform duration-300 group-hover:scale-[1.01] ${hasImageBackground ? theme.outerBgClass : ""}`}
         style={{ background: thumbnailBackground }}
       >
         {hasImageBackground && (
@@ -430,7 +470,7 @@ function ThemeCard({
       {/* Card Info Footer */}
       <div className="pt-2.5 px-1 pb-0.5 flex items-center justify-between gap-2 w-full">
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[13px] sm:text-sm font-bold text-[#151933] leading-tight">
+          <p className="truncate text-[13px] sm:text-sm font-bold text-[#043084] leading-tight">
             {theme.name}
           </p>
           <p className="mt-0.5 truncate text-[11px] text-[#64748b] font-medium">
@@ -439,7 +479,7 @@ function ThemeCard({
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
           {isThemeAnimated && (
-            <span className="inline-flex items-center rounded-full bg-[#151933]/[0.08] px-1.5 py-1 text-[#151933]">
+            <span className="inline-flex items-center rounded-full bg-[#043084]/[0.08] px-1.5 py-1 text-[#043084]">
               <Sparkles className="h-3 w-3" />
             </span>
           )}

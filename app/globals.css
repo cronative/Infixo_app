@@ -8,20 +8,20 @@
   --color-muted-surface: #e2e8f0;
 
   /* TEXT */
-  --color-ink: #151933;
+  --color-ink: #043084;
   --color-ink-muted: #475569;
   --color-caption: #64748b;
   --color-very-muted: #94a3b8;
 
   /* BRAND & BUTTONS */
-  --color-primary: #151933;
-  --color-primary-hover: #0f1329;
-  --color-primary-tint: #f1f5f9;
+  --color-primary: #043084;
+  --color-primary-hover: #03256c;
+  --color-primary-tint: #eff6ff;
 
   /* BORDERS & DIVIDERS */
   --color-border: #e2e8f0;
   --color-border-hover: #cbd5e1;
-  --color-border-active: #151933;
+  --color-border-active: #043084;
 
   /* STATUS COLORS */
   --color-success: #10b981;
@@ -75,14 +75,14 @@
   --radius-input: 12px;
 
   /* Shadows */
-  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
-  --shadow-elevated: 0 12px 30px rgba(15, 23, 42, 0.08);
-  --shadow-premium: 0 12px 30px rgba(15, 23, 42, 0.08);
-  --shadow-hover: 0 4px 16px rgba(15, 23, 42, 0.06);
+  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(4, 48, 132, 0.03);
+  --shadow-elevated: 0 12px 30px rgba(4, 48, 132, 0.08);
+  --shadow-premium: 0 12px 30px rgba(4, 48, 132, 0.08);
+  --shadow-hover: 0 4px 16px rgba(4, 48, 132, 0.08);
 
-  --gradient-premium: #151933;
-  --gradient-gold: #151933;
-  --gradient-energy: #151933;
+  --gradient-premium: linear-gradient(135deg, #043084 0%, #0284c7 100%);
+  --gradient-gold: linear-gradient(135deg, #043084 0%, #38bdf8 100%);
+  --gradient-energy: linear-gradient(135deg, #043084 0%, #00b4d8 100%);
 
   /* Global Design Tokens */
   --bg-page: #f8fafc;
@@ -90,20 +90,20 @@
   --bg-card: #ffffff;
   --bg-card-hover: #f1f5f9;
   --bg-muted: #e2e8f0;
-  --text-primary: #151933;
+  --text-primary: #043084;
   --text-secondary: #475569;
   --text-muted: #64748b;
   --border-card: #e2e8f0;
   --border-card-hover: #cbd5e1;
-  --accent-color: #151933;
-  --accent-glow: rgba(15, 23, 42, 0.08);
-  --btn-primary-bg: #151933;
-  --btn-primary-hover: #0f1329;
+  --accent-color: #043084;
+  --accent-glow: rgba(4, 48, 132, 0.15);
+  --btn-primary-bg: #043084;
+  --btn-primary-hover: #03256c;
   --btn-primary-text: #ffffff;
-  --badge-bg: #f1f5f9;
-  --badge-text: #151933;
-  --badge-border: #e2e8f0;
-  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+  --badge-bg: #eff6ff;
+  --badge-text: #043084;
+  --badge-border: #dbeafe;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(4, 48, 132, 0.03);
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
@@ -450,6 +450,17 @@ body {
   }
 }
 
+@keyframes infixo-sheen {
+  0% {
+    transform: translateX(-150%);
+  }
+
+  30%,
+  100% {
+    transform: translateX(150%);
+  }
+}
+
 @keyframes scale-in {
   0% {
     opacity: 0;
@@ -620,7 +631,7 @@ body {
 
 .hover-lift:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 28px -6px rgba(128, 61, 99, 0.12), 0 6px 12px -4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 12px 28px -6px rgba(4, 48, 132, 0.14), 0 6px 12px -4px rgba(0, 0, 0, 0.04);
 }
 
 .tap-scale {
@@ -675,7 +686,7 @@ body {
 }
 
 .glass-card-dark {
-  background: #151933;
+  background: #043084;
   border: 1px solid #334155;
 }
 
@@ -685,7 +696,7 @@ body {
 
 .hover-glow:hover {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(58, 36, 71, 0.1);
+  box-shadow: 0 0 0 3px rgba(4, 48, 132, 0.18);
 }
 
 @keyframes toastProgress {
@@ -1009,6 +1020,7 @@ body {
 }
 
 @keyframes creatorToolFloat {
+
   0%,
   100% {
     transform: translate3d(0, 0, 0);

@@ -21,7 +21,7 @@ export async function ensureSingleOnboardingStepSchema() {
     // Ensure unique_email key exists if table was created previously without it
     try {
       await db.query(`ALTER TABLE creator_onboarding_steps ADD UNIQUE KEY unique_email (email)`);
-    } catch (e) {
+    } catch (_e) {
       // Key already exists, ignore
     }
 

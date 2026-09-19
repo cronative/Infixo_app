@@ -113,7 +113,7 @@ export function EpisodeQuickDrawer({
       case "facebook":
         return "bg-[#1877F2]";
       default:
-        return "bg-[#151933]";
+        return "bg-[#043084]";
     }
   }
 
@@ -140,14 +140,13 @@ export function EpisodeQuickDrawer({
       <div
         ref={modalRef}
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-[560px] max-h-[calc(100dvh-28px)] sm:max-h-[calc(100dvh-44px)] bg-white rounded-[28px] border border-slate-200/90 shadow-2xl shadow-black/25 flex flex-col overflow-hidden text-left animate-in zoom-in-95 duration-200"
+        className="relative w-full max-w-[520px] max-h-[calc(100dvh-28px)] sm:max-h-[calc(100dvh-44px)] bg-white rounded-[22px] border border-slate-200/90 shadow-2xl shadow-black/25 flex flex-col overflow-hidden text-left animate-in zoom-in-95 duration-200"
       >
         {/* 1. Full-Width Hero Cover Header (Styled like Center Profile Card Hero) */}
-        <div className={`relative w-full overflow-hidden shrink-0 ${
-          hasValidCover
+        <div className={`relative w-full overflow-hidden shrink-0 ${hasValidCover
             ? "aspect-[21/10] sm:aspect-[21/9] min-h-[165px] sm:min-h-[190px] bg-slate-900"
-            : "min-h-[140px] bg-gradient-to-r from-[#151933] via-[#2A335E] to-[#151933]"
-        }`}>
+            : "min-h-[140px] bg-gradient-to-r from-[#043084] via-[#2A335E] to-[#043084]"
+          }`}>
           {hasValidCover && (
             <>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -168,7 +167,7 @@ export function EpisodeQuickDrawer({
               type="button"
               onClick={onClose}
               aria-label="Close details"
-              className="tap-scale flex h-8.5 w-8.5 items-center justify-center rounded-full bg-black/45 hover:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
+              className="tap-scale flex h-8.5 w-8.5 items-center justify-center rounded-[10px] bg-black/45 hover:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
             >
               <X className="h-4 w-4 stroke-[2.5]" />
             </button>
@@ -188,10 +187,10 @@ export function EpisodeQuickDrawer({
               )}
 
               <div
-                className="flex h-8.5 w-8.5 items-center justify-center rounded-full bg-black/45 backdrop-blur-md border border-white/25 text-white shadow-md select-none"
+                className="flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] bg-black/45 backdrop-blur-md border border-white/20 text-white shadow-md select-none"
                 title="Inflixo Series"
               >
-                <InflixoLogoIcon className="h-4 w-4" />
+                <InflixoLogoIcon light className="h-5 w-5 sm:h-5.5 sm:w-5.5 object-contain" />
               </div>
             </div>
           </div>
@@ -241,11 +240,10 @@ export function EpisodeQuickDrawer({
                   key={sn.id || idx}
                   type="button"
                   onClick={() => setActiveSeasonIndex(idx)}
-                  className={`tap-scale px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer border ${
-                    activeSeasonIndex === idx
-                      ? "bg-[#151933] text-white border-[#151933] shadow-xs"
+                  className={`tap-scale px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer border ${activeSeasonIndex === idx
+                      ? "bg-[#043084] text-white border-[#043084] shadow-xs"
                       : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
-                  }`}
+                    }`}
                 >
                   {sn.title || `Season ${sn.seasonNumber || idx + 1}`} ({sn.episodes?.length || 0})
                 </button>
@@ -291,7 +289,7 @@ export function EpisodeQuickDrawer({
                         </span>
 
                         <div className="min-w-0 space-y-0.5">
-                          <p className="truncate text-xs sm:text-[13px] font-bold text-slate-900 group-hover:text-[#151933] transition-colors">
+                          <p className="truncate text-xs sm:text-[13px] font-bold text-slate-900 group-hover:text-[#043084] transition-colors">
                             {epTitleStr}
                           </p>
                           {(ep as any).duration && (
@@ -308,7 +306,7 @@ export function EpisodeQuickDrawer({
                           href={ep.externalUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="tap-scale shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-[#151933] hover:bg-brand-hover px-3.5 py-1.5 text-xs font-bold text-white transition-all shadow-xs cursor-pointer hover:scale-102"
+                          className="tap-scale shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-[#043084] hover:bg-brand-hover px-3.5 py-1.5 text-xs font-bold text-white transition-all shadow-xs cursor-pointer hover:scale-102"
                         >
                           <Play className="h-3 w-3 fill-current" />
                           <span>Play</span>
@@ -333,9 +331,9 @@ export function EpisodeQuickDrawer({
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="tap-scale inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+            className="tap-scale inline-flex items-center gap-2 text-[13px] font-bold text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
           >
-            <InflixoLogoIcon className="h-3.5 w-3.5" />
+            <InflixoLogoIcon className="h-4.5 w-4.5 shrink-0" />
             <span>Made with Inflixo</span>
           </a>
         </div>

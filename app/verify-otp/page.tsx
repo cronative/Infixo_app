@@ -2,8 +2,7 @@
 
 import { useEffect, useRef, useState, KeyboardEvent, ClipboardEvent } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { ArrowLeft, Lock, ArrowRight, Loader2, ShieldCheck } from "lucide-react";
+import { Lock, ArrowRight, Loader2, ShieldCheck, Edit3 } from "lucide-react";
 import { AuthService } from "@/services/AuthService";
 import { useToast } from "@/contexts/ToastContext";
 import { Logo } from "@/components/shared/Logo";
@@ -144,216 +143,152 @@ export default function VerifyOtpPage() {
   }
 
   return (
-    <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-x-hidden overflow-y-auto bg-[#f8fafc] px-4 py-8 text-center text-[#181716]">
+    <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-x-hidden overflow-y-auto bg-[#f8fafc] px-4 py-6 sm:py-10 text-[#181716]">
       <CreatorGridBackground showWordmark />
-      {/* Background Inflixo "I" Logo Mark & Radiating Waves */}
-      <div className="hidden">
-        {/* Top-Left Inflixo "I" Logo Watermark */}
-        <div className="absolute -top-12 -left-12 sm:-top-16 sm:-left-16 text-[#151933] opacity-[0.06] -rotate-12">
-          <svg
-            viewBox="0 0 100 100"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-[320px] h-[320px] sm:w-[460px] sm:h-[460px]"
-          >
-            {/* Concentric Radiating Outer Squircle Echoes */}
-            <g stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" fill="none">
-              <rect x="-30" y="-30" width="160" height="160" rx="44" strokeOpacity="0.65" />
-              <rect x="-65" y="-65" width="230" height="230" rx="60" strokeOpacity="0.45" />
-              <rect x="-105" y="-105" width="310" height="310" rx="80" strokeOpacity="0.3" />
-              <rect x="-155" y="-155" width="410" height="410" rx="104" strokeOpacity="0.18" />
-            </g>
 
-            {/* Inflixo Outer Stadium Link Frame */}
-            <g stroke="currentColor" strokeWidth="5.5" strokeLinecap="round" strokeLinejoin="round" fill="none">
-              <path d="M 28 42 L 28 24 C 28 14 38 10 50 10 C 62 10 72 14 72 24 L 72 42" />
-              <path d="M 28 58 L 28 76 C 28 86 38 90 50 90 C 62 90 72 86 72 76 L 72 58" />
-              <path d="M 28 34 C 28 38 34 42 40 42" />
-              <path d="M 72 34 C 72 38 66 42 60 42" />
-              <path d="M 28 66 C 28 62 34 58 40 58" />
-              <path d="M 72 66 C 72 62 66 58 60 58" />
-            </g>
-
-            {/* Inflixo Center Letter 'I' */}
-            <g fill="currentColor">
-              <rect x="36" y="25" width="28" height="7" rx="3.5" />
-              <rect x="45.5" y="32" width="9" height="36" rx="4.5" />
-              <rect x="36" y="68" width="28" height="7" rx="3.5" />
-            </g>
-          </svg>
-        </div>
-
-        {/* Bottom-Right Inflixo "I" Logo Watermark */}
-        <div className="absolute -bottom-16 -right-16 sm:-bottom-20 sm:-right-20 text-[#151933] opacity-[0.05] rotate-12">
-          <svg
-            viewBox="0 0 100 100"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-[360px] h-[360px] sm:w-[500px] sm:h-[500px]"
-          >
-            {/* Concentric Radiating Outer Squircle Echoes */}
-            <g stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" fill="none">
-              <rect x="-30" y="-30" width="160" height="160" rx="44" strokeOpacity="0.65" />
-              <rect x="-65" y="-65" width="230" height="230" rx="60" strokeOpacity="0.45" />
-              <rect x="-105" y="-105" width="310" height="310" rx="80" strokeOpacity="0.3" />
-              <rect x="-155" y="-155" width="410" height="410" rx="104" strokeOpacity="0.18" />
-            </g>
-
-            {/* Inflixo Outer Stadium Link Frame */}
-            <g stroke="currentColor" strokeWidth="5.5" strokeLinecap="round" strokeLinejoin="round" fill="none">
-              <path d="M 28 42 L 28 24 C 28 14 38 10 50 10 C 62 10 72 14 72 24 L 72 42" />
-              <path d="M 28 58 L 28 76 C 28 86 38 90 50 90 C 62 90 72 86 72 76 L 72 58" />
-              <path d="M 28 34 C 28 38 34 42 40 42" />
-              <path d="M 72 34 C 72 38 66 42 60 42" />
-              <path d="M 28 66 C 28 62 34 58 40 58" />
-              <path d="M 72 66 C 72 62 66 58 60 58" />
-            </g>
-
-            {/* Inflixo Center Letter 'I' */}
-            <g fill="currentColor">
-              <rect x="36" y="25" width="28" height="7" rx="3.5" />
-              <rect x="45.5" y="32" width="9" height="36" rx="4.5" />
-              <rect x="36" y="68" width="28" height="7" rx="3.5" />
-            </g>
-          </svg>
-        </div>
-      </div>
-
-      {/* SINGLE UNIFIED WHITE CARD */}
-      <div className="relative z-10 my-auto w-full max-w-[500px] rounded-[28px] border border-white/80 bg-white/70 p-5 text-center shadow-[0_26px_90px_rgba(21,25,51,0.12)] backdrop-blur-xl sm:p-7">
-        {/* 1. Header: Logo (100px x 100px) & Badge */}
-        <div className="flex flex-col items-center text-center">
-          <div className="flex items-center justify-center">
-            <Logo size="xl" orientation="vertical" />
+      {/* UNIFIED CENTER CARD: EXACT 420px WIDTH & MATCHING FIXED HEIGHT FOR BOTH SCREENS */}
+      <div className="relative z-10 my-auto flex min-h-[530px] w-full max-w-[420px] flex-col justify-between rounded-[24px] border border-slate-200/80 bg-white/95 p-5 text-center shadow-[0_20px_60px_-15px_rgba(4,48,132,0.12)] backdrop-blur-xl transition-all sm:min-h-[550px] sm:p-6">
+        
+        {/* TOP BLOCK: Header & Verification Info */}
+        <div>
+          {/* 1. Header: Logo & Badge */}
+          <div className="flex flex-col items-center text-center">
+            <Logo size="lg" orientation="vertical" />
+            <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-[#043084]/[0.07] px-3 py-0.5 text-[11px] font-extrabold uppercase tracking-wider text-[#043084]">
+              <ShieldCheck className="h-3 w-3" />
+              <span>Verification</span>
+            </div>
           </div>
 
-          <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-[#151933]/[0.08] px-3.5 py-1 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#151933]">
-            <ShieldCheck className="h-3 w-3" />
-            Verification
-          </span>
-        </div>
-
-        {/* 2. Heading & Subtitle */}
-        <div className="mt-8 space-y-2">
-          <h1 className="font-display text-[28px] font-black leading-[1.05] tracking-tight text-[#181716] sm:text-[32px]">
-            Check your email
-          </h1>
-          <p className="mx-auto max-w-[460px] text-[13px] font-medium leading-relaxed text-[#5d6575] sm:text-sm">
-            We sent a 4-digit verification code to{" "}
-            <span className="font-semibold text-[#181716]">
-              {email || "your email"}
-            </span>
-          </p>
-        </div>
-
-        {/* 4-Digit OTP Input Boxes */}
-        <div className="mt-7 space-y-3">
-          <div className="flex justify-center gap-2.5 sm:gap-3.5">
-            {digits.map((d, i) => (
-              <input
-                key={i}
-                ref={(el) => {
-                  inputsRef.current[i] = el;
-                }}
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                autoComplete="one-time-code"
-                maxLength={1}
-                autoFocus={i === 0}
-                value={d}
-                onChange={(e) => handleChange(i, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(i, e)}
-                onPaste={handlePaste}
-                aria-label={`Digit ${i + 1}`}
-                className={`h-14 w-14 rounded-[14px] border text-center text-2xl font-black transition-all duration-150 outline-none sm:h-[60px] sm:w-[60px] ${errorMessage
-                  ? "border-[#ef4444] bg-rose-50/20 text-[#ef4444] ring-2 ring-rose-100"
-                  : d
-                    ? "border-[#151933] bg-white text-[#181716] ring-4 ring-[#151933]/12"
-                    : "border-[#cbd5e1] bg-[#f8fafc] text-[#181716] focus:border-[#151933] focus:bg-white focus:ring-4 focus:ring-[#151933]/10"
-                  }`}
-              />
-            ))}
-          </div>
-
-          {/* Error Message */}
-          {errorMessage && (
-            <p className="text-xs font-semibold text-[#ef4444] text-center animate-fade-in pt-1">
-              {errorMessage}
-            </p>
-          )}
-
-          {/* Code Sent Notification Banner */}
-          {codeSent && (
-            <p className="animate-fade-in rounded-[14px] border border-[#151933]/20 bg-[#151933]/[0.06] px-3 py-2 text-center text-xs font-bold text-[#151933]">
-              New verification code sent 📩
-            </p>
-          )}
-        </div>
-
-        {/* Verify & Continue Button */}
-        <button
-          type="button"
-          disabled={!isOtpComplete || submitting}
-          onClick={() => submit(digits.join(""))}
-          className={`mt-7 inline-flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-[14px] text-sm font-extrabold shadow-[0_14px_28px_rgba(21,25,51,0.18)] transition-all active:scale-[0.985] ${isOtpComplete && !submitting
-            ? "bg-[#151933] text-white hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-[0_18px_34px_rgba(21,25,51,0.22)]"
-            : "bg-[#151933]/30 text-white/80 cursor-not-allowed"
-            }`}
-        >
-          {submitting ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              <span>Verifying...</span>
-            </>
-          ) : (
-            <>
-              <span>Verify &amp; Continue</span>
-              <ArrowRight className="h-4 w-4" />
-            </>
-          )}
-        </button>
-
-        {/* Resend Countdown Timer */}
-        <div className="mt-7 border-t border-[#E7E3DC] pt-4 text-center text-xs font-semibold text-[#54514D]">
-          {countdown > 0 ? (
-            <p>
-              Didn&apos;t receive code? Resend in{" "}
-              <span className="font-mono font-bold text-[#151933]">
-                00:{countdown.toString().padStart(2, "0")}
+          {/* 2. Headline & Subtitle with Quick Inline Email Edit */}
+          <div className="mt-3.5 space-y-1">
+            <h1 className="font-display text-xl font-black tracking-tight text-slate-900 sm:text-2xl">
+              Enter 4-digit code
+            </h1>
+            <div className="mx-auto flex max-w-[340px] items-center justify-center gap-1.5 text-xs font-medium text-slate-500 sm:text-[13px]">
+              <span>Sent to</span>
+              <span className="font-bold text-slate-800 truncate max-w-[190px]">
+                {email || "your email"}
               </span>
-            </p>
-          ) : (
-            <p>
-              Didn&apos;t receive code?{" "}
               <button
                 type="button"
-                onClick={handleResend}
-                disabled={resending}
-                className="cursor-pointer font-extrabold text-[#151933] underline transition-colors hover:text-brand-hover"
+                onClick={() => router.push("/login")}
+                className="inline-flex items-center gap-0.5 font-bold text-[#043084] underline hover:text-[#032363] cursor-pointer text-[11px]"
+                title="Change email address"
               >
-                {resending ? "Sending..." : "Resend Code"}
+                <Edit3 className="h-3 w-3" />
+                <span>Edit</span>
               </button>
-            </p>
-          )}
+            </div>
+          </div>
+
+          {/* 3. Expiry Pill (Matches Login Trust Pill) */}
+          <div className="mx-auto mt-3 flex w-fit items-center justify-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold text-slate-600">
+            <Lock className="h-3 w-3 text-[#043084]" />
+            <span>One-time password • Valid for 10 minutes</span>
+          </div>
         </div>
 
-        {/* Change Email Pill (below didn't receive code and above secure footer) */}
-        <div className="mt-4 flex items-center justify-center">
+        {/* MIDDLE BLOCK: 4-Digit OTP Boxes, Submit Button & Resend */}
+        <div className="my-auto py-2">
+          <div className="space-y-2">
+            <div className="flex justify-center gap-2.5 sm:gap-3">
+              {digits.map((d, i) => (
+                <input
+                  key={i}
+                  ref={(el) => {
+                    inputsRef.current[i] = el;
+                  }}
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  autoComplete="one-time-code"
+                  maxLength={1}
+                  autoFocus={i === 0}
+                  value={d}
+                  onChange={(e) => handleChange(i, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(i, e)}
+                  onPaste={handlePaste}
+                  aria-label={`Digit ${i + 1}`}
+                  className={`h-13 w-12 rounded-xl border text-center text-2xl font-black transition-all duration-150 outline-none sm:h-14 sm:w-14 ${
+                    errorMessage
+                      ? "border-rose-500 bg-rose-50/30 text-rose-600 ring-2 ring-rose-200"
+                      : d
+                        ? "border-[#043084] bg-white text-slate-900 ring-4 ring-[#043084]/12 shadow-sm"
+                        : "border-slate-300 bg-slate-50/80 text-slate-900 focus:border-[#043084] focus:bg-white focus:ring-4 focus:ring-[#043084]/10"
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Error Message */}
+            {errorMessage && (
+              <p className="animate-fade-in pt-0.5 text-xs font-semibold text-rose-500">
+                {errorMessage}
+              </p>
+            )}
+
+            {/* Code Sent Notification Banner */}
+            {codeSent && (
+              <p className="animate-fade-in rounded-lg border border-[#043084]/20 bg-[#043084]/5 px-3 py-1.5 text-center text-xs font-bold text-[#043084]">
+                New verification code sent 📩
+              </p>
+            )}
+          </div>
+
+          {/* 4. Verify & Open Studio Button */}
           <button
             type="button"
-            onClick={() => router.push("/login")}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-[#151933]/[0.06] px-4 py-1.5 text-xs font-bold text-[#54514D] transition-colors hover:bg-brand-hover/10 hover:text-brand-primary"
+            disabled={!isOtpComplete || submitting}
+            onClick={() => submit(digits.join(""))}
+            className={`tap-scale mt-3.5 flex h-11.5 w-full cursor-pointer items-center justify-center gap-2 rounded-xl text-sm font-bold shadow-md transition-all active:scale-[0.98] ${
+              isOtpComplete && !submitting
+                ? "bg-[#043084] text-white shadow-[#043084]/20 hover:bg-[#032363]"
+                : "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
+            }`}
           >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            <span>Change email address</span>
+            {submitting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Verifying...</span>
+              </>
+            ) : (
+              <>
+                <span>Verify &amp; Open Studio</span>
+                <ArrowRight className="h-4 w-4" />
+              </>
+            )}
           </button>
+
+          {/* 5. Resend Countdown Timer */}
+          <div className="mt-3.5 text-center text-xs font-medium text-slate-500">
+            {countdown > 0 ? (
+              <p>
+                Didn&apos;t get code? Resend in{" "}
+                <span className="font-mono font-bold text-[#043084]">
+                  00:{countdown.toString().padStart(2, "0")}
+                </span>
+              </p>
+            ) : (
+              <p>
+                Didn&apos;t get code?{" "}
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={resending}
+                  className="cursor-pointer font-bold text-[#043084] underline hover:text-[#032363]"
+                >
+                  {resending ? "Sending..." : "Resend Code"}
+                </button>
+              </p>
+            )}
+          </div>
         </div>
 
-        {/* Security Footer inside card */}
-        <div className="mt-7 border-t border-[#E7E3DC]/80 pt-4">
-          <p className="inline-flex items-center justify-center gap-1.5 text-center text-[11px] font-semibold text-[#6B5A5D]">
-            <Lock className="h-3.5 w-3.5 text-[#6B5A5D]" />
+        {/* BOTTOM BLOCK: Security Footer Inside Card */}
+        <div className="border-t border-slate-100 pt-3">
+          <p className="inline-flex items-center justify-center gap-1.5 text-center text-[11px] font-medium text-slate-400">
+            <Lock className="h-3 w-3 text-slate-400" />
             <span>Secure passwordless verification by Inflixo</span>
           </p>
         </div>

@@ -16,6 +16,7 @@ const pool =
     enableKeepAlive: true,
     keepAliveInitialDelay: 10000,
     connectTimeout: 15000,
+    idleTimeout: 60000, // Close idle connections after 60 seconds
     timezone: process.env.MYSQL_TIMEZONE || "+05:30",
   });
 
@@ -26,6 +27,5 @@ pool.on("connection", (connection: any) => {
 
 export const db = pool;
 
-if (process.env.NODE_ENV !== "production") {
-  globalForDb.pool = db;
-}
+// Preserve pool singleton across module re-evaluations
+globalForDb.pool = db;

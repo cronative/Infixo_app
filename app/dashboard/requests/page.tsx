@@ -7,11 +7,12 @@ import { useToast } from "@/contexts/ToastContext";
 import { CollaborationRequest, CollaborationStatus } from "@/types";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 const STATUS_CONFIG: Record<CollaborationStatus, { label: string; bg: string; text: string; border: string }> = {
   NEW: { label: "New", bg: "bg-[#EAF7F0]", text: "text-[#17845B]", border: "border-[#17845B]/20" },
-  VIEWED: { label: "Viewed", bg: "bg-[#151933]/[0.09]", text: "text-[#151933]", border: "border-[#151933]/20" },
-  REPLIED: { label: "Replied", bg: "bg-[#151933]/[0.09]", text: "text-[#151933]", border: "border-[#151933]/20" },
+  VIEWED: { label: "Viewed", bg: "bg-[#043084]/[0.09]", text: "text-[#043084]", border: "border-[#043084]/20" },
+  REPLIED: { label: "Replied", bg: "bg-[#043084]/[0.09]", text: "text-[#043084]", border: "border-[#043084]/20" },
   CLOSED: { label: "Closed", bg: "bg-[#f8fafc]", text: "text-[#64748b]", border: "border-[#e2e8f0]" },
 };
 
@@ -151,11 +152,11 @@ export default function DashboardRequestsPage() {
   });
 
   return (
-    <div className="space-y-4 sm:space-y-5 w-full pb-8 text-left">
+    <div className="space-y-4 sm:space-y-4.5 w-full pb-8 text-left">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#151933] flex items-center gap-2">
+          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#043084] flex items-center gap-2">
             <span>Collaboration Inquiries</span>
             {unreadCount > 0 && (
               <span className="rounded-full bg-[#17845B] text-white text-[10px] font-bold px-2 py-0.5">
@@ -163,14 +164,14 @@ export default function DashboardRequestsPage() {
               </span>
             )}
           </h1>
-          <p className="text-xs sm:text-[13px] text-[#64748b] font-medium mt-0.5">
+          <p className="text-xs sm:text-[13px] text-[#475569] font-medium mt-0.5">
             Incoming brand enquiries, partnership briefs, and messages received via your &quot;Work With Me&quot; profile form.
           </p>
         </div>
       </div>
 
       {/* Tabs Filter */}
-      <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-white border border-[#e2e8f0] shadow-xs overflow-x-auto">
+      <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white border border-[#e2e8f0] shadow-xs overflow-x-auto">
         {(["ALL", "NEW", "VIEWED", "REPLIED", "CLOSED"] as const).map((tab) => {
           const isSelected = activeTab === tab;
           const count = tab === "ALL" ? requests.length : requests.filter((r) => r.status === tab).length;
@@ -180,9 +181,9 @@ export default function DashboardRequestsPage() {
               key={tab}
               type="button"
               onClick={() => setActiveTab(tab)}
-              className={`tap-scale flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${isSelected
-                ? "bg-[#151933] text-white shadow-xs"
-                : "text-[#64748b] hover:text-[#151933] hover:bg-[#f1f5f9]"
+              className={`tap-scale flex items-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${isSelected
+                ? "bg-[#043084] text-white shadow-xs"
+                : "text-[#64748b] hover:text-[#043084] hover:bg-[#f1f5f9]"
                 }`}
             >
               <span>{tab === "ALL" ? "All Inquiries" : STATUS_CONFIG[tab].label}</span>
@@ -196,26 +197,22 @@ export default function DashboardRequestsPage() {
 
       {/* Requests List */}
       {loading ? (
-        <div className="rounded-2xl border border-[#e2e8f0] bg-white p-8 text-center text-xs text-[#64748b]">
+        <div className="rounded-xl border border-[#e2e8f0] bg-white p-6 text-center text-xs text-[#64748b]">
           Loading collaboration requests...
         </div>
       ) : filteredRequests.length === 0 ? (
         /* Empty State */
-        <div className="rounded-2xl border-2 border-dashed border-[#e2e8f0] bg-white p-8 sm:p-10 text-center space-y-3 max-w-xl mx-auto shadow-xs">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#151933]/[0.09] text-[#151933]">
-            <Inbox className="h-6 w-6" />
-          </div>
-          <div className="space-y-1">
-            <h3 className="font-display text-sm sm:text-base font-bold text-[#151933]">
-              No collaboration requests yet
-            </h3>
-            <p className="text-xs text-[#64748b] font-medium max-w-sm mx-auto leading-relaxed">
-              When brands or sponsors reach out through the &quot;Work With Me&quot; button on your public Inflixo profile, their inquiries will appear here.
-            </p>
-          </div>
-        </div>
+        <EmptyState
+          icon={<Inbox className="h-7 w-7" />}
+          title={activeTab !== "ALL" ? "No matching requests found" : "No collaboration requests yet"}
+          description={
+            activeTab !== "ALL"
+              ? "No requests found under this status filter. Select 'All' to view all inquiries."
+              : "When brands or sponsors reach out through the 'Work With Me' button on your public Inflixo profile, their inquiries will appear here."
+          }
+        />
       ) : (
-        <div className="rounded-2xl border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0] shadow-xs">
+        <div className="rounded-xl border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0] shadow-xs">
           {filteredRequests.map((req) => {
             const conf = STATUS_CONFIG[req.status] || STATUS_CONFIG.NEW;
             return (
@@ -224,21 +221,21 @@ export default function DashboardRequestsPage() {
                 onClick={() => handleOpenDetail(req)}
                 className="group px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#f1f5f9] transition-colors cursor-pointer text-left"
               >
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#15193314] border border-[#e2e8f0] text-[#151933] font-bold text-xs shrink-0">
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <div className="flex h-8.5 w-8.5 items-center justify-center rounded-lg bg-[#04308414] border border-[#e2e8f0] text-[#043084] font-bold text-xs shrink-0">
                     {req.senderName.charAt(0).toUpperCase()}
                   </div>
 
                   <div className="min-w-0 flex-1 space-y-0.5">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-bold text-xs sm:text-[13px] text-[#151933] truncate group-hover:text-[#151933] transition-colors">{req.senderName}</h3>
+                      <h3 className="font-bold text-xs sm:text-[13px] text-[#043084] truncate group-hover:text-[#043084] transition-colors">{req.senderName}</h3>
                       {req.companyName && (
                         <span className="text-[11px] font-semibold text-[#64748b] truncate">
                           • {req.companyName}
                         </span>
                       )}
                       {req.approxBudget && (
-                        <span className="text-[10px] font-semibold text-[#151933] bg-[#151933]/[0.09] border border-[#151933]/20 px-1.5 py-0.5 rounded-md truncate">
+                        <span className="text-[10px] font-semibold text-[#043084] bg-[#043084]/[0.09] border border-[#043084]/20 px-1.5 py-0.5 rounded-md truncate">
                           {req.approxBudget}
                         </span>
                       )}
@@ -262,7 +259,7 @@ export default function DashboardRequestsPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-1.5 shrink-0">
                   <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${conf.bg} ${conf.text} ${conf.border}`}>
                     {conf.label}
                   </span>
@@ -273,7 +270,7 @@ export default function DashboardRequestsPage() {
                       e.stopPropagation();
                       setRequestToDelete(req);
                     }}
-                    className="tap-scale flex h-7 w-7 items-center justify-center rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#151933] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                    className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#043084] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
                     title="Delete inquiry"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -300,7 +297,7 @@ export default function DashboardRequestsPage() {
               {/* Sender summary card */}
               <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 p-3 space-y-2">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-xs sm:text-sm text-[#151933]">{selectedRequest.senderName}</h3>
+                  <h3 className="font-bold text-xs sm:text-sm text-[#043084]">{selectedRequest.senderName}</h3>
                   <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border ${STATUS_CONFIG[selectedRequest.status].bg} ${STATUS_CONFIG[selectedRequest.status].text} ${STATUS_CONFIG[selectedRequest.status].border}`}>
                     {STATUS_CONFIG[selectedRequest.status].label}
                   </span>
@@ -309,26 +306,26 @@ export default function DashboardRequestsPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#64748b]">
                   {selectedRequest.companyName && (
                     <div className="flex items-center gap-1.5">
-                      <Building2 className="h-3.5 w-3.5 text-[#151933]" />
+                      <Building2 className="h-3.5 w-3.5 text-[#043084]" />
                       <span className="truncate"><strong>Company:</strong> {selectedRequest.companyName}</span>
                     </div>
                   )}
 
                   <div className="flex items-center gap-1.5">
-                    <Mail className="h-3.5 w-3.5 text-[#151933]" />
+                    <Mail className="h-3.5 w-3.5 text-[#043084]" />
                     <span className="truncate"><strong>Email:</strong> {selectedRequest.email}</span>
                   </div>
 
                   {selectedRequest.campaignType && (
                     <div className="flex items-center gap-1.5">
-                      <MessageSquare className="h-3.5 w-3.5 text-[#151933]" />
+                      <MessageSquare className="h-3.5 w-3.5 text-[#043084]" />
                       <span className="truncate"><strong>Type:</strong> {selectedRequest.campaignType}</span>
                     </div>
                   )}
 
                   {selectedRequest.approxBudget && (
                     <div className="flex items-center gap-1.5">
-                      <DollarSign className="h-3.5 w-3.5 text-[#151933]" />
+                      <DollarSign className="h-3.5 w-3.5 text-[#043084]" />
                       <span className="truncate"><strong>Budget:</strong> {selectedRequest.approxBudget}</span>
                     </div>
                   )}
@@ -337,17 +334,17 @@ export default function DashboardRequestsPage() {
 
               {/* Message Content */}
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#151933]">
+                <label className="block text-xs font-bold text-[#043084]">
                   Message / Requirement:
                 </label>
-                <div className="rounded-xl border border-[#e2e8f0] bg-white p-3 text-xs text-[#151933] leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto">
+                <div className="rounded-xl border border-[#e2e8f0] bg-white p-3 text-xs text-[#043084] leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto">
                   {selectedRequest.message}
                 </div>
               </div>
 
               {/* Status Update Selector */}
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#151933]">
+                <label className="block text-xs font-bold text-[#043084]">
                   Update Request Status:
                 </label>
                 <div className="grid grid-cols-4 gap-2">
@@ -358,7 +355,7 @@ export default function DashboardRequestsPage() {
                       disabled={isUpdating}
                       onClick={() => handleStatusChange(st)}
                       className={`tap-scale py-1.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${selectedRequest.status === st
-                        ? "bg-[#151933] text-white border-[#151933] shadow-xs"
+                        ? "bg-[#043084] text-white border-[#043084] shadow-xs"
                         : "border-[#e2e8f0] bg-white text-[#64748b] hover:bg-[#f1f5f9]"
                         }`}
                     >
@@ -381,7 +378,7 @@ export default function DashboardRequestsPage() {
               <div className="flex items-center gap-2">
                 <a
                   href={`mailto:${selectedRequest.email}?subject=Collaboration with ${encodeURIComponent(profile.displayName || "Inflixo Creator")}`}
-                  className="tap-scale bg-[#151933] hover:bg-brand-hover text-white font-semibold text-xs py-2 px-3.5 rounded-xl transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5"
+                  className="tap-scale bg-[#043084] hover:bg-brand-hover text-white font-semibold text-xs h-9 px-3.5 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5"
                 >
                   <Mail className="h-3.5 w-3.5" />
                   <span>Reply via Email</span>

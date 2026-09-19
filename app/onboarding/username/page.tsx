@@ -167,31 +167,29 @@ export default function UsernameStepPage() {
 
   return (
     <OnboardingLayout step="username">
-      <div className="w-full max-w-[500px] mx-auto pt-4 sm:pt-8">
-        {/* SINGLE UNIFIED WHITE CARD (Matching Screenshot) */}
-        <div className="rounded-[28px] border border-[#E7E3DC] bg-white p-6 sm:p-8 space-y-5 text-center shadow-[0_12px_38px_rgba(21,25,51,0.06)]">
+      <div className="w-full max-w-[460px] mx-auto pt-0 sm:pt-1">
+        {/* SINGLE UNIFIED WHITE CARD */}
+        <div className="rounded-2xl border border-[#e2e8f0] bg-white p-4 sm:p-5 space-y-3 text-center shadow-xs">
           {/* 1. Pill Badge */}
           <div className="flex justify-center">
-            <span className="inline-block rounded-full bg-[#151933]/[0.05] border border-[#151933]/15 px-4 py-1 text-[11px] font-bold uppercase tracking-widest text-[#151933]">
-              CHOOSE YOUR USERNAME
+            <span className="inline-block rounded-full bg-[#043084]/[0.05] border border-[#043084]/15 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#043084]">
+              STEP 1 OF 4 · USERNAME
             </span>
           </div>
 
           {/* 2. Heading */}
-          <div className="space-y-2 pt-0.5">
-            <h1 className="font-display text-3xl sm:text-[38px] font-extrabold text-[#181716] tracking-tight leading-[1.12]">
-              Claim your unique
-              <br />
-              username
+          <div className="space-y-1">
+            <h1 className="font-display text-xl sm:text-[24px] font-extrabold text-[#181716] tracking-tight leading-tight">
+              Claim your unique username
             </h1>
-            <p className="text-xs sm:text-[13px] font-normal text-[#54514D] max-w-sm mx-auto leading-relaxed">
+            <p className="text-xs font-normal text-[#54514D] max-w-sm mx-auto leading-relaxed">
               Choose the name people will use to find you on Inflixo. Your public creator profile will open at{" "}
               <span className="font-bold text-[#181716]">inflixo.com/username</span>.
             </p>
           </div>
 
           {/* 3. Input Form Area */}
-          <div className="space-y-2 text-left pt-1">
+          <div className="space-y-1 text-left">
             <label
               htmlFor="username-input"
               className="block text-xs font-semibold text-[#181716]"
@@ -200,10 +198,10 @@ export default function UsernameStepPage() {
             </label>
 
             <div
-              className={`flex h-12 items-center rounded-xl border px-3.5 bg-white transition-all focus-within:border-[#151933] focus-within:ring-2 focus-within:ring-[#151933]/10 ${error ? "border-[#ef4444]" : "border-[#E7E3DC]"
+              className={`flex h-10.5 sm:h-11 items-center rounded-xl border px-3 bg-white transition-all focus-within:border-[#043084] focus-within:ring-2 focus-within:ring-[#043084]/10 ${error ? "border-[#ef4444]" : "border-[#cbd5e1]"
                 }`}
             >
-              <span className="text-sm sm:text-base font-medium text-[#64748b] select-none">
+              <span className="text-xs sm:text-sm font-medium text-[#64748b] select-none">
                 inflixo.com/
               </span>
               <input
@@ -215,7 +213,7 @@ export default function UsernameStepPage() {
                 autoFocus
                 maxLength={30}
                 spellCheck={false}
-                className="h-full w-full min-w-0 flex-1 bg-transparent px-1 text-sm sm:text-base font-bold text-[#181716] outline-none placeholder:text-[#94a3b8]"
+                className="h-full w-full min-w-0 flex-1 bg-transparent px-1 text-xs sm:text-sm font-bold text-[#181716] outline-none placeholder:text-[#94a3b8]"
               />
               {checking && (
                 <Loader2 className="h-4 w-4 animate-spin text-[#64748b] shrink-0" />
@@ -224,27 +222,27 @@ export default function UsernameStepPage() {
 
             {/* Availability Feedback (below input) */}
             {status?.available && cleanHandle ? (
-              <div className="flex items-center gap-1.5 text-xs sm:text-[13px] font-semibold text-[#16a34a] pt-0.5 animate-fade-in">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-[#16a34a] pt-0.5 animate-fade-in">
                 <Check className="h-3.5 w-3.5 stroke-[3] text-[#16a34a]" />
                 <span>inflixo.com/{cleanHandle} is available</span>
               </div>
             ) : error ? (
-              <div className="flex items-center gap-1.5 text-xs sm:text-[13px] font-semibold text-[#ef4444] pt-0.5 animate-fade-in">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-[#ef4444] pt-0.5 animate-fade-in">
                 <AlertCircle className="h-3.5 w-3.5 text-[#ef4444]" />
                 <span>{error}</span>
               </div>
             ) : null}
           </div>
 
-          {/* 4. Choose Carefully Hint Box (Matching Screenshot) */}
-          <div className="rounded-xl bg-[#f1f5f9]/80 p-3.5 text-left text-xs text-[#54514D] leading-relaxed border border-[#e2e8f0]/60">
+          {/* 4. Choose Carefully Hint Box */}
+          <div className="rounded-xl bg-[#f8fafc] p-2 sm:p-2.5 text-left text-[11px] text-[#54514D] leading-relaxed border border-[#e2e8f0]">
             <span className="font-semibold text-[#181716]">Choose carefully:</span> use your creator name or familiar social handle. You can use 3–30 letters, numbers or underscores.
           </div>
 
           {/* Smart suggestions if taken */}
           {cleanHandle && (!status?.available || cleanHandle.length < 3) && (
-            <div className="pt-1 text-left space-y-1.5 animate-fade-in">
-              <span className="text-[11px] font-bold text-[#64748b] uppercase tracking-wider block">
+            <div className="text-left space-y-1 animate-fade-in">
+              <span className="text-[10px] font-bold text-[#64748b] uppercase tracking-wider block">
                 Suggested alternatives:
               </span>
               <div className="flex flex-wrap gap-1.5">
@@ -255,7 +253,7 @@ export default function UsernameStepPage() {
                       key={prefix}
                       type="button"
                       onClick={() => handlePickSuggestion(suggested)}
-                      className="rounded-lg bg-[#f8fafc] hover:bg-surface-soft hover:text-brand-primary border border-[#e2e8f0] px-2.5 py-1 text-xs font-semibold text-[#475569] transition-all cursor-pointer"
+                      className="rounded-lg bg-[#f8fafc] hover:bg-surface-soft hover:text-brand-primary border border-[#e2e8f0] px-2 py-0.5 text-xs font-semibold text-[#475569] transition-all cursor-pointer"
                     >
                       @{suggested}
                     </button>
@@ -265,12 +263,12 @@ export default function UsernameStepPage() {
             </div>
           )}
 
-          {/* 6. Primary CTA Button (Matching Screenshot) */}
+          {/* 6. Primary CTA Button */}
           <button
             type="button"
             onClick={handleClaimUsername}
             disabled={!isReadyToClaim || submitting}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#151933] hover:bg-brand-hover text-white font-semibold text-xs sm:text-sm h-12 transition-all cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#043084] hover:bg-brand-hover text-white font-semibold text-xs sm:text-sm h-10.5 sm:h-11 transition-all cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
           >
             {submitting ? (
               <>

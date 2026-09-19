@@ -85,37 +85,37 @@ export function OnboardingLayout({
   }
 
   return (
-    <div className="min-h-dvh bg-[#f8fafc] scroll-pt-32">
+    <div className="min-h-dvh bg-[#f8fafc] scroll-pt-28">
       {/* Sticky Header section with Top Navbar + Step Navigation (fixed/sticky so it never scrolls) */}
-      <header className="sticky top-0 z-50 w-full border-b border-[#e2e8f0] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
-        {/* Top Navbar Row - Full Width with Increased Height */}
-        <div className="w-full flex items-center justify-between gap-4 px-4 sm:px-8 lg:px-12 py-3.5 sm:py-4.5 border-b border-[#e2e8f0] bg-white">
+      <header className="sticky top-0 z-50 w-full border-b border-[#e2e8f0] bg-white shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+        {/* Top Navbar Row - Tight, neat, and minimal padding */}
+        <div className="w-full flex items-center justify-between gap-3 px-3.5 sm:px-6 lg:px-8 py-1.5 sm:py-2 border-b border-[#e2e8f0] bg-white">
           {/* Left: Logo */}
-          <div className="flex items-center gap-3">
-            <Logo size="md" />
+          <div className="flex items-center gap-2">
+            <Logo size="sm" />
           </div>
 
           {/* Center: Subtle Verified Email Indicator */}
           {email && (
-            <div className="flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3.5 py-1.5 text-xs font-semibold text-emerald-800 shadow-xs">
-              <Check className="h-4 w-4 text-emerald-600 stroke-[3]" />
-              <span className="truncate max-w-[160px] sm:max-w-xs font-medium">{email}</span>
+            <div className="flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-800 shadow-2xs">
+              <Check className="h-3 w-3 text-emerald-600 stroke-[3]" />
+              <span className="truncate max-w-[140px] sm:max-w-xs font-medium">{email}</span>
             </div>
           )}
 
           {/* Right: Save & Logout */}
           <button
             onClick={handleSaveAndLogout}
-            className="tap-scale flex shrink-0 items-center gap-2 rounded-full border border-[#e2e8f0] bg-white px-4 py-2 text-xs font-bold text-[#475569] transition-all hover:border-[#cbd5e1] hover:bg-[#f8fafc] hover:text-[#151933] shadow-xs cursor-pointer"
+            className="tap-scale flex shrink-0 items-center gap-1.5 rounded-full border border-[#e2e8f0] bg-white px-2.5 py-1 text-xs font-bold text-[#475569] transition-all hover:border-[#cbd5e1] hover:bg-[#f8fafc] hover:text-[#043084] shadow-2xs cursor-pointer"
           >
-            <LogOut className="h-4 w-4 text-[#64748b]" />
+            <LogOut className="h-3.5 w-3.5 text-[#64748b]" />
             <span className="hidden sm:inline">Save &amp; logout</span>
             <span className="sm:hidden">Logout</span>
           </button>
         </div>
 
         {/* Subheader bar below Top Navbar containing step progress - Centered */}
-        <div className="w-full bg-white px-3.5 py-3 sm:px-8">
+        <div className="w-full bg-white px-3.5 py-1.5 sm:px-6 sm:py-2">
           <div className="mx-auto max-w-6xl flex items-center justify-between">
             <ProgressSteps current={step} />
           </div>
@@ -126,24 +126,24 @@ export function OnboardingLayout({
       <div className="w-full">
         {isFullWidthStep ? (
           /* Full Screen / Full Width Layout for Subscription & Finish steps */
-          <div className="mx-auto max-w-full sm:max-w-[95%] w-full px-3 pb-16 pt-5 sm:px-8 sm:pb-20 sm:pt-6">
+          <div className="mx-auto max-w-full sm:max-w-[95%] w-full px-3 pb-6 pt-1.5 sm:px-6 sm:pb-8 sm:pt-2">
             <main key={step} className="onboarding-step-enter w-full">
               {children}
             </main>
           </div>
         ) : (
           /* Split Layout with 50-50 wide desktop split */
-          <div className="mx-auto flex max-w-7xl w-full flex-col lg:flex-row gap-8">
+          <div className="mx-auto flex max-w-7xl w-full flex-col lg:flex-row gap-4 lg:gap-6">
             {/* Left form column - scrolls normally */}
-            <main className="flex-1 px-3.5 pb-16 pt-4 sm:px-8 sm:pb-20 sm:pt-6 lg:w-[50%] max-w-xl mx-auto lg:max-w-none">
+            <main className="flex-1 px-3 pb-6 pt-1.5 sm:px-5 sm:pb-8 sm:pt-2 lg:w-[50%] max-w-xl mx-auto lg:max-w-none">
               <div key={step} className="onboarding-step-enter">{children}</div>
             </main>
 
             {/* Right live preview column - sticky below header and contained in viewport */}
             {preview && (
-              <aside className="hidden flex-1 border-l border-[#E4DAD5] bg-[#fbfbfb] px-6 py-4 pb-20 lg:block lg:w-[50%] min-w-[440px]">
-                <div className="sticky top-[136px] max-h-[calc(100vh-148px)] overflow-y-auto pr-1 pb-6 scrollbar-thin flex flex-col items-center">
-                  <div className="w-full max-w-[480px]">
+              <aside className="hidden flex-1 border-l border-[#e2e8f0] bg-[#fbfbfb] px-3 py-1.5 pb-6 lg:block lg:w-[50%] min-w-[400px]">
+                <div className="sticky top-[92px] max-h-[calc(100vh-104px)] overflow-y-auto pr-1 pb-2 scrollbar-thin flex flex-col items-center">
+                  <div className="w-full max-w-[450px]">
                     {preview}
                   </div>
                 </div>
@@ -185,7 +185,7 @@ export function OnboardingLayout({
               <button
                 type="button"
                 onClick={() => setIsMobilePreviewOpen(false)}
-                className="w-full rounded-xl bg-[#151933] hover:bg-[#151933] py-3 text-xs font-bold text-white transition-colors cursor-pointer text-center shadow-xs"
+                className="w-full rounded-xl bg-[#043084] hover:bg-[#043084] py-3 text-xs font-bold text-white transition-colors cursor-pointer text-center shadow-xs"
               >
                 Back to Editing Form
               </button>

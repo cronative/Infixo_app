@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminToken } from "@/lib/adminAuth";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 
 export async function POST(req: Request) {
   try {
@@ -11,6 +12,16 @@ export async function POST(req: Request) {
       const response = NextResponse.json({ success: true, message: "Logged out successfully" });
       response.cookies.delete("inflixo_admin_token");
       return response;
+    }
+
+    // Rate Limiting Protection (Max 5 attempts per 10 minutes per IP)
+    const clientIp = getClientIp(req);
+    const rateCheck = checkRateLimit(`admin_auth_${clientIp}`, 5, 10 * 60 * 1000);
+    if (!rateCheck.success) {
+      return NextResponse.json(
+        { error: `Too many admin login attempts. Please wait ${rateCheck.retryAfterSec} seconds.` },
+        { status: 429 }
+      );
     }
 
     const expectedEmail = (process.env.ADMIN_EMAIL || "admin@inflixo.com").toLowerCase().trim();

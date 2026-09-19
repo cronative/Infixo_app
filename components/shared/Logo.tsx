@@ -19,21 +19,48 @@ import {
 export function LogoStadiumLinkI({
   className = "h-6 w-6",
   color = "dark",
+  style,
 }: {
   className?: string;
-  color?: "dark" | "white";
+  color?: "dark" | "white" | "color" | "current";
+  style?: React.CSSProperties;
 }) {
+  if (color === "current") {
+    return (
+      <span
+        className={`${className} inline-block shrink-0`}
+        style={{
+          maskImage: "url(/images/inflixo-logo-icon-043084.png)",
+          WebkitMaskImage: "url(/images/inflixo-logo-icon-043084.png)",
+          maskSize: "contain",
+          WebkitMaskSize: "contain",
+          maskRepeat: "no-repeat",
+          WebkitMaskRepeat: "no-repeat",
+          maskPosition: "center",
+          WebkitMaskPosition: "center",
+          backgroundColor: "currentColor",
+          ...style,
+        }}
+        aria-hidden="true"
+      />
+    );
+  }
+
+  const imageSrc =
+    color === "white"
+      ? "/images/inflixo-logo-icon-white-transparent.png"
+      : color === "color"
+      ? "/images/inflixo-logo-icon.png"
+      : "/images/inflixo-logo-icon-043084.png";
+
   return (
     <Image
-      src={
-        color === "white"
-          ? "/images/inflixo-logo-icon-white-transparent.png"
-          : "/images/inflixo-logo-icon-151933-transparent.png"
-      }
+      src={imageSrc}
       alt="Inflixo"
       width={100}
       height={100}
       className={`${className} object-contain`}
+      style={style}
       priority
     />
   );
@@ -109,14 +136,21 @@ export function LogoUniversalLinkI({
 export function InflixoLogoIcon({
   className = "h-6 w-6",
   light = false,
+  color,
+  style,
 }: {
   className?: string;
   light?: boolean;
+  color?: "dark" | "white" | "color" | "current";
+  style?: React.CSSProperties;
 }) {
+  const resolvedColor = color || (light ? "white" : "current");
+
   return (
     <LogoStadiumLinkI
       className={className}
-      color={light ? "white" : "dark"}
+      color={resolvedColor}
+      style={style}
     />
   );
 }
@@ -138,7 +172,7 @@ export function Logo({
   size?: "sm" | "md" | "lg" | "xl";
   href?: string;
   light?: boolean;
-  variant?: "gradient" | "black" | "white" | "brand";
+  variant?: "gradient" | "black" | "white" | "brand" | "color";
   styleName?: "stadium-link-i" | "universal-link-i";
   orientation?: "horizontal" | "vertical";
   showText?: boolean;
@@ -225,11 +259,12 @@ export function Logo({
    * ============================================================
    */
   const badgeStyles = {
-    gradient: "bg-[#151933]",
-    black: "bg-[#151933]",
-    brand: "bg-[#151933]",
-    white: "bg-white border border-[#e5e7eb]",
-  }[variant];
+    gradient: "bg-[#043084]",
+    black: "bg-[#043084]",
+    brand: "bg-[#043084]",
+    white: "bg-white border border-[#e2e8f0]",
+    color: "bg-[#eff6ff] border border-[#dbeafe]",
+  }[variant] || "bg-[#043084]";
 
   /**
    * ============================================================
@@ -237,10 +272,15 @@ export function Logo({
    * ============================================================
    *
    * Dark badge -> white logo
-   * White badge -> #151933 logo
+   * White badge -> #043084 logo
+   * Color badge -> full 3D color logo
    */
-  const primaryLogoColor =
-    variant === "white" ? "dark" : "white";
+  const primaryLogoColor: "dark" | "white" | "color" =
+    variant === "color"
+      ? "color"
+      : variant === "white"
+      ? "dark"
+      : "white";
 
   return (
     <Link
@@ -280,7 +320,7 @@ export function Logo({
             className={`
               ${iconSize}
               ${variant === "white"
-                ? "text-[#151933]"
+                ? "text-[#043084]"
                 : "text-white"
               }
             `}
@@ -306,7 +346,7 @@ export function Logo({
             transition-colors
             ${light
               ? "text-white"
-              : "text-[#151933]"
+              : "text-[#043084]"
             }
           `}
         >

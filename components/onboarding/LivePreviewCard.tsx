@@ -163,17 +163,17 @@ const BLUSH_PAPER_STYLE: ThemeStyleConfig = {
 };
 
 const STUDIO_FROST_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#F8FAFC] via-white to-[#EEF4FF] border border-[#D8E2F0] text-[#151933] shadow-xl",
+  cardBg: "bg-gradient-to-b from-[#F8FAFC] via-white to-[#EEF4FF] border border-[#D8E2F0] text-[#043084] shadow-xl",
   profBadgeBg: "bg-white/92 backdrop-blur-md",
-  profBadgeText: "text-[#151933]",
+  profBadgeText: "text-[#043084]",
   profBadgeBorder: "border-[#D8E2F0]",
   fanbaseBg: "bg-white/92 backdrop-blur-md",
-  fanbaseText: "text-[#151933]",
+  fanbaseText: "text-[#043084]",
   socialItemBg: "bg-white/88 hover:bg-[#F1F5F9] backdrop-blur-md",
-  socialItemBorder: "border-[#D8E2F0] hover:border-[#151933]/24",
-  socialNameColor: "text-[#151933]",
+  socialItemBorder: "border-[#D8E2F0] hover:border-[#043084]/24",
+  socialNameColor: "text-[#043084]",
   socialUnitColor: "text-[#64748B]",
-  nameColor: "text-[#151933]",
+  nameColor: "text-[#043084]",
   bioColor: "text-[#475569]",
   handleColor: "text-[#64748B]",
 };
@@ -181,12 +181,12 @@ const STUDIO_FROST_STYLE: ThemeStyleConfig = {
 const TAJ_MAHAL_STYLE: ThemeStyleConfig = {
   cardBg: "bg-[#FFFDF7]/56 border border-white/45 text-[#221A12] shadow-xl backdrop-blur-lg",
   profBadgeBg: "bg-white/72 backdrop-blur-md",
-  profBadgeText: "text-[#151933]",
+  profBadgeText: "text-[#043084]",
   profBadgeBorder: "border-[#DCCDB2]/70",
   fanbaseBg: "bg-white/80 backdrop-blur-md",
   fanbaseText: "text-[#221A12]",
   socialItemBg: "bg-white/78 hover:bg-[#F7F0E4]/88 backdrop-blur-md",
-  socialItemBorder: "border-[#DCCDB2]/70 hover:border-[#151933]/28",
+  socialItemBorder: "border-[#DCCDB2]/70 hover:border-[#043084]/28",
   socialNameColor: "text-[#221A12]",
   socialUnitColor: "text-[#766A58]",
   nameColor: "text-[#221A12]",
@@ -229,12 +229,12 @@ const BURJ_KHALIFA_STYLE: ThemeStyleConfig = {
 const SOMNATH_TEMPLE_STYLE: ThemeStyleConfig = {
   cardBg: "bg-[#FFF8EC]/60 border border-white/42 text-[#261A0F] shadow-xl backdrop-blur-lg",
   profBadgeBg: "bg-white/74 backdrop-blur-md",
-  profBadgeText: "text-[#151933]",
+  profBadgeText: "text-[#043084]",
   profBadgeBorder: "border-[#E6C58B]/55",
   fanbaseBg: "bg-white/80 backdrop-blur-md",
   fanbaseText: "text-[#261A0F]",
   socialItemBg: "bg-white/78 hover:bg-[#FFF0D4]/90 backdrop-blur-md",
-  socialItemBorder: "border-[#E6C58B]/55 hover:border-[#151933]/28",
+  socialItemBorder: "border-[#E6C58B]/55 hover:border-[#043084]/28",
   socialNameColor: "text-[#261A0F]",
   socialUnitColor: "text-[#7B664E]",
   nameColor: "text-[#261A0F]",
@@ -245,12 +245,12 @@ const SOMNATH_TEMPLE_STYLE: ThemeStyleConfig = {
 const DWARKA_TEMPLE_STYLE: ThemeStyleConfig = {
   cardBg: "bg-[#F7FBF8]/58 border border-white/42 text-[#14251D] shadow-xl backdrop-blur-lg",
   profBadgeBg: "bg-white/74 backdrop-blur-md",
-  profBadgeText: "text-[#151933]",
+  profBadgeText: "text-[#043084]",
   profBadgeBorder: "border-[#B7D0C0]/60",
   fanbaseBg: "bg-white/80 backdrop-blur-md",
   fanbaseText: "text-[#14251D]",
   socialItemBg: "bg-white/78 hover:bg-[#EAF4ED]/90 backdrop-blur-md",
-  socialItemBorder: "border-[#B7D0C0]/60 hover:border-[#151933]/28",
+  socialItemBorder: "border-[#B7D0C0]/60 hover:border-[#043084]/28",
   socialNameColor: "text-[#14251D]",
   socialUnitColor: "text-[#597163]",
   nameColor: "text-[#14251D]",
@@ -261,12 +261,12 @@ const DWARKA_TEMPLE_STYLE: ThemeStyleConfig = {
 const GOA_BEACH_STYLE: ThemeStyleConfig = {
   cardBg: "bg-[#FFF8EF]/58 border border-white/44 text-[#241A12] shadow-xl backdrop-blur-lg",
   profBadgeBg: "bg-white/74 backdrop-blur-md",
-  profBadgeText: "text-[#151933]",
+  profBadgeText: "text-[#043084]",
   profBadgeBorder: "border-[#F0C98D]/60",
   fanbaseBg: "bg-white/80 backdrop-blur-md",
   fanbaseText: "text-[#241A12]",
   socialItemBg: "bg-white/78 hover:bg-[#FFF0D8]/90 backdrop-blur-md",
-  socialItemBorder: "border-[#F0C98D]/60 hover:border-[#151933]/28",
+  socialItemBorder: "border-[#F0C98D]/60 hover:border-[#043084]/28",
   socialNameColor: "text-[#241A12]",
   socialUnitColor: "text-[#7A5F49]",
   nameColor: "text-[#241A12]",
@@ -275,17 +275,17 @@ const GOA_BEACH_STYLE: ThemeStyleConfig = {
 };
 
 const CREATOR_STUDIO_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-[#F8FAFC] border border-[#D8E2F0] text-[#151933] shadow-xl",
+  cardBg: "bg-[#F8FAFC] border border-[#D8E2F0] text-[#043084] shadow-xl",
   profBadgeBg: "bg-white",
-  profBadgeText: "text-[#151933]",
+  profBadgeText: "text-[#043084]",
   profBadgeBorder: "border-[#D8E2F0]",
   fanbaseBg: "bg-white",
-  fanbaseText: "text-[#151933]",
+  fanbaseText: "text-[#043084]",
   socialItemBg: "bg-white hover:bg-[#F1F5F9]",
-  socialItemBorder: "border-[#D8E2F0] hover:border-[#151933]/25",
-  socialNameColor: "text-[#151933]",
+  socialItemBorder: "border-[#D8E2F0] hover:border-[#043084]/25",
+  socialNameColor: "text-[#043084]",
   socialUnitColor: "text-[#64748B]",
-  nameColor: "text-[#151933]",
+  nameColor: "text-[#043084]",
   bioColor: "text-[#475569]",
   handleColor: "text-[#64748B]",
 };
@@ -355,19 +355,19 @@ const GAMER_STREAM_STYLE: ThemeStyleConfig = {
 };
 
 const SIGNATURE_PURPLE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#FAF5FF] via-[#FDFBFE] to-[#F8F2F7] border border-[#151933]/18 text-slate-900 shadow-lg",
+  cardBg: "bg-gradient-to-b from-[#FAF5FF] via-[#FDFBFE] to-[#F8F2F7] border border-[#043084]/18 text-slate-900 shadow-lg",
   profBadgeBg: "bg-white/80 backdrop-blur-md",
-  profBadgeText: "text-[#151933]",
-  profBadgeBorder: "border-[#151933]/18",
+  profBadgeText: "text-[#043084]",
+  profBadgeBorder: "border-[#043084]/18",
   fanbaseBg: "bg-white/80 backdrop-blur-md",
   fanbaseText: "text-[#17131A]",
   socialItemBg: "bg-white/80 hover:bg-surface-soft backdrop-blur-md",
-  socialItemBorder: "border-[#151933]/18 hover:border-brand-primary/30",
+  socialItemBorder: "border-[#043084]/18 hover:border-brand-primary/30",
   socialNameColor: "text-[#17131A]",
   socialUnitColor: "text-[#6F6872]",
   nameColor: "text-[#17131A]",
   bioColor: "text-[#6F6872]",
-  handleColor: "text-[#151933]",
+  handleColor: "text-[#043084]",
 };
 
 const MIDNIGHT_DARK_STYLE: ThemeStyleConfig = {
@@ -470,19 +470,19 @@ const SUNSET_STUDIO_STYLE: ThemeStyleConfig = {
 };
 
 const MINIMAL_SPARK_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-white to-[#FAF8FA] text-[#17131A] border border-[#151933]/16 shadow-2xs",
+  cardBg: "bg-gradient-to-b from-white to-[#FAF8FA] text-[#17131A] border border-[#043084]/16 shadow-2xs",
   profBadgeBg: "bg-white/90",
-  profBadgeText: "text-[#151933]",
-  profBadgeBorder: "border-[#151933]/20",
+  profBadgeText: "text-[#043084]",
+  profBadgeBorder: "border-[#043084]/20",
   fanbaseBg: "bg-white/90 backdrop-blur-md",
   fanbaseText: "text-[#17131A]",
   socialItemBg: "bg-white/80 hover:bg-surface-soft backdrop-blur-md",
-  socialItemBorder: "border-[#151933]/16 hover:border-brand-primary/30",
+  socialItemBorder: "border-[#043084]/16 hover:border-brand-primary/30",
   socialNameColor: "text-[#17131A]",
   socialUnitColor: "text-[#6F6872]",
   nameColor: "text-[#17131A]",
   bioColor: "text-[#6F6872]",
-  handleColor: "text-[#151933]",
+  handleColor: "text-[#043084]",
 };
 
 const NEON_GRID_STYLE: ThemeStyleConfig = {
@@ -552,7 +552,7 @@ const SPOTLIGHT_STAGE_STYLE: ThemeStyleConfig = {
 const CREATIVE_PAPER_STYLE: ThemeStyleConfig = {
   cardBg: "bg-gradient-to-b from-[#FAF6F0] to-[#EDE5DB] text-[#29221D] border border-[#E3D9CC] shadow-xl",
   profBadgeBg: "bg-white/90",
-  profBadgeText: "text-[#151933]",
+  profBadgeText: "text-[#043084]",
   profBadgeBorder: "border-[#E3D9CC]",
   fanbaseBg: "bg-white/90 backdrop-blur-md",
   fanbaseText: "text-[#29221D]",
@@ -562,7 +562,7 @@ const CREATIVE_PAPER_STYLE: ThemeStyleConfig = {
   socialUnitColor: "text-[#6A5E57]",
   nameColor: "text-[#29221D]",
   bioColor: "text-[#6A5E57]",
-  handleColor: "text-[#151933]",
+  handleColor: "text-[#043084]",
 };
 
 const LOVE_LETTER_STYLE: ThemeStyleConfig = {
@@ -1044,23 +1044,23 @@ export function LivePreviewCard({
 
   const effectiveVisibilitySettings: VisibilitySettings = seriesOnlyMode
     ? {
+      ...visibilitySettings,
+      showFanbase: false,
+      showCustomLinks: false,
+      showCollabGigs: false,
+      showReviews: false,
+      showSeries: true,
+    }
+    : reviewsOnlyMode
+      ? {
         ...visibilitySettings,
         showFanbase: false,
         showCustomLinks: false,
         showCollabGigs: false,
-        showReviews: false,
-        showSeries: true,
+        showSeries: false,
+        showReviews: true,
       }
-    : reviewsOnlyMode
-      ? {
-          ...visibilitySettings,
-          showFanbase: false,
-          showCustomLinks: false,
-          showCollabGigs: false,
-          showSeries: false,
-          showReviews: true,
-        }
-    : visibilitySettings;
+      : visibilitySettings;
 
 
   const handleSaveVisibilitySettings = async (newSettings: VisibilitySettings) => {
@@ -1413,9 +1413,9 @@ export function LivePreviewCard({
       }}
       className={`relative flex-1 flex flex-col min-h-0 overflow-hidden ${isFull
         ? isDefaultCleanLayout
-          ? "px-3.5 py-5 sm:px-7 sm:py-7 rounded-[28px] border shadow-xl"
+          ? "px-3.5 py-4 sm:px-5 sm:py-5 rounded-[22px] border shadow-lg"
           : "p-0 border-0 shadow-none bg-transparent"
-        : `${cardPadding ? cardPadding : "p-4 sm:p-6 pt-6 sm:pt-8"} rounded-[24px] border shadow-md`
+        : `${cardPadding ? cardPadding : "p-3.5 sm:p-5 pt-4 sm:pt-6"} rounded-[20px] border shadow-md`
         } transition-all`}
     >
       {/* Ambient Animation in Preview mode when theme supports it */}
@@ -1431,18 +1431,22 @@ export function LivePreviewCard({
       {/* Focus Overlay between animated background and content */}
       {!isFull && <FocusOverlay overlay={themeMeta.focusOverlay} contained={true} />}
 
-      {/* Top Action Bar (Left Inflixo Logo Squircle, Right Share Icon Squircle) */}
+      {/* Top Action Bar (Left Inflixo Logo Square with radius, Right Share Icon Square with radius) */}
       <div
         className={`relative z-30 flex items-center justify-between w-full px-0.5 bg-transparent ${containedScroll ? "shrink-0 pt-0 pb-2" : "mb-2"}`}
       >
         <Link
           href="/"
-          style={{ backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.accent }}
-          className="tap-scale flex h-11 w-11 shrink-0 cursor-pointer select-none items-center justify-center rounded-xl border border-white/25 text-white shadow-sm shadow-black/10 transition-all hover:scale-105 sm:h-12 sm:w-12"
+          style={{
+            backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.cardBackground,
+            borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : c.border,
+            color: usesDarkControls ? "#FFFFFF" : c.primaryText,
+          }}
+          className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 shrink-0 cursor-pointer select-none items-center justify-center rounded-[10px] border shadow-xs transition-all hover:scale-105"
           title="Inflixo"
           aria-label="Inflixo"
         >
-          <InflixoLogoIcon light className="h-7 w-7 object-contain sm:h-8 sm:w-8" />
+          <InflixoLogoIcon light={usesDarkControls} className="h-5 w-5 sm:h-5.5 sm:w-5.5 object-contain" />
         </Link>
 
         {!isOnboardingMode && (
@@ -1454,11 +1458,11 @@ export function LivePreviewCard({
               borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : c.border,
               color: usesDarkControls ? "#FFFFFF" : c.primaryText,
             }}
-            className="tap-scale flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl border shadow-sm shadow-black/10 transition-all hover:scale-105 sm:h-12 sm:w-12"
+            className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 cursor-pointer items-center justify-center rounded-[10px] border shadow-xs transition-all hover:scale-105"
             title="Share profile"
             aria-label="Share profile"
           >
-            <Share2 className="h-5 w-5 sm:h-[22px] sm:w-[22px]" />
+            <Share2 className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
           </button>
         )}
       </div>
@@ -1469,152 +1473,152 @@ export function LivePreviewCard({
         className={containedScroll ? "relative z-10 flex flex-1 min-h-0 flex-col overflow-y-auto overflow-x-hidden overscroll-contain pt-1 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" : "contents"}
       >
 
-      {/* 1. Profile Header Section */}
-      <div className="relative z-10 flex flex-col items-center text-center">
-        {/* Circular Avatar */}
-        <div className="relative inline-block mx-auto">
-          <CreatorAvatar
-            src={profile.photoDataUrl}
-            name={profile.displayName || "Creator"}
-            className="h-[74px] w-[74px] sm:h-[82px] sm:w-[82px] rounded-full aspect-square object-contain object-center overflow-hidden border-2 border-white/80 ring-4 ring-black/5 shadow-md mx-auto bg-white"
-            style={{ borderColor: c.border || "#FFFFFF", backgroundColor: c.cardBackground }}
-            textClassName="text-xl sm:text-2xl font-extrabold"
-            textStyle={{ color: c.primaryText }}
-            fallbackBgClass="bg-[#151933]"
-          />
-        </div>
-
-        {/* Creator Name & Verified Checkmark */}
-        <div className="mt-2 flex items-center justify-center gap-1.5 max-w-full">
-          <h1
-            style={{
-              color: c.primaryText,
-              fontFamily: typ.headingFontFamily,
-              fontWeight: 700,
-            }}
-            className="text-[22px] sm:text-[24px] font-bold tracking-tight"
-          >
-            {profile.displayName || "Creator Name"}
-          </h1>
-          {Boolean(profile.isVerified) && (
-            <svg className="w-5 h-5 text-emerald-500 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-label="Verified Creator">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L9 14.17l9.59-9.59L20 6l-10 11z" />
-            </svg>
-          )}
-        </div>
-
-        {/* Username */}
-        {cleanHandle && (
-          <p
-            style={{ color: c.mutedText }}
-            className="text-xs sm:text-[13px] font-medium text-center mt-0.5"
-          >
-            @{cleanHandle}
-          </p>
-        )}
-
-        {/* Categories: Dot-separated text without pill */}
-      {effectiveVisibilitySettings.showContentCategory !== false && formattedCategories && (
-          <p
-            style={{ color: c.secondaryText }}
-            className="mt-1 text-xs sm:text-[13px] font-medium text-center tracking-normal"
-          >
-            {formattedCategories}
-          </p>
-        )}
-
-        {/* Short Creator Bio */}
-        {profile.bio && profile.bio.trim() && (
-          <p
-            style={{ color: c.secondaryText }}
-            className="mt-1.5 text-xs sm:text-sm leading-relaxed max-w-lg mx-auto font-normal px-1 text-center"
-          >
-            {profile.bio}
-          </p>
-        )}
-
-        {/* Clickable Social Icons Row */}
-        {headerSocialList.length > 0 && (
-          <div className="mt-2 flex items-center justify-center gap-3 sm:gap-3.5 flex-wrap">
-            {headerSocialList.map((item) => (
-              <a
-                key={item.platform}
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => {
-                  if (isInformationalMode) {
-                    e.preventDefault();
-                    showToast(`Redirects to ${item.label} on live profile ✨`);
-                  }
-                }}
-                style={{ color: c.primaryText }}
-                className="tap-scale flex h-6 w-6 items-center justify-center transition-all hover:scale-110 cursor-pointer"
-                title={`Visit ${item.label}`}
-                aria-label={item.label}
-              >
-                <span className="flex items-center justify-center">
-                  {item.platform === "instagram" && <InstagramIcon className="h-[18px] w-[18px] text-pink-500" />}
-                  {item.platform === "youtube" && <YoutubeIcon className="h-[18px] w-[18px] text-red-500" />}
-                  {item.platform === "facebook" && <FacebookIcon className="h-[18px] w-[18px] text-blue-500" />}
-                  {item.platform === "twitter" && <XTwitterIcon className="h-4 w-4" style={{ color: c.primaryText }} />}
-                  {item.platform === "linkedin" && <LinkedinIcon className="h-[18px] w-[18px] text-sky-600" />}
-                  {item.platform === "threads" && <ThreadsIcon className="h-[18px] w-[18px]" style={{ color: c.primaryText }} />}
-                  {item.platform === "snapchat" && <SnapchatIcon className="h-[18px] w-[18px] text-amber-400" />}
-                  {item.platform === "spotify" && <SpotifyIcon className="h-[18px] w-[18px] text-emerald-500" />}
-                  {item.platform === "twitch" && <TwitchIcon className="h-[18px] w-[18px] text-purple-500" />}
-                  {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch"].includes(item.platform) && (
-                    <Globe className="h-[18px] w-[18px]" style={{ color: c.accentText }} />
-                  )}
-                </span>
-              </a>
-            ))}
+        {/* 1. Profile Header Section */}
+        <div className="relative z-10 flex flex-col items-center text-center">
+          {/* Circular Avatar */}
+          <div className="relative inline-block mx-auto">
+            <CreatorAvatar
+              src={profile.photoDataUrl}
+              name={profile.displayName || "Creator"}
+              className="h-[68px] w-[68px] sm:h-[76px] sm:w-[76px] rounded-full aspect-square object-contain object-center overflow-hidden border-2 border-white/80 ring-3 ring-black/5 shadow-sm mx-auto bg-white"
+              style={{ borderColor: c.border || "#FFFFFF", backgroundColor: c.cardBackground }}
+              textClassName="text-lg sm:text-xl font-extrabold"
+              textStyle={{ color: c.primaryText }}
+              fallbackBgClass="bg-[#043084]"
+            />
           </div>
-        )}
-      </div>
 
-      {/* 2. Total Fanbase USP Block */}
-      {effectiveVisibilitySettings.showFanbase !== false && (
-        <div className="relative z-10 mt-5 sm:mt-6 w-full space-y-2.5">
-          <div
-            style={{
-              backgroundColor: c.cardBackground,
-              borderColor: c.border,
-              boxShadow: eff.cardShadow,
-            }}
-            className="rounded-[14px] border px-4 py-4 sm:py-5 text-center shadow-xs"
-          >
-            <span
-              style={{ color: c.mutedText }}
-              className="block text-[11px] sm:text-xs font-extrabold tracking-[0.16em] uppercase"
-            >
-              Total Fanbase
-            </span>
-            <p
+          {/* Creator Name & Verified Checkmark */}
+          <div className="mt-1.5 flex items-center justify-center gap-1.5 max-w-full">
+            <h1
               style={{
                 color: c.primaryText,
                 fontFamily: typ.headingFontFamily,
-                fontWeight: 900,
+                fontWeight: 700,
               }}
-              className="mt-1.5 text-3xl sm:text-4xl leading-none font-black tabular-nums tracking-tight"
+              className="text-xl sm:text-[22px] font-bold tracking-tight"
             >
-              {formatCount(totalAudience)}
-            </p>
-            <p
-              style={{ color: c.secondaryText }}
-              className="mt-1.5 text-xs sm:text-[13px] font-medium"
-            >
-              Total Fanbase Across Primary Platforms
-            </p>
+              {profile.displayName || "Creator Name"}
+            </h1>
+            {Boolean(profile.isVerified) && (
+              <svg className="w-4.5 h-4.5 text-emerald-500 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-label="Verified Creator">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L9 14.17l9.59-9.59L20 6l-10 11z" />
+              </svg>
+            )}
           </div>
 
-          {/* Clickable Platform Cards */}
-          {fanbaseSocialCards.length > 0 && (
-            <div
-              className="grid gap-2.5 sm:gap-3"
-              style={{ gridTemplateColumns: fanbaseSocialGridColumns }}
+          {/* Username */}
+          {cleanHandle && (
+            <p
+              style={{ color: c.mutedText }}
+              className="text-xs sm:text-[13px] font-medium text-center mt-0.5"
             >
-              {fanbaseSocialCards.map((item) => (
+              @{cleanHandle}
+            </p>
+          )}
+
+          {/* Categories: Dot-separated text without pill */}
+          {effectiveVisibilitySettings.showContentCategory !== false && formattedCategories && (
+            <p
+              style={{ color: c.secondaryText }}
+              className="mt-0.5 text-xs font-medium text-center tracking-normal opacity-85"
+            >
+              {formattedCategories}
+            </p>
+          )}
+
+          {/* Short Creator Bio */}
+          {profile.bio && profile.bio.trim() && (
+            <p
+              style={{ color: c.secondaryText }}
+              className="mt-1 text-xs sm:text-[13px] leading-relaxed max-w-md mx-auto font-normal px-1 text-center"
+            >
+              {profile.bio}
+            </p>
+          )}
+
+          {/* Clickable Social Icons Row */}
+          {headerSocialList.length > 0 && (
+            <div className="mt-2 flex items-center justify-center gap-2.5 sm:gap-3 flex-wrap">
+              {headerSocialList.map((item) => (
+                <a
+                  key={item.platform}
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    if (isInformationalMode) {
+                      e.preventDefault();
+                      showToast(`Redirects to ${item.label} on live profile ✨`);
+                    }
+                  }}
+                  style={{ color: c.primaryText }}
+                  className="tap-scale flex h-6 w-6 items-center justify-center transition-all hover:scale-110 cursor-pointer"
+                  title={`Visit ${item.label}`}
+                  aria-label={item.label}
+                >
+                  <span className="flex items-center justify-center">
+                    {item.platform === "instagram" && <InstagramIcon className="h-[18px] w-[18px] text-pink-500" />}
+                    {item.platform === "youtube" && <YoutubeIcon className="h-[18px] w-[18px] text-red-500" />}
+                    {item.platform === "facebook" && <FacebookIcon className="h-[18px] w-[18px] text-blue-500" />}
+                    {item.platform === "twitter" && <XTwitterIcon className="h-4 w-4" style={{ color: c.primaryText }} />}
+                    {item.platform === "linkedin" && <LinkedinIcon className="h-[18px] w-[18px] text-sky-600" />}
+                    {item.platform === "threads" && <ThreadsIcon className="h-[18px] w-[18px]" style={{ color: c.primaryText }} />}
+                    {item.platform === "snapchat" && <SnapchatIcon className="h-[18px] w-[18px] text-amber-400" />}
+                    {item.platform === "spotify" && <SpotifyIcon className="h-[18px] w-[18px] text-emerald-500" />}
+                    {item.platform === "twitch" && <TwitchIcon className="h-[18px] w-[18px] text-purple-500" />}
+                    {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch"].includes(item.platform) && (
+                      <Globe className="h-[18px] w-[18px]" style={{ color: c.accentText }} />
+                    )}
+                  </span>
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* 2. Total Fanbase USP Block */}
+        {effectiveVisibilitySettings.showFanbase !== false && (
+          <div className="relative z-10 mt-3.5 sm:mt-4 w-full space-y-2">
+            <div
+              style={{
+                backgroundColor: c.cardBackground,
+                borderColor: c.border,
+                boxShadow: eff.cardShadow,
+              }}
+              className="rounded-[14px] border px-3.5 py-3 text-center shadow-xs"
+            >
+              <span
+                style={{ color: c.mutedText }}
+                className="block text-[10px] sm:text-[11px] font-extrabold tracking-[0.14em] uppercase"
+              >
+                Total Fanbase
+              </span>
+              <p
+                style={{
+                  color: c.primaryText,
+                  fontFamily: typ.headingFontFamily,
+                  fontWeight: 900,
+                }}
+                className="mt-0.5 text-2xl sm:text-3xl leading-tight font-black tabular-nums tracking-tight"
+              >
+                {formatCount(totalAudience)}
+              </p>
+              <p
+                style={{ color: c.secondaryText }}
+                className="mt-0.5 text-[11px] sm:text-xs font-medium opacity-80"
+              >
+                Total Fanbase Across Primary Platforms
+              </p>
+            </div>
+
+            {/* Clickable Platform Cards */}
+            {fanbaseSocialCards.length > 0 && (
+              <div
+                className="grid gap-2 sm:gap-2.5"
+                style={{ gridTemplateColumns: fanbaseSocialGridColumns }}
+              >
+                {fanbaseSocialCards.map((item) => (
                   <a
                     key={item.platform}
                     href={item.url}
@@ -1631,85 +1635,141 @@ export function LivePreviewCard({
                       borderColor: c.border,
                       boxShadow: eff.cardShadow,
                     }}
-                    className="tap-scale flex min-h-[112px] flex-col rounded-[10px] border text-center transition-all hover:scale-[1.02] cursor-pointer shadow-xs overflow-hidden"
+                    className="tap-scale flex min-h-[84px] sm:min-h-[92px] flex-col rounded-[12px] border text-center transition-all hover:scale-[1.02] cursor-pointer shadow-xs overflow-hidden"
                     title={`Visit ${item.label}`}
                   >
-                    <span className="flex flex-1 flex-col items-center justify-center px-2 py-2.5">
-                      <span className="mb-2 flex h-5 items-center justify-center shrink-0">
-                        {item.platform === "instagram" && <InstagramIcon className="h-5 w-5 text-pink-500" />}
-                        {item.platform === "youtube" && <YoutubeIcon className="h-5 w-5 text-red-500" />}
-                        {item.platform === "facebook" && <FacebookIcon className="h-5 w-5 text-blue-500" />}
-                        {item.platform === "twitter" && <XTwitterIcon className="h-[18px] w-[18px]" style={{ color: c.primaryText }} />}
-                        {item.platform === "linkedin" && <LinkedinIcon className="h-5 w-5 text-sky-600" />}
-                        {item.platform === "threads" && <ThreadsIcon className="h-5 w-5" style={{ color: c.primaryText }} />}
-                        {item.platform === "snapchat" && <SnapchatIcon className="h-5 w-5 text-amber-400" />}
-                        {item.platform === "spotify" && <SpotifyIcon className="h-5 w-5 text-emerald-500" />}
-                        {item.platform === "twitch" && <TwitchIcon className="h-5 w-5 text-purple-500" />}
-                        {item.platform === "pinterest" && <PinterestIcon className="h-5 w-5 text-red-600" />}
+                    <span className="flex flex-1 flex-col items-center justify-center px-2 py-2">
+                      <span className="mb-1 flex h-4.5 items-center justify-center shrink-0">
+                        {item.platform === "instagram" && <InstagramIcon className="h-4.5 w-4.5 text-pink-500" />}
+                        {item.platform === "youtube" && <YoutubeIcon className="h-4.5 w-4.5 text-red-500" />}
+                        {item.platform === "facebook" && <FacebookIcon className="h-4.5 w-4.5 text-blue-500" />}
+                        {item.platform === "twitter" && <XTwitterIcon className="h-4 w-4" style={{ color: c.primaryText }} />}
+                        {item.platform === "linkedin" && <LinkedinIcon className="h-4.5 w-4.5 text-sky-600" />}
+                        {item.platform === "threads" && <ThreadsIcon className="h-4.5 w-4.5" style={{ color: c.primaryText }} />}
+                        {item.platform === "snapchat" && <SnapchatIcon className="h-4.5 w-4.5 text-amber-400" />}
+                        {item.platform === "spotify" && <SpotifyIcon className="h-4.5 w-4.5 text-emerald-500" />}
+                        {item.platform === "twitch" && <TwitchIcon className="h-4.5 w-4.5 text-purple-500" />}
+                        {item.platform === "pinterest" && <PinterestIcon className="h-4.5 w-4.5 text-red-600" />}
                         {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch", "pinterest"].includes(item.platform) && (
-                          <Globe className="h-5 w-5" style={{ color: c.accentText }} />
+                          <Globe className="h-4.5 w-4.5" style={{ color: c.accentText }} />
                         )}
                       </span>
-                      <span style={{ color: c.primaryText }} className="text-sm sm:text-base font-black tabular-nums leading-none">
+                      <span style={{ color: c.primaryText }} className="text-xs sm:text-[13px] font-bold tabular-nums leading-tight">
                         {formatCount(item.count)}
                       </span>
-                      <span style={{ color: c.secondaryText }} className="mt-1 text-[10px] sm:text-[11px] font-semibold leading-none">
+                      <span style={{ color: c.secondaryText }} className="mt-0.5 text-[10px] sm:text-[11px] font-semibold leading-none">
                         {item.unit}
                       </span>
                     </span>
                     <span
                       style={{ color: c.mutedText, borderColor: c.divider }}
-                      className="block w-full border-t px-2 py-2 text-[10px] sm:text-[11px] font-medium leading-none"
+                      className="block w-full border-t px-2 py-1.5 text-[9px] sm:text-[10px] font-medium leading-none"
                     >
-                      <span className="inline-flex max-w-full items-center justify-center gap-2">
+                      <span className="inline-flex max-w-full items-center justify-center gap-1">
                         <span className="block min-w-0 truncate">
-                        {(item.handle || item.name || item.label).replace(/^@/, "")}
+                          {(item.handle || item.name || item.label).replace(/^@/, "")}
                         </span>
-                        <ExternalLink className="h-3 w-3 shrink-0 opacity-75" />
+                        <ExternalLink className="h-2.5 w-2.5 shrink-0 opacity-75" />
                       </span>
                     </span>
                   </a>
                 ))}
-            </div>
-          )}
-        </div>
-      )}
+              </div>
+            )}
+          </div>
+        )}
 
-      {/* 3. Links Section */}
-      {effectiveVisibilitySettings.showCustomLinks !== false && customLinksList && customLinksList.filter((l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url)))).length > 0 && (
-        <div id="links-section" className="relative z-10 order-[5] mt-6 w-full text-left space-y-2.5">
-          <h2
-            style={{
-              color: c.primaryText,
-              fontFamily: typ.headingFontFamily,
-              fontWeight: 700,
-            }}
-            className="text-base sm:text-lg font-bold tracking-tight px-0.5"
-          >
-            Links
-          </h2>
+        {/* 3. Links Section */}
+        {effectiveVisibilitySettings.showCustomLinks !== false && customLinksList && customLinksList.filter((l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url)))).length > 0 && (
+          <div id="links-section" className="relative z-10 order-[5] mt-6 w-full text-left space-y-2.5">
+            <h2
+              style={{
+                color: c.primaryText,
+                fontFamily: typ.headingFontFamily,
+                fontWeight: 700,
+              }}
+              className="text-base sm:text-lg font-bold tracking-tight px-0.5"
+            >
+              Links
+            </h2>
 
-          <div className="space-y-2">
-            {customLinksList
-              .filter((l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url))))
-              .map((link) => {
-                const collectionItems = link.items?.filter((item) => item.isEnabled !== false && item.title && item.url) || [];
-                if (link.kind === "collection") {
+            <div className="space-y-2">
+              {customLinksList
+                .filter((l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url))))
+                .map((link) => {
+                  const collectionItems = link.items?.filter((item) => item.isEnabled !== false && item.title && item.url) || [];
+                  if (link.kind === "collection") {
+                    return (
+                      <div
+                        key={link.id}
+                        style={{
+                          backgroundColor: c.cardBackground,
+                          borderColor: c.border,
+                          boxShadow: eff.cardShadow,
+                        }}
+                        className="rounded-[12px] border p-3 shadow-2xs"
+                      >
+                        <div className="mb-2 flex items-center gap-2">
+                          <Globe
+                            style={{ color: c.accentText }}
+                            className="h-4 w-4 shrink-0"
+                          />
+                          <span
+                            style={{ color: c.primaryText }}
+                            className="block truncate text-xs sm:text-sm font-semibold"
+                          >
+                            {link.title}
+                          </span>
+                        </div>
+                        <div className="space-y-2">
+                          {collectionItems.map((item) => (
+                            <a
+                              key={item.id}
+                              href={item.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
+                              style={{
+                                borderColor: c.border,
+                                color: c.primaryText,
+                              }}
+                              className="tap-scale flex min-h-[42px] items-center justify-between gap-3 rounded-[10px] border px-3 py-2 text-xs font-semibold transition-all hover:scale-[1.01]"
+                            >
+                              <span className="min-w-0 truncate">{item.title}</span>
+                              <ExternalLink
+                                style={{ color: c.secondaryText }}
+                                className="h-3.5 w-3.5 shrink-0"
+                              />
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  }
                   return (
-                    <div
+                    <a
                       key={link.id}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
                       style={{
                         backgroundColor: c.cardBackground,
                         borderColor: c.border,
                         boxShadow: eff.cardShadow,
                       }}
-                      className="rounded-[12px] border p-3 shadow-2xs"
+                      className={`tap-scale relative h-[52px] sm:h-[56px] border flex items-center transition-all hover:scale-[1.01] hover:shadow-xs group cursor-pointer shadow-2xs ${isDefaultCleanLayout
+                        ? "rounded-[12px] px-5 justify-center"
+                        : "rounded-[12px] px-3.5 justify-between"
+                        }`}
                     >
-                      <div className="mb-2 flex items-center gap-2">
+                      <div className={`flex items-center gap-3 min-w-0 ${isDefaultCleanLayout ? "absolute left-5" : "pr-2"}`}>
                         <Globe
                           style={{ color: c.accentText }}
                           className="h-4 w-4 shrink-0"
                         />
+                      </div>
+                      <div className={isDefaultCleanLayout ? "max-w-[72%] px-2 text-center" : "min-w-0 flex-1"}>
                         <span
                           style={{ color: c.primaryText }}
                           className="block truncate text-xs sm:text-sm font-semibold"
@@ -1717,384 +1777,363 @@ export function LivePreviewCard({
                           {link.title}
                         </span>
                       </div>
-                      <div className="space-y-2">
-                        {collectionItems.map((item) => (
-                          <a
-                            key={item.id}
-                            href={item.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
-                            style={{
-                              borderColor: c.border,
-                              color: c.primaryText,
-                            }}
-                            className="tap-scale flex min-h-[42px] items-center justify-between gap-3 rounded-[10px] border px-3 py-2 text-xs font-semibold transition-all hover:scale-[1.01]"
-                          >
-                            <span className="min-w-0 truncate">{item.title}</span>
-                            <ExternalLink
-                              style={{ color: c.secondaryText }}
-                              className="h-3.5 w-3.5 shrink-0"
-                            />
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                }
-                return (
-                  <a
-                    key={link.id}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
-                    style={{
-                      backgroundColor: c.cardBackground,
-                      borderColor: c.border,
-                      boxShadow: eff.cardShadow,
-                    }}
-                    className={`tap-scale relative h-[52px] sm:h-[56px] border flex items-center transition-all hover:scale-[1.01] hover:shadow-xs group cursor-pointer shadow-2xs ${isDefaultCleanLayout
-                      ? "rounded-[12px] px-5 justify-center"
-                      : "rounded-[12px] px-3.5 justify-between"
-                      }`}
-                  >
-                    <div className={`flex items-center gap-3 min-w-0 ${isDefaultCleanLayout ? "absolute left-5" : "pr-2"}`}>
-                      <Globe
-                        style={{ color: c.accentText }}
-                        className="h-4 w-4 shrink-0"
+
+                      <ExternalLink
+                        style={{ color: c.secondaryText }}
+                        className={`h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 ${isDefaultCleanLayout ? "absolute right-5" : ""}`}
                       />
-                    </div>
-                    <div className={isDefaultCleanLayout ? "max-w-[72%] px-2 text-center" : "min-w-0 flex-1"}>
-                      <span
-                        style={{ color: c.primaryText }}
-                        className="block truncate text-xs sm:text-sm font-semibold"
-                      >
-                        {link.title}
-                      </span>
-                    </div>
-
-                    <ExternalLink
-                      style={{ color: c.secondaryText }}
-                      className={`h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 ${isDefaultCleanLayout ? "absolute right-5" : ""}`}
-                    />
-                  </a>
-                );
-              })}
-          </div>
-        </div>
-      )}
-
-      {/* 4. Series Section */}
-      {effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || isOnboardingMode) && (
-        <div id="series-section" className="relative z-10 order-[10] mt-6 w-full text-left space-y-2.5">
-          {/* Section Header */}
-          <div className="flex items-center justify-between px-0.5">
-            <h2
-              style={{
-                color: c.primaryText,
-                fontFamily: typ.headingFontFamily,
-                fontWeight: 700,
-              }}
-              className="flex items-center gap-2 text-base sm:text-lg font-bold tracking-tight"
-            >
-              <Film className="h-4 w-4 opacity-70" style={{ color: c.primaryText }} />
-              Series &amp; Playlists
-            </h2>
-            {series.length > 0 && (
-              <span
-                style={{ color: c.mutedText }}
-                className="text-xs sm:text-[13px] font-medium"
-              >
-                {series.length} Curated {series.length === 1 ? "Series" : "Series"}
-              </span>
-            )}
-          </div>
-
-          <div className="space-y-2.5 sm:space-y-3">
-            {displayedSeries.map((s) => {
-              const allEps = getSeriesEpisodes(s);
-              const epCount = allEps.length;
-              const epCountStr = `${epCount} ${epCount === 1 ? "episode" : "episodes"}`;
-
-              const firstEpUrl = allEps[0]?.externalUrl || "";
-              const detectedPlatform = (() => {
-                const p = (s.platform || "").toLowerCase();
-                const u = (firstEpUrl || "").toLowerCase();
-                if (p.includes("youtube") || u.includes("youtube.com") || u.includes("youtu.be")) return "YouTube";
-                if (p.includes("instagram") || u.includes("instagram.com")) return "Instagram";
-                if (p.includes("facebook") || u.includes("facebook.com")) return "Facebook";
-                if (s.platform && s.platform.trim()) return s.platform.trim();
-                return null;
-              })();
-
-              const subtitleParts: string[] = [epCountStr];
-              if (detectedPlatform) subtitleParts.push(detectedPlatform);
-              const subtitleStr = subtitleParts.join(" · ");
-              const seriesGenres = s.genre
-                ? s.genre.split(/[,•|/]/).map((g: string) => g.trim().replace(/^Genre:\s*/i, "")).filter(Boolean)
-                : [];
-              const seriesUrl = `/${cleanHandle || "creator"}/series/${s.id}`;
-              const hasPoster = Boolean(s.posterDataUrl);
-
-              return (
-                <div
-                  key={s.id}
-                  onClick={() => {
-                    if (onSeriesPreviewOpen) {
-                      onSeriesPreviewOpen(s);
-                    } else if (isInformationalMode) {
-                      showToast(`Opens ${s.title} dedicated series page ✨`);
-                    } else if (seriesOpenMode === "internal") {
-                      setDrawerSeries(s);
-                      setIsDrawerOpen(true);
-                    } else {
-                      router.push(seriesUrl);
-                    }
-                  }}
-                  style={{
-                    backgroundColor: c.cardBackground,
-                    borderColor: c.border,
-                    boxShadow: eff.cardShadow,
-                  }}
-                  className="group rounded-[16px] border overflow-hidden transition-all hover:shadow-md cursor-pointer shadow-xs"
-                >
-                  {/* Cover Image */}
-                  <div className="relative w-full h-[145px] sm:h-[165px] overflow-hidden bg-slate-900/5">
-                    {s.posterDataUrl ? (
-                      <>
-                        <img
-                          src={s.posterDataUrl}
-                          alt={s.title}
-                          className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-300"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/88 via-black/42 to-transparent" />
-                        <div className="absolute inset-x-0 bottom-3 px-4 sm:px-5">
-                          <div className="flex items-end justify-between gap-3">
-                            <div className="min-w-0 flex-1">
-                              <h3 className="line-clamp-2 text-lg sm:text-xl font-black leading-tight tracking-tight text-white drop-shadow-md">
-                                {s.title}
-                              </h3>
-                              {s.description && (
-                                <p className="mt-1 line-clamp-1 text-[11px] sm:text-xs font-medium text-white/72">
-                                  {s.description}
-                                </p>
-                              )}
-                            </div>
-                            <span className="mb-0.5 shrink-0 rounded-full border border-white/18 bg-black/35 px-2.5 py-1 text-[10px] sm:text-[11px] font-bold text-white/90 backdrop-blur-sm">
-                              {detectedPlatform || "Series"}
-                            </span>
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#241618] to-[#151933]">
-                        <Film className="h-10 w-10 text-white/40" />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Content */}
-                  <div className="px-3.5 pb-3.5 pt-2.5 sm:px-4 sm:pb-4 sm:pt-3 space-y-0.5">
-                    {!hasPoster && (
-                      <h3
-                        style={{ color: c.primaryText }}
-                        className="text-base sm:text-[17px] font-bold tracking-tight"
-                      >
-                        {s.title}
-                      </h3>
-                    )}
-                    {s.description && !hasPoster && (
-                      <p
-                        style={{ color: c.secondaryText }}
-                        className="text-xs sm:text-[13px] leading-relaxed line-clamp-2"
-                      >
-                        {s.description}
-                      </p>
-                    )}
-                    {seriesGenres.length > 0 && (
-                      <p
-                        style={{ color: c.mutedText }}
-                        className="text-[11px] sm:text-xs font-medium"
-                      >
-                        {seriesGenres.slice(0, 3).join(" · ")}
-                      </p>
-                    )}
-                    <p
-                      style={{ color: c.secondaryText }}
-                      className="text-xs sm:text-[13px] font-medium opacity-70"
-                    >
-                      {subtitleStr}{s.language ? ` · ${s.language}` : ""}
-                    </p>
-
-                    <div
-                      style={{ color: c.accentText }}
-                      className="pt-1 flex items-center gap-1 text-xs sm:text-[13px] font-bold"
-                    >
-                      <span>View Series</span>
-                      <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {allSeriesHref && series.length > 0 && (
-            <div className="pt-1 text-center">
-              <button
-                type="button"
-                onClick={() => {
-                  if (isInformationalMode) {
-                    showToast("Opens all creator series on live profile ✨");
-                    return;
-                  }
-                  router.push(allSeriesHref);
-                }}
-                style={{ color: c.accentText }}
-                className="tap-scale inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs sm:text-[13px] font-bold transition-all hover:translate-y-[-1px] hover:opacity-85 cursor-pointer"
-              >
-                <span>See all series</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </button>
+                    </a>
+                  );
+                })}
             </div>
-          )}
-        </div>
-      )}
-
-      {/* 5. Creator Team */}
-      {activeTeamMembers.length > 0 && (
-        <div id="team-section" className="relative z-10 order-[20] mt-6 w-full text-left space-y-2.5">
-          <div className="flex items-center justify-between gap-3 px-0.5">
-            <h2
-              style={{
-                color: c.primaryText,
-                fontFamily: typ.headingFontFamily,
-                fontWeight: 700,
-              }}
-              className="flex items-center gap-2 text-base sm:text-lg font-bold tracking-tight"
-            >
-              <Users className="h-4 w-4 opacity-70" style={{ color: c.primaryText }} />
-              {teamData.team?.teamName || "Creator Team"}
-            </h2>
-            <span
-              style={{ color: c.mutedText }}
-              className="text-xs sm:text-[13px] font-medium"
-            >
-              {activeTeamMembers.length} {activeTeamMembers.length === 1 ? "member" : "members"}
-            </span>
           </div>
+        )}
 
-          <div className="space-y-2.5">
-            {activeTeamMembers.map((member) => {
-              const memberLinks = [
-                { url: member.instagramUrl, icon: <InstagramIcon className="h-3.5 w-3.5 text-pink-500" />, label: "Instagram" },
-                { url: member.youtubeUrl, icon: <YoutubeIcon className="h-3.5 w-3.5 text-red-500" />, label: "YouTube" },
-                { url: member.facebookUrl, icon: <FacebookIcon className="h-3.5 w-3.5 text-blue-500" />, label: "Facebook" },
-              ].filter((item) => item.url);
-
-              return (
-                <div
-                  key={member.id}
-                  style={{
-                    backgroundColor: c.cardBackground,
-                    borderColor: c.border,
-                    boxShadow: eff.cardShadow,
-                  }}
-                  className="rounded-[14px] border p-3 shadow-xs"
-                >
-                  <div className="flex items-center gap-3">
-                    <CreatorAvatar
-                      src={member.avatarUrl || null}
-                      name={member.name || "Team"}
-                      className="h-11 w-11 shrink-0 rounded-[12px] object-cover"
-                      fallbackBgClass="bg-[#151933]"
-                      textClassName="text-xs font-black tracking-tight text-white"
-                      style={{ backgroundColor: c.accent }}
-                    />
-
-                    <div className="min-w-0 flex-1">
-                      <p
-                        style={{ color: c.primaryText }}
-                        className="truncate text-sm font-bold leading-tight"
-                      >
-                        {member.name}
-                      </p>
-                      <p
-                        style={{ color: c.secondaryText }}
-                        className="mt-0.5 truncate text-xs font-medium"
-                      >
-                        {member.role || "Team member"}
-                      </p>
-                    </div>
-
-                    {memberLinks.length > 0 && (
-                      <div className="flex shrink-0 items-center gap-1.5">
-                        {memberLinks.map((link) => (
-                          <a
-                            key={link.label}
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={`${member.name} ${link.label}`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (isInformationalMode) e.preventDefault();
-                            }}
-                            style={{ borderColor: c.border, backgroundColor: c.profileBackground }}
-                            className="tap-scale flex h-8 w-8 items-center justify-center rounded-[10px] border transition-all hover:scale-105"
-                          >
-                            {link.icon}
-                          </a>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* 5. Work with Me Section (Only shown if WhatsApp or Email is available) */}
-      {(() => {
-        if (effectiveVisibilitySettings.showCollabGigs === false) return null;
-
-        const whatsappNum = mediaKitSettings?.whatsappNumber?.trim() || (profile as any).whatsappNumber?.trim() || "";
-        const hasWhatsApp = Boolean(whatsappNum);
-
-        const contactEmail = mediaKitSettings?.sponsorEmail?.trim() || profile.email?.trim() || "";
-        const hasEmail = Boolean(contactEmail);
-        const activePackages = mediaKitPackages.filter((p) => p.isActive);
-
-        if (!hasWhatsApp && !hasEmail && activePackages.length === 0) return null;
-
-        return (
-          <div id="work-with-me-section" className="relative z-10 order-[40] mt-6 w-full text-left space-y-2.5">
-            <div className="space-y-1 px-0.5">
+        {/* 4. Series Section */}
+        {effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || isOnboardingMode || seriesOnlyMode) && (
+          <div id="series-section" className="relative z-10 order-[10] mt-4 sm:mt-5 w-full text-left space-y-2">
+            {/* Section Header */}
+            <div className="flex items-center justify-between px-0.5">
               <h2
                 style={{
                   color: c.primaryText,
                   fontFamily: typ.headingFontFamily,
                   fontWeight: 700,
                 }}
-                className="text-base sm:text-lg font-bold tracking-tight"
+                className="flex items-center gap-1.5 text-sm sm:text-base font-bold tracking-tight"
               >
-                Work with me
+                <Film className="h-3.5 w-3.5 opacity-70" style={{ color: c.primaryText }} />
+                <span>Series &amp; Playlists</span>
               </h2>
-              <p
-                style={{ color: c.secondaryText }}
-                className="text-xs sm:text-[13px] font-normal"
-              >
-                For collaborations and business enquiries.
-              </p>
+              {series.length > 0 && (
+                <span
+                  style={{ color: c.mutedText }}
+                  className="text-[11px] sm:text-xs font-medium"
+                >
+                  {series.length} {series.length === 1 ? "Series" : "Series"}
+                </span>
+              )}
             </div>
 
-            {/* Services if creator created any */}
-            {activePackages.length > 0 && (
-              <div className="space-y-2">
-                {activePackages.map((pkg) => {
+            {series.length === 0 ? (
+              <div
+                style={{
+                  backgroundColor: c.elevatedBackground,
+                  borderColor: c.border,
+                }}
+                className="rounded-[14px] border p-4 sm:p-5 text-center space-y-0.5"
+              >
+                <p
+                  style={{ color: c.primaryText }}
+                  className="text-xs sm:text-sm font-semibold"
+                >
+                  No series added yet
+                </p>
+                <p
+                  style={{ color: c.mutedText }}
+                  className="text-[11px] sm:text-xs"
+                >
+                  Stay tuned! Episodes and playlists will appear here soon.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2 sm:space-y-2.5">
+                {displayedSeries.map((s) => {
+                  const allEps = getSeriesEpisodes(s);
+                  const epCount = allEps.length;
+                  const epCountStr = `${epCount} ${epCount === 1 ? "episode" : "episodes"}`;
+
+                  const firstEpUrl = allEps[0]?.externalUrl || "";
+                  const detectedPlatform = (() => {
+                    const p = (s.platform || "").toLowerCase();
+                    const u = (firstEpUrl || "").toLowerCase();
+                    if (p.includes("youtube") || u.includes("youtube.com") || u.includes("youtu.be")) return "YouTube";
+                    if (p.includes("instagram") || u.includes("instagram.com")) return "Instagram";
+                    if (p.includes("facebook") || u.includes("facebook.com")) return "Facebook";
+                    if (s.platform && s.platform.trim()) return s.platform.trim();
+                    return null;
+                  })();
+
+                  const subtitleParts: string[] = [epCountStr];
+                  if (detectedPlatform) subtitleParts.push(detectedPlatform);
+                  const subtitleStr = subtitleParts.join(" · ");
+                  const seriesGenres = s.genre
+                    ? s.genre.split(/[,•|/]/).map((g: string) => g.trim().replace(/^Genre:\s*/i, "")).filter(Boolean)
+                    : [];
+                  const seriesUrl = `/${cleanHandle || "creator"}/series/${s.id}`;
+                  const hasPoster = Boolean(s.posterDataUrl && s.posterDataUrl.trim() !== "");
+
+                  return (
+                    <div
+                      key={s.id}
+                      onPointerEnter={() => {
+                        if (seriesUrl && seriesOpenMode === "page") {
+                          router.prefetch(seriesUrl);
+                        }
+                      }}
+                      onClick={() => {
+                        if (onSeriesPreviewOpen) {
+                          onSeriesPreviewOpen(s);
+                        } else if (isInformationalMode) {
+                          showToast(`Opens ${s.title} dedicated series page ✨`);
+                        } else if (seriesOpenMode === "internal") {
+                          setDrawerSeries(s);
+                          setIsDrawerOpen(true);
+                        } else {
+                          router.push(seriesUrl);
+                        }
+                      }}
+                      style={{
+                        backgroundColor: c.cardBackground,
+                        borderColor: c.border,
+                        boxShadow: eff.cardShadow,
+                      }}
+                      className="group rounded-[14px] border overflow-hidden transition-all hover:shadow-md cursor-pointer"
+                    >
+                      {/* Cover Image: ONLY rendered if genuine posterDataUrl exists */}
+                      {hasPoster && (
+                        <div className="relative w-full h-[105px] sm:h-[118px] overflow-hidden bg-slate-900/5">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={s.posterDataUrl!}
+                            alt={s.title}
+                            className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-300"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+                          <div className="absolute inset-x-0 bottom-2.5 px-3.5 sm:px-4">
+                            <div className="flex items-end justify-between gap-2">
+                              <div className="min-w-0 flex-1">
+                                <h3 className="line-clamp-1 text-sm sm:text-base font-bold leading-tight text-white drop-shadow-sm">
+                                  {s.title}
+                                </h3>
+                              </div>
+                              <span className="shrink-0 rounded-full border border-white/20 bg-black/40 px-2 py-0.5 text-[10px] font-bold text-white/90 backdrop-blur-xs">
+                                {detectedPlatform || "Series"}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Content */}
+                      <div className="p-3 sm:p-3.5 space-y-1">
+                        {!hasPoster && (
+                          <div className="flex items-start justify-between gap-2">
+                            <h3
+                              style={{ color: c.primaryText }}
+                              className="text-sm sm:text-base font-bold tracking-tight leading-snug"
+                            >
+                              {s.title}
+                            </h3>
+                            <span
+                              style={{
+                                backgroundColor: c.elevatedBackground || "rgba(0,0,0,0.04)",
+                                borderColor: c.border,
+                                color: c.secondaryText,
+                              }}
+                              className="shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold"
+                            >
+                              {detectedPlatform || "Series"}
+                            </span>
+                          </div>
+                        )}
+
+                        {s.description && (
+                          <p
+                            style={{ color: c.secondaryText }}
+                            className="text-xs sm:text-[13px] leading-relaxed line-clamp-2"
+                          >
+                            {s.description}
+                          </p>
+                        )}
+
+                        <div className="flex items-center justify-between gap-2 pt-1">
+                          <div className="min-w-0 flex-1 flex items-center gap-1.5 text-[11px] sm:text-xs font-medium truncate">
+                            {seriesGenres.length > 0 && (
+                              <span style={{ color: c.mutedText }} className="shrink-0">
+                                {seriesGenres.slice(0, 2).join(" · ")} •
+                              </span>
+                            )}
+                            <span style={{ color: c.secondaryText }} className="opacity-75 truncate">
+                              {subtitleStr}{s.language ? ` · ${s.language}` : ""}
+                            </span>
+                          </div>
+
+                          <div
+                            style={{ color: c.accentText }}
+                            className="shrink-0 flex items-center gap-1 text-xs font-bold"
+                          >
+                            <span>Watch</span>
+                            <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {allSeriesHref && series.length > 0 && (
+              <div className="pt-0.5 text-center">
+                <button
+                  type="button"
+                  onPointerEnter={() => {
+                    if (allSeriesHref && !isInformationalMode) {
+                      router.prefetch(allSeriesHref);
+                    }
+                  }}
+                  onClick={() => {
+                    if (isInformationalMode) {
+                      showToast("Opens all creator series on live profile ✨");
+                      return;
+                    }
+                    router.push(allSeriesHref);
+                  }}
+                  style={{ color: c.accentText }}
+                  className="tap-scale inline-flex items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition-all hover:opacity-85 cursor-pointer"
+                >
+                  <span>See all series</span>
+                  <ArrowRight className="h-3 w-3" />
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 5. Creator Team */}
+        {activeTeamMembers.length > 0 && (
+          <div id="team-section" className="relative z-10 order-[20] mt-6 w-full text-left space-y-2.5">
+            <div className="flex items-center justify-between gap-3 px-0.5">
+              <h2
+                style={{
+                  color: c.primaryText,
+                  fontFamily: typ.headingFontFamily,
+                  fontWeight: 700,
+                }}
+                className="flex items-center gap-2 text-base sm:text-lg font-bold tracking-tight"
+              >
+                <Users className="h-4 w-4 opacity-70" style={{ color: c.primaryText }} />
+                {teamData.team?.teamName || "Creator Team"}
+              </h2>
+              <span
+                style={{ color: c.mutedText }}
+                className="text-xs sm:text-[13px] font-medium"
+              >
+                {activeTeamMembers.length} {activeTeamMembers.length === 1 ? "member" : "members"}
+              </span>
+            </div>
+
+            <div className="space-y-2.5">
+              {activeTeamMembers.map((member) => {
+                const memberLinks = [
+                  { url: member.instagramUrl, icon: <InstagramIcon className="h-3.5 w-3.5 text-pink-500" />, label: "Instagram" },
+                  { url: member.youtubeUrl, icon: <YoutubeIcon className="h-3.5 w-3.5 text-red-500" />, label: "YouTube" },
+                  { url: member.facebookUrl, icon: <FacebookIcon className="h-3.5 w-3.5 text-blue-500" />, label: "Facebook" },
+                ].filter((item) => item.url);
+
+                return (
+                  <div
+                    key={member.id}
+                    style={{
+                      backgroundColor: c.cardBackground,
+                      borderColor: c.border,
+                      boxShadow: eff.cardShadow,
+                    }}
+                    className="rounded-[14px] border p-3 shadow-xs"
+                  >
+                    <div className="flex items-center gap-3">
+                      <CreatorAvatar
+                        src={member.avatarUrl || null}
+                        name={member.name || "Team"}
+                        className="h-11 w-11 shrink-0 rounded-[12px] object-cover"
+                        fallbackBgClass="bg-[#043084]"
+                        textClassName="text-xs font-black tracking-tight text-white"
+                        style={{ backgroundColor: c.accent }}
+                      />
+
+                      <div className="min-w-0 flex-1">
+                        <p
+                          style={{ color: c.primaryText }}
+                          className="truncate text-sm font-bold leading-tight"
+                        >
+                          {member.name}
+                        </p>
+                        <p
+                          style={{ color: c.secondaryText }}
+                          className="mt-0.5 truncate text-xs font-medium"
+                        >
+                          {member.role || "Team member"}
+                        </p>
+                      </div>
+
+                      {memberLinks.length > 0 && (
+                        <div className="flex shrink-0 items-center gap-1.5">
+                          {memberLinks.map((link) => (
+                            <a
+                              key={link.label}
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              aria-label={`${member.name} ${link.label}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (isInformationalMode) e.preventDefault();
+                              }}
+                              style={{ borderColor: c.border, backgroundColor: c.profileBackground }}
+                              className="tap-scale flex h-8 w-8 items-center justify-center rounded-[10px] border transition-all hover:scale-105"
+                            >
+                              {link.icon}
+                            </a>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* 5. Work with Me Section (Only shown if WhatsApp or Email is available) */}
+        {(() => {
+          if (effectiveVisibilitySettings.showCollabGigs === false) return null;
+
+          const whatsappNum = mediaKitSettings?.whatsappNumber?.trim() || (profile as any).whatsappNumber?.trim() || "";
+          const hasWhatsApp = Boolean(whatsappNum);
+
+          const contactEmail = mediaKitSettings?.sponsorEmail?.trim() || profile.email?.trim() || "";
+          const hasEmail = Boolean(contactEmail);
+          const activePackages = mediaKitPackages.filter((p) => p.isActive);
+
+          if (!hasWhatsApp && !hasEmail && activePackages.length === 0) return null;
+
+          return (
+            <div id="work-with-me-section" className="relative z-10 order-[40] mt-6 w-full text-left space-y-2.5">
+              <div className="space-y-1 px-0.5">
+                <h2
+                  style={{
+                    color: c.primaryText,
+                    fontFamily: typ.headingFontFamily,
+                    fontWeight: 700,
+                  }}
+                  className="text-base sm:text-lg font-bold tracking-tight"
+                >
+                  Work with me
+                </h2>
+                <p
+                  style={{ color: c.secondaryText }}
+                  className="text-xs sm:text-[13px] font-normal"
+                >
+                  For collaborations and business enquiries.
+                </p>
+              </div>
+
+              {/* Services if creator created any */}
+              {activePackages.length > 0 && (
+                <div className="space-y-2">
+                  {activePackages.map((pkg) => {
                     const formattedPrice = pkg.price
                       ? pkg.price.startsWith("₹") || pkg.price.toLowerCase().includes("contact")
                         ? pkg.price
@@ -2143,272 +2182,297 @@ export function LivePreviewCard({
                       </div>
                     );
                   })}
-              </div>
-            )}
-
-            {/* Contact Buttons: WhatsApp only, Email only, or Both */}
-            <div className="flex items-center gap-2.5 pt-1">
-              {hasWhatsApp && (
-                <button
-                  type="button"
-                  onClick={() => setIsLeadModalOpen(true)}
-                  style={{
-                    backgroundColor: c.cardBackground,
-                    borderColor: c.border,
-                    color: c.primaryText,
-                  }}
-                  className={`tap-scale ${hasEmail ? "flex-1" : "w-full"} h-[48px] rounded-[14px] border flex items-center justify-center gap-2 text-xs sm:text-[13px] font-bold transition-all hover:brightness-95 cursor-pointer shadow-2xs`}
-                >
-                  <MessageCircle className="h-4 w-4 text-emerald-500 shrink-0" />
-                  <span>WhatsApp</span>
-                </button>
-              )}
-
-              {hasEmail && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    window.location.href = `mailto:${contactEmail}?subject=${encodeURIComponent(`Brand Collaboration Enquiry: @${cleanHandle || "creator"}`)}`;
-                  }}
-                  style={{
-                    backgroundColor: c.cardBackground,
-                    borderColor: c.border,
-                    color: c.primaryText,
-                  }}
-                  className={`tap-scale ${hasWhatsApp ? "flex-1" : "w-full"} h-[48px] rounded-[14px] border flex items-center justify-center gap-2 text-xs sm:text-[13px] font-bold transition-all hover:brightness-95 cursor-pointer shadow-2xs`}
-                >
-                  <Mail className="h-4 w-4 text-rose-500 shrink-0" />
-                  <span>Email</span>
-                </button>
-              )}
-            </div>
-          </div>
-        );
-      })()}
-
-      {/* 6. Reviews (Compact, only when reviews exist) */}
-      {effectiveVisibilitySettings.showReviews !== false && approvedReviews.length > 0 && (
-        <div id="reviews-section" className="relative z-10 order-[30] mt-6 w-full text-left space-y-2.5">
-          <h2
-            style={{
-              color: c.primaryText,
-              fontFamily: typ.headingFontFamily,
-              fontWeight: 700,
-            }}
-            className="text-base sm:text-lg font-bold tracking-tight px-0.5"
-          >
-            Reviews
-          </h2>
-
-          <div className="space-y-2.5">
-            {(typeof reviewsPreviewLimit === "number" ? approvedReviews.slice(0, reviewsPreviewLimit) : approvedReviews).map((rev) => {
-              const ratingNum = Number(rev.rating) || 5;
-              return (
-                <div
-                  key={rev.id}
-                  style={{
-                    backgroundColor: c.cardBackground,
-                    borderColor: c.border,
-                    boxShadow: eff.cardShadow,
-                  }}
-                  className="rounded-[14px] border p-3.5 sm:p-4 space-y-2 text-left shadow-xs"
-                >
-                  <div className="flex items-center gap-1 text-amber-400">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`h-3.5 w-3.5 ${i < ratingNum ? "fill-amber-400 text-amber-400" : "fill-slate-200 text-slate-200"
-                          }`}
-                      />
-                    ))}
-                  </div>
-
-                  {rev.comment && (
-                    <p
-                      style={{ color: c.primaryText }}
-                      className="text-xs sm:text-[13px] leading-relaxed font-normal italic"
-                    >
-                      &ldquo;{rev.comment.trim()}&rdquo;
-                    </p>
-                  )}
-
-                  <p
-                    style={{ color: c.primaryText }}
-                    className="text-xs sm:text-[13px] font-bold pt-0.5"
-                  >
-                    {rev.clientName}
-                  </p>
                 </div>
-              );
-            })}
-          </div>
+              )}
 
-          {allReviewsHref && approvedReviews.length > 0 && (
-            <div className="pt-1 text-center">
-              <button
-                type="button"
-                onClick={() => {
-                  if (isInformationalMode) {
-                    showToast("Opens all creator reviews on live profile ✨");
-                    return;
-                  }
-                  router.push(allReviewsHref);
-                }}
-                style={{ color: c.accentText }}
-                className="tap-scale inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs sm:text-[13px] font-bold transition-all hover:translate-y-[-1px] hover:opacity-85 cursor-pointer"
-              >
-                <span>See all reviews</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </button>
+              {/* Contact Buttons: WhatsApp only, Email only, or Both */}
+              <div className="flex items-center gap-2.5 pt-1">
+                {hasWhatsApp && (
+                  <button
+                    type="button"
+                    onClick={() => setIsLeadModalOpen(true)}
+                    style={{
+                      backgroundColor: c.cardBackground,
+                      borderColor: c.border,
+                      color: c.primaryText,
+                    }}
+                    className={`tap-scale ${hasEmail ? "flex-1" : "w-full"} h-[48px] rounded-[14px] border flex items-center justify-center gap-2 text-xs sm:text-[13px] font-bold transition-all hover:brightness-95 cursor-pointer shadow-2xs`}
+                  >
+                    <MessageCircle className="h-4 w-4 text-emerald-500 shrink-0" />
+                    <span>WhatsApp</span>
+                  </button>
+                )}
+
+                {hasEmail && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      window.location.href = `mailto:${contactEmail}?subject=${encodeURIComponent(`Brand Collaboration Enquiry: @${cleanHandle || "creator"}`)}`;
+                    }}
+                    style={{
+                      backgroundColor: c.cardBackground,
+                      borderColor: c.border,
+                      color: c.primaryText,
+                    }}
+                    className={`tap-scale ${hasWhatsApp ? "flex-1" : "w-full"} h-[48px] rounded-[14px] border flex items-center justify-center gap-2 text-xs sm:text-[13px] font-bold transition-all hover:brightness-95 cursor-pointer shadow-2xs`}
+                  >
+                    <Mail className="h-4 w-4 text-rose-500 shrink-0" />
+                    <span>Email</span>
+                  </button>
+                )}
+              </div>
             </div>
-          )}
-        </div>
-      )}
+          );
+        })()}
 
-      {/* 7. Setup & Gear Section */}
-      {setupList && setupList.filter((it) => it.isActive !== false).length > 0 && (
-        <div id="setup-section" className="relative z-10 order-[45] mt-6 w-full text-left space-y-2.5">
-          <div className="flex items-center justify-between px-0.5">
+        {/* 6. Reviews (Compact, only when reviews exist, or when reviewsOnlyMode is true) */}
+        {effectiveVisibilitySettings.showReviews !== false && (approvedReviews.length > 0 || reviewsOnlyMode) && (
+          <div id="reviews-section" className="relative z-10 order-[30] mt-6 w-full text-left space-y-2.5">
             <h2
               style={{
                 color: c.primaryText,
                 fontFamily: typ.headingFontFamily,
                 fontWeight: 700,
               }}
-              className="flex items-center gap-2 text-base sm:text-lg font-bold tracking-tight"
+              className="text-base sm:text-lg font-bold tracking-tight px-0.5"
             >
-              <Laptop className="h-4 w-4 opacity-70" style={{ color: c.primaryText }} />
-              Gear &amp; Tools
+              Reviews
             </h2>
-            <span
-              style={{ color: c.mutedText }}
-              className="text-xs sm:text-[13px] font-medium"
-            >
-              {setupList.filter((it) => it.isActive !== false).length} Items
-            </span>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            {setupList
-              .filter((it) => it.isActive !== false)
-              .map((item) => (
-                <div
-                  key={item.id}
-                  style={{
-                    backgroundColor: c.cardBackground,
-                    borderColor: c.border,
-                    boxShadow: eff.cardShadow,
-                  }}
-                  className="rounded-[14px] border p-3 flex flex-col justify-between space-y-2 shadow-2xs transition-all hover:scale-[1.01]"
+            {approvedReviews.length === 0 ? (
+              <div
+                style={{
+                  backgroundColor: c.elevatedBackground,
+                  borderColor: c.border,
+                }}
+                className="rounded-[14px] border p-4 sm:p-5 text-center space-y-0.5"
+              >
+                <p
+                  style={{ color: c.primaryText }}
+                  className="text-xs sm:text-sm font-semibold"
                 >
-                  <div>
-                    <div className="flex items-center justify-between gap-1.5 mb-1.5">
-                      <span
-                        style={{
-                          backgroundColor: `${c.border}40`,
-                          color: c.secondaryText,
-                        }}
-                        className="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider"
+                  No reviews yet
+                </p>
+                <p
+                  style={{ color: c.mutedText }}
+                  className="text-[11px] sm:text-xs"
+                >
+                  Verified client and brand reviews will appear here.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2.5">
+                {(typeof reviewsPreviewLimit === "number" ? approvedReviews.slice(0, reviewsPreviewLimit) : approvedReviews).map((rev) => {
+                const ratingNum = Number(rev.rating) || 5;
+                return (
+                  <div
+                    key={rev.id}
+                    style={{
+                      backgroundColor: c.cardBackground,
+                      borderColor: c.border,
+                      boxShadow: eff.cardShadow,
+                    }}
+                    className="rounded-[14px] border p-3.5 sm:p-4 space-y-2 text-left shadow-xs"
+                  >
+                    <div className="flex items-center gap-1 text-amber-400">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-3.5 w-3.5 ${i < ratingNum ? "fill-amber-400 text-amber-400" : "fill-slate-200 text-slate-200"
+                            }`}
+                        />
+                      ))}
+                    </div>
+
+                    {rev.comment && (
+                      <p
+                        style={{ color: c.primaryText }}
+                        className="text-xs sm:text-[13px] leading-relaxed font-normal italic"
                       >
-                        {item.category}
-                      </span>
-                      {item.brand && (
+                        &ldquo;{rev.comment.trim()}&rdquo;
+                      </p>
+                    )}
+
+                    <p
+                      style={{ color: c.primaryText }}
+                      className="text-xs sm:text-[13px] font-bold pt-0.5"
+                    >
+                      {rev.clientName}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+            )}
+
+            {allReviewsHref && approvedReviews.length > 0 && (
+              <div className="pt-1 text-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isInformationalMode) {
+                      showToast("Opens all creator reviews on live profile ✨");
+                      return;
+                    }
+                    router.push(allReviewsHref);
+                  }}
+                  style={{ color: c.accentText }}
+                  className="tap-scale inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs sm:text-[13px] font-bold transition-all hover:translate-y-[-1px] hover:opacity-85 cursor-pointer"
+                >
+                  <span>See all reviews</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 7. Setup & Gear Section */}
+        {setupList && setupList.filter((it) => it.isActive !== false).length > 0 && (
+          <div id="setup-section" className="relative z-10 order-[45] mt-6 w-full text-left space-y-2.5">
+            <div className="flex items-center justify-between px-0.5">
+              <h2
+                style={{
+                  color: c.primaryText,
+                  fontFamily: typ.headingFontFamily,
+                  fontWeight: 700,
+                }}
+                className="flex items-center gap-2 text-base sm:text-lg font-bold tracking-tight"
+              >
+                <Laptop className="h-4 w-4 opacity-70" style={{ color: c.primaryText }} />
+                Gear &amp; Tools
+              </h2>
+              <span
+                style={{ color: c.mutedText }}
+                className="text-xs sm:text-[13px] font-medium"
+              >
+                {setupList.filter((it) => it.isActive !== false).length} Items
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {setupList
+                .filter((it) => it.isActive !== false)
+                .map((item) => (
+                  <div
+                    key={item.id}
+                    style={{
+                      backgroundColor: c.cardBackground,
+                      borderColor: c.border,
+                      boxShadow: eff.cardShadow,
+                    }}
+                    className="rounded-[14px] border p-3 flex flex-col justify-between space-y-2 shadow-2xs transition-all hover:scale-[1.01]"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between gap-1.5 mb-1.5">
                         <span
-                          style={{ color: c.mutedText }}
-                          className="text-[10px] font-semibold truncate"
+                          style={{
+                            backgroundColor: `${c.border}40`,
+                            color: c.secondaryText,
+                          }}
+                          className="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider"
                         >
-                          {item.brand}
+                          {item.category}
                         </span>
+                        {item.brand && (
+                          <span
+                            style={{ color: c.mutedText }}
+                            className="text-[10px] font-semibold truncate"
+                          >
+                            {item.brand}
+                          </span>
+                        )}
+                      </div>
+
+                      <h4
+                        style={{ color: c.primaryText }}
+                        className="text-xs sm:text-sm font-bold truncate"
+                        title={item.name}
+                      >
+                        {item.name}
+                      </h4>
+
+                      {item.modelOrPlan && (
+                        <p
+                          style={{ color: c.secondaryText }}
+                          className="text-[11px] truncate mt-0.5"
+                        >
+                          {item.modelOrPlan}
+                        </p>
+                      )}
+
+                      {item.usedFor && (
+                        <p
+                          style={{ color: c.secondaryText }}
+                          className="text-[10px] line-clamp-2 mt-1.5 opacity-90"
+                        >
+                          <span className="font-semibold">Used for: </span>
+                          {item.usedFor}
+                        </p>
                       )}
                     </div>
 
-                    <h4
-                      style={{ color: c.primaryText }}
-                      className="text-xs sm:text-sm font-bold truncate"
-                      title={item.name}
-                    >
-                      {item.name}
-                    </h4>
-
-                    {item.modelOrPlan && (
-                      <p
-                        style={{ color: c.secondaryText }}
-                        className="text-[11px] truncate mt-0.5"
+                    {item.linkUrl && (
+                      <a
+                        href={item.linkUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
+                        style={{ color: c.accentText }}
+                        className="inline-flex items-center gap-1 text-[11px] font-bold pt-1 transition-opacity hover:opacity-80"
                       >
-                        {item.modelOrPlan}
-                      </p>
-                    )}
-
-                    {item.usedFor && (
-                      <p
-                        style={{ color: c.secondaryText }}
-                        className="text-[10px] line-clamp-2 mt-1.5 opacity-90"
-                      >
-                        <span className="font-semibold">Used for: </span>
-                        {item.usedFor}
-                      </p>
+                        <span>View Gear</span>
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
                     )}
                   </div>
-
-                  {item.linkUrl && (
-                    <a
-                      href={item.linkUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
-                      style={{ color: c.accentText }}
-                      className="inline-flex items-center gap-1 text-[11px] font-bold pt-1 transition-opacity hover:opacity-80"
-                    >
-                      <span>View Gear</span>
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
-                  )}
-                </div>
-              ))}
+                ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {!containedScroll && (
-        <div className="relative z-10 order-[60] mt-7 mb-3 flex items-center justify-center select-none">
-          <a
-            href="/"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
-            style={{ color: c.mutedText }}
-            className="tap-scale inline-flex items-center gap-1.5 text-xs font-medium hover:opacity-100 opacity-60 transition-opacity cursor-pointer"
-          >
-            <InflixoLogoIcon className="h-3.5 w-3.5" />
-            <span>Made with Inflixo</span>
-            <ExternalLink className="h-3 w-3" />
-          </a>
-        </div>
-      )}
-      {containedScroll && <div className="order-[70] h-[30px] shrink-0" aria-hidden="true" />}
+        {!containedScroll && (
+          <div className="relative z-10 order-[60] mt-8 mb-4 flex items-center justify-center select-none">
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
+              style={{ color: c.mutedText }}
+              className="tap-scale inline-flex items-center gap-2 text-[13px] sm:text-sm font-bold hover:opacity-100 opacity-80 transition-opacity cursor-pointer select-none"
+            >
+              <InflixoLogoIcon className="h-4.5 w-4.5 shrink-0" />
+              <span className="tracking-tight">Made with Inflixo</span>
+              <ExternalLink className="h-3.5 w-3.5 opacity-80 shrink-0" />
+            </a>
+          </div>
+        )}
+        {containedScroll && <div className="order-[70] h-14 shrink-0" aria-hidden="true" />}
       </div>
 
       {containedScroll && (
         <div
-          className="relative z-30 -mx-3.5 h-[30px] shrink-0 select-none sm:-mx-7"
+          className="relative z-30 -mx-3.5 -mb-5 shrink-0 select-none sm:-mx-7 sm:-mb-7"
         >
           <div
             style={{ backgroundColor: c.divider }}
-            className="h-0.5 w-full"
+            className="h-px w-full"
             aria-hidden="true"
           />
-          <a
-            href="/"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
-            style={{ color: c.secondaryText }}
-            className="tap-scale flex h-[28px] items-center justify-center gap-1.5 text-xs font-semibold leading-none opacity-85 transition-opacity hover:opacity-100 cursor-pointer"
-          >
-            <InflixoLogoIcon className="h-3.5 w-3.5" />
-            <span>Made with Inflixo</span>
-            <ExternalLink className="h-3 w-3" />
-          </a>
+          <div className="flex items-center justify-center pt-3.5 pb-[15px]">
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
+              style={{ color: c.secondaryText }}
+              className="tap-scale inline-flex items-center justify-center gap-2 text-[13px] sm:text-sm font-bold opacity-90 transition-opacity hover:opacity-100 cursor-pointer select-none"
+            >
+              <InflixoLogoIcon className="h-4.5 w-4.5 shrink-0" />
+              <span className="tracking-tight">Made with Inflixo</span>
+              <ExternalLink className="h-3.5 w-3.5 opacity-80 shrink-0" />
+            </a>
+          </div>
         </div>
       )}
 
@@ -2421,7 +2485,7 @@ export function LivePreviewCard({
             color: "#FFFFFF",
             boxShadow: eff.shadow,
           }}
-          className="tap-scale absolute bottom-4 left-1/2 z-40 inline-flex h-10 -translate-x-1/2 items-center justify-center gap-1.5 rounded-full px-4 text-xs font-bold shadow-lg transition-all hover:scale-[1.03] cursor-pointer"
+          className="tap-scale absolute bottom-16 left-1/2 z-40 inline-flex h-10 -translate-x-1/2 items-center justify-center gap-1.5 rounded-full px-4 text-xs font-bold shadow-lg transition-all hover:scale-[1.03] cursor-pointer"
           aria-label="Move to top"
         >
           <ChevronUp className="h-4 w-4" />
@@ -2511,9 +2575,9 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   return {
     name: platformStr || "Web",
     icon: <Film className="h-3 w-3 text-white" />,
-    badgeClass: "bg-[#151933] text-white shadow-2xs",
+    badgeClass: "bg-[#043084] text-white shadow-2xs",
     chipClass: "bg-indigo-50 text-indigo-700 border-indigo-200/80",
-    textColor: "text-[#151933]",
+    textColor: "text-[#043084]",
   };
 }
 
@@ -2603,7 +2667,7 @@ export function PreviewSeriesItem({
                           ? "bg-emerald-600 shadow-xs text-white"
                           : detectedPlatform === "Twitch"
                             ? "bg-purple-600 shadow-xs text-white"
-                            : "bg-[#15193314] text-[#151933]"
+                            : "bg-[#04308414] text-[#043084]"
             }`}
         >
           {detectedPlatform === "YouTube" ? (

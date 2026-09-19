@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
+let mediaKitTablesEnsured = false;
+
 // Auto-create dedicated MySQL tables for Media Kit with creator_id
 async function ensureMediaKitTables() {
+  if (mediaKitTablesEnsured) return;
   try {
     await db.query(`
       CREATE TABLE IF NOT EXISTS mediakit_settings (
@@ -38,7 +41,7 @@ async function ensureMediaKitTables() {
         is_popular TINYINT(1) DEFAULT 0,
         is_active TINYINT(1) DEFAULT 1,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         INDEX idx_creator_id (creator_id),
         INDEX idx_email (email)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -47,6 +50,8 @@ async function ensureMediaKitTables() {
     // Ensure columns exist on existing tables if created previously
     try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN creator_id VARCHAR(100) DEFAULT NULL"); } catch {}
     try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN creator_id VARCHAR(100) DEFAULT NULL"); } catch {}
+
+    mediaKitTablesEnsured = true;
   } catch (e) {
     console.error("ensureMediaKitTables Error:", e);
   }

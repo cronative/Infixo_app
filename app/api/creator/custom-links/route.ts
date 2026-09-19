@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
+let customLinksTableEnsured = false;
+
 async function ensureCustomLinksTable() {
+  if (customLinksTableEnsured) return;
   try {
     await db.query(`
       CREATE TABLE IF NOT EXISTS creator_custom_links (
@@ -26,6 +29,7 @@ async function ensureCustomLinksTable() {
     await db.query("ALTER TABLE creator_custom_links ADD COLUMN link_type VARCHAR(30) DEFAULT 'link'").catch(() => {});
     await db.query("ALTER TABLE creator_custom_links MODIFY COLUMN url VARCHAR(1000) DEFAULT NULL").catch(() => {});
     await db.query("ALTER TABLE creator_custom_links ADD INDEX idx_parent_id (parent_id)").catch(() => {});
+    customLinksTableEnsured = true;
   } catch (e) {
     console.warn("ensureCustomLinksTable error:", e);
   }
@@ -138,15 +142,20 @@ export async function POST(req: Request) {
     await ensureCustomLinksTable();
 
     let creatorId = email;
+    let actualEmail = email;
     try {
-      const [creators]: any = await db.query("SELECT id FROM creators WHERE email = ?", [email]);
+      const [creators]: any = await db.query(
+        "SELECT id, email FROM creators WHERE email = ? OR username = ? OR id = ? LIMIT 1",
+        [email, email, email]
+      );
       if (creators && creators.length > 0) {
         creatorId = creators[0].id;
+        if (creators[0].email) actualEmail = creators[0].email;
       }
     } catch {}
 
     // Delete existing links for this creator in creator_custom_links table and insert updated list
-    await db.query("DELETE FROM creator_custom_links WHERE creator_id = ? OR email = ?", [creatorId, email]);
+    await db.query("DELETE FROM creator_custom_links WHERE creator_id = ? OR email = ? OR email = ?", [creatorId, actualEmail, email]);
 
     let savedCount = 0;
     for (let idx = 0; idx < links.length; idx++) {
