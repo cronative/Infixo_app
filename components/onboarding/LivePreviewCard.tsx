@@ -1862,6 +1862,11 @@ export function LivePreviewCard({
                 return (
                   <div
                     key={s.id}
+                    onPointerEnter={() => {
+                      if (seriesUrl && seriesOpenMode === "page") {
+                        router.prefetch(seriesUrl);
+                      }
+                    }}
                     onClick={() => {
                       if (onSeriesPreviewOpen) {
                         onSeriesPreviewOpen(s);
@@ -1968,6 +1973,11 @@ export function LivePreviewCard({
               <div className="pt-1 text-center">
                 <button
                   type="button"
+                  onPointerEnter={() => {
+                    if (allSeriesHref && !isInformationalMode) {
+                      router.prefetch(allSeriesHref);
+                    }
+                  }}
                   onClick={() => {
                     if (isInformationalMode) {
                       showToast("Opens all creator series on live profile ✨");

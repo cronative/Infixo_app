@@ -95,6 +95,15 @@ export function SeriesDetailClient({
   const [coverImageError, setCoverImageError] = useState(false);
   const [activeSeasonIndex, setActiveSeasonIndex] = useState<number>(0);
 
+  // Warm up and prefetch series listing & profile routes for instant back navigation
+  useEffect(() => {
+    const userHandle = creator?.username || initialUsername;
+    if (userHandle) {
+      router.prefetch(`/${userHandle}/series`);
+      router.prefetch(`/${userHandle}`);
+    }
+  }, [creator?.username, initialUsername, router]);
+
   // Client-side fallback fetch if initial SSR data is not present
   useEffect(() => {
     if (series) return;
@@ -404,6 +413,11 @@ export function SeriesDetailClient({
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
+                    onPointerEnter={() => {
+                      if (username) {
+                        router.prefetch(`/${username}/series`);
+                      }
+                    }}
                     onClick={() => {
                       if (typeof window !== "undefined" && window.history.length > 1) {
                         router.back();

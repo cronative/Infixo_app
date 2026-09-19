@@ -6,7 +6,6 @@ import { ArrowLeft, UserX } from "lucide-react";
 import { ThemeCard } from "@/themes/registry";
 import { ThemeService, THEME_PAGE_BACKGROUNDS } from "@/services/ThemeService";
 import { SocialService } from "@/services/SocialService";
-import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
 import { FocusOverlay } from "@/components/theme/FocusOverlay";
 import { useToast } from "@/contexts/ToastContext";
@@ -86,22 +85,34 @@ function buildSocialAccounts(rows: Array<Record<string, unknown>>): SocialAccoun
   return accounts;
 }
 
+interface SeriesCacheData {
+  profile: CreatorProfile;
+  socials: SocialAccounts;
+  series: Series[];
+  theme: ThemeKey;
+}
+
+// Module-level in-memory cache: prevents white screen & re-fetching on back navigation
+const seriesListingMemoryCache = new Map<string, SeriesCacheData>();
+
 export default function AllSeriesClient() {
   const params = useParams<{ username: string }>();
   const router = useRouter();
   const { showToast } = useToast();
-  const [profile, setProfile] = useState<CreatorProfile>(EMPTY_PROFILE);
-  const [socials, setSocials] = useState<SocialAccounts>(EMPTY_SOCIAL_ACCOUNTS);
-  const [series, setSeries] = useState<Series[]>([]);
-  const [theme, setTheme] = useState<ThemeKey>("minimal-white");
-  const [loaded, setLoaded] = useState(false);
+
+  const rawUser = decodeURIComponent(params.username ?? "").trim();
+  const username = rawUser.replace(/^@/, "").toLowerCase();
+  const cachedData = username ? seriesListingMemoryCache.get(username) : undefined;
+
+  const [profile, setProfile] = useState<CreatorProfile>(cachedData?.profile || EMPTY_PROFILE);
+  const [socials, setSocials] = useState<SocialAccounts>(cachedData?.socials || EMPTY_SOCIAL_ACCOUNTS);
+  const [series, setSeries] = useState<Series[]>(cachedData?.series || []);
+  const [theme, setTheme] = useState<ThemeKey>(cachedData?.theme || "minimal-white");
+  const [loaded, setLoaded] = useState(Boolean(cachedData));
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     async function loadSeriesPage() {
-      const rawUser = decodeURIComponent(params.username ?? "").trim();
-      const username = rawUser.replace(/^@/, "").toLowerCase();
-
       if (!username) {
         setNotFound(true);
         setLoaded(true);
@@ -119,6 +130,12 @@ export default function AllSeriesClient() {
         setSocials(EXPERT_DEMO_SOCIALS);
         setSeries(EXPERT_DEMO_SERIES);
         setTheme(EXPERT_DEMO_THEME);
+        seriesListingMemoryCache.set(username, {
+          profile: EXPERT_DEMO_PROFILE,
+          socials: EXPERT_DEMO_SOCIALS,
+          series: EXPERT_DEMO_SERIES,
+          theme: EXPERT_DEMO_THEME,
+        });
         setLoaded(true);
         return;
       }
@@ -141,25 +158,56 @@ export default function AllSeriesClient() {
           return;
         }
 
-        setProfile(profileRes.profile);
-        setTheme((profileRes.profile.themeKey || "minimal-white") as ThemeKey);
-        setSocials(Array.isArray(socialsRes.socials) ? buildSocialAccounts(socialsRes.socials) : EMPTY_SOCIAL_ACCOUNTS);
-        setSeries(Array.isArray(seriesRes.series) ? seriesRes.series : []);
+        const freshProfile = profileRes.profile;
+        const freshTheme = (profileRes.profile.themeKey || "minimal-white") as ThemeKey;
+        const freshSocials = Array.isArray(socialsRes.socials) ? buildSocialAccounts(socialsRes.socials) : EMPTY_SOCIAL_ACCOUNTS;
+        const freshSeries = Array.isArray(seriesRes.series) ? seriesRes.series : [];
+
+        setProfile(freshProfile);
+        setTheme(freshTheme);
+        setSocials(freshSocials);
+        setSeries(freshSeries);
         setNotFound(false);
+
+        // Update in-memory cache for instant zero-latency back navigation
+        seriesListingMemoryCache.set(username, {
+          profile: freshProfile,
+          socials: freshSocials,
+          series: freshSeries,
+          theme: freshTheme,
+        });
       } catch (error) {
         console.warn("Failed to load all series page:", error);
-        setNotFound(true);
+        if (!cachedData) {
+          setNotFound(true);
+        }
       } finally {
         setLoaded(true);
       }
     }
 
     loadSeriesPage();
-  }, [params.username]);
+  }, [username, cachedData]);
+
+  // Pre-fetch all series detail pages and main profile for instant navigation
+  useEffect(() => {
+    if (series && series.length > 0 && username) {
+      series.forEach((s) => {
+        router.prefetch(`/${username}/series/${s.id}`);
+      });
+      router.prefetch(`/${username}`);
+    }
+  }, [series, username, router]);
 
   if (!loaded) {
-    const handle = decodeURIComponent(params.username ?? "").trim();
-    return <SyncingLoader message={`Syncing @${handle}'s series...`} fullScreen hideProgressBar={true} />;
+    return (
+      <div className="min-h-dvh flex flex-col items-center justify-center bg-[#f8fafc] text-[#043084]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#043084] border-t-transparent" />
+          <p className="text-xs font-semibold text-[#64748b]">Loading series...</p>
+        </div>
+      </div>
+    );
   }
 
   if (notFound) {
