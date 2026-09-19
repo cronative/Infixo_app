@@ -1786,7 +1786,7 @@ export function LivePreviewCard({
         )}
 
         {/* 4. Series Section */}
-        {effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || isOnboardingMode) && (
+        {effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || isOnboardingMode || seriesOnlyMode) && (
           <div id="series-section" className="relative z-10 order-[10] mt-6 w-full text-left space-y-2.5">
             {/* Section Header */}
             <div className="flex items-center justify-between px-0.5">
@@ -1811,8 +1811,30 @@ export function LivePreviewCard({
               )}
             </div>
 
-            <div className="space-y-2.5 sm:space-y-3">
-              {displayedSeries.map((s) => {
+            {series.length === 0 ? (
+              <div
+                style={{
+                  backgroundColor: c.elevatedBackground,
+                  borderColor: c.border,
+                }}
+                className="rounded-[16px] border p-6 text-center space-y-1"
+              >
+                <p
+                  style={{ color: c.primaryText }}
+                  className="text-sm font-semibold"
+                >
+                  No series added yet
+                </p>
+                <p
+                  style={{ color: c.mutedText }}
+                  className="text-xs"
+                >
+                  Stay tuned! Episodes and playlists will appear here soon.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2.5 sm:space-y-3">
+                {displayedSeries.map((s) => {
                 const allEps = getSeriesEpisodes(s);
                 const epCount = allEps.length;
                 const epCountStr = `${epCount} ${epCount === 1 ? "episode" : "episodes"}`;
@@ -1940,6 +1962,7 @@ export function LivePreviewCard({
                 );
               })}
             </div>
+            )}
 
             {allSeriesHref && series.length > 0 && (
               <div className="pt-1 text-center">

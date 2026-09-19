@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, UserX, Film, Sparkles, Share2 } from "lucide-react";
+import { ArrowLeft, UserX } from "lucide-react";
 import { ThemeCard } from "@/themes/registry";
 import { ThemeService, THEME_PAGE_BACKGROUNDS } from "@/services/ThemeService";
 import { SocialService } from "@/services/SocialService";
@@ -243,151 +242,21 @@ export default function AllSeriesClient() {
           <span>Profile</span>
         </button>
 
-        {series.length === 0 ? (
-          <div
-            style={{
-              backgroundColor: themeMeta.colors.cardBackground,
-              borderColor: themeMeta.colors.border,
-              boxShadow: themeMeta.effects.cardShadow || themeMeta.effects.shadow,
-              borderRadius: themeMeta.effects.radius || "24px",
-            }}
-            className="w-full flex-1 flex flex-col items-center justify-center border p-6 sm:p-10 text-center transition-all overflow-y-auto"
-          >
-            {/* Creator Identity Header */}
-            <div className="relative mb-4">
-              {profile.photoDataUrl ? (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img
-                  src={profile.photoDataUrl}
-                  alt={profile.displayName || cleanHandle}
-                  className="h-20 w-20 sm:h-24 sm:w-24 rounded-full object-cover border-2 shadow-md"
-                  style={{ borderColor: themeMeta.colors.accent }}
-                />
-              ) : (
-                <div
-                  style={{
-                    backgroundColor: themeMeta.colors.elevatedBackground,
-                    color: themeMeta.colors.accent,
-                    borderColor: themeMeta.colors.border,
-                  }}
-                  className="h-20 w-20 sm:h-24 sm:w-24 rounded-full flex items-center justify-center text-2xl font-black border shadow-md"
-                >
-                  {(profile.displayName || cleanHandle).charAt(0).toUpperCase()}
-                </div>
-              )}
-              <div
-                style={{
-                  backgroundColor: themeMeta.colors.accent,
-                  color: "#ffffff",
-                }}
-                className="absolute -bottom-1.5 -right-1.5 flex h-8 w-8 items-center justify-center rounded-full shadow-sm"
-              >
-                <Film className="h-4 w-4" />
-              </div>
-            </div>
-
-            <h1
-              style={{
-                color: themeMeta.colors.primaryText,
-                fontFamily: themeMeta.typography.headingFontFamily,
-              }}
-              className="text-xl sm:text-2xl font-black tracking-tight"
-            >
-              {profile.displayName || `@${cleanHandle}`}
-            </h1>
-            <p
-              style={{ color: themeMeta.colors.secondaryText }}
-              className="mt-1 text-xs sm:text-sm font-semibold"
-            >
-              @{cleanHandle} {profile.category && `• ${profile.category}`}
-            </p>
-
-            {/* Empty State Notice Box */}
-            <div
-              style={{
-                backgroundColor: themeMeta.colors.elevatedBackground,
-                borderColor: themeMeta.colors.border,
-              }}
-              className="mt-5 w-full max-w-md rounded-2xl border p-5 sm:p-6 text-center space-y-2"
-            >
-              <div
-                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold tracking-wide uppercase"
-                style={{
-                  backgroundColor: themeMeta.colors.accentSoft || "rgba(4, 48, 132, 0.08)",
-                  color: themeMeta.colors.accent,
-                }}
-              >
-                <Sparkles className="h-3 w-3" />
-                <span>No Series Added Yet</span>
-              </div>
-              <h2
-                style={{ color: themeMeta.colors.primaryText }}
-                className="text-base sm:text-lg font-bold"
-              >
-                Episodes Coming Soon
-              </h2>
-              <p
-                style={{ color: themeMeta.colors.mutedText }}
-                className="text-xs sm:text-sm leading-relaxed max-w-xs mx-auto"
-              >
-                {profile.displayName || `@${cleanHandle}`} hasn&apos;t published any video series or playlists yet. Visit their profile to explore links and social channels!
-              </p>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="mt-5 flex flex-col sm:flex-row items-center gap-3 w-full max-w-md">
-              <button
-                type="button"
-                onClick={() => router.push(`/${cleanHandle}`)}
-                style={{
-                  backgroundColor: themeMeta.colors.accent,
-                  color: "#ffffff",
-                }}
-                className="w-full sm:flex-1 inline-flex h-11 items-center justify-center gap-2 rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all hover:opacity-90 cursor-pointer"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span>Visit Full Profile</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleShareSeriesList}
-                style={{
-                  borderColor: themeMeta.colors.border,
-                  color: themeMeta.colors.primaryText,
-                  backgroundColor: themeMeta.colors.cardBackground,
-                }}
-                className="w-full sm:w-auto inline-flex h-11 items-center justify-center gap-2 rounded-xl border px-4 text-xs sm:text-sm font-bold transition-all hover:opacity-80 cursor-pointer"
-              >
-                <Share2 className="h-4 w-4" />
-                <span>Share</span>
-              </button>
-            </div>
-
-            <div className="mt-5 text-[11px]" style={{ color: themeMeta.colors.mutedText }}>
-              Are you @{cleanHandle}?{" "}
-              <Link href="/dashboard/series" className="underline font-semibold hover:opacity-80">
-                Add your first series here
-              </Link>
-            </div>
-          </div>
-        ) : (
-          <ThemeCard
-            themeKey={theme}
-            profile={profile}
-            socials={socials}
-            series={series}
-            customLinks={[]}
-            mediaKitPackages={[]}
-            reviews={[]}
-            totalAudience={totalAudience}
-            variant="full"
-            containedScroll
-            seriesOpenMode="page"
-            seriesOnlyMode
-            onShare={handleShareSeriesList}
-          />
-        )}
+        <ThemeCard
+          themeKey={theme}
+          profile={profile}
+          socials={socials}
+          series={series}
+          customLinks={[]}
+          mediaKitPackages={[]}
+          reviews={[]}
+          totalAudience={totalAudience}
+          variant="full"
+          containedScroll
+          seriesOpenMode="page"
+          seriesOnlyMode
+          onShare={handleShareSeriesList}
+        />
       </main>
     </div>
   );
