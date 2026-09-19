@@ -1,6 +1,9 @@
 import { db } from "@/lib/db";
 
+let isEnsured = false;
+
 export async function ensureAnalyticsTable() {
+  if (isEnsured) return;
   try {
     await db.query(`
       CREATE TABLE IF NOT EXISTS analytics_events (
@@ -36,6 +39,7 @@ export async function ensureAnalyticsTable() {
     try {
       await db.query("ALTER TABLE analytics_events ADD UNIQUE KEY unique_analytics_event_id (event_id)");
     } catch {}
+    isEnsured = true;
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown analytics schema error";
     console.warn("ensureAnalyticsTable error:", message);

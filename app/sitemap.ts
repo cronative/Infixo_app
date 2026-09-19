@@ -39,6 +39,8 @@ function canIndex(row: { visibility_settings?: string | null; settings_visibilit
   return visibility?.showInSearchEngines !== false;
 }
 
+export const revalidate = 3600; // Cache sitemap for 1 hour for fast crawler response
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://inflixo.com";
 

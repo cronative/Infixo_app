@@ -1,4 +1,4 @@
-import { Users, Play } from "lucide-react";
+import { Play } from "lucide-react";
 import { ThemeCardProps } from "@/themes/types";
 import { formatCount } from "@/utils/format";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";

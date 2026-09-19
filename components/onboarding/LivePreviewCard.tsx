@@ -1863,6 +1863,7 @@ export function LivePreviewCard({
                     <div className="relative w-full h-[145px] sm:h-[165px] overflow-hidden bg-slate-900/5">
                       {s.posterDataUrl ? (
                         <>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={s.posterDataUrl}
                             alt={s.title}

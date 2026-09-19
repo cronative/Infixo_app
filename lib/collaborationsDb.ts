@@ -1,6 +1,9 @@
 import { db } from "@/lib/db";
 
+let isEnsured = false;
+
 export async function ensureCollaborationsTable() {
+  if (isEnsured) return;
   try {
     await db.query(`
       CREATE TABLE IF NOT EXISTS creator_collaborations (
@@ -18,6 +21,7 @@ export async function ensureCollaborationsTable() {
         INDEX idx_creator_id (creator_id)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
+    isEnsured = true;
   } catch (err: any) {
     console.warn("ensureCollaborationsTable error:", err.message);
   }

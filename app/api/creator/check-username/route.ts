@@ -20,7 +20,7 @@ export async function GET(req: Request) {
 
     // Check if username exists in MySQL DB for another creator
     const [rows]: any = await db.query(
-      "SELECT id, email FROM creators WHERE LOWER(username) = ? AND email != ?",
+      "SELECT id, email FROM creators WHERE LOWER(username) = ? AND email != ? LIMIT 1",
       [username, email]
     );
 

@@ -205,7 +205,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
           <Clock className="h-4 w-4 text-[#043084]" />
           <div>
             <p className="text-[10px] font-extrabold uppercase tracking-wider text-[#64748b]">
-              Today's Peak Window
+              Today&apos;s Peak Window
             </p>
             <p className="text-xs font-black text-[#043084]">
               6:30 PM – 8:45 PM
@@ -219,7 +219,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-[#043084]" />
           <h3 className="font-extrabold text-sm text-[#043084]">
-            Today's Fresh AI Reel Ideas &amp; Viral Hooks (24h Daily Feed)
+            Today&apos;s Fresh AI Reel Ideas &amp; Viral Hooks (24h Daily Feed)
           </h3>
         </div>
 
@@ -256,7 +256,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
               </h4>
 
               <div className="p-2.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[11px] font-medium text-[#64748b] italic leading-relaxed">
-                "{item.hook}"
+                &ldquo;{item.hook}&rdquo;
               </div>
             </div>
 

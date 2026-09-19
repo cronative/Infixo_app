@@ -1,6 +1,9 @@
 import { db } from "@/lib/db";
 
+let isEnsured = false;
+
 export async function ensureRequestsTable() {
+  if (isEnsured) return;
   try {
     await db.query(`
       CREATE TABLE IF NOT EXISTS collaboration_requests (
@@ -19,6 +22,7 @@ export async function ensureRequestsTable() {
         INDEX idx_creator_created (creator_id, created_at)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
+    isEnsured = true;
   } catch (err: any) {
     console.warn("ensureRequestsTable error:", err.message);
   }

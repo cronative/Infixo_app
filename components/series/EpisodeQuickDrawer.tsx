@@ -25,15 +25,12 @@ export function EpisodeQuickDrawer({
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
   // Reset season index & cover error when series changes
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setActiveSeasonIndex(0);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCoverError(false);
   }, [series?.id]);
 

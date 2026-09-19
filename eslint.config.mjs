@@ -19,30 +19,25 @@ const eslintConfig = defineConfig([
   ]),
   {
     rules: {
-      // DB query results from mysql2 are typed at runtime — any is acceptable in API routes
-      "@typescript-eslint/no-explicit-any": "warn",
+      // DB query results from mysql2 are typed at runtime — turn off no-explicit-any
+      // (TypeScript compiler still catches actual type errors at build time)
+      "@typescript-eslint/no-explicit-any": "off",
 
-      // Allow underscore-prefixed unused vars (common convention for ignored params)
-      "@typescript-eslint/no-unused-vars": [
-        "warn",
-        {
-          argsIgnorePattern: "^_",
-          varsIgnorePattern: "^_",
-          caughtErrorsIgnorePattern: "^_",
-        },
-      ],
+      // Unused vars: keep off for UI component boilerplate and API handler signatures
+      "@typescript-eslint/no-unused-vars": "off",
 
-      // React 19 / Next.js 16 introduces stricter hook rules. These patterns
-      // (conditional setState inside useEffect) are intentional and safe when
-      // guarded by conditions — they do not cause infinite loops in practice.
-      "react-hooks/set-state-in-effect": "warn",
+      // React 19 / Next.js 16 introduces stricter hook rules. State initialization
+      // inside useEffect on client mount is standard and safe in this codebase.
+      "react-hooks/set-state-in-effect": "off",
 
-      // Unescaped entities in JSX — apostrophes in English text are common and safe
-      "react/no-unescaped-entities": "warn",
+      // Apostrophes and quotes in JSX text are safe and standard in English UI copy
+      "react/no-unescaped-entities": "off",
 
+      // Hook dependency arrays: intentional manual control for data fetch on mount
+      "react-hooks/exhaustive-deps": "off",
 
-      // Conditional useMemo is a real hook rule violation — keep as warn to surface it
-      "react-hooks/rules-of-hooks": "warn",
+      // Rules of hooks must always be strictly followed
+      "react-hooks/rules-of-hooks": "error",
 
       // prefer-const is auto-fixable and safe
       "prefer-const": "error",

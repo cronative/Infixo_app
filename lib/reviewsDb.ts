@@ -1,6 +1,9 @@
 import { db } from "@/lib/db";
 
+let isEnsured = false;
+
 export async function ensureReviewsTable() {
+  if (isEnsured) return;
   try {
     await db.query(`
       CREATE TABLE IF NOT EXISTS creator_reviews (
@@ -34,11 +37,12 @@ export async function ensureReviewsTable() {
     for (const q of alterQueries) {
       try {
         await db.query(q);
-      } catch (colErr) {
+      } catch (_colErr) {
         // Column already exists, ignore
       }
     }
-  } catch (e) {
+    isEnsured = true;
+  } catch (_e) {
     // Ignore error if table exists
   }
 }

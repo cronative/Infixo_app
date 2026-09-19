@@ -3,7 +3,7 @@ import {
   profileRepository,
   socialRepository,
   themeRepository,
-  seriesRepository,
+  seriesRepository as _seriesRepository,
   subscriptionRepository,
   onboardingRepository,
 } from "@/repositories/localRepository";

@@ -1,6 +1,6 @@
-import { Users, Play, Cpu } from "lucide-react";
+import { Play, Cpu } from "lucide-react";
 import { ThemeCardProps } from "@/themes/types";
-import { formatCount, initials } from "@/utils/format";
+import { initials } from "@/utils/format";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 
 function getHandle(url: string): string {

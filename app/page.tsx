@@ -280,14 +280,6 @@ export default function LandingHomePage() {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   }
 
-  if (checkingAuth && isLoggedIn) {
-    return (
-      <div className="flex min-h-dvh items-center justify-center bg-[#f8fafc]">
-        <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#043084] border-t-transparent" />
-      </div>
-    );
-  }
-
   const previewHandle = cleanHandle(username) || EXPERT_DEMO_PROFILE.username || "demo_creator";
   const previewProfile: CreatorProfile = username.trim()
     ? {
@@ -311,6 +303,14 @@ export default function LandingHomePage() {
       }
       : EXPERT_DEMO_SOCIALS
   ), [previewHandle, username]);
+
+  if (checkingAuth && isLoggedIn) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center bg-[#f8fafc]">
+        <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#043084] border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-dvh bg-[#f8fafc] text-[#043084] antialiased selection:bg-[#04308414] selection:text-[#043084]">

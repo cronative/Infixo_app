@@ -142,7 +142,7 @@ export const MilestoneService = {
   getMilestoneDetails(
     totalCount: number,
     socials?: Partial<SocialAccounts> | null,
-    creatorName: string = "Creator",
+    _creatorName: string = "Creator",
     username: string = "creator"
   ): MilestoneInfo {
     // If totalCount is 0 or unconfigured, fallback to realistic milestone (e.g. 79.2K)

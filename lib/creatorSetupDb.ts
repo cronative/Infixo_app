@@ -1,6 +1,9 @@
 import { db } from "@/lib/db";
 
+let isEnsured = false;
+
 export async function ensureCreatorSetupTable() {
+  if (isEnsured) return;
   try {
     await db.query(`
       CREATE TABLE IF NOT EXISTS creator_setup_items (
@@ -21,6 +24,7 @@ export async function ensureCreatorSetupTable() {
         INDEX idx_creator_setup (creator_id, is_active, sort_order)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
+    isEnsured = true;
   } catch (err) {
     console.warn("ensureCreatorSetupTable error:", err instanceof Error ? err.message : err);
   }

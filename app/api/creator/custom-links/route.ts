@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
+let customLinksTableEnsured = false;
+
 async function ensureCustomLinksTable() {
+  if (customLinksTableEnsured) return;
   try {
     await db.query(`
       CREATE TABLE IF NOT EXISTS creator_custom_links (
@@ -26,6 +29,7 @@ async function ensureCustomLinksTable() {
     await db.query("ALTER TABLE creator_custom_links ADD COLUMN link_type VARCHAR(30) DEFAULT 'link'").catch(() => {});
     await db.query("ALTER TABLE creator_custom_links MODIFY COLUMN url VARCHAR(1000) DEFAULT NULL").catch(() => {});
     await db.query("ALTER TABLE creator_custom_links ADD INDEX idx_parent_id (parent_id)").catch(() => {});
+    customLinksTableEnsured = true;
   } catch (e) {
     console.warn("ensureCustomLinksTable error:", e);
   }
