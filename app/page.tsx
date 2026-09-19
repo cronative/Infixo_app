@@ -324,10 +324,12 @@ export default function LandingHomePage() {
             <button onClick={() => scrollToSection("faq")} className="transition-colors hover:text-brand-primary">FAQ</button>
           </nav>
           <div className="flex items-center gap-2">
-            <Link href="/login" className="rounded-[8px] px-3 py-1.5 text-[#043084] transition-colors hover:bg-[#f1f5f9]">Sign in</Link>
-            <button onClick={() => handleClaim(username)} className="group rounded-[8px] bg-[#043084] px-3 py-1.5 text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-[0_10px_25px_rgba(21,25,51,0.18)]">
-              Create Your Inflixo
-            </button>
+            <Link
+              href="/login"
+              className="tap-scale inline-flex items-center justify-center rounded-[10px] bg-[#043084] px-4 py-2 text-xs font-bold text-white shadow-xs transition-all hover:bg-[#03256c] hover:scale-[1.02] cursor-pointer"
+            >
+              Get Started
+            </Link>
           </div>
         </div>
       </header>
@@ -720,7 +722,7 @@ export default function LandingHomePage() {
             <button onClick={() => previewRef.current?.scrollIntoView({ behavior: "smooth" })} className="hover:text-brand-primary">Series Preview</button>
             <button onClick={() => scrollToSection("pillars")} className="hover:text-brand-primary">Creator Tools</button>
             <button onClick={() => scrollToSection("pricing")} className="hover:text-brand-primary">Pricing</button>
-            <Link href="/login" className="hover:text-brand-primary">Sign in</Link>
+            <Link href="/login" className="hover:text-brand-primary">Get Started</Link>
             <Link href="/privacy" className="hover:text-brand-primary">Privacy</Link>
             <Link href="/terms" className="hover:text-brand-primary">Terms</Link>
             <button onClick={() => openCookiePreferences()} className="hover:text-brand-primary">Cookies</button>
