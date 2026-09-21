@@ -95,8 +95,8 @@ export async function POST(req: Request) {
     if (email && planKey) {
       try {
         const [creators] = await db.query<CreatorIdRow[]>(
-          "SELECT id FROM creators WHERE email = ?",
-          [email]
+          "SELECT id FROM creators WHERE LOWER(TRIM(email)) = LOWER(TRIM(?))",
+          [email.trim()]
         );
         if (creators && creators.length > 0) {
           const creatorId = String(creators[0].id);
@@ -107,13 +107,22 @@ export async function POST(req: Request) {
           const dateNowStr = now.toISOString().slice(0, 19).replace("T", " ");
           const endsAtStr = endsAt.toISOString().slice(0, 19).replace("T", " ");
           const paymentMode = isRecurring ? "recurring" : "razorpay";
+          const normalizedPlanName =
+            planKey === "starter"
+              ? "Starter Plan"
+              : planKey === "creator_pro" || planKey === "pro"
+              ? "Creator Pro"
+              : planKey === "creator_VIP" || planKey === "vip"
+              ? "Creator VIP"
+              : `${planKey.toUpperCase()} Plan`;
 
           await db.query(
             `INSERT INTO subscriptions (
                creator_id, plan_key, plan_name, billing_cycle, status, activated_at,
-               current_period_started_at, current_period_ends_at, ends_at, renews_at, payment_mode, auto_renew
+               current_period_started_at, current_period_ends_at, ends_at, renews_at,
+               payment_mode, auto_renew, razorpay_subscription_id
              )
-             VALUES (?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?, 1)
+             VALUES (?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?, 1, ?)
              ON DUPLICATE KEY UPDATE
                plan_key = VALUES(plan_key),
                plan_name = VALUES(plan_name),
@@ -125,11 +134,12 @@ export async function POST(req: Request) {
                ends_at = VALUES(ends_at),
                renews_at = VALUES(renews_at),
                payment_mode = VALUES(payment_mode),
-               auto_renew = 1`,
+               auto_renew = 1,
+               razorpay_subscription_id = COALESCE(VALUES(razorpay_subscription_id), razorpay_subscription_id)`,
             [
               creatorId,
               planKey,
-              `${planKey.toUpperCase()} Plan`,
+              normalizedPlanName,
               billingCycle || "monthly",
               dateNowStr,
               dateNowStr,
@@ -137,6 +147,7 @@ export async function POST(req: Request) {
               endsAtStr,
               endsAtStr,
               paymentMode,
+              razorpay_subscription_id || null,
             ]
           );
         }

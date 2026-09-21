@@ -198,9 +198,10 @@ export async function POST(req: Request) {
          creator_id, plan_key, plan_name, billing_cycle, status, activated_at,
          trial_started_at, trial_ends_at, current_period_started_at, current_period_ends_at,
          renews_at, ends_at, cancelled_at, cancel_at_period_end, payment_mode,
-         first_month_offer, first_month_amount, first_month_currency, auto_renew
+         first_month_offer, first_month_amount, first_month_currency, auto_renew,
+         razorpay_subscription_id
        )
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
          plan_key = VALUES(plan_key),
          plan_name = VALUES(plan_name),
@@ -219,11 +220,19 @@ export async function POST(req: Request) {
          first_month_offer = VALUES(first_month_offer),
          first_month_amount = VALUES(first_month_amount),
          first_month_currency = VALUES(first_month_currency),
-         auto_renew = VALUES(auto_renew)`,
+         auto_renew = VALUES(auto_renew),
+         razorpay_subscription_id = COALESCE(VALUES(razorpay_subscription_id), razorpay_subscription_id)`,
       [
         creatorId,
         planKey,
-        planName || `${planKey.toUpperCase()} Plan`,
+        body.planName ||
+          (planKey === "starter"
+            ? "Starter Plan"
+            : planKey === "creator_pro" || planKey === "pro"
+            ? "Creator Pro"
+            : planKey === "creator_VIP" || planKey === "vip"
+            ? "Creator VIP"
+            : `${planKey.toUpperCase()} Plan`),
         billingCycle || "yearly",
         status || (planKey === "early_access" ? "trial" : "active"),
         toMysqlDate(body.activatedAt) || toMysqlDate(new Date().toISOString()),
@@ -235,11 +244,12 @@ export async function POST(req: Request) {
         toMysqlDate(body.endsAt),
         toMysqlDate(body.cancelledAt),
         body.cancelAtPeriodEnd ? 1 : 0,
-        body.paymentMode || (planKey === "early_access" ? "free_trial" : "one_time_first_month"),
+        body.paymentMode || (planKey === "early_access" ? "free_trial" : "recurring"),
         body.firstMonthOffer ? 1 : 0,
         body.firstMonthAmount ?? 99,
         body.firstMonthCurrency || "INR",
         body.autoRenew ? 1 : 0,
+        body.razorpay_subscription_id || null,
       ]
     );
 

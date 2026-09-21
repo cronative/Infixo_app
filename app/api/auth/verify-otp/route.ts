@@ -80,12 +80,12 @@ export async function POST(req: Request) {
     });
 
     if (creator) {
-      // Ensure Free Trial subscription is active in MySQL
+      // Ensure default subscription exists in MySQL without overwriting existing paid plans
       try {
         await db.query(
           `INSERT INTO subscriptions (creator_id, plan_key, plan_name, billing_cycle, status, activated_at)
-           VALUES (?, 'early_access', 'Free Trial', 'yearly', 'active', NOW())
-           ON DUPLICATE KEY UPDATE plan_key = 'early_access', plan_name = 'Free Trial', status = 'active'`,
+           VALUES (?, 'early_access', 'Free Trial', 'yearly', 'trial', NOW())
+           ON DUPLICATE KEY UPDATE id = id`,
           [creator.id]
         );
       } catch (e: any) {

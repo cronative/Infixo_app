@@ -219,19 +219,31 @@ export const SubscriptionService = {
     return INFLIXO_PLANS.find((p) => p.key === key || p.key === normalizedKey) || INFLIXO_PLANS[0];
   },
 
-  activate(planKey: PlanKey = "early_access", billingCycle: BillingCycle = "yearly", overrideEmail?: string): Subscription {
-    const email = overrideEmail || authRepository.getPendingEmail() || profileRepository.get()?.email;
+  async activate(
+    planKey: PlanKey = "early_access",
+    billingCycle: BillingCycle = "yearly",
+    overrideEmail?: string
+  ): Promise<Subscription> {
+    const email =
+      overrideEmail ||
+      authRepository.getPendingEmail() ||
+      profileRepository.get()?.email ||
+      authRepository.get()?.email;
     const sub = createSubscriptionLifecycle(planKey, billingCycle);
 
     subscriptionRepository.save(sub);
 
     // Keep local onboarding fast, then mirror the lifecycle to MySQL in the background.
     if (email) {
-      fetch("/api/subscription", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, ...sub }),
-      }).catch((e) => console.error("Failed to save Subscription to MySQL DB:", e));
+      try {
+        await fetch("/api/subscription", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, ...sub }),
+        });
+      } catch (e) {
+        console.error("Failed to save Subscription to MySQL DB:", e);
+      }
     }
 
     return sub;
@@ -239,7 +251,10 @@ export const SubscriptionService = {
 
   cancelAutoRenew(): Subscription {
     const current = subscriptionRepository.get();
-    const email = authRepository.getPendingEmail() || profileRepository.get()?.email;
+    const email =
+      authRepository.getPendingEmail() ||
+      profileRepository.get()?.email ||
+      authRepository.get()?.email;
     const nowIso = new Date().toISOString();
     const updated: Subscription = {
       ...current,
@@ -271,7 +286,10 @@ export const SubscriptionService = {
 
   resumeAutoRenew(): Subscription {
     const current = subscriptionRepository.get();
-    const email = authRepository.getPendingEmail() || profileRepository.get()?.email;
+    const email =
+      authRepository.getPendingEmail() ||
+      profileRepository.get()?.email ||
+      authRepository.get()?.email;
     const nextRenewal = current.currentPeriodEndsAt || current.endsAt || new Date().toISOString();
     const updated: Subscription = {
       ...current,
@@ -302,13 +320,36 @@ export const SubscriptionService = {
   },
 
   async fetchFromDb(overrideEmail?: string): Promise<Subscription | null> {
-    const email = overrideEmail || authRepository.getPendingEmail() || profileRepository.get()?.email;
+    const email =
+      overrideEmail ||
+      authRepository.getPendingEmail() ||
+      profileRepository.get()?.email ||
+      authRepository.get()?.email;
     if (!email) return null;
 
     try {
       const res = await fetch(`/api/subscription?email=${encodeURIComponent(email)}`);
       const data = await res.json();
       if (data.success && data.subscription) {
+        const currentLocal = subscriptionRepository.get();
+
+        // SAFEGUARD: If local repository already has an active paid plan (starter, pro, vip),
+        // but MySQL still returned 'early_access' (due to async delay or stale cache),
+        // DO NOT downgrade to early_access! Preserve the paid plan and sync MySQL immediately!
+        if (
+          currentLocal &&
+          currentLocal.planKey !== "early_access" &&
+          data.subscription.planKey === "early_access"
+        ) {
+          console.warn("Preserving local paid plan over stale DB early_access:", currentLocal.planKey);
+          fetch("/api/subscription", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, ...currentLocal }),
+          }).catch(() => null);
+          return currentLocal;
+        }
+
         const sub: Subscription = {
           planKey: data.subscription.planKey || "early_access",
           planName: data.subscription.planName || "Free Trial",

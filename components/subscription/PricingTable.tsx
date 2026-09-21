@@ -7,7 +7,7 @@ import { BillingCycle, PlanKey } from "@/types";
 import { useToast } from "@/contexts/ToastContext";
 import { useCreator } from "@/contexts/CreatorContext";
 import { SubscriptionService } from "@/services/SubscriptionService";
-import { authRepository } from "@/repositories/localRepository";
+import { authRepository, profileRepository } from "@/repositories/localRepository";
 import { formatPlanPrice, getPlanPrice, usePricingCurrency } from "@/lib/pricing";
 import { RazorpayCheckoutButton } from "@/components/checkout/RazorpayCheckoutButton";
 
@@ -32,7 +32,63 @@ export function PricingTable({ }: PricingTableProps) {
   }
 
   const currentPeriod = cycle === "yearly" ? "yearly" : "monthly";
-  const activeEmail = profile?.email || authRepository.getPendingEmail() || "";
+  const activeEmail =
+    profile?.email ||
+    authRepository.getPendingEmail() ||
+    profileRepository.get()?.email ||
+    authRepository.get()?.email ||
+    "";
+
+  const handleUpgradeSuccess = async (
+    targetPlanKey: PlanKey,
+    planTitle: string,
+    verifyData?: {
+      order_id?: string | null;
+      subscription_id?: string | null;
+      payment_id: string;
+      signature: string;
+      is_recurring?: boolean;
+    }
+  ) => {
+    const emailToUse =
+      activeEmail ||
+      profile?.email ||
+      authRepository.getPendingEmail() ||
+      profileRepository.get()?.email ||
+      authRepository.get()?.email ||
+      "";
+
+    // 1. Activate in local storage immediately
+    await SubscriptionService.activate(targetPlanKey, currentPeriod, emailToUse);
+
+    // 2. Direct guaranteed sync to MySQL DB with Razorpay details
+    if (emailToUse) {
+      try {
+        await fetch("/api/subscription", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: emailToUse,
+            planKey: targetPlanKey,
+            planName: planTitle,
+            billingCycle: currentPeriod,
+            status: "active",
+            autoRenew: true,
+            paymentMode: verifyData?.is_recurring ? "recurring" : "razorpay",
+            razorpay_subscription_id: verifyData?.subscription_id || null,
+            razorpay_payment_id: verifyData?.payment_id || null,
+          }),
+        });
+      } catch (err) {
+        console.warn("Direct subscription sync warning:", err);
+      }
+    }
+
+    // 3. Refresh CreatorContext so full app reflects upgraded plan
+    await refresh();
+    showToast(`Successfully upgraded to ${planTitle}! 🎉`);
+  };
+
   const currentPlanKey =
     subscription?.planKey === "creator_pro" || subscription?.planKey === "pro"
       ? "pro"
@@ -207,10 +263,8 @@ export function PricingTable({ }: PricingTableProps) {
                     email: activeEmail,
                   }}
                   className="w-full rounded-xl border border-[#043084] bg-white hover:bg-[#043084]/5 text-[#043084] py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
-                  onSuccess={() => {
-                    SubscriptionService.activate("starter", currentPeriod);
-                    refresh();
-                    showToast("Successfully upgraded to Starter Plan! 🎉");
+                  onSuccess={(data) => {
+                    handleUpgradeSuccess("starter", "Starter Plan", data);
                   }}
                   onError={(err) => {
                     showToast(`Payment failed: ${err.description || "Transaction declined"}`);
@@ -251,26 +305,11 @@ export function PricingTable({ }: PricingTableProps) {
                   Pro Features
                 </span>
                 <ul className="space-y-2 text-xs text-[#181716] font-medium">
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
-                    <span>20 series/playlists</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
-                    <span>20 episodes per series</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
-                    <span>20 custom links</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
-                    <span>3 collab packages &amp; 10 reviews</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
-                    <span>Rate card + default media kit</span>
-                  </li>
+                  <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" /><span>20 series, 200 episodes</span></li>
+                  <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" /><span>20 custom links &amp; 10 reviews</span></li>
+                  <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" /><span>5 collab packages</span></li>
+                  <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" /><span>Rate card &amp; full media kit</span></li>
+                  <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" /><span>Standard analytics + faster refresh</span></li>
                 </ul>
               </div>
             </div>
@@ -296,10 +335,8 @@ export function PricingTable({ }: PricingTableProps) {
                     email: activeEmail,
                   }}
                   className="w-full rounded-xl bg-[#043084] hover:bg-[#032360] text-white py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
-                  onSuccess={() => {
-                    SubscriptionService.activate("pro", currentPeriod);
-                    refresh();
-                    showToast("Successfully upgraded to Pro Plan! 🎉");
+                  onSuccess={(data) => {
+                    handleUpgradeSuccess("creator_pro", "Creator Pro", data);
                   }}
                   onError={(err) => {
                     showToast(`Payment failed: ${err.description || "Transaction declined"}`);
@@ -385,10 +422,8 @@ export function PricingTable({ }: PricingTableProps) {
                     email: activeEmail,
                   }}
                   className="w-full rounded-xl bg-[#043084] hover:bg-[#032360] text-white py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
-                  onSuccess={() => {
-                    SubscriptionService.activate("vip", currentPeriod);
-                    refresh();
-                    showToast("Successfully upgraded to VIP Plan! 🎉");
+                  onSuccess={(data) => {
+                    handleUpgradeSuccess("creator_VIP", "Creator VIP", data);
                   }}
                   onError={(err) => {
                     showToast(`Payment failed: ${err.description || "Transaction declined"}`);
