@@ -106,10 +106,14 @@ export default function DashboardSubscriptionPage() {
         billingCycle === "yearly" ? "year" : "month"
       }`;
 
-  const isStarterOrTrial =
-    planKey === "starter" ||
+  const isFreeTrial =
     planKey === "early_access" ||
-    subscription?.status === "trial";
+    (subscription?.status === "trial" &&
+      planKey !== "starter" &&
+      planKey !== "pro" &&
+      planKey !== "vip" &&
+      planKey !== "creator_pro" &&
+      planKey !== "creator_VIP");
 
   const activatedMs = subscription?.activatedAt ? new Date(subscription.activatedAt).getTime() : Date.now();
   const safeActivatedMs = Number.isNaN(activatedMs) ? Date.now() : activatedMs;
@@ -174,8 +178,8 @@ export default function DashboardSubscriptionPage() {
         </div>
       </div>
 
-      {/* 2. STARTER / TRIAL 7-DAYS COUNTDOWN BANNER ("PATTI") */}
-      {isStarterOrTrial && (
+      {/* 2. FREE TRIAL 7-DAYS COUNTDOWN BANNER ("PATTI") */}
+      {isFreeTrial && (
         <div className="rounded-2xl border border-amber-300 bg-gradient-to-r from-amber-50 via-amber-50/50 to-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs text-left">
           <div className="flex items-start sm:items-center gap-3.5">
             <div className="h-10 w-10 rounded-xl bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-600 shrink-0">
@@ -184,14 +188,14 @@ export default function DashboardSubscriptionPage() {
             <div className="space-y-0.5">
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="font-display text-sm sm:text-base font-bold text-amber-950">
-                  ⚡ {dayText} left in your {planKey === "starter" ? "Starter Plan" : "Free Trial"}
+                  ⚡ {dayText} left in your Free Trial
                 </h3>
                 <span className="rounded-full bg-amber-200/80 border border-amber-300 text-amber-900 text-[10px] font-extrabold px-2.5 py-0.5 uppercase tracking-wide">
                   {daysLeft} Days Remaining
                 </span>
               </div>
               <p className="text-xs text-amber-900/80 font-medium leading-relaxed">
-                Your creator profile is currently live and public. After {dayText}, upgrade anytime to ensure permanent public access, unlimited episodes &amp; VIP creator features.
+                Your creator profile is currently live and public during this 7-day trial. After {dayText}, your profile will become private so fans cannot view it. Upgrade to any plan to keep your profile permanently live!
               </p>
             </div>
           </div>

@@ -88,12 +88,10 @@ function TrialAccessBar() {
 
   const daysLeft = trialStatus.daysLeft ?? 0;
   const dayText = daysLeft === 1 ? "1 day" : `${daysLeft} days`;
-  const isStarter = subscription?.planKey === "starter";
-  const planLabel = isStarter ? "Starter Plan" : "Free Trial";
   const message = trialStatus.isExpired
-    ? `Your ${planLabel} has ended`
-    : `${dayText} left in ${planLabel}`;
-  const cta = trialStatus.isExpired ? "Choose a plan" : "Keep access";
+    ? "Your Free Trial has ended (Profile is now private)"
+    : `${dayText} left in Free Trial — after 7 days profile will be private`;
+  const cta = trialStatus.isExpired ? "Choose a plan" : "Upgrade Plan";
 
   return (
     <div className="sticky top-0 z-40 flex h-11 shrink-0 items-center justify-center border-b border-[#032363] bg-[#043084] px-4 text-white shadow-[0_1px_0_rgba(255,255,255,0.08)]">

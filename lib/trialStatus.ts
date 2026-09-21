@@ -13,12 +13,17 @@ export function getFreeTrialStatus(subscription?: Subscription | null, nowMs = D
     };
   }
 
-  const isStarterOrTrial =
+  // Only real free trials (early_access or status === 'trial' when not a paid plan)
+  const isFreeTrial =
     subscription.planKey === "early_access" ||
-    subscription.planKey === "starter" ||
-    subscription.status === "trial";
+    (subscription.status === "trial" &&
+      subscription.planKey !== "starter" &&
+      subscription.planKey !== "pro" &&
+      subscription.planKey !== "vip" &&
+      subscription.planKey !== "creator_pro" &&
+      subscription.planKey !== "creator_VIP");
 
-  if (!isStarterOrTrial) {
+  if (!isFreeTrial) {
     return {
       isFreeTrial: false,
       isExpired: false,
@@ -60,16 +65,13 @@ export function getTrialHeaderMessage(subscription?: Subscription | null, nowMs 
     return "Here's how your Inflixo profile is looking today.";
   }
 
-  const isStarter = subscription?.planKey === "starter";
-  const planTitle = isStarter ? "Starter Plan" : "Free Trial";
-
   if (status.isExpired) {
-    return `Your ${planTitle} has ended. Your profile is private now, so fans cannot view it until you choose a plan.`;
+    return "Your Free Trial has ended. Your profile is private now, so fans cannot view it until you choose a plan.";
   }
 
   if (status.shouldWarn) {
     const dayText = status.daysLeft === 1 ? "1 day" : `${status.daysLeft} days`;
-    return `You are creating good content. Your ${planTitle} has ${dayText} left. Upgrade to keep your public profile live and unlock more features.`;
+    return `Your Free Trial has ${dayText} left. After 7 days, your profile will become private. Choose a plan to keep it live.`;
   }
 
   return "Here's how your Inflixo profile is looking today.";
