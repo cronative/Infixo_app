@@ -54,7 +54,6 @@ export const COLLABORATION_TYPES = [
   "Store / Product Visit ⭐",
   "Event Appearance / Coverage ⭐",
   "Multi-Platform Campaign",
-  "Podcast Integration",
   "Monthly Brand Retainer",
   "Other",
 ] as const;
@@ -410,6 +409,7 @@ export default function DashboardMediaKitPage() {
   const [formTurnaround, setFormTurnaround] = useState<number>(2);
   const [formDeliverableInput, setFormDeliverableInput] = useState("");
   const [formDeliverables, setFormDeliverables] = useState<string[]>([]);
+  const [showAllSuggestions, setShowAllSuggestions] = useState(false);
 
   const activeEmail = profile.email || authRepository.getPendingEmail() || "";
   const activeCreatorId = profile.id;
@@ -465,6 +465,7 @@ export default function DashboardMediaKitPage() {
     setFormTurnaround(2);
     setFormDeliverableInput("");
     setFormDeliverables([]);
+    setShowAllSuggestions(false);
     setIsModalOpen(true);
   };
 
@@ -495,6 +496,7 @@ export default function DashboardMediaKitPage() {
     setFormTurnaround(pkg.turnaroundDays);
     setFormDeliverableInput("");
     setFormDeliverables([...pkg.deliverables]);
+    setShowAllSuggestions(false);
     setIsModalOpen(true);
   };
 
@@ -514,6 +516,7 @@ export default function DashboardMediaKitPage() {
     setFormTurnaround(template.turnaroundDays);
     setFormDeliverables([...template.deliverables]);
     setFormDeliverableInput("");
+    setShowAllSuggestions(false);
     setIsExamplesModalOpen(false);
     setIsModalOpen(true);
   };
@@ -970,7 +973,10 @@ export default function DashboardMediaKitPage() {
                 <label className="block text-xs font-bold text-[#043084]">Collaboration Type</label>
                 <select
                   value={formPlatform}
-                  onChange={(e) => setFormPlatform(e.target.value)}
+                  onChange={(e) => {
+                    setFormPlatform(e.target.value);
+                    setShowAllSuggestions(false);
+                  }}
                   className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3 text-xs sm:text-sm font-medium text-[#043084] focus:border-[#043084] focus:outline-none transition-colors"
                 >
                   {COLLABORATION_TYPES.map((type) => (
@@ -982,15 +988,42 @@ export default function DashboardMediaKitPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#043084]">Turnaround time (Days)</label>
-                <input
-                  type="number"
-                  value={formTurnaround}
-                  onChange={(e) => setFormTurnaround(Number(e.target.value))}
-                  min={1}
-                  max={30}
-                  className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#043084] focus:border-[#043084] focus:outline-none transition-colors"
-                />
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-[#043084]">Delivery Time</label>
+                  <span className="text-[10px] text-[#64748b] font-medium">
+                    {formTurnaround} {formTurnaround === 1 ? "day" : "days"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {[2, 3, 7, 14].map((days) => {
+                    const isSelected = formTurnaround === days;
+                    return (
+                      <button
+                        key={days}
+                        type="button"
+                        onClick={() => setFormTurnaround(days)}
+                        className={`flex-1 h-10 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                          isSelected
+                            ? "bg-[#043084] text-white border-[#043084] shadow-xs"
+                            : "bg-white text-[#043084] border-[#e2e8f0] hover:bg-[#f8fafc]"
+                        }`}
+                      >
+                        {days}D
+                      </button>
+                    );
+                  })}
+                  <div className="relative w-20 shrink-0">
+                    <input
+                      type="number"
+                      value={formTurnaround}
+                      onChange={(e) => setFormTurnaround(Math.max(1, Number(e.target.value)))}
+                      min={1}
+                      max={60}
+                      title="Custom Days"
+                      className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-2 text-center text-xs font-semibold text-[#043084] focus:border-[#043084] focus:outline-none transition-colors"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -1010,14 +1043,21 @@ export default function DashboardMediaKitPage() {
               </div>
             )}
 
-            {/* Min - Max Pricing Range Inputs */}
-            <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#043084]">
-                Pricing range (in INR)
-              </label>
+            {/* Package Pricing Inputs */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold text-[#043084]">
+                  Package Pricing (INR)
+                </label>
+                <span className="text-[10px] text-[#64748b]">
+                  Leave &quot;Up to&quot; empty for fixed price
+                </span>
+              </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[10px] font-bold text-[#64748b] mb-0.5">Min Price (₹) <span className="text-[#C2414B]">*</span></label>
+                  <label className="block text-[10px] font-bold text-[#64748b] mb-0.5">
+                    Starting Price (₹) <span className="text-[#C2414B]">*</span>
+                  </label>
                   <input
                     type="text"
                     value={formMinPrice}
@@ -1028,12 +1068,14 @@ export default function DashboardMediaKitPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-[#64748b] mb-0.5">Max Price (Optional)</label>
+                  <label className="block text-[10px] font-bold text-[#64748b] mb-0.5">
+                    Up to ₹ <span className="text-[#64748b] font-normal">(Optional)</span>
+                  </label>
                   <input
                     type="text"
                     value={formMaxPrice}
                     onChange={(e) => setFormMaxPrice(e.target.value)}
-                    placeholder="₹15,000"
+                    placeholder="e.g. ₹15,000"
                     className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#043084] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:outline-none transition-colors"
                   />
                 </div>
@@ -1067,35 +1109,55 @@ export default function DashboardMediaKitPage() {
               </div>
 
               {/* Suggestions */}
-              <div className="space-y-1 bg-[#f8fafc] border border-[#e2e8f0] rounded-xl p-2.5">
-                <p className="text-[10px] font-bold text-[#64748b] uppercase tracking-wider flex items-center justify-between">
-                  <span>💡 Suggestions for {formPlatform === "Other" ? (customPlatform.trim() || "Custom Collaboration") : formPlatform}:</span>
-                  <span className="text-[9px] text-[#043084] font-bold">Click chip to add +</span>
-                </p>
-                <div className="flex flex-wrap items-center gap-1.5 max-h-24 overflow-y-auto pt-1">
-                  {(DELIVERABLE_SUGGESTIONS[formPlatform] || DELIVERABLE_SUGGESTIONS["Instagram Reel"]).map((item, idx) => {
-                    const isAdded = formDeliverables.includes(item);
-                    return (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => {
-                          if (!isAdded) {
-                            setFormDeliverables([...formDeliverables, item]);
-                          }
-                        }}
-                        disabled={isAdded}
-                        className={`text-[11px] font-semibold px-2 py-0.5 rounded-lg border transition-colors cursor-pointer ${isAdded
-                          ? "bg-[#EAF7F0] text-[#17845B] border-[#17845B]/20 cursor-default opacity-70"
-                          : "bg-white hover:bg-[#f1f5f9] text-[#043084] hover:text-[#043084] border-[#e2e8f0]"
-                          }`}
-                      >
-                        {isAdded ? `✓ ${item}` : `+ ${item}`}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+              {(() => {
+                const suggestionsList = DELIVERABLE_SUGGESTIONS[formPlatform] || DELIVERABLE_SUGGESTIONS["Instagram Reel"] || [];
+                const displayedList = showAllSuggestions ? suggestionsList : suggestionsList.slice(0, 5);
+                const hasMore = suggestionsList.length > 5;
+
+                return (
+                  <div className="space-y-2 bg-[#f8fafc] border border-[#e2e8f0] rounded-xl p-3">
+                    <div className="flex items-center justify-between text-[10px] font-bold text-[#64748b] uppercase tracking-wider">
+                      <span>💡 Popular suggestions for {formPlatform === "Other" ? (customPlatform.trim() || "Collaboration") : formPlatform}:</span>
+                      <span className="text-[9px] text-[#043084] font-bold">Click chip to add +</span>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                      {displayedList.map((item, idx) => {
+                        const isAdded = formDeliverables.includes(item);
+                        return (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => {
+                              if (!isAdded) {
+                                setFormDeliverables([...formDeliverables, item]);
+                              }
+                            }}
+                            disabled={isAdded}
+                            className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
+                              isAdded
+                                ? "bg-[#EAF7F0] text-[#17845B] border-[#17845B]/20 cursor-default opacity-70"
+                                : "bg-white hover:bg-[#f1f5f9] text-[#043084] border-[#e2e8f0] hover:border-[#043084]/30"
+                            }`}
+                          >
+                            {isAdded ? `✓ ${item}` : `+ ${item}`}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {hasMore && (
+                      <div className="pt-0.5 flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => setShowAllSuggestions(!showAllSuggestions)}
+                          className="text-[11px] font-bold text-[#043084] hover:underline cursor-pointer"
+                        >
+                          {showAllSuggestions ? "Show fewer suggestions ↑" : `+ Show ${suggestionsList.length - 5} more suggestions ↓`}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
 
               {/* Added Deliverables */}
               {formDeliverables.length > 0 && (
@@ -1117,17 +1179,54 @@ export default function DashboardMediaKitPage() {
               )}
             </div>
 
-            {/* Optional badge */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-[#043084]">
-                Highlight badge <span className="text-[#64748b] font-normal">(Optional)</span>
-              </label>
+            {/* Highlight badge with Quick Chips */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold text-[#043084]">
+                  Highlight badge <span className="text-[#64748b] font-normal">(Optional)</span>
+                </label>
+                {formPackageName && (
+                  <button
+                    type="button"
+                    onClick={() => setFormPackageName("")}
+                    className="text-[10px] font-bold text-[#C2414B] hover:underline cursor-pointer"
+                  >
+                    Clear badge
+                  </button>
+                )}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-1.5">
+                {[
+                  { label: "Most Popular", icon: "🔥" },
+                  { label: "Best Value", icon: "💎" },
+                  { label: "Recommended", icon: "⭐" },
+                  { label: "Premium", icon: "👑" },
+                ].map((badge) => {
+                  const isSelected = formPackageName === badge.label;
+                  return (
+                    <button
+                      key={badge.label}
+                      type="button"
+                      onClick={() => setFormPackageName(isSelected ? "" : badge.label)}
+                      className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
+                        isSelected
+                          ? "bg-[#043084] text-white border-[#043084] shadow-xs"
+                          : "bg-white text-[#043084] border-[#e2e8f0] hover:bg-[#f8fafc]"
+                      }`}
+                    >
+                      <span>{badge.icon} {badge.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
               <input
                 type="text"
                 value={formPackageName}
                 onChange={(e) => setFormPackageName(e.target.value)}
-                placeholder="e.g. Most Popular, Best Value"
-                className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#043084] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:outline-none transition-colors"
+                placeholder="Or type a custom badge (e.g. Creator Choice, Limited Edition)"
+                className="w-full h-9 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs font-medium text-[#043084] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:outline-none transition-colors"
               />
             </div>
           </ModalBody>
