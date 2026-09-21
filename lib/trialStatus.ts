@@ -4,7 +4,21 @@ const TRIAL_DAYS = 7;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 export function getFreeTrialStatus(subscription?: Subscription | null, nowMs = Date.now()) {
-  if (!subscription || subscription.planKey !== "early_access") {
+  if (!subscription) {
+    return {
+      isFreeTrial: false,
+      isExpired: false,
+      daysLeft: null as number | null,
+      shouldWarn: false,
+    };
+  }
+
+  const isStarterOrTrial =
+    subscription.planKey === "early_access" ||
+    subscription.planKey === "starter" ||
+    subscription.status === "trial";
+
+  if (!isStarterOrTrial) {
     return {
       isFreeTrial: false,
       isExpired: false,
@@ -46,14 +60,18 @@ export function getTrialHeaderMessage(subscription?: Subscription | null, nowMs 
     return "Here's how your Inflixo profile is looking today.";
   }
 
+  const isStarter = subscription?.planKey === "starter";
+  const planTitle = isStarter ? "Starter Plan" : "Free Trial";
+
   if (status.isExpired) {
-    return "Your Free Trial has ended. Your profile is private now, so fans cannot view it until you choose a plan.";
+    return `Your ${planTitle} has ended. Your profile is private now, so fans cannot view it until you choose a plan.`;
   }
 
   if (status.shouldWarn) {
     const dayText = status.daysLeft === 1 ? "1 day" : `${status.daysLeft} days`;
-    return `You are creating good content. Your Free Trial has ${dayText} left. After 7 days, tamari profile private thai jase, so fans tamaru public profile nahi joi sake. Choose a plan to keep it live.`;
+    return `You are creating good content. Your ${planTitle} has ${dayText} left. Upgrade to keep your public profile live and unlock more features.`;
   }
 
   return "Here's how your Inflixo profile is looking today.";
 }
+

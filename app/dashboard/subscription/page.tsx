@@ -17,6 +17,7 @@ import {
   CheckCircle2,
   X,
   RefreshCw,
+  Zap,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { PricingTable } from "@/components/subscription/PricingTable";
@@ -105,6 +106,17 @@ export default function DashboardSubscriptionPage() {
         billingCycle === "yearly" ? "year" : "month"
       }`;
 
+  const isStarterOrTrial =
+    planKey === "starter" ||
+    planKey === "early_access" ||
+    subscription?.status === "trial";
+
+  const activatedMs = subscription?.activatedAt ? new Date(subscription.activatedAt).getTime() : Date.now();
+  const safeActivatedMs = Number.isNaN(activatedMs) ? Date.now() : activatedMs;
+  const explicitEndMs = finishDate ? new Date(finishDate).getTime() : safeActivatedMs + 7 * 24 * 60 * 60 * 1000;
+  const daysLeft = Math.max(0, Math.ceil((explicitEndMs - Date.now()) / (1000 * 60 * 60 * 24)));
+  const dayText = daysLeft === 1 ? "1 day" : `${daysLeft} days`;
+
   const handleScrollToUpgrade = () => {
     setShowAllPlans(true);
     setTimeout(() => {
@@ -162,7 +174,42 @@ export default function DashboardSubscriptionPage() {
         </div>
       </div>
 
-      {/* 2. ACTIVE PLAN DETAILS CARD (PLAN K ANDAR KI DETAILS) */}
+      {/* 2. STARTER / TRIAL 7-DAYS COUNTDOWN BANNER ("PATTI") */}
+      {isStarterOrTrial && (
+        <div className="rounded-2xl border border-amber-300 bg-gradient-to-r from-amber-50 via-amber-50/50 to-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs text-left">
+          <div className="flex items-start sm:items-center gap-3.5">
+            <div className="h-10 w-10 rounded-xl bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-600 shrink-0">
+              <Zap className="h-5 w-5 fill-amber-500 text-amber-600 animate-pulse" />
+            </div>
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="font-display text-sm sm:text-base font-bold text-amber-950">
+                  ⚡ {dayText} left in your {planKey === "starter" ? "Starter Plan" : "Free Trial"}
+                </h3>
+                <span className="rounded-full bg-amber-200/80 border border-amber-300 text-amber-900 text-[10px] font-extrabold px-2.5 py-0.5 uppercase tracking-wide">
+                  {daysLeft} Days Remaining
+                </span>
+              </div>
+              <p className="text-xs text-amber-900/80 font-medium leading-relaxed">
+                Your creator profile is currently live and public. After {dayText}, upgrade anytime to ensure permanent public access, unlimited episodes &amp; VIP creator features.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={handleScrollToUpgrade}
+              className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#043084] hover:bg-[#032363] active:scale-[0.99] text-white px-4 py-2.5 text-xs font-bold transition-all shadow-sm cursor-pointer"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Upgrade Plan</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 3. ACTIVE PLAN DETAILS CARD (PLAN K ANDAR KI DETAILS) */}
       <section className="rounded-2xl border-2 border-[#043084]/20 bg-white shadow-xs overflow-hidden text-left">
         {/* Card Header Banner */}
         <div className="bg-gradient-to-r from-[#043084]/[0.07] via-[#043084]/[0.03] to-transparent p-5 sm:p-6 border-b border-[#e2e8f0]">

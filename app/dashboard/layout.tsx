@@ -88,15 +88,17 @@ function TrialAccessBar() {
 
   const daysLeft = trialStatus.daysLeft ?? 0;
   const dayText = daysLeft === 1 ? "1 day" : `${daysLeft} days`;
+  const isStarter = subscription?.planKey === "starter";
+  const planLabel = isStarter ? "Starter Plan" : "Free Trial";
   const message = trialStatus.isExpired
-    ? "Your Free Trial has ended"
-    : `${dayText} left in Free Trial`;
+    ? `Your ${planLabel} has ended`
+    : `${dayText} left in ${planLabel}`;
   const cta = trialStatus.isExpired ? "Choose a plan" : "Keep access";
 
   return (
     <div className="sticky top-0 z-40 flex h-11 shrink-0 items-center justify-center border-b border-[#032363] bg-[#043084] px-4 text-white shadow-[0_1px_0_rgba(255,255,255,0.08)]">
       <div className="flex w-full max-w-5xl items-center justify-center gap-3 text-center">
-        <span className="hidden h-5 w-5 items-center justify-center rounded-md text-white sm:inline-flex">
+        <span className="hidden h-5 w-5 items-center justify-center rounded-md text-[#38E869] sm:inline-flex">
           <Zap className="h-4 w-4 fill-current" />
         </span>
         <p className="truncate text-sm font-black tracking-tight sm:text-base">
