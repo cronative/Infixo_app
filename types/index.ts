@@ -524,6 +524,7 @@ export interface Subscription {
   firstMonthAmount?: number;
   firstMonthCurrency?: string;
   autoRenew?: boolean;
+  hasUsedTrial?: boolean;
 }
 
 // ---------------------------------------------------------------------------

@@ -17,14 +17,26 @@ interface PricingTableProps {
   billingCycle?: BillingCycle;
   onBillingCycleChange?: (cycle: BillingCycle) => void;
   showEarlyAccessBanner?: boolean;
+  hideFreeTrial?: boolean;
 }
 
-export function PricingTable({ }: PricingTableProps) {
+export function PricingTable({ hideFreeTrial }: PricingTableProps) {
   const { showToast } = useToast();
   const { profile, subscription, refresh } = useCreator();
   const [notifiedPlan, setNotifiedPlan] = useState<string | null>(null);
   const [cycle, setCycle] = useState<BillingCycle>("monthly");
   const currency = usePricingCurrency();
+
+  // Once a user has selected/used free trial, do not show Free Trial in the plans list
+  const hasSelectedFreeTrial = Boolean(
+    hideFreeTrial ||
+    subscription?.hasUsedTrial ||
+    subscription?.trialStartedAt ||
+    subscription?.paymentMode === "free_trial" ||
+    subscription?.planKey === "early_access" ||
+    subscription?.status === "trial" ||
+    (subscription?.activatedAt && subscription?.status)
+  );
 
   function handleNotifyMe(planName: string) {
     setNotifiedPlan(planName);
@@ -141,66 +153,68 @@ export function PricingTable({ }: PricingTableProps) {
         </div>
 
         {/* 2. READABLE PLAN CARDS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div className={`grid grid-cols-1 ${hasSelectedFreeTrial ? "md:grid-cols-3 gap-5" : "md:grid-cols-2 xl:grid-cols-4 gap-4"}`}>
 
-          {/* Card 1: Free Trial */}
-          <div className="rounded-2xl border border-[#E4DAD5] bg-white p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xs text-left">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-display text-base font-bold text-[#181716]">Free Trial</h3>
-                <span className="text-[10px] font-bold text-[#17845B] bg-[#EAF7F0] px-2 py-0.5 rounded-full border border-[#17845B]/20">
-                  7 Days
-                </span>
+          {/* Card 1: Free Trial (hidden once free trial has been selected/used) */}
+          {!hasSelectedFreeTrial && (
+            <div className="rounded-2xl border border-[#E4DAD5] bg-white p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xs text-left">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-display text-base font-bold text-[#181716]">Free Trial</h3>
+                  <span className="text-[10px] font-bold text-[#17845B] bg-[#EAF7F0] px-2 py-0.5 rounded-full border border-[#17845B]/20">
+                    7 Days
+                  </span>
+                </div>
+
+                <div>
+                  <p className="font-display text-xl font-bold text-[#181716]">
+                    ₹0
+                  </p>
+                  <p className="text-[11px] text-[#797570] font-medium mt-0.5">
+                    Public profile for 7 days • No card required
+                  </p>
+                </div>
+
+                <p className="text-xs text-[#797570] font-medium leading-relaxed">
+                  Try Inflixo and see how your public creator profile looks before upgrading.
+                </p>
+
+                <div className="pt-3 border-t border-[#E4DAD5] space-y-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570] block">
+                    Trial Features
+                  </span>
+                  <ul className="space-y-2 text-xs text-[#181716] font-medium">
+                    <li className="flex items-center gap-2">
+                      <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
+                      <span>Public profile active for 7 days</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
+                      <span>3 series, 15 total episodes</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
+                      <span>5 custom links &amp; free themes</span>
+                    </li>
+                  </ul>
+                </div>
               </div>
 
-              <div>
-                <p className="font-display text-xl font-bold text-[#181716]">
-                  ₹0
-                </p>
-                <p className="text-[11px] text-[#797570] font-medium mt-0.5">
-                  Public profile for 7 days • No card required
-                </p>
-              </div>
-
-              <p className="text-xs text-[#797570] font-medium leading-relaxed">
-                Try Inflixo and see how your public creator profile looks before upgrading.
-              </p>
-
-              <div className="pt-3 border-t border-[#E4DAD5] space-y-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570] block">
-                  Trial Features
-                </span>
-                <ul className="space-y-2 text-xs text-[#181716] font-medium">
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
-                    <span>Public profile active for 7 days</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
-                    <span>3 series, 15 total episodes</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
-                    <span>5 custom links &amp; free themes</span>
-                  </li>
-                </ul>
+              <div className="pt-4 border-t border-[#E4DAD5]">
+                <button
+                  type="button"
+                  disabled
+                  className={`w-full rounded-xl py-2.5 px-3 text-xs font-semibold cursor-default text-center ${
+                    currentPlanKey === "early_access"
+                      ? "bg-[#EAF7F0] border border-[#17845B]/20 text-[#17845B]"
+                      : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#797570]"
+                  }`}
+                >
+                  {currentPlanKey === "early_access" ? "Current Trial ✓" : "Included in Trial"}
+                </button>
               </div>
             </div>
-
-            <div className="pt-4 border-t border-[#E4DAD5]">
-              <button
-                type="button"
-                disabled
-                className={`w-full rounded-xl py-2.5 px-3 text-xs font-semibold cursor-default text-center ${
-                  currentPlanKey === "early_access"
-                    ? "bg-[#EAF7F0] border border-[#17845B]/20 text-[#17845B]"
-                    : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#797570]"
-                }`}
-              >
-                {currentPlanKey === "early_access" ? "Current Trial ✓" : "Included in Trial"}
-              </button>
-            </div>
-          </div>
+          )}
 
           {/* Card 2: Starter */}
           <div className="rounded-2xl border border-[#E4DAD5] bg-white p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xs text-left">
@@ -452,10 +466,12 @@ export function PricingTable({ }: PricingTableProps) {
             <thead>
               <tr className="border-b border-[#E4DAD5] bg-[#fbfbfb] text-xs font-bold text-[#181716]">
                 <th className="py-3.5 px-5">Feature</th>
-                <th className="py-3.5 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
-                  <div className="font-bold text-[#043084]">Free Trial</div>
-                  <div className="text-[10px] font-medium text-[#797570] mt-0.5">7 days</div>
-                </th>
+                {!hasSelectedFreeTrial && (
+                  <th className="py-3.5 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                    <div className="font-bold text-[#043084]">Free Trial</div>
+                    <div className="text-[10px] font-medium text-[#797570] mt-0.5">7 days</div>
+                  </th>
+                )}
                 <th className="py-3.5 px-4 text-center">
                   <div className="font-bold text-[#181716]">Starter</div>
                   <div className="text-[10px] font-medium text-[#797570] mt-0.5">
@@ -482,9 +498,11 @@ export function PricingTable({ }: PricingTableProps) {
                 <td className="py-3 px-5 font-semibold text-[#181716]">
                   Content Series
                 </td>
-                <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
-                  3 series
-                </td>
+                {!hasSelectedFreeTrial && (
+                  <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                    3 series
+                  </td>
+                )}
                 <td className="py-3 px-4 text-center">3 series</td>
                 <td className="py-3 px-4 text-center">20 series</td>
                 <td className="py-3 px-4 text-center font-semibold text-[#043084]">Unlimited</td>
@@ -495,9 +513,11 @@ export function PricingTable({ }: PricingTableProps) {
                 <td className="py-3 px-5 font-semibold text-[#181716]">
                   Total Episodes
                 </td>
-                <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
-                  15 episodes
-                </td>
+                {!hasSelectedFreeTrial && (
+                  <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                    15 episodes
+                  </td>
+                )}
                 <td className="py-3 px-4 text-center">15 episodes</td>
                 <td className="py-3 px-4 text-center">20 per series</td>
                 <td className="py-3 px-4 text-center font-semibold text-[#043084]">Unlimited</td>
@@ -508,9 +528,11 @@ export function PricingTable({ }: PricingTableProps) {
                 <td className="py-3 px-5 font-semibold text-[#181716]">
                   Custom Links
                 </td>
-                <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
-                  5 links
-                </td>
+                {!hasSelectedFreeTrial && (
+                  <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                    5 links
+                  </td>
+                )}
                 <td className="py-3 px-4 text-center">5 links</td>
                 <td className="py-3 px-4 text-center">20 links</td>
                 <td className="py-3 px-4 text-center font-semibold text-[#043084]">Unlimited</td>
@@ -521,9 +543,11 @@ export function PricingTable({ }: PricingTableProps) {
                 <td className="py-3 px-5 font-semibold text-[#181716]">
                   Collab Packages
                 </td>
-                <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
-                  1 package
-                </td>
+                {!hasSelectedFreeTrial && (
+                  <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                    1 package
+                  </td>
+                )}
                 <td className="py-3 px-4 text-center">1 package</td>
                 <td className="py-3 px-4 text-center">3 packages</td>
                 <td className="py-3 px-4 text-center font-semibold text-[#043084]">10 packages</td>
@@ -534,9 +558,11 @@ export function PricingTable({ }: PricingTableProps) {
                 <td className="py-3 px-5 font-semibold text-[#181716]">
                   Reviews
                 </td>
-                <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
-                  1 review
-                </td>
+                {!hasSelectedFreeTrial && (
+                  <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                    1 review
+                  </td>
+                )}
                 <td className="py-3 px-4 text-center">1 review</td>
                 <td className="py-3 px-4 text-center">10 reviews</td>
                 <td className="py-3 px-4 text-center font-semibold text-[#043084]">Unlimited</td>
@@ -547,9 +573,11 @@ export function PricingTable({ }: PricingTableProps) {
                 <td className="py-3 px-5 font-semibold text-[#181716]">
                   Public Profile
                 </td>
-                <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
-                  7 days
-                </td>
+                {!hasSelectedFreeTrial && (
+                  <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                    7 days
+                  </td>
+                )}
                 <td className="py-3 px-4 text-center">Always live</td>
                 <td className="py-3 px-4 text-center">Always live</td>
                 <td className="py-3 px-4 text-center">Always live</td>
@@ -560,9 +588,11 @@ export function PricingTable({ }: PricingTableProps) {
                 <td className="py-3 px-5 font-semibold text-[#181716]">
                   Rate Card
                 </td>
-                <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
-                  <Minus className="h-4 w-4 mx-auto text-[#797570]/50" />
-                </td>
+                {!hasSelectedFreeTrial && (
+                  <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                    <Minus className="h-4 w-4 mx-auto text-[#797570]/50" />
+                  </td>
+                )}
                 <td className="py-3 px-4 text-center">
                   <Minus className="h-4 w-4 mx-auto text-[#797570]/50" />
                 </td>
@@ -577,9 +607,11 @@ export function PricingTable({ }: PricingTableProps) {
                 <td className="py-3 px-5 font-semibold text-[#181716]">
                   Media Kit
                 </td>
-                <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
-                  <Minus className="h-4 w-4 mx-auto text-[#797570]/50" />
-                </td>
+                {!hasSelectedFreeTrial && (
+                  <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                    <Minus className="h-4 w-4 mx-auto text-[#797570]/50" />
+                  </td>
+                )}
                 <td className="py-3 px-4 text-center">
                   <Minus className="h-4 w-4 mx-auto text-[#797570]/50" />
                 </td>
@@ -596,9 +628,11 @@ export function PricingTable({ }: PricingTableProps) {
                 <td className="py-3 px-5 font-semibold text-[#181716]">
                   Inflixo Branding
                 </td>
-                <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
-                  <Check className="h-4 w-4 mx-auto text-[#17845B]" />
-                </td>
+                {!hasSelectedFreeTrial && (
+                  <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                    <Check className="h-4 w-4 mx-auto text-[#17845B]" />
+                  </td>
+                )}
                 <td className="py-3 px-4 text-center">
                   <Check className="h-4 w-4 mx-auto text-[#17845B]" />
                 </td>

@@ -150,6 +150,7 @@ export async function GET(req: Request) {
         firstMonthAmount: s.first_month_amount ?? 99,
         firstMonthCurrency: s.first_month_currency || "INR",
         autoRenew: Boolean(s.auto_renew),
+        hasUsedTrial: Boolean(s.trial_started_at || s.payment_mode === "free_trial" || s.plan_key === "early_access"),
       },
     });
   } catch (err) {
@@ -208,8 +209,8 @@ export async function POST(req: Request) {
          billing_cycle = VALUES(billing_cycle),
          status = VALUES(status),
          activated_at = VALUES(activated_at),
-         trial_started_at = VALUES(trial_started_at),
-         trial_ends_at = VALUES(trial_ends_at),
+         trial_started_at = COALESCE(subscriptions.trial_started_at, VALUES(trial_started_at)),
+         trial_ends_at = COALESCE(subscriptions.trial_ends_at, VALUES(trial_ends_at)),
          current_period_started_at = VALUES(current_period_started_at),
          current_period_ends_at = VALUES(current_period_ends_at),
          renews_at = VALUES(renews_at),

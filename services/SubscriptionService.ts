@@ -56,6 +56,7 @@ export function createSubscriptionLifecycle(
       firstMonthAmount: 0,
       firstMonthCurrency: "INR",
       autoRenew: false,
+      hasUsedTrial: true,
     };
   }
 
@@ -65,14 +66,27 @@ export function createSubscriptionLifecycle(
 
   const periodAmount = billingCycle === "yearly" ? plan.yearlyPrice : plan.monthlyPrice;
 
+  let existingTrialStartedAt: string | null = null;
+  let existingTrialEndsAt: string | null = null;
+  let hasUsedTrial = false;
+
+  try {
+    const currentSub = typeof window !== "undefined" ? subscriptionRepository.get() : null;
+    existingTrialStartedAt = currentSub?.trialStartedAt || null;
+    existingTrialEndsAt = currentSub?.trialEndsAt || null;
+    hasUsedTrial = Boolean(existingTrialStartedAt || currentSub?.hasUsedTrial || currentSub?.planKey === "early_access");
+  } catch {
+    // fallback if outside browser
+  }
+
   return {
     planKey: plan.key,
     planName: plan.name,
     billingCycle,
     status: "active",
     activatedAt,
-    trialStartedAt: null,
-    trialEndsAt: null,
+    trialStartedAt: existingTrialStartedAt,
+    trialEndsAt: existingTrialEndsAt,
     currentPeriodStartedAt: activatedAt,
     currentPeriodEndsAt,
     renewsAt: currentPeriodEndsAt,
@@ -84,6 +98,7 @@ export function createSubscriptionLifecycle(
     firstMonthAmount: periodAmount,
     firstMonthCurrency: "INR",
     autoRenew: true,
+    hasUsedTrial,
   };
 }
 

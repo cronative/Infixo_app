@@ -18,13 +18,23 @@ type LaunchOption = "free" | "starter" | "pro" | "vip";
 export default function SubscriptionStepPage() {
   const router = useRouter();
   const { showToast } = useToast();
-  const { profile, socials, series, theme, totalAudience } = useCreator();
+  const { profile, socials, series, theme, totalAudience, subscription } = useCreator();
   const pricingCurrency = usePricingCurrency();
 
-  const [selectedOption, setSelectedOption] = useState<LaunchOption>("free");
+  const hasSelectedFreeTrial = Boolean(
+    subscription?.hasUsedTrial ||
+    subscription?.trialStartedAt ||
+    subscription?.paymentMode === "free_trial" ||
+    subscription?.planKey === "early_access" ||
+    (subscription?.activatedAt && subscription?.status)
+  );
+
+  const [selectedOption, setSelectedOption] = useState<LaunchOption>(
+    hasSelectedFreeTrial ? "starter" : "free"
+  );
   const [submitting, setSubmitting] = useState(false);
 
-  const launchOptions: Array<{
+  const allLaunchOptions: Array<{
     id: LaunchOption;
     name: string;
     badge: string;
@@ -76,6 +86,10 @@ export default function SubscriptionStepPage() {
         recommended: true,
       },
     ];
+
+  const launchOptions = hasSelectedFreeTrial
+    ? allLaunchOptions.filter((opt) => opt.id !== "free")
+    : allLaunchOptions;
 
   async function handleLaunch() {
     if (submitting) return;
