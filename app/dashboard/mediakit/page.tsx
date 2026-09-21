@@ -41,7 +41,25 @@ import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { EmptyState } from "@/components/ui/EmptyState";
 
-// 10 Tailored Deliverable Suggestion Chips for Reels, Cafe/Shop Visits & Brand Collabs
+export const COLLABORATION_TYPES = [
+  "Instagram Reel",
+  "Instagram Story",
+  "Instagram Post / Carousel",
+  "Instagram Bundle (Reel + Stories)",
+  "YouTube Dedicated Video",
+  "YouTube Video Integration",
+  "YouTube Shorts",
+  "UGC Content ⭐",
+  "Cafe / Restaurant Visit ⭐",
+  "Store / Product Visit ⭐",
+  "Event Appearance / Coverage ⭐",
+  "Multi-Platform Campaign",
+  "Podcast Integration",
+  "Monthly Brand Retainer",
+  "Other",
+] as const;
+
+// 10 Tailored Deliverable Suggestion Chips for all Collaboration Types
 const DELIVERABLE_SUGGESTIONS: Record<string, string[]> = {
   "Instagram Reel": [
     "1x 30–60s Dedicated Promo Reel",
@@ -55,18 +73,6 @@ const DELIVERABLE_SUGGESTIONS: Record<string, string[]> = {
     "Pinned Comment with Tracked Link",
     "Raw Video Footage Access for Brand Ads",
   ],
-  "Instagram Bundle": [
-    "3x Targeted Instagram Reels",
-    "3x Companion Stories with Direct Links",
-    "Store Visit + Unboxing + Dedicated Review",
-    "Collaborator Co-Author Tag on all posts",
-    "45 Days Digital Usage & Whitelisting Rights",
-    "Bio Promo Link for Full Campaign Duration",
-    "Product / Store Tagging in Reel & Stories",
-    "Pinned Comments with Promo Codes",
-    "RAW High-Res Footage for Performance Ads",
-    "Weekly Performance & Engagement Reporting",
-  ],
   "Instagram Story": [
     "3x Sequential Story Slides with Direct Swipe/Link",
     "Cafe / Store Location Map Tag",
@@ -78,6 +84,42 @@ const DELIVERABLE_SUGGESTIONS: Record<string, string[]> = {
     "Call-To-Action (CTA) Voiceover",
     "High-Resolution Product Closeups",
     "24-Hour Active Link Guarantee",
+  ],
+  "Instagram Post / Carousel": [
+    "1x High-Quality Feed Carousel (Up to 10 Slides)",
+    "In-depth Product Showcase & Feature Highlights",
+    "Collaborator Co-Author Tag on Post",
+    "Brand Mention in First Line of Caption",
+    "Direct Tracked Promo Link in Bio (48 Hours)",
+    "Exclusive Discount Code for Followers",
+    "1x Supporting Story Slide with Swipe Link",
+    "Pinned Comment with Call-To-Action",
+    "High-Res Photography for Brand Digital Reposting",
+    "Engagement & Reach Analytics Delivery",
+  ],
+  "Instagram Bundle (Reel + Stories)": [
+    "1x Dedicated 30–60s Instagram Reel",
+    "3x Companion Stories with Direct Links",
+    "Collaborator Co-Author Tag on Reel",
+    "Store / Product Pin & Map Location Tag",
+    "Promo Code Highlight in Caption & Stories",
+    "Bio Link Active for 7 Days",
+    "Interactive Sticker / Poll on Story",
+    "Raw Footage Access for Brand Paid Ads",
+    "Pinned Comment with Tracked Link",
+    "Full Insights & Reach Screenshot Report",
+  ],
+  "Instagram Bundle": [
+    "3x Targeted Instagram Reels",
+    "3x Companion Stories with Direct Links",
+    "Store Visit + Unboxing + Dedicated Review",
+    "Collaborator Co-Author Tag on all posts",
+    "45 Days Digital Usage & Whitelisting Rights",
+    "Bio Promo Link for Full Campaign Duration",
+    "Product / Store Tagging in Reel & Stories",
+    "Pinned Comments with Promo Codes",
+    "RAW High-Res Footage for Performance Ads",
+    "Weekly Performance & Engagement Reporting",
   ],
   "YouTube Dedicated Video": [
     "1x Dedicated 8–15 Min Product Breakdown Video",
@@ -115,6 +157,54 @@ const DELIVERABLE_SUGGESTIONS: Record<string, string[]> = {
     "Verbal CTA & Discount Code",
     "Audience Demographic Report",
   ],
+  "UGC Content ⭐": [
+    "Raw 9:16 Vertical Video for Brand Meta/TikTok Ads",
+    "Authentic Problem-Solution Hook (3 Variations)",
+    "High-Energy Unboxing & First Impression",
+    "Voiceover + Dynamic Captions Included",
+    "Direct-to-Camera Testimonial & Review",
+    "Multiple B-Roll Angles & Closeups",
+    "30 Days Digital Paid Ads Usage Rights",
+    "Full Commercial Rights (Whitelisting Ready)",
+    "Color Graded 4K Master Video File",
+    "Fast 48–72h Delivery Turnaround",
+  ],
+  "Cafe / Restaurant Visit ⭐": [
+    "On-Site Visit & Food Tasting Experience",
+    "1x Aesthetic Ambience & Food Reel",
+    "3x Real-Time Story Highlights with Location Tag",
+    "Google Maps / Zomato Review & Pin Tag",
+    "Exclusive Creator Menu Item / Discount Shoutout",
+    "Chef / Staff Interaction & Signature Dish Showcase",
+    "High-Res Food & Ambience Photography for Cafe",
+    "Co-Author Collaboration Tag on Instagram",
+    "Direct Geo-Tagging on All Posts",
+    "Story Added to Dedicated Food / Cafe Highlights",
+  ],
+  "Store / Product Visit ⭐": [
+    "In-Store Walkthrough & Shopping Experience",
+    "1x Dedicated Try-On / Store Tour Reel",
+    "Live Store Location & Address Tag in Bio/Stories",
+    "Staff & Collection Interaction Highlights",
+    "Special In-Store Discount Code for Followers",
+    "3x Sequential Stories with Swipe/Location Tag",
+    "High-Res In-Store Stills for Brand Use",
+    "Collaborator Tag with Brand Account",
+    "Pinned Comment with Store Landmark Directions",
+    "Post-Visit Footfall & Reach Insights",
+  ],
+  "Event Appearance / Coverage ⭐": [
+    "Creator VIP Event / Red Carpet Attendance",
+    "Live On-Ground Story Coverage (5+ Slides)",
+    "1x Event Highlights & Experience Reel",
+    "Interactive Fan / Attendee Interaction",
+    "Keynote / Panel Appearance or Ribbon Cutting",
+    "Event Location & Official Hashtag Co-Promotion",
+    "Pre-Event Announcement Story Shoutout",
+    "High-Resolution Event Photos & Media Access",
+    "Co-Author Tag on All Event Content",
+    "Full Event Day Coverage Insights",
+  ],
   "Multi-Platform Campaign": [
     "Cross-Platform Campaign (Reels + Shorts + Stories)",
     "Unified Brand Messaging across Platforms",
@@ -127,17 +217,17 @@ const DELIVERABLE_SUGGESTIONS: Record<string, string[]> = {
     "Comprehensive Cross-Platform Analytics Report",
     "Priority Fast Turnaround Delivery",
   ],
-  "Series Title Sponsorship": [
-    "Main Series Title Sponsor ('Presented by Brand')",
-    "15s Pre-Roll & Post-Roll Sponsor Billboard",
-    "Brand Logo on All Episode Posters & Cards",
-    "Product Integration inside Series Storyline",
-    "Dedicated Sponsored Finale / Special Episode",
-    "Custom Promo Link in Every Episode Description",
-    "Category Exclusivity (Zero Competitor Ads)",
-    "Social Media Co-Promotion across Reels & Shorts",
-    "Closing Credits Special Thanks & Logo",
-    "Full Rights to Series Stills & Promo Clips",
+  "Podcast Integration": [
+    "60s Host-Read Audio Segment & Shoutout",
+    "Logo & Link in Podcast Episode Notes",
+    "Video Podcast On-Screen Banner Overlay",
+    "Short Clip Excerpt for Reels & TikTok",
+    "Exclusive Viewer / Listener Discount Code",
+    "Permanent Audio Placement in Episode",
+    "Social Media Promo Post across Channels",
+    "Host Product Testimonial & Endorsement",
+    "Category Exclusivity for Podcast Episode",
+    "Listener Impression & Download Analytics",
   ],
   "Podcast Episode Integration": [
     "60s Host-Read Audio Segment & Shoutout",
@@ -151,6 +241,18 @@ const DELIVERABLE_SUGGESTIONS: Record<string, string[]> = {
     "Category Exclusivity for Podcast Episode",
     "Listener Impression & Download Analytics",
   ],
+  "Monthly Brand Retainer": [
+    "4x Dedicated Reels / Shorts per Month",
+    "8x High-Converting Companion Stories",
+    "Official Brand Ambassador Title & Tag",
+    "Permanent Bio Link for Full Month Duration",
+    "Full Paid Ad Whitelisting & Digital Usage Rights",
+    "Monthly Strategy & Content Planning Sync",
+    "Category Exclusivity (No Competitor Collaborations)",
+    "Co-Author Collaboration Tag on All Assets",
+    "Raw Footage Access for Brand Marketing",
+    "Comprehensive Monthly Analytics & ROI Report",
+  ],
   "Monthly Creator Retainer": [
     "4x–8x Monthly Dedicated Content Deliverables",
     "Exclusive Brand Ambassador Status & Tag",
@@ -162,6 +264,30 @@ const DELIVERABLE_SUGGESTIONS: Record<string, string[]> = {
     "Category Exclusivity across Creator's Channels",
     "Co-Author Collaboration Tag on All Reels",
     "Priority Content Turnaround & Fast Edits",
+  ],
+  "Series Title Sponsorship": [
+    "Main Series Title Sponsor ('Presented by Brand')",
+    "15s Pre-Roll & Post-Roll Sponsor Billboard",
+    "Brand Logo on All Episode Posters & Cards",
+    "Product Integration inside Series Storyline",
+    "Dedicated Sponsored Finale / Special Episode",
+    "Custom Promo Link in Every Episode Description",
+    "Category Exclusivity (Zero Competitor Ads)",
+    "Social Media Co-Promotion across Reels & Shorts",
+    "Closing Credits Special Thanks & Logo",
+    "Full Rights to Series Stills & Promo Clips",
+  ],
+  "Other": [
+    "Custom Tailored Content Deliverable",
+    "Dedicated Brand Storytelling & Creative Concept",
+    "Collaborator Tag & Brand Co-Authorship",
+    "Direct Trackable Link in Bio",
+    "Exclusive Audience Promo Code",
+    "Full Commercial Rights & Digital Usage",
+    "Raw Asset Files & High-Res Footage",
+    "Companion Stories with Engagement Stickers",
+    "Category Exclusivity for Campaign",
+    "Detailed Performance & Engagement Insights",
   ],
 };
 
@@ -226,7 +352,7 @@ const SERVICE_EXAMPLES = [
   },
   {
     title: "Monthly Reel Pack (4 Reels)",
-    platform: "Instagram Bundle",
+    platform: "Instagram Bundle (Reel + Stories)",
     turnaroundDays: 30,
     minPrice: "₹25,000",
     maxPrice: "₹40,000",
@@ -277,6 +403,7 @@ export default function DashboardMediaKitPage() {
   // Form inputs for package modal
   const [formTitle, setFormTitle] = useState("");
   const [formPlatform, setFormPlatform] = useState<string>("Instagram Reel");
+  const [customPlatform, setCustomPlatform] = useState("");
   const [formMinPrice, setFormMinPrice] = useState("");
   const [formMaxPrice, setFormMaxPrice] = useState("");
   const [formPackageName, setFormPackageName] = useState("");
@@ -331,6 +458,7 @@ export default function DashboardMediaKitPage() {
     setEditingPkgId(null);
     setFormTitle("");
     setFormPlatform("Instagram Reel");
+    setCustomPlatform("");
     setFormMinPrice("");
     setFormMaxPrice("");
     setFormPackageName("");
@@ -344,7 +472,14 @@ export default function DashboardMediaKitPage() {
     setActiveMenuId(null);
     setEditingPkgId(pkg.id);
     setFormTitle(pkg.title);
-    setFormPlatform(pkg.platform);
+    const isStandard = (COLLABORATION_TYPES as readonly string[]).includes(pkg.platform) && pkg.platform !== "Other";
+    if (isStandard) {
+      setFormPlatform(pkg.platform);
+      setCustomPlatform("");
+    } else {
+      setFormPlatform("Other");
+      setCustomPlatform(pkg.platform === "Other" ? "" : pkg.platform);
+    }
     if (pkg.minPrice) {
       setFormMinPrice(pkg.minPrice);
       setFormMaxPrice(pkg.maxPrice || "");
@@ -372,6 +507,7 @@ export default function DashboardMediaKitPage() {
     setEditingPkgId(null);
     setFormTitle(template.title);
     setFormPlatform(template.platform);
+    setCustomPlatform("");
     setFormMinPrice(template.minPrice);
     setFormMaxPrice(template.maxPrice);
     setFormPackageName(template.badge);
@@ -399,6 +535,13 @@ export default function DashboardMediaKitPage() {
       return;
     }
 
+    if (formPlatform === "Other" && !customPlatform.trim()) {
+      showToast("Please enter a custom collaboration type", "error");
+      return;
+    }
+
+    const resolvedPlatform = formPlatform === "Other" ? customPlatform.trim() : formPlatform;
+
     const minStr = formatCurrencyString(formMinPrice);
     const maxStr = formMaxPrice.trim() ? formatCurrencyString(formMaxPrice) : "";
     const formattedPrice = maxStr ? `${minStr}–${maxStr}` : minStr;
@@ -412,7 +555,7 @@ export default function DashboardMediaKitPage() {
           ? {
             ...p,
             title: formTitle.trim(),
-            platform: formPlatform,
+            platform: resolvedPlatform,
             price: formattedPrice,
             minPrice: minStr,
             maxPrice: maxStr || undefined,
@@ -428,7 +571,7 @@ export default function DashboardMediaKitPage() {
       const newPkg: MediaKitPackage = {
         id: `pkg_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
         title: formTitle.trim(),
-        platform: formPlatform,
+        platform: resolvedPlatform,
         price: formattedPrice,
         minPrice: minStr,
         maxPrice: maxStr || undefined,
@@ -824,22 +967,17 @@ export default function DashboardMediaKitPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#043084]">Platform type</label>
+                <label className="block text-xs font-bold text-[#043084]">Collaboration Type</label>
                 <select
                   value={formPlatform}
                   onChange={(e) => setFormPlatform(e.target.value)}
                   className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3 text-xs sm:text-sm font-medium text-[#043084] focus:border-[#043084] focus:outline-none transition-colors"
                 >
-                  <option value="Instagram Reel">Instagram Reel</option>
-                  <option value="Instagram Bundle">Instagram Bundle (Reels + Stories)</option>
-                  <option value="Instagram Story">Instagram Story Sponsorship</option>
-                  <option value="YouTube Dedicated Video">YouTube Dedicated Video</option>
-                  <option value="YouTube Video Integration">YouTube Integration (60-90s)</option>
-                  <option value="YouTube Shorts">YouTube Shorts</option>
-                  <option value="Multi-Platform Campaign">Multi-Platform Campaign</option>
-                  <option value="Series Title Sponsorship">Series Title Sponsorship</option>
-                  <option value="Podcast Episode Integration">Podcast Episode Integration</option>
-                  <option value="Monthly Creator Retainer">Monthly Creator Retainer</option>
+                  {COLLABORATION_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -855,6 +993,22 @@ export default function DashboardMediaKitPage() {
                 />
               </div>
             </div>
+
+            {formPlatform === "Other" && (
+              <div className="space-y-1 animate-in fade-in duration-200">
+                <label className="block text-xs font-bold text-[#043084]">
+                  Specify Collaboration Type <span className="text-[#C2414B]">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={customPlatform}
+                  onChange={(e) => setCustomPlatform(e.target.value)}
+                  placeholder="e.g., Live Stream Sponsorship, Workshop, Brand Ambassador"
+                  className="w-full h-10 rounded-xl border border-[#043084] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#043084] placeholder:text-[#64748b]/50 focus:outline-none transition-colors shadow-xs"
+                  required
+                />
+              </div>
+            )}
 
             {/* Min - Max Pricing Range Inputs */}
             <div className="space-y-1">
@@ -915,7 +1069,7 @@ export default function DashboardMediaKitPage() {
               {/* Suggestions */}
               <div className="space-y-1 bg-[#f8fafc] border border-[#e2e8f0] rounded-xl p-2.5">
                 <p className="text-[10px] font-bold text-[#64748b] uppercase tracking-wider flex items-center justify-between">
-                  <span>💡 Suggestions for {formPlatform}:</span>
+                  <span>💡 Suggestions for {formPlatform === "Other" ? (customPlatform.trim() || "Custom Collaboration") : formPlatform}:</span>
                   <span className="text-[9px] text-[#043084] font-bold">Click chip to add +</span>
                 </p>
                 <div className="flex flex-wrap items-center gap-1.5 max-h-24 overflow-y-auto pt-1">
