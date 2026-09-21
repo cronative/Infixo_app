@@ -20,7 +20,8 @@ export async function GET(req: Request) {
     let query = `
        SELECT c.*, s.plan_key, s.plan_name, s.billing_cycle, s.status AS sub_status,
               s.activated_at AS sub_activated_at, s.created_at AS sub_created_at,
-              s.trial_ends_at AS sub_trial_ends_at,
+              s.trial_ends_at AS sub_trial_ends_at, s.ends_at AS sub_ends_at,
+              s.current_period_ends_at AS sub_current_period_ends_at,
               cs.visibility_settings AS settings_visibility
        FROM creators c
        LEFT JOIN subscriptions s ON c.id = s.creator_id
@@ -103,6 +104,8 @@ export async function GET(req: Request) {
         status: creator.sub_status || "trial",
         activatedAt: creator.sub_activated_at || creator.sub_created_at || creator.created_at,
         trialEndsAt: creator.sub_trial_ends_at || null,
+        endsAt: creator.sub_ends_at || null,
+        currentPeriodEndsAt: creator.sub_current_period_ends_at || null,
       },
     });
   } catch (err: any) {

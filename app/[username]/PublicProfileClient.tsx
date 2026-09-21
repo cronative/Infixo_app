@@ -51,8 +51,8 @@ function isFreeTrialExpired(subscription?: {
 
   if (subscription.activatedAt) {
     const actMs = new Date(subscription.activatedAt).getTime();
-    const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
-    if (nowMs - actMs > thirtyDaysMs) return true;
+    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+    if (nowMs - actMs > sevenDaysMs) return true;
   }
   return false;
 }

@@ -70,7 +70,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
           const [dbSocials, dbSeries, dbSub] = await Promise.all([
             SocialService.fetchFromDb({ email: dbProfile.email, username: dbProfile.username }).catch(() => null),
             SeriesService.fetchFromDb().catch(() => null),
-            SubscriptionService.fetchFromDb().catch(() => null),
+            SubscriptionService.fetchFromDb(dbProfile.email).catch(() => null),
           ]);
 
           if (dbSocials) {

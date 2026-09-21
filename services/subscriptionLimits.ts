@@ -47,6 +47,18 @@ export const PLAN_QUOTAS: Record<string, PlanQuota> = {
     hasMediaKit: false,
     description: "Keep your public profile live after trial with the same starter limits.",
   },
+  pro: {
+    name: "Pro",
+    maxSeries: 20,
+    maxEpisodesPerSeries: 20,
+    maxTotalEpisodes: 400,
+    maxGigs: 3,
+    maxReviews: 10,
+    maxCustomLinks: 20,
+    hasRateCard: true,
+    hasMediaKit: true,
+    description: "20 series, 20 episodes per series, 20 links, 3 collab packages, 10 reviews, rate card and default media kit.",
+  },
   creator_pro: {
     name: "Pro",
     maxSeries: 20,
@@ -58,6 +70,18 @@ export const PLAN_QUOTAS: Record<string, PlanQuota> = {
     hasRateCard: true,
     hasMediaKit: true,
     description: "20 series, 20 episodes per series, 20 links, 3 collab packages, 10 reviews, rate card and default media kit.",
+  },
+  vip: {
+    name: "VIP",
+    maxSeries: Infinity,
+    maxEpisodesPerSeries: Infinity,
+    maxTotalEpisodes: Infinity,
+    maxGigs: 10,
+    maxReviews: Infinity,
+    maxCustomLinks: Infinity,
+    hasRateCard: true,
+    hasMediaKit: true,
+    description: "Unlimited series, episodes, links and reviews, 10 collab packages, custom media kit and premium features.",
   },
   creator_VIP: {
     name: "VIP",
@@ -74,7 +98,13 @@ export const PLAN_QUOTAS: Record<string, PlanQuota> = {
 };
 
 export function getPlanQuota(planKey: string = "early_access"): PlanQuota {
-  return PLAN_QUOTAS[planKey] || PLAN_QUOTAS.early_access;
+  const normalizedKey =
+    planKey === "pro" || planKey === "creator_pro"
+      ? "pro"
+      : planKey === "vip" || planKey === "creator_VIP"
+      ? "vip"
+      : planKey;
+  return PLAN_QUOTAS[normalizedKey] || PLAN_QUOTAS[planKey] || PLAN_QUOTAS.early_access;
 }
 
 export function getSeriesUsage(seriesList: Series[], planKey: string = "early_access") {

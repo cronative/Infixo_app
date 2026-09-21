@@ -1,4 +1,4 @@
-import { subscriptionRepository, authRepository } from "@/repositories/localRepository";
+import { subscriptionRepository, authRepository, profileRepository } from "@/repositories/localRepository";
 import { BillingCycle, PlanKey, PlanMeta, Subscription } from "@/types";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -14,21 +14,32 @@ function addMonths(date: Date, months: number) {
   return next;
 }
 
+function normalizePlanKey(key?: string): PlanKey {
+  if (!key) return "early_access";
+  if (key === "creator_pro" || key === "pro") return "pro";
+  if (key === "creator_VIP" || key === "vip") return "vip";
+  if (key === "starter") return "starter";
+  return "early_access";
+}
+
 export function createSubscriptionLifecycle(
   planKey: PlanKey = "early_access",
   billingCycle: BillingCycle = "monthly",
   startedAt = new Date()
 ): Subscription {
-  const plan = INFLIXO_PLANS.find((p) => p.key === planKey) || INFLIXO_PLANS[0];
+  const normalizedKey = normalizePlanKey(planKey);
+  const plan =
+    INFLIXO_PLANS.find((p) => p.key === planKey || p.key === normalizedKey) ||
+    INFLIXO_PLANS[0];
   const activatedAt = startedAt.toISOString();
 
   // Free trial is real access, but it does not schedule any renewal.
-  if (planKey === "early_access") {
+  if (normalizedKey === "early_access") {
     const trialEndsAt = addDays(startedAt, plan.freeTrialDays || 7).toISOString();
 
     return {
-      planKey,
-      planName: plan.name,
+      planKey: "early_access",
+      planName: plan.name || "Free Trial",
       billingCycle,
       status: "trial",
       activatedAt,
@@ -42,18 +53,20 @@ export function createSubscriptionLifecycle(
       cancelAtPeriodEnd: false,
       paymentMode: "free_trial",
       firstMonthOffer: true,
-      firstMonthAmount: FIRST_MONTH_OFFER_AMOUNT_INR,
+      firstMonthAmount: 0,
       firstMonthCurrency: "INR",
       autoRenew: false,
     };
   }
 
-  // Paid launch offer: charge the first month once, then stop unless the creator upgrades again.
+  // Paid subscription: active with auto-renewal for both monthly and yearly cycles.
   const currentPeriodEndsAt =
     billingCycle === "yearly" ? addMonths(startedAt, 12).toISOString() : addMonths(startedAt, 1).toISOString();
 
+  const periodAmount = billingCycle === "yearly" ? plan.yearlyPrice : plan.monthlyPrice;
+
   return {
-    planKey,
+    planKey: plan.key,
     planName: plan.name,
     billingCycle,
     status: "active",
@@ -62,15 +75,15 @@ export function createSubscriptionLifecycle(
     trialEndsAt: null,
     currentPeriodStartedAt: activatedAt,
     currentPeriodEndsAt,
-    renewsAt: null,
+    renewsAt: currentPeriodEndsAt,
     endsAt: currentPeriodEndsAt,
     cancelledAt: null,
-    cancelAtPeriodEnd: true,
-    paymentMode: "one_time_first_month",
-    firstMonthOffer: true,
-    firstMonthAmount: FIRST_MONTH_OFFER_AMOUNT_INR,
+    cancelAtPeriodEnd: false,
+    paymentMode: "recurring",
+    firstMonthOffer: false,
+    firstMonthAmount: periodAmount,
     firstMonthCurrency: "INR",
-    autoRenew: false,
+    autoRenew: true,
   };
 }
 
@@ -114,6 +127,25 @@ export const INFLIXO_PLANS: PlanMeta[] = [
     support: "Standard",
   },
   {
+    key: "pro",
+    name: "Pro",
+    badge: "PRO TIER",
+    isPopular: false,
+    description: "For serious creators who need rate cards, media kit and more content space.",
+    monthlyPrice: 199,
+    yearlyPrice: 1999,
+    yearlySavings: 389,
+    freeTrialDays: 0,
+    publicProfile: true,
+    instagram: true,
+    youtube: true,
+    facebook: true,
+    ottSeriesLimit: "20 Series, 20 Episodes Each",
+    autoDataRefresh: "Weekly refresh",
+    removeBranding: false,
+    support: "Priority",
+  },
+  {
     key: "creator_pro",
     name: "Pro",
     badge: "PRO TIER",
@@ -131,6 +163,25 @@ export const INFLIXO_PLANS: PlanMeta[] = [
     autoDataRefresh: "Weekly refresh",
     removeBranding: false,
     support: "Priority",
+  },
+  {
+    key: "vip",
+    name: "VIP",
+    badge: "👑 VIP BRAND COLLABS",
+    isPopular: true,
+    description: "For premium creators who want unlimited content space, custom media kit and stronger collab tools.",
+    monthlyPrice: 399,
+    yearlyPrice: 3999,
+    yearlySavings: 789,
+    freeTrialDays: 0,
+    publicProfile: true,
+    instagram: true,
+    youtube: true,
+    facebook: true,
+    ottSeriesLimit: "Unlimited Series, Episodes, Links & Reviews, 10 Collab Packages",
+    autoDataRefresh: "Daily refresh",
+    removeBranding: true,
+    support: "VIP Dedicated Manager",
   },
   {
     key: "creator_VIP",
@@ -164,11 +215,12 @@ export const SubscriptionService = {
 
   getPlan(key?: PlanKey): PlanMeta {
     if (!key) return INFLIXO_PLANS[0];
-    return INFLIXO_PLANS.find((p) => p.key === key) || INFLIXO_PLANS[0];
+    const normalizedKey = normalizePlanKey(key);
+    return INFLIXO_PLANS.find((p) => p.key === key || p.key === normalizedKey) || INFLIXO_PLANS[0];
   },
 
-  activate(planKey: PlanKey = "early_access", billingCycle: BillingCycle = "yearly"): Subscription {
-    const email = authRepository.getPendingEmail();
+  activate(planKey: PlanKey = "early_access", billingCycle: BillingCycle = "yearly", overrideEmail?: string): Subscription {
+    const email = overrideEmail || authRepository.getPendingEmail() || profileRepository.get()?.email;
     const sub = createSubscriptionLifecycle(planKey, billingCycle);
 
     subscriptionRepository.save(sub);
@@ -185,14 +237,78 @@ export const SubscriptionService = {
     return sub;
   },
 
-  async fetchFromDb(): Promise<Subscription | null> {
-    const email = authRepository.getPendingEmail();
+  cancelAutoRenew(): Subscription {
+    const current = subscriptionRepository.get();
+    const email = authRepository.getPendingEmail() || profileRepository.get()?.email;
+    const nowIso = new Date().toISOString();
+    const updated: Subscription = {
+      ...current,
+      autoRenew: false,
+      renewsAt: null,
+      cancelledAt: nowIso,
+      cancelAtPeriodEnd: true,
+    };
+
+    subscriptionRepository.save(updated);
+
+    if (email) {
+      fetch("/api/subscription", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          ...updated,
+          cancelledAt: nowIso,
+          autoRenew: false,
+          cancelAtPeriodEnd: true,
+          renewsAt: null,
+        }),
+      }).catch((e) => console.error("Failed to update auto-renewal in MySQL DB:", e));
+    }
+
+    return updated;
+  },
+
+  resumeAutoRenew(): Subscription {
+    const current = subscriptionRepository.get();
+    const email = authRepository.getPendingEmail() || profileRepository.get()?.email;
+    const nextRenewal = current.currentPeriodEndsAt || current.endsAt || new Date().toISOString();
+    const updated: Subscription = {
+      ...current,
+      autoRenew: true,
+      renewsAt: nextRenewal,
+      cancelledAt: null,
+      cancelAtPeriodEnd: false,
+    };
+
+    subscriptionRepository.save(updated);
+
+    if (email) {
+      fetch("/api/subscription", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          ...updated,
+          autoRenew: true,
+          cancelAtPeriodEnd: false,
+          renewsAt: nextRenewal,
+          cancelledAt: null,
+        }),
+      }).catch((e) => console.error("Failed to resume auto-renewal in MySQL DB:", e));
+    }
+
+    return updated;
+  },
+
+  async fetchFromDb(overrideEmail?: string): Promise<Subscription | null> {
+    const email = overrideEmail || authRepository.getPendingEmail() || profileRepository.get()?.email;
     if (!email) return null;
 
     try {
       const res = await fetch(`/api/subscription?email=${encodeURIComponent(email)}`);
       const data = await res.json();
-      if (data.subscription) {
+      if (data.success && data.subscription) {
         const sub: Subscription = {
           planKey: data.subscription.planKey || "early_access",
           planName: data.subscription.planName || "Free Trial",
@@ -215,6 +331,17 @@ export const SubscriptionService = {
         };
         subscriptionRepository.save(sub);
         return sub;
+      } else {
+        // If MySQL has no subscription yet, but local repository already has an active paid plan,
+        // sync the local plan to MySQL so it is permanently preserved across devices and sessions.
+        const currentLocal = subscriptionRepository.get();
+        if (currentLocal && currentLocal.planKey !== "early_access") {
+          fetch("/api/subscription", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, ...currentLocal }),
+          }).catch(() => null);
+        }
       }
     } catch (e) {
       console.warn("Failed to fetch subscription from DB:", e);

@@ -88,7 +88,7 @@ export default function SubscriptionStepPage() {
 
     try {
       // 1. Activate plan locally
-      SubscriptionService.activate(planKey, "monthly");
+      SubscriptionService.activate(planKey, "monthly", email);
 
       // 2. Persist to MySQL database
       if (email) {
@@ -100,6 +100,8 @@ export default function SubscriptionStepPage() {
             planKey,
             planName,
             billingCycle: "monthly",
+            status: planKey === "early_access" ? "trial" : "active",
+            autoRenew: planKey !== "early_access",
           }),
         }).catch((err) => console.warn("Subscription sync warning:", err));
       }

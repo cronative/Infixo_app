@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 import { debugLog } from "@/lib/debugLogger";
+import { getPlanQuota } from "@/services/subscriptionLimits";
 
 
 // GET /api/series?email=... or ?username=...
@@ -199,7 +200,38 @@ export async function POST(req: Request) {
       await db.query("ALTER TABLE episodes MODIFY COLUMN platform VARCHAR(50) NOT NULL DEFAULT 'YouTube'");
     } catch {}
 
+    // Fetch creator active plan to enforce server-side quota
+    const [subRows]: any = await db.query(
+      "SELECT plan_key FROM subscriptions WHERE creator_id = ? AND status = 'active' ORDER BY updated_at DESC LIMIT 1",
+      [creatorId]
+    );
+    const activePlanKey = subRows[0]?.plan_key || "early_access";
+    const quota = getPlanQuota(activePlanKey);
+
     if (!isEpisodeOnlyFlag) {
+      // Check if this is a new series creation (not an edit of existing series)
+      const [existingSeries]: any = await db.query(
+        "SELECT id FROM series WHERE id = ? AND creator_id = ?",
+        [seriesId, creatorId]
+      );
+      if (!existingSeries || existingSeries.length === 0) {
+        const [totalSeriesRows]: any = await db.query(
+          "SELECT COUNT(*) as count FROM series WHERE creator_id = ?",
+          [creatorId]
+        );
+        const currentSeriesCount = Number(totalSeriesRows[0]?.count || 0);
+        if (currentSeriesCount >= quota.maxSeries) {
+          return NextResponse.json(
+            {
+              error: `Series limit reached (${quota.maxSeries} max) for ${quota.name} plan. Upgrade your plan to add more series.`,
+              isLimitReached: true,
+              type: "series",
+            },
+            { status: 403 }
+          );
+        }
+      }
+
       const finalPosterUrl = await saveBase64ImageToStorage(posterDataUrl, "posters", "poster") || (posterDataUrl && !posterDataUrl.startsWith("data:") ? posterDataUrl : null);
 
       // Upsert Series into MySQL DB
@@ -218,7 +250,28 @@ export async function POST(req: Request) {
     }
 
     // Insert Episodes if provided
-    if (episodes && Array.isArray(episodes)) {
+    if (episodes && Array.isArray(episodes) && episodes.length > 0) {
+      if (quota.maxEpisodesPerSeries !== Infinity) {
+        const [existingEps]: any = await db.query(
+          "SELECT id FROM episodes WHERE series_id = ?",
+          [seriesId]
+        );
+        const existingEpIds = new Set((existingEps || []).map((e: any) => e.id));
+        const newEpisodesCount = episodes.filter((e: any) => !existingEpIds.has(e.id)).length;
+        const projectedTotal = (existingEps?.length || 0) + newEpisodesCount;
+
+        if (projectedTotal > quota.maxEpisodesPerSeries) {
+          return NextResponse.json(
+            {
+              error: `Episode limit reached (${quota.maxEpisodesPerSeries} max per series) for ${quota.name} plan. Upgrade your plan to add more episodes.`,
+              isLimitReached: true,
+              type: "episode",
+            },
+            { status: 403 }
+          );
+        }
+      }
+
       for (let i = 0; i < episodes.length; i++) {
         const ep = episodes[i];
         const epId = ep.id || `ep_${Date.now()}_${i}`;

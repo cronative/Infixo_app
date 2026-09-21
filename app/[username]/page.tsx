@@ -26,6 +26,8 @@ interface CreatorSeoRow extends RowDataPacket {
   sub_status: string | null;
   activated_at: string | Date | null;
   trial_ends_at: string | Date | null;
+  ends_at?: string | Date | null;
+  current_period_ends_at?: string | Date | null;
 }
 
 interface SocialSeoRow extends RowDataPacket {
@@ -49,12 +51,15 @@ function isTrialPrivate(creator?: CreatorSeoRow | null) {
   if (!creator || creator.plan_key !== "early_access") return false;
   if (creator.sub_status && !["active", "trial"].includes(creator.sub_status)) return true;
 
+  const nowMs = Date.now();
   const explicitEndMs = toDateMs(creator.trial_ends_at);
+  if (explicitEndMs && nowMs > explicitEndMs) return true;
 
-  if (explicitEndMs) return Date.now() > explicitEndMs;
+  const periodEndMs = toDateMs(creator.current_period_ends_at) || toDateMs(creator.ends_at);
+  if (periodEndMs && nowMs > periodEndMs) return true;
 
   const activatedMs = toDateMs(creator.activated_at);
-  return activatedMs ? Date.now() - activatedMs > 7 * 24 * 60 * 60 * 1000 : false;
+  return activatedMs ? nowMs - activatedMs > 7 * 24 * 60 * 60 * 1000 : false;
 }
 
 function parseVisibility(value?: string | null): { showInSearchEngines?: boolean } | null {
@@ -75,7 +80,8 @@ async function getCreatorSeo(username: string) {
        c.city, c.state, c.country, c.updated_at,
        c.visibility_settings,
        cs.visibility_settings AS settings_visibility,
-       s.plan_key, s.status AS sub_status, s.activated_at, s.trial_ends_at
+       s.plan_key, s.status AS sub_status, s.activated_at, s.trial_ends_at,
+       s.ends_at, s.current_period_ends_at
      FROM creators c
      LEFT JOIN creator_settings cs ON c.id = cs.creator_id
      LEFT JOIN subscriptions s ON c.id = s.creator_id

@@ -6,6 +6,7 @@ const authRoutes = require("./routes/authRoutes");
 const creatorRoutes = require("./routes/creatorRoutes");
 const seriesRoutes = require("./routes/seriesRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
 const { initCronJobs } = require("./cron/autoRefreshCron");
 
 const app = express();
@@ -20,6 +21,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/creator", creatorRoutes);
 app.use("/api/series", seriesRoutes);
 app.use("/api/subscription", subscriptionRoutes);
+app.use("/api", paymentRoutes);
 
 // Root & Health Check Endpoint
 app.get("/", (req, res) => {

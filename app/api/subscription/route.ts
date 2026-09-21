@@ -103,24 +103,28 @@ function getTrialFallbackSubscription() {
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const email = searchParams.get("email");
+    const email = searchParams.get("email")?.trim();
 
     if (!email) {
       return NextResponse.json({
-        subscription: getTrialFallbackSubscription(),
+        success: false,
+        subscription: null,
       });
     }
 
     const [rows] = await db.query<SubscriptionRow[]>(
       `SELECT s.* FROM subscriptions s
        JOIN creators c ON c.id = s.creator_id
-       WHERE c.email = ?`,
+       WHERE LOWER(c.email) = LOWER(?)
+       ORDER BY s.updated_at DESC, s.created_at DESC
+       LIMIT 1`,
       [email]
     );
 
     if (!rows || rows.length === 0) {
       return NextResponse.json({
-        subscription: getTrialFallbackSubscription(),
+        success: false,
+        subscription: null,
       });
     }
 
@@ -163,7 +167,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
-    const [creators] = await db.query<CreatorIdRow[]>("SELECT id FROM creators WHERE email = ?", [email]);
+    const [creators] = await db.query<CreatorIdRow[]>(
+      "SELECT id FROM creators WHERE LOWER(email) = LOWER(?)",
+      [email.trim()]
+    );
     if (!creators || creators.length === 0) {
       return NextResponse.json({ error: "Creator not found" }, { status: 404 });
     }

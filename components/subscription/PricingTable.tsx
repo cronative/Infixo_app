@@ -1,10 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Bell, Minus } from "lucide-react";
+import { Check, Bell, Minus, ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 import { BillingCycle, PlanKey } from "@/types";
 import { useToast } from "@/contexts/ToastContext";
-import { formatPlanPrice, usePricingCurrency } from "@/lib/pricing";
+import { useCreator } from "@/contexts/CreatorContext";
+import { SubscriptionService } from "@/services/SubscriptionService";
+import { authRepository } from "@/repositories/localRepository";
+import { formatPlanPrice, getPlanPrice, usePricingCurrency } from "@/lib/pricing";
+import { RazorpayCheckoutButton } from "@/components/checkout/RazorpayCheckoutButton";
 
 interface PricingTableProps {
   selectedPlan?: PlanKey;
@@ -16,6 +21,7 @@ interface PricingTableProps {
 
 export function PricingTable({ }: PricingTableProps) {
   const { showToast } = useToast();
+  const { profile, subscription, refresh } = useCreator();
   const [notifiedPlan, setNotifiedPlan] = useState<string | null>(null);
   const [cycle, setCycle] = useState<BillingCycle>("monthly");
   const currency = usePricingCurrency();
@@ -26,6 +32,13 @@ export function PricingTable({ }: PricingTableProps) {
   }
 
   const currentPeriod = cycle === "yearly" ? "yearly" : "monthly";
+  const activeEmail = profile?.email || authRepository.getPendingEmail() || "";
+  const currentPlanKey =
+    subscription?.planKey === "creator_pro" || subscription?.planKey === "pro"
+      ? "pro"
+      : subscription?.planKey === "creator_VIP" || subscription?.planKey === "vip"
+      ? "vip"
+      : subscription?.planKey || "early_access";
 
   return (
     <div className="w-full space-y-8 text-left">
@@ -99,32 +112,20 @@ export function PricingTable({ }: PricingTableProps) {
 
               <div className="pt-3 border-t border-[#E4DAD5] space-y-2">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#797570] block">
-                  Included Features
+                  Trial Features
                 </span>
                 <ul className="space-y-2 text-xs text-[#181716] font-medium">
                   <li className="flex items-center gap-2">
                     <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
-                    <span>Up to 3 content series</span>
+                    <span>Public profile active for 7 days</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
-                    <span>Up to 15 total episodes</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
-                    <span>1 collab package</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
-                    <span>1 review</span>
+                    <span>3 series, 15 total episodes</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
                     <span>5 custom links &amp; free themes</span>
-                  </li>
-                  <li className="flex items-center gap-2 text-[#797570]">
-                    <Minus className="h-3.5 w-3.5 shrink-0" />
-                    <span>No rate card or media kit</span>
                   </li>
                 </ul>
               </div>
@@ -134,9 +135,13 @@ export function PricingTable({ }: PricingTableProps) {
               <button
                 type="button"
                 disabled
-                className="w-full rounded-xl bg-[#fbfbfb] border border-[#E4DAD5] py-2.5 px-3 text-xs font-semibold text-[#797570] cursor-default text-center"
+                className={`w-full rounded-xl py-2.5 px-3 text-xs font-semibold cursor-default text-center ${
+                  currentPlanKey === "early_access"
+                    ? "bg-[#EAF7F0] border border-[#17845B]/20 text-[#17845B]"
+                    : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#797570]"
+                }`}
               >
-                Current Trial
+                {currentPlanKey === "early_access" ? "Current Trial ✓" : "Included in Trial"}
               </button>
             </div>
           </div>
@@ -182,15 +187,36 @@ export function PricingTable({ }: PricingTableProps) {
             </div>
 
             <div className="pt-4 border-t border-[#E4DAD5]">
-              <button
-                type="button"
-                onClick={() => handleNotifyMe("Starter Plan")}
-                disabled={notifiedPlan === "Starter Plan"}
-                className="w-full rounded-xl border border-[#E4DAD5] bg-white hover:bg-surface-soft text-[#181716] py-2.5 px-3 text-xs font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-xs disabled:opacity-80"
-              >
-                <Bell className="h-3.5 w-3.5 text-[#797570]" />
-                <span>{notifiedPlan === "Starter Plan" ? "Notification Set ✓" : "Notify Me"}</span>
-              </button>
+              {currentPlanKey === "starter" ? (
+                <button
+                  type="button"
+                  disabled
+                  className="w-full rounded-xl bg-[#EAF7F0] border border-[#17845B]/20 py-2.5 px-3 text-xs font-semibold text-[#17845B] cursor-default text-center"
+                >
+                  Current Plan ✓
+                </button>
+              ) : (
+                <RazorpayCheckoutButton
+                  amount={Math.round(getPlanPrice("starter", currentPeriod, "INR") * 100)}
+                  currency="INR"
+                  planKey="starter"
+                  billingCycle={currentPeriod}
+                  buttonText={`Upgrade to Starter (${formatPlanPrice("starter", currentPeriod, currency)})`}
+                  prefill={{
+                    name: profile?.displayName || "Creator",
+                    email: activeEmail,
+                  }}
+                  className="w-full rounded-xl border border-[#043084] bg-white hover:bg-[#043084]/5 text-[#043084] py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
+                  onSuccess={() => {
+                    SubscriptionService.activate("starter", currentPeriod);
+                    refresh();
+                    showToast("Successfully upgraded to Starter Plan! 🎉");
+                  }}
+                  onError={(err) => {
+                    showToast(`Payment failed: ${err.description || "Transaction declined"}`);
+                  }}
+                />
+              )}
             </div>
           </div>
 
@@ -250,15 +276,36 @@ export function PricingTable({ }: PricingTableProps) {
             </div>
 
             <div className="pt-4 border-t border-[#E4DAD5]">
-              <button
-                type="button"
-                onClick={() => handleNotifyMe("Pro Plan")}
-                disabled={notifiedPlan === "Pro Plan"}
-                className="w-full rounded-xl bg-[#043084] hover:bg-brand-hover text-white py-2.5 px-3 text-xs font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-xs disabled:opacity-80"
-              >
-                <Bell className="h-3.5 w-3.5" />
-                <span>{notifiedPlan === "Pro Plan" ? "Notification Set ✓" : "Notify Me"}</span>
-              </button>
+              {currentPlanKey === "pro" ? (
+                <button
+                  type="button"
+                  disabled
+                  className="w-full rounded-xl bg-[#EAF7F0] border border-[#17845B]/20 py-2.5 px-3 text-xs font-semibold text-[#17845B] cursor-default text-center"
+                >
+                  Current Plan ✓
+                </button>
+              ) : (
+                <RazorpayCheckoutButton
+                  amount={Math.round(getPlanPrice("pro", currentPeriod, "INR") * 100)}
+                  currency="INR"
+                  planKey="pro"
+                  billingCycle={currentPeriod}
+                  buttonText={`Upgrade to Pro (${formatPlanPrice("pro", currentPeriod, currency)})`}
+                  prefill={{
+                    name: profile?.displayName || "Creator",
+                    email: activeEmail,
+                  }}
+                  className="w-full rounded-xl bg-[#043084] hover:bg-[#032360] text-white py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
+                  onSuccess={() => {
+                    SubscriptionService.activate("pro", currentPeriod);
+                    refresh();
+                    showToast("Successfully upgraded to Pro Plan! 🎉");
+                  }}
+                  onError={(err) => {
+                    showToast(`Payment failed: ${err.description || "Transaction declined"}`);
+                  }}
+                />
+              )}
             </div>
           </div>
 
@@ -318,15 +365,36 @@ export function PricingTable({ }: PricingTableProps) {
             </div>
 
             <div className="pt-4 border-t border-[#E4DAD5]">
-              <button
-                type="button"
-                onClick={() => handleNotifyMe("VIP Plan")}
-                disabled={notifiedPlan === "VIP Plan"}
-                className="w-full rounded-xl border border-[#E4DAD5] bg-white hover:bg-surface-soft text-[#181716] py-2.5 px-3 text-xs font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-xs disabled:opacity-80"
-              >
-                <Bell className="h-3.5 w-3.5 text-[#797570]" />
-                <span>{notifiedPlan === "VIP Plan" ? "Notification Set ✓" : "Notify Me"}</span>
-              </button>
+              {currentPlanKey === "vip" ? (
+                <button
+                  type="button"
+                  disabled
+                  className="w-full rounded-xl bg-[#EAF7F0] border border-[#17845B]/20 py-2.5 px-3 text-xs font-semibold text-[#17845B] cursor-default text-center"
+                >
+                  Current Plan ✓
+                </button>
+              ) : (
+                <RazorpayCheckoutButton
+                  amount={Math.round(getPlanPrice("vip", currentPeriod, "INR") * 100)}
+                  currency="INR"
+                  planKey="vip"
+                  billingCycle={currentPeriod}
+                  buttonText={`Upgrade to VIP (${formatPlanPrice("vip", currentPeriod, currency)})`}
+                  prefill={{
+                    name: profile?.displayName || "Creator",
+                    email: activeEmail,
+                  }}
+                  className="w-full rounded-xl bg-[#043084] hover:bg-[#032360] text-white py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
+                  onSuccess={() => {
+                    SubscriptionService.activate("vip", currentPeriod);
+                    refresh();
+                    showToast("Successfully upgraded to VIP Plan! 🎉");
+                  }}
+                  onError={(err) => {
+                    showToast(`Payment failed: ${err.description || "Transaction declined"}`);
+                  }}
+                />
+              )}
             </div>
           </div>
 
