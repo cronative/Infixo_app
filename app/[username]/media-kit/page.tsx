@@ -19,6 +19,9 @@ import {
   MessageCircle,
   ExternalLink,
   CheckCircle2,
+  Check,
+  Gift,
+  ArrowRight,
   Clock,
   ChevronRight,
   UserX,
@@ -50,6 +53,140 @@ import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { CollaborationInquiryModal } from "@/components/mediakit/CollaborationInquiryModal";
 import { getInitials } from "@/lib/avatar";
 
+const DEFAULT_FALLBACK_PACKAGES: MediaKitPackage[] = [
+  {
+    id: "sample_reel",
+    title: "Instagram Reel",
+    platform: "Instagram Reel",
+    price: "₹10,000",
+    turnaroundDays: 2,
+    badge: "Most Popular",
+    isPopular: true,
+    isActive: true,
+    deliverables: [
+      "1 x 30–60s Dedicated Reel",
+      "Brand Collaborator Tag",
+      "Direct Promo Link in Bio (24 Hours)",
+      "Pinned Comment with Tracked Link",
+      "Raw Video Footage (Optional)",
+    ],
+  },
+  {
+    id: "sample_yt",
+    title: "YouTube Integration",
+    platform: "YouTube Video Integration",
+    price: "₹25,000",
+    turnaroundDays: 4,
+    badge: "",
+    isPopular: false,
+    isActive: true,
+    deliverables: [
+      "60–90s Brand Integration",
+      "Product Mention & Showcase",
+      "Link in Description",
+      "Community Post (Optional)",
+      "Raw Footage (Optional)",
+    ],
+  },
+  {
+    id: "sample_bundle",
+    title: "Instagram Bundle",
+    platform: "Instagram Bundle",
+    price: "₹18,000",
+    turnaroundDays: 2,
+    badge: "",
+    isPopular: false,
+    isActive: true,
+    deliverables: [
+      "1 x Reel (30–60s)",
+      "2 x Instagram Stories",
+      "Brand Tag & Location Tag",
+      "Exclusive Discount Code",
+      "Link in Bio (24 Hours)",
+    ],
+  },
+];
+
+function formatPackagePrice(price: string): string {
+  if (!price) return "₹0";
+  const trimmed = price.trim();
+  if (trimmed.startsWith("₹") || trimmed.startsWith("$") || trimmed.startsWith("€") || trimmed.startsWith("£")) {
+    return trimmed;
+  }
+  if (/^\d[\d,]*$/.test(trimmed)) {
+    return `₹${Number(trimmed.replace(/,/g, "")).toLocaleString("en-IN")}`;
+  }
+  return `₹${trimmed}`;
+}
+
+function formatDeliveryText(days: number | undefined): string {
+  if (!days) return "2 Days";
+  if (days === 1) return "1 Day";
+  if (days === 4) return "3–5 Days";
+  return `${days} Days`;
+}
+
+function getPackageCardVisual(pkg: MediaKitPackage) {
+  const platform = (pkg.platform || "").toLowerCase();
+  const title = (pkg.title || "").toLowerCase();
+
+  if (platform.includes("youtube") || title.includes("youtube")) {
+    return {
+      cardClass: "border-rose-100 bg-gradient-to-b from-rose-50/25 via-white to-white",
+      icon: (
+        <div className="w-10 h-10 rounded-2xl bg-[#FF0000] flex items-center justify-center text-white shadow-xs shrink-0">
+          <YoutubeIcon className="w-5 h-5 text-white" />
+        </div>
+      ),
+    };
+  }
+
+  if (
+    platform.includes("bundle") ||
+    title.includes("bundle") ||
+    platform.includes("multi") ||
+    title.includes("multi") ||
+    platform.includes("retainer") ||
+    title.includes("retainer")
+  ) {
+    return {
+      cardClass: "border-purple-100 bg-gradient-to-b from-purple-50/25 via-white to-white",
+      icon: (
+        <div className="w-10 h-10 rounded-2xl bg-[#FAF5FF] border border-purple-200/80 flex items-center justify-center text-purple-600 shadow-xs shrink-0">
+          <Gift className="w-5 h-5 text-purple-600 stroke-[2.2]" />
+        </div>
+      ),
+    };
+  }
+
+  if (
+    platform.includes("instagram") ||
+    title.includes("instagram") ||
+    platform.includes("reel") ||
+    title.includes("reel") ||
+    platform.includes("story") ||
+    title.includes("story")
+  ) {
+    return {
+      cardClass: "border-pink-200/80 bg-gradient-to-b from-pink-50/25 via-white to-white",
+      icon: (
+        <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#FD5949] via-[#D6249F] to-[#285AEB] flex items-center justify-center text-white shadow-xs shrink-0">
+          <InstagramIcon className="w-5 h-5 text-white" />
+        </div>
+      ),
+    };
+  }
+
+  return {
+    cardClass: "border-blue-100 bg-gradient-to-b from-blue-50/25 via-white to-white",
+    icon: (
+      <div className="w-10 h-10 rounded-2xl bg-[#EEF2FF] border border-blue-200/80 flex items-center justify-center text-[#043084] shadow-xs shrink-0">
+        <Briefcase className="w-5 h-5 text-[#043084] stroke-[2.2]" />
+      </div>
+    ),
+  };
+}
+
 export default function PublicMediaKitPage() {
   const params = useParams<{ username: string }>();
   const router = useRouter();
@@ -67,6 +204,7 @@ export default function PublicMediaKitPage() {
   const [loaded, setLoaded] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
+  const [selectedPackageForInquiry, setSelectedPackageForInquiry] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     async function loadMediaKitData() {
@@ -245,7 +383,10 @@ export default function PublicMediaKitPage() {
     (socials.youtube?.subscribers || 0) +
     (socials.facebook?.followers || 0);
 
-  const activePackages = packages.filter((p) => p.isActive !== false);
+  const displayPackages =
+    packages.length > 0
+      ? packages.filter((p) => p.isActive !== false)
+      : DEFAULT_FALLBACK_PACKAGES;
 
   return (
     <div className="min-h-dvh bg-[#FAF8FA] text-[#17131A] pb-16">
@@ -381,70 +522,107 @@ export default function PublicMediaKitPage() {
         </section>
 
         {/* 2. COLLABORATION PACKAGES & RATE CARDS */}
-        {activePackages.length > 0 && (
-          <section className="space-y-3.5">
-            <div className="flex items-center justify-between px-1">
-              <div>
-                <h2 className="font-display text-base sm:text-lg font-bold text-[#17131A]">
-                  Collaboration Packages &amp; Deliverables
-                </h2>
-                <p className="text-xs text-[#6F6872]">
-                  Standard sponsorship options and starting rate cards.
-                </p>
+        {displayPackages.length > 0 && (
+          <section className="rounded-3xl border border-[#ECE8EB] bg-white p-5 sm:p-7 shadow-xs space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-2xl bg-[#043084]/10 border border-[#043084]/15 flex items-center justify-center text-[#043084] shrink-0 shadow-2xs">
+                  <Briefcase className="w-5 h-5 stroke-[2.2]" />
+                </div>
+                <div>
+                  <h2 className="font-display text-lg sm:text-xl font-bold text-[#17131A] tracking-tight">
+                    Collaboration Packages
+                  </h2>
+                  <p className="text-xs sm:text-[13px] text-[#64748b]">
+                    Custom packages available. Let&apos;s discuss your brand goals!
+                  </p>
+                </div>
               </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedPackageForInquiry(undefined);
+                  setIsInquiryOpen(true);
+                }}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#EEF2FF] hover:bg-[#E0E7FF] text-[#043084] font-bold text-xs transition-colors cursor-pointer self-start sm:self-auto shadow-2xs"
+              >
+                <span>View All Packages</span>
+                <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
+              </button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
-              {activePackages.map((pkg) => (
-                <div
-                  key={pkg.id}
-                  className="rounded-2xl border border-[#ECE8EB] bg-white p-5 flex flex-col justify-between space-y-4 shadow-2xs"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between gap-1.5">
-                      <span className="text-[11px] font-bold text-[#043084] bg-[#F7EDF3] px-2 py-0.5 rounded-lg">
-                        {pkg.platform}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pt-1">
+              {displayPackages.map((pkg) => {
+                const visual = getPackageCardVisual(pkg);
+                const displayPrice = formatPackagePrice(pkg.price);
+
+                return (
+                  <div
+                    key={pkg.id}
+                    className={`relative rounded-3xl border ${visual.cardClass} p-5 sm:p-6 flex flex-col justify-between transition-all duration-200 hover:shadow-md`}
+                  >
+                    {/* Floating Most Popular / Badge */}
+                    {(pkg.isPopular || pkg.badge) && (
+                      <span className="absolute -top-3 left-6 z-10 bg-[#E11D74] text-white px-3.5 py-0.5 rounded-full text-[11px] font-bold shadow-xs tracking-tight whitespace-nowrap">
+                        {pkg.badge || "Most Popular"}
                       </span>
-                      {(pkg.packageName || pkg.badge) && (
-                        <span className="text-[10px] font-semibold text-[#6F6872] bg-[#FAF8FA] border border-[#ECE8EB] px-2 py-0.5 rounded-md">
-                          {pkg.packageName || pkg.badge}
-                        </span>
+                    )}
+
+                    <div className="space-y-4">
+                      {/* Card Top Row */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          {visual.icon}
+                          <h3 className="font-bold text-base sm:text-lg text-[#17131A] leading-snug truncate" title={pkg.title}>
+                            {pkg.title}
+                          </h3>
+                        </div>
+
+                        <div className="text-right shrink-0">
+                          <div className="font-bold text-lg sm:text-xl text-[#17131A] leading-tight">
+                            {displayPrice}
+                          </div>
+                          <div className="text-[10px] text-[#64748b] font-medium mt-0.5">
+                            Starting from
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Deliverables Checklist */}
+                      {pkg.deliverables && pkg.deliverables.length > 0 && (
+                        <ul className="space-y-2 pt-2 text-[#334155]">
+                          {pkg.deliverables.map((item, idx) => (
+                            <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-[13px] font-medium leading-snug">
+                              <Check className="h-4 w-4 text-[#043084] shrink-0 mt-0.5 stroke-[2.5]" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
                       )}
                     </div>
 
-                    <div>
-                      <h3 className="font-bold text-sm text-[#17131A]">{pkg.title}</h3>
-                      <div className="flex items-baseline gap-2 mt-1">
-                        <span className="font-display text-lg font-bold text-[#043084]">
-                          {pkg.price}
-                        </span>
-                        <span className="text-[11px] text-[#6F6872]">
-                          • {pkg.turnaroundDays}-day delivery
-                        </span>
+                    {/* Card Footer */}
+                    <div className="mt-6 pt-4 border-t border-slate-100/80 flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-1.5 text-xs sm:text-[13px] font-semibold text-[#043084]">
+                        <Clock className="h-4 w-4 stroke-[2]" />
+                        <span>Delivery: {formatDeliveryText(pkg.turnaroundDays)}</span>
                       </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedPackageForInquiry(pkg.title);
+                          setIsInquiryOpen(true);
+                        }}
+                        className="px-5 py-2 rounded-full bg-[#043084] hover:bg-[#032360] text-white text-xs font-bold transition-all shadow-xs hover:shadow-sm cursor-pointer"
+                      >
+                        Enquire Now
+                      </button>
                     </div>
-
-                    {pkg.deliverables && pkg.deliverables.length > 0 && (
-                      <ul className="space-y-1.5 pt-2 border-t border-[#ECE8EB] text-xs text-[#17131A]">
-                        {pkg.deliverables.map((item, idx) => (
-                          <li key={idx} className="flex items-start gap-1.5">
-                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
                   </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setIsInquiryOpen(true)}
-                    className="w-full py-2 rounded-xl bg-[#043084] hover:bg-brand-hover text-white text-xs font-semibold transition-colors cursor-pointer"
-                  >
-                    Request Booking
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
         )}
@@ -533,6 +711,7 @@ export default function PublicMediaKitPage() {
         creatorName={profile.displayName || "Creator"}
         creatorUsername={profile.username || "creator"}
         packages={packages}
+        selectedPackageTitle={selectedPackageForInquiry}
       />
     </div>
   );

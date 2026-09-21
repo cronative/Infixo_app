@@ -20,6 +20,7 @@ import {
   SlidersHorizontal,
   Mail,
   MessageCircle,
+  Gift,
 } from "lucide-react";
 import {
   InstagramIcon,
@@ -670,6 +671,13 @@ export default function DashboardMediaKitPage() {
       return (
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1DB954] text-white shrink-0 shadow-xs">
           <SpotifyIcon className="h-5 w-5 text-white" />
+        </div>
+      );
+    }
+    if (platform.includes("bundle") || platform.includes("gift")) {
+      return (
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FAF5FF] border border-purple-200/80 text-purple-600 shrink-0 shadow-xs">
+          <Gift className="h-5 w-5 text-purple-600 stroke-[2.2]" />
         </div>
       );
     }

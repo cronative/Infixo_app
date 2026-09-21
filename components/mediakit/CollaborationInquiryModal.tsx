@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Briefcase,
   Mail,
@@ -25,6 +25,7 @@ interface CollaborationInquiryModalProps {
   creatorName: string;
   creatorUsername: string;
   packages?: MediaKitPackage[];
+  selectedPackageTitle?: string;
 }
 
 export function CollaborationInquiryModal({
@@ -35,6 +36,7 @@ export function CollaborationInquiryModal({
   creatorName,
   creatorUsername,
   packages = [],
+  selectedPackageTitle,
 }: CollaborationInquiryModalProps) {
   const { showToast } = useToast();
 
@@ -45,8 +47,16 @@ export function CollaborationInquiryModal({
   const [budgetRange, setBudgetRange] = useState("₹25,000 – ₹50,000");
   const [timeline, setTimeline] = useState("Within 2–4 weeks");
   const [deliverables, setDeliverables] = useState(
-    packages.length > 0 ? packages[0].title : "Sponsored Video / Reel"
+    selectedPackageTitle || (packages.length > 0 ? packages[0].title : "Sponsored Video / Reel")
   );
+
+  useEffect(() => {
+    if (selectedPackageTitle) {
+      setDeliverables(selectedPackageTitle);
+    } else if (packages.length > 0 && !deliverables) {
+      setDeliverables(packages[0].title);
+    }
+  }, [selectedPackageTitle, packages, isOpen]);
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
