@@ -2,28 +2,20 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
 import {
+  ArrowLeft,
   Briefcase,
+  Mail,
+  MessageCircle,
   Share2,
   Printer,
-  Sparkles,
   ShieldCheck,
   Star,
   Users,
-  Film,
-  Building2,
-  Handshake,
-  Mail,
-  Phone,
-  MessageCircle,
-  ExternalLink,
-  CheckCircle2,
   Check,
   Gift,
   ArrowRight,
   Clock,
-  ChevronRight,
   UserX,
 } from "lucide-react";
 import {
@@ -37,6 +29,7 @@ import {
   CreatorCollaboration,
   TeamMember,
   CreatorTeam,
+  ThemeKey,
   EMPTY_SOCIAL_ACCOUNTS,
 } from "@/types";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
@@ -50,8 +43,12 @@ import { formatCount } from "@/utils/format";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { useToast } from "@/contexts/ToastContext";
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
-import { CollaborationInquiryModal } from "@/components/mediakit/CollaborationInquiryModal";
 import { getInitials } from "@/lib/avatar";
+import { ThemeService, THEME_PAGE_BACKGROUNDS } from "@/services/ThemeService";
+import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
+import { FocusOverlay } from "@/components/theme/FocusOverlay";
+import { isDarkTheme } from "@/components/onboarding/LivePreviewCard";
+import { MadeWithInflixo } from "@/components/shared/MadeWithInflixo";
 
 const DEFAULT_FALLBACK_PACKAGES: MediaKitPackage[] = [
   {
@@ -193,6 +190,7 @@ export default function PublicMediaKitPage() {
   const { showToast } = useToast();
 
   const [profile, setProfile] = useState<CreatorProfile | null>(null);
+  const [theme, setTheme] = useState<ThemeKey>("minimal-white");
   const [socials, setSocials] = useState<SocialAccounts>(EMPTY_SOCIAL_ACCOUNTS);
   const [series, setSeries] = useState<Series[]>([]);
   const [packages, setPackages] = useState<MediaKitPackage[]>([]);
@@ -203,8 +201,6 @@ export default function PublicMediaKitPage() {
   const [collaborations, setCollaborations] = useState<CreatorCollaboration[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [notFound, setNotFound] = useState(false);
-  const [isInquiryOpen, setIsInquiryOpen] = useState(false);
-  const [selectedPackageForInquiry, setSelectedPackageForInquiry] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     async function loadMediaKitData() {
@@ -239,6 +235,7 @@ export default function PublicMediaKitPage() {
 
         if (profRes.success && profRes.profile && profRes.profile.username) {
           setProfile(profRes.profile);
+          setTheme((profRes.profile.themeKey || "minimal-white") as ThemeKey);
           setNotFound(false);
 
           if (socRes.success && Array.isArray(socRes.socials)) {
@@ -312,6 +309,7 @@ export default function PublicMediaKitPage() {
             const cleanLocalUser = (local?.username || "").replace(/^@/, "").toLowerCase();
             if (local && (cleanLocalUser === usernameParam || !local.username)) {
               setProfile({ ...local, username: local.username || usernameParam });
+              setTheme((local.themeKey || "minimal-white") as ThemeKey);
               setSeries(seriesRepository.getAll());
               const localTeam = teamRepository.get();
               setTeam(localTeam ? { team: localTeam.team || localTeam, members: localTeam.members || [] } : { members: [] });
@@ -388,331 +386,354 @@ export default function PublicMediaKitPage() {
       ? packages.filter((p) => p.isActive !== false)
       : DEFAULT_FALLBACK_PACKAGES;
 
+  const themeMeta = ThemeService.getThemeMeta(theme);
+  const pageBgStyle = themeMeta.outerBgClass || THEME_PAGE_BACKGROUNDS[theme] || THEME_PAGE_BACKGROUNDS["minimal-white"];
+  const isDark = isDarkTheme(theme) || themeMeta.mode === "dark";
+  const profileSurface = themeMeta.profileSurface;
+  const cardStyle = {
+    background: themeMeta.colors.cardBackground,
+    borderColor: themeMeta.colors.border,
+    color: themeMeta.colors.primaryText,
+    boxShadow: themeMeta.effects.cardShadow,
+  };
+  const subtleStyle = {
+    background: themeMeta.colors.elevatedBackground,
+    borderColor: themeMeta.colors.border,
+  };
+  const controlStyle = {
+    background: isDark ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0.82)",
+    borderColor: isDark ? "rgba(255,255,255,0.20)" : themeMeta.colors.border,
+    color: themeMeta.colors.primaryText,
+  };
+  const cleanHandle = (profile.username || params.username || "creator").replace(/^@/, "");
+  const contactEmail = settings?.sponsorEmail?.trim() || profile.email?.trim() || "";
+  const whatsappNumber = settings?.whatsappNumber?.replace(/\D/g, "") || "";
+  const hasDirectContact = Boolean(contactEmail || whatsappNumber);
+  const contactMessage = (packageTitle?: string) =>
+    `Hi ${profile.displayName || cleanHandle}, I would like to discuss${packageTitle ? ` your ${packageTitle} package` : " a brand collaboration"}.`;
+  const emailHref = (packageTitle?: string) => {
+    const subject = packageTitle
+      ? `Collaboration enquiry: ${packageTitle}`
+      : `Brand collaboration with ${profile.displayName || cleanHandle}`;
+    return `mailto:${contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(contactMessage(packageTitle))}`;
+  };
+  const whatsappHref = (packageTitle?: string) =>
+    `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(contactMessage(packageTitle))}`;
+  const creatorTypes = [profile.category, profile.profession]
+    .filter(Boolean)
+    .flatMap((value) => String(value).split(","))
+    .map((value) => value.trim())
+    .filter(Boolean)
+    .join(" · ");
+  const headerSocials = [
+    socials.instagram.username && {
+      label: "Instagram",
+      href: socials.instagram.url || `https://instagram.com/${socials.instagram.username.replace(/^@/, "")}`,
+      icon: <InstagramIcon className="h-4 w-4 text-pink-500" />,
+    },
+    socials.youtube.username && {
+      label: "YouTube",
+      href: socials.youtube.url || `https://youtube.com/@${socials.youtube.username.replace(/^@/, "")}`,
+      icon: <YoutubeIcon className="h-4 w-4 text-red-500" />,
+    },
+    socials.facebook.username && {
+      label: "Facebook",
+      href: socials.facebook.url || `https://facebook.com/${socials.facebook.username.replace(/^@/, "")}`,
+      icon: <FacebookIcon className="h-4 w-4 text-blue-500" />,
+    },
+  ].filter(Boolean) as Array<{ label: string; href: string; icon: React.ReactNode }>;
+
   return (
-    <div className="min-h-dvh bg-[#FAF8FA] text-[#17131A] pb-16">
-      {/* Top Navbar */}
-      <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-[#ECE8EB] px-4 sm:px-8 py-3">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Logo />
-            <span className="text-xs font-bold text-[#043084] bg-[#F7EDF3] px-2 py-0.5 rounded-md">
-              Media Kit
-            </span>
-          </div>
+    <div
+      data-media-kit-print
+      style={{ backgroundColor: themeMeta.colors.pageBackground }}
+      className="relative min-h-dvh overflow-hidden print:overflow-visible"
+    >
+      <style jsx global>{`
+        @media print {
+          html,
+          body,
+          [data-media-kit-print] {
+            background: ${themeMeta.colors.pageBackground} !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
 
-          <div className="flex items-center gap-2">
+          [data-media-kit-print] *,
+          [data-media-kit-print] *::before,
+          [data-media-kit-print] *::after {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          [data-media-kit-actions] {
+            display: none !important;
+          }
+
+          [data-media-kit-content] {
+            height: auto !important;
+            overflow: visible !important;
+          }
+
+          [data-media-kit-section] {
+            break-inside: avoid;
+            page-break-inside: avoid;
+          }
+        }
+      `}</style>
+      <div
+        className={`fixed inset-0 z-0 pointer-events-none transition-colors duration-500 ${pageBgStyle}`}
+        style={{ backgroundColor: themeMeta.colors.pageBackground }}
+        aria-hidden="true"
+      />
+      {themeMeta.animation?.type !== "none" && (
+        <AmbientAnimation
+          type={themeMeta.animation?.type || themeMeta.animationType}
+          colors={themeMeta.animation?.colors || themeMeta.particleColors}
+          themeKey={themeMeta.key}
+        />
+      )}
+      <FocusOverlay overlay={themeMeta.focusOverlay} />
+
+      <main className="relative z-10 mx-auto flex h-dvh min-h-0 w-full max-w-[520px] flex-col px-2.5 py-2.5 sm:px-4 sm:py-3.5 print:h-auto print:max-w-none print:p-0">
+        <div
+          className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[22px] border backdrop-blur-xl print:overflow-visible print:rounded-none print:border-0 print:shadow-none"
+          style={{
+            background: profileSurface?.background || themeMeta.colors.profileBackground,
+            borderColor: profileSurface?.border || themeMeta.colors.border,
+            boxShadow: profileSurface?.shadow || themeMeta.effects.shadow,
+            color: themeMeta.colors.primaryText,
+            fontFamily: themeMeta.typography.fontFamily,
+          }}
+        >
+          <header
+            data-media-kit-actions
+            className="z-20 flex shrink-0 items-center justify-between gap-2 border-b px-3 py-3 sm:px-4"
+            style={{ borderColor: themeMeta.colors.divider }}
+          >
             <button
               type="button"
-              onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-surface-soft px-3.5 py-1.5 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer shadow-2xs"
+              onClick={() => router.push(`/${cleanHandle}`)}
+              className="tap-scale inline-flex h-9 items-center gap-1.5 rounded-[10px] border px-3 text-xs font-bold backdrop-blur-md transition-opacity hover:opacity-80"
+              style={controlStyle}
             >
-              <Share2 className="h-3.5 w-3.5 text-[#043084]" />
-              <span className="hidden sm:inline">Share Media Kit</span>
+              <ArrowLeft className="h-3.5 w-3.5" />
+              Profile
             </button>
-
-            <button
-              type="button"
-              onClick={handlePrint}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[#ECE8EB] bg-white hover:bg-surface-soft px-3.5 py-1.5 text-xs font-semibold text-[#17131A] transition-colors cursor-pointer shadow-2xs"
-            >
-              <Printer className="h-3.5 w-3.5 text-[#6F6872]" />
-              <span className="hidden sm:inline">Export PDF</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setIsInquiryOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#043084] hover:bg-brand-hover px-4 py-1.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
-            >
-              <span>Work With Me</span>
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 space-y-6 text-left">
-        {/* 1. HERO CREATOR IDENTIFICATION */}
-        <section className="rounded-3xl border border-[#ECE8EB] bg-white p-6 sm:p-8 space-y-6 shadow-2xs">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <CreatorAvatar
-                src={profile.photoDataUrl}
-                name={profile.displayName || "Creator"}
-                className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover aspect-square border border-[#ECE8EB] shadow-xs"
-                textClassName="text-2xl font-bold"
-                fallbackBgClass="bg-[#F7EDF3]"
-              />
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#17131A]">
-                    {profile.displayName || "Creator"}
-                  </h1>
-                  {profile.isVerified && <ShieldCheck className="h-5 w-5 text-emerald-500 shrink-0" />}
-                </div>
-                <p className="text-xs sm:text-sm font-semibold text-[#043084]">
-                  @{profile.username} • {profile.category || "Digital Creator"}
-                </p>
-                <p className="text-xs text-[#6F6872] max-w-xl leading-relaxed pt-1">
-                  {profile.bio || "Official creator portfolio and brand collaboration kit."}
-                </p>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-[#ECE8EB] bg-[#FAF8FA] p-4 text-center sm:text-right shrink-0 space-y-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#6F6872] block">
-                Total Verified Fanbase
-              </span>
-              <p className="font-display text-3xl font-bold text-[#043084]">
-                {formatCount(totalAudience)}
-              </p>
-              <p className="text-[11px] text-[#6F6872]">Combined audience reach</p>
-            </div>
-          </div>
-
-          {/* Social Reach Breakdown */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-[#ECE8EB]">
-            {/* Instagram */}
-            <div className="rounded-2xl border border-[#ECE8EB] bg-[#FAF8FA] p-3.5 flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-pink-50 text-pink-600 border border-pink-100">
-                  <InstagramIcon className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="font-bold text-xs">Instagram</p>
-                  <p className="text-[11px] text-[#6F6872]">@{socials.instagram.username || profile.username}</p>
-                </div>
-              </div>
-              <p className="font-display text-sm font-bold">
-                {formatCount(socials.instagram.followers || 0)}
-              </p>
-            </div>
-
-            {/* YouTube */}
-            <div className="rounded-2xl border border-[#ECE8EB] bg-[#FAF8FA] p-3.5 flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-red-50 text-red-600 border border-red-100">
-                  <YoutubeIcon className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="font-bold text-xs">YouTube</p>
-                  <p className="text-[11px] text-[#6F6872]">@{socials.youtube.username || profile.username}</p>
-                </div>
-              </div>
-              <p className="font-display text-sm font-bold">
-                {formatCount(socials.youtube.subscribers || 0)}
-              </p>
-            </div>
-
-            {/* Facebook */}
-            <div className="rounded-2xl border border-[#ECE8EB] bg-[#FAF8FA] p-3.5 flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100">
-                  <FacebookIcon className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="font-bold text-xs">Facebook</p>
-                  <p className="text-[11px] text-[#6F6872]">@{socials.facebook.username || profile.username}</p>
-                </div>
-              </div>
-              <p className="font-display text-sm font-bold">
-                {formatCount(socials.facebook.followers || 0)}
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* 2. COLLABORATION PACKAGES & RATE CARDS */}
-        {displayPackages.length > 0 && (
-          <section className="rounded-3xl border border-[#ECE8EB] bg-white p-5 sm:p-7 shadow-xs space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-2xl bg-[#043084]/10 border border-[#043084]/15 flex items-center justify-center text-[#043084] shrink-0 shadow-2xs">
-                  <Briefcase className="w-5 h-5 stroke-[2.2]" />
-                </div>
-                <div>
-                  <h2 className="font-display text-lg sm:text-xl font-bold text-[#17131A] tracking-tight">
-                    Collaboration Packages
-                  </h2>
-                  <p className="text-xs sm:text-[13px] text-[#64748b]">
-                    Custom packages available. Let&apos;s discuss your brand goals!
-                  </p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedPackageForInquiry(undefined);
-                  setIsInquiryOpen(true);
-                }}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#EEF2FF] hover:bg-[#E0E7FF] text-[#043084] font-bold text-xs transition-colors cursor-pointer self-start sm:self-auto shadow-2xs"
-              >
-                <span>View All Packages</span>
-                <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
+            <span className="min-w-0 truncate text-xs font-extrabold uppercase tracking-[0.12em]">Media Kit</span>
+            <div className="flex items-center gap-1.5">
+              <button type="button" onClick={handlePrint} aria-label="Export media kit" title="Export PDF" className="tap-scale flex h-9 w-9 items-center justify-center rounded-[10px] border backdrop-blur-md transition-opacity hover:opacity-80" style={controlStyle}>
+                <Printer className="h-4 w-4" />
+              </button>
+              <button type="button" onClick={handleCopyLink} aria-label="Share media kit" title="Share media kit" className="tap-scale flex h-9 w-9 items-center justify-center rounded-[10px] border backdrop-blur-md transition-opacity hover:opacity-80" style={controlStyle}>
+                <Share2 className="h-4 w-4" />
               </button>
             </div>
+          </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pt-1">
-              {displayPackages.map((pkg) => {
-                const visual = getPackageCardVisual(pkg);
-                const displayPrice = formatPackagePrice(pkg.price);
+          <div data-media-kit-content className="min-h-0 flex-1 space-y-4 overflow-y-auto px-3 py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:px-4 print:overflow-visible">
+            <section className="text-center">
+              <div className="relative mx-auto inline-block">
+                <CreatorAvatar
+                  src={profile.photoDataUrl}
+                  name={profile.displayName || "Creator"}
+                  className="mx-auto h-[68px] w-[68px] overflow-hidden rounded-full border-2 object-contain object-center shadow-sm ring-3 ring-black/5 sm:h-[76px] sm:w-[76px]"
+                  style={{ borderColor: themeMeta.colors.border, backgroundColor: themeMeta.colors.cardBackground }}
+                  textClassName="text-lg font-extrabold sm:text-xl"
+                  textStyle={{ color: themeMeta.colors.primaryText }}
+                  fallbackBgClass="bg-[#043084]"
+                />
+              </div>
+              <div className="mt-1.5 flex items-center justify-center gap-1.5">
+                <h1 className="font-display text-xl font-black" style={{ fontFamily: themeMeta.typography.headingFontFamily }}>
+                  {profile.displayName || "Creator"}
+                </h1>
+                {profile.isVerified && <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-500" />}
+              </div>
+              <p className="mt-0.5 text-xs font-medium sm:text-[13px]" style={{ color: themeMeta.colors.mutedText }}>@{cleanHandle}</p>
+              {creatorTypes && <p className="mt-0.5 text-xs font-medium opacity-85" style={{ color: themeMeta.colors.secondaryText }}>{creatorTypes}</p>}
+              <p className="mx-auto mt-1 max-w-sm px-1 text-xs font-normal leading-relaxed sm:text-[13px]" style={{ color: themeMeta.colors.secondaryText }}>
+                {profile.bio || "Official creator portfolio and collaboration media kit."}
+              </p>
+              {headerSocials.length > 0 && (
+                <div className="mt-2 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
+                  {headerSocials.map((item) => (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={item.label}
+                      title={item.label}
+                      className="tap-scale flex h-8 w-8 items-center justify-center rounded-[10px] border transition-opacity hover:opacity-80"
+                      style={{ background: themeMeta.colors.cardBackground, borderColor: themeMeta.colors.border }}
+                    >
+                      {item.icon}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </section>
 
-                return (
-                  <div
-                    key={pkg.id}
-                    className={`relative rounded-3xl border ${visual.cardClass} p-5 sm:p-6 flex flex-col justify-between transition-all duration-200 hover:shadow-md`}
-                  >
-                    {/* Floating Most Popular / Badge */}
-                    {(pkg.isPopular || pkg.badge) && (
-                      <span className="absolute -top-3 left-6 z-10 bg-[#E11D74] text-white px-3.5 py-0.5 rounded-full text-[11px] font-bold shadow-xs tracking-tight whitespace-nowrap">
-                        {pkg.badge || "Most Popular"}
-                      </span>
-                    )}
+            <section data-media-kit-section className="rounded-2xl border p-4 text-center" style={cardStyle}>
+              <p className="text-[10px] font-black uppercase tracking-[0.14em]" style={{ color: themeMeta.colors.mutedText }}>Total fanbase</p>
+              <p className="mt-1 font-display text-3xl font-black" style={{ color: themeMeta.colors.primaryText }}>{formatCount(totalAudience)}</p>
+              <p className="mt-0.5 text-[11px]" style={{ color: themeMeta.colors.secondaryText }}>Across primary social platforms</p>
+              <div className="mt-3 grid grid-cols-3 gap-2">
+                {[
+                  { label: "Instagram", value: socials.instagram.followers || 0, icon: <InstagramIcon className="h-4 w-4 text-pink-500" /> },
+                  { label: "YouTube", value: socials.youtube.subscribers || 0, icon: <YoutubeIcon className="h-4 w-4 text-red-500" /> },
+                  { label: "Facebook", value: socials.facebook.followers || 0, icon: <FacebookIcon className="h-4 w-4 text-blue-500" /> },
+                ].map((item) => (
+                  <div key={item.label} className="min-w-0 rounded-xl border px-1.5 py-2.5" style={subtleStyle}>
+                    <div className="mx-auto flex justify-center">{item.icon}</div>
+                    <p className="mt-1 text-sm font-black">{formatCount(item.value)}</p>
+                    <p className="truncate text-[9px] font-semibold" style={{ color: themeMeta.colors.mutedText }}>{item.label}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
 
-                    <div className="space-y-4">
-                      {/* Card Top Row */}
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-3 min-w-0">
+            {displayPackages.length > 0 && (
+              <section data-media-kit-section className="space-y-2.5">
+                <div className="flex items-end justify-between gap-3 px-0.5">
+                  <div>
+                    <h2 className="flex items-center gap-2 text-sm font-black"><Briefcase className="h-4 w-4" /> Collaboration packages</h2>
+                    <p className="mt-0.5 text-[11px]" style={{ color: themeMeta.colors.secondaryText }}>Clear deliverables, pricing and turnaround.</p>
+                  </div>
+                  {hasDirectContact && (
+                    <a
+                      href={contactEmail ? emailHref() : whatsappHref()}
+                      target={contactEmail ? undefined : "_blank"}
+                      rel={contactEmail ? undefined : "noopener noreferrer"}
+                      className="shrink-0 text-[11px] font-black"
+                      style={{ color: themeMeta.colors.accentText }}
+                    >
+                      Ask for custom <ArrowRight className="ml-0.5 inline h-3 w-3" />
+                    </a>
+                  )}
+                </div>
+                <div className="space-y-2.5">
+                  {displayPackages.map((pkg) => {
+                    const visual = getPackageCardVisual(pkg);
+                    return (
+                      <article key={pkg.id} className="rounded-2xl border p-3.5" style={cardStyle}>
+                        <div className="flex items-start gap-3">
                           {visual.icon}
-                          <h3 className="font-bold text-base sm:text-lg text-[#17131A] leading-snug truncate" title={pkg.title}>
-                            {pkg.title}
-                          </h3>
-                        </div>
-
-                        <div className="text-right shrink-0">
-                          <div className="font-bold text-lg sm:text-xl text-[#17131A] leading-tight">
-                            {displayPrice}
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="min-w-0">
+                                <h3 className="truncate text-sm font-black">{pkg.title}</h3>
+                                {(pkg.isPopular || pkg.badge) && <p className="mt-0.5 text-[10px] font-bold" style={{ color: themeMeta.colors.accentText }}>{pkg.badge || "Most popular"}</p>}
+                              </div>
+                              <p className="shrink-0 text-sm font-black">{formatPackagePrice(pkg.price)}</p>
+                            </div>
+                            {pkg.deliverables?.length > 0 && (
+                              <ul className="mt-2 space-y-1.5">
+                                {pkg.deliverables.slice(0, 4).map((item, index) => (
+                                  <li key={index} className="flex items-start gap-1.5 text-[11px] leading-snug" style={{ color: themeMeta.colors.secondaryText }}>
+                                    <Check className="mt-0.5 h-3 w-3 shrink-0" style={{ color: themeMeta.colors.accent }} />
+                                    <span>{item}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
                           </div>
-                          <div className="text-[10px] text-[#64748b] font-medium mt-0.5">
-                            Starting from
-                          </div>
                         </div>
-                      </div>
-
-                      {/* Deliverables Checklist */}
-                      {pkg.deliverables && pkg.deliverables.length > 0 && (
-                        <ul className="space-y-2 pt-2 text-[#334155]">
-                          {pkg.deliverables.map((item, idx) => (
-                            <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-[13px] font-medium leading-snug">
-                              <Check className="h-4 w-4 text-[#043084] shrink-0 mt-0.5 stroke-[2.5]" />
-                              <span>{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-
-                    {/* Card Footer */}
-                    <div className="mt-6 pt-4 border-t border-slate-100/80 flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-1.5 text-xs sm:text-[13px] font-semibold text-[#043084]">
-                        <Clock className="h-4 w-4 stroke-[2]" />
-                        <span>Delivery: {formatDeliveryText(pkg.turnaroundDays)}</span>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSelectedPackageForInquiry(pkg.title);
-                          setIsInquiryOpen(true);
-                        }}
-                        className="px-5 py-2 rounded-full bg-[#043084] hover:bg-[#032360] text-white text-xs font-bold transition-all shadow-xs hover:shadow-sm cursor-pointer"
-                      >
-                        Enquire Now
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-        )}
-
-        {/* 3. CLIENT REVIEWS */}
-        {reviews.length > 0 && (
-          <section className="space-y-3.5">
-            <div className="px-1">
-              <h2 className="font-display text-base sm:text-lg font-bold text-[#17131A] flex items-center gap-2">
-                <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-                Verified Client Reviews ({reviews.length})
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              {reviews.map((rev) => (
-                <div key={rev.id} className="rounded-2xl border border-[#ECE8EB] bg-white p-4 space-y-2 shadow-2xs">
-                  <div className="flex items-center gap-0.5 text-amber-400">
-                    {Array.from({ length: Number(rev.rating) || 5 }).map((_, i) => (
-                      <Star key={i} className="h-3.5 w-3.5 fill-amber-400" />
-                    ))}
-                  </div>
-                  {rev.comment && <p className="text-xs text-[#17131A] italic">“{rev.comment}”</p>}
-                  <p className="text-[11px] font-bold text-[#6F6872] pt-1">
-                    {rev.clientName} {rev.clientDesignation ? `• ${rev.clientDesignation}` : ""}
-                  </p>
+                        <div className="mt-3 flex items-center justify-between border-t pt-3" style={{ borderColor: themeMeta.colors.divider }}>
+                          <span className="flex items-center gap-1 text-[10px] font-bold" style={{ color: themeMeta.colors.secondaryText }}><Clock className="h-3 w-3" /> {formatDeliveryText(pkg.turnaroundDays)}</span>
+                          {hasDirectContact && (
+                            <div className="flex items-center gap-1.5">
+                              {contactEmail && (
+                                <a
+                                  href={emailHref(pkg.title)}
+                                  aria-label={`Email about ${pkg.title}`}
+                                  title="Email creator"
+                                  className="flex h-8 items-center gap-1.5 rounded-[10px] px-2.5 text-[10px] font-black text-white transition-opacity hover:opacity-90"
+                                  style={{ background: themeMeta.colors.accent }}
+                                >
+                                  <Mail className="h-3.5 w-3.5" /> Email
+                                </a>
+                              )}
+                              {whatsappNumber && (
+                                <a
+                                  href={whatsappHref(pkg.title)}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  aria-label={`WhatsApp about ${pkg.title}`}
+                                  title="WhatsApp creator"
+                                  className="flex h-8 items-center gap-1.5 rounded-[10px] bg-[#16a34a] px-2.5 text-[10px] font-black text-white transition-opacity hover:opacity-90"
+                                >
+                                  <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
+                                </a>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </article>
+                    );
+                  })}
                 </div>
-              ))}
-            </div>
-          </section>
-        )}
+              </section>
+            )}
 
-        {/* 6. CREATOR TEAM */}
-        {team?.members && Array.isArray(team.members) && team.members.length > 0 && (
-          <section className="space-y-3.5">
-            <div className="px-1">
-              <h2 className="font-display text-base sm:text-lg font-bold text-[#17131A] flex items-center gap-2">
-                <Users className="h-4 w-4 text-[#043084]" />
-                {team?.team?.teamName || "Creator Team"} ({team?.members?.length || 0})
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              {team.members.map((m) => (
-                <div key={m.id} className="rounded-2xl border border-[#ECE8EB] bg-white p-3.5 flex items-center gap-3 shadow-2xs">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#043084] text-white font-extrabold text-xs shrink-0 ring-2 ring-[#F7EDF3]">
-                    {getInitials(m.name)}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-bold text-xs text-[#17131A] truncate">{m.name}</p>
-                    <p className="text-[11px] font-semibold text-[#043084] truncate">{m.role}</p>
-                  </div>
+            {team.members.length > 0 && (
+              <section data-media-kit-section className="space-y-2.5">
+                <h2 className="flex items-center gap-2 px-0.5 text-sm font-black"><Users className="h-4 w-4" /> {team.team?.teamName || "Creator team"}</h2>
+                <div className="grid grid-cols-2 gap-2">
+                  {team.members.map((member) => (
+                    <div key={member.id} className="flex min-w-0 items-center gap-2 rounded-xl border p-2.5" style={cardStyle}>
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] text-[10px] font-black text-white" style={{ background: themeMeta.colors.accent }}>{getInitials(member.name)}</div>
+                      <div className="min-w-0"><p className="truncate text-[11px] font-black">{member.name}</p><p className="truncate text-[10px]" style={{ color: themeMeta.colors.secondaryText }}>{member.role}</p></div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </section>
-        )}
+              </section>
+            )}
 
-        {/* 6. BOTTOM CONTACT & INQUIRY FOOTER */}
-        <section className="rounded-3xl border border-[#ECE8EB] bg-[#F7EDF3]/50 p-6 sm:p-8 text-center space-y-3">
-          <h2 className="font-display text-lg font-bold text-[#17131A]">
-            Ready to start a brand collaboration?
-          </h2>
-          <p className="text-xs text-[#6F6872] max-w-md mx-auto">
-            Get in touch directly with @{profile.username} for tailored sponsorship campaigns and custom deliverables.
-          </p>
-          <div className="pt-2">
-            <button
-              type="button"
-              onClick={() => setIsInquiryOpen(true)}
-              className="inline-flex items-center gap-2 rounded-xl bg-[#043084] hover:bg-brand-hover px-6 py-2.5 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs"
-            >
-              <span>Submit Brand Inquiry</span>
-              <ChevronRight className="h-3.5 w-3.5" />
-            </button>
+            {reviews.length > 0 && (
+              <section data-media-kit-section className="space-y-2.5">
+                <h2 className="flex items-center gap-2 px-0.5 text-sm font-black"><Star className="h-4 w-4 fill-amber-400 text-amber-400" /> Reviews</h2>
+                {reviews.slice(0, 3).map((review) => (
+                  <article key={review.id} className="rounded-2xl border p-3.5" style={cardStyle}>
+                    <div className="flex gap-0.5">{Array.from({ length: Number(review.rating) || 5 }).map((_, index) => <Star key={index} className="h-3 w-3 fill-amber-400 text-amber-400" />)}</div>
+                    {review.comment && <p className="mt-2 text-xs italic leading-relaxed">&ldquo;{review.comment}&rdquo;</p>}
+                    <p className="mt-2 text-[10px] font-bold" style={{ color: themeMeta.colors.secondaryText }}>{review.clientName}{review.clientDesignation ? ` · ${review.clientDesignation}` : ""}</p>
+                  </article>
+                ))}
+              </section>
+            )}
+
+            {hasDirectContact && (
+              <section data-media-kit-section className="rounded-2xl border p-5 text-center" style={cardStyle}>
+                <h2 className="text-base font-black">Let&apos;s create something together</h2>
+                <p className="mx-auto mt-1 max-w-xs text-[11px] leading-relaxed" style={{ color: themeMeta.colors.secondaryText }}>Contact @{cleanHandle} directly for collaborations and campaign enquiries.</p>
+                <div className="mx-auto mt-3 flex max-w-sm flex-col gap-2">
+                  {contactEmail && (
+                    <a href={emailHref()} className="inline-flex min-h-10 min-w-0 items-center justify-center gap-2 rounded-[10px] px-4 py-2 text-xs font-black text-white transition-opacity hover:opacity-90" style={{ background: themeMeta.colors.accent }}>
+                      <Mail className="h-4 w-4 shrink-0" /> <span className="truncate">{contactEmail}</span>
+                    </a>
+                  )}
+                  {whatsappNumber && (
+                    <a href={whatsappHref()} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-[10px] bg-[#16a34a] px-4 py-2 text-xs font-black text-white transition-opacity hover:opacity-90">
+                      <MessageCircle className="h-4 w-4 shrink-0" /> WhatsApp +{whatsappNumber}
+                    </a>
+                  )}
+                </div>
+              </section>
+            )}
+
+            <div className="flex items-center justify-center pb-3 pt-1 text-center">
+              <MadeWithInflixo
+                color={isDark ? "#FFFFFF" : themeMeta.colors.secondaryText}
+                backgroundColor={themeMeta.colors.accentSoft}
+                borderColor={themeMeta.colors.accentBorder}
+              />
+            </div>
           </div>
-        </section>
+        </div>
       </main>
 
-      {/* Inquiry Modal */}
-      <CollaborationInquiryModal
-        isOpen={isInquiryOpen}
-        onClose={() => setIsInquiryOpen(false)}
-        creatorId={profile.id || profile.username || "creator"}
-        creatorEmail={profile.email}
-        creatorName={profile.displayName || "Creator"}
-        creatorUsername={profile.username || "creator"}
-        packages={packages}
-        selectedPackageTitle={selectedPackageForInquiry}
-      />
     </div>
   );
 }

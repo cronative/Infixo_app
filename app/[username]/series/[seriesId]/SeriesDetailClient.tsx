@@ -25,6 +25,7 @@ import { THEME_STYLES, isDarkTheme, DEFAULT_THEME_STYLE } from "@/components/onb
 import { THEME_PAGE_BACKGROUNDS, ThemeService, getThemeCssVariables } from "@/services/ThemeService";
 import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
 import { FocusOverlay } from "@/components/theme/FocusOverlay";
+import { MadeWithInflixo } from "@/components/shared/MadeWithInflixo";
 
 function getPlatformInfo(platformStr?: string, urlStr?: string) {
   const p = (platformStr || "").toLowerCase();
@@ -732,17 +733,11 @@ export function SeriesDetailClient({
             style={{ borderColor: c.divider }}
             className="flex items-center justify-center pt-3.5 pb-[15px] px-4 select-none shrink-0 border-t"
           >
-            <a
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: c.secondaryText }}
-              className="tap-scale inline-flex items-center justify-center gap-2 text-[13px] sm:text-sm font-bold opacity-90 transition-opacity hover:opacity-100 cursor-pointer select-none"
-            >
-              <InflixoLogoIcon light={usesDarkControls} className="h-4.5 w-4.5 shrink-0" />
-              <span className="tracking-tight">Made with Inflixo</span>
-              <ExternalLink className="h-3.5 w-3.5 opacity-80 shrink-0" />
-            </a>
+            <MadeWithInflixo
+              color={usesDarkControls ? "#FFFFFF" : c.secondaryText}
+              backgroundColor={c.accentSoft}
+              borderColor={c.accentBorder}
+            />
           </div>
         </div>
       </main>

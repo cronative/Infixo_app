@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { X, Play, Film, Globe, ExternalLink } from "lucide-react";
 import { Series, Episode, Season, ThemeKey } from "@/types";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
+import { MadeWithInflixo } from "@/components/shared/MadeWithInflixo";
 import { InflixoLogoIcon } from "@/components/shared/Logo";
 
 interface EpisodeQuickDrawerProps {
@@ -327,15 +328,11 @@ export function EpisodeQuickDrawer({
 
         {/* 3. Pinned Center Card Style Footer */}
         <div className="px-4 py-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-center shrink-0 select-none">
-          <a
-            href="/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="tap-scale inline-flex items-center gap-2 text-[13px] font-bold text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
-          >
-            <InflixoLogoIcon className="h-4.5 w-4.5 shrink-0" />
-            <span>Made with Inflixo</span>
-          </a>
+          <MadeWithInflixo
+            color="#475569"
+            backgroundColor="rgba(255,255,255,0.86)"
+            borderColor="#e2e8f0"
+          />
         </div>
       </div>
     </div>,

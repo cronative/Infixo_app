@@ -84,6 +84,7 @@ import { InflixoLogoIcon } from "@/components/shared/Logo";
 import { useToast } from "@/contexts/ToastContext";
 import { ShareSeriesModal } from "@/components/shared/ShareSeriesModal";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
+import { MadeWithInflixo } from "@/components/shared/MadeWithInflixo";
 import { SeriesPoster } from "@/components/shared/SeriesPoster";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { FocusOverlay } from "@/components/theme/FocusOverlay";
@@ -2433,18 +2434,12 @@ export function LivePreviewCard({
 
         {!containedScroll && (
           <div className="relative z-10 order-[60] mt-8 mb-4 flex items-center justify-center select-none">
-            <a
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
-              style={{ color: c.mutedText }}
-              className="tap-scale inline-flex items-center gap-2 text-[13px] sm:text-sm font-bold hover:opacity-100 opacity-80 transition-opacity cursor-pointer select-none"
-            >
-              <InflixoLogoIcon className="h-4.5 w-4.5 shrink-0" />
-              <span className="tracking-tight">Made with Inflixo</span>
-              <ExternalLink className="h-3.5 w-3.5 opacity-80 shrink-0" />
-            </a>
+            <MadeWithInflixo
+              color={c.secondaryText}
+              backgroundColor={c.accentSoft}
+              borderColor={c.accentBorder}
+              disabled={isInformationalMode}
+            />
           </div>
         )}
         {containedScroll && <div className="order-[70] h-14 shrink-0" aria-hidden="true" />}
@@ -2460,18 +2455,12 @@ export function LivePreviewCard({
             aria-hidden="true"
           />
           <div className="flex items-center justify-center pt-3.5 pb-[15px]">
-            <a
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
-              style={{ color: c.secondaryText }}
-              className="tap-scale inline-flex items-center justify-center gap-2 text-[13px] sm:text-sm font-bold opacity-90 transition-opacity hover:opacity-100 cursor-pointer select-none"
-            >
-              <InflixoLogoIcon className="h-4.5 w-4.5 shrink-0" />
-              <span className="tracking-tight">Made with Inflixo</span>
-              <ExternalLink className="h-3.5 w-3.5 opacity-80 shrink-0" />
-            </a>
+            <MadeWithInflixo
+              color={c.secondaryText}
+              backgroundColor={c.accentSoft}
+              borderColor={c.accentBorder}
+              disabled={isInformationalMode}
+            />
           </div>
         </div>
       )}
