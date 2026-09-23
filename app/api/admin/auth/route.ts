@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
 import { createAdminToken } from "@/lib/adminAuth";
 import { getClientIp } from "@/lib/rateLimit";
 import { checkPersistentRateLimit } from "@/lib/persistentRateLimit";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 export async function POST(req: Request) {
   try {
@@ -10,7 +10,7 @@ export async function POST(req: Request) {
 
     // Handle logout action
     if (action === "logout") {
-      const response = NextResponse.json({ success: true, message: "Logged out successfully" });
+      const response = apiSuccess({}, "Logged out successfully");
       response.cookies.delete("inflixo_admin_token");
       return response;
     }
@@ -19,9 +19,9 @@ export async function POST(req: Request) {
     const clientIp = getClientIp(req);
     const rateCheck = await checkPersistentRateLimit(`admin-auth:${clientIp}`, 5, 10 * 60);
     if (!rateCheck.success) {
-      return NextResponse.json(
-        { error: `Too many admin login attempts. Please wait ${rateCheck.retryAfterSec} seconds.` },
-        { status: 429 }
+      return apiError(
+        `Too many admin login attempts. Please wait ${rateCheck.retryAfterSec} seconds.`,
+        429
       );
     }
 
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     const expectedPassword = process.env.ADMIN_PASSWORD;
 
     if (!expectedEmail || !expectedPassword) {
-      return NextResponse.json({ error: "Admin authentication is not configured" }, { status: 503 });
+      return apiError("Admin authentication is not configured", 503);
     }
 
     const inputEmail = (email || "").trim().toLowerCase();
@@ -37,14 +37,13 @@ export async function POST(req: Request) {
     if (inputEmail === expectedEmail && password === expectedPassword) {
       const token = createAdminToken(expectedEmail);
 
-      const response = NextResponse.json({
-        success: true,
+      const response = apiSuccess({
         admin: {
           email: expectedEmail,
           name: "Inflixo Super Admin",
           role: "admin",
         },
-      });
+      }, "Admin authenticated successfully");
 
       // Set secure httpOnly cookie
       response.cookies.set("inflixo_admin_token", token, {
@@ -58,8 +57,8 @@ export async function POST(req: Request) {
       return response;
     }
 
-    return NextResponse.json({ error: "Invalid admin email or password" }, { status: 401 });
+    return apiError("Invalid admin email or password", 401);
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Admin authentication error", 500);
   }
 }

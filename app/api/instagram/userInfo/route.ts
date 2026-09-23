@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
 import { ApifySocialService } from "@/services/ApifySocialService";
 import { requireSession } from "@/lib/session";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 export async function POST(req: Request) {
   const auth = requireSession(req);
@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     const username = (body.username || "").trim().replace(/^@/, "");
 
     if (!username) {
-      return NextResponse.json({ error: "Username is required" }, { status: 400 });
+      return apiError("Username is required", 400);
     }
 
     // 1. Primary: Try Apify Instagram Profile Scraper
@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     if (rapidApiKey) try {
       const apifyUser = await ApifySocialService.fetchInstagramProfile(username);
       if (apifyUser) {
-        return NextResponse.json({ success: true, user: apifyUser, provider: "apify" });
+        return apiSuccess({ user: apifyUser, provider: "apify" }, "Instagram profile fetched via Apify");
       }
     } catch (err) {
       console.warn("[Instagram API] Apify error, falling back to RapidAPI:", err);
@@ -53,22 +53,19 @@ export async function POST(req: Request) {
             is_verified: Boolean(user.is_verified),
           };
 
-          return NextResponse.json({ success: true, user: extracted, provider: "rapidapi" });
+          return apiSuccess({ user: extracted, provider: "rapidapi" }, "Instagram profile fetched via RapidAPI");
         }
       }
     } catch (err) {
       console.warn("[Instagram API] RapidAPI fallback error:", err);
     }
 
-    return NextResponse.json(
-      { error: `Instagram account @${username} not found. Please check the handle or enter details manually.` },
-      { status: 404 }
+    return apiError(
+      `Instagram account @${username} not found. Please check the handle or enter details manually.`,
+      404
     );
   } catch (error: any) {
     console.error("Instagram API Error:", error);
-    return NextResponse.json(
-      { error: error.message || "Failed to fetch Instagram profile" },
-      { status: 500 }
-    );
+    return apiError(error.message || "Failed to fetch Instagram profile", 500);
   }
 }

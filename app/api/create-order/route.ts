@@ -1,9 +1,9 @@
 import crypto from "crypto";
-import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
 import { db } from "@/lib/db";
 import { getPaidPlan } from "@/lib/billing";
 import { requireCreator } from "@/lib/creatorAuth";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 export async function POST(req: Request) {
   try {
@@ -12,11 +12,11 @@ export async function POST(req: Request) {
 
     const keyId = process.env.RAZORPAY_KEY_ID;
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
-    if (!keyId || !keySecret) return NextResponse.json({ error: "Payments are not configured" }, { status: 503 });
+    if (!keyId || !keySecret) return apiError("Payments are not configured", 503);
 
     const body = await req.json();
     const plan = getPaidPlan(body.planKey, body.billingCycle);
-    if (!plan) return NextResponse.json({ error: "Invalid paid plan or billing cycle" }, { status: 400 });
+    if (!plan) return apiError("Invalid paid plan or billing cycle", 400);
 
     const intentId = `pi_${crypto.randomUUID()}`;
     await db.query(
@@ -35,13 +35,13 @@ export async function POST(req: Request) {
         notes: { checkoutIntentId: intentId, creatorId: auth.creator.id },
       });
       await db.query("UPDATE payment_checkout_intents SET provider_id = ?, status = 'pending' WHERE id = ?", [order.id, intentId]);
-      return NextResponse.json({ order_id: order.id, amount: order.amount, currency: order.currency });
+      return apiSuccess({ order_id: order.id, amount: order.amount, currency: order.currency }, "Order created successfully");
     } catch (error) {
       await db.query("UPDATE payment_checkout_intents SET status = 'failed' WHERE id = ?", [intentId]);
       throw error;
     }
   } catch (error: any) {
     console.error("Razorpay create-order error:", error);
-    return NextResponse.json({ error: error?.error?.description || error?.message || "Failed to create order" }, { status: 500 });
+    return apiError(error?.error?.description || error?.message || "Failed to create order", 500);
   }
 }

@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { NextResponse } from "next/server";
+import { apiError } from "./apiResponse";
 
 const SESSION_COOKIE_NAME = "inflixo_session";
 const SESSION_MAX_AGE = 30 * 24 * 60 * 60; // 30 days in seconds
@@ -143,7 +144,7 @@ export function requireSession(
     if (crossOrigin) {
       return {
         session: null,
-        error: NextResponse.json({ error: "Cross-origin request rejected" }, { status: 403 }),
+        error: apiError("Cross-origin request rejected", 403),
       };
     }
   }
@@ -152,7 +153,7 @@ export function requireSession(
   if (!session) {
     return {
       session: null,
-      error: NextResponse.json({ error: "Unauthorized — please log in" }, { status: 401 }),
+      error: apiError("Unauthorized — please log in", 401),
     };
   }
   return { session, error: null };

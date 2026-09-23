@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 import { getClientIp } from "@/lib/rateLimit";
@@ -6,6 +5,7 @@ import { checkPersistentRateLimit } from "@/lib/persistentRateLimit";
 import { logDeviceLogin } from "@/lib/loginLogger";
 import { debugLog, debugError } from "@/lib/debugLogger";
 import { createSessionToken, setSessionCookie } from "@/lib/session";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 export async function POST(req: Request) {
   try {
@@ -13,10 +13,7 @@ export async function POST(req: Request) {
     const clientIp = getClientIp(req);
     const rateCheck = await checkPersistentRateLimit(`verify:${clientIp}`, 10, 5 * 60);
     if (!rateCheck.success) {
-      return NextResponse.json(
-        { error: `Too many attempts. Please wait ${rateCheck.retryAfterSec} seconds.` },
-        { status: 429 }
-      );
+      return apiError(`Too many attempts. Please wait ${rateCheck.retryAfterSec} seconds.`, 429);
     }
 
     const body = await req.json();
@@ -24,7 +21,7 @@ export async function POST(req: Request) {
     const otp = (body.otp || "").trim();
 
     if (!email || !otp) {
-      return NextResponse.json({ error: "Email and OTP are required" }, { status: 400 });
+      return apiError("Email and OTP are required", 400);
     }
 
     // 1. Strict Verification of OTP code against MySQL otps table
@@ -43,16 +40,10 @@ export async function POST(req: Request) {
       );
 
       if (expiredRows && expiredRows.length > 0) {
-        return NextResponse.json(
-          { error: "OTP code has expired (valid for 5 mins). Please click Resend Code." },
-          { status: 400 }
-        );
+        return apiError("OTP code has expired (valid for 5 mins). Please click Resend Code.", 400);
       }
 
-      return NextResponse.json(
-        { error: "Invalid OTP code. Please check your email and try again." },
-        { status: 400 }
-      );
+      return apiError("Invalid OTP code. Please check your email and try again.", 400);
     }
 
     // 2. Mark OTP as used in database on successful verification (keep row in otps table)
@@ -61,7 +52,7 @@ export async function POST(req: Request) {
       [otpRows[0].id]
     );
     if (consumeResult.affectedRows !== 1) {
-      return NextResponse.json({ error: "This OTP code has already been used" }, { status: 409 });
+      return apiError("This OTP code has already been used", 409);
     }
 
     // 3. Fetch Creator details from MySQL database
@@ -154,9 +145,7 @@ export async function POST(req: Request) {
     // Issue session cookie (httpOnly, SameSite=Strict)
     const creatorIdForSession = creator?.id || `new_${email}`;
     const sessionToken = createSessionToken(email, creatorIdForSession);
-    const responseBody = {
-      success: true,
-      message: "OTP verified successfully",
+    const data = {
       isExistingProfile,
       onboardingStep: currentStep,
       creator: creator
@@ -184,13 +173,10 @@ export async function POST(req: Request) {
           },
     };
 
-    const response = NextResponse.json(responseBody);
+    const response = apiSuccess(data, "OTP verified successfully.");
     return setSessionCookie(response, sessionToken, req);
   } catch (error: any) {
     console.error("Auth Verify OTP MySQL Error:", error);
-    return NextResponse.json(
-      { error: error.message || "Failed to verify OTP" },
-      { status: 500 }
-    );
+    return apiError(error.message || "Failed to verify OTP", 500);
   }
 }

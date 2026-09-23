@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
 import { saveBase64ImageToStorage, saveImageBufferToStorage, ImageFolder } from "@/lib/imageStorage";
 import { getClientIp } from "@/lib/rateLimit";
 import { checkPersistentRateLimit } from "@/lib/persistentRateLimit";
 import { requireSession } from "@/lib/session";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB max upload limit
 const ALLOWED_MIME_TYPES = new Set([
@@ -21,9 +21,9 @@ export async function POST(req: Request) {
     const clientIp = getClientIp(req);
     const rateCheck = await checkPersistentRateLimit(`upload:${auth.session.email}:${clientIp}`, 30, 10 * 60);
     if (!rateCheck.success) {
-      return NextResponse.json(
-        { error: `Upload rate limit reached. Please wait ${rateCheck.retryAfterSec} seconds.` },
-        { status: 429 }
+      return apiError(
+        `Upload rate limit reached. Please wait ${rateCheck.retryAfterSec} seconds.`,
+        429
       );
     }
 
@@ -40,22 +40,16 @@ export async function POST(req: Request) {
         : "avatars") as ImageFolder;
 
       if (!file) {
-        return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+        return apiError("No file uploaded", 400);
       }
 
       if (file.size > MAX_FILE_SIZE) {
-        return NextResponse.json(
-          { error: "Image file size exceeds maximum limit of 5MB" },
-          { status: 400 }
-        );
+        return apiError("Image file size exceeds maximum limit of 5MB", 400);
       }
 
       const mime = (file.type || "image/png").toLowerCase();
       if (!ALLOWED_MIME_TYPES.has(mime)) {
-        return NextResponse.json(
-          { error: "Invalid file type. Only JPEG, PNG, and WebP images are allowed." },
-          { status: 400 }
-        );
+        return apiError("Invalid file type. Only JPEG, PNG, and WebP images are allowed.", 400);
       }
 
       const bytes = await file.arrayBuffer();
@@ -68,14 +62,12 @@ export async function POST(req: Request) {
       const storedUrl = await saveImageBufferToStorage(fileBuffer, validFolder, prefix, extension, mime);
 
       if (!storedUrl) {
-        return NextResponse.json({ error: "Failed to store uploaded image" }, { status: 500 });
+        return apiError("Failed to store uploaded image", 500);
       }
 
-      return NextResponse.json({
-        success: true,
-        message: "Image uploaded successfully",
+      return apiSuccess({
         url: storedUrl,
-      });
+      }, "Image uploaded successfully");
     }
 
     // JSON body with base64 string
@@ -87,34 +79,32 @@ export async function POST(req: Request) {
       : "avatars";
 
     if (!photoDataUrl || typeof photoDataUrl !== "string") {
-      return NextResponse.json({ error: "No image data provided" }, { status: 400 });
+      return apiError("No image data provided", 400);
     }
 
     if (photoDataUrl.length > 8 * 1024 * 1024) {
-      return NextResponse.json({ error: "Image data exceeds maximum limit of 5MB" }, { status: 400 });
+      return apiError("Image data exceeds maximum limit of 5MB", 400);
     }
 
     // If already a relative server URL (e.g. /uploads/...), return as is
     if (photoDataUrl.startsWith("/uploads/") || photoDataUrl.startsWith("/api/assets/")) {
-      return NextResponse.json({ success: true, url: photoDataUrl });
+      return apiSuccess({ url: photoDataUrl }, "Image already stored");
     }
 
     const prefix = validFolder.slice(0, -1);
     const relativeUrl = await saveBase64ImageToStorage(photoDataUrl, validFolder, prefix);
 
     if (!relativeUrl) {
-      return NextResponse.json({ error: "Failed to process image data" }, { status: 400 });
+      return apiError("Failed to process image data", 400);
     }
 
-    return NextResponse.json({
-      success: true,
-      message: "Image saved successfully",
+    return apiSuccess({
       url: relativeUrl,
-    });
+    }, "Image saved successfully");
   } catch (err: unknown) {
     console.error("Image Upload Error:", err);
     const message = err instanceof Error ? err.message : "Image upload failed";
     const isValidationError = message.includes("valid JPEG") || message.includes("declared file type") || message.includes("between 1 byte");
-    return NextResponse.json({ error: message }, { status: isValidationError ? 400 : 500 });
+    return apiError(message, isValidationError ? 400 : 500);
   }
 }

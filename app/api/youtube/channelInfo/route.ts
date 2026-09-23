@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
 import { ApifySocialService } from "@/services/ApifySocialService";
 import { requireSession } from "@/lib/session";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 function parseSubscribers(subStr: string): number {
   if (!subStr) return 0;
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     const channelName = (body.channelName || body.username || "").trim().replace(/^@/, "");
 
     if (!channelName) {
-      return NextResponse.json({ error: "YouTube channel name / handle is required" }, { status: 400 });
+      return apiError("YouTube channel name / handle is required", 400);
     }
 
     const apiKey = process.env.RAPIDAPI_KEY;
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     if (apiKey) try {
       const apifyChannel = await ApifySocialService.fetchYouTubeChannel(channelName);
       if (apifyChannel) {
-        return NextResponse.json({ success: true, channel: apifyChannel, provider: "apify" });
+        return apiSuccess({ channel: apifyChannel, provider: "apify" }, "YouTube channel fetched via Apify");
       }
     } catch (err) {
       console.warn("[YouTube API] Apify error, falling back to RapidAPI:", err);
@@ -79,7 +79,7 @@ export async function POST(req: Request) {
               verified: Boolean(details.verified),
             };
 
-            return NextResponse.json({ success: true, channel: extracted, provider: "rapidapi" });
+            return apiSuccess({ channel: extracted, provider: "rapidapi" }, "YouTube channel fetched via RapidAPI");
           }
         }
       }
@@ -87,15 +87,12 @@ export async function POST(req: Request) {
       console.warn("[YouTube API] RapidAPI fallback error:", e);
     }
 
-    return NextResponse.json(
-      { error: `YouTube channel "@${channelName}" not found. Please verify the handle and try again.` },
-      { status: 404 }
+    return apiError(
+      `YouTube channel "@${channelName}" not found. Please verify the handle and try again.`,
+      404
     );
   } catch (error: any) {
     console.error("YouTube API Error:", error);
-    return NextResponse.json(
-      { error: error.message || "Failed to fetch YouTube channel info" },
-      { status: 500 }
-    );
+    return apiError(error.message || "Failed to fetch YouTube channel info", 500);
   }
 }

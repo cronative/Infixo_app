@@ -49,19 +49,20 @@ export function InstagramFetcher({ username, onConfirmSync, onBeforeFetch, varia
     setLoading(true);
 
     try {
-      const res = await fetch("/api/instagram/userInfo", {
+      const httpResponse = await fetch("/api/instagram/userInfo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: cleanUsername }),
       });
 
-      const data = await res.json();
+      const apiResponse = await httpResponse.json();
+      const user = apiResponse.data?.user || apiResponse.user;
 
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || "Could not fetch Instagram details");
+      if (!httpResponse.ok || apiResponse.status !== 1 || !user) {
+        throw new Error(apiResponse.message || "Could not fetch Instagram details");
       }
 
-      setPreviewData({ platform: "instagram", data: data.user });
+      setPreviewData({ platform: "instagram", data: user });
       if (variant === "modal") {
         setModalOpen(true);
       }

@@ -50,10 +50,12 @@ export default function DashboardRequestsPage() {
     if (!creatorLookup) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/creator/requests?creatorId=${encodeURIComponent(creatorLookup)}`).then((r) => r.json());
-      if (res.success && Array.isArray(res.requests)) {
-        setRequests(res.requests);
-        setUnreadCount(res.unreadCount || 0);
+      const httpResponse = await fetch(`/api/creator/requests?creatorId=${encodeURIComponent(creatorLookup)}`);
+      const apiResponse = await httpResponse.json();
+      const reqList = apiResponse.data?.requests || apiResponse.requests;
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && Array.isArray(reqList)) {
+        setRequests(reqList);
+        setUnreadCount(apiResponse.data?.unreadCount ?? apiResponse.unreadCount ?? 0);
       }
     } catch {
       // no-op
@@ -93,7 +95,7 @@ export default function DashboardRequestsPage() {
     if (!selectedRequest) return;
     setIsUpdating(true);
     try {
-      const res = await fetch("/api/creator/requests", {
+      const httpResponse = await fetch("/api/creator/requests", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -102,16 +104,17 @@ export default function DashboardRequestsPage() {
           creatorId: profile.id || creatorLookup,
           email: profile.email,
         }),
-      }).then((r) => r.json());
+      });
+      const apiResponse = await httpResponse.json();
 
-      if (res.success) {
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
         showToast(`Status updated to ${STATUS_CONFIG[newStatus].label}`);
         setSelectedRequest({ ...selectedRequest, status: newStatus });
         setRequests((prev) =>
           prev.map((r) => (r.id === selectedRequest.id ? { ...r, status: newStatus } : r))
         );
       } else {
-        showToast(res.error || "Failed to update status", "error");
+        showToast(apiResponse.message || apiResponse.error || "Failed to update status", "error");
       }
     } catch {
       showToast("Error updating status", "error");
@@ -124,12 +127,13 @@ export default function DashboardRequestsPage() {
     if (!requestToDelete) return;
     setIsUpdating(true);
     try {
-      const res = await fetch(
+      const httpResponse = await fetch(
         `/api/creator/requests?id=${encodeURIComponent(requestToDelete.id)}&creatorId=${encodeURIComponent(creatorLookup)}`,
         { method: "DELETE" }
-      ).then((r) => r.json());
+      );
+      const apiResponse = await httpResponse.json();
 
-      if (res.success) {
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
         showToast("Inquiry deleted");
         if (selectedRequest?.id === requestToDelete.id) {
           setSelectedRequest(null);
@@ -137,7 +141,7 @@ export default function DashboardRequestsPage() {
         setRequestToDelete(null);
         loadRequests();
       } else {
-        showToast(res.error || "Failed to delete request", "error");
+        showToast(apiResponse.message || apiResponse.error || "Failed to delete request", "error");
       }
     } catch {
       showToast("Failed to delete request", "error");

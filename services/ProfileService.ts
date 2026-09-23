@@ -36,40 +36,41 @@ export const ProfileService = {
     if (!email) return null;
 
     try {
-      const res = await fetch(`/api/creator/profile?email=${encodeURIComponent(email)}`);
-      const data = await res.json();
-      if (data.success && data.profile) {
+      const httpResponse = await fetch(`/api/creator/profile?email=${encodeURIComponent(email)}`);
+      const apiResponse = await httpResponse.json();
+      const profile = apiResponse.data?.profile;
+      if (apiResponse.status === 1 && profile) {
         const currentLocal: Partial<CreatorProfile> = profileRepository.get() || {};
         const updated: CreatorProfile = {
           ...currentLocal,
-          id: data.profile.id ? String(data.profile.id) : (currentLocal.id || undefined),
-          email: data.profile.email || currentLocal.email || email,
-          photoDataUrl: data.profile.photoDataUrl || currentLocal.photoDataUrl || null,
-          displayName: data.profile.displayName || currentLocal.displayName || "",
-          username: data.profile.username || currentLocal.username || "",
-          category: data.profile.category || currentLocal.category || null,
-          customCategory: data.profile.customCategory || currentLocal.customCategory || "",
-          profession: data.profile.profession || currentLocal.profession || "",
-          bio: data.profile.bio ?? currentLocal.bio ?? "",
-          city: data.profile.city || currentLocal.city || "",
-          state: data.profile.state || currentLocal.state || "",
-          country: data.profile.country || currentLocal.country || "",
-          visibilitySettings: data.profile.visibilitySettings || currentLocal.visibilitySettings || null,
+          id: profile.id ? String(profile.id) : (currentLocal.id || undefined),
+          email: profile.email || currentLocal.email || email,
+          photoDataUrl: profile.photoDataUrl || currentLocal.photoDataUrl || null,
+          displayName: profile.displayName || currentLocal.displayName || "",
+          username: profile.username || currentLocal.username || "",
+          category: profile.category || currentLocal.category || null,
+          customCategory: profile.customCategory || currentLocal.customCategory || "",
+          profession: profile.profession || currentLocal.profession || "",
+          bio: profile.bio ?? currentLocal.bio ?? "",
+          city: profile.city || currentLocal.city || "",
+          state: profile.state || currentLocal.state || "",
+          country: profile.country || currentLocal.country || "",
+          visibilitySettings: profile.visibilitySettings || currentLocal.visibilitySettings || null,
           updatedAt: new Date().toISOString(),
         } as CreatorProfile;
 
         // Only save to localStorage if creator actually exists in DB (not a brand new user)
-        if (!data.isNewUser && data.profile.id) {
+        if (!apiResponse.data?.isNewUser && profile.id) {
           profileRepository.save(updated);
 
-          if (typeof data.profile.themeChangesCount === "number") {
-            ThemeService.syncThemeChangesCount(data.profile.themeChangesCount);
+          if (typeof profile.themeChangesCount === "number") {
+            ThemeService.syncThemeChangesCount(profile.themeChangesCount);
           }
 
-          if (data.profile.themeKey) {
+          if (profile.themeKey) {
             const existingLocalTheme = themeRepository.get();
             if (!existingLocalTheme || existingLocalTheme === "minimal-white") {
-              ThemeService.setSelectedTheme(data.profile.themeKey);
+              ThemeService.setSelectedTheme(profile.themeKey);
             }
           }
         }
@@ -102,14 +103,14 @@ export const ProfileService = {
   async uploadAvatar(photoDataUrl: string): Promise<string | null> {
     if (!photoDataUrl || photoDataUrl.startsWith("/uploads/")) return photoDataUrl;
     try {
-      const res = await fetch("/api/upload", {
+      const httpResponse = await fetch("/api/upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ photoDataUrl }),
       });
-      const data = await res.json();
-      if (data.success && data.url) {
-        return data.url;
+      const apiResponse = await httpResponse.json();
+      if (apiResponse.status === 1 && apiResponse.data?.url) {
+        return apiResponse.data.url;
       }
     } catch (e: any) {
       console.error("Failed to upload profile avatar file:", e);
@@ -139,7 +140,7 @@ export const ProfileService = {
           username: updated.username,
         });
 
-        const res = await fetch("/api/creator/profile", {
+        const httpResponse = await fetch("/api/creator/profile", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -158,11 +159,11 @@ export const ProfileService = {
             visibilitySettings: updated.visibilitySettings,
           }),
         });
-        const data = await res.json();
-        if (data.success && data.profile) {
-          debugLog("PROFILE_SERVICE", "✅ Profile saved to MySQL Database successfully:", data.profile);
+        const apiResponse = await httpResponse.json();
+        if (apiResponse.status === 1 && apiResponse.data?.profile) {
+          debugLog("PROFILE_SERVICE", "✅ Profile saved to MySQL Database successfully:", apiResponse.data.profile);
         } else {
-          debugError("PROFILE_SERVICE", "❌ Profile save response failed:", data.error);
+          debugError("PROFILE_SERVICE", "❌ Profile save response failed:", apiResponse.message);
         }
       } catch (e: any) {
         debugError("PROFILE_SERVICE", "Failed to save profile to MySQL DB:", e);

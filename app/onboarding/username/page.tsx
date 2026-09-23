@@ -69,24 +69,27 @@ export default function UsernameStepPage() {
 
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch(
+        const httpResponse = await fetch(
           `/api/creator/check-username?username=${encodeURIComponent(clean)}&email=${encodeURIComponent(email)}`
         );
-        const data = await res.json();
+        const apiResponse = await httpResponse.json();
         setChecking(false);
 
-        if (data.available) {
+        const isAvailable = Boolean(apiResponse.data?.available);
+
+        if (httpResponse.ok && apiResponse.status === 1 && isAvailable) {
           setStatus({
             available: true,
-            message: `@${clean} is available!`,
+            message: apiResponse.message || `@${clean} is available!`,
           });
           setError(null);
         } else {
+          const failMsg = apiResponse.message || `@${clean} is already taken`;
           setStatus({
             available: false,
-            message: data.error || `@${clean} is already claimed`,
+            message: failMsg,
           });
-          setError(data.error || `@${clean} is already taken`);
+          setError(failMsg);
         }
       } catch (err) {
         setChecking(false);

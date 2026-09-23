@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 import { requireCreator } from "@/lib/creatorAuth";
 import { requireSession, ownsResource } from "@/lib/session";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 function normalizeCustomLinks(rows: any[]) {
   const parents: any[] = [];
@@ -60,12 +60,12 @@ export async function GET(req: Request) {
       const auth = requireSession(req);
       if (auth.error) return auth.error;
       if (!ownsResource(auth.session, email)) {
-        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        return apiError("Forbidden", 403);
       }
     }
 
     if (!email && !username) {
-      return NextResponse.json({ error: "Email or username query param required" }, { status: 400 });
+      return apiError("Email or username query param required", 400);
     }
 
     let creators: any = [];
@@ -79,7 +79,7 @@ export async function GET(req: Request) {
       [creators] = await db.query("SELECT id, email FROM creators WHERE LOWER(email) = LOWER(?)", [email?.trim()]);
     }
     if (creators.length === 0) {
-      return NextResponse.json({ success: true, socials: [], customLinks: [] });
+      return apiSuccess({ socials: [], customLinks: [] }, "No socials found");
     }
 
     const creatorId = creators[0].id;
@@ -104,8 +104,7 @@ export async function GET(req: Request) {
       customLinks = normalizeCustomLinks(linkRows || []);
     } catch {}
 
-    return NextResponse.json({
-      success: true,
+    return apiSuccess({
       socials: rows.map((r: any) => ({
         id: r.id,
         platform: r.platform,
@@ -118,10 +117,10 @@ export async function GET(req: Request) {
         lastSyncedAt: r.last_synced_at,
       })),
       customLinks,
-    });
+    }, "Social accounts retrieved successfully");
   } catch (err: any) {
     console.error("GET Socials Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to retrieve socials", 500);
   }
 }
 
@@ -136,7 +135,7 @@ export async function POST(req: Request) {
     const email = auth.creator.email;
 
     if (!platform || !username) {
-      return NextResponse.json({ error: "Platform and username required" }, { status: 400 });
+      return apiError("Platform and username required", 400);
     }
     const creatorId = auth.creator.id;
 
@@ -162,10 +161,10 @@ export async function POST(req: Request) {
     // Record / Update current step in creator_onboarding_steps table (1 row per email)
     await recordOnboardingStep(email, "socials", creatorId);
 
-    return NextResponse.json({ success: true, message: `Saved ${platform} account to MySQL` });
+    return apiSuccess({}, `Saved ${platform} account to MySQL`);
   } catch (err: any) {
     console.error("POST Socials Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to save social account", 500);
   }
 }
 
@@ -179,13 +178,13 @@ export async function DELETE(req: Request) {
     const platform = searchParams.get("platform");
 
     if (!platform) {
-      return NextResponse.json({ error: "Platform query param required" }, { status: 400 });
+      return apiError("Platform query param required", 400);
     }
     await db.query("DELETE FROM social_accounts WHERE creator_id = ? AND platform = ?", [auth.creator.id, platform]);
 
-    return NextResponse.json({ success: true, message: `Removed ${platform} account from DB` });
+    return apiSuccess({}, `Removed ${platform} account from DB`);
   } catch (err: any) {
     console.error("DELETE Socials Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to remove social account", 500);
   }
 }

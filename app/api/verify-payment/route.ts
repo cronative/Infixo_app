@@ -1,9 +1,9 @@
 import crypto from "crypto";
-import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
 import { db } from "@/lib/db";
 import { addBillingPeriod, toMysqlDate, type BillingCycle } from "@/lib/billing";
 import { requireCreator } from "@/lib/creatorAuth";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 function safeCompare(a: string, b: string) {
   const left = Buffer.from(a, "utf8");
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
 
   const keyId = process.env.RAZORPAY_KEY_ID;
   const keySecret = process.env.RAZORPAY_KEY_SECRET;
-  if (!keyId || !keySecret) return NextResponse.json({ error: "Payments are not configured" }, { status: 503 });
+  if (!keyId || !keySecret) return apiError("Payments are not configured", 503);
 
   try {
     const body = await req.json();
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     const providerId = body.razorpay_subscription_id || body.razorpay_order_id;
     const isRecurring = Boolean(body.razorpay_subscription_id);
     if (!paymentId || !signature || !providerId) {
-      return NextResponse.json({ success: false, error: "Missing payment verification fields" }, { status: 400 });
+      return apiError("Missing payment verification fields", 400);
     }
 
     const signedPayload = isRecurring
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
       : `${body.razorpay_order_id}|${paymentId}`;
     const expected = crypto.createHmac("sha256", keySecret).update(signedPayload).digest("hex");
     if (!safeCompare(expected, signature)) {
-      return NextResponse.json({ success: false, error: "Invalid payment signature" }, { status: 400 });
+      return apiError("Invalid payment signature", 400);
     }
 
     const [intentRows]: any = await db.query(
@@ -43,31 +43,37 @@ export async function POST(req: Request) {
       [providerId, auth.creator.id]
     );
     const intent = intentRows?.[0];
-    if (!intent) return NextResponse.json({ success: false, error: "Checkout intent not found" }, { status: 404 });
+    if (!intent) return apiError("Checkout intent not found", 404);
     if (intent.provider_type !== (isRecurring ? "subscription" : "order")) {
-      return NextResponse.json({ success: false, error: "Checkout type mismatch" }, { status: 400 });
+      return apiError("Checkout type mismatch", 400);
     }
 
     if (intent.status === "completed") {
       if (intent.payment_id !== paymentId) {
-        return NextResponse.json({ success: false, error: "Checkout intent was already consumed" }, { status: 409 });
+        return apiError("Checkout intent was already consumed", 409);
       }
-      return NextResponse.json({ success: true, duplicate: true, is_recurring: isRecurring, subscription_id: body.razorpay_subscription_id || null, order_id: body.razorpay_order_id || null, payment_id: paymentId });
+      return apiSuccess({
+        duplicate: true,
+        is_recurring: isRecurring,
+        subscription_id: body.razorpay_subscription_id || null,
+        order_id: body.razorpay_order_id || null,
+        payment_id: paymentId,
+      }, "Payment already verified");
     }
     if (intent.status !== "pending") {
-      return NextResponse.json({ success: false, error: "Checkout intent is not payable" }, { status: 409 });
+      return apiError("Checkout intent is not payable", 409);
     }
 
     const razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret });
     const payment: any = await razorpay.payments.fetch(paymentId);
     if (payment.status !== "captured") {
-      return NextResponse.json({ success: false, error: "Payment has not been captured" }, { status: 409 });
+      return apiError("Payment has not been captured", 409);
     }
     if (Number(payment.amount) !== Number(intent.amount) || String(payment.currency).toUpperCase() !== String(intent.currency).toUpperCase()) {
-      return NextResponse.json({ success: false, error: "Payment amount does not match checkout" }, { status: 400 });
+      return apiError("Payment amount does not match checkout", 400);
     }
     if (!isRecurring && payment.order_id !== providerId) {
-      return NextResponse.json({ success: false, error: "Payment does not belong to this order" }, { status: 400 });
+      return apiError("Payment does not belong to this order", 400);
     }
 
     const connection = await db.getConnection();
@@ -120,9 +126,14 @@ export async function POST(req: Request) {
       connection.release();
     }
 
-    return NextResponse.json({ success: true, is_recurring: isRecurring, subscription_id: body.razorpay_subscription_id || null, order_id: body.razorpay_order_id || null, payment_id: paymentId });
+    return apiSuccess({
+      is_recurring: isRecurring,
+      subscription_id: body.razorpay_subscription_id || null,
+      order_id: body.razorpay_order_id || null,
+      payment_id: paymentId,
+    }, "Payment verified successfully");
   } catch (error: any) {
     console.error("Razorpay verify-payment error:", error);
-    return NextResponse.json({ success: false, error: error?.message || "Payment verification failed" }, { status: 500 });
+    return apiError(error?.message || "Payment verification failed", 500);
   }
 }

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireCreator } from "@/lib/creatorAuth";
 import { isAuthorizedAdmin } from "@/lib/adminAuth";
+import { apiError } from "@/lib/apiResponse";
 
 function asTime(value: unknown) {
   if (!value) return null;
@@ -35,7 +36,7 @@ export async function authorizeCreatorRead(req: Request, creatorId: string, isPu
   if (isPublicLookup) {
     return (await isCreatorPublic(creatorId))
       ? null
-      : NextResponse.json({ error: "Creator profile is private" }, { status: 404 });
+      : apiError("Creator profile is private", 404);
   }
 
   if (await isAuthorizedAdmin(req)) {
@@ -47,5 +48,5 @@ export async function authorizeCreatorRead(req: Request, creatorId: string, isPu
   const target = (creatorId || "").toLowerCase();
   return (auth.creator.id.toLowerCase() === target || auth.creator.email.toLowerCase() === target)
     ? null
-    : NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    : apiError("Forbidden", 403);
 }

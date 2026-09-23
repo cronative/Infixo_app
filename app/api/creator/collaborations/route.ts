@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureCollaborationsTable } from "@/lib/collaborationsDb";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 import { requireCreator } from "@/lib/creatorAuth";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -26,7 +26,7 @@ export async function GET(req: Request) {
     const lookupVal = searchParams.get("creatorId") || searchParams.get("email") || searchParams.get("username");
 
     if (!lookupVal) {
-      return NextResponse.json({ success: true, collaborations: [] });
+      return apiSuccess({ collaborations: [] }, "Collaborations retrieved successfully");
     }
 
     await ensureCollaborationsTable();
@@ -58,10 +58,10 @@ export async function GET(req: Request) {
       updatedAt: c.updatedAt,
     }));
 
-    return NextResponse.json({ success: true, collaborations });
+    return apiSuccess({ collaborations }, "Collaborations retrieved successfully");
   } catch (err: any) {
     console.error("GET collaborations error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to fetch collaborations", 500);
   }
 }
 
@@ -87,12 +87,12 @@ export async function POST(req: Request) {
           );
         }
       }
-      return NextResponse.json({ success: true, message: "Collaborations reordered" });
+      return apiSuccess({ collaborations }, "Collaborations reordered successfully");
     }
 
     const c = collaboration || body;
     if (!c.brandName || !c.brandName.trim()) {
-      return NextResponse.json({ error: "Brand name is required" }, { status: 400 });
+      return apiError("Brand name is required", 400);
     }
 
     const finalLogoUrl = await saveBase64ImageToStorage(c.brandLogoUrl, "collaborations", "collab_logo") || (c.brandLogoUrl && !c.brandLogoUrl.startsWith("data:") ? c.brandLogoUrl : null);
@@ -122,10 +122,10 @@ export async function POST(req: Request) {
       ]
     );
 
-    return NextResponse.json({ success: true, collabId, message: "Collaboration saved successfully" });
+    return apiSuccess({ collabId }, "Collaboration saved successfully");
   } catch (err: any) {
     console.error("POST collaboration error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to save collaboration", 500);
   }
 }
 
@@ -138,7 +138,7 @@ export async function DELETE(req: Request) {
     const id = searchParams.get("id");
 
     if (!id) {
-      return NextResponse.json({ error: "ID required" }, { status: 400 });
+      return apiError("ID required", 400);
     }
 
     await ensureCollaborationsTable();
@@ -147,9 +147,9 @@ export async function DELETE(req: Request) {
 
     await db.query("DELETE FROM creator_collaborations WHERE id = ? AND creator_id = ?", [id, targetId]);
 
-    return NextResponse.json({ success: true, message: "Collaboration removed" });
+    return apiSuccess({}, "Collaboration removed successfully");
   } catch (err: any) {
     console.error("DELETE collaboration error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to remove collaboration", 500);
   }
 }

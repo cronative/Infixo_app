@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
 import { clearSessionCookie } from "@/lib/session";
+import { apiSuccess } from "@/lib/apiResponse";
 
 export async function POST(req: Request) {
-  const response = NextResponse.json({ success: true, message: "Logged out" });
+  const response = apiSuccess({}, "Logged out successfully.");
   return clearSessionCookie(response, req);
 }

@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureSectionsTable } from "@/lib/sectionsDb";
 import { DEFAULT_PROFILE_SECTIONS, ProfileSectionKey } from "@/types";
 import { requireCreator } from "@/lib/creatorAuth";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -26,7 +26,7 @@ export async function GET(req: Request) {
     const lookupVal = searchParams.get("creatorId") || searchParams.get("email") || searchParams.get("username");
 
     if (!lookupVal) {
-      return NextResponse.json({ success: true, sections: DEFAULT_PROFILE_SECTIONS });
+      return apiSuccess({ sections: DEFAULT_PROFILE_SECTIONS, isDefault: true }, "Default sections returned");
     }
 
     await ensureSectionsTable();
@@ -45,7 +45,7 @@ export async function GET(req: Request) {
     );
 
     if (!rows || rows.length === 0) {
-      return NextResponse.json({ success: true, sections: DEFAULT_PROFILE_SECTIONS, isDefault: true });
+      return apiSuccess({ sections: DEFAULT_PROFILE_SECTIONS, isDefault: true }, "Default sections returned");
     }
 
     const map = new Map<string, { sortOrder: number; isVisible: boolean }>();
@@ -70,10 +70,10 @@ export async function GET(req: Request) {
       };
     }).sort((a, b) => a.sortOrder - b.sortOrder);
 
-    return NextResponse.json({ success: true, sections: combined, isDefault: false });
+    return apiSuccess({ sections: combined, isDefault: false }, "Sections retrieved successfully");
   } catch (err: any) {
     console.error("GET sections error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to retrieve sections", 500);
   }
 }
 
@@ -86,7 +86,7 @@ export async function POST(req: Request) {
     const { sections } = body;
 
     if (!Array.isArray(sections)) {
-      return NextResponse.json({ error: "Sections array required" }, { status: 400 });
+      return apiError("Sections array required", 400);
     }
 
     await ensureSectionsTable();
@@ -109,9 +109,9 @@ export async function POST(req: Request) {
       }
     }
 
-    return NextResponse.json({ success: true, message: "Profile section layout saved" });
+    return apiSuccess({}, "Profile section layout saved");
   } catch (err: any) {
     console.error("POST sections error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to save sections", 500);
   }
 }

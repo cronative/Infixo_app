@@ -20,11 +20,12 @@ export const SeriesService = {
     if (!email) return seriesRepository.getAll();
 
     try {
-      const res = await fetch(`/api/series?email=${encodeURIComponent(email)}`);
-      const data = await res.json();
-      if (data.success && Array.isArray(data.series)) {
-        seriesRepository.saveAll(data.series);
-        return data.series;
+      const httpResponse = await fetch(`/api/series?email=${encodeURIComponent(email)}`);
+      const apiResponse = await httpResponse.json();
+      const series = apiResponse.data?.series || apiResponse.series;
+      if ((apiResponse.status === 1 || apiResponse.success) && Array.isArray(series)) {
+        seriesRepository.saveAll(series);
+        return series;
       }
     } catch (e) {
       console.warn("Failed to fetch series from MySQL DB:", e);
@@ -38,10 +39,11 @@ export const SeriesService = {
 
     if (email) {
       fetch(`/api/series?email=${encodeURIComponent(email)}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success && Array.isArray(data.series)) {
-            seriesRepository.saveAll(data.series);
+        .then((httpResponse) => httpResponse.json())
+        .then((apiResponse) => {
+          const series = apiResponse.data?.series || apiResponse.series;
+          if ((apiResponse.status === 1 || apiResponse.success) && Array.isArray(series)) {
+            seriesRepository.saveAll(series);
           }
         })
         .catch((e) => console.warn("Failed to fetch series from MySQL DB:", e));
@@ -57,14 +59,14 @@ export const SeriesService = {
   async uploadPoster(posterDataUrl: string): Promise<string | null> {
     if (!posterDataUrl || posterDataUrl.startsWith("/uploads/")) return posterDataUrl;
     try {
-      const res = await fetch("/api/upload", {
+      const httpResponse = await fetch("/api/upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ posterDataUrl, folder: "posters" }),
       });
-      const data = await res.json();
-      if (data.success && data.url) {
-        return data.url;
+      const apiResponse = await httpResponse.json();
+      if (apiResponse.status === 1 && apiResponse.data?.url) {
+        return apiResponse.data.url;
       }
     } catch (e: any) {
       console.error("Failed to upload series poster image file:", e);

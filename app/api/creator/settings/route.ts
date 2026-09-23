@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureCreatorSettingsTable } from "@/lib/settingsDb";
 import { requireCreator } from "@/lib/creatorAuth";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 // GET /api/creator/settings?email=... or ?username=...
 export async function GET(req: Request) {
@@ -14,7 +14,7 @@ export async function GET(req: Request) {
     const username = searchParams.get("username");
 
     if (!email && !username) {
-      return NextResponse.json({ error: "Email or username parameter is required" }, { status: 400 });
+      return apiError("Email or username parameter is required", 400);
     }
 
     // Resolve creator ID
@@ -30,7 +30,7 @@ export async function GET(req: Request) {
 
     const [cRows]: any = await db.query(creatorQuery, [param]);
     if (!cRows || cRows.length === 0) {
-      return NextResponse.json({ error: "Creator not found" }, { status: 404 });
+      return apiError("Creator not found", 404);
     }
 
     const creatorId = cRows[0].id;
@@ -52,14 +52,13 @@ export async function GET(req: Request) {
       } catch (e) {}
     }
 
-    return NextResponse.json({
-      success: true,
+    return apiSuccess({
       creatorId,
       visibilitySettings,
-    });
+    }, "Settings retrieved successfully");
   } catch (err: any) {
     console.error("GET /api/creator/settings error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to retrieve settings", 500);
   }
 }
 
@@ -91,13 +90,11 @@ export async function POST(req: Request) {
       await db.query("UPDATE creators SET visibility_settings = ? WHERE id = ?", [visibilityJson, creatorId]);
     } catch (e) {}
 
-    return NextResponse.json({
-      success: true,
-      message: "Page visibility settings saved successfully to creator_settings table!",
+    return apiSuccess({
       visibilitySettings,
-    });
+    }, "Page visibility settings saved successfully to creator_settings table!");
   } catch (err: any) {
     console.error("POST /api/creator/settings error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to save settings", 500);
   }
 }

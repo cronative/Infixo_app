@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
 import { ApifySocialService } from "@/services/ApifySocialService";
 import { requireSession } from "@/lib/session";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 export async function POST(req: Request) {
   const auth = requireSession(req);
@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     const username = (body.username || body.pageName || "").trim().replace(/^@/, "");
 
     if (!username) {
-      return NextResponse.json({ error: "Facebook Page username is required" }, { status: 400 });
+      return apiError("Facebook Page username is required", 400);
     }
 
     // Construct full Facebook URL
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     if (apiKey) try {
       const apifyPage = await ApifySocialService.fetchFacebookPage(username);
       if (apifyPage) {
-        return NextResponse.json({ success: true, page: apifyPage, provider: "apify" });
+        return apiSuccess({ page: apifyPage, provider: "apify" }, "Facebook page fetched via Apify");
       }
     } catch (err) {
       console.warn("[Facebook API] Apify error, falling back to RapidAPI:", err);
@@ -64,22 +64,19 @@ export async function POST(req: Request) {
             intro: res.intro || "",
           };
 
-          return NextResponse.json({ success: true, page: extracted, provider: "rapidapi" });
+          return apiSuccess({ page: extracted, provider: "rapidapi" }, "Facebook page fetched via RapidAPI");
         }
       }
     } catch (e) {
       console.warn("[Facebook API] RapidAPI fallback error:", e);
     }
 
-    return NextResponse.json(
-      { error: `Facebook Page "${username}" not found. Please verify the page name or URL.` },
-      { status: 404 }
+    return apiError(
+      `Facebook Page "${username}" not found. Please verify the page name or URL.`,
+      404
     );
   } catch (error: any) {
     console.error("Facebook API Error:", error);
-    return NextResponse.json(
-      { error: error.message || "Failed to fetch Facebook Page info" },
-      { status: 500 }
-    );
+    return apiError(error.message || "Failed to fetch Facebook Page info", 500);
   }
 }

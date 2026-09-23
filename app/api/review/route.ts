@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { sendReviewReceivedEmail } from "@/lib/email";
 import { ensureReviewsTable } from "@/lib/reviewsDb";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 // GET /api/review?token=... — Fetch review invitation for public brand page
 export async function GET(req: Request) {
@@ -12,13 +12,13 @@ export async function GET(req: Request) {
     const token = searchParams.get("token");
 
     if (!token) {
-      return NextResponse.json({ success: false, error: "Token is required" }, { status: 400 });
+      return apiError("Token is required", 400);
     }
 
     const [rows]: any = await db.query("SELECT * FROM creator_reviews WHERE token = ?", [token]);
 
     if (!rows || rows.length === 0) {
-      return NextResponse.json({ success: false, error: "Invalid or expired review link" }, { status: 404 });
+      return apiError("Invalid or expired review link", 404);
     }
 
     const r = rows[0];
@@ -33,8 +33,7 @@ export async function GET(req: Request) {
     );
     const creator = creatorRows && creatorRows.length > 0 ? creatorRows[0] : null;
 
-    return NextResponse.json({
-      success: true,
+    return apiSuccess({
       isAlreadySubmitted,
       review: {
         id: r.id,
@@ -62,10 +61,10 @@ export async function GET(req: Request) {
             isVerified: Boolean(creator.is_verified),
           }
         : null,
-    });
+    }, "Review invitation retrieved successfully");
   } catch (error: any) {
     console.error("GET /api/review error:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return apiError(error.message || "Failed to fetch review", 500);
   }
 }
 
@@ -87,26 +86,23 @@ export async function POST(req: Request) {
     } = body;
 
     if (!token) {
-      return NextResponse.json({ success: false, error: "Token is required" }, { status: 400 });
+      return apiError("Token is required", 400);
     }
 
     const [rows]: any = await db.query("SELECT * FROM creator_reviews WHERE token = ?", [token]);
 
     if (!rows || rows.length === 0) {
-      return NextResponse.json({ success: false, error: "Review invitation not found" }, { status: 404 });
+      return apiError("Review invitation not found", 404);
     }
 
     const review = rows[0];
 
     // Single-use link check: Block re-submission if already processed
     if (["pending_approval", "approved", "rejected"].includes(review.status)) {
-      return NextResponse.json(
-        {
-          success: false,
-          isAlreadySubmitted: true,
-          error: "This review link has already been used / submitted. Re-submission is disabled.",
-        },
-        { status: 400 }
+      return apiError(
+        "This review link has already been used / submitted. Re-submission is disabled.",
+        400,
+        { isAlreadySubmitted: true }
       );
     }
 
@@ -120,7 +116,7 @@ export async function POST(req: Request) {
     const rTD = Number(ratingTimelyDelivery || rOverall);
     const ratings = [rOverall, rCQ, rProf, rTD];
     if (ratings.some((value) => !Number.isInteger(value) || value < 1 || value > 5)) {
-      return NextResponse.json({ success: false, error: "Ratings must be whole numbers from 1 to 5" }, { status: 400 });
+      return apiError("Ratings must be whole numbers from 1 to 5", 400);
     }
 
     const [updateResult]: any = await db.query(
@@ -132,10 +128,7 @@ export async function POST(req: Request) {
       [rOverall, rCQ, rProf, rTD, finalComment, finalClientName, finalDesignation, token]
     );
     if (updateResult.affectedRows !== 1) {
-      return NextResponse.json(
-        { success: false, isAlreadySubmitted: true, error: "This review link has already been used" },
-        { status: 409 }
-      );
+      return apiError("This review link has already been used", 409, { isAlreadySubmitted: true });
     }
 
     // Resolve creator email & send notification email to creator
@@ -170,12 +163,9 @@ export async function POST(req: Request) {
       console.warn("Could not dispatch creator review notification email:", emailErr);
     }
 
-    return NextResponse.json({
-      success: true,
-      message: "Thank you! Your review has been submitted to the creator for approval.",
-    });
+    return apiSuccess({}, "Thank you! Your review has been submitted to the creator for approval.");
   } catch (error: any) {
     console.error("POST /api/review error:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return apiError(error.message || "Failed to submit review", 500);
   }
 }

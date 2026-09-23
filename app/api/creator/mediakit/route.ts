@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireCreator } from "@/lib/creatorAuth";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 let mediaKitTablesEnsured = false;
 
@@ -94,7 +94,7 @@ export async function GET(req: Request) {
 
     const lookupVal = resolvedCreatorIdParam || resolvedEmailParam || resolvedUsernameParam;
     if (!lookupVal) {
-      return NextResponse.json({ error: "creatorId, email, or username query param required" }, { status: 400 });
+      return apiError("creatorId, email, or username query param required", 400);
     }
 
     await ensureMediaKitTables();
@@ -158,15 +158,14 @@ export async function GET(req: Request) {
       };
     });
 
-    return NextResponse.json({
-      success: true,
+    return apiSuccess({
       creatorId: resolvedCreatorId,
       settings,
       packages,
-    });
+    }, "Media Kit retrieved successfully");
   } catch (err: any) {
     console.error("GET Media Kit Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to retrieve Media Kit", 500);
   }
 }
 
@@ -266,13 +265,11 @@ export async function POST(req: Request) {
       );
     }
 
-    return NextResponse.json({
-      success: true,
+    return apiSuccess({
       creatorId: resolvedCreatorId,
-      message: "Media Kit settings & gigs saved to MySQL DB by creator_id successfully!",
-    });
+    }, "Media Kit settings & gigs saved to MySQL DB by creator_id successfully!");
   } catch (err: any) {
     console.error("POST Media Kit Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to save Media Kit", 500);
   }
 }

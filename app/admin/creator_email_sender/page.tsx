@@ -135,7 +135,7 @@ export default function CreatorEmailSenderPage() {
       );
 
       try {
-        const res = await fetch("/api/admin/send-email", {
+        const httpResponse = await fetch("/api/admin/send-email", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -145,9 +145,10 @@ export default function CreatorEmailSenderPage() {
           }),
         });
 
-        const data = await res.json();
+        const apiResponse = await httpResponse.json();
+        const sentCount = apiResponse.data?.sentCount ?? apiResponse.sentCount ?? 0;
 
-        if (res.ok && data.success && data.sentCount > 0) {
+        if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && sentCount > 0) {
           setDispatchLogs((prev) =>
             prev.map((log, idx) => (idx === i ? { ...log, status: "success", timestamp: new Date().toLocaleTimeString() } : log))
           );
@@ -158,7 +159,7 @@ export default function CreatorEmailSenderPage() {
                 ? {
                   ...log,
                   status: "failed",
-                  error: data.error || "SMTP send failed",
+                  error: apiResponse.message || apiResponse.error || "SMTP send failed",
                   timestamp: new Date().toLocaleTimeString(),
                 }
                 : log

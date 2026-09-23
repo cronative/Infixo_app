@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server";
 import type { RowDataPacket } from "mysql2";
 import { db } from "@/lib/db";
 import { ensureCreatorSetupTable } from "@/lib/creatorSetupDb";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 import { requireCreator } from "@/lib/creatorAuth";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 interface CreatorIdRow extends RowDataPacket {
   id: string;
@@ -74,7 +74,7 @@ export async function GET(req: Request) {
     const lookupVal = searchParams.get("creatorId") || searchParams.get("email") || searchParams.get("username");
 
     if (!lookupVal) {
-      return NextResponse.json({ success: true, items: [] });
+      return apiSuccess({ items: [] }, "No creator lookup provided");
     }
 
     await ensureCreatorSetupTable();
@@ -107,10 +107,10 @@ export async function GET(req: Request) {
       isActive: Boolean(item.isActive),
     }));
 
-    return NextResponse.json({ success: true, items });
+    return apiSuccess({ items }, "Setup items retrieved successfully");
   } catch (err: unknown) {
     console.error("GET creator setup error:", err);
-    return NextResponse.json({ error: getErrorMessage(err) }, { status: 500 });
+    return apiError(getErrorMessage(err), 500);
   }
 }
 
@@ -135,15 +135,15 @@ export async function POST(req: Request) {
           );
         }
       }
-      return NextResponse.json({ success: true, message: "Setup items reordered" });
+      return apiSuccess({}, "Setup items reordered");
     }
 
     const setupItem = item || body;
     if (!setupItem.category?.trim()) {
-      return NextResponse.json({ error: "Category is required" }, { status: 400 });
+      return apiError("Category is required", 400);
     }
     if (!setupItem.name?.trim()) {
-      return NextResponse.json({ error: "Name is required" }, { status: 400 });
+      return apiError("Name is required", 400);
     }
 
     const finalImageUrl = await saveBase64ImageToStorage(setupItem.imageUrl, "team", "setup")
@@ -182,10 +182,10 @@ export async function POST(req: Request) {
       ]
     );
 
-    return NextResponse.json({ success: true, itemId, message: "Setup item saved" });
+    return apiSuccess({ itemId }, "Setup item saved");
   } catch (err: unknown) {
     console.error("POST creator setup error:", err);
-    return NextResponse.json({ error: getErrorMessage(err) }, { status: 500 });
+    return apiError(getErrorMessage(err), 500);
   }
 }
 
@@ -198,7 +198,7 @@ export async function DELETE(req: Request) {
     const id = searchParams.get("id");
 
     if (!id) {
-      return NextResponse.json({ error: "ID required" }, { status: 400 });
+      return apiError("ID required", 400);
     }
 
     await ensureCreatorSetupTable();
@@ -207,9 +207,9 @@ export async function DELETE(req: Request) {
 
     await db.query("DELETE FROM creator_setup_items WHERE id = ? AND creator_id = ?", [id, targetId]);
 
-    return NextResponse.json({ success: true, message: "Setup item removed" });
+    return apiSuccess({}, "Setup item removed");
   } catch (err: unknown) {
     console.error("DELETE creator setup error:", err);
-    return NextResponse.json({ error: getErrorMessage(err) }, { status: 500 });
+    return apiError(getErrorMessage(err), 500);
   }
 }

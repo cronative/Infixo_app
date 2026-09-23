@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureRequestsTable } from "@/lib/requestsDb";
 import { ensureAnalyticsTable } from "@/lib/analyticsDb";
 import { isCreatorPublic } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 // Simple in-memory IP rate limiter: max 5 submissions per 10 minutes per IP
 const ipSubmissions = new Map<string, number[]>();
@@ -24,23 +24,27 @@ export async function POST(req: Request) {
   try {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
     if (isRateLimited(ip)) {
-      return NextResponse.json(
-        { error: "Too many inquiries submitted. Please wait a few minutes before trying again." },
-        { status: 429 }
-      );
+      return apiError("Too many inquiries submitted. Please wait a few minutes before trying again.", 429);
     }
 
     const body = await req.json();
-    const { username, creatorId: passedCreatorId, senderName, companyName, email, campaignType, approxBudget, message } = body;
+    const username = body.username || body.creator_username;
+    const passedCreatorId = body.creatorId || body.creator_id;
+    const senderName = body.senderName || body.contact_name;
+    const companyName = body.companyName || body.brand_name;
+    const email = body.email || body.contact_email;
+    const campaignType = body.campaignType || (Array.isArray(body.deliverables) ? body.deliverables.join(", ") : body.deliverables);
+    const approxBudget = body.approxBudget || body.budget_range;
+    const message = body.message || (body.timeline ? `Timeline: ${body.timeline}` : "");
 
     if (!senderName || !senderName.trim()) {
-      return NextResponse.json({ error: "Your name is required" }, { status: 400 });
+      return apiError("Your name is required", 400);
     }
     if (!email || !email.trim() || !email.includes("@")) {
-      return NextResponse.json({ error: "A valid email address is required" }, { status: 400 });
+      return apiError("A valid email address is required", 400);
     }
     if (!message || !message.trim()) {
-      return NextResponse.json({ error: "Please write a brief message / requirement" }, { status: 400 });
+      return apiError("Please write a brief message / requirement", 400);
     }
 
     await ensureRequestsTable();
@@ -59,10 +63,10 @@ export async function POST(req: Request) {
     }
 
     if (!targetCreatorId) {
-      return NextResponse.json({ error: "Creator not found" }, { status: 404 });
+      return apiError("Creator not found", 404);
     }
     if (!(await isCreatorPublic(targetCreatorId))) {
-      return NextResponse.json({ error: "Creator profile is private" }, { status: 404 });
+      return apiError("Creator profile is private", 404);
     }
 
     const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
@@ -91,13 +95,12 @@ export async function POST(req: Request) {
       );
     } catch {}
 
-    return NextResponse.json({
-      success: true,
-      requestId,
-      message: "Your collaboration inquiry has been sent to the creator! 🎉",
-    });
+    return apiSuccess(
+      { requestId },
+      "Your collaboration inquiry has been sent to the creator! 🎉"
+    );
   } catch (err: any) {
     console.error("POST collaboration submit error:", err);
-    return NextResponse.json({ error: "Failed to submit collaboration request. Please try again." }, { status: 500 });
+    return apiError("Failed to submit collaboration request. Please try again.", 500);
   }
 }

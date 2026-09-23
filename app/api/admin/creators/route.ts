@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { isAuthorizedAdmin } from "@/lib/adminAuth";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 async function ensureMediaKitTables() {
   try {
@@ -34,7 +34,7 @@ async function ensureMediaKitTables() {
 export async function GET(req: Request) {
   try {
     if (!(await isAuthorizedAdmin(req))) {
-      return NextResponse.json({ error: "Unauthorized admin access" }, { status: 401 });
+      return apiError("Unauthorized admin access", 401);
     }
 
     let creators: any[] = [];
@@ -144,27 +144,26 @@ export async function GET(req: Request) {
       console.warn("Admin creators DB fetch fallback:", dbErr);
     }
 
-    return NextResponse.json({
-      success: true,
+    return apiSuccess({
       creators,
       stats,
-    });
+    }, "Creators retrieved successfully");
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to fetch creators", 500);
   }
 }
 
 export async function POST(req: Request) {
   try {
     if (!(await isAuthorizedAdmin(req))) {
-      return NextResponse.json({ error: "Unauthorized admin access" }, { status: 401 });
+      return apiError("Unauthorized admin access", 401);
     }
 
     const body = await req.json();
     const { action, creatorId, email, planKey, planName } = body;
 
     if (!creatorId && !email) {
-      return NextResponse.json({ error: "creatorId or email required" }, { status: 400 });
+      return apiError("creatorId or email required", 400);
     }
 
     // Find creator ID
@@ -177,7 +176,7 @@ export async function POST(req: Request) {
     }
 
     if (!targetCreatorId) {
-      return NextResponse.json({ error: "Creator not found" }, { status: 404 });
+      return apiError("Creator not found", 404);
     }
 
     if (action === "grant_vip" || action === "set_plan") {
@@ -190,7 +189,7 @@ export async function POST(req: Request) {
          ON DUPLICATE KEY UPDATE plan_key = VALUES(plan_key), plan_name = VALUES(plan_name), status = 'active', activated_at = NOW()`,
         [targetCreatorId, targetPlanKey, targetPlanName]
       );
-      return NextResponse.json({ success: true, message: `${targetPlanName} Plan assigned successfully!` });
+      return apiSuccess({}, `${targetPlanName} Plan assigned successfully!`);
     }
 
     if (action === "toggle_status") {
@@ -199,11 +198,9 @@ export async function POST(req: Request) {
       const newStatus = currentStatus === "active" ? "suspended" : "active";
 
       await db.query("UPDATE creators SET status = ? WHERE id = ?", [newStatus, targetCreatorId]);
-      return NextResponse.json({
-        success: true,
+      return apiSuccess({
         newStatus,
-        message: `Account status updated to ${newStatus}`,
-      });
+      }, `Account status updated to ${newStatus}`);
     }
 
     if (action === "toggle_verified") {
@@ -212,16 +209,14 @@ export async function POST(req: Request) {
       const newVal = currentVal ? 0 : 1;
 
       await db.query("UPDATE creators SET is_verified = ? WHERE id = ?", [newVal, targetCreatorId]);
-      return NextResponse.json({
-        success: true,
+      return apiSuccess({
         isVerified: Boolean(newVal),
-        message: newVal ? "Creator verified badge granted!" : "Creator verified badge removed",
-      });
+      }, newVal ? "Creator verified badge granted!" : "Creator verified badge removed");
     }
 
-    return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+    return apiError("Invalid action", 400);
   } catch (err: any) {
     console.error("Admin POST Action Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to execute admin action", 500);
   }
 }

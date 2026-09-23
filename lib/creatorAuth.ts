@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireSession, type SessionPayload } from "@/lib/session";
+import { apiError } from "@/lib/apiResponse";
 
 export interface AuthenticatedCreator {
   id: string;
@@ -25,7 +26,7 @@ export async function requireCreator(req: Request): Promise<CreatorAuthResult> {
     return {
       session: null,
       creator: null,
-      error: NextResponse.json({ error: "Creator profile not found" }, { status: 404 }),
+      error: apiError("Creator profile not found", 404),
     };
   }
 
@@ -42,7 +43,7 @@ export function requireOwnedEmail(req: Request, email: string | null | undefined
   if (email && auth.session.email !== email.trim().toLowerCase()) {
     return {
       session: null,
-      error: NextResponse.json({ error: "Forbidden" }, { status: 403 }),
+      error: apiError("Forbidden", 403),
     } as const;
   }
   return auth;

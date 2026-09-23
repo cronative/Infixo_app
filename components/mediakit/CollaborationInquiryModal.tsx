@@ -70,7 +70,7 @@ export function CollaborationInquiryModal({
 
     setSubmitting(true);
     try {
-      const res = await fetch("/api/collaborations/submit", {
+      const httpResponse = await fetch("/api/collaborations/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -88,12 +88,12 @@ export function CollaborationInquiryModal({
         }),
       });
 
-      const data = await res.json();
-      if (data.success) {
+      const apiResponse = await httpResponse.json();
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
         setIsSuccess(true);
         showToast("Collaboration request sent! ✨");
       } else {
-        showToast(data.error || "Failed to submit request", "error");
+        showToast(apiResponse.message || apiResponse.error || "Failed to submit request", "error");
       }
     } catch (err) {
       console.error("Failed to submit inquiry:", err);

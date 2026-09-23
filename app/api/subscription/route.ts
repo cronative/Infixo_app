@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
 import { db } from "@/lib/db";
 import { requireCreator } from "@/lib/creatorAuth";
 import { toMysqlDate } from "@/lib/billing";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 function toIso(value: unknown) {
   if (!value) return null;
@@ -19,10 +19,9 @@ export async function GET(req: Request) {
       [auth.creator.id]
     );
     const s = rows?.[0];
-    if (!s) return NextResponse.json({ success: false, subscription: null });
+    if (!s) return apiSuccess({ subscription: null }, "No subscription found");
 
-    return NextResponse.json({
-      success: true,
+    return apiSuccess({
       subscription: {
         planKey: s.plan_key || "early_access",
         planName: s.plan_name || "Free Trial",
@@ -41,10 +40,10 @@ export async function GET(req: Request) {
         autoRenew: Boolean(s.auto_renew),
         hasUsedTrial: Boolean(s.trial_started_at),
       },
-    });
+    }, "Subscription loaded successfully");
   } catch (error: any) {
     console.error("GET Subscription Error:", error);
-    return NextResponse.json({ error: error?.message || "Failed to load subscription" }, { status: 500 });
+    return apiError(error?.message || "Failed to load subscription", 500);
   }
 }
 
@@ -58,7 +57,7 @@ export async function POST(req: Request) {
       const [rows]: any = await db.query("SELECT * FROM subscriptions WHERE creator_id = ? LIMIT 1", [auth.creator.id]);
       const existing = rows?.[0];
       if (existing?.trial_started_at || (existing && existing.plan_key !== "early_access")) {
-        return NextResponse.json({ error: "Free trial has already been used" }, { status: 409 });
+        return apiError("Free trial has already been used", 409);
       }
 
       const now = new Date();
@@ -77,7 +76,7 @@ export async function POST(req: Request) {
            payment_mode = 'free_trial', auto_renew = 0`,
         [auth.creator.id, toMysqlDate(now), toMysqlDate(now), toMysqlDate(trialEnd), toMysqlDate(now), toMysqlDate(trialEnd), toMysqlDate(trialEnd)]
       );
-      return NextResponse.json({ success: true, message: "Free trial started" });
+      return apiSuccess({}, "Free trial started");
     }
 
     if (body.action === "cancel") {
@@ -86,12 +85,12 @@ export async function POST(req: Request) {
         [auth.creator.id]
       );
       const current = rows?.[0];
-      if (!current) return NextResponse.json({ error: "Subscription not found" }, { status: 404 });
+      if (!current) return apiError("Subscription not found", 404);
 
       if (current.razorpay_subscription_id) {
         const keyId = process.env.RAZORPAY_KEY_ID;
         const keySecret = process.env.RAZORPAY_KEY_SECRET;
-        if (!keyId || !keySecret) return NextResponse.json({ error: "Payments are not configured" }, { status: 503 });
+        if (!keyId || !keySecret) return apiError("Payments are not configured", 503);
         const razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret });
         await razorpay.subscriptions.cancel(current.razorpay_subscription_id, true);
         await db.query(
@@ -104,12 +103,12 @@ export async function POST(req: Request) {
           [auth.creator.id]
         );
       }
-      return NextResponse.json({ success: true, message: "Subscription cancellation scheduled" });
+      return apiSuccess({}, "Subscription cancellation scheduled");
     }
 
-    return NextResponse.json({ error: "Unsupported subscription action" }, { status: 400 });
+    return apiError("Unsupported subscription action", 400);
   } catch (error: any) {
     console.error("POST Subscription Error:", error);
-    return NextResponse.json({ error: error?.message || "Subscription update failed" }, { status: 500 });
+    return apiError(error?.message || "Subscription update failed", 500);
   }
 }

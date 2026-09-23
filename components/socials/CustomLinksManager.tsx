@@ -240,12 +240,13 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
         ? `email=${encodeURIComponent(email)}`
         : `username=${encodeURIComponent(username || "")}`;
       fetch(`/api/creator/custom-links?${query}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success && Array.isArray(data.links)) {
-            setLinks(data.links);
-            customLinksRepository.save(data.links);
-            onChangeRef.current?.(data.links);
+        .then((httpResponse) => httpResponse.json())
+        .then((apiResponse) => {
+          const links = apiResponse.data?.links || apiResponse.links;
+          if ((apiResponse.status === 1 || apiResponse.success) && Array.isArray(links)) {
+            setLinks(links);
+            customLinksRepository.save(links);
+            onChangeRef.current?.(links);
           }
         })
         .catch(() => { });
@@ -443,7 +444,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
 
     try {
       setIsSaving(true);
-      const res = await fetch("/api/creator/custom-links", {
+      const httpResponse = await fetch("/api/creator/custom-links", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -451,9 +452,9 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
           links: updatedLinks,
         }),
       });
-      const data = await res.json().catch(() => null);
-      if (!res.ok || data?.success === false || data?.error) {
-        throw new Error(data?.error || "Custom links sync failed");
+      const apiResponse = await httpResponse.json().catch(() => null);
+      if (!httpResponse.ok || apiResponse?.status === 0 || apiResponse?.success === false) {
+        throw new Error(apiResponse?.message || "Custom links sync failed");
       }
     } catch (e) {
       console.warn("Backend custom links sync error:", e);

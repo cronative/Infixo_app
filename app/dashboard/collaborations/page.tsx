@@ -44,10 +44,12 @@ export default function DashboardCollaborationsPage() {
     if (!creatorLookup) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/creator/collaborations?creatorId=${encodeURIComponent(creatorLookup)}`).then((r) => r.json());
-      if (res.success && Array.isArray(res.collaborations)) {
-        setCollaborations(res.collaborations);
-        collaborationsRepository.saveAll(res.collaborations);
+      const httpResponse = await fetch(`/api/creator/collaborations?creatorId=${encodeURIComponent(creatorLookup)}`);
+      const apiResponse = await httpResponse.json();
+      const collabsList = apiResponse.data?.collaborations || apiResponse.collaborations;
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && Array.isArray(collabsList)) {
+        setCollaborations(collabsList);
+        collaborationsRepository.saveAll(collabsList);
       } else {
         const local = collaborationsRepository.getAll();
         setCollaborations(local);
@@ -92,7 +94,7 @@ export default function DashboardCollaborationsPage() {
 
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/creator/collaborations", {
+      const httpResponse = await fetch("/api/creator/collaborations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -109,14 +111,15 @@ export default function DashboardCollaborationsPage() {
             isActive: editingCollab?.isActive !== false,
           },
         }),
-      }).then((r) => r.json());
+      });
+      const apiResponse = await httpResponse.json();
 
-      if (res.success) {
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
         showToast(editingCollab ? "Collaboration updated! ✨" : "Collaboration added! 🚀");
         setIsModalOpen(false);
         loadCollaborations();
       } else {
-        showToast(res.error || "Failed to save collaboration", "error");
+        showToast(apiResponse.message || apiResponse.error || "Failed to save collaboration", "error");
       }
     } catch {
       showToast("An error occurred while saving collaboration", "error");
@@ -129,17 +132,18 @@ export default function DashboardCollaborationsPage() {
     if (!collabToDelete) return;
     setIsSubmitting(true);
     try {
-      const res = await fetch(
+      const httpResponse = await fetch(
         `/api/creator/collaborations?id=${encodeURIComponent(collabToDelete.id)}&creatorId=${encodeURIComponent(creatorLookup)}`,
         { method: "DELETE" }
-      ).then((r) => r.json());
+      );
+      const apiResponse = await httpResponse.json();
 
-      if (res.success) {
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
         showToast("Collaboration removed");
         setCollabToDelete(null);
         loadCollaborations();
       } else {
-        showToast(res.error || "Failed to delete collaboration", "error");
+        showToast(apiResponse.message || apiResponse.error || "Failed to delete collaboration", "error");
       }
     } catch {
       showToast("Failed to remove collaboration", "error");
@@ -151,7 +155,7 @@ export default function DashboardCollaborationsPage() {
   const handleToggleCollab = async (collab: CreatorCollaboration) => {
     try {
       const updated = !collab.isActive;
-      await fetch("/api/creator/collaborations", {
+      const httpResponse = await fetch("/api/creator/collaborations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -163,8 +167,11 @@ export default function DashboardCollaborationsPage() {
           },
         }),
       });
-      showToast(updated ? "Collaboration visible on profile" : "Collaboration hidden from profile");
-      loadCollaborations();
+      const apiResponse = await httpResponse.json();
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
+        showToast(updated ? "Collaboration visible on profile" : "Collaboration hidden from profile");
+        loadCollaborations();
+      }
     } catch { }
   };
 

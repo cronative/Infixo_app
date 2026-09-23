@@ -234,14 +234,18 @@ export default function PublicMediaKitPage() {
           fetch(`/api/creator/collaborations?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
         ]);
 
-        if (profRes.success && profRes.profile && profRes.profile.username) {
-          setProfile(profRes.profile);
-          setTheme((profRes.profile.themeKey || "minimal-white") as ThemeKey);
+        const isProfOk = profRes.status === 1 || profRes.success === true;
+        const profile = profRes.data?.profile || profRes.profile;
+
+        if (isProfOk && profile && profile.username) {
+          setProfile(profile);
+          setTheme((profile.themeKey || "minimal-white") as ThemeKey);
           setNotFound(false);
 
-          if (socRes.success && Array.isArray(socRes.socials)) {
+          const socials = socRes.data?.socials || socRes.socials;
+          if ((socRes.status === 1 || socRes.success) && Array.isArray(socials)) {
             const accs: SocialAccounts = { ...EMPTY_SOCIAL_ACCOUNTS };
-            socRes.socials.forEach((s: any) => {
+            socials.forEach((s: any) => {
               const handle = s.username || s.accountName || "";
               if (s.platform === "instagram") {
                 accs.instagram = {
@@ -269,31 +273,39 @@ export default function PublicMediaKitPage() {
             setSocials(accs);
           }
 
-          if (serRes.success && Array.isArray(serRes.series)) {
-            setSeries(serRes.series);
+          const series = serRes.data?.series || serRes.series;
+          if ((serRes.status === 1 || serRes.success) && Array.isArray(series)) {
+            setSeries(series);
           }
 
-          if (mediakitRes.success && Array.isArray(mediakitRes.packages)) {
-            setPackages(mediakitRes.packages);
+          const packages = mediakitRes.data?.packages || mediakitRes.packages;
+          if ((mediakitRes.status === 1 || mediakitRes.success) && Array.isArray(packages)) {
+            setPackages(packages);
           }
-          if (mediakitRes.success && mediakitRes.settings) {
-            setSettings(mediakitRes.settings);
-          }
-
-          if (revRes.success && Array.isArray(revRes.reviews)) {
-            setReviews(revRes.reviews);
+          const mkSettings = mediakitRes.data?.settings || mediakitRes.settings;
+          if ((mediakitRes.status === 1 || mediakitRes.success) && mkSettings) {
+            setSettings(mkSettings);
           }
 
-          if (teamRes.success && teamRes.team) {
-            setTeam({ team: teamRes.team, members: teamRes.members || [] });
+          const reviews = revRes.data?.reviews || revRes.reviews;
+          if ((revRes.status === 1 || revRes.success) && Array.isArray(reviews)) {
+            setReviews(reviews);
           }
 
-          if (brandRes.success && Array.isArray(brandRes.brands)) {
-            setBrands(brandRes.brands);
+          const team = teamRes.data?.team || teamRes.team;
+          const members = teamRes.data?.members || teamRes.members || [];
+          if ((teamRes.status === 1 || teamRes.success) && team) {
+            setTeam({ team, members });
           }
 
-          if (collabRes.success && Array.isArray(collabRes.collaborations)) {
-            setCollaborations(collabRes.collaborations);
+          const brands = brandRes.data?.brands || brandRes.brands;
+          if ((brandRes.status === 1 || brandRes.success) && Array.isArray(brands)) {
+            setBrands(brands);
+          }
+
+          const collabs = collabRes.data?.collaborations || collabRes.collaborations;
+          if ((collabRes.status === 1 || collabRes.success) && Array.isArray(collabs)) {
+            setCollaborations(collabs);
           }
 
         } else {

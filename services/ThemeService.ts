@@ -2461,10 +2461,10 @@ export const ThemeService = {
           incrementThemeCount: isDashboardChange,
         }),
       })
-        .then((r) => r.json())
-        .then((data) => {
-          if (data.success && typeof data.profile?.themeChangesCount === "number") {
-            this.syncThemeChangesCount(data.profile.themeChangesCount);
+        .then((httpResponse) => httpResponse.json())
+        .then((apiResponse) => {
+          if (apiResponse.status === 1 && typeof apiResponse.data?.profile?.themeChangesCount === "number") {
+            this.syncThemeChangesCount(apiResponse.data.profile.themeChangesCount);
           }
         })
         .catch((e) => console.error("Failed to save themeKey to MySQL DB:", e));

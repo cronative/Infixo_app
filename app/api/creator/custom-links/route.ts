@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireCreator } from "@/lib/creatorAuth";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 let customLinksTableEnsured = false;
 
@@ -91,7 +91,7 @@ export async function GET(req: Request) {
 
     const lookupVal = email || username || creatorId;
     if (!lookupVal) {
-      return NextResponse.json({ links: [] });
+      return apiSuccess({ links: [] }, "No lookup param provided");
     }
 
     await ensureCustomLinksTable();
@@ -123,13 +123,12 @@ export async function GET(req: Request) {
 
     const links = normalizeCustomLinks(rows || []);
 
-    return NextResponse.json({
-      success: true,
+    return apiSuccess({
       links,
-    });
+    }, "Custom links retrieved successfully");
   } catch (err: any) {
     console.error("GET Custom Links Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to retrieve custom links", 500);
   }
 }
 
@@ -143,7 +142,7 @@ export async function POST(req: Request) {
     const email = auth.creator.email;
 
     if (!Array.isArray(links)) {
-      return NextResponse.json({ error: "Links array required" }, { status: 400 });
+      return apiError("Links array required", 400);
     }
 
     await ensureCustomLinksTable();
@@ -203,13 +202,11 @@ export async function POST(req: Request) {
       }
     }
 
-    return NextResponse.json({
-      success: true,
+    return apiSuccess({
       savedCount,
-      message: `Saved ${savedCount} custom link(s) to MySQL table creator_custom_links`,
-    });
+    }, `Saved ${savedCount} custom link(s) to MySQL table creator_custom_links`);
   } catch (err: any) {
     console.error("POST Custom Links Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to save custom links", 500);
   }
 }

@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import type { RowDataPacket } from "mysql2";
 import { db } from "@/lib/db";
 import { sendCollabReviewEmail } from "@/lib/email";
@@ -7,6 +6,7 @@ import { requireCreator } from "@/lib/creatorAuth";
 import { requireSession, ownsResource } from "@/lib/session";
 import crypto from "crypto";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 interface CreatorIdRow extends RowDataPacket {
   id: string;
@@ -66,7 +66,7 @@ export async function GET(req: Request) {
       const auth = requireSession(req);
       if (auth.error) return auth.error;
       if (!ownsResource(auth.session, email)) {
-        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        return apiError("Forbidden", 403);
       }
     }
 
@@ -89,7 +89,7 @@ export async function GET(req: Request) {
     }
 
     if (!creatorId) {
-      return NextResponse.json({ success: true, reviews: [] });
+      return apiSuccess({ reviews: [] }, "Reviews retrieved successfully");
     }
 
     const accessError = await authorizeCreatorRead(req, creatorId, isPublicRequest);
@@ -128,10 +128,10 @@ export async function GET(req: Request) {
       updatedAt: r.updated_at,
     }));
 
-    return NextResponse.json({ success: true, reviews });
+    return apiSuccess({ reviews }, "Reviews retrieved successfully");
   } catch (error: unknown) {
     console.error("GET /api/creator/reviews error:", error);
-    return NextResponse.json({ success: false, error: getErrorMessage(error) }, { status: 500 });
+    return apiError(getErrorMessage(error), 500);
   }
 }
 
@@ -147,10 +147,7 @@ export async function POST(req: Request) {
     const { clientName, clientEmail, clientDesignation, projectTitle, contentUrl } = body;
 
     if (!clientName || !clientName.trim()) {
-      return NextResponse.json(
-        { success: false, error: "Client or brand name is required" },
-        { status: 400 }
-      );
+      return apiError("Client or brand name is required", 400);
     }
 
     let resolvedCreatorId = auth.creator.id;
@@ -170,7 +167,7 @@ export async function POST(req: Request) {
     }
 
     if (!resolvedCreatorId) {
-      return NextResponse.json({ success: false, error: "Creator email or ID is required" }, { status: 400 });
+      return apiError("Creator email or ID is required", 400);
     }
 
     const reviewId = `rev_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
@@ -239,18 +236,14 @@ export async function POST(req: Request) {
       createdAt: new Date().toISOString(),
     };
 
-    return NextResponse.json({
-      success: true,
-      message: emailSent
-        ? `Review request email successfully sent to ${cleanClientEmail}!`
-        : `Review request created. (Note: Email attempt error: ${emailError || "check SMTP setup"})`,
-      emailSent,
-      review: reviewObj,
-      reviewUrl,
-    });
+    const message = emailSent
+      ? `Review request email successfully sent to ${cleanClientEmail}!`
+      : `Review request created. (Note: Email attempt error: ${emailError || "check SMTP setup"})`;
+
+    return apiSuccess({ emailSent, review: reviewObj, reviewUrl }, message);
   } catch (error: unknown) {
     console.error("POST /api/creator/reviews error:", error);
-    return NextResponse.json({ success: false, error: getErrorMessage(error) }, { status: 500 });
+    return apiError(getErrorMessage(error), 500);
   }
 }
 
@@ -266,19 +259,19 @@ export async function PATCH(req: Request) {
     const { id, status } = body;
 
     if (!id || !status) {
-      return NextResponse.json({ success: false, error: "id and status are required" }, { status: 400 });
+      return apiError("id and status are required", 400);
     }
 
     if (!["approved", "rejected", "pending_approval", "pending_invite"].includes(status)) {
-      return NextResponse.json({ success: false, error: "Invalid status value" }, { status: 400 });
+      return apiError("Invalid status value", 400);
     }
 
     await db.query("UPDATE creator_reviews SET status = ? WHERE id = ? AND creator_id = ?", [status, id, auth.creator.id]);
 
-    return NextResponse.json({ success: true, message: `Review status updated to ${status}` });
+    return apiSuccess({}, `Review status updated to ${status}`);
   } catch (error: unknown) {
     console.error("PATCH /api/creator/reviews error:", error);
-    return NextResponse.json({ success: false, error: getErrorMessage(error) }, { status: 500 });
+    return apiError(getErrorMessage(error), 500);
   }
 }
 
@@ -294,14 +287,14 @@ export async function DELETE(req: Request) {
     const id = searchParams.get("id");
 
     if (!id) {
-      return NextResponse.json({ success: false, error: "id is required" }, { status: 400 });
+      return apiError("id is required", 400);
     }
 
     await db.query("DELETE FROM creator_reviews WHERE id = ? AND creator_id = ?", [id, auth.creator.id]);
 
-    return NextResponse.json({ success: true, message: "Review deleted successfully" });
+    return apiSuccess({}, "Review deleted successfully");
   } catch (error: unknown) {
     console.error("DELETE /api/creator/reviews error:", error);
-    return NextResponse.json({ success: false, error: getErrorMessage(error) }, { status: 500 });
+    return apiError(getErrorMessage(error), 500);
   }
 }

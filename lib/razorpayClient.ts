@@ -86,7 +86,7 @@ export async function openRazorpayCheckout(options: CheckoutOptions): Promise<vo
   try {
     if (useSubscription) {
       // 1A. Create recurring subscription on Razorpay
-      const res = await fetch("/api/create-subscription", {
+      const httpResponse = await fetch("/api/create-subscription", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -97,14 +97,14 @@ export async function openRazorpayCheckout(options: CheckoutOptions): Promise<vo
         }),
       });
 
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to create subscription on server");
+      const apiResponse = await httpResponse.json();
+      if (!httpResponse.ok || (apiResponse.status !== undefined && apiResponse.status !== 1 && !apiResponse.success)) {
+        throw new Error(apiResponse.message || apiResponse.error || "Failed to create subscription on server");
       }
-      subscriptionId = data.subscription_id;
+      subscriptionId = apiResponse.data?.subscription_id || apiResponse.subscription_id;
     } else {
       // 1B. Create one-time order
-      const res = await fetch("/api/create-order", {
+      const httpResponse = await fetch("/api/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -113,11 +113,11 @@ export async function openRazorpayCheckout(options: CheckoutOptions): Promise<vo
         }),
       });
 
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to create order on server");
+      const apiResponse = await httpResponse.json();
+      if (!httpResponse.ok || (apiResponse.status !== undefined && apiResponse.status !== 1 && !apiResponse.success)) {
+        throw new Error(apiResponse.message || apiResponse.error || "Failed to create order on server");
       }
-      orderData = data;
+      orderData = apiResponse.data || apiResponse;
     }
   } catch (err: any) {
     console.error("Order/Subscription creation failed:", err);
@@ -154,7 +154,7 @@ export async function openRazorpayCheckout(options: CheckoutOptions): Promise<vo
       }) => {
         try {
           // 3. Verify signature on backend
-          const verifyRes = await fetch("/api/verify-payment", {
+          const httpResponse = await fetch("/api/verify-payment", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -165,17 +165,19 @@ export async function openRazorpayCheckout(options: CheckoutOptions): Promise<vo
             }),
           });
 
-          const verifyResult = await verifyRes.json();
-          if (!verifyRes.ok || !verifyResult.success) {
-            throw new Error(verifyResult.error || "Payment signature verification failed");
+          const apiResponse = await httpResponse.json();
+          const isOk = httpResponse.ok && (apiResponse.status === 1 || apiResponse.success);
+          if (!isOk) {
+            throw new Error(apiResponse.message || apiResponse.error || "Payment signature verification failed");
           }
 
+          const verifyData = apiResponse.data || apiResponse;
           options.onSuccess?.({
-            order_id: verifyResult.order_id,
-            subscription_id: verifyResult.subscription_id,
+            order_id: verifyData.order_id,
+            subscription_id: verifyData.subscription_id,
             payment_id: response.razorpay_payment_id,
             signature: response.razorpay_signature,
-            is_recurring: verifyResult.is_recurring,
+            is_recurring: verifyData.is_recurring,
           });
           resolve();
         } catch (verifyErr: any) {

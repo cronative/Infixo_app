@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
 import type { RowDataPacket } from "mysql2";
 import { db } from "@/lib/db";
 import { ensureAnalyticsTable } from "@/lib/analyticsDb";
 import { isCreatorPublic } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 interface CreatorIdRow extends RowDataPacket {
   id: string;
@@ -26,16 +26,16 @@ export async function POST(req: Request) {
     const metadata = body.metadata;
 
     if (!eventType) {
-      return NextResponse.json({ error: "eventType required" }, { status: 400 });
+      return apiError("eventType required", 400);
     }
     if (!ALLOWED_PUBLIC_EVENTS.has(eventType)) {
-      return NextResponse.json({ error: "Unsupported public analytics event" }, { status: 400 });
+      return apiError("Unsupported public analytics event", 400);
     }
     if (!ALLOWED_PUBLIC_SOURCES.has(source)) {
-      return NextResponse.json({ error: "Unsupported analytics source" }, { status: 400 });
+      return apiError("Unsupported analytics source", 400);
     }
     if (!eventId) {
-      return NextResponse.json({ error: "eventId required" }, { status: 400 });
+      return apiError("eventId required", 400);
     }
 
     await ensureAnalyticsTable();
@@ -52,10 +52,10 @@ export async function POST(req: Request) {
     }
 
     if (!targetCreatorId) {
-      return NextResponse.json({ error: "Creator not found" }, { status: 404 });
+      return apiError("Creator not found", 404);
     }
     if (!(await isCreatorPublic(targetCreatorId))) {
-      return NextResponse.json({ error: "Creator profile is private" }, { status: 404 });
+      return apiError("Creator profile is private", 404);
     }
 
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null;
@@ -69,9 +69,9 @@ export async function POST(req: Request) {
       [eventId, targetCreatorId, eventType, eventTarget || null, visitorId || null, source, ip, userAgent, metaJson]
     );
 
-    return NextResponse.json({ success: true });
+    return apiSuccess({}, "Event tracked successfully");
   } catch (err) {
     console.error("Analytics track error:", err);
-    return NextResponse.json({ error: "Tracking error" }, { status: 500 });
+    return apiError("Tracking error", 500);
   }
 }

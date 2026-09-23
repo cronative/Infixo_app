@@ -77,16 +77,16 @@ export default function DashboardSettingsPage() {
     setIsDeleting(true);
 
     try {
-      const res = await fetch(
+      const httpResponse = await fetch(
         `/api/creator/profile?email=${encodeURIComponent(accountEmail)}`,
         {
           method: "DELETE",
         }
       );
 
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || "Failed to delete account");
+      const apiResponse = await httpResponse.json();
+      if (!httpResponse.ok || apiResponse.status !== 1) {
+        throw new Error(apiResponse.message || "Failed to delete account");
       }
 
       // Clear local storage and auth session

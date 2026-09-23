@@ -1,7 +1,7 @@
 import crypto from "crypto";
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { addBillingPeriod, toMysqlDate, type BillingCycle } from "@/lib/billing";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 function validSignature(rawBody: string, signature: string, secret: string) {
   const expected = crypto.createHmac("sha256", secret).update(rawBody).digest("hex");
@@ -14,9 +14,9 @@ export async function POST(req: Request) {
   const rawBody = await req.text();
   const signature = req.headers.get("x-razorpay-signature");
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
-  if (!secret) return NextResponse.json({ error: "Webhook is not configured" }, { status: 503 });
+  if (!secret) return apiError("Webhook is not configured", 503);
   if (!signature || !validSignature(rawBody, signature, secret)) {
-    return NextResponse.json({ error: "Invalid webhook signature" }, { status: 401 });
+    return apiError("Invalid webhook signature", 401);
   }
 
   const eventId = req.headers.get("x-razorpay-event-id") || crypto.createHash("sha256").update(rawBody).digest("hex");
@@ -31,11 +31,11 @@ export async function POST(req: Request) {
     );
     const existing = existingRows?.[0];
     if (existing && existing.payload_hash !== payloadHash) {
-      return NextResponse.json({ error: "Webhook event ID conflict" }, { status: 409 });
+      return apiError("Webhook event ID conflict", 409);
     }
     const processingAgeMs = existing?.created_at ? Date.now() - new Date(existing.created_at).getTime() : 0;
     if (existing?.status === "processed" || (existing?.status === "processing" && processingAgeMs < 5 * 60 * 1000)) {
-      return NextResponse.json({ status: "ok", duplicate: true });
+      return apiSuccess({ status: "ok", duplicate: true }, "Webhook duplicate event ignored");
     }
     await db.query(
       `INSERT INTO payment_webhook_events (event_id, event_type, payload_hash, status)
@@ -97,7 +97,7 @@ export async function POST(req: Request) {
     }
 
     await db.query("UPDATE payment_webhook_events SET status = 'processed', processed_at = NOW() WHERE event_id = ?", [eventId]);
-    return NextResponse.json({ status: "ok", received: true });
+    return apiSuccess({ status: "ok", received: true }, "Webhook processed successfully");
   } catch (error: any) {
     console.error("Razorpay webhook error:", error);
     try {
@@ -106,6 +106,6 @@ export async function POST(req: Request) {
         [String(error?.message || "Webhook processing error").slice(0, 500), eventId]
       );
     } catch {}
-    return NextResponse.json({ error: "Webhook processing error" }, { status: 500 });
+    return apiError("Webhook processing error", 500);
   }
 }

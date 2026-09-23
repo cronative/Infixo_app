@@ -74,10 +74,12 @@ export default function DashboardTeamPage() {
     if (!creatorLookup) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/creator/team?creatorId=${encodeURIComponent(creatorLookup)}`).then((r) => r.json());
-      if (res.success && res.team) {
-        setTeam(res.team);
-        teamRepository.save(res.team);
+      const httpResponse = await fetch(`/api/creator/team?creatorId=${encodeURIComponent(creatorLookup)}`);
+      const apiResponse = await httpResponse.json();
+      const teamData = apiResponse.data?.team || apiResponse.team;
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && teamData) {
+        setTeam(teamData);
+        teamRepository.save(teamData);
       } else {
         const local = teamRepository.get();
         setTeam(local);
@@ -111,7 +113,7 @@ export default function DashboardTeamPage() {
 
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/creator/team", {
+      const httpResponse = await fetch("/api/creator/team", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -123,14 +125,15 @@ export default function DashboardTeamPage() {
           teamLogoUrl,
           isActive: team?.isActive !== false,
         }),
-      }).then((r) => r.json());
+      });
+      const apiResponse = await httpResponse.json();
 
-      if (res.success) {
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
         showToast("Team saved successfully! 🎉");
         setIsTeamModalOpen(false);
         loadTeam();
       } else {
-        showToast(res.error || "Failed to save team", "error");
+        showToast(apiResponse.message || apiResponse.error || "Failed to save team", "error");
       }
     } catch {
       showToast("An error occurred while saving team", "error");
@@ -201,7 +204,7 @@ export default function DashboardTeamPage() {
 
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/creator/team", {
+      const httpResponse = await fetch("/api/creator/team", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -220,14 +223,15 @@ export default function DashboardTeamPage() {
             isActive: editingMember ? editingMember.isActive : true,
           },
         }),
-      }).then((r) => r.json());
+      });
+      const apiResponse = await httpResponse.json();
 
-      if (res.success) {
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
         showToast(editingMember ? "Member updated! 🎉" : "Member added! 🎉");
         setIsMemberModalOpen(false);
         loadTeam();
       } else {
-        showToast(res.error || "Failed to save member", "error");
+        showToast(apiResponse.message || apiResponse.error || "Failed to save member", "error");
       }
     } catch {
       showToast("An error occurred while saving member", "error");
@@ -240,7 +244,7 @@ export default function DashboardTeamPage() {
   const handleToggleMember = async (member: TeamMember) => {
     try {
       const newStatus = !member.isActive;
-      const res = await fetch("/api/creator/team", {
+      const httpResponse = await fetch("/api/creator/team", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -251,13 +255,14 @@ export default function DashboardTeamPage() {
           memberId: member.id,
           isActive: newStatus,
         }),
-      }).then((r) => r.json());
+      });
+      const apiResponse = await httpResponse.json();
 
-      if (res.success) {
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
         showToast(newStatus ? "Member shown on profile" : "Member hidden from profile");
         loadTeam();
       } else {
-        showToast(res.error || "Failed to update member status", "error");
+        showToast(apiResponse.message || apiResponse.error || "Failed to update member status", "error");
       }
     } catch {
       showToast("Error updating member", "error");
@@ -269,7 +274,7 @@ export default function DashboardTeamPage() {
     if (!memberToDelete) return;
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/creator/team", {
+      const httpResponse = await fetch("/api/creator/team", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -279,14 +284,15 @@ export default function DashboardTeamPage() {
           teamId: team?.id,
           memberId: memberToDelete.id,
         }),
-      }).then((r) => r.json());
+      });
+      const apiResponse = await httpResponse.json();
 
-      if (res.success) {
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
         showToast("Member removed successfully");
         setMemberToDelete(null);
         loadTeam();
       } else {
-        showToast(res.error || "Failed to delete member", "error");
+        showToast(apiResponse.message || apiResponse.error || "Failed to delete member", "error");
       }
     } catch {
       showToast("Error deleting member", "error");

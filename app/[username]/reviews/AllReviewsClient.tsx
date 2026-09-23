@@ -131,21 +131,27 @@ export default function AllReviewsClient() {
           fetch(`/api/creator/reviews?username=${encodeURIComponent(username)}&status=approved`).then((r) => r.json()).catch(() => ({ success: false })),
         ]);
 
+        const isProfOk = profileRes.status === 1 || profileRes.success === true;
+        const freshProfile = profileRes.data?.profile || profileRes.profile;
+        const freshSubscription = profileRes.data?.subscription || profileRes.subscription;
+
         if (
-          !profileRes.success ||
-          !profileRes.profile?.username ||
-          isFreeTrialExpired(profileRes.subscription) ||
-          profileRes.profile.visibilitySettings?.showReviews === false
+          !isProfOk ||
+          !freshProfile?.username ||
+          isFreeTrialExpired(freshSubscription) ||
+          freshProfile.visibilitySettings?.showReviews === false
         ) {
           setNotFound(true);
           setLoaded(true);
           return;
         }
 
-        setProfile(profileRes.profile);
-        setTheme((profileRes.profile.themeKey || "minimal-white") as ThemeKey);
-        setSocials(Array.isArray(socialsRes.socials) ? buildSocialAccounts(socialsRes.socials) : EMPTY_SOCIAL_ACCOUNTS);
-        setReviews(Array.isArray(reviewsRes.reviews) ? reviewsRes.reviews : []);
+        setProfile(freshProfile);
+        setTheme((freshProfile.themeKey || "minimal-white") as ThemeKey);
+        const rawSocials = socialsRes.data?.socials || socialsRes.socials;
+        setSocials(Array.isArray(rawSocials) ? buildSocialAccounts(rawSocials) : EMPTY_SOCIAL_ACCOUNTS);
+        const rawReviews = reviewsRes.data?.reviews || reviewsRes.reviews;
+        setReviews(Array.isArray(rawReviews) ? rawReviews : []);
         setNotFound(false);
       } catch (error) {
         console.warn("Failed to load all reviews page:", error);

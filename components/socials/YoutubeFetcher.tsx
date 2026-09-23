@@ -49,19 +49,20 @@ export function YoutubeFetcher({ handle, onConfirmSync, onBeforeFetch, variant =
     setLoading(true);
 
     try {
-      const res = await fetch("/api/youtube/channelInfo", {
+      const httpResponse = await fetch("/api/youtube/channelInfo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ channelName: cleanHandle }),
       });
 
-      const data = await res.json();
+      const apiResponse = await httpResponse.json();
+      const channel = apiResponse.data?.channel || apiResponse.channel;
 
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || "Could not fetch YouTube channel details");
+      if (!httpResponse.ok || apiResponse.status !== 1 || !channel) {
+        throw new Error(apiResponse.message || "Could not fetch YouTube channel details");
       }
 
-      setPreviewData({ platform: "youtube", data: data.channel });
+      setPreviewData({ platform: "youtube", data: channel });
       if (variant === "modal") {
         setModalOpen(true);
       }

@@ -162,30 +162,36 @@ export default function PublicProfileClient() {
           fetch(`/api/creator/sections?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
         ]);
 
-        if (profRes.success && profRes.profile && profRes.profile.username) {
-          if (isFreeTrialExpired(profRes.subscription)) {
+        const isProfOk = profRes.status === 1 || profRes.success === true;
+        const profile = profRes.data?.profile || profRes.profile;
+        const subscription = profRes.data?.subscription || profRes.subscription;
+
+        if (isProfOk && profile && profile.username) {
+          if (isFreeTrialExpired(subscription)) {
             setProfilePrivate(true);
             setNotFound(false);
             setLoaded(true);
             return;
           }
 
-          setProfile(profRes.profile);
-          if (profRes.profile.themeKey) {
-            setTheme(profRes.profile.themeKey as ThemeKey);
+          setProfile(profile);
+          if (profile.themeKey) {
+            setTheme(profile.themeKey as ThemeKey);
           }
           setNotFound(false);
           setProfilePrivate(false);
 
-          if (linkRes.success && Array.isArray(linkRes.links)) {
-            setCustomLinks(linkRes.links);
+          const links = linkRes.data?.links || linkRes.links;
+          if ((linkRes.status === 1 || linkRes.success) && Array.isArray(links)) {
+            setCustomLinks(links);
           } else {
             setCustomLinks([]);
           }
 
-          if (socRes.success && Array.isArray(socRes.socials)) {
+          const socials = socRes.data?.socials || socRes.socials;
+          if ((socRes.status === 1 || socRes.success) && Array.isArray(socials)) {
             const accs: SocialAccounts = { ...EMPTY_SOCIAL_ACCOUNTS };
-            socRes.socials.forEach((s: any) => {
+            socials.forEach((s: any) => {
               const handle = s.username || s.accountName || "";
               if (s.platform === "instagram") {
                 accs.instagram = {
@@ -215,62 +221,73 @@ export default function PublicProfileClient() {
             setSocials(EMPTY_SOCIAL_ACCOUNTS);
           }
 
-          if (serRes.success && Array.isArray(serRes.series)) {
-            setSeries(serRes.series);
+          const series = serRes.data?.series || serRes.series;
+          if ((serRes.status === 1 || serRes.success) && Array.isArray(series)) {
+            setSeries(series);
           } else {
             setSeries([]);
           }
 
-          if (mediakitRes.success && Array.isArray(mediakitRes.packages)) {
-            setMediaKitPackages(mediakitRes.packages);
+          const packages = mediakitRes.data?.packages || mediakitRes.packages;
+          if ((mediakitRes.status === 1 || mediakitRes.success) && Array.isArray(packages)) {
+            setMediaKitPackages(packages);
           } else {
             setMediaKitPackages([]);
           }
 
-          if (mediakitRes.success && mediakitRes.settings) {
-            setMediaKitSettings(mediakitRes.settings);
+          const mkSettings = mediakitRes.data?.settings || mediakitRes.settings;
+          if ((mediakitRes.status === 1 || mediakitRes.success) && mkSettings) {
+            setMediaKitSettings(mkSettings);
           }
 
-          if (revRes.success && Array.isArray(revRes.reviews)) {
-            setReviews(revRes.reviews);
+          const reviews = revRes.data?.reviews || revRes.reviews;
+          if ((revRes.status === 1 || revRes.success) && Array.isArray(reviews)) {
+            setReviews(reviews);
           } else {
             setReviews([]);
           }
 
-          if (teamRes.success && teamRes.team) {
-            setTeam({ team: teamRes.team, members: teamRes.members || [] });
+          const team = teamRes.data?.team || teamRes.team;
+          const members = teamRes.data?.members || teamRes.members || [];
+          if ((teamRes.status === 1 || teamRes.success) && team) {
+            setTeam({ team, members });
           }
 
-          if (brandRes.success && Array.isArray(brandRes.brands)) {
-            setBrands(brandRes.brands);
+          const brands = brandRes.data?.brands || brandRes.brands;
+          if ((brandRes.status === 1 || brandRes.success) && Array.isArray(brands)) {
+            setBrands(brands);
           }
 
-          if (collabRes.success && Array.isArray(collabRes.collaborations)) {
-            setCollaborations(collabRes.collaborations);
+          const collabs = collabRes.data?.collaborations || collabRes.collaborations;
+          if ((collabRes.status === 1 || collabRes.success) && Array.isArray(collabs)) {
+            setCollaborations(collabs);
           }
 
-          if (setupRes.success && Array.isArray(setupRes.items)) {
-            setSetupItems(setupRes.items);
+          const setupItems = setupRes.data?.items || setupRes.items;
+          if ((setupRes.status === 1 || setupRes.success) && Array.isArray(setupItems)) {
+            setSetupItems(setupItems);
           }
 
-          if (otherSocRes.success && Array.isArray(otherSocRes.otherSocials)) {
-            setOtherSocials(otherSocRes.otherSocials);
+          const otherSocials = otherSocRes.data?.otherSocials || otherSocRes.otherSocials;
+          if ((otherSocRes.status === 1 || otherSocRes.success) && Array.isArray(otherSocials)) {
+            setOtherSocials(otherSocials);
           }
 
-          if (secRes.success && Array.isArray(secRes.sections)) {
-            setSections(secRes.sections);
+          const sections = secRes.data?.sections || secRes.sections;
+          if ((secRes.status === 1 || secRes.success) && Array.isArray(sections)) {
+            setSections(sections);
           }
 
           // Track Profile View Event
           try {
             const visitorKey = getPublicVisitorId();
-            const eventId = getPageViewEventId(profRes.profile.id, usernameParam, visitorKey);
+            const eventId = getPageViewEventId(profile.id, usernameParam, visitorKey);
 
             fetch("/api/analytics/track", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                creator_id: profRes.profile.id,
+                creator_id: profile.id,
                 creator_username: usernameParam,
                 event_type: "profile_view",
                 visitor_id: visitorKey,
@@ -344,8 +361,8 @@ export default function PublicProfileClient() {
       const handle = decodeURIComponent(params.username).trim().toLowerCase();
       fetch(`/api/creator/check-username?username=${encodeURIComponent(handle)}`)
         .then((r) => r.json())
-        .then((data) => {
-          setUsernameAvailable(Boolean(data.available));
+        .then((apiResponse) => {
+          setUsernameAvailable(Boolean(apiResponse.data?.available ?? apiResponse.available));
         })
         .catch(() => {
           setUsernameAvailable(false);

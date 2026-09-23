@@ -174,13 +174,15 @@ export class MediaKitService {
       queryUrl += `${paramKey}=${encodeURIComponent(identifier.trim())}`;
 
 
-      const res = await fetch(queryUrl);
-      if (!res.ok) throw new Error("DB fetch failed");
-      const data = await res.json();
-      if (data.success) {
+      const httpResponse = await fetch(queryUrl);
+      if (!httpResponse.ok) throw new Error("DB fetch failed");
+      const apiResponse = await httpResponse.json();
+      if (apiResponse.status === 1 || apiResponse.success) {
+        const settings = apiResponse.data?.settings || apiResponse.settings;
+        const packages = apiResponse.data?.packages || apiResponse.packages;
         return {
-          settings: data.settings || { sponsorEmail: "", whatsappNumber: "", minBudget: "", bioHighlight: "", acceptingSponsors: true, preferredCategories: [] },
-          packages: data.packages || [],
+          settings: settings || { sponsorEmail: "", whatsappNumber: "", minBudget: "", bioHighlight: "", acceptingSponsors: true, preferredCategories: [] },
+          packages: packages || [],
         };
       }
     } catch (e) {
@@ -194,12 +196,13 @@ export class MediaKitService {
 
   static async saveToDb(email: string, settings: MediaKitSettings, packages: MediaKitPackage[], creatorId?: string): Promise<boolean> {
     try {
-      const res = await fetch("/api/creator/mediakit", {
+      const httpResponse = await fetch("/api/creator/mediakit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ creatorId, email, settings, packages }),
       });
-      return res.ok;
+      const apiResponse = await httpResponse.json().catch(() => null);
+      return httpResponse.ok && (apiResponse?.status === 1 || apiResponse?.success === true);
     } catch (e) {
       console.warn("MediaKit DB save error:", e);
       return false;

@@ -49,17 +49,23 @@ export default function DashboardAnalyticsPage() {
       setAnalytics((current) => ({ ...current, loading: true }));
 
       try {
-        const res = await fetch(`/api/creator/analytics?${query}&period=${period}`);
-        const data = await res.json();
+        const httpResponse = await fetch(`/api/creator/analytics?${query}&period=${period}`);
+        const apiResponse = await httpResponse.json();
 
         if (ignore) return;
-        setAnalytics({
-          loading: false,
-          profileViews: Number(data.metrics?.profileViews || 0),
-          uniqueVisitors: Number(data.metrics?.uniqueVisitors || 0),
-          episodeClicks: Number(data.metrics?.episodeClicks || 0),
-          topTargets: Array.isArray(data.topTargets) ? data.topTargets : [],
-        });
+        const metrics = apiResponse.data?.metrics || apiResponse.metrics;
+        const topTargets = apiResponse.data?.topTargets || apiResponse.topTargets;
+        if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
+          setAnalytics({
+            loading: false,
+            profileViews: Number(metrics?.profileViews || 0),
+            uniqueVisitors: Number(metrics?.uniqueVisitors || 0),
+            episodeClicks: Number(metrics?.episodeClicks || 0),
+            topTargets: Array.isArray(topTargets) ? topTargets : [],
+          });
+        } else {
+          setAnalytics({ ...EMPTY_ANALYTICS, loading: false });
+        }
       } catch {
         if (!ignore) setAnalytics({ ...EMPTY_ANALYTICS, loading: false });
       }

@@ -7,15 +7,15 @@
  * This is the single source of truth that replaces all localStorage reads on page load.
  */
 
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/session";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 export async function GET(req: Request) {
   try {
     const session = getSessionFromRequest(req);
     if (!session) {
-      return NextResponse.json({ authenticated: false }, { status: 401 });
+      return apiError("Unauthenticated session.", 401, { authenticated: false });
     }
 
     const { email } = session;
@@ -38,7 +38,7 @@ export async function GET(req: Request) {
 
     if (!creatorRows || creatorRows.length === 0) {
       // New user — session is valid but profile not created yet
-      return NextResponse.json({
+      return apiSuccess({
         authenticated: true,
         email,
         creatorId: session.creatorId,
@@ -48,7 +48,7 @@ export async function GET(req: Request) {
         socials: [],
         customLinks: [],
         onboardingStep: "username",
-      });
+      }, "Session active (new creator).");
     }
 
     const c = creatorRows[0];
@@ -140,7 +140,7 @@ export async function GET(req: Request) {
       hasUsedTrial: Boolean(c.trial_started_at),
     };
 
-    return NextResponse.json({
+    return apiSuccess({
       authenticated: true,
       email,
       creatorId: c.id,
@@ -150,9 +150,9 @@ export async function GET(req: Request) {
       socials: socialRows || [],
       customLinks,
       onboardingStep,
-    });
+    }, "Session active.");
   } catch (error: any) {
     console.error("GET /api/me error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return apiError(error.message || "Failed to retrieve session", 500);
   }
 }

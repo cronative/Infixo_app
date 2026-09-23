@@ -121,34 +121,38 @@ export default function DashboardOverviewPage() {
         : `username=${encodeURIComponent(profile.username || "")}`;
 
       fetch(`/api/creator/custom-links?${query}`)
-        .then((r) => r.json())
-        .then((data) => {
-          if (data.success && Array.isArray(data.links)) {
-            setCustomLinks(data.links);
-            customLinksRepository.save(data.links);
+        .then((httpResponse) => httpResponse.json())
+        .then((apiResponse) => {
+          const links = apiResponse.data?.links || apiResponse.links;
+          if ((apiResponse.status === 1 || apiResponse.success) && Array.isArray(links)) {
+            setCustomLinks(links);
+            customLinksRepository.save(links);
           }
         })
         .catch(() => { });
 
       const mkQuery = profile.id ? `creatorId=${encodeURIComponent(profile.id)}` : profile.email ? `email=${encodeURIComponent(profile.email)}` : `username=${encodeURIComponent(profile.username || "")}`;
       fetch(`/api/creator/mediakit?${mkQuery}`)
-        .then((r) => r.json())
-        .then((data) => {
-          if (data.success && Array.isArray(data.packages)) {
-            setPackages(data.packages);
+        .then((httpResponse) => httpResponse.json())
+        .then((apiResponse) => {
+          const packages = apiResponse.data?.packages || apiResponse.packages;
+          if ((apiResponse.status === 1 || apiResponse.success) && Array.isArray(packages)) {
+            setPackages(packages);
           }
         })
         .catch(() => { });
 
       fetch(`/api/creator/analytics?${query}&period=30d`)
         .then((r) => r.json())
-        .then((data) => {
-          if (data.success) {
+        .then((apiResponse) => {
+          const metrics = apiResponse.data?.metrics || apiResponse.metrics;
+          const topTargets = apiResponse.data?.topTargets || apiResponse.topTargets;
+          if (apiResponse.status === 1 || apiResponse.success) {
             setAnalytics({
-              profileViews: Number(data.metrics?.profileViews || 0),
-              uniqueVisitors: Number(data.metrics?.uniqueVisitors || 0),
-              episodeClicks: Number(data.metrics?.episodeClicks || 0),
-              topTargets: Array.isArray(data.topTargets) ? data.topTargets : [],
+              profileViews: Number(metrics?.profileViews || 0),
+              uniqueVisitors: Number(metrics?.uniqueVisitors || 0),
+              episodeClicks: Number(metrics?.episodeClicks || 0),
+              topTargets: Array.isArray(topTargets) ? topTargets : [],
             });
           }
         })

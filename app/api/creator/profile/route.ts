@@ -5,6 +5,7 @@ import { ensureCreatorSettingsTable } from "@/lib/settingsDb";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 import { requireSession, ownsResource } from "@/lib/session";
 import { isCreatorPublic } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 // GET /api/creator/profile?email=... or ?username=...
 export async function GET(req: Request) {
@@ -19,12 +20,12 @@ export async function GET(req: Request) {
       const auth = requireSession(req);
       if (auth.error) return auth.error;
       if (!ownsResource(auth.session, email)) {
-        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        return apiError("Forbidden", 403);
       }
     }
 
     if (!email && !username) {
-      return NextResponse.json({ error: "Email or username query param required" }, { status: 400 });
+      return apiError("Email or username query param required", 400);
     }
 
     let query = `
@@ -53,8 +54,7 @@ export async function GET(req: Request) {
     if (!creator) {
       // If queried by email (e.g. during onboarding for a new user), return 200 OK with clean new profile and onboardingStep: "profile"
       if (email) {
-        return NextResponse.json({
-          success: true,
+        return apiSuccess({
           isNewUser: true,
           onboardingStep: "profile",
           profile: {
@@ -69,16 +69,14 @@ export async function GET(req: Request) {
             themeKey: "minimal-white",
             onboardingStep: "profile",
           },
-        });
+        }, "New user profile initialized");
       }
-      return NextResponse.json({ error: "Creator not found" }, { status: 404 });
+      return apiError("Creator not found", 404);
     }
 
     if (username && !(await isCreatorPublic(creator.id))) {
-      return NextResponse.json({ error: "Creator profile is private" }, { status: 404 });
+      return apiError("Creator profile is private", 404);
     }
-
-
 
     const rawVis = creator.settings_visibility || creator.visibility_settings;
     let visibilitySettings = null;
@@ -90,8 +88,7 @@ export async function GET(req: Request) {
       } catch (e) {}
     }
 
-    return NextResponse.json({
-      success: true,
+    return apiSuccess({
       profile: {
         id: creator.id,
         ...(username ? {} : { email: creator.email }),
@@ -121,10 +118,10 @@ export async function GET(req: Request) {
         endsAt: creator.sub_ends_at || null,
         currentPeriodEndsAt: creator.sub_current_period_ends_at || null,
       },
-    });
+    }, "Profile retrieved successfully");
   } catch (err: any) {
     console.error("GET Creator Profile Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to retrieve profile", 500);
   }
 }
 
@@ -172,9 +169,8 @@ export async function POST(req: Request) {
       if (creatorId) {
         await recordOnboardingStep(email, body.onboardingStep, creatorId);
       }
-      return NextResponse.json({ success: true, onboardingStep: body.onboardingStep });
+      return apiSuccess({ onboardingStep: body.onboardingStep }, "Onboarding step updated");
     }
-
 
     if (creatorId) {
       // If user typed a username, update it; otherwise preserve existing handle without default fallback
@@ -207,10 +203,9 @@ export async function POST(req: Request) {
     } else {
       // Guard: ONLY insert a new creator if user provided a displayName or username
       if (!displayName?.trim() && !cleanUsername) {
-        return NextResponse.json({
-          success: true,
-          message: "No creator created: Profile details not provided yet",
-        });
+        return apiSuccess({
+          profile: null,
+        }, "No creator created: Profile details not provided yet");
       }
 
       // Insert new creator into MySQL with user provided fields
@@ -279,8 +274,7 @@ export async function POST(req: Request) {
       } catch (e) {}
     }
 
-    return NextResponse.json({
-      success: true,
+    return apiSuccess({
       profile: {
         id: updated.id,
         email: updated.email,
@@ -299,10 +293,10 @@ export async function POST(req: Request) {
         visibilitySettings: parsedVisibility,
         updatedAt: updated.updated_at,
       },
-    });
+    }, "Profile saved successfully");
   } catch (err: any) {
     console.error("POST Creator Profile Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to save profile", 500);
   }
 }
 
@@ -315,7 +309,7 @@ export async function DELETE(req: Request) {
     const { searchParams } = new URL(req.url);
     const requestedEmail = searchParams.get("email");
     if (requestedEmail && !ownsResource(auth.session, requestedEmail)) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      return apiError("Forbidden", 403);
     }
     const cleanEmail = auth.session.email;
 
@@ -362,9 +356,9 @@ export async function DELETE(req: Request) {
       }
     }
 
-    return NextResponse.json({ success: true, message: "Account deleted successfully" });
+    return apiSuccess({}, "Account deleted successfully");
   } catch (err: any) {
     console.error("DELETE Creator Profile Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to delete account", 500);
   }
 }

@@ -52,19 +52,20 @@ export function FacebookFetcher({ username, onConfirmSync, onBeforeFetch, varian
     setLoading(true);
 
     try {
-      const res = await fetch("/api/facebook/pageInfo", {
+      const httpResponse = await fetch("/api/facebook/pageInfo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: cleanUsername }),
       });
 
-      const data = await res.json();
+      const apiResponse = await httpResponse.json();
+      const page = apiResponse.data?.page || apiResponse.page;
 
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || "Could not fetch Facebook Page details");
+      if (!httpResponse.ok || apiResponse.status !== 1 || !page) {
+        throw new Error(apiResponse.message || "Could not fetch Facebook Page details");
       }
 
-      setPreviewData({ platform: "facebook", data: data.page });
+      setPreviewData({ platform: "facebook", data: page });
       if (variant === "modal") {
         setModalOpen(true);
       }

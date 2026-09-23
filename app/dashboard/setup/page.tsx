@@ -130,13 +130,15 @@ export default function DashboardSetupPage() {
     if (!creatorLookup) return;
     setLoading(true);
     try {
-      const res = await fetch(
+      const httpResponse = await fetch(
         `/api/creator/setup?creatorId=${encodeURIComponent(creatorLookup)}`
-      ).then((r) => r.json());
+      );
+      const apiResponse = await httpResponse.json();
+      const items = apiResponse.data?.items || apiResponse.items;
 
-      if (res.success && Array.isArray(res.items)) {
-        setItems(res.items);
-        creatorSetupRepository.saveAll(res.items);
+      if (apiResponse.status === 1 && Array.isArray(items)) {
+        setItems(items);
+        creatorSetupRepository.saveAll(items);
       } else {
         const local = creatorSetupRepository.getAll();
         setItems(local);
@@ -155,12 +157,13 @@ export default function DashboardSetupPage() {
     let cancelled = false;
 
     fetch(`/api/creator/setup?creatorId=${encodeURIComponent(creatorLookup)}`)
-      .then((r) => r.json())
-      .then((res) => {
+      .then((httpResponse) => httpResponse.json())
+      .then((apiResponse) => {
         if (cancelled) return;
-        if (res.success && Array.isArray(res.items)) {
-          setItems(res.items);
-          creatorSetupRepository.saveAll(res.items);
+        const items = apiResponse.data?.items || apiResponse.items;
+        if (apiResponse.status === 1 && Array.isArray(items)) {
+          setItems(items);
+          creatorSetupRepository.saveAll(items);
           return;
         }
         setItems(creatorSetupRepository.getAll());
@@ -247,7 +250,7 @@ export default function DashboardSetupPage() {
         isActive,
       };
 
-      const res = await fetch("/api/creator/setup", {
+      const httpResponse = await fetch("/api/creator/setup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -255,14 +258,15 @@ export default function DashboardSetupPage() {
           email: profile.email,
           item: payloadItem,
         }),
-      }).then((r) => r.json());
+      });
+      const apiResponse = await httpResponse.json();
 
-      if (res.success) {
+      if (apiResponse.status === 1) {
         showToast(editingItem ? "Setup item updated! ✨" : "Gear added to your setup! 🚀");
         setIsModalOpen(false);
         loadSetupItems();
       } else {
-        showToast(res.error || "Failed to save item", "error");
+        showToast(apiResponse.message || "Failed to save item", "error");
       }
     } catch {
       showToast("An error occurred while saving item", "error");
@@ -274,7 +278,7 @@ export default function DashboardSetupPage() {
   const handleToggleActive = async (item: CreatorSetupItem) => {
     try {
       const updated = { ...item, isActive: !item.isActive };
-      const res = await fetch("/api/creator/setup", {
+      const httpResponse = await fetch("/api/creator/setup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -282,9 +286,10 @@ export default function DashboardSetupPage() {
           email: profile.email,
           item: updated,
         }),
-      }).then((r) => r.json());
+      });
+      const apiResponse = await httpResponse.json();
 
-      if (res.success) {
+      if (apiResponse.status === 1) {
         showToast(updated.isActive ? "Item visible on profile" : "Item hidden from profile");
         setItems((prev) => prev.map((it) => (it.id === item.id ? updated : it)));
       }
@@ -297,19 +302,20 @@ export default function DashboardSetupPage() {
     if (!itemToDelete) return;
     setIsSubmitting(true);
     try {
-      const res = await fetch(
+      const httpResponse = await fetch(
         `/api/creator/setup?id=${encodeURIComponent(itemToDelete.id)}&creatorId=${encodeURIComponent(
           creatorLookup || ""
         )}`,
         { method: "DELETE" }
-      ).then((r) => r.json());
+      );
+      const apiResponse = await httpResponse.json();
 
-      if (res.success) {
+      if (apiResponse.status === 1) {
         showToast("Item removed from your setup");
         setItemToDelete(null);
         loadSetupItems();
       } else {
-        showToast(res.error || "Failed to delete item", "error");
+        showToast(apiResponse.message || "Failed to delete item", "error");
       }
     } catch {
       showToast("Failed to remove item", "error");

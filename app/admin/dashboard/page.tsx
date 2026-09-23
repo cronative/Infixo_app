@@ -254,16 +254,19 @@ export default function AdminDashboardPage() {
       ]);
 
       let loadedCreators: AdminCreator[] = [];
-      if (cRes.success && Array.isArray(cRes.creators)) {
-        loadedCreators = cRes.creators;
+      const creatorsList = cRes.data?.creators || cRes.creators;
+      if ((cRes.status === 1 || cRes.success) && Array.isArray(creatorsList)) {
+        loadedCreators = creatorsList;
       }
-      if (cRes.stats) {
-        setStats({ ...INITIAL_STATS, ...cRes.stats });
+      const statsData = cRes.data?.stats || cRes.stats;
+      if (statsData) {
+        setStats({ ...INITIAL_STATS, ...statsData });
       }
 
       let loadedSeries: AdminSeries[] = [];
-      if (sRes.success && Array.isArray(sRes.series)) {
-        loadedSeries = sRes.series;
+      const seriesData = sRes.data?.series || sRes.series;
+      if ((sRes.status === 1 || sRes.success) && Array.isArray(seriesData)) {
+        loadedSeries = seriesData;
       }
 
       // Include local creator if missing from remote DB
@@ -318,17 +321,17 @@ export default function AdminDashboardPage() {
     setOpenActionMenuId(null);
     setPlanChangerCreator(null);
     try {
-      const res = await fetch("/api/admin/creators", {
+      const httpResponse = await fetch("/api/admin/creators", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "set_plan", creatorId: creator.id, email: creator.email, planKey, planName }),
       });
-      const data = await res.json();
-      if (data.success) {
+      const apiResponse = await httpResponse.json();
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
         showToast(`${planName} plan assigned to @${creator.username}! ⭐`);
         loadAdminData();
       } else {
-        showToast(data.error || "Failed to update plan", "error");
+        showToast(apiResponse.message || apiResponse.error || "Failed to update plan", "error");
       }
     } catch {
       showToast("Error updating creator plan", "error");
@@ -338,17 +341,18 @@ export default function AdminDashboardPage() {
   async function handleToggleVerified(creator: AdminCreator) {
     setOpenActionMenuId(null);
     try {
-      const res = await fetch("/api/admin/creators", {
+      const httpResponse = await fetch("/api/admin/creators", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "toggle_verified", creatorId: creator.id, email: creator.email }),
       });
-      const data = await res.json();
-      if (data.success) {
-        showToast(data.isVerified ? `Verified badge granted to @${creator.username}! 🛡️` : `Verified badge removed from @${creator.username}`);
+      const apiResponse = await httpResponse.json();
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
+        const isVerified = apiResponse.data?.isVerified ?? apiResponse.isVerified;
+        showToast(isVerified ? `Verified badge granted to @${creator.username}! 🛡️` : `Verified badge removed from @${creator.username}`);
         loadAdminData();
       } else {
-        showToast(data.error || "Failed to toggle verified badge", "error");
+        showToast(apiResponse.message || apiResponse.error || "Failed to toggle verified badge", "error");
       }
     } catch {
       showToast("Error updating verified status", "error");
@@ -358,17 +362,18 @@ export default function AdminDashboardPage() {
   async function handleToggleStatus(creator: AdminCreator) {
     setOpenActionMenuId(null);
     try {
-      const res = await fetch("/api/admin/creators", {
+      const httpResponse = await fetch("/api/admin/creators", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "toggle_status", creatorId: creator.id, email: creator.email }),
       });
-      const data = await res.json();
-      if (data.success) {
-        showToast(`Account status updated to ${data.newStatus}`);
+      const apiResponse = await httpResponse.json();
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
+        const newStatus = apiResponse.data?.newStatus || apiResponse.newStatus;
+        showToast(`Account status updated to ${newStatus}`);
         loadAdminData();
       } else {
-        showToast(data.error || "Failed to update status", "error");
+        showToast(apiResponse.message || apiResponse.error || "Failed to update status", "error");
       }
     } catch {
       showToast("Error updating account status", "error");
@@ -453,7 +458,7 @@ export default function AdminDashboardPage() {
 
     setSendingEmail(true);
     try {
-      const res = await fetch("/api/admin/send-email", {
+      const httpResponse = await fetch("/api/admin/send-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -463,11 +468,12 @@ export default function AdminDashboardPage() {
         }),
       });
 
-      const data = await res.json();
-      if (data.success) {
-        showToast(`Sent ${data.sentCount} emails successfully! ✉️`);
+      const apiResponse = await httpResponse.json();
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
+        const sentCount = apiResponse.data?.sentCount ?? apiResponse.sentCount ?? 0;
+        showToast(`Sent ${sentCount} emails successfully! ✉️`);
       } else {
-        showToast(data.error || "Could not send emails", "error");
+        showToast(apiResponse.message || apiResponse.error || "Could not send emails", "error");
       }
     } catch {
       showToast("Failed to send broadcast emails", "error");

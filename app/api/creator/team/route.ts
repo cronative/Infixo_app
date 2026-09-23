@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureTeamTables } from "@/lib/teamDb";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 import { requireCreator } from "@/lib/creatorAuth";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -26,7 +26,7 @@ export async function GET(req: Request) {
     const lookupVal = searchParams.get("creatorId") || searchParams.get("email") || searchParams.get("username");
 
     if (!lookupVal) {
-      return NextResponse.json({ success: true, team: null });
+      return apiSuccess({ team: null, members: [] }, "Team retrieved successfully");
     }
 
     await ensureTeamTables();
@@ -44,7 +44,7 @@ export async function GET(req: Request) {
     );
 
     if (!teamRows || teamRows.length === 0) {
-      return NextResponse.json({ success: true, team: null });
+      return apiSuccess({ team: null, members: [] }, "Team retrieved successfully");
     }
 
     const team = teamRows[0];
@@ -73,22 +73,21 @@ export async function GET(req: Request) {
       updatedAt: m.updatedAt,
     }));
 
-    return NextResponse.json({
-      success: true,
-      team: {
-        id: team.id,
-        creatorId: team.creatorId,
-        teamName: team.teamName,
-        teamLogoUrl: team.teamLogoUrl || null,
-        isActive: Boolean(team.isActive),
-        members,
-        createdAt: team.createdAt,
-        updatedAt: team.updatedAt,
-      },
-    });
+    const fullTeam = {
+      id: team.id,
+      creatorId: team.creatorId,
+      teamName: team.teamName,
+      teamLogoUrl: team.teamLogoUrl || null,
+      isActive: Boolean(team.isActive),
+      members,
+      createdAt: team.createdAt,
+      updatedAt: team.updatedAt,
+    };
+
+    return apiSuccess({ team: fullTeam, members }, "Team retrieved successfully");
   } catch (err: any) {
     console.error("GET team error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to fetch team", 500);
   }
 }
 
@@ -108,7 +107,7 @@ export async function POST(req: Request) {
     // 1. Action: create or update team base info
     if (action === "save_team" || (!action && teamName !== undefined)) {
       if (!teamName || !teamName.trim()) {
-        return NextResponse.json({ error: "Team name is required" }, { status: 400 });
+        return apiError("Team name is required", 400);
       }
 
       const finalTeamLogoUrl = await saveBase64ImageToStorage(teamLogoUrl, "team", "team_logo") || (teamLogoUrl && !teamLogoUrl.startsWith("data:") ? teamLogoUrl : null);
@@ -124,14 +123,14 @@ export async function POST(req: Request) {
         [teamId, targetId, teamName.trim(), finalTeamLogoUrl || null, isActive !== false ? 1 : 0]
       );
 
-      return NextResponse.json({ success: true, message: "Team details saved" });
+      return apiSuccess({}, "Team details saved");
     }
 
     // 2. Action: Add or edit single member
     if (action === "save_member" || member) {
       const m = member || body;
       if (!m.name || !m.name.trim() || !m.role || !m.role.trim()) {
-        return NextResponse.json({ error: "Member name and role are required" }, { status: 400 });
+        return apiError("Member name and role are required", 400);
       }
 
       const finalAvatarUrl = await saveBase64ImageToStorage(m.avatarUrl, "team", "member") || (m.avatarUrl && !m.avatarUrl.startsWith("data:") ? m.avatarUrl : null);
@@ -176,7 +175,7 @@ export async function POST(req: Request) {
         ]
       );
 
-      return NextResponse.json({ success: true, memberId, message: "Team member saved" });
+      return apiSuccess({ memberId }, "Team member saved");
     }
 
     // 3. Action: Reorder members
@@ -190,13 +189,34 @@ export async function POST(req: Request) {
           );
         }
       }
-      return NextResponse.json({ success: true, message: "Members reordered" });
+      return apiSuccess({ members }, "Members reordered");
     }
 
-    return NextResponse.json({ error: "Invalid action or payload" }, { status: 400 });
+    // 4. Action: Toggle member
+    if (action === "toggle_member") {
+      const { memberId, isActive } = body;
+      if (memberId) {
+        await db.query(
+          "UPDATE team_members SET is_active = ?, updated_at = NOW() WHERE id = ? AND creator_id = ?",
+          [isActive ? 1 : 0, memberId, targetId]
+        );
+        return apiSuccess({}, "Member status updated");
+      }
+    }
+
+    // 5. Action: Delete member via POST
+    if (action === "delete_member") {
+      const { memberId } = body;
+      if (memberId) {
+        await db.query("DELETE FROM team_members WHERE id = ? AND creator_id = ?", [memberId, targetId]);
+        return apiSuccess({}, "Member removed from team");
+      }
+    }
+
+    return apiError("Invalid action or payload", 400);
   } catch (err: any) {
     console.error("POST team error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to save team", 500);
   }
 }
 
@@ -215,18 +235,18 @@ export async function DELETE(req: Request) {
 
     if (memberId) {
       await db.query("DELETE FROM team_members WHERE id = ? AND creator_id = ?", [memberId, targetId]);
-      return NextResponse.json({ success: true, message: "Member removed from team" });
+      return apiSuccess({}, "Member removed from team");
     }
 
     if (teamId) {
       await db.query("DELETE FROM team_members WHERE team_id = ? AND creator_id = ?", [teamId, targetId]);
       await db.query("DELETE FROM creator_teams WHERE id = ? AND creator_id = ?", [teamId, targetId]);
-      return NextResponse.json({ success: true, message: "Team deleted" });
+      return apiSuccess({}, "Team deleted");
     }
 
-    return NextResponse.json({ error: "memberId or teamId required" }, { status: 400 });
+    return apiError("memberId or teamId required", 400);
   } catch (err: any) {
     console.error("DELETE team error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to delete team", 500);
   }
 }

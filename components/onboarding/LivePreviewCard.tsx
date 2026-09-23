@@ -968,12 +968,14 @@ export function LivePreviewCard({
 
       try {
         if (email || username) {
-          const res = await fetch(
+          const httpResponse = await fetch(
             `/api/creator/reviews?email=${encodeURIComponent(email)}&username=${encodeURIComponent(username)}&status=approved`
-          ).then((r) => r.json());
+          );
+          const apiResponse = await httpResponse.json();
+          const revList = apiResponse.data?.reviews || apiResponse.reviews;
 
-          if (res && res.success && Array.isArray(res.reviews)) {
-            setApprovedReviews(res.reviews);
+          if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && Array.isArray(revList)) {
+            setApprovedReviews(revList);
             return;
           }
         }

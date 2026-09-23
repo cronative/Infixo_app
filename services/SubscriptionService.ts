@@ -280,12 +280,15 @@ export const SubscriptionService = {
     };
 
     if (!email) throw new Error("No signed-in account");
-    const response = await fetch("/api/subscription", {
+    const httpResponse = await fetch("/api/subscription", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "cancel" }),
     });
-    if (!response.ok) throw new Error("Failed to cancel subscription");
+    const apiResponse = await httpResponse.json().catch(() => null);
+    if (!httpResponse.ok || (apiResponse && apiResponse.status === 0)) {
+      throw new Error(apiResponse?.message || apiResponse?.error || "Failed to cancel subscription");
+    }
     subscriptionRepository.save(updated);
 
     return updated;
@@ -320,30 +323,29 @@ export const SubscriptionService = {
     if (!email) return null;
 
     try {
-      const res = await fetch(`/api/subscription?email=${encodeURIComponent(email)}`);
-      const data = await res.json();
-      if (data.success && data.subscription) {
-        const currentLocal = subscriptionRepository.get();
-
+      const httpResponse = await fetch(`/api/subscription?email=${encodeURIComponent(email)}`);
+      const apiResponse = await httpResponse.json();
+      const subData = apiResponse.data?.subscription || apiResponse.subscription;
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && subData) {
         const sub: Subscription = {
-          planKey: data.subscription.planKey || "early_access",
-          planName: data.subscription.planName || "Free Trial",
-          billingCycle: data.subscription.billingCycle || "yearly",
-          status: data.subscription.status || "trial",
-          activatedAt: data.subscription.activatedAt || new Date().toISOString(),
-          trialStartedAt: data.subscription.trialStartedAt || null,
-          trialEndsAt: data.subscription.trialEndsAt || null,
-          currentPeriodStartedAt: data.subscription.currentPeriodStartedAt || null,
-          currentPeriodEndsAt: data.subscription.currentPeriodEndsAt || null,
-          renewsAt: data.subscription.renewsAt || null,
-          endsAt: data.subscription.endsAt || null,
-          cancelledAt: data.subscription.cancelledAt || null,
-          cancelAtPeriodEnd: Boolean(data.subscription.cancelAtPeriodEnd),
-          paymentMode: data.subscription.paymentMode || "free_trial",
-          firstMonthOffer: Boolean(data.subscription.firstMonthOffer),
-          firstMonthAmount: data.subscription.firstMonthAmount ?? FIRST_MONTH_OFFER_AMOUNT_INR,
-          firstMonthCurrency: data.subscription.firstMonthCurrency || "INR",
-          autoRenew: Boolean(data.subscription.autoRenew),
+          planKey: subData.planKey || "early_access",
+          planName: subData.planName || "Free Trial",
+          billingCycle: subData.billingCycle || "yearly",
+          status: subData.status || "trial",
+          activatedAt: subData.activatedAt || new Date().toISOString(),
+          trialStartedAt: subData.trialStartedAt || null,
+          trialEndsAt: subData.trialEndsAt || null,
+          currentPeriodStartedAt: subData.currentPeriodStartedAt || null,
+          currentPeriodEndsAt: subData.currentPeriodEndsAt || null,
+          renewsAt: subData.renewsAt || null,
+          endsAt: subData.endsAt || null,
+          cancelledAt: subData.cancelledAt || null,
+          cancelAtPeriodEnd: Boolean(subData.cancelAtPeriodEnd),
+          paymentMode: subData.paymentMode || "free_trial",
+          firstMonthOffer: Boolean(subData.firstMonthOffer),
+          firstMonthAmount: subData.firstMonthAmount ?? FIRST_MONTH_OFFER_AMOUNT_INR,
+          firstMonthCurrency: subData.firstMonthCurrency || "INR",
+          autoRenew: Boolean(subData.autoRenew),
         };
         subscriptionRepository.save(sub);
         return sub;

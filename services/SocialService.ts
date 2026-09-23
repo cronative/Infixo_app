@@ -112,13 +112,16 @@ export const SocialService = {
       const query = email
         ? `email=${encodeURIComponent(email)}`
         : `username=${encodeURIComponent(username || "")}`;
-      const res = await fetch(`/api/creator/socials?${query}`);
-      const data = await res.json();
-      if (data.success && Array.isArray(data.socials)) {
+      const httpResponse = await fetch(`/api/creator/socials?${query}`);
+      const apiResponse = await httpResponse.json();
+      const socials = apiResponse.data?.socials || apiResponse.socials;
+      const customLinks = apiResponse.data?.customLinks || apiResponse.customLinks;
+
+      if ((apiResponse.status === 1 || apiResponse.success) && Array.isArray(socials)) {
         const current = this.getAccounts();
         const updated: SocialAccounts = { ...current };
 
-        data.socials.forEach((s: any) => {
+        socials.forEach((s: any) => {
           const platform = (s.platform || "").toLowerCase().trim();
           const handle = (s.username || s.accountName || "").replace(/^@/, "").trim();
 
@@ -174,8 +177,8 @@ export const SocialService = {
         socialRepository.save(updated);
 
         // Also sync custom links if returned by socials endpoint
-        if (Array.isArray(data.customLinks) && data.customLinks.length > 0) {
-          customLinksRepository.save(data.customLinks);
+        if (Array.isArray(customLinks) && customLinks.length > 0) {
+          customLinksRepository.save(customLinks);
         }
 
         return updated;

@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
@@ -7,7 +6,7 @@ import { getPlanQuota } from "@/services/subscriptionLimits";
 import { requireCreator } from "@/lib/creatorAuth";
 import { requireSession, ownsResource } from "@/lib/session";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
-
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 // GET /api/series?email=... or ?username=...
 export async function GET(req: Request) {
@@ -21,14 +20,14 @@ export async function GET(req: Request) {
       const auth = requireSession(req);
       if (auth.error) return auth.error;
       if (!ownsResource(auth.session, email)) {
-        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        return apiError("Forbidden", 403);
       }
     }
 
     if (seriesId && seriesId.trim() !== "") {
       const [seriesRows]: any = await db.query("SELECT * FROM series WHERE id = ?", [seriesId]);
       if (!seriesRows || seriesRows.length === 0) {
-        return NextResponse.json({ success: false, error: "Series not found" }, { status: 404 });
+        return apiError("Series not found", 404);
       }
       const s = seriesRows[0];
       const accessError = await authorizeCreatorRead(req, s.creator_id, true);
@@ -78,11 +77,10 @@ export async function GET(req: Request) {
           },
         ],
       };
-      return NextResponse.json({ success: true, series: singleSeries });
+      return apiSuccess({ series: singleSeries }, "Series retrieved successfully");
     }
 
     debugLog("API_SERIES", "Received query for email/username:", { email, username });
-
 
     let creatorId: string | null = null;
 
@@ -105,7 +103,7 @@ export async function GET(req: Request) {
     }
 
     if (!creatorId) {
-      return NextResponse.json({ success: true, series: [] });
+      return apiSuccess({ series: [] }, "No series found");
     }
     const accessError = await authorizeCreatorRead(req, creatorId, Boolean(username));
     if (accessError) return accessError;
@@ -117,7 +115,7 @@ export async function GET(req: Request) {
     );
 
     if (seriesRows.length === 0) {
-      return NextResponse.json({ success: true, series: [] });
+      return apiSuccess({ series: [] }, "No series found");
     }
 
     const seriesIds = seriesRows.map((s: any) => s.id);
@@ -164,10 +162,10 @@ export async function GET(req: Request) {
     });
 
     console.log(`✅ [GET /api/series] Returning ${seriesList.length} series for creatorId ${creatorId}`);
-    return NextResponse.json({ success: true, series: seriesList });
+    return apiSuccess({ series: seriesList }, "Series list retrieved successfully");
   } catch (err: any) {
     console.error("❌ GET Series MySQL Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to retrieve series", 500);
   }
 }
 
@@ -185,7 +183,7 @@ export async function POST(req: Request) {
 
     if (!isEpisodeOnly && !title) {
       console.error("❌ [POST /api/series] Missing series title!");
-      return NextResponse.json({ error: "Series Title is required" }, { status: 400 });
+      return apiError("Series Title is required", 400);
     }
 
     const creatorId = auth.creator.id;
@@ -214,13 +212,10 @@ export async function POST(req: Request) {
         );
         const currentSeriesCount = Number(totalSeriesRows[0]?.count || 0);
         if (currentSeriesCount >= quota.maxSeries) {
-          return NextResponse.json(
-            {
-              error: `Series limit reached (${quota.maxSeries} max) for ${quota.name} plan. Upgrade your plan to add more series.`,
-              isLimitReached: true,
-              type: "series",
-            },
-            { status: 403 }
+          return apiError(
+            `Series limit reached (${quota.maxSeries} max) for ${quota.name} plan. Upgrade your plan to add more series.`,
+            403,
+            { isLimitReached: true, type: "series" }
           );
         }
       }
@@ -254,13 +249,10 @@ export async function POST(req: Request) {
         const projectedTotal = (existingEps?.length || 0) + newEpisodesCount;
 
         if (projectedTotal > quota.maxEpisodesPerSeries) {
-          return NextResponse.json(
-            {
-              error: `Episode limit reached (${quota.maxEpisodesPerSeries} max per series) for ${quota.name} plan. Upgrade your plan to add more episodes.`,
-              isLimitReached: true,
-              type: "episode",
-            },
-            { status: 403 }
+          return apiError(
+            `Episode limit reached (${quota.maxEpisodesPerSeries} max per series) for ${quota.name} plan. Upgrade your plan to add more episodes.`,
+            403,
+            { isLimitReached: true, type: "episode" }
           );
         }
       }
@@ -340,10 +332,10 @@ export async function POST(req: Request) {
     // Record / Update current step in creator_onboarding_steps table (1 row per email)
     await recordOnboardingStep(email, "series", creatorId);
 
-    return NextResponse.json({ success: true, message: "Series created in MySQL", seriesId });
+    return apiSuccess({ seriesId }, "Series created in MySQL");
   } catch (err: any) {
     console.error("POST Series MySQL Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to create series", 500);
   }
 }
 
@@ -362,11 +354,11 @@ export async function DELETE(req: Request) {
         "DELETE e FROM episodes e INNER JOIN series s ON s.id = e.series_id WHERE e.id = ? AND s.creator_id = ?",
         [episodeId, auth.creator.id]
       );
-      return NextResponse.json({ success: true, message: "Episode deleted from MySQL" });
+      return apiSuccess({}, "Episode deleted from MySQL");
     }
 
     if (!seriesId) {
-      return NextResponse.json({ error: "Series ID or Episode ID required" }, { status: 400 });
+      return apiError("Series ID or Episode ID required", 400);
     }
 
     await db.query(
@@ -374,10 +366,10 @@ export async function DELETE(req: Request) {
       [seriesId, auth.creator.id]
     );
     await db.query("DELETE FROM series WHERE id = ? AND creator_id = ?", [seriesId, auth.creator.id]);
-    return NextResponse.json({ success: true, message: "Series deleted from MySQL" });
+    return apiSuccess({}, "Series deleted from MySQL");
   } catch (err: any) {
     console.error("DELETE Series MySQL Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to delete series", 500);
   }
 }
 
@@ -398,7 +390,7 @@ export async function PUT(req: Request) {
          WHERE e.id = ? AND s.creator_id = ?`,
         [episodeNumber || 1, title || "Episode", externalUrl || "", platform || "YouTube", episodeId, auth.creator.id]
       );
-      return NextResponse.json({ success: true, message: "Episode updated in MySQL" });
+      return apiSuccess({}, "Episode updated in MySQL");
     }
 
     if (seriesId) {
@@ -408,12 +400,12 @@ export async function PUT(req: Request) {
          WHERE id = ? AND creator_id = ?`,
         [body.title, body.description || "", body.genre || "", body.language || "Hindi", seriesId, auth.creator.id]
       );
-      return NextResponse.json({ success: true, message: "Series updated in MySQL" });
+      return apiSuccess({}, "Series updated in MySQL");
     }
 
-    return NextResponse.json({ error: "episodeId or seriesId required" }, { status: 400 });
+    return apiError("episodeId or seriesId required", 400);
   } catch (err: any) {
     console.error("PUT Series/Episode MySQL Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to update series", 500);
   }
 }

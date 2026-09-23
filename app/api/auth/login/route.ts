@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { sendOtpEmail } from "@/lib/email";
 import { getClientIp } from "@/lib/rateLimit";
 import { checkPersistentRateLimit } from "@/lib/persistentRateLimit";
 import crypto from "crypto";
 import { logDeviceLogin } from "@/lib/loginLogger";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 export async function POST(req: Request) {
   try {
@@ -12,9 +12,9 @@ export async function POST(req: Request) {
     const clientIp = getClientIp(req);
     const rateCheck = await checkPersistentRateLimit(`login:${clientIp}`, 5, 5 * 60);
     if (!rateCheck.success) {
-      return NextResponse.json(
-        { error: `Too many login attempts. Please wait ${rateCheck.retryAfterSec} seconds before trying again.` },
-        { status: 429 }
+      return apiError(
+        `Too many login attempts. Please wait ${rateCheck.retryAfterSec} seconds before trying again.`,
+        429
       );
     }
 
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     const email = (body.email || "").trim().toLowerCase();
 
     if (!email || !email.includes("@")) {
-      return NextResponse.json({ error: "Please enter a valid email address" }, { status: 400 });
+      return apiError("Please enter a valid email address", 400);
     }
 
     let creator: any = null;
@@ -60,27 +60,25 @@ export async function POST(req: Request) {
       });
     } catch (dbErr: any) {
       console.error("Failed to persist OTP:", dbErr.message);
-      return NextResponse.json({ error: "Unable to create a login code" }, { status: 503 });
+      return apiError("Unable to create a login code", 503);
     }
 
     // 4. Send real OTP Email via Gmail SMTP (Awaited for guaranteed delivery)
     const emailSent = await sendOtpEmail(email, otpCode);
     if (!emailSent) {
       await db.query("UPDATE otps SET is_used = TRUE WHERE email = ? AND otp_code = ?", [email, otpCode]);
-      return NextResponse.json({ error: "Unable to deliver the login code" }, { status: 503 });
+      return apiError("Unable to deliver the login code", 503);
     }
 
-    return NextResponse.json({
-      success: true,
-      message: `OTP sent to ${email} (valid for 5 minutes)`,
-      email: email,
-      username: creator?.username || "",
-    });
+    return apiSuccess(
+      {
+        email,
+        username: creator?.username || "",
+      },
+      `OTP sent to ${email} (valid for 5 minutes)`
+    );
   } catch (error: any) {
     console.error("Auth Login Error:", error);
-    return NextResponse.json(
-      { error: error.message || "Failed to process login request" },
-      { status: 500 }
-    );
+    return apiError(error.message || "Failed to process login request", 500);
   }
 }

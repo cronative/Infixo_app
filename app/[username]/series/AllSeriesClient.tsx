@@ -174,11 +174,15 @@ export default function AllSeriesClient() {
           fetch(`/api/series?username=${encodeURIComponent(username)}`).then((r) => r.json()).catch(() => ({ success: false })),
         ]);
 
+        const isProfOk = profileRes.status === 1 || profileRes.success === true;
+        const freshProfile = profileRes.data?.profile || profileRes.profile;
+        const freshSubscription = profileRes.data?.subscription || profileRes.subscription;
+
         if (
-          !profileRes.success ||
-          !profileRes.profile?.username ||
-          isFreeTrialExpired(profileRes.subscription) ||
-          profileRes.profile.visibilitySettings?.showSeries === false
+          !isProfOk ||
+          !freshProfile?.username ||
+          isFreeTrialExpired(freshSubscription) ||
+          freshProfile.visibilitySettings?.showSeries === false
         ) {
           setNotFound(true);
           setLoaded(true);
@@ -186,10 +190,11 @@ export default function AllSeriesClient() {
           return;
         }
 
-        const freshProfile = profileRes.profile;
-        const freshTheme = (profileRes.profile.themeKey || "minimal-white") as ThemeKey;
-        const freshSocials = Array.isArray(socialsRes.socials) ? buildSocialAccounts(socialsRes.socials) : EMPTY_SOCIAL_ACCOUNTS;
-        const freshSeries = Array.isArray(seriesRes.series) ? seriesRes.series : [];
+        const freshTheme = (freshProfile.themeKey || "minimal-white") as ThemeKey;
+        const rawSocials = socialsRes.data?.socials || socialsRes.socials;
+        const freshSocials = Array.isArray(rawSocials) ? buildSocialAccounts(rawSocials) : EMPTY_SOCIAL_ACCOUNTS;
+        const rawSeries = seriesRes.data?.series || seriesRes.series;
+        const freshSeries = Array.isArray(rawSeries) ? rawSeries : [];
 
         setProfile(freshProfile);
         setTheme(freshTheme);

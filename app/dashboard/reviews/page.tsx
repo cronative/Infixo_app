@@ -62,15 +62,15 @@ export default function DashboardReviewsPage() {
 
       try {
         if (email || username) {
-          const res = await fetch(
+          const httpResponse = await fetch(
             `/api/creator/reviews?email=${encodeURIComponent(email)}&username=${encodeURIComponent(username)}`
-          )
-            .then((r) => r.json())
-            .catch(() => null);
+          );
+          const apiResponse = await httpResponse.json();
+          const revList = apiResponse.data?.reviews || apiResponse.reviews;
 
-          if (res && res.success && Array.isArray(res.reviews)) {
-            setReviews(res.reviews);
-            reviewsRepository.saveAll(res.reviews);
+          if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && Array.isArray(revList)) {
+            setReviews(revList);
+            reviewsRepository.saveAll(revList);
             return;
           }
         }
@@ -110,7 +110,7 @@ export default function DashboardReviewsPage() {
       const email = profile.email || "";
       const creatorId = profile.id || profile.email || "";
 
-      const res = await fetch("/api/creator/reviews", {
+      const httpResponse = await fetch("/api/creator/reviews", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -120,15 +120,18 @@ export default function DashboardReviewsPage() {
           clientEmail: clientEmail.trim() || undefined,
           projectTitle: projectTitle.trim() || undefined,
         }),
-      }).then((r) => r.json());
+      });
+      const apiResponse = await httpResponse.json();
+      const reviewData = apiResponse.data?.review || apiResponse.review;
+      const reviewUrl = apiResponse.data?.reviewUrl || apiResponse.reviewUrl;
 
-      if (res.success && res.review) {
-        const newRev: CreatorReview = res.review;
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && reviewData) {
+        const newRev: CreatorReview = reviewData;
         updateReviews([newRev, ...reviews]);
 
         if (copyLinkAfter || !clientEmail.trim()) {
           const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
-          const link = res.reviewUrl || `${origin}/review/${newRev.token}`;
+          const link = reviewUrl || `${origin}/review/${newRev.token}`;
           await copyToClipboard(link);
           showToast("Review link created and copied to clipboard! 🔗", "success");
         } else {
@@ -139,8 +142,9 @@ export default function DashboardReviewsPage() {
         setClientEmail("");
         setProjectTitle("");
         setIsModalOpen(false);
+        return;
       } else {
-        throw new Error(res.error || "Failed to create review request");
+        throw new Error(apiResponse.message || apiResponse.error || "Failed to create review request");
       }
     } catch (err: unknown) {
       console.warn("Backend error, saving locally:", err);

@@ -106,14 +106,14 @@ export default function DashboardSocialsPage() {
     setSyncingPlatform(platform);
     try {
       if (platform === "instagram" && instaConnectedHandle) {
-        const res = await fetch("/api/instagram/userInfo", {
+        const httpResponse = await fetch("/api/instagram/userInfo", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username: instaConnectedHandle }),
         });
-        const data = await res.json();
-        if (data.success && data.user) {
-          const u = data.user;
+        const apiResponse = await httpResponse.json();
+        const u = apiResponse.data?.user || apiResponse.user;
+        if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && u) {
           updateSocials({
             instagram: {
               ...socials.instagram,
@@ -130,14 +130,14 @@ export default function DashboardSocialsPage() {
           showToast("Could not refresh Instagram. Please check handle.", "error");
         }
       } else if (platform === "youtube" && ytConnectedHandle) {
-        const res = await fetch("/api/youtube/channelInfo", {
+        const httpResponse = await fetch("/api/youtube/channelInfo", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ channelName: ytConnectedHandle }),
         });
-        const data = await res.json();
-        if (data.success && data.channel) {
-          const c = data.channel;
+        const apiResponse = await httpResponse.json();
+        const c = apiResponse.data?.channel || apiResponse.channel;
+        if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && c) {
           updateSocials({
             youtube: {
               ...socials.youtube,
@@ -154,14 +154,14 @@ export default function DashboardSocialsPage() {
           showToast("Could not refresh YouTube. Please check handle.", "error");
         }
       } else if (platform === "facebook" && fbConnectedHandle) {
-        const res = await fetch("/api/facebook/pageInfo", {
+        const httpResponse = await fetch("/api/facebook/pageInfo", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username: fbConnectedHandle }),
         });
-        const data = await res.json();
-        if (data.success && data.page) {
-          const p = data.page;
+        const apiResponse = await httpResponse.json();
+        const p = apiResponse.data?.page || apiResponse.page;
+        if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && p) {
           updateSocials({
             facebook: {
               ...socials.facebook,

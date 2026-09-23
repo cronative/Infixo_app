@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureBrandsTable } from "@/lib/brandsDb";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 import { requireCreator } from "@/lib/creatorAuth";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -26,7 +26,7 @@ export async function GET(req: Request) {
     const lookupVal = searchParams.get("creatorId") || searchParams.get("email") || searchParams.get("username");
 
     if (!lookupVal) {
-      return NextResponse.json({ success: true, brands: [] });
+      return apiSuccess({ brands: [] }, "No creator lookup provided");
     }
 
     await ensureBrandsTable();
@@ -59,10 +59,10 @@ export async function GET(req: Request) {
       updatedAt: b.updatedAt,
     }));
 
-    return NextResponse.json({ success: true, brands });
+    return apiSuccess({ brands }, "Brands retrieved successfully");
   } catch (err: any) {
     console.error("GET brands error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to retrieve brands", 500);
   }
 }
 
@@ -88,12 +88,12 @@ export async function POST(req: Request) {
           );
         }
       }
-      return NextResponse.json({ success: true, message: "Brands reordered" });
+      return apiSuccess({}, "Brands reordered");
     }
 
     const b = brand || body;
     if (!b.brandName || !b.brandName.trim()) {
-      return NextResponse.json({ error: "Brand name is required" }, { status: 400 });
+      return apiError("Brand name is required", 400);
     }
 
     const finalLogoUrl = await saveBase64ImageToStorage(b.brandLogoUrl, "brands", "brand") || (b.brandLogoUrl && !b.brandLogoUrl.startsWith("data:") ? b.brandLogoUrl : null);
@@ -125,10 +125,10 @@ export async function POST(req: Request) {
       ]
     );
 
-    return NextResponse.json({ success: true, brandId, message: "Brand saved successfully" });
+    return apiSuccess({ brandId }, "Brand saved successfully");
   } catch (err: any) {
     console.error("POST brand error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to save brand", 500);
   }
 }
 
@@ -141,7 +141,7 @@ export async function DELETE(req: Request) {
     const id = searchParams.get("id");
 
     if (!id) {
-      return NextResponse.json({ error: "ID required" }, { status: 400 });
+      return apiError("ID required", 400);
     }
 
     await ensureBrandsTable();
@@ -150,9 +150,9 @@ export async function DELETE(req: Request) {
 
     await db.query("DELETE FROM creator_brands WHERE id = ? AND creator_id = ?", [id, targetId]);
 
-    return NextResponse.json({ success: true, message: "Brand removed" });
+    return apiSuccess({}, "Brand removed");
   } catch (err: any) {
     console.error("DELETE brand error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to delete brand", 500);
   }
 }

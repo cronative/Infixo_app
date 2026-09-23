@@ -143,19 +143,21 @@ export function SeriesDetailClient({
           fetch(`/api/creator/profile?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({})),
         ]);
 
-        const list: Series[] = seriesRes.series || [];
+        const list: Series[] = seriesRes.data?.series || seriesRes.series || [];
         const found = list.find((s) => s.id === seriesIdParam);
+        const isProfOk = profRes.status === 1 || profRes.success === true;
+        const profile = profRes.data?.profile || profRes.profile;
 
-        if (found && profRes.success && profRes.profile) {
+        if (found && isProfOk && profile) {
           setSeries(found);
           setCreator({
-            displayName: profRes.profile.displayName || usernameParam,
-            username: profRes.profile.username || usernameParam,
-            photoDataUrl: profRes.profile.photoDataUrl,
-            bio: profRes.profile.bio,
-            category: profRes.profile.category,
-            themeKey: profRes.profile.themeKey || "minimal-white",
-            totalFanbase: profRes.profile.totalFanbase || 0,
+            displayName: profile.displayName || usernameParam,
+            username: profile.username || usernameParam,
+            photoDataUrl: profile.photoDataUrl,
+            bio: profile.bio,
+            category: profile.category,
+            themeKey: profile.themeKey || "minimal-white",
+            totalFanbase: profile.totalFanbase || 0,
           });
           setNotFound(false);
         } else {

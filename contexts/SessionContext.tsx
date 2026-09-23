@@ -90,8 +90,8 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
   const fetchSession = useCallback(async () => {
     try {
-      const res = await fetch("/api/me", { credentials: "include" });
-      if (res.status === 401) {
+      const httpResponse = await fetch("/api/me", { credentials: "include" });
+      if (httpResponse.status === 401) {
         if (wasLoggedIn.current) {
           forceLogout();
           return;
@@ -99,8 +99,9 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         setState((s) => ({ ...s, isLoading: false, isLoggedIn: false }));
         return;
       }
-      const data = await res.json();
-      if (!data.authenticated) {
+      const apiResponse = await httpResponse.json();
+      const data = apiResponse.data || {};
+      if (!httpResponse.ok || apiResponse.status !== 1 || !data.authenticated) {
         if (wasLoggedIn.current) {
           forceLogout();
           return;

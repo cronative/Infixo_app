@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureOtherSocialsTable } from "@/lib/otherSocialsDb";
 import { requireCreator } from "@/lib/creatorAuth";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -25,7 +25,7 @@ export async function GET(req: Request) {
     const lookupVal = searchParams.get("creatorId") || searchParams.get("email") || searchParams.get("username");
 
     if (!lookupVal) {
-      return NextResponse.json({ success: true, socials: [] });
+      return apiSuccess({ socials: [] }, "No lookup param provided");
     }
 
     await ensureOtherSocialsTable();
@@ -55,10 +55,10 @@ export async function GET(req: Request) {
       createdAt: r.createdAt,
     }));
 
-    return NextResponse.json({ success: true, socials });
+    return apiSuccess({ socials }, "Other social accounts retrieved successfully");
   } catch (err: any) {
     console.error("GET other socials error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to retrieve other socials", 500);
   }
 }
 
@@ -71,7 +71,7 @@ export async function POST(req: Request) {
     const { socials } = body;
 
     if (!Array.isArray(socials)) {
-      return NextResponse.json({ error: "Socials array is required" }, { status: 400 });
+      return apiError("Socials array is required", 400);
     }
 
     await ensureOtherSocialsTable();
@@ -102,10 +102,10 @@ export async function POST(req: Request) {
       }
     }
 
-    return NextResponse.json({ success: true, message: "Other social accounts saved successfully" });
+    return apiSuccess({}, "Other social accounts saved successfully");
   } catch (err: any) {
     console.error("POST other socials error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to save other socials", 500);
   }
 }
 
@@ -118,7 +118,7 @@ export async function DELETE(req: Request) {
     const id = searchParams.get("id");
 
     if (!id) {
-      return NextResponse.json({ error: "ID required" }, { status: 400 });
+      return apiError("ID required", 400);
     }
 
     await ensureOtherSocialsTable();
@@ -127,9 +127,9 @@ export async function DELETE(req: Request) {
 
     await db.query("DELETE FROM creator_other_socials WHERE id = ? AND creator_id = ?", [id, targetId]);
 
-    return NextResponse.json({ success: true, message: "Social account deleted" });
+    return apiSuccess({}, "Social account deleted");
   } catch (err: any) {
     console.error("DELETE other socials error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to delete other social account", 500);
   }
 }

@@ -11,18 +11,19 @@ export interface AdminUser {
 export const AdminService = {
   async login(email: string, pass: string): Promise<boolean> {
     try {
-      const res = await fetch("/api/admin/auth", {
+      const httpResponse = await fetch("/api/admin/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim().toLowerCase(), password: pass }),
       });
 
-      const data = await res.json();
-      if (res.ok && data.success && data.admin) {
+      const apiResponse = await httpResponse.json();
+      const adminData = apiResponse.data?.admin || apiResponse.admin;
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && adminData) {
         const session = {
-          email: data.admin.email,
+          email: adminData.email,
           role: "admin",
-          name: data.admin.name || "Inflixo Super Admin",
+          name: adminData.name || "Inflixo Super Admin",
           loggedInAt: new Date().toISOString(),
         };
         storage.set(ADMIN_TOKEN_KEY, session);

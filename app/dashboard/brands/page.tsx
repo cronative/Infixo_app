@@ -46,10 +46,12 @@ export default function DashboardBrandsPage() {
     if (!creatorLookup) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/creator/brands?creatorId=${encodeURIComponent(creatorLookup)}`).then((r) => r.json());
-      if (res.success && Array.isArray(res.brands)) {
-        setBrands(res.brands);
-        brandsRepository.saveAll(res.brands);
+      const httpResponse = await fetch(`/api/creator/brands?creatorId=${encodeURIComponent(creatorLookup)}`);
+      const apiResponse = await httpResponse.json();
+      const brandsList = apiResponse.data?.brands || apiResponse.brands;
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && Array.isArray(brandsList)) {
+        setBrands(brandsList);
+        brandsRepository.saveAll(brandsList);
       } else {
         const local = brandsRepository.getAll();
         setBrands(local);
@@ -122,7 +124,7 @@ export default function DashboardBrandsPage() {
 
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/creator/brands", {
+      const httpResponse = await fetch("/api/creator/brands", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -140,14 +142,15 @@ export default function DashboardBrandsPage() {
             isActive: editingBrand?.isActive !== false,
           },
         }),
-      }).then((r) => r.json());
+      });
+      const apiResponse = await httpResponse.json();
 
-      if (res.success) {
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
         showToast(editingBrand ? "Brand updated successfully! ✨" : "Brand added successfully! 🚀");
         setIsModalOpen(false);
         loadBrands();
       } else {
-        showToast(res.error || "Failed to save brand", "error");
+        showToast(apiResponse.message || apiResponse.error || "Failed to save brand", "error");
       }
     } catch {
       showToast("An error occurred while saving brand", "error");
@@ -160,17 +163,18 @@ export default function DashboardBrandsPage() {
     if (!brandToDelete) return;
     setIsSubmitting(true);
     try {
-      const res = await fetch(
+      const httpResponse = await fetch(
         `/api/creator/brands?id=${encodeURIComponent(brandToDelete.id)}&creatorId=${encodeURIComponent(creatorLookup)}`,
         { method: "DELETE" }
-      ).then((r) => r.json());
+      );
+      const apiResponse = await httpResponse.json();
 
-      if (res.success) {
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
         showToast("Brand removed");
         setBrandToDelete(null);
         loadBrands();
       } else {
-        showToast(res.error || "Failed to delete brand", "error");
+        showToast(apiResponse.message || apiResponse.error || "Failed to delete brand", "error");
       }
     } catch {
       showToast("Failed to remove brand", "error");
@@ -182,7 +186,7 @@ export default function DashboardBrandsPage() {
   const handleToggleBrand = async (brand: CreatorBrand) => {
     try {
       const updated = !brand.isActive;
-      await fetch("/api/creator/brands", {
+      const httpResponse = await fetch("/api/creator/brands", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -194,8 +198,11 @@ export default function DashboardBrandsPage() {
           },
         }),
       });
-      showToast(updated ? "Brand visible on profile" : "Brand hidden from profile");
-      loadBrands();
+      const apiResponse = await httpResponse.json();
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
+        showToast(updated ? "Brand visible on profile" : "Brand hidden from profile");
+        loadBrands();
+      }
     } catch { }
   };
 

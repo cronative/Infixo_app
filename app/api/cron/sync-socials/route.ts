@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ApifySocialService } from "@/services/ApifySocialService";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 export const maxDuration = 300; // 5 minutes max execution duration
 
@@ -203,12 +203,12 @@ async function handleCronSync(req: Request) {
     const cronSecret = process.env.CRON_SECRET;
     if (!cronSecret) {
       console.error("CRON_SECRET is not configured");
-      return NextResponse.json({ error: "Cron is not configured" }, { status: 503 });
+      return apiError("Cron is not configured", 503);
     }
 
     const authorization = req.headers.get("authorization");
     if (authorization !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return apiError("Unauthorized", 401);
     }
 
     // Step 1: Query all creators from MySQL DB
@@ -280,16 +280,15 @@ async function handleCronSync(req: Request) {
       results.push(creatorSummary);
     }
 
-    return NextResponse.json({
-      success: true,
+    return apiSuccess({
       timestamp: new Date().toISOString(),
       cronSchedule: "Every 12 hours at 11:11 AM & 11:11 PM IST",
       cronExpression: "11 11,23 * * *",
       creatorsProcessed: creators.length,
       results,
-    });
+    }, "Social accounts sync completed successfully");
   } catch (error: any) {
     console.error("Cron Social Sync Error:", error);
-    return NextResponse.json({ error: error.message || "Cron social sync failed" }, { status: 500 });
+    return apiError(error.message || "Cron social sync failed", 500);
   }
 }
