@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { requireCreator } from "@/lib/creatorAuth";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { sanitizeUrl } from "@/lib/urlSanitizer";
 
 let customLinksTableEnsured = false;
 
@@ -45,7 +46,7 @@ function normalizeCustomLinks(rows: any[]) {
     const row = {
       id: r.id,
       title: r.title,
-      url: r.url || "",
+      url: sanitizeUrl(r.url, { allowEmpty: true }) || "",
       icon: r.icon || "link",
       isEnabled: Boolean(r.isEnabled),
       kind: r.linkType === "collection" ? "collection" : "link",
@@ -57,7 +58,7 @@ function normalizeCustomLinks(rows: any[]) {
       childList.push({
         id: row.id,
         title: row.title,
-        url: row.url,
+        url: sanitizeUrl(row.url, { allowEmpty: true }) || "",
         icon: row.icon,
         isEnabled: row.isEnabled,
       });
@@ -169,7 +170,7 @@ export async function POST(req: Request) {
             null,
             item.kind === "collection" ? "collection" : "link",
             (item.title || "").trim(),
-            (item.url || "").trim(),
+            sanitizeUrl(item.url, { allowEmpty: true }) || "",
             item.icon || "link",
             item.isEnabled !== false ? 1 : 0,
             idx,
@@ -191,7 +192,7 @@ export async function POST(req: Request) {
                 linkId,
                 "collection_item",
                 (child.title || "").trim(),
-                (child.url || "").trim(),
+                sanitizeUrl(child.url, { allowEmpty: true }) || "",
                 child.icon || "link",
                 child.isEnabled !== false ? 1 : 0,
                 childIdx,

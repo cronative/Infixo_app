@@ -438,6 +438,7 @@ export default function PublicProfileClient() {
   const fullUrl = buildProfileUrl(handleStr);
   const themeMeta = ThemeService.getThemeMeta(theme);
   const pageBgStyle = themeMeta.outerBgClass || THEME_PAGE_BACKGROUNDS[theme] || THEME_PAGE_BACKGROUNDS["minimal-white"];
+  const hasPhotoBackdrop = Boolean(themeMeta.outerBgClass?.includes("theme-bg-"));
 
   async function handleShare() {
     if (typeof navigator !== "undefined" && navigator.share) {
@@ -531,12 +532,12 @@ export default function PublicProfileClient() {
     >
       {/* 1. Full-screen outer background covering complete viewport */}
       <div
-        className={`fixed inset-0 pointer-events-none transition-colors duration-500 z-0 ${pageBgStyle}`}
+        className={`fixed inset-0 pointer-events-none transition-colors duration-500 z-0 ${pageBgStyle} ${hasPhotoBackdrop ? "theme-photo-backdrop" : ""}`}
         style={{ backgroundColor: themeMeta.colors.pageBackground }}
         aria-hidden="true"
       >
-        {/* Soft ambient radial lighting */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[650px] bg-gradient-radial from-white/[0.06] to-transparent blur-3xl pointer-events-none" />
+        {/* Soft ambient radial lighting (skipped on photo themes to keep the blurred photo clean) */}
+        {!hasPhotoBackdrop && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[650px] bg-gradient-radial from-white/[0.06] to-transparent blur-3xl pointer-events-none" />}
       </div>
 
       {/* 2. Ambient animation if theme is animated */}
@@ -549,10 +550,10 @@ export default function PublicProfileClient() {
       )}
 
       {/* 3. Theme-aware Focus Overlay Layer */}
-      <FocusOverlay overlay={themeMeta.focusOverlay} />
+      {!hasPhotoBackdrop && <FocusOverlay overlay={themeMeta.focusOverlay} />}
 
       {/* 4. Centred Creator Profile Surface */}
-      <main className="relative z-10 h-dvh min-h-0 flex flex-col mx-auto w-full max-w-[520px] px-2.5 py-2.5 sm:px-4 sm:py-3.5 overflow-hidden animate-fade-in-up">
+      <main className="relative z-10 h-dvh min-h-0 flex flex-col mx-auto w-full max-w-[620px] px-2.5 py-2.5 sm:py-3.5 overflow-hidden animate-fade-in-up">
         {/* Main Theme Profile Card (Renders Profile, Socials, Series, Services, Reviews & Custom Links) */}
         <ThemeCard
           themeKey={theme}

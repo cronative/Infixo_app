@@ -242,7 +242,7 @@ export default function AllReviewsClient() {
       )}
       <FocusOverlay overlay={themeMeta.focusOverlay} />
 
-      <main className="relative z-10 h-dvh min-h-0 flex flex-col mx-auto w-full max-w-[520px] px-2.5 py-2.5 sm:px-4 sm:py-3.5 overflow-hidden animate-fade-in-up">
+      <main className="relative z-10 h-dvh min-h-0 flex flex-col mx-auto w-full max-w-[620px] px-2.5 py-2.5 sm:py-3.5 overflow-hidden animate-fade-in-up">
         <button
           type="button"
           onClick={() => router.push(`/${cleanHandle}`)}

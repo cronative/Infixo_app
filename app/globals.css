@@ -110,6 +110,8 @@
 }
 
 .theme-bg-taj-mahal {
+  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Front_far_view_of_taj_mahal.jpg?width=1600");
+  --theme-photo-tint: rgba(255, 251, 244, 0.30);
   background-color: #e6d7bc;
   background-image:
     linear-gradient(180deg, rgba(255, 253, 247, 0.72) 0%, rgba(246, 239, 226, 0.82) 44%, rgba(230, 215, 188, 0.90) 100%),
@@ -129,6 +131,8 @@
 }
 
 .theme-bg-marine-drive {
+  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Mumbai_Skyline_Marine_Drive_Night.jpg?width=1600");
+  --theme-photo-tint: rgba(6, 9, 16, 0.38);
   background-color: #061320;
   background-image:
     linear-gradient(180deg, rgba(2, 8, 18, 0.40) 0%, rgba(6, 19, 32, 0.58) 45%, rgba(2, 8, 18, 0.86) 100%),
@@ -148,6 +152,8 @@
 }
 
 .theme-bg-burj-khalifa {
+  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Night_view_of_Dubai_from_the_Burj_Khalifa,_April_2012_(31004629).jpg?width=1600");
+  --theme-photo-tint: rgba(6, 9, 16, 0.38);
   background-color: #05070d;
   background-image:
     linear-gradient(180deg, rgba(2, 3, 10, 0.32) 0%, rgba(5, 7, 13, 0.58) 48%, rgba(2, 3, 10, 0.90) 100%),
@@ -167,6 +173,8 @@
 }
 
 .theme-bg-somnath-temple {
+  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Somnath_Temple_Gujarat.jpg?width=1600");
+  --theme-photo-tint: rgba(255, 251, 244, 0.30);
   background-color: #d8b77a;
   background-image:
     linear-gradient(180deg, rgba(255, 248, 236, 0.52) 0%, rgba(243, 216, 168, 0.68) 46%, rgba(104, 66, 30, 0.74) 100%),
@@ -186,6 +194,8 @@
 }
 
 .theme-bg-dwarka-temple {
+  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Dwarkadhish_Temple,_Dwarka,_Gujarat.JPG?width=1600");
+  --theme-photo-tint: rgba(255, 251, 244, 0.30);
   background-color: #bfd5c9;
   background-image:
     linear-gradient(180deg, rgba(247, 251, 248, 0.50) 0%, rgba(232, 240, 230, 0.68) 45%, rgba(49, 84, 68, 0.72) 100%),
@@ -205,6 +215,8 @@
 }
 
 .theme-bg-goa-beach {
+  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Goa_Beach_-_Baga_Beach.jpg?width=1600");
+  --theme-photo-tint: rgba(255, 251, 244, 0.30);
   background-color: #e8c88e;
   background-image:
     linear-gradient(180deg, rgba(255, 248, 239, 0.48) 0%, rgba(247, 217, 166, 0.62) 44%, rgba(57, 83, 76, 0.70) 100%),
@@ -224,6 +236,8 @@
 }
 
 .theme-bg-love-letter {
+  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Love_Locks_(15125921667).jpg?width=1600");
+  --theme-photo-tint: rgba(255, 251, 244, 0.30);
   background-color: #f8dde4;
   background-image:
     linear-gradient(180deg, rgba(255, 246, 248, 0.58) 0%, rgba(253, 236, 239, 0.70) 46%, rgba(88, 20, 42, 0.62) 100%),
@@ -243,6 +257,8 @@
 }
 
 .theme-bg-christmas-snow {
+  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Snowy_tree_with_Christmas_lights.jpg?width=1600");
+  --theme-photo-tint: rgba(255, 251, 244, 0.30);
   background-color: #e7f3ea;
   background-image:
     linear-gradient(180deg, rgba(248, 255, 251, 0.54) 0%, rgba(239, 248, 242, 0.64) 42%, rgba(20, 58, 36, 0.74) 100%),
@@ -262,6 +278,8 @@
 }
 
 .theme-bg-mountain-mist {
+  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Misty_Mountains_(29990500236).jpg?width=1600");
+  --theme-photo-tint: rgba(255, 251, 244, 0.30);
   background-color: #d7e6e1;
   background-image:
     linear-gradient(180deg, rgba(243, 250, 248, 0.50) 0%, rgba(232, 242, 239, 0.64) 42%, rgba(17, 45, 46, 0.74) 100%),
@@ -281,6 +299,8 @@
 }
 
 .theme-bg-street-food {
+  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Indian_street_food-2.jpg?width=1600");
+  --theme-photo-tint: rgba(255, 251, 244, 0.30);
   background-color: #f5c777;
   background-image:
     linear-gradient(180deg, rgba(255, 248, 234, 0.42) 0%, rgba(255, 236, 203, 0.56) 44%, rgba(77, 37, 8, 0.70) 100%),
@@ -300,6 +320,8 @@
 }
 
 .theme-bg-cafe-mocha {
+  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/India-coffee-house-kolkata.jpg?width=1600");
+  --theme-photo-tint: rgba(6, 9, 16, 0.38);
   background-color: #201611;
   background-image:
     linear-gradient(180deg, rgba(32, 22, 17, 0.30) 0%, rgba(32, 22, 17, 0.58) 45%, rgba(12, 7, 4, 0.90) 100%),
@@ -315,6 +337,35 @@
   .theme-bg-cafe-mocha {
     background-attachment: scroll;
     background-position: center top, center top, center center;
+  }
+}
+
+/* Blurred photo backdrop for place/image themes (public profile page layer).
+   ::before = softly blurred photo, ::after = even clean tint. */
+.theme-photo-backdrop {
+  overflow: hidden;
+}
+.theme-photo-backdrop::before,
+.theme-photo-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.theme-photo-backdrop::before {
+  background-image: var(--theme-photo);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(10px) saturate(1.08);
+  transform: scale(1.08);
+}
+.theme-photo-backdrop::after {
+  background: var(--theme-photo-tint, rgba(0, 0, 0, 0.35));
+}
+@media (max-width: 768px) {
+  .theme-photo-backdrop::before {
+    filter: blur(8px) saturate(1.08);
   }
 }
 

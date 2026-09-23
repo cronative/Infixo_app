@@ -6,6 +6,7 @@ import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 import { requireSession, ownsResource } from "@/lib/session";
 import { isCreatorPublic } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { isReservedUsername } from "@/lib/constants";
 
 // GET /api/creator/profile?email=... or ?username=...
 export async function GET(req: Request) {
@@ -139,6 +140,10 @@ export async function POST(req: Request) {
     const email = session.email;
 
     const cleanUsername = username ? username.trim().replace(/[^a-z0-9_]/gi, "").toLowerCase() : "";
+
+    if (cleanUsername && isReservedUsername(cleanUsername)) {
+      return apiError("This username is reserved for platform use", 400);
+    }
 
     // Check if creator exists
     const [rows]: any = await db.query("SELECT id, username FROM creators WHERE email = ?", [email]);

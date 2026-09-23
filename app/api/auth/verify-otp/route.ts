@@ -33,6 +33,17 @@ export async function POST(req: Request) {
     );
 
     if (!otpRows || otpRows.length === 0) {
+      // Track failed attempts per email to defeat distributed brute-force attacks
+      const failCheck = await checkPersistentRateLimit(`verify:fail:${email}`, 5, 5 * 60);
+      if (!failCheck.success) {
+        // Invalidate active OTPs for this email upon 5 failed attempts
+        await db.query("UPDATE otps SET is_used = TRUE WHERE email = ? AND is_used = FALSE", [email]);
+        return apiError(
+          "Too many incorrect attempts. For security, your verification code has been cancelled. Please request a new code.",
+          429
+        );
+      }
+
       // Check if an expired OTP exists for this email & code
       const [expiredRows]: any = await db.query(
         `SELECT * FROM otps WHERE email = ? AND otp_code = ? ORDER BY id DESC LIMIT 1`,
@@ -43,7 +54,11 @@ export async function POST(req: Request) {
         return apiError("OTP code has expired (valid for 5 mins). Please click Resend Code.", 400);
       }
 
-      return apiError("Invalid OTP code. Please check your email and try again.", 400);
+      const remaining = failCheck.remaining;
+      const attemptWarning = remaining > 0 && remaining <= 3
+        ? ` (${remaining} attempt${remaining === 1 ? "" : "s"} remaining)`
+        : "";
+      return apiError(`Invalid OTP code. Please check your email and try again.${attemptWarning}`, 400);
     }
 
     // 2. Mark OTP as used in database on successful verification (keep row in otps table)

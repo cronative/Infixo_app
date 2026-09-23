@@ -3,6 +3,7 @@ import { ensureOtherSocialsTable } from "@/lib/otherSocialsDb";
 import { requireCreator } from "@/lib/creatorAuth";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { sanitizeUrl } from "@/lib/urlSanitizer";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -48,7 +49,7 @@ export async function GET(req: Request) {
       creatorId: r.creatorId,
       platform: r.platform,
       username: r.username,
-      url: r.url,
+      url: sanitizeUrl(r.url, { allowEmpty: true }) || "",
       label: r.label || "",
       sortOrder: Number(r.sortOrder || 0),
       isActive: Boolean(r.isActive),
@@ -93,7 +94,7 @@ export async function POST(req: Request) {
             targetId,
             s.platform || "other",
             (s.username || "").trim(),
-            (s.url || "").trim(),
+            sanitizeUrl(s.url, { allowEmpty: true }) || "",
             (s.label || "").trim() || null,
             i,
             s.isActive !== false ? 1 : 0,

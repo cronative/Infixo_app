@@ -508,7 +508,7 @@ export default function PublicMediaKitPage() {
       )}
       <FocusOverlay overlay={themeMeta.focusOverlay} />
 
-      <main className="relative z-10 mx-auto flex h-dvh min-h-0 w-full max-w-[520px] flex-col px-2.5 py-2.5 sm:px-4 sm:py-3.5 print:h-auto print:max-w-none print:p-0">
+      <main className="relative z-10 mx-auto flex h-dvh min-h-0 w-full max-w-[620px] flex-col px-2.5 py-2.5 sm:py-3.5 print:h-auto print:max-w-none print:p-0">
         <div
           className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[22px] border backdrop-blur-xl print:overflow-visible print:rounded-none print:border-0 print:shadow-none"
           style={{

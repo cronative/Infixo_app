@@ -4,6 +4,7 @@ import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 import { requireCreator } from "@/lib/creatorAuth";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { sanitizeUrl } from "@/lib/urlSanitizer";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -64,9 +65,9 @@ export async function GET(req: Request) {
       name: m.name,
       role: m.role,
       avatarUrl: m.avatarUrl || null,
-      instagramUrl: m.instagramUrl || "",
-      youtubeUrl: m.youtubeUrl || "",
-      facebookUrl: m.facebookUrl || "",
+      instagramUrl: sanitizeUrl(m.instagramUrl, { allowEmpty: true }) || "",
+      youtubeUrl: sanitizeUrl(m.youtubeUrl, { allowEmpty: true }) || "",
+      facebookUrl: sanitizeUrl(m.facebookUrl, { allowEmpty: true }) || "",
       sortOrder: Number(m.sortOrder || 0),
       isActive: Boolean(m.isActive),
       createdAt: m.createdAt,
@@ -167,9 +168,9 @@ export async function POST(req: Request) {
           m.name.trim(),
           m.role.trim(),
           finalAvatarUrl || null,
-          (m.instagramUrl || "").trim() || null,
-          (m.youtubeUrl || "").trim() || null,
-          (m.facebookUrl || "").trim() || null,
+          sanitizeUrl(m.instagramUrl) || null,
+          sanitizeUrl(m.youtubeUrl) || null,
+          sanitizeUrl(m.facebookUrl) || null,
           Number(m.sortOrder || 0),
           m.isActive !== false ? 1 : 0,
         ]

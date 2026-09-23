@@ -5,6 +5,7 @@ import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 import { requireCreator } from "@/lib/creatorAuth";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { sanitizeUrl } from "@/lib/urlSanitizer";
 
 interface CreatorIdRow extends RowDataPacket {
   id: string;
@@ -101,7 +102,7 @@ export async function GET(req: Request) {
       modelOrPlan: item.modelOrPlan || "",
       usedFor: item.usedFor || "",
       note: item.note || "",
-      linkUrl: item.linkUrl || "",
+      linkUrl: sanitizeUrl(item.linkUrl, { allowEmpty: true }) || "",
       imageUrl: item.imageUrl || null,
       sortOrder: Number(item.sortOrder || 0),
       isActive: Boolean(item.isActive),
@@ -175,7 +176,7 @@ export async function POST(req: Request) {
         (setupItem.modelOrPlan || "").trim() || null,
         (setupItem.usedFor || "").trim() || null,
         (setupItem.note || "").trim() || null,
-        (setupItem.linkUrl || "").trim() || null,
+        sanitizeUrl(setupItem.linkUrl) || null,
         finalImageUrl || null,
         Number(setupItem.sortOrder || 0),
         setupItem.isActive !== false ? 1 : 0,

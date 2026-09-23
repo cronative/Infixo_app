@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { isReservedUsername } from "@/lib/constants";
 
 // GET /api/creator/check-username?username=nikunj&email=user@email.com
 export async function GET(req: Request) {
@@ -16,6 +17,13 @@ export async function GET(req: Request) {
 
     if (username.length < 3) {
       return apiError("Username must be at least 3 characters", 400, { available: false, username });
+    }
+
+    if (isReservedUsername(username)) {
+      return apiSuccess({
+        available: false,
+        username,
+      }, `@${username} is reserved for platform use`);
     }
 
     // Check if username exists in MySQL DB for another creator

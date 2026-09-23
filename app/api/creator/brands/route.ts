@@ -4,6 +4,7 @@ import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 import { requireCreator } from "@/lib/creatorAuth";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { sanitizeUrl } from "@/lib/urlSanitizer";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -49,10 +50,10 @@ export async function GET(req: Request) {
       creatorId: b.creatorId,
       brandName: b.brandName,
       brandLogoUrl: b.brandLogoUrl || null,
-      instagramUrl: b.instagramUrl || "",
-      youtubeUrl: b.youtubeUrl || "",
-      facebookUrl: b.facebookUrl || "",
-      websiteUrl: b.websiteUrl || "",
+      instagramUrl: sanitizeUrl(b.instagramUrl, { allowEmpty: true }) || "",
+      youtubeUrl: sanitizeUrl(b.youtubeUrl, { allowEmpty: true }) || "",
+      facebookUrl: sanitizeUrl(b.facebookUrl, { allowEmpty: true }) || "",
+      websiteUrl: sanitizeUrl(b.websiteUrl, { allowEmpty: true }) || "",
       sortOrder: Number(b.sortOrder || 0),
       isActive: Boolean(b.isActive),
       createdAt: b.createdAt,
@@ -116,10 +117,10 @@ export async function POST(req: Request) {
         targetId,
         b.brandName.trim(),
         finalLogoUrl || null,
-        (b.instagramUrl || "").trim() || null,
-        (b.youtubeUrl || "").trim() || null,
-        (b.facebookUrl || "").trim() || null,
-        (b.websiteUrl || "").trim() || null,
+        sanitizeUrl(b.instagramUrl) || null,
+        sanitizeUrl(b.youtubeUrl) || null,
+        sanitizeUrl(b.facebookUrl) || null,
+        sanitizeUrl(b.websiteUrl) || null,
         Number(b.sortOrder || 0),
         b.isActive !== false ? 1 : 0,
       ]

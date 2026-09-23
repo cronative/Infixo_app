@@ -19,7 +19,11 @@ export async function GET(req: Request) {
       [auth.creator.id]
     );
     const s = rows?.[0];
-    if (!s) return apiSuccess({ subscription: null }, "No subscription found");
+    if (!s) {
+      return apiSuccess({ subscription: null }, "No subscription found", {
+        headers: { "Cache-Control": "private, no-store, no-cache, max-age=0, must-revalidate" },
+      });
+    }
 
     return apiSuccess({
       subscription: {
@@ -40,10 +44,14 @@ export async function GET(req: Request) {
         autoRenew: Boolean(s.auto_renew),
         hasUsedTrial: Boolean(s.trial_started_at),
       },
-    }, "Subscription loaded successfully");
+    }, "Subscription loaded successfully", {
+      headers: { "Cache-Control": "private, no-store, no-cache, max-age=0, must-revalidate" },
+    });
   } catch (error: any) {
     console.error("GET Subscription Error:", error);
-    return apiError(error?.message || "Failed to load subscription", 500);
+    return apiError(error?.message || "Failed to load subscription", 500, {}, {
+      headers: { "Cache-Control": "private, no-store, no-cache, max-age=0, must-revalidate" },
+    });
   }
 }
 

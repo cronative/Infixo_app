@@ -25,6 +25,24 @@ export async function POST(req: Request) {
       return apiError("Please enter a valid email address", 400);
     }
 
+    // 0b. Email-Level Cooldown (1 request per 60 seconds per email to prevent OTP spam)
+    const cooldownCheck = await checkPersistentRateLimit(`login:cooldown:${email}`, 1, 60);
+    if (!cooldownCheck.success) {
+      return apiError(
+        `Please wait ${cooldownCheck.retryAfterSec} seconds before requesting another code.`,
+        429
+      );
+    }
+
+    // 0c. Email-Level Rate Limit (Max 3 OTP requests per 3 minutes per email)
+    const emailRateCheck = await checkPersistentRateLimit(`login:email:${email}`, 3, 3 * 60);
+    if (!emailRateCheck.success) {
+      return apiError(
+        `Too many code requests for this email. Please wait ${emailRateCheck.retryAfterSec} seconds before trying again.`,
+        429
+      );
+    }
+
     let creator: any = null;
 
     try {

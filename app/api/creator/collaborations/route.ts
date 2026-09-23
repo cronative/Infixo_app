@@ -4,6 +4,7 @@ import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 import { requireCreator } from "@/lib/creatorAuth";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { sanitizeUrl } from "@/lib/urlSanitizer";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -50,7 +51,7 @@ export async function GET(req: Request) {
       brandName: c.brandName,
       brandLogoUrl: c.brandLogoUrl || null,
       campaignTitle: c.campaignTitle || "",
-      campaignUrl: c.campaignUrl || "",
+      campaignUrl: sanitizeUrl(c.campaignUrl, { allowEmpty: true }) || "",
       description: c.description || "",
       sortOrder: Number(c.sortOrder || 0),
       isActive: Boolean(c.isActive),
@@ -115,7 +116,7 @@ export async function POST(req: Request) {
         c.brandName.trim(),
         finalLogoUrl || null,
         (c.campaignTitle || "").trim() || null,
-        (c.campaignUrl || "").trim() || null,
+        sanitizeUrl(c.campaignUrl) || null,
         (c.description || "").trim() || null,
         Number(c.sortOrder || 0),
         c.isActive !== false ? 1 : 0,

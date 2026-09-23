@@ -15,7 +15,9 @@ export async function GET(req: Request) {
   try {
     const session = getSessionFromRequest(req);
     if (!session) {
-      return apiError("Unauthenticated session.", 401, { authenticated: false });
+      return apiError("Unauthenticated session.", 401, { authenticated: false }, {
+        headers: { "Cache-Control": "private, no-store, no-cache, max-age=0, must-revalidate" },
+      });
     }
 
     const { email } = session;
@@ -48,7 +50,9 @@ export async function GET(req: Request) {
         socials: [],
         customLinks: [],
         onboardingStep: "username",
-      }, "Session active (new creator).");
+      }, "Session active (new creator).", {
+        headers: { "Cache-Control": "private, no-store, no-cache, max-age=0, must-revalidate" },
+      });
     }
 
     const c = creatorRows[0];
@@ -150,9 +154,13 @@ export async function GET(req: Request) {
       socials: socialRows || [],
       customLinks,
       onboardingStep,
-    }, "Session active.");
+    }, "Session active.", {
+      headers: { "Cache-Control": "private, no-store, no-cache, max-age=0, must-revalidate" },
+    });
   } catch (error: any) {
     console.error("GET /api/me error:", error);
-    return apiError(error.message || "Failed to retrieve session", 500);
+    return apiError(error.message || "Failed to retrieve session", 500, {}, {
+      headers: { "Cache-Control": "private, no-store, no-cache, max-age=0, must-revalidate" },
+    });
   }
 }
