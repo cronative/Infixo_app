@@ -227,7 +227,10 @@ export default function ProfileStepPage() {
 
               {/* Text Information */}
               <div className="space-y-0.5">
-                <p className="text-xs font-bold text-[#181716]">Profile photo</p>
+                <div className="flex items-center gap-1.5">
+                  <p className="text-xs font-bold text-[#181716]">Profile photo</p>
+                  <span className="text-[10px] font-medium text-[#64748b] bg-[#f1f5f9] px-1.5 py-0.2 rounded">Optional</span>
+                </div>
                 <p className="text-[10.5px] text-[#64748b]">Square JPG or PNG · up to 5 MB</p>
               </div>
             </div>
@@ -253,12 +256,15 @@ export default function ProfileStepPage() {
 
           {/* 4. Creator or Display Name */}
           <div className="space-y-1">
-            <label
-              htmlFor="display-name"
-              className="block text-xs font-semibold text-[#181716]"
-            >
-              Creator or display name
-            </label>
+            <div className="flex items-center justify-between">
+              <label
+                htmlFor="display-name"
+                className="block text-xs font-semibold text-[#181716]"
+              >
+                Creator or display name <span className="text-red-500">*</span>
+              </label>
+              <span className="text-[10.5px] text-[#64748b]">Visible on your profile</span>
+            </div>
             <div
               className={`flex h-10.5 sm:h-11 items-center rounded-xl border bg-white px-3 transition-all focus-within:border-[#043084] focus-within:ring-2 focus-within:ring-[#043084]/10 ${errors.displayName ? "border-[#ef4444]" : "border-[#cbd5e1]"
                 }`}
@@ -331,7 +337,15 @@ export default function ProfileStepPage() {
                       ? "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed"
                       : "bg-[#eff6ff] text-[#043084] hover:bg-[#dbeafe] border border-[#bfdbfe]/80 active:scale-95 shadow-2xs"
                   }`}
-                  title={aiUsesLeft <= 0 ? "Maximum 3 AI suggestions reached" : "Generate tailored bio ideas with AI"}
+                  title={
+                    aiUsesLeft <= 0
+                      ? "Maximum 3 AI suggestions reached"
+                      : !profile?.displayName?.trim()
+                      ? "Enter your creator name first to generate AI bios"
+                      : selectedCategories.length === 0
+                      ? "Select creator type first to generate AI bios"
+                      : "Generate tailored bio ideas with AI"
+                  }
                 >
                   {isGenerating ? (
                     <Loader2 className="h-3 w-3 animate-spin text-[#043084]" />

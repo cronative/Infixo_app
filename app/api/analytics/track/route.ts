@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { RowDataPacket } from "mysql2";
 import { db } from "@/lib/db";
 import { ensureAnalyticsTable } from "@/lib/analyticsDb";
+import { isCreatorPublic } from "@/lib/creatorReadAccess";
 
 interface CreatorIdRow extends RowDataPacket {
   id: string;
@@ -52,6 +53,9 @@ export async function POST(req: Request) {
 
     if (!targetCreatorId) {
       return NextResponse.json({ error: "Creator not found" }, { status: 404 });
+    }
+    if (!(await isCreatorPublic(targetCreatorId))) {
+      return NextResponse.json({ error: "Creator profile is private" }, { status: 404 });
     }
 
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null;

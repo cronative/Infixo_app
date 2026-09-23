@@ -2,6 +2,30 @@ import fs from "fs";
 import path from "path";
 import { buildStorageKey, isR2Configured, uploadBufferToR2 } from "@/lib/r2Storage";
 
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+
+const IMAGE_SIGNATURES = {
+  jpg: (buffer: Buffer) => buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff,
+  png: (buffer: Buffer) => buffer.length >= 8 && buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])),
+  webp: (buffer: Buffer) => buffer.length >= 12 && buffer.toString("ascii", 0, 4) === "RIFF" && buffer.toString("ascii", 8, 12) === "WEBP",
+} as const;
+
+export type SafeImageExtension = keyof typeof IMAGE_SIGNATURES;
+
+export function validateImageBuffer(buffer: Buffer, requestedExtension?: string): SafeImageExtension {
+  if (!buffer.length || buffer.length > MAX_IMAGE_BYTES) {
+    throw new Error("Image must be between 1 byte and 5MB");
+  }
+
+  const detected = (Object.entries(IMAGE_SIGNATURES) as Array<[SafeImageExtension, (value: Buffer) => boolean]>)
+    .find(([, matches]) => matches(buffer))?.[0];
+  if (!detected) throw new Error("Only valid JPEG, PNG, and WebP images are allowed");
+
+  const normalized = requestedExtension?.toLowerCase() === "jpeg" ? "jpg" : requestedExtension?.toLowerCase();
+  if (normalized && normalized !== detected) throw new Error("Image contents do not match the declared file type");
+  return detected;
+}
+
 export type ImageFolder =
   | "avatars"
   | "posters"
@@ -50,10 +74,11 @@ export function saveBase64Image(
   try {
     let extension = matches[1].toLowerCase();
     if (extension === "jpeg") extension = "jpg";
-    if (extension === "svg+xml") extension = "svg";
+    if (!(["jpg", "png", "webp"] as string[]).includes(extension)) return null;
 
     const base64Data = matches[2];
     const fileBuffer = Buffer.from(base64Data, "base64");
+    validateImageBuffer(fileBuffer, extension);
 
     const uploadsDir = path.join(process.cwd(), "public", "uploads", folder);
     if (!fs.existsSync(uploadsDir)) {
@@ -77,7 +102,6 @@ export function saveBase64Image(
 function getImageExtension(mimeExtension: string) {
   let extension = mimeExtension.toLowerCase();
   if (extension === "jpeg") extension = "jpg";
-  if (extension === "svg+xml") extension = "svg";
   return extension;
 }
 
@@ -100,7 +124,6 @@ export async function saveBase64ImageToStorage(
   if (
     trimmed.startsWith("/uploads/") ||
     trimmed.startsWith("/api/assets/") ||
-    trimmed.startsWith("http://") ||
     trimmed.startsWith("https://") ||
     trimmed.startsWith("/")
   ) {
@@ -112,6 +135,7 @@ export async function saveBase64ImageToStorage(
 
   const extension = getImageExtension(matches[1]);
   const fileBuffer = Buffer.from(matches[2], "base64");
+  validateImageBuffer(fileBuffer, extension);
   const contentType = `image/${extension === "jpg" ? "jpeg" : extension}`;
 
   if (isR2Configured()) {
@@ -119,7 +143,8 @@ export async function saveBase64ImageToStorage(
       const key = buildStorageKey(folder, prefix, extension);
       return await uploadBufferToR2(key, fileBuffer, contentType);
     } catch (err) {
-      console.error("❌ [imageStorage] R2 upload failed, falling back to local disk:", err);
+      console.error("[imageStorage] R2 upload failed:", err);
+      if (process.env.NODE_ENV === "production") return null;
     }
   }
 
@@ -134,13 +159,16 @@ export async function saveImageBufferToStorage(
   contentType: string = "image/png"
 ): Promise<string | null> {
   const cleanExtension = getImageExtension(extension);
+  const detectedExtension = validateImageBuffer(fileBuffer, cleanExtension);
+  const safeContentType = `image/${detectedExtension === "jpg" ? "jpeg" : detectedExtension}`;
 
   if (isR2Configured()) {
     try {
-      const key = buildStorageKey(folder, prefix, cleanExtension);
-      return await uploadBufferToR2(key, fileBuffer, contentType);
+      const key = buildStorageKey(folder, prefix, detectedExtension);
+      return await uploadBufferToR2(key, fileBuffer, safeContentType);
     } catch (err) {
-      console.error("❌ [imageStorage] R2 buffer upload failed, falling back to local disk:", err);
+      console.error("[imageStorage] R2 buffer upload failed:", err);
+      if (process.env.NODE_ENV === "production") return null;
     }
   }
 
@@ -150,7 +178,7 @@ export async function saveImageBufferToStorage(
       fs.mkdirSync(uploadsDir, { recursive: true });
     }
 
-    const fileName = `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${cleanExtension}`;
+    const fileName = `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${detectedExtension}`;
     const filePath = path.join(uploadsDir, fileName);
 
     fs.writeFileSync(filePath, fileBuffer);

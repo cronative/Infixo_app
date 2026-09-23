@@ -1,134 +1,26 @@
 import { NextResponse } from "next/server";
-import type { RowDataPacket } from "mysql2";
+import Razorpay from "razorpay";
 import { db } from "@/lib/db";
-import { recordOnboardingStep } from "@/lib/onboardingStepDb";
+import { requireCreator } from "@/lib/creatorAuth";
+import { toMysqlDate } from "@/lib/billing";
 
-interface SubscriptionRow extends RowDataPacket {
-  plan_key?: string;
-  plan_name?: string;
-  billing_cycle?: string;
-  status?: string;
-  activated_at?: string | Date | null;
-  created_at?: string | Date | null;
-  trial_started_at?: string | Date | null;
-  trial_ends_at?: string | Date | null;
-  current_period_started_at?: string | Date | null;
-  current_period_ends_at?: string | Date | null;
-  renews_at?: string | Date | null;
-  ends_at?: string | Date | null;
-  cancelled_at?: string | Date | null;
-  cancel_at_period_end?: boolean | number;
-  payment_mode?: string;
-  first_month_offer?: boolean | number;
-  first_month_amount?: number | null;
-  first_month_currency?: string | null;
-  auto_renew?: boolean | number;
-}
-
-interface CreatorIdRow extends RowDataPacket {
-  id: number | string;
-}
-
-function toMysqlDate(value?: string | Date | null) {
+function toIso(value: unknown) {
   if (!value) return null;
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return null;
-  return date.toISOString().slice(0, 19).replace("T", " ");
-}
-
-function toIsoOrNull(value?: string | Date | null) {
-  if (!value) return null;
-  const date = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(date.getTime())) return null;
-  return date.toISOString();
-}
-
-function getErrorMessage(error: unknown) {
-  return error instanceof Error ? error.message : "Unexpected subscription error";
-}
-
-async function ensureSubscriptionLifecycleColumns() {
-  const statements = [
-    `ALTER TABLE subscriptions MODIFY COLUMN plan_key VARCHAR(32) NOT NULL DEFAULT 'early_access'`,
-    `ALTER TABLE subscriptions ADD COLUMN trial_started_at DATETIME NULL`,
-    `ALTER TABLE subscriptions ADD COLUMN trial_ends_at DATETIME NULL`,
-    `ALTER TABLE subscriptions ADD COLUMN current_period_started_at DATETIME NULL`,
-    `ALTER TABLE subscriptions ADD COLUMN current_period_ends_at DATETIME NULL`,
-    `ALTER TABLE subscriptions ADD COLUMN renews_at DATETIME NULL`,
-    `ALTER TABLE subscriptions ADD COLUMN ends_at DATETIME NULL`,
-    `ALTER TABLE subscriptions ADD COLUMN cancelled_at DATETIME NULL`,
-    `ALTER TABLE subscriptions ADD COLUMN cancel_at_period_end TINYINT(1) NOT NULL DEFAULT 0`,
-    `ALTER TABLE subscriptions ADD COLUMN payment_mode VARCHAR(32) NOT NULL DEFAULT 'free_trial'`,
-    `ALTER TABLE subscriptions ADD COLUMN first_month_offer TINYINT(1) NOT NULL DEFAULT 0`,
-    `ALTER TABLE subscriptions ADD COLUMN first_month_amount INT NULL`,
-    `ALTER TABLE subscriptions ADD COLUMN first_month_currency VARCHAR(8) NULL`,
-    `ALTER TABLE subscriptions ADD COLUMN auto_renew TINYINT(1) NOT NULL DEFAULT 0`,
-  ];
-
-  for (const statement of statements) {
-    try {
-      await db.query(statement);
-    } catch {
-      // Existing columns or already-compatible schema can continue safely.
-    }
-  }
-}
-
-function getTrialFallbackSubscription() {
-  const now = new Date();
-  const trialEndsAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
-
-  return {
-    planKey: "early_access",
-    planName: "Free Trial",
-    billingCycle: "yearly",
-    status: "trial",
-    activatedAt: now.toISOString(),
-    trialStartedAt: now.toISOString(),
-    trialEndsAt,
-    currentPeriodStartedAt: now.toISOString(),
-    currentPeriodEndsAt: trialEndsAt,
-    renewsAt: null,
-    endsAt: trialEndsAt,
-    cancelledAt: null,
-    cancelAtPeriodEnd: false,
-    paymentMode: "free_trial",
-    firstMonthOffer: true,
-    firstMonthAmount: 99,
-    firstMonthCurrency: "INR",
-    autoRenew: false,
-  };
+  const date = new Date(value as string | Date);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
 }
 
 export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const email = searchParams.get("email")?.trim();
-
-    if (!email) {
-      return NextResponse.json({
-        success: false,
-        subscription: null,
-      });
-    }
-
-    const [rows] = await db.query<SubscriptionRow[]>(
-      `SELECT s.* FROM subscriptions s
-       JOIN creators c ON c.id = s.creator_id
-       WHERE LOWER(c.email) = LOWER(?)
-       ORDER BY s.updated_at DESC, s.created_at DESC
-       LIMIT 1`,
-      [email]
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
+    const [rows]: any = await db.query(
+      "SELECT * FROM subscriptions WHERE creator_id = ? ORDER BY updated_at DESC LIMIT 1",
+      [auth.creator.id]
     );
+    const s = rows?.[0];
+    if (!s) return NextResponse.json({ success: false, subscription: null });
 
-    if (!rows || rows.length === 0) {
-      return NextResponse.json({
-        success: false,
-        subscription: null,
-      });
-    }
-
-    const s = rows[0];
     return NextResponse.json({
       success: true,
       subscription: {
@@ -136,130 +28,88 @@ export async function GET(req: Request) {
         planName: s.plan_name || "Free Trial",
         billingCycle: s.billing_cycle || "yearly",
         status: s.status || "trial",
-        activatedAt: toIsoOrNull(s.activated_at) || toIsoOrNull(s.created_at),
-        trialStartedAt: toIsoOrNull(s.trial_started_at),
-        trialEndsAt: toIsoOrNull(s.trial_ends_at),
-        currentPeriodStartedAt: toIsoOrNull(s.current_period_started_at),
-        currentPeriodEndsAt: toIsoOrNull(s.current_period_ends_at),
-        renewsAt: toIsoOrNull(s.renews_at),
-        endsAt: toIsoOrNull(s.ends_at),
-        cancelledAt: toIsoOrNull(s.cancelled_at),
+        activatedAt: toIso(s.activated_at) || toIso(s.created_at),
+        trialStartedAt: toIso(s.trial_started_at),
+        trialEndsAt: toIso(s.trial_ends_at),
+        currentPeriodStartedAt: toIso(s.current_period_started_at),
+        currentPeriodEndsAt: toIso(s.current_period_ends_at),
+        renewsAt: toIso(s.renews_at),
+        endsAt: toIso(s.ends_at),
+        cancelledAt: toIso(s.cancelled_at),
         cancelAtPeriodEnd: Boolean(s.cancel_at_period_end),
         paymentMode: s.payment_mode || "free_trial",
-        firstMonthOffer: Boolean(s.first_month_offer),
-        firstMonthAmount: s.first_month_amount ?? 99,
-        firstMonthCurrency: s.first_month_currency || "INR",
         autoRenew: Boolean(s.auto_renew),
-        hasUsedTrial: Boolean(s.trial_started_at || s.payment_mode === "free_trial" || s.plan_key === "early_access"),
+        hasUsedTrial: Boolean(s.trial_started_at),
       },
     });
-  } catch (err) {
-    console.error("GET Subscription Error:", err);
-    return NextResponse.json({ error: getErrorMessage(err) }, { status: 500 });
+  } catch (error: any) {
+    console.error("GET Subscription Error:", error);
+    return NextResponse.json({ error: error?.message || "Failed to load subscription" }, { status: 500 });
   }
 }
 
 export async function POST(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const body = await req.json();
-    const { email, planKey, planName, billingCycle, status } = body;
 
-    if (!email) {
-      return NextResponse.json({ error: "Email is required" }, { status: 400 });
-    }
+    if (body.action === "start_trial") {
+      const [rows]: any = await db.query("SELECT * FROM subscriptions WHERE creator_id = ? LIMIT 1", [auth.creator.id]);
+      const existing = rows?.[0];
+      if (existing?.trial_started_at || (existing && existing.plan_key !== "early_access")) {
+        return NextResponse.json({ error: "Free trial has already been used" }, { status: 409 });
+      }
 
-    const [creators] = await db.query<CreatorIdRow[]>(
-      "SELECT id FROM creators WHERE LOWER(email) = LOWER(?)",
-      [email.trim()]
-    );
-    if (!creators || creators.length === 0) {
-      return NextResponse.json({ error: "Creator not found" }, { status: 404 });
-    }
-
-    const creatorId = String(creators[0].id);
-    await ensureSubscriptionLifecycleColumns();
-
-    if (status === "cancelled") {
+      const now = new Date();
+      const trialEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
       await db.query(
-        `UPDATE subscriptions
-         SET status = 'cancelled', cancelled_at = ?, auto_renew = 0, renews_at = NULL
-         WHERE creator_id = ?`,
-        [toMysqlDate(body.cancelledAt) || toMysqlDate(new Date().toISOString()), creatorId]
+        `INSERT INTO subscriptions (
+           creator_id, plan_key, plan_name, billing_cycle, status, activated_at,
+           trial_started_at, trial_ends_at, current_period_started_at,
+           current_period_ends_at, ends_at, payment_mode, auto_renew
+         ) VALUES (?, 'early_access', 'Free Trial', 'monthly', 'trial', ?, ?, ?, ?, ?, ?, 'free_trial', 0)
+         ON DUPLICATE KEY UPDATE
+           plan_key = 'early_access', plan_name = 'Free Trial', status = 'trial',
+           activated_at = VALUES(activated_at), trial_started_at = VALUES(trial_started_at),
+           trial_ends_at = VALUES(trial_ends_at), current_period_started_at = VALUES(current_period_started_at),
+           current_period_ends_at = VALUES(current_period_ends_at), ends_at = VALUES(ends_at),
+           payment_mode = 'free_trial', auto_renew = 0`,
+        [auth.creator.id, toMysqlDate(now), toMysqlDate(now), toMysqlDate(trialEnd), toMysqlDate(now), toMysqlDate(trialEnd), toMysqlDate(trialEnd)]
       );
-      return NextResponse.json({ success: true, message: "Subscription cancelled successfully" });
+      return NextResponse.json({ success: true, message: "Free trial started" });
     }
 
-    if (!planKey) {
-      return NextResponse.json({ error: "planKey required" }, { status: 400 });
+    if (body.action === "cancel") {
+      const [rows]: any = await db.query(
+        "SELECT razorpay_subscription_id, plan_key FROM subscriptions WHERE creator_id = ? LIMIT 1",
+        [auth.creator.id]
+      );
+      const current = rows?.[0];
+      if (!current) return NextResponse.json({ error: "Subscription not found" }, { status: 404 });
+
+      if (current.razorpay_subscription_id) {
+        const keyId = process.env.RAZORPAY_KEY_ID;
+        const keySecret = process.env.RAZORPAY_KEY_SECRET;
+        if (!keyId || !keySecret) return NextResponse.json({ error: "Payments are not configured" }, { status: 503 });
+        const razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret });
+        await razorpay.subscriptions.cancel(current.razorpay_subscription_id, true);
+        await db.query(
+          "UPDATE subscriptions SET cancel_at_period_end = 1, auto_renew = 0, cancelled_at = NOW() WHERE creator_id = ?",
+          [auth.creator.id]
+        );
+      } else {
+        await db.query(
+          "UPDATE subscriptions SET status = 'cancelled', auto_renew = 0, cancelled_at = NOW() WHERE creator_id = ?",
+          [auth.creator.id]
+        );
+      }
+      return NextResponse.json({ success: true, message: "Subscription cancellation scheduled" });
     }
 
-    // Store every date Cashfree or the dashboard needs to explain access clearly.
-    await db.query(
-      `INSERT INTO subscriptions (
-         creator_id, plan_key, plan_name, billing_cycle, status, activated_at,
-         trial_started_at, trial_ends_at, current_period_started_at, current_period_ends_at,
-         renews_at, ends_at, cancelled_at, cancel_at_period_end, payment_mode,
-         first_month_offer, first_month_amount, first_month_currency, auto_renew,
-         razorpay_subscription_id
-       )
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-       ON DUPLICATE KEY UPDATE
-         plan_key = VALUES(plan_key),
-         plan_name = VALUES(plan_name),
-         billing_cycle = VALUES(billing_cycle),
-         status = VALUES(status),
-         activated_at = VALUES(activated_at),
-         trial_started_at = COALESCE(subscriptions.trial_started_at, VALUES(trial_started_at)),
-         trial_ends_at = COALESCE(subscriptions.trial_ends_at, VALUES(trial_ends_at)),
-         current_period_started_at = VALUES(current_period_started_at),
-         current_period_ends_at = VALUES(current_period_ends_at),
-         renews_at = VALUES(renews_at),
-         ends_at = VALUES(ends_at),
-         cancelled_at = VALUES(cancelled_at),
-         cancel_at_period_end = VALUES(cancel_at_period_end),
-         payment_mode = VALUES(payment_mode),
-         first_month_offer = VALUES(first_month_offer),
-         first_month_amount = VALUES(first_month_amount),
-         first_month_currency = VALUES(first_month_currency),
-         auto_renew = VALUES(auto_renew),
-         razorpay_subscription_id = COALESCE(VALUES(razorpay_subscription_id), razorpay_subscription_id)`,
-      [
-        creatorId,
-        planKey,
-        body.planName ||
-          (planKey === "starter"
-            ? "Starter Plan"
-            : planKey === "creator_pro" || planKey === "pro"
-            ? "Creator Pro"
-            : planKey === "creator_VIP" || planKey === "vip"
-            ? "Creator VIP"
-            : `${planKey.toUpperCase()} Plan`),
-        billingCycle || "yearly",
-        status || (planKey === "early_access" ? "trial" : "active"),
-        toMysqlDate(body.activatedAt) || toMysqlDate(new Date().toISOString()),
-        toMysqlDate(body.trialStartedAt),
-        toMysqlDate(body.trialEndsAt),
-        toMysqlDate(body.currentPeriodStartedAt),
-        toMysqlDate(body.currentPeriodEndsAt),
-        toMysqlDate(body.renewsAt),
-        toMysqlDate(body.endsAt),
-        toMysqlDate(body.cancelledAt),
-        body.cancelAtPeriodEnd ? 1 : 0,
-        body.paymentMode || (planKey === "early_access" ? "free_trial" : "recurring"),
-        body.firstMonthOffer ? 1 : 0,
-        body.firstMonthAmount ?? 99,
-        body.firstMonthCurrency || "INR",
-        body.autoRenew ? 1 : 0,
-        body.razorpay_subscription_id || null,
-      ]
-    );
-
-    // Record / Update current step in creator_onboarding_steps table (1 row per email)
-    await recordOnboardingStep(email, "finish", creatorId);
-
-    return NextResponse.json({ success: true, message: "Subscription activated in MySQL" });
-  } catch (err) {
-    console.error("POST Subscription Error:", err);
-    return NextResponse.json({ error: getErrorMessage(err) }, { status: 500 });
+    return NextResponse.json({ error: "Unsupported subscription action" }, { status: 400 });
+  } catch (error: any) {
+    console.error("POST Subscription Error:", error);
+    return NextResponse.json({ error: error?.message || "Subscription update failed" }, { status: 500 });
   }
 }

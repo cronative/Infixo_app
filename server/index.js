@@ -2,6 +2,10 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+if (process.env.NODE_ENV === "production") {
+  throw new Error("The legacy Express server is disabled in production. Use the Next.js server.");
+}
+
 const authRoutes = require("./routes/authRoutes");
 const creatorRoutes = require("./routes/creatorRoutes");
 const seriesRoutes = require("./routes/seriesRoutes");
@@ -13,7 +17,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+  origin: process.env.DEV_APP_ORIGIN || "http://localhost:3000",
+  credentials: true,
+}));
 app.use(express.json());
 
 // API Routes

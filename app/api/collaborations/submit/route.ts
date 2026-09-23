@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureRequestsTable } from "@/lib/requestsDb";
 import { ensureAnalyticsTable } from "@/lib/analyticsDb";
+import { isCreatorPublic } from "@/lib/creatorReadAccess";
 
 // Simple in-memory IP rate limiter: max 5 submissions per 10 minutes per IP
 const ipSubmissions = new Map<string, number[]>();
@@ -59,6 +60,9 @@ export async function POST(req: Request) {
 
     if (!targetCreatorId) {
       return NextResponse.json({ error: "Creator not found" }, { status: 404 });
+    }
+    if (!(await isCreatorPublic(targetCreatorId))) {
+      return NextResponse.json({ error: "Creator profile is private" }, { status: 404 });
     }
 
     const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;

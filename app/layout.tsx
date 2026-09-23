@@ -3,6 +3,7 @@ import { Inter, Plus_Jakarta_Sans, Outfit, Sora } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { ToastProvider } from "@/contexts/ToastContext";
+import { SessionProvider } from "@/contexts/SessionContext";
 import { GA_MEASUREMENT_ID } from "@/lib/analytics";
 import { PwaInstallPrompt } from "@/components/shared/PwaInstallPrompt";
 import { CookieConsentBanner } from "@/components/shared/CookieConsentBanner";
@@ -178,11 +179,13 @@ export default function RootLayout({
         </Script>
       </head>
       <body className="min-h-full bg-background font-sans">
-        <ToastProvider>
-          {children}
-          <PwaInstallPrompt />
-          <CookieConsentBanner />
-        </ToastProvider>
+        <SessionProvider>
+          <ToastProvider>
+            {children}
+            <PwaInstallPrompt />
+            <CookieConsentBanner />
+          </ToastProvider>
+        </SessionProvider>
       </body>
     </html>
   );

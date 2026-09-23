@@ -159,7 +159,7 @@ export function CollaborationInquiryModal({
                     required
                     value={brandName}
                     onChange={(e) => setBrandName(e.target.value)}
-                    placeholder="e.g. Acme Corp"
+                    placeholder="e.g. Mamaearth / Local Brand / Agency"
                     className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-3 text-xs sm:text-[13px] font-medium text-[#043084] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
                   />
                 </div>
@@ -174,7 +174,7 @@ export function CollaborationInquiryModal({
                   required
                   value={contactName}
                   onChange={(e) => setContactName(e.target.value)}
-                  placeholder="e.g. Sarah Connor"
+                  placeholder="e.g. Rohan Sharma"
                   className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#043084] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
                 />
               </div>
@@ -193,7 +193,7 @@ export function CollaborationInquiryModal({
                     required
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
-                    placeholder="sarah@acme.com"
+                    placeholder="contact@brand.com"
                     className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-3 text-xs sm:text-[13px] font-medium text-[#043084] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
                   />
                 </div>

@@ -3,6 +3,8 @@ import { db } from "@/lib/db";
 import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 import { ensureCreatorSettingsTable } from "@/lib/settingsDb";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
+import { requireSession, ownsResource } from "@/lib/session";
+import { isCreatorPublic } from "@/lib/creatorReadAccess";
 
 // GET /api/creator/profile?email=... or ?username=...
 export async function GET(req: Request) {
@@ -12,6 +14,14 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const email = searchParams.get("email");
     const username = searchParams.get("username");
+
+    if (email) {
+      const auth = requireSession(req);
+      if (auth.error) return auth.error;
+      if (!ownsResource(auth.session, email)) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
 
     if (!email && !username) {
       return NextResponse.json({ error: "Email or username query param required" }, { status: 400 });
@@ -64,6 +74,10 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Creator not found" }, { status: 404 });
     }
 
+    if (username && !(await isCreatorPublic(creator.id))) {
+      return NextResponse.json({ error: "Creator profile is private" }, { status: 404 });
+    }
+
 
 
     const rawVis = creator.settings_visibility || creator.visibility_settings;
@@ -80,7 +94,7 @@ export async function GET(req: Request) {
       success: true,
       profile: {
         id: creator.id,
-        email: creator.email,
+        ...(username ? {} : { email: creator.email }),
         displayName: creator.display_name,
         username: creator.username,
         photoDataUrl: creator.photo_url,
@@ -117,28 +131,15 @@ export async function GET(req: Request) {
 // POST /api/creator/profile
 export async function POST(req: Request) {
   try {
+    // ── Auth guard ──────────────────────────────────────────────────────────
+    const { session, error: authError } = requireSession(req);
+    if (authError) return authError;
+
     await ensureCreatorSettingsTable();
 
     const body = await req.json();
-    const { email, displayName, username, category, customCategory, profession, bio, photoDataUrl, city, state, country, themeKey, incrementThemeCount, visibilitySettings } = body;
-
-    if (!email) {
-      return NextResponse.json({ error: "Email is required" }, { status: 400 });
-    }
-
-    // Ensure column types and capacities exist in MySQL table dynamically
-    try { await db.query("ALTER TABLE creators MODIFY COLUMN category VARCHAR(500) DEFAULT NULL"); } catch {}
-    try { await db.query("ALTER TABLE creators MODIFY COLUMN profession VARCHAR(500) DEFAULT NULL"); } catch {}
-    try { await db.query("ALTER TABLE creators MODIFY COLUMN bio TEXT DEFAULT NULL"); } catch {}
-    try { await db.query("ALTER TABLE creators MODIFY COLUMN photo_url TEXT DEFAULT NULL"); } catch {}
-    try { await db.query("ALTER TABLE creators MODIFY COLUMN custom_category VARCHAR(500) DEFAULT NULL"); } catch {}
-    try { await db.query("ALTER TABLE creators ADD COLUMN profession VARCHAR(500) DEFAULT NULL"); } catch {}
-    try { await db.query("ALTER TABLE creators ADD COLUMN custom_category VARCHAR(500) DEFAULT NULL"); } catch {}
-    try { await db.query("ALTER TABLE creators ADD COLUMN city VARCHAR(100) DEFAULT NULL"); } catch {}
-    try { await db.query("ALTER TABLE creators ADD COLUMN state VARCHAR(100) DEFAULT NULL"); } catch {}
-    try { await db.query("ALTER TABLE creators ADD COLUMN country VARCHAR(100) DEFAULT NULL"); } catch {}
-    try { await db.query("ALTER TABLE creators ADD COLUMN theme_changes_count INT DEFAULT 0"); } catch {}
-    try { await db.query("ALTER TABLE creators ADD COLUMN visibility_settings TEXT DEFAULT NULL"); } catch {}
+    const { displayName, username, category, customCategory, profession, bio, photoDataUrl, city, state, country, themeKey, incrementThemeCount, visibilitySettings } = body;
+    const email = session.email;
 
     const cleanUsername = username ? username.trim().replace(/[^a-z0-9_]/gi, "").toLowerCase() : "";
 
@@ -236,13 +237,6 @@ export async function POST(req: Request) {
         ]
       );
 
-      // Create default Free Trial subscription record in MySQL DB
-      await db.query(
-        `INSERT INTO subscriptions (creator_id, plan_key, plan_name, billing_cycle, status, activated_at)
-         VALUES (?, 'early_access', 'Free Trial', 'yearly', 'active', NOW())
-         ON DUPLICATE KEY UPDATE plan_key = 'early_access', plan_name = 'Free Trial', status = 'active'`,
-        [creatorId]
-      );
     }
 
     // Upsert into dedicated creator_settings table
@@ -315,30 +309,58 @@ export async function POST(req: Request) {
 // DELETE /api/creator/profile?email=...
 export async function DELETE(req: Request) {
   try {
+    const auth = requireSession(req);
+    if (auth.error) return auth.error;
+
     const { searchParams } = new URL(req.url);
-    const email = searchParams.get("email");
-
-    if (!email) {
-      return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    const requestedEmail = searchParams.get("email");
+    if (requestedEmail && !ownsResource(auth.session, requestedEmail)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-
-    const cleanEmail = email.trim().toLowerCase();
+    const cleanEmail = auth.session.email;
 
     const [cRows]: any = await db.query("SELECT id FROM creators WHERE email = ?", [cleanEmail]);
     if (cRows && cRows.length > 0) {
       const creatorId = cRows[0].id;
-      // Clean up child tables
-      try { await db.query("DELETE FROM episodes WHERE series_id IN (SELECT id FROM series WHERE creator_id = ?)", [creatorId]); } catch {}
-      try { await db.query("DELETE FROM series WHERE creator_id = ?", [creatorId]); } catch {}
-      try { await db.query("DELETE FROM social_accounts WHERE creator_id = ?", [creatorId]); } catch {}
-      try { await db.query("DELETE FROM subscriptions WHERE creator_id = ?", [creatorId]); } catch {}
-      try { await db.query("DELETE FROM creator_settings WHERE creator_id = ?", [creatorId]); } catch {}
-      try { await db.query("DELETE FROM custom_links WHERE creator_id = ?", [creatorId]); } catch {}
-      try { await db.query("DELETE FROM creator_reviews WHERE creator_id = ?", [creatorId]); } catch {}
-      try { await db.query("DELETE FROM creators WHERE id = ?", [creatorId]); } catch {}
+      const connection = await db.getConnection();
+      try {
+        await connection.beginTransaction();
+        await connection.query("DELETE FROM episodes WHERE series_id IN (SELECT id FROM series WHERE creator_id = ?)", [creatorId]);
+        await connection.query("DELETE FROM series WHERE creator_id = ?", [creatorId]);
+        const creatorTables = [
+          "social_accounts", "subscriptions", "creator_settings", "creator_custom_links",
+          "creator_reviews", "creator_profile_sections", "creator_brands", "creator_collaborations",
+          "creator_other_socials", "creator_setup_items", "team_members", "creator_teams",
+          "collaboration_requests", "mediakit_gigs", "mediakit_settings", "analytics_events",
+          "payment_checkout_intents",
+        ];
+        const [tableRows]: any = await connection.query(
+          "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()"
+        );
+        const existingTables = new Set(tableRows.map((row: any) => row.TABLE_NAME || row.table_name));
+        for (const table of creatorTables.filter((name) => existingTables.has(name))) {
+          await connection.query(`DELETE FROM \`${table}\` WHERE creator_id = ?`, [creatorId]);
+        }
+        for (const table of ["creator_onboarding_steps", "creator_login_logs", "otps"].filter((name) => existingTables.has(name))) {
+          await connection.query(`DELETE FROM \`${table}\` WHERE email = ?`, [cleanEmail]);
+        }
+        await connection.query("DELETE FROM creators WHERE id = ?", [creatorId]);
+        await connection.commit();
+      } catch (error) {
+        await connection.rollback();
+        throw error;
+      } finally {
+        connection.release();
+      }
+    } else {
+      const [tableRows]: any = await db.query(
+        "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()"
+      );
+      const existingTables = new Set(tableRows.map((row: any) => row.TABLE_NAME || row.table_name));
+      for (const table of ["creator_onboarding_steps", "creator_login_logs", "otps"].filter((name) => existingTables.has(name))) {
+        await db.query(`DELETE FROM \`${table}\` WHERE email = ?`, [cleanEmail]);
+      }
     }
-    try { await db.query("DELETE FROM creator_onboarding_steps WHERE email = ?", [cleanEmail]); } catch {}
-    try { await db.query("DELETE FROM otps WHERE email = ?", [cleanEmail]); } catch {}
 
     return NextResponse.json({ success: true, message: "Account deleted successfully" });
   } catch (err: any) {

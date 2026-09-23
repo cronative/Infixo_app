@@ -1,6 +1,7 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
+import reactHooks from "eslint-plugin-react-hooks";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -16,8 +17,13 @@ const eslintConfig = defineConfig([
     "server/**",
     // Codex backup patches
     "codex-backups/**",
+    // One-off CommonJS database diagnostics are not shipped with the application.
+    "scratch/**",
   ]),
   {
+    plugins: {
+      "react-hooks": reactHooks,
+    },
     rules: {
       // DB query results from mysql2 are typed at runtime — turn off no-explicit-any
       // (TypeScript compiler still catches actual type errors at build time)

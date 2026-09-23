@@ -23,7 +23,6 @@ export const AdminService = {
           email: data.admin.email,
           role: "admin",
           name: data.admin.name || "Inflixo Super Admin",
-          token: data.token,
           loggedInAt: new Date().toISOString(),
         };
         storage.set(ADMIN_TOKEN_KEY, session);
@@ -48,12 +47,12 @@ export const AdminService = {
 
   isLoggedIn(): boolean {
     const session = storage.get<any>(ADMIN_TOKEN_KEY, null);
-    return Boolean(session && session.email === "admin@inflixo.com");
+    return Boolean(session && session.email && session.role === "admin");
   },
 
   getSession(): AdminUser | null {
     const session = storage.get<any>(ADMIN_TOKEN_KEY, null);
-    if (!session || session.email !== "admin@inflixo.com") return null;
+    if (!session || !session.email || session.role !== "admin") return null;
     return {
       email: session.email,
       role: "admin",

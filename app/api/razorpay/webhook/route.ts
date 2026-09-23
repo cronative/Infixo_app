@@ -1,169 +1,111 @@
-import { NextResponse } from "next/server";
 import crypto from "crypto";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import type { RowDataPacket } from "mysql2";
+import { addBillingPeriod, toMysqlDate, type BillingCycle } from "@/lib/billing";
 
-interface CreatorIdRow extends RowDataPacket {
-  id: number | string;
+function validSignature(rawBody: string, signature: string, secret: string) {
+  const expected = crypto.createHmac("sha256", secret).update(rawBody).digest("hex");
+  const left = Buffer.from(signature, "utf8");
+  const right = Buffer.from(expected, "utf8");
+  return left.length === right.length && crypto.timingSafeEqual(left, right);
 }
 
 export async function POST(req: Request) {
+  const rawBody = await req.text();
+  const signature = req.headers.get("x-razorpay-signature");
+  const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
+  if (!secret) return NextResponse.json({ error: "Webhook is not configured" }, { status: 503 });
+  if (!signature || !validSignature(rawBody, signature, secret)) {
+    return NextResponse.json({ error: "Invalid webhook signature" }, { status: 401 });
+  }
+
+  const eventId = req.headers.get("x-razorpay-event-id") || crypto.createHash("sha256").update(rawBody).digest("hex");
   try {
-    const rawBody = await req.text();
-    const signature = req.headers.get("x-razorpay-signature");
+    const event = JSON.parse(rawBody);
+    const eventName = String(event?.event || "unknown");
+    const payloadHash = crypto.createHash("sha256").update(rawBody).digest("hex");
 
-    const webhookSecret =
-      process.env.RAZORPAY_WEBHOOK_SECRET || process.env.RAZORPAY_KEY_SECRET;
-
-    // Verify webhook signature if secret & header are available
-    if (webhookSecret && signature) {
-      const expectedSignature = crypto
-        .createHmac("sha256", webhookSecret)
-        .update(rawBody)
-        .digest("hex");
-
-      const bufA = Buffer.from(signature, "utf-8");
-      const bufB = Buffer.from(expectedSignature, "utf-8");
-
-      if (bufA.length !== bufB.length || !crypto.timingSafeEqual(bufA, bufB)) {
-        console.warn("Razorpay Webhook signature verification failed");
-        return NextResponse.json(
-          { error: "Invalid webhook signature" },
-          { status: 400 }
-        );
-      }
+    const [existingRows]: any = await db.query(
+      "SELECT status, payload_hash, created_at FROM payment_webhook_events WHERE event_id = ?",
+      [eventId]
+    );
+    const existing = existingRows?.[0];
+    if (existing && existing.payload_hash !== payloadHash) {
+      return NextResponse.json({ error: "Webhook event ID conflict" }, { status: 409 });
     }
+    const processingAgeMs = existing?.created_at ? Date.now() - new Date(existing.created_at).getTime() : 0;
+    if (existing?.status === "processed" || (existing?.status === "processing" && processingAgeMs < 5 * 60 * 1000)) {
+      return NextResponse.json({ status: "ok", duplicate: true });
+    }
+    await db.query(
+      `INSERT INTO payment_webhook_events (event_id, event_type, payload_hash, status)
+       VALUES (?, ?, ?, 'processing')
+       ON DUPLICATE KEY UPDATE event_type = VALUES(event_type), payload_hash = VALUES(payload_hash), status = 'processing', error_message = NULL`,
+      [eventId, eventName, payloadHash]
+    );
 
-    let event: any;
-    try {
-      event = JSON.parse(rawBody);
-    } catch {
-      return NextResponse.json(
-        { error: "Invalid JSON body" },
-        { status: 400 }
+    const subscription = event?.payload?.subscription?.entity;
+    const payment = event?.payload?.payment?.entity;
+    const providerId = subscription?.id || payment?.order_id;
+
+    if (["subscription.charged", "subscription.activated", "payment.captured"].includes(eventName) && providerId) {
+      const [intentRows]: any = await db.query("SELECT * FROM payment_checkout_intents WHERE provider_id = ? LIMIT 1", [providerId]);
+      const intent = intentRows?.[0];
+      if (intent && (intent.status === "pending" || intent.status === "completed")) {
+        const start = subscription?.current_start ? new Date(subscription.current_start * 1000) : new Date();
+        const end = subscription?.current_end
+          ? new Date(subscription.current_end * 1000)
+          : addBillingPeriod(start, intent.billing_cycle as BillingCycle);
+        const planName = intent.plan_key === "starter" ? "Starter Plan" : intent.plan_key === "pro" ? "Creator Pro" : "Creator VIP";
+
+        await db.query(
+          `INSERT INTO subscriptions (
+             creator_id, plan_key, plan_name, billing_cycle, status, activated_at,
+             current_period_started_at, current_period_ends_at, ends_at, renews_at,
+             payment_mode, auto_renew, razorpay_subscription_id
+           ) VALUES (?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?)
+           ON DUPLICATE KEY UPDATE
+             plan_key = VALUES(plan_key), plan_name = VALUES(plan_name), billing_cycle = VALUES(billing_cycle),
+             status = 'active', current_period_started_at = VALUES(current_period_started_at),
+             current_period_ends_at = VALUES(current_period_ends_at), ends_at = VALUES(ends_at),
+             renews_at = VALUES(renews_at), cancelled_at = NULL, cancel_at_period_end = 0,
+             payment_mode = VALUES(payment_mode), auto_renew = VALUES(auto_renew),
+             razorpay_subscription_id = COALESCE(VALUES(razorpay_subscription_id), razorpay_subscription_id)`,
+          [
+            intent.creator_id, intent.plan_key, planName, intent.billing_cycle,
+            toMysqlDate(start), toMysqlDate(start), toMysqlDate(end), toMysqlDate(end), toMysqlDate(end),
+            intent.provider_type === "subscription" ? "recurring" : "razorpay",
+            intent.provider_type === "subscription" ? 1 : 0,
+            intent.provider_type === "subscription" ? providerId : null,
+          ]
+        );
+
+        if (payment?.id && intent.status !== "completed") {
+          await db.query(
+            "UPDATE payment_checkout_intents SET status = 'completed', payment_id = ?, completed_at = NOW() WHERE id = ? AND status = 'pending'",
+            [payment.id, intent.id]
+          );
+        }
+      }
+    } else if (["subscription.halted", "subscription.cancelled"].includes(eventName) && subscription?.id) {
+      await db.query(
+        `UPDATE subscriptions
+         SET status = ?, auto_renew = 0, renews_at = NULL, cancelled_at = COALESCE(cancelled_at, NOW())
+         WHERE razorpay_subscription_id = ?`,
+        ["cancelled", subscription.id]
       );
     }
 
-    const eventName = event?.event;
-    console.log(`Razorpay Webhook received event: ${eventName}`);
-
-    // Handle recurring auto-debit charged event (Auto-Renewal)
-    if (eventName === "subscription.charged" || eventName === "subscription.activated") {
-      const subscriptionEntity = event?.payload?.subscription?.entity;
-      const paymentEntity = event?.payload?.payment?.entity;
-
-      const email = (subscriptionEntity?.notes?.email || paymentEntity?.email || "").trim();
-      const planKey = subscriptionEntity?.notes?.planKey || "starter";
-      const billingCycle = subscriptionEntity?.notes?.billingCycle || "monthly";
-
-      if (email) {
-        const [creators] = await db.query<CreatorIdRow[]>(
-          "SELECT id FROM creators WHERE LOWER(email) = LOWER(?)",
-          [email]
-        );
-
-        if (creators && creators.length > 0) {
-          const creatorId = String(creators[0].id);
-          const now = new Date();
-          const periodMonths = billingCycle === "yearly" ? 12 : 1;
-          const endsAt = new Date(now.getTime() + periodMonths * 30 * 24 * 60 * 60 * 1000);
-
-          const dateNowStr = now.toISOString().slice(0, 19).replace("T", " ");
-          const endsAtStr = endsAt.toISOString().slice(0, 19).replace("T", " ");
-
-          await db.query(
-            `INSERT INTO subscriptions (
-               creator_id, plan_key, plan_name, billing_cycle, status, activated_at,
-               current_period_started_at, current_period_ends_at, ends_at, renews_at, payment_mode, auto_renew
-             )
-             VALUES (?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, 'recurring', 1)
-             ON DUPLICATE KEY UPDATE
-               plan_key = VALUES(plan_key),
-               plan_name = VALUES(plan_name),
-               billing_cycle = VALUES(billing_cycle),
-               status = 'active',
-               current_period_started_at = VALUES(current_period_started_at),
-               current_period_ends_at = VALUES(current_period_ends_at),
-               ends_at = VALUES(ends_at),
-               renews_at = VALUES(renews_at),
-               payment_mode = 'recurring',
-               auto_renew = 1`,
-            [
-              creatorId,
-              planKey,
-              `${planKey.toUpperCase()} Plan`,
-              billingCycle,
-              dateNowStr,
-              dateNowStr,
-              endsAtStr,
-              endsAtStr,
-              endsAtStr,
-            ]
-          );
-
-          console.log(`✅ Successfully updated subscription for creator ${creatorId} (${planKey}) via webhook [${eventName}]`);
-        }
-      }
-    } else if (eventName === "subscription.halted" || eventName === "subscription.cancelled") {
-      const subscriptionEntity = event?.payload?.subscription?.entity;
-      const email = (subscriptionEntity?.notes?.email || "").trim();
-
-      if (email) {
-        await db.query(
-          `UPDATE subscriptions s
-           JOIN creators c ON s.creator_id = c.id
-           SET s.status = ?, s.auto_renew = 0, s.renews_at = NULL
-           WHERE LOWER(c.email) = LOWER(?)`,
-          [eventName === "subscription.cancelled" ? "cancelled" : "halted", email]
-        );
-        console.log(`⚠️ Subscription marked as ${eventName} for ${email}`);
-      }
-    } else if (eventName === "payment.captured") {
-      // Standard one-time order payment captured
-      const paymentEntity = event?.payload?.payment?.entity;
-      const email = (paymentEntity?.email || paymentEntity?.notes?.email || "").trim();
-      const planKey = paymentEntity?.notes?.planKey;
-      const billingCycle = paymentEntity?.notes?.billingCycle || "monthly";
-
-      if (email && planKey && planKey !== "standard") {
-        const [creators] = await db.query<CreatorIdRow[]>(
-          "SELECT id FROM creators WHERE LOWER(email) = LOWER(?)",
-          [email]
-        );
-        if (creators && creators.length > 0) {
-          const creatorId = String(creators[0].id);
-          const now = new Date();
-          const periodMonths = billingCycle === "yearly" ? 12 : 1;
-          const endsAt = new Date(now.getTime() + periodMonths * 30 * 24 * 60 * 60 * 1000);
-
-          const dateNowStr = now.toISOString().slice(0, 19).replace("T", " ");
-          const endsAtStr = endsAt.toISOString().slice(0, 19).replace("T", " ");
-
-          await db.query(
-            `UPDATE subscriptions
-             SET status = 'active',
-                 plan_key = ?,
-                 plan_name = ?,
-                 billing_cycle = ?,
-                 current_period_started_at = ?,
-                 current_period_ends_at = ?,
-                 ends_at = ?,
-                 renews_at = ?,
-                 payment_mode = 'razorpay',
-                 auto_renew = 1
-             WHERE creator_id = ?`,
-            [planKey, `${planKey.toUpperCase()} Plan`, billingCycle, dateNowStr, endsAtStr, endsAtStr, endsAtStr, creatorId]
-          );
-        }
-      }
-    }
-
+    await db.query("UPDATE payment_webhook_events SET status = 'processed', processed_at = NOW() WHERE event_id = ?", [eventId]);
     return NextResponse.json({ status: "ok", received: true });
   } catch (error: any) {
     console.error("Razorpay webhook error:", error);
-    return NextResponse.json(
-      { error: error?.message || "Webhook processing error" },
-      { status: 500 }
-    );
+    try {
+      await db.query(
+        "UPDATE payment_webhook_events SET status = 'failed', error_message = ? WHERE event_id = ?",
+        [String(error?.message || "Webhook processing error").slice(0, 500), eventId]
+      );
+    } catch {}
+    return NextResponse.json({ error: "Webhook processing error" }, { status: 500 });
   }
 }

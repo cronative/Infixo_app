@@ -3,6 +3,8 @@ import type { RowDataPacket } from "mysql2";
 import { db } from "@/lib/db";
 import { ensureCreatorSetupTable } from "@/lib/creatorSetupDb";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
+import { requireCreator } from "@/lib/creatorAuth";
+import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 
 interface CreatorIdRow extends RowDataPacket {
   id: string;
@@ -79,6 +81,8 @@ export async function GET(req: Request) {
 
     const creatorId = await resolveCreatorId(lookupVal);
     const targetId = creatorId || lookupVal;
+    const accessError = await authorizeCreatorRead(req, targetId, Boolean(searchParams.get("username")));
+    if (accessError) return accessError;
 
     const [rows] = await db.query<CreatorSetupRow[]>(
       `SELECT id, creator_id AS creatorId, category, item_name AS name, brand,
@@ -113,18 +117,14 @@ export async function GET(req: Request) {
 // POST /api/creator/setup (Add/Update/Reorder setup items)
 export async function POST(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const body = (await req.json()) as SetupPostBody;
-    const { email, creatorId: passedCreatorId, action, item, items } = body;
-
-    const lookupVal = passedCreatorId || email;
-    if (!lookupVal) {
-      return NextResponse.json({ error: "Creator identifier required" }, { status: 400 });
-    }
+    const { action, item, items } = body;
 
     await ensureCreatorSetupTable();
 
-    const creatorId = await resolveCreatorId(lookupVal);
-    const targetId = creatorId || lookupVal;
+    const targetId = auth.creator.id;
 
     if (action === "reorder" && Array.isArray(items)) {
       for (let i = 0; i < items.length; i++) {
@@ -192,18 +192,18 @@ export async function POST(req: Request) {
 // DELETE /api/creator/setup?id=...&creatorId=...
 export async function DELETE(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
-    const lookupVal = searchParams.get("creatorId") || searchParams.get("email");
 
-    if (!id || !lookupVal) {
-      return NextResponse.json({ error: "ID and creator identifier required" }, { status: 400 });
+    if (!id) {
+      return NextResponse.json({ error: "ID required" }, { status: 400 });
     }
 
     await ensureCreatorSetupTable();
 
-    const creatorId = await resolveCreatorId(lookupVal);
-    const targetId = creatorId || lookupVal;
+    const targetId = auth.creator.id;
 
     await db.query("DELETE FROM creator_setup_items WHERE id = ? AND creator_id = ?", [id, targetId]);
 

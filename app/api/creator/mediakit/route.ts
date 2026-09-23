@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireCreator } from "@/lib/creatorAuth";
+import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 
 let mediaKitTablesEnsured = false;
 
@@ -100,6 +102,8 @@ export async function GET(req: Request) {
     const creatorRecord = await resolveCreatorRecord(lookupVal);
     const resolvedCreatorId = creatorRecord?.creatorId || resolvedCreatorIdParam || lookupVal;
     const resolvedEmail = creatorRecord?.email || resolvedEmailParam || lookupVal;
+    const accessError = await authorizeCreatorRead(req, resolvedCreatorId, Boolean(resolvedUsernameParam));
+    if (accessError) return accessError;
 
     // 1. Fetch Contact & Lead Routing Settings for THIS Creator only
     const [settingsRows]: any = await db.query(
@@ -169,19 +173,15 @@ export async function GET(req: Request) {
 // POST /api/creator/mediakit
 export async function POST(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const body = await req.json();
-    const { creatorId: inputCreatorId, email: inputEmail, settings, packages } = body;
-
-    const lookupVal = inputCreatorId || inputEmail;
-    if (!lookupVal) {
-      return NextResponse.json({ error: "creatorId or email is required" }, { status: 400 });
-    }
+    const { settings, packages } = body;
 
     await ensureMediaKitTables();
 
-    const creatorRecord = await resolveCreatorRecord(lookupVal);
-    const resolvedCreatorId = creatorRecord?.creatorId || inputCreatorId || lookupVal;
-    const resolvedEmail = creatorRecord?.email || inputEmail || lookupVal;
+    const resolvedCreatorId = auth.creator.id;
+    const resolvedEmail = auth.creator.email;
 
     // 1. Save Settings tied to creator_id & email
     const whatsapp = settings?.whatsappNumber || null;

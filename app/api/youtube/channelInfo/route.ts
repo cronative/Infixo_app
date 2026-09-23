@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { ApifySocialService } from "@/services/ApifySocialService";
+import { requireSession } from "@/lib/session";
 
 function parseSubscribers(subStr: string): number {
   if (!subStr) return 0;
@@ -14,6 +15,9 @@ function parseSubscribers(subStr: string): number {
 }
 
 export async function POST(req: Request) {
+  const auth = requireSession(req);
+  if (auth.error) return auth.error;
+
   try {
     const body = await req.json();
     const channelName = (body.channelName || body.username || "").trim().replace(/^@/, "");
@@ -22,15 +26,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "YouTube channel name / handle is required" }, { status: 400 });
     }
 
-    const apiKey = process.env.RAPIDAPI_KEY || "02af3277a0msh6d2023026fe26cap12bd27jsn3e7de18972b7";
+    const apiKey = process.env.RAPIDAPI_KEY;
     const headers = {
       "Content-Type": "application/json",
       "x-rapidapi-host": "youtube-v2.p.rapidapi.com",
-      "x-rapidapi-key": apiKey,
+      "x-rapidapi-key": apiKey!,
     };
 
     // 1. Primary: Try Apify YouTube Channel Scraper
-    try {
+    if (apiKey) try {
       const apifyChannel = await ApifySocialService.fetchYouTubeChannel(channelName);
       if (apifyChannel) {
         return NextResponse.json({ success: true, channel: apifyChannel, provider: "apify" });

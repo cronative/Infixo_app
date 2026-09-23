@@ -209,26 +209,39 @@ export default function UsernameStepPage() {
                 type="text"
                 value={username}
                 onChange={(e) => handleInputChange(e.target.value)}
-                placeholder="username"
+                placeholder="yourhandle"
                 autoFocus
                 maxLength={30}
                 spellCheck={false}
                 className="h-full w-full min-w-0 flex-1 bg-transparent px-1 text-xs sm:text-sm font-bold text-[#181716] outline-none placeholder:text-[#94a3b8]"
               />
               {checking && (
-                <Loader2 className="h-4 w-4 animate-spin text-[#64748b] shrink-0" />
+                <Loader2 className="h-4 w-4 animate-spin text-[#043084] shrink-0" />
               )}
             </div>
 
+            {/* Live Profile URL badge preview */}
+            <div className="flex items-center justify-between px-2.5 py-1 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[11px]">
+              <span className="text-[#64748b]">Your profile link:</span>
+              <span className="font-mono font-bold text-[#043084] truncate max-w-[220px]">
+                inflixo.com/{cleanHandle || "yourname"}
+              </span>
+            </div>
+
             {/* Availability Feedback (below input) */}
-            {status?.available && cleanHandle ? (
+            {checking && cleanHandle.length >= 3 ? (
+              <div className="flex items-center gap-1.5 text-xs font-medium text-[#64748b] pt-0.5 animate-fade-in">
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-[#043084]" />
+                <span>Checking availability...</span>
+              </div>
+            ) : status?.available && cleanHandle ? (
               <div className="flex items-center gap-1.5 text-xs font-semibold text-[#16a34a] pt-0.5 animate-fade-in">
                 <Check className="h-3.5 w-3.5 stroke-[3] text-[#16a34a]" />
-                <span>inflixo.com/{cleanHandle} is available</span>
+                <span>inflixo.com/{cleanHandle} is available! ✨</span>
               </div>
             ) : error ? (
               <div className="flex items-center gap-1.5 text-xs font-semibold text-[#ef4444] pt-0.5 animate-fade-in">
-                <AlertCircle className="h-3.5 w-3.5 text-[#ef4444]" />
+                <AlertCircle className="h-3.5 w-3.5 text-[#ef4444] shrink-0" />
                 <span>{error}</span>
               </div>
             ) : null}
@@ -236,7 +249,7 @@ export default function UsernameStepPage() {
 
           {/* 4. Choose Carefully Hint Box */}
           <div className="rounded-xl bg-[#f8fafc] p-2 sm:p-2.5 text-left text-[11px] text-[#54514D] leading-relaxed border border-[#e2e8f0]">
-            <span className="font-semibold text-[#181716]">Choose carefully:</span> use your creator name or familiar social handle. You can use 3–30 letters, numbers or underscores.
+            <span className="font-semibold text-[#181716]">Handle tips:</span> Use letters, numbers, or underscores (3–30 characters). Spaces and special characters are automatically formatted.
           </div>
 
           {/* Smart suggestions if taken */}
@@ -273,7 +286,16 @@ export default function UsernameStepPage() {
             {submitting ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Claiming...</span>
+                <span>Claiming handle...</span>
+              </>
+            ) : !cleanHandle ? (
+              <span>Enter a username to continue</span>
+            ) : cleanHandle.length < 3 ? (
+              <span>Minimum 3 characters required</span>
+            ) : checking ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Checking availability...</span>
               </>
             ) : (
               <>

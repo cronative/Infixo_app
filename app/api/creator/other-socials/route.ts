@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureOtherSocialsTable } from "@/lib/otherSocialsDb";
+import { requireCreator } from "@/lib/creatorAuth";
+import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -30,6 +32,8 @@ export async function GET(req: Request) {
 
     const creator = await resolveCreatorId(lookupVal);
     const targetId = creator ? creator.id : lookupVal;
+    const accessError = await authorizeCreatorRead(req, targetId, Boolean(searchParams.get("username")));
+    if (accessError) return accessError;
 
     const [rows]: any = await db.query(
       `SELECT id, creator_id AS creatorId, platform, username, url, label, sort_order AS sortOrder, is_active AS isActive, created_at AS createdAt
@@ -61,18 +65,18 @@ export async function GET(req: Request) {
 // POST /api/creator/other-socials
 export async function POST(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const body = await req.json();
-    const { email, creatorId: passedCreatorId, socials } = body;
+    const { socials } = body;
 
-    const lookupVal = passedCreatorId || email;
-    if (!lookupVal || !Array.isArray(socials)) {
-      return NextResponse.json({ error: "Creator identifier and socials array are required" }, { status: 400 });
+    if (!Array.isArray(socials)) {
+      return NextResponse.json({ error: "Socials array is required" }, { status: 400 });
     }
 
     await ensureOtherSocialsTable();
 
-    const creator = await resolveCreatorId(lookupVal);
-    const targetId = creator ? creator.id : lookupVal;
+    const targetId = auth.creator.id;
 
     // Delete existing and insert updated list (atomic replace)
     await db.query("DELETE FROM creator_other_socials WHERE creator_id = ?", [targetId]);
@@ -108,18 +112,18 @@ export async function POST(req: Request) {
 // DELETE /api/creator/other-socials?id=...&creatorId=...
 export async function DELETE(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
-    const lookupVal = searchParams.get("creatorId") || searchParams.get("email");
 
-    if (!id || !lookupVal) {
-      return NextResponse.json({ error: "ID and creator identifier required" }, { status: 400 });
+    if (!id) {
+      return NextResponse.json({ error: "ID required" }, { status: 400 });
     }
 
     await ensureOtherSocialsTable();
 
-    const creator = await resolveCreatorId(lookupVal);
-    const targetId = creator ? creator.id : lookupVal;
+    const targetId = auth.creator.id;
 
     await db.query("DELETE FROM creator_other_socials WHERE id = ? AND creator_id = ?", [id, targetId]);
 

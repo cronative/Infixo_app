@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { ApifySocialService } from "@/services/ApifySocialService";
+import { requireSession } from "@/lib/session";
 
 export async function POST(req: Request) {
+  const auth = requireSession(req);
+  if (auth.error) return auth.error;
+
   try {
     const body = await req.json();
     const username = (body.username || "").trim().replace(/^@/, "");
@@ -11,7 +15,8 @@ export async function POST(req: Request) {
     }
 
     // 1. Primary: Try Apify Instagram Profile Scraper
-    try {
+    const rapidApiKey = process.env.RAPIDAPI_KEY;
+    if (rapidApiKey) try {
       const apifyUser = await ApifySocialService.fetchInstagramProfile(username);
       if (apifyUser) {
         return NextResponse.json({ success: true, user: apifyUser, provider: "apify" });
@@ -27,7 +32,7 @@ export async function POST(req: Request) {
         headers: {
           "Content-Type": "application/json",
           "x-rapidapi-host": "instagram120.p.rapidapi.com",
-          "x-rapidapi-key": process.env.RAPIDAPI_KEY || "02af3277a0msh6d2023026fe26cap12bd27jsn3e7de18972b7",
+          "x-rapidapi-key": rapidApiKey!,
         },
         body: JSON.stringify({ username }),
       });

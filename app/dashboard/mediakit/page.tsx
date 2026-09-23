@@ -42,7 +42,7 @@ import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { EmptyState } from "@/components/ui/EmptyState";
 
-export const COLLABORATION_TYPES = [
+const COLLABORATION_TYPES = [
   "Instagram Reel",
   "Instagram Story",
   "Instagram Post / Carousel",

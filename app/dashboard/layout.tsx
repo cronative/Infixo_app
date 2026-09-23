@@ -4,7 +4,9 @@ import { ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CreatorProvider, useCreator } from "@/contexts/CreatorContext";
+import { useSession } from "@/contexts/SessionContext";
 import { AuthService } from "@/services/AuthService";
+import { forceLogout } from "@/lib/authClient";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { DashboardMobileHeader } from "@/components/dashboard/DashboardMobileHeader";
 import { DashboardSideDrawer } from "@/components/dashboard/DashboardSideDrawer";
@@ -167,13 +169,42 @@ function Shell({ children }: { children: ReactNode }) {
 
 export default function DashboardRootLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
+  // Fast local check first, just so a returning creator doesn't see a flash
+  // of "Authenticating..." on every navigation.
   const [checked] = useState(() => AuthService.isLoggedIn());
+  // The server-verified source of truth (reads the httpOnly session cookie
+  // via /api/me). SessionContext may have last fetched *before* this login
+  // happened (e.g. it was mounted on /login when the user wasn't
+  // authenticated yet, and nothing else ever told it to re-check) — so we
+  // never trust its snapshot as-is. Instead we explicitly re-fetch once we
+  // reach a protected route, wait for that specific fetch to resolve, and
+  // only THEN decide whether to force a logout.
+  const { isLoggedIn: sessionLoggedIn, refresh } = useSession();
+  const [sessionVerified, setSessionVerified] = useState(false);
 
   useEffect(() => {
     if (!checked) {
       router.replace("/login");
     }
   }, [checked, router]);
+
+  useEffect(() => {
+    if (!checked) return;
+    let cancelled = false;
+    setSessionVerified(false);
+    refresh().finally(() => {
+      if (!cancelled) setSessionVerified(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [checked, refresh]);
+
+  useEffect(() => {
+    if (checked && sessionVerified && !sessionLoggedIn) {
+      forceLogout();
+    }
+  }, [checked, sessionVerified, sessionLoggedIn]);
 
   if (!checked) {
     return <SyncingLoader message="Authenticating account..." fullScreen hideProgressBar={true} />;

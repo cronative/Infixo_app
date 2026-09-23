@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { saveBase64ImageToStorage, saveImageBufferToStorage, ImageFolder } from "@/lib/imageStorage";
-import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
+import { getClientIp } from "@/lib/rateLimit";
+import { checkPersistentRateLimit } from "@/lib/persistentRateLimit";
+import { requireSession } from "@/lib/session";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB max upload limit
 const ALLOWED_MIME_TYPES = new Set([
@@ -8,15 +10,16 @@ const ALLOWED_MIME_TYPES = new Set([
   "image/jpg",
   "image/png",
   "image/webp",
-  "image/gif",
-  "image/svg+xml",
 ]);
 
 export async function POST(req: Request) {
+  const auth = requireSession(req);
+  if (auth.error) return auth.error;
+
   try {
     // Rate Limiting Protection (Max 30 uploads per 10 minutes per IP)
     const clientIp = getClientIp(req);
-    const rateCheck = checkRateLimit(`upload_${clientIp}`, 30, 10 * 60 * 1000);
+    const rateCheck = await checkPersistentRateLimit(`upload:${auth.session.email}:${clientIp}`, 30, 10 * 60);
     if (!rateCheck.success) {
       return NextResponse.json(
         { error: `Upload rate limit reached. Please wait ${rateCheck.retryAfterSec} seconds.` },
@@ -48,9 +51,9 @@ export async function POST(req: Request) {
       }
 
       const mime = (file.type || "image/png").toLowerCase();
-      if (!mime.startsWith("image/") && !ALLOWED_MIME_TYPES.has(mime)) {
+      if (!ALLOWED_MIME_TYPES.has(mime)) {
         return NextResponse.json(
-          { error: "Invalid file type. Only image uploads (JPEG, PNG, WebP, GIF, SVG) are allowed." },
+          { error: "Invalid file type. Only JPEG, PNG, and WebP images are allowed." },
           { status: 400 }
         );
       }
@@ -60,8 +63,6 @@ export async function POST(req: Request) {
 
       if (mime.includes("jpeg") || mime.includes("jpg")) extension = "jpg";
       else if (mime.includes("webp")) extension = "webp";
-      else if (mime.includes("gif")) extension = "gif";
-      else if (mime.includes("svg")) extension = "svg";
 
       const prefix = validFolder.slice(0, -1);
       const storedUrl = await saveImageBufferToStorage(fileBuffer, validFolder, prefix, extension, mime);
@@ -112,6 +113,8 @@ export async function POST(req: Request) {
     });
   } catch (err: unknown) {
     console.error("Image Upload Error:", err);
-    return NextResponse.json({ error: err instanceof Error ? err.message : "Image upload failed" }, { status: 500 });
+    const message = err instanceof Error ? err.message : "Image upload failed";
+    const isValidationError = message.includes("valid JPEG") || message.includes("declared file type") || message.includes("between 1 byte");
+    return NextResponse.json({ error: message }, { status: isValidationError ? 400 : 500 });
   }
 }

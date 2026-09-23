@@ -75,7 +75,7 @@ export function CategorySelect({
       <div className="flex items-center justify-between gap-1.5">
         <label className="text-xs font-semibold text-[#181716] flex items-center gap-1.5">
           <Tag className="h-3.5 w-3.5 text-[#043084]" />
-          <span>Creator type (profession/category)</span>
+          <span>Creator type (profession/category) <span className="text-red-500">*</span></span>
         </label>
         <span className="bg-[#043084]/[0.06] text-[#043084] border border-[#043084]/15 text-[10.5px] font-bold px-2 py-0.5 rounded-full shrink-0">
           {selectedCategories.length} / {max} selected

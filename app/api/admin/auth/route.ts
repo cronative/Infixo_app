@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminToken } from "@/lib/adminAuth";
-import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
+import { getClientIp } from "@/lib/rateLimit";
+import { checkPersistentRateLimit } from "@/lib/persistentRateLimit";
 
 export async function POST(req: Request) {
   try {
@@ -16,7 +17,7 @@ export async function POST(req: Request) {
 
     // Rate Limiting Protection (Max 5 attempts per 10 minutes per IP)
     const clientIp = getClientIp(req);
-    const rateCheck = checkRateLimit(`admin_auth_${clientIp}`, 5, 10 * 60 * 1000);
+    const rateCheck = await checkPersistentRateLimit(`admin-auth:${clientIp}`, 5, 10 * 60);
     if (!rateCheck.success) {
       return NextResponse.json(
         { error: `Too many admin login attempts. Please wait ${rateCheck.retryAfterSec} seconds.` },
@@ -24,8 +25,12 @@ export async function POST(req: Request) {
       );
     }
 
-    const expectedEmail = (process.env.ADMIN_EMAIL || "admin@inflixo.com").toLowerCase().trim();
-    const expectedPassword = process.env.ADMIN_PASSWORD || "Devom@131130";
+    const expectedEmail = process.env.ADMIN_EMAIL?.toLowerCase().trim();
+    const expectedPassword = process.env.ADMIN_PASSWORD;
+
+    if (!expectedEmail || !expectedPassword) {
+      return NextResponse.json({ error: "Admin authentication is not configured" }, { status: 503 });
+    }
 
     const inputEmail = (email || "").trim().toLowerCase();
 
@@ -34,7 +39,6 @@ export async function POST(req: Request) {
 
       const response = NextResponse.json({
         success: true,
-        token,
         admin: {
           email: expectedEmail,
           name: "Inflixo Super Admin",
@@ -59,4 +63,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
-

@@ -1,9 +1,10 @@
 import crypto from "crypto";
 
-const ADMIN_SECRET =
-  process.env.ADMIN_JWT_SECRET ||
-  process.env.NEXTAUTH_SECRET ||
-  "inflixo_admin_secure_secret_2026_salt_hash";
+function getAdminSecret() {
+  const secret = process.env.ADMIN_JWT_SECRET || process.env.NEXTAUTH_SECRET;
+  if (!secret) throw new Error("ADMIN_JWT_SECRET is not configured");
+  return secret;
+}
 
 export function createAdminToken(email: string): string {
   const payload = JSON.stringify({
@@ -11,7 +12,7 @@ export function createAdminToken(email: string): string {
     role: "admin",
     exp: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days validity
   });
-  const hmac = crypto.createHmac("sha256", ADMIN_SECRET).update(payload).digest("hex");
+  const hmac = crypto.createHmac("sha256", getAdminSecret()).update(payload).digest("hex");
   return Buffer.from(payload).toString("base64url") + "." + hmac;
 }
 
@@ -22,7 +23,7 @@ export function verifyAdminToken(token: string | null | undefined): boolean {
     if (!encodedPayload || !signature) return false;
 
     const payload = Buffer.from(encodedPayload, "base64url").toString();
-    const expectedSig = crypto.createHmac("sha256", ADMIN_SECRET).update(payload).digest("hex");
+    const expectedSig = crypto.createHmac("sha256", getAdminSecret()).update(payload).digest("hex");
 
     // Timing-safe buffer comparison to prevent timing attacks
     const sigBuffer = Buffer.from(signature);
@@ -41,6 +42,17 @@ export function verifyAdminToken(token: string | null | undefined): boolean {
 }
 
 export async function isAuthorizedAdmin(req: Request): Promise<boolean> {
+  const fetchSite = req.headers.get("sec-fetch-site");
+  if (fetchSite === "cross-site") return false;
+  const origin = req.headers.get("origin");
+  if (origin) {
+    try {
+      if (new URL(origin).host !== new URL(req.url).host) return false;
+    } catch {
+      return false;
+    }
+  }
+
   // 1. Check httpOnly cookie
   const cookieHeader = req.headers.get("cookie") || "";
   const cookieMatch = cookieHeader.match(/inflixo_admin_token=([^;]+)/);

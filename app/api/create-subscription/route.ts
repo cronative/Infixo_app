@@ -1,83 +1,56 @@
+import crypto from "crypto";
 import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
+import { db } from "@/lib/db";
+import { getPaidPlan } from "@/lib/billing";
+import { requireCreator } from "@/lib/creatorAuth";
 import { getOrCreateRazorpayPlan } from "@/lib/razorpayPlans";
 
 export async function POST(req: Request) {
   try {
-    const key_id = process.env.RAZORPAY_KEY_ID;
-    const key_secret = process.env.RAZORPAY_KEY_SECRET;
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
 
-    if (!key_id || !key_secret) {
-      console.error("Razorpay Error: Missing API keys in environment variables");
-      return NextResponse.json(
-        { error: "Razorpay credentials are not configured on the server" },
-        { status: 500 }
-      );
-    }
+    const keyId = process.env.RAZORPAY_KEY_ID;
+    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+    if (!keyId || !keySecret) return NextResponse.json({ error: "Payments are not configured" }, { status: 503 });
 
-    let body;
+    const body = await req.json();
+    const plan = getPaidPlan(body.planKey, body.billingCycle);
+    if (!plan) return NextResponse.json({ error: "Invalid paid plan or billing cycle" }, { status: 400 });
+
+    const intentId = `pi_${crypto.randomUUID()}`;
+    await db.query(
+      `INSERT INTO payment_checkout_intents
+       (id, creator_id, provider_type, plan_key, billing_cycle, amount, currency, status)
+       VALUES (?, ?, 'subscription', ?, ?, ?, ?, 'creating')`,
+      [intentId, auth.creator.id, plan.planKey, plan.billingCycle, plan.amount, plan.currency]
+    );
+
     try {
-      body = await req.json();
-    } catch {
-      return NextResponse.json(
-        { error: "Invalid JSON request body" },
-        { status: 400 }
-      );
+      const razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret });
+      const planId = await getOrCreateRazorpayPlan(razorpay, plan.planKey, plan.billingCycle);
+      const subscription = await razorpay.subscriptions.create({
+        plan_id: planId,
+        total_count: plan.billingCycle === "yearly" ? 10 : 60,
+        quantity: 1,
+        customer_notify: 1,
+        notes: {
+          checkoutIntentId: intentId,
+          creatorId: auth.creator.id,
+          planKey: plan.planKey,
+          billingCycle: plan.billingCycle,
+        },
+      });
+
+      await db.query("UPDATE payment_checkout_intents SET provider_id = ?, status = 'pending' WHERE id = ?", [subscription.id, intentId]);
+      return NextResponse.json({ subscription_id: subscription.id, plan_id: subscription.plan_id, status: subscription.status });
+    } catch (error) {
+      await db.query("UPDATE payment_checkout_intents SET status = 'failed' WHERE id = ?", [intentId]);
+      throw error;
     }
-
-    const { planKey = "starter", billingCycle = "monthly", email, notes = {} } = body;
-
-    const normalizedCycle = billingCycle === "yearly" ? "yearly" : "monthly";
-
-    const razorpay = new Razorpay({
-      key_id,
-      key_secret,
-    });
-
-    // 1. Get or create the recurring Plan ID on Razorpay
-    const planId = await getOrCreateRazorpayPlan(razorpay, planKey, normalizedCycle);
-
-    // 2. Create the Subscription with recurring auto-debit (total_count = 60 cycles)
-    const subscription = await razorpay.subscriptions.create({
-      plan_id: planId,
-      total_count: normalizedCycle === "yearly" ? 10 : 60,
-      quantity: 1,
-      customer_notify: 1,
-      notes: {
-        planKey,
-        billingCycle: normalizedCycle,
-        email: email || "",
-        ...notes,
-      },
-    });
-
-    return NextResponse.json({
-      subscription_id: subscription.id,
-      plan_id: subscription.plan_id,
-      status: subscription.status,
-    });
   } catch (error: any) {
     console.error("Razorpay create-subscription error:", error);
-
-    if (
-      error?.statusCode === 401 ||
-      (error?.error?.code === "BAD_REQUEST_ERROR" &&
-        error?.error?.description?.toLowerCase().includes("key"))
-    ) {
-      return NextResponse.json(
-        { error: "Authentication failed with Razorpay" },
-        { status: 401 }
-      );
-    }
-
-    return NextResponse.json(
-      {
-        error:
-          error?.error?.description ||
-          error?.message ||
-          "Failed to create Razorpay recurring subscription",
-      },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error?.error?.description || error?.message || "Failed to create subscription" }, { status: 500 });
   }
 }

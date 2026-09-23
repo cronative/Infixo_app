@@ -85,22 +85,16 @@ exports.verifyOtp = async (req, res) => {
       // Mark OTP as used
       await db.query("UPDATE otps SET is_used = TRUE WHERE id = ?", [otpRows[0].id]);
     } else {
-      // Fallback for demo code 1234
-      if (otp === "1234" || otp === "0000") {
-        // demo bypass allowed
-      } else {
-        // Check if expired
-        const [expiredRows] = await db.query(
-          "SELECT * FROM otps WHERE email = ? AND otp_code = ? ORDER BY id DESC LIMIT 1",
-          [email, otp]
-        );
+      const [expiredRows] = await db.query(
+        "SELECT * FROM otps WHERE email = ? AND otp_code = ? ORDER BY id DESC LIMIT 1",
+        [email, otp]
+      );
 
-        if (expiredRows.length > 0) {
-          return res.status(400).json({ error: "OTP code has expired (valid for 5 mins). Please click Resend Code." });
-        }
-
-        return res.status(400).json({ error: "Invalid OTP verification code. Please check your email." });
+      if (expiredRows.length > 0) {
+        return res.status(400).json({ error: "OTP code has expired (valid for 5 mins). Please click Resend Code." });
       }
+
+      return res.status(400).json({ error: "Invalid OTP verification code. Please check your email." });
     }
 
     // Fetch creator details + subscription from MySQL

@@ -4,6 +4,9 @@ import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 import { debugLog } from "@/lib/debugLogger";
 import { getPlanQuota } from "@/services/subscriptionLimits";
+import { requireCreator } from "@/lib/creatorAuth";
+import { requireSession, ownsResource } from "@/lib/session";
+import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 
 
 // GET /api/series?email=... or ?username=...
@@ -14,12 +17,22 @@ export async function GET(req: Request) {
     const username = searchParams.get("username");
     const seriesId = searchParams.get("seriesId") || searchParams.get("id");
 
+    if (email) {
+      const auth = requireSession(req);
+      if (auth.error) return auth.error;
+      if (!ownsResource(auth.session, email)) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
+
     if (seriesId && seriesId.trim() !== "") {
       const [seriesRows]: any = await db.query("SELECT * FROM series WHERE id = ?", [seriesId]);
       if (!seriesRows || seriesRows.length === 0) {
         return NextResponse.json({ success: false, error: "Series not found" }, { status: 404 });
       }
       const s = seriesRows[0];
+      const accessError = await authorizeCreatorRead(req, s.creator_id, true);
+      if (accessError) return accessError;
       const [epRows]: any = await db.query("SELECT * FROM episodes WHERE series_id = ? ORDER BY episode_number ASC", [s.id]);
       const [creatorRows]: any = await db.query("SELECT * FROM creators WHERE id = ?", [s.creator_id]);
       const creator = creatorRows[0] || null;
@@ -94,6 +107,8 @@ export async function GET(req: Request) {
     if (!creatorId) {
       return NextResponse.json({ success: true, series: [] });
     }
+    const accessError = await authorizeCreatorRead(req, creatorId, Boolean(username));
+    if (accessError) return accessError;
 
     // Fetch series
     const [seriesRows]: any = await db.query(
@@ -159,10 +174,13 @@ export async function GET(req: Request) {
 // POST /api/series (Create Series in MySQL)
 export async function POST(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
+
     const body = await req.json();
     console.log("📥 [POST /api/series] Request payload:", body);
 
-    let { email } = body;
+    const email = auth.creator.email;
     const { title, posterDataUrl, description, genre, language, episodes, isEpisodeOnly } = body;
 
     if (!isEpisodeOnly && !title) {
@@ -170,35 +188,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Series Title is required" }, { status: 400 });
     }
 
-    if (!email || email.trim() === "") {
-      const [anyCreator]: any = await db.query("SELECT email FROM creators ORDER BY updated_at DESC LIMIT 1");
-      if (anyCreator.length > 0 && anyCreator[0].email) {
-        email = anyCreator[0].email;
-        console.log("⚠️ [POST /api/series] Used DB active email fallback:", email);
-      } else {
-        email = "creator@inflixo.com";
-      }
-    }
-
-    const [creators]: any = await db.query("SELECT id FROM creators WHERE email = ?", [email]);
-    let creatorId = creators[0]?.id;
-
-    if (!creatorId) {
-      creatorId = `cr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-      await db.query(
-        `INSERT INTO creators (id, email, display_name, username) VALUES (?, ?, '', '')`,
-        [creatorId, email]
-      );
-      console.log("✨ [POST /api/series] Created new creator in DB:", creatorId);
-    }
+    const creatorId = auth.creator.id;
 
     const seriesId = body.seriesId || `ser_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     const isEpisodeOnlyFlag = Boolean(isEpisodeOnly || body.title === "Update" || !title);
-
-    // Auto-migrate episodes table platform column to VARCHAR(50) if needed
-    try {
-      await db.query("ALTER TABLE episodes MODIFY COLUMN platform VARCHAR(50) NOT NULL DEFAULT 'YouTube'");
-    } catch {}
 
     // Fetch creator active plan to enforce server-side quota
     const [subRows]: any = await db.query(
@@ -357,12 +350,18 @@ export async function POST(req: Request) {
 // DELETE /api/series?id=... or /api/series?episodeId=...
 export async function DELETE(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
+
     const { searchParams } = new URL(req.url);
     const seriesId = searchParams.get("id");
     const episodeId = searchParams.get("episodeId");
 
     if (episodeId) {
-      await db.query("DELETE FROM episodes WHERE id = ?", [episodeId]);
+      await db.query(
+        "DELETE e FROM episodes e INNER JOIN series s ON s.id = e.series_id WHERE e.id = ? AND s.creator_id = ?",
+        [episodeId, auth.creator.id]
+      );
       return NextResponse.json({ success: true, message: "Episode deleted from MySQL" });
     }
 
@@ -370,8 +369,11 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "Series ID or Episode ID required" }, { status: 400 });
     }
 
-    await db.query("DELETE FROM episodes WHERE series_id = ?", [seriesId]);
-    await db.query("DELETE FROM series WHERE id = ?", [seriesId]);
+    await db.query(
+      "DELETE e FROM episodes e INNER JOIN series s ON s.id = e.series_id WHERE e.series_id = ? AND s.creator_id = ?",
+      [seriesId, auth.creator.id]
+    );
+    await db.query("DELETE FROM series WHERE id = ? AND creator_id = ?", [seriesId, auth.creator.id]);
     return NextResponse.json({ success: true, message: "Series deleted from MySQL" });
   } catch (err: any) {
     console.error("DELETE Series MySQL Error:", err);
@@ -382,15 +384,19 @@ export async function DELETE(req: Request) {
 // PUT /api/series (Update Single Episode or Series details in MySQL)
 export async function PUT(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
+
     const body = await req.json();
     const { episodeId, seriesId, episodeNumber, title, externalUrl, platform } = body;
 
     if (episodeId) {
       await db.query(
-        `UPDATE episodes
+        `UPDATE episodes e
+         INNER JOIN series s ON s.id = e.series_id
          SET episode_number = ?, title = ?, external_url = ?, platform = ?
-         WHERE id = ?`,
-        [episodeNumber || 1, title || "Episode", externalUrl || "", platform || "YouTube", episodeId]
+         WHERE e.id = ? AND s.creator_id = ?`,
+        [episodeNumber || 1, title || "Episode", externalUrl || "", platform || "YouTube", episodeId, auth.creator.id]
       );
       return NextResponse.json({ success: true, message: "Episode updated in MySQL" });
     }
@@ -399,8 +405,8 @@ export async function PUT(req: Request) {
       await db.query(
         `UPDATE series
          SET title = ?, description = ?, genres = ?, language = ?
-         WHERE id = ?`,
-        [body.title, body.description || "", body.genre || "", body.language || "Hindi", seriesId]
+         WHERE id = ? AND creator_id = ?`,
+        [body.title, body.description || "", body.genre || "", body.language || "Hindi", seriesId, auth.creator.id]
       );
       return NextResponse.json({ success: true, message: "Series updated in MySQL" });
     }

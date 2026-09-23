@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start -p 3030",
+    "migrate": "node scripts/migrate.mjs",
     "server": "node server/index.js",
     "lint": "eslint"
   },

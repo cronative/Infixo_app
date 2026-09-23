@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { ApifySocialService } from "@/services/ApifySocialService";
+import { requireSession } from "@/lib/session";
 
 export async function POST(req: Request) {
+  const auth = requireSession(req);
+  if (auth.error) return auth.error;
+
   try {
     const body = await req.json();
     const username = (body.username || body.pageName || "").trim().replace(/^@/, "");
@@ -15,10 +19,10 @@ export async function POST(req: Request) {
       ? username
       : `https://www.facebook.com/${username}`;
 
-    const apiKey = process.env.RAPIDAPI_KEY || "02af3277a0msh6d2023026fe26cap12bd27jsn3e7de18972b7";
+    const apiKey = process.env.RAPIDAPI_KEY;
 
     // 1. Primary: Try Apify Facebook Page Scraper
-    try {
+    if (apiKey) try {
       const apifyPage = await ApifySocialService.fetchFacebookPage(username);
       if (apifyPage) {
         return NextResponse.json({ success: true, page: apifyPage, provider: "apify" });
@@ -36,7 +40,7 @@ export async function POST(req: Request) {
           headers: {
             "Content-Type": "application/json",
             "x-rapidapi-host": "facebook-scraper3.p.rapidapi.com",
-            "x-rapidapi-key": apiKey,
+            "x-rapidapi-key": apiKey!,
           },
         }
       );

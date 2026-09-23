@@ -47,17 +47,17 @@ export default function SubscriptionStepPage() {
   }> = [
       {
         id: "free",
-        name: "Start Free Trial",
-        badge: "7 DAYS PUBLIC",
-        description: "Try your public profile first. After 7 days, upgrade to keep it public.",
+        name: "7-Day Free Trial",
+        badge: "₹0 · NO CARD NEEDED",
+        description: "Launch your public profile instantly for 7 days. No credit card required.",
         price: "₹0",
         planKey: "early_access",
         planName: "Free Trial",
       },
       {
         id: "starter",
-        name: "Starter Trial",
-        badge: "7 DAYS TRIAL",
+        name: "Starter Plan",
+        badge: "POPULAR",
         description: "Keep your profile public with 3 series, 5 custom links, 1 package and 1 review.",
         price: formatPlanPrice("starter", "monthly", pricingCurrency),
         period: "/ month",
@@ -66,8 +66,8 @@ export default function SubscriptionStepPage() {
       },
       {
         id: "pro",
-        name: "Pro Trial",
-        badge: "7 DAYS TRIAL",
+        name: "Pro Plan",
+        badge: "BEST VALUE",
         description: "20 series, 20 custom links, rate card and default media kit.",
         price: formatPlanPrice("pro", "monthly", pricingCurrency),
         period: "/ month",
@@ -76,7 +76,7 @@ export default function SubscriptionStepPage() {
       },
       {
         id: "vip",
-        name: "VIP Trial",
+        name: "VIP Plan",
         badge: "RECOMMENDED",
         description: "Unlimited series, links and reviews, plus custom media kit and premium tools.",
         price: formatPlanPrice("vip", "monthly", pricingCurrency),
@@ -101,24 +101,15 @@ export default function SubscriptionStepPage() {
     const email = authRepository.getPendingEmail() || profile?.email || "";
 
     try {
-      // 1. Activate plan locally
-      SubscriptionService.activate(planKey, "monthly", email);
-
-      // 2. Persist to MySQL database
-      if (email) {
-        await fetch("/api/subscription", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email,
-            planKey,
-            planName,
-            billingCycle: "monthly",
-            status: planKey === "early_access" ? "trial" : "active",
-            autoRenew: planKey !== "early_access",
-          }),
-        }).catch((err) => console.warn("Subscription sync warning:", err));
+      if (selectedOption !== "free") {
+        OnboardingService.setStep("finish");
+        showToast(`Complete Razorpay checkout to activate ${planName}.`);
+        router.push("/dashboard/subscription");
+        return;
       }
+
+      // 1. Activate plan locally
+      await SubscriptionService.activate(planKey, "monthly", email);
 
       // 3. Mark onboarding finished
       OnboardingService.setStep("finish");
@@ -267,17 +258,21 @@ export default function SubscriptionStepPage() {
                 </>
               ) : selectedOption === "free" ? (
                 <>
-                  <span>Go Live for Free</span>
+                  <span>Launch Free Profile 🚀</span>
                   <ArrowRight className="h-4 w-4" />
                 </>
               ) : (
                 <>
-                  <span>Start {launchOptions.find((option) => option.id === selectedOption)?.planName || "Plan"} Trial</span>
+                  <span>Continue to Secure Checkout 🔒</span>
                   <ArrowRight className="h-4 w-4" />
                 </>
               )}
             </button>
           </div>
+
+          <p className="text-[10px] text-center text-[#64748b] pt-0.5">
+            No credit card needed for Free Trial · Upgrade or cancel anytime
+          </p>
 
         </div>
       </div>

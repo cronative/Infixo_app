@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireCreator } from "@/lib/creatorAuth";
+import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 
 let customLinksTableEnsured = false;
 
@@ -108,6 +110,8 @@ export async function GET(req: Request) {
         targetEmail = creators[0].email;
       }
     } catch {}
+    const accessError = await authorizeCreatorRead(req, targetCreatorId, Boolean(username));
+    if (accessError) return accessError;
 
     const [rows]: any = await db.query(
       `SELECT id, parent_id AS parentId, link_type AS linkType, title, url, icon, is_enabled AS isEnabled, sort_order AS sortOrder
@@ -132,27 +136,20 @@ export async function GET(req: Request) {
 // POST /api/creator/custom-links (Save custom links array to MySQL database table creator_custom_links)
 export async function POST(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const body = await req.json();
-    const { email, links } = body;
+    const { links } = body;
+    const email = auth.creator.email;
 
-    if (!email || !Array.isArray(links)) {
-      return NextResponse.json({ error: "Email and links array required" }, { status: 400 });
+    if (!Array.isArray(links)) {
+      return NextResponse.json({ error: "Links array required" }, { status: 400 });
     }
 
     await ensureCustomLinksTable();
 
-    let creatorId = email;
-    let actualEmail = email;
-    try {
-      const [creators]: any = await db.query(
-        "SELECT id, email FROM creators WHERE email = ? OR username = ? OR id = ? LIMIT 1",
-        [email, email, email]
-      );
-      if (creators && creators.length > 0) {
-        creatorId = creators[0].id;
-        if (creators[0].email) actualEmail = creators[0].email;
-      }
-    } catch {}
+    const creatorId = auth.creator.id;
+    const actualEmail = auth.creator.email;
 
     // Delete existing links for this creator in creator_custom_links table and insert updated list
     await db.query("DELETE FROM creator_custom_links WHERE creator_id = ? OR email = ? OR email = ?", [creatorId, actualEmail, email]);

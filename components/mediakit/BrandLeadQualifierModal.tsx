@@ -98,14 +98,14 @@ export function BrandLeadQualifierModal({
               required
               value={brandName}
               onChange={(e) => setBrandName(e.target.value)}
-              placeholder="e.g. Puma India / Nike"
+              placeholder="e.g. Mamaearth / Local Brand / Agency"
               className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#043084] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
             />
           </div>
 
           <div className="space-y-1">
             <label className="block text-xs font-bold text-[#043084] flex items-center gap-1.5">
-              <DollarSign className="h-3.5 w-3.5 text-[#17845B]" />
+              <span className="h-3.5 w-3.5 text-[#17845B] font-extrabold text-xs flex items-center justify-center">₹</span>
               <span>Campaign budget</span> <span className="text-[#C2414B]">*</span>
             </label>
             <input
@@ -113,7 +113,7 @@ export function BrandLeadQualifierModal({
               required
               value={budget}
               onChange={(e) => setBudget(e.target.value)}
-              placeholder="e.g. ₹25,000 / $500 USD"
+              placeholder="e.g. ₹15,000 or ₹25,000"
               className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#043084] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
             />
           </div>

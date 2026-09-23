@@ -179,5 +179,8 @@ export const AuthService = {
 
   logout(): void {
     storage.clearAll();
+    // Best-effort: also clear the httpOnly session cookie server-side so a
+    // stale cookie can't silently re-authenticate the user after logout.
+    fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
   },
 };

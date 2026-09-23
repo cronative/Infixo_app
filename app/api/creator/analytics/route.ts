@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureAnalyticsTable } from "@/lib/analyticsDb";
 import { ensureRequestsTable } from "@/lib/requestsDb";
+import { requireCreator } from "@/lib/creatorAuth";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -20,19 +21,16 @@ async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email:
 // GET /api/creator/analytics?creatorId=... or ?email=...
 export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const lookupVal = searchParams.get("creatorId") || searchParams.get("email") || searchParams.get("username");
-    const period = searchParams.get("period") || "30d"; // 7d or 30d
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
 
-    if (!lookupVal) {
-      return NextResponse.json({ error: "Creator identifier required" }, { status: 400 });
-    }
+    const { searchParams } = new URL(req.url);
+    const period = searchParams.get("period") || "30d"; // 7d or 30d
 
     await ensureAnalyticsTable();
     await ensureRequestsTable();
 
-    const creator = await resolveCreatorId(lookupVal);
-    const targetId = creator ? creator.id : lookupVal;
+    const targetId = auth.creator.id;
 
     const days = period === "7d" ? 7 : 30;
 

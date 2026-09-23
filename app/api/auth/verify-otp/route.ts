@@ -1,15 +1,17 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { recordOnboardingStep } from "@/lib/onboardingStepDb";
-import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
+import { getClientIp } from "@/lib/rateLimit";
+import { checkPersistentRateLimit } from "@/lib/persistentRateLimit";
 import { logDeviceLogin } from "@/lib/loginLogger";
 import { debugLog, debugError } from "@/lib/debugLogger";
+import { createSessionToken, setSessionCookie } from "@/lib/session";
 
 export async function POST(req: Request) {
   try {
     // 0. Rate Limiting Protection (Max 10 verify attempts per 5 minutes per IP)
     const clientIp = getClientIp(req);
-    const rateCheck = checkRateLimit(`verify_${clientIp}`, 10, 5 * 60 * 1000);
+    const rateCheck = await checkPersistentRateLimit(`verify:${clientIp}`, 10, 5 * 60);
     if (!rateCheck.success) {
       return NextResponse.json(
         { error: `Too many attempts. Please wait ${rateCheck.retryAfterSec} seconds.` },
@@ -54,7 +56,13 @@ export async function POST(req: Request) {
     }
 
     // 2. Mark OTP as used in database on successful verification (keep row in otps table)
-    await db.query("UPDATE otps SET is_used = TRUE WHERE email = ? AND otp_code = ?", [email, otp]);
+    const [consumeResult]: any = await db.query(
+      "UPDATE otps SET is_used = TRUE WHERE id = ? AND is_used = FALSE",
+      [otpRows[0].id]
+    );
+    if (consumeResult.affectedRows !== 1) {
+      return NextResponse.json({ error: "This OTP code has already been used" }, { status: 409 });
+    }
 
     // 3. Fetch Creator details from MySQL database
     const [rows]: any = await db.query(
@@ -80,18 +88,6 @@ export async function POST(req: Request) {
     });
 
     if (creator) {
-      // Ensure default subscription exists in MySQL without overwriting existing paid plans
-      try {
-        await db.query(
-          `INSERT INTO subscriptions (creator_id, plan_key, plan_name, billing_cycle, status, activated_at)
-           VALUES (?, 'early_access', 'Free Trial', 'yearly', 'trial', NOW())
-           ON DUPLICATE KEY UPDATE id = id`,
-          [creator.id]
-        );
-      } catch (e: any) {
-        console.warn("⚠️ Subscription upsert error in verify-otp:", e.message);
-      }
-
       const [sRows]: any = await db.query(
         `SELECT * FROM social_accounts WHERE creator_id = ?`,
         [creator.id]
@@ -155,13 +151,15 @@ export async function POST(req: Request) {
       isExistingProfile = false;
     }
 
-    return NextResponse.json({
+    // Issue session cookie (httpOnly, SameSite=Strict)
+    const creatorIdForSession = creator?.id || `new_${email}`;
+    const sessionToken = createSessionToken(email, creatorIdForSession);
+    const responseBody = {
       success: true,
       message: "OTP verified successfully",
       isExistingProfile,
       onboardingStep: currentStep,
       creator: creator
-
         ? {
             id: creator.id,
             email: creator.email,
@@ -184,7 +182,10 @@ export async function POST(req: Request) {
         : {
             onboardingStep: currentStep,
           },
-    });
+    };
+
+    const response = NextResponse.json(responseBody);
+    return setSessionCookie(response, sessionToken, req);
   } catch (error: any) {
     console.error("Auth Verify OTP MySQL Error:", error);
     return NextResponse.json(

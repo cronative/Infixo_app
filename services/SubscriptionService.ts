@@ -248,13 +248,13 @@ export const SubscriptionService = {
 
     subscriptionRepository.save(sub);
 
-    // Keep local onboarding fast, then mirror the lifecycle to MySQL in the background.
-    if (email) {
+    // Paid access is persisted only by verified payment endpoints.
+    if (email && planKey === "early_access") {
       try {
         await fetch("/api/subscription", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, ...sub }),
+          body: JSON.stringify({ action: "start_trial" }),
         });
       } catch (e) {
         console.error("Failed to save Subscription to MySQL DB:", e);
@@ -264,7 +264,7 @@ export const SubscriptionService = {
     return sub;
   },
 
-  cancelAutoRenew(): Subscription {
+  async cancelAutoRenew(): Promise<Subscription> {
     const current = subscriptionRepository.get();
     const email =
       authRepository.getPendingEmail() ||
@@ -279,22 +279,14 @@ export const SubscriptionService = {
       cancelAtPeriodEnd: true,
     };
 
+    if (!email) throw new Error("No signed-in account");
+    const response = await fetch("/api/subscription", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "cancel" }),
+    });
+    if (!response.ok) throw new Error("Failed to cancel subscription");
     subscriptionRepository.save(updated);
-
-    if (email) {
-      fetch("/api/subscription", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          ...updated,
-          cancelledAt: nowIso,
-          autoRenew: false,
-          cancelAtPeriodEnd: true,
-          renewsAt: null,
-        }),
-      }).catch((e) => console.error("Failed to update auto-renewal in MySQL DB:", e));
-    }
 
     return updated;
   },
@@ -316,21 +308,6 @@ export const SubscriptionService = {
 
     subscriptionRepository.save(updated);
 
-    if (email) {
-      fetch("/api/subscription", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          ...updated,
-          autoRenew: true,
-          cancelAtPeriodEnd: false,
-          renewsAt: nextRenewal,
-          cancelledAt: null,
-        }),
-      }).catch((e) => console.error("Failed to resume auto-renewal in MySQL DB:", e));
-    }
-
     return updated;
   },
 
@@ -347,23 +324,6 @@ export const SubscriptionService = {
       const data = await res.json();
       if (data.success && data.subscription) {
         const currentLocal = subscriptionRepository.get();
-
-        // SAFEGUARD: If local repository already has an active paid plan (starter, pro, vip),
-        // but MySQL still returned 'early_access' (due to async delay or stale cache),
-        // DO NOT downgrade to early_access! Preserve the paid plan and sync MySQL immediately!
-        if (
-          currentLocal &&
-          currentLocal.planKey !== "early_access" &&
-          data.subscription.planKey === "early_access"
-        ) {
-          console.warn("Preserving local paid plan over stale DB early_access:", currentLocal.planKey);
-          fetch("/api/subscription", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, ...currentLocal }),
-          }).catch(() => null);
-          return currentLocal;
-        }
 
         const sub: Subscription = {
           planKey: data.subscription.planKey || "early_access",
@@ -387,17 +347,6 @@ export const SubscriptionService = {
         };
         subscriptionRepository.save(sub);
         return sub;
-      } else {
-        // If MySQL has no subscription yet, but local repository already has an active paid plan,
-        // sync the local plan to MySQL so it is permanently preserved across devices and sessions.
-        const currentLocal = subscriptionRepository.get();
-        if (currentLocal && currentLocal.planKey !== "early_access") {
-          fetch("/api/subscription", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, ...currentLocal }),
-          }).catch(() => null);
-        }
       }
     } catch (e) {
       console.warn("Failed to fetch subscription from DB:", e);
@@ -422,7 +371,7 @@ export const SubscriptionService = {
       fetch("/api/subscription", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, status: "cancelled", cancelledAt }),
+        body: JSON.stringify({ action: "cancel" }),
       }).catch((e) => console.error("Failed to cancel subscription:", e));
     }
 

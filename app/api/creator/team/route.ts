@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureTeamTables } from "@/lib/teamDb";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
+import { requireCreator } from "@/lib/creatorAuth";
+import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -31,6 +33,8 @@ export async function GET(req: Request) {
 
     const creator = await resolveCreatorId(lookupVal);
     const targetId = creator ? creator.id : lookupVal;
+    const accessError = await authorizeCreatorRead(req, targetId, Boolean(searchParams.get("username")));
+    if (accessError) return accessError;
 
     const [teamRows]: any = await db.query(
       `SELECT id, creator_id AS creatorId, team_name AS teamName, team_logo_url AS teamLogoUrl, is_active AS isActive, created_at AS createdAt, updated_at AS updatedAt
@@ -91,18 +95,15 @@ export async function GET(req: Request) {
 // POST /api/creator/team (Create or Update Team & Members)
 export async function POST(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const body = await req.json();
-    const { email, creatorId: passedCreatorId, action, teamName, teamLogoUrl, isActive, member, members } = body;
-
-    const lookupVal = passedCreatorId || email;
-    if (!lookupVal) {
-      return NextResponse.json({ error: "Creator identifier required" }, { status: 400 });
-    }
+    const { action, teamName, teamLogoUrl, isActive, member, members } = body;
 
     await ensureTeamTables();
 
-    const creator = await resolveCreatorId(lookupVal);
-    const targetId = creator ? creator.id : lookupVal;
+    const creator = auth.creator;
+    const targetId = auth.creator.id;
 
     // 1. Action: create or update team base info
     if (action === "save_team" || (!action && teamName !== undefined)) {
@@ -202,19 +203,15 @@ export async function POST(req: Request) {
 // DELETE /api/creator/team?memberId=... or ?teamId=...&creatorId=...
 export async function DELETE(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const { searchParams } = new URL(req.url);
     const memberId = searchParams.get("memberId");
     const teamId = searchParams.get("teamId");
-    const lookupVal = searchParams.get("creatorId") || searchParams.get("email");
-
-    if (!lookupVal) {
-      return NextResponse.json({ error: "Creator identifier required" }, { status: 400 });
-    }
 
     await ensureTeamTables();
 
-    const creator = await resolveCreatorId(lookupVal);
-    const targetId = creator ? creator.id : lookupVal;
+    const targetId = auth.creator.id;
 
     if (memberId) {
       await db.query("DELETE FROM team_members WHERE id = ? AND creator_id = ?", [memberId, targetId]);

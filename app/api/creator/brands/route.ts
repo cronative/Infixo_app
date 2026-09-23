@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureBrandsTable } from "@/lib/brandsDb";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
+import { requireCreator } from "@/lib/creatorAuth";
+import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -31,6 +33,8 @@ export async function GET(req: Request) {
 
     const creator = await resolveCreatorId(lookupVal);
     const targetId = creator ? creator.id : lookupVal;
+    const accessError = await authorizeCreatorRead(req, targetId, Boolean(searchParams.get("username")));
+    if (accessError) return accessError;
 
     const [rows]: any = await db.query(
       `SELECT id, creator_id AS creatorId, brand_name AS brandName, brand_logo_url AS brandLogoUrl, instagram_url AS instagramUrl, youtube_url AS youtubeUrl, facebook_url AS facebookUrl, website_url AS websiteUrl, sort_order AS sortOrder, is_active AS isActive, created_at AS createdAt, updated_at AS updatedAt
@@ -65,18 +69,14 @@ export async function GET(req: Request) {
 // POST /api/creator/brands (Add/Update or Reorder Brand)
 export async function POST(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const body = await req.json();
-    const { email, creatorId: passedCreatorId, action, brand, brands } = body;
-
-    const lookupVal = passedCreatorId || email;
-    if (!lookupVal) {
-      return NextResponse.json({ error: "Creator identifier required" }, { status: 400 });
-    }
+    const { action, brand, brands } = body;
 
     await ensureBrandsTable();
 
-    const creator = await resolveCreatorId(lookupVal);
-    const targetId = creator ? creator.id : lookupVal;
+    const targetId = auth.creator.id;
 
     if (action === "reorder" && Array.isArray(brands)) {
       for (let i = 0; i < brands.length; i++) {
@@ -135,18 +135,18 @@ export async function POST(req: Request) {
 // DELETE /api/creator/brands?id=...&creatorId=...
 export async function DELETE(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
-    const lookupVal = searchParams.get("creatorId") || searchParams.get("email");
 
-    if (!id || !lookupVal) {
-      return NextResponse.json({ error: "ID and creator identifier required" }, { status: 400 });
+    if (!id) {
+      return NextResponse.json({ error: "ID required" }, { status: 400 });
     }
 
     await ensureBrandsTable();
 
-    const creator = await resolveCreatorId(lookupVal);
-    const targetId = creator ? creator.id : lookupVal;
+    const targetId = auth.creator.id;
 
     await db.query("DELETE FROM creator_brands WHERE id = ? AND creator_id = ?", [id, targetId]);
 

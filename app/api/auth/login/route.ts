@@ -1,14 +1,16 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { sendOtpEmail } from "@/lib/email";
-import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
+import { getClientIp } from "@/lib/rateLimit";
+import { checkPersistentRateLimit } from "@/lib/persistentRateLimit";
+import crypto from "crypto";
 import { logDeviceLogin } from "@/lib/loginLogger";
 
 export async function POST(req: Request) {
   try {
     // 0. Rate Limiting Protection (Max 5 requests per 5 minutes per IP)
     const clientIp = getClientIp(req);
-    const rateCheck = checkRateLimit(`login_${clientIp}`, 5, 5 * 60 * 1000);
+    const rateCheck = await checkPersistentRateLimit(`login:${clientIp}`, 5, 5 * 60);
     if (!rateCheck.success) {
       return NextResponse.json(
         { error: `Too many login attempts. Please wait ${rateCheck.retryAfterSec} seconds before trying again.` },
@@ -35,7 +37,7 @@ export async function POST(req: Request) {
     }
 
     // 3. Generate dynamic random 4-digit OTP code (e.g. 4819)
-    const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
+    const otpCode = crypto.randomInt(1000, 10000).toString();
 
     try {
       // 1. Invalidate any previous unused OTP entries for this email
@@ -57,13 +59,15 @@ export async function POST(req: Request) {
         status: "otp_sent",
       });
     } catch (dbErr: any) {
-      console.warn("⚠️ MySQL error inserting OTP record / log:", dbErr.message);
+      console.error("Failed to persist OTP:", dbErr.message);
+      return NextResponse.json({ error: "Unable to create a login code" }, { status: 503 });
     }
 
     // 4. Send real OTP Email via Gmail SMTP (Awaited for guaranteed delivery)
     const emailSent = await sendOtpEmail(email, otpCode);
     if (!emailSent) {
-      console.warn("⚠️ sendOtpEmail returned false for email:", email);
+      await db.query("UPDATE otps SET is_used = TRUE WHERE email = ? AND otp_code = ?", [email, otpCode]);
+      return NextResponse.json({ error: "Unable to deliver the login code" }, { status: 503 });
     }
 
     return NextResponse.json({

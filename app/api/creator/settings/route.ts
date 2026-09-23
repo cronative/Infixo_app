@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureCreatorSettingsTable } from "@/lib/settingsDb";
+import { requireCreator } from "@/lib/creatorAuth";
+import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 
 // GET /api/creator/settings?email=... or ?username=...
 export async function GET(req: Request) {
@@ -32,6 +34,8 @@ export async function GET(req: Request) {
     }
 
     const creatorId = cRows[0].id;
+    const accessError = await authorizeCreatorRead(req, creatorId, Boolean(username));
+    if (accessError) return accessError;
 
     // Fetch settings from dedicated creator_settings table
     const [sRows]: any = await db.query(
@@ -62,38 +66,13 @@ export async function GET(req: Request) {
 // POST /api/creator/settings — Upsert settings into dedicated creator_settings table
 export async function POST(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     await ensureCreatorSettingsTable();
 
     const body = await req.json();
-    const { email, username, visibilitySettings } = body;
-
-    if (!email && !username) {
-      return NextResponse.json({ error: "Email or username is required" }, { status: 400 });
-    }
-
-    // Resolve creator ID from creators table
-    let creatorQuery = "SELECT id FROM creators WHERE ";
-    let param = "";
-    if (email) {
-      creatorQuery += "email = ?";
-      param = email;
-    } else {
-      creatorQuery += "username = ?";
-      param = username;
-    }
-
-    const [cRows]: any = await db.query(creatorQuery, [param]);
-    let creatorId = cRows && cRows.length > 0 ? cRows[0].id : null;
-
-    if (!creatorId) {
-      // Fallback: If creator row does not exist yet, generate ID
-      creatorId = `cr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-      const cleanUsername = username ? username.trim().replace(/[^a-z0-9_]/gi, "").toLowerCase() : "";
-      await db.query(
-        "INSERT INTO creators (id, email, display_name, username) VALUES (?, ?, '', ?)",
-        [creatorId, email || "", cleanUsername]
-      );
-    }
+    const { visibilitySettings } = body;
+    const creatorId = auth.creator.id;
 
     const visibilityJson = visibilitySettings ? JSON.stringify(visibilitySettings) : null;
 

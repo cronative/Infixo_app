@@ -73,30 +73,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
     // 1. Activate in local storage immediately
     await SubscriptionService.activate(targetPlanKey, currentPeriod, emailToUse);
 
-    // 2. Direct guaranteed sync to MySQL DB with Razorpay details
-    if (emailToUse) {
-      try {
-        await fetch("/api/subscription", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: emailToUse,
-            planKey: targetPlanKey,
-            planName: planTitle,
-            billingCycle: currentPeriod,
-            status: "active",
-            autoRenew: true,
-            paymentMode: verifyData?.is_recurring ? "recurring" : "razorpay",
-            razorpay_subscription_id: verifyData?.subscription_id || null,
-            razorpay_payment_id: verifyData?.payment_id || null,
-          }),
-        });
-      } catch (err) {
-        console.warn("Direct subscription sync warning:", err);
-      }
-    }
-
-    // 3. Refresh CreatorContext so full app reflects upgraded plan
+    // The verified payment endpoint is the only authority that activates paid access.
     await refresh();
     showToast(`Successfully upgraded to ${planTitle}! 🎉`);
   };

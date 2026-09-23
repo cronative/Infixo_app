@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureSectionsTable } from "@/lib/sectionsDb";
 import { DEFAULT_PROFILE_SECTIONS, ProfileSectionKey } from "@/types";
+import { requireCreator } from "@/lib/creatorAuth";
+import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -31,6 +33,8 @@ export async function GET(req: Request) {
 
     const creator = await resolveCreatorId(lookupVal);
     const targetId = creator ? creator.id : lookupVal;
+    const accessError = await authorizeCreatorRead(req, targetId, Boolean(searchParams.get("username")));
+    if (accessError) return accessError;
 
     const [rows]: any = await db.query(
       `SELECT id, creator_id AS creatorId, section_key AS sectionKey, sort_order AS sortOrder, is_visible AS isVisible
@@ -76,18 +80,18 @@ export async function GET(req: Request) {
 // POST /api/creator/sections (Save Section Ordering & Visibility)
 export async function POST(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const body = await req.json();
-    const { email, creatorId: passedCreatorId, sections } = body;
+    const { sections } = body;
 
-    const lookupVal = passedCreatorId || email;
-    if (!lookupVal || !Array.isArray(sections)) {
-      return NextResponse.json({ error: "Creator identifier and sections array required" }, { status: 400 });
+    if (!Array.isArray(sections)) {
+      return NextResponse.json({ error: "Sections array required" }, { status: 400 });
     }
 
     await ensureSectionsTable();
 
-    const creator = await resolveCreatorId(lookupVal);
-    const targetId = creator ? creator.id : lookupVal;
+    const targetId = auth.creator.id;
 
     for (let i = 0; i < sections.length; i++) {
       const s = sections[i];

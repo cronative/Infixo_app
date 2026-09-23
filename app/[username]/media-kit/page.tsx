@@ -17,6 +17,7 @@ import {
   ArrowRight,
   Clock,
   UserX,
+  MapPin,
 } from "lucide-react";
 import {
   CreatorProfile,
@@ -552,6 +553,12 @@ export default function PublicMediaKitPage() {
               </div>
               <p className="mt-0.5 text-xs font-medium sm:text-[13px]" style={{ color: themeMeta.colors.mutedText }}>@{cleanHandle}</p>
               {creatorTypes && <p className="mt-0.5 text-xs font-medium opacity-85" style={{ color: themeMeta.colors.secondaryText }}>{creatorTypes}</p>}
+              {Boolean(profile.city) && (
+                <p className="mt-0.5 inline-flex items-center justify-center gap-1 text-[11px] font-medium opacity-80" style={{ color: themeMeta.colors.mutedText }}>
+                  <MapPin className="h-3 w-3 shrink-0" />
+                  <span>{[profile.city, profile.state].filter(Boolean).join(", ")}</span>
+                </p>
+              )}
               <p className="mx-auto mt-1 max-w-sm px-1 text-xs font-normal leading-relaxed sm:text-[13px]" style={{ color: themeMeta.colors.secondaryText }}>
                 {profile.bio || "Official creator portfolio and collaboration media kit."}
               </p>

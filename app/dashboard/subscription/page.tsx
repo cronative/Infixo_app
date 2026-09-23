@@ -43,6 +43,7 @@ function formatSubscriptionDate(value?: string | null) {
 }
 
 export default function DashboardSubscriptionPage() {
+  const [renderedAt] = useState(() => Date.now());
   const { profile, series, subscription, refresh } = useCreator();
   const [activeGigsCount, setActiveGigsCount] = useState(0);
   const [showCancelModal, setShowCancelModal] = useState(false);
@@ -115,10 +116,10 @@ export default function DashboardSubscriptionPage() {
       planKey !== "creator_pro" &&
       planKey !== "creator_VIP");
 
-  const activatedMs = subscription?.activatedAt ? new Date(subscription.activatedAt).getTime() : Date.now();
-  const safeActivatedMs = Number.isNaN(activatedMs) ? Date.now() : activatedMs;
+  const activatedMs = subscription?.activatedAt ? new Date(subscription.activatedAt).getTime() : renderedAt;
+  const safeActivatedMs = Number.isNaN(activatedMs) ? renderedAt : activatedMs;
   const explicitEndMs = finishDate ? new Date(finishDate).getTime() : safeActivatedMs + 7 * 24 * 60 * 60 * 1000;
-  const daysLeft = Math.max(0, Math.ceil((explicitEndMs - Date.now()) / (1000 * 60 * 60 * 24)));
+  const daysLeft = Math.max(0, Math.ceil((explicitEndMs - renderedAt) / (1000 * 60 * 60 * 24)));
   const dayText = daysLeft === 1 ? "1 day" : `${daysLeft} days`;
 
   const handleScrollToUpgrade = () => {
@@ -131,7 +132,7 @@ export default function DashboardSubscriptionPage() {
   const handleConfirmCancel = async () => {
     setIsCancelling(true);
     try {
-      SubscriptionService.cancelAutoRenew();
+      await SubscriptionService.cancelAutoRenew();
       await refresh();
       setShowCancelModal(false);
       showToast("Auto-renewal has been cancelled. Your access remains active until period ends.");

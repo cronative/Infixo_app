@@ -118,33 +118,23 @@ export async function POST(req: Request) {
     const rCQ = Number(ratingContentQuality || rOverall);
     const rProf = Number(ratingProfessionalism || rOverall);
     const rTD = Number(ratingTimelyDelivery || rOverall);
+    const ratings = [rOverall, rCQ, rProf, rTD];
+    if (ratings.some((value) => !Number.isInteger(value) || value < 1 || value > 5)) {
+      return NextResponse.json({ success: false, error: "Ratings must be whole numbers from 1 to 5" }, { status: 400 });
+    }
 
-    // Update MySQL table status to pending_approval with fallback
-    try {
-      await db.query(
-        `UPDATE creator_reviews 
-         SET rating = ?, 
-             rating_content_quality = ?, 
-             rating_professionalism = ?, 
-             rating_timely_delivery = ?, 
-             comment = ?, 
-             client_name = ?, 
-             client_designation = ?, 
-             status = 'pending_approval' 
-         WHERE token = ?`,
-        [rOverall, rCQ, rProf, rTD, finalComment, finalClientName, finalDesignation, token]
-      );
-    } catch (dbUpdateErr) {
-      console.warn("Full 4-column UPDATE failed, falling back to base columns:", dbUpdateErr);
-      await db.query(
-        `UPDATE creator_reviews 
-         SET rating = ?, 
-             comment = ?, 
-             client_name = ?, 
-             client_designation = ?, 
-             status = 'pending_approval' 
-         WHERE token = ?`,
-        [rOverall, finalComment, finalClientName, finalDesignation, token]
+    const [updateResult]: any = await db.query(
+      `UPDATE creator_reviews
+       SET rating = ?, rating_content_quality = ?, rating_professionalism = ?,
+           rating_timely_delivery = ?, comment = ?, client_name = ?,
+           client_designation = ?, status = 'pending_approval'
+       WHERE token = ? AND status = 'pending_invite'`,
+      [rOverall, rCQ, rProf, rTD, finalComment, finalClientName, finalDesignation, token]
+    );
+    if (updateResult.affectedRows !== 1) {
+      return NextResponse.json(
+        { success: false, isAlreadySubmitted: true, error: "This review link has already been used" },
+        { status: 409 }
       );
     }
 
@@ -164,16 +154,8 @@ export async function POST(req: Request) {
       }
 
       if (creatorEmail) {
-        const host = req.headers.get("host") || "inflixo.com";
-        const isDevHost =
-          host.includes("localhost") ||
-          host.includes("127.0.0.1") ||
-          host.includes("192.168.") ||
-          host.includes("10.") ||
-          host.includes(":3000") ||
-          host.includes(":3001");
-        const protocol = isDevHost ? "http" : "https";
-        const dashboardUrl = `${protocol}://${host}/dashboard/reviews`;
+        const configuredOrigin = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL;
+        const dashboardUrl = `${(configuredOrigin || new URL(req.url).origin).replace(/\/$/, "")}/dashboard/reviews`;
 
         await sendReviewReceivedEmail(creatorEmail, {
           creatorName: creatorDisplayName,

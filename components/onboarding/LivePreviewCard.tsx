@@ -95,6 +95,46 @@ import { VisibilitySettingsModal } from "@/components/shared/VisibilitySettingsM
 import { STORAGE_KEYS, storage } from "@/utils/storage";
 import { getInitials } from "@/lib/avatar";
 
+function formatIndianPackagePrice(pkg: MediaKitPackage): string {
+  const min = pkg.minPrice?.trim();
+  const max = pkg.maxPrice?.trim();
+  if (min && max) {
+    const formattedMin = min.startsWith("₹") ? min : `₹${min}`;
+    const formattedMax = max.startsWith("₹") ? max : `₹${max}`;
+    return `${formattedMin} – ${formattedMax}`;
+  }
+  if (min && !max) {
+    const formattedMin = min.startsWith("₹") ? min : `₹${min}`;
+    return `Starting from ${formattedMin}`;
+  }
+
+  const raw = (pkg.price || "").trim();
+  if (!raw) return "Contact for pricing";
+
+  const lower = raw.toLowerCase();
+  if (lower.includes("contact") || lower.includes("negotiable") || lower.includes("custom")) {
+    return raw;
+  }
+
+  if (raw.includes("–") || raw.includes("-") || lower.includes(" to ")) {
+    return raw.startsWith("₹") ? raw : `₹${raw}`;
+  }
+
+  if (lower.startsWith("starting from") || lower.startsWith("from")) {
+    return raw;
+  }
+
+  const cleanNumber = raw.replace(/^₹\s*/, "").trim();
+  if (/^\d[\d,]*$/.test(cleanNumber)) {
+    const num = Number(cleanNumber.replace(/,/g, ""));
+    if (!Number.isNaN(num)) {
+      return `₹${num.toLocaleString("en-IN")}`;
+    }
+  }
+
+  return raw.startsWith("₹") ? raw : `₹${raw}`;
+}
+
 export interface ThemeStyleConfig {
   cardBg?: string;
   profBadgeBg: string;
@@ -1490,14 +1530,14 @@ export function LivePreviewCard({
           </div>
 
           {/* Creator Name & Verified Checkmark */}
-          <div className="mt-1.5 flex items-center justify-center gap-1.5 max-w-full">
+          <div className="mt-1.5 flex items-center justify-center gap-1.5 max-w-full px-2">
             <h1
               style={{
                 color: c.primaryText,
                 fontFamily: typ.headingFontFamily,
                 fontWeight: 700,
               }}
-              className="text-xl sm:text-[22px] font-bold tracking-tight"
+              className="text-xl sm:text-[22px] font-bold tracking-tight break-words text-center line-clamp-2"
             >
               {profile.displayName || "Creator Name"}
             </h1>
@@ -1512,7 +1552,7 @@ export function LivePreviewCard({
           {cleanHandle && (
             <p
               style={{ color: c.mutedText }}
-              className="text-xs sm:text-[13px] font-medium text-center mt-0.5"
+              className="text-xs sm:text-[13px] font-medium text-center mt-0.5 truncate max-w-[280px]"
             >
               @{cleanHandle}
             </p>
@@ -1522,9 +1562,20 @@ export function LivePreviewCard({
           {effectiveVisibilitySettings.showContentCategory !== false && formattedCategories && (
             <p
               style={{ color: c.secondaryText }}
-              className="mt-0.5 text-xs font-medium text-center tracking-normal opacity-85"
+              className="mt-0.5 text-xs font-medium text-center tracking-normal opacity-85 break-words line-clamp-2 px-2"
             >
               {formattedCategories}
+            </p>
+          )}
+
+          {/* Location: City, State (if specified) */}
+          {Boolean(profile.city) && (
+            <p
+              style={{ color: c.mutedText }}
+              className="mt-0.5 inline-flex items-center justify-center gap-1 text-[11px] font-medium opacity-80 text-center"
+            >
+              <MapPin className="h-3 w-3 shrink-0" />
+              <span>{[profile.city, profile.state].filter(Boolean).join(", ")}</span>
             </p>
           )}
 
@@ -1532,7 +1583,7 @@ export function LivePreviewCard({
           {profile.bio && profile.bio.trim() && (
             <p
               style={{ color: c.secondaryText }}
-              className="mt-1 text-xs sm:text-[13px] leading-relaxed max-w-md mx-auto font-normal px-1 text-center"
+              className="mt-1 text-xs sm:text-[13px] leading-relaxed max-w-md mx-auto font-normal px-2 text-center break-words"
             >
               {profile.bio}
             </p>
@@ -2135,11 +2186,7 @@ export function LivePreviewCard({
               {activePackages.length > 0 && (
                 <div className="space-y-2">
                   {activePackages.map((pkg) => {
-                    const formattedPrice = pkg.price
-                      ? pkg.price.startsWith("₹") || pkg.price.toLowerCase().includes("contact")
-                        ? pkg.price
-                        : `₹${pkg.price}`
-                      : "Contact for pricing";
+                    const formattedPrice = formatIndianPackagePrice(pkg);
 
                     return (
                       <div
@@ -2168,12 +2215,30 @@ export function LivePreviewCard({
                           >
                             {pkg.title}
                           </h3>
-                          <p
-                            style={{ color: c.secondaryText }}
-                            className="text-[11px] sm:text-xs font-medium"
-                          >
-                            Starting at {formattedPrice}
-                          </p>
+                          <div className="flex flex-wrap items-center gap-1.5 text-[11px] sm:text-xs">
+                            <span
+                              style={{ color: c.primaryText }}
+                              className="font-bold"
+                            >
+                              {formattedPrice}
+                            </span>
+                            {pkg.turnaroundDays ? (
+                              <span
+                                style={{ color: c.mutedText }}
+                                className="text-[10px] sm:text-[10.5px] font-medium opacity-80"
+                              >
+                                · {pkg.turnaroundDays}d turnaround
+                              </span>
+                            ) : null}
+                          </div>
+                          {pkg.deliverables && pkg.deliverables.length > 0 && (
+                            <p
+                              style={{ color: c.secondaryText }}
+                              className="text-[10.5px] truncate opacity-75 font-normal"
+                            >
+                              {pkg.deliverables.slice(0, 2).join(" · ")}
+                            </p>
+                          )}
                         </div>
 
                         <ArrowRight
@@ -2505,7 +2570,7 @@ export function LivePreviewCard({
         onClose={() => setIsLeadModalOpen(false)}
         creatorName={profile.displayName || "Creator"}
         creatorUsername={profile.username || "creator"}
-        whatsappNumber={mediaKitSettings.whatsappNumber || ""}
+        whatsappNumber={mediaKitSettings?.whatsappNumber || (profile as any)?.whatsappNumber || ""}
         packageName={selectedGigForWhatsApp?.title}
         packagePrice={selectedGigForWhatsApp?.price}
         deliverableText={selectedGigForWhatsApp?.deliverables?.join(", ")}

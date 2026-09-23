@@ -108,13 +108,8 @@ export async function openRazorpayCheckout(options: CheckoutOptions): Promise<vo
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: options.amount,
-          currency: options.currency || "INR",
-          receipt: `rcpt_${Date.now()}`,
-          notes: {
-            planKey: options.planKey || "standard",
-            ...options.notes,
-          },
+          planKey: options.planKey,
+          billingCycle: options.billingCycle || "monthly",
         }),
       });
 
@@ -167,9 +162,6 @@ export async function openRazorpayCheckout(options: CheckoutOptions): Promise<vo
               razorpay_subscription_id: response.razorpay_subscription_id || subscriptionId,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
-              email: options.prefill?.email,
-              planKey: options.planKey,
-              billingCycle: options.billingCycle,
             }),
           });
 

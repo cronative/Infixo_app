@@ -1,76 +1,47 @@
+import crypto from "crypto";
 import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
+import { db } from "@/lib/db";
+import { getPaidPlan } from "@/lib/billing";
+import { requireCreator } from "@/lib/creatorAuth";
 
 export async function POST(req: Request) {
   try {
-    const key_id = process.env.RAZORPAY_KEY_ID;
-    const key_secret = process.env.RAZORPAY_KEY_SECRET;
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
 
-    if (!key_id || !key_secret) {
-      console.error("Razorpay Error: Missing API keys in environment variables");
-      return NextResponse.json(
-        { error: "Razorpay credentials are not configured on the server" },
-        { status: 500 }
-      );
-    }
+    const keyId = process.env.RAZORPAY_KEY_ID;
+    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+    if (!keyId || !keySecret) return NextResponse.json({ error: "Payments are not configured" }, { status: 503 });
 
-    let body;
+    const body = await req.json();
+    const plan = getPaidPlan(body.planKey, body.billingCycle);
+    if (!plan) return NextResponse.json({ error: "Invalid paid plan or billing cycle" }, { status: 400 });
+
+    const intentId = `pi_${crypto.randomUUID()}`;
+    await db.query(
+      `INSERT INTO payment_checkout_intents
+       (id, creator_id, provider_type, plan_key, billing_cycle, amount, currency, status)
+       VALUES (?, ?, 'order', ?, ?, ?, ?, 'creating')`,
+      [intentId, auth.creator.id, plan.planKey, plan.billingCycle, plan.amount, plan.currency]
+    );
+
     try {
-      body = await req.json();
-    } catch {
-      return NextResponse.json(
-        { error: "Invalid JSON request body" },
-        { status: 400 }
-      );
+      const razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret });
+      const order = await razorpay.orders.create({
+        amount: plan.amount,
+        currency: plan.currency,
+        receipt: intentId.slice(0, 40),
+        notes: { checkoutIntentId: intentId, creatorId: auth.creator.id },
+      });
+      await db.query("UPDATE payment_checkout_intents SET provider_id = ?, status = 'pending' WHERE id = ?", [order.id, intentId]);
+      return NextResponse.json({ order_id: order.id, amount: order.amount, currency: order.currency });
+    } catch (error) {
+      await db.query("UPDATE payment_checkout_intents SET status = 'failed' WHERE id = ?", [intentId]);
+      throw error;
     }
-
-    const { amount, currency = "INR", receipt, notes } = body;
-
-    // Validate amount: must be provided, must be a number, minimum 100 paise (₹1.00)
-    if (typeof amount !== "number" || !Number.isFinite(amount) || amount < 100) {
-      return NextResponse.json(
-        {
-          error: "Invalid amount. Minimum amount is 100 paise (₹1.00).",
-        },
-        { status: 400 }
-      );
-    }
-
-    const razorpay = new Razorpay({
-      key_id,
-      key_secret,
-    });
-
-    const options = {
-      amount: Math.round(amount),
-      currency: currency.toUpperCase(),
-      receipt: receipt || `rcpt_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
-      notes: notes || {},
-    };
-
-    const order = await razorpay.orders.create(options);
-
-    return NextResponse.json({
-      order_id: order.id,
-      amount: order.amount,
-      currency: order.currency,
-    });
   } catch (error: any) {
     console.error("Razorpay create-order error:", error);
-
-    // Handle authentication failure
-    if (error?.statusCode === 401 || (error?.error?.code === "BAD_REQUEST_ERROR" && error?.error?.description?.toLowerCase().includes("key"))) {
-      return NextResponse.json(
-        { error: "Authentication failed with Razorpay" },
-        { status: 401 }
-      );
-    }
-
-    return NextResponse.json(
-      {
-        error: error?.error?.description || error?.message || "Failed to create Razorpay order",
-      },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error?.error?.description || error?.message || "Failed to create order" }, { status: 500 });
   }
 }

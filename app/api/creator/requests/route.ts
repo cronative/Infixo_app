@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureRequestsTable } from "@/lib/requestsDb";
+import { requireCreator } from "@/lib/creatorAuth";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -19,18 +20,14 @@ async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email:
 // GET /api/creator/requests?creatorId=... or ?email=...
 export async function GET(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const { searchParams } = new URL(req.url);
-    const lookupVal = searchParams.get("creatorId") || searchParams.get("email") || searchParams.get("username");
     const statusFilter = searchParams.get("status");
-
-    if (!lookupVal) {
-      return NextResponse.json({ success: true, requests: [], unreadCount: 0 });
-    }
 
     await ensureRequestsTable();
 
-    const creator = await resolveCreatorId(lookupVal);
-    const targetId = creator ? creator.id : lookupVal;
+    const targetId = auth.creator.id;
 
     let query = `
       SELECT id, creator_id AS creatorId, sender_name AS senderName, company_name AS companyName,
@@ -80,12 +77,13 @@ export async function GET(req: Request) {
 // PATCH /api/creator/requests (Update Status: NEW, VIEWED, REPLIED, CLOSED)
 export async function PATCH(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const body = await req.json();
-    const { id, status, creatorId: passedCreatorId, email } = body;
+    const { id, status } = body;
 
-    const lookupVal = passedCreatorId || email;
-    if (!id || !status || !lookupVal) {
-      return NextResponse.json({ error: "ID, status and creator identifier required" }, { status: 400 });
+    if (!id || !status) {
+      return NextResponse.json({ error: "ID and status required" }, { status: 400 });
     }
 
     const cleanStatus = status.toUpperCase();
@@ -95,8 +93,7 @@ export async function PATCH(req: Request) {
 
     await ensureRequestsTable();
 
-    const creator = await resolveCreatorId(lookupVal);
-    const targetId = creator ? creator.id : lookupVal;
+    const targetId = auth.creator.id;
 
     await db.query(
       "UPDATE collaboration_requests SET status = ?, updated_at = NOW() WHERE id = ? AND creator_id = ?",
@@ -113,18 +110,18 @@ export async function PATCH(req: Request) {
 // DELETE /api/creator/requests?id=...&creatorId=...
 export async function DELETE(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
-    const lookupVal = searchParams.get("creatorId") || searchParams.get("email");
 
-    if (!id || !lookupVal) {
-      return NextResponse.json({ error: "ID and creator identifier required" }, { status: 400 });
+    if (!id) {
+      return NextResponse.json({ error: "ID required" }, { status: 400 });
     }
 
     await ensureRequestsTable();
 
-    const creator = await resolveCreatorId(lookupVal);
-    const targetId = creator ? creator.id : lookupVal;
+    const targetId = auth.creator.id;
 
     await db.query("DELETE FROM collaboration_requests WHERE id = ? AND creator_id = ?", [id, targetId]);
 
