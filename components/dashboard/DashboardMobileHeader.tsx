@@ -3,11 +3,15 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Menu, ExternalLink, Copy } from "lucide-react";
-import { Logo } from "@/components/shared/Logo";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { copyToClipboard } from "@/lib/copyToClipboard";
+import { Logo } from "@/components/shared/Logo";
 
+const ICON_BTN =
+  "flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-[#334155] transition-colors hover:bg-[#f1f5f9] active:bg-[#e2e8f0]";
+
+/** Native-style mobile app bar: menu · brand (or title) · profile shortcuts. */
 export function DashboardMobileHeader({
   title,
   showBack,
@@ -24,65 +28,44 @@ export function DashboardMobileHeader({
 
   const handleCopy = async () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
-    const fullUrl = `${origin}/${handleStr}`;
-    const success = await copyToClipboard(fullUrl);
-    if (success) {
-      showToast("Profile link copied! ✨");
-    } else {
-      showToast("Could not copy link", "error");
-    }
+    const success = await copyToClipboard(`${origin}/${handleStr}`);
+    showToast(success ? "Profile link copied! ✨" : "Could not copy link", success ? "success" : "error");
   };
 
   return (
-    <header className="sticky top-0 z-20 border-b border-[#e2e8f0] bg-white/92 px-4 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] shadow-[0_1px_0_rgba(15,23,42,0.02)] backdrop-blur-xl lg:hidden">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          {showBack ? (
-            <button
-              onClick={() => router.back()}
-              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-[#043084] transition-all hover:border-[#cbd5e1] hover:bg-[#f1f5f9] active:scale-95"
-              aria-label="Back"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </button>
+    <header className="sticky top-0 z-20 border-b border-[#e2e8f0] bg-white/95 px-2 pb-1.5 pt-[calc(env(safe-area-inset-top)+0.375rem)] backdrop-blur-xl lg:hidden">
+      <div className="flex items-center gap-1">
+        {showBack ? (
+          <button onClick={() => router.back()} className={ICON_BTN} aria-label="Back">
+            <ArrowLeft className="h-5 w-5" />
+          </button>
+        ) : (
+          <button onClick={onOpenDrawer} className={ICON_BTN} aria-label="Open menu">
+            <Menu className="h-5 w-5" />
+          </button>
+        )}
+
+        <div className="min-w-0 flex-1 px-1">
+          {title ? (
+            <p className="truncate text-[17px] font-semibold tracking-tight text-[#0f172a]">{title}</p>
           ) : (
-            <button
-              onClick={onOpenDrawer}
-              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-[#043084] transition-all hover:border-[#cbd5e1] hover:bg-[#f1f5f9] active:scale-95"
-              aria-label="Open menu drawer"
-            >
-              <Menu className="h-4 w-4" />
-            </button>
+            <Logo size="sm" />
           )}
-          <Logo size="sm" />
         </div>
 
-        <div className="flex items-center gap-1.5">
-          {title ? (
-            <p className="text-xs font-bold text-[#043084] truncate max-w-[140px]">{title}</p>
-          ) : (
-            <>
-              <button
-                type="button"
-                onClick={handleCopy}
-                className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[#e2e8f0] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#043084] shadow-xs transition-all hover:border-[#cbd5e1] hover:bg-[#f8fafc] active:scale-95"
-                title="Copy Profile Link"
-              >
-                <Copy className="h-3 w-3 text-[#64748b]" />
-                <span className="hidden xs:inline text-[11px]">Copy</span>
-              </button>
-              <Link
-                href={`/${handleStr}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 rounded-lg border border-[#043084] bg-[#043084] px-2.5 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-brand-hover hover:border-[#043084] active:scale-95"
-              >
-                <span className="text-[11px]">View</span>
-                <ExternalLink className="h-3 w-3" />
-              </Link>
-            </>
-          )}
-        </div>
+        <button type="button" onClick={handleCopy} className={ICON_BTN} aria-label="Copy profile link" title="Copy profile link">
+          <Copy className="h-[18px] w-[18px]" />
+        </button>
+        <Link
+          href={`/${handleStr}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={ICON_BTN}
+          aria-label="View public profile"
+          title="View public profile"
+        >
+          <ExternalLink className="h-[18px] w-[18px]" />
+        </Link>
       </div>
     </header>
   );

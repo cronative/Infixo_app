@@ -81,7 +81,7 @@ export default function DashboardPreviewPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
         <div>
           <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#043084]">
+            <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
               Profile Preview
             </h1>
             <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#17845B] bg-[#EAF7F0] px-2.5 py-0.5 rounded-full border border-[#17845B]/20">

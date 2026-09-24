@@ -778,16 +778,8 @@ export function buildSocialUrl(platform: string, rawUrlOrHandle?: string): strin
   }
 }
 
-export function formatCategoryDots(category?: string | null, customCategory?: string | null): string {
-  const raw = (category || customCategory || "").trim();
-  if (!raw) return "";
-  if (raw.includes("·")) return raw;
-  return raw
-    .split(/[,/|&]+/)
-    .map((s) => s.trim().replace(/^Genre:\s*/i, ""))
-    .filter(Boolean)
-    .join(" · ");
-}
+import { formatCategoryDots } from "@/utils/format";
+export { formatCategoryDots };
 
 export interface LivePreviewCardProps {
   profile: CreatorProfile;

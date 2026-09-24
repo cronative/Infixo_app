@@ -306,7 +306,7 @@ export default function DashboardTeamPage() {
       {/* Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#043084]">
+          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
             Team &amp; Collaborators
           </h1>
           <p className="text-xs sm:text-[13px] text-[#475569] font-medium mt-0.5">
@@ -328,7 +328,7 @@ export default function DashboardTeamPage() {
             <button
               type="button"
               onClick={() => handleOpenMemberModal()}
-              className="tap-scale inline-flex items-center gap-1.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-white font-semibold text-xs h-9 px-3.5 transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+              className="tap-scale inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3.5 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5 stroke-[2.5]" />
               <span>Add Member</span>
@@ -392,7 +392,7 @@ export default function DashboardTeamPage() {
               <button
                 type="button"
                 onClick={() => handleOpenMemberModal()}
-                className="hidden sm:inline-flex items-center gap-1 rounded-lg bg-[#043084] hover:bg-brand-hover text-white px-2.5 py-1 text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                className="hidden sm:inline-flex items-center gap-1 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] text-[#0f172a] px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer"
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span>Add Member</span>
@@ -524,7 +524,7 @@ export default function DashboardTeamPage() {
 
                         <div className="min-w-0 flex-1 space-y-0.5">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <h3 className="truncate font-bold text-xs sm:text-[13px] text-[#043084]">{member.name}</h3>
+                            <h3 className="truncate font-semibold text-xs sm:text-[13px] text-[#0f172a]">{member.name}</h3>
                             <span className="text-[11px] font-semibold text-[#043084] truncate">
                               • {member.role}
                             </span>
@@ -702,7 +702,7 @@ export default function DashboardTeamPage() {
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#043084]">
+              <label className="block text-[13px] font-medium text-[#0f172a]">
                 Team Name <span className="text-[#C2414B]">*</span>
               </label>
               <input
@@ -711,7 +711,7 @@ export default function DashboardTeamPage() {
                 value={teamName}
                 onChange={(e) => setTeamName(e.target.value)}
                 placeholder="e.g. MediaVerse Studio or Nikunj Films"
-                className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3.5 py-2 text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
           </ModalBody>
@@ -759,7 +759,7 @@ export default function DashboardTeamPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#043084]">
+                <label className="block text-[13px] font-medium text-[#0f172a]">
                   Name <span className="text-[#C2414B]">*</span>
                 </label>
                 <input
@@ -768,12 +768,12 @@ export default function DashboardTeamPage() {
                   value={memberName}
                   onChange={(e) => setMemberName(e.target.value)}
                   placeholder="e.g. Rahul Sharma"
-                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3.5 py-2 text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#043084]">
+                <label className="block text-[13px] font-medium text-[#0f172a]">
                   Role <span className="text-[#C2414B]">*</span>
                 </label>
                 <input
@@ -782,7 +782,7 @@ export default function DashboardTeamPage() {
                   value={memberRole}
                   onChange={(e) => setMemberRole(e.target.value)}
                   placeholder="e.g. Lead Video Editor"
-                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3.5 py-2 text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
             </div>
@@ -806,7 +806,7 @@ export default function DashboardTeamPage() {
                     value={memberInstagram}
                     onChange={(e) => setMemberInstagram(extractHandle(e.target.value, "instagram"))}
                     placeholder="username (e.g. johndoe)"
-                    className="h-full w-full min-w-0 flex-1 bg-transparent text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/40 outline-none"
+                    className="h-full w-full min-w-0 flex-1 bg-transparent text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/40 outline-none"
                   />
                 </div>
               </div>
@@ -824,7 +824,7 @@ export default function DashboardTeamPage() {
                     value={memberYoutube}
                     onChange={(e) => setMemberYoutube(extractHandle(e.target.value, "youtube"))}
                     placeholder="channel username (e.g. channelname)"
-                    className="h-full w-full min-w-0 flex-1 bg-transparent text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/40 outline-none"
+                    className="h-full w-full min-w-0 flex-1 bg-transparent text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/40 outline-none"
                   />
                 </div>
               </div>
@@ -842,7 +842,7 @@ export default function DashboardTeamPage() {
                     value={memberFacebook}
                     onChange={(e) => setMemberFacebook(extractHandle(e.target.value, "facebook"))}
                     placeholder="page username (e.g. pagename)"
-                    className="h-full w-full min-w-0 flex-1 bg-transparent text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/40 outline-none"
+                    className="h-full w-full min-w-0 flex-1 bg-transparent text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/40 outline-none"
                   />
                 </div>
               </div>

@@ -127,7 +127,7 @@ export function LocationSearchModal({
                 placeholder="Search city, state, or country..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] py-2.5 pl-10 pr-4 text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/60 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] py-2.5 pl-10 pr-4 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
@@ -176,7 +176,7 @@ export function LocationSearchModal({
         ) : (
           <div className="space-y-3.5 text-left">
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#043084]">City <span className="text-rose-500">*</span></label>
+              <label className="block text-[13px] font-medium text-[#0f172a]">City <span className="text-rose-500">*</span></label>
               <div className="relative">
                 <Building className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
                 <input
@@ -184,13 +184,13 @@ export function LocationSearchModal({
                   placeholder="e.g. Surat, Austin, Kyoto"
                   value={customCity}
                   onChange={(e) => setCustomCity(e.target.value)}
-                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] py-2.5 pl-10 pr-3.5 text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/60 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] py-2.5 pl-10 pr-3.5 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#043084]">State or Region <span className="text-[#64748b] font-normal">(Optional)</span></label>
+              <label className="block text-[13px] font-medium text-[#0f172a]">State or Region <span className="text-[#64748b] font-normal">(Optional)</span></label>
               <div className="relative">
                 <Navigation className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
                 <input
@@ -198,13 +198,13 @@ export function LocationSearchModal({
                   placeholder="e.g. Gujarat, California"
                   value={customState}
                   onChange={(e) => setCustomState(e.target.value)}
-                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] py-2.5 pl-10 pr-3.5 text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/60 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] py-2.5 pl-10 pr-3.5 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#043084]">Country <span className="text-rose-500">*</span></label>
+              <label className="block text-[13px] font-medium text-[#0f172a]">Country <span className="text-rose-500">*</span></label>
               <div className="relative">
                 <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
                 <input
@@ -212,7 +212,7 @@ export function LocationSearchModal({
                   placeholder="e.g. India, United States, Japan"
                   value={customCountry}
                   onChange={(e) => setCustomCountry(e.target.value)}
-                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] py-2.5 pl-10 pr-3.5 text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/60 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] py-2.5 pl-10 pr-3.5 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
             </div>

@@ -26,6 +26,7 @@ import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { creatorSetupRepository } from "@/repositories/localRepository";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { resizeImageToDataUrl } from "@/lib/imageResize";
 
 const CATEGORIES: CreatorSetupCategory[] = [
   "Camera / Phone",
@@ -216,11 +217,7 @@ export default function DashboardSetupPage() {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      setImageUrl(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    resizeImageToDataUrl(file, 800).then(setImageUrl).catch(() => showToast("Could not read that image.", "error"));
   };
 
   const handleSaveItem = async (e: React.FormEvent) => {
@@ -352,10 +349,10 @@ export default function DashboardSetupPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#043084]">
+            <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
               Creator Setup &amp; Gear
             </h1>
-            <span className="rounded-full bg-[#043084]/10 px-2.5 py-0.5 text-xs font-bold text-[#043084]">
+            <span className="rounded-full bg-[#f1f5f9] px-2 py-0.5 text-xs font-medium text-[#475569]">
               {items.length} {items.length === 1 ? "item" : "items"}
             </span>
           </div>
@@ -367,7 +364,7 @@ export default function DashboardSetupPage() {
         <button
           type="button"
           onClick={() => handleOpenModal()}
-          className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-[#043084] px-3.5 text-xs font-semibold text-white shadow-xs transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-sm cursor-pointer self-start sm:self-auto"
+          className="tap-scale inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3.5 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] cursor-pointer"
         >
           <Plus className="h-3.5 w-3.5" />
           <span>Add Gear / Tool</span>
@@ -386,7 +383,7 @@ export default function DashboardSetupPage() {
                 type="button"
                 onClick={() => setSelectedCategoryFilter(tab)}
                 className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition-all cursor-pointer ${active
-                    ? "bg-[#043084] text-white shadow-xs"
+                    ? "bg-[#043084]/[0.08] text-[#043084]"
                     : "bg-[#f8fafc] text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#043084]"
                   }`}
               >
@@ -581,7 +578,7 @@ export default function DashboardSetupPage() {
           <ModalBody className="space-y-4">
             {/* Category */}
             <div>
-              <label className="block text-xs font-bold text-[#043084] mb-1">
+              <label className="block text-[13px] font-medium text-[#0f172a] mb-1">
                 Category <span className="text-rose-500">*</span>
               </label>
               <select
@@ -600,7 +597,7 @@ export default function DashboardSetupPage() {
             {/* Name & Brand */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
-                <label className="block text-xs font-bold text-[#043084] mb-1">
+                <label className="block text-[13px] font-medium text-[#0f172a] mb-1">
                   Item Name <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -614,7 +611,7 @@ export default function DashboardSetupPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#043084] mb-1">
+                <label className="block text-[13px] font-medium text-[#0f172a] mb-1">
                   Brand / Maker
                 </label>
                 <input
@@ -630,7 +627,7 @@ export default function DashboardSetupPage() {
             {/* Model / Plan & Used For */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
-                <label className="block text-xs font-bold text-[#043084] mb-1">
+                <label className="block text-[13px] font-medium text-[#0f172a] mb-1">
                   Model / Version / Plan
                 </label>
                 <input
@@ -643,7 +640,7 @@ export default function DashboardSetupPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#043084] mb-1">
+                <label className="block text-[13px] font-medium text-[#0f172a] mb-1">
                   What do you use it for?
                 </label>
                 <input
@@ -658,7 +655,7 @@ export default function DashboardSetupPage() {
 
             {/* Link URL */}
             <div>
-              <label className="block text-xs font-bold text-[#043084] mb-1">
+              <label className="block text-[13px] font-medium text-[#0f172a] mb-1">
                 Product / Affiliate / Store Link
               </label>
               <input
@@ -672,7 +669,7 @@ export default function DashboardSetupPage() {
 
             {/* Image Upload */}
             <div>
-              <label className="block text-xs font-bold text-[#043084] mb-1">
+              <label className="block text-[13px] font-medium text-[#0f172a] mb-1">
                 Item Photo / Icon (Optional)
               </label>
               <div className="flex items-center gap-3">
@@ -691,7 +688,7 @@ export default function DashboardSetupPage() {
                 </div>
 
                 <div className="flex flex-1 items-center gap-2">
-                  <label className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#043084] transition-all hover:bg-[#f8fafc]">
+                  <label className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-[13px] font-medium text-[#0f172a] transition-all hover:bg-[#f8fafc]">
                     <UploadCloud className="h-3.5 w-3.5" />
                     <span>Upload Image</span>
                     <input
@@ -717,7 +714,7 @@ export default function DashboardSetupPage() {
 
             {/* Note / Advice */}
             <div>
-              <label className="block text-xs font-bold text-[#043084] mb-1">
+              <label className="block text-[13px] font-medium text-[#0f172a] mb-1">
                 Note or Recommendation
               </label>
               <textarea

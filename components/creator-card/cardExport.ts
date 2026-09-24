@@ -1,6 +1,5 @@
 "use client";
 
-import { getFontEmbedCSS, toBlob } from "html-to-image";
 import { CARD_EXPORT_PIXEL_RATIO, CARD_HEIGHT, CARD_WIDTH } from "@/components/creator-card/CreatorCard";
 
 const isWebKit = () =>
@@ -8,6 +7,8 @@ const isWebKit = () =>
 
 /** Renders the card DOM node to a 1080 × 1920 PNG blob. */
 export async function renderCardPng(node: HTMLElement): Promise<Blob> {
+  // Loaded on demand so the export library isn't part of the page's initial bundle.
+  const { getFontEmbedCSS, toBlob } = await import("html-to-image");
   await document.fonts?.ready;
   const fontEmbedCSS = await getFontEmbedCSS(node);
   const options = {

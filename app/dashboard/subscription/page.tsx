@@ -58,13 +58,20 @@ export default function DashboardSubscriptionPage() {
     setTimeout(() => setToastMessage(null), 4000);
   };
 
+  // Count from the database (same source as Home / Media Kit); local cache only as an instant fallback.
   useEffect(() => {
-    async function loadGigs() {
-      const packages = MediaKitService.getPackages();
-      setActiveGigsCount(packages.filter((p) => p.isActive).length);
+    let cancelled = false;
+    setActiveGigsCount(MediaKitService.getPackages().filter((p) => p.isActive).length);
+    const identifier = profile.email || profile.username;
+    if (identifier) {
+      MediaKitService.fetchFromDb(identifier, profile.id).then(({ packages }) => {
+        if (!cancelled) setActiveGigsCount(packages.filter((p) => p.isActive !== false).length);
+      });
     }
-    loadGigs();
-  }, [profile]);
+    return () => {
+      cancelled = true;
+    };
+  }, [profile.email, profile.username, profile.id]);
 
   const planKey = subscription?.planKey || "early_access";
   const normalizedKey =
@@ -163,7 +170,7 @@ export default function DashboardSubscriptionPage() {
       {/* 1. PAGE HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
         <div>
-          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#043084]">
+          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
             Subscription &amp; Plans
           </h1>
           <p className="text-xs sm:text-[13px] text-[#475569] font-medium mt-0.5">
@@ -244,7 +251,7 @@ export default function DashboardSubscriptionPage() {
               </div>
 
               <div className="flex items-baseline gap-3 flex-wrap pt-1">
-                <h2 className="font-display text-2xl sm:text-3xl font-bold text-[#043084]">
+                <h2 className="font-display text-2xl sm:text-3xl font-semibold text-[#0f172a]">
                   Inflixo {planName}
                 </h2>
                 <span className="text-sm font-bold text-[#181716] bg-white border border-[#E4DAD5] px-3 py-1 rounded-lg shadow-2xs">
@@ -458,7 +465,7 @@ export default function DashboardSubscriptionPage() {
                   <button
                     type="button"
                     onClick={() => setShowCancelModal(true)}
-                    className="rounded-xl border border-rose-200 bg-rose-50/70 hover:bg-rose-100/70 text-rose-700 py-2.5 px-4 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                    className="rounded-lg py-2 px-3 text-xs font-medium text-[#64748b] underline-offset-2 transition-colors hover:bg-[#fef2f2] hover:text-rose-700 cursor-pointer flex items-center justify-center gap-1.5"
                   >
                     <XCircle className="h-3.5 w-3.5" />
                     <span>Cancel Auto-Renewal</span>

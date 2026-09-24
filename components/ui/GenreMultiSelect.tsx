@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Check, Tag } from "lucide-react";
 
 export const ALL_SERIES_GENRES = [
@@ -49,7 +50,10 @@ interface GenreMultiSelectProps {
   max?: number;
 }
 
+const COLLAPSED_COUNT = 12;
+
 export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectProps) {
+  const [showAll, setShowAll] = useState(false);
   // Parse existing selected genres
   const selectedGenres = value
     ? value
@@ -71,21 +75,26 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
     }
   }
 
+  // Collapsed: the most common genres plus anything already selected (so selections never hide).
+  const visibleGenres = showAll
+    ? ALL_SERIES_GENRES
+    : ALL_SERIES_GENRES.filter((g, i) => i < COLLAPSED_COUNT || selectedGenres.includes(g));
+  const hiddenCount = ALL_SERIES_GENRES.length - visibleGenres.length;
+
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-2">
-        <label className="block text-sm font-bold text-[#043084] flex items-center gap-1.5">
-          <Tag className="h-4 w-4 text-[#043084]" />
-          Series Genres
-        </label>
-        <span className={`text-xs font-semibold ${selectedGenres.length >= max ? "text-[#B7791F] font-bold" : "text-[#64748b]"}`}>
+      <div className="flex items-center justify-between mb-1.5">
+        <p className="flex items-center gap-1.5 text-[13px] font-medium text-[#0f172a]">
+          <Tag className="h-3.5 w-3.5 text-[#94a3b8]" />
+          Genres
+        </p>
+        <span className={`text-xs ${selectedGenres.length >= max ? "font-semibold text-[#B7791F]" : "text-[#64748b]"}`}>
           {selectedGenres.length} / {max} selected
         </span>
       </div>
 
-      {/* Direct Interactive Chips List (Natural Expansion, No Clipping) */}
-      <div className="flex flex-wrap gap-2 rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5">
-        {ALL_SERIES_GENRES.map((g) => {
+      <div className="flex flex-wrap gap-1.5">
+        {visibleGenres.map((g) => {
           const isSelected = selectedGenres.includes(g);
           const isMaxReached = !isSelected && selectedGenres.length >= max;
 
@@ -94,28 +103,29 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
               key={g}
               type="button"
               disabled={isMaxReached}
+              aria-pressed={isSelected}
               onClick={() => toggleGenre(g)}
-              className={`tap-scale flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs transition-all cursor-pointer shrink-0 ${isSelected
-                ? "bg-[#043084]/[0.09] text-[#043084] border border-[#043084] font-bold shadow-xs"
+              className={`tap-scale inline-flex h-8 items-center gap-1 rounded-full border px-3 text-[13px] transition-colors cursor-pointer shrink-0 ${isSelected
+                ? "border-[#043084] bg-[#043084]/[0.06] font-medium text-[#043084]"
                 : isMaxReached
-                  ? "opacity-40 cursor-not-allowed bg-white border border-[#e2e8f0] text-[#64748b]"
-                  : "bg-white border border-[#e2e8f0] text-[#475569] hover:border-[#cbd5e1] hover:bg-[#f1f5f9] hover:text-[#043084]"
+                  ? "opacity-40 cursor-not-allowed border-[#e2e8f0] bg-white text-[#64748b]"
+                  : "border-[#e2e8f0] bg-white text-[#475569] hover:border-[#cbd5e1] hover:bg-[#f8fafc] hover:text-[#0f172a]"
                 }`}
             >
-              {isSelected ? (
-                <>
-                  <Check className="h-3 w-3 stroke-[3] text-[#043084] shrink-0" />
-                  <span>{g}</span>
-                </>
-              ) : (
-                <>
-                  <span className="text-[#64748b] text-xs leading-none">+</span>
-                  <span>{g}</span>
-                </>
-              )}
+              {isSelected && <Check className="h-3 w-3 stroke-[3] shrink-0" />}
+              <span>{g}</span>
             </button>
           );
         })}
+        {(hiddenCount > 0 || showAll) && (
+          <button
+            type="button"
+            onClick={() => setShowAll((v) => !v)}
+            className="inline-flex h-8 items-center rounded-full px-3 text-[13px] font-medium text-[#043084] hover:bg-[#043084]/[0.06] cursor-pointer"
+          >
+            {showAll ? "Show fewer" : `+${hiddenCount} more`}
+          </button>
+        )}
       </div>
     </div>
   );

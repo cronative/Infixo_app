@@ -14,11 +14,9 @@ import {
   Film,
   Edit2,
   ChevronRight,
-  Copy,
   Briefcase,
   Eye,
   MousePointerClick,
-  BarChart3,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -27,7 +25,6 @@ import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { canCreateSeries, getPlanQuota } from "@/services/subscriptionLimits";
 import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
 import { reviewsRepository, customLinksRepository } from "@/repositories/localRepository";
-import { copyToClipboard } from "@/lib/copyToClipboard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { MediaKitPackage, CreatorReview, CustomLink, Episode } from "@/types";
 
@@ -159,17 +156,6 @@ export default function DashboardOverviewPage() {
         .catch(() => { });
     }
   }, [profile]);
-
-  const handleCopy = async () => {
-    const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
-    const fullUrl = `${origin}/${handleStr}`;
-    const success = await copyToClipboard(fullUrl);
-    if (success) {
-      showToast("Profile link copied! ✨");
-    } else {
-      showToast("Could not copy link", "error");
-    }
-  };
 
   async function handleRefreshStats() {
     setIsSyncing(true);
@@ -325,398 +311,136 @@ export default function DashboardOverviewPage() {
     };
   }, [packages, series, totalEpisodesCount, reviews, handleStr, handleCreateSeriesClick]);
 
+  // Resolve "seriesId:episodeId" analytics targets to human-readable names.
+  const resolveTarget = (target: string | null) => {
+    if (!target) return "Series episode";
+    const [seriesId, episodeId] = target.split(":");
+    const s = series.find((item) => item.id === seriesId);
+    if (!s) return "Series episode";
+    const legacyEpisodes = (s as unknown as { episodes?: Episode[] }).episodes;
+    const eps = s.seasons?.flatMap((sn) => sn.episodes) || legacyEpisodes || [];
+    const ep = eps.find((e) => e.id === episodeId);
+    return ep ? `${s.title} · ${ep.title || `Episode ${ep.episodeNumber}`}` : s.title;
+  };
+  const topEpisodeTargets = analytics.topTargets.filter((item) => item.event_type === "episode_click").slice(0, 5);
+
+  const sectionTitle = "text-[15px] font-semibold text-[#0f172a]";
+  const quietLink = "inline-flex items-center gap-0.5 text-xs font-medium text-[#475569] hover:text-[#0f172a]";
+  const primaryBtn = "h-9 px-3.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-white text-sm font-semibold inline-flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer";
+
+  const overview = [
+    {
+      label: "Total fanbase",
+      value: formatCount(animatedFanbase),
+      sub: connectedSocialsCount > 0 ? `${connectedSocialsCount} connected ${connectedSocialsCount === 1 ? "social" : "socials"}` : "Connect socials",
+      href: "/dashboard/socials",
+      icon: Users,
+    },
+    {
+      label: "Series",
+      value: `${series.length}`,
+      sub: `${totalEpisodesCount} ${totalEpisodesCount === 1 ? "episode" : "episodes"}`,
+      href: "/dashboard/series",
+      icon: Layers,
+    },
+    {
+      label: "Collab packages",
+      value: `${packages.length}`,
+      sub: `${activePackagesCount} active`,
+      href: "/dashboard/mediakit",
+      icon: Briefcase,
+    },
+  ];
+
   return (
-    <div className="space-y-4 sm:space-y-4.5 w-full pb-6 text-left">
-
-      {/* 1. COMPACT PROFILE CARD */}
-      <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 shadow-xs space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
-          <div className="flex items-center gap-3 min-w-0 flex-1">
-            <CreatorAvatar
-              src={profile.photoDataUrl}
-              name={displayName}
-              className="w-11 h-11 rounded-full border border-[#e2e8f0] overflow-hidden object-cover aspect-square shrink-0"
-              textClassName="text-sm font-semibold text-[#043084]"
-              fallbackBgClass="bg-[#f8fafc]"
-            />
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-base font-semibold text-[#043084]">
-                  {displayName}
-                </h2>
-                {profile.isVerified && (
-                  <ShieldCheck className="h-4 w-4 shrink-0 text-[#043084]" />
-                )}
-                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#17845B] bg-[#EAF7F0] border border-[#17845B]/20 px-2 py-0.5 rounded-full shrink-0">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#17845B]" />
-                  Live
-                </span>
-              </div>
-              <p className="text-xs text-[#475569] font-normal mt-0.5">
-                @{handleStr}
-              </p>
+    <div className="space-y-4 w-full pb-6 text-left">
+      {/* 1. PROFILE — identity + completion */}
+      <section className="rounded-xl border border-[#e2e8f0] bg-white p-4">
+        <div className="flex items-center gap-3">
+          <CreatorAvatar
+            src={profile.photoDataUrl}
+            name={displayName}
+            className="w-11 h-11 rounded-full border border-[#e2e8f0] overflow-hidden object-cover aspect-square shrink-0"
+            textClassName="text-sm font-semibold text-[#043084]"
+            fallbackBgClass="bg-[#f8fafc]"
+          />
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5">
+              <h1 className="truncate text-base font-semibold text-[#0f172a]">{displayName}</h1>
+              {profile.isVerified && <ShieldCheck className="h-4 w-4 shrink-0 text-[#043084]" />}
             </div>
+            <p className="flex items-center gap-1.5 text-xs text-[#64748b]">
+              <span className="truncate">@{handleStr}</span>
+              <span className="inline-flex shrink-0 items-center gap-1 font-medium text-[#047857]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
+                Live
+              </span>
+            </p>
           </div>
-
-          <div className="flex items-center gap-2 shrink-0 flex-wrap">
-            <Link
-              href="/dashboard/profile"
-              className="h-8.5 sm:h-9 px-3 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs font-medium text-[#043084] transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
-            >
-              <Edit2 className="h-3.5 w-3.5 text-[#64748b]" />
-              <span>Edit Profile</span>
-            </Link>
-            <button
-              type="button"
-              onClick={handleCopy}
-              className="h-8.5 sm:h-9 px-3 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs font-medium text-[#043084] transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
-            >
-              <Copy className="h-3.5 w-3.5 text-[#64748b]" />
-              <span>Copy Link</span>
-            </button>
-            <a
-              href={`/${handleStr}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="h-8.5 sm:h-9 px-3 rounded-lg bg-[#043084] hover:bg-brand-hover text-xs font-medium text-white transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
-            >
-              <span>View Profile</span>
-              <ExternalLink className="h-3.5 w-3.5" />
-            </a>
-          </div>
+          <Link
+            href="/dashboard/profile"
+            className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3 text-sm font-medium text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc]"
+          >
+            <Edit2 className="h-3.5 w-3.5 text-[#64748b]" />
+            <span className="hidden sm:inline">Edit profile</span>
+            <span className="sm:hidden">Edit</span>
+          </Link>
         </div>
 
-        <div className="pt-3 border-t border-[#e2e8f0] space-y-1.5">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-medium text-[#043084]">
-              Your profile is {animatedPercentage}% complete
-            </span>
-            <Link
-              href="/dashboard/profile"
-              className="font-medium text-xs text-[#043084] hover:underline inline-flex items-center gap-1"
-            >
-              <span>Complete profile</span>
-              <ArrowRight className="h-3 w-3" />
-            </Link>
-          </div>
-          <div className="w-full h-1.5 rounded-full bg-[#f8fafc] border border-[#e2e8f0] overflow-hidden">
+        <div className="mt-3.5 flex items-center gap-3">
+          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#eef2f7]">
             <div
-              className="h-full bg-[#043084] rounded-full transition-all duration-700 ease-out"
+              className="h-full rounded-full bg-[#043084] transition-all duration-700 ease-out"
               style={{ width: isLoaded ? `${profileSteps.percentage}%` : "0%" }}
             />
           </div>
-        </div>
-      </section>
-
-      {/* 2. OVERVIEW (3 EQUAL CARDS) */}
-      <section className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        {/* Card 1: Total Fanbase */}
-        <div className="rounded-xl border border-[#e2e8f0] bg-white p-3.5 sm:p-4 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:shadow-sm flex flex-col justify-between space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs sm:text-sm font-medium text-[#64748b]">
-              Total Fanbase
-            </span>
-            <div className="flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={handleRefreshStats}
-                className="p-1 rounded-lg text-[#64748b] hover:text-[#043084] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
-                title={`Last synced: ${formatSyncDate(socials.updatedAt)}. Click to refresh.`}
-              >
-                <RefreshCw className={`h-3.5 w-3.5 ${isSyncing ? "animate-spin text-[#043084]" : ""}`} />
-              </button>
-              <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] flex items-center justify-center text-[#043084]">
-                <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              </div>
-            </div>
-          </div>
-          <div>
-            <p className="text-2xl sm:text-[28px] font-semibold text-[#043084] leading-none tracking-tight tabular-nums">
-              {formatCount(animatedFanbase)}
-            </p>
-            <p className="text-xs text-[#64748b] font-normal mt-1">
-              {connectedSocialsCount > 0
-                ? `${connectedSocialsCount} connected ${connectedSocialsCount === 1 ? "social" : "socials"}`
-                : "Connect your social platforms"}
-            </p>
-          </div>
-          <Link
-            href="/dashboard/socials"
-            className="text-xs font-medium text-[#043084] hover:underline inline-flex items-center gap-1 pt-0.5"
-          >
-            <span>View socials</span>
-            <ChevronRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-
-        {/* Card 2: Series */}
-        <div className="rounded-xl border border-[#e2e8f0] bg-white p-3.5 sm:p-4 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:shadow-sm flex flex-col justify-between space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs sm:text-sm font-medium text-[#64748b]">
-              Series
-            </span>
-            <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] flex items-center justify-center text-[#043084]">
-              <Layers className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            </div>
-          </div>
-          <div>
-            <p className="text-2xl sm:text-[28px] font-semibold text-[#043084] leading-none tracking-tight">
-              {series.length} {series.length === 1 ? "Series" : "Series"}
-            </p>
-            <p className="text-xs text-[#64748b] font-normal mt-1">
-              {totalEpisodesCount} {totalEpisodesCount === 1 ? "episode" : "episodes"}
-            </p>
-          </div>
-          <Link
-            href="/dashboard/series"
-            className="text-xs font-medium text-[#043084] hover:underline inline-flex items-center gap-1 pt-0.5"
-          >
-            <span>Manage series</span>
-            <ChevronRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-
-        {/* Card 3: Collab Packages */}
-        <div className="rounded-xl border border-[#e2e8f0] bg-white p-3.5 sm:p-4 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:shadow-sm flex flex-col justify-between space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs sm:text-sm font-medium text-[#64748b]">
-              Collabs
-            </span>
-            <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] flex items-center justify-center text-[#043084]">
-              <Briefcase className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            </div>
-          </div>
-          <div>
-            <p className="text-2xl sm:text-[28px] font-semibold text-[#043084] leading-none tracking-tight">
-              {packages.length} {packages.length === 1 ? "Package" : "Packages"}
-            </p>
-            <p className="text-xs text-[#64748b] font-normal mt-1">
-              {activePackagesCount} active collab {activePackagesCount === 1 ? "package" : "packages"}
-            </p>
-          </div>
-          <Link
-            href="/dashboard/mediakit"
-            className="text-xs font-medium text-[#043084] hover:underline inline-flex items-center gap-1 pt-0.5"
-          >
-            <span>Manage collabs</span>
-            <ChevronRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-      </section>
-
-      <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 shadow-xs space-y-3.5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748b] uppercase tracking-wider">
-              <BarChart3 className="h-3.5 w-3.5 text-[#043084]" />
-              Public analytics
-            </span>
-            <h3 className="mt-0.5 text-base font-semibold text-[#043084]">
-              Last 30 days
-            </h3>
-            <p className="text-xs text-[#475569]">
-              Counts only public profile opens and public series part clicks.
-            </p>
-          </div>
-          <Link
-            href={`/${handleStr}`}
-            target="_blank"
-            className="h-8.5 px-3 rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-xs font-semibold text-[#043084] transition-all hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-[#f1f5f9] inline-flex items-center gap-1.5 self-start sm:self-center"
-          >
-            <span>Open public page</span>
-            <ExternalLink className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3 sm:p-3.5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-[#64748b]">Profile opens</span>
-              <Eye className="h-3.5 w-3.5 text-[#043084]" />
-            </div>
-            <p className="mt-1.5 text-xl sm:text-2xl font-semibold text-[#043084] tabular-nums">
-              {analytics.profileViews.toLocaleString("en-IN")}
-            </p>
-            <p className="mt-0.5 text-[11px] text-[#64748b]">
-              Public profile link opened
-            </p>
-          </div>
-          <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3 sm:p-3.5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-[#64748b]">Unique visitors</span>
-              <Users className="h-3.5 w-3.5 text-[#043084]" />
-            </div>
-            <p className="mt-1.5 text-xl sm:text-2xl font-semibold text-[#043084] tabular-nums">
-              {analytics.uniqueVisitors.toLocaleString("en-IN")}
-            </p>
-            <p className="mt-0.5 text-[11px] text-[#64748b]">
-              Approx browser visitors
-            </p>
-          </div>
-          <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3 sm:p-3.5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-[#64748b]">Series part clicks</span>
-              <MousePointerClick className="h-3.5 w-3.5 text-[#043084]" />
-            </div>
-            <p className="mt-1.5 text-xl sm:text-2xl font-semibold text-[#043084] tabular-nums">
-              {analytics.episodeClicks.toLocaleString("en-IN")}
-            </p>
-            <p className="mt-0.5 text-[11px] text-[#64748b]">
-              Public series episode links clicked
-            </p>
-          </div>
-        </div>
-
-        {analytics.topTargets.length > 0 && (
-          <div className="rounded-xl border border-[#e2e8f0] overflow-hidden">
-            <div className="flex items-center justify-between bg-[#f8fafc] px-3.5 py-2 border-b border-[#e2e8f0]">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#64748b]">
-                Top clicked series parts
-              </span>
-            </div>
-            <div className="divide-y divide-[#e2e8f0]">
-              {analytics.topTargets
-                .filter((item) => item.event_type === "episode_click")
-                .slice(0, 5)
-                .map((item, index) => (
-                  <div key={`${item.event_target}-${index}`} className="flex items-center justify-between gap-3 px-3.5 py-2 text-xs">
-                    <span className="min-w-0 truncate font-semibold text-[#043084]">
-                      {item.event_target || "Series part"}
-                    </span>
-                    <span className="shrink-0 rounded-full bg-[#043084]/[0.08] border border-[#043084]/10 px-2 py-0.5 text-[11px] font-bold text-[#043084]">
-                      {Number(item.clicks || 0).toLocaleString("en-IN")} clicks
-                    </span>
-                  </div>
-                ))}
-            </div>
-          </div>
-        )}
-      </section>
-
-      {showQuotaPanel && (
-        <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 shadow-xs space-y-3.5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <span className="text-xs font-semibold text-[#64748b] uppercase tracking-wider">
-                {quota.name} usage
-              </span>
-              <h3 className="mt-0.5 text-base font-semibold text-[#043084]">
-                Your plan quota
-              </h3>
-              <p className="text-xs text-[#475569]">
-                See what you have used and what is still available in your current plan.
-              </p>
-            </div>
-            <Link
-              href="/dashboard/subscription"
-              className="h-8.5 px-3 rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-xs font-semibold text-[#043084] transition-all hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-[#f1f5f9] inline-flex items-center gap-1.5 self-start sm:self-center"
-            >
-              <span>View plan</span>
-              <ChevronRight className="h-3.5 w-3.5" />
+          <span className="shrink-0 text-xs text-[#64748b]">
+            <span className="font-semibold text-[#0f172a] tabular-nums">{animatedPercentage}%</span> complete
+          </span>
+          {profileSteps.percentage < 100 && (
+            <Link href="/dashboard/profile" className={`${quietLink} shrink-0`}>
+              Finish <ChevronRight className="h-3.5 w-3.5" />
             </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-2.5">
-            {quotaItems.map((item) => {
-              const percentage = item.max === Infinity ? 0 : Math.min(100, Math.round((item.current / item.max) * 100));
-              const isNearLimit = item.max !== Infinity && percentage >= 80;
-
-              return (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3 transition-all hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-white hover:shadow-xs"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <p className="text-xs font-semibold text-[#64748b]">{item.label}</p>
-                      <p className="mt-0.5 text-base font-semibold tabular-nums text-[#043084]">
-                        {item.current.toLocaleString("en-IN")}
-                        <span className="text-xs font-medium text-[#64748b]">
-                          {" "}of {formatQuotaLimit(item.max)}
-                        </span>
-                      </p>
-                    </div>
-                    <span className={`rounded-full px-1.5 py-0.2 text-[10px] font-bold ${isNearLimit
-                      ? "bg-amber-50 text-amber-700 border border-amber-200"
-                      : "bg-[#043084]/[0.08] text-[#043084] border border-[#043084]/15"
-                      }`}>
-                      {formatQuotaRemaining(item.current, item.max)}
-                    </span>
-                  </div>
-                  <div className="mt-2.5 h-1.5 rounded-full bg-white border border-[#e2e8f0] overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all duration-700 ${isNearLimit ? "bg-amber-500" : "bg-[#043084]"}`}
-                      style={{ width: item.max === Infinity ? "100%" : `${percentage}%` }}
-                    />
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-      )}
-
-      {/* 3. NEXT BEST STEP (COMPACT & FOCUSED) */}
-      <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 shadow-xs space-y-2.5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="space-y-0.5">
-            <span className="text-xs font-semibold text-[#64748b] uppercase tracking-wider">
-              Next best step
-            </span>
-            <h3 className="text-base font-semibold text-[#043084]">
-              {nextStep.title}
-            </h3>
-            <p className="text-xs text-[#475569] font-normal">
-              {nextStep.description}
-            </p>
-          </div>
-
-          <div className="shrink-0 self-start sm:self-center">
-            {nextStep.isExternal ? (
-              <a
-                href={nextStep.ctaHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="h-9 px-3.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-white text-xs font-medium inline-flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
-              >
-                <span>{nextStep.ctaLabel}</span>
-                <ExternalLink className="h-3.5 w-3.5" />
-              </a>
-            ) : nextStep.onClick ? (
-              <button
-                type="button"
-                onClick={nextStep.onClick}
-                className="h-9 px-3.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-white text-xs font-medium inline-flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
-              >
-                <span>{nextStep.ctaLabel}</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </button>
-            ) : (
-              <Link
-                href={nextStep.ctaHref}
-                className="h-9 px-3.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-white text-xs font-medium inline-flex items-center gap-1.5 transition-colors shadow-xs"
-              >
-                <span>{nextStep.ctaLabel}</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            )}
-          </div>
+          )}
         </div>
       </section>
 
-      {/* 4. RECENT SERIES (MAX 3 ITEMS + VIEW ALL LINK) */}
-      <section className="space-y-2.5">
-        <div className="flex items-center justify-between px-0.5">
-          <h3 className="text-base font-semibold text-[#043084]">
-            Recent series
-          </h3>
-          <Link
-            href="/dashboard/series"
-            className="text-xs font-medium text-[#043084] hover:underline inline-flex items-center gap-1"
-          >
-            <span>View all series</span>
-            <ChevronRight className="h-3.5 w-3.5" />
+      {/* 2. OVERVIEW — one compact strip */}
+      <section className="grid grid-cols-3 overflow-hidden rounded-xl border border-[#e2e8f0] bg-white divide-x divide-[#e2e8f0]">
+        {overview.map((item) => {
+          const Icon = item.icon;
+          return (
+            <Link key={item.label} href={item.href} className="group min-w-0 p-3 sm:p-4 transition-colors hover:bg-[#f8fafc]">
+              <span className="flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-[#64748b]">
+                <Icon className="hidden sm:block h-3.5 w-3.5 text-[#94a3b8]" />
+                <span className="truncate">{item.label}</span>
+              </span>
+              <span className="mt-1 block text-xl sm:text-2xl font-semibold leading-tight tracking-tight tabular-nums text-[#0f172a]">
+                {item.value}
+              </span>
+              <span className="mt-0.5 block truncate text-[11px] sm:text-xs text-[#64748b]">{item.sub}</span>
+            </Link>
+          );
+        })}
+      </section>
+      <div className="-mt-2.5 flex justify-end">
+        <button
+          type="button"
+          onClick={handleRefreshStats}
+          className="inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-[11px] text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] cursor-pointer"
+          title="Refresh follower counts"
+        >
+          <RefreshCw className={`h-3 w-3 ${isSyncing ? "animate-spin" : ""}`} />
+          Fanbase synced {formatSyncDate(socials.updatedAt)}
+        </button>
+      </div>
+
+      {/* 3. SERIES — the hero content */}
+      <section className="space-y-2">
+        <div className="flex items-center justify-between">
+          <h2 className={sectionTitle}>Your series</h2>
+          <Link href="/dashboard/series" className={quietLink}>
+            Manage all <ChevronRight className="h-3.5 w-3.5" />
           </Link>
         </div>
 
@@ -726,56 +450,155 @@ export default function DashboardOverviewPage() {
             title="Start your first content series"
             description="Organize related reels and videos so followers can watch in order."
             action={
-              <button
-                type="button"
-                onClick={handleCreateSeriesClick}
-                className="inline-flex items-center gap-2 rounded-[10px] bg-[#043084] px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-md cursor-pointer"
-              >
+              <button type="button" onClick={handleCreateSeriesClick} className={primaryBtn}>
                 <Plus className="h-4 w-4" />
-                <span>Create Your First Series</span>
+                <span>Create your first series</span>
               </button>
             }
           />
         ) : (
-          <div className="rounded-xl border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0] shadow-xs overflow-hidden">
+          <div className="rounded-xl border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0] overflow-hidden">
             {series.slice(0, 3).map((s) => {
               const legacyEpisodes = (s as unknown as { episodes?: Episode[] }).episodes;
               const eps = s.seasons?.flatMap((sn) => sn.episodes) || legacyEpisodes || [];
-              const platformLabel = s.genre || "Web Series";
+              const genre = (s.genre || "").split(",")[0].trim();
               return (
-                <div
+                <Link
                   key={s.id}
-                  className="px-4 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#f1f5f9] transition-colors text-left"
+                  href="/dashboard/series"
+                  className="flex items-center gap-3 px-3 sm:px-4 py-2.5 transition-colors hover:bg-[#f8fafc]"
                 >
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[#043084] shrink-0">
+                  {s.posterDataUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={s.posterDataUrl} alt="" loading="lazy" decoding="async" className="h-10 w-10 shrink-0 rounded-lg border border-[#e2e8f0] object-cover" />
+                  ) : (
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
                       <Film className="h-4 w-4" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h4 className="text-xs sm:text-sm font-semibold text-[#043084] truncate">
-                        {s.title}
-                      </h4>
-                      <p className="text-[11px] text-[#64748b] font-normal mt-0.5">
-                        {eps.length} {eps.length === 1 ? "episode" : "episodes"} • {platformLabel}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 shrink-0">
-                    <Link
-                      href="/dashboard/series"
-                      className="text-xs font-medium text-[#043084] hover:underline inline-flex items-center gap-1"
-                    >
-                      <span>Manage</span>
-                      <ChevronRight className="h-3.5 w-3.5" />
-                    </Link>
-                  </div>
-                </div>
+                    </span>
+                  )}
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-semibold text-[#0f172a]">{s.title}</span>
+                    <span className="block truncate text-xs text-[#64748b]">
+                      {eps.length} {eps.length === 1 ? "episode" : "episodes"}{genre ? ` · ${genre}` : ""}
+                    </span>
+                  </span>
+                  <ChevronRight className="h-4 w-4 shrink-0 text-[#cbd5e1]" />
+                </Link>
               );
             })}
           </div>
         )}
       </section>
+
+      {/* 4. NEXT BEST STEP — the page's one primary action */}
+      <section className="flex flex-col gap-3 rounded-xl border border-[#e2e8f0] bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <p className="text-[11px] font-medium uppercase tracking-wide text-[#94a3b8]">Next step</p>
+          <h3 className="mt-0.5 text-sm font-semibold text-[#0f172a]">{nextStep.title}</h3>
+          <p className="text-xs text-[#64748b]">{nextStep.description}</p>
+        </div>
+        <div className="shrink-0">
+          {nextStep.isExternal ? (
+            <a href={nextStep.ctaHref} target="_blank" rel="noopener noreferrer" className={primaryBtn}>
+              <span>{nextStep.ctaLabel.replace(" →", "")}</span>
+              <ExternalLink className="h-3.5 w-3.5" />
+            </a>
+          ) : nextStep.onClick ? (
+            <button type="button" onClick={nextStep.onClick} className={primaryBtn}>
+              <span>{nextStep.ctaLabel.replace(" →", "")}</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+          ) : (
+            <Link href={nextStep.ctaHref} className={primaryBtn}>
+              <span>{nextStep.ctaLabel.replace(" →", "")}</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          )}
+        </div>
+      </section>
+
+      {/* 5. ANALYTICS — compact summary */}
+      <section className="rounded-xl border border-[#e2e8f0] bg-white">
+        <div className="flex items-center justify-between px-4 pt-3.5">
+          <h2 className={sectionTitle}>
+            Last 30 days <span className="text-xs font-normal text-[#64748b]">· public page</span>
+          </h2>
+          <Link href="/dashboard/analytics" className={quietLink}>
+            Analytics <ChevronRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+        <div className="grid grid-cols-3 gap-2 px-4 py-3">
+          {[
+            { label: "Profile opens", value: analytics.profileViews, icon: Eye },
+            { label: "Unique visitors", value: analytics.uniqueVisitors, icon: Users },
+            { label: "Episode clicks", value: analytics.episodeClicks, icon: MousePointerClick },
+          ].map((m) => (
+            <div key={m.label} className="min-w-0">
+              <p className="flex items-center gap-1 truncate text-[11px] sm:text-xs text-[#64748b]">
+                <m.icon className="hidden sm:block h-3.5 w-3.5 text-[#94a3b8]" />
+                {m.label}
+              </p>
+              <p className="text-lg sm:text-xl font-semibold tabular-nums text-[#0f172a]">{m.value.toLocaleString("en-IN")}</p>
+            </div>
+          ))}
+        </div>
+        {topEpisodeTargets.length > 0 && (
+          <div className="border-t border-[#e2e8f0] px-4 py-2.5">
+            <p className="mb-1 text-[11px] font-medium uppercase tracking-wide text-[#94a3b8]">Top clicked episodes</p>
+            <ul className="space-y-1">
+              {topEpisodeTargets.map((item, index) => {
+                const clicks = Number(item.clicks || 0);
+                return (
+                  <li key={`${item.event_target}-${index}`} className="flex items-center justify-between gap-3 text-xs">
+                    <span className="min-w-0 truncate text-[#334155]">{resolveTarget(item.event_target)}</span>
+                    <span className="shrink-0 tabular-nums text-[#64748b]">
+                      {clicks.toLocaleString("en-IN")} {clicks === 1 ? "click" : "clicks"}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+      </section>
+
+      {/* 6. PLAN USAGE */}
+      {showQuotaPanel && (
+        <section className="rounded-xl border border-[#e2e8f0] bg-white">
+          <div className="flex items-center justify-between px-4 pt-3.5">
+            <h2 className={sectionTitle}>
+              {quota.name} plan <span className="text-xs font-normal text-[#64748b]">· usage</span>
+            </h2>
+            <Link href="/dashboard/subscription" className={quietLink}>
+              View plan <ChevronRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-3 px-4 py-3 sm:grid-cols-5">
+            {quotaItems.map((item) => {
+              const percentage = item.max === Infinity ? 0 : Math.min(100, Math.round((item.current / item.max) * 100));
+              const isNearLimit = item.max !== Infinity && percentage >= 80;
+              return (
+                <Link key={item.label} href={item.href} className="group min-w-0">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="truncate text-xs text-[#64748b] group-hover:text-[#0f172a]">{item.label}</span>
+                    <span className="shrink-0 text-xs tabular-nums text-[#0f172a]">
+                      <span className="font-semibold">{item.current.toLocaleString("en-IN")}</span>
+                      <span className="text-[#94a3b8]">/{formatQuotaLimit(item.max)}</span>
+                    </span>
+                  </div>
+                  <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-[#eef2f7]">
+                    <div
+                      className={`h-full rounded-full transition-all duration-700 ${isNearLimit ? "bg-[#F59E0B]" : "bg-[#043084]"}`}
+                      style={{ width: item.max === Infinity ? "100%" : `${percentage}%` }}
+                    />
+                  </div>
+                  <span className="sr-only">{formatQuotaRemaining(item.current, item.max)}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* Limit Reached Modal Popup */}
       <LimitReachedModal

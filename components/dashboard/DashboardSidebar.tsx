@@ -9,7 +9,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
-import { NAV_GROUPS } from "@/components/dashboard/navConfig";
+import { NAV_GROUPS, isNavActive } from "@/components/dashboard/navConfig";
 import { AuthService } from "@/services/AuthService";
 import { useCreator } from "@/contexts/CreatorContext";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
@@ -23,23 +23,23 @@ export function DashboardSidebar() {
   const displayName = profile.displayName || profile.email?.split("@")[0] || "Creator";
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 shrink-0 border-r border-[#e2e8f0] bg-white px-3.5 py-4 min-h-screen">
+    <aside className="hidden lg:flex flex-col w-60 shrink-0 border-r border-[#e2e8f0] bg-white px-3 py-4 h-dvh">
       {/* Top Brand Logo */}
-      <div className="flex items-center justify-between px-1 mb-4">
+      <div className="flex items-center justify-between px-1.5 mb-3">
         <Logo size="md" />
       </div>
 
       {/* Creator Profile Mini Card */}
-      <div className="mb-4 flex items-center gap-3 rounded-[16px] border border-[#e2e8f0] bg-white p-2.5 shadow-sm transition-all hover:border-[#cbd5e1]">
+      <div className="mb-3 flex items-center gap-2.5 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-2">
         <CreatorAvatar
           src={profile.photoDataUrl}
           name={displayName}
-          className="h-10 w-10 shrink-0 rounded-full border border-[#e2e8f0] shadow-sm"
+          className="h-9 w-9 shrink-0 rounded-full border border-[#e2e8f0]"
         />
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1">
-            <p className="truncate text-xs font-bold text-[#181716]" title={displayName}>
+            <p className="truncate text-[13px] font-semibold text-[#0f172a]" title={displayName}>
               {displayName}
             </p>
             {profile.isVerified && (
@@ -47,10 +47,10 @@ export function DashboardSidebar() {
             )}
           </div>
           <div className="flex items-center gap-1.5 mt-0.5">
-            <p className="truncate text-[11px] font-medium text-[#475569]">
+            <p className="truncate text-[11px] text-[#64748b]">
               @{handleStr}
             </p>
-            <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-[#043084] bg-[#f1f5f9] border border-[#e2e8f0] px-1.5 py-0.2 rounded">
+            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#047857]">
               <span className="h-1 w-1 rounded-full bg-[#10b981]" />
               Live
             </span>
@@ -59,26 +59,27 @@ export function DashboardSidebar() {
       </div>
 
       {/* Main Navigation List: 3 Creator-First Groups (Studio, Growth, Account) */}
-      <nav className="flex-1 space-y-4 overflow-y-auto pt-1 no-scrollbar">
+      <nav className="flex-1 space-y-3.5 overflow-y-auto pt-1 no-scrollbar" aria-label="Dashboard">
         {NAV_GROUPS.map((group) => (
           <div key={group.id}>
-            <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#64748b] mb-1">
+            <p className="px-2.5 text-[10px] font-semibold uppercase tracking-wider text-[#94a3b8] mb-1">
               {group.title}
             </p>
             <div className="space-y-0.5">
               {group.items.map((item) => {
-                const active = pathname === item.href;
+                const active = isNavActive(pathname, item.href);
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex h-9 items-center gap-2.5 rounded-[9px] border px-3 text-xs transition-all ${active
-                      ? "border-[#cbd5e1] bg-[#043084] font-semibold text-white shadow-sm"
-                      : "border-transparent font-medium text-[#475569] hover:translate-x-0.5 hover:border-[#e2e8f0] hover:bg-[#f8fafc] hover:text-[#043084]"
+                    aria-current={active ? "page" : undefined}
+                    className={`flex h-8 items-center gap-2.5 rounded-lg px-2.5 text-[13px] transition-colors ${active
+                      ? "bg-[#043084]/[0.07] font-semibold text-[#043084]"
+                      : "font-medium text-[#475569] hover:bg-[#f1f5f9] hover:text-[#0f172a]"
                       }`}
                   >
-                    <Icon className={`h-4 w-4 shrink-0 ${active ? "text-white" : "text-[#64748b]"}`} />
+                    <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#043084]" : "text-[#94a3b8]"}`} />
                     <span className="flex-1 truncate">{item.label}</span>
                   </Link>
                 );
@@ -88,34 +89,35 @@ export function DashboardSidebar() {
         ))}
       </nav>
 
-      {/* Bottom Utility Area: Trial & Logout */}
-      <div className="pt-3 border-t border-[#e2e8f0] space-y-2">
-        <div className="flex items-center justify-between rounded-[10px] border border-[#e2e8f0] bg-[#f8fafc] px-3 py-2 text-[11px] font-semibold text-[#043084] shadow-inner shadow-white/80">
-          <div className="flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-[#043084] shrink-0" />
-            <span>Free Trial</span>
-          </div>
-          <Link
-            href={`/${handleStr}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-[#043084] transition-colors hover:text-brand-hover hover:underline"
-            title="View live profile"
-          >
-            <span>Preview</span>
-            <ExternalLink className="h-2.5 w-2.5" />
-          </Link>
-        </div>
-
+      {/* Bottom Utility Row: plan · preview · logout */}
+      <div className="mt-2 flex items-center gap-1 border-t border-[#e2e8f0] pt-2">
+        <Link
+          href="/dashboard/subscription"
+          className="flex min-w-0 flex-1 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#475569] transition-colors hover:bg-[#f1f5f9] hover:text-[#0f172a]"
+        >
+          <Sparkles className="h-3.5 w-3.5 shrink-0 text-[#94a3b8]" />
+          <span className="truncate">Free Trial</span>
+        </Link>
+        <Link
+          href={`/${handleStr}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748b] transition-colors hover:bg-[#f1f5f9] hover:text-[#0f172a]"
+          title="View live profile"
+          aria-label="View live profile"
+        >
+          <ExternalLink className="h-3.5 w-3.5" />
+        </Link>
         <button
           onClick={() => {
             AuthService.logout();
             router.push("/login");
           }}
-          className="flex w-full cursor-pointer items-center gap-2 rounded-[10px] px-3 py-2 text-xs font-semibold text-[#64748b] transition-colors hover:bg-[#f1f5f9] hover:text-[#043084]"
+          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-[#64748b] transition-colors hover:bg-[#f1f5f9] hover:text-[#0f172a]"
+          title="Logout"
+          aria-label="Logout"
         >
-          <LogOut className="h-3.5 w-3.5 shrink-0" />
-          <span>Logout</span>
+          <LogOut className="h-3.5 w-3.5" />
         </button>
       </div>
     </aside>

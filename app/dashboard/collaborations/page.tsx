@@ -1,5 +1,11 @@
 "use client";
 
+export default function DashboardCollaborationsPage() {
+  // Section hidden per user request
+  return null;
+}
+
+
 import { useEffect, useState } from "react";
 import { Handshake, Plus, Pencil, Trash2, Eye, EyeOff, ExternalLink, MoreVertical } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
@@ -35,7 +41,11 @@ export default function DashboardCollaborationsPage() {
   const creatorLookup = profile.id || profile.email || profile.username;
 
   useEffect(() => {
-    const handleClickOutside = () => setActiveMenuId(null);
+    // Ignore presses inside an open menu so its items receive their click.
+    const handleClickOutside = (e: MouseEvent) => {
+      if ((e.target as HTMLElement).closest?.("[data-menu]")) return;
+      setActiveMenuId(null);
+    };
     if (activeMenuId) document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [activeMenuId]);
@@ -180,7 +190,7 @@ export default function DashboardCollaborationsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#043084]">
+          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
             Selected Collaborations
           </h1>
           <p className="text-xs sm:text-[13px] text-[#475569] font-medium mt-0.5">
@@ -192,7 +202,7 @@ export default function DashboardCollaborationsPage() {
           <button
             type="button"
             onClick={() => handleOpenModal()}
-            className="tap-scale inline-flex items-center gap-1.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-white font-semibold text-xs h-9 px-3.5 transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm shrink-0 self-start sm:self-auto"
+            className="tap-scale inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3.5 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             <span>Add Collaboration</span>
@@ -247,7 +257,7 @@ export default function DashboardCollaborationsPage() {
 
                 <div className="min-w-0 flex-1 space-y-0.5">
                   <div className="flex items-center gap-2">
-                    <h3 className="truncate font-bold text-xs sm:text-[13px] text-[#043084]">{collab.brandName}</h3>
+                    <h3 className="truncate font-semibold text-xs sm:text-[13px] text-[#0f172a]">{collab.brandName}</h3>
                     {collab.campaignTitle && (
                       <span className="text-[11px] font-semibold text-[#043084] truncate">
                         • {collab.campaignTitle}
@@ -336,6 +346,7 @@ export default function DashboardCollaborationsPage() {
                   {activeMenuId === collab.id && (
                     <div
                       onClick={(e) => e.stopPropagation()}
+                      data-menu
                       className="absolute right-0 top-full mt-1.5 w-44 rounded-xl border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in text-left"
                     >
                       {collab.campaignUrl && (
@@ -418,7 +429,7 @@ export default function DashboardCollaborationsPage() {
         <form onSubmit={handleSaveCollaboration} className="flex flex-col flex-1 min-h-0">
           <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
             <div>
-              <label className="block text-xs font-bold text-[#043084] mb-1">
+              <label className="block text-[13px] font-medium text-[#0f172a] mb-1">
                 Brand Logo / Image (Optional)
               </label>
               <PhotoUpload
@@ -431,7 +442,7 @@ export default function DashboardCollaborationsPage() {
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#043084]">
+              <label className="block text-[13px] font-medium text-[#0f172a]">
                 Brand / Partner Name <span className="text-[#C2414B]">*</span>
               </label>
               <input
@@ -440,12 +451,12 @@ export default function DashboardCollaborationsPage() {
                 value={brandName}
                 onChange={(e) => setBrandName(e.target.value)}
                 placeholder="e.g. Sony Music, Nike, or Boat Audio"
-                className="w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-2 text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#043084]">
+              <label className="block text-[13px] font-medium text-[#0f172a]">
                 Campaign Title (Optional)
               </label>
               <input
@@ -453,12 +464,12 @@ export default function DashboardCollaborationsPage() {
                 value={campaignTitle}
                 onChange={(e) => setCampaignTitle(e.target.value)}
                 placeholder="e.g. Summer Launch Reel Campaign"
-                className="w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-2 text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#043084]">
+              <label className="block text-[13px] font-medium text-[#0f172a]">
                 Campaign URL / Live Reel Link (Optional)
               </label>
               <input
@@ -466,12 +477,12 @@ export default function DashboardCollaborationsPage() {
                 value={campaignUrl}
                 onChange={(e) => setCampaignUrl(e.target.value)}
                 placeholder="https://instagram.com/reel/... or https://youtube.com/watch?v=..."
-                className="w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-2 text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#043084]">
+              <label className="block text-[13px] font-medium text-[#0f172a]">
                 Short Description (Optional)
               </label>
               <textarea
@@ -479,7 +490,7 @@ export default function DashboardCollaborationsPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Briefly mention key deliverables (e.g. 2x Instagram Reels, 1x YouTube dedicated video with 250K+ views)..."
-                className="w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 p-2.5 text-xs font-medium text-[#043084] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors resize-y"
+                className="w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 p-2.5 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors resize-y"
               />
             </div>
           </ModalBody>

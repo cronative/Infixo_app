@@ -160,7 +160,7 @@ export default function DashboardRequestsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#043084] flex items-center gap-2">
+          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a] flex items-center gap-2">
             <span>Collaboration Inquiries</span>
             {unreadCount > 0 && (
               <span className="rounded-full bg-[#17845B] text-white text-[10px] font-bold px-2 py-0.5">
@@ -186,7 +186,7 @@ export default function DashboardRequestsPage() {
               type="button"
               onClick={() => setActiveTab(tab)}
               className={`tap-scale flex items-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${isSelected
-                ? "bg-[#043084] text-white shadow-xs"
+                ? "bg-[#043084]/[0.08] text-[#043084]"
                 : "text-[#64748b] hover:text-[#043084] hover:bg-[#f1f5f9]"
                 }`}
             >
@@ -232,7 +232,7 @@ export default function DashboardRequestsPage() {
 
                   <div className="min-w-0 flex-1 space-y-0.5">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-bold text-xs sm:text-[13px] text-[#043084] truncate group-hover:text-[#043084] transition-colors">{req.senderName}</h3>
+                      <h3 className="font-semibold text-xs sm:text-[13px] text-[#0f172a] truncate group-hover:text-[#043084] transition-colors">{req.senderName}</h3>
                       {req.companyName && (
                         <span className="text-[11px] font-semibold text-[#64748b] truncate">
                           • {req.companyName}
@@ -301,7 +301,7 @@ export default function DashboardRequestsPage() {
               {/* Sender summary card */}
               <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 p-3 space-y-2">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-xs sm:text-sm text-[#043084]">{selectedRequest.senderName}</h3>
+                  <h3 className="font-semibold text-xs sm:text-sm text-[#0f172a]">{selectedRequest.senderName}</h3>
                   <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border ${STATUS_CONFIG[selectedRequest.status].bg} ${STATUS_CONFIG[selectedRequest.status].text} ${STATUS_CONFIG[selectedRequest.status].border}`}>
                     {STATUS_CONFIG[selectedRequest.status].label}
                   </span>
@@ -338,7 +338,7 @@ export default function DashboardRequestsPage() {
 
               {/* Message Content */}
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#043084]">
+                <label className="block text-[13px] font-medium text-[#0f172a]">
                   Message / Requirement:
                 </label>
                 <div className="rounded-xl border border-[#e2e8f0] bg-white p-3 text-xs text-[#043084] leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto">
@@ -348,7 +348,7 @@ export default function DashboardRequestsPage() {
 
               {/* Status Update Selector */}
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#043084]">
+                <label className="block text-[13px] font-medium text-[#0f172a]">
                   Update Request Status:
                 </label>
                 <div className="grid grid-cols-4 gap-2">
@@ -359,7 +359,7 @@ export default function DashboardRequestsPage() {
                       disabled={isUpdating}
                       onClick={() => handleStatusChange(st)}
                       className={`tap-scale py-1.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${selectedRequest.status === st
-                        ? "bg-[#043084] text-white border-[#043084] shadow-xs"
+                        ? "bg-[#043084]/[0.08] text-[#043084] border-[#043084]/30"
                         : "border-[#e2e8f0] bg-white text-[#64748b] hover:bg-[#f1f5f9]"
                         }`}
                     >

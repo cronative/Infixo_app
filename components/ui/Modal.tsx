@@ -86,30 +86,35 @@ export function Modal({
       aria-modal="true"
       aria-label={ariaLabel || title}
       onClick={handleBackdropClick}
-      className="fixed inset-0 z-[999] w-screen h-[100dvh] flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-150"
+      className="fixed inset-0 z-[999] w-screen h-[100dvh] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/50 animate-in fade-in duration-150"
     >
       <div
         ref={modalRef}
         onClick={(e) => e.stopPropagation()}
-        className={`relative w-full ${SIZE_CLASSES[size]} max-h-[calc(100dvh-32px)] sm:max-h-[calc(100dvh-48px)] bg-white rounded-[10px] border border-[#e2e8f0] shadow-xl flex flex-col overflow-hidden text-left animate-in zoom-in-95 duration-150 ${className}`}
+        className={`relative w-full ${SIZE_CLASSES[size]} max-h-[92dvh] sm:max-h-[calc(100dvh-48px)] bg-white rounded-t-2xl sm:rounded-xl border border-[#e2e8f0] shadow-xl flex flex-col overflow-hidden text-left pb-[env(safe-area-inset-bottom)] sm:pb-0 animate-sheet-in ${className}`}
       >
+        {/* Grab handle — mobile bottom-sheet affordance */}
+        <div className="flex justify-center pt-2 sm:hidden" aria-hidden="true">
+          <span className="h-1 w-9 rounded-full bg-[#cbd5e1]" />
+        </div>
+
         {/* Optional Automatic Header */}
         {(title || showCloseButton) && (
-          <div className={`flex items-center justify-between border-b border-[#e2e8f0] bg-white px-5 sm:px-6 py-3.5 sm:py-4 shrink-0 ${headerClassName}`}>
+          <div className={`flex items-center justify-between border-b border-[#e2e8f0] bg-white px-4 sm:px-5 py-3 shrink-0 ${headerClassName}`}>
             <div className="flex items-center gap-3 min-w-0 pr-2">
               {icon && (
-                <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[#043084]/[0.08] text-[#043084] shrink-0 border border-[#043084]/10">
+                <div className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg bg-[#f1f5f9] text-[#475569] shrink-0">
                   {icon}
                 </div>
               )}
               <div className="min-w-0">
                 {title && (
-                  <h3 className="font-display text-base font-bold text-[#043084] truncate">
+                  <h3 className="text-base font-semibold text-[#0f172a] truncate">
                     {title}
                   </h3>
                 )}
                 {description && (
-                  <p className="text-xs text-[#64748b] font-medium truncate mt-0.5">
+                  <p className="text-xs text-[#64748b] truncate mt-0.5">
                     {description}
                   </p>
                 )}
@@ -121,7 +126,7 @@ export function Modal({
                 type="button"
                 onClick={onClose}
                 aria-label="Close modal"
-                className="flex h-8 w-8 items-center justify-center rounded-[10px] text-[#64748b] hover:text-[#043084] hover:bg-[#043084]/[0.06] transition-colors cursor-pointer shrink-0 border border-transparent hover:border-[#043084]/10"
+                className="flex h-9 w-9 items-center justify-center rounded-full text-[#64748b] hover:text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer shrink-0"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -153,19 +158,19 @@ export function ModalHeader({
   className?: string;
 }) {
   return (
-    <div className={`flex items-center justify-between border-b border-[#e2e8f0] bg-white px-5 sm:px-6 py-3.5 sm:py-4 shrink-0 ${className}`}>
+    <div className={`flex items-center justify-between border-b border-[#e2e8f0] bg-white px-4 sm:px-5 py-3 shrink-0 ${className}`}>
       <div className="flex items-center gap-3 min-w-0 pr-2">
         {icon && (
-          <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[#043084]/[0.08] text-[#043084] shrink-0 border border-[#043084]/10">
+          <div className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg bg-[#f1f5f9] text-[#475569] shrink-0">
             {icon}
           </div>
         )}
         <div className="min-w-0">
-          <h3 className="font-display text-base font-bold text-[#043084] truncate">
+          <h3 className="text-base font-semibold text-[#0f172a] truncate">
             {title}
           </h3>
           {description && (
-            <p className="text-xs text-[#64748b] font-medium truncate mt-0.5">
+            <p className="text-xs text-[#64748b] truncate mt-0.5">
               {description}
             </p>
           )}
@@ -177,7 +182,7 @@ export function ModalHeader({
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="flex h-8 w-8 items-center justify-center rounded-[10px] text-[#64748b] hover:text-[#043084] hover:bg-[#043084]/[0.06] transition-colors cursor-pointer shrink-0 border border-transparent hover:border-[#043084]/10"
+          className="flex h-9 w-9 items-center justify-center rounded-full text-[#64748b] hover:text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer shrink-0"
         >
           <X className="h-4 w-4" />
         </button>
@@ -194,7 +199,7 @@ export function ModalBody({
   className?: string;
 }) {
   return (
-    <div className={`flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 sm:px-6 py-4 sm:py-5 ${className}`}>
+    <div className={`flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 sm:px-5 py-4 ${className}`}>
       {children}
     </div>
   );
@@ -208,7 +213,7 @@ export function ModalFooter({
   className?: string;
 }) {
   return (
-    <div className={`flex items-center justify-end gap-2.5 border-t border-[#e2e8f0] bg-white px-5 sm:px-6 py-3.5 shrink-0 ${className}`}>
+    <div className={`flex items-center justify-end gap-2 border-t border-[#e2e8f0] bg-white px-4 sm:px-5 py-3 shrink-0 ${className}`}>
       {children}
     </div>
   );

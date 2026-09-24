@@ -86,7 +86,11 @@ export default function DashboardReviewsPage() {
 
   // Click outside to close 3-dot menus
   useEffect(() => {
-    const handleClickOutside = () => setActiveMenuId(null);
+    // Ignore presses inside an open menu so its items receive their click.
+    const handleClickOutside = (e: MouseEvent) => {
+      if ((e.target as HTMLElement).closest?.("[data-menu]")) return;
+      setActiveMenuId(null);
+    };
     if (activeMenuId) document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [activeMenuId]);
@@ -276,10 +280,10 @@ export default function DashboardReviewsPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#e2e8f0] pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="font-display text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+            <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
               Reviews
             </h1>
-            <span className="inline-flex items-center gap-1 rounded-full bg-[#043084]/10 px-2.5 py-0.5 text-xs font-bold text-[#043084]">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#f1f5f9] px-2 py-0.5 text-xs font-medium text-[#475569]">
               <Star className="h-3 w-3" />
               <span>{reviews.length} {reviews.length === 1 ? "Review" : "Reviews"}</span>
             </span>
@@ -302,7 +306,7 @@ export default function DashboardReviewsPage() {
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#043084] px-4 py-2 text-xs font-bold text-white shadow-2xs transition-all hover:bg-brand-hover cursor-pointer"
+            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3.5 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             <span>Request Review</span>
@@ -359,7 +363,7 @@ export default function DashboardReviewsPage() {
                 <button
                   type="button"
                   onClick={handleSharePublicReviewsLink}
-                  className="inline-flex h-7.5 items-center gap-1 rounded-md bg-[#043084] px-2.5 text-xs font-semibold text-white transition-colors hover:bg-brand-hover"
+                  className="inline-flex h-7.5 items-center gap-1 rounded-md border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-[#043084] transition-colors hover:bg-[#f1f5f9]"
                 >
                   <Share2 className="h-3 w-3" />
                   <span>Share</span>
@@ -539,6 +543,7 @@ export default function DashboardReviewsPage() {
                         {activeMenuId === rev.id && (
                           <div
                             onClick={(e) => e.stopPropagation()}
+                            data-menu
                             className="absolute right-0 top-full mt-1.5 w-44 rounded-xl border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in"
                           >
                             {rev.token && (
@@ -611,7 +616,7 @@ export default function DashboardReviewsPage() {
         <form onSubmit={(e) => handleCreateRequest(e, false)} className="flex flex-col flex-1 min-h-0">
           <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
             <div className="space-y-1">
-              <label htmlFor="client-name" className="block text-xs font-bold text-[#043084]">
+              <label htmlFor="client-name" className="block text-[13px] font-medium text-[#0f172a]">
                 Client or brand name <span className="text-[#C2414B]">*</span>
               </label>
               <input
@@ -621,12 +626,12 @@ export default function DashboardReviewsPage() {
                 value={clientName}
                 onChange={(e) => setClientName(e.target.value)}
                 placeholder="e.g. Puma India or Urban Cafe"
-                className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#043084] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:outline-none transition-colors"
+                className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:outline-none transition-colors"
               />
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="client-email" className="block text-xs font-bold text-[#043084]">
+              <label htmlFor="client-email" className="block text-[13px] font-medium text-[#0f172a]">
                 Client email <span className="text-[#64748b] font-normal">(Optional if sharing link directly)</span>
               </label>
               <input
@@ -635,12 +640,12 @@ export default function DashboardReviewsPage() {
                 value={clientEmail}
                 onChange={(e) => setClientEmail(e.target.value)}
                 placeholder="collabs@brand.com"
-                className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#043084] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:outline-none transition-colors"
+                className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:outline-none transition-colors"
               />
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="collab-title" className="block text-xs font-bold text-[#043084]">
+              <label htmlFor="collab-title" className="block text-[13px] font-medium text-[#0f172a]">
                 Collaboration / campaign name <span className="text-[#64748b] font-normal">(Optional)</span>
               </label>
               <input
@@ -649,7 +654,7 @@ export default function DashboardReviewsPage() {
                 value={projectTitle}
                 onChange={(e) => setProjectTitle(e.target.value)}
                 placeholder="e.g. Summer Campaign Reel or Store Launch"
-                className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#043084] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:outline-none transition-colors"
+                className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:outline-none transition-colors"
               />
             </div>
           </ModalBody>

@@ -255,7 +255,11 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
 
   // Click outside to close 3-dot menus
   useEffect(() => {
-    const handleClickOutside = () => setActiveMenuId(null);
+    // Ignore presses inside an open menu so its items receive their click.
+    const handleClickOutside = (e: MouseEvent) => {
+      if ((e.target as HTMLElement).closest?.("[data-menu]")) return;
+      setActiveMenuId(null);
+    };
     if (activeMenuId) document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [activeMenuId]);
@@ -496,7 +500,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
     <div className="w-full space-y-3 text-left">
       {/* Section Header: count badge + Add Link button */}
       <div className="flex items-center justify-between gap-3">
-        <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-[#043084]/[0.08] text-[#043084] border border-[#043084]/20">
+        <span className="inline-flex items-center text-xs text-[#64748b]">
           {links.length} / {maxLinks === Infinity ? "Unlimited" : maxLinks} links
         </span>
 
@@ -554,7 +558,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     </span>
 
                     <div
-                      className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 overflow-hidden ${isCollection ? "bg-[#043084] text-white shadow-xs" : platformInfo.bgClass
+                      className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 overflow-hidden ${isCollection ? "bg-[#f1f5f9] text-[#475569]" : platformInfo.bgClass
                         }`}
                     >
                       {isCollection ? (
@@ -579,7 +583,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                       className="min-w-0 flex-1 cursor-pointer group"
                       title="Click to edit link"
                     >
-                      <p className="truncate text-sm sm:text-[15px] font-semibold text-[#043084] group-hover:underline">
+                      <p className="truncate text-sm font-semibold text-[#0f172a] group-hover:underline">
                         {item.title}
                       </p>
                       <p className="truncate text-xs text-[#475569]">
@@ -630,6 +634,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                       {activeMenuId === item.id && (
                         <div
                           onClick={(e) => e.stopPropagation()}
+                          data-menu
                           className="absolute right-0 top-full mt-1.5 w-36 rounded-xl border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in"
                         >
                           {item.url && (
@@ -638,7 +643,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={() => setActiveMenuId(null)}
-                              className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#043084] hover:bg-[#f1f5f9] transition-colors"
+                              className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium text-[#0f172a] hover:bg-[#f1f5f9] transition-colors"
                             >
                               <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
                               <span>Open Link</span>
@@ -651,7 +656,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                               setActiveMenuId(null);
                               handleOpenEdit(item);
                             }}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#043084] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                           >
                             <Pencil className="h-3.5 w-3.5 text-[#64748b]" />
                             <span>Edit Link</span>
@@ -661,7 +666,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                             <button
                               type="button"
                               onClick={() => handleCopy(item.url)}
-                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#043084] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                             >
                               <Copy className="h-3.5 w-3.5 text-[#64748b]" />
                               <span>Copy Link</span>
@@ -774,7 +779,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
             {/* Link Type Selector */}
             {formMode === "link" && (
               <div className="space-y-1">
-                <label htmlFor="custom-link-type" className="block text-xs font-bold text-[#043084]">
+                <label htmlFor="custom-link-type" className="block text-[13px] font-medium text-[#0f172a]">
                   Link type
                 </label>
                 <div className="relative">
@@ -802,7 +807,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
 
             {/* Link Title Field */}
             <div className="space-y-1">
-              <label htmlFor="custom-link-title" className="block text-xs font-bold text-[#043084]">
+              <label htmlFor="custom-link-title" className="block text-[13px] font-medium text-[#0f172a]">
                 {formMode === "collection" ? "Collection title" : "Link title"} <span className="text-[#C2414B] font-bold">*</span>
               </label>
               <input
@@ -815,14 +820,14 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                   setIsTitleManuallyEdited(true);
                 }}
                 placeholder={formMode === "collection" ? "e.g. World Tour Tickets" : "e.g. Follow on Instagram or Watch Latest Video"}
-                className="h-9.5 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#043084] placeholder:text-[#94a3b8] placeholder:font-normal focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
+                className="h-9.5 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] placeholder:font-normal focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
               />
             </div>
 
             {/* Destination URL Field */}
             {formMode === "link" ? (
               <div className="space-y-1">
-                <label htmlFor="custom-link-url" className="block text-xs font-bold text-[#043084]">
+                <label htmlFor="custom-link-url" className="block text-[13px] font-medium text-[#0f172a]">
                   Destination URL <span className="text-[#C2414B] font-bold">*</span>
                 </label>
                 <div className="relative">
@@ -833,7 +838,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                     value={formUrl}
                     onChange={(e) => setFormUrl(e.target.value)}
                     placeholder="https://example.com/your-destination"
-                    className="h-9.5 w-full rounded-[10px] border border-[#e2e8f0] bg-white pl-3 pr-9 text-xs font-mono font-medium text-[#043084] placeholder:text-[#94a3b8] placeholder:font-normal focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
+                    className="h-9.5 w-full rounded-[10px] border border-[#e2e8f0] bg-white pl-3 pr-9 text-xs font-mono font-medium text-[#0f172a] placeholder:text-[#94a3b8] placeholder:font-normal focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
                   />
                   {formUrl && (formUrl.startsWith("http://") || formUrl.startsWith("https://")) && (
                     <a
@@ -852,13 +857,13 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
               <div className="space-y-2.5 rounded-[10px] border border-[#e2e8f0] bg-[#f8fafc] p-3">
                 <div className="flex items-center justify-between gap-2">
                   <div>
-                    <p className="text-xs font-bold text-[#043084]">Collection links</p>
+                    <p className="text-[13px] font-medium text-[#0f172a]">Collection links</p>
                     <p className="text-[11px] text-[#64748b]">Add grouped links for tickets, tour stops, or resources.</p>
                   </div>
                   <button
                     type="button"
                     onClick={addCollectionItem}
-                    className="inline-flex h-7.5 items-center gap-1.5 rounded-[8px] bg-[#043084] px-3 text-xs font-semibold text-white transition-all hover:bg-brand-hover hover:shadow-xs cursor-pointer"
+                    className="inline-flex h-7.5 items-center gap-1.5 rounded-[8px] border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#0f172a] transition-all hover:bg-[#f8fafc] hover:border-[#cbd5e1] cursor-pointer"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     <span>Add Link</span>
@@ -887,7 +892,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                       {/* Separate rows for Title and URL */}
                       <div className="space-y-2.5">
                         <div className="space-y-1">
-                          <label className="block text-xs font-bold text-[#043084]">
+                          <label className="block text-[13px] font-medium text-[#0f172a]">
                             Link title <span className="text-[#C2414B] font-bold">*</span>
                           </label>
                           <input
@@ -895,11 +900,11 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                             value={item.title}
                             onChange={(e) => updateCollectionItem(item.id, { title: e.target.value })}
                             placeholder="e.g. Ahmedabad tickets"
-                            className="h-9 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#043084] placeholder:text-[#94a3b8] placeholder:font-normal focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
+                            className="h-9 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] placeholder:font-normal focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
                           />
                         </div>
                         <div className="space-y-1">
-                          <label className="block text-xs font-bold text-[#043084]">
+                          <label className="block text-[13px] font-medium text-[#0f172a]">
                             Link URL <span className="text-[#C2414B] font-bold">*</span>
                           </label>
                           <input
@@ -907,7 +912,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                             value={item.url}
                             onChange={(e) => updateCollectionItem(item.id, { url: e.target.value })}
                             placeholder="https://bookmyshow.com/..."
-                            className="h-9 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs font-mono font-medium text-[#043084] placeholder:text-[#94a3b8] placeholder:font-normal focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
+                            className="h-9 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs font-mono font-medium text-[#0f172a] placeholder:text-[#94a3b8] placeholder:font-normal focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
                           />
                         </div>
                       </div>

@@ -8,7 +8,7 @@ import { useToast } from "@/contexts/ToastContext";
 import { ThemeService } from "@/services/ThemeService";
 import { buildProfileUrl, formatCount } from "@/utils/format";
 import { copyToClipboard } from "@/lib/copyToClipboard";
-import { formatCategoryDots } from "@/components/onboarding/LivePreviewCard";
+import { formatCategoryDots } from "@/utils/format";
 import { CARD_HEIGHT, CARD_WIDTH, CreatorCard } from "@/components/creator-card/CreatorCard";
 import { deriveCardAppearance, useExportableImage } from "@/components/creator-card/cardAppearance";
 import { cardFileName, downloadBlob, renderCardPng, shareCardFile } from "@/components/creator-card/cardExport";
@@ -123,7 +123,7 @@ export default function CreatorCardPage() {
   return (
     <div className="w-full space-y-4 pb-8 text-left sm:space-y-5">
       <div>
-        <h1 className="font-display text-xl font-bold tracking-tight text-[#043084] sm:text-2xl">Creator Card</h1>
+        <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">Creator Card</h1>
         <p className="mt-0.5 text-xs font-medium text-[#475569] sm:text-[13px]">Share your Inflixo with one scan.</p>
       </div>
 

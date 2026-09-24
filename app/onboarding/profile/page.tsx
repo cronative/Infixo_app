@@ -12,6 +12,7 @@ import { debugLog, debugError } from "@/lib/debugLogger";
 import { CategorySelect } from "@/components/ui/CategorySelect";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { generateAiBios } from "@/lib/aiBioGenerator";
+import { resizeImageToDataUrl } from "@/lib/imageResize";
 
 export default function ProfileStepPage() {
   const router = useRouter();
@@ -115,12 +116,10 @@ export default function ProfileStepPage() {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      updateProfile({ photoDataUrl: reader.result as string });
+    resizeImageToDataUrl(file, 512).then((dataUrl) => {
+      updateProfile({ photoDataUrl: dataUrl });
       showToast("Profile photo selected! 📸");
-    };
-    reader.readAsDataURL(file);
+    }).catch(() => showToast("Could not read that image. Please try another.", "error"));
   }
 
   async function handleNext() {

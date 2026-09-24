@@ -320,6 +320,14 @@ export default function PublicMediaKitPage() {
     window.print();
   };
 
+  // Dashboard "PDF" button opens this page with ?download=pdf — open the print dialog once loaded.
+  useEffect(() => {
+    if (!loaded || !profile || typeof window === "undefined") return;
+    if (new URLSearchParams(window.location.search).get("download") !== "pdf") return;
+    const timer = window.setTimeout(handlePrint, 600);
+    return () => window.clearTimeout(timer);
+  }, [loaded, profile]);
+
   if (!loaded) {
     return <SyncingLoader message="Loading Official Creator Media Kit..." fullScreen hideProgressBar={true} />;
   }

@@ -137,7 +137,7 @@ export function CategorySelect({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search actor, singer, YouTuber, food reviewer..."
-                  className="h-10 w-full rounded-xl border border-[#dbe3ee] bg-white pl-9 pr-3 text-sm font-semibold text-[#043084] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-2 focus:ring-[#043084]/10"
+                  className="h-10 w-full rounded-xl border border-[#dbe3ee] bg-white pl-9 pr-3 text-sm font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-2 focus:ring-[#043084]/10"
                   autoFocus
                 />
               </div>
