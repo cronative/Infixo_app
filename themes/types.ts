@@ -40,5 +40,6 @@ export interface ThemeCardProps {
   reviewsPreviewLimit?: number;
   allReviewsHref?: string;
   reviewsOnlyMode?: boolean;
+  pageHeader?: { pageLabel: string; backHref: string; backLabel: string };
   onShare?: () => void;
 }

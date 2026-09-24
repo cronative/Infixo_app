@@ -7,7 +7,7 @@ import { Logo } from "@/components/shared/Logo";
 import { SkeletonProfileCard } from "@/components/ui/Skeleton";
 import { ProfileService } from "@/services/ProfileService";
 import { SocialService } from "@/services/SocialService";
-import { ThemeService, THEME_PAGE_BACKGROUNDS } from "@/services/ThemeService";
+import { ThemeService } from "@/services/ThemeService";
 import { SeriesService } from "@/services/SeriesService";
 import { ThemeCard } from "@/themes/registry";
 import { CreatorProfile, SocialAccounts, Series, ThemeKey, EMPTY_SOCIAL_ACCOUNTS, CreatorReview, MediaKitPackage, MediaKitSettings, CreatorSetupItem } from "@/types";
@@ -15,8 +15,7 @@ import { useToast } from "@/contexts/ToastContext";
 import { buildProfileUrl } from "@/utils/format";
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { copyToClipboard } from "@/lib/copyToClipboard";
-import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
-import { FocusOverlay } from "@/components/theme/FocusOverlay";
+import { CreatorPublicShell } from "@/components/public/CreatorPublicShell";
 
 const EMPTY_PROFILE: CreatorProfile = {
   photoDataUrl: null,
@@ -436,9 +435,6 @@ export default function PublicProfileClient() {
   const totalAudience = SocialService.calculateTotalAudience(socials);
   const handleStr = profile.username || decodeURIComponent(params.username ?? "username");
   const fullUrl = buildProfileUrl(handleStr);
-  const themeMeta = ThemeService.getThemeMeta(theme);
-  const pageBgStyle = themeMeta.outerBgClass || THEME_PAGE_BACKGROUNDS[theme] || THEME_PAGE_BACKGROUNDS["minimal-white"];
-  const hasPhotoBackdrop = Boolean(themeMeta.outerBgClass?.includes("theme-bg-"));
 
   async function handleShare() {
     if (typeof navigator !== "undefined" && navigator.share) {
@@ -526,34 +522,7 @@ export default function PublicProfileClient() {
   }
 
   return (
-    <div
-      style={{ backgroundColor: themeMeta.colors.pageBackground }}
-      className="relative min-h-dvh flex flex-col transition-colors duration-500"
-    >
-      {/* 1. Full-screen outer background covering complete viewport */}
-      <div
-        className={`fixed inset-0 pointer-events-none transition-colors duration-500 z-0 ${pageBgStyle} ${hasPhotoBackdrop ? "theme-photo-backdrop" : ""}`}
-        style={{ backgroundColor: themeMeta.colors.pageBackground }}
-        aria-hidden="true"
-      >
-        {/* Soft ambient radial lighting (skipped on photo themes to keep the blurred photo clean) */}
-        {!hasPhotoBackdrop && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[650px] bg-gradient-radial from-white/[0.06] to-transparent blur-3xl pointer-events-none" />}
-      </div>
-
-      {/* 2. Ambient animation if theme is animated */}
-      {themeMeta.animation?.type !== "none" && (
-        <AmbientAnimation
-          type={themeMeta.animation?.type || themeMeta.animationType}
-          colors={themeMeta.animation?.colors || themeMeta.particleColors}
-          themeKey={themeMeta.key}
-        />
-      )}
-
-      {/* 3. Theme-aware Focus Overlay Layer */}
-      {!hasPhotoBackdrop && <FocusOverlay overlay={themeMeta.focusOverlay} />}
-
-      {/* 4. Centred Creator Profile Surface */}
-      <main className="relative z-10 h-dvh min-h-0 flex flex-col mx-auto w-full max-w-[620px] px-2.5 py-2.5 sm:py-3.5 overflow-hidden animate-fade-in-up">
+    <CreatorPublicShell themeKey={theme}>
         {/* Main Theme Profile Card (Renders Profile, Socials, Series, Services, Reviews & Custom Links) */}
         <ThemeCard
           themeKey={theme}
@@ -580,7 +549,6 @@ export default function PublicProfileClient() {
           allReviewsHref={`/${handleStr.replace(/^@/, "")}/reviews`}
           onShare={handleShare}
         />
-      </main>
-    </div>
+    </CreatorPublicShell>
   );
 }

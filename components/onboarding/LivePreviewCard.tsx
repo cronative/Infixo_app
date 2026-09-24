@@ -85,6 +85,8 @@ import { useToast } from "@/contexts/ToastContext";
 import { ShareSeriesModal } from "@/components/shared/ShareSeriesModal";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { MadeWithInflixo } from "@/components/shared/MadeWithInflixo";
+import { isDarkTheme, PUBLIC_ICON_BUTTON, PUBLIC_TEXT_BUTTON, PUBLIC_TYPE } from "@/components/public/publicTheme";
+import { PublicPageHeader } from "@/components/public/PublicPageHeader";
 import { SeriesPoster } from "@/components/shared/SeriesPoster";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { FocusOverlay } from "@/components/theme/FocusOverlay";
@@ -815,6 +817,8 @@ export interface LivePreviewCardProps {
   reviewsPreviewLimit?: number;
   allReviewsHref?: string;
   reviewsOnlyMode?: boolean;
+  /** Secondary public page (series list, reviews): compact creator header instead of the full profile header. */
+  pageHeader?: { pageLabel: string; backHref: string; backLabel: string };
   showSettingsIcon?: boolean;
   onShare?: () => void;
   isInformational?: boolean;
@@ -832,22 +836,7 @@ function getSeriesEpisodes(s: Series): any[] {
   return [];
 }
 
-const DARK_THEME_KEYS = new Set([
-  "midnight",
-  "cosmic-purple",
-  "aurora-night",
-  "rose-glow",
-  "ocean-motion",
-  "sunset-studio",
-  "marine-drive",
-  "burj-khalifa",
-  "neon-reels",
-  "podcast-lounge",
-  "gamer-stream",
-  "cafe-mocha",
-  "aurora-gradient",
-  "royal-glow",
-]);
+
 
 const EMPTY_PROFILE_FALLBACK: CreatorProfile = {
   photoDataUrl: null,
@@ -858,9 +847,8 @@ const EMPTY_PROFILE_FALLBACK: CreatorProfile = {
   updatedAt: new Date().toISOString(),
 };
 
-export function isDarkTheme(themeKey: string = "minimal-white"): boolean {
-  return DARK_THEME_KEYS.has(themeKey);
-}
+// Single source of truth lives in the shared public design tokens.
+export { isDarkTheme };
 
 export function LivePreviewCard({
   profile: incomingProfile,
@@ -890,6 +878,7 @@ export function LivePreviewCard({
   reviewsPreviewLimit,
   allReviewsHref,
   reviewsOnlyMode = false,
+  pageHeader,
   showSettingsIcon: showSettingsIconProp,
   onShare,
   isInformational: isInformationalProp,
@@ -1423,6 +1412,9 @@ export function LivePreviewCard({
   };
 
   const isFull = variant === "full";
+  // Live public pages (profile, series, reviews) render the card with contained scroll.
+  // They share the exact card surface used by every public page (see components/public).
+  const isPublicSurface = isFull || containedScroll;
   const bleedMargins = isFull ? "-mx-5 -mt-5 sm:-mx-8 sm:-mt-8" : "-mx-4 -mt-4 sm:-mx-6 sm:-mt-6";
   const bleedRadius = isFull ? "rounded-t-3xl" : "rounded-t-[28px]";
 
@@ -1447,22 +1439,21 @@ export function LivePreviewCard({
     <div
       style={{
         ...themeCssVars,
-        backgroundColor: isFull && !isDefaultCleanLayout ? "transparent" : surfaceBg,
-        borderColor: isFull && !isDefaultCleanLayout ? "transparent" : surfaceBorder,
+        backgroundColor: surfaceBg,
+        borderColor: surfaceBorder,
         color: c.primaryText,
         fontFamily: typ.fontFamily,
         letterSpacing: typ.letterSpacing,
-        ["--desktop-surface-shadow" as any]: isFull && !isDefaultCleanLayout ? "none" : surfaceShadow,
+        ["--desktop-surface-shadow" as any]: surfaceShadow,
+        boxShadow: isPublicSurface ? "none" : undefined,
       }}
-      className={`relative flex-1 flex flex-col min-h-0 overflow-hidden ${isFull
-        ? isDefaultCleanLayout
-          ? "px-3.5 py-4 sm:px-5 sm:py-5 rounded-[22px] border shadow-lg"
-          : "p-0 border-0 shadow-none bg-transparent"
+      className={`relative flex-1 flex flex-col min-h-0 overflow-hidden ${isPublicSurface
+        ? "px-4 pt-4 pb-4 sm:px-6 sm:pt-5 sm:pb-5 rounded-[22px] border backdrop-blur-xl"
         : `${cardPadding ? cardPadding : "p-3.5 sm:p-5 pt-4 sm:pt-6"} rounded-[20px] border shadow-md`
         } transition-all`}
     >
       {/* Ambient Animation in Preview mode when theme supports it */}
-      {themeMeta.animation?.type !== "none" && !isFull && (
+      {themeMeta.animation?.type !== "none" && !isPublicSurface && (
         <AmbientAnimation
           type={themeMeta.animation?.type || themeMeta.animationType}
           colors={themeMeta.animation?.colors || themeMeta.particleColors}
@@ -1472,43 +1463,97 @@ export function LivePreviewCard({
       )}
 
       {/* Focus Overlay between animated background and content */}
-      {!isFull && <FocusOverlay overlay={themeMeta.focusOverlay} contained={true} />}
+      {!isPublicSurface && <FocusOverlay overlay={themeMeta.focusOverlay} contained={true} />}
 
-      {/* Top Action Bar (Left Inflixo Logo Square with radius, Right Share Icon Square with radius) */}
-      <div
-        className={`relative z-30 flex items-center justify-between w-full px-0.5 bg-transparent ${containedScroll ? "shrink-0 pt-0 pb-2" : "mb-2"}`}
-      >
-        <Link
-          href="/"
-          style={{
-            backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.cardBackground,
-            borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : c.border,
-            color: usesDarkControls ? "#FFFFFF" : c.primaryText,
-          }}
-          className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 shrink-0 cursor-pointer select-none items-center justify-center rounded-[10px] border shadow-xs transition-all hover:scale-105"
-          title="Inflixo"
-          aria-label="Inflixo"
+      {/* Top Action Bar: home header on the profile, compact creator header on secondary pages */}
+      {pageHeader ? (
+        <PublicPageHeader
+          themeKey={themeKey}
+          backHref={pageHeader.backHref}
+          backLabel={pageHeader.backLabel}
+          creatorName={profile.displayName || ""}
+          creatorHandle={cleanHandle || "creator"}
+          creatorPhoto={profile.photoDataUrl}
+          pageLabel={pageHeader.pageLabel}
+          className={containedScroll ? "pb-3" : "mb-3"}
+          actions={
+            !isOnboardingMode ? (
+              <button
+                type="button"
+                onClick={handleShareClick}
+                style={{
+                  backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.cardBackground,
+                  borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : c.border,
+                  color: usesDarkControls ? "#FFFFFF" : c.primaryText,
+                }}
+                className={PUBLIC_ICON_BUTTON}
+                title={`Share ${pageHeader.pageLabel.toLowerCase()}`}
+                aria-label={`Share ${pageHeader.pageLabel.toLowerCase()}`}
+              >
+                <Share2 className="h-4 w-4" />
+              </button>
+            ) : null
+          }
+        />
+      ) : (
+        <div
+          className={`relative z-30 flex items-center justify-between gap-2 w-full px-0.5 bg-transparent ${containedScroll ? "shrink-0 pt-0 pb-2" : "mb-2"}`}
         >
-          <InflixoLogoIcon light={usesDarkControls} className="h-5 w-5 sm:h-5.5 sm:w-5.5 object-contain" />
-        </Link>
-
-        {!isOnboardingMode && (
-          <button
-            type="button"
-            onClick={handleShareClick}
+          <Link
+            href="/"
             style={{
               backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.cardBackground,
               borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : c.border,
               color: usesDarkControls ? "#FFFFFF" : c.primaryText,
             }}
-            className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 cursor-pointer items-center justify-center rounded-[10px] border shadow-xs transition-all hover:scale-105"
-            title="Share profile"
-            aria-label="Share profile"
+            className={PUBLIC_ICON_BUTTON}
+            title="Inflixo"
+            aria-label="Inflixo"
           >
-            <Share2 className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
-          </button>
-        )}
-      </div>
+            <InflixoLogoIcon light={usesDarkControls} className="h-5 w-5 sm:h-5.5 sm:w-5.5 object-contain" />
+          </Link>
+
+          {!isOnboardingMode && (
+            <div className="flex items-center gap-1.5">
+              {containedScroll && cleanHandle && cleanHandle !== "demo_creator" && !isDashboardPreview && (
+                <Link
+                  href={`/${cleanHandle}/media-kit`}
+                  onClick={(e) => {
+                    if (isInformationalMode) {
+                      e.preventDefault();
+                      showToast("Opens the creator's media kit on the live profile ✨");
+                    }
+                  }}
+                  style={{
+                    backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.cardBackground,
+                    borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : c.border,
+                    color: usesDarkControls ? "#FFFFFF" : c.primaryText,
+                  }}
+                  className={PUBLIC_TEXT_BUTTON}
+                  title="View media kit"
+                >
+                  <Briefcase className="h-4 w-4" />
+                  <span>Media kit</span>
+                </Link>
+              )}
+              <button
+                type="button"
+                onClick={handleShareClick}
+                style={{
+                  backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.cardBackground,
+                  borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : c.border,
+                  color: usesDarkControls ? "#FFFFFF" : c.primaryText,
+                }}
+                className={PUBLIC_ICON_BUTTON}
+                title="Share profile"
+                aria-label="Share profile"
+              >
+                <Share2 className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       <div
         ref={containedScroll ? profileScrollRef : undefined}
@@ -1516,7 +1561,7 @@ export function LivePreviewCard({
         className={containedScroll ? "relative z-10 flex flex-1 min-h-0 flex-col overflow-y-auto overflow-x-hidden overscroll-contain pt-1 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" : "contents"}
       >
 
-        {/* 1. Profile Header Section */}
+        {/* 1. Profile Header Section (same creator details on profile, series list and reviews) */}
         <div className="relative z-10 flex flex-col items-center text-center">
           {/* Circular Avatar */}
           <div className="relative inline-block mx-auto">
@@ -1539,7 +1584,7 @@ export function LivePreviewCard({
                 fontFamily: typ.headingFontFamily,
                 fontWeight: 700,
               }}
-              className="text-xl sm:text-[22px] font-bold tracking-tight break-words text-center line-clamp-2"
+              className={`${PUBLIC_TYPE.creatorName} break-words text-center line-clamp-2`}
             >
               {profile.displayName || "Creator Name"}
             </h1>
@@ -1644,7 +1689,7 @@ export function LivePreviewCard({
             >
               <span
                 style={{ color: c.mutedText }}
-                className="block text-[10px] sm:text-[11px] font-extrabold tracking-[0.14em] uppercase"
+                className="block text-[11px] sm:text-[11px] font-extrabold tracking-[0.14em] uppercase"
               >
                 Total Fanbase
               </span>
@@ -1652,9 +1697,9 @@ export function LivePreviewCard({
                 style={{
                   color: c.primaryText,
                   fontFamily: typ.headingFontFamily,
-                  fontWeight: 900,
+                  fontWeight: 800,
                 }}
-                className="mt-0.5 text-2xl sm:text-3xl leading-tight font-black tabular-nums tracking-tight"
+                className={`mt-1 ${PUBLIC_TYPE.stat} tabular-nums`}
               >
                 {formatCount(totalAudience)}
               </p>
@@ -1689,7 +1734,7 @@ export function LivePreviewCard({
                       borderColor: c.border,
                       boxShadow: eff.cardShadow,
                     }}
-                    className="tap-scale flex min-h-[84px] sm:min-h-[92px] flex-col rounded-[12px] border text-center transition-all hover:scale-[1.02] cursor-pointer shadow-xs overflow-hidden"
+                    className="tap-scale flex min-h-[84px] sm:min-h-[92px] flex-col rounded-[14px] border text-center transition-all hover:scale-[1.02] cursor-pointer shadow-xs overflow-hidden"
                     title={`Visit ${item.label}`}
                   >
                     <span className="flex flex-1 flex-col items-center justify-center px-2 py-2">
@@ -1711,13 +1756,13 @@ export function LivePreviewCard({
                       <span style={{ color: c.primaryText }} className="text-xs sm:text-[13px] font-bold tabular-nums leading-tight">
                         {formatCount(item.count)}
                       </span>
-                      <span style={{ color: c.secondaryText }} className="mt-0.5 text-[10px] sm:text-[11px] font-semibold leading-none">
+                      <span style={{ color: c.secondaryText }} className="mt-0.5 text-[11px] sm:text-[11px] font-semibold leading-none">
                         {item.unit}
                       </span>
                     </span>
                     <span
                       style={{ color: c.mutedText, borderColor: c.divider }}
-                      className="block w-full border-t px-2 py-1.5 text-[9px] sm:text-[10px] font-medium leading-none"
+                      className="block w-full border-t px-2 py-1.5 text-[11px] sm:text-[11px] font-medium leading-none"
                     >
                       <span className="inline-flex max-w-full items-center justify-center gap-1">
                         <span className="block min-w-0 truncate">
@@ -1742,7 +1787,7 @@ export function LivePreviewCard({
                 fontFamily: typ.headingFontFamily,
                 fontWeight: 700,
               }}
-              className="text-base sm:text-lg font-bold tracking-tight px-0.5"
+              className={`${PUBLIC_TYPE.sectionTitle} px-0.5`}
             >
               Links
             </h2>
@@ -1761,7 +1806,7 @@ export function LivePreviewCard({
                           borderColor: c.border,
                           boxShadow: eff.cardShadow,
                         }}
-                        className="rounded-[12px] border p-3 shadow-2xs"
+                        className="rounded-[14px] border p-3 shadow-2xs"
                       >
                         <div className="mb-2 flex items-center gap-2">
                           <Globe
@@ -1770,7 +1815,7 @@ export function LivePreviewCard({
                           />
                           <span
                             style={{ color: c.primaryText }}
-                            className="block truncate text-xs sm:text-sm font-semibold"
+                            className={`block line-clamp-2 break-words ${PUBLIC_TYPE.cardTitle}`}
                           >
                             {link.title}
                           </span>
@@ -1787,7 +1832,7 @@ export function LivePreviewCard({
                                 borderColor: c.border,
                                 color: c.primaryText,
                               }}
-                              className="tap-scale flex min-h-[42px] items-center justify-between gap-3 rounded-[10px] border px-3 py-2 text-xs font-semibold transition-all hover:scale-[1.01]"
+                              className="tap-scale flex min-h-[44px] items-center justify-between gap-3 rounded-[12px] border px-3 py-2 text-xs font-semibold transition-all hover:scale-[1.01]"
                             >
                               <span className="min-w-0 truncate">{item.title}</span>
                               <ExternalLink
@@ -1826,7 +1871,7 @@ export function LivePreviewCard({
                       <div className={isDefaultCleanLayout ? "max-w-[72%] px-2 text-center" : "min-w-0 flex-1"}>
                         <span
                           style={{ color: c.primaryText }}
-                          className="block truncate text-xs sm:text-sm font-semibold"
+                          className={`block line-clamp-2 break-words ${PUBLIC_TYPE.cardTitle}`}
                         >
                           {link.title}
                         </span>
@@ -1845,7 +1890,7 @@ export function LivePreviewCard({
 
         {/* 4. Series Section */}
         {effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || isOnboardingMode || seriesOnlyMode) && (
-          <div id="series-section" className="relative z-10 order-[10] mt-4 sm:mt-5 w-full text-left space-y-2">
+          <div id="series-section" className="relative z-10 order-[10] mt-6 w-full text-left space-y-2.5">
             {/* Section Header */}
             <div className="flex items-center justify-between px-0.5">
               <h2
@@ -1854,7 +1899,7 @@ export function LivePreviewCard({
                   fontFamily: typ.headingFontFamily,
                   fontWeight: 700,
                 }}
-                className="flex items-center gap-1.5 text-sm sm:text-base font-bold tracking-tight"
+                className={`flex items-center gap-1.5 ${PUBLIC_TYPE.sectionTitle}`}
               >
                 <Film className="h-3.5 w-3.5 opacity-70" style={{ color: c.primaryText }} />
                 <span>Series &amp; Playlists</span>
@@ -1961,7 +2006,7 @@ export function LivePreviewCard({
                                   {s.title}
                                 </h3>
                               </div>
-                              <span className="shrink-0 rounded-full border border-white/20 bg-black/40 px-2 py-0.5 text-[10px] font-bold text-white/90 backdrop-blur-xs">
+                              <span className="shrink-0 rounded-full border border-white/20 bg-black/40 px-2 py-0.5 text-[11px] font-bold text-white/90 backdrop-blur-xs">
                                 {detectedPlatform || "Series"}
                               </span>
                             </div>
@@ -1975,7 +2020,7 @@ export function LivePreviewCard({
                           <div className="flex items-start justify-between gap-2">
                             <h3
                               style={{ color: c.primaryText }}
-                              className="text-sm sm:text-base font-bold tracking-tight leading-snug"
+                              className={`break-words ${PUBLIC_TYPE.cardTitle}`}
                             >
                               {s.title}
                             </h3>
@@ -1985,7 +2030,7 @@ export function LivePreviewCard({
                                 borderColor: c.border,
                                 color: c.secondaryText,
                               }}
-                              className="shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold"
+                              className="shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-semibold"
                             >
                               {detectedPlatform || "Series"}
                             </span>
@@ -2028,7 +2073,7 @@ export function LivePreviewCard({
               </div>
             )}
 
-            {allSeriesHref && series.length > 0 && (
+            {allSeriesHref && series.length > displayedSeries.length && (
               <div className="pt-0.5 text-center">
                 <button
                   type="button"
@@ -2044,10 +2089,10 @@ export function LivePreviewCard({
                     }
                     router.push(allSeriesHref);
                   }}
-                  style={{ color: c.accentText }}
-                  className="tap-scale inline-flex items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition-all hover:opacity-85 cursor-pointer"
+                  style={{ color: c.accentText, borderColor: c.accentBorder, backgroundColor: c.accentSoft }}
+                  className="tap-scale inline-flex h-10 items-center justify-center gap-1.5 rounded-full border px-4 text-xs sm:text-[13px] font-semibold transition-all hover:opacity-85 cursor-pointer"
                 >
-                  <span>See all series</span>
+                  <span>View all {series.length} series</span>
                   <ArrowRight className="h-3 w-3" />
                 </button>
               </div>
@@ -2056,7 +2101,7 @@ export function LivePreviewCard({
         )}
 
         {/* 5. Creator Team */}
-        {activeTeamMembers.length > 0 && (
+        {!seriesOnlyMode && !reviewsOnlyMode && activeTeamMembers.length > 0 && (
           <div id="team-section" className="relative z-10 order-[20] mt-6 w-full text-left space-y-2.5">
             <div className="flex items-center justify-between gap-3 px-0.5">
               <h2
@@ -2065,7 +2110,7 @@ export function LivePreviewCard({
                   fontFamily: typ.headingFontFamily,
                   fontWeight: 700,
                 }}
-                className="flex items-center gap-2 text-base sm:text-lg font-bold tracking-tight"
+                className={`flex items-center gap-2 ${PUBLIC_TYPE.sectionTitle}`}
               >
                 <Users className="h-4 w-4 opacity-70" style={{ color: c.primaryText }} />
                 {teamData.team?.teamName || "Creator Team"}
@@ -2135,7 +2180,7 @@ export function LivePreviewCard({
                                 if (isInformationalMode) e.preventDefault();
                               }}
                               style={{ borderColor: c.border, backgroundColor: c.profileBackground }}
-                              className="tap-scale flex h-8 w-8 items-center justify-center rounded-[10px] border transition-all hover:scale-105"
+                              className="tap-scale flex h-9 w-9 items-center justify-center rounded-[10px] border transition-all hover:scale-105"
                             >
                               {link.icon}
                             </a>
@@ -2172,7 +2217,7 @@ export function LivePreviewCard({
                     fontFamily: typ.headingFontFamily,
                     fontWeight: 700,
                   }}
-                  className="text-base sm:text-lg font-bold tracking-tight"
+                  className={`${PUBLIC_TYPE.sectionTitle}`}
                 >
                   Work with me
                 </h2>
@@ -2208,12 +2253,12 @@ export function LivePreviewCard({
                           borderColor: c.border,
                           boxShadow: eff.cardShadow,
                         }}
-                        className="tap-scale rounded-[12px] border p-3 sm:p-3.5 flex items-center justify-between gap-3 cursor-pointer transition-all hover:scale-[1.01] hover:shadow-xs group shadow-2xs"
+                        className="tap-scale rounded-[14px] border p-3 sm:p-3.5 flex items-center justify-between gap-3 cursor-pointer transition-all hover:scale-[1.01] hover:shadow-xs group shadow-2xs"
                       >
                         <div className="min-w-0 pr-2 space-y-0.5">
                           <h3
                             style={{ color: c.primaryText }}
-                            className="text-xs sm:text-sm font-bold truncate"
+                            className={`line-clamp-2 break-words ${PUBLIC_TYPE.cardTitle}`}
                           >
                             {pkg.title}
                           </h3>
@@ -2227,7 +2272,7 @@ export function LivePreviewCard({
                             {pkg.turnaroundDays ? (
                               <span
                                 style={{ color: c.mutedText }}
-                                className="text-[10px] sm:text-[10.5px] font-medium opacity-80"
+                                className="text-[11px] sm:text-[11px] font-medium opacity-80"
                               >
                                 · {pkg.turnaroundDays}d turnaround
                               </span>
@@ -2236,7 +2281,7 @@ export function LivePreviewCard({
                           {pkg.deliverables && pkg.deliverables.length > 0 && (
                             <p
                               style={{ color: c.secondaryText }}
-                              className="text-[10.5px] truncate opacity-75 font-normal"
+                              className="text-[11px] truncate opacity-75 font-normal"
                             >
                               {pkg.deliverables.slice(0, 2).join(" · ")}
                             </p>
@@ -2302,7 +2347,7 @@ export function LivePreviewCard({
                 fontFamily: typ.headingFontFamily,
                 fontWeight: 700,
               }}
-              className="text-base sm:text-lg font-bold tracking-tight px-0.5"
+              className={`${PUBLIC_TYPE.sectionTitle} px-0.5`}
             >
               Reviews
             </h2>
@@ -2373,7 +2418,7 @@ export function LivePreviewCard({
             </div>
             )}
 
-            {allReviewsHref && approvedReviews.length > 0 && (
+            {allReviewsHref && approvedReviews.length > (typeof reviewsPreviewLimit === "number" ? reviewsPreviewLimit : approvedReviews.length) && (
               <div className="pt-1 text-center">
                 <button
                   type="button"
@@ -2384,10 +2429,10 @@ export function LivePreviewCard({
                     }
                     router.push(allReviewsHref);
                   }}
-                  style={{ color: c.accentText }}
-                  className="tap-scale inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs sm:text-[13px] font-bold transition-all hover:translate-y-[-1px] hover:opacity-85 cursor-pointer"
+                  style={{ color: c.accentText, borderColor: c.accentBorder, backgroundColor: c.accentSoft }}
+                  className="tap-scale inline-flex h-10 items-center justify-center gap-1.5 rounded-full border px-4 text-xs sm:text-[13px] font-semibold transition-all hover:opacity-85 cursor-pointer"
                 >
-                  <span>See all reviews</span>
+                  <span>View all {approvedReviews.length} reviews</span>
                   <ArrowRight className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -2396,7 +2441,7 @@ export function LivePreviewCard({
         )}
 
         {/* 7. Setup & Gear Section */}
-        {setupList && setupList.filter((it) => it.isActive !== false).length > 0 && (
+        {!seriesOnlyMode && !reviewsOnlyMode && setupList && setupList.filter((it) => it.isActive !== false).length > 0 && (
           <div id="setup-section" className="relative z-10 order-[45] mt-6 w-full text-left space-y-2.5">
             <div className="flex items-center justify-between px-0.5">
               <h2
@@ -2405,7 +2450,7 @@ export function LivePreviewCard({
                   fontFamily: typ.headingFontFamily,
                   fontWeight: 700,
                 }}
-                className="flex items-center gap-2 text-base sm:text-lg font-bold tracking-tight"
+                className={`flex items-center gap-2 ${PUBLIC_TYPE.sectionTitle}`}
               >
                 <Laptop className="h-4 w-4 opacity-70" style={{ color: c.primaryText }} />
                 Gear &amp; Tools
@@ -2438,14 +2483,14 @@ export function LivePreviewCard({
                             backgroundColor: `${c.border}40`,
                             color: c.secondaryText,
                           }}
-                          className="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider"
+                          className="rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider"
                         >
                           {item.category}
                         </span>
                         {item.brand && (
                           <span
                             style={{ color: c.mutedText }}
-                            className="text-[10px] font-semibold truncate"
+                            className="text-[11px] font-semibold truncate"
                           >
                             {item.brand}
                           </span>
@@ -2454,7 +2499,7 @@ export function LivePreviewCard({
 
                       <h4
                         style={{ color: c.primaryText }}
-                        className="text-xs sm:text-sm font-bold truncate"
+                        className={`line-clamp-2 break-words ${PUBLIC_TYPE.cardTitle}`}
                         title={item.name}
                       >
                         {item.name}
@@ -2472,7 +2517,7 @@ export function LivePreviewCard({
                       {item.usedFor && (
                         <p
                           style={{ color: c.secondaryText }}
-                          className="text-[10px] line-clamp-2 mt-1.5 opacity-90"
+                          className="text-[11px] line-clamp-2 mt-1.5 opacity-90"
                         >
                           <span className="font-semibold">Used for: </span>
                           {item.usedFor}
@@ -2514,7 +2559,7 @@ export function LivePreviewCard({
 
       {containedScroll && (
         <div
-          className="relative z-30 -mx-3.5 -mb-5 shrink-0 select-none sm:-mx-7 sm:-mb-7"
+          className={`relative z-30 shrink-0 select-none ${isPublicSurface ? "-mx-4 -mb-4 sm:-mx-6 sm:-mb-5" : "-mx-3.5 -mb-5 sm:-mx-7 sm:-mb-7"}`}
         >
           <div
             style={{ backgroundColor: c.divider }}
@@ -2755,7 +2800,7 @@ export function PreviewSeriesItem({
             {series.title}
           </p>
           {genresList.length > 0 && (
-            <p style={{ color: c.mutedText }} className="truncate text-[10px] font-medium leading-snug">
+            <p style={{ color: c.mutedText }} className="truncate text-[11px] font-medium leading-snug">
               {genresList.slice(0, 3).join(" • ")}
             </p>
           )}

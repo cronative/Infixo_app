@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import {
   Share2,
   Film,
@@ -10,10 +9,8 @@ import {
   Layers,
   Sparkles,
   ExternalLink,
-  ArrowLeft,
   Globe,
 } from "lucide-react";
-import { InflixoLogoIcon, LogoStadiumLinkI } from "@/components/shared/Logo";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 import { Series, Episode, ThemeKey, Season } from "@/types";
 import { useToast } from "@/contexts/ToastContext";
@@ -21,10 +18,16 @@ import { buildSeriesUrl } from "@/utils/format";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { ShareSeriesModal } from "@/components/shared/ShareSeriesModal";
 import { PublicCreatorInfo } from "@/lib/publicSeriesService";
-import { THEME_STYLES, isDarkTheme, DEFAULT_THEME_STYLE } from "@/components/onboarding/LivePreviewCard";
-import { THEME_PAGE_BACKGROUNDS, ThemeService, getThemeCssVariables } from "@/services/ThemeService";
-import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
-import { FocusOverlay } from "@/components/theme/FocusOverlay";
+import { ThemeService } from "@/services/ThemeService";
+import { CreatorPublicShell, PublicCard } from "@/components/public/CreatorPublicShell";
+import { PublicPageHeader, PublicIconButton } from "@/components/public/PublicPageHeader";
+import { PublicSectionHeader } from "@/components/public/PublicSectionHeader";
+import {
+  getPublicTheme,
+  PUBLIC_CARD_PADDING,
+  PUBLIC_CTA_BUTTON,
+  PUBLIC_TYPE,
+} from "@/components/public/publicTheme";
 import { MadeWithInflixo } from "@/components/shared/MadeWithInflixo";
 
 function getPlatformInfo(platformStr?: string, urlStr?: string) {
@@ -179,12 +182,9 @@ export function SeriesDetailClient({
 
   // Theme integration
   const themeKey = (creator?.themeKey || "minimal-white") as ThemeKey;
-  const themeMeta = ThemeService.getThemeMeta(themeKey);
-  const style = THEME_STYLES[themeKey] || THEME_STYLES["minimal-white"];
-  const pageBgStyle = themeMeta.outerBgClass || THEME_PAGE_BACKGROUNDS[themeKey] || THEME_PAGE_BACKGROUNDS["minimal-white"];
-  const isDark = isDarkTheme(themeKey);
-  const isSignaturePurple = themeKey === "signature-purple";
-  const usesDarkControls = isDark || themeMeta.mode === "dark";
+  const pt = getPublicTheme(themeKey);
+  const c = pt.colors;
+  const usesDarkControls = pt.isDark;
 
   const seasonsList: Season[] = useMemo(() => {
     if (!series) return [];
@@ -276,73 +276,67 @@ export function SeriesDetailClient({
   // ── LOADING SKELETON (THEME-AWARE) ──
   if (loading) {
     return (
-      <div className={`min-h-dvh flex flex-col transition-colors duration-300 ${pageBgStyle}`}>
-        <main className="flex-1 flex flex-col mx-auto max-w-2xl w-full px-3 sm:px-6 py-6 sm:py-8 animate-pulse">
-          <div className={`flex-1 rounded-3xl p-5 sm:p-8 space-y-4 border ${style.socialItemBg} ${style.socialItemBorder}`}>
-            <div className="w-full aspect-[16/9] bg-black/10 rounded-2xl" />
-            <div className="h-6 w-1/2 mx-auto bg-black/10 rounded-md" />
-            <div className="h-4 w-3/4 mx-auto bg-black/10 rounded-md" />
-            <div className="space-y-2 pt-2">
-              <div className="h-12 w-full bg-black/10 rounded-xl" />
-              <div className="h-12 w-full bg-black/10 rounded-xl" />
+      <CreatorPublicShell themeKey={themeKey}>
+        <PublicCard themeKey={themeKey} className={`${PUBLIC_CARD_PADDING} py-4 sm:py-5 animate-pulse`}>
+          <div className="flex items-center gap-2.5">
+            <div className="h-10 w-10 rounded-[12px] bg-black/10" />
+            <div className="h-10 w-10 rounded-full bg-black/10" />
+            <div className="flex-1 space-y-1.5">
+              <div className="h-3.5 w-32 rounded bg-black/10" />
+              <div className="h-3 w-20 rounded bg-black/10" />
             </div>
           </div>
-        </main>
-      </div>
+          <div className="mt-4 h-40 w-full rounded-[14px] bg-black/10" />
+          <div className="mx-auto mt-4 h-5 w-1/2 rounded bg-black/10" />
+          <div className="mx-auto mt-2 h-3.5 w-3/4 rounded bg-black/10" />
+          <div className="mt-5 space-y-2">
+            <div className="h-12 w-full rounded-[14px] bg-black/10" />
+            <div className="h-12 w-full rounded-[14px] bg-black/10" />
+          </div>
+        </PublicCard>
+      </CreatorPublicShell>
     );
   }
 
   // ── NOT FOUND STATE ──
   if (notFound || !series) {
     return (
-      <div className={`min-h-dvh flex flex-col items-center justify-center p-4 py-6 sm:py-8 transition-colors duration-300 ${pageBgStyle}`}>
-        <main className="mx-auto max-w-md w-full text-center space-y-6">
-          <div className={`rounded-3xl border p-8 sm:p-10 shadow-2xs space-y-5 ${style.socialItemBg} ${style.socialItemBorder}`}>
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#043084] text-white shadow-md">
-              <Film className="h-8 w-8" />
-            </div>
-
-            <div className="space-y-2">
-              <h1 className={`font-display text-xl sm:text-2xl font-bold ${style.nameColor}`}>
-                Series isn’t available
-              </h1>
-              <p className={`text-xs sm:text-sm leading-relaxed ${style.bioColor}`}>
-                This series playlist doesn’t exist, belongs to another creator, or has been removed.
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-2">
-              <button
-                type="button"
-                onClick={() => router.push(profileUrl)}
-                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold transition-all cursor-pointer border ${isDark
-                  ? "bg-[#043084]/22 hover:bg-brand-hover/32 active:bg-brand-primary/40 border-[#043084]/45 hover:border-brand-primary/60 text-[#F8FAFC] focus-visible:ring-2 focus-visible:ring-brand-primary/60"
-                  : isSignaturePurple
-                    ? "bg-[#043084]/16 hover:bg-brand-hover/24 active:bg-brand-primary/32 border border-[#043084]/35 hover:border-brand-primary/50 text-[#043084] focus-visible:ring-2 focus-visible:ring-brand-primary/60 shadow-xs"
-                    : "bg-[#043084] hover:bg-brand-hover text-white border-transparent"
-                  }`}
-              >
-                <span>Go to @{username}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => router.push("/")}
-                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border px-5 py-2.5 text-xs font-semibold transition-colors cursor-pointer ${style.socialItemBg} ${style.socialItemBorder} ${style.nameColor}`}
-              >
-                <span>Explore Inflixo</span>
-              </button>
-            </div>
+      <CreatorPublicShell themeKey={themeKey}>
+        <PublicCard themeKey={themeKey} className={`${PUBLIC_CARD_PADDING} items-center justify-center py-10 text-center`}>
+          <div
+            style={pt.elevatedStyle}
+            className="mx-auto flex h-14 w-14 items-center justify-center rounded-[14px] border"
+          >
+            <Film className="h-7 w-7" style={{ color: c.accentText }} />
           </div>
-        </main>
-      </div>
+          <h1 style={pt.headingStyle} className={`mt-4 ${PUBLIC_TYPE.pageTitle}`}>
+            Series isn’t available
+          </h1>
+          <p style={{ color: c.secondaryText }} className={`mx-auto mt-1.5 max-w-sm ${PUBLIC_TYPE.body}`}>
+            This series doesn’t exist, belongs to another creator, or has been removed.
+          </p>
+          <div className="mt-5 flex w-full max-w-xs flex-col gap-2">
+            <button
+              type="button"
+              onClick={() => router.push(profileUrl)}
+              style={{ backgroundColor: c.accent, borderColor: c.accent, color: "#FFFFFF" }}
+              className={PUBLIC_CTA_BUTTON}
+            >
+              Go to @{username}
+            </button>
+            <button
+              type="button"
+              onClick={() => router.push("/")}
+              style={pt.controlStyle}
+              className={PUBLIC_CTA_BUTTON}
+            >
+              Explore Inflixo
+            </button>
+          </div>
+        </PublicCard>
+      </CreatorPublicShell>
     );
   }
-
-  const themeCssVars = getThemeCssVariables(themeMeta);
-  const c = themeMeta.colors;
-  const typ = themeMeta.typography;
-  const eff = themeMeta.effects;
 
   const genresList = series.genre
     ? series.genre
@@ -358,401 +352,215 @@ export function SeriesDetailClient({
       ? series.language.trim()
       : null;
 
+  const platformIcon = (cls: string, platform: string | null = detectedPlatform) =>
+    platform === "YouTube" ? <YoutubeIcon className={`${cls} text-red-500`} />
+      : platform === "Instagram" ? <InstagramIcon className={`${cls} text-pink-500`} />
+        : platform === "Facebook" ? <FacebookIcon className={`${cls} text-blue-500`} />
+          : <Globe className={`${cls} opacity-75`} />;
+
+  const episodePlatform = (url?: string | null): string | null => {
+    if (!url) return null;
+    if (/youtube\.com|youtu\.be/i.test(url)) return "YouTube";
+    if (/instagram\.com/i.test(url)) return "Instagram";
+    if (/facebook\.com|fb\.watch/i.test(url)) return "Facebook";
+    return null;
+  };
+
+  const metaParts = [
+    `${allEpisodes.length} ${allEpisodes.length === 1 ? "episode" : "episodes"}`,
+    ...(seasonsList.length > 1 ? [`${seasonsList.length} seasons`] : []),
+    ...(langTag ? [langTag] : []),
+  ];
+
   return (
-    <div
-      style={{ backgroundColor: c.pageBackground }}
-      className="relative min-h-dvh flex flex-col font-sans antialiased transition-colors duration-500"
-    >
-      {/* 1. Full-screen outer background covering complete viewport */}
-      <div
-        className={`fixed inset-0 pointer-events-none transition-colors duration-500 z-0 ${pageBgStyle}`}
-        style={{ backgroundColor: c.pageBackground }}
-        aria-hidden="true"
-      >
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[650px] bg-gradient-radial from-white/[0.06] to-transparent blur-3xl pointer-events-none" />
-      </div>
-
-      {/* 2. Ambient animation if theme is animated */}
-      {themeMeta.animation?.type !== "none" && (
-        <AmbientAnimation
-          type={themeMeta.animation?.type || themeMeta.animationType}
-          colors={themeMeta.animation?.colors || themeMeta.particleColors}
-          themeKey={themeMeta.key}
-        />
-      )}
-
-      {/* 3. Theme-aware Focus Overlay Layer */}
-      <FocusOverlay overlay={themeMeta.focusOverlay} />
-
-      {/* 4. Centered Content */}
-      <main className="relative z-10 h-dvh min-h-0 flex flex-col mx-auto w-full max-w-[620px] px-2.5 py-2.5 sm:py-3.5 overflow-hidden animate-fade-in-up">
-        {/* Centered Theme Card with flex layout & contained scroll */}
-        <div
-          style={{
-            ...themeCssVars,
-            backgroundColor: themeMeta.profileSurface?.background || c.profileBackground,
-            borderColor: themeMeta.profileSurface?.border || c.border,
-            color: c.primaryText,
-            fontFamily: typ.fontFamily,
-            letterSpacing: typ.letterSpacing,
-            ["--desktop-surface-shadow" as any]: themeMeta.profileSurface?.shadow || eff.shadow || "0 20px 60px rgba(0,0,0,0.06)",
-          }}
-          className="flex-1 flex flex-col justify-between relative overflow-hidden rounded-[22px] border shadow-lg transition-all"
-        >
-          {/* Top Action Bar (Dedicated when no cover, or overlaid when cover exists) */}
-          {!hasValidCover && (
-            <header className="relative z-20 flex items-center justify-between w-full px-3.5 pt-3 pb-1.5 shrink-0 bg-transparent">
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onPointerEnter={() => {
-                    if (username) {
-                      router.prefetch(`/${username}/series`);
-                    }
-                  }}
-                  onClick={() => {
-                    if (typeof window !== "undefined" && window.history.length > 1) {
-                      router.back();
-                    } else {
-                      router.push(profileUrl);
-                    }
-                  }}
-                  style={{
-                    backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.cardBackground,
-                    borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : c.border,
-                    color: usesDarkControls ? "#FFFFFF" : c.primaryText,
-                  }}
-                  className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] border shadow-xs transition-all hover:scale-105 cursor-pointer"
-                  title={`Back to @${username}`}
-                  aria-label={`Back to @${username}`}
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                </button>
-
-                <Link
-                  href="/"
-                  style={{
-                    backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.cardBackground,
-                    borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : c.border,
-                    color: usesDarkControls ? "#FFFFFF" : c.primaryText,
-                  }}
-                  className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] border shadow-xs transition-all shrink-0 hover:scale-105 cursor-pointer select-none"
-                  title="Inflixo Home"
-                  aria-label="Inflixo Home"
-                >
-                  <InflixoLogoIcon light={usesDarkControls} className="h-5 w-5 sm:h-5.5 sm:w-5.5 object-contain" />
-                </Link>
-              </div>
-
-              <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={handleCopyLink}
-                  style={{
-                    backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.cardBackground,
-                    borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : c.border,
-                    color: usesDarkControls ? "#FFFFFF" : c.primaryText,
-                  }}
-                  className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] border shadow-xs transition-all hover:scale-105 cursor-pointer"
-                  title="Copy series link"
-                  aria-label="Copy series link"
-                >
-                  <Copy className="h-3.5 w-3.5" />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setIsShareModalOpen(true)}
-                  style={{
-                    backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.cardBackground,
-                    borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : c.border,
-                    color: usesDarkControls ? "#FFFFFF" : c.primaryText,
-                  }}
-                  className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] border shadow-xs transition-all hover:scale-105 cursor-pointer"
-                  title="Share series"
-                  aria-label="Share series"
-                >
-                  <Share2 className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            </header>
-          )}
-
-          <div className="flex-1 flex flex-col min-h-0 overflow-y-auto scrollbar-none">
-            {/* 1. Compact Cover Image (ONLY rendered if genuine cover exists) */}
-            {hasValidCover && (
-              <div className="relative w-full h-[115px] sm:h-[130px] overflow-hidden bg-slate-900/10 shrink-0">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={series.posterDataUrl!}
-                  alt={series.title}
-                  onError={() => setCoverImageError(true)}
-                  className="block w-full h-full object-cover object-center"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/25 pointer-events-none" />
-
-                {/* Overlaid Top Action Bar on Cover */}
-                <header className="absolute top-2.5 inset-x-3 sm:top-3 sm:inset-x-3.5 z-20 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onPointerEnter={() => {
-                        if (username) {
-                          router.prefetch(`/${username}/series`);
-                        }
-                      }}
-                      onClick={() => {
-                        if (typeof window !== "undefined" && window.history.length > 1) {
-                          router.back();
-                        } else {
-                          router.push(profileUrl);
-                        }
-                      }}
-                      className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
-                      title={`Back to @${username}`}
-                      aria-label={`Back to @${username}`}
-                    >
-                      <ArrowLeft className="h-4 w-4" />
-                    </button>
-
-                    <Link
-                      href="/"
-                      className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/25 text-white transition-all shadow-md shrink-0 hover:scale-105 cursor-pointer select-none"
-                      title="Inflixo Home"
-                      aria-label="Inflixo Home"
-                    >
-                      <InflixoLogoIcon light className="h-5 w-5 sm:h-5.5 sm:w-5.5 object-contain" />
-                    </Link>
-                  </div>
-
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      type="button"
-                      onClick={handleCopyLink}
-                      className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
-                      title="Copy series link"
-                      aria-label="Copy series link"
-                    >
-                      <Copy className="h-3.5 w-3.5" />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setIsShareModalOpen(true)}
-                      className="tap-scale flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
-                      title="Share series"
-                      aria-label="Share series"
-                    >
-                      <Share2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                </header>
-
-                <div className="absolute inset-x-3.5 bottom-2.5 z-10 flex items-end justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <h1
-                      style={{ fontFamily: typ.headingFontFamily, fontWeight: 800 }}
-                      className="line-clamp-1 text-base sm:text-lg font-bold leading-tight tracking-tight text-white drop-shadow-sm"
-                    >
-                      {series.title}
-                    </h1>
-                  </div>
-                  {detectedPlatform && (
-                    <span className="shrink-0 rounded-full border border-white/20 bg-black/40 px-2 py-0.5 text-[10px] font-bold text-white/90 backdrop-blur-xs">
-                      {detectedPlatform}
-                    </span>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* 2. BODY CONTENT: TITLE, DESCRIPTION, PILL TAGS, EPISODES */}
-            <div className="p-3.5 sm:p-4 flex-1 flex flex-col">
-              {/* Title & Description & Genre Tags */}
-              <div className="text-center px-1">
-                {!hasValidCover && (
-                  <>
-                    <h1
-                      style={{
-                        color: c.primaryText,
-                        fontFamily: typ.headingFontFamily,
-                        fontWeight: 700,
-                      }}
-                      className="text-lg sm:text-xl font-bold leading-snug tracking-tight"
-                    >
-                      {series.title}
-                    </h1>
-
-                    {detectedPlatform && (
-                      <div className="mt-1.5 flex justify-center">
-                        <span
-                          style={{
-                            backgroundColor: c.elevatedBackground || "rgba(0,0,0,0.04)",
-                            borderColor: c.border,
-                            color: c.secondaryText,
-                          }}
-                          className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[11px] font-semibold"
-                        >
-                          {detectedPlatform === "YouTube" && <YoutubeIcon className="h-3 w-3 text-red-500" />}
-                          {detectedPlatform === "Instagram" && <InstagramIcon className="h-3 w-3 text-pink-500" />}
-                          {detectedPlatform === "Facebook" && <FacebookIcon className="h-3 w-3 text-blue-500" />}
-                          {detectedPlatform !== "YouTube" && detectedPlatform !== "Instagram" && detectedPlatform !== "Facebook" && (
-                            <Globe className="h-3 w-3 opacity-75" />
-                          )}
-                          <span>{detectedPlatform}</span>
-                        </span>
-                      </div>
-                    )}
-
-                    {series.description && series.description.trim() && (
-                      <p
-                        style={{ color: c.secondaryText }}
-                        className="mt-1.5 text-xs sm:text-[13px] leading-relaxed font-normal max-w-md mx-auto"
-                      >
-                        {series.description}
-                      </p>
-                    )}
-                  </>
-                )}
-
-                {/* Metadata — clean values */}
-                {(genresList.length > 0 || langTag || allEpisodes.length > 0) && (
-                  <div className={`${hasValidCover ? "mt-0" : "mt-2"} space-y-0.5 text-center`}>
-                    {genresList.length > 0 && (
-                      <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-medium">
-                        {genresList.slice(0, 3).join(", ")}
-                      </p>
-                    )}
-                    <p style={{ color: c.secondaryText }} className="text-[11px] sm:text-xs font-medium opacity-80">
-                      {allEpisodes.length} {allEpisodes.length === 1 ? "episode" : "episodes"}{langTag ? ` · ${langTag}` : ""}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* Seasons Filter Tabs (if multiple seasons) */}
-              {seasonsList.length > 1 && (
-                <div className="mt-2.5 flex items-center justify-center gap-2 overflow-x-auto pb-0.5 scrollbar-none">
-                  {seasonsList.map((sn, idx) => (
-                    <button
-                      key={sn.id || idx}
-                      type="button"
-                      onClick={() => setActiveSeasonIndex(idx)}
-                      style={
-                        activeSeasonIndex === idx
-                          ? { backgroundColor: c.accentSoft, borderColor: c.accentBorder, color: c.accentText }
-                          : { backgroundColor: c.cardBackground, borderColor: c.border, color: c.secondaryText }
-                      }
-                      className="tap-scale px-2.5 py-1 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer border"
-                    >
-                      {sn.title || `Season ${sn.seasonNumber || idx + 1}`} ({sn.episodes?.length || 0})
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {/* 3. EPISODES HEADER & GROUPED LIST */}
-              <div className="mt-3.5 sm:mt-4 space-y-1.5">
-                <div className="flex items-center justify-between px-1">
-                  <span
-                    style={{ color: c.mutedText }}
-                    className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider"
-                  >
-                    {seasonsList.length > 1
-                      ? `${seasonsList[activeSeasonIndex]?.title || `Season ${activeSeasonIndex + 1}`} Episodes (${currentEpisodes.length})`
-                      : `Episodes (${currentEpisodes.length})`}
-                  </span>
-                </div>
-
-                {currentEpisodes.length === 0 ? (
-                  <div
-                    style={{
-                      borderColor: c.border,
-                      color: c.mutedText,
-                      backgroundColor: c.elevatedBackground || "rgba(0,0,0,0.02)",
-                    }}
-                    className="p-4 text-center text-xs font-semibold rounded-[14px] border border-dashed"
-                  >
-                    No episodes uploaded for this series yet.
-                  </div>
-                ) : (
-                  <div
-                    style={{
-                      borderColor: c.border,
-                      backgroundColor: c.cardBackground,
-                    }}
-                    className="rounded-[14px] border divide-y overflow-hidden shadow-xs"
-                  >
-                    {currentEpisodes.map((ep: Episode, index: number) => {
-                      const partNum = ep.episodeNumber || index + 1;
-                      const partNumStr = partNum < 10 ? `0${partNum}` : `${partNum}`;
-                      const epTitleStr = ep.title?.trim() || `Episode ${partNum}`;
-
-                      return (
-                        <a
-                          key={ep.id || index}
-                          href={ep.externalUrl || "#"}
-                          target={ep.externalUrl ? "_blank" : undefined}
-                          rel="noopener noreferrer"
-                          onClick={() => trackEpisodeClick(ep)}
-                          style={{ borderColor: c.divider }}
-                          className="group flex items-center justify-between w-full px-3.5 py-2 sm:py-2.5 transition-colors hover:opacity-85 cursor-pointer"
-                        >
-                          {/* Left: Number & Title */}
-                          <div className="flex items-center gap-2.5 min-w-0 pr-2">
-                            <span
-                              style={{ color: c.mutedText }}
-                              className="text-xs font-mono font-medium w-5 shrink-0"
-                            >
-                              {partNumStr}
-                            </span>
-                            <span
-                              style={{ color: c.primaryText }}
-                              className="text-xs sm:text-[13px] font-bold truncate transition-colors"
-                            >
-                              {epTitleStr}
-                            </span>
-                          </div>
-
-                          {/* Right: Open Link Icon */}
-                          <div
-                            style={{ color: c.accentText }}
-                            className="flex h-6 w-6 items-center justify-center shrink-0 opacity-75 transition-all group-hover:translate-x-0.5 group-hover:opacity-100"
-                          >
-                            <ExternalLink className="h-3.5 w-3.5" />
-                          </div>
-                        </a>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* 4. PINNED MADE WITH INFLIXO FOOTER */}
-          <div
-            style={{ borderColor: c.divider }}
-            className="flex items-center justify-center pt-3.5 pb-[15px] px-4 select-none shrink-0 border-t"
-          >
-            <MadeWithInflixo
-              color={usesDarkControls ? "#FFFFFF" : c.secondaryText}
-              backgroundColor={c.accentSoft}
-              borderColor={c.accentBorder}
-            />
-          </div>
-        </div>
-      </main>
-
-      {/* Share Modal */}
-      {series && (
+    <CreatorPublicShell
+      themeKey={themeKey}
+      outside={
         <ShareSeriesModal
           isOpen={isShareModalOpen}
           onClose={() => setIsShareModalOpen(false)}
           series={series}
           username={username}
         />
-      )}
-    </div>
+      }
+    >
+      <PublicCard themeKey={themeKey}>
+        {/* Compact creator header — same on every secondary public page */}
+        <PublicPageHeader
+          themeKey={themeKey}
+          backHref={`/${username}/series`}
+          backLabel="Back to series"
+          preferHistoryBack
+          creatorName={creator?.displayName || ""}
+          creatorHandle={username}
+          creatorPhoto={creator?.photoDataUrl}
+          pageLabel="Series"
+          className={`${PUBLIC_CARD_PADDING} pt-4 pb-3 sm:pt-5`}
+          actions={
+            <>
+              <PublicIconButton themeKey={themeKey} onClick={handleCopyLink} label="Copy series link">
+                <Copy className="h-4 w-4" />
+              </PublicIconButton>
+              <PublicIconButton themeKey={themeKey} onClick={() => setIsShareModalOpen(true)} label="Share series">
+                <Share2 className="h-4 w-4" />
+              </PublicIconButton>
+            </>
+          }
+        />
+
+        <div className={`flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain scrollbar-none ${PUBLIC_CARD_PADDING} pb-5`}>
+          {/* Series hero */}
+          {hasValidCover && (
+            <div
+              style={{ borderColor: c.border }}
+              className="relative mt-1 aspect-[16/9] max-h-[220px] w-full shrink-0 overflow-hidden rounded-[14px] border bg-black/10"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={series.posterDataUrl!}
+                alt={series.title}
+                onError={() => setCoverImageError(true)}
+                className="block h-full w-full object-cover object-center"
+              />
+            </div>
+          )}
+
+          <div className={`${hasValidCover ? "mt-4" : "mt-2"} text-center`}>
+            <h1 style={pt.headingStyle} className={`break-words ${PUBLIC_TYPE.pageTitle}`}>
+              {series.title}
+            </h1>
+
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5">
+              {detectedPlatform && (
+                <span
+                  style={pt.elevatedStyle}
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 ${PUBLIC_TYPE.label}`}
+                >
+                  {platformIcon("h-3.5 w-3.5")}
+                  <span>{detectedPlatform}</span>
+                </span>
+              )}
+              {genresList.slice(0, 3).map((g) => (
+                <span
+                  key={g}
+                  style={{ borderColor: c.border, color: c.secondaryText }}
+                  className={`inline-flex items-center rounded-full border px-2.5 py-1 ${PUBLIC_TYPE.label}`}
+                >
+                  {g}
+                </span>
+              ))}
+            </div>
+
+            <p style={{ color: c.mutedText }} className={`mt-2 ${PUBLIC_TYPE.meta}`}>
+              {metaParts.join(" · ")}
+            </p>
+
+            {series.description && series.description.trim() && (
+              <p
+                style={{ color: c.secondaryText }}
+                className={`mx-auto mt-2.5 max-w-md whitespace-pre-line break-words ${PUBLIC_TYPE.body}`}
+              >
+                {series.description}
+              </p>
+            )}
+          </div>
+
+          {/* Seasons */}
+          {seasonsList.length > 1 && (
+            <div className="-mx-1 mt-5 flex items-center gap-2 overflow-x-auto px-1 pb-1 scrollbar-none">
+              {seasonsList.map((sn, idx) => (
+                <button
+                  key={sn.id || idx}
+                  type="button"
+                  onClick={() => setActiveSeasonIndex(idx)}
+                  style={
+                    activeSeasonIndex === idx
+                      ? { backgroundColor: c.accentSoft, borderColor: c.accentBorder, color: c.accentText }
+                      : { backgroundColor: c.cardBackground, borderColor: c.border, color: c.secondaryText }
+                  }
+                  className={`tap-scale inline-flex h-9 shrink-0 cursor-pointer items-center rounded-full border px-3.5 transition-all ${PUBLIC_TYPE.label}`}
+                >
+                  {sn.title || `Season ${sn.seasonNumber || idx + 1}`} · {sn.episodes?.length || 0}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Episodes */}
+          <div className={`${seasonsList.length > 1 ? "mt-3" : "mt-6"} space-y-2.5`}>
+            <PublicSectionHeader
+              themeKey={themeKey}
+              title="Episodes"
+              icon={<Film className="h-4 w-4" />}
+              meta={`${currentEpisodes.length}`}
+            />
+
+            {currentEpisodes.length === 0 ? (
+              <div
+                style={{ ...pt.elevatedStyle, color: c.mutedText }}
+                className={`rounded-[14px] border border-dashed p-5 text-center ${PUBLIC_TYPE.meta}`}
+              >
+                No episodes added to this series yet.
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {currentEpisodes.map((ep: Episode, index: number) => {
+                  const partNum = ep.episodeNumber || index + 1;
+                  const partNumStr = partNum < 10 ? `0${partNum}` : `${partNum}`;
+                  const epTitleStr = ep.title?.trim() || `Episode ${partNum}`;
+                  const epPlatform = episodePlatform(ep.externalUrl);
+
+                  return (
+                    <a
+                      key={ep.id || index}
+                      href={ep.externalUrl || "#"}
+                      target={ep.externalUrl ? "_blank" : undefined}
+                      rel="noopener noreferrer"
+                      onClick={() => trackEpisodeClick(ep)}
+                      style={pt.itemStyle}
+                      className="group tap-scale flex min-h-[56px] w-full cursor-pointer items-center gap-3 rounded-[14px] border px-3.5 py-2.5 transition-all hover:opacity-90"
+                    >
+                      <span
+                        style={{ backgroundColor: c.accentSoft, color: c.accentText }}
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] text-xs font-bold tabular-nums"
+                      >
+                        {partNumStr}
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span style={{ color: c.primaryText }} className={`block line-clamp-2 break-words ${PUBLIC_TYPE.cardTitle}`}>
+                          {epTitleStr}
+                        </span>
+                        {epPlatform && (
+                          <span style={{ color: c.mutedText }} className={`mt-0.5 flex items-center gap-1 ${PUBLIC_TYPE.meta}`}>
+                            {platformIcon("h-3 w-3", epPlatform)}
+                            Watch on {epPlatform}
+                          </span>
+                        )}
+                      </span>
+                      <ExternalLink
+                        className="h-4 w-4 shrink-0 opacity-70 transition-all group-hover:translate-x-0.5 group-hover:opacity-100"
+                        style={{ color: c.accentText }}
+                      />
+                    </a>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Pinned Made with Inflixo footer (same as profile) */}
+        <div
+          style={{ borderColor: c.divider }}
+          className="flex shrink-0 select-none items-center justify-center border-t px-4 pt-3.5 pb-[15px]"
+        >
+          <MadeWithInflixo
+            color={usesDarkControls ? "#FFFFFF" : c.secondaryText}
+            backgroundColor={c.accentSoft}
+            borderColor={c.accentBorder}
+          />
+        </div>
+      </PublicCard>
+    </CreatorPublicShell>
   );
 }

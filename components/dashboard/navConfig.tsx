@@ -12,6 +12,7 @@ import {
   Star,
   BarChart3,
   Laptop,
+  IdCard,
 } from "lucide-react";
 
 export interface NavItem {
@@ -53,6 +54,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/dashboard/mediakit", label: "Collabs", icon: Briefcase },
       { href: "/dashboard/reviews", label: "Reviews", icon: Star },
       { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
+      { href: "/dashboard/creator-card", label: "Creator Card", icon: IdCard },
     ],
   },
   {

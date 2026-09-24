@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
-  ArrowLeft,
   Briefcase,
   Mail,
   MessageCircle,
@@ -45,65 +44,17 @@ import { copyToClipboard } from "@/lib/copyToClipboard";
 import { useToast } from "@/contexts/ToastContext";
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { getInitials } from "@/lib/avatar";
-import { ThemeService, THEME_PAGE_BACKGROUNDS } from "@/services/ThemeService";
-import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
-import { FocusOverlay } from "@/components/theme/FocusOverlay";
-import { isDarkTheme } from "@/components/onboarding/LivePreviewCard";
 import { MadeWithInflixo } from "@/components/shared/MadeWithInflixo";
-
-const DEFAULT_FALLBACK_PACKAGES: MediaKitPackage[] = [
-  {
-    id: "sample_reel",
-    title: "Instagram Reel",
-    platform: "Instagram Reel",
-    price: "₹10,000",
-    turnaroundDays: 2,
-    badge: "Most Popular",
-    isPopular: true,
-    isActive: true,
-    deliverables: [
-      "1 x 30–60s Dedicated Reel",
-      "Brand Collaborator Tag",
-      "Direct Promo Link in Bio (24 Hours)",
-      "Pinned Comment with Tracked Link",
-      "Raw Video Footage (Optional)",
-    ],
-  },
-  {
-    id: "sample_yt",
-    title: "YouTube Integration",
-    platform: "YouTube Video Integration",
-    price: "₹25,000",
-    turnaroundDays: 4,
-    badge: "",
-    isPopular: false,
-    isActive: true,
-    deliverables: [
-      "60–90s Brand Integration",
-      "Product Mention & Showcase",
-      "Link in Description",
-      "Community Post (Optional)",
-      "Raw Footage (Optional)",
-    ],
-  },
-  {
-    id: "sample_bundle",
-    title: "Instagram Bundle",
-    platform: "Instagram Bundle",
-    price: "₹18,000",
-    turnaroundDays: 2,
-    badge: "",
-    isPopular: false,
-    isActive: true,
-    deliverables: [
-      "1 x Reel (30–60s)",
-      "2 x Instagram Stories",
-      "Brand Tag & Location Tag",
-      "Exclusive Discount Code",
-      "Link in Bio (24 Hours)",
-    ],
-  },
-];
+import { CreatorPublicShell, PublicCard } from "@/components/public/CreatorPublicShell";
+import { PublicPageHeader, PublicIconButton } from "@/components/public/PublicPageHeader";
+import { PublicSectionHeader } from "@/components/public/PublicSectionHeader";
+import {
+  getPublicTheme,
+  PUBLIC_CARD_PADDING,
+  PUBLIC_CTA_BUTTON,
+  PUBLIC_ICON_BUTTON,
+  PUBLIC_TYPE,
+} from "@/components/public/publicTheme";
 
 function formatPackagePrice(price: string): string {
   if (!price) return "₹0";
@@ -356,9 +307,17 @@ export default function PublicMediaKitPage() {
   };
 
   const handlePrint = () => {
-    if (typeof window !== "undefined") {
-      window.print();
-    }
+    if (typeof window === "undefined") return;
+    // The browser uses the document title as the default PDF file name.
+    const previousTitle = document.title;
+    const name = profile?.displayName || profile?.username || "Creator";
+    document.title = `${name} - Media Kit`;
+    const restore = () => {
+      document.title = previousTitle;
+      window.removeEventListener("afterprint", restore);
+    };
+    window.addEventListener("afterprint", restore);
+    window.print();
   };
 
   if (!loaded) {
@@ -394,30 +353,15 @@ export default function PublicMediaKitPage() {
     (socials.youtube?.subscribers || 0) +
     (socials.facebook?.followers || 0);
 
-  const displayPackages =
-    packages.length > 0
-      ? packages.filter((p) => p.isActive !== false)
-      : DEFAULT_FALLBACK_PACKAGES;
+  // Only the creator's real packages. (Sample packages with invented prices were
+  // previously shown to brands when a creator had none.)
+  const displayPackages = packages.filter((p) => p.isActive !== false);
 
-  const themeMeta = ThemeService.getThemeMeta(theme);
-  const pageBgStyle = themeMeta.outerBgClass || THEME_PAGE_BACKGROUNDS[theme] || THEME_PAGE_BACKGROUNDS["minimal-white"];
-  const isDark = isDarkTheme(theme) || themeMeta.mode === "dark";
-  const profileSurface = themeMeta.profileSurface;
-  const cardStyle = {
-    background: themeMeta.colors.cardBackground,
-    borderColor: themeMeta.colors.border,
-    color: themeMeta.colors.primaryText,
-    boxShadow: themeMeta.effects.cardShadow,
-  };
-  const subtleStyle = {
-    background: themeMeta.colors.elevatedBackground,
-    borderColor: themeMeta.colors.border,
-  };
-  const controlStyle = {
-    background: isDark ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0.82)",
-    borderColor: isDark ? "rgba(255,255,255,0.20)" : themeMeta.colors.border,
-    color: themeMeta.colors.primaryText,
-  };
+  const pt = getPublicTheme(theme);
+  const c = pt.colors;
+  const isDark = pt.isDark;
+  const cardStyle = pt.itemStyle;
+  const subtleStyle = pt.elevatedStyle;
   const cleanHandle = (profile.username || params.username || "creator").replace(/^@/, "");
   const contactEmail = settings?.sponsorEmail?.trim() || profile.email?.trim() || "";
   const whatsappNumber = settings?.whatsappNumber?.replace(/\D/g, "") || "";
@@ -457,302 +401,437 @@ export default function PublicMediaKitPage() {
   ].filter(Boolean) as Array<{ label: string; href: string; icon: React.ReactNode }>;
 
   return (
-    <div
-      data-media-kit-print
-      style={{ backgroundColor: themeMeta.colors.pageBackground }}
-      className="relative min-h-dvh overflow-hidden print:overflow-visible"
-    >
-      <style jsx global>{`
-        @media print {
-          html,
-          body,
-          [data-media-kit-print] {
-            background: ${themeMeta.colors.pageBackground} !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
+    <CreatorPublicShell
+      themeKey={theme}
+      wrapperProps={{ "data-media-kit-print": true }}
+      mainClassName="print:h-auto print:max-w-none print:p-0 print:overflow-visible"
+      outside={
+        <style
+          // Print-only rules for "Export PDF"
+          dangerouslySetInnerHTML={{
+            __html: `
+          /* ── Media kit → PDF (A4) ─────────────────────────────── */
+          @page {
+            size: A4;
+            /* No paper margin: the theme background runs edge to edge; spacing comes from padding below */
+            margin: 0;
           }
 
-          [data-media-kit-print] *,
-          [data-media-kit-print] *::before,
-          [data-media-kit-print] *::after {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
+          @media print {
+            html,
+            body {
+              background: ${c.pageBackground} !important;
+              height: auto !important;
+              min-height: 0 !important;
+              overflow: visible !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
 
-          [data-media-kit-actions] {
-            display: none !important;
-          }
+            /* Only the media kit is printed (no cookie banner, toasts, install prompt) */
+            body > :not([data-media-kit-print]):not(:has([data-media-kit-print])) {
+              display: none !important;
+            }
 
-          [data-media-kit-content] {
-            height: auto !important;
-            overflow: visible !important;
-          }
+            [data-media-kit-print] {
+              min-height: 0 !important;
+              background: ${c.pageBackground} !important;
+            }
 
-          [data-media-kit-section] {
-            break-inside: avoid;
-            page-break-inside: avoid;
-          }
-        }
-      `}</style>
-      <div
-        className={`fixed inset-0 z-0 pointer-events-none transition-colors duration-500 ${pageBgStyle}`}
-        style={{ backgroundColor: themeMeta.colors.pageBackground }}
-        aria-hidden="true"
-      />
-      {themeMeta.animation?.type !== "none" && (
-        <AmbientAnimation
-          type={themeMeta.animation?.type || themeMeta.animationType}
-          colors={themeMeta.animation?.colors || themeMeta.particleColors}
-          themeKey={themeMeta.key}
-        />
-      )}
-      <FocusOverlay overlay={themeMeta.focusOverlay} />
+            [data-media-kit-print] *,
+            [data-media-kit-print] *::before,
+            [data-media-kit-print] *::after {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              animation: none !important;
+              transition: none !important;
+            }
 
-      <main className="relative z-10 mx-auto flex h-dvh min-h-0 w-full max-w-[620px] flex-col px-2.5 py-2.5 sm:py-3.5 print:h-auto print:max-w-none print:p-0">
-        <div
-          className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[22px] border backdrop-blur-xl print:overflow-visible print:rounded-none print:border-0 print:shadow-none"
-          style={{
-            background: profileSurface?.background || themeMeta.colors.profileBackground,
-            borderColor: profileSurface?.border || themeMeta.colors.border,
-            boxShadow: profileSurface?.shadow || themeMeta.effects.shadow,
-            color: themeMeta.colors.primaryText,
-            fontFamily: themeMeta.typography.fontFamily,
+            /* Drop the web-only layers: photo/gradient background, ambient animation, overlays */
+            [data-media-kit-print] > :not(main) {
+              display: none !important;
+            }
+
+            /* Flatten the centered web card into a full-width document */
+            [data-media-kit-print] main {
+              position: static !important;
+              height: auto !important;
+              max-width: none !important;
+              margin: 0 !important;
+              padding: 0 !important;
+              overflow: visible !important;
+              transform: none !important;
+            }
+
+            [data-media-kit-print] main > div {
+              display: block !important;
+              background: transparent !important;
+              border: 0 !important;
+              border-radius: 0 !important;
+              box-shadow: none !important;
+              backdrop-filter: none !important;
+              -webkit-backdrop-filter: none !important;
+              overflow: visible !important;
+              min-height: 0 !important;
+            }
+
+            [data-media-kit-actions] {
+              display: none !important;
+            }
+
+            [data-media-kit-content] {
+              display: block !important;
+              flex: none !important;
+              height: auto !important;
+              overflow: visible !important;
+              padding: 14mm 16mm 10mm !important;
+              /* Repeat the top/bottom padding on every printed page */
+              -webkit-box-decoration-break: clone;
+              box-decoration-break: clone;
+            }
+
+            [data-media-kit-content] > * + * {
+              margin-top: 7mm !important;
+            }
+
+            /* Keep individual cards whole; let long sections flow across pages */
+            [data-media-kit-keep],
+            [data-media-kit-content] article {
+              break-inside: avoid;
+              page-break-inside: avoid;
+            }
+
+            /* Never leave a section heading alone at the bottom of a page */
+            [data-media-kit-section] > :first-child {
+              break-after: avoid;
+              page-break-after: avoid;
+            }
+
+            [data-media-kit-footer] {
+              border-top-width: 1px !important;
+              margin: 0 16mm !important;
+              padding: 4mm 0 12mm !important;
+              break-inside: avoid;
+            }
+
+            [data-media-kit-print] a:not(.underline) {
+              text-decoration: none !important;
+            }
+          }
+        `,
           }}
-        >
-          <header
-            data-media-kit-actions
-            className="z-20 flex shrink-0 items-center justify-between gap-2 border-b px-3 py-3 sm:px-4"
-            style={{ borderColor: themeMeta.colors.divider }}
-          >
-            <button
-              type="button"
-              onClick={() => router.push(`/${cleanHandle}`)}
-              className="tap-scale inline-flex h-9 items-center gap-1.5 rounded-[10px] border px-3 text-xs font-bold backdrop-blur-md transition-opacity hover:opacity-80"
-              style={controlStyle}
-            >
-              <ArrowLeft className="h-3.5 w-3.5" />
-              Profile
-            </button>
-            <span className="min-w-0 truncate text-xs font-extrabold uppercase tracking-[0.12em]">Media Kit</span>
-            <div className="flex items-center gap-1.5">
-              <button type="button" onClick={handlePrint} aria-label="Export media kit" title="Export PDF" className="tap-scale flex h-9 w-9 items-center justify-center rounded-[10px] border backdrop-blur-md transition-opacity hover:opacity-80" style={controlStyle}>
-                <Printer className="h-4 w-4" />
-              </button>
-              <button type="button" onClick={handleCopyLink} aria-label="Share media kit" title="Share media kit" className="tap-scale flex h-9 w-9 items-center justify-center rounded-[10px] border backdrop-blur-md transition-opacity hover:opacity-80" style={controlStyle}>
-                <Share2 className="h-4 w-4" />
-              </button>
-            </div>
-          </header>
+        />
+      }
+    >
+      <PublicCard
+        themeKey={theme}
+        className="print:overflow-visible print:rounded-none print:border-0 print:shadow-none"
+      >
+        <div data-media-kit-actions className={`${PUBLIC_CARD_PADDING} shrink-0 pt-4 pb-3 sm:pt-5`}>
+          <PublicPageHeader
+            themeKey={theme}
+            backHref={`/${cleanHandle}`}
+            backLabel="Back to profile"
+            creatorName={profile.displayName || ""}
+            creatorHandle={cleanHandle}
+            creatorPhoto={profile.photoDataUrl}
+            pageLabel="Media kit"
+            actions={
+              <>
+                <PublicIconButton themeKey={theme} onClick={handlePrint} label="Export PDF">
+                  <Printer className="h-4 w-4" />
+                </PublicIconButton>
+                <PublicIconButton themeKey={theme} onClick={handleCopyLink} label="Share media kit">
+                  <Share2 className="h-4 w-4" />
+                </PublicIconButton>
+              </>
+            }
+          />
+        </div>
 
-          <div data-media-kit-content className="min-h-0 flex-1 space-y-4 overflow-y-auto px-3 py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:px-4 print:overflow-visible">
-            <section className="text-center">
-              <div className="relative mx-auto inline-block">
-                <CreatorAvatar
-                  src={profile.photoDataUrl}
-                  name={profile.displayName || "Creator"}
-                  className="mx-auto h-[68px] w-[68px] overflow-hidden rounded-full border-2 object-contain object-center shadow-sm ring-3 ring-black/5 sm:h-[76px] sm:w-[76px]"
-                  style={{ borderColor: themeMeta.colors.border, backgroundColor: themeMeta.colors.cardBackground }}
-                  textClassName="text-lg font-extrabold sm:text-xl"
-                  textStyle={{ color: themeMeta.colors.primaryText }}
-                  fallbackBgClass="bg-[#043084]"
-                />
-              </div>
-              <div className="mt-1.5 flex items-center justify-center gap-1.5">
-                <h1 className="font-display text-xl font-black" style={{ fontFamily: themeMeta.typography.headingFontFamily }}>
-                  {profile.displayName || "Creator"}
-                </h1>
-                {profile.isVerified && <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-500" />}
-              </div>
-              <p className="mt-0.5 text-xs font-medium sm:text-[13px]" style={{ color: themeMeta.colors.mutedText }}>@{cleanHandle}</p>
-              {creatorTypes && <p className="mt-0.5 text-xs font-medium opacity-85" style={{ color: themeMeta.colors.secondaryText }}>{creatorTypes}</p>}
-              {Boolean(profile.city) && (
-                <p className="mt-0.5 inline-flex items-center justify-center gap-1 text-[11px] font-medium opacity-80" style={{ color: themeMeta.colors.mutedText }}>
-                  <MapPin className="h-3 w-3 shrink-0" />
-                  <span>{[profile.city, profile.state].filter(Boolean).join(", ")}</span>
-                </p>
-              )}
-              <p className="mx-auto mt-1 max-w-sm px-1 text-xs font-normal leading-relaxed sm:text-[13px]" style={{ color: themeMeta.colors.secondaryText }}>
-                {profile.bio || "Official creator portfolio and collaboration media kit."}
+        <div
+          data-media-kit-content
+          className={`min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain ${PUBLIC_CARD_PADDING} pt-2 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden print:overflow-visible`}
+        >
+          {/* Creator identity: the "cover" of the media kit (also used in the PDF) */}
+          <section className="text-center">
+            <p style={{ color: c.accentText }} className={PUBLIC_TYPE.eyebrow}>Media kit</p>
+            <CreatorAvatar
+              src={profile.photoDataUrl}
+              name={profile.displayName || "Creator"}
+              className="mx-auto mt-3 h-[72px] w-[72px] overflow-hidden rounded-full border-2 object-cover object-center shadow-sm sm:h-20 sm:w-20"
+              style={{ borderColor: c.border, backgroundColor: c.cardBackground }}
+              textClassName="text-lg font-extrabold sm:text-xl"
+              textStyle={{ color: c.primaryText }}
+              fallbackBgClass="bg-[#043084]"
+            />
+            <div className="mt-2 flex items-center justify-center gap-1.5 px-2">
+              <h1 style={pt.headingStyle} className={`${PUBLIC_TYPE.creatorName} break-words line-clamp-2`}>
+                {profile.displayName || "Creator"}
+              </h1>
+              {profile.isVerified && <ShieldCheck className="h-4.5 w-4.5 shrink-0 text-emerald-500" />}
+            </div>
+            <p style={{ color: c.mutedText }} className={`mt-0.5 ${PUBLIC_TYPE.meta}`}>@{cleanHandle}</p>
+            {creatorTypes && (
+              <p style={{ color: c.secondaryText }} className={`mt-1 break-words px-2 ${PUBLIC_TYPE.meta}`}>{creatorTypes}</p>
+            )}
+            {Boolean(profile.city) && (
+              <p style={{ color: c.mutedText }} className={`mt-1 inline-flex items-center justify-center gap-1 ${PUBLIC_TYPE.meta}`}>
+                <MapPin className="h-3.5 w-3.5 shrink-0" />
+                <span>{[profile.city, profile.state].filter(Boolean).join(", ")}</span>
               </p>
+            )}
+            {profile.bio && profile.bio.trim() && (
+              <p style={{ color: c.secondaryText }} className={`mx-auto mt-2 max-w-md break-words px-1 ${PUBLIC_TYPE.body}`}>
+                {profile.bio}
+              </p>
+            )}
+            {/* PDF only: clickable profile + social links (the icon buttons are hidden on paper) */}
+            <div className="mt-2 hidden print:block">
+              <a
+                href={`${typeof window !== "undefined" ? window.location.origin : "https://inflixo.com"}/${cleanHandle}`}
+                style={{ color: c.accentText }}
+                className={`underline underline-offset-2 ${PUBLIC_TYPE.meta}`}
+              >
+                {(typeof window !== "undefined" ? window.location.host : "inflixo.com")}/{cleanHandle}
+              </a>
               {headerSocials.length > 0 && (
-                <div className="mt-2 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
+                <p className={`mt-1.5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 ${PUBLIC_TYPE.meta}`}>
                   {headerSocials.map((item) => (
                     <a
                       key={item.label}
                       href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={item.label}
-                      title={item.label}
-                      className="tap-scale flex h-8 w-8 items-center justify-center rounded-[10px] border transition-opacity hover:opacity-80"
-                      style={{ background: themeMeta.colors.cardBackground, borderColor: themeMeta.colors.border }}
+                      style={{ color: c.secondaryText }}
+                      className="inline-flex items-center gap-1 underline underline-offset-2"
                     >
                       {item.icon}
+                      <span>{item.href.replace(/^https?:\/\/(www\.)?/, "")}</span>
                     </a>
                   ))}
+                </p>
+              )}
+            </div>
+            {headerSocials.length > 0 && (
+              <div data-media-kit-actions className="mt-3 flex flex-wrap items-center justify-center gap-2">
+                {headerSocials.map((item) => (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={item.label}
+                    title={item.label}
+                    style={pt.controlStyle}
+                    className={PUBLIC_ICON_BUTTON}
+                  >
+                    {item.icon}
+                  </a>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* Total fanbase + platform breakdown */}
+          <section data-media-kit-section data-media-kit-keep style={cardStyle} className="rounded-[14px] border p-4 text-center sm:p-5">
+            <p style={{ color: c.mutedText }} className={PUBLIC_TYPE.eyebrow}>Total fanbase</p>
+            <p style={{ ...pt.headingStyle, color: c.accentText }} className={`mt-1.5 ${PUBLIC_TYPE.stat}`}>{formatCount(totalAudience)}</p>
+            <p style={{ color: c.secondaryText }} className={`mt-1 ${PUBLIC_TYPE.meta}`}>Across primary social platforms</p>
+            <div className="mt-4 grid grid-cols-3 gap-2">
+              {[
+                { label: "Instagram", unit: "Followers", value: socials.instagram.followers || 0, icon: <InstagramIcon className="h-4 w-4 text-pink-500" /> },
+                { label: "YouTube", unit: "Subscribers", value: socials.youtube.subscribers || 0, icon: <YoutubeIcon className="h-4 w-4 text-red-500" /> },
+                { label: "Facebook", unit: "Followers", value: socials.facebook.followers || 0, icon: <FacebookIcon className="h-4 w-4 text-blue-500" /> },
+              ].map((item) => (
+                <div key={item.label} style={subtleStyle} className="min-w-0 rounded-[12px] border px-1.5 py-3">
+                  <div className="mx-auto flex justify-center">{item.icon}</div>
+                  <p className="mt-1.5 text-base font-bold tabular-nums">{formatCount(item.value)}</p>
+                  <p style={{ color: c.mutedText }} className={`truncate ${PUBLIC_TYPE.label}`}>{item.label}</p>
                 </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Collaboration packages / rate card */}
+          {displayPackages.length > 0 && (
+            <section data-media-kit-section className="space-y-3">
+              <PublicSectionHeader
+                themeKey={theme}
+                title="Collaboration packages"
+                icon={<Briefcase className="h-4 w-4" />}
+                description="Deliverables, pricing and turnaround."
+              />
+              <div className="space-y-2.5 print:grid print:grid-cols-2 print:gap-3 print:space-y-0">
+                {displayPackages.map((pkg) => {
+                  const visual = getPackageCardVisual(pkg);
+                  return (
+                    <article key={pkg.id} style={cardStyle} className="rounded-[14px] border p-3.5 sm:p-4">
+                      <div className="flex items-start gap-3">
+                        {visual.icon}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
+                            <div className="min-w-0 flex-1">
+                              <h3 className={`break-words ${PUBLIC_TYPE.cardTitle}`}>{pkg.title}</h3>
+                              {(pkg.isPopular || pkg.badge) && (
+                                <p style={{ color: c.accentText }} className={`mt-0.5 ${PUBLIC_TYPE.label}`}>{pkg.badge || "Most popular"}</p>
+                              )}
+                            </div>
+                            <p className={`shrink-0 text-right break-words ${PUBLIC_TYPE.price}`}>{formatPackagePrice(pkg.price)}</p>
+                          </div>
+                          {pkg.deliverables?.length > 0 && (
+                            <ul className="mt-2.5 space-y-1.5">
+                              {pkg.deliverables.map((item, index) => (
+                                <li key={index} style={{ color: c.secondaryText }} className={`flex items-start gap-1.5 break-words ${PUBLIC_TYPE.metaRegular} leading-snug`}>
+                                  <Check className="mt-0.5 h-3.5 w-3.5 shrink-0" style={{ color: c.accent }} />
+                                  <span>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </div>
+                      <div style={{ borderColor: c.divider }} className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t pt-3">
+                        <span style={{ color: c.secondaryText }} className={`flex items-center gap-1 ${PUBLIC_TYPE.label}`}>
+                          <Clock className="h-3.5 w-3.5" /> {formatDeliveryText(pkg.turnaroundDays)}
+                        </span>
+                        {hasDirectContact && (
+                          <div data-media-kit-actions className="flex items-center gap-1.5">
+                            {contactEmail && (
+                              <a
+                                href={emailHref(pkg.title)}
+                                aria-label={`Email about ${pkg.title}`}
+                                title="Email creator"
+                                style={{ background: c.accent }}
+                                className="tap-scale flex h-10 items-center gap-1.5 rounded-[12px] px-3.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
+                              >
+                                <Mail className="h-4 w-4" /> Email
+                              </a>
+                            )}
+                            {whatsappNumber && (
+                              <a
+                                href={whatsappHref(pkg.title)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label={`WhatsApp about ${pkg.title}`}
+                                title="WhatsApp creator"
+                                className="tap-scale flex h-10 items-center gap-1.5 rounded-[12px] bg-[#16a34a] px-3.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
+                              >
+                                <MessageCircle className="h-4 w-4" /> WhatsApp
+                              </a>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+              {hasDirectContact && (
+                <a
+                  data-media-kit-actions
+                  href={contactEmail ? emailHref() : whatsappHref()}
+                  target={contactEmail ? undefined : "_blank"}
+                  rel={contactEmail ? undefined : "noopener noreferrer"}
+                  style={{ color: c.accentText }}
+                  className={`tap-scale inline-flex min-h-10 items-center gap-1 px-0.5 ${PUBLIC_TYPE.label}`}
+                >
+                  Need something custom? Ask @{cleanHandle} <ArrowRight className="h-3.5 w-3.5" />
+                </a>
               )}
             </section>
+          )}
 
-            <section data-media-kit-section className="rounded-2xl border p-4 text-center" style={cardStyle}>
-              <p className="text-[10px] font-black uppercase tracking-[0.14em]" style={{ color: themeMeta.colors.mutedText }}>Total fanbase</p>
-              <p className="mt-1 font-display text-3xl font-black" style={{ color: themeMeta.colors.primaryText }}>{formatCount(totalAudience)}</p>
-              <p className="mt-0.5 text-[11px]" style={{ color: themeMeta.colors.secondaryText }}>Across primary social platforms</p>
-              <div className="mt-3 grid grid-cols-3 gap-2">
-                {[
-                  { label: "Instagram", value: socials.instagram.followers || 0, icon: <InstagramIcon className="h-4 w-4 text-pink-500" /> },
-                  { label: "YouTube", value: socials.youtube.subscribers || 0, icon: <YoutubeIcon className="h-4 w-4 text-red-500" /> },
-                  { label: "Facebook", value: socials.facebook.followers || 0, icon: <FacebookIcon className="h-4 w-4 text-blue-500" /> },
-                ].map((item) => (
-                  <div key={item.label} className="min-w-0 rounded-xl border px-1.5 py-2.5" style={subtleStyle}>
-                    <div className="mx-auto flex justify-center">{item.icon}</div>
-                    <p className="mt-1 text-sm font-black">{formatCount(item.value)}</p>
-                    <p className="truncate text-[9px] font-semibold" style={{ color: themeMeta.colors.mutedText }}>{item.label}</p>
+          {/* Team */}
+          {team.members.length > 0 && (
+            <section data-media-kit-section className="space-y-3">
+              <PublicSectionHeader
+                themeKey={theme}
+                title={team.team?.teamName || "Creator team"}
+                icon={<Users className="h-4 w-4" />}
+                meta={`${team.members.length}`}
+              />
+              <div className="grid grid-cols-1 gap-2 min-[380px]:grid-cols-2">
+                {team.members.map((member) => (
+                  <div key={member.id} style={cardStyle} className="flex min-w-0 items-center gap-2.5 rounded-[14px] border p-3">
+                    <div style={{ background: c.accent }} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] text-xs font-bold text-white">
+                      {getInitials(member.name)}
+                    </div>
+                    <div className="min-w-0">
+                      <p className={`truncate ${PUBLIC_TYPE.cardTitle}`}>{member.name}</p>
+                      <p style={{ color: c.secondaryText }} className={`truncate ${PUBLIC_TYPE.meta}`}>{member.role}</p>
+                    </div>
                   </div>
                 ))}
               </div>
             </section>
+          )}
 
-            {displayPackages.length > 0 && (
-              <section data-media-kit-section className="space-y-2.5">
-                <div className="flex items-end justify-between gap-3 px-0.5">
-                  <div>
-                    <h2 className="flex items-center gap-2 text-sm font-black"><Briefcase className="h-4 w-4" /> Collaboration packages</h2>
-                    <p className="mt-0.5 text-[11px]" style={{ color: themeMeta.colors.secondaryText }}>Clear deliverables, pricing and turnaround.</p>
-                  </div>
-                  {hasDirectContact && (
-                    <a
-                      href={contactEmail ? emailHref() : whatsappHref()}
-                      target={contactEmail ? undefined : "_blank"}
-                      rel={contactEmail ? undefined : "noopener noreferrer"}
-                      className="shrink-0 text-[11px] font-black"
-                      style={{ color: themeMeta.colors.accentText }}
-                    >
-                      Ask for custom <ArrowRight className="ml-0.5 inline h-3 w-3" />
-                    </a>
-                  )}
-                </div>
-                <div className="space-y-2.5">
-                  {displayPackages.map((pkg) => {
-                    const visual = getPackageCardVisual(pkg);
-                    return (
-                      <article key={pkg.id} className="rounded-2xl border p-3.5" style={cardStyle}>
-                        <div className="flex items-start gap-3">
-                          {visual.icon}
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="min-w-0">
-                                <h3 className="truncate text-sm font-black">{pkg.title}</h3>
-                                {(pkg.isPopular || pkg.badge) && <p className="mt-0.5 text-[10px] font-bold" style={{ color: themeMeta.colors.accentText }}>{pkg.badge || "Most popular"}</p>}
-                              </div>
-                              <p className="shrink-0 text-sm font-black">{formatPackagePrice(pkg.price)}</p>
-                            </div>
-                            {pkg.deliverables?.length > 0 && (
-                              <ul className="mt-2 space-y-1.5">
-                                {pkg.deliverables.slice(0, 4).map((item, index) => (
-                                  <li key={index} className="flex items-start gap-1.5 text-[11px] leading-snug" style={{ color: themeMeta.colors.secondaryText }}>
-                                    <Check className="mt-0.5 h-3 w-3 shrink-0" style={{ color: themeMeta.colors.accent }} />
-                                    <span>{item}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
-                          </div>
-                        </div>
-                        <div className="mt-3 flex items-center justify-between border-t pt-3" style={{ borderColor: themeMeta.colors.divider }}>
-                          <span className="flex items-center gap-1 text-[10px] font-bold" style={{ color: themeMeta.colors.secondaryText }}><Clock className="h-3 w-3" /> {formatDeliveryText(pkg.turnaroundDays)}</span>
-                          {hasDirectContact && (
-                            <div className="flex items-center gap-1.5">
-                              {contactEmail && (
-                                <a
-                                  href={emailHref(pkg.title)}
-                                  aria-label={`Email about ${pkg.title}`}
-                                  title="Email creator"
-                                  className="flex h-8 items-center gap-1.5 rounded-[10px] px-2.5 text-[10px] font-black text-white transition-opacity hover:opacity-90"
-                                  style={{ background: themeMeta.colors.accent }}
-                                >
-                                  <Mail className="h-3.5 w-3.5" /> Email
-                                </a>
-                              )}
-                              {whatsappNumber && (
-                                <a
-                                  href={whatsappHref(pkg.title)}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  aria-label={`WhatsApp about ${pkg.title}`}
-                                  title="WhatsApp creator"
-                                  className="flex h-8 items-center gap-1.5 rounded-[10px] bg-[#16a34a] px-2.5 text-[10px] font-black text-white transition-opacity hover:opacity-90"
-                                >
-                                  <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
-                                </a>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      </article>
-                    );
-                  })}
-                </div>
-              </section>
-            )}
-
-            {team.members.length > 0 && (
-              <section data-media-kit-section className="space-y-2.5">
-                <h2 className="flex items-center gap-2 px-0.5 text-sm font-black"><Users className="h-4 w-4" /> {team.team?.teamName || "Creator team"}</h2>
-                <div className="grid grid-cols-2 gap-2">
-                  {team.members.map((member) => (
-                    <div key={member.id} className="flex min-w-0 items-center gap-2 rounded-xl border p-2.5" style={cardStyle}>
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] text-[10px] font-black text-white" style={{ background: themeMeta.colors.accent }}>{getInitials(member.name)}</div>
-                      <div className="min-w-0"><p className="truncate text-[11px] font-black">{member.name}</p><p className="truncate text-[10px]" style={{ color: themeMeta.colors.secondaryText }}>{member.role}</p></div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {reviews.length > 0 && (
-              <section data-media-kit-section className="space-y-2.5">
-                <h2 className="flex items-center gap-2 px-0.5 text-sm font-black"><Star className="h-4 w-4 fill-amber-400 text-amber-400" /> Reviews</h2>
-                {reviews.slice(0, 3).map((review) => (
-                  <article key={review.id} className="rounded-2xl border p-3.5" style={cardStyle}>
-                    <div className="flex gap-0.5">{Array.from({ length: Number(review.rating) || 5 }).map((_, index) => <Star key={index} className="h-3 w-3 fill-amber-400 text-amber-400" />)}</div>
-                    {review.comment && <p className="mt-2 text-xs italic leading-relaxed">&ldquo;{review.comment}&rdquo;</p>}
-                    <p className="mt-2 text-[10px] font-bold" style={{ color: themeMeta.colors.secondaryText }}>{review.clientName}{review.clientDesignation ? ` · ${review.clientDesignation}` : ""}</p>
-                  </article>
-                ))}
-              </section>
-            )}
-
-            {hasDirectContact && (
-              <section data-media-kit-section className="rounded-2xl border p-5 text-center" style={cardStyle}>
-                <h2 className="text-base font-black">Let&apos;s create something together</h2>
-                <p className="mx-auto mt-1 max-w-xs text-[11px] leading-relaxed" style={{ color: themeMeta.colors.secondaryText }}>Contact @{cleanHandle} directly for collaborations and campaign enquiries.</p>
-                <div className="mx-auto mt-3 flex max-w-sm flex-col gap-2">
-                  {contactEmail && (
-                    <a href={emailHref()} className="inline-flex min-h-10 min-w-0 items-center justify-center gap-2 rounded-[10px] px-4 py-2 text-xs font-black text-white transition-opacity hover:opacity-90" style={{ background: themeMeta.colors.accent }}>
-                      <Mail className="h-4 w-4 shrink-0" /> <span className="truncate">{contactEmail}</span>
-                    </a>
-                  )}
-                  {whatsappNumber && (
-                    <a href={whatsappHref()} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-[10px] bg-[#16a34a] px-4 py-2 text-xs font-black text-white transition-opacity hover:opacity-90">
-                      <MessageCircle className="h-4 w-4 shrink-0" /> WhatsApp +{whatsappNumber}
-                    </a>
-                  )}
-                </div>
-              </section>
-            )}
-
-            <div className="flex items-center justify-center pb-3 pt-1 text-center">
-              <MadeWithInflixo
-                color={isDark ? "#FFFFFF" : themeMeta.colors.secondaryText}
-                backgroundColor={themeMeta.colors.accentSoft}
-                borderColor={themeMeta.colors.accentBorder}
+          {/* Reviews */}
+          {reviews.length > 0 && (
+            <section data-media-kit-section className="space-y-3">
+              <PublicSectionHeader
+                themeKey={theme}
+                title="Reviews"
+                icon={<Star className="h-4 w-4" />}
+                meta={`${reviews.length}`}
+                action={reviews.length > 3 ? { label: "View all", href: `/${cleanHandle}/reviews` } : undefined}
               />
-            </div>
-          </div>
-        </div>
-      </main>
+              {reviews.slice(0, 3).map((review) => {
+                const rating = Math.max(0, Math.min(5, Math.round(Number(review.rating) || 0)));
+                return (
+                  <article key={review.id} style={cardStyle} className="rounded-[14px] border p-3.5 sm:p-4">
+                    {rating > 0 && (
+                      <div className="flex gap-0.5" aria-label={`${rating} out of 5 stars`}>
+                        {Array.from({ length: rating }).map((_, index) => (
+                          <Star key={index} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                        ))}
+                      </div>
+                    )}
+                    {review.comment && (
+                      <p className={`${rating > 0 ? "mt-2" : ""} break-words ${PUBLIC_TYPE.body}`}>&ldquo;{review.comment}&rdquo;</p>
+                    )}
+                    <p style={{ color: c.secondaryText }} className={`mt-2 ${PUBLIC_TYPE.meta}`}>
+                      <span style={{ color: c.primaryText }} className="font-semibold">{review.clientName}</span>
+                      {review.clientDesignation ? ` · ${review.clientDesignation}` : ""}
+                    </p>
+                  </article>
+                );
+              })}
+            </section>
+          )}
 
-    </div>
+          {/* Brand CTA */}
+          {hasDirectContact && (
+            <section data-media-kit-section data-media-kit-keep style={cardStyle} className="rounded-[14px] border p-5 text-center">
+              <h2 style={pt.headingStyle} className={PUBLIC_TYPE.sectionTitle}>Let&apos;s create something together</h2>
+              <p style={{ color: c.secondaryText }} className={`mx-auto mt-1 max-w-xs ${PUBLIC_TYPE.metaRegular}`}>
+                Contact @{cleanHandle} directly for collaborations and campaign enquiries.
+              </p>
+              <div className="mx-auto mt-4 flex max-w-sm flex-col gap-2">
+                {contactEmail && (
+                  <a href={emailHref()} style={{ background: c.accent, borderColor: c.accent, color: "#FFFFFF" }} className={`${PUBLIC_CTA_BUTTON} min-w-0`}>
+                    <Mail className="h-4 w-4 shrink-0" /> <span className="truncate">{contactEmail}</span>
+                  </a>
+                )}
+                {whatsappNumber && (
+                  <a href={whatsappHref()} target="_blank" rel="noopener noreferrer" className={`${PUBLIC_CTA_BUTTON} border-[#16a34a] bg-[#16a34a] text-white`}>
+                    <MessageCircle className="h-4 w-4 shrink-0" /> WhatsApp +{whatsappNumber}
+                  </a>
+                )}
+              </div>
+            </section>
+          )}
+          <div className="h-2" aria-hidden="true" />
+        </div>
+
+        {/* Pinned Made with Inflixo footer (same as profile) */}
+        <div data-media-kit-footer style={{ borderColor: c.divider }} className="flex shrink-0 select-none items-center justify-center border-t px-4 pt-3.5 pb-[15px]">
+          <MadeWithInflixo
+            color={isDark ? "#FFFFFF" : c.secondaryText}
+            backgroundColor={c.accentSoft}
+            borderColor={c.accentBorder}
+          />
+        </div>
+      </PublicCard>
+    </CreatorPublicShell>
   );
 }

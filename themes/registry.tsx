@@ -28,6 +28,7 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
     reviewsPreviewLimit,
     allReviewsHref,
     reviewsOnlyMode,
+    pageHeader,
     onShare,
   } = props;
   return (
@@ -56,6 +57,7 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
       reviewsPreviewLimit={reviewsPreviewLimit}
       allReviewsHref={allReviewsHref}
       reviewsOnlyMode={reviewsOnlyMode}
+      pageHeader={pageHeader}
       onShare={onShare}
     />
   );
