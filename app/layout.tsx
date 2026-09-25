@@ -62,21 +62,26 @@ const indicFontVariables = [notoDevanagari, notoGujarati, notoTamil, notoTelugu,
   .join(" ");
 
 export const metadata: Metadata = {
-  title: "Inflixo — One Link for Your Content & Fanbase",
+  title: "Inflixo — The Video-First Link in Bio & Creator Hub",
   description:
-    "Build your creator page, bring your social fanbase together, and organize your content into binge-worthy series with Inflixo.",
+    "Organize your YouTube & Instagram videos into bingeable series, sell digital products & affiliate gear, and showcase your verified fanbase in one bio link.",
   keywords: [
     "Inflixo",
-    "creator profile",
     "link in bio",
     "Linktree alternative",
-    "video series links",
-    "creator media kit",
-    "Instagram follower count",
+    "Linktree alternative India",
+    "video series link in bio",
+    "organize reels into series",
+    "YouTube playlist link in bio",
+    "creator store India",
+    "sell presets in bio",
+    "affiliate products link in bio",
+    "creator media kit builder",
+    "Instagram follower counter",
     "YouTube subscriber count",
-    "Facebook followers",
-    "creator collaboration profile",
+    "creator rate card",
     "Indian content creators",
+    "Atmanirbhar Bharat creator tool",
   ],
   applicationName: "Inflixo",
   creator: "Inflixo",
@@ -101,8 +106,8 @@ export const metadata: Metadata = {
     apple: "/logo-square.png",
   },
   openGraph: {
-    title: "Inflixo — One Link for Your Content & Fanbase",
-    description: "Build your creator page, bring your social fanbase together, and organize your content into binge-worthy series.",
+    title: "Inflixo — The Video-First Link in Bio & Creator Hub",
+    description: "Organize your YouTube & Instagram videos into bingeable series, sell digital products & affiliate gear, and showcase your verified fanbase in one bio link.",
     url: "https://inflixo.com",
     siteName: "Inflixo",
     type: "website",
@@ -111,14 +116,14 @@ export const metadata: Metadata = {
         url: "https://inflixo.com/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Inflixo — One Link for Your Content & Fanbase",
+        alt: "Inflixo — One Link for Your Content, Series & Fanbase",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Inflixo — One Link for Your Content & Fanbase",
-    description: "Build your creator page, bring your social fanbase together, and organize your content into binge-worthy series.",
+    title: "Inflixo — The Video-First Link in Bio & Creator Hub",
+    description: "Organize your YouTube & Instagram videos into bingeable series, sell digital products & affiliate gear, and showcase your verified fanbase in one bio link.",
     images: ["https://inflixo.com/og-image.png"],
   },
 };
@@ -141,7 +146,12 @@ const jsonLd = {
       "name": "Inflixo",
       "url": "https://inflixo.com",
       "logo": "https://inflixo.com/logo-square.png",
-      "description": "Build your creator page, bring your social fanbase together, and organize your content into binge-worthy series.",
+      "description": "Video-first link in bio platform built for Indian creators to organize video series, run digital & affiliate shops, and showcase brand media kits.",
+      "sameAs": [
+        "https://twitter.com/inflixo",
+        "https://instagram.com/inflixo",
+        "https://youtube.com/@inflixo"
+      ],
     },
     {
       "@type": "WebSite",
@@ -150,6 +160,59 @@ const jsonLd = {
       "name": "Inflixo",
       "publisher": { "@id": "https://inflixo.com/#organization" },
     },
+    {
+      "@type": "WebApplication",
+      "@id": "https://inflixo.com/#app",
+      "name": "Inflixo",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "All",
+      "url": "https://inflixo.com",
+      "offers": {
+        "@type": "AggregateOffer",
+        "lowPrice": "0",
+        "highPrice": "799",
+        "priceCurrency": "INR"
+      },
+      "description": "Create a stunning video-first portfolio. Group reels & videos into playlists, add your affiliate recommendations, and land brand deals with your media kit."
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://inflixo.com/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does Inflixo host or re-upload my videos?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Your videos stay on YouTube, Instagram, or Facebook. Inflixo only organizes your video links into a clean playlist format, and views count directly on your original channel."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I sell digital products or add affiliate links?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes! Inflixo has a built-in Creator Store. You can sell digital downloads (presets, guides, templates, courses) or add affiliate links for your camera gear and setup with 0% platform commission."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do my fans need an app or account to watch?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Anyone can open your Inflixo link directly in any mobile or desktop browser without signing up."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is Total Fanbase?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It is the sum of your public audience across Instagram, Facebook, and YouTube, displayed as one combined reach metric for fans and brands."
+          }
+        }
+      ]
+    }
   ],
 };
 

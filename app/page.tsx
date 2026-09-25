@@ -28,6 +28,10 @@ import {
   Video,
   WandSparkles,
   X,
+  Star,
+  TrendingUp,
+  Sparkles,
+  ShoppingBag,
 } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 import { AuthService } from "@/services/AuthService";
@@ -45,6 +49,7 @@ import {
   EXPERT_DEMO_CUSTOM_LINKS,
   EXPERT_DEMO_REVIEWS,
   EXPERT_DEMO_THEME,
+  EXPERT_DEMO_PRODUCTS,
 } from "@/data/expertDemoCreator";
 
 const DEFAULT_THEME: ThemeKey = EXPERT_DEMO_THEME;
@@ -54,6 +59,11 @@ const PILLARS = [
     icon: Film,
     title: "Video Series & Playlists",
     text: "Group videos into ordered playlists so fans can easily watch Part 1, 2, and 3 without searching your feed.",
+  },
+  {
+    icon: ShoppingBag,
+    title: "Creator Shop & Affiliate Gear",
+    text: "Sell digital downloads (presets, guides, courses) or recommend gear with Amazon affiliate links in one clean tap.",
   },
   {
     icon: Play,
@@ -74,11 +84,6 @@ const PILLARS = [
     icon: ShieldCheck,
     title: "Verified Reviews",
     text: "Show testimonials from brands and collaborators to build instant credibility before deals.",
-  },
-  {
-    icon: Globe,
-    title: "One Clean Link",
-    text: "Replace messy link trees with a sleek, video-first portfolio at inflixo.com/yourname.",
   },
 ];
 
@@ -114,6 +119,10 @@ const FAQS = [
   {
     q: "How do client reviews work?",
     a: "Send your review link to any brand or client. They can submit feedback in seconds without creating an Inflixo account.",
+  },
+  {
+    q: "Can I sell digital products or add affiliate links?",
+    a: "Yes! Inflixo has a built-in Creator Store. You can sell digital downloads (presets, guides, templates, courses) or add affiliate links for your camera gear, setup, and recommendations with 0% platform commission.",
   },
   {
     q: "Can I customize what appears on my profile?",
@@ -152,7 +161,7 @@ const CREATOR_TOOL_FLOATS = [
   { icon: Mic2, label: "Voice", className: "right-[7%] top-[335px] rotate-[-4deg]", duration: "16s", delay: "-6s" },
   { icon: ImageIcon, label: "Thumbnail", className: "left-[16%] bottom-24 rotate-[-3deg]", duration: "20s", delay: "-13s" },
   { icon: Music2, label: "Audio", className: "right-[17%] bottom-24 rotate-[4deg]", duration: "14s", delay: "-4s" },
-  { icon: PenLine, label: "Script", className: "left-[5%] bottom-10 rotate-[6deg]", duration: "22s", delay: "-9s" },
+  { icon: ShoppingBag, label: "Shop", className: "left-[5%] bottom-10 rotate-[6deg]", duration: "22s", delay: "-9s" },
   { icon: Share2, label: "Share", className: "right-[5%] bottom-12 rotate-[-5deg]", duration: "18s", delay: "-12s" },
   { icon: BarChart3, label: "Stats", className: "left-[23%] top-[285px] rotate-[-5deg]", duration: "23s", delay: "-16s" },
   { icon: WandSparkles, label: "Polish", className: "right-[23%] top-[295px] rotate-[5deg]", duration: "16s", delay: "-7s" },
@@ -160,16 +169,16 @@ const CREATOR_TOOL_FLOATS = [
 
 const HERO_MESSAGES = [
   {
-    title: "All your video series in one link.",
-    subtitle: "Organise your YouTube, Instagram, and Facebook videos into playlists. Fans easily find Part 1, 2, and 3 without getting lost in the feed.",
+    title: "All your video series & shop in one link.",
+    subtitle: "Organise your YouTube, Instagram, and Facebook videos into playlists, plus showcase your affiliate gear and digital products in one bio link.",
   },
   {
     title: "Never lose views on your best content.",
     subtitle: "Reels and Shorts disappear quickly in the algorithm. Keep your top videos organized so new fans can watch your best work anytime.",
   },
   {
-    title: "Views and likes stay 100% yours.",
-    subtitle: "When fans click, your original video opens. Your YouTube views, Instagram likes, and comments keep growing on your own channels.",
+    title: "Binge series, sell products & close brand deals.",
+    subtitle: "Everything Indian creators need: sequential video playlists, an integrated affiliate shop, verified total fanbase, and media kit rate cards.",
   },
 ];
 
@@ -390,11 +399,94 @@ export default function LandingHomePage() {
             </button>
           </form>
 
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 pb-[24px] text-[11px] font-bold text-[#64748b]">
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 pb-6 text-[11px] font-bold text-[#64748b]">
             <span>✓ No visitor signup needed</span>
             <span>✓ Views stay on your YouTube & Instagram</span>
-            <span>✓ No video re-uploading</span>
+            <span>✓ Creator Shop & Affiliate products</span>
             <span>✓ 7-day free trial</span>
+          </div>
+
+          {/* Social Proof & Growth Metrics Row */}
+          <div data-scroll-reveal className="mx-auto mt-4 mb-8 max-w-4xl px-2">
+            {/* Supporting Atmanirbhar Bharat Pill */}
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <div className="inline-flex items-center gap-2.5 rounded-full border border-orange-200/90 bg-gradient-to-r from-orange-50 via-white to-emerald-50 px-4 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm font-bold text-[#0f172a] shadow-sm transition-all hover:shadow-md hover:border-orange-300">
+                <span className="text-base sm:text-xl leading-none shrink-0" role="img" aria-label="Indian Flag">🇮🇳</span>
+                <span className="tracking-tight">
+                  <span className="text-orange-950 font-black">Supporting Atmanirbhar Bharat</span>
+                  <span className="mx-2 text-slate-300">|</span>
+                  <span className="text-emerald-950 font-bold">Proudly Built for Indian Creators</span>
+                </span>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-[#043084]/12 bg-white/95 p-4 sm:p-6 shadow-[0_16px_45px_rgba(4,48,132,0.07)] backdrop-blur-md">
+              <div className="grid grid-cols-2 gap-4 sm:gap-6 sm:grid-cols-4 divide-y divide-[#e2e8f0]/70 sm:divide-y-0 sm:divide-x sm:divide-[#e2e8f0]/70">
+                <div className="text-center pt-2 sm:pt-0 sm:px-3">
+                  <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-emerald-600 mb-1">
+                    <TrendingUp className="h-3.5 w-3.5" />
+                    <span>So far with us</span>
+                  </div>
+                  <div className="font-display text-2xl sm:text-3xl font-black tracking-tight text-[#043084]">
+                    100+
+                  </div>
+                  <div className="text-xs sm:text-[13px] font-bold text-[#0f172a] mt-0.5">
+                    Creators Joined
+                  </div>
+                  <div className="text-[11px] text-[#64748b] mt-0.5">
+                    Active & onboarded
+                  </div>
+                </div>
+
+                <div className="text-center pt-2 sm:pt-0 sm:px-3">
+                  <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-[#043084] mb-1">
+                    <Film className="h-3.5 w-3.5" />
+                    <span>Curated</span>
+                  </div>
+                  <div className="font-display text-2xl sm:text-3xl font-black tracking-tight text-[#043084]">
+                    60+
+                  </div>
+                  <div className="text-xs sm:text-[13px] font-bold text-[#0f172a] mt-0.5">
+                    Series Created
+                  </div>
+                  <div className="text-[11px] text-[#64748b] mt-0.5">
+                    YouTube & Instagram
+                  </div>
+                </div>
+
+                <div className="text-center pt-2 sm:pt-0 sm:px-3">
+                  <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-blue-600 mb-1">
+                    <Play className="h-3.5 w-3.5 fill-current" />
+                    <span>Engagement</span>
+                  </div>
+                  <div className="font-display text-2xl sm:text-3xl font-black tracking-tight text-[#043084]">
+                    25K+
+                  </div>
+                  <div className="text-xs sm:text-[13px] font-bold text-[#0f172a] mt-0.5">
+                    Episode Views
+                  </div>
+                  <div className="text-[11px] text-[#64748b] mt-0.5">
+                    100% on creator posts
+                  </div>
+                </div>
+
+                <div className="text-center pt-2 sm:pt-0 sm:px-3">
+                  <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-amber-500 mb-1">
+                    <Star className="h-3.5 w-3.5 fill-current" />
+                    <span>Top Rated</span>
+                  </div>
+                  <div className="font-display text-2xl sm:text-3xl font-black tracking-tight text-[#043084]">
+                    4.9 / 5
+                  </div>
+                  <div className="text-xs sm:text-[13px] font-bold text-[#0f172a] mt-0.5">
+                    Creator Satisfaction
+                  </div>
+                  <div className="text-[11px] text-[#64748b] mt-0.5">
+                    Binge-watch format
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -408,7 +500,7 @@ export default function LandingHomePage() {
             {username.trim() ? `See @${previewHandle}'s Live Profile` : "See Live Creator Profile"}
           </h2>
           <p className="mt-2 text-sm font-medium text-[#64748b]">
-            Explore complete creator series, combined audience counter & brand collab cards.
+            Explore complete creator series, shop & affiliate products, combined fanbase & brand collab cards.
           </p>
 
           <div data-scroll-reveal style={{ "--reveal-delay": "120ms" } as CSSProperties} className="group mx-auto mt-8 max-w-[650px] rounded-[24px] border border-[#043084]/12 bg-[#043084] p-2 shadow-[0_30px_90px_rgba(21,25,51,0.22)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_42px_110px_rgba(21,25,51,0.28)] sm:p-3">
@@ -432,6 +524,7 @@ export default function LandingHomePage() {
                 customLinks={EXPERT_DEMO_CUSTOM_LINKS}
                 mediaKitPackages={EXPERT_DEMO_GIGS}
                 reviews={EXPERT_DEMO_REVIEWS}
+                products={EXPERT_DEMO_PRODUCTS}
                 totalAudience={1345000}
                 themeKey={EXPERT_DEMO_THEME}
                 variant="full"
@@ -497,7 +590,7 @@ export default function LandingHomePage() {
             <div data-scroll-reveal style={{ "--reveal-delay": "80ms" } as CSSProperties} className="rounded-[16px] border border-[#e2e8f0] bg-[#f8fafc] p-5 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-[#043084]/20 hover:shadow-[0_18px_45px_rgba(21,25,51,0.08)]">
               <h3 className="font-display text-base font-black text-[#043084]">Without Inflixo</h3>
               <ul className="mt-4 space-y-2 text-sm font-semibold text-[#64748b]">
-                {["Part 1, 2, and 3 get scattered in your feed", "Fans keep asking 'Where is the next part?'", "Old videos stop getting new views", "Bio has too many messy, confusing links", "No simple way to prove total reach to brands"].map((item) => (
+                {["Part 1, 2, and 3 get scattered in your feed", "Fans keep asking 'Where is the next part?'", "No place to showcase gear & affiliate links", "Bio has too many messy, confusing links", "No simple way to prove total reach to brands"].map((item) => (
                   <li key={item} className="flex gap-2">
                     <X className="mt-0.5 h-4 w-4 shrink-0 text-[#043084]" />
                     <span>{item}</span>
@@ -510,7 +603,7 @@ export default function LandingHomePage() {
               <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#043084]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
               <h3 className="font-display text-base font-black text-[#043084]">With Inflixo</h3>
               <ul className="mt-4 space-y-2 text-sm font-semibold text-[#334155]">
-                {["Organized series with Part 1, 2, 3 in order", "One simple link: inflixo.com/yourname", "Old videos keep getting new views and fans", "Views stay 100% on your original platform", "Live fanbase counter and brand rate cards"].map((item) => (
+                {["Organized series with Part 1, 2, 3 in order", "One simple link: inflixo.com/yourname", "Integrated Shop for digital products & affiliate gear", "Views stay 100% on your original platform", "Live fanbase counter and brand rate cards"].map((item) => (
                   <li key={item} className="flex gap-2">
                     <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#043084]" />
                     <span>{item}</span>
@@ -589,7 +682,15 @@ export default function LandingHomePage() {
                 <p className="mt-7 font-display text-5xl font-black text-[#043084]">₹0</p>
                 <p className="mt-1 text-xs font-semibold text-[#64748b]">7 days public</p>
                 <ul className="mt-7 space-y-2 text-sm font-semibold text-[#334155]">
-                  {["7 days public profile", "3 series with 15 total episodes", "5 custom links", "1 collab package", "1 review", "Free themes", "Social stats fetch", "Inflixo branding"].map((item) => (
+                  {[
+                    "7 days public profile",
+                    "3 series with 15 total episodes",
+                    "1 digital / affiliate product in shop",
+                    "5 custom links",
+                    "1 collab package & 1 review",
+                    "Free themes & social stats fetch",
+                    "Inflixo branding",
+                  ].map((item) => (
                     <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-[#043084]" />{item}</li>
                   ))}
                 </ul>
@@ -608,7 +709,15 @@ export default function LandingHomePage() {
               <p className="mt-7 font-display text-5xl font-black text-[#043084]">{formatPlanPrice("starter", "monthly", pricingCurrency)}</p>
               <p className="mt-1 text-xs font-semibold text-[#64748b]">/month or {formatPlanPrice("starter", "yearly", pricingCurrency)}/year</p>
               <ul className="mt-7 space-y-2 text-sm font-semibold text-[#334155]">
-                {["Public profile always live", "3 series with 15 total episodes", "5 custom links", "1 collab package", "1 review", "Free themes", "Social stats fetch", "Inflixo branding"].map((item) => (
+                {[
+                  "Public profile always live",
+                  "3 series with 15 total episodes",
+                  "1 digital / affiliate product in shop",
+                  "5 custom links",
+                  "1 collab package & 1 review",
+                  "Free themes & social stats fetch",
+                  "Inflixo branding",
+                ].map((item) => (
                   <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-[#043084]" />{item}</li>
                 ))}
               </ul>
@@ -620,11 +729,18 @@ export default function LandingHomePage() {
             <div data-scroll-reveal style={{ "--reveal-delay": "160ms" } as CSSProperties} className="group relative overflow-hidden rounded-[14px] border border-[#e2e8f0] bg-white p-7 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-[#043084]/20 hover:shadow-[0_22px_60px_rgba(21,25,51,0.10)]">
               <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#043084]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
               <h3 className="font-display text-xl font-black text-[#043084]">Pro</h3>
-              <p className="mt-1 text-sm font-medium text-[#64748b]">For active creators who publish regular series and work with brands.</p>
+              <p className="mt-1 text-sm font-medium text-[#64748b]">For active creators who publish regular series, sell products and work with brands.</p>
               <p className="mt-7 font-display text-5xl font-black text-[#043084]">{formatPlanPrice("pro", "monthly", pricingCurrency)}</p>
               <p className="mt-1 text-xs font-semibold text-[#64748b]">/month or {formatPlanPrice("pro", "yearly", pricingCurrency)}/year</p>
               <ul className="mt-7 space-y-2 text-sm font-semibold text-[#334155]">
-                {["20 series/playlists", "20 episodes per series", "20 custom links", "3 collab packages", "10 reviews", "Rate card access", "Default media kit", "Weekly social stats refresh"].map((item) => (
+                {[
+                  "20 series/playlists (20 eps per series)",
+                  "20 store products & affiliate links",
+                  "0% platform commission on sales",
+                  "20 custom links & 3 collab packages",
+                  "10 reviews & rate card access",
+                  "Default media kit & weekly stats refresh",
+                ].map((item) => (
                   <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-[#043084]" />{item}</li>
                 ))}
               </ul>
@@ -637,11 +753,19 @@ export default function LandingHomePage() {
               <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#043084]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
               <span className="absolute top-5 right-5 rounded-full bg-[#043084] px-3 py-1 text-[10px] font-black uppercase tracking-wide text-white">Recommended</span>
               <h3 className="font-display text-xl font-black text-[#043084]">VIP</h3>
-              <p className="mt-1 text-sm font-medium text-[#64748b]">Unlimited series, custom media kit, and premium creator tools.</p>
+              <p className="mt-1 text-sm font-medium text-[#64748b]">Unlimited series, products, custom media kit, and premium creator tools.</p>
               <p className="mt-7 font-display text-5xl font-black text-[#043084]">{formatPlanPrice("vip", "monthly", pricingCurrency)}</p>
               <p className="mt-1 text-xs font-semibold text-[#64748b]">/month or {formatPlanPrice("vip", "yearly", pricingCurrency)}/year</p>
               <ul className="mt-7 space-y-2 text-sm font-semibold text-[#334155]">
-                {["Unlimited series and episodes", "Unlimited custom links", "Unlimited reviews", "10 collab packages", "Custom media kit", "Premium themes", "Daily stats refresh", "Priority support"].map((item) => (
+                {[
+                  "Unlimited series and episodes",
+                  "Unlimited store & affiliate products",
+                  "0% platform commission on sales",
+                  "Unlimited custom links & reviews",
+                  "10 collab packages & custom media kit",
+                  "Premium themes & daily stats refresh",
+                  "Priority support",
+                ].map((item) => (
                   <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-[#043084]" />{item}</li>
                 ))}
               </ul>

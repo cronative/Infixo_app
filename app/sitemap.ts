@@ -10,6 +10,7 @@ interface ProfileSitemapRow extends RowDataPacket {
   series_count: number | string;
   review_count: number | string;
   active_gig_count: number | string;
+  product_count?: number | string;
 }
 
 interface SeriesSitemapRow extends RowDataPacket {
@@ -27,6 +28,7 @@ function parseVisibility(value?: string | null) {
       showSeries?: boolean;
       showReviews?: boolean;
       showCollabGigs?: boolean;
+      showProducts?: boolean;
       showInSearchEngines?: boolean;
     };
   } catch {
@@ -83,6 +85,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let dynamicSeriesIndexes: MetadataRoute.Sitemap = [];
   let dynamicReviewIndexes: MetadataRoute.Sitemap = [];
   let dynamicMediaKits: MetadataRoute.Sitemap = [];
+  let dynamicProducts: MetadataRoute.Sitemap = [];
   let dynamicSeries: MetadataRoute.Sitemap = [];
   try {
     const [rows] = await db.query<ProfileSitemapRow[]>(
@@ -93,7 +96,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
          cs.visibility_settings AS settings_visibility,
          (SELECT COUNT(*) FROM series sx WHERE sx.creator_id = c.id) AS series_count,
          (SELECT COUNT(*) FROM creator_reviews rx WHERE rx.creator_id = c.id AND rx.status = 'approved') AS review_count,
-         (SELECT COUNT(*) FROM mediakit_gigs mx WHERE mx.creator_id COLLATE utf8mb4_unicode_ci = c.id AND mx.is_active = 1) AS active_gig_count
+         (SELECT COUNT(*) FROM mediakit_gigs mx WHERE mx.creator_id COLLATE utf8mb4_unicode_ci = c.id AND mx.is_active = 1) AS active_gig_count,
+         (SELECT COUNT(*) FROM creator_products px WHERE px.creator_id = c.id) AS product_count
        FROM creators c
        LEFT JOIN creator_settings cs ON c.id = cs.creator_id
        LEFT JOIN subscriptions s ON c.id = s.creator_id
@@ -151,6 +155,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           changeFrequency: "weekly",
           priority: 0.7,
         }));
+
+      dynamicProducts = indexableRows
+        .filter((c) => {
+          const visibility = parseVisibility(c.settings_visibility || c.visibility_settings);
+          return visibility?.showProducts !== false && Number(c.product_count || 0) > 0;
+        })
+        .map((c) => ({
+          url: `${baseUrl}/${c.username}/products`,
+          lastModified: c.updated_at ? new Date(c.updated_at) : new Date(),
+          changeFrequency: "weekly",
+          priority: 0.8,
+        }));
     }
 
     const [seriesRows] = await db.query<SeriesSitemapRow[]>(
@@ -194,6 +210,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...dynamicSeriesIndexes,
     ...dynamicReviewIndexes,
     ...dynamicMediaKits,
+    ...dynamicProducts,
     ...dynamicSeries,
   ];
 }
