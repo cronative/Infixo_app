@@ -1,36 +1,19 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureRequestsTable } from "@/lib/requestsDb";
+import { requireCreator } from "@/lib/creatorAuth";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
-async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
-  if (!lookupVal) return null;
-  try {
-    const [rows]: any = await db.query(
-      "SELECT id, email FROM creators WHERE id = ? OR email = ? OR username = ? LIMIT 1",
-      [lookupVal, lookupVal, lookupVal]
-    );
-    if (rows && rows.length > 0) {
-      return { id: rows[0].id, email: rows[0].email };
-    }
-  } catch {}
-  return null;
-}
-
-// GET /api/creator/requests?creatorId=... or ?email=...
+// GET /api/creator/requests?status=...
 export async function GET(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const { searchParams } = new URL(req.url);
-    const lookupVal = searchParams.get("creatorId") || searchParams.get("email") || searchParams.get("username");
     const statusFilter = searchParams.get("status");
-
-    if (!lookupVal) {
-      return NextResponse.json({ success: true, requests: [], unreadCount: 0 });
-    }
 
     await ensureRequestsTable();
 
-    const creator = await resolveCreatorId(lookupVal);
-    const targetId = creator ? creator.id : lookupVal;
+    const targetId = auth.creator.id;
 
     let query = `
       SELECT id, creator_id AS creatorId, sender_name AS senderName, company_name AS companyName,
@@ -70,67 +53,67 @@ export async function GET(req: Request) {
       updatedAt: r.updatedAt,
     }));
 
-    return NextResponse.json({ success: true, requests, unreadCount });
+    return apiSuccess({ requests, unreadCount }, "Requests retrieved successfully");
   } catch (err: any) {
     console.error("GET collaboration requests error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to fetch collaboration requests", 500);
   }
 }
 
 // PATCH /api/creator/requests (Update Status: NEW, VIEWED, REPLIED, CLOSED)
 export async function PATCH(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const body = await req.json();
-    const { id, status, creatorId: passedCreatorId, email } = body;
+    const { id, status } = body;
 
-    const lookupVal = passedCreatorId || email;
-    if (!id || !status || !lookupVal) {
-      return NextResponse.json({ error: "ID, status and creator identifier required" }, { status: 400 });
+    if (!id || !status) {
+      return apiError("ID and status required", 400);
     }
 
     const cleanStatus = status.toUpperCase();
     if (!["NEW", "VIEWED", "REPLIED", "CLOSED"].includes(cleanStatus)) {
-      return NextResponse.json({ error: "Invalid status value" }, { status: 400 });
+      return apiError("Invalid status value", 400);
     }
 
     await ensureRequestsTable();
 
-    const creator = await resolveCreatorId(lookupVal);
-    const targetId = creator ? creator.id : lookupVal;
+    const targetId = auth.creator.id;
 
     await db.query(
       "UPDATE collaboration_requests SET status = ?, updated_at = NOW() WHERE id = ? AND creator_id = ?",
       [cleanStatus, id, targetId]
     );
 
-    return NextResponse.json({ success: true, message: `Request status updated to ${cleanStatus}` });
+    return apiSuccess({}, `Request status updated to ${cleanStatus}`);
   } catch (err: any) {
     console.error("PATCH request status error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to update request status", 500);
   }
 }
 
-// DELETE /api/creator/requests?id=...&creatorId=...
+// DELETE /api/creator/requests?id=...
 export async function DELETE(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
-    const lookupVal = searchParams.get("creatorId") || searchParams.get("email");
 
-    if (!id || !lookupVal) {
-      return NextResponse.json({ error: "ID and creator identifier required" }, { status: 400 });
+    if (!id) {
+      return apiError("ID required", 400);
     }
 
     await ensureRequestsTable();
 
-    const creator = await resolveCreatorId(lookupVal);
-    const targetId = creator ? creator.id : lookupVal;
+    const targetId = auth.creator.id;
 
     await db.query("DELETE FROM collaboration_requests WHERE id = ? AND creator_id = ?", [id, targetId]);
 
-    return NextResponse.json({ success: true, message: "Collaboration request deleted" });
+    return apiSuccess({}, "Collaboration request deleted");
   } catch (err: any) {
     console.error("DELETE collaboration request error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to delete collaboration request", 500);
   }
 }

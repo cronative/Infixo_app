@@ -51,26 +51,64 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
 
   const refresh = useCallback(async () => {
     setLoading(true);
-    // 1. Instant local storage state
+    // 1. Instant local storage state for fast first paint
     setProfile(ProfileService.getProfile());
     setSocials(SocialService.getAccounts());
     setThemeState(ThemeService.getSelectedTheme());
     setSubscription(SubscriptionService.get());
     setSeries(SeriesService.getAllLocal());
 
-    // 2. Live DB sync: First verify if a creator profile actually exists in DB
+    // 2. Authoritative Server DB Sync via /api/me (cookie-backed session)
     try {
+      const meRes = await fetch("/api/me", { cache: "no-store" }).catch(() => null);
+      if (meRes && meRes.ok) {
+        const meJson = await meRes.json().catch(() => null);
+        if (meJson?.status === 1 && meJson?.data?.authenticated) {
+          const { profile: dbProfile, subscription: dbSub, email: sessionEmail } = meJson.data;
+
+          if (dbProfile) {
+            setProfile(dbProfile);
+            if (dbProfile.themeKey) {
+              setThemeState(dbProfile.themeKey);
+              ThemeService.setSelectedTheme(dbProfile.themeKey);
+            }
+          }
+
+          if (dbSub) {
+            setSubscription(dbSub);
+          }
+
+          const activeEmail = sessionEmail || dbProfile?.email;
+          const activeUsername = dbProfile?.username;
+
+          const [dbSocials, dbSeries] = await Promise.all([
+            SocialService.fetchFromDb({ email: activeEmail, username: activeUsername }).catch(() => null),
+            SeriesService.fetchFromDb().catch(() => null),
+          ]);
+
+          if (dbSocials) {
+            setSocials(dbSocials);
+          }
+          if (dbSeries && Array.isArray(dbSeries)) {
+            setSeries(dbSeries);
+          }
+
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Fallback for legacy flows without cookie
       const dbProfile = await ProfileService.fetchFromDb().catch(() => null);
 
       if (dbProfile) {
         setProfile(dbProfile);
 
-        // Fetch sub-resources (socials, series, subscription) if creator exists in DB
         if (dbProfile.id || dbProfile.email || dbProfile.username) {
           const [dbSocials, dbSeries, dbSub] = await Promise.all([
             SocialService.fetchFromDb({ email: dbProfile.email, username: dbProfile.username }).catch(() => null),
             SeriesService.fetchFromDb().catch(() => null),
-            SubscriptionService.fetchFromDb().catch(() => null),
+            SubscriptionService.fetchFromDb(dbProfile.email).catch(() => null),
           ]);
 
           if (dbSocials) {
@@ -89,8 +127,6 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-
-
   }, []);
 
   useEffect(() => {

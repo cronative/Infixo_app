@@ -145,12 +145,12 @@ export default async function SeriesDetailPage({ params }: PageProps) {
       {jsonLdSeries && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSeries) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSeries).replace(/</g, "\\u003c") }}
         />
       )}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumbs) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumbs).replace(/</g, "\\u003c") }}
       />
       <SeriesDetailClient
         username={username}

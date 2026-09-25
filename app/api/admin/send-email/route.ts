@@ -1,25 +1,25 @@
-import { NextResponse } from "next/server";
 import { sendBroadcastEmail } from "@/lib/email";
 import { isAuthorizedAdmin } from "@/lib/adminAuth";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 export async function POST(req: Request) {
   try {
     if (!(await isAuthorizedAdmin(req))) {
-      return NextResponse.json({ error: "Unauthorized admin access" }, { status: 401 });
+      return apiError("Unauthorized admin access", 401);
     }
 
     const { recipients, subject, bodyHtml } = await req.json();
 
     if (!Array.isArray(recipients) || recipients.length === 0) {
-      return NextResponse.json({ error: "At least one recipient email ID is required" }, { status: 400 });
+      return apiError("At least one recipient email ID is required", 400);
     }
 
     if (!subject || !subject.trim()) {
-      return NextResponse.json({ error: "Email subject is required" }, { status: 400 });
+      return apiError("Email subject is required", 400);
     }
 
     if (!bodyHtml || !bodyHtml.trim()) {
-      return NextResponse.json({ error: "Email message body is required" }, { status: 400 });
+      return apiError("Email message body is required", 400);
     }
 
     // Clean emails list
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
       .filter((e: string) => e && e.includes("@"));
 
     if (validEmails.length === 0) {
-      return NextResponse.json({ error: "No valid recipient email addresses provided" }, { status: 400 });
+      return apiError("No valid recipient email addresses provided", 400);
     }
 
     let successCount = 0;
@@ -46,15 +46,21 @@ export async function POST(req: Request) {
       }
     }
 
-    return NextResponse.json({
-      success: successCount > 0,
+    if (successCount === 0 && failedEmails.length > 0) {
+      return apiError(lastError || "Failed to send broadcast emails", 500, {
+        sentCount: 0,
+        failedCount: failedEmails.length,
+        failedEmails,
+      });
+    }
+
+    return apiSuccess({
       sentCount: successCount,
       failedCount: failedEmails.length,
       failedEmails,
-      error: lastError,
-    });
+    }, "Broadcast emails processed successfully");
   } catch (err: any) {
     console.error("Admin Email Send Error:", err);
-    return NextResponse.json({ error: err.message || "Failed to send broadcast emails" }, { status: 500 });
+    return apiError(err.message || "Failed to send broadcast emails", 500);
   }
 }

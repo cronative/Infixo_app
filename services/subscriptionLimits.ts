@@ -8,6 +8,7 @@ export interface PlanQuota {
   maxGigs: number;
   maxReviews: number;
   maxCustomLinks: number;
+  maxProducts: number;
   hasRateCard: boolean;
   hasMediaKit: boolean;
   publicProfileDays?: number;
@@ -19,6 +20,7 @@ export const EARLY_ACCESS_LIMITS = {
   maxEpisodesPerSeries: 5,
   maxTotalEpisodes: 15,
   maxGigs: 1,
+  maxProducts: 1,
 };
 
 export const PLAN_QUOTAS: Record<string, PlanQuota> = {
@@ -30,10 +32,11 @@ export const PLAN_QUOTAS: Record<string, PlanQuota> = {
     maxGigs: 1,
     maxReviews: 1,
     maxCustomLinks: 5,
+    maxProducts: 1,
     hasRateCard: false,
     hasMediaKit: false,
     publicProfileDays: 7,
-    description: "7-day public profile trial with Inflixo branding, social stats, 3 series, 5 links, 1 review and 1 collab package.",
+    description: "7-day public profile trial with Inflixo branding, social stats, 3 series, 5 links, 1 product in shop, 1 review and 1 collab package.",
   },
   starter: {
     name: "Starter",
@@ -43,9 +46,23 @@ export const PLAN_QUOTAS: Record<string, PlanQuota> = {
     maxGigs: 1,
     maxReviews: 1,
     maxCustomLinks: 5,
+    maxProducts: 1,
     hasRateCard: false,
     hasMediaKit: false,
-    description: "Keep your public profile live after trial with the same starter limits.",
+    description: "Keep your public profile live after trial with 1 product in shop and starter limits.",
+  },
+  pro: {
+    name: "Pro",
+    maxSeries: 20,
+    maxEpisodesPerSeries: 20,
+    maxTotalEpisodes: 400,
+    maxGigs: 3,
+    maxReviews: 10,
+    maxCustomLinks: 20,
+    maxProducts: 20,
+    hasRateCard: true,
+    hasMediaKit: true,
+    description: "20 series, 20 products in shop, 20 episodes per series, 20 links, 3 collab packages, 10 reviews, rate card and default media kit.",
   },
   creator_pro: {
     name: "Pro",
@@ -55,9 +72,23 @@ export const PLAN_QUOTAS: Record<string, PlanQuota> = {
     maxGigs: 3,
     maxReviews: 10,
     maxCustomLinks: 20,
+    maxProducts: 20,
     hasRateCard: true,
     hasMediaKit: true,
-    description: "20 series, 20 episodes per series, 20 links, 3 collab packages, 10 reviews, rate card and default media kit.",
+    description: "20 series, 20 products in shop, 20 episodes per series, 20 links, 3 collab packages, 10 reviews, rate card and default media kit.",
+  },
+  vip: {
+    name: "VIP",
+    maxSeries: Infinity,
+    maxEpisodesPerSeries: Infinity,
+    maxTotalEpisodes: Infinity,
+    maxGigs: 10,
+    maxReviews: Infinity,
+    maxCustomLinks: Infinity,
+    maxProducts: Infinity,
+    hasRateCard: true,
+    hasMediaKit: true,
+    description: "Unlimited products in shop, series, episodes, links and reviews, 10 collab packages, custom media kit and premium features.",
   },
   creator_VIP: {
     name: "VIP",
@@ -67,14 +98,21 @@ export const PLAN_QUOTAS: Record<string, PlanQuota> = {
     maxGigs: 10,
     maxReviews: Infinity,
     maxCustomLinks: Infinity,
+    maxProducts: Infinity,
     hasRateCard: true,
     hasMediaKit: true,
-    description: "Unlimited series, episodes, links and reviews, 10 collab packages, custom media kit and premium features.",
+    description: "Unlimited products in shop, series, episodes, links and reviews, 10 collab packages, custom media kit and premium features.",
   },
 };
 
 export function getPlanQuota(planKey: string = "early_access"): PlanQuota {
-  return PLAN_QUOTAS[planKey] || PLAN_QUOTAS.early_access;
+  const normalizedKey =
+    planKey === "pro" || planKey === "creator_pro"
+      ? "pro"
+      : planKey === "vip" || planKey === "creator_VIP"
+      ? "vip"
+      : planKey;
+  return PLAN_QUOTAS[normalizedKey] || PLAN_QUOTAS[planKey] || PLAN_QUOTAS.early_access;
 }
 
 export function getSeriesUsage(seriesList: Series[], planKey: string = "early_access") {
@@ -139,6 +177,18 @@ export function getGigUsage(currentGigsCount: number, planKey: string = "early_a
   };
 }
 
+export function getProductUsage(currentProductsCount: number, planKey: string = "early_access") {
+  const quota = getPlanQuota(planKey);
+  const max = quota.maxProducts;
+  const isLimitReached = currentProductsCount >= max;
+  return {
+    current: currentProductsCount,
+    max,
+    isLimitReached,
+    percentage: max === Infinity ? 0 : Math.min(100, Math.round((currentProductsCount / max) * 100)),
+  };
+}
+
 export function canCreateSeries(seriesList: Series[], planKey: string = "early_access"): boolean {
   const usage = getSeriesUsage(seriesList, planKey);
   return !usage.isLimitReached;
@@ -157,5 +207,10 @@ export function canCreateEpisode(targetSeriesOrList?: Series | Series[], planKey
 
 export function canCreateGig(currentGigsCount: number, planKey: string = "early_access"): boolean {
   const usage = getGigUsage(currentGigsCount, planKey);
+  return !usage.isLimitReached;
+}
+
+export function canAddProduct(currentProductsCount: number, planKey: string = "early_access"): boolean {
+  const usage = getProductUsage(currentProductsCount, planKey);
   return !usage.isLimitReached;
 }

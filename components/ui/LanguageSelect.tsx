@@ -19,7 +19,7 @@ interface LanguageSelectProps {
 }
 
 export function LanguageSelect({
-  label = "Series Language",
+  label = "Language",
   value,
   onChange,
   placeholder = "Select series language...",
@@ -57,7 +57,7 @@ export function LanguageSelect({
   return (
     <div className="relative w-full" ref={containerRef}>
       {label && (
-        <label className="mb-1.5 block text-sm font-semibold text-inflixo-navy">
+        <label className="mb-1.5 block text-[13px] font-medium text-[#0f172a]">
           {label}
         </label>
       )}

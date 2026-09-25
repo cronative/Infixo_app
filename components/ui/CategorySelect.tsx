@@ -75,7 +75,7 @@ export function CategorySelect({
       <div className="flex items-center justify-between gap-1.5">
         <label className="text-xs font-semibold text-[#181716] flex items-center gap-1.5">
           <Tag className="h-3.5 w-3.5 text-[#043084]" />
-          <span>Creator type (profession/category)</span>
+          <span>Creator type (profession/category) <span className="text-red-500">*</span></span>
         </label>
         <span className="bg-[#043084]/[0.06] text-[#043084] border border-[#043084]/15 text-[10.5px] font-bold px-2 py-0.5 rounded-full shrink-0">
           {selectedCategories.length} / {max} selected
@@ -137,7 +137,7 @@ export function CategorySelect({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search actor, singer, YouTuber, food reviewer..."
-                  className="h-10 w-full rounded-xl border border-[#dbe3ee] bg-white pl-9 pr-3 text-sm font-semibold text-[#043084] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-2 focus:ring-[#043084]/10"
+                  className="h-10 w-full rounded-xl border border-[#dbe3ee] bg-white pl-9 pr-3 text-sm font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-2 focus:ring-[#043084]/10"
                   autoFocus
                 />
               </div>

@@ -17,7 +17,7 @@ function trimDecimal(n: number): string {
 export function slugifyUsername(input: string): string {
   return input
     .toLowerCase()
-    .replace(/[^a-z0-9_.]/g, "")
+    .replace(/[^a-z0-9_]/g, "")
     .slice(0, 30);
 }
 
@@ -68,3 +68,15 @@ export function buildSeriesUrl(username: string, seriesId: string): string {
   return `${base}/${handle}/series/${seriesId}`;
 }
 
+
+/** Normalizes a creator category string ("Tech, Comedy") to "Tech · Comedy". */
+export function formatCategoryDots(category?: string | null, customCategory?: string | null): string {
+  const raw = (category || customCategory || "").trim();
+  if (!raw) return "";
+  if (raw.includes("·")) return raw;
+  return raw
+    .split(/[,/|&]+/)
+    .map((s) => s.trim().replace(/^Genre:\s*/i, ""))
+    .filter(Boolean)
+    .join(" · ");
+}

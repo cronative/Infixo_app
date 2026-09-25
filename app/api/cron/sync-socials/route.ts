@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ApifySocialService } from "@/services/ApifySocialService";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 export const maxDuration = 300; // 5 minutes max execution duration
 
@@ -47,7 +47,8 @@ async function fetchInstagramStats(usernameStr: string) {
 
   // 2. Fallback: Try RapidAPI
   try {
-    const apiKey = process.env.RAPIDAPI_KEY || "02af3277a0msh6d2023026fe26cap12bd27jsn3e7de18972b7";
+    const apiKey = process.env.RAPIDAPI_KEY;
+    if (!apiKey) return null;
     const response = await fetch("https://instagram120.p.rapidapi.com/api/instagram/userInfo", {
       method: "POST",
       headers: {
@@ -96,7 +97,8 @@ async function fetchYouTubeStats(channelNameStr: string) {
 
   // 2. Fallback: Try RapidAPI
   try {
-    const apiKey = process.env.RAPIDAPI_KEY || "02af3277a0msh6d2023026fe26cap12bd27jsn3e7de18972b7";
+    const apiKey = process.env.RAPIDAPI_KEY;
+    if (!apiKey) return null;
     const headers = {
       "Content-Type": "application/json",
       "x-rapidapi-host": "youtube-v2.p.rapidapi.com",
@@ -153,7 +155,8 @@ async function fetchFacebookStats(usernameStr: string) {
 
   // 2. Fallback: Try RapidAPI
   const fbUrl = handle.startsWith("http") ? handle : `https://www.facebook.com/${handle}`;
-  const apiKey = process.env.RAPIDAPI_KEY || "02af3277a0msh6d2023026fe26cap12bd27jsn3e7de18972b7";
+  const apiKey = process.env.RAPIDAPI_KEY;
+  if (!apiKey) return null;
 
   try {
     const response = await fetch(
@@ -197,13 +200,15 @@ export async function POST(req: Request) {
 
 async function handleCronSync(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const token = searchParams.get("token") || searchParams.get("key");
-    const cronSecret = process.env.CRON_SECRET || "inflixo_cron_secret_1111";
+    const cronSecret = process.env.CRON_SECRET;
+    if (!cronSecret) {
+      console.error("CRON_SECRET is not configured");
+      return apiError("Cron is not configured", 503);
+    }
 
-    // Verify token if provided in query params
-    if (token && token !== cronSecret) {
-      return NextResponse.json({ error: "Unauthorized cron token" }, { status: 401 });
+    const authorization = req.headers.get("authorization");
+    if (authorization !== `Bearer ${cronSecret}`) {
+      return apiError("Unauthorized", 401);
     }
 
     // Step 1: Query all creators from MySQL DB
@@ -223,7 +228,6 @@ async function handleCronSync(req: Request) {
 
       const creatorSummary = {
         creatorId: creator.id,
-        email: creator.email,
         username: creator.username,
         platformsUpdated: 0,
         details: [] as any[],
@@ -276,16 +280,15 @@ async function handleCronSync(req: Request) {
       results.push(creatorSummary);
     }
 
-    return NextResponse.json({
-      success: true,
+    return apiSuccess({
       timestamp: new Date().toISOString(),
       cronSchedule: "Every 12 hours at 11:11 AM & 11:11 PM IST",
       cronExpression: "11 11,23 * * *",
       creatorsProcessed: creators.length,
       results,
-    });
+    }, "Social accounts sync completed successfully");
   } catch (error: any) {
     console.error("Cron Social Sync Error:", error);
-    return NextResponse.json({ error: error.message || "Cron social sync failed" }, { status: 500 });
+    return apiError(error.message || "Cron social sync failed", 500);
   }
 }

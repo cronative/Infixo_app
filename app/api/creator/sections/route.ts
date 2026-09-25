@@ -1,7 +1,9 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureSectionsTable } from "@/lib/sectionsDb";
 import { DEFAULT_PROFILE_SECTIONS, ProfileSectionKey } from "@/types";
+import { requireCreator } from "@/lib/creatorAuth";
+import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -24,13 +26,15 @@ export async function GET(req: Request) {
     const lookupVal = searchParams.get("creatorId") || searchParams.get("email") || searchParams.get("username");
 
     if (!lookupVal) {
-      return NextResponse.json({ success: true, sections: DEFAULT_PROFILE_SECTIONS });
+      return apiSuccess({ sections: DEFAULT_PROFILE_SECTIONS, isDefault: true }, "Default sections returned");
     }
 
     await ensureSectionsTable();
 
     const creator = await resolveCreatorId(lookupVal);
     const targetId = creator ? creator.id : lookupVal;
+    const accessError = await authorizeCreatorRead(req, targetId, Boolean(searchParams.get("username")));
+    if (accessError) return accessError;
 
     const [rows]: any = await db.query(
       `SELECT id, creator_id AS creatorId, section_key AS sectionKey, sort_order AS sortOrder, is_visible AS isVisible
@@ -41,7 +45,7 @@ export async function GET(req: Request) {
     );
 
     if (!rows || rows.length === 0) {
-      return NextResponse.json({ success: true, sections: DEFAULT_PROFILE_SECTIONS, isDefault: true });
+      return apiSuccess({ sections: DEFAULT_PROFILE_SECTIONS, isDefault: true }, "Default sections returned");
     }
 
     const map = new Map<string, { sortOrder: number; isVisible: boolean }>();
@@ -66,28 +70,28 @@ export async function GET(req: Request) {
       };
     }).sort((a, b) => a.sortOrder - b.sortOrder);
 
-    return NextResponse.json({ success: true, sections: combined, isDefault: false });
+    return apiSuccess({ sections: combined, isDefault: false }, "Sections retrieved successfully");
   } catch (err: any) {
     console.error("GET sections error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to retrieve sections", 500);
   }
 }
 
 // POST /api/creator/sections (Save Section Ordering & Visibility)
 export async function POST(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const body = await req.json();
-    const { email, creatorId: passedCreatorId, sections } = body;
+    const { sections } = body;
 
-    const lookupVal = passedCreatorId || email;
-    if (!lookupVal || !Array.isArray(sections)) {
-      return NextResponse.json({ error: "Creator identifier and sections array required" }, { status: 400 });
+    if (!Array.isArray(sections)) {
+      return apiError("Sections array required", 400);
     }
 
     await ensureSectionsTable();
 
-    const creator = await resolveCreatorId(lookupVal);
-    const targetId = creator ? creator.id : lookupVal;
+    const targetId = auth.creator.id;
 
     for (let i = 0; i < sections.length; i++) {
       const s = sections[i];
@@ -105,9 +109,9 @@ export async function POST(req: Request) {
       }
     }
 
-    return NextResponse.json({ success: true, message: "Profile section layout saved" });
+    return apiSuccess({}, "Profile section layout saved");
   } catch (err: any) {
     console.error("POST sections error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to save sections", 500);
   }
 }

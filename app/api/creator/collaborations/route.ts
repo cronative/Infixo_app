@@ -1,7 +1,10 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureCollaborationsTable } from "@/lib/collaborationsDb";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
+import { requireCreator } from "@/lib/creatorAuth";
+import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { sanitizeUrl } from "@/lib/urlSanitizer";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -24,13 +27,15 @@ export async function GET(req: Request) {
     const lookupVal = searchParams.get("creatorId") || searchParams.get("email") || searchParams.get("username");
 
     if (!lookupVal) {
-      return NextResponse.json({ success: true, collaborations: [] });
+      return apiSuccess({ collaborations: [] }, "Collaborations retrieved successfully");
     }
 
     await ensureCollaborationsTable();
 
     const creator = await resolveCreatorId(lookupVal);
     const targetId = creator ? creator.id : lookupVal;
+    const accessError = await authorizeCreatorRead(req, targetId, Boolean(searchParams.get("username")));
+    if (accessError) return accessError;
 
     const [rows]: any = await db.query(
       `SELECT id, creator_id AS creatorId, brand_name AS brandName, brand_logo_url AS brandLogoUrl, campaign_title AS campaignTitle, campaign_url AS campaignUrl, description, sort_order AS sortOrder, is_active AS isActive, created_at AS createdAt, updated_at AS updatedAt
@@ -46,7 +51,7 @@ export async function GET(req: Request) {
       brandName: c.brandName,
       brandLogoUrl: c.brandLogoUrl || null,
       campaignTitle: c.campaignTitle || "",
-      campaignUrl: c.campaignUrl || "",
+      campaignUrl: sanitizeUrl(c.campaignUrl, { allowEmpty: true }) || "",
       description: c.description || "",
       sortOrder: Number(c.sortOrder || 0),
       isActive: Boolean(c.isActive),
@@ -54,28 +59,24 @@ export async function GET(req: Request) {
       updatedAt: c.updatedAt,
     }));
 
-    return NextResponse.json({ success: true, collaborations });
+    return apiSuccess({ collaborations }, "Collaborations retrieved successfully");
   } catch (err: any) {
     console.error("GET collaborations error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to fetch collaborations", 500);
   }
 }
 
 // POST /api/creator/collaborations (Add/Update or Reorder Collaboration)
 export async function POST(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const body = await req.json();
-    const { email, creatorId: passedCreatorId, action, collaboration, collaborations } = body;
-
-    const lookupVal = passedCreatorId || email;
-    if (!lookupVal) {
-      return NextResponse.json({ error: "Creator identifier required" }, { status: 400 });
-    }
+    const { action, collaboration, collaborations } = body;
 
     await ensureCollaborationsTable();
 
-    const creator = await resolveCreatorId(lookupVal);
-    const targetId = creator ? creator.id : lookupVal;
+    const targetId = auth.creator.id;
 
     if (action === "reorder" && Array.isArray(collaborations)) {
       for (let i = 0; i < collaborations.length; i++) {
@@ -87,12 +88,12 @@ export async function POST(req: Request) {
           );
         }
       }
-      return NextResponse.json({ success: true, message: "Collaborations reordered" });
+      return apiSuccess({ collaborations }, "Collaborations reordered successfully");
     }
 
     const c = collaboration || body;
     if (!c.brandName || !c.brandName.trim()) {
-      return NextResponse.json({ error: "Brand name is required" }, { status: 400 });
+      return apiError("Brand name is required", 400);
     }
 
     const finalLogoUrl = await saveBase64ImageToStorage(c.brandLogoUrl, "collaborations", "collab_logo") || (c.brandLogoUrl && !c.brandLogoUrl.startsWith("data:") ? c.brandLogoUrl : null);
@@ -115,41 +116,41 @@ export async function POST(req: Request) {
         c.brandName.trim(),
         finalLogoUrl || null,
         (c.campaignTitle || "").trim() || null,
-        (c.campaignUrl || "").trim() || null,
+        sanitizeUrl(c.campaignUrl) || null,
         (c.description || "").trim() || null,
         Number(c.sortOrder || 0),
         c.isActive !== false ? 1 : 0,
       ]
     );
 
-    return NextResponse.json({ success: true, collabId, message: "Collaboration saved successfully" });
+    return apiSuccess({ collabId }, "Collaboration saved successfully");
   } catch (err: any) {
     console.error("POST collaboration error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to save collaboration", 500);
   }
 }
 
 // DELETE /api/creator/collaborations?id=...&creatorId=...
 export async function DELETE(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
-    const lookupVal = searchParams.get("creatorId") || searchParams.get("email");
 
-    if (!id || !lookupVal) {
-      return NextResponse.json({ error: "ID and creator identifier required" }, { status: 400 });
+    if (!id) {
+      return apiError("ID required", 400);
     }
 
     await ensureCollaborationsTable();
 
-    const creator = await resolveCreatorId(lookupVal);
-    const targetId = creator ? creator.id : lookupVal;
+    const targetId = auth.creator.id;
 
     await db.query("DELETE FROM creator_collaborations WHERE id = ? AND creator_id = ?", [id, targetId]);
 
-    return NextResponse.json({ success: true, message: "Collaboration removed" });
+    return apiSuccess({}, "Collaboration removed successfully");
   } catch (err: any) {
     console.error("DELETE collaboration error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to remove collaboration", 500);
   }
 }

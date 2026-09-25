@@ -1,6 +1,9 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { recordOnboardingStep } from "@/lib/onboardingStepDb";
+import { requireCreator } from "@/lib/creatorAuth";
+import { requireSession, ownsResource } from "@/lib/session";
+import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 function normalizeCustomLinks(rows: any[]) {
   const parents: any[] = [];
@@ -53,8 +56,16 @@ export async function GET(req: Request) {
     const email = searchParams.get("email");
     const username = searchParams.get("username");
 
+    if (email) {
+      const auth = requireSession(req);
+      if (auth.error) return auth.error;
+      if (!ownsResource(auth.session, email)) {
+        return apiError("Forbidden", 403);
+      }
+    }
+
     if (!email && !username) {
-      return NextResponse.json({ error: "Email or username query param required" }, { status: 400 });
+      return apiError("Email or username query param required", 400);
     }
 
     let creators: any = [];
@@ -68,10 +79,12 @@ export async function GET(req: Request) {
       [creators] = await db.query("SELECT id, email FROM creators WHERE LOWER(email) = LOWER(?)", [email?.trim()]);
     }
     if (creators.length === 0) {
-      return NextResponse.json({ success: true, socials: [], customLinks: [] });
+      return apiSuccess({ socials: [], customLinks: [] }, "No socials found");
     }
 
     const creatorId = creators[0].id;
+    const accessError = await authorizeCreatorRead(req, creatorId, Boolean(username));
+    if (accessError) return accessError;
     const targetEmail = email || creators[0].email || "";
 
     const [rows]: any = await db.query(
@@ -91,8 +104,7 @@ export async function GET(req: Request) {
       customLinks = normalizeCustomLinks(linkRows || []);
     } catch {}
 
-    return NextResponse.json({
-      success: true,
+    return apiSuccess({
       socials: rows.map((r: any) => ({
         id: r.id,
         platform: r.platform,
@@ -105,32 +117,27 @@ export async function GET(req: Request) {
         lastSyncedAt: r.last_synced_at,
       })),
       customLinks,
-    });
+    }, "Social accounts retrieved successfully");
   } catch (err: any) {
     console.error("GET Socials Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to retrieve socials", 500);
   }
 }
 
 // POST /api/creator/socials (Upsert single platform social account)
 export async function POST(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
+
     const body = await req.json();
-    const { email, platform, accountName, username, followerCount, mediaCount, audienceCount, isVerified } = body;
+    const { platform, accountName, username } = body;
+    const email = auth.creator.email;
 
-    if (!email || !platform || !username) {
-      return NextResponse.json({ error: "Email, platform, and username required" }, { status: 400 });
+    if (!platform || !username) {
+      return apiError("Platform and username required", 400);
     }
-
-    const [creators]: any = await db.query(
-      "SELECT id FROM creators WHERE LOWER(email) = LOWER(?) OR username = ?",
-      [email.trim(), email.trim()]
-    );
-    if (creators.length === 0) {
-      return NextResponse.json({ error: "Creator not found" }, { status: 404 });
-    }
-
-    const creatorId = creators[0].id;
+    const creatorId = auth.creator.id;
 
     await db.query(
       `INSERT INTO social_accounts (creator_id, platform, account_name, username, follower_count, media_count, audience_count, is_verified, last_synced_at)
@@ -138,55 +145,46 @@ export async function POST(req: Request) {
        ON DUPLICATE KEY UPDATE
          account_name = VALUES(account_name),
          username = VALUES(username),
-         follower_count = VALUES(follower_count),
-         media_count = VALUES(media_count),
-         audience_count = VALUES(audience_count),
-         is_verified = VALUES(is_verified),
-         last_synced_at = NOW()`,
+         last_synced_at = last_synced_at`,
       [
         creatorId,
         platform,
         accountName || username,
         username,
-        followerCount || 0,
-        mediaCount || 0,
-        audienceCount || 0,
-        isVerified ? 1 : 0,
+        0,
+        0,
+        0,
+        0,
       ]
     );
 
     // Record / Update current step in creator_onboarding_steps table (1 row per email)
     await recordOnboardingStep(email, "socials", creatorId);
 
-    return NextResponse.json({ success: true, message: `Saved ${platform} account to MySQL` });
+    return apiSuccess({}, `Saved ${platform} account to MySQL`);
   } catch (err: any) {
     console.error("POST Socials Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to save social account", 500);
   }
 }
 
 // DELETE /api/creator/socials?email=...&platform=...
 export async function DELETE(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
+
     const { searchParams } = new URL(req.url);
-    const email = searchParams.get("email");
     const platform = searchParams.get("platform");
 
-    if (!email || !platform) {
-      return NextResponse.json({ error: "Email and platform query params required" }, { status: 400 });
+    if (!platform) {
+      return apiError("Platform query param required", 400);
     }
+    await db.query("DELETE FROM social_accounts WHERE creator_id = ? AND platform = ?", [auth.creator.id, platform]);
 
-    const [creators]: any = await db.query(
-      "SELECT id FROM creators WHERE LOWER(email) = LOWER(?) OR username = ?",
-      [email.trim(), email.trim()]
-    );
-    if (creators.length > 0) {
-      await db.query("DELETE FROM social_accounts WHERE creator_id = ? AND platform = ?", [creators[0].id, platform]);
-    }
-
-    return NextResponse.json({ success: true, message: `Removed ${platform} account from DB` });
+    return apiSuccess({}, `Removed ${platform} account from DB`);
   } catch (err: any) {
     console.error("DELETE Socials Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to remove social account", 500);
   }
 }

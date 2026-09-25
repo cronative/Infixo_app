@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start -p 3030",
+    "migrate": "node scripts/migrate.mjs",
     "server": "node server/index.js",
     "lint": "eslint"
   },
@@ -19,8 +20,10 @@
     "next": "16.3.0",
     "node-cron": "^4.6.0",
     "nodemailer": "^9.0.4",
+    "razorpay": "^2.9.8",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "uqr": "^0.1.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

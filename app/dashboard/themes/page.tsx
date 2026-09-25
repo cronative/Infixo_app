@@ -193,10 +193,10 @@ export default function DashboardThemesPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#e2e8f0] pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="font-display text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+            <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
               Themes &amp; Styling
             </h1>
-            <span className="inline-flex items-center gap-1 rounded-full bg-[#043084]/10 px-2.5 py-0.5 text-xs font-bold text-[#043084]">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#f1f5f9] px-2 py-0.5 text-xs font-medium text-[#475569]">
               <Sparkles className="h-3 w-3" />
               <span>{previewThemeMeta.name}</span>
             </span>
@@ -269,7 +269,7 @@ export default function DashboardThemesPage() {
               <section key={group.key} className="space-y-2">
                 <div className="flex items-end justify-between gap-3">
                   <div>
-                    <h2 className="text-sm font-bold tracking-tight text-[#043084]">
+                    <h2 className="text-sm font-semibold tracking-tight text-[#0f172a]">
                       {group.title}
                     </h2>
                     <p className="mt-0.5 text-[11px] leading-relaxed text-[#64748b]">
@@ -307,7 +307,7 @@ export default function DashboardThemesPage() {
           {/* Header: Profile preview title + Action Controls aligned at top */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 min-h-[46px]">
             <div className="space-y-0.5">
-              <h2 className="text-lg sm:text-xl font-bold tracking-tight text-[#043084] leading-tight">
+              <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-[#0f172a] leading-tight">
                 Profile preview
               </h2>
               <p className="text-xs sm:text-[13px] text-[#475569] font-normal">

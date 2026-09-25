@@ -1,8 +1,12 @@
-import { NextResponse } from "next/server";
 import type { RowDataPacket } from "mysql2";
 import { db } from "@/lib/db";
 import { sendCollabReviewEmail } from "@/lib/email";
 import { ensureReviewsTable } from "@/lib/reviewsDb";
+import { requireCreator } from "@/lib/creatorAuth";
+import { requireSession, ownsResource } from "@/lib/session";
+import crypto from "crypto";
+import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 interface CreatorIdRow extends RowDataPacket {
   id: string;
@@ -56,6 +60,15 @@ export async function GET(req: Request) {
     const email = searchParams.get("email");
     const username = searchParams.get("username");
     const status = searchParams.get("status");
+    const isPublicRequest = Boolean(username);
+
+    if (email) {
+      const auth = requireSession(req);
+      if (auth.error) return auth.error;
+      if (!ownsResource(auth.session, email)) {
+        return apiError("Forbidden", 403);
+      }
+    }
 
     let creatorId: string | null = null;
 
@@ -76,13 +89,18 @@ export async function GET(req: Request) {
     }
 
     if (!creatorId) {
-      return NextResponse.json({ success: true, reviews: [] });
+      return apiSuccess({ reviews: [] }, "Reviews retrieved successfully");
     }
+
+    const accessError = await authorizeCreatorRead(req, creatorId, isPublicRequest);
+    if (accessError) return accessError;
 
     let sql = "SELECT * FROM creator_reviews WHERE creator_id = ?";
     const queryParams: string[] = [creatorId];
 
-    if (status) {
+    if (isPublicRequest) {
+      sql += " AND status = 'approved'";
+    } else if (status) {
       sql += " AND status = ?";
       queryParams.push(status);
     }
@@ -94,9 +112,9 @@ export async function GET(req: Request) {
     const reviews = (rows || []).map((r) => ({
       id: r.id,
       creatorId: r.creator_id,
-      token: r.token,
+      ...(isPublicRequest ? {} : { token: r.token }),
       clientName: r.client_name,
-      clientEmail: r.client_email,
+      ...(isPublicRequest ? {} : { clientEmail: r.client_email }),
       clientDesignation: r.client_designation || "",
       projectTitle: r.project_title,
       contentUrl: r.content_url || "",
@@ -110,50 +128,50 @@ export async function GET(req: Request) {
       updatedAt: r.updated_at,
     }));
 
-    return NextResponse.json({ success: true, reviews });
+    return apiSuccess({ reviews }, "Reviews retrieved successfully");
   } catch (error: unknown) {
     console.error("GET /api/creator/reviews error:", error);
-    return NextResponse.json({ success: false, error: getErrorMessage(error) }, { status: 500 });
+    return apiError(getErrorMessage(error), 500);
   }
 }
 
 // POST /api/creator/reviews — Generate review request & send email to client/brand
 export async function POST(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
+
     await ensureReviewsTable();
 
     const body = (await req.json()) as ReviewRequestBody;
-    const { email, creatorId, clientName, clientEmail, clientDesignation, projectTitle, contentUrl } = body;
+    const { clientName, clientEmail, clientDesignation, projectTitle, contentUrl } = body;
 
     if (!clientName || !clientName.trim()) {
-      return NextResponse.json(
-        { success: false, error: "Client or brand name is required" },
-        { status: 400 }
-      );
+      return apiError("Client or brand name is required", 400);
     }
 
-    let resolvedCreatorId = creatorId;
+    let resolvedCreatorId = auth.creator.id;
     let creatorDisplayName = "Creator";
 
-    if (email || resolvedCreatorId) {
+    if (resolvedCreatorId) {
       const [rows] = await db.query<CreatorIdRow[]>(
         "SELECT id, display_name FROM creators WHERE email = ? OR id = ?",
-        [email || "", resolvedCreatorId || ""]
+        [auth.creator.email, resolvedCreatorId]
       );
       if (rows && rows.length > 0) {
         resolvedCreatorId = rows[0].id;
         creatorDisplayName = rows[0].display_name || "Creator";
       } else {
-        if (!resolvedCreatorId) resolvedCreatorId = email;
+        resolvedCreatorId = auth.creator.id;
       }
     }
 
     if (!resolvedCreatorId) {
-      return NextResponse.json({ success: false, error: "Creator email or ID is required" }, { status: 400 });
+      return apiError("Creator email or ID is required", 400);
     }
 
     const reviewId = `rev_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-    const token = `tok_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+    const token = crypto.randomBytes(32).toString("base64url");
 
     const cleanClientName = clientName.trim();
     const cleanClientEmail = clientEmail?.trim() || "";
@@ -178,16 +196,9 @@ export async function POST(req: Request) {
     );
 
     // Build absolute review submission URL
-    const host = req.headers.get("host") || "inflixo.com";
-    const isDevHost =
-      host.includes("localhost") ||
-      host.includes("127.0.0.1") ||
-      host.includes("192.168.") ||
-      host.includes("10.") ||
-      host.includes(":3000") ||
-      host.includes(":3001");
-    const protocol = isDevHost ? "http" : "https";
-    const reviewUrl = `${protocol}://${host}/review/${token}`;
+    const configuredOrigin = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL;
+    const origin = configuredOrigin || new URL(req.url).origin;
+    const reviewUrl = `${origin.replace(/\/$/, "")}/review/${token}`;
 
     let emailSent = false;
     let emailError: string | undefined = undefined;
@@ -225,63 +236,65 @@ export async function POST(req: Request) {
       createdAt: new Date().toISOString(),
     };
 
-    return NextResponse.json({
-      success: true,
-      message: emailSent
-        ? `Review request email successfully sent to ${cleanClientEmail}!`
-        : `Review request created. (Note: Email attempt error: ${emailError || "check SMTP setup"})`,
-      emailSent,
-      review: reviewObj,
-      reviewUrl,
-    });
+    const message = emailSent
+      ? `Review request email successfully sent to ${cleanClientEmail}!`
+      : `Review request created. (Note: Email attempt error: ${emailError || "check SMTP setup"})`;
+
+    return apiSuccess({ emailSent, review: reviewObj, reviewUrl }, message);
   } catch (error: unknown) {
     console.error("POST /api/creator/reviews error:", error);
-    return NextResponse.json({ success: false, error: getErrorMessage(error) }, { status: 500 });
+    return apiError(getErrorMessage(error), 500);
   }
 }
 
 // PATCH /api/creator/reviews — Approve or reject review
 export async function PATCH(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
+
     await ensureReviewsTable();
 
     const body = (await req.json()) as ReviewStatusBody;
     const { id, status } = body;
 
     if (!id || !status) {
-      return NextResponse.json({ success: false, error: "id and status are required" }, { status: 400 });
+      return apiError("id and status are required", 400);
     }
 
     if (!["approved", "rejected", "pending_approval", "pending_invite"].includes(status)) {
-      return NextResponse.json({ success: false, error: "Invalid status value" }, { status: 400 });
+      return apiError("Invalid status value", 400);
     }
 
-    await db.query("UPDATE creator_reviews SET status = ? WHERE id = ?", [status, id]);
+    await db.query("UPDATE creator_reviews SET status = ? WHERE id = ? AND creator_id = ?", [status, id, auth.creator.id]);
 
-    return NextResponse.json({ success: true, message: `Review status updated to ${status}` });
+    return apiSuccess({}, `Review status updated to ${status}`);
   } catch (error: unknown) {
     console.error("PATCH /api/creator/reviews error:", error);
-    return NextResponse.json({ success: false, error: getErrorMessage(error) }, { status: 500 });
+    return apiError(getErrorMessage(error), 500);
   }
 }
 
 // DELETE /api/creator/reviews — Delete review request
 export async function DELETE(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
+
     await ensureReviewsTable();
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
     if (!id) {
-      return NextResponse.json({ success: false, error: "id is required" }, { status: 400 });
+      return apiError("id is required", 400);
     }
 
-    await db.query("DELETE FROM creator_reviews WHERE id = ?", [id]);
+    await db.query("DELETE FROM creator_reviews WHERE id = ? AND creator_id = ?", [id, auth.creator.id]);
 
-    return NextResponse.json({ success: true, message: "Review deleted successfully" });
+    return apiSuccess({}, "Review deleted successfully");
   } catch (error: unknown) {
     console.error("DELETE /api/creator/reviews error:", error);
-    return NextResponse.json({ success: false, error: getErrorMessage(error) }, { status: 500 });
+    return apiError(getErrorMessage(error), 500);
   }
 }

@@ -1,8 +1,21 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Plus_Jakarta_Sans, Outfit, Sora } from "next/font/google";
+import {
+  Inter,
+  Plus_Jakarta_Sans,
+  Outfit,
+  Sora,
+  Noto_Sans_Devanagari,
+  Noto_Sans_Gujarati,
+  Noto_Sans_Tamil,
+  Noto_Sans_Telugu,
+  Noto_Sans_Kannada,
+  Noto_Sans_Bengali,
+  Noto_Sans_Gurmukhi,
+} from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { ToastProvider } from "@/contexts/ToastContext";
+import { SessionProvider } from "@/contexts/SessionContext";
 import { GA_MEASUREMENT_ID } from "@/lib/analytics";
 import { PwaInstallPrompt } from "@/components/shared/PwaInstallPrompt";
 import { CookieConsentBanner } from "@/components/shared/CookieConsentBanner";
@@ -33,6 +46,20 @@ const outfit = Outfit({
   display: "swap",
   weight: ["500", "600", "700", "800", "900"],
 });
+
+// Indian-language fonts (Hindi/Marathi, Gujarati, Tamil, Telugu, Kannada, Bengali, Punjabi).
+// Only the script subset is requested and nothing is preloaded, so a browser downloads a
+// file only when that script actually appears on the page (unicode-range).
+const notoDevanagari = Noto_Sans_Devanagari({ display: "swap", preload: false, subsets: ["devanagari"], variable: "--font-noto-devanagari" });
+const notoGujarati = Noto_Sans_Gujarati({ display: "swap", preload: false, subsets: ["gujarati"], variable: "--font-noto-gujarati" });
+const notoTamil = Noto_Sans_Tamil({ display: "swap", preload: false, subsets: ["tamil"], variable: "--font-noto-tamil" });
+const notoTelugu = Noto_Sans_Telugu({ display: "swap", preload: false, subsets: ["telugu"], variable: "--font-noto-telugu" });
+const notoKannada = Noto_Sans_Kannada({ display: "swap", preload: false, subsets: ["kannada"], variable: "--font-noto-kannada" });
+const notoBengali = Noto_Sans_Bengali({ display: "swap", preload: false, subsets: ["bengali"], variable: "--font-noto-bengali" });
+const notoGurmukhi = Noto_Sans_Gurmukhi({ display: "swap", preload: false, subsets: ["gurmukhi"], variable: "--font-noto-gurmukhi" });
+const indicFontVariables = [notoDevanagari, notoGujarati, notoTamil, notoTelugu, notoKannada, notoBengali, notoGurmukhi]
+  .map((font) => font.variable)
+  .join(" ");
 
 export const metadata: Metadata = {
   title: "Inflixo — One Link for Your Content & Fanbase",
@@ -134,7 +161,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`min-h-full antialiased ${inter.variable} ${sora.variable} ${plusJakartaSans.variable} ${outfit.variable}`}
+      className={`min-h-full antialiased ${inter.variable} ${sora.variable} ${plusJakartaSans.variable} ${outfit.variable} ${indicFontVariables}`}
     >
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -178,11 +205,13 @@ export default function RootLayout({
         </Script>
       </head>
       <body className="min-h-full bg-background font-sans">
-        <ToastProvider>
-          {children}
-          <PwaInstallPrompt />
-          <CookieConsentBanner />
-        </ToastProvider>
+        <SessionProvider>
+          <ToastProvider>
+            {children}
+            <PwaInstallPrompt />
+            <CookieConsentBanner />
+          </ToastProvider>
+        </SessionProvider>
       </body>
     </html>
   );

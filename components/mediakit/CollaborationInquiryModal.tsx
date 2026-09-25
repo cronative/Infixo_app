@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Briefcase,
   Mail,
@@ -25,6 +25,7 @@ interface CollaborationInquiryModalProps {
   creatorName: string;
   creatorUsername: string;
   packages?: MediaKitPackage[];
+  selectedPackageTitle?: string;
 }
 
 export function CollaborationInquiryModal({
@@ -35,6 +36,7 @@ export function CollaborationInquiryModal({
   creatorName,
   creatorUsername,
   packages = [],
+  selectedPackageTitle,
 }: CollaborationInquiryModalProps) {
   const { showToast } = useToast();
 
@@ -45,8 +47,16 @@ export function CollaborationInquiryModal({
   const [budgetRange, setBudgetRange] = useState("₹25,000 – ₹50,000");
   const [timeline, setTimeline] = useState("Within 2–4 weeks");
   const [deliverables, setDeliverables] = useState(
-    packages.length > 0 ? packages[0].title : "Sponsored Video / Reel"
+    selectedPackageTitle || (packages.length > 0 ? packages[0].title : "Sponsored Video / Reel")
   );
+
+  useEffect(() => {
+    if (selectedPackageTitle) {
+      setDeliverables(selectedPackageTitle);
+    } else if (packages.length > 0 && !deliverables) {
+      setDeliverables(packages[0].title);
+    }
+  }, [selectedPackageTitle, packages, isOpen]);
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -60,7 +70,7 @@ export function CollaborationInquiryModal({
 
     setSubmitting(true);
     try {
-      const res = await fetch("/api/collaborations/submit", {
+      const httpResponse = await fetch("/api/collaborations/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -78,12 +88,12 @@ export function CollaborationInquiryModal({
         }),
       });
 
-      const data = await res.json();
-      if (data.success) {
+      const apiResponse = await httpResponse.json();
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
         setIsSuccess(true);
         showToast("Collaboration request sent! ✨");
       } else {
-        showToast(data.error || "Failed to submit request", "error");
+        showToast(apiResponse.message || apiResponse.error || "Failed to submit request", "error");
       }
     } catch (err) {
       console.error("Failed to submit inquiry:", err);
@@ -139,7 +149,7 @@ export function CollaborationInquiryModal({
             {/* Brand & Contact Name */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-[#043084] block">
+                <label className="text-[13px] font-medium text-[#0f172a] block">
                   Brand / Company Name <span className="text-[#C2414B]">*</span>
                 </label>
                 <div className="relative">
@@ -149,14 +159,14 @@ export function CollaborationInquiryModal({
                     required
                     value={brandName}
                     onChange={(e) => setBrandName(e.target.value)}
-                    placeholder="e.g. Acme Corp"
-                    className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-3 text-xs sm:text-[13px] font-medium text-[#043084] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
+                    placeholder="e.g. Mamaearth / Local Brand / Agency"
+                    className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-[#043084] block">
+                <label className="text-[13px] font-medium text-[#0f172a] block">
                   Your Name <span className="text-[#C2414B]">*</span>
                 </label>
                 <input
@@ -164,8 +174,8 @@ export function CollaborationInquiryModal({
                   required
                   value={contactName}
                   onChange={(e) => setContactName(e.target.value)}
-                  placeholder="e.g. Sarah Connor"
-                  className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#043084] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
+                  placeholder="e.g. Rohan Sharma"
+                  className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
                 />
               </div>
             </div>
@@ -173,7 +183,7 @@ export function CollaborationInquiryModal({
             {/* Email & Phone */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-[#043084] block">
+                <label className="text-[13px] font-medium text-[#0f172a] block">
                   Business Email <span className="text-[#C2414B]">*</span>
                 </label>
                 <div className="relative">
@@ -183,14 +193,14 @@ export function CollaborationInquiryModal({
                     required
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
-                    placeholder="sarah@acme.com"
-                    className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-3 text-xs sm:text-[13px] font-medium text-[#043084] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
+                    placeholder="contact@brand.com"
+                    className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-[#043084] block">
+                <label className="text-[13px] font-medium text-[#0f172a] block">
                   Phone / WhatsApp
                 </label>
                 <div className="relative">
@@ -200,7 +210,7 @@ export function CollaborationInquiryModal({
                     value={contactPhone}
                     onChange={(e) => setContactPhone(e.target.value)}
                     placeholder="+91 98765 43210"
-                    className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-3 text-xs sm:text-[13px] font-medium text-[#043084] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
+                    className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
                   />
                 </div>
               </div>
@@ -209,7 +219,7 @@ export function CollaborationInquiryModal({
             {/* Budget & Timeline */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-[#043084] block">
+                <label className="text-[13px] font-medium text-[#0f172a] block">
                   Estimated Budget
                 </label>
                 <select
@@ -227,7 +237,7 @@ export function CollaborationInquiryModal({
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-[#043084] block">
+                <label className="text-[13px] font-medium text-[#0f172a] block">
                   Campaign Timeline
                 </label>
                 <div className="relative">
@@ -237,7 +247,7 @@ export function CollaborationInquiryModal({
                     value={timeline}
                     onChange={(e) => setTimeline(e.target.value)}
                     placeholder="e.g. Next month / Q3"
-                    className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-3 text-xs sm:text-[13px] font-medium text-[#043084] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
+                    className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
                   />
                 </div>
               </div>
@@ -245,7 +255,7 @@ export function CollaborationInquiryModal({
 
             {/* Preferred Deliverables */}
             <div className="space-y-1">
-              <label className="text-xs font-bold text-[#043084] block">
+              <label className="text-[13px] font-medium text-[#0f172a] block">
                 Deliverables / Format
               </label>
               <input
@@ -253,13 +263,13 @@ export function CollaborationInquiryModal({
                 value={deliverables}
                 onChange={(e) => setDeliverables(e.target.value)}
                 placeholder="e.g. 1x Dedicated Reel, 2x Stories with Link"
-                className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#043084] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
+                className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
               />
             </div>
 
             {/* Campaign Details / Message */}
             <div className="space-y-1">
-              <label className="text-xs font-bold text-[#043084] block">
+              <label className="text-[13px] font-medium text-[#0f172a] block">
                 Campaign Brief &amp; Notes
               </label>
               <textarea
@@ -267,7 +277,7 @@ export function CollaborationInquiryModal({
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Share project goals, product details, or specific campaign requirements..."
-                className="w-full rounded-lg border border-[#e2e8f0] bg-white p-3 text-xs sm:text-[13px] font-medium text-[#043084] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs resize-none"
+                className="w-full rounded-lg border border-[#e2e8f0] bg-white p-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs resize-none"
               />
             </div>
           </ModalBody>

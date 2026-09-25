@@ -86,7 +86,7 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
 
         {/* Copy Direct Link Section */}
         <div className="space-y-1 text-left">
-          <label className="block text-xs font-bold text-[#043084]">Series Public Link</label>
+          <label className="block text-[13px] font-medium text-[#0f172a]">Series Public Link</label>
           <div className="flex items-center gap-2">
             <input
               type="text"
@@ -131,7 +131,7 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
 
         {/* Social Share Buttons */}
         <div className="space-y-1.5 text-left pt-1">
-          <label className="block text-xs font-bold text-[#043084]">Share Directly</label>
+          <label className="block text-[13px] font-medium text-[#0f172a]">Share Directly</label>
           <div className="grid grid-cols-3 gap-2">
             <button
               type="button"

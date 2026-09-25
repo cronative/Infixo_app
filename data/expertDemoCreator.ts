@@ -1,4 +1,4 @@
-import { CreatorProfile, SocialAccounts, Series, MediaKitPackage, CustomLink, ThemeKey, CreatorReview, CreatorSetupItem } from "@/types";
+import { CreatorProfile, SocialAccounts, Series, MediaKitPackage, CustomLink, ThemeKey, CreatorReview, CreatorSetupItem, CreatorProduct } from "@/types";
 
 export const EXPERT_DEMO_PROFILE: CreatorProfile = {
   id: "cr_expert_demo_creator",
@@ -516,3 +516,33 @@ export const EXPERT_DEMO_SETUP_ITEMS: CreatorSetupItem[] = [
   },
 ];
 
+export const EXPERT_DEMO_PRODUCTS: CreatorProduct[] = [
+  {
+    id: "prod_sony_a7siii",
+    name: "Sony Alpha 7S III Mirrorless Camera",
+    imageUrl: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=500&q=80",
+    pricePaise: 33499000,
+    productUrl: "https://amazon.in/dp/B08DP45C57",
+  },
+  {
+    id: "prod_shure_sm7b",
+    name: "Shure SM7B Cardioid Dynamic Vocal Mic",
+    imageUrl: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=500&q=80",
+    pricePaise: 3890000,
+    productUrl: "https://amazon.in/dp/B0002E4Z8M",
+  },
+  {
+    id: "prod_dji_rs3_pro",
+    name: "DJI RS 3 Pro Gimbal Stabilizer",
+    imageUrl: "https://images.unsplash.com/photo-1527011046414-4781f1f94f8c?auto=format&fit=crop&w=500&q=80",
+    pricePaise: 7499000,
+    productUrl: "https://amazon.in/dp/B09V7YQ8Q1",
+  },
+  {
+    id: "prod_nanlite_forza",
+    name: "Nanlite Forza 300B II Bi-Color LED",
+    imageUrl: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=500&q=80",
+    pricePaise: 8499000,
+    productUrl: "https://amazon.in/dp/B0B64P4B62",
+  },
+];

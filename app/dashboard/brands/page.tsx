@@ -1,5 +1,7 @@
 "use client";
 
+
+
 import { useEffect, useState } from "react";
 import { Building2, Plus, Pencil, Trash2, Eye, EyeOff, Globe, ExternalLink, MoreVertical } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
@@ -37,7 +39,11 @@ export default function DashboardBrandsPage() {
   const creatorLookup = profile.id || profile.email || profile.username;
 
   useEffect(() => {
-    const handleClickOutside = () => setActiveMenuId(null);
+    // Ignore presses inside an open menu so its items receive their click.
+    const handleClickOutside = (e: MouseEvent) => {
+      if ((e.target as HTMLElement).closest?.("[data-menu]")) return;
+      setActiveMenuId(null);
+    };
     if (activeMenuId) document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [activeMenuId]);
@@ -46,10 +52,12 @@ export default function DashboardBrandsPage() {
     if (!creatorLookup) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/creator/brands?creatorId=${encodeURIComponent(creatorLookup)}`).then((r) => r.json());
-      if (res.success && Array.isArray(res.brands)) {
-        setBrands(res.brands);
-        brandsRepository.saveAll(res.brands);
+      const httpResponse = await fetch(`/api/creator/brands?creatorId=${encodeURIComponent(creatorLookup)}`);
+      const apiResponse = await httpResponse.json();
+      const brandsList = apiResponse.data?.brands || apiResponse.brands;
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && Array.isArray(brandsList)) {
+        setBrands(brandsList);
+        brandsRepository.saveAll(brandsList);
       } else {
         const local = brandsRepository.getAll();
         setBrands(local);
@@ -122,7 +130,7 @@ export default function DashboardBrandsPage() {
 
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/creator/brands", {
+      const httpResponse = await fetch("/api/creator/brands", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -140,14 +148,15 @@ export default function DashboardBrandsPage() {
             isActive: editingBrand?.isActive !== false,
           },
         }),
-      }).then((r) => r.json());
+      });
+      const apiResponse = await httpResponse.json();
 
-      if (res.success) {
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
         showToast(editingBrand ? "Brand updated successfully! ✨" : "Brand added successfully! 🚀");
         setIsModalOpen(false);
         loadBrands();
       } else {
-        showToast(res.error || "Failed to save brand", "error");
+        showToast(apiResponse.message || apiResponse.error || "Failed to save brand", "error");
       }
     } catch {
       showToast("An error occurred while saving brand", "error");
@@ -160,17 +169,18 @@ export default function DashboardBrandsPage() {
     if (!brandToDelete) return;
     setIsSubmitting(true);
     try {
-      const res = await fetch(
+      const httpResponse = await fetch(
         `/api/creator/brands?id=${encodeURIComponent(brandToDelete.id)}&creatorId=${encodeURIComponent(creatorLookup)}`,
         { method: "DELETE" }
-      ).then((r) => r.json());
+      );
+      const apiResponse = await httpResponse.json();
 
-      if (res.success) {
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
         showToast("Brand removed");
         setBrandToDelete(null);
         loadBrands();
       } else {
-        showToast(res.error || "Failed to delete brand", "error");
+        showToast(apiResponse.message || apiResponse.error || "Failed to delete brand", "error");
       }
     } catch {
       showToast("Failed to remove brand", "error");
@@ -182,7 +192,7 @@ export default function DashboardBrandsPage() {
   const handleToggleBrand = async (brand: CreatorBrand) => {
     try {
       const updated = !brand.isActive;
-      await fetch("/api/creator/brands", {
+      const httpResponse = await fetch("/api/creator/brands", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -194,8 +204,11 @@ export default function DashboardBrandsPage() {
           },
         }),
       });
-      showToast(updated ? "Brand visible on profile" : "Brand hidden from profile");
-      loadBrands();
+      const apiResponse = await httpResponse.json();
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
+        showToast(updated ? "Brand visible on profile" : "Brand hidden from profile");
+        loadBrands();
+      }
     } catch { }
   };
 
@@ -204,7 +217,7 @@ export default function DashboardBrandsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#043084]">
+          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
             My Brands &amp; Ventures
           </h1>
           <p className="text-xs sm:text-[13px] text-[#475569] font-medium mt-0.5">
@@ -216,7 +229,7 @@ export default function DashboardBrandsPage() {
           <button
             type="button"
             onClick={() => handleOpenModal()}
-            className="tap-scale inline-flex items-center gap-1.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-white font-semibold text-xs h-9 px-3.5 transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm shrink-0 self-start sm:self-auto"
+            className="tap-scale inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3.5 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             <span>Add Brand</span>
@@ -262,7 +275,7 @@ export default function DashboardBrandsPage() {
 
                 <div className="min-w-0 flex-1 space-y-0.5">
                   <div className="flex items-center gap-2">
-                    <h3 className="truncate font-bold text-xs sm:text-[13px] text-[#043084]">{brand.brandName}</h3>
+                    <h3 className="truncate font-semibold text-xs sm:text-[13px] text-[#0f172a]">{brand.brandName}</h3>
                     {!brand.isActive && (
                       <span className="text-[10px] font-semibold text-[#64748b] bg-zinc-100 px-1.5 py-0.2 rounded">Hidden</span>
                     )}
@@ -376,6 +389,7 @@ export default function DashboardBrandsPage() {
                   {activeMenuId === brand.id && (
                     <div
                       onClick={(e) => e.stopPropagation()}
+                      data-menu
                       className="absolute right-0 top-full mt-1.5 w-44 rounded-xl border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in text-left"
                     >
                       {brand.websiteUrl && (
@@ -460,7 +474,7 @@ export default function DashboardBrandsPage() {
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#043084]">
+              <label className="block text-[13px] font-medium text-[#0f172a]">
                 Brand Name <span className="text-[#C2414B]">*</span>
               </label>
               <input
@@ -469,12 +483,12 @@ export default function DashboardBrandsPage() {
                 value={brandName}
                 onChange={(e) => setBrandName(e.target.value)}
                 placeholder="e.g. CreatorCloths or The Tech Show"
-                className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3.5 py-2 text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#043084]">
+              <label className="block text-[13px] font-medium text-[#0f172a]">
                 Website URL (Optional)
               </label>
               <input
@@ -482,7 +496,7 @@ export default function DashboardBrandsPage() {
                 value={websiteUrl}
                 onChange={(e) => setWebsiteUrl(e.target.value)}
                 placeholder="https://mybrand.com"
-                className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3.5 py-2 text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
@@ -505,7 +519,7 @@ export default function DashboardBrandsPage() {
                     value={instagramUrl}
                     onChange={(e) => setInstagramUrl(extractHandle(e.target.value, "instagram"))}
                     placeholder="Enter username (e.g. brandname)"
-                    className="h-full w-full min-w-0 flex-1 bg-transparent text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/40 outline-none"
+                    className="h-full w-full min-w-0 flex-1 bg-transparent text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/40 outline-none"
                   />
                 </div>
               </div>
@@ -523,7 +537,7 @@ export default function DashboardBrandsPage() {
                     value={youtubeUrl}
                     onChange={(e) => setYoutubeUrl(extractHandle(e.target.value, "youtube"))}
                     placeholder="Enter channel handle (e.g. brandchannel)"
-                    className="h-full w-full min-w-0 flex-1 bg-transparent text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/40 outline-none"
+                    className="h-full w-full min-w-0 flex-1 bg-transparent text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/40 outline-none"
                   />
                 </div>
               </div>
@@ -541,7 +555,7 @@ export default function DashboardBrandsPage() {
                     value={facebookUrl}
                     onChange={(e) => setFacebookUrl(extractHandle(e.target.value, "facebook"))}
                     placeholder="Enter page username (e.g. brandpage)"
-                    className="h-full w-full min-w-0 flex-1 bg-transparent text-xs font-semibold text-[#043084] placeholder:text-[#64748b]/40 outline-none"
+                    className="h-full w-full min-w-0 flex-1 bg-transparent text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/40 outline-none"
                   />
                 </div>
               </div>

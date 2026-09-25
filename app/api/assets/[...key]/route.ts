@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { getR2Object } from "@/lib/r2Storage";
+import { apiError } from "@/lib/apiResponse";
 
 type AssetRouteContext = {
   params: Promise<{
@@ -12,13 +12,13 @@ export async function GET(_req: Request, context: AssetRouteContext) {
   const objectKey = key.join("/");
 
   if (!objectKey || objectKey.includes("..")) {
-    return NextResponse.json({ error: "Invalid asset path" }, { status: 400 });
+    return apiError("Invalid asset path", 400);
   }
 
   try {
     const objectResponse = await getR2Object(objectKey);
     if (!objectResponse) {
-      return NextResponse.json({ error: "Asset not found" }, { status: 404 });
+      return apiError("Asset not found", 404);
     }
 
     const contentType = objectResponse.headers.get("content-type") || "application/octet-stream";
@@ -33,6 +33,6 @@ export async function GET(_req: Request, context: AssetRouteContext) {
     });
   } catch (err) {
     console.error("R2 asset proxy error:", err);
-    return NextResponse.json({ error: "Unable to load asset" }, { status: 500 });
+    return apiError("Unable to load asset", 500);
   }
 }

@@ -1,7 +1,10 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureTeamTables } from "@/lib/teamDb";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
+import { requireCreator } from "@/lib/creatorAuth";
+import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { sanitizeUrl } from "@/lib/urlSanitizer";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -24,13 +27,15 @@ export async function GET(req: Request) {
     const lookupVal = searchParams.get("creatorId") || searchParams.get("email") || searchParams.get("username");
 
     if (!lookupVal) {
-      return NextResponse.json({ success: true, team: null });
+      return apiSuccess({ team: null, members: [] }, "Team retrieved successfully");
     }
 
     await ensureTeamTables();
 
     const creator = await resolveCreatorId(lookupVal);
     const targetId = creator ? creator.id : lookupVal;
+    const accessError = await authorizeCreatorRead(req, targetId, Boolean(searchParams.get("username")));
+    if (accessError) return accessError;
 
     const [teamRows]: any = await db.query(
       `SELECT id, creator_id AS creatorId, team_name AS teamName, team_logo_url AS teamLogoUrl, is_active AS isActive, created_at AS createdAt, updated_at AS updatedAt
@@ -40,7 +45,7 @@ export async function GET(req: Request) {
     );
 
     if (!teamRows || teamRows.length === 0) {
-      return NextResponse.json({ success: true, team: null });
+      return apiSuccess({ team: null, members: [] }, "Team retrieved successfully");
     }
 
     const team = teamRows[0];
@@ -60,54 +65,50 @@ export async function GET(req: Request) {
       name: m.name,
       role: m.role,
       avatarUrl: m.avatarUrl || null,
-      instagramUrl: m.instagramUrl || "",
-      youtubeUrl: m.youtubeUrl || "",
-      facebookUrl: m.facebookUrl || "",
+      instagramUrl: sanitizeUrl(m.instagramUrl, { allowEmpty: true }) || "",
+      youtubeUrl: sanitizeUrl(m.youtubeUrl, { allowEmpty: true }) || "",
+      facebookUrl: sanitizeUrl(m.facebookUrl, { allowEmpty: true }) || "",
       sortOrder: Number(m.sortOrder || 0),
       isActive: Boolean(m.isActive),
       createdAt: m.createdAt,
       updatedAt: m.updatedAt,
     }));
 
-    return NextResponse.json({
-      success: true,
-      team: {
-        id: team.id,
-        creatorId: team.creatorId,
-        teamName: team.teamName,
-        teamLogoUrl: team.teamLogoUrl || null,
-        isActive: Boolean(team.isActive),
-        members,
-        createdAt: team.createdAt,
-        updatedAt: team.updatedAt,
-      },
-    });
+    const fullTeam = {
+      id: team.id,
+      creatorId: team.creatorId,
+      teamName: team.teamName,
+      teamLogoUrl: team.teamLogoUrl || null,
+      isActive: Boolean(team.isActive),
+      members,
+      createdAt: team.createdAt,
+      updatedAt: team.updatedAt,
+    };
+
+    return apiSuccess({ team: fullTeam, members }, "Team retrieved successfully");
   } catch (err: any) {
     console.error("GET team error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to fetch team", 500);
   }
 }
 
 // POST /api/creator/team (Create or Update Team & Members)
 export async function POST(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const body = await req.json();
-    const { email, creatorId: passedCreatorId, action, teamName, teamLogoUrl, isActive, member, members } = body;
-
-    const lookupVal = passedCreatorId || email;
-    if (!lookupVal) {
-      return NextResponse.json({ error: "Creator identifier required" }, { status: 400 });
-    }
+    const { action, teamName, teamLogoUrl, isActive, member, members } = body;
 
     await ensureTeamTables();
 
-    const creator = await resolveCreatorId(lookupVal);
-    const targetId = creator ? creator.id : lookupVal;
+    const creator = auth.creator;
+    const targetId = auth.creator.id;
 
     // 1. Action: create or update team base info
     if (action === "save_team" || (!action && teamName !== undefined)) {
       if (!teamName || !teamName.trim()) {
-        return NextResponse.json({ error: "Team name is required" }, { status: 400 });
+        return apiError("Team name is required", 400);
       }
 
       const finalTeamLogoUrl = await saveBase64ImageToStorage(teamLogoUrl, "team", "team_logo") || (teamLogoUrl && !teamLogoUrl.startsWith("data:") ? teamLogoUrl : null);
@@ -123,14 +124,14 @@ export async function POST(req: Request) {
         [teamId, targetId, teamName.trim(), finalTeamLogoUrl || null, isActive !== false ? 1 : 0]
       );
 
-      return NextResponse.json({ success: true, message: "Team details saved" });
+      return apiSuccess({}, "Team details saved");
     }
 
     // 2. Action: Add or edit single member
     if (action === "save_member" || member) {
       const m = member || body;
       if (!m.name || !m.name.trim() || !m.role || !m.role.trim()) {
-        return NextResponse.json({ error: "Member name and role are required" }, { status: 400 });
+        return apiError("Member name and role are required", 400);
       }
 
       const finalAvatarUrl = await saveBase64ImageToStorage(m.avatarUrl, "team", "member") || (m.avatarUrl && !m.avatarUrl.startsWith("data:") ? m.avatarUrl : null);
@@ -167,15 +168,15 @@ export async function POST(req: Request) {
           m.name.trim(),
           m.role.trim(),
           finalAvatarUrl || null,
-          (m.instagramUrl || "").trim() || null,
-          (m.youtubeUrl || "").trim() || null,
-          (m.facebookUrl || "").trim() || null,
+          sanitizeUrl(m.instagramUrl) || null,
+          sanitizeUrl(m.youtubeUrl) || null,
+          sanitizeUrl(m.facebookUrl) || null,
           Number(m.sortOrder || 0),
           m.isActive !== false ? 1 : 0,
         ]
       );
 
-      return NextResponse.json({ success: true, memberId, message: "Team member saved" });
+      return apiSuccess({ memberId }, "Team member saved");
     }
 
     // 3. Action: Reorder members
@@ -189,47 +190,64 @@ export async function POST(req: Request) {
           );
         }
       }
-      return NextResponse.json({ success: true, message: "Members reordered" });
+      return apiSuccess({ members }, "Members reordered");
     }
 
-    return NextResponse.json({ error: "Invalid action or payload" }, { status: 400 });
+    // 4. Action: Toggle member
+    if (action === "toggle_member") {
+      const { memberId, isActive } = body;
+      if (memberId) {
+        await db.query(
+          "UPDATE team_members SET is_active = ?, updated_at = NOW() WHERE id = ? AND creator_id = ?",
+          [isActive ? 1 : 0, memberId, targetId]
+        );
+        return apiSuccess({}, "Member status updated");
+      }
+    }
+
+    // 5. Action: Delete member via POST
+    if (action === "delete_member") {
+      const { memberId } = body;
+      if (memberId) {
+        await db.query("DELETE FROM team_members WHERE id = ? AND creator_id = ?", [memberId, targetId]);
+        return apiSuccess({}, "Member removed from team");
+      }
+    }
+
+    return apiError("Invalid action or payload", 400);
   } catch (err: any) {
     console.error("POST team error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to save team", 500);
   }
 }
 
 // DELETE /api/creator/team?memberId=... or ?teamId=...&creatorId=...
 export async function DELETE(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const { searchParams } = new URL(req.url);
     const memberId = searchParams.get("memberId");
     const teamId = searchParams.get("teamId");
-    const lookupVal = searchParams.get("creatorId") || searchParams.get("email");
-
-    if (!lookupVal) {
-      return NextResponse.json({ error: "Creator identifier required" }, { status: 400 });
-    }
 
     await ensureTeamTables();
 
-    const creator = await resolveCreatorId(lookupVal);
-    const targetId = creator ? creator.id : lookupVal;
+    const targetId = auth.creator.id;
 
     if (memberId) {
       await db.query("DELETE FROM team_members WHERE id = ? AND creator_id = ?", [memberId, targetId]);
-      return NextResponse.json({ success: true, message: "Member removed from team" });
+      return apiSuccess({}, "Member removed from team");
     }
 
     if (teamId) {
       await db.query("DELETE FROM team_members WHERE team_id = ? AND creator_id = ?", [teamId, targetId]);
       await db.query("DELETE FROM creator_teams WHERE id = ? AND creator_id = ?", [teamId, targetId]);
-      return NextResponse.json({ success: true, message: "Team deleted" });
+      return apiSuccess({}, "Team deleted");
     }
 
-    return NextResponse.json({ error: "memberId or teamId required" }, { status: 400 });
+    return apiError("memberId or teamId required", 400);
   } catch (err: any) {
     console.error("DELETE team error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to delete team", 500);
   }
 }

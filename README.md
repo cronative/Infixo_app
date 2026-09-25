@@ -1,20 +1,20 @@
-# Inflixo — Frontend Prototype
+# Inflixo
 
-A modern, responsive frontend prototype for **Inflixo**, a creator identity and
-content organization platform for Indian content creators. Built with
-Next.js App Router, React, TypeScript, and Tailwind CSS. Everything runs
-locally with mock JSON and `localStorage` — there is no backend yet.
+A creator identity and content organization platform built with Next.js,
+React, TypeScript, Tailwind CSS, MySQL, Razorpay, and object storage.
 
 ## Getting started
 
 ```bash
 npm install
+npm run migrate
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). You'll be redirected to
-`/login`. Enter any email and use any 6-digit code on the OTP screen (or use
-the Google/Apple buttons) to get straight into onboarding.
+Copy the variable names from `.env.example` into your local or deployment
+environment before running migrations. Open
+[http://localhost:3000](http://localhost:3000) and sign in with the OTP sent
+to your email.
 
 ## Production build
 
@@ -23,10 +23,15 @@ npm run build
 npm run start
 ```
 
+Production must configure `JWT_SECRET`, `CRON_SECRET`,
+`RAZORPAY_WEBHOOK_SECRET`, the MySQL variables, and the credentials for each
+enabled provider. Sensitive endpoints fail closed when required secrets are
+missing.
+
 ## Architecture
 
-The codebase is intentionally layered so the whole app can be pointed at a
-real Node.js/MySQL API later without touching any component code:
+The codebase keeps UI, business logic, local caching, and server APIs in
+separate layers:
 
 ```
 components/  → UI only, no localStorage access
@@ -38,9 +43,8 @@ repositories/→ raw per-entity persistence (localRepository.ts)
 utils/storage.ts → the only file that touches window.localStorage directly
 ```
 
-When the backend is ready, swap `repositories/localRepository.ts` for
-`fetch()`-based calls (or add a parallel `apiRepository.ts` and switch the
-import) — `services/*` and every component keep working unchanged.
+The authenticated server state is exposed through `/api/me`; browser storage
+is used only as a UI cache and is not an authorization source.
 
 ### Folder guide
 
@@ -59,7 +63,7 @@ import) — `services/*` and every component keep working unchanged.
 
 ### Routes
 
-- `/login`, `/verify-otp` — mock auth (any email + any 6-digit OTP works)
+- `/login`, `/verify-otp` — email OTP authentication
 - `/onboarding/profile` → `/socials` → `/themes` → `/series` → `/subscription` → `/finish`
 - `/dashboard` and `/dashboard/{profile,socials,series,themes,preview,subscription,settings}`
 - `/[username]` — the public, shareable creator profile page
@@ -87,9 +91,12 @@ Lightweight original SVG icons for these three platforms live in
 `components/shared/BrandIcons.tsx`. The Google/Apple buttons on the login
 screen use inline SVGs for the same reason.
 
-## What's intentionally not built yet
+## Operations
 
-Per the brief, this phase has no real backend: no MySQL, no Node.js APIs, no
-auth/email/OTP/payment providers, no social or scraping APIs, no file
-uploads. Photos and thumbnails are local `FileReader` previews only. The
-`services/` layer is the seam designed for that future integration.
+Run `npm run migrate` before deploying a new release. Razorpay webhooks use
+`RAZORPAY_WEBHOOK_SECRET`, and the scheduled social sync uses the Vercel cron
+`Authorization: Bearer` header backed by `CRON_SECRET`.
+
+Migrations target only the database selected by `MYSQL_HOST`, `MYSQL_USER`,
+`MYSQL_PASSWORD`, `MYSQL_DATABASE`, and `MYSQL_PORT`. Run them separately with
+the appropriate environment for development and production.

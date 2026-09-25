@@ -21,17 +21,16 @@ export const AuthService = {
     }
     authRepository.savePendingEmail(cleanEmail);
 
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: cleanEmail }),
-      });
-      const data = await res.json();
-      return data;
-    } catch {
-      return { success: true };
+    const httpResponse = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: cleanEmail }),
+    });
+    const apiResponse = await httpResponse.json();
+    if (!httpResponse.ok || apiResponse.status !== 1) {
+      throw new Error(apiResponse.message || "Failed to send verification code");
     }
+    return { success: true, demoOtp: apiResponse.data?.demoOtp };
   },
 
   getPendingEmail(): string {
@@ -41,16 +40,18 @@ export const AuthService = {
   async verifyOtp(otp: string): Promise<{ session: AuthSession; isExistingProfile: boolean; onboardingStep: string }> {
     const email = authRepository.getPendingEmail();
 
-    const res = await fetch("/api/auth/verify-otp", {
+    const httpResponse = await fetch("/api/auth/verify-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, otp }),
     });
-    const data = await res.json();
+    const apiResponse = await httpResponse.json();
 
-    if (!res.ok || !data.success) {
-      throw new Error(data.error || "Invalid OTP code");
+    if (!httpResponse.ok || apiResponse.status !== 1) {
+      throw new Error(apiResponse.message || "Invalid OTP code");
     }
+
+    const data = apiResponse.data || {};
 
     debugLog("AUTH_SERVICE", "verifyOtp response received:", {
       isExistingProfile: data.isExistingProfile,
@@ -179,5 +180,8 @@ export const AuthService = {
 
   logout(): void {
     storage.clearAll();
+    // Best-effort: also clear the httpOnly session cookie server-side so a
+    // stale cookie can't silently re-authenticate the user after logout.
+    fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
   },
 };

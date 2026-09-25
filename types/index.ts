@@ -101,7 +101,55 @@ export interface AuthSession {
 // Profile
 // ---------------------------------------------------------------------------
 
+export type PublicProfileLayout = "default" | "minimal" | "creator" | "spotlight" | "studio";
+
+export const PUBLIC_PROFILE_LAYOUTS: Array<{
+  id: PublicProfileLayout;
+  name: string;
+  badge: string;
+  tagline: string;
+  description: string;
+}> = [
+  {
+    id: "default",
+    name: "Default",
+    badge: "Classic",
+    tagline: "Classic continuous stream",
+    description: "Original balanced Inflixo profile layout with vertical flow.",
+  },
+  {
+    id: "minimal",
+    name: "Minimal",
+    badge: "Fast & Clean",
+    tagline: "Ultra-compact scanning",
+    description: "Compact creator header, zero wasted padding, instant content access.",
+  },
+  {
+    id: "creator",
+    name: "Creator",
+    badge: "Influencer-First",
+    tagline: "High-engagement app feel",
+    description: "Influencer focus with bold stats, prominent CTA, and rich visual media.",
+  },
+  {
+    id: "spotlight",
+    name: "Spotlight",
+    badge: "Content-First",
+    tagline: "Featured series in prime view",
+    description: "Spotlights your top series first with immediate watch actions.",
+  },
+  {
+    id: "studio",
+    name: "Studio",
+    badge: "Brand & Portfolio",
+    tagline: "Professional media-kit balance",
+    description: "Audience reach, series portfolio, collaboration packages & client proof.",
+  },
+];
+
 export interface VisibilitySettings {
+  profileLayout?: "list" | "tabs";
+  publicProfileLayout?: PublicProfileLayout;
   showFanbase: boolean;
   showInstagram: boolean;
   showFacebook: boolean;
@@ -122,6 +170,8 @@ export interface VisibilitySettings {
 }
 
 export const DEFAULT_VISIBILITY_SETTINGS: VisibilitySettings = {
+  profileLayout: "list",
+  publicProfileLayout: "default",
   showFanbase: true,
   showInstagram: true,
   showFacebook: true,
@@ -157,6 +207,7 @@ export interface CreatorProfile {
   isVerified?: boolean;
   themeKey?: ThemeKey;
   theme_key?: string;
+  publicProfileLayout?: PublicProfileLayout;
   visibilitySettings?: VisibilitySettings;
   updatedAt: string;
 }
@@ -500,6 +551,7 @@ export interface PlanMeta {
   youtube: boolean;
   facebook: boolean;
   ottSeriesLimit: string; // "5" | "10" | "20" | "Unlimited"
+  shopProductLimit?: string; // "1 Product" | "20 Products" | "Unlimited"
   autoDataRefresh: string; // "Every 24 Hours" | "Every 18 Hours" | "Every 12 Hours" | "Every 3 Hours"
   removeBranding: boolean;
   support: "Standard" | "Priority" | "VIP Dedicated" | string;
@@ -524,6 +576,7 @@ export interface Subscription {
   firstMonthAmount?: number;
   firstMonthCurrency?: string;
   autoRenew?: boolean;
+  hasUsedTrial?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -794,3 +847,12 @@ export type AnalyticsEventType =
   | "brand_click"
   | "team_social_click"
   | "collaboration_click";
+
+/** Creator recommendations. Price is nullable integer paise, never floating-point money. */
+export interface CreatorProduct {
+  id: string;
+  name: string;
+  imageUrl: string;
+  pricePaise: number | null;
+  productUrl: string;
+}

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Users,
-  Layers,
   Plus,
   ArrowRight,
   ExternalLink,
@@ -14,22 +13,24 @@ import {
   Film,
   Edit2,
   ChevronRight,
-  Copy,
   Briefcase,
   Eye,
   MousePointerClick,
-  BarChart3,
+  ShoppingBag,
+  Link2,
+  Star,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { formatCount, formatSyncDate } from "@/utils/format";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
-import { canCreateSeries, getPlanQuota } from "@/services/subscriptionLimits";
+import { canCreateSeries, canAddProduct, getPlanQuota } from "@/services/subscriptionLimits";
 import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
 import { reviewsRepository, customLinksRepository } from "@/repositories/localRepository";
-import { copyToClipboard } from "@/lib/copyToClipboard";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { MediaKitPackage, CreatorReview, CustomLink, Episode } from "@/types";
+import { ProductImage, formatProductPrice } from "@/components/products/ProductImage";
+import { ProductService } from "@/services/ProductService";
+import { MediaKitPackage, CreatorReview, CustomLink, Episode, CreatorProduct } from "@/types";
 
 type DashboardAnalytics = {
   profileViews: number;
@@ -37,6 +38,16 @@ type DashboardAnalytics = {
   episodeClicks: number;
   topTargets: { event_type: string; event_target: string | null; clicks: number }[];
 };
+
+function safeHostname(urlStr?: string): string {
+  if (!urlStr) return "";
+  try {
+    const raw = /^https?:\/\//i.test(urlStr.trim()) ? urlStr.trim() : `https://${urlStr.trim()}`;
+    return new URL(raw).hostname.replace(/^www\./, "");
+  } catch {
+    return urlStr;
+  }
+}
 
 // Smooth count-up animation hook for metric reveals
 function useCountUp(target: number, durationMs = 800, delayMs = 150): number {
@@ -81,6 +92,7 @@ export default function DashboardOverviewPage() {
 
   const [isSyncing, setIsSyncing] = useState(false);
   const [packages, setPackages] = useState<MediaKitPackage[]>([]);
+  const [products, setProducts] = useState<CreatorProduct[]>([]);
   const [reviews] = useState<CreatorReview[]>(() => reviewsRepository.getAll());
   const [customLinks, setCustomLinks] = useState<CustomLink[]>(() => customLinksRepository.get());
   const [analytics, setAnalytics] = useState<DashboardAnalytics>({
@@ -92,7 +104,7 @@ export default function DashboardOverviewPage() {
 
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
-    type: "series" | "episode";
+    type: "series" | "episode" | "gig" | "product";
     seriesTitle?: string;
   }>({
     isOpen: false,
@@ -112,60 +124,66 @@ export default function DashboardOverviewPage() {
   const quota = getPlanQuota(planKey);
   const showQuotaPanel = planKey !== "early_access";
 
-  // Load packages, reviews, custom links & collaboration requests from local & DB
+  // Load packages, products, reviews, custom links & analytics from local & DB
   useEffect(() => {
+    const controller = new AbortController();
+
+    ProductService.list(controller.signal)
+      .then(setProducts)
+      .catch(() => {});
+
     const ident = profile.id || profile.email || profile.username;
     if (ident) {
       const query = profile.email
         ? `email=${encodeURIComponent(profile.email)}`
         : `username=${encodeURIComponent(profile.username || "")}`;
 
-      fetch(`/api/creator/custom-links?${query}`)
-        .then((r) => r.json())
-        .then((data) => {
-          if (data.success && Array.isArray(data.links)) {
-            setCustomLinks(data.links);
-            customLinksRepository.save(data.links);
+      fetch(`/api/creator/custom-links?${query}`, { signal: controller.signal })
+        .then((httpResponse) => httpResponse.json())
+        .then((apiResponse) => {
+          const links = apiResponse.data?.links || apiResponse.links;
+          if ((apiResponse.status === 1 || apiResponse.success) && Array.isArray(links)) {
+            setCustomLinks(links);
+            customLinksRepository.save(links);
           }
         })
-        .catch(() => { });
+        .catch(() => {});
 
-      const mkQuery = profile.id ? `creatorId=${encodeURIComponent(profile.id)}` : profile.email ? `email=${encodeURIComponent(profile.email)}` : `username=${encodeURIComponent(profile.username || "")}`;
-      fetch(`/api/creator/mediakit?${mkQuery}`)
-        .then((r) => r.json())
-        .then((data) => {
-          if (data.success && Array.isArray(data.packages)) {
-            setPackages(data.packages);
+      const mkQuery = profile.id
+        ? `creatorId=${encodeURIComponent(profile.id)}`
+        : profile.email
+        ? `email=${encodeURIComponent(profile.email)}`
+        : `username=${encodeURIComponent(profile.username || "")}`;
+
+      fetch(`/api/creator/mediakit?${mkQuery}`, { signal: controller.signal })
+        .then((httpResponse) => httpResponse.json())
+        .then((apiResponse) => {
+          const pkgs = apiResponse.data?.packages || apiResponse.packages;
+          if ((apiResponse.status === 1 || apiResponse.success) && Array.isArray(pkgs)) {
+            setPackages(pkgs);
           }
         })
-        .catch(() => { });
+        .catch(() => {});
 
-      fetch(`/api/creator/analytics?${query}&period=30d`)
+      fetch(`/api/creator/analytics?${query}&period=30d`, { signal: controller.signal })
         .then((r) => r.json())
-        .then((data) => {
-          if (data.success) {
+        .then((apiResponse) => {
+          const metrics = apiResponse.data?.metrics || apiResponse.metrics;
+          const topTargets = apiResponse.data?.topTargets || apiResponse.topTargets;
+          if (apiResponse.status === 1 || apiResponse.success) {
             setAnalytics({
-              profileViews: Number(data.metrics?.profileViews || 0),
-              uniqueVisitors: Number(data.metrics?.uniqueVisitors || 0),
-              episodeClicks: Number(data.metrics?.episodeClicks || 0),
-              topTargets: Array.isArray(data.topTargets) ? data.topTargets : [],
+              profileViews: Number(metrics?.profileViews || 0),
+              uniqueVisitors: Number(metrics?.uniqueVisitors || 0),
+              episodeClicks: Number(metrics?.episodeClicks || 0),
+              topTargets: Array.isArray(topTargets) ? topTargets : [],
             });
           }
         })
-        .catch(() => { });
+        .catch(() => {});
     }
-  }, [profile]);
 
-  const handleCopy = async () => {
-    const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
-    const fullUrl = `${origin}/${handleStr}`;
-    const success = await copyToClipboard(fullUrl);
-    if (success) {
-      showToast("Profile link copied! ✨");
-    } else {
-      showToast("Could not copy link", "error");
-    }
-  };
+    return () => controller.abort();
+  }, [profile]);
 
   async function handleRefreshStats() {
     setIsSyncing(true);
@@ -188,6 +206,14 @@ export default function DashboardOverviewPage() {
       router.push("/dashboard/series");
     }
   }, [planKey, router, series]);
+
+  const handleAddProductClick = useCallback(() => {
+    if (!canAddProduct(products.length, planKey)) {
+      setModalState({ isOpen: true, type: "product" });
+    } else {
+      router.push("/dashboard/products");
+    }
+  }, [planKey, router, products.length]);
 
   // Social account count
   const connectedSocialsCount = useMemo(() => {
@@ -212,15 +238,17 @@ export default function DashboardOverviewPage() {
     const hasSocials = connectedSocialsCount > 0;
     const hasCustomLinks = customLinks.length > 0;
     const hasSeries = series.length > 0;
+    const hasProducts = products.length > 0;
     const hasPackages = packages.length > 0;
     const hasReviews = reviews.length > 0;
 
     const items = [
       { id: "profile", label: "Profile details", completed: hasProfileDetails, link: "/dashboard/profile" },
-      { id: "socials", label: "Connected social channel", completed: hasSocials, link: "/dashboard/socials" },
-      { id: "links", label: "Important links", completed: hasCustomLinks, link: "/dashboard/links" },
-      { id: "series", label: "Series", completed: hasSeries, link: "/dashboard/series" },
-      { id: "services", label: "Collab packages", completed: hasPackages, link: "/dashboard/mediakit" },
+      { id: "socials", label: "Connected socials", completed: hasSocials, link: "/dashboard/socials" },
+      { id: "links", label: "Bio links", completed: hasCustomLinks, link: "/dashboard/links" },
+      { id: "series", label: "Content series", completed: hasSeries, link: "/dashboard/series" },
+      { id: "products", label: "Shop products", completed: hasProducts, link: "/dashboard/products" },
+      { id: "services", label: "Collab rates", completed: hasPackages, link: "/dashboard/mediakit" },
       { id: "reviews", label: "Client reviews", completed: hasReviews, link: "/dashboard/reviews" },
     ];
 
@@ -228,7 +256,7 @@ export default function DashboardOverviewPage() {
     const percentage = Math.round((completedCount / items.length) * 100);
 
     return { items, completedCount, totalCount: items.length, percentage };
-  }, [profile, connectedSocialsCount, customLinks, series, packages, reviews]);
+  }, [profile, connectedSocialsCount, customLinks, series, products, packages, reviews]);
 
   const animatedFanbase = useCountUp(totalAudience, 800, 150);
   const animatedPercentage = useCountUp(profileSteps.percentage, 800, 200);
@@ -258,6 +286,12 @@ export default function DashboardOverviewPage() {
       href: "/dashboard/series",
     },
     {
+      label: "Shop products",
+      current: products.length,
+      max: quota.maxProducts,
+      href: "/dashboard/products",
+    },
+    {
       label: "Custom links",
       current: customLinks.length,
       max: quota.maxCustomLinks,
@@ -277,57 +311,76 @@ export default function DashboardOverviewPage() {
     },
   ];
 
-  // Simplified Next Best Step recommendation
-  const nextStep = useMemo(() => {
-    if (packages.length === 0) {
-      return {
-        title: "Add your collab packages",
-        description: "Set up rates for brands, cafes, and shops wanting reels.",
-        ctaLabel: "Add Package →",
-        ctaHref: "/dashboard/mediakit",
-      };
-    }
-    if (series.length === 0) {
-      return {
-        title: "Create your first content series",
-        description: "Group your related reels and videos so followers can watch in order.",
-        ctaLabel: "Create Series →",
-        ctaHref: "/dashboard/series",
-        onClick: handleCreateSeriesClick,
-      };
-    }
-    if (totalEpisodesCount === 0) {
-      return {
-        title: "Add your first episode",
-        description: "Link your video episodes to bring your showcase playlist alive.",
-        ctaLabel: "Add Episode →",
-        ctaHref: "/dashboard/series",
-      };
-    }
-    if (reviews.length === 0) {
-      return {
-        title: "Request your first client review",
-        description: "Collect verified reviews from brands and clients you have worked with.",
-        ctaLabel: "Request Review →",
-        ctaHref: "/dashboard/reviews",
-      };
-    }
-    return {
-      title: "Share your public profile",
-      description: "Your creator profile is ready. Share your link in bio and pitch decks.",
-      ctaLabel: "View Profile →",
-      ctaHref: `/${handleStr}`,
-      isExternal: true,
-    };
-  }, [packages, series, totalEpisodesCount, reviews, handleStr, handleCreateSeriesClick]);
+
+  // Resolve "seriesId:episodeId" analytics targets to human-readable names.
+  const resolveTarget = (target: string | null) => {
+    if (!target) return "Series episode";
+    const [seriesId, episodeId] = target.split(":");
+    const s = series.find((item) => item.id === seriesId);
+    if (!s) return "Series episode";
+    const legacyEpisodes = (s as unknown as { episodes?: Episode[] }).episodes;
+    const eps = s.seasons?.flatMap((sn) => sn.episodes) || legacyEpisodes || [];
+    const ep = eps.find((e) => e.id === episodeId);
+    return ep ? `${s.title} · ${ep.title || `Episode ${ep.episodeNumber}`}` : s.title;
+  };
+  const topEpisodeTargets = analytics.topTargets.filter((item) => item.event_type === "episode_click").slice(0, 5);
+
+  const sectionTitle = "text-[15px] font-semibold text-[#0f172a]";
+  const quietLink = "inline-flex items-center gap-0.5 text-xs font-medium text-[#475569] hover:text-[#0f172a] transition-colors";
+  const primaryBtn = "h-9 px-3.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-white text-sm font-semibold inline-flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer";
+
+  // Trailer command metrics strip: 6 clickable summary cards with counts
+  const overview = [
+    {
+      label: "Total Fanbase",
+      value: formatCount(animatedFanbase),
+      sub: connectedSocialsCount > 0 ? `${connectedSocialsCount} connected` : "Connect socials",
+      href: "/dashboard/socials",
+      icon: Users,
+    },
+    {
+      label: "Content Series",
+      value: `${series.length}`,
+      sub: `${totalEpisodesCount} ${totalEpisodesCount === 1 ? "episode" : "episodes"}`,
+      href: "/dashboard/series",
+      icon: Film,
+    },
+    {
+      label: "Shop Products",
+      value: `${products.length}`,
+      sub: quota.maxProducts === Infinity ? "Unlimited max" : `${quota.maxProducts} allowed`,
+      href: "/dashboard/products",
+      icon: ShoppingBag,
+    },
+    {
+      label: "Collab Rates",
+      value: `${packages.length}`,
+      sub: `${activePackagesCount} active packages`,
+      href: "/dashboard/mediakit",
+      icon: Briefcase,
+    },
+    {
+      label: "Bio Links",
+      value: `${customLinks.length}`,
+      sub: "Active on profile",
+      href: "/dashboard/links",
+      icon: Link2,
+    },
+    {
+      label: "30d Views",
+      value: analytics.profileViews.toLocaleString("en-IN"),
+      sub: `${analytics.uniqueVisitors} visitors`,
+      href: "/dashboard/analytics",
+      icon: Eye,
+    },
+  ];
 
   return (
-    <div className="space-y-4 sm:space-y-4.5 w-full pb-6 text-left">
-
-      {/* 1. COMPACT PROFILE CARD */}
-      <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 shadow-xs space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
-          <div className="flex items-center gap-3 min-w-0 flex-1">
+    <div className="space-y-4 w-full pb-6 text-left">
+      {/* 1. CREATOR IDENTITY & PROFILE READINESS */}
+      <section className="rounded-xl border border-[#e2e8f0] bg-white p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <CreatorAvatar
               src={profile.photoDataUrl}
               name={displayName}
@@ -336,442 +389,408 @@ export default function DashboardOverviewPage() {
               fallbackBgClass="bg-[#f8fafc]"
             />
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-base font-semibold text-[#043084]">
-                  {displayName}
-                </h2>
-                {profile.isVerified && (
-                  <ShieldCheck className="h-4 w-4 shrink-0 text-[#043084]" />
-                )}
-                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#17845B] bg-[#EAF7F0] border border-[#17845B]/20 px-2 py-0.5 rounded-full shrink-0">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#17845B]" />
-                  Live
-                </span>
+              <div className="flex items-center gap-1.5">
+                <h1 className="truncate text-base font-semibold text-[#0f172a]">{displayName}</h1>
+                {profile.isVerified && <ShieldCheck className="h-4 w-4 shrink-0 text-[#043084]" />}
               </div>
-              <p className="text-xs text-[#475569] font-normal mt-0.5">
-                @{handleStr}
+              <p className="flex items-center gap-2 text-xs text-[#64748b]">
+                <span className="truncate font-medium">@{handleStr}</span>
+                <span className="inline-flex shrink-0 items-center gap-1 font-medium text-[#047857]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
+                  Live profile
+                </span>
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0 flex-wrap">
-            <Link
-              href="/dashboard/profile"
-              className="h-8.5 sm:h-9 px-3 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs font-medium text-[#043084] transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
-            >
-              <Edit2 className="h-3.5 w-3.5 text-[#64748b]" />
-              <span>Edit Profile</span>
-            </Link>
-            <button
-              type="button"
-              onClick={handleCopy}
-              className="h-8.5 sm:h-9 px-3 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs font-medium text-[#043084] transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
-            >
-              <Copy className="h-3.5 w-3.5 text-[#64748b]" />
-              <span>Copy Link</span>
-            </button>
+          <div className="flex items-center gap-2 shrink-0">
             <a
               href={`/${handleStr}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="h-8.5 sm:h-9 px-3 rounded-lg bg-[#043084] hover:bg-brand-hover text-xs font-medium text-white transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc]"
             >
-              <span>View Profile</span>
-              <ExternalLink className="h-3.5 w-3.5" />
+              <span>View live</span>
+              <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
             </a>
+            <Link
+              href="/dashboard/profile"
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc]"
+            >
+              <Edit2 className="h-3.5 w-3.5 text-[#64748b]" />
+              <span className="hidden sm:inline">Edit profile</span>
+              <span className="sm:hidden">Edit</span>
+            </Link>
           </div>
         </div>
 
-        <div className="pt-3 border-t border-[#e2e8f0] space-y-1.5">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-medium text-[#043084]">
-              Your profile is {animatedPercentage}% complete
-            </span>
-            <Link
-              href="/dashboard/profile"
-              className="font-medium text-xs text-[#043084] hover:underline inline-flex items-center gap-1"
-            >
-              <span>Complete profile</span>
-              <ArrowRight className="h-3 w-3" />
-            </Link>
-          </div>
-          <div className="w-full h-1.5 rounded-full bg-[#f8fafc] border border-[#e2e8f0] overflow-hidden">
+        {/* Readiness Bar */}
+        <div className="mt-3.5 flex items-center gap-3">
+          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#eef2f7]">
             <div
-              className="h-full bg-[#043084] rounded-full transition-all duration-700 ease-out"
+              className="h-full rounded-full bg-[#043084] transition-all duration-700 ease-out"
               style={{ width: isLoaded ? `${profileSteps.percentage}%` : "0%" }}
             />
           </div>
+          <span className="shrink-0 text-xs text-[#64748b]">
+            <span className="font-semibold text-[#0f172a] tabular-nums">{animatedPercentage}%</span> complete
+          </span>
+          {profileSteps.percentage < 100 && (
+            <Link href="/dashboard/profile" className={`${quietLink} shrink-0`}>
+              Finish <ChevronRight className="h-3.5 w-3.5" />
+            </Link>
+          )}
         </div>
       </section>
 
-      {/* 2. OVERVIEW (3 EQUAL CARDS) */}
-      <section className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        {/* Card 1: Total Fanbase */}
-        <div className="rounded-xl border border-[#e2e8f0] bg-white p-3.5 sm:p-4 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:shadow-sm flex flex-col justify-between space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs sm:text-sm font-medium text-[#64748b]">
-              Total Fanbase
-            </span>
-            <div className="flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={handleRefreshStats}
-                className="p-1 rounded-lg text-[#64748b] hover:text-[#043084] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
-                title={`Last synced: ${formatSyncDate(socials.updatedAt)}. Click to refresh.`}
-              >
-                <RefreshCw className={`h-3.5 w-3.5 ${isSyncing ? "animate-spin text-[#043084]" : ""}`} />
-              </button>
-              <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] flex items-center justify-center text-[#043084]">
-                <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              </div>
-            </div>
-          </div>
-          <div>
-            <p className="text-2xl sm:text-[28px] font-semibold text-[#043084] leading-none tracking-tight tabular-nums">
-              {formatCount(animatedFanbase)}
-            </p>
-            <p className="text-xs text-[#64748b] font-normal mt-1">
-              {connectedSocialsCount > 0
-                ? `${connectedSocialsCount} connected ${connectedSocialsCount === 1 ? "social" : "socials"}`
-                : "Connect your social platforms"}
-            </p>
-          </div>
-          <Link
-            href="/dashboard/socials"
-            className="text-xs font-medium text-[#043084] hover:underline inline-flex items-center gap-1 pt-0.5"
-          >
-            <span>View socials</span>
-            <ChevronRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-
-        {/* Card 2: Series */}
-        <div className="rounded-xl border border-[#e2e8f0] bg-white p-3.5 sm:p-4 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:shadow-sm flex flex-col justify-between space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs sm:text-sm font-medium text-[#64748b]">
-              Series
-            </span>
-            <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] flex items-center justify-center text-[#043084]">
-              <Layers className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            </div>
-          </div>
-          <div>
-            <p className="text-2xl sm:text-[28px] font-semibold text-[#043084] leading-none tracking-tight">
-              {series.length} {series.length === 1 ? "Series" : "Series"}
-            </p>
-            <p className="text-xs text-[#64748b] font-normal mt-1">
-              {totalEpisodesCount} {totalEpisodesCount === 1 ? "episode" : "episodes"}
-            </p>
-          </div>
-          <Link
-            href="/dashboard/series"
-            className="text-xs font-medium text-[#043084] hover:underline inline-flex items-center gap-1 pt-0.5"
-          >
-            <span>Manage series</span>
-            <ChevronRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-
-        {/* Card 3: Collab Packages */}
-        <div className="rounded-xl border border-[#e2e8f0] bg-white p-3.5 sm:p-4 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:shadow-sm flex flex-col justify-between space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs sm:text-sm font-medium text-[#64748b]">
-              Collabs
-            </span>
-            <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] flex items-center justify-center text-[#043084]">
-              <Briefcase className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            </div>
-          </div>
-          <div>
-            <p className="text-2xl sm:text-[28px] font-semibold text-[#043084] leading-none tracking-tight">
-              {packages.length} {packages.length === 1 ? "Package" : "Packages"}
-            </p>
-            <p className="text-xs text-[#64748b] font-normal mt-1">
-              {activePackagesCount} active collab {activePackagesCount === 1 ? "package" : "packages"}
-            </p>
-          </div>
-          <Link
-            href="/dashboard/mediakit"
-            className="text-xs font-medium text-[#043084] hover:underline inline-flex items-center gap-1 pt-0.5"
-          >
-            <span>Manage collabs</span>
-            <ChevronRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
+      {/* 2. TRAILER COMMAND STRIP — 6 Core Counts (Clickable at a glance) */}
+      <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 overflow-hidden rounded-xl border border-[#e2e8f0] bg-white divide-y sm:divide-y-0 divide-x divide-[#e2e8f0]">
+        {overview.map((item) => {
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.label}
+              href={item.href}
+              className="group min-w-0 p-3 sm:p-3.5 transition-colors hover:bg-[#f8fafc]"
+            >
+              <span className="flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-[#64748b] group-hover:text-[#043084] transition-colors">
+                <Icon className="h-3.5 w-3.5 text-[#94a3b8] group-hover:text-[#043084] shrink-0 transition-colors" />
+                <span className="truncate">{item.label}</span>
+              </span>
+              <span className="mt-1 block text-lg sm:text-xl font-bold leading-tight tracking-tight tabular-nums text-[#0f172a]">
+                {item.value}
+              </span>
+              <span className="mt-0.5 block truncate text-[10px] sm:text-[11px] text-[#64748b]">{item.sub}</span>
+            </Link>
+          );
+        })}
       </section>
+      <div className="-mt-2.5 flex justify-end">
+        <button
+          type="button"
+          onClick={handleRefreshStats}
+          className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] cursor-pointer"
+          title="Refresh follower counts"
+        >
+          <RefreshCw className={`h-3 w-3 ${isSyncing ? "animate-spin" : ""}`} />
+          Fanbase synced {formatSyncDate(socials.updatedAt)}
+        </button>
+      </div>
 
-      <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 shadow-xs space-y-3.5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748b] uppercase tracking-wider">
-              <BarChart3 className="h-3.5 w-3.5 text-[#043084]" />
-              Public analytics
-            </span>
-            <h3 className="mt-0.5 text-base font-semibold text-[#043084]">
-              Last 30 days
-            </h3>
-            <p className="text-xs text-[#475569]">
-              Counts only public profile opens and public series part clicks.
-            </p>
-          </div>
-          <Link
-            href={`/${handleStr}`}
-            target="_blank"
-            className="h-8.5 px-3 rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-xs font-semibold text-[#043084] transition-all hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-[#f1f5f9] inline-flex items-center gap-1.5 self-start sm:self-center"
-          >
-            <span>Open public page</span>
-            <ExternalLink className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3 sm:p-3.5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-[#64748b]">Profile opens</span>
-              <Eye className="h-3.5 w-3.5 text-[#043084]" />
-            </div>
-            <p className="mt-1.5 text-xl sm:text-2xl font-semibold text-[#043084] tabular-nums">
-              {analytics.profileViews.toLocaleString("en-IN")}
-            </p>
-            <p className="mt-0.5 text-[11px] text-[#64748b]">
-              Public profile link opened
-            </p>
-          </div>
-          <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3 sm:p-3.5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-[#64748b]">Unique visitors</span>
-              <Users className="h-3.5 w-3.5 text-[#043084]" />
-            </div>
-            <p className="mt-1.5 text-xl sm:text-2xl font-semibold text-[#043084] tabular-nums">
-              {analytics.uniqueVisitors.toLocaleString("en-IN")}
-            </p>
-            <p className="mt-0.5 text-[11px] text-[#64748b]">
-              Approx browser visitors
-            </p>
-          </div>
-          <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3 sm:p-3.5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-[#64748b]">Series part clicks</span>
-              <MousePointerClick className="h-3.5 w-3.5 text-[#043084]" />
-            </div>
-            <p className="mt-1.5 text-xl sm:text-2xl font-semibold text-[#043084] tabular-nums">
-              {analytics.episodeClicks.toLocaleString("en-IN")}
-            </p>
-            <p className="mt-0.5 text-[11px] text-[#64748b]">
-              Public series episode links clicked
-            </p>
-          </div>
-        </div>
-
-        {analytics.topTargets.length > 0 && (
-          <div className="rounded-xl border border-[#e2e8f0] overflow-hidden">
-            <div className="flex items-center justify-between bg-[#f8fafc] px-3.5 py-2 border-b border-[#e2e8f0]">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#64748b]">
-                Top clicked series parts
+      {/* 3. SHOWCASE TRAILER GRID: Series & Shop Products (Side-by-Side on Desktop) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Left: Content Series */}
+        <section className="flex flex-col rounded-xl border border-[#e2e8f0] bg-white overflow-hidden">
+          <div className="flex items-center justify-between border-b border-[#e2e8f0] px-4 py-3">
+            <div className="flex items-center gap-2">
+              <Film className="h-4 w-4 text-[#043084]" />
+              <h2 className={sectionTitle}>Content Series</h2>
+              <span className="rounded-full bg-[#f1f5f9] px-2 py-0.5 text-[11px] font-bold text-[#475569]">
+                {series.length}
               </span>
             </div>
-            <div className="divide-y divide-[#e2e8f0]">
-              {analytics.topTargets
-                .filter((item) => item.event_type === "episode_click")
-                .slice(0, 5)
-                .map((item, index) => (
-                  <div key={`${item.event_target}-${index}`} className="flex items-center justify-between gap-3 px-3.5 py-2 text-xs">
-                    <span className="min-w-0 truncate font-semibold text-[#043084]">
-                      {item.event_target || "Series part"}
+            <Link href="/dashboard/series" className={quietLink}>
+              Manage all <ChevronRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+
+          <div className="flex-1 divide-y divide-[#e2e8f0]">
+            {series.length === 0 ? (
+              <div className="p-6">
+                <EmptyState
+                  icon={<Film className="h-6 w-6" />}
+                  title="No content series yet"
+                  description="Group your reels and videos so followers can watch sequentially."
+                  action={
+                    <button type="button" onClick={handleCreateSeriesClick} className={primaryBtn}>
+                      <Plus className="h-4 w-4" />
+                      <span>Create Series</span>
+                    </button>
+                  }
+                />
+              </div>
+            ) : (
+              series.slice(0, 3).map((s) => {
+                const legacyEpisodes = (s as unknown as { episodes?: Episode[] }).episodes;
+                const eps = s.seasons?.flatMap((sn) => sn.episodes) || legacyEpisodes || [];
+                const genre = (s.genre || "").split(",")[0].trim();
+                return (
+                  <Link
+                    key={s.id}
+                    href="/dashboard/series"
+                    className="flex items-center gap-3 px-3.5 py-2.5 transition-colors hover:bg-[#f8fafc]"
+                  >
+                    {s.posterDataUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={s.posterDataUrl}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        className="h-10 w-10 shrink-0 rounded-lg border border-[#e2e8f0] object-cover"
+                      />
+                    ) : (
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                        <Film className="h-4 w-4" />
+                      </span>
+                    )}
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-xs sm:text-sm font-semibold text-[#0f172a]">{s.title}</span>
+                      <span className="block truncate text-[11px] text-[#64748b]">
+                        {eps.length} {eps.length === 1 ? "episode" : "episodes"}{genre ? ` · ${genre}` : ""}
+                      </span>
                     </span>
-                    <span className="shrink-0 rounded-full bg-[#043084]/[0.08] border border-[#043084]/10 px-2 py-0.5 text-[11px] font-bold text-[#043084]">
-                      {Number(item.clicks || 0).toLocaleString("en-IN")} clicks
-                    </span>
-                  </div>
-                ))}
+                    <ChevronRight className="h-4 w-4 shrink-0 text-[#cbd5e1]" />
+                  </Link>
+                );
+              })
+            )}
+          </div>
+
+          {series.length > 0 && (
+            <div className="border-t border-[#f1f5f9] bg-[#f8fafc] px-3.5 py-2 flex items-center justify-between">
+              <span className="text-[11px] text-[#64748b]">
+                {quota.maxSeries === Infinity
+                  ? "Unlimited series allowed"
+                  : `${Math.max(0, quota.maxSeries - series.length)} slots left in ${quota.name}`}
+              </span>
+              <button
+                type="button"
+                onClick={handleCreateSeriesClick}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[#043084] hover:underline cursor-pointer"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                <span>New series</span>
+              </button>
             </div>
+          )}
+        </section>
+
+        {/* Right: Shop Products */}
+        <section className="flex flex-col rounded-xl border border-[#e2e8f0] bg-white overflow-hidden">
+          <div className="flex items-center justify-between border-b border-[#e2e8f0] px-4 py-3">
+            <div className="flex items-center gap-2">
+              <ShoppingBag className="h-4 w-4 text-[#043084]" />
+              <h2 className={sectionTitle}>Shop Products</h2>
+              <span className="rounded-full bg-[#f1f5f9] px-2 py-0.5 text-[11px] font-bold text-[#475569]">
+                {products.length}
+              </span>
+            </div>
+            <Link href="/dashboard/products" className={quietLink}>
+              Manage all <ChevronRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+
+          <div className="flex-1 divide-y divide-[#e2e8f0]">
+            {products.length === 0 ? (
+              <div className="p-6">
+                <EmptyState
+                  icon={<ShoppingBag className="h-6 w-6" />}
+                  title="No products yet"
+                  description="Recommend gear, ebooks, or affiliate links to your followers."
+                  action={
+                    <button type="button" onClick={handleAddProductClick} className={primaryBtn}>
+                      <Plus className="h-4 w-4" />
+                      <span>Add Product</span>
+                    </button>
+                  }
+                />
+              </div>
+            ) : (
+              products.slice(0, 3).map((prod) => (
+                <Link
+                  key={prod.id}
+                  href="/dashboard/products"
+                  className="flex items-center gap-3 px-3.5 py-2.5 transition-colors hover:bg-[#f8fafc]"
+                >
+                  <ProductImage
+                    src={prod.imageUrl}
+                    name={prod.name}
+                    className="h-10 w-10 shrink-0 rounded-lg border border-[#e2e8f0]"
+                  />
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-xs sm:text-sm font-semibold text-[#0f172a]">{prod.name}</span>
+                    <span className="block truncate text-[11px] text-[#64748b]">
+                      {prod.pricePaise !== null ? (
+                        <span className="font-semibold text-[#043084] mr-1.5">
+                          {formatProductPrice(prod.pricePaise)}
+                        </span>
+                      ) : null}
+                      <span>{safeHostname(prod.productUrl)}</span>
+                    </span>
+                  </span>
+                  <ChevronRight className="h-4 w-4 shrink-0 text-[#cbd5e1]" />
+                </Link>
+              ))
+            )}
+          </div>
+
+          {products.length > 0 && (
+            <div className="border-t border-[#f1f5f9] bg-[#f8fafc] px-3.5 py-2 flex items-center justify-between">
+              <span className="text-[11px] text-[#64748b]">
+                {quota.maxProducts === Infinity
+                  ? "Unlimited products in shop"
+                  : `${Math.max(0, quota.maxProducts - products.length)} product slots left in ${quota.name}`}
+              </span>
+              <button
+                type="button"
+                onClick={handleAddProductClick}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[#043084] hover:underline cursor-pointer"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                <span>Add product</span>
+              </button>
+            </div>
+          )}
+        </section>
+      </div>
+
+      {/* 4. MONETIZATION & TRUST STRIP: Collabs, Bio Links & Reviews */}
+      <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <Link
+          href="/dashboard/mediakit"
+          className="flex items-center justify-between rounded-xl border border-[#e2e8f0] bg-white p-3.5 transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] group"
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#043084]/[0.08] text-[#043084]">
+              <Briefcase className="h-4 w-4" />
+            </span>
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-[#0f172a] truncate group-hover:text-[#043084] transition-colors">
+                Collab Packages
+              </p>
+              <p className="text-[11px] text-[#64748b] truncate">
+                {activePackagesCount} active {activePackagesCount === 1 ? "rate" : "rates"} · Media kit
+              </p>
+            </div>
+          </div>
+          <ChevronRight className="h-4 w-4 text-[#cbd5e1] group-hover:text-[#043084] shrink-0 transition-colors" />
+        </Link>
+
+        <Link
+          href="/dashboard/links"
+          className="flex items-center justify-between rounded-xl border border-[#e2e8f0] bg-white p-3.5 transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] group"
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#043084]/[0.08] text-[#043084]">
+              <Link2 className="h-4 w-4" />
+            </span>
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-[#0f172a] truncate group-hover:text-[#043084] transition-colors">
+                Custom Links
+              </p>
+              <p className="text-[11px] text-[#64748b] truncate">
+                {customLinks.length} active on bio profile
+              </p>
+            </div>
+          </div>
+          <ChevronRight className="h-4 w-4 text-[#cbd5e1] group-hover:text-[#043084] shrink-0 transition-colors" />
+        </Link>
+
+        <Link
+          href="/dashboard/reviews"
+          className="flex items-center justify-between rounded-xl border border-[#e2e8f0] bg-white p-3.5 transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] group"
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+              <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
+            </span>
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-[#0f172a] truncate group-hover:text-[#043084] transition-colors">
+                Client Reviews
+              </p>
+              <p className="text-[11px] text-[#64748b] truncate">
+                {reviews.length} verified testimonials
+              </p>
+            </div>
+          </div>
+          <ChevronRight className="h-4 w-4 text-[#cbd5e1] group-hover:text-[#043084] shrink-0 transition-colors" />
+        </Link>
+      </section>
+
+
+      {/* 6. ANALYTICS — 30-Day Performance Trailer */}
+      <section className="rounded-xl border border-[#e2e8f0] bg-white">
+        <div className="flex items-center justify-between px-4 pt-3.5">
+          <h2 className={sectionTitle}>
+            Last 30 days <span className="text-xs font-normal text-[#64748b]">· public page performance</span>
+          </h2>
+          <Link href="/dashboard/analytics" className={quietLink}>
+            Analytics <ChevronRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+        <div className="grid grid-cols-3 gap-2 px-4 py-3">
+          {[
+            { label: "Profile opens", value: analytics.profileViews, icon: Eye },
+            { label: "Unique visitors", value: analytics.uniqueVisitors, icon: Users },
+            { label: "Episode clicks", value: analytics.episodeClicks, icon: MousePointerClick },
+          ].map((m) => (
+            <div key={m.label} className="min-w-0">
+              <p className="flex items-center gap-1 truncate text-[11px] sm:text-xs text-[#64748b]">
+                <m.icon className="hidden sm:block h-3.5 w-3.5 text-[#94a3b8]" />
+                {m.label}
+              </p>
+              <p className="text-lg sm:text-xl font-bold tabular-nums text-[#0f172a]">{m.value.toLocaleString("en-IN")}</p>
+            </div>
+          ))}
+        </div>
+        {topEpisodeTargets.length > 0 && (
+          <div className="border-t border-[#e2e8f0] px-4 py-2.5">
+            <p className="mb-1 text-[11px] font-medium uppercase tracking-wide text-[#94a3b8]">Top clicked episodes</p>
+            <ul className="space-y-1">
+              {topEpisodeTargets.map((item, index) => {
+                const clicks = Number(item.clicks || 0);
+                return (
+                  <li key={`${item.event_target}-${index}`} className="flex items-center justify-between gap-3 text-xs">
+                    <span className="min-w-0 truncate text-[#334155]">{resolveTarget(item.event_target)}</span>
+                    <span className="shrink-0 tabular-nums text-[#64748b]">
+                      {clicks.toLocaleString("en-IN")} {clicks === 1 ? "click" : "clicks"}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         )}
       </section>
 
+      {/* 7. PLAN USAGE — Complete 6-feature Quota Bar */}
       {showQuotaPanel && (
-        <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 shadow-xs space-y-3.5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <span className="text-xs font-semibold text-[#64748b] uppercase tracking-wider">
-                {quota.name} usage
-              </span>
-              <h3 className="mt-0.5 text-base font-semibold text-[#043084]">
-                Your plan quota
-              </h3>
-              <p className="text-xs text-[#475569]">
-                See what you have used and what is still available in your current plan.
-              </p>
-            </div>
-            <Link
-              href="/dashboard/subscription"
-              className="h-8.5 px-3 rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-xs font-semibold text-[#043084] transition-all hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-[#f1f5f9] inline-flex items-center gap-1.5 self-start sm:self-center"
-            >
-              <span>View plan</span>
-              <ChevronRight className="h-3.5 w-3.5" />
+        <section className="rounded-xl border border-[#e2e8f0] bg-white">
+          <div className="flex items-center justify-between px-4 pt-3.5">
+            <h2 className={sectionTitle}>
+              {quota.name} plan <span className="text-xs font-normal text-[#64748b]">· resource limits</span>
+            </h2>
+            <Link href="/dashboard/subscription" className={quietLink}>
+              View plan <ChevronRight className="h-3.5 w-3.5" />
             </Link>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-2.5">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-3 px-4 py-3 sm:grid-cols-3 lg:grid-cols-6">
             {quotaItems.map((item) => {
               const percentage = item.max === Infinity ? 0 : Math.min(100, Math.round((item.current / item.max) * 100));
               const isNearLimit = item.max !== Infinity && percentage >= 80;
-
               return (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3 transition-all hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-white hover:shadow-xs"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <p className="text-xs font-semibold text-[#64748b]">{item.label}</p>
-                      <p className="mt-0.5 text-base font-semibold tabular-nums text-[#043084]">
-                        {item.current.toLocaleString("en-IN")}
-                        <span className="text-xs font-medium text-[#64748b]">
-                          {" "}of {formatQuotaLimit(item.max)}
-                        </span>
-                      </p>
-                    </div>
-                    <span className={`rounded-full px-1.5 py-0.2 text-[10px] font-bold ${isNearLimit
-                      ? "bg-amber-50 text-amber-700 border border-amber-200"
-                      : "bg-[#043084]/[0.08] text-[#043084] border border-[#043084]/15"
-                      }`}>
-                      {formatQuotaRemaining(item.current, item.max)}
+                <Link key={item.label} href={item.href} className="group min-w-0">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="truncate text-xs text-[#64748b] group-hover:text-[#0f172a] transition-colors">{item.label}</span>
+                    <span className="shrink-0 text-xs tabular-nums text-[#0f172a]">
+                      <span className="font-semibold">{item.current.toLocaleString("en-IN")}</span>
+                      <span className="text-[#94a3b8]">/{formatQuotaLimit(item.max)}</span>
                     </span>
                   </div>
-                  <div className="mt-2.5 h-1.5 rounded-full bg-white border border-[#e2e8f0] overflow-hidden">
+                  <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-[#eef2f7]">
                     <div
-                      className={`h-full rounded-full transition-all duration-700 ${isNearLimit ? "bg-amber-500" : "bg-[#043084]"}`}
+                      className={`h-full rounded-full transition-all duration-700 ${isNearLimit ? "bg-[#F59E0B]" : "bg-[#043084]"}`}
                       style={{ width: item.max === Infinity ? "100%" : `${percentage}%` }}
                     />
                   </div>
+                  <span className="sr-only">{formatQuotaRemaining(item.current, item.max)}</span>
                 </Link>
               );
             })}
           </div>
         </section>
       )}
-
-      {/* 3. NEXT BEST STEP (COMPACT & FOCUSED) */}
-      <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 shadow-xs space-y-2.5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="space-y-0.5">
-            <span className="text-xs font-semibold text-[#64748b] uppercase tracking-wider">
-              Next best step
-            </span>
-            <h3 className="text-base font-semibold text-[#043084]">
-              {nextStep.title}
-            </h3>
-            <p className="text-xs text-[#475569] font-normal">
-              {nextStep.description}
-            </p>
-          </div>
-
-          <div className="shrink-0 self-start sm:self-center">
-            {nextStep.isExternal ? (
-              <a
-                href={nextStep.ctaHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="h-9 px-3.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-white text-xs font-medium inline-flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
-              >
-                <span>{nextStep.ctaLabel}</span>
-                <ExternalLink className="h-3.5 w-3.5" />
-              </a>
-            ) : nextStep.onClick ? (
-              <button
-                type="button"
-                onClick={nextStep.onClick}
-                className="h-9 px-3.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-white text-xs font-medium inline-flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
-              >
-                <span>{nextStep.ctaLabel}</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </button>
-            ) : (
-              <Link
-                href={nextStep.ctaHref}
-                className="h-9 px-3.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-white text-xs font-medium inline-flex items-center gap-1.5 transition-colors shadow-xs"
-              >
-                <span>{nextStep.ctaLabel}</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* 4. RECENT SERIES (MAX 3 ITEMS + VIEW ALL LINK) */}
-      <section className="space-y-2.5">
-        <div className="flex items-center justify-between px-0.5">
-          <h3 className="text-base font-semibold text-[#043084]">
-            Recent series
-          </h3>
-          <Link
-            href="/dashboard/series"
-            className="text-xs font-medium text-[#043084] hover:underline inline-flex items-center gap-1"
-          >
-            <span>View all series</span>
-            <ChevronRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-
-        {series.length === 0 ? (
-          <EmptyState
-            icon={<Film className="h-7 w-7" />}
-            title="Start your first content series"
-            description="Organize related reels and videos so followers can watch in order."
-            action={
-              <button
-                type="button"
-                onClick={handleCreateSeriesClick}
-                className="inline-flex items-center gap-2 rounded-[10px] bg-[#043084] px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-md cursor-pointer"
-              >
-                <Plus className="h-4 w-4" />
-                <span>Create Your First Series</span>
-              </button>
-            }
-          />
-        ) : (
-          <div className="rounded-xl border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0] shadow-xs overflow-hidden">
-            {series.slice(0, 3).map((s) => {
-              const legacyEpisodes = (s as unknown as { episodes?: Episode[] }).episodes;
-              const eps = s.seasons?.flatMap((sn) => sn.episodes) || legacyEpisodes || [];
-              const platformLabel = s.genre || "Web Series";
-              return (
-                <div
-                  key={s.id}
-                  className="px-4 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#f1f5f9] transition-colors text-left"
-                >
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[#043084] shrink-0">
-                      <Film className="h-4 w-4" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h4 className="text-xs sm:text-sm font-semibold text-[#043084] truncate">
-                        {s.title}
-                      </h4>
-                      <p className="text-[11px] text-[#64748b] font-normal mt-0.5">
-                        {eps.length} {eps.length === 1 ? "episode" : "episodes"} • {platformLabel}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 shrink-0">
-                    <Link
-                      href="/dashboard/series"
-                      className="text-xs font-medium text-[#043084] hover:underline inline-flex items-center gap-1"
-                    >
-                      <span>Manage</span>
-                      <ChevronRight className="h-3.5 w-3.5" />
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
 
       {/* Limit Reached Modal Popup */}
       <LimitReachedModal

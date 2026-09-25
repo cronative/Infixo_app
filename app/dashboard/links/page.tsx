@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Link as LinkIcon, ExternalLink, Sparkles, ShieldCheck } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { CustomLinksManager } from "@/components/socials/CustomLinksManager";
 import { useCreator } from "@/contexts/CreatorContext";
 import { customLinksRepository } from "@/repositories/localRepository";
@@ -33,93 +33,66 @@ export default function DashboardCustomLinksPage() {
   const percentage = isUnlimited ? 15 : Math.min(100, Math.round((linksCount / maxLinks) * 100));
 
   return (
-    <div className="space-y-4 sm:space-y-4.5 w-full pb-8 text-left">
+    <div className="space-y-3.5 w-full pb-8 text-left">
       {/* 1. Page Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#e2e8f0] pb-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="font-display text-xl sm:text-2xl font-black tracking-tight text-slate-900">
-              Custom Links
-            </h1>
-            <span className="inline-flex items-center gap-1 rounded-full bg-[#043084]/10 px-2.5 py-0.5 text-xs font-bold text-[#043084]">
-              <LinkIcon className="h-3 w-3" />
-              <span>{linksCount} {linksCount === 1 ? "Link" : "Links"}</span>
-            </span>
-          </div>
-          <p className="mt-1 text-xs sm:text-sm font-medium text-slate-500">
-            Add custom links, affiliate stores, brand deals &amp; social profiles to your Inflixo bio.
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
+            Links
+          </h1>
+          <p className="mt-0.5 text-xs sm:text-[13px] text-[#64748b]">
+            Custom links, affiliate stores, brand deals and folders on your Inflixo bio.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-1 shrink-0">
           <Link
             href="/dashboard/socials"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#043084] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-xs font-medium text-[#475569] transition-colors hover:bg-[#f1f5f9] hover:text-[#0f172a]"
           >
-            <span>Social Accounts</span>
+            <span>Social accounts</span>
           </Link>
           <Link
             href={`/${handleStr}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#043084] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc]"
           >
-            <span>Live Profile</span>
-            <ExternalLink className="h-3.5 w-3.5" />
+            <span>Live profile</span>
+            <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
           </Link>
         </div>
       </div>
 
-      {/* 2. Quota & Plan Status Card */}
-      <div className="w-full rounded-2xl border border-slate-200/80 bg-white p-4 sm:p-5 shadow-2xs">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#043084]/10 text-[#043084]">
-              <Sparkles className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-slate-900 sm:text-sm">
-                {isUnlimited ? (
-                  <span>Unlimited Custom Links Available</span>
-                ) : (
-                  <span>
-                    {linksCount} of {maxLinks} custom links active
-                  </span>
-                )}
-              </p>
-              <p className="text-[11px] font-medium text-slate-500">
-                {isUnlimited
-                  ? "Your current creator plan allows unlimited links and folders."
-                  : linksCount >= maxLinks
-                  ? "You have reached your current plan limit. Upgrade to add more."
-                  : `${maxLinks - linksCount} link slots remaining on your plan.`}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
-            <span className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-bold text-slate-700">
-              <ShieldCheck className="h-3.5 w-3.5 text-[#043084]" />
-              <span>{subscription?.planName || "Pro Plan"}</span>
+      {/* 2. Plan usage — one compact row */}
+      <div className="rounded-xl border border-[#e2e8f0] bg-white px-3 sm:px-4 py-2.5">
+        <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+          <p className="text-[#64748b]">
+            <span className="font-semibold text-[#0f172a]">
+              {isUnlimited ? "Unlimited links" : `${linksCount} / ${maxLinks} links`}
             </span>
-            {linksCount >= maxLinks && !isUnlimited && (
-              <Link
-                href="/dashboard/subscription"
-                className="inline-flex items-center gap-1 rounded-lg bg-[#043084] px-3 py-1 text-xs font-bold text-white shadow-2xs hover:bg-[#032363] transition-colors"
-              >
-                <span>Upgrade</span>
-              </Link>
-            )}
-          </div>
+            <span aria-hidden="true"> · </span>
+            {subscription?.planName || "Pro Plan"}
+            <span aria-hidden="true"> · </span>
+            {isUnlimited
+              ? "unlimited links and folders"
+              : linksCount >= maxLinks
+                ? "plan limit reached"
+                : `${maxLinks - linksCount} ${maxLinks - linksCount === 1 ? "slot" : "slots"} left`}
+          </p>
+          {linksCount >= maxLinks && !isUnlimited && (
+            <Link
+              href="/dashboard/subscription"
+              className="inline-flex items-center gap-1 rounded-lg border border-[#043084]/30 px-2.5 py-1 text-xs font-semibold text-[#043084] hover:bg-[#043084]/[0.06] transition-colors"
+            >
+              Upgrade
+            </Link>
+          )}
         </div>
-
-        {/* Progress bar */}
         {!isUnlimited && (
-          <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+          <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-[#eef2f7]">
             <div
-              className={`h-full transition-all duration-300 ${
-                percentage >= 100 ? "bg-rose-500" : percentage >= 80 ? "bg-amber-500" : "bg-[#043084]"
-              }`}
+              className={`h-full rounded-full transition-all duration-300 ${percentage >= 100 ? "bg-rose-500" : percentage >= 80 ? "bg-amber-500" : "bg-[#043084]"}`}
               style={{ width: `${percentage}%` }}
             />
           </div>

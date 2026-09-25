@@ -1,39 +1,22 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureAnalyticsTable } from "@/lib/analyticsDb";
 import { ensureRequestsTable } from "@/lib/requestsDb";
+import { requireCreator } from "@/lib/creatorAuth";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
-async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
-  if (!lookupVal) return null;
-  try {
-    const [rows]: any = await db.query(
-      "SELECT id, email FROM creators WHERE id = ? OR email = ? OR username = ? LIMIT 1",
-      [lookupVal, lookupVal, lookupVal]
-    );
-    if (rows && rows.length > 0) {
-      return { id: rows[0].id, email: rows[0].email };
-    }
-  } catch {}
-  return null;
-}
-
-// GET /api/creator/analytics?creatorId=... or ?email=...
+// GET /api/creator/analytics?period=...
 export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const lookupVal = searchParams.get("creatorId") || searchParams.get("email") || searchParams.get("username");
-    const period = searchParams.get("period") || "30d"; // 7d or 30d
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
 
-    if (!lookupVal) {
-      return NextResponse.json({ error: "Creator identifier required" }, { status: 400 });
-    }
+    const { searchParams } = new URL(req.url);
+    const period = searchParams.get("period") || "30d"; // 7d or 30d
 
     await ensureAnalyticsTable();
     await ensureRequestsTable();
 
-    const creator = await resolveCreatorId(lookupVal);
-    const targetId = creator ? creator.id : lookupVal;
-
+    const targetId = auth.creator.id;
     const days = period === "7d" ? 7 : 30;
 
     // 1. Total event counts by type
@@ -85,31 +68,32 @@ export async function GET(req: Request) {
       [targetId, days]
     );
 
-    return NextResponse.json({
-      success: true,
+    const metrics = {
+      profileViews: counts["profile_view"]?.total || 0,
+      uniqueVisitors: counts["profile_view"]?.unique || 0,
+      socialClicks: counts["social_click"]?.total || 0,
+      seriesViews: counts["series_view"]?.total || 0,
+      episodeClicks: counts["episode_click"]?.total || 0,
+      serviceViews: counts["service_view"]?.total || 0,
+      serviceClicks: counts["service_click"]?.total || 0,
+      workWithMeClicks: counts["work_with_me_click"]?.total || 0,
+      collaborationSubmissions: counts["collaboration_submit"]?.total || Number(reqCounts[0]?.total_inquiries || 0),
+      newCollaborationInquiries: Number(reqCounts[0]?.new_inquiries || 0),
+      mediaKitViews: counts["media_kit_view"]?.total || 0,
+      brandClicks: counts["brand_click"]?.total || 0,
+      teamSocialClicks: counts["team_social_click"]?.total || 0,
+      collaborationClicks: counts["collaboration_click"]?.total || 0,
+    };
+
+    return apiSuccess({
       period,
       days,
-      metrics: {
-        profileViews: counts["profile_view"]?.total || 0,
-        uniqueVisitors: counts["profile_view"]?.unique || 0,
-        socialClicks: counts["social_click"]?.total || 0,
-        seriesViews: counts["series_view"]?.total || 0,
-        episodeClicks: counts["episode_click"]?.total || 0,
-        serviceViews: counts["service_view"]?.total || 0,
-        serviceClicks: counts["service_click"]?.total || 0,
-        workWithMeClicks: counts["work_with_me_click"]?.total || 0,
-        collaborationSubmissions: counts["collaboration_submit"]?.total || Number(reqCounts[0]?.total_inquiries || 0),
-        newCollaborationInquiries: Number(reqCounts[0]?.new_inquiries || 0),
-        mediaKitViews: counts["media_kit_view"]?.total || 0,
-        brandClicks: counts["brand_click"]?.total || 0,
-        teamSocialClicks: counts["team_social_click"]?.total || 0,
-        collaborationClicks: counts["collaboration_click"]?.total || 0,
-      },
+      metrics,
       dailyTrend: dailyTrend || [],
       topTargets: topTargets || [],
-    });
+    }, "Analytics retrieved successfully");
   } catch (err: any) {
     console.error("GET analytics error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to fetch analytics", 500);
   }
 }

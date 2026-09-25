@@ -24,18 +24,6 @@ export const OnboardingService = {
         body: JSON.stringify({ email, onboardingStep: step }),
       }).catch(() => {});
 
-      if (step === "finish") {
-        // Finishing onboarding starts the free-trial subscription lifecycle.
-        const subscription = createSubscriptionLifecycle("early_access", "yearly");
-        fetch("/api/subscription", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email,
-            ...subscription,
-          }),
-        }).catch(() => {});
-      }
     }
   },
 

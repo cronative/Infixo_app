@@ -1,8 +1,11 @@
-import { NextResponse } from "next/server";
 import type { RowDataPacket } from "mysql2";
 import { db } from "@/lib/db";
 import { ensureCreatorSetupTable } from "@/lib/creatorSetupDb";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
+import { requireCreator } from "@/lib/creatorAuth";
+import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { sanitizeUrl } from "@/lib/urlSanitizer";
 
 interface CreatorIdRow extends RowDataPacket {
   id: string;
@@ -72,13 +75,15 @@ export async function GET(req: Request) {
     const lookupVal = searchParams.get("creatorId") || searchParams.get("email") || searchParams.get("username");
 
     if (!lookupVal) {
-      return NextResponse.json({ success: true, items: [] });
+      return apiSuccess({ items: [] }, "No creator lookup provided");
     }
 
     await ensureCreatorSetupTable();
 
     const creatorId = await resolveCreatorId(lookupVal);
     const targetId = creatorId || lookupVal;
+    const accessError = await authorizeCreatorRead(req, targetId, Boolean(searchParams.get("username")));
+    if (accessError) return accessError;
 
     const [rows] = await db.query<CreatorSetupRow[]>(
       `SELECT id, creator_id AS creatorId, category, item_name AS name, brand,
@@ -97,34 +102,30 @@ export async function GET(req: Request) {
       modelOrPlan: item.modelOrPlan || "",
       usedFor: item.usedFor || "",
       note: item.note || "",
-      linkUrl: item.linkUrl || "",
+      linkUrl: sanitizeUrl(item.linkUrl, { allowEmpty: true }) || "",
       imageUrl: item.imageUrl || null,
       sortOrder: Number(item.sortOrder || 0),
       isActive: Boolean(item.isActive),
     }));
 
-    return NextResponse.json({ success: true, items });
+    return apiSuccess({ items }, "Setup items retrieved successfully");
   } catch (err: unknown) {
     console.error("GET creator setup error:", err);
-    return NextResponse.json({ error: getErrorMessage(err) }, { status: 500 });
+    return apiError(getErrorMessage(err), 500);
   }
 }
 
 // POST /api/creator/setup (Add/Update/Reorder setup items)
 export async function POST(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const body = (await req.json()) as SetupPostBody;
-    const { email, creatorId: passedCreatorId, action, item, items } = body;
-
-    const lookupVal = passedCreatorId || email;
-    if (!lookupVal) {
-      return NextResponse.json({ error: "Creator identifier required" }, { status: 400 });
-    }
+    const { action, item, items } = body;
 
     await ensureCreatorSetupTable();
 
-    const creatorId = await resolveCreatorId(lookupVal);
-    const targetId = creatorId || lookupVal;
+    const targetId = auth.creator.id;
 
     if (action === "reorder" && Array.isArray(items)) {
       for (let i = 0; i < items.length; i++) {
@@ -135,15 +136,15 @@ export async function POST(req: Request) {
           );
         }
       }
-      return NextResponse.json({ success: true, message: "Setup items reordered" });
+      return apiSuccess({}, "Setup items reordered");
     }
 
     const setupItem = item || body;
     if (!setupItem.category?.trim()) {
-      return NextResponse.json({ error: "Category is required" }, { status: 400 });
+      return apiError("Category is required", 400);
     }
     if (!setupItem.name?.trim()) {
-      return NextResponse.json({ error: "Name is required" }, { status: 400 });
+      return apiError("Name is required", 400);
     }
 
     const finalImageUrl = await saveBase64ImageToStorage(setupItem.imageUrl, "team", "setup")
@@ -175,41 +176,41 @@ export async function POST(req: Request) {
         (setupItem.modelOrPlan || "").trim() || null,
         (setupItem.usedFor || "").trim() || null,
         (setupItem.note || "").trim() || null,
-        (setupItem.linkUrl || "").trim() || null,
+        sanitizeUrl(setupItem.linkUrl) || null,
         finalImageUrl || null,
         Number(setupItem.sortOrder || 0),
         setupItem.isActive !== false ? 1 : 0,
       ]
     );
 
-    return NextResponse.json({ success: true, itemId, message: "Setup item saved" });
+    return apiSuccess({ itemId }, "Setup item saved");
   } catch (err: unknown) {
     console.error("POST creator setup error:", err);
-    return NextResponse.json({ error: getErrorMessage(err) }, { status: 500 });
+    return apiError(getErrorMessage(err), 500);
   }
 }
 
 // DELETE /api/creator/setup?id=...&creatorId=...
 export async function DELETE(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
-    const lookupVal = searchParams.get("creatorId") || searchParams.get("email");
 
-    if (!id || !lookupVal) {
-      return NextResponse.json({ error: "ID and creator identifier required" }, { status: 400 });
+    if (!id) {
+      return apiError("ID required", 400);
     }
 
     await ensureCreatorSetupTable();
 
-    const creatorId = await resolveCreatorId(lookupVal);
-    const targetId = creatorId || lookupVal;
+    const targetId = auth.creator.id;
 
     await db.query("DELETE FROM creator_setup_items WHERE id = ? AND creator_id = ?", [id, targetId]);
 
-    return NextResponse.json({ success: true, message: "Setup item removed" });
+    return apiSuccess({}, "Setup item removed");
   } catch (err: unknown) {
     console.error("DELETE creator setup error:", err);
-    return NextResponse.json({ error: getErrorMessage(err) }, { status: 500 });
+    return apiError(getErrorMessage(err), 500);
   }
 }

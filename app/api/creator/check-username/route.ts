@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { isReservedUsername } from "@/lib/constants";
 
 // GET /api/creator/check-username?username=nikunj&email=user@email.com
 export async function GET(req: Request) {
@@ -11,11 +12,18 @@ export async function GET(req: Request) {
     const username = rawUsername.trim().toLowerCase().replace(/[^a-z0-9_]/g, "");
 
     if (!username) {
-      return NextResponse.json({ available: false, error: "Username is required" }, { status: 400 });
+      return apiError("Username is required", 400, { available: false, username: "" });
     }
 
     if (username.length < 3) {
-      return NextResponse.json({ available: false, error: "Username must be at least 3 characters" });
+      return apiError("Username must be at least 3 characters", 400, { available: false, username });
+    }
+
+    if (isReservedUsername(username)) {
+      return apiSuccess({
+        available: false,
+        username,
+      }, `@${username} is reserved for platform use`);
     }
 
     // Check if username exists in MySQL DB for another creator
@@ -25,20 +33,18 @@ export async function GET(req: Request) {
     );
 
     if (rows && rows.length > 0) {
-      return NextResponse.json({
+      return apiSuccess({
         available: false,
         username,
-        error: `@${username} is already taken by another creator`,
-      });
+      }, `@${username} is already taken by another creator`);
     }
 
-    return NextResponse.json({
+    return apiSuccess({
       available: true,
       username,
-      message: `@${username} is available! ✨`,
-    });
+    }, `@${username} is available! ✨`);
   } catch (err: any) {
     console.error("Check Username API Error:", err);
-    return NextResponse.json({ available: true, message: "Could not check username" }, { status: 200 });
+    return apiError("Could not check username", 500, { available: true, username: "" });
   }
 }

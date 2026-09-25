@@ -1,5 +1,7 @@
 "use client";
 
+import type { CreatorProduct } from "@/types";
+
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Play, UserX, Home, Sparkles, Film, Users } from "lucide-react";
@@ -7,7 +9,7 @@ import { Logo } from "@/components/shared/Logo";
 import { SkeletonProfileCard } from "@/components/ui/Skeleton";
 import { ProfileService } from "@/services/ProfileService";
 import { SocialService } from "@/services/SocialService";
-import { ThemeService, THEME_PAGE_BACKGROUNDS } from "@/services/ThemeService";
+import { ThemeService } from "@/services/ThemeService";
 import { SeriesService } from "@/services/SeriesService";
 import { ThemeCard } from "@/themes/registry";
 import { CreatorProfile, SocialAccounts, Series, ThemeKey, EMPTY_SOCIAL_ACCOUNTS, CreatorReview, MediaKitPackage, MediaKitSettings, CreatorSetupItem } from "@/types";
@@ -15,8 +17,8 @@ import { useToast } from "@/contexts/ToastContext";
 import { buildProfileUrl } from "@/utils/format";
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { copyToClipboard } from "@/lib/copyToClipboard";
-import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
-import { FocusOverlay } from "@/components/theme/FocusOverlay";
+import { CreatorPublicShell } from "@/components/public/CreatorPublicShell";
+import { getPlanQuota } from "@/services/subscriptionLimits";
 
 const EMPTY_PROFILE: CreatorProfile = {
   photoDataUrl: null,
@@ -51,8 +53,8 @@ function isFreeTrialExpired(subscription?: {
 
   if (subscription.activatedAt) {
     const actMs = new Date(subscription.activatedAt).getTime();
-    const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
-    if (nowMs - actMs > thirtyDaysMs) return true;
+    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+    if (nowMs - actMs > sevenDaysMs) return true;
   }
   return false;
 }
@@ -87,6 +89,7 @@ export default function PublicProfileClient() {
   const [team, setTeam] = useState<{ team?: any; members: any[] }>({ members: [] });
   const [brands, setBrands] = useState<any[]>([]);
   const [collaborations, setCollaborations] = useState<any[]>([]);
+  const [products, setProducts] = useState<CreatorProduct[]>([]);
   const [setupItems, setSetupItems] = useState<CreatorSetupItem[]>([]);
   const [otherSocials, setOtherSocials] = useState<any[]>([]);
   const [sections, setSections] = useState<any[]>([]);
@@ -147,6 +150,7 @@ export default function PublicProfileClient() {
           setupRes,
           otherSocRes,
           secRes,
+          productsRes,
         ] = await Promise.all([
           fetch(`/api/creator/profile?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
           fetch(`/api/creator/socials?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
@@ -160,32 +164,50 @@ export default function PublicProfileClient() {
           fetch(`/api/creator/setup?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
           fetch(`/api/creator/other-socials?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
           fetch(`/api/creator/sections?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
+          fetch(`/api/public/products?username=${encodeURIComponent(usernameParam)}`, { cache: "no-store" }).then((r) => r.json()).catch(() => ({ status: 0 })),
         ]);
 
-        if (profRes.success && profRes.profile && profRes.profile.username) {
-          if (isFreeTrialExpired(profRes.subscription)) {
+        const isProfOk = profRes.status === 1 || profRes.success === true;
+        const profile = profRes.data?.profile || profRes.profile;
+        const subscription = profRes.data?.subscription || profRes.subscription;
+
+        const rawProducts: CreatorProduct[] =
+          productsRes.status === 1 && Array.isArray(productsRes.data?.products)
+            ? productsRes.data.products
+            : [];
+        const quota = getPlanQuota(subscription?.planKey || "early_access");
+        const visibleProducts =
+          quota.maxProducts === Infinity
+            ? rawProducts
+            : rawProducts.slice(0, quota.maxProducts);
+        setProducts(visibleProducts);
+
+        if (isProfOk && profile && profile.username) {
+          if (isFreeTrialExpired(subscription)) {
             setProfilePrivate(true);
             setNotFound(false);
             setLoaded(true);
             return;
           }
 
-          setProfile(profRes.profile);
-          if (profRes.profile.themeKey) {
-            setTheme(profRes.profile.themeKey as ThemeKey);
+          setProfile(profile);
+          if (profile.themeKey) {
+            setTheme(profile.themeKey as ThemeKey);
           }
           setNotFound(false);
           setProfilePrivate(false);
 
-          if (linkRes.success && Array.isArray(linkRes.links)) {
-            setCustomLinks(linkRes.links);
+          const links = linkRes.data?.links || linkRes.links;
+          if ((linkRes.status === 1 || linkRes.success) && Array.isArray(links)) {
+            setCustomLinks(links);
           } else {
             setCustomLinks([]);
           }
 
-          if (socRes.success && Array.isArray(socRes.socials)) {
+          const socials = socRes.data?.socials || socRes.socials;
+          if ((socRes.status === 1 || socRes.success) && Array.isArray(socials)) {
             const accs: SocialAccounts = { ...EMPTY_SOCIAL_ACCOUNTS };
-            socRes.socials.forEach((s: any) => {
+            socials.forEach((s: any) => {
               const handle = s.username || s.accountName || "";
               if (s.platform === "instagram") {
                 accs.instagram = {
@@ -215,62 +237,73 @@ export default function PublicProfileClient() {
             setSocials(EMPTY_SOCIAL_ACCOUNTS);
           }
 
-          if (serRes.success && Array.isArray(serRes.series)) {
-            setSeries(serRes.series);
+          const series = serRes.data?.series || serRes.series;
+          if ((serRes.status === 1 || serRes.success) && Array.isArray(series)) {
+            setSeries(series);
           } else {
             setSeries([]);
           }
 
-          if (mediakitRes.success && Array.isArray(mediakitRes.packages)) {
-            setMediaKitPackages(mediakitRes.packages);
+          const packages = mediakitRes.data?.packages || mediakitRes.packages;
+          if ((mediakitRes.status === 1 || mediakitRes.success) && Array.isArray(packages)) {
+            setMediaKitPackages(packages);
           } else {
             setMediaKitPackages([]);
           }
 
-          if (mediakitRes.success && mediakitRes.settings) {
-            setMediaKitSettings(mediakitRes.settings);
+          const mkSettings = mediakitRes.data?.settings || mediakitRes.settings;
+          if ((mediakitRes.status === 1 || mediakitRes.success) && mkSettings) {
+            setMediaKitSettings(mkSettings);
           }
 
-          if (revRes.success && Array.isArray(revRes.reviews)) {
-            setReviews(revRes.reviews);
+          const reviews = revRes.data?.reviews || revRes.reviews;
+          if ((revRes.status === 1 || revRes.success) && Array.isArray(reviews)) {
+            setReviews(reviews);
           } else {
             setReviews([]);
           }
 
-          if (teamRes.success && teamRes.team) {
-            setTeam({ team: teamRes.team, members: teamRes.members || [] });
+          const team = teamRes.data?.team || teamRes.team;
+          const members = teamRes.data?.members || teamRes.members || [];
+          if ((teamRes.status === 1 || teamRes.success) && team) {
+            setTeam({ team, members });
           }
 
-          if (brandRes.success && Array.isArray(brandRes.brands)) {
-            setBrands(brandRes.brands);
+          const brands = brandRes.data?.brands || brandRes.brands;
+          if ((brandRes.status === 1 || brandRes.success) && Array.isArray(brands)) {
+            setBrands(brands);
           }
 
-          if (collabRes.success && Array.isArray(collabRes.collaborations)) {
-            setCollaborations(collabRes.collaborations);
+          const collabs = collabRes.data?.collaborations || collabRes.collaborations;
+          if ((collabRes.status === 1 || collabRes.success) && Array.isArray(collabs)) {
+            setCollaborations(collabs);
           }
 
-          if (setupRes.success && Array.isArray(setupRes.items)) {
-            setSetupItems(setupRes.items);
+          const setupItems = setupRes.data?.items || setupRes.items;
+          if ((setupRes.status === 1 || setupRes.success) && Array.isArray(setupItems)) {
+            setSetupItems(setupItems);
           }
 
-          if (otherSocRes.success && Array.isArray(otherSocRes.otherSocials)) {
-            setOtherSocials(otherSocRes.otherSocials);
+          const otherSocials = otherSocRes.data?.otherSocials || otherSocRes.otherSocials;
+          if ((otherSocRes.status === 1 || otherSocRes.success) && Array.isArray(otherSocials)) {
+            setOtherSocials(otherSocials);
           }
 
-          if (secRes.success && Array.isArray(secRes.sections)) {
-            setSections(secRes.sections);
+          const sections = secRes.data?.sections || secRes.sections;
+          if ((secRes.status === 1 || secRes.success) && Array.isArray(sections)) {
+            setSections(sections);
           }
 
           // Track Profile View Event
           try {
             const visitorKey = getPublicVisitorId();
-            const eventId = getPageViewEventId(profRes.profile.id, usernameParam, visitorKey);
+            const eventId = getPageViewEventId(profile.id, usernameParam, visitorKey);
 
             fetch("/api/analytics/track", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                creator_id: profRes.profile.id,
+                creator_id: profile.id,
                 creator_username: usernameParam,
                 event_type: "profile_view",
                 visitor_id: visitorKey,
@@ -344,8 +377,8 @@ export default function PublicProfileClient() {
       const handle = decodeURIComponent(params.username).trim().toLowerCase();
       fetch(`/api/creator/check-username?username=${encodeURIComponent(handle)}`)
         .then((r) => r.json())
-        .then((data) => {
-          setUsernameAvailable(Boolean(data.available));
+        .then((apiResponse) => {
+          setUsernameAvailable(Boolean(apiResponse.data?.available ?? apiResponse.available));
         })
         .catch(() => {
           setUsernameAvailable(false);
@@ -419,8 +452,6 @@ export default function PublicProfileClient() {
   const totalAudience = SocialService.calculateTotalAudience(socials);
   const handleStr = profile.username || decodeURIComponent(params.username ?? "username");
   const fullUrl = buildProfileUrl(handleStr);
-  const themeMeta = ThemeService.getThemeMeta(theme);
-  const pageBgStyle = themeMeta.outerBgClass || THEME_PAGE_BACKGROUNDS[theme] || THEME_PAGE_BACKGROUNDS["minimal-white"];
 
   async function handleShare() {
     if (typeof navigator !== "undefined" && navigator.share) {
@@ -508,34 +539,7 @@ export default function PublicProfileClient() {
   }
 
   return (
-    <div
-      style={{ backgroundColor: themeMeta.colors.pageBackground }}
-      className="relative min-h-dvh flex flex-col transition-colors duration-500"
-    >
-      {/* 1. Full-screen outer background covering complete viewport */}
-      <div
-        className={`fixed inset-0 pointer-events-none transition-colors duration-500 z-0 ${pageBgStyle}`}
-        style={{ backgroundColor: themeMeta.colors.pageBackground }}
-        aria-hidden="true"
-      >
-        {/* Soft ambient radial lighting */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[650px] bg-gradient-radial from-white/[0.06] to-transparent blur-3xl pointer-events-none" />
-      </div>
-
-      {/* 2. Ambient animation if theme is animated */}
-      {themeMeta.animation?.type !== "none" && (
-        <AmbientAnimation
-          type={themeMeta.animation?.type || themeMeta.animationType}
-          colors={themeMeta.animation?.colors || themeMeta.particleColors}
-          themeKey={themeMeta.key}
-        />
-      )}
-
-      {/* 3. Theme-aware Focus Overlay Layer */}
-      <FocusOverlay overlay={themeMeta.focusOverlay} />
-
-      {/* 4. Centred Creator Profile Surface */}
-      <main className="relative z-10 h-dvh min-h-0 flex flex-col mx-auto w-full max-w-[520px] px-2.5 py-2.5 sm:px-4 sm:py-3.5 overflow-hidden animate-fade-in-up">
+    <CreatorPublicShell themeKey={theme}>
         {/* Main Theme Profile Card (Renders Profile, Socials, Series, Services, Reviews & Custom Links) */}
         <ThemeCard
           themeKey={theme}
@@ -550,6 +554,7 @@ export default function PublicProfileClient() {
           brands={brands}
           collaborations={collaborations}
           setupItems={setupItems}
+          products={products}
           otherSocials={otherSocials}
           sections={sections}
           totalAudience={totalAudience}
@@ -558,11 +563,12 @@ export default function PublicProfileClient() {
           seriesOpenMode="page"
           seriesPreviewLimit={3}
           allSeriesHref={`/${handleStr.replace(/^@/, "")}/series`}
+          productsPreviewLimit={3}
+          allProductsHref={`/${handleStr.replace(/^@/, "")}/products`}
           reviewsPreviewLimit={3}
           allReviewsHref={`/${handleStr.replace(/^@/, "")}/reviews`}
           onShare={handleShare}
         />
-      </main>
-    </div>
+    </CreatorPublicShell>
   );
 }

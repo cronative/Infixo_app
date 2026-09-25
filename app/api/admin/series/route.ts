@@ -1,11 +1,11 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { isAuthorizedAdmin } from "@/lib/adminAuth";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 export async function GET(req: Request) {
   try {
     if (!(await isAuthorizedAdmin(req))) {
-      return NextResponse.json({ error: "Unauthorized admin access" }, { status: 401 });
+      return apiError("Unauthorized admin access", 401);
     }
 
     let seriesList: any[] = [];
@@ -75,11 +75,10 @@ export async function GET(req: Request) {
       console.warn("Admin series DB fetch fallback:", dbErr);
     }
 
-    return NextResponse.json({
-      success: true,
+    return apiSuccess({
       series: seriesList,
-    });
+    }, "Series retrieved successfully");
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to fetch series", 500);
   }
 }

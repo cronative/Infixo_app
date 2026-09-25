@@ -4,7 +4,26 @@ const TRIAL_DAYS = 7;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 export function getFreeTrialStatus(subscription?: Subscription | null, nowMs = Date.now()) {
-  if (!subscription || subscription.planKey !== "early_access") {
+  if (!subscription) {
+    return {
+      isFreeTrial: false,
+      isExpired: false,
+      daysLeft: null as number | null,
+      shouldWarn: false,
+    };
+  }
+
+  // Only real free trials (early_access or status === 'trial' when not a paid plan)
+  const isFreeTrial =
+    subscription.planKey === "early_access" ||
+    (subscription.status === "trial" &&
+      subscription.planKey !== "starter" &&
+      subscription.planKey !== "pro" &&
+      subscription.planKey !== "vip" &&
+      subscription.planKey !== "creator_pro" &&
+      subscription.planKey !== "creator_VIP");
+
+  if (!isFreeTrial) {
     return {
       isFreeTrial: false,
       isExpired: false,
@@ -52,7 +71,7 @@ export function getTrialHeaderMessage(subscription?: Subscription | null, nowMs 
 
   if (status.shouldWarn) {
     const dayText = status.daysLeft === 1 ? "1 day" : `${status.daysLeft} days`;
-    return `You are creating good content. Your Free Trial has ${dayText} left. After 7 days, tamari profile private thai jase, so fans tamaru public profile nahi joi sake. Choose a plan to keep it live.`;
+    return `Your Free Trial has ${dayText} left. After 7 days, your profile will become private. Choose a plan to keep it live.`;
   }
 
   return "Here's how your Inflixo profile is looking today.";

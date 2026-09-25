@@ -2,6 +2,7 @@
 
 import React, { useRef, useState } from "react";
 import { ImagePlus, Camera, Trash2, MoveVertical, AlertCircle } from "lucide-react";
+import { resizeImageToDataUrl } from "@/lib/imageResize";
 
 export interface SeriesCoverUploadProps {
   value: string | null;
@@ -46,18 +47,12 @@ export function SeriesCoverUpload({
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result as string;
-      if (result) {
+    resizeImageToDataUrl(file, 1600)
+      .then((result) => {
         onChange(result);
         setErrorMessage(null);
-      }
-    };
-    reader.onerror = () => {
-      setErrorMessage("Failed to read the image file. Please try again.");
-    };
-    reader.readAsDataURL(file);
+      })
+      .catch(() => setErrorMessage("Failed to read the image file. Please try again."));
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -102,11 +97,11 @@ export function SeriesCoverUpload({
     <div className={`w-full space-y-1.5 text-left ${className}`}>
       {/* Section Header */}
       <div className="flex items-center justify-between">
-        <label className="block text-xs font-bold text-[#043084]">
-          {label} <span className="text-[11px] font-semibold text-[#64748b]">(16:9 Landscape)</span>
+        <label className="block text-[13px] font-medium text-[#0f172a]">
+          {label} <span className="font-normal text-[#94a3b8]">· 16:9, optional</span>
         </label>
-        <span className="text-[11px] font-semibold text-[#64748b]">
-          Max {maxSizeMB}MB
+        <span className="text-[11px] text-[#94a3b8]">
+          JPG, PNG, WebP · max {maxSizeMB}MB
         </span>
       </div>
 
@@ -133,11 +128,11 @@ export function SeriesCoverUpload({
             fileInputRef.current?.click();
           }
         }}
-        className={`group relative w-full aspect-[16/9] overflow-hidden rounded-2xl border transition-all cursor-pointer select-none ${value
-          ? "border-[#e2e8f0] bg-slate-950 shadow-sm"
+        className={`group relative w-full overflow-hidden rounded-xl border transition-colors cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#043084]/30 ${value
+          ? "aspect-[16/9] border-[#e2e8f0] bg-slate-950"
           : isDragging
-            ? "border-2 border-dashed border-[#043084] bg-[#043084]/[0.09]"
-            : "border-2 border-dashed border-[#e2e8f0] hover:border-[#043084] bg-[#f8fafc] hover:bg-[#f1f5f9]"
+            ? "h-20 border-dashed border-[#043084] bg-[#043084]/[0.05]"
+            : "h-20 border-dashed border-[#cbd5e1] bg-[#f8fafc] hover:border-[#94a3b8] hover:bg-[#f1f5f9]"
           }`}
       >
         {value ? (
@@ -162,9 +157,9 @@ export function SeriesCoverUpload({
                   e.stopPropagation();
                   fileInputRef.current?.click();
                 }}
-                className="tap-scale flex items-center gap-1.5 rounded-xl bg-white/95 hover:bg-[#f1f5f9] text-[#043084] px-3 py-1.5 text-xs font-bold shadow-md border border-white/60 backdrop-blur-md transition-all cursor-pointer"
+                className="tap-scale flex h-8 items-center gap-1.5 rounded-lg bg-white/95 hover:bg-white text-[#0f172a] px-3 text-xs font-semibold shadow-sm transition-colors cursor-pointer"
               >
-                <Camera className="h-3.5 w-3.5 text-[#043084]" />
+                <Camera className="h-3.5 w-3.5 text-[#64748b]" />
                 <span>Change Cover</span>
               </button>
 
@@ -173,7 +168,7 @@ export function SeriesCoverUpload({
                   type="button"
                   onClick={cyclePosition}
                   title={`Position: ${position.toUpperCase()} (Click to toggle)`}
-                  className="tap-scale flex items-center gap-1 rounded-xl bg-white/95 hover:bg-[#f1f5f9] text-[#475569] px-2.5 py-1.5 text-xs font-semibold shadow-md border border-white/60 backdrop-blur-md transition-all cursor-pointer"
+                  className="tap-scale flex h-8 items-center gap-1 rounded-lg bg-white/95 hover:bg-white text-[#475569] px-2.5 text-xs font-medium shadow-sm transition-colors cursor-pointer"
                 >
                   <MoveVertical className="h-3.5 w-3.5 text-[#64748b]" />
                   <span className="capitalize text-[11px]">{position}</span>
@@ -183,7 +178,8 @@ export function SeriesCoverUpload({
                   type="button"
                   onClick={handleRemove}
                   title="Remove cover"
-                  className="tap-scale flex h-8 w-8 items-center justify-center rounded-xl bg-white/95 hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#043084] shadow-md border border-white/60 backdrop-blur-md transition-all cursor-pointer"
+                  aria-label="Remove cover"
+                  className="tap-scale flex h-8 w-8 items-center justify-center rounded-lg bg-white/95 hover:bg-white text-[#64748b] hover:text-[#C2414B] shadow-sm transition-colors cursor-pointer"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
@@ -191,23 +187,15 @@ export function SeriesCoverUpload({
             </div>
           </>
         ) : (
-          /* Empty State - Full Width Landscape Dropzone */
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#043084]/[0.09] text-[#043084] border border-[#043084]/20 shadow-xs group-hover:scale-105 transition-transform">
-              <ImagePlus className="h-6 w-6 stroke-[2]" />
-            </div>
-
-            <p className="mt-2.5 text-xs sm:text-sm font-bold text-[#043084] group-hover:text-[#043084] transition-colors">
-              Upload Series Cover
-            </p>
-
-            <p className="mt-0.5 text-[11px] sm:text-xs font-semibold text-[#64748b]">
-              Recommended size: 1920 × 1080 px
-            </p>
-
-            <p className="mt-1 text-[10px] sm:text-[11px] font-medium text-[#64748b]/70">
-              JPG, PNG or WebP
-            </p>
+          /* Empty state — compact dropzone so the form's required fields stay above the fold */
+          <div className="absolute inset-0 flex items-center justify-center gap-3 px-4 text-left">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white text-[#64748b]">
+              <ImagePlus className="h-5 w-5" />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-sm font-medium text-[#0f172a]">Upload a cover</span>
+              <span className="block text-xs text-[#64748b]">Drop an image or tap to browse · 1920 × 1080 recommended</span>
+            </span>
           </div>
         )}
       </div>

@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, AlertTriangle, X } from "lucide-react";
+import Link from "next/link";
+import { Loader2, AlertTriangle, X, ChevronRight } from "lucide-react";
+import { NAV_GROUPS, BOTTOM_NAV } from "@/components/dashboard/navConfig";
 import { AuthService } from "@/services/AuthService";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -77,16 +79,16 @@ export default function DashboardSettingsPage() {
     setIsDeleting(true);
 
     try {
-      const res = await fetch(
+      const httpResponse = await fetch(
         `/api/creator/profile?email=${encodeURIComponent(accountEmail)}`,
         {
           method: "DELETE",
         }
       );
 
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || "Failed to delete account");
+      const apiResponse = await httpResponse.json();
+      if (!httpResponse.ok || apiResponse.status !== 1) {
+        throw new Error(apiResponse.message || "Failed to delete account");
       }
 
       // Clear local storage and auth session
@@ -107,7 +109,7 @@ export default function DashboardSettingsPage() {
     <div className="space-y-4 sm:space-y-4.5 w-full max-w-3xl pb-8 text-left">
       {/* 1. PAGE HEADER */}
       <div>
-        <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#043084]">
+        <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
           Settings
         </h1>
         <p className="text-xs sm:text-[13px] text-[#475569] font-medium mt-0.5">
@@ -115,10 +117,38 @@ export default function DashboardSettingsPage() {
         </p>
       </div>
 
+      {/* Mobile account hub — everything not in the bottom tab bar, one tap away */}
+      <nav aria-label="More" className="space-y-3 lg:hidden">
+        {NAV_GROUPS.map((group) => {
+          const items = group.items.filter(
+            (item) => item.href !== "/dashboard/settings" && !BOTTOM_NAV.some((b) => b.href === item.href)
+          );
+          if (items.length === 0) return null;
+          return (
+            <div key={group.id}>
+              <p className="px-1 pb-1 text-[11px] font-semibold uppercase tracking-wider text-[#94a3b8]">{group.title}</p>
+              <div className="overflow-hidden rounded-xl border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0]">
+                {items.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link key={item.href} href={item.href} className="flex min-h-[48px] items-center gap-3 px-3.5 active:bg-[#f1f5f9]">
+                      <Icon className="h-[18px] w-[18px] shrink-0 text-[#64748b]" />
+                      <span className="flex-1 text-sm font-medium text-[#0f172a]">{item.label}</span>
+                      <ChevronRight className="h-4 w-4 text-[#cbd5e1]" />
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+        <p className="px-1 pt-1 text-[11px] font-semibold uppercase tracking-wider text-[#94a3b8]">Settings</p>
+      </nav>
+
       {/* 2. ACCOUNT SECTION */}
       <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 space-y-3 shadow-xs">
         <div className="border-b border-[#e2e8f0] pb-2.5">
-          <h2 className="text-sm font-bold text-[#043084]">Account</h2>
+          <h2 className="text-sm font-semibold text-[#0f172a]">Account</h2>
         </div>
 
         <div className="space-y-0.5">
@@ -132,7 +162,7 @@ export default function DashboardSettingsPage() {
       {/* 3. PROFILE VISIBILITY SECTION */}
       <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 space-y-3 shadow-xs">
         <div className="border-b border-[#e2e8f0] pb-2.5">
-          <h2 className="text-sm font-bold text-[#043084]">Profile visibility</h2>
+          <h2 className="text-sm font-semibold text-[#0f172a]">Profile visibility</h2>
         </div>
 
         <div className="flex items-center justify-between gap-4">
@@ -157,7 +187,7 @@ export default function DashboardSettingsPage() {
       {/* 4. DELETE ACCOUNT SECTION (Simple row, no massive red banner) */}
       <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 space-y-3 shadow-xs">
         <div className="border-b border-[#e2e8f0] pb-2.5">
-          <h2 className="text-sm font-bold text-[#043084]">Delete account</h2>
+          <h2 className="text-sm font-semibold text-[#0f172a]">Delete account</h2>
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -191,7 +221,7 @@ export default function DashboardSettingsPage() {
                   <AlertTriangle className="h-4 w-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-[#043084]">
+                  <h3 className="text-sm sm:text-base font-semibold text-[#0f172a]">
                     Delete account
                   </h3>
                   <p className="text-xs text-[#64748b]">

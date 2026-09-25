@@ -158,7 +158,7 @@ export default function SocialsStepPage() {
               Add your social handles
             </h1>
             <p className="text-xs font-normal text-[#54514D] leading-relaxed">
-              Enter your handles to link your social accounts and showcase your fanbase and content.
+              Enter your handles to link your accounts and showcase your fanbase. Active on only one platform? Connect what you have now — you can add or change accounts anytime.
             </p>
           </div>
 
@@ -337,9 +337,9 @@ export default function SocialsStepPage() {
               <Link2 className="h-3 w-3" />
             </div>
             <div className="space-y-0.5">
-              <h4 className="text-xs font-bold text-[#181716]">Want to add more links?</h4>
+              <h4 className="text-xs font-bold text-[#181716]">Link what you have, add more anytime</h4>
               <p className="text-[10.5px] text-[#64748b] leading-relaxed">
-                You can add custom links &amp; collections anytime from your dashboard.
+                You don&apos;t need every platform to get started. You can also add custom links, WhatsApp, Spotify, and more anytime from your creator dashboard.
               </p>
             </div>
           </div>

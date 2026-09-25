@@ -10,6 +10,7 @@ export interface PublicCreatorInfo {
   category?: string | null;
   themeKey?: string;
   totalFanbase?: number;
+  publicProfileLayout?: import("@/types").PublicProfileLayout;
 }
 
 export interface PublicSeriesData {
@@ -139,8 +140,9 @@ export async function getPublicSeriesData(
       [s.id]
     );
 
-    const [creatorRows] = await db.query<PublicCreatorRow[]>(
+    const [creatorRows] = await db.query<any[]>(
       `SELECT c.*, cs.visibility_settings AS settings_visibility,
+              cs.public_profile_layout AS settings_layout,
               sub.plan_key, sub.status AS sub_status,
               sub.activated_at AS sub_activated_at,
               sub.trial_ends_at AS sub_trial_ends_at
@@ -208,6 +210,7 @@ export async function getPublicSeriesData(
           category: creator.category || null,
           themeKey: creator.theme_key || "minimal-white",
           totalFanbase,
+          publicProfileLayout: creator.settings_layout || creator.public_profile_layout || "default",
         }
       : null;
 

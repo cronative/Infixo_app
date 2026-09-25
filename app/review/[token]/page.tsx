@@ -187,22 +187,27 @@ export default function PublicReviewSubmissionPage() {
       }
 
       try {
-        const res = await fetch(`/api/review?token=${encodeURIComponent(tokenParam)}`).then((r) => r.json());
-        if (res.success && res.review) {
-          setReviewData(res.review);
-          setRatingOverall(res.review.rating || 5);
-          setRatingContentQuality(res.review.ratingContentQuality || res.review.rating || 5);
-          setRatingProfessionalism(res.review.ratingProfessionalism || res.review.rating || 5);
-          setRatingTimelyDelivery(res.review.ratingTimelyDelivery || res.review.rating || 5);
-          setComment(res.review.comment ? res.review.comment.substring(0, 250) : "");
+        const httpResponse = await fetch(`/api/review?token=${encodeURIComponent(tokenParam)}`);
+        const apiResponse = await httpResponse.json();
+        const review = apiResponse.data?.review || apiResponse.review;
+        const creator = apiResponse.data?.creator || apiResponse.creator;
+        const isAlreadySub = apiResponse.data?.isAlreadySubmitted ?? apiResponse.isAlreadySubmitted;
 
-          const creatorInfo = res.creator || { displayName: "Creator", username: "creator", photoDataUrl: null };
+        if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && review) {
+          setReviewData(review);
+          setRatingOverall(review.rating || 5);
+          setRatingContentQuality(review.ratingContentQuality || review.rating || 5);
+          setRatingProfessionalism(review.ratingProfessionalism || review.rating || 5);
+          setRatingTimelyDelivery(review.ratingTimelyDelivery || review.rating || 5);
+          setComment(review.comment ? review.comment.substring(0, 250) : "");
+
+          const creatorInfo = creator || { displayName: "Creator", username: "creator", photoDataUrl: null };
           setCreatorData(creatorInfo);
 
           // Generate 5 contextual AI suggestions based on creator & work
-          handleRefreshSuggestions(creatorInfo.displayName, res.review.projectTitle, res.review.clientName);
+          handleRefreshSuggestions(creatorInfo.displayName, review.projectTitle, review.clientName);
 
-          if (res.isAlreadySubmitted || ["pending_approval", "approved", "rejected"].includes(res.review.status)) {
+          if (isAlreadySub || ["pending_approval", "approved", "rejected"].includes(review.status)) {
             setIsAlreadySubmitted(true);
           }
           setNotFound(false);
@@ -285,7 +290,7 @@ export default function PublicReviewSubmissionPage() {
     setSubmitting(true);
 
     try {
-      const res = await fetch("/api/review", {
+      const httpResponse = await fetch("/api/review", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -298,9 +303,10 @@ export default function PublicReviewSubmissionPage() {
           clientName: reviewData?.clientName || "",
           clientDesignation: reviewData?.clientDesignation || "",
         }),
-      }).then((r) => r.json());
+      });
+      const apiResponse = await httpResponse.json();
 
-      if (res.success) {
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
         // Also update local storage fallback if present
         if (typeof window !== "undefined") {
           const rawLocal = window.localStorage.getItem("inflixo:reviews");
@@ -329,10 +335,10 @@ export default function PublicReviewSubmissionPage() {
         setIsAlreadySubmitted(true);
         showToast("Review submitted successfully! Thank you ⭐", "success");
       } else {
-        if (res.isAlreadySubmitted) {
+        if (apiResponse.data?.isAlreadySubmitted || apiResponse.isAlreadySubmitted) {
           setIsAlreadySubmitted(true);
         }
-        throw new Error(res.error || "Failed to submit review");
+        throw new Error(apiResponse.message || apiResponse.error || "Failed to submit review");
       }
     } catch (err: any) {
       console.warn("Backend error submitting review, saving locally:", err);

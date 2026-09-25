@@ -1,3 +1,4 @@
+import type { CreatorProduct } from "@/types";
 import {
   CreatorProfile,
   SocialAccounts,
@@ -19,6 +20,7 @@ export interface ThemeCardProps {
   profile: CreatorProfile;
   socials: SocialAccounts;
   series: Series[];
+  products?: CreatorProduct[];
   customLinks?: CustomLink[];
   mediaKitPackages?: MediaKitPackage[];
   mediaKitSettings?: MediaKitSettings;
@@ -37,8 +39,12 @@ export interface ThemeCardProps {
   seriesPreviewLimit?: number;
   allSeriesHref?: string;
   seriesOnlyMode?: boolean;
+  productsPreviewLimit?: number;
+  allProductsHref?: string;
+  productsOnlyMode?: boolean;
   reviewsPreviewLimit?: number;
   allReviewsHref?: string;
   reviewsOnlyMode?: boolean;
+  pageHeader?: { pageLabel: string; backHref: string; backLabel: string };
   onShare?: () => void;
 }

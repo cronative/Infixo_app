@@ -1,4 +1,4 @@
-import { subscriptionRepository, authRepository } from "@/repositories/localRepository";
+import { subscriptionRepository, authRepository, profileRepository } from "@/repositories/localRepository";
 import { BillingCycle, PlanKey, PlanMeta, Subscription } from "@/types";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -14,21 +14,32 @@ function addMonths(date: Date, months: number) {
   return next;
 }
 
+function normalizePlanKey(key?: string): PlanKey {
+  if (!key) return "early_access";
+  if (key === "creator_pro" || key === "pro") return "pro";
+  if (key === "creator_VIP" || key === "vip") return "vip";
+  if (key === "starter") return "starter";
+  return "early_access";
+}
+
 export function createSubscriptionLifecycle(
   planKey: PlanKey = "early_access",
   billingCycle: BillingCycle = "monthly",
   startedAt = new Date()
 ): Subscription {
-  const plan = INFLIXO_PLANS.find((p) => p.key === planKey) || INFLIXO_PLANS[0];
+  const normalizedKey = normalizePlanKey(planKey);
+  const plan =
+    INFLIXO_PLANS.find((p) => p.key === planKey || p.key === normalizedKey) ||
+    INFLIXO_PLANS[0];
   const activatedAt = startedAt.toISOString();
 
   // Free trial is real access, but it does not schedule any renewal.
-  if (planKey === "early_access") {
+  if (normalizedKey === "early_access") {
     const trialEndsAt = addDays(startedAt, plan.freeTrialDays || 7).toISOString();
 
     return {
-      planKey,
-      planName: plan.name,
+      planKey: "early_access",
+      planName: plan.name || "Free Trial",
       billingCycle,
       status: "trial",
       activatedAt,
@@ -42,35 +53,52 @@ export function createSubscriptionLifecycle(
       cancelAtPeriodEnd: false,
       paymentMode: "free_trial",
       firstMonthOffer: true,
-      firstMonthAmount: FIRST_MONTH_OFFER_AMOUNT_INR,
+      firstMonthAmount: 0,
       firstMonthCurrency: "INR",
       autoRenew: false,
+      hasUsedTrial: true,
     };
   }
 
-  // Paid launch offer: charge the first month once, then stop unless the creator upgrades again.
+  // Paid subscription: active with auto-renewal for both monthly and yearly cycles.
   const currentPeriodEndsAt =
     billingCycle === "yearly" ? addMonths(startedAt, 12).toISOString() : addMonths(startedAt, 1).toISOString();
 
+  const periodAmount = billingCycle === "yearly" ? plan.yearlyPrice : plan.monthlyPrice;
+
+  let existingTrialStartedAt: string | null = null;
+  let existingTrialEndsAt: string | null = null;
+  let hasUsedTrial = false;
+
+  try {
+    const currentSub = typeof window !== "undefined" ? subscriptionRepository.get() : null;
+    existingTrialStartedAt = currentSub?.trialStartedAt || null;
+    existingTrialEndsAt = currentSub?.trialEndsAt || null;
+    hasUsedTrial = Boolean(existingTrialStartedAt || currentSub?.hasUsedTrial || currentSub?.planKey === "early_access");
+  } catch {
+    // fallback if outside browser
+  }
+
   return {
-    planKey,
+    planKey: plan.key,
     planName: plan.name,
     billingCycle,
     status: "active",
     activatedAt,
-    trialStartedAt: null,
-    trialEndsAt: null,
+    trialStartedAt: existingTrialStartedAt,
+    trialEndsAt: existingTrialEndsAt,
     currentPeriodStartedAt: activatedAt,
     currentPeriodEndsAt,
-    renewsAt: null,
+    renewsAt: currentPeriodEndsAt,
     endsAt: currentPeriodEndsAt,
     cancelledAt: null,
-    cancelAtPeriodEnd: true,
-    paymentMode: "one_time_first_month",
-    firstMonthOffer: true,
-    firstMonthAmount: FIRST_MONTH_OFFER_AMOUNT_INR,
+    cancelAtPeriodEnd: false,
+    paymentMode: "recurring",
+    firstMonthOffer: false,
+    firstMonthAmount: periodAmount,
     firstMonthCurrency: "INR",
-    autoRenew: false,
+    autoRenew: true,
+    hasUsedTrial,
   };
 }
 
@@ -80,7 +108,7 @@ export const INFLIXO_PLANS: PlanMeta[] = [
     name: "Free Trial",
     badge: "7 DAYS PUBLIC",
     isPopular: false,
-    description: "Try your public creator profile for 7 days. After trial, profile becomes private until you upgrade.",
+    description: "Try your public creator profile for 7 days with 1 shop product and 3 series. After trial, profile becomes private until you upgrade.",
     monthlyPrice: 0,
     yearlyPrice: 0,
     yearlySavings: 0,
@@ -90,6 +118,7 @@ export const INFLIXO_PLANS: PlanMeta[] = [
     youtube: true,
     facebook: true,
     ottSeriesLimit: "Up to 3 Series & 15 Episodes",
+    shopProductLimit: "1 Product in Shop",
     autoDataRefresh: "Limited trial refresh",
     removeBranding: false,
     support: "Standard",
@@ -99,7 +128,7 @@ export const INFLIXO_PLANS: PlanMeta[] = [
     name: "Starter",
     badge: "PUBLIC PROFILE",
     isPopular: false,
-    description: "Keep your public Inflixo profile live after the free trial.",
+    description: "Keep your public Inflixo profile live after the free trial with 1 product in shop and starter limits.",
     monthlyPrice: 99,
     yearlyPrice: 999,
     yearlySavings: 189,
@@ -109,16 +138,17 @@ export const INFLIXO_PLANS: PlanMeta[] = [
     youtube: true,
     facebook: true,
     ottSeriesLimit: "3 Series & 15 Episodes",
+    shopProductLimit: "1 Product in Shop",
     autoDataRefresh: "Basic refresh",
     removeBranding: false,
     support: "Standard",
   },
   {
-    key: "creator_pro",
+    key: "pro",
     name: "Pro",
     badge: "PRO TIER",
     isPopular: false,
-    description: "For serious creators who need rate cards, media kit and more content space.",
+    description: "For serious creators who need 20 products in shop (matches 20 series), rate cards, and full media kit.",
     monthlyPrice: 199,
     yearlyPrice: 1999,
     yearlySavings: 389,
@@ -128,16 +158,37 @@ export const INFLIXO_PLANS: PlanMeta[] = [
     youtube: true,
     facebook: true,
     ottSeriesLimit: "20 Series, 20 Episodes Each",
+    shopProductLimit: "20 Products in Shop (matches 20 series)",
     autoDataRefresh: "Weekly refresh",
     removeBranding: false,
     support: "Priority",
   },
   {
-    key: "creator_VIP",
+    key: "creator_pro",
+    name: "Pro",
+    badge: "PRO TIER",
+    isPopular: false,
+    description: "For serious creators who need 20 products in shop (matches 20 series), rate cards, and full media kit.",
+    monthlyPrice: 199,
+    yearlyPrice: 1999,
+    yearlySavings: 389,
+    freeTrialDays: 0,
+    publicProfile: true,
+    instagram: true,
+    youtube: true,
+    facebook: true,
+    ottSeriesLimit: "20 Series, 20 Episodes Each",
+    shopProductLimit: "20 Products in Shop (matches 20 series)",
+    autoDataRefresh: "Weekly refresh",
+    removeBranding: false,
+    support: "Priority",
+  },
+  {
+    key: "vip",
     name: "VIP",
     badge: "👑 VIP BRAND COLLABS",
     isPopular: true,
-    description: "For premium creators who want unlimited content space, custom media kit and stronger collab tools.",
+    description: "For premium creators who want unlimited products in shop, unlimited series, custom media kit and collab tools.",
     monthlyPrice: 399,
     yearlyPrice: 3999,
     yearlySavings: 789,
@@ -147,6 +198,27 @@ export const INFLIXO_PLANS: PlanMeta[] = [
     youtube: true,
     facebook: true,
     ottSeriesLimit: "Unlimited Series, Episodes, Links & Reviews, 10 Collab Packages",
+    shopProductLimit: "Unlimited Products in Shop",
+    autoDataRefresh: "Daily refresh",
+    removeBranding: true,
+    support: "VIP Dedicated Manager",
+  },
+  {
+    key: "creator_VIP",
+    name: "VIP",
+    badge: "👑 VIP BRAND COLLABS",
+    isPopular: true,
+    description: "For premium creators who want unlimited products in shop, unlimited series, custom media kit and collab tools.",
+    monthlyPrice: 399,
+    yearlyPrice: 3999,
+    yearlySavings: 789,
+    freeTrialDays: 0,
+    publicProfile: true,
+    instagram: true,
+    youtube: true,
+    facebook: true,
+    ottSeriesLimit: "Unlimited Series, Episodes, Links & Reviews, 10 Collab Packages",
+    shopProductLimit: "Unlimited Products in Shop",
     autoDataRefresh: "Daily refresh",
     removeBranding: true,
     support: "VIP Dedicated Manager",
@@ -164,54 +236,122 @@ export const SubscriptionService = {
 
   getPlan(key?: PlanKey): PlanMeta {
     if (!key) return INFLIXO_PLANS[0];
-    return INFLIXO_PLANS.find((p) => p.key === key) || INFLIXO_PLANS[0];
+    const normalizedKey = normalizePlanKey(key);
+    return INFLIXO_PLANS.find((p) => p.key === key || p.key === normalizedKey) || INFLIXO_PLANS[0];
   },
 
-  activate(planKey: PlanKey = "early_access", billingCycle: BillingCycle = "yearly"): Subscription {
-    const email = authRepository.getPendingEmail();
+  async activate(
+    planKey: PlanKey = "early_access",
+    billingCycle: BillingCycle = "yearly",
+    overrideEmail?: string
+  ): Promise<Subscription> {
+    const email =
+      overrideEmail ||
+      authRepository.getPendingEmail() ||
+      profileRepository.get()?.email ||
+      authRepository.get()?.email;
     const sub = createSubscriptionLifecycle(planKey, billingCycle);
 
     subscriptionRepository.save(sub);
 
-    // Keep local onboarding fast, then mirror the lifecycle to MySQL in the background.
-    if (email) {
-      fetch("/api/subscription", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, ...sub }),
-      }).catch((e) => console.error("Failed to save Subscription to MySQL DB:", e));
+    // Paid access is persisted only by verified payment endpoints.
+    if (email && planKey === "early_access") {
+      try {
+        await fetch("/api/subscription", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "start_trial" }),
+        });
+      } catch (e) {
+        console.error("Failed to save Subscription to MySQL DB:", e);
+      }
     }
 
     return sub;
   },
 
-  async fetchFromDb(): Promise<Subscription | null> {
-    const email = authRepository.getPendingEmail();
+  async cancelAutoRenew(): Promise<Subscription> {
+    const current = subscriptionRepository.get();
+    const email =
+      authRepository.getPendingEmail() ||
+      profileRepository.get()?.email ||
+      authRepository.get()?.email;
+    const nowIso = new Date().toISOString();
+    const updated: Subscription = {
+      ...current,
+      autoRenew: false,
+      renewsAt: null,
+      cancelledAt: nowIso,
+      cancelAtPeriodEnd: true,
+    };
+
+    if (!email) throw new Error("No signed-in account");
+    const httpResponse = await fetch("/api/subscription", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "cancel" }),
+    });
+    const apiResponse = await httpResponse.json().catch(() => null);
+    if (!httpResponse.ok || (apiResponse && apiResponse.status === 0)) {
+      throw new Error(apiResponse?.message || apiResponse?.error || "Failed to cancel subscription");
+    }
+    subscriptionRepository.save(updated);
+
+    return updated;
+  },
+
+  resumeAutoRenew(): Subscription {
+    const current = subscriptionRepository.get();
+    const email =
+      authRepository.getPendingEmail() ||
+      profileRepository.get()?.email ||
+      authRepository.get()?.email;
+    const nextRenewal = current.currentPeriodEndsAt || current.endsAt || new Date().toISOString();
+    const updated: Subscription = {
+      ...current,
+      autoRenew: true,
+      renewsAt: nextRenewal,
+      cancelledAt: null,
+      cancelAtPeriodEnd: false,
+    };
+
+    subscriptionRepository.save(updated);
+
+    return updated;
+  },
+
+  async fetchFromDb(overrideEmail?: string): Promise<Subscription | null> {
+    const email =
+      overrideEmail ||
+      authRepository.getPendingEmail() ||
+      profileRepository.get()?.email ||
+      authRepository.get()?.email;
     if (!email) return null;
 
     try {
-      const res = await fetch(`/api/subscription?email=${encodeURIComponent(email)}`);
-      const data = await res.json();
-      if (data.subscription) {
+      const httpResponse = await fetch(`/api/subscription?email=${encodeURIComponent(email)}`);
+      const apiResponse = await httpResponse.json();
+      const subData = apiResponse.data?.subscription || apiResponse.subscription;
+      if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && subData) {
         const sub: Subscription = {
-          planKey: data.subscription.planKey || "early_access",
-          planName: data.subscription.planName || "Free Trial",
-          billingCycle: data.subscription.billingCycle || "yearly",
-          status: data.subscription.status || "trial",
-          activatedAt: data.subscription.activatedAt || new Date().toISOString(),
-          trialStartedAt: data.subscription.trialStartedAt || null,
-          trialEndsAt: data.subscription.trialEndsAt || null,
-          currentPeriodStartedAt: data.subscription.currentPeriodStartedAt || null,
-          currentPeriodEndsAt: data.subscription.currentPeriodEndsAt || null,
-          renewsAt: data.subscription.renewsAt || null,
-          endsAt: data.subscription.endsAt || null,
-          cancelledAt: data.subscription.cancelledAt || null,
-          cancelAtPeriodEnd: Boolean(data.subscription.cancelAtPeriodEnd),
-          paymentMode: data.subscription.paymentMode || "free_trial",
-          firstMonthOffer: Boolean(data.subscription.firstMonthOffer),
-          firstMonthAmount: data.subscription.firstMonthAmount ?? FIRST_MONTH_OFFER_AMOUNT_INR,
-          firstMonthCurrency: data.subscription.firstMonthCurrency || "INR",
-          autoRenew: Boolean(data.subscription.autoRenew),
+          planKey: subData.planKey || "early_access",
+          planName: subData.planName || "Free Trial",
+          billingCycle: subData.billingCycle || "yearly",
+          status: subData.status || "trial",
+          activatedAt: subData.activatedAt || new Date().toISOString(),
+          trialStartedAt: subData.trialStartedAt || null,
+          trialEndsAt: subData.trialEndsAt || null,
+          currentPeriodStartedAt: subData.currentPeriodStartedAt || null,
+          currentPeriodEndsAt: subData.currentPeriodEndsAt || null,
+          renewsAt: subData.renewsAt || null,
+          endsAt: subData.endsAt || null,
+          cancelledAt: subData.cancelledAt || null,
+          cancelAtPeriodEnd: Boolean(subData.cancelAtPeriodEnd),
+          paymentMode: subData.paymentMode || "free_trial",
+          firstMonthOffer: Boolean(subData.firstMonthOffer),
+          firstMonthAmount: subData.firstMonthAmount ?? FIRST_MONTH_OFFER_AMOUNT_INR,
+          firstMonthCurrency: subData.firstMonthCurrency || "INR",
+          autoRenew: Boolean(subData.autoRenew),
         };
         subscriptionRepository.save(sub);
         return sub;
@@ -239,7 +379,7 @@ export const SubscriptionService = {
       fetch("/api/subscription", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, status: "cancelled", cancelledAt }),
+        body: JSON.stringify({ action: "cancel" }),
       }).catch((e) => console.error("Failed to cancel subscription:", e));
     }
 

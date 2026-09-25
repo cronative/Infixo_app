@@ -8,6 +8,7 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
     profile,
     socials,
     series,
+    products,
     customLinks,
     mediaKitPackages,
     mediaKitSettings,
@@ -25,9 +26,13 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
     seriesPreviewLimit,
     allSeriesHref,
     seriesOnlyMode,
+    productsPreviewLimit,
+    allProductsHref,
+    productsOnlyMode,
     reviewsPreviewLimit,
     allReviewsHref,
     reviewsOnlyMode,
+    pageHeader,
     onShare,
   } = props;
   return (
@@ -35,6 +40,7 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
       profile={profile}
       socials={socials}
       series={series}
+      products={products}
       customLinks={customLinks}
       mediaKitPackages={mediaKitPackages}
       mediaKitSettings={mediaKitSettings}
@@ -53,9 +59,13 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
       seriesPreviewLimit={seriesPreviewLimit}
       allSeriesHref={allSeriesHref}
       seriesOnlyMode={seriesOnlyMode}
+      productsPreviewLimit={productsPreviewLimit}
+      allProductsHref={allProductsHref}
+      productsOnlyMode={productsOnlyMode}
       reviewsPreviewLimit={reviewsPreviewLimit}
       allReviewsHref={allReviewsHref}
       reviewsOnlyMode={reviewsOnlyMode}
+      pageHeader={pageHeader}
       onShare={onShare}
     />
   );

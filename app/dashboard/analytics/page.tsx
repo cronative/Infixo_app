@@ -49,17 +49,23 @@ export default function DashboardAnalyticsPage() {
       setAnalytics((current) => ({ ...current, loading: true }));
 
       try {
-        const res = await fetch(`/api/creator/analytics?${query}&period=${period}`);
-        const data = await res.json();
+        const httpResponse = await fetch(`/api/creator/analytics?${query}&period=${period}`);
+        const apiResponse = await httpResponse.json();
 
         if (ignore) return;
-        setAnalytics({
-          loading: false,
-          profileViews: Number(data.metrics?.profileViews || 0),
-          uniqueVisitors: Number(data.metrics?.uniqueVisitors || 0),
-          episodeClicks: Number(data.metrics?.episodeClicks || 0),
-          topTargets: Array.isArray(data.topTargets) ? data.topTargets : [],
-        });
+        const metrics = apiResponse.data?.metrics || apiResponse.metrics;
+        const topTargets = apiResponse.data?.topTargets || apiResponse.topTargets;
+        if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
+          setAnalytics({
+            loading: false,
+            profileViews: Number(metrics?.profileViews || 0),
+            uniqueVisitors: Number(metrics?.uniqueVisitors || 0),
+            episodeClicks: Number(metrics?.episodeClicks || 0),
+            topTargets: Array.isArray(topTargets) ? topTargets : [],
+          });
+        } else {
+          setAnalytics({ ...EMPTY_ANALYTICS, loading: false });
+        }
       } catch {
         if (!ignore) setAnalytics({ ...EMPTY_ANALYTICS, loading: false });
       }
@@ -80,10 +86,10 @@ export default function DashboardAnalyticsPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#e2e8f0] pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="font-display text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+            <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
               Analytics
             </h1>
-            <span className="inline-flex items-center gap-1 rounded-full bg-[#043084]/10 px-2.5 py-0.5 text-xs font-bold text-[#043084]">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#f1f5f9] px-2 py-0.5 text-xs font-medium text-[#475569]">
               <BarChart3 className="h-3 w-3" />
               <span>{period === "7d" ? "Past 7 Days" : "Past 30 Days"}</span>
             </span>
@@ -101,7 +107,7 @@ export default function DashboardAnalyticsPage() {
                 type="button"
                 onClick={() => setPeriod(value)}
                 className={`h-7.5 rounded-lg px-2.5 text-xs font-bold transition-all cursor-pointer ${period === value
-                    ? "bg-[#043084] text-white shadow-xs"
+                    ? "bg-[#043084]/[0.08] text-[#043084]"
                     : "text-[#64748b] hover:bg-[#f8fafc] hover:text-[#043084]"
                   }`}
               >
@@ -148,7 +154,7 @@ export default function DashboardAnalyticsPage() {
       <section className="rounded-xl border border-[#e2e8f0] bg-white shadow-xs overflow-hidden">
         <div className="flex items-center justify-between gap-3 border-b border-[#e2e8f0] bg-[#f8fafc] px-3.5 py-2.5">
           <div>
-            <h2 className="text-xs sm:text-sm font-bold text-[#043084]">Top clicked series parts</h2>
+            <h2 className="text-xs sm:text-sm font-semibold text-[#0f172a]">Top clicked series parts</h2>
             <p className="text-[11px] text-[#64748b]">Only clicks from public series pages are counted.</p>
           </div>
           {analytics.loading && <RefreshCw className="h-3.5 w-3.5 animate-spin text-[#64748b]" />}

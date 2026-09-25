@@ -50,12 +50,13 @@ export function SectionOrderManager() {
         }
 
         if (email) {
-          const res = await fetch(`/api/creator/sections?email=${encodeURIComponent(email)}`);
-          if (res.ok) {
-            const data = await res.json();
-            if (Array.isArray(data.sections) && data.sections.length > 0) {
-              setSections(data.sections);
-              sectionsRepository.saveAll(data.sections);
+          const httpResponse = await fetch(`/api/creator/sections?email=${encodeURIComponent(email)}`);
+          if (httpResponse.ok) {
+            const apiResponse = await httpResponse.json();
+            const sections = apiResponse.data?.sections || apiResponse.sections;
+            if (apiResponse.status === 1 && Array.isArray(sections) && sections.length > 0) {
+              setSections(sections);
+              sectionsRepository.saveAll(sections);
             }
           }
         }

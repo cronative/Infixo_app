@@ -15,9 +15,15 @@ export function SyncingLoader({
   hideProgressBar?: boolean;
 }) {
   const [dots, setDots] = useState(".");
-  const [quoteIndex, setQuoteIndex] = useState(() => getRandomQuoteIndex());
+  // Start at 0 so server and client render the same text (avoids a hydration mismatch),
+  // then pick a random quote once mounted.
+  const [quoteIndex, setQuoteIndex] = useState(0);
   const [isFading, setIsFading] = useState(false);
   const [progress, setProgress] = useState(20);
+
+  useEffect(() => {
+    setQuoteIndex(getRandomQuoteIndex());
+  }, []);
 
   // Syncing dots animation (every 450ms)
   useEffect(() => {

@@ -2,16 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, UserX } from "lucide-react";
+import { UserX } from "lucide-react";
 import { ThemeCard } from "@/themes/registry";
-import { ThemeService, THEME_PAGE_BACKGROUNDS } from "@/services/ThemeService";
+import { ThemeService } from "@/services/ThemeService";
 import { SocialService } from "@/services/SocialService";
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
-import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
-import { FocusOverlay } from "@/components/theme/FocusOverlay";
+import { CreatorPublicShell } from "@/components/public/CreatorPublicShell";
 import { useToast } from "@/contexts/ToastContext";
 import { copyToClipboard } from "@/lib/copyToClipboard";
-import { isDarkTheme } from "@/components/onboarding/LivePreviewCard";
 import {
   CreatorProfile,
   CreatorReview,
@@ -131,21 +129,27 @@ export default function AllReviewsClient() {
           fetch(`/api/creator/reviews?username=${encodeURIComponent(username)}&status=approved`).then((r) => r.json()).catch(() => ({ success: false })),
         ]);
 
+        const isProfOk = profileRes.status === 1 || profileRes.success === true;
+        const freshProfile = profileRes.data?.profile || profileRes.profile;
+        const freshSubscription = profileRes.data?.subscription || profileRes.subscription;
+
         if (
-          !profileRes.success ||
-          !profileRes.profile?.username ||
-          isFreeTrialExpired(profileRes.subscription) ||
-          profileRes.profile.visibilitySettings?.showReviews === false
+          !isProfOk ||
+          !freshProfile?.username ||
+          isFreeTrialExpired(freshSubscription) ||
+          freshProfile.visibilitySettings?.showReviews === false
         ) {
           setNotFound(true);
           setLoaded(true);
           return;
         }
 
-        setProfile(profileRes.profile);
-        setTheme((profileRes.profile.themeKey || "minimal-white") as ThemeKey);
-        setSocials(Array.isArray(socialsRes.socials) ? buildSocialAccounts(socialsRes.socials) : EMPTY_SOCIAL_ACCOUNTS);
-        setReviews(Array.isArray(reviewsRes.reviews) ? reviewsRes.reviews : []);
+        setProfile(freshProfile);
+        setTheme((freshProfile.themeKey || "minimal-white") as ThemeKey);
+        const rawSocials = socialsRes.data?.socials || socialsRes.socials;
+        setSocials(Array.isArray(rawSocials) ? buildSocialAccounts(rawSocials) : EMPTY_SOCIAL_ACCOUNTS);
+        const rawReviews = reviewsRes.data?.reviews || reviewsRes.reviews;
+        setReviews(Array.isArray(rawReviews) ? rawReviews : []);
         setNotFound(false);
       } catch (error) {
         console.warn("Failed to load all reviews page:", error);
@@ -186,8 +190,6 @@ export default function AllReviewsClient() {
     );
   }
 
-  const themeMeta = ThemeService.getThemeMeta(theme);
-  const pageBgStyle = themeMeta.outerBgClass || THEME_PAGE_BACKGROUNDS[theme] || THEME_PAGE_BACKGROUNDS["minimal-white"];
   const totalAudience = SocialService.calculateTotalAudience(socials);
   const cleanHandle = (profile.username || params.username || "creator").replace(/^@/, "");
   const reviewsUrl = typeof window !== "undefined"
@@ -211,46 +213,9 @@ export default function AllReviewsClient() {
     }
   }
 
-  const isDark = isDarkTheme(theme);
-  const usesDarkControls = isDark || themeMeta.mode === "dark";
 
   return (
-    <div
-      style={{ backgroundColor: themeMeta.colors.pageBackground }}
-      className="relative min-h-dvh flex flex-col transition-colors duration-500"
-    >
-      <div
-        className={`fixed inset-0 pointer-events-none transition-colors duration-500 z-0 ${pageBgStyle}`}
-        style={{ backgroundColor: themeMeta.colors.pageBackground }}
-        aria-hidden="true"
-      >
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[650px] bg-gradient-radial from-white/[0.06] to-transparent blur-3xl pointer-events-none" />
-      </div>
-
-      {themeMeta.animation?.type !== "none" && (
-        <AmbientAnimation
-          type={themeMeta.animation?.type || themeMeta.animationType}
-          colors={themeMeta.animation?.colors || themeMeta.particleColors}
-          themeKey={themeMeta.key}
-        />
-      )}
-      <FocusOverlay overlay={themeMeta.focusOverlay} />
-
-      <main className="relative z-10 h-dvh min-h-0 flex flex-col mx-auto w-full max-w-[520px] px-2.5 py-2.5 sm:px-4 sm:py-3.5 overflow-hidden animate-fade-in-up">
-        <button
-          type="button"
-          onClick={() => router.push(`/${cleanHandle}`)}
-          style={{
-            backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 0.85)",
-            borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : "rgba(0, 0, 0, 0.1)",
-            color: usesDarkControls ? "#FFFFFF" : themeMeta.colors.primaryText,
-          }}
-          className="tap-scale mb-2 inline-flex h-8 w-fit items-center gap-1.5 rounded-[10px] border px-3 text-xs font-bold shadow-xs backdrop-blur-md transition-all hover:opacity-90 cursor-pointer"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          <span>Profile</span>
-        </button>
-
+    <CreatorPublicShell themeKey={theme}>
         <ThemeCard
           themeKey={theme}
           profile={profile}
@@ -264,9 +229,9 @@ export default function AllReviewsClient() {
           containedScroll
           seriesOpenMode="page"
           reviewsOnlyMode
+          pageHeader={{ pageLabel: "Reviews", backHref: `/${cleanHandle}`, backLabel: "Back to profile" }}
           onShare={handleShareReviewsList}
         />
-      </main>
-    </div>
+    </CreatorPublicShell>
   );
 }

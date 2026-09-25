@@ -1,18 +1,20 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { sendOtpEmail } from "@/lib/email";
-import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
+import { getClientIp } from "@/lib/rateLimit";
+import { checkPersistentRateLimit } from "@/lib/persistentRateLimit";
+import crypto from "crypto";
 import { logDeviceLogin } from "@/lib/loginLogger";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 export async function POST(req: Request) {
   try {
     // 0. Rate Limiting Protection (Max 5 requests per 5 minutes per IP)
     const clientIp = getClientIp(req);
-    const rateCheck = checkRateLimit(`login_${clientIp}`, 5, 5 * 60 * 1000);
+    const rateCheck = await checkPersistentRateLimit(`login:${clientIp}`, 5, 5 * 60);
     if (!rateCheck.success) {
-      return NextResponse.json(
-        { error: `Too many login attempts. Please wait ${rateCheck.retryAfterSec} seconds before trying again.` },
-        { status: 429 }
+      return apiError(
+        `Too many login attempts. Please wait ${rateCheck.retryAfterSec} seconds before trying again.`,
+        429
       );
     }
 
@@ -20,7 +22,25 @@ export async function POST(req: Request) {
     const email = (body.email || "").trim().toLowerCase();
 
     if (!email || !email.includes("@")) {
-      return NextResponse.json({ error: "Please enter a valid email address" }, { status: 400 });
+      return apiError("Please enter a valid email address", 400);
+    }
+
+    // 0b. Email-Level Cooldown (1 request per 60 seconds per email to prevent OTP spam)
+    const cooldownCheck = await checkPersistentRateLimit(`login:cooldown:${email}`, 1, 60);
+    if (!cooldownCheck.success) {
+      return apiError(
+        `Please wait ${cooldownCheck.retryAfterSec} seconds before requesting another code.`,
+        429
+      );
+    }
+
+    // 0c. Email-Level Rate Limit (Max 3 OTP requests per 3 minutes per email)
+    const emailRateCheck = await checkPersistentRateLimit(`login:email:${email}`, 3, 3 * 60);
+    if (!emailRateCheck.success) {
+      return apiError(
+        `Too many code requests for this email. Please wait ${emailRateCheck.retryAfterSec} seconds before trying again.`,
+        429
+      );
     }
 
     let creator: any = null;
@@ -35,7 +55,7 @@ export async function POST(req: Request) {
     }
 
     // 3. Generate dynamic random 4-digit OTP code (e.g. 4819)
-    const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
+    const otpCode = crypto.randomInt(1000, 10000).toString();
 
     try {
       // 1. Invalidate any previous unused OTP entries for this email
@@ -57,26 +77,26 @@ export async function POST(req: Request) {
         status: "otp_sent",
       });
     } catch (dbErr: any) {
-      console.warn("⚠️ MySQL error inserting OTP record / log:", dbErr.message);
+      console.error("Failed to persist OTP:", dbErr.message);
+      return apiError("Unable to create a login code", 503);
     }
 
     // 4. Send real OTP Email via Gmail SMTP (Awaited for guaranteed delivery)
     const emailSent = await sendOtpEmail(email, otpCode);
     if (!emailSent) {
-      console.warn("⚠️ sendOtpEmail returned false for email:", email);
+      await db.query("UPDATE otps SET is_used = TRUE WHERE email = ? AND otp_code = ?", [email, otpCode]);
+      return apiError("Unable to deliver the login code", 503);
     }
 
-    return NextResponse.json({
-      success: true,
-      message: `OTP sent to ${email} (valid for 5 minutes)`,
-      email: email,
-      username: creator?.username || "",
-    });
+    return apiSuccess(
+      {
+        email,
+        username: creator?.username || "",
+      },
+      `OTP sent to ${email} (valid for 5 minutes)`
+    );
   } catch (error: any) {
     console.error("Auth Login Error:", error);
-    return NextResponse.json(
-      { error: error.message || "Failed to process login request" },
-      { status: 500 }
-    );
+    return apiError(error.message || "Failed to process login request", 500);
   }
 }

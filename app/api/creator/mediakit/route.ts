@@ -1,5 +1,9 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireCreator } from "@/lib/creatorAuth";
+import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
+import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { getSessionFromRequest } from "@/lib/session";
+import { getPlanQuota } from "@/services/subscriptionLimits";
 
 let mediaKitTablesEnsured = false;
 
@@ -90,9 +94,18 @@ export async function GET(req: Request) {
     const resolvedEmailParam = searchParams.get("email") || (identifierParam && identifierParam.includes("@") ? identifierParam : null);
     const resolvedUsernameParam = searchParams.get("username");
 
-    const lookupVal = resolvedCreatorIdParam || resolvedEmailParam || resolvedUsernameParam;
+    let lookupVal = resolvedCreatorIdParam || resolvedEmailParam || resolvedUsernameParam;
     if (!lookupVal) {
-      return NextResponse.json({ error: "creatorId, email, or username query param required" }, { status: 400 });
+      const session = getSessionFromRequest(req);
+      if (session?.creatorId) {
+        lookupVal = session.creatorId;
+      } else if (session?.email) {
+        lookupVal = session.email;
+      }
+    }
+
+    if (!lookupVal) {
+      return apiError("creatorId, email, or username query param required", 400);
     }
 
     await ensureMediaKitTables();
@@ -100,6 +113,8 @@ export async function GET(req: Request) {
     const creatorRecord = await resolveCreatorRecord(lookupVal);
     const resolvedCreatorId = creatorRecord?.creatorId || resolvedCreatorIdParam || lookupVal;
     const resolvedEmail = creatorRecord?.email || resolvedEmailParam || lookupVal;
+    const accessError = await authorizeCreatorRead(req, resolvedCreatorId, Boolean(resolvedUsernameParam));
+    if (accessError) return accessError;
 
     // 1. Fetch Contact & Lead Routing Settings for THIS Creator only
     const [settingsRows]: any = await db.query(
@@ -154,34 +169,29 @@ export async function GET(req: Request) {
       };
     });
 
-    return NextResponse.json({
-      success: true,
+    return apiSuccess({
       creatorId: resolvedCreatorId,
       settings,
       packages,
-    });
+    }, "Media Kit retrieved successfully");
   } catch (err: any) {
     console.error("GET Media Kit Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to retrieve Media Kit", 500);
   }
 }
 
 // POST /api/creator/mediakit
 export async function POST(req: Request) {
   try {
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
     const body = await req.json();
-    const { creatorId: inputCreatorId, email: inputEmail, settings, packages } = body;
-
-    const lookupVal = inputCreatorId || inputEmail;
-    if (!lookupVal) {
-      return NextResponse.json({ error: "creatorId or email is required" }, { status: 400 });
-    }
+    const { settings, packages } = body;
 
     await ensureMediaKitTables();
 
-    const creatorRecord = await resolveCreatorRecord(lookupVal);
-    const resolvedCreatorId = creatorRecord?.creatorId || inputCreatorId || lookupVal;
-    const resolvedEmail = creatorRecord?.email || inputEmail || lookupVal;
+    const resolvedCreatorId = auth.creator.id;
+    const resolvedEmail = auth.creator.email;
 
     // 1. Save Settings tied to creator_id & email
     const whatsapp = settings?.whatsappNumber || null;
@@ -205,6 +215,23 @@ export async function POST(req: Request) {
 
     // 2. Synchronize Gigs tied to creator_id & email
     const incomingPackages: any[] = packages || [];
+
+    // Enforce server-side gig quota based on active subscription
+    const [subRows]: any = await db.query(
+      "SELECT plan_key FROM subscriptions WHERE creator_id = ? AND status = 'active' ORDER BY updated_at DESC LIMIT 1",
+      [resolvedCreatorId]
+    );
+    const activePlanKey = subRows[0]?.plan_key || "early_access";
+    const quota = getPlanQuota(activePlanKey);
+
+    if (incomingPackages.length > quota.maxGigs) {
+      return apiError(
+        `Collab package limit reached (${quota.maxGigs} max) for ${quota.name} plan. Upgrade your plan to add more packages.`,
+        403,
+        { isLimitReached: true, type: "gig" }
+      );
+    }
+
     const incomingIds = incomingPackages.map((p) => p.id);
 
     // Delete removed gigs for this creator_id/email
@@ -266,13 +293,11 @@ export async function POST(req: Request) {
       );
     }
 
-    return NextResponse.json({
-      success: true,
+    return apiSuccess({
       creatorId: resolvedCreatorId,
-      message: "Media Kit settings & gigs saved to MySQL DB by creator_id successfully!",
-    });
+    }, "Media Kit settings & gigs saved to MySQL DB by creator_id successfully!");
   } catch (err: any) {
     console.error("POST Media Kit Error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return apiError(err.message || "Failed to save Media Kit", 500);
   }
 }

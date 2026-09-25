@@ -35,7 +35,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             id={inputId}
-            className={`h-full w-full min-w-0 flex-1 bg-transparent text-xs sm:text-sm font-semibold text-[#043084] outline-none placeholder:text-[#94a3b8] placeholder:font-normal ${className}`}
+            className={`h-full w-full min-w-0 flex-1 bg-transparent text-xs sm:text-sm font-medium text-[#0f172a] outline-none placeholder:text-[#94a3b8] placeholder:font-normal ${className}`}
             {...rest}
           />
           {rightSlot && <div className="ml-1.5 shrink-0">{rightSlot}</div>}

@@ -106,14 +106,14 @@ export default function DashboardSocialsPage() {
     setSyncingPlatform(platform);
     try {
       if (platform === "instagram" && instaConnectedHandle) {
-        const res = await fetch("/api/instagram/userInfo", {
+        const httpResponse = await fetch("/api/instagram/userInfo", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username: instaConnectedHandle }),
         });
-        const data = await res.json();
-        if (data.success && data.user) {
-          const u = data.user;
+        const apiResponse = await httpResponse.json();
+        const u = apiResponse.data?.user || apiResponse.user;
+        if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && u) {
           updateSocials({
             instagram: {
               ...socials.instagram,
@@ -130,14 +130,14 @@ export default function DashboardSocialsPage() {
           showToast("Could not refresh Instagram. Please check handle.", "error");
         }
       } else if (platform === "youtube" && ytConnectedHandle) {
-        const res = await fetch("/api/youtube/channelInfo", {
+        const httpResponse = await fetch("/api/youtube/channelInfo", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ channelName: ytConnectedHandle }),
         });
-        const data = await res.json();
-        if (data.success && data.channel) {
-          const c = data.channel;
+        const apiResponse = await httpResponse.json();
+        const c = apiResponse.data?.channel || apiResponse.channel;
+        if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && c) {
           updateSocials({
             youtube: {
               ...socials.youtube,
@@ -154,14 +154,14 @@ export default function DashboardSocialsPage() {
           showToast("Could not refresh YouTube. Please check handle.", "error");
         }
       } else if (platform === "facebook" && fbConnectedHandle) {
-        const res = await fetch("/api/facebook/pageInfo", {
+        const httpResponse = await fetch("/api/facebook/pageInfo", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username: fbConnectedHandle }),
         });
-        const data = await res.json();
-        if (data.success && data.page) {
-          const p = data.page;
+        const apiResponse = await httpResponse.json();
+        const p = apiResponse.data?.page || apiResponse.page;
+        if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && p) {
           updateSocials({
             facebook: {
               ...socials.facebook,
@@ -230,10 +230,10 @@ export default function DashboardSocialsPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#e2e8f0] pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="font-display text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+            <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
               Social Accounts
             </h1>
-            <span className="inline-flex items-center gap-1 rounded-full bg-[#10b981]/10 px-2.5 py-0.5 text-xs font-bold text-[#059669]">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#ecfdf5] px-2 py-0.5 text-xs font-medium text-[#047857]">
               <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
               <span>Live Fanbase Sync</span>
             </span>
@@ -282,7 +282,7 @@ export default function DashboardSocialsPage() {
       {/* 3. SOCIAL ACCOUNTS SECTION */}
       <section className="space-y-2.5 text-left">
         <div>
-          <h2 className="text-sm sm:text-base font-bold text-[#043084]">
+          <h2 className="text-sm sm:text-base font-semibold text-[#0f172a]">
             Social accounts
           </h2>
           <p className="text-xs text-[#475569] font-normal mt-0.5">
@@ -408,7 +408,7 @@ export default function DashboardSocialsPage() {
                         value={draftInsta}
                         onChange={(e) => setDraftInsta(e.target.value.trim().replace(/^@/, ""))}
                         placeholder="Instagram username"
-                        className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-2.5 text-xs font-medium text-[#043084] placeholder:text-[#64748b]/60 focus:outline-none focus:border-[#043084] transition-colors"
+                        className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-2.5 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 focus:outline-none focus:border-[#043084] transition-colors"
                       />
                     </div>
                     <InstagramFetcher username={draftInsta} />
@@ -437,7 +437,7 @@ export default function DashboardSocialsPage() {
                         value={draftYt}
                         onChange={(e) => setDraftYt(e.target.value.trim().replace(/^@/, ""))}
                         placeholder="YouTube channel handle"
-                        className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-2.5 text-xs font-medium text-[#043084] placeholder:text-[#64748b]/60 focus:outline-none focus:border-[#043084] transition-colors"
+                        className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-2.5 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 focus:outline-none focus:border-[#043084] transition-colors"
                       />
                     </div>
                     <YoutubeFetcher handle={draftYt} />
@@ -466,7 +466,7 @@ export default function DashboardSocialsPage() {
                         value={draftFb}
                         onChange={(e) => setDraftFb(e.target.value.trim().replace(/^@/, ""))}
                         placeholder="Facebook page username"
-                        className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-2.5 text-xs font-medium text-[#043084] placeholder:text-[#64748b]/60 focus:outline-none focus:border-[#043084] transition-colors"
+                        className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-2.5 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 focus:outline-none focus:border-[#043084] transition-colors"
                       />
                     </div>
                     <FacebookFetcher username={draftFb} />
@@ -491,7 +491,7 @@ export default function DashboardSocialsPage() {
         </div>
         <Link
           href="/dashboard/links"
-          className="inline-flex items-center gap-1.5 rounded-xl bg-[#043084] px-4 py-2 text-xs font-bold text-white shadow-2xs hover:bg-[#032363] transition-colors shrink-0 self-start sm:self-auto"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3.5 py-2 text-xs font-semibold text-[#0f172a] hover:border-[#cbd5e1] hover:bg-[#f8fafc] transition-colors shrink-0 self-start sm:self-auto"
         >
           <span>Custom Links Manager</span>
           <ExternalLink className="h-3.5 w-3.5" />
@@ -610,7 +610,7 @@ function ConnectedSocialCard({
         <div className="flex items-center gap-2.5 min-w-0">
           <div className="shrink-0">{icon}</div>
           <div className="min-w-0">
-            <h3 className="text-sm sm:text-base font-bold text-[#043084] truncate">{platformName}</h3>
+            <h3 className="text-sm sm:text-base font-semibold text-[#0f172a] truncate">{platformName}</h3>
           </div>
         </div>
         <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#17845B] bg-[#EAF7F0] px-2 py-0.5 rounded-full border border-[#17845B]/20 shrink-0">

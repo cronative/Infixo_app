@@ -35,6 +35,16 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  const requestUrl = new URL(event.request.url);
+  const isStaticAsset =
+    STATIC_ASSETS.includes(requestUrl.pathname) ||
+    requestUrl.pathname.startsWith("/_next/static/") ||
+    requestUrl.pathname.startsWith("/images/");
+
+  if (!isStaticAsset) {
+    return;
+  }
+
   // Network first strategy with cache fallback
   event.respondWith(
     fetch(event.request)
@@ -49,7 +59,7 @@ self.addEventListener("fetch", (event) => {
       })
       .catch(() => {
         return caches.match(event.request).then((cachedResponse) => {
-          return cachedResponse || caches.match("/");
+          return cachedResponse;
         });
       })
   );

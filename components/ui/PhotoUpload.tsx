@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { Camera, ImagePlus, X, Film } from "lucide-react";
+import { resizeImageToDataUrl } from "@/lib/imageResize";
 
 interface PhotoUploadProps {
   value: string | null;
@@ -24,9 +25,7 @@ export function PhotoUpload({
 
   function handleFile(file: File | undefined) {
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => onChange(reader.result as string);
-    reader.readAsDataURL(file);
+    resizeImageToDataUrl(file, shape === "landscape" ? 1600 : 512).then(onChange).catch(() => undefined);
   }
 
   const isLandscape = shape === "landscape";

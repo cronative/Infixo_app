@@ -16,6 +16,7 @@ import { useToast } from "@/contexts/ToastContext";
 import { ProfileService } from "@/services/ProfileService";
 import { CategorySelect } from "@/components/ui/CategorySelect";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
+import { resizeImageToDataUrl } from "@/lib/imageResize";
 
 const BIO_SUGGESTIONS = [
   "🎬 Creating cinematic vlogs & travel stories for curious minds.",
@@ -57,12 +58,10 @@ export default function DashboardProfilePage() {
       showToast("Please upload an image smaller than 5MB", "error");
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => {
-      updateProfile({ photoDataUrl: reader.result as string });
+    resizeImageToDataUrl(file, 512).then((dataUrl) => {
+      updateProfile({ photoDataUrl: dataUrl });
       showToast("Profile photo updated! Click Save Changes to apply. ✨");
-    };
-    reader.readAsDataURL(file);
+    }).catch(() => showToast("Could not read that image. Please try another.", "error"));
   };
 
   // Suggest Bio
@@ -109,10 +108,10 @@ export default function DashboardProfilePage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#e2e8f0] pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="font-display text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+            <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
               Profile
             </h1>
-            <span className="inline-flex items-center gap-1 rounded-full bg-[#043084]/10 px-2.5 py-0.5 text-xs font-bold text-[#043084]">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#f1f5f9] px-2 py-0.5 text-xs font-medium text-[#475569]">
               <UserRound className="h-3 w-3" />
               <span>@{handleStr}</span>
             </span>
@@ -148,7 +147,7 @@ export default function DashboardProfilePage() {
         {/* Card Header with Live Badge */}
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-sm sm:text-base font-bold text-[#043084]">
+            <h2 className="text-sm sm:text-base font-semibold text-[#0f172a]">
               Profile identity
             </h2>
             <p className="text-xs text-[#475569] font-normal mt-0.5">
@@ -212,7 +211,7 @@ export default function DashboardProfilePage() {
           <div className="md:col-span-7 space-y-4">
             {/* Display Name Input */}
             <div>
-              <label className="block text-xs font-semibold text-[#043084] mb-1.5">
+              <label className="block text-[13px] font-medium text-[#0f172a] mb-1.5">
                 Display name
               </label>
               <input
@@ -223,7 +222,7 @@ export default function DashboardProfilePage() {
                   updateProfile({ displayName: e.target.value });
                   if (errors.displayName) setErrors((prev) => ({ ...prev, displayName: undefined }));
                 }}
-                className={`w-full h-9.5 sm:h-10 rounded-lg border px-3 text-xs sm:text-sm font-medium text-[#043084] placeholder:text-[#64748b]/50 focus:outline-none transition-colors ${errors.displayName
+                className={`w-full h-9.5 sm:h-10 rounded-lg border px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:outline-none transition-colors ${errors.displayName
                   ? "border-[#C2414B] bg-rose-50/20 focus:border-[#C2414B]"
                   : "border-[#e2e8f0] bg-white focus:border-[#043084] focus:ring-2 focus:ring-[#043084]/10"
                   }`}
@@ -237,7 +236,7 @@ export default function DashboardProfilePage() {
 
             {/* Profile URL */}
             <div>
-              <label className="block text-xs font-semibold text-[#043084] mb-1.5">
+              <label className="block text-[13px] font-medium text-[#0f172a] mb-1.5">
                 Profile URL
               </label>
               <div className="flex items-center justify-between h-9.5 sm:h-10 rounded-lg border border-[#e2e8f0] bg-[#f8fafc] px-3 text-xs sm:text-sm font-medium text-[#043084]">
@@ -272,7 +271,7 @@ export default function DashboardProfilePage() {
       {/* SECTION 3 — ABOUT YOUR CONTENT */}
       <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-xs space-y-3.5">
         <div>
-          <h2 className="text-sm sm:text-base font-bold text-[#043084]">
+          <h2 className="text-sm sm:text-base font-semibold text-[#0f172a]">
             About your content
           </h2>
           <p className="text-xs text-[#475569] font-normal mt-0.5">
@@ -282,7 +281,7 @@ export default function DashboardProfilePage() {
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="block text-xs font-semibold text-[#043084]">
+            <label className="block text-[13px] font-medium text-[#0f172a]">
               Short bio
             </label>
 
@@ -307,7 +306,7 @@ export default function DashboardProfilePage() {
             value={profile.bio || ""}
             placeholder="Tell people what you create and what they can expect from your content..."
             onChange={(e) => updateProfile({ bio: e.target.value })}
-            className={`w-full rounded-lg border p-3 text-xs sm:text-sm font-normal text-[#043084] placeholder:text-[#64748b]/50 focus:outline-none transition-colors resize-y min-h-[80px] ${errors.bio
+            className={`w-full rounded-lg border p-3 text-xs sm:text-sm font-normal text-[#0f172a] placeholder:text-[#64748b]/50 focus:outline-none transition-colors resize-y min-h-[80px] ${errors.bio
               ? "border-[#C2414B] bg-rose-50/20 focus:border-[#C2414B]"
               : "border-[#e2e8f0] bg-white focus:border-[#043084] focus:ring-2 focus:ring-[#043084]/10"
               }`}
