@@ -74,24 +74,24 @@ export const PUBLIC_RADIUS = {
   chip: "rounded-full",
 } as const;
 
-/** Centered card: 600px on web, full width minus 10px each side below 620px. */
+/** Centered card: sleek mobile-first width on web (up to 580px). */
 export const PUBLIC_MAIN_CLASS =
-  "relative z-10 h-dvh min-h-0 flex flex-col mx-auto w-full max-w-[620px] px-2.5 py-2.5 sm:py-3.5 overflow-hidden animate-fade-in-up";
+  "relative z-10 h-dvh min-h-0 flex flex-col mx-auto w-full max-w-[580px] px-2 py-2 sm:px-3 sm:py-3 overflow-hidden animate-fade-in-up";
 
 /** Inner padding of the centered card, shared by all pages. */
-export const PUBLIC_CARD_PADDING = "px-4 sm:px-6";
+export const PUBLIC_CARD_PADDING = "px-3.5 sm:px-5";
 
-/** 40px square icon control (header buttons). */
+/** 36-38px square icon control (header buttons). */
 export const PUBLIC_ICON_BUTTON =
-  "tap-scale flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] border shadow-xs transition-all hover:scale-105 cursor-pointer select-none";
+  "tap-scale flex h-9 w-9 sm:h-9.5 sm:w-9.5 shrink-0 items-center justify-center rounded-[11px] border shadow-2xs transition-all hover:scale-105 cursor-pointer select-none";
 
 /** Text control (e.g. "View all", "Media kit"). */
 export const PUBLIC_TEXT_BUTTON =
-  "tap-scale inline-flex h-10 items-center justify-center gap-1.5 rounded-[12px] border px-3.5 text-xs sm:text-[13px] font-semibold shadow-xs transition-all hover:opacity-90 cursor-pointer";
+  "tap-scale inline-flex h-9 sm:h-9.5 items-center justify-center gap-1.5 rounded-[11px] border px-3 text-xs sm:text-[13px] font-semibold shadow-2xs transition-all hover:opacity-90 cursor-pointer";
 
 /** Full-width CTA button. */
 export const PUBLIC_CTA_BUTTON =
-  "tap-scale inline-flex h-12 w-full items-center justify-center gap-2 rounded-[14px] border px-4 text-sm font-bold transition-all hover:brightness-95 cursor-pointer";
+  "tap-scale inline-flex h-11 sm:h-11.5 w-full items-center justify-center gap-2 rounded-[12px] border px-4 text-xs sm:text-sm font-bold transition-all hover:brightness-95 cursor-pointer";
 
 /* ------------------------------------------------------------------ */
 /* Theme-derived styles                                                */

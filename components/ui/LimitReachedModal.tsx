@@ -10,7 +10,7 @@ import { getPlanQuota } from "@/services/subscriptionLimits";
 interface LimitReachedModalProps {
   isOpen: boolean;
   onClose: () => void;
-  type: "series" | "episode" | "gig";
+  type: "series" | "episode" | "gig" | "product";
   seriesTitle?: string;
   planKey?: string;
 }
@@ -41,11 +41,14 @@ export function LimitReachedModal({
   const isSeries = type === "series";
   const isEpisode = type === "episode";
   const isGig = type === "gig";
+  const isProduct = type === "product";
 
   const modalTitle = isSeries
     ? `${quota.maxSeries} Series Limit Reached`
     : isEpisode
     ? `${quota.maxEpisodesPerSeries} Episodes Limit Reached`
+    : isProduct
+    ? `${quota.maxProducts} Product Limit Reached`
     : `${quota.maxGigs} Collab Package Limit Reached`;
 
   let limitExplanation = "";
@@ -63,6 +66,11 @@ export function LimitReachedModal({
         : seriesTitle
         ? `"${seriesTitle}" has reached the ${planName} limit (5 episodes). Upgrade to Pro for 20 episodes per series or VIP for unlimited.`
         : `${planName} includes up to 5 episodes per series (15 total). Upgrade to Pro for 20 episodes per series or VIP for unlimited.`;
+  } else if (isProduct) {
+    limitExplanation =
+      normalizedKey === "pro"
+        ? "Pro plan includes up to 20 products in shop. Upgrade to VIP for unlimited products."
+        : `${planName} includes 1 product in shop. Upgrade to Pro for 20 products or VIP for unlimited products.`;
   } else {
     limitExplanation =
       normalizedKey === "pro"
@@ -112,8 +120,8 @@ export function LimitReachedModal({
               <Check className="h-3.5 w-3.5 text-emerald-600" />
               <span>
                 {targetUpgradePlan === "vip"
-                  ? "Unlimited series & episodes + 10 collab packages"
-                  : "20 series with 20 episodes per series (400 total)"}
+                  ? "Unlimited products, series & episodes + 10 collab packages"
+                  : "20 products in shop & 20 series with 20 episodes"}
               </span>
             </li>
             <li className="flex items-center gap-1.5">

@@ -1,9 +1,5 @@
 "use client";
 
-export default function DashboardCollaborationsPage() {
-  // Section hidden per user request
-  return null;
-}
 
 
 import { useEffect, useState } from "react";

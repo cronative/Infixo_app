@@ -1,5 +1,7 @@
 "use client";
 
+import type { CreatorProduct } from "@/types";
+
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Play, UserX, Home, Sparkles, Film, Users } from "lucide-react";
@@ -16,6 +18,7 @@ import { buildProfileUrl } from "@/utils/format";
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { CreatorPublicShell } from "@/components/public/CreatorPublicShell";
+import { getPlanQuota } from "@/services/subscriptionLimits";
 
 const EMPTY_PROFILE: CreatorProfile = {
   photoDataUrl: null,
@@ -86,6 +89,7 @@ export default function PublicProfileClient() {
   const [team, setTeam] = useState<{ team?: any; members: any[] }>({ members: [] });
   const [brands, setBrands] = useState<any[]>([]);
   const [collaborations, setCollaborations] = useState<any[]>([]);
+  const [products, setProducts] = useState<CreatorProduct[]>([]);
   const [setupItems, setSetupItems] = useState<CreatorSetupItem[]>([]);
   const [otherSocials, setOtherSocials] = useState<any[]>([]);
   const [sections, setSections] = useState<any[]>([]);
@@ -146,6 +150,7 @@ export default function PublicProfileClient() {
           setupRes,
           otherSocRes,
           secRes,
+          productsRes,
         ] = await Promise.all([
           fetch(`/api/creator/profile?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
           fetch(`/api/creator/socials?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
@@ -159,11 +164,23 @@ export default function PublicProfileClient() {
           fetch(`/api/creator/setup?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
           fetch(`/api/creator/other-socials?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
           fetch(`/api/creator/sections?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
+          fetch(`/api/public/products?username=${encodeURIComponent(usernameParam)}`, { cache: "no-store" }).then((r) => r.json()).catch(() => ({ status: 0 })),
         ]);
 
         const isProfOk = profRes.status === 1 || profRes.success === true;
         const profile = profRes.data?.profile || profRes.profile;
         const subscription = profRes.data?.subscription || profRes.subscription;
+
+        const rawProducts: CreatorProduct[] =
+          productsRes.status === 1 && Array.isArray(productsRes.data?.products)
+            ? productsRes.data.products
+            : [];
+        const quota = getPlanQuota(subscription?.planKey || "early_access");
+        const visibleProducts =
+          quota.maxProducts === Infinity
+            ? rawProducts
+            : rawProducts.slice(0, quota.maxProducts);
+        setProducts(visibleProducts);
 
         if (isProfOk && profile && profile.username) {
           if (isFreeTrialExpired(subscription)) {
@@ -537,6 +554,7 @@ export default function PublicProfileClient() {
           brands={brands}
           collaborations={collaborations}
           setupItems={setupItems}
+          products={products}
           otherSocials={otherSocials}
           sections={sections}
           totalAudience={totalAudience}
@@ -545,6 +563,8 @@ export default function PublicProfileClient() {
           seriesOpenMode="page"
           seriesPreviewLimit={3}
           allSeriesHref={`/${handleStr.replace(/^@/, "")}/series`}
+          productsPreviewLimit={3}
+          allProductsHref={`/${handleStr.replace(/^@/, "")}/products`}
           reviewsPreviewLimit={3}
           allReviewsHref={`/${handleStr.replace(/^@/, "")}/reviews`}
           onShare={handleShare}

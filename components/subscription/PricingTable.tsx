@@ -171,6 +171,10 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
+                      <span>1 product in shop</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
                       <span>5 custom links &amp; free themes</span>
                     </li>
                   </ul>
@@ -226,6 +230,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                 <ul className="space-y-2 text-xs text-[#181716] font-medium">
                   <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" /><span>Public profile always live</span></li>
                   <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" /><span>3 series, 15 total episodes</span></li>
+                  <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" /><span>1 product in shop</span></li>
                   <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" /><span>5 custom links</span></li>
                   <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" /><span>1 collab package + 1 review</span></li>
                   <li className="flex items-center gap-2 text-[#797570]"><Minus className="h-3.5 w-3.5 shrink-0" /><span>No rate card or media kit</span></li>
@@ -297,6 +302,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                 </span>
                 <ul className="space-y-2 text-xs text-[#181716] font-medium">
                   <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" /><span>20 series, 200 episodes</span></li>
+                  <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" /><span>20 products in shop (matches 20 series)</span></li>
                   <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" /><span>20 custom links &amp; 10 reviews</span></li>
                   <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" /><span>5 collab packages</span></li>
                   <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" /><span>Rate card &amp; full media kit</span></li>
@@ -371,6 +377,10 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                   <li className="flex items-center gap-2">
                     <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
                     <span>Unlimited content series &amp; episodes</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
+                    <span>Unlimited products in shop</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-3.5 w-3.5 text-[#17845B] shrink-0" />
@@ -512,6 +522,21 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                 )}
                 <td className="py-3 px-4 text-center">5 links</td>
                 <td className="py-3 px-4 text-center">20 links</td>
+                <td className="py-3 px-4 text-center font-semibold text-[#043084]">Unlimited</td>
+              </tr>
+
+              {/* Row: Shop Products */}
+              <tr>
+                <td className="py-3 px-5 font-semibold text-[#181716]">
+                  Shop Products
+                </td>
+                {!hasSelectedFreeTrial && (
+                  <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                    1 product
+                  </td>
+                )}
+                <td className="py-3 px-4 text-center">1 product</td>
+                <td className="py-3 px-4 text-center">20 products</td>
                 <td className="py-3 px-4 text-center font-semibold text-[#043084]">Unlimited</td>
               </tr>
 

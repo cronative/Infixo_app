@@ -39,21 +39,37 @@ export async function GET(req: Request) {
 
     // Fetch settings from dedicated creator_settings table
     const [sRows]: any = await db.query(
-      "SELECT visibility_settings FROM creator_settings WHERE creator_id = ?",
+      "SELECT visibility_settings, public_profile_layout FROM creator_settings WHERE creator_id = ?",
       [creatorId]
     );
 
     let visibilitySettings = null;
-    if (sRows && sRows.length > 0 && sRows[0].visibility_settings) {
-      try {
-        visibilitySettings = typeof sRows[0].visibility_settings === "string"
-          ? JSON.parse(sRows[0].visibility_settings)
-          : sRows[0].visibility_settings;
-      } catch (e) {}
+    let publicProfileLayout = "default";
+    if (sRows && sRows.length > 0) {
+      if (sRows[0].visibility_settings) {
+        try {
+          visibilitySettings = typeof sRows[0].visibility_settings === "string"
+            ? JSON.parse(sRows[0].visibility_settings)
+            : sRows[0].visibility_settings;
+        } catch (e) {}
+      }
+      if (sRows[0].public_profile_layout) {
+        publicProfileLayout = sRows[0].public_profile_layout;
+      }
+    }
+
+    const ALLOWED_LAYOUTS = ["default", "minimal", "creator", "spotlight", "studio"];
+    if (!ALLOWED_LAYOUTS.includes(publicProfileLayout)) {
+      publicProfileLayout = "default";
+    }
+
+    if (visibilitySettings && typeof visibilitySettings === "object") {
+      visibilitySettings.publicProfileLayout = publicProfileLayout;
     }
 
     return apiSuccess({
       creatorId,
+      publicProfileLayout,
       visibilitySettings,
     }, "Settings retrieved successfully");
   } catch (err: any) {
@@ -73,24 +89,34 @@ export async function POST(req: Request) {
     const { visibilitySettings } = body;
     const creatorId = auth.creator.id;
 
+    const ALLOWED_LAYOUTS = ["default", "minimal", "creator", "spotlight", "studio"];
+    const layoutCandidate = body.publicProfileLayout || visibilitySettings?.publicProfileLayout;
+    const safeLayout = ALLOWED_LAYOUTS.includes(layoutCandidate) ? layoutCandidate : "default";
+
+    if (visibilitySettings && typeof visibilitySettings === "object") {
+      visibilitySettings.publicProfileLayout = safeLayout;
+    }
+
     const visibilityJson = visibilitySettings ? JSON.stringify(visibilitySettings) : null;
 
     // Upsert into dedicated creator_settings table
     await db.query(
-      `INSERT INTO creator_settings (creator_id, visibility_settings)
-       VALUES (?, ?)
+      `INSERT INTO creator_settings (creator_id, visibility_settings, public_profile_layout)
+       VALUES (?, ?, ?)
        ON DUPLICATE KEY UPDATE 
          visibility_settings = VALUES(visibility_settings),
+         public_profile_layout = VALUES(public_profile_layout),
          updated_at = CURRENT_TIMESTAMP`,
-      [creatorId, visibilityJson]
+      [creatorId, visibilityJson, safeLayout]
     );
 
     // Also update creators table column for backward compatibility
     try {
-      await db.query("UPDATE creators SET visibility_settings = ? WHERE id = ?", [visibilityJson, creatorId]);
+      await db.query("UPDATE creators SET visibility_settings = ?, public_profile_layout = ? WHERE id = ?", [visibilityJson, safeLayout, creatorId]);
     } catch (e) {}
 
     return apiSuccess({
+      publicProfileLayout: safeLayout,
       visibilitySettings,
     }, "Page visibility settings saved successfully to creator_settings table!");
   } catch (err: any) {

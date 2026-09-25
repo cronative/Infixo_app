@@ -18,6 +18,7 @@ import {
   X,
   RefreshCw,
   Zap,
+  ShoppingBag,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { PricingTable } from "@/components/subscription/PricingTable";
@@ -25,9 +26,11 @@ import {
   getSeriesUsage,
   getTotalEpisodesUsage,
   getGigUsage,
+  getProductUsage,
   getPlanQuota,
 } from "@/services/subscriptionLimits";
 import { MediaKitService } from "@/services/MediaKitService";
+import { ProductService } from "@/services/ProductService";
 import { SubscriptionService } from "@/services/SubscriptionService";
 import { getPlanPrice, formatPlanPrice } from "@/lib/pricing";
 
@@ -58,6 +61,8 @@ export default function DashboardSubscriptionPage() {
     setTimeout(() => setToastMessage(null), 4000);
   };
 
+  const [productsCount, setProductsCount] = useState(0);
+
   // Count from the database (same source as Home / Media Kit); local cache only as an instant fallback.
   useEffect(() => {
     let cancelled = false;
@@ -68,6 +73,9 @@ export default function DashboardSubscriptionPage() {
         if (!cancelled) setActiveGigsCount(packages.filter((p) => p.isActive !== false).length);
       });
     }
+    ProductService.list().then((products) => {
+      if (!cancelled) setProductsCount(products.length);
+    }).catch(() => {});
     return () => {
       cancelled = true;
     };
@@ -86,6 +94,7 @@ export default function DashboardSubscriptionPage() {
   const seriesUsage = getSeriesUsage(series, planKey);
   const episodeUsage = getTotalEpisodesUsage(series, planKey);
   const gigUsage = getGigUsage(activeGigsCount, planKey);
+  const productUsage = getProductUsage(productsCount, planKey);
   const quota = getPlanQuota(planKey);
   const planName = quota.name;
   const isTrial = planKey === "early_access";
@@ -317,11 +326,19 @@ export default function DashboardSubscriptionPage() {
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748b] block mb-3">
               Included in Your Active Plan
             </span>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
               <div className="p-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] space-y-1">
                 <span className="text-[11px] text-[#64748b] font-medium block">Content Series</span>
                 <span className="font-bold text-[#043084] text-sm">
                   {quota.maxSeries === Infinity ? "Unlimited" : `${quota.maxSeries} Series`}
+                </span>
+              </div>
+              <div className="p-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] space-y-1">
+                <span className="text-[11px] text-[#64748b] font-medium block">Shop Products</span>
+                <span className="font-bold text-[#043084] text-sm">
+                  {quota.maxProducts === Infinity
+                    ? "Unlimited"
+                    : `${quota.maxProducts} ${quota.maxProducts === 1 ? "Product" : "Products"}`}
                 </span>
               </div>
               <div className="p-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] space-y-1">
@@ -338,7 +355,7 @@ export default function DashboardSubscriptionPage() {
                   {quota.maxCustomLinks === Infinity ? "Unlimited" : `${quota.maxCustomLinks} Links`}
                 </span>
               </div>
-              <div className="p-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] space-y-1">
+              <div className="p-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] space-y-1 col-span-2 sm:col-span-1">
                 <span className="text-[11px] text-[#64748b] font-medium block">Media Kit &amp; Rate Card</span>
                 <span className="font-bold text-[#043084] text-sm">
                   {quota.hasMediaKit && quota.hasRateCard
@@ -356,7 +373,7 @@ export default function DashboardSubscriptionPage() {
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748b] block">
               Real-Time Quota Usage
             </span>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {/* Metric 1: Content Series */}
               <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
                 <div className="flex items-center justify-between">
@@ -405,7 +422,31 @@ export default function DashboardSubscriptionPage() {
                 </p>
               </div>
 
-              {/* Metric 3: Collab Packages */}
+              {/* Metric 3: Shop Products */}
+              <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-[#475569] flex items-center gap-1.5">
+                    <ShoppingBag className="h-3.5 w-3.5 text-[#043084]" />
+                    <span>Shop Products</span>
+                  </span>
+                  <span className="text-xs font-bold text-[#043084]">
+                    {productUsage.current} of {productUsage.max === Infinity ? "Unlimited" : productUsage.max}
+                  </span>
+                </div>
+                <div className="w-full bg-[#e2e8f0] h-2 rounded-full overflow-hidden">
+                  <div
+                    className="bg-[#043084] h-full rounded-full transition-all"
+                    style={{ width: `${Math.min(100, productUsage.percentage)}%` }}
+                  />
+                </div>
+                <p className="text-[10px] text-[#64748b] font-medium">
+                  {productUsage.max === Infinity
+                    ? "Unlimited products in shop"
+                    : `${Math.max(0, productUsage.max - productUsage.current)} product slots available`}
+                </p>
+              </div>
+
+              {/* Metric 4: Collab Packages */}
               <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-[#475569] flex items-center gap-1.5">

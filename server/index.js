@@ -31,7 +31,11 @@ app.use("/api/subscription", subscriptionRoutes);
 app.use("/api", paymentRoutes);
 
 // Root & Health Check Endpoint
+app.get("/api/health", (req, res) => {
+  res.json({ status: "online" });
+});
 app.get("/", (req, res) => {
+
   res.json({
     status: "online",
     name: "Inflixo API Server",

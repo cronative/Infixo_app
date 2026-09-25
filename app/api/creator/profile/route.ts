@@ -34,7 +34,8 @@ export async function GET(req: Request) {
               s.activated_at AS sub_activated_at, s.created_at AS sub_created_at,
               s.trial_ends_at AS sub_trial_ends_at, s.ends_at AS sub_ends_at,
               s.current_period_ends_at AS sub_current_period_ends_at,
-              cs.visibility_settings AS settings_visibility
+              cs.visibility_settings AS settings_visibility,
+              cs.public_profile_layout AS settings_layout
        FROM creators c
        LEFT JOIN subscriptions s ON c.id = s.creator_id
        LEFT JOIN creator_settings cs ON c.id = cs.creator_id
@@ -89,6 +90,14 @@ export async function GET(req: Request) {
       } catch (e) {}
     }
 
+    const ALLOWED_LAYOUTS = ["default", "minimal", "creator", "spotlight", "studio"];
+    const layoutCandidate = creator.public_profile_layout || creator.settings_layout || visibilitySettings?.publicProfileLayout || "default";
+    const publicProfileLayout = ALLOWED_LAYOUTS.includes(layoutCandidate) ? layoutCandidate : "default";
+
+    if (visibilitySettings && typeof visibilitySettings === "object") {
+      visibilitySettings.publicProfileLayout = publicProfileLayout;
+    }
+
     return apiSuccess({
       profile: {
         id: creator.id,
@@ -106,6 +115,7 @@ export async function GET(req: Request) {
         themeKey: (!creator.theme_key || creator.theme_key === "modern-purple") ? "minimal-white" : creator.theme_key,
         themeChangesCount: Number(creator.theme_changes_count || 0),
         isVerified: Boolean(creator.is_verified),
+        publicProfileLayout,
         visibilitySettings,
         updatedAt: creator.updated_at,
       },
@@ -177,6 +187,10 @@ export async function POST(req: Request) {
       return apiSuccess({ onboardingStep: body.onboardingStep }, "Onboarding step updated");
     }
 
+    const ALLOWED_LAYOUTS = ["default", "minimal", "creator", "spotlight", "studio"];
+    const layoutCandidate = body.publicProfileLayout || visibilitySettings?.publicProfileLayout;
+    const safeLayout = ALLOWED_LAYOUTS.includes(layoutCandidate) ? layoutCandidate : null;
+
     if (creatorId) {
       // If user typed a username, update it; otherwise preserve existing handle without default fallback
       const finalUsername = cleanUsername || existingUsername || "";
@@ -197,9 +211,10 @@ export async function POST(req: Request) {
              state = COALESCE(?, state),
              country = COALESCE(?, country),
              theme_key = ?,
+             public_profile_layout = COALESCE(?, public_profile_layout),
              visibility_settings = COALESCE(?, visibility_settings)
           WHERE id = ?`,
-        [displayName || null, finalUsername, safeCategory, safeCustomCategory, safeProfession, bio, finalPhotoUrl, city, state, country, safeThemeKey, visibilityJson, creatorId]
+        [displayName || null, finalUsername, safeCategory, safeCustomCategory, safeProfession, bio, finalPhotoUrl, city, state, country, safeThemeKey, safeLayout, visibilityJson, creatorId]
       );
 
       if (incrementThemeCount) {
@@ -240,15 +255,16 @@ export async function POST(req: Request) {
     }
 
     // Upsert into dedicated creator_settings table
-    if (visibilityJson) {
+    if (visibilityJson || safeLayout) {
       try {
         await db.query(
-          `INSERT INTO creator_settings (creator_id, visibility_settings)
-           VALUES (?, ?)
+          `INSERT INTO creator_settings (creator_id, visibility_settings, public_profile_layout)
+           VALUES (?, ?, COALESCE(?, 'default'))
            ON DUPLICATE KEY UPDATE 
-             visibility_settings = VALUES(visibility_settings),
+             visibility_settings = COALESCE(VALUES(visibility_settings), visibility_settings),
+             public_profile_layout = COALESCE(VALUES(public_profile_layout), public_profile_layout),
              updated_at = CURRENT_TIMESTAMP`,
-          [creatorId, visibilityJson]
+          [creatorId, visibilityJson, safeLayout]
         );
       } catch (e) {
         console.warn("Could not upsert into creator_settings:", e);
@@ -261,7 +277,7 @@ export async function POST(req: Request) {
 
     // Re-fetch updated profile with LEFT JOIN on creator_settings
     const [updatedRows]: any = await db.query(
-      `SELECT c.*, cs.visibility_settings AS settings_visibility 
+      `SELECT c.*, cs.visibility_settings AS settings_visibility, cs.public_profile_layout AS settings_layout 
        FROM creators c 
        LEFT JOIN creator_settings cs ON c.id = cs.creator_id 
        WHERE c.id = ?`,
@@ -277,6 +293,11 @@ export async function POST(req: Request) {
           ? JSON.parse(rawVis)
           : rawVis;
       } catch (e) {}
+    }
+
+    const publicProfileLayout = updated.settings_layout || updated.public_profile_layout || "default";
+    if (parsedVisibility && typeof parsedVisibility === "object") {
+      parsedVisibility.publicProfileLayout = publicProfileLayout;
     }
 
     return apiSuccess({
@@ -295,6 +316,7 @@ export async function POST(req: Request) {
         themeKey: updated.theme_key,
         themeChangesCount: Number(updated.theme_changes_count || 0),
         isVerified: Boolean(updated.is_verified),
+        publicProfileLayout,
         visibilitySettings: parsedVisibility,
         updatedAt: updated.updated_at,
       },

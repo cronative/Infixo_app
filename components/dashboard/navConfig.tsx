@@ -13,11 +13,9 @@ import {
   BarChart3,
   Laptop,
   IdCard,
-  Inbox,
-  Handshake,
-  Store,
   Users,
   Eye,
+  ShoppingBag,
 } from "lucide-react";
 
 export interface NavItem {
@@ -47,6 +45,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/dashboard", label: "Home", icon: LayoutGrid },
       { href: "/dashboard/series", label: "Series", icon: Layers },
+      { href: "/dashboard/products", label: "Products", icon: ShoppingBag },
       { href: "/dashboard/links", label: "Links", icon: Link2 },
       { href: "/dashboard/socials", label: "Socials", icon: AtSign },
       { href: "/dashboard/profile", label: "Profile", icon: UserRound },
@@ -70,7 +69,6 @@ export const NAV_GROUPS: NavGroup[] = [
     id: "showcase",
     title: "Showcase",
     items: [
-      { href: "/dashboard/brands", label: "My Brands", icon: Store },
       { href: "/dashboard/team", label: "Team", icon: Users },
       { href: "/dashboard/setup", label: "Gear & Setup", icon: Laptop },
     ],

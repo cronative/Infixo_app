@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Settings,
-  Eye,
   ExternalLink,
   RotateCw,
   Sparkles,
@@ -17,11 +16,22 @@ import { VisibilitySettingsModal } from "@/components/shared/VisibilitySettingsM
 import { VisibilitySettings, DEFAULT_VISIBILITY_SETTINGS } from "@/types";
 import { STORAGE_KEYS, storage } from "@/utils/storage";
 import { useToast } from "@/contexts/ToastContext";
+import { ProductService } from "@/services/ProductService";
+import { getPlanQuota } from "@/services/subscriptionLimits";
+import type { CreatorProduct } from "@/types";
 import { buildProfileUrl } from "@/utils/format";
 
 export default function DashboardPreviewPage() {
-  const { profile, socials, series, totalAudience, theme } = useCreator();
+  const { profile, socials, series, totalAudience, theme, updateProfile, subscription } = useCreator();
   const { showToast } = useToast();
+
+  const [products, setProducts] = useState<CreatorProduct[]>([]);
+  const [productRefresh, setProductRefresh] = useState(0);
+  useEffect(() => {
+    const controller = new AbortController();
+    ProductService.list(controller.signal).then(setProducts).catch(() => {});
+    return () => controller.abort();
+  }, [productRefresh]);
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isVisibilityModalOpen, setIsVisibilityModalOpen] = useState(false);
@@ -30,6 +40,12 @@ export default function DashboardPreviewPage() {
     if (profile.visibilitySettings) return profile.visibilitySettings;
     return storage.get<VisibilitySettings>(STORAGE_KEYS.visibilitySettings, DEFAULT_VISIBILITY_SETTINGS);
   });
+
+  useEffect(() => {
+    if (profile.visibilitySettings) {
+      setVisibilitySettings(profile.visibilitySettings);
+    }
+  }, [profile.visibilitySettings]);
 
   const activeThemeMeta = useMemo(() => {
     return THEME_LIST.find((t) => t.key === theme) || THEME_LIST[0];
@@ -40,9 +56,10 @@ export default function DashboardPreviewPage() {
   const rawUsername = profile?.username || "creator";
   const canonicalUrl = buildProfileUrl(rawUsername);
 
-  const handleSaveVisibility = async (newSettings: VisibilitySettings) => {
+  const handleSaveVisibility = async (newSettings: VisibilitySettings, customToast?: string) => {
     setVisibilitySettings(newSettings);
     storage.set(STORAGE_KEYS.visibilitySettings, newSettings);
+    updateProfile({ visibilitySettings: newSettings });
     try {
       const { ProfileService } = await import("@/services/ProfileService");
       ProfileService.saveLocal({ visibilitySettings: newSettings });
@@ -61,7 +78,7 @@ export default function DashboardPreviewPage() {
           }),
         ]);
       }
-      showToast("Display preferences updated! ✨");
+      showToast(customToast || "Display preferences updated! ✨");
     } catch (e) {
       console.warn("Error saving visibility settings:", e);
     }
@@ -69,6 +86,7 @@ export default function DashboardPreviewPage() {
 
   const handleRefresh = () => {
     setIsRefreshing(true);
+    setProductRefresh((value) => value + 1);
     setTimeout(() => {
       setIsRefreshing(false);
       showToast("Preview updated! 🔄");
@@ -158,14 +176,24 @@ export default function DashboardPreviewPage() {
           <FocusOverlay overlay={activeThemeMeta.focusOverlay} contained={true} />
 
           <div className="relative z-10 w-full max-w-[620px] mx-auto flex flex-col min-h-full">
-            <ThemeCard
-              themeKey={theme}
-              profile={{ ...profile, visibilitySettings }}
-              socials={socials}
-              series={series}
-              totalAudience={totalAudience}
-              variant="full"
-            />
+            {(() => {
+              const quota = getPlanQuota(subscription?.planKey || "early_access");
+              const visibleProducts =
+                quota.maxProducts === Infinity
+                  ? products
+                  : products.slice(0, quota.maxProducts);
+              return (
+                <ThemeCard
+                  themeKey={theme}
+                  profile={{ ...profile, visibilitySettings }}
+                  socials={socials}
+                  series={series}
+                  products={visibleProducts}
+                  totalAudience={totalAudience}
+                  variant="full"
+                />
+              );
+            })()}
           </div>
         </div>
       </div>

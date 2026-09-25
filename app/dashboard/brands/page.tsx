@@ -1,15 +1,5 @@
 "use client";
 
-export default function DashboardBrandsPage() {
-  // Section hidden per user request
-  return null;
-}
-
-
-export default function DashboardBrandsPage() {
-  // Section hidden per user request
-  return null;
-}
 
 
 import { useEffect, useState } from "react";

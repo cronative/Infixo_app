@@ -40,6 +40,7 @@ CREATE TABLE creators (
   state VARCHAR(100) DEFAULT NULL COMMENT 'Creator state / region',
   country VARCHAR(100) DEFAULT NULL COMMENT 'Creator country',
   theme_key VARCHAR(50) NOT NULL DEFAULT 'minimal-white' COMMENT 'Active visual theme key (1 of 20 themes)',
+  public_profile_layout VARCHAR(32) NOT NULL DEFAULT 'default' COMMENT 'Active public profile layout (default, minimal, creator, spotlight, studio)',
   is_verified BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Verified creator badge status',
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -256,8 +257,25 @@ CREATE TABLE IF NOT EXISTS creator_settings (
   creator_id VARCHAR(64) NOT NULL UNIQUE COMMENT 'FK to creators table ID',
   visibility_settings TEXT DEFAULT NULL COMMENT 'JSON settings to show/hide page sections (fanbase, socials, series, gigs, reviews, links)',
   theme_key VARCHAR(50) DEFAULT 'minimal-white' COMMENT 'Active visual theme key',
+  public_profile_layout VARCHAR(32) NOT NULL DEFAULT 'default' COMMENT 'Active public profile layout (default, minimal, creator, spotlight, studio)',
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (creator_id) REFERENCES creators(id) ON DELETE CASCADE,
   INDEX idx_creator_settings (creator_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 11. CREATOR PRODUCTS TABLE (Products / Affiliate recommendations for Shop)
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS creator_products (
+  id VARCHAR(64) NOT NULL PRIMARY KEY,
+  creator_id VARCHAR(64) NOT NULL,
+  name VARCHAR(180) NOT NULL,
+  image_url TEXT NOT NULL,
+  price_paise INT DEFAULT NULL,
+  product_url VARCHAR(2048) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_creator_products (creator_id, created_at, id),
+  CONSTRAINT fk_products_creator FOREIGN KEY (creator_id) REFERENCES creators(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+

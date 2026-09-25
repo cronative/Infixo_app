@@ -31,6 +31,7 @@ export function PublicPageHeader({
   themeKey,
   backHref,
   backLabel,
+  pageLabel,
   actions,
   preferHistoryBack = false,
   className = "",
@@ -66,8 +67,18 @@ export function PublicPageHeader({
         <ArrowLeft className="h-[18px] w-[18px]" />
       </button>
 
-      {/* Spacer: creator identity intentionally not shown in the header */}
-      <div className="min-w-0 flex-1" />
+      {pageLabel ? (
+        <div className="min-w-0 flex-1 text-center">
+          <span
+            style={{ color: t.colors.primaryText }}
+            className="text-xs sm:text-sm font-bold tracking-tight truncate block"
+          >
+            {pageLabel}
+          </span>
+        </div>
+      ) : (
+        <div className="min-w-0 flex-1" />
+      )}
 
       {actions ? <div className="flex shrink-0 items-center gap-1.5">{actions}</div> : null}
     </header>

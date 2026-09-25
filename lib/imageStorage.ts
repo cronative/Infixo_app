@@ -33,7 +33,8 @@ export type ImageFolder =
   | "team"
   | "collaborations"
   | "reviews"
-  | "uploads";
+  | "uploads"
+  | "products";
 
 /**
  * Saves a base64 Data URL to a disk file in public/uploads/<folder>/,

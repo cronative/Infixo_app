@@ -9,23 +9,18 @@ import { CreatorPublicShell } from "@/components/public/CreatorPublicShell";
 import {
   EXPERT_DEMO_PROFILE,
   EXPERT_DEMO_SOCIALS,
-  EXPERT_DEMO_SERIES,
-  EXPERT_DEMO_GIGS,
-  EXPERT_DEMO_CUSTOM_LINKS,
-  EXPERT_DEMO_REVIEWS,
-  EXPERT_DEMO_THEME,
   EXPERT_DEMO_PRODUCTS,
-  EXPERT_DEMO_SETUP_ITEMS,
+  EXPERT_DEMO_THEME,
 } from "@/data/expertDemoCreator";
 
-export default function DemoCreatorPage() {
+export default function DemoCreatorProductsPage() {
   const { showToast } = useToast();
   const theme = EXPERT_DEMO_THEME;
   const totalAudience = SocialService.calculateTotalAudience(EXPERT_DEMO_SOCIALS);
 
   useEffect(() => {
     if (typeof document !== "undefined") {
-      document.title = `${EXPERT_DEMO_PROFILE.displayName} (@${EXPERT_DEMO_PROFILE.username}) — Official Inflixo Creator Profile`;
+      document.title = `${EXPERT_DEMO_PROFILE.displayName} (@${EXPERT_DEMO_PROFILE.username}) — Recommended Products & Shop | Inflixo`;
     }
   }, []);
 
@@ -33,12 +28,12 @@ export default function DemoCreatorPage() {
     const fullUrl =
       typeof window !== "undefined"
         ? window.location.href
-        : "https://inflixo.com/demo_creator";
+        : "https://inflixo.com/demo_creator/products";
 
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
         await navigator.share({
-          title: `${EXPERT_DEMO_PROFILE.displayName} on Inflixo`,
+          title: `${EXPERT_DEMO_PROFILE.displayName}'s Recommended Products on Inflixo`,
           url: fullUrl,
         });
       } catch {
@@ -52,7 +47,7 @@ export default function DemoCreatorPage() {
   async function handleCopy(url: string) {
     const success = await copyToClipboard(url);
     if (success) {
-      showToast("Profile link copied to clipboard! ✨");
+      showToast("Product listing link copied! ✨");
     } else {
       showToast("Couldn't copy link", "error");
     }
@@ -60,25 +55,22 @@ export default function DemoCreatorPage() {
 
   return (
     <CreatorPublicShell themeKey={theme}>
-        {/* Main Theme Profile Card (seriesOpenMode="internal" keeps series details in popup drawer) */}
-        <ThemeCard
-          themeKey={theme}
-          profile={EXPERT_DEMO_PROFILE}
-          socials={EXPERT_DEMO_SOCIALS}
-          series={EXPERT_DEMO_SERIES}
-          products={EXPERT_DEMO_PRODUCTS}
-          setupItems={EXPERT_DEMO_SETUP_ITEMS}
-          customLinks={EXPERT_DEMO_CUSTOM_LINKS}
-          mediaKitPackages={EXPERT_DEMO_GIGS}
-          reviews={EXPERT_DEMO_REVIEWS}
-          totalAudience={totalAudience}
-          variant="full"
-          containedScroll={true}
-          seriesOpenMode="internal"
-          productsPreviewLimit={3}
-          allProductsHref="/demo_creator/products"
-          onShare={handleShare}
-        />
+      <ThemeCard
+        themeKey={theme}
+        profile={EXPERT_DEMO_PROFILE}
+        socials={EXPERT_DEMO_SOCIALS}
+        series={[]}
+        products={EXPERT_DEMO_PRODUCTS}
+        customLinks={[]}
+        mediaKitPackages={[]}
+        reviews={[]}
+        totalAudience={totalAudience}
+        variant="full"
+        containedScroll={true}
+        productsOnlyMode={true}
+        pageHeader={{ pageLabel: "Shop", backHref: "/demo_creator", backLabel: "Back to profile" }}
+        onShare={handleShare}
+      />
     </CreatorPublicShell>
   );
 }
