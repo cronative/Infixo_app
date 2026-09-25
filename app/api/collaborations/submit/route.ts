@@ -3,6 +3,7 @@ import { ensureRequestsTable } from "@/lib/requestsDb";
 import { ensureAnalyticsTable } from "@/lib/analyticsDb";
 import { isCreatorPublic } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { sendCollabRequestReceivedEmail } from "@/lib/email";
 import { getClientIp } from "@/lib/rateLimit";
 import { checkPersistentRateLimit } from "@/lib/persistentRateLimit";
 
@@ -42,23 +43,29 @@ export async function POST(req: Request) {
     await ensureAnalyticsTable();
 
     // Resolve target creator
-    let targetCreatorId = passedCreatorId;
-    if (!targetCreatorId && username) {
+    let targetCreator: { id: string; email: string; displayName: string } | null = null;
+    if (passedCreatorId || username) {
       const [creators]: any = await db.query(
-        "SELECT id FROM creators WHERE username = ? OR email = ? LIMIT 1",
-        [username, username]
+        "SELECT id, email, display_name AS displayName FROM creators WHERE id = ? OR username = ? OR email = ? LIMIT 1",
+        [passedCreatorId || "", username || "", username || ""]
       );
       if (creators && creators.length > 0) {
-        targetCreatorId = creators[0].id;
+        targetCreator = {
+          id: creators[0].id,
+          email: creators[0].email,
+          displayName: creators[0].displayName || "Creator",
+        };
       }
     }
 
-    if (!targetCreatorId) {
+    if (!targetCreator) {
       return apiError("Creator not found", 404);
     }
-    if (!(await isCreatorPublic(targetCreatorId))) {
+    if (!(await isCreatorPublic(targetCreator.id))) {
       return apiError("Creator profile is private", 404);
     }
+
+    const targetCreatorId = targetCreator.id;
 
     const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
@@ -85,6 +92,22 @@ export async function POST(req: Request) {
         [targetCreatorId, senderName.trim(), clientIp, req.headers.get("user-agent") || null]
       );
     } catch {}
+
+    // Asynchronously notify creator via email (fire-and-forget so user submission is instant)
+    if (targetCreator.email) {
+      sendCollabRequestReceivedEmail(targetCreator.email, {
+        creatorName: targetCreator.displayName,
+        senderName: senderName.trim(),
+        companyName: (companyName || "").trim() || undefined,
+        senderEmail: email.trim().toLowerCase(),
+        campaignType: (campaignType || "").trim() || undefined,
+        approxBudget: (approxBudget || "").trim() || undefined,
+        message: message.trim(),
+        dashboardUrl: "https://inflixo.com/dashboard/requests",
+      }).catch((emailErr) => {
+        console.warn("⚠️ Could not send collab inquiry notification email to creator:", emailErr);
+      });
+    }
 
     return apiSuccess(
       { requestId },

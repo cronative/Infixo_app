@@ -160,4 +160,57 @@ export async function sendReviewReceivedEmail(
   }
 }
 
+export async function sendCollabRequestReceivedEmail(
+  creatorEmail: string,
+  options: {
+    creatorName?: string;
+    senderName: string;
+    companyName?: string;
+    senderEmail: string;
+    campaignType?: string;
+    approxBudget?: string;
+    message: string;
+    dashboardUrl?: string;
+  }
+): Promise<{ success: boolean; error?: string }> {
+  const from = process.env.EMAIL_FROM || '"Inflixo App" <inflixoapp@gmail.com>';
+  const clientName = options.companyName ? `${options.senderName} (${options.companyName})` : options.senderName;
+  const projectTitle = options.campaignType || "Collaboration Proposal";
+  const ctaUrl = options.dashboardUrl || "https://inflixo.com/dashboard/requests";
+
+  const customItems = [
+    { label: "Contact Person", value: options.senderName },
+    ...(options.companyName ? [{ label: "Brand / Company", value: options.companyName }] : []),
+    { label: "Client Email", value: options.senderEmail },
+    ...(options.approxBudget ? [{ label: "Proposed Budget", value: options.approxBudget }] : []),
+    ...(options.campaignType ? [{ label: "Campaign Format", value: options.campaignType }] : []),
+    { label: "Message", value: options.message },
+  ];
+
+  const html = renderEmailTemplate("collab_request_received", {
+    creatorName: options.creatorName || "Creator",
+    clientName,
+    clientEmail: options.senderEmail,
+    projectTitle,
+    ctaUrl,
+    customItems,
+  });
+
+  const subject = `💼 New Brand Collaboration Inquiry from ${clientName}!`;
+
+  try {
+    await transporter.sendMail({
+      from,
+      to: creatorEmail,
+      subject,
+      html,
+    });
+    console.log(`✉️ Collab inquiry email sent to creator (${creatorEmail})`);
+    return { success: true };
+  } catch (err: any) {
+    console.error("❌ Failed to send collab inquiry email to creator:", err.message || err);
+    return { success: false, error: err.message || String(err) };
+  }
+}
+
 export { renderEmailTemplate };
