@@ -7,6 +7,7 @@ import { requireCreator } from "@/lib/creatorAuth";
 import { requireSession, ownsResource, getSessionFromRequest } from "@/lib/session";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { isUrlAllowedForPlatform } from "@/lib/seriesCsv";
 
 // GET /api/series?email=... or ?username=...
 export async function GET(req: Request) {
@@ -52,6 +53,7 @@ export async function GET(req: Request) {
         description: s.description,
         genre: s.genres || "",
         language: s.language || "Hindi",
+        platform: s.platform || "YouTube",
         createdAt: s.created_at,
         creator: creator ? {
           displayName: creator.display_name,
@@ -154,6 +156,7 @@ export async function GET(req: Request) {
         description: s.description,
         genre: s.genres || "",
         language: s.language || "Hindi",
+        platform: s.platform || "YouTube",
         createdAt: s.created_at,
         seasons: [
           {
@@ -192,7 +195,7 @@ export async function POST(req: Request) {
     console.log("📥 [POST /api/series] Request payload:", body);
 
     const email = auth.creator.email;
-    const { title, posterDataUrl, description, genre, language, episodes, isEpisodeOnly } = body;
+    const { title, posterDataUrl, description, genre, language, platform, episodes, isEpisodeOnly } = body;
 
     if (!isEpisodeOnly && !title) {
       console.error("❌ [POST /api/series] Missing series title!");
@@ -235,23 +238,43 @@ export async function POST(req: Request) {
 
       const finalPosterUrl = await saveBase64ImageToStorage(posterDataUrl, "posters", "poster") || (posterDataUrl && !posterDataUrl.startsWith("data:") ? posterDataUrl : null);
 
+      await db.query("ALTER TABLE series MODIFY COLUMN platform VARCHAR(50) NOT NULL DEFAULT 'YouTube'").catch(() => {});
+
       // Upsert Series into MySQL DB
       await db.query(
-        `INSERT INTO series (id, creator_id, title, poster_url, description, genres, language)
-         VALUES (?, ?, ?, ?, ?, ?, ?)
+        `INSERT INTO series (id, creator_id, title, poster_url, description, platform, genres, language)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
            title = VALUES(title),
            poster_url = COALESCE(VALUES(poster_url), poster_url),
            description = VALUES(description),
+           platform = VALUES(platform),
            genres = VALUES(genres),
            language = VALUES(language)`,
-        [seriesId, creatorId, title, finalPosterUrl, description || "", genre || "", language || "Hindi"]
+        [seriesId, creatorId, title, finalPosterUrl, description || "", platform || "YouTube", genre || "", language || "Hindi"]
       );
-      console.log(`💾 [POST /api/series] Saved Series "${title}" in MySQL DB for Creator: ${creatorId}`);
+      console.log(`💾 [POST /api/series] Saved Series "${title}" (Platform: ${platform || "YouTube"}) in MySQL DB for Creator: ${creatorId}`);
     }
 
     // Insert Episodes if provided
     if (episodes && Array.isArray(episodes) && episodes.length > 0) {
+      let seriesPlatform = platform;
+      if (!seriesPlatform) {
+        const [sRows]: any = await db.query("SELECT platform FROM series WHERE id = ?", [seriesId]);
+        seriesPlatform = sRows[0]?.platform || "YouTube";
+      }
+
+      // Enforce platform validation on episodes
+      if (seriesPlatform && seriesPlatform !== 'Mix' && seriesPlatform !== 'Other') {
+        for (const ep of episodes) {
+          if (ep.externalUrl && !isUrlAllowedForPlatform(ep.externalUrl, seriesPlatform)) {
+            return apiError(
+              `Episode "${ep.title || 'Untitled'}" link is not allowed. This series only accepts ${seriesPlatform} links.`,
+              400
+            );
+          }
+        }
+      }
       if (quota.maxEpisodesPerSeries !== Infinity) {
         const [existingEps]: any = await db.query(
           "SELECT id FROM episodes WHERE series_id = ?",
@@ -396,6 +419,22 @@ export async function PUT(req: Request) {
     const { episodeId, seriesId, episodeNumber, title, externalUrl, platform } = body;
 
     if (episodeId) {
+      if (externalUrl) {
+        const [sRows]: any = await db.query(
+          "SELECT s.platform FROM series s INNER JOIN episodes e ON s.id = e.series_id WHERE e.id = ?",
+          [episodeId]
+        );
+        const seriesPlatform = sRows[0]?.platform;
+        if (seriesPlatform && seriesPlatform !== 'Mix' && seriesPlatform !== 'Other') {
+          if (!isUrlAllowedForPlatform(externalUrl, seriesPlatform)) {
+            return apiError(
+              `Link is not allowed. This series only accepts ${seriesPlatform} links.`,
+              400
+            );
+          }
+        }
+      }
+
       await db.query(
         `UPDATE episodes e
          INNER JOIN series s ON s.id = e.series_id
@@ -407,11 +446,12 @@ export async function PUT(req: Request) {
     }
 
     if (seriesId) {
+      await db.query("ALTER TABLE series MODIFY COLUMN platform VARCHAR(50) NOT NULL DEFAULT 'YouTube'").catch(() => {});
       await db.query(
         `UPDATE series
-         SET title = ?, description = ?, genres = ?, language = ?
+         SET title = ?, description = ?, genres = ?, language = ?, platform = COALESCE(?, platform)
          WHERE id = ? AND creator_id = ?`,
-        [body.title, body.description || "", body.genre || "", body.language || "Hindi", seriesId, auth.creator.id]
+        [body.title, body.description || "", body.genre || "", body.language || "Hindi", body.platform || null, seriesId, auth.creator.id]
       );
       return apiSuccess({}, "Series updated in MySQL");
     }

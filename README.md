@@ -100,3 +100,21 @@ Run `npm run migrate` before deploying a new release. Razorpay webhooks use
 Migrations target only the database selected by `MYSQL_HOST`, `MYSQL_USER`,
 `MYSQL_PASSWORD`, `MYSQL_DATABASE`, and `MYSQL_PORT`. Run them separately with
 the appropriate environment for development and production.
+
+## Import series videos from CSV
+
+Open **Dashboard → Series → Import CSV**. Download the template, fill it in
+Excel or Google Sheets, and export as **CSV UTF-8**. Required columns are
+`title`, `part_number`, and `url` (`order_number` and `link` are also accepted).
+Select an existing series or enter a new series title, review the preview,
+and import. Part numbers determine playback listing order; they do not need
+to be consecutive. Links must use HTTP or HTTPS.
+
+Files support quoted commas, multiline titles, Unicode, and semicolon-separated
+Excel exports. The maximum is 500 videos / 1 MB, subject to the creator's plan.
+Duplicate parts or links within the file or target series block the import.
+Imports are additive and transactional: existing episodes are never overwritten,
+and a failed database write rolls back the entire batch. Direct `.xlsx` upload
+is not supported; export the sheet as CSV first.
+
+Run import regression checks with `node --test tests/series-csv.test.cjs`.

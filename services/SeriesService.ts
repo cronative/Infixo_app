@@ -1,5 +1,5 @@
 import { seriesRepository, authRepository, profileRepository } from "@/repositories/localRepository";
-import { Episode, Season, Series } from "@/types";
+import { Episode, EpisodePlatform, Season, Series } from "@/types";
 import { generateId } from "@/utils/format";
 
 function getTargetEmail(): string {
@@ -80,6 +80,7 @@ export const SeriesService = {
     description: string;
     genre: string;
     language: string;
+    platform?: EpisodePlatform;
     episodes?: Omit<Episode, "id">[];
   }): Promise<Series> {
     const email = getTargetEmail();
@@ -105,6 +106,7 @@ export const SeriesService = {
       description: input.description,
       genre: input.genre,
       language: input.language,
+      platform: input.platform || "YouTube",
       seasons: seasonsList,
       createdAt: new Date().toISOString(),
     };
@@ -113,7 +115,7 @@ export const SeriesService = {
     seriesRepository.saveAll([...all, newSeries]);
 
     // Save to Live MySQL Database via API
-    console.log("🚀 [SeriesService.create] Creating series with email:", email, "and title:", input.title, "posterUrl:", posterUrl);
+    console.log("🚀 [SeriesService.create] Creating series with email:", email, "and title:", input.title, "posterUrl:", posterUrl, "platform:", input.platform);
     try {
       const res = await fetch("/api/series", {
         method: "POST",
@@ -126,6 +128,7 @@ export const SeriesService = {
           description: input.description,
           genre: input.genre,
           language: input.language,
+          platform: input.platform || "YouTube",
           episodes: input.episodes || [],
         }),
       });
@@ -138,9 +141,26 @@ export const SeriesService = {
     return newSeries;
   },
 
-  update(id: string, patch: Partial<Series>): void {
+  async update(id: string, patch: Partial<Series>): Promise<void> {
     const all = seriesRepository.getAll();
     seriesRepository.saveAll(all.map((s) => (s.id === id ? { ...s, ...patch } : s)));
+
+    try {
+      await fetch("/api/series", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          seriesId: id,
+          title: patch.title,
+          description: patch.description,
+          genre: patch.genre,
+          language: patch.language,
+          platform: patch.platform,
+        }),
+      });
+    } catch (e: any) {
+      console.error("Failed to update Series in MySQL DB:", e);
+    }
   },
 
   async remove(id: string): Promise<void> {

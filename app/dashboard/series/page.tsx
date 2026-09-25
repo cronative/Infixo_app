@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import {
   Plus,
+  Upload,
   Trash2,
   ChevronDown,
   ChevronUp,
@@ -17,11 +18,13 @@ import {
   Play,
   Globe,
 } from "lucide-react";
+import { SeriesCsvImportModal } from "@/components/series/SeriesCsvImportModal";
 import { SeriesCoverUpload } from "@/components/series/SeriesCoverUpload";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { SeriesService } from "@/services/SeriesService";
 import { Episode, EpisodePlatform, Series } from "@/types";
+import { isUrlAllowedForPlatform, getPlatformRequirementMessage } from "@/lib/seriesCsv";
 import {
   YoutubeIcon,
   InstagramIcon,
@@ -53,6 +56,7 @@ const PLATFORM_ICONS: Record<EpisodePlatform, React.ReactNode> = {
   YouTube: <YoutubeIcon className="h-4 w-4 text-red-500" />,
   Instagram: <InstagramIcon className="h-4 w-4 text-pink-500" />,
   Facebook: <FacebookIcon className="h-4 w-4 text-blue-600" />,
+  Mix: <Globe className="h-4 w-4 text-[#043084]" />,
   Other: <Globe className="h-4 w-4 text-[#043084]" />,
 };
 
@@ -206,6 +210,7 @@ function SeriesDrawer({
           description: description.trim(),
           genre: genre.trim(),
           language: language.trim(),
+          platform: seriesPlatform,
         });
         showToast("Series updated successfully! ✨");
       } else {
@@ -215,6 +220,7 @@ function SeriesDrawer({
           description: description.trim(),
           genre: genre.trim(),
           language: language.trim(),
+          platform: seriesPlatform,
         });
         showToast("Series created! 🎉");
       }
@@ -236,7 +242,7 @@ function SeriesDrawer({
       title={isEditing ? "Edit Series" : "Create Series"}
       description={
         isEditing
-          ? "Update series details and cover poster."
+          ? "Update series details, platform, and cover poster."
           : `Series ${seriesList.length + 1} of ${getPlanQuota(planKey).maxSeries === Infinity ? "Unlimited" : getPlanQuota(planKey).maxSeries} allowed in ${getPlanQuota(planKey).name}`
       }
       icon={<Film className="h-4 w-4" />}
@@ -278,32 +284,41 @@ function SeriesDrawer({
           {/* Cover (optional) — after the required fields */}
           <SeriesCoverUpload value={poster} onChange={setPoster} maxSizeMB={5} label="Cover" />
 
-          {/* Primary Platform */}
-          {!isEditing && (
-            <div className="space-y-1">
-              <p className={FIELD_LABEL}>Primary content platform</p>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {(["YouTube", "Instagram", "Facebook", "Other"] as EpisodePlatform[]).map((p) => {
-                  const isSelected = seriesPlatform === p;
-                  return (
-                    <button
-                      key={p}
-                      type="button"
-                      onClick={() => setSeriesPlatform(p)}
-                      aria-pressed={isSelected}
-                      className={`flex h-10 items-center justify-center gap-1.5 rounded-lg border text-sm font-medium transition-colors cursor-pointer ${isSelected
+          {/* Content Platform */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <p className={FIELD_LABEL}>Content Platform</p>
+              <span className="text-xs text-[#64748b]">
+                {seriesPlatform === "Mix"
+                  ? "Allows links from any platform"
+                  : `Only allows ${seriesPlatform} video links`}
+              </span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {(["YouTube", "Instagram", "Facebook", "Mix"] as EpisodePlatform[]).map((p) => {
+                const isSelected = seriesPlatform === p;
+                return (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setSeriesPlatform(p)}
+                    aria-pressed={isSelected}
+                    className={`flex h-10 items-center justify-center gap-1.5 rounded-lg border text-sm font-medium transition-colors cursor-pointer ${
+                      isSelected
                         ? "border-[#043084] bg-[#043084]/[0.05] text-[#0f172a] ring-1 ring-[#043084]"
                         : "border-[#e2e8f0] bg-white text-[#475569] hover:bg-[#f8fafc]"
-                        }`}
-                    >
-                      {PLATFORM_ICONS[p]}
-                      <span>{p}</span>
-                    </button>
-                  );
-                })}
-              </div>
+                    }`}
+                  >
+                    {p === "YouTube" && <YoutubeIcon className="h-4 w-4 text-red-500" />}
+                    {p === "Instagram" && <InstagramIcon className="h-4 w-4 text-pink-500" />}
+                    {p === "Facebook" && <FacebookIcon className="h-4 w-4 text-blue-600" />}
+                    {p === "Mix" && <Globe className="h-4 w-4 text-[#043084]" />}
+                    <span>{p === "Mix" ? "Mix (All)" : p}</span>
+                  </button>
+                );
+              })}
             </div>
-          )}
+          </div>
 
           {/* Genre & Language Selectors */}
           <div className="space-y-3 pt-1">
@@ -387,7 +402,9 @@ function EpisodeDrawer({
 
   if (!isOpen || !series) return null;
 
+  const seriesPlatform = series.platform || "YouTube";
   const platformInfo = getPlatformInfo(url);
+  const isPlatformValid = !url.trim() || isUrlAllowedForPlatform(url.trim(), seriesPlatform);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -399,6 +416,14 @@ function EpisodeDrawer({
     }
     if (!url.trim()) {
       showToast("Paste a valid video or content link.", "error");
+      return;
+    }
+
+    if (!isUrlAllowedForPlatform(url.trim(), seriesPlatform)) {
+      showToast(
+        getPlatformRequirementMessage(seriesPlatform) || `This series only accepts ${seriesPlatform} links.`,
+        "error"
+      );
       return;
     }
 
@@ -456,9 +481,26 @@ function EpisodeDrawer({
         <ModalBody className="p-4 sm:p-5 space-y-4 text-left">
           {/* Link first — pasting the video is the natural first step */}
           <div className="space-y-1.5">
-            <label htmlFor="episode-url" className={FIELD_LABEL}>
-              Video or content link <span className="text-[#C2414B]">*</span>
-            </label>
+            <div className="flex items-center justify-between">
+              <label htmlFor="episode-url" className={FIELD_LABEL}>
+                Video or content link <span className="text-[#C2414B]">*</span>
+              </label>
+              <span
+                className={`text-[11px] font-medium px-2 py-0.5 rounded-md border ${
+                  seriesPlatform === "YouTube"
+                    ? "bg-red-50 text-red-700 border-red-200"
+                    : seriesPlatform === "Instagram"
+                    ? "bg-pink-50 text-pink-700 border-pink-200"
+                    : seriesPlatform === "Facebook"
+                    ? "bg-blue-50 text-blue-700 border-blue-200"
+                    : "bg-slate-50 text-slate-700 border-slate-200"
+                }`}
+              >
+                {seriesPlatform === "Mix" || seriesPlatform === "Other"
+                  ? "Mix: Any link allowed"
+                  : `${seriesPlatform} only`}
+              </span>
+            </div>
             <div className="relative">
               <input
                 id="episode-url"
@@ -468,17 +510,44 @@ function EpisodeDrawer({
                 autoFocus={!isEditing}
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                placeholder="Paste a YouTube, Instagram, or Facebook link"
-                className={`${FIELD_INPUT} pr-9`}
+                placeholder={
+                  seriesPlatform === "YouTube"
+                    ? "Paste a YouTube link (youtube.com or youtu.be)"
+                    : seriesPlatform === "Instagram"
+                    ? "Paste an Instagram reel or post link"
+                    : seriesPlatform === "Facebook"
+                    ? "Paste a Facebook video link (facebook.com or fb.watch)"
+                    : "Paste a YouTube, Instagram, or Facebook link"
+                }
+                className={`${FIELD_INPUT} pr-9 ${
+                  !isPlatformValid ? "border-red-400 bg-red-50/20 focus:border-red-500 focus:ring-red-400/20" : ""
+                }`}
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2">
                 {platformInfo.icon}
               </div>
             </div>
-            {url.trim() && (
-              <p className="text-xs text-[#047857] flex items-center gap-1">
-                <Check className="h-3 w-3" />
-                <span>Detected: {platformInfo.name} ({platformInfo.host})</span>
+            {url.trim() && isPlatformValid && (
+              <div className="flex items-center justify-between text-xs pt-0.5">
+                <p className="text-[#047857] flex items-center gap-1 font-medium">
+                  <Check className="h-3 w-3" />
+                  <span>Detected: {platformInfo.name} ({platformInfo.host})</span>
+                </p>
+                <a
+                  href={url.trim()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-[#043084] hover:underline font-medium"
+                  title="Test link in new tab"
+                >
+                  <span>Test link</span>
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
+            )}
+            {!isPlatformValid && (
+              <p className="text-xs text-red-600 flex items-center gap-1 font-medium">
+                <span>⚠️ Invalid link: This series is set to &quot;{seriesPlatform}&quot;. Only {seriesPlatform} links are allowed.</span>
               </p>
             )}
           </div>
@@ -539,6 +608,7 @@ interface SeriesCardProps {
   onEditSeries: (s: Series) => void;
   onDeleteSeries: (s: Series) => void;
   onAddEpisode: (s: Series) => void;
+  onImportEpisodes: (s: Series) => void;
   onEditEpisode: (series: Series, seasonId: string, ep: Episode) => void;
   onDeleteEpisode: (series: Series, seasonId: string, ep: Episode) => void;
 }
@@ -552,6 +622,7 @@ function SeriesCard({
   onEditSeries,
   onDeleteSeries,
   onAddEpisode,
+  onImportEpisodes,
   onEditEpisode,
   onDeleteEpisode,
 }: SeriesCardProps) {
@@ -705,6 +776,18 @@ function SeriesCard({
             <span>Add Episode</span>
           </button>
 
+          {/* Import Episodes in Bulk / CSV */}
+          <button
+            type="button"
+            onClick={() => onImportEpisodes(series)}
+            disabled={epUsage.isLimitReached}
+            className="hidden sm:inline-flex h-8 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-[#043084] transition-colors hover:border-[#cbd5e1] hover:bg-blue-50/50 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+            title="Import multiple episodes at once or from CSV"
+          >
+            <Upload className="h-3.5 w-3.5 text-[#043084]" />
+            <span>Import CSV</span>
+          </button>
+
           {/* Utilities: borderless ghost icons, still one click on desktop */}
           <a
             href={`/${username}/series/${series.id}`}
@@ -750,7 +833,7 @@ function SeriesCard({
             </button>
 
             {menuOpen && (
-              <div className="absolute right-0 top-full mt-1.5 w-44 rounded-xl border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in">
+              <div className="absolute right-0 top-full mt-1.5 w-48 rounded-xl border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in">
                 <button
                   type="button"
                   disabled={epUsage.isLimitReached}
@@ -762,6 +845,19 @@ function SeriesCard({
                 >
                   <Plus className="h-3.5 w-3.5 text-[#64748b]" />
                   <span>Add Episode</span>
+                </button>
+
+                <button
+                  type="button"
+                  disabled={epUsage.isLimitReached}
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onImportEpisodes(series);
+                  }}
+                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium text-[#043084] hover:bg-blue-50/50 transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  <Upload className="h-3.5 w-3.5 text-[#043084]" />
+                  <span>Import Episodes (CSV)</span>
                 </button>
 
                 <a
@@ -848,28 +944,51 @@ function SeriesCard({
             <span className="text-[11px] font-semibold uppercase tracking-wide text-[#64748b]">
               Episodes · {episodes.length}/{epUsage.max === Infinity ? "Unlimited" : epUsage.max}
             </span>
-            {epUsage.isLimitReached && (
-              <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md">
-                Episode limit reached
-              </span>
-            )}
+            <div className="flex items-center gap-2">
+              {!epUsage.isLimitReached && (
+                <button
+                  type="button"
+                  onClick={() => onImportEpisodes(series)}
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#043084] hover:underline cursor-pointer"
+                >
+                  <Upload className="h-3 w-3" />
+                  <span>Import CSV / Bulk</span>
+                </button>
+              )}
+              {epUsage.isLimitReached && (
+                <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md">
+                  Episode limit reached
+                </span>
+              )}
+            </div>
           </div>
 
           {episodes.length === 0 ? (
-            <div className="p-4 text-center space-y-2 bg-white last:rounded-b-xl">
+            <div className="p-4 text-center space-y-3 bg-white last:rounded-b-xl">
               <p className="text-sm font-semibold text-[#0f172a]">No episodes added yet</p>
               <p className="text-xs text-[#64748b] max-w-sm mx-auto">
-                Add the first part so followers can begin this series.
+                Add your episodes one by one or import multiple episodes together using CSV / bulk links.
               </p>
-              <button
-                type="button"
-                onClick={() => onAddEpisode(series)}
-                disabled={epUsage.isLimitReached}
-                className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <Plus className="h-3.5 w-3.5 text-[#64748b]" />
-                <span>Add First Episode</span>
-              </button>
+              <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => onAddEpisode(series)}
+                  disabled={epUsage.isLimitReached}
+                  className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <Plus className="h-3.5 w-3.5 text-[#64748b]" />
+                  <span>Add First Episode</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onImportEpisodes(series)}
+                  disabled={epUsage.isLimitReached}
+                  className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-[#043084] px-3.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <Upload className="h-3.5 w-3.5" />
+                  <span>Import Multiple (CSV)</span>
+                </button>
+              </div>
             </div>
           ) : (
             <div className="divide-y divide-[#e2e8f0] bg-white last:rounded-b-xl">
@@ -900,21 +1019,8 @@ function SeriesCard({
                         </div>
                       </div>
 
-                      {/* Right: Actions (View, Edit, ⋮ with Delete inside) */}
+                      {/* Right: Actions (Edit, ⋮ with Delete inside) */}
                       <div className="flex items-center gap-0.5 shrink-0">
-                        {ep.externalUrl && (
-                          <a
-                            href={ep.externalUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`hidden sm:inline-flex ${GHOST_ICON}`}
-                            title="Open original link"
-                            aria-label="Open original link"
-                          >
-                            <ExternalLink className="h-3.5 w-3.5" />
-                          </a>
-                        )}
-
                         <button
                           type="button"
                           onClick={() => onEditEpisode(series, season.id, ep)}
@@ -945,19 +1051,6 @@ function SeriesCard({
                               onClick={(e) => e.stopPropagation()}
                               className="absolute right-0 top-full mt-1.5 w-36 rounded-xl border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in"
                             >
-                              {ep.externalUrl && (
-                                <a
-                                  href={ep.externalUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  onClick={() => setActiveEpMenuId(null)}
-                                  className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium text-[#0f172a] hover:bg-[#f1f5f9] transition-colors"
-                                >
-                                  <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
-                                  <span>View</span>
-                                </a>
-                              )}
-
                               <button
                                 type="button"
                                 onClick={() => {
@@ -978,18 +1071,26 @@ function SeriesCard({
                 })
               )}
 
-              {/* Always-visible add row: makes Series → Episodes obvious on every screen size */}
+              {/* Always-visible add actions: Add episode & Bulk import */}
               {!epUsage.isLimitReached && (
-                <button
-                  type="button"
-                  onClick={() => onAddEpisode(series)}
-                  className="flex w-full items-center gap-3 px-3 sm:px-4 py-2.5 text-left text-xs font-semibold text-[#475569] transition-colors hover:bg-[#f8fafc] hover:text-[#0f172a] cursor-pointer last:rounded-b-xl"
-                >
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-dashed border-[#cbd5e1]">
+                <div className="flex items-center divide-x divide-[#e2e8f0] border-t border-[#e2e8f0] bg-white last:rounded-b-xl">
+                  <button
+                    type="button"
+                    onClick={() => onAddEpisode(series)}
+                    className="flex flex-1 items-center justify-center gap-2 py-2.5 text-xs font-semibold text-[#475569] transition-colors hover:bg-[#f8fafc] hover:text-[#0f172a] cursor-pointer"
+                  >
                     <Plus className="h-3.5 w-3.5" />
-                  </span>
-                  <span>Add episode</span>
-                </button>
+                    <span>Add episode</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onImportEpisodes(series)}
+                    className="flex flex-1 items-center justify-center gap-2 py-2.5 text-xs font-semibold text-[#043084] transition-colors hover:bg-blue-50/40 cursor-pointer"
+                  >
+                    <Upload className="h-3.5 w-3.5" />
+                    <span>Bulk Import (CSV)</span>
+                  </button>
+                </div>
               )}
             </div>
           )}
@@ -1016,6 +1117,8 @@ export default function DashboardContentPage() {
 
   // States
   const [searchQuery, setSearchQuery] = useState("");
+  const [isCsvImportOpen, setIsCsvImportOpen] = useState(false);
+  const [selectedSeriesForImport, setSelectedSeriesForImport] = useState<string | undefined>(undefined);
   // undefined = creator hasn't toggled yet (auto-open a lone series); null = explicitly collapsed.
   const [expandedSeriesId, setExpandedSeriesId] = useState<string | null | undefined>(undefined);
   const visibleExpandedSeriesId =
@@ -1097,6 +1200,11 @@ export default function DashboardContentPage() {
     setIsEpisodeDrawerOpen(true);
   };
 
+  const handleOpenImportEpisodes = (s?: Series) => {
+    setSelectedSeriesForImport(s?.id);
+    setIsCsvImportOpen(true);
+  };
+
   const promptDeleteSeries = (s: Series) => {
     setConfirmModal({
       title: "Delete this series?",
@@ -1155,7 +1263,10 @@ export default function DashboardContentPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+        <div className="flex flex-wrap items-center gap-2 shrink-0 self-start sm:self-auto">
+          <button type="button" onClick={() => handleOpenImportEpisodes()} className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#043084] hover:bg-slate-50 cursor-pointer">
+            <Upload className="h-3.5 w-3.5" /> Import CSV / Bulk
+          </button>
           <a
             href={publicSeriesListingUrl}
             target="_blank"
@@ -1282,6 +1393,7 @@ export default function DashboardContentPage() {
                 onEditSeries={handleOpenEditSeries}
                 onDeleteSeries={promptDeleteSeries}
                 onAddEpisode={handleOpenAddEpisode}
+                onImportEpisodes={handleOpenImportEpisodes}
                 onEditEpisode={handleOpenEditEpisode}
                 onDeleteEpisode={promptDeleteEpisode}
               />
@@ -1291,6 +1403,25 @@ export default function DashboardContentPage() {
       </div>
 
       {/* 5. DRAWERS & MODALS */}
+      {isCsvImportOpen && (
+        <SeriesCsvImportModal
+          series={series}
+          planKey={planKey}
+          initialSeriesId={selectedSeriesForImport}
+          onClose={() => {
+            setIsCsvImportOpen(false);
+            setSelectedSeriesForImport(undefined);
+          }}
+          onImported={(id, count) => {
+            setIsCsvImportOpen(false);
+            setSelectedSeriesForImport(undefined);
+            setExpandedSeriesId(id);
+            setSearchQuery("");
+            showToast(`${count} episodes imported successfully! 🎬`);
+            refresh();
+          }}
+        />
+      )}
       <SeriesDrawer
         key={seriesToEdit ? `edit-${seriesToEdit.id}` : `create-${isSeriesDrawerOpen ? "open" : "closed"}`}
         isOpen={isSeriesDrawerOpen}
