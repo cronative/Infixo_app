@@ -74,7 +74,9 @@ export default function DemoCreatorPage() {
           totalAudience={totalAudience}
           variant="full"
           containedScroll={true}
-          seriesOpenMode="internal"
+          seriesOpenMode="page"
+          seriesPreviewLimit={3}
+          allSeriesHref="/demo_creator/series"
           productsPreviewLimit={3}
           allProductsHref="/demo_creator/products"
           onShare={handleShare}

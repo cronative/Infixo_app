@@ -120,6 +120,7 @@ export default function PublicProfileClient() {
           EXPERT_DEMO_GIGS,
           EXPERT_DEMO_REVIEWS,
           EXPERT_DEMO_SETUP_ITEMS,
+          EXPERT_DEMO_PRODUCTS,
         } = await import("@/data/expertDemoCreator");
         setProfile(EXPERT_DEMO_PROFILE);
         setSocials(EXPERT_DEMO_SOCIALS);
@@ -128,6 +129,7 @@ export default function PublicProfileClient() {
         setMediaKitPackages(EXPERT_DEMO_GIGS);
         setReviews(EXPERT_DEMO_REVIEWS);
         setSetupItems(EXPERT_DEMO_SETUP_ITEMS);
+        setProducts(EXPERT_DEMO_PRODUCTS);
         setTheme(EXPERT_DEMO_THEME);
         setNotFound(false);
         setProfilePrivate(false);
@@ -546,6 +548,8 @@ export default function PublicProfileClient() {
           profile={profile}
           socials={socials}
           series={series}
+          products={products}
+          setupItems={setupItems}
           customLinks={customLinks}
           mediaKitPackages={mediaKitPackages}
           mediaKitSettings={mediaKitSettings}
@@ -553,13 +557,11 @@ export default function PublicProfileClient() {
           team={team}
           brands={brands}
           collaborations={collaborations}
-          setupItems={setupItems}
-          products={products}
           otherSocials={otherSocials}
           sections={sections}
           totalAudience={totalAudience}
           variant="full"
-          containedScroll
+          containedScroll={true}
           seriesOpenMode="page"
           seriesPreviewLimit={3}
           allSeriesHref={`/${handleStr.replace(/^@/, "")}/series`}

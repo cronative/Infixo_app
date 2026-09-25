@@ -1632,14 +1632,20 @@ export function LivePreviewCard({
             </p>
           )}
 
-          {/* Location: City, State (if specified) */}
-          {Boolean(profile.city) && (
+          {/* Location: City, State, Country (if specified) */}
+          {Boolean(profile.city || profile.country) && (
             <p
               style={{ color: c.mutedText }}
               className="mt-0.5 inline-flex items-center justify-center gap-1 text-[11px] font-medium opacity-80 text-center"
             >
               <MapPin className="h-3 w-3 shrink-0" />
-              <span>{[profile.city, profile.state].filter(Boolean).join(", ")}</span>
+              <span>
+                {(() => {
+                  const parts = [profile.city, profile.state, profile.country].filter(Boolean) as string[];
+                  const unique = Array.from(new Set(parts.map((p) => p.trim())));
+                  return unique.join(", ");
+                })()}
+              </span>
             </p>
           )}
 
@@ -1799,7 +1805,7 @@ export function LivePreviewCard({
         {effectiveVisibilitySettings.showCustomLinks !== false && customLinksList && customLinksList.filter((l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url)))).length > 0 && (
           <div id="links-section" className="relative z-10 order-[5] mt-6 sm:mt-7 w-full text-left space-y-2.5">
             <div>
-              <div className="flex items-center justify-between px-0.5 pb-2">
+              <div className="flex items-center justify-between px-0.5">
                 <h2
                   style={{
                     color: c.primaryText,
@@ -1812,6 +1818,12 @@ export function LivePreviewCard({
                   <span>Links</span>
                 </h2>
               </div>
+              <p
+                style={{ color: c.secondaryText }}
+                className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5 pb-2"
+              >
+                Find me everywhere, all in one place.
+              </p>
               <div style={{ backgroundColor: c.divider }} className="-mx-3.5 sm:-mx-5 h-px opacity-60" aria-hidden="true" />
             </div>
 
@@ -1891,10 +1903,10 @@ export function LivePreviewCard({
                           className="h-3.5 w-3.5 shrink-0"
                         />
                       </div>
-                      <div className={isDefaultCleanLayout ? "max-w-[72%] px-2 text-center" : "min-w-0 flex-1"}>
+                      <div className={isDefaultCleanLayout ? "max-w-[78%] px-2 text-center" : "min-w-0 flex-1"}>
                         <span
                           style={{ color: c.primaryText }}
-                          className={`block line-clamp-2 break-words ${PUBLIC_TYPE.cardTitle}`}
+                          className={`block truncate ${PUBLIC_TYPE.cardTitle}`}
                         >
                           {link.title}
                         </span>
@@ -1916,7 +1928,7 @@ export function LivePreviewCard({
           <div id="series-section" className="relative z-10 order-[10] mt-6 sm:mt-7 w-full text-left space-y-2.5">
             {/* Section Header */}
             <div>
-              <div className="flex items-center justify-between px-0.5 pb-2">
+              <div className="flex items-center justify-between px-0.5">
                 <h2
                   style={{
                     color: c.primaryText,
@@ -1929,14 +1941,44 @@ export function LivePreviewCard({
                   <span>Series &amp; Playlists</span>
                 </h2>
                 {series.length > 0 && (
-                  <span
-                    style={{ color: c.mutedText }}
-                    className="text-[11px] sm:text-xs font-medium"
-                  >
-                    {series.length} {series.length === 1 ? "Series" : "Series"}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    {!seriesOnlyMode && allSeriesHref && (
+                      <button
+                        type="button"
+                        onPointerEnter={() => {
+                          if (allSeriesHref && !isInformationalMode) {
+                            router.prefetch(allSeriesHref);
+                          }
+                        }}
+                        onClick={() => {
+                          if (isInformationalMode) {
+                            showToast("Opens all creator series on live profile ✨");
+                            return;
+                          }
+                          router.push(allSeriesHref);
+                        }}
+                        style={{ color: c.accentText }}
+                        className="group text-[11px] sm:text-xs font-bold hover:opacity-80 transition-opacity cursor-pointer inline-flex items-center gap-0.5"
+                      >
+                        <span>See all</span>
+                        <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                      </button>
+                    )}
+                    <span
+                      style={{ color: c.mutedText }}
+                      className="text-[11px] sm:text-xs font-medium"
+                    >
+                      {series.length} {series.length === 1 ? "Series" : "Series"}
+                    </span>
+                  </div>
                 )}
               </div>
+              <p
+                style={{ color: c.secondaryText }}
+                className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5 pb-2"
+              >
+                Watch my videos, series &amp; episodes in order.
+              </p>
               <div style={{ backgroundColor: c.divider }} className="-mx-3.5 sm:-mx-5 h-px opacity-60" aria-hidden="true" />
             </div>
 
@@ -2130,7 +2172,7 @@ export function LivePreviewCard({
         {(!seriesOnlyMode && !reviewsOnlyMode) && ((products && products.length > 0) || productsOnlyMode) && (
           <section id="shop-section" aria-label="Shop" className="relative z-10 order-[15] mt-6 sm:mt-7 w-full space-y-2.5 text-left">
             <div>
-              <div className="flex items-center justify-between px-0.5 pb-2">
+              <div className="flex items-center justify-between px-0.5">
                 <div className="min-w-0">
                   <h2
                     style={{
@@ -2143,11 +2185,6 @@ export function LivePreviewCard({
                     <ShoppingBag className="h-3.5 w-3.5 opacity-70" style={{ color: c.primaryText }} />
                     <span>{productsOnlyMode ? "Curated Products & Recommendations" : "Shop"}</span>
                   </h2>
-                  {productsOnlyMode && (
-                    <p style={{ color: c.secondaryText }} className="text-[11px] sm:text-xs font-normal mt-0.5">
-                      Handpicked products, gear &amp; recommended essentials
-                    </p>
-                  )}
                 </div>
                 {products && products.length > 0 && (
                   <span
@@ -2158,6 +2195,12 @@ export function LivePreviewCard({
                   </span>
                 )}
               </div>
+              <p
+                style={{ color: c.secondaryText }}
+                className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5 pb-2"
+              >
+                Shop my favorites, gear &amp; recommendations.
+              </p>
               <div style={{ backgroundColor: c.divider }} className="-mx-3.5 sm:-mx-5 h-px opacity-60" aria-hidden="true" />
             </div>
 
@@ -2394,7 +2437,7 @@ export function LivePreviewCard({
                   style={{ color: c.secondaryText }}
                   className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5 pb-2"
                 >
-                  For collaborations and business enquiries.
+                  Let’s collaborate and create something great.
                 </p>
                 <div style={{ backgroundColor: c.divider }} className="-mx-3.5 sm:-mx-5 h-px opacity-60" aria-hidden="true" />
               </div>
@@ -2512,7 +2555,7 @@ export function LivePreviewCard({
         {effectiveVisibilitySettings.showReviews !== false && (approvedReviews.length > 0 || reviewsOnlyMode) && (
           <div id="reviews-section" className="relative z-10 order-[30] mt-6 sm:mt-7 w-full text-left space-y-2.5">
             <div>
-              <div className="flex items-center justify-between px-0.5 pb-2">
+              <div className="flex items-center justify-between px-0.5">
                 <h2
                   style={{
                     color: c.primaryText,
@@ -2533,6 +2576,12 @@ export function LivePreviewCard({
                   </span>
                 )}
               </div>
+              <p
+                style={{ color: c.secondaryText }}
+                className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5 pb-2"
+              >
+                What brands &amp; collaborators say about working with me.
+              </p>
               <div style={{ backgroundColor: c.divider }} className="-mx-3.5 sm:-mx-5 h-px opacity-60" aria-hidden="true" />
             </div>
 
