@@ -98,6 +98,7 @@ export function SeriesDetailClient({
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [coverImageError, setCoverImageError] = useState(false);
   const [activeSeasonIndex, setActiveSeasonIndex] = useState<number>(0);
+  const [isScrolledPastHeader, setIsScrolledPastHeader] = useState(false);
 
   const prefetchedBackRef = useRef(false);
 
@@ -395,6 +396,7 @@ export function SeriesDetailClient({
           creatorHandle={username}
           creatorPhoto={creator?.photoDataUrl}
           pageLabel="Series"
+          showCreatorIdentity={isScrolledPastHeader}
           className={`${PUBLIC_CARD_PADDING} pt-4 pb-3 sm:pt-5`}
           actions={
             <>
@@ -408,7 +410,10 @@ export function SeriesDetailClient({
           }
         />
 
-        <div className={`flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain scrollbar-none ${PUBLIC_CARD_PADDING} pb-5`}>
+        <div
+          onScroll={(e) => setIsScrolledPastHeader(e.currentTarget.scrollTop > 80)}
+          className={`flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain scrollbar-none ${PUBLIC_CARD_PADDING} pb-5`}
+        >
           {/* Series hero */}
           {hasValidCover && (
             <div

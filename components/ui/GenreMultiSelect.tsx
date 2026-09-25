@@ -4,11 +4,31 @@ import { useState } from "react";
 import { Check, Tag } from "lucide-react";
 
 export const ALL_SERIES_GENRES = [
+  // Creator Vlogs & Lifestyle (Prominent)
+  "Vlogs",
+  "Daily Vlogs",
+  "Travel",
+  "Travel Vlogs",
+  "Food",
+  "Food & Street Food",
+  "Cooking & Recipes",
+  "Moto Vlogging",
+  "Family Vlogs",
+  "Road Trips",
+  "Lifestyle",
+  "Comedy & Sketches",
+  "Tech & Gadgets",
+  "Fitness & Health",
+  "Gaming",
+  "Podcast & Talk Shows",
+  "Entertainment",
+  "Documentary",
+
+  // Storytelling, Drama & Cinema
   "Action",
   "Adventure",
   "Comedy",
   "Drama",
-  "Love",
   "Romance",
   "Romantic Comedy",
   "Romantic Drama",
@@ -24,22 +44,16 @@ export const ALL_SERIES_GENRES = [
   "Emotional",
   "Family",
   "Friendship",
-  "Kids",
+  "Slice of Life",
+  "Education & Tutorials",
+  "Finance & Business",
+  "Music & Dance",
   "Animation",
-  "Documentary",
   "Biography",
   "History",
-  "Mythology",
-  "Spiritual",
-  "Musical",
+  "Mythology & Spiritual",
   "Sports",
   "Reality",
-  "Slice of Life",
-  "Survival",
-  "Personal Vlogs",
-  "Daily Life",
-  "Lifestyle",
-  "Travel Diaries",
   "Behind the Scenes",
   "Other",
 ];
@@ -50,7 +64,7 @@ interface GenreMultiSelectProps {
   max?: number;
 }
 
-const COLLAPSED_COUNT = 12;
+const COLLAPSED_COUNT = 18;
 
 export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectProps) {
   const [showAll, setShowAll] = useState(false);

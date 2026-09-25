@@ -19,21 +19,26 @@ interface PublicPageHeaderProps {
   actions?: ReactNode;
   /** Prefer router.back() when the visitor came from inside Inflixo. */
   preferHistoryBack?: boolean;
+  /** Show creator avatar and name in header (typically when scrolled down). */
+  showCreatorIdentity?: boolean;
   className?: string;
 }
 
 /**
  * Header for secondary public pages: [←]  ...  [actions]
- * Always sits inside the centered card. Creator identity props are accepted
- * for compatibility but not rendered.
+ * Shows page title by default; transitions to creator identity when scrolled.
  */
 export function PublicPageHeader({
   themeKey,
   backHref,
   backLabel,
+  creatorName,
+  creatorHandle,
+  creatorPhoto,
   pageLabel,
   actions,
   preferHistoryBack = false,
+  showCreatorIdentity = false,
   className = "",
 }: PublicPageHeaderProps) {
   const router = useRouter();
@@ -67,18 +72,45 @@ export function PublicPageHeader({
         <ArrowLeft className="h-[18px] w-[18px]" />
       </button>
 
-      {pageLabel ? (
-        <div className="min-w-0 flex-1 text-center">
-          <span
-            style={{ color: t.colors.primaryText }}
-            className="text-xs sm:text-sm font-bold tracking-tight truncate block"
-          >
-            {pageLabel}
-          </span>
-        </div>
-      ) : (
-        <div className="min-w-0 flex-1" />
-      )}
+      <div className="min-w-0 flex-1 flex items-center justify-center gap-1.5 px-1">
+        {showCreatorIdentity ? (
+          <div className="flex items-center justify-center gap-1.5 min-w-0 animate-in fade-in duration-200">
+            {creatorPhoto && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={creatorPhoto}
+                alt={creatorName || "Creator"}
+                className="h-6 w-6 sm:h-7 sm:w-7 rounded-full aspect-square object-cover border border-white/70 shadow-xs shrink-0"
+              />
+            )}
+            <div className="min-w-0 text-center truncate">
+              <span
+                style={{ color: t.colors.primaryText }}
+                className="text-xs sm:text-sm font-bold tracking-tight truncate block leading-tight"
+              >
+                {creatorName || pageLabel}
+              </span>
+              {pageLabel && (
+                <span
+                  style={{ color: t.colors.secondaryText }}
+                  className="text-[10px] sm:text-[11px] font-medium opacity-80 truncate block leading-tight"
+                >
+                  {pageLabel}
+                </span>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="text-center truncate">
+            <span
+              style={{ color: t.colors.primaryText }}
+              className="text-xs sm:text-sm font-bold tracking-tight truncate block"
+            >
+              {pageLabel || creatorName}
+            </span>
+          </div>
+        )}
+      </div>
 
       {actions ? <div className="flex shrink-0 items-center gap-1.5">{actions}</div> : null}
     </header>

@@ -1058,6 +1058,7 @@ export function LivePreviewCard({
   const [showAllGigs, setShowAllGigs] = useState(false);
   const profileScrollRef = useRef<HTMLDivElement | null>(null);
   const [showMoveToTop, setShowMoveToTop] = useState(false);
+  const [showStickyProfileHeader, setShowStickyProfileHeader] = useState(false);
 
   const safeProfile: CreatorProfile = Object.assign(
     {
@@ -1422,11 +1423,30 @@ export function LivePreviewCard({
     if (!containedScroll) return;
     const el = event.currentTarget;
     setShowMoveToTop(el.scrollTop > 200);
+    setShowStickyProfileHeader(el.scrollTop > 80);
   };
 
   const handleMoveToTop = () => {
     profileScrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      if (scrollY > 80) {
+        setShowStickyProfileHeader(true);
+        setShowMoveToTop(scrollY > 200);
+      } else if (!containedScroll || (profileScrollRef.current?.scrollTop || 0) <= 80) {
+        setShowStickyProfileHeader(false);
+        if (!containedScroll) setShowMoveToTop(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [containedScroll]);
 
   const isFull = variant === "full";
   // Live public pages (profile, series, reviews) render the card with contained scroll.
@@ -1492,6 +1512,7 @@ export function LivePreviewCard({
           creatorHandle={cleanHandle || "creator"}
           creatorPhoto={profile.photoDataUrl}
           pageLabel={pageHeader.pageLabel}
+          showCreatorIdentity={showStickyProfileHeader}
           className={containedScroll ? "pb-2.5" : "mb-2.5"}
           actions={
             !isOnboardingMode ? (
@@ -1514,24 +1535,80 @@ export function LivePreviewCard({
         />
       ) : (
         <div
-          className={`relative z-30 flex items-center justify-between gap-2 w-full px-0.5 bg-transparent ${containedScroll ? "shrink-0 pt-0 pb-1.5" : "mb-1.5"}`}
+          className={`relative z-30 flex items-center justify-between gap-2 w-full px-1 py-1 -mt-1 rounded-xl transition-all duration-300 ${
+            containedScroll ? "shrink-0 mb-1" : "mb-1.5"
+          } ${
+            showStickyProfileHeader
+              ? "backdrop-blur-md shadow-xs border"
+              : "bg-transparent border-transparent"
+          }`}
+          style={
+            showStickyProfileHeader
+              ? {
+                  backgroundColor: usesDarkControls ? "rgba(15, 23, 42, 0.75)" : "rgba(255, 255, 255, 0.85)",
+                  borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.06)",
+                }
+              : undefined
+          }
         >
-          <Link
-            href="/"
-            style={{
-              backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.cardBackground,
-              borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : c.border,
-              color: usesDarkControls ? "#FFFFFF" : c.primaryText,
-            }}
-            className={PUBLIC_ICON_BUTTON}
-            title="Inflixo"
-            aria-label="Inflixo"
+          <div className="shrink-0 flex items-center">
+            <Link
+              href="/"
+              style={{
+                backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.cardBackground,
+                borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : c.border,
+                color: usesDarkControls ? "#FFFFFF" : c.primaryText,
+              }}
+              className={PUBLIC_ICON_BUTTON}
+              title="Inflixo"
+              aria-label="Inflixo"
+            >
+              <InflixoLogoIcon light={usesDarkControls} className="h-4.5 w-4.5 sm:h-5 sm:w-5 object-contain" />
+            </Link>
+          </div>
+
+          {/* Sticky Creator Profile Picture & Name */}
+          <div
+            onClick={handleMoveToTop}
+            title="Scroll to top"
+            className={`min-w-0 flex-1 flex items-center justify-center gap-1.5 px-1 cursor-pointer transition-all duration-300 ease-out select-none ${
+              showStickyProfileHeader
+                ? "opacity-100 translate-y-0 pointer-events-auto"
+                : "opacity-0 -translate-y-1.5 pointer-events-none"
+            }`}
           >
-            <InflixoLogoIcon light={usesDarkControls} className="h-4.5 w-4.5 sm:h-5 sm:w-5 object-contain" />
-          </Link>
+            <div className="relative shrink-0">
+              <CreatorAvatar
+                src={profile.photoDataUrl}
+                name={profile.displayName || "Creator"}
+                className="h-[26px] w-[26px] sm:h-[28px] sm:w-[28px] rounded-full aspect-square object-contain object-center overflow-hidden border border-white/80 ring-1 ring-black/5 shadow-xs mx-auto bg-white"
+                style={{ borderColor: c.border || "#FFFFFF", backgroundColor: c.cardBackground }}
+                textClassName="text-[10px] font-bold"
+                textStyle={{ color: c.primaryText }}
+                fallbackBgClass="bg-[#043084]"
+              />
+            </div>
+            <div className="min-w-0 flex items-center gap-1">
+              <span
+                style={{
+                  color: c.primaryText,
+                  fontFamily: typ.headingFontFamily,
+                  fontWeight: 700,
+                }}
+                className="text-xs sm:text-[13px] font-bold truncate max-w-[120px] sm:max-w-[200px]"
+              >
+                {profile.displayName || "Creator"}
+              </span>
+              {Boolean(profile.isVerified) && (
+                <svg className="w-3.5 h-3.5 text-emerald-500 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-label="Verified">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L9 14.17l9.59-9.59L20 6l-10 11z" />
+                </svg>
+              )}
+            </div>
+          </div>
 
           {!isOnboardingMode && (
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 shrink-0">
               {containedScroll && cleanHandle && cleanHandle !== "demo_creator" && !isDashboardPreview && (
                 <Link
                   href={`/${cleanHandle}/media-kit`}
