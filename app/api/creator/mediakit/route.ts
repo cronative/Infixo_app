@@ -2,6 +2,8 @@ import { db } from "@/lib/db";
 import { requireCreator } from "@/lib/creatorAuth";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { getSessionFromRequest } from "@/lib/session";
+import { getPlanQuota } from "@/services/subscriptionLimits";
 
 let mediaKitTablesEnsured = false;
 
@@ -92,7 +94,16 @@ export async function GET(req: Request) {
     const resolvedEmailParam = searchParams.get("email") || (identifierParam && identifierParam.includes("@") ? identifierParam : null);
     const resolvedUsernameParam = searchParams.get("username");
 
-    const lookupVal = resolvedCreatorIdParam || resolvedEmailParam || resolvedUsernameParam;
+    let lookupVal = resolvedCreatorIdParam || resolvedEmailParam || resolvedUsernameParam;
+    if (!lookupVal) {
+      const session = getSessionFromRequest(req);
+      if (session?.creatorId) {
+        lookupVal = session.creatorId;
+      } else if (session?.email) {
+        lookupVal = session.email;
+      }
+    }
+
     if (!lookupVal) {
       return apiError("creatorId, email, or username query param required", 400);
     }
@@ -204,6 +215,23 @@ export async function POST(req: Request) {
 
     // 2. Synchronize Gigs tied to creator_id & email
     const incomingPackages: any[] = packages || [];
+
+    // Enforce server-side gig quota based on active subscription
+    const [subRows]: any = await db.query(
+      "SELECT plan_key FROM subscriptions WHERE creator_id = ? AND status = 'active' ORDER BY updated_at DESC LIMIT 1",
+      [resolvedCreatorId]
+    );
+    const activePlanKey = subRows[0]?.plan_key || "early_access";
+    const quota = getPlanQuota(activePlanKey);
+
+    if (incomingPackages.length > quota.maxGigs) {
+      return apiError(
+        `Collab package limit reached (${quota.maxGigs} max) for ${quota.name} plan. Upgrade your plan to add more packages.`,
+        403,
+        { isLimitReached: true, type: "gig" }
+      );
+    }
+
     const incomingIds = incomingPackages.map((p) => p.id);
 
     // Delete removed gigs for this creator_id/email

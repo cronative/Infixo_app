@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 import { ensureCreatorSettingsTable } from "@/lib/settingsDb";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
-import { requireSession, ownsResource } from "@/lib/session";
+import { requireSession, ownsResource, getSessionFromRequest } from "@/lib/session";
 import { isCreatorPublic } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
 import { isReservedUsername } from "@/lib/constants";
@@ -17,15 +17,21 @@ export async function GET(req: Request) {
     const email = searchParams.get("email");
     const username = searchParams.get("username");
 
-    if (email) {
+    let targetEmail = email;
+    if (targetEmail) {
       const auth = requireSession(req);
       if (auth.error) return auth.error;
-      if (!ownsResource(auth.session, email)) {
+      if (!ownsResource(auth.session, targetEmail)) {
         return apiError("Forbidden", 403);
+      }
+    } else if (!username) {
+      const session = getSessionFromRequest(req);
+      if (session?.email) {
+        targetEmail = session.email;
       }
     }
 
-    if (!email && !username) {
+    if (!targetEmail && !username) {
       return apiError("Email or username query param required", 400);
     }
 
@@ -47,7 +53,7 @@ export async function GET(req: Request) {
       params.push(cleanUser, username, `@${cleanUser}`);
     } else {
       query += ` WHERE LOWER(c.email) = LOWER(?)`;
-      params.push(email?.trim());
+      params.push(targetEmail?.trim());
     }
 
     const [rows]: any = await db.query(query, params);
@@ -55,13 +61,13 @@ export async function GET(req: Request) {
     const creator = rows[0];
     if (!creator) {
       // If queried by email (e.g. during onboarding for a new user), return 200 OK with clean new profile and onboardingStep: "profile"
-      if (email) {
+      if (targetEmail) {
         return apiSuccess({
           isNewUser: true,
           onboardingStep: "profile",
           profile: {
             id: null,
-            email: email.trim(),
+            email: targetEmail.trim(),
             displayName: "",
             username: "",
             photoDataUrl: null,

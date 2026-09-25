@@ -16,11 +16,11 @@ export const SeriesService = {
   },
 
   async fetchFromDb(): Promise<Series[]> {
-    const email = getTargetEmail();
-    if (!email) return seriesRepository.getAll();
+    const email = authRepository.getPendingEmail() || profileRepository.get()?.email;
+    const query = email ? `?email=${encodeURIComponent(email)}` : "";
 
     try {
-      const httpResponse = await fetch(`/api/series?email=${encodeURIComponent(email)}`);
+      const httpResponse = await fetch(`/api/series${query}`);
       const apiResponse = await httpResponse.json();
       const series = apiResponse.data?.series || apiResponse.series;
       if ((apiResponse.status === 1 || apiResponse.success) && Array.isArray(series)) {

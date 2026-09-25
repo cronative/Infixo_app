@@ -16,6 +16,28 @@ function nsKey(key: string) {
   return `${NAMESPACE}:${key}`;
 }
 
+function sanitizeForStorage(value: any): any {
+  if (value === null || value === undefined) return value;
+  if (typeof value === "string") {
+    // Strip large base64 data URLs (images, posters, avatars) to prevent localStorage quota crash (5MB limit)
+    if (value.startsWith("data:image/") || value.startsWith("data:video/") || (value.startsWith("data:") && value.length > 500)) {
+      return null;
+    }
+    return value;
+  }
+  if (Array.isArray(value)) {
+    return value.map(sanitizeForStorage);
+  }
+  if (typeof value === "object") {
+    const cleaned: Record<string, any> = {};
+    for (const [k, v] of Object.entries(value)) {
+      cleaned[k] = sanitizeForStorage(v);
+    }
+    return cleaned;
+  }
+  return value;
+}
+
 export const storage = {
   get<T>(key: string, fallback: T): T {
     if (!isBrowser()) return fallback;
@@ -31,9 +53,15 @@ export const storage = {
   set<T>(key: string, value: T): void {
     if (!isBrowser()) return;
     try {
-      window.localStorage.setItem(nsKey(key), JSON.stringify(value));
-    } catch {
-      // localStorage may be full or disabled — fail silently in prototype
+      const sanitized = sanitizeForStorage(value);
+      window.localStorage.setItem(nsKey(key), JSON.stringify(sanitized));
+    } catch (e) {
+      console.warn(`[storage] Could not save key "${key}" to localStorage:`, e);
+      // If quota exceeded, attempt to clear any legacy oversized cache keys
+      try {
+        window.localStorage.removeItem(nsKey(STORAGE_KEYS.series));
+        window.localStorage.removeItem(nsKey(STORAGE_KEYS.brands));
+      } catch {}
     }
   },
 

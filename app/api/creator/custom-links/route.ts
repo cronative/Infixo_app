@@ -3,6 +3,7 @@ import { requireCreator } from "@/lib/creatorAuth";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
 import { sanitizeUrl } from "@/lib/urlSanitizer";
+import { getPlanQuota } from "@/services/subscriptionLimits";
 
 let customLinksTableEnsured = false;
 
@@ -150,6 +151,22 @@ export async function POST(req: Request) {
 
     const creatorId = auth.creator.id;
     const actualEmail = auth.creator.email;
+
+    // Enforce server-side custom links quota based on active subscription
+    const [subRows]: any = await db.query(
+      "SELECT plan_key FROM subscriptions WHERE creator_id = ? AND status = 'active' ORDER BY updated_at DESC LIMIT 1",
+      [creatorId]
+    );
+    const activePlanKey = subRows[0]?.plan_key || "early_access";
+    const quota = getPlanQuota(activePlanKey);
+
+    if (links.length > quota.maxCustomLinks) {
+      return apiError(
+        `Custom links limit reached (${quota.maxCustomLinks} max) for ${quota.name} plan. Upgrade your plan to add more links.`,
+        403,
+        { isLimitReached: true, type: "links" }
+      );
+    }
 
     // Delete existing links for this creator in creator_custom_links table and insert updated list
     await db.query("DELETE FROM creator_custom_links WHERE creator_id = ? OR email = ? OR email = ?", [creatorId, actualEmail, email]);

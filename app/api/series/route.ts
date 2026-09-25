@@ -4,7 +4,7 @@ import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 import { debugLog } from "@/lib/debugLogger";
 import { getPlanQuota } from "@/services/subscriptionLimits";
 import { requireCreator } from "@/lib/creatorAuth";
-import { requireSession, ownsResource } from "@/lib/session";
+import { requireSession, ownsResource, getSessionFromRequest } from "@/lib/session";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
 
@@ -99,6 +99,19 @@ export async function GET(req: Request) {
       const [creatorsByEmail]: any = await db.query("SELECT id FROM creators WHERE email = ?", [email]);
       if (creatorsByEmail.length > 0) {
         creatorId = creatorsByEmail[0].id;
+      }
+    }
+
+    // Fallback to active HTTP session cookie if no email or username was passed
+    if (!creatorId) {
+      const session = getSessionFromRequest(req);
+      if (session?.creatorId) {
+        creatorId = session.creatorId;
+      } else if (session?.email) {
+        const [creatorsByEmail]: any = await db.query("SELECT id FROM creators WHERE email = ?", [session.email]);
+        if (creatorsByEmail.length > 0) {
+          creatorId = creatorsByEmail[0].id;
+        }
       }
     }
 

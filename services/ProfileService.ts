@@ -33,10 +33,10 @@ export const ProfileService = {
 
   async fetchFromDb(): Promise<CreatorProfile | null> {
     const email = authRepository.getPendingEmail();
-    if (!email) return null;
+    const query = email ? `?email=${encodeURIComponent(email)}` : "";
 
     try {
-      const httpResponse = await fetch(`/api/creator/profile?email=${encodeURIComponent(email)}`);
+      const httpResponse = await fetch(`/api/creator/profile${query}`);
       const apiResponse = await httpResponse.json();
       const profile = apiResponse.data?.profile;
       if (apiResponse.status === 1 && profile) {
