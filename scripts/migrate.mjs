@@ -131,6 +131,10 @@ async function migrateDatabase(target) {
     await addColumnIfMissing("creators", "public_profile_layout", "VARCHAR(32) NOT NULL DEFAULT 'default'");
     await addColumnIfMissing("creator_settings", "public_profile_layout", "VARCHAR(32) NOT NULL DEFAULT 'default'");
 
+    await addColumnIfMissing("creators", "custom_domain", "VARCHAR(255) NULL UNIQUE");
+    await addColumnIfMissing("creators", "custom_domain_verified", "TINYINT(1) NOT NULL DEFAULT 0");
+    await addColumnIfMissing("creators", "custom_domain_configured_at", "DATETIME NULL");
+
     console.log(`✅ ${target.name} migrated successfully.`);
   } finally {
     await connection.end();

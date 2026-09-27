@@ -79,6 +79,8 @@
 
 ---
 
+---
+
 ## ⏳ PENDING / UPCOMING TASKS TRACKER
 
 | Task ID | Feature Name | Description | Priority | Target Status |
@@ -86,12 +88,13 @@
 | **TASK-01** | **Automated Data Sync Cron** | Tiered cron service (24h/12h/3h) for IG/YT/FB sync + CLI runner `npm run cron:sync` | 🟡 Medium | ✅ **Completed** |
 | **TASK-02** | **Payment Gateway Integration** | Razorpay recurring e-mandates & one-time orders, webhook sync & checkout funnel | 🟢 High | ✅ **Completed** |
 | **TASK-03** | **Analytics & Visit Counters** | Public profile opens, unique visitors, episode plays & link clicks in MySQL | 🔵 Medium | ✅ **Completed** |
-| **TASK-04** | **Custom Domain Mapping** | Allow Pro creators to connect custom domains (e.g. `creator.com`) | 🔵 Low | Planned |
+| **TASK-04** | **Custom Domain Mapping** | Custom domain & subdomain routing, DNS CNAME verification, and Next.js middleware | 🔵 Low | ✅ **Completed** |
 
 ---
 
 ## 🛠️ NEXT ACTION ITEMS
-Select which area you'd like to work on next:
-1. **End-to-End Creator Journey Live Testing & QA Polish** (Landing page $\rightarrow$ Claim Handle $\rightarrow$ Login/OTP $\rightarrow$ 5 Steps $\rightarrow$ Live profile $\rightarrow$ Dashboard)
-2. **[TASK-04] Custom Domain Mapping**
-3. **Commit all analytics updates to git**
+All planned technical roadmap tasks (TASK-01 through TASK-04) are 100% completed!
+Suggested next steps:
+1. **End-to-End Creator Journey Smoke Test**
+2. **Commit & Push Custom Domain feature to GitHub (`claude_dev`)**
+3. **Production Deployment Readiness Review**
