@@ -1,29 +1,46 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, AlertCircle, ShieldCheck, CreditCard, Sparkles, RefreshCw, Repeat, Zap } from "lucide-react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { ArrowLeft, CheckCircle2, AlertCircle, ShieldCheck, CreditCard, Sparkles, RefreshCw, Repeat, Zap, ArrowRight, ExternalLink } from "lucide-react";
 import { RazorpayCheckoutButton } from "@/components/checkout/RazorpayCheckoutButton";
 import { ProfileService } from "@/services/ProfileService";
+import { SubscriptionService } from "@/services/SubscriptionService";
+import { OnboardingService } from "@/services/OnboardingService";
+import { authRepository, profileRepository } from "@/repositories/localRepository";
 
-export default function CheckoutPage() {
+function CheckoutContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const planParam = searchParams.get("plan");
+  const cycleParam = searchParams.get("cycle");
+  const modeParam = searchParams.get("mode");
+  const fromParam = searchParams.get("from");
+
   const [customerName, setCustomerName] = useState("Test Creator");
   const [customerEmail, setCustomerEmail] = useState("creator@inflixo.com");
   const [customerPhone, setCustomerPhone] = useState("9999999999");
-  const [checkoutMode, setCheckoutMode] = useState<"recurring" | "onetime">("recurring");
+  const [username, setUsername] = useState("");
+  const [checkoutMode, setCheckoutMode] = useState<"recurring" | "onetime">(
+    modeParam === "onetime" ? "onetime" : "recurring"
+  );
 
-  useEffect(() => {
-    try {
-      const p = ProfileService.getProfile();
-      if (p?.displayName) setCustomerName(p.displayName);
-    } catch {
-      // Ignore during static render
-    }
-  }, []);
+  const initialPlan =
+    planParam === "pro" || planParam === "creator_pro"
+      ? "pro"
+      : planParam === "vip" || planParam === "creator_VIP"
+      ? "vip"
+      : planParam === "custom"
+      ? "custom"
+      : "starter";
 
-  const [selectedPlan, setSelectedPlan] = useState<"starter" | "pro" | "vip" | "custom">("starter");
-  const [customAmountRupees, setCustomAmountRupees] = useState<number>(1); // min ₹1 = 100 paise
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
+  const [selectedPlan, setSelectedPlan] = useState<"starter" | "pro" | "vip" | "custom">(initialPlan);
+  const [customAmountRupees, setCustomAmountRupees] = useState<number>(1);
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
+    cycleParam === "yearly" ? "yearly" : "monthly"
+  );
   const [paymentStatus, setPaymentStatus] = useState<"idle" | "success" | "error" | "cancelled">("idle");
   const [lastPaymentResult, setLastPaymentResult] = useState<{
     order_id?: string | null;
@@ -33,6 +50,25 @@ export default function CheckoutPage() {
     is_recurring?: boolean;
     error?: string;
   } | null>(null);
+
+  useEffect(() => {
+    try {
+      const p = ProfileService.getProfile();
+      const cached = profileRepository.get();
+      const email = p?.email || cached?.email || authRepository.getPendingEmail() || authRepository.get()?.email;
+      if (p?.displayName || cached?.displayName) {
+        setCustomerName(p?.displayName || cached?.displayName || "Creator");
+      }
+      if (email) {
+        setCustomerEmail(email);
+      }
+      if (p?.username || cached?.username) {
+        setUsername(p?.username || cached?.username || "");
+      }
+    } catch {
+      // Ignore during static render
+    }
+  }, []);
 
   const planAmounts: Record<string, { name: string; monthly: number; yearly: number }> = {
     starter: { name: "Starter Plan", monthly: 99, yearly: 999 },
@@ -321,14 +357,23 @@ export default function CheckoutPage() {
                   email: customerEmail,
                   contact: customerPhone,
                 }}
-                buttonText={
-                  isRecurringActive
-                    ? `Subscribe ₹${amountRupees}/${billingCycle === "yearly" ? "yr" : "mo"} AutoPay`
-                    : `Pay ₹${amountRupees} with Razorpay`
-                }
-                onSuccess={(data) => {
+                onSuccess={async (data) => {
                   setPaymentStatus("success");
                   setLastPaymentResult(data);
+                  try {
+                    const targetKey =
+                      selectedPlan === "pro"
+                        ? "creator_pro"
+                        : selectedPlan === "vip"
+                        ? "creator_VIP"
+                        : "starter";
+                    await SubscriptionService.activate(targetKey, billingCycle, customerEmail);
+                    if (fromParam === "onboarding") {
+                      OnboardingService.setStep("finish");
+                    }
+                  } catch (e) {
+                    console.error("Local activation error:", e);
+                  }
                 }}
                 onError={(err) => {
                   setPaymentStatus("error");
@@ -343,9 +388,48 @@ export default function CheckoutPage() {
                 <span>HMAC-SHA256 verified server-side</span>
               </p>
             </div>
+
+            {paymentStatus === "success" && (
+              <div className="pt-3 border-t border-emerald-100 flex flex-col gap-2">
+                <Link
+                  href="/dashboard"
+                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs py-2.5 px-3 transition-colors text-center shadow-xs"
+                >
+                  <span>Go to Creator Dashboard</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+                {username && (
+                  <Link
+                    href={`/${username}`}
+                    target="_blank"
+                    className="w-full flex items-center justify-center gap-1.5 rounded-xl border border-emerald-300 bg-white hover:bg-emerald-50 text-emerald-800 font-semibold text-xs py-2 px-3 transition-colors text-center"
+                  >
+                    <span>View Public Profile</span>
+                    <ExternalLink className="h-3 w-3" />
+                  </Link>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center p-6">
+          <div className="flex items-center gap-3 text-sm font-semibold text-[#043084]">
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#043084] border-t-transparent" />
+            <span>Loading secure checkout...</span>
+          </div>
+        </div>
+      }
+    >
+      <CheckoutContent />
+    </Suspense>
   );
 }

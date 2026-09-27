@@ -103,8 +103,8 @@ export default function SubscriptionStepPage() {
     try {
       if (selectedOption !== "free") {
         OnboardingService.setStep("finish");
-        showToast(`Complete Razorpay checkout to activate ${planName}.`);
-        router.push("/dashboard/subscription");
+        showToast(`Redirecting to secure Razorpay checkout for ${planName}...`);
+        router.push(`/checkout?plan=${selectedOption}&cycle=monthly&from=onboarding`);
         return;
       }
 
