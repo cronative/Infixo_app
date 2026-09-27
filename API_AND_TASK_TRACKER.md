@@ -88,7 +88,7 @@
 | **TASK-01** | **Automated Data Sync Cron** | Tiered cron service (24h/12h/3h) for IG/YT/FB sync + CLI runner `npm run cron:sync` | 🟡 Medium | ✅ **Completed** |
 | **TASK-02** | **Payment Gateway Integration** | Razorpay recurring e-mandates & one-time orders, webhook sync & checkout funnel | 🟢 High | ✅ **Completed** |
 | **TASK-03** | **Analytics & Visit Counters** | Public profile opens, unique visitors, episode plays & link clicks in MySQL | 🔵 Medium | ✅ **Completed** |
-| **TASK-04** | **Custom Domain Mapping** | Custom domain & subdomain routing, DNS CNAME verification, and Next.js middleware | 🔵 Low | ✅ **Completed** |
+| **TASK-04** | **Custom Domain Mapping** | Custom domain routing & DNS CNAME APIs ready (UI hidden for now as requested) | 🔵 Low | ⏸️ **UI Hidden / Backend Ready** |
 
 ---
 

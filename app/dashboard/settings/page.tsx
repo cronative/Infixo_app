@@ -10,7 +10,6 @@ import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { storage } from "@/utils/storage";
 import { DEFAULT_VISIBILITY_SETTINGS } from "@/types";
-import { CustomDomainCard } from "@/components/dashboard/CustomDomainCard";
 
 export default function DashboardSettingsPage() {
   const router = useRouter();
@@ -160,10 +159,7 @@ export default function DashboardSettingsPage() {
         </div>
       </section>
 
-      {/* 3. CUSTOM DOMAIN MAPPING */}
-      <CustomDomainCard />
-
-      {/* 4. PROFILE VISIBILITY SECTION */}
+      {/* 3. PROFILE VISIBILITY SECTION */}
       <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 space-y-3 shadow-xs">
         <div className="border-b border-[#e2e8f0] pb-2.5">
           <h2 className="text-sm font-semibold text-[#0f172a]">Profile visibility</h2>
