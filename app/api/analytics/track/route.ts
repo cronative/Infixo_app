@@ -8,8 +8,25 @@ interface CreatorIdRow extends RowDataPacket {
   id: string;
 }
 
-const ALLOWED_PUBLIC_EVENTS = new Set(["profile_view", "episode_click"]);
-const ALLOWED_PUBLIC_SOURCES = new Set(["public_profile", "public_series"]);
+const ALLOWED_PUBLIC_EVENTS = new Set([
+  "profile_view",
+  "episode_click",
+  "series_view",
+  "social_click",
+  "link_click",
+  "product_click",
+  "media_kit_view",
+  "work_with_me_click",
+  "collaboration_click",
+]);
+
+const ALLOWED_PUBLIC_SOURCES = new Set([
+  "public_profile",
+  "public_series",
+  "public_shop",
+  "public_products",
+  "public_mediakit",
+]);
 
 // POST /api/analytics/track (Public Event Tracker)
 export async function POST(req: Request) {

@@ -17,6 +17,8 @@ type AnalyticsState = {
   profileViews: number;
   uniqueVisitors: number;
   episodeClicks: number;
+  socialClicks: number;
+  linkClicks: number;
   topTargets: AnalyticsTarget[];
 };
 
@@ -25,6 +27,8 @@ const EMPTY_ANALYTICS: AnalyticsState = {
   profileViews: 0,
   uniqueVisitors: 0,
   episodeClicks: 0,
+  socialClicks: 0,
+  linkClicks: 0,
   topTargets: [],
 };
 
@@ -61,6 +65,8 @@ export default function DashboardAnalyticsPage() {
             profileViews: Number(metrics?.profileViews || 0),
             uniqueVisitors: Number(metrics?.uniqueVisitors || 0),
             episodeClicks: Number(metrics?.episodeClicks || 0),
+            socialClicks: Number(metrics?.socialClicks || 0),
+            linkClicks: Number(metrics?.linkClicks || 0),
             topTargets: Array.isArray(topTargets) ? topTargets : [],
           });
         } else {
@@ -127,7 +133,7 @@ export default function DashboardAnalyticsPage() {
         </div>
       </div>
 
-      <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <section className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <MetricCard
           icon={<Eye className="h-4 w-4" />}
           label="Profile opens"
@@ -144,9 +150,16 @@ export default function DashboardAnalyticsPage() {
         />
         <MetricCard
           icon={<MousePointerClick className="h-4 w-4" />}
-          label="Series part clicks"
+          label="Series episode clicks"
           value={analytics.episodeClicks}
-          helper="Episode links clicked from public series pages"
+          helper="Episode links clicked"
+          loading={analytics.loading}
+        />
+        <MetricCard
+          icon={<ExternalLink className="h-4 w-4" />}
+          label="Social & link clicks"
+          value={analytics.socialClicks + analytics.linkClicks}
+          helper="Social handles & bio links"
           loading={analytics.loading}
         />
       </section>
@@ -154,34 +167,45 @@ export default function DashboardAnalyticsPage() {
       <section className="rounded-xl border border-[#e2e8f0] bg-white shadow-xs overflow-hidden">
         <div className="flex items-center justify-between gap-3 border-b border-[#e2e8f0] bg-[#f8fafc] px-3.5 py-2.5">
           <div>
-            <h2 className="text-xs sm:text-sm font-semibold text-[#0f172a]">Top clicked series parts</h2>
-            <p className="text-[11px] text-[#64748b]">Only clicks from public series pages are counted.</p>
+            <h2 className="text-xs sm:text-sm font-semibold text-[#0f172a]">Top clicked links & series parts</h2>
+            <p className="text-[11px] text-[#64748b]">Real-time fan engagement across your public profile.</p>
           </div>
           {analytics.loading && <RefreshCw className="h-3.5 w-3.5 animate-spin text-[#64748b]" />}
         </div>
 
-        {clickedParts.length === 0 ? (
+        {analytics.topTargets.length === 0 ? (
           <EmptyState
             icon={<BarChart3 className="h-7 w-7" />}
-            title="No series clicks yet"
-            description="Share your public profile and series links. Clicks will appear here after fans open episode links."
+            title="No click events yet"
+            description="Share your public profile and series links. Fan clicks on your episodes and bio links will appear here."
             className="border-none bg-transparent"
           />
         ) : (
           <div className="divide-y divide-[#e2e8f0]">
-            {clickedParts.slice(0, 10).map((item, index) => (
-              <div key={`${item.event_target}-${index}`} className="flex items-center justify-between gap-3 px-3.5 py-2.5">
-                <div className="min-w-0">
-                  <p className="truncate text-xs sm:text-sm font-semibold text-[#043084]">
-                    {item.event_target || "Series part"}
-                  </p>
-                  <p className="text-[11px] text-[#64748b]">Public series episode link</p>
+            {analytics.topTargets.slice(0, 10).map((item, index) => {
+              const label =
+                item.event_type === "episode_click"
+                  ? "Series episode link"
+                  : item.event_type === "social_click"
+                  ? "Social profile link"
+                  : item.event_type === "link_click"
+                  ? "Custom bio link"
+                  : "Profile target";
+
+              return (
+                <div key={`${item.event_target}-${index}`} className="flex items-center justify-between gap-3 px-3.5 py-2.5">
+                  <div className="min-w-0">
+                    <p className="truncate text-xs sm:text-sm font-semibold text-[#043084]">
+                      {item.event_target || "Profile link"}
+                    </p>
+                    <p className="text-[11px] text-[#64748b]">{label}</p>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-[#043084]/[0.08] border border-[#043084]/10 px-2 py-0.5 text-[11px] font-bold text-[#043084]">
+                    {Number(item.clicks || 0).toLocaleString("en-IN")} clicks
+                  </span>
                 </div>
-                <span className="shrink-0 rounded-full bg-[#043084]/[0.08] border border-[#043084]/10 px-2 py-0.5 text-[11px] font-bold text-[#043084]">
-                  {Number(item.clicks || 0).toLocaleString("en-IN")} clicks
-                </span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </section>

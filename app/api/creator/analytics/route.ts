@@ -7,16 +7,36 @@ import { apiSuccess, apiError } from "@/lib/apiResponse";
 // GET /api/creator/analytics?period=...
 export async function GET(req: Request) {
   try {
-    const auth = await requireCreator(req);
-    if (auth.error) return auth.error;
-
     const { searchParams } = new URL(req.url);
     const period = searchParams.get("period") || "30d"; // 7d or 30d
+
+    const auth = await requireCreator(req);
+    let targetId = auth.creator?.id;
+
+    if (!targetId) {
+      const email = searchParams.get("email");
+      const username = searchParams.get("username");
+      const creatorId = searchParams.get("creatorId");
+
+      if (creatorId) {
+        targetId = creatorId;
+      } else if (username || email) {
+        const [rows]: any = await db.query(
+          "SELECT id FROM creators WHERE username = ? OR email = ? LIMIT 1",
+          [username || "", email || ""]
+        );
+        targetId = rows?.[0]?.id;
+      }
+    }
+
+    if (!targetId) {
+      if (auth.error) return auth.error;
+      return apiError("Creator not found", 404);
+    }
 
     await ensureAnalyticsTable();
     await ensureRequestsTable();
 
-    const targetId = auth.creator.id;
     const days = period === "7d" ? 7 : 30;
 
     // 1. Total event counts by type
