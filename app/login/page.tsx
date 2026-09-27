@@ -56,7 +56,7 @@ export default function LoginPage() {
         <div>
           {/* 1. Header: Logo & Badge */}
           <div className="flex flex-col items-center text-center">
-            <Logo size="lg" orientation="vertical" />
+            <Logo size="lg" orientation="vertical" variant="transparent" />
             <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-[#043084]/[0.07] px-3 py-0.5 text-[11px] font-extrabold uppercase tracking-wider text-[#043084]">
               <Sparkles className="h-3 w-3" />
               <span>Creator Studio</span>

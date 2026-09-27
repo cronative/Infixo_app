@@ -8,7 +8,7 @@ export function AuthSplitLayout({ children }: { children: ReactNode }) {
       {/* Left / form column */}
       <div className="flex w-full flex-col justify-between px-6 py-8 sm:px-10 sm:py-10 lg:w-[48%] lg:px-14 lg:py-12 xl:w-[45%] bg-white border-r border-[#e2e8f0] min-h-dvh">
         <div>
-          <Logo />
+          <Logo variant="transparent" />
         </div>
 
         {/* Vertically Centered Form Container */}

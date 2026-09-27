@@ -309,12 +309,13 @@ export default function LandingHomePage() {
     <div className="min-h-dvh bg-[#f8fafc] text-[#043084] antialiased selection:bg-[#04308414] selection:text-[#043084]">
       <header className="fixed inset-x-0 top-0 z-50 border-b border-[#e2e8f0] bg-white/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 text-xs font-bold text-[#64748b] sm:px-6">
-          <Logo size="sm" />
+          <Logo size="sm" variant="transparent" />
           <nav className="hidden items-center gap-5 md:flex">
-            <button onClick={() => previewRef.current?.scrollIntoView({ behavior: "smooth" })} className="transition-colors hover:text-brand-primary">Series Preview</button>
-            <button onClick={() => scrollToSection("pillars")} className="transition-colors hover:text-brand-primary">Creator Tools</button>
-            <button onClick={() => scrollToSection("pricing")} className="transition-colors hover:text-brand-primary">Pricing</button>
-            <button onClick={() => scrollToSection("faq")} className="transition-colors hover:text-brand-primary">FAQ</button>
+            <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="cursor-pointer transition-colors hover:text-brand-primary">Home</button>
+            <button onClick={() => previewRef.current?.scrollIntoView({ behavior: "smooth" })} className="cursor-pointer transition-colors hover:text-brand-primary">Series Preview</button>
+            <button onClick={() => scrollToSection("pillars")} className="cursor-pointer transition-colors hover:text-brand-primary">Creator Tools</button>
+            <button onClick={() => scrollToSection("pricing")} className="cursor-pointer transition-colors hover:text-brand-primary">Pricing</button>
+            <button onClick={() => scrollToSection("faq")} className="cursor-pointer transition-colors hover:text-brand-primary">FAQ</button>
           </nav>
           <div className="flex items-center gap-2">
             <Link
@@ -420,7 +421,8 @@ export default function LandingHomePage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-[#043084]/12 bg-white/95 p-4 sm:p-6 shadow-[0_16px_45px_rgba(4,48,132,0.07)] backdrop-blur-md">
+            <div className="relative overflow-hidden rounded-2xl border border-[#043084]/15 bg-white/95 p-4 sm:p-6 shadow-[0_16px_45px_rgba(4,48,132,0.08)] backdrop-blur-md">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#043084]" aria-hidden="true" />
               <div className="grid grid-cols-2 gap-4 sm:gap-6 sm:grid-cols-4 divide-y divide-[#e2e8f0]/70 sm:divide-y-0 sm:divide-x sm:divide-[#e2e8f0]/70">
                 <div className="text-center pt-2 sm:pt-0 sm:px-3">
                   <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-emerald-600 mb-1">
@@ -554,8 +556,9 @@ export default function LandingHomePage() {
                   key={step.title}
                   data-scroll-reveal
                   style={{ "--reveal-delay": `${index * 90}ms` } as CSSProperties}
-                  className="group relative overflow-hidden rounded-[16px] border border-[#e2e8f0] bg-[#f8fafc] p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#043084]/25 hover:bg-white hover:shadow-[0_18px_45px_rgba(21,25,51,0.09)]"
+                  className="group relative overflow-hidden rounded-[16px] border border-[#e2e8f0] bg-white p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#043084] hover:shadow-[0_18px_45px_rgba(4,48,132,0.10)]"
                 >
+                  <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#043084]/25 transition-colors duration-300 group-hover:bg-[#043084]" aria-hidden="true" />
                   <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#043084]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
                   <div className="flex items-start gap-4">
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] bg-[#043084] font-display text-sm font-black text-white">
@@ -587,8 +590,9 @@ export default function LandingHomePage() {
           </div>
 
           <div className="mt-10 grid gap-5 md:grid-cols-2">
-            <div data-scroll-reveal style={{ "--reveal-delay": "80ms" } as CSSProperties} className="rounded-[16px] border border-[#e2e8f0] bg-[#f8fafc] p-5 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-[#043084]/20 hover:shadow-[0_18px_45px_rgba(21,25,51,0.08)]">
-              <h3 className="font-display text-base font-black text-[#043084]">Without Inflixo</h3>
+            <div data-scroll-reveal style={{ "--reveal-delay": "80ms" } as CSSProperties} className="group relative overflow-hidden rounded-[16px] border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-slate-300 hover:shadow-[0_18px_45px_rgba(21,25,51,0.08)]">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-slate-300" aria-hidden="true" />
+              <h3 className="font-display text-base font-black text-slate-700">Without Inflixo</h3>
               <ul className="mt-4 space-y-2 text-sm font-semibold text-[#64748b]">
                 {["Part 1, 2, and 3 get scattered in your feed", "Fans keep asking 'Where is the next part?'", "No place to showcase gear & affiliate links", "Bio has too many messy, confusing links", "No simple way to prove total reach to brands"].map((item) => (
                   <li key={item} className="flex gap-2">
@@ -629,7 +633,9 @@ export default function LandingHomePage() {
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {PILLARS.map((pillar, index) => (
-              <div key={pillar.title} data-scroll-reveal style={{ "--reveal-delay": `${index * 70}ms` } as CSSProperties} className="group rounded-[16px] border border-[#e2e8f0] bg-white p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#043084]/25 hover:shadow-[0_18px_45px_rgba(21,25,51,0.08)]">
+              <div key={pillar.title} data-scroll-reveal style={{ "--reveal-delay": `${index * 70}ms` } as CSSProperties} className="group relative overflow-hidden rounded-[16px] border border-[#043084]/15 bg-white p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#043084] hover:shadow-[0_20px_50px_rgba(4,48,132,0.12)]">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#043084]" aria-hidden="true" />
+                <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#043084]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
                 <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[#043084] text-white transition-transform duration-300 group-hover:rotate-3">
                   <pillar.icon className="h-4 w-4" />
                 </div>
@@ -653,7 +659,9 @@ export default function LandingHomePage() {
               Built for Indian creators.
             </h2>
           </div>
-          <div data-scroll-reveal style={{ "--reveal-delay": "120ms" } as CSSProperties} className="rounded-[18px] border border-[#e2e8f0] bg-white p-5 text-left shadow-[0_20px_60px_rgba(21,25,51,0.08)] sm:p-7">
+          <div data-scroll-reveal style={{ "--reveal-delay": "120ms" } as CSSProperties} className="group relative overflow-hidden rounded-[18px] border border-[#043084]/15 bg-white p-5 text-left shadow-[0_20px_60px_rgba(4,48,132,0.08)] sm:p-7 transition-all duration-300 hover:-translate-y-1 hover:border-[#043084]">
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#043084]" aria-hidden="true" />
+            <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#043084]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
             <p className="text-sm font-medium leading-relaxed text-[#334155] sm:text-base">
               Our mission is to help creators organize their best work, reach new fans, and earn with confidence.
             </p>
@@ -675,7 +683,9 @@ export default function LandingHomePage() {
           </div>
 
           <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div data-scroll-reveal style={{ "--reveal-delay": "80ms" } as CSSProperties} className="flex flex-col justify-between rounded-[14px] border border-[#e2e8f0] bg-[#f8fafc] p-7 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-[#043084]/20 hover:shadow-[0_22px_60px_rgba(21,25,51,0.10)]">
+            <div data-scroll-reveal style={{ "--reveal-delay": "80ms" } as CSSProperties} className="group relative overflow-hidden flex flex-col justify-between rounded-[16px] border border-[#043084]/20 bg-white p-7 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-[#043084] hover:shadow-[0_22px_60px_rgba(4,48,132,0.12)]">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#043084]" aria-hidden="true" />
+              <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#043084]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
               <div>
                 <h3 className="font-display text-xl font-black text-[#043084]">Free Trial</h3>
                 <p className="mt-1 text-sm font-medium text-[#64748b]">Try your public creator profile for 7 days.</p>
@@ -703,72 +713,82 @@ export default function LandingHomePage() {
               </button>
             </div>
 
-            <div data-scroll-reveal style={{ "--reveal-delay": "120ms" } as CSSProperties} className="rounded-[14px] border border-[#e2e8f0] bg-white p-7 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-[#043084]/20 hover:shadow-[0_22px_60px_rgba(21,25,51,0.10)]">
-              <h3 className="font-display text-xl font-black text-[#043084]">Starter</h3>
-              <p className="mt-1 text-sm font-medium text-[#64748b]">Keep your public profile live after trial.</p>
-              <p className="mt-7 font-display text-5xl font-black text-[#043084]">{formatPlanPrice("starter", "monthly", pricingCurrency)}</p>
-              <p className="mt-1 text-xs font-semibold text-[#64748b]">/month or {formatPlanPrice("starter", "yearly", pricingCurrency)}/year</p>
-              <ul className="mt-7 space-y-2 text-sm font-semibold text-[#334155]">
-                {[
-                  "Public profile always live",
-                  "3 series with 15 total episodes",
-                  "1 digital / affiliate product in shop",
-                  "5 custom links",
-                  "1 collab package & 1 review",
-                  "Free themes & social stats fetch",
-                  "Inflixo branding",
-                ].map((item) => (
-                  <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-[#043084]" />{item}</li>
-                ))}
-              </ul>
+            <div data-scroll-reveal style={{ "--reveal-delay": "120ms" } as CSSProperties} className="group relative overflow-hidden flex flex-col justify-between rounded-[16px] border border-[#043084]/20 bg-white p-7 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-[#043084] hover:shadow-[0_22px_60px_rgba(4,48,132,0.12)]">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#043084]" aria-hidden="true" />
+              <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#043084]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
+              <div>
+                <h3 className="font-display text-xl font-black text-[#043084]">Starter</h3>
+                <p className="mt-1 text-sm font-medium text-[#64748b]">Keep your public profile live after trial.</p>
+                <p className="mt-7 font-display text-5xl font-black text-[#043084]">{formatPlanPrice("starter", "monthly", pricingCurrency)}</p>
+                <p className="mt-1 text-xs font-semibold text-[#64748b]">/month or {formatPlanPrice("starter", "yearly", pricingCurrency)}/year</p>
+                <ul className="mt-7 space-y-2 text-sm font-semibold text-[#334155]">
+                  {[
+                    "Public profile always live",
+                    "3 series with 15 total episodes",
+                    "1 digital / affiliate product in shop",
+                    "5 custom links",
+                    "1 collab package & 1 review",
+                    "Free themes & social stats fetch",
+                    "Inflixo branding",
+                  ].map((item) => (
+                    <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-[#043084]" />{item}</li>
+                  ))}
+                </ul>
+              </div>
               <button onClick={() => handleClaim(username)} className="group mt-7 w-full rounded-[8px] border border-[#043084] bg-white px-5 py-3 text-sm font-black text-[#043084] transition-all hover:-translate-y-0.5 hover:bg-[#043084] hover:text-white hover:shadow-[0_14px_35px_rgba(21,25,51,0.16)] cursor-pointer">
                 Keep Profile Public
               </button>
             </div>
 
-            <div data-scroll-reveal style={{ "--reveal-delay": "160ms" } as CSSProperties} className="group relative overflow-hidden rounded-[14px] border border-[#e2e8f0] bg-white p-7 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-[#043084]/20 hover:shadow-[0_22px_60px_rgba(21,25,51,0.10)]">
+            <div data-scroll-reveal style={{ "--reveal-delay": "160ms" } as CSSProperties} className="group relative overflow-hidden flex flex-col justify-between rounded-[16px] border border-[#043084]/20 bg-white p-7 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-[#043084] hover:shadow-[0_22px_60px_rgba(4,48,132,0.12)]">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#043084]" aria-hidden="true" />
               <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#043084]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
-              <h3 className="font-display text-xl font-black text-[#043084]">Pro</h3>
-              <p className="mt-1 text-sm font-medium text-[#64748b]">For active creators who publish regular series, sell products and work with brands.</p>
-              <p className="mt-7 font-display text-5xl font-black text-[#043084]">{formatPlanPrice("pro", "monthly", pricingCurrency)}</p>
-              <p className="mt-1 text-xs font-semibold text-[#64748b]">/month or {formatPlanPrice("pro", "yearly", pricingCurrency)}/year</p>
-              <ul className="mt-7 space-y-2 text-sm font-semibold text-[#334155]">
-                {[
-                  "20 series/playlists (20 eps per series)",
-                  "20 store products & affiliate links",
-                  "0% platform commission on sales",
-                  "20 custom links & 3 collab packages",
-                  "10 reviews & rate card access",
-                  "Default media kit & weekly stats refresh",
-                ].map((item) => (
-                  <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-[#043084]" />{item}</li>
-                ))}
-              </ul>
+              <div>
+                <h3 className="font-display text-xl font-black text-[#043084]">Pro</h3>
+                <p className="mt-1 text-sm font-medium text-[#64748b]">For active creators who publish regular series, sell products and work with brands.</p>
+                <p className="mt-7 font-display text-5xl font-black text-[#043084]">{formatPlanPrice("pro", "monthly", pricingCurrency)}</p>
+                <p className="mt-1 text-xs font-semibold text-[#64748b]">/month or {formatPlanPrice("pro", "yearly", pricingCurrency)}/year</p>
+                <ul className="mt-7 space-y-2 text-sm font-semibold text-[#334155]">
+                  {[
+                    "20 series/playlists (20 eps per series)",
+                    "20 store products & affiliate links",
+                    "0% platform commission on sales",
+                    "20 custom links & 3 collab packages",
+                    "10 reviews & rate card access",
+                    "Default media kit & weekly stats refresh",
+                  ].map((item) => (
+                    <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-[#043084]" />{item}</li>
+                  ))}
+                </ul>
+              </div>
               <button onClick={() => handleClaim(username)} className="mt-7 w-full rounded-[8px] bg-[#043084] px-5 py-3 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-[0_14px_35px_rgba(21,25,51,0.20)] cursor-pointer">
                 Get Started with Pro
               </button>
             </div>
 
-            <div data-scroll-reveal style={{ "--reveal-delay": "200ms" } as CSSProperties} className="group relative overflow-hidden rounded-[14px] border-2 border-[#043084] bg-white p-7 text-left shadow-[0_16px_40px_rgba(15,23,42,0.10)] transition-all hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(21,25,51,0.16)]">
+            <div data-scroll-reveal style={{ "--reveal-delay": "200ms" } as CSSProperties} className="group relative overflow-hidden flex flex-col justify-between rounded-[16px] border-2 border-[#043084] bg-white p-7 text-left shadow-[0_16px_40px_rgba(4,48,132,0.12)] transition-all hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(4,48,132,0.18)]">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-1.5 bg-[#043084]" aria-hidden="true" />
               <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#043084]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
-              <span className="absolute top-5 right-5 rounded-full bg-[#043084] px-3 py-1 text-[10px] font-black uppercase tracking-wide text-white">Recommended</span>
-              <h3 className="font-display text-xl font-black text-[#043084]">VIP</h3>
-              <p className="mt-1 text-sm font-medium text-[#64748b]">Unlimited series, products, custom media kit, and premium creator tools.</p>
-              <p className="mt-7 font-display text-5xl font-black text-[#043084]">{formatPlanPrice("vip", "monthly", pricingCurrency)}</p>
-              <p className="mt-1 text-xs font-semibold text-[#64748b]">/month or {formatPlanPrice("vip", "yearly", pricingCurrency)}/year</p>
-              <ul className="mt-7 space-y-2 text-sm font-semibold text-[#334155]">
-                {[
-                  "Unlimited series and episodes",
-                  "Unlimited store & affiliate products",
-                  "0% platform commission on sales",
-                  "Unlimited custom links & reviews",
-                  "10 collab packages & custom media kit",
-                  "Premium themes & daily stats refresh",
-                  "Priority support",
-                ].map((item) => (
-                  <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-[#043084]" />{item}</li>
-                ))}
-              </ul>
+              <div>
+                <span className="absolute top-5 right-5 rounded-full bg-[#043084] px-3 py-1 text-[10px] font-black uppercase tracking-wide text-white">Recommended</span>
+                <h3 className="font-display text-xl font-black text-[#043084]">VIP</h3>
+                <p className="mt-1 text-sm font-medium text-[#64748b]">Unlimited series, products, custom media kit, and premium creator tools.</p>
+                <p className="mt-7 font-display text-5xl font-black text-[#043084]">{formatPlanPrice("vip", "monthly", pricingCurrency)}</p>
+                <p className="mt-1 text-xs font-semibold text-[#64748b]">/month or {formatPlanPrice("vip", "yearly", pricingCurrency)}/year</p>
+                <ul className="mt-7 space-y-2 text-sm font-semibold text-[#334155]">
+                  {[
+                    "Unlimited series and episodes",
+                    "Unlimited store & affiliate products",
+                    "0% platform commission on sales",
+                    "Unlimited custom links & reviews",
+                    "10 collab packages & custom media kit",
+                    "Premium themes & daily stats refresh",
+                    "Priority support",
+                  ].map((item) => (
+                    <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-[#043084]" />{item}</li>
+                  ))}
+                </ul>
+              </div>
               <button onClick={() => handleClaim(username)} className="group mt-7 w-full rounded-[8px] bg-[#043084] px-5 py-3 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-[0_14px_35px_rgba(21,25,51,0.20)] cursor-pointer">
                 Go VIP
               </button>
@@ -832,7 +852,7 @@ export default function LandingHomePage() {
 
       <footer className="border-t border-[#e2e8f0] bg-white py-6">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 text-xs font-semibold text-[#64748b] sm:flex-row sm:px-6">
-          <Logo size="sm" />
+          <Logo size="sm" variant="transparent" />
           <div className="flex flex-wrap items-center justify-center gap-4">
             <button onClick={() => previewRef.current?.scrollIntoView({ behavior: "smooth" })} className="hover:text-brand-primary">Series Preview</button>
             <button onClick={() => scrollToSection("pillars")} className="hover:text-brand-primary">Creator Tools</button>

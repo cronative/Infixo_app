@@ -190,6 +190,24 @@ async function fetchFacebookStats(usernameStr: string) {
   return null;
 }
 
+function getSyncIntervalHours(planKey?: string, status?: string): number {
+  if (status === "expired" || status === "cancelled") {
+    return 48; // Expired / cancelled creators sync less frequently
+  }
+  const key = (planKey || "").toLowerCase();
+  if (key === "creator_vip" || key === "vip" || key === "unlimited") {
+    return 3; // VIP Plan: 3-Hour Fast Sync
+  }
+  if (key === "creator_pro" || key === "pro") {
+    return 12; // Pro Plan: 12-Hour Sync
+  }
+  if (key === "growth") {
+    return 18;
+  }
+  // Starter ('starter'), Free Trial ('early_access'), Free Basic ('free'), or default
+  return 24; // 24-Hour Daily Sync
+}
+
 export async function GET(req: Request) {
   return handleCronSync(req);
 }
@@ -200,27 +218,62 @@ export async function POST(req: Request) {
 
 async function handleCronSync(req: Request) {
   try {
+    const url = new URL(req.url);
     const cronSecret = process.env.CRON_SECRET;
-    if (!cronSecret) {
-      console.error("CRON_SECRET is not configured");
-      return apiError("Cron is not configured", 503);
+    const isDev = process.env.NODE_ENV === "development";
+    const authHeader = req.headers.get("authorization");
+    const querySecret = url.searchParams.get("secret");
+
+    const isAuthorized =
+      (cronSecret && (authHeader === `Bearer ${cronSecret}` || querySecret === cronSecret)) ||
+      isDev;
+
+    if (!isAuthorized) {
+      return apiError("Unauthorized - Valid Bearer CRON_SECRET or secret param required", 401);
     }
 
-    const authorization = req.headers.get("authorization");
-    if (authorization !== `Bearer ${cronSecret}`) {
-      return apiError("Unauthorized", 401);
+    const forceSync = url.searchParams.get("force") === "true";
+    const targetUsername = url.searchParams.get("username")?.trim();
+    const targetCreatorId = url.searchParams.get("creatorId")?.trim();
+
+    // Step 1: Query creators from MySQL DB along with their subscription plan
+    let query = `
+      SELECT 
+        c.id, 
+        c.email, 
+        c.username, 
+        c.display_name, 
+        c.photo_url,
+        s.plan_key,
+        s.status AS subscription_status
+      FROM creators c
+      LEFT JOIN subscriptions s ON c.id = s.creator_id
+    `;
+
+    const params: any[] = [];
+    const conditions: string[] = [];
+
+    if (targetUsername) {
+      conditions.push("c.username = ?");
+      params.push(targetUsername);
+    } else if (targetCreatorId) {
+      conditions.push("c.id = ?");
+      params.push(targetCreatorId);
     }
 
-    // Step 1: Query all creators from MySQL DB
-    const [creators]: any = await db.query(
-      `SELECT id, email, username, display_name, profile_image_url FROM creators`
-    );
+    if (conditions.length > 0) {
+      query += ` WHERE ` + conditions.join(" AND ");
+    }
+
+    const [creators]: any = await db.query(query, params);
 
     const results: any[] = [];
 
     for (const creator of creators) {
+      const refreshHours = getSyncIntervalHours(creator.plan_key, creator.subscription_status);
+
       const [socials]: any = await db.query(
-        `SELECT id, platform, account_name, username, follower_count, media_count, is_verified
+        `SELECT id, platform, account_name, username, follower_count, media_count, is_verified, last_synced_at
          FROM social_accounts
          WHERE creator_id = ?`,
         [creator.id]
@@ -229,11 +282,31 @@ async function handleCronSync(req: Request) {
       const creatorSummary = {
         creatorId: creator.id,
         username: creator.username,
+        planKey: creator.plan_key || "free",
+        syncIntervalHours: refreshHours,
         platformsUpdated: 0,
+        platformsSkippedFresh: 0,
         details: [] as any[],
       };
 
       for (const social of socials) {
+        const lastSynced = social.last_synced_at ? new Date(social.last_synced_at).getTime() : 0;
+        const hoursSinceLastSync = lastSynced ? (Date.now() - lastSynced) / (1000 * 60 * 60) : 999999;
+        const isDue = forceSync || !social.last_synced_at || hoursSinceLastSync >= refreshHours;
+
+        if (!isDue) {
+          creatorSummary.platformsSkippedFresh += 1;
+          creatorSummary.details.push({
+            platform: social.platform,
+            username: social.username,
+            status: "skipped_fresh",
+            lastSyncedAt: social.last_synced_at,
+            syncIntervalHours: refreshHours,
+            hoursUntilNextSync: Math.max(0, +(refreshHours - hoursSinceLastSync).toFixed(1)),
+          });
+          continue;
+        }
+
         let stats: any = null;
 
         if (social.platform === "instagram") {
@@ -259,12 +332,13 @@ async function handleCronSync(req: Request) {
             followerCount: stats.followerCount,
             mediaCount: stats.mediaCount,
             status: "success",
+            syncIntervalHours: refreshHours,
           });
 
           // Update creator avatar if missing
-          if (!creator.profile_image_url && stats.avatarUrl) {
+          if (!creator.photo_url && stats.avatarUrl) {
             await db.query(
-              `UPDATE creators SET profile_image_url = ? WHERE id = ?`,
+              `UPDATE creators SET photo_url = ? WHERE id = ?`,
               [stats.avatarUrl, creator.id]
             );
           }
@@ -273,6 +347,7 @@ async function handleCronSync(req: Request) {
             platform: social.platform,
             username: social.username,
             status: "skipped_or_error",
+            syncIntervalHours: refreshHours,
           });
         }
       }
@@ -282,11 +357,16 @@ async function handleCronSync(req: Request) {
 
     return apiSuccess({
       timestamp: new Date().toISOString(),
-      cronSchedule: "Every 12 hours at 11:11 AM & 11:11 PM IST",
-      cronExpression: "11 11,23 * * *",
+      syncSchedulePolicy: {
+        vipTier: "Every 3 hours",
+        proTier: "Every 12 hours",
+        starterTier: "Every 24 hours",
+        freeTier: "Every 24 hours",
+      },
+      forceSync,
       creatorsProcessed: creators.length,
       results,
-    }, "Social accounts sync completed successfully");
+    }, "Social accounts sync evaluated and updated successfully");
   } catch (error: any) {
     console.error("Cron Social Sync Error:", error);
     return apiError(error.message || "Cron social sync failed", 500);

@@ -168,14 +168,18 @@ export function Logo({
   styleName = "stadium-link-i",
   orientation = "horizontal",
   showText = true,
+  className = "",
+  casing = "uppercase",
 }: {
   size?: "sm" | "md" | "lg" | "xl";
   href?: string;
   light?: boolean;
-  variant?: "gradient" | "black" | "white" | "brand" | "color";
+  variant?: "gradient" | "black" | "white" | "brand" | "color" | "transparent";
   styleName?: "stadium-link-i" | "universal-link-i";
   orientation?: "horizontal" | "vertical";
   showText?: boolean;
+  className?: string;
+  casing?: "uppercase" | "title";
 }) {
   const router = useRouter();
 
@@ -212,6 +216,9 @@ export function Logo({
         stepRoutes[step] || "/onboarding/profile";
 
       router.push(targetRoute);
+    } else if (href === "/" && typeof window !== "undefined" && window.location.pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }
 
@@ -220,25 +227,27 @@ export function Logo({
    * SIZES
    * ============================================================
    */
+  const isTransparent = variant === "transparent";
+
   const badgeSize = {
     sm: "h-8 w-8",
     md: "h-10 w-10",
     lg: "h-12 w-12",
-    xl: "h-[100px] w-[100px]",
+    xl: isTransparent ? "h-20 w-20" : "h-[100px] w-[100px]",
   }[size];
 
   const iconSize = {
-    sm: "h-[21px] w-[21px]",
-    md: "h-[27px] w-[27px]",
-    lg: "h-[33px] w-[33px]",
-    xl: "h-[68px] w-[68px]",
+    sm: isTransparent ? "h-8 w-8" : "h-[21px] w-[21px]",
+    md: isTransparent ? "h-10 w-10" : "h-[27px] w-[27px]",
+    lg: isTransparent ? "h-12 w-12" : "h-[33px] w-[33px]",
+    xl: isTransparent ? "h-20 w-20" : "h-[68px] w-[68px]",
   }[size];
 
   const textSize = {
-    sm: "text-lg",
-    md: "text-xl",
-    lg: "text-2xl",
-    xl: "text-3xl",
+    sm: "text-[21px]",
+    md: "text-2xl",
+    lg: "text-3xl",
+    xl: "text-4xl",
   }[size];
 
   /**
@@ -258,13 +267,15 @@ export function Logo({
    * BADGE STYLE
    * ============================================================
    */
-  const badgeStyles = {
-    gradient: "bg-[#043084]",
-    black: "bg-[#043084]",
-    brand: "bg-[#043084]",
-    white: "bg-white border border-[#e2e8f0]",
-    color: "bg-[#eff6ff] border border-[#dbeafe]",
-  }[variant] || "bg-[#043084]";
+  const badgeStyles = isTransparent
+    ? "bg-transparent"
+    : ({
+        gradient: "bg-[#043084]",
+        black: "bg-[#043084]",
+        brand: "bg-[#043084]",
+        white: "bg-white border border-[#e2e8f0]",
+        color: "bg-[#eff6ff] border border-[#dbeafe]",
+      }[variant] || "bg-[#043084]");
 
   /**
    * ============================================================
@@ -274,12 +285,15 @@ export function Logo({
    * Dark badge -> white logo
    * White badge -> #043084 logo
    * Color badge -> full 3D color logo
+   * Transparent badge -> #043084 primary logo
    */
   const primaryLogoColor: "dark" | "white" | "color" =
     variant === "color"
       ? "color"
       : variant === "white"
       ? "dark"
+      : variant === "transparent"
+      ? (light ? "white" : "dark")
       : "white";
 
   return (
@@ -295,6 +309,7 @@ export function Logo({
           ? "flex-col items-center gap-2 text-center"
           : "items-center gap-2.5"
         }
+        ${className}
       `}
     >
       {/* =====================================================
@@ -303,16 +318,10 @@ export function Logo({
       <div
         className={`
           ${badgeSize}
-          ${radius}
-          ${badgeStyles}
-          flex
-          shrink-0
-          items-center
-          justify-center
-          overflow-hidden
-          transition-all
-          duration-200
-          shadow-sm
+          ${isTransparent
+            ? "flex shrink-0 items-center justify-center transition-transform duration-200 group-hover:scale-105"
+            : `${radius} ${badgeStyles} flex shrink-0 items-center justify-center overflow-hidden transition-all duration-200 shadow-sm group-hover:shadow-md`
+          }
         `}
       >
         {styleName === "universal-link-i" ? (
@@ -321,6 +330,8 @@ export function Logo({
               ${iconSize}
               ${variant === "white"
                 ? "text-[#043084]"
+                : variant === "transparent"
+                ? (light ? "text-white" : "text-[#043084]")
                 : "text-white"
               }
             `}
@@ -339,10 +350,11 @@ export function Logo({
       {showText && (
         <span
           className={`
-            font-display
+            font-[family-name:var(--font-outfit)]
             ${textSize}
-            font-bold
-            tracking-tight
+            font-black
+            ${casing === "uppercase" ? "uppercase tracking-[0.05em]" : "tracking-tight"}
+            leading-none
             transition-colors
             ${light
               ? "text-white"
@@ -350,7 +362,7 @@ export function Logo({
             }
           `}
         >
-          Inflixo
+          {casing === "uppercase" ? "INFLIXO" : "Inflixo"}
         </span>
       )}
     </Link>

@@ -83,8 +83,8 @@
 
 | Task ID | Feature Name | Description | Priority | Target Status |
 | :---: | :--- | :--- | :---: | :---: |
-| **TASK-01** | **Automated Data Sync Cron** | Background cron service to auto-refresh IG/YT/FB follower counts every 24h/12h/3h | 🟡 Medium | Pending |
-| **TASK-02** | **Payment Gateway Integration** | Connect Cashfree checkout and webhook flow after merchant approval | 🟢 On Hold | Ready to activate |
+| **TASK-01** | **Automated Data Sync Cron** | Tiered cron service (24h/12h/3h) for IG/YT/FB sync + CLI runner `npm run cron:sync` | 🟡 Medium | ✅ **Completed** |
+| **TASK-02** | **Payment Gateway Integration** | Connect Cashfree / Razorpay checkout and webhook flow | 🟢 High | Ready to activate |
 | **TASK-03** | **Analytics & Visit Counters** | Track total profile visits & episode click counts on creator cards | 🔵 Low | Planned |
 | **TASK-04** | **Custom Domain Mapping** | Allow Pro creators to connect custom domains (e.g. `creator.com`) | 🔵 Low | Planned |
 
@@ -92,7 +92,7 @@
 
 ## 🛠️ NEXT ACTION ITEMS
 Select which area you'd like to work on next:
-1. **Automated Data Sync Cron Service**
-2. **Dashboard UI Refinements & Analytics**
-3. **Public Profile Player Improvements**
+1. **[TASK-02] Payment Gateway Checkout (Razorpay / Cashfree) & Webhook Integration**
+2. **[TASK-03] Profile Visits & Link Click Tracking Analytics on Dashboard**
+3. **End-to-End Creator Journey Live Testing & QA Polish**
 4. **Any custom feature of your choice**
