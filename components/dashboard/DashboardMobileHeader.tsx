@@ -22,11 +22,16 @@ export function DashboardMobileHeader({
   onOpenDrawer?: () => void;
 }) {
   const router = useRouter();
-  const { profile } = useCreator();
+  const { profile, handleViewProfile, isTrialExpired, openTrialExpiredModal } = useCreator();
   const { showToast } = useToast();
   const handleStr = profile.username || "username";
 
   const handleCopy = async () => {
+    if (isTrialExpired) {
+      showToast("Public profile is hidden (Free trial ended)", "error");
+      openTrialExpiredModal();
+      return;
+    }
     const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
     const success = await copyToClipboard(`${origin}/${handleStr}`);
     showToast(success ? "Profile link copied! ✨" : "Could not copy link", success ? "success" : "error");
@@ -56,16 +61,15 @@ export function DashboardMobileHeader({
         <button type="button" onClick={handleCopy} className={ICON_BTN} aria-label="Copy profile link" title="Copy profile link">
           <Copy className="h-[18px] w-[18px]" />
         </button>
-        <Link
-          href={`/${handleStr}`}
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          type="button"
+          onClick={handleViewProfile}
           className={ICON_BTN}
           aria-label="View public profile"
           title="View public profile"
         >
           <ExternalLink className="h-[18px] w-[18px]" />
-        </Link>
+        </button>
       </div>
     </header>
   );

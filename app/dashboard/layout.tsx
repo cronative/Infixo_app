@@ -20,6 +20,7 @@ import { getFreeTrialStatus } from "@/lib/trialStatus";
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { OnboardingService } from "@/services/OnboardingService";
 import { debugLog } from "@/lib/debugLogger";
+import { TrialExpiredEmotionalModal } from "@/components/dashboard/TrialExpiredEmotionalModal";
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -29,7 +30,7 @@ function getGreeting(): string {
 }
 
 function DesktopTopHeader() {
-  const { profile } = useCreator();
+  const { profile, handleViewProfile, isTrialExpired, openTrialExpiredModal } = useCreator();
   const { showToast } = useToast();
   const pathname = usePathname();
 
@@ -39,6 +40,11 @@ function DesktopTopHeader() {
   const group = NAV_GROUPS.find((g) => g.items.some((item) => isNavActive(pathname, item.href) && item.href !== "/dashboard"));
 
   const handleCopy = async () => {
+    if (isTrialExpired) {
+      showToast("Your public profile is currently hidden (Free trial ended)", "error");
+      openTrialExpiredModal();
+      return;
+    }
     const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
     const success = await copyToClipboard(`${origin}/${handleStr}`);
     showToast(success ? "Profile link copied! ✨" : "Could not copy link", success ? "success" : "error");
@@ -68,15 +74,14 @@ function DesktopTopHeader() {
           <Copy className="h-3.5 w-3.5" />
           <span>Copy link</span>
         </button>
-        <a
-          href={`/${handleStr}`}
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          type="button"
+          onClick={handleViewProfile}
           className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc]"
         >
           <span>View profile</span>
           <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
-        </a>
+        </button>
       </div>
     </header>
   );
@@ -113,7 +118,7 @@ function TrialAccessBar() {
 function Shell({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { profile, loading } = useCreator();
+  const { profile, loading, isTrialModalOpen, closeTrialExpiredModal } = useCreator();
 
   useEffect(() => {
     if (!loading) {
@@ -159,6 +164,13 @@ function Shell({ children }: { children: ReactNode }) {
 
       {/* Side Drawer Overlay Menu */}
       <DashboardSideDrawer isOpen={drawerOpen} onClose={() => setDrawerOpen(false)} />
+
+      {/* Emotional Trial Expired Popup */}
+      <TrialExpiredEmotionalModal
+        isOpen={isTrialModalOpen}
+        onClose={closeTrialExpiredModal}
+        profile={profile}
+      />
     </div>
   );
 }

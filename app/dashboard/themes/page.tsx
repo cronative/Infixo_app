@@ -128,7 +128,7 @@ const THEME_GROUPS: Array<{
   ];
 
 export default function DashboardThemesPage() {
-  const { profile, socials, series, totalAudience, theme, setTheme } = useCreator();
+  const { profile, socials, series, totalAudience, theme, setTheme, handleViewProfile } = useCreator();
   const { showToast } = useToast();
 
   // Active theme vs Interactive Preview theme
@@ -352,16 +352,15 @@ export default function DashboardThemesPage() {
                 </>
               )}
 
-              <a
-                href={canonicalUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={handleViewProfile}
                 className="h-9 px-3 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#043084] text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5"
                 title="View public profile in new tab"
               >
                 <span>View Profile</span>
                 <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
-              </a>
+              </button>
             </div>
           </div>
 

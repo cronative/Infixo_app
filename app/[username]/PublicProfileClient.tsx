@@ -4,7 +4,7 @@ import type { CreatorProduct } from "@/types";
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Play, UserX, Home, Sparkles, Film, Users } from "lucide-react";
+import { Play, UserX, Home, Sparkles, Film, Users, Lock, ShieldAlert, ArrowRight, Clock, ExternalLink } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 import { SkeletonProfileCard } from "@/components/ui/Skeleton";
 import { ProfileService } from "@/services/ProfileService";
@@ -98,6 +98,21 @@ export default function PublicProfileClient() {
   const [profilePrivate, setProfilePrivate] = useState(false);
   const [copied, setCopied] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
+  const [viewerIsOwner, setViewerIsOwner] = useState(false);
+
+  useEffect(() => {
+    try {
+      const rawUser = decodeURIComponent(params.username ?? "").trim().replace(/^@/, "").toLowerCase();
+      const storedUser = localStorage.getItem("inflixo_creator_profile");
+      if (storedUser) {
+        const parsed = JSON.parse(storedUser);
+        const parsedHandle = (parsed?.username || "").replace(/^@/, "").toLowerCase();
+        if (parsedHandle && rawUser && parsedHandle === rawUser) {
+          setViewerIsOwner(true);
+        }
+      }
+    } catch {}
+  }, [params.username]);
 
   useEffect(() => {
     async function loadData() {
@@ -172,6 +187,25 @@ export default function PublicProfileClient() {
         const isProfOk = profRes.status === 1 || profRes.success === true;
         const profile = profRes.data?.profile || profRes.profile;
         const subscription = profRes.data?.subscription || profRes.subscription;
+        const isPrivateRes =
+          profRes.status === 0 &&
+          (profRes.data?.isPrivate === true ||
+            profRes.isPrivate === true ||
+            profRes.message === "Creator profile is private" ||
+            profRes.error === "Creator profile is private");
+
+        if (isPrivateRes) {
+          setProfile({
+            ...EMPTY_PROFILE,
+            displayName: profRes.data?.displayName || profRes.displayName || usernameParam,
+            username: profRes.data?.username || profRes.username || usernameParam,
+            photoDataUrl: profRes.data?.photoUrl || profRes.photoUrl || null,
+          });
+          setProfilePrivate(true);
+          setNotFound(false);
+          setLoaded(true);
+          return;
+        }
 
         const rawProducts: CreatorProduct[] =
           productsRes.status === 1 && Array.isArray(productsRes.data?.products)
@@ -186,6 +220,7 @@ export default function PublicProfileClient() {
 
         if (isProfOk && profile && profile.username) {
           if (isFreeTrialExpired(subscription)) {
+            setProfile(profile);
             setProfilePrivate(true);
             setNotFound(false);
             setLoaded(true);
@@ -318,10 +353,19 @@ export default function PublicProfileClient() {
             }).catch(() => { });
           } catch { }
         } else {
+          // If profile is private, do not fallback to local profile
+          if (isPrivateRes) {
+            setProfilePrivate(true);
+            setNotFound(false);
+            setLoaded(true);
+            return;
+          }
+
           // Fallback to local profile if in same browser session for immediate view
           try {
             const {
               profileRepository,
+              subscriptionRepository,
               socialRepository,
               seriesRepository,
               customLinksRepository,
@@ -335,6 +379,19 @@ export default function PublicProfileClient() {
               sectionsRepository,
             } = await import("@/repositories/localRepository");
             const local = profileRepository.get();
+            const localSub = subscriptionRepository.get();
+
+            // Guard against showing expired trial via local cache
+            if (isFreeTrialExpired(localSub)) {
+              if (local) {
+                setProfile({ ...local, username: local.username || usernameParam });
+              }
+              setProfilePrivate(true);
+              setNotFound(false);
+              setLoaded(true);
+              return;
+            }
+
             const cleanLocalUser = (local?.username || "").replace(/^@/, "").toLowerCase();
             if (local && (cleanLocalUser === usernameParam || !local.username)) {
               setProfile({ ...local, username: local.username || usernameParam });
@@ -487,7 +544,131 @@ export default function PublicProfileClient() {
     return <SyncingLoader message={syncMessage} fullScreen hideProgressBar={true} />;
   }
 
-  if (notFound || profilePrivate) {
+  if (profilePrivate) {
+    const handle = profile.username || decodeURIComponent(params.username ?? "");
+    const displayName = profile.displayName || `@${handle}`;
+
+    return (
+      <div className="relative flex min-h-dvh flex-col items-center justify-center bg-gradient-to-b from-[#FDFBF7] via-slate-50 to-white px-4 py-12 text-center text-slate-900 overflow-hidden">
+        {/* Ambient Warm Background Glow Orbs */}
+        <div className="pointer-events-none absolute -top-24 -left-20 h-96 w-96 rounded-full bg-rose-200/30 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -right-20 h-96 w-96 rounded-full bg-amber-100/40 blur-3xl" />
+
+        <main className="relative z-10 w-full max-w-md space-y-6">
+          {/* Header Branding */}
+          <div className="flex items-center justify-center px-2">
+            <Logo />
+          </div>
+
+          {/* Main Card */}
+          <div className="rounded-[32px] border border-rose-100 bg-white/95 p-8 sm:p-10 shadow-2xl shadow-rose-950/5 backdrop-blur-xl space-y-6 text-center">
+            {/* Avatar / Lock Badge */}
+            <div className="relative mx-auto w-fit">
+              <div className="h-20 w-20 rounded-2xl border-2 border-white shadow-xl ring-2 ring-rose-200 overflow-hidden bg-rose-50 flex items-center justify-center mx-auto">
+                {profile.photoDataUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={profile.photoDataUrl} alt={displayName} className="h-full w-full object-cover" />
+                ) : (
+                  <span className="text-2xl font-bold text-rose-700 uppercase">
+                    {(displayName[0] || handle[0] || "C").toUpperCase()}
+                  </span>
+                )}
+              </div>
+              <span className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-rose-500 text-white shadow-md ring-2 ring-white">
+                <Lock className="h-3.5 w-3.5" />
+              </span>
+            </div>
+
+            {viewerIsOwner ? (
+              /* Case A: The Creator viewing their own profile */
+              <div className="space-y-3">
+                <div className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 border border-rose-200/80 px-3 py-1 text-xs font-bold text-rose-700">
+                  <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" />
+                  <span>Free Trial Ended · Profile Hidden</span>
+                </div>
+                <h1 className="font-display text-xl sm:text-2xl font-black text-slate-900 leading-tight">
+                  Your Public Profile is Currently Hidden
+                </h1>
+                <p className="text-xs sm:text-[13px] text-slate-600 leading-relaxed font-normal max-w-sm mx-auto">
+                  Hey <strong>{displayName}</strong>, your 7-day free trial has expired. Your public profile (<code className="bg-slate-100 px-1 py-0.5 rounded text-[11px] font-mono text-slate-800">inflixo.com/@{handle}</code>) is currently hidden from fans and brand inquiries.
+                </p>
+
+                <div className="rounded-2xl border border-rose-100 bg-rose-50/60 p-3 text-left space-y-1.5">
+                  <p className="text-[11px] font-bold text-rose-800 uppercase tracking-wider flex items-center gap-1">
+                    <ShieldAlert className="h-3.5 w-3.5 text-rose-600" />
+                    <span>What&apos;s paused:</span>
+                  </p>
+                  <p className="text-[11px] text-slate-600">
+                    • Your bio link shows this inactive screen to visitors.<br />
+                    • Brand collaboration requests and media kit are on hold.<br />
+                    • Reactivating instantly restores your page and all data.
+                  </p>
+                </div>
+
+                <div className="pt-2 space-y-2">
+                  <button
+                    onClick={() => router.push("/dashboard/subscription")}
+                    className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#043084] hover:bg-[#032363] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#043084]/20 transition-all hover:scale-[1.02] cursor-pointer"
+                  >
+                    <Sparkles className="h-4 w-4" />
+                    <span>Reactivate My Profile (Choose Plan)</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+
+                  <button
+                    onClick={() => router.push("/dashboard")}
+                    className="w-full text-xs font-semibold text-slate-500 hover:text-slate-800 py-1.5 cursor-pointer"
+                  >
+                    Go to Creator Dashboard
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* Case B: Public visitor / Fan / Brand */
+              <div className="space-y-3">
+                <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-200/80 px-3 py-1 text-xs font-semibold text-amber-800">
+                  <Clock className="h-3 w-3 text-amber-600" />
+                  <span>Profile Temporarily Inactive</span>
+                </div>
+                <h1 className="font-display text-xl sm:text-2xl font-black text-slate-900 leading-tight">
+                  @{handle}&apos;s Space is Taking a Pause
+                </h1>
+                <p className="text-xs sm:text-[13px] text-slate-600 leading-relaxed font-normal max-w-sm mx-auto">
+                  This creator space on Inflixo is currently taking a short break. The creator may be updating their profile, refreshing their content, or renewing their space. Please check back again soon!
+                </p>
+
+                <div className="pt-3 space-y-3">
+                  <button
+                    onClick={() => router.push("/")}
+                    className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#043084] hover:bg-[#032363] px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#043084]/20 transition-all hover:scale-[1.02] cursor-pointer"
+                  >
+                    <Sparkles className="h-4 w-4" />
+                    <span>Explore Inflixo Creators</span>
+                  </button>
+
+                  <p className="text-[11px] text-slate-400">
+                    Are you @{handle}?{" "}
+                    <button
+                      onClick={() => router.push("/login")}
+                      className="font-semibold text-[#043084] hover:underline cursor-pointer"
+                    >
+                      Sign in to reactivate your profile
+                    </button>
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <p className="text-xs font-semibold text-slate-400">
+            Inflixo · The Creator Operating System
+          </p>
+        </main>
+      </div>
+    );
+  }
+
+  if (notFound) {
     const handle = decodeURIComponent(params.username ?? "");
     return (
       <div className="relative flex min-h-dvh flex-col items-center justify-center bg-gradient-to-b from-[#F6EBF1]/60 via-slate-50 to-white px-4 py-12 text-center text-slate-900 overflow-hidden">
@@ -511,12 +692,10 @@ export default function PublicProfileClient() {
             {/* Title & Description */}
             <div className="space-y-2.5">
               <h1 className="font-display text-xl sm:text-2xl font-black text-slate-900 leading-tight">
-                {profilePrivate ? "This profile is private" : `No Profile Found for @${handle}`}
+                No Profile Found for @{handle}
               </h1>
               <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-sm mx-auto">
-                {profilePrivate
-                  ? "This creator's free trial has ended, so their public profile is currently private."
-                  : "Using this username on Inflixo, no profile has been created yet. If you want to create your creator profile with this handle, click below to get started."}
+                Using this username on Inflixo, no profile has been created yet. If you want to create your creator profile with this handle, click below to get started.
               </p>
             </div>
 
@@ -527,7 +706,7 @@ export default function PublicProfileClient() {
                 className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#043084] hover:bg-brand-hover px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#043084]/20 transition-all border border-[#043084] hover:scale-[1.02] cursor-pointer"
               >
                 <Sparkles className="h-4 w-4" />
-                <span>Create Profile</span>
+                <span>Claim Handle &amp; Create Profile</span>
               </button>
             </div>
           </div>

@@ -24,7 +24,7 @@ interface DashboardSideDrawerProps {
 export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { profile } = useCreator();
+  const { profile, handleViewProfile, isTrialExpired } = useCreator();
 
   // Close drawer ONLY when user actually navigates to a new pathname
   const prevPathRef = useRef(pathname);
@@ -141,19 +141,25 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
         {/* Bottom Utility Area */}
         <div className="px-3 pt-2 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] border-t border-[#e2e8f0] space-y-1">
           <div className="flex min-h-[44px] items-center justify-between rounded-xl px-3 text-sm font-medium text-[#0f172a]">
-            <div className="flex items-center gap-1.5">
-              <Sparkles className="h-4 w-4 text-[#94a3b8] shrink-0" />
-              <span className="text-sm">Free Trial</span>
-            </div>
             <Link
-              href={`/${handleStr}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs font-medium text-[#475569] hover:underline inline-flex items-center gap-1"
+              href="/dashboard/subscription"
+              onClick={onClose}
+              className="flex items-center gap-1.5 hover:text-[#043084]"
+            >
+              <Sparkles className="h-4 w-4 text-[#94a3b8] shrink-0" />
+              <span className="text-sm font-semibold">{isTrialExpired ? "Choose Plan" : "Free Trial"}</span>
+            </Link>
+            <button
+              type="button"
+              onClick={(e) => {
+                onClose();
+                handleViewProfile(e);
+              }}
+              className="text-xs font-semibold text-[#043084] hover:underline inline-flex items-center gap-1 cursor-pointer"
             >
               <span>View Profile</span>
               <ExternalLink className="h-3 w-3" />
-            </Link>
+            </button>
           </div>
 
           <button

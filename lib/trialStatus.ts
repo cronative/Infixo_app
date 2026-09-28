@@ -24,9 +24,19 @@ export function getFreeTrialStatus(subscription?: Subscription | null, nowMs = D
       subscription.planKey !== "creator_VIP");
 
   if (!isFreeTrial) {
+    const isPaidExpired = Boolean(
+      subscription.status && !["active", "trial"].includes(subscription.status)
+    );
+    const endMs = subscription.currentPeriodEndsAt
+      ? new Date(subscription.currentPeriodEndsAt).getTime()
+      : subscription.endsAt
+      ? new Date(subscription.endsAt).getTime()
+      : 0;
+    const isPastEnd = Boolean(endMs && nowMs > endMs);
+
     return {
       isFreeTrial: false,
-      isExpired: false,
+      isExpired: isPaidExpired || isPastEnd,
       daysLeft: null as number | null,
       shouldWarn: false,
     };

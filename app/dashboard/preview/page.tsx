@@ -22,7 +22,7 @@ import type { CreatorProduct } from "@/types";
 import { buildProfileUrl } from "@/utils/format";
 
 export default function DashboardPreviewPage() {
-  const { profile, socials, series, totalAudience, theme, updateProfile, subscription } = useCreator();
+  const { profile, socials, series, totalAudience, theme, updateProfile, subscription, handleViewProfile, isTrialExpired } = useCreator();
   const { showToast } = useToast();
 
   const [products, setProducts] = useState<CreatorProduct[]>([]);
@@ -102,10 +102,17 @@ export default function DashboardPreviewPage() {
             <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
               Profile Preview
             </h1>
-            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#17845B] bg-[#EAF7F0] px-2.5 py-0.5 rounded-full border border-[#17845B]/20">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#17845B]" />
-              Public profile is live
-            </span>
+            {isTrialExpired ? (
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-700 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200">
+                <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" />
+                Profile is private (Trial ended)
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#17845B] bg-[#EAF7F0] px-2.5 py-0.5 rounded-full border border-[#17845B]/20">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#17845B]" />
+                Public profile is live
+              </span>
+            )}
           </div>
           <p className="text-xs sm:text-[13px] text-[#475569] font-medium mt-0.5">
             See exactly how your public creator profile appears to visitors.
@@ -122,15 +129,14 @@ export default function DashboardPreviewPage() {
             <span>Display Settings</span>
           </button>
 
-          <a
-            href={canonicalUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={handleViewProfile}
             className="inline-flex items-center gap-1.5 rounded-lg bg-[#043084] hover:bg-brand-hover h-9 px-3.5 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
           >
             <span>Open Public Profile</span>
             <ExternalLink className="h-3.5 w-3.5" />
-          </a>
+          </button>
         </div>
       </div>
 

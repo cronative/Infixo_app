@@ -83,7 +83,13 @@ export async function GET(req: Request) {
     }
 
     if (username && !(await isCreatorPublic(creator.id))) {
-      return apiError("Creator profile is private", 404);
+      return apiError("Creator profile is private", 403, {
+        isPrivate: true,
+        reason: "trial_expired",
+        username: creator.username,
+        displayName: creator.display_name,
+        photoUrl: creator.photo_url,
+      });
     }
 
     const rawVis = creator.settings_visibility || creator.visibility_settings;

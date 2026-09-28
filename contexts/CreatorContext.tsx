@@ -15,6 +15,8 @@ import { ThemeService } from "@/services/ThemeService";
 import { SeriesService } from "@/services/SeriesService";
 import { SubscriptionService } from "@/services/SubscriptionService";
 
+import { getFreeTrialStatus } from "@/lib/trialStatus";
+
 interface CreatorContextValue {
   profile: CreatorProfile;
   socials: SocialAccounts;
@@ -23,6 +25,12 @@ interface CreatorContextValue {
   subscription: Subscription;
   totalAudience: number;
   loading: boolean;
+  isTrialExpired: boolean;
+  trialStatus: ReturnType<typeof getFreeTrialStatus>;
+  isTrialModalOpen: boolean;
+  openTrialExpiredModal: () => void;
+  closeTrialExpiredModal: () => void;
+  handleViewProfile: (e?: React.MouseEvent) => void;
   refresh: () => void;
   updateProfile: (patch: Partial<CreatorProfile>) => void;
   updateSocials: (patch: Partial<SocialAccounts>) => void;
@@ -150,6 +158,30 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const totalAudience = SocialService.calculateTotalAudience(socials);
+  const trialStatus = getFreeTrialStatus(subscription);
+  const isTrialExpired = trialStatus.isExpired;
+  const [isTrialModalOpen, setIsTrialModalOpen] = useState(false);
+
+  const openTrialExpiredModal = useCallback(() => {
+    setIsTrialModalOpen(true);
+  }, []);
+
+  const closeTrialExpiredModal = useCallback(() => {
+    setIsTrialModalOpen(false);
+  }, []);
+
+  const handleViewProfile = useCallback((e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (isTrialExpired) {
+      setIsTrialModalOpen(true);
+    } else {
+      const handleStr = profile.username || "creator";
+      window.open(`/${handleStr}`, "_blank");
+    }
+  }, [isTrialExpired, profile.username]);
 
   if (!hydrated) {
     return (
@@ -169,6 +201,12 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         subscription,
         totalAudience,
         loading,
+        isTrialExpired,
+        trialStatus,
+        isTrialModalOpen,
+        openTrialExpiredModal,
+        closeTrialExpiredModal,
+        handleViewProfile,
         refresh,
         updateProfile,
         updateSocials,

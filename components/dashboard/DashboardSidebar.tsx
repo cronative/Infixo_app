@@ -17,7 +17,7 @@ import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 export function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { profile } = useCreator();
+  const { profile, handleViewProfile, isTrialExpired } = useCreator();
 
   const handleStr = profile.username || "username";
   const displayName = profile.displayName || profile.email?.split("@")[0] || "Creator";
@@ -50,10 +50,17 @@ export function DashboardSidebar() {
             <p className="truncate text-[11px] text-[#64748b]">
               @{handleStr}
             </p>
-            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#047857]">
-              <span className="h-1 w-1 rounded-full bg-[#10b981]" />
-              Live
-            </span>
+            {isTrialExpired ? (
+              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded-full border border-rose-200">
+                <span className="h-1 w-1 rounded-full bg-rose-500" />
+                Private
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#047857]">
+                <span className="h-1 w-1 rounded-full bg-[#10b981]" />
+                Live
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -96,18 +103,17 @@ export function DashboardSidebar() {
           className="flex min-w-0 flex-1 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#475569] transition-colors hover:bg-[#f1f5f9] hover:text-[#0f172a]"
         >
           <Sparkles className="h-3.5 w-3.5 shrink-0 text-[#94a3b8]" />
-          <span className="truncate">Free Trial</span>
+          <span className="truncate">{isTrialExpired ? "Choose Plan" : "Free Trial"}</span>
         </Link>
-        <Link
-          href={`/${handleStr}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748b] transition-colors hover:bg-[#f1f5f9] hover:text-[#0f172a]"
+        <button
+          type="button"
+          onClick={handleViewProfile}
+          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-[#64748b] transition-colors hover:bg-[#f1f5f9] hover:text-[#0f172a]"
           title="View live profile"
           aria-label="View live profile"
         >
           <ExternalLink className="h-3.5 w-3.5" />
-        </Link>
+        </button>
         <button
           onClick={() => {
             AuthService.logout();
