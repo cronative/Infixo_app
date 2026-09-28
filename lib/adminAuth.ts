@@ -41,16 +41,16 @@ export function verifyAdminToken(token: string | null | undefined): boolean {
   }
 }
 
+import { isAllowedOrigin } from "@/lib/session";
+
 export async function isAuthorizedAdmin(req: Request): Promise<boolean> {
   const fetchSite = req.headers.get("sec-fetch-site");
-  if (fetchSite === "cross-site") return false;
   const origin = req.headers.get("origin");
-  if (origin) {
-    try {
-      if (new URL(origin).host !== new URL(req.url).host) return false;
-    } catch {
-      return false;
-    }
+
+  if (fetchSite === "cross-site") {
+    if (!isAllowedOrigin(req, origin)) return false;
+  } else if (origin && !isAllowedOrigin(req, origin)) {
+    return false;
   }
 
   // 1. Check httpOnly cookie

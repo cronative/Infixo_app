@@ -101,12 +101,86 @@ function isHttpsRequest(req: Request): boolean {
   }
 }
 
+export function isAllowedOrigin(req: Request, origin?: string | null): boolean {
+  if (!origin) return true;
+
+  try {
+    const originUrl = new URL(origin);
+    const originHost = originUrl.host.toLowerCase();
+    const originHostNoWww = originHost.replace(/^www\./, "");
+    const originWithoutPort = originHost.split(":")[0];
+    const originBase = originWithoutPort.replace(/^www\./, "");
+
+    // 1. Gather all candidate host headers from the request
+    const forwardedHost = req.headers.get("x-forwarded-host")?.split(",")[0].trim().toLowerCase();
+    const hostHeader = req.headers.get("host")?.toLowerCase();
+    let reqUrlHost: string | null = null;
+    try {
+      reqUrlHost = new URL(req.url).host.toLowerCase();
+    } catch {}
+
+    const candidates = [forwardedHost, hostHeader, reqUrlHost].filter(Boolean) as string[];
+
+    for (const cand of candidates) {
+      const candNoWww = cand.replace(/^www\./, "");
+      const candWithoutPort = cand.split(":")[0];
+      const candBase = candWithoutPort.replace(/^www\./, "");
+
+      if (
+        originHost === cand ||
+        originHostNoWww === candNoWww ||
+        originWithoutPort === candWithoutPort ||
+        originBase === candBase
+      ) {
+        return true;
+      }
+    }
+
+    // 2. Check environment configured URLs
+    const envUrls = [
+      process.env.APP_URL,
+      process.env.NEXT_PUBLIC_APP_URL,
+      process.env.NEXTAUTH_URL,
+      "https://inflixo.com",
+      "https://www.inflixo.com",
+    ].filter(Boolean) as string[];
+
+    for (const envUrl of envUrls) {
+      try {
+        const u = new URL(envUrl);
+        const uHost = u.host.toLowerCase();
+        const uHostNoWww = uHost.replace(/^www\./, "");
+        const uWithoutPort = uHost.split(":")[0];
+        const uBase = uWithoutPort.replace(/^www\./, "");
+
+        if (
+          originHost === uHost ||
+          originHostNoWww === uHostNoWww ||
+          originWithoutPort === uWithoutPort ||
+          originBase === uBase
+        ) {
+          return true;
+        }
+      } catch {}
+    }
+
+    // 3. Localhost / 127.0.0.1 for local dev/testing
+    if (originHost.startsWith("localhost") || originHost.startsWith("127.0.0.1")) {
+      return true;
+    }
+
+    return false;
+  } catch {
+    return false;
+  }
+}
+
 export function setSessionCookie(response: NextResponse, token: string, req?: Request): NextResponse {
   const secure = req ? isHttpsRequest(req) : process.env.NODE_ENV === "production";
   response.cookies.set(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
     secure,
-    sameSite: "strict",
+    sameSite: "lax",
     maxAge: SESSION_MAX_AGE,
     path: "/",
   });
@@ -118,7 +192,7 @@ export function clearSessionCookie(response: NextResponse, req?: Request): NextR
   response.cookies.set(SESSION_COOKIE_NAME, "", {
     httpOnly: true,
     secure,
-    sameSite: "strict",
+    sameSite: "lax",
     maxAge: 0,
     path: "/",
   });
@@ -133,15 +207,16 @@ export function requireSession(
   if (!["GET", "HEAD", "OPTIONS"].includes(req.method.toUpperCase())) {
     const fetchSite = req.headers.get("sec-fetch-site");
     const origin = req.headers.get("origin");
-    let crossOrigin = fetchSite === "cross-site";
-    if (origin) {
-      try {
-        crossOrigin ||= new URL(origin).host !== new URL(req.url).host;
-      } catch {
-        crossOrigin = true;
+
+    // Block only if sec-fetch-site explicitly says cross-site AND origin is not allowed
+    if (fetchSite === "cross-site") {
+      if (!isAllowedOrigin(req, origin)) {
+        return {
+          session: null,
+          error: apiError("Cross-origin request rejected", 403),
+        };
       }
-    }
-    if (crossOrigin) {
+    } else if (origin && !isAllowedOrigin(req, origin)) {
       return {
         session: null,
         error: apiError("Cross-origin request rejected", 403),
