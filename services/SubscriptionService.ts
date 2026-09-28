@@ -86,7 +86,7 @@ export function createSubscriptionLifecycle(
     status: "active",
     activatedAt,
     trialStartedAt: existingTrialStartedAt,
-    trialEndsAt: existingTrialEndsAt,
+    trialEndsAt: null,
     currentPeriodStartedAt: activatedAt,
     currentPeriodEndsAt,
     renewsAt: currentPeriodEndsAt,

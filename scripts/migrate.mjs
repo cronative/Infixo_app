@@ -135,6 +135,12 @@ async function migrateDatabase(target) {
     await addColumnIfMissing("creators", "custom_domain_verified", "TINYINT(1) NOT NULL DEFAULT 0");
     await addColumnIfMissing("creators", "custom_domain_configured_at", "DATETIME NULL");
 
+    await connection.query(`UPDATE subscriptions
+      SET trial_ends_at = NULL
+      WHERE plan_key IN ('starter', 'pro', 'vip', 'creator_pro', 'creator_VIP')
+        AND status = 'active'
+        AND trial_ends_at IS NOT NULL`);
+
     console.log(`✅ ${target.name} migrated successfully.`);
   } finally {
     await connection.end();

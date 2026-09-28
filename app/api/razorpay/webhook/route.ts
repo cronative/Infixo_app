@@ -61,12 +61,14 @@ export async function POST(req: Request) {
         await db.query(
           `INSERT INTO subscriptions (
              creator_id, plan_key, plan_name, billing_cycle, status, activated_at,
-             current_period_started_at, current_period_ends_at, ends_at, renews_at,
+             trial_ends_at, current_period_started_at, current_period_ends_at, ends_at, renews_at,
              payment_mode, auto_renew, razorpay_subscription_id
-           ) VALUES (?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?)
+           ) VALUES (?, ?, ?, ?, 'active', ?, NULL, ?, ?, ?, ?, ?, ?, ?)
            ON DUPLICATE KEY UPDATE
              plan_key = VALUES(plan_key), plan_name = VALUES(plan_name), billing_cycle = VALUES(billing_cycle),
-             status = 'active', current_period_started_at = VALUES(current_period_started_at),
+             status = 'active',
+             trial_ends_at = NULL,
+             current_period_started_at = VALUES(current_period_started_at),
              current_period_ends_at = VALUES(current_period_ends_at), ends_at = VALUES(ends_at),
              renews_at = VALUES(renews_at), cancelled_at = NULL, cancel_at_period_end = 0,
              payment_mode = VALUES(payment_mode), auto_renew = VALUES(auto_renew),

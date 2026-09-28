@@ -20,16 +20,27 @@ export async function isCreatorPublic(creatorId: string) {
   if (!subscription) return false;
   if (!["active", "trial"].includes(subscription.status)) return false;
 
-  const end = asTime(subscription.trial_ends_at)
+  const isPaidPlan =
+    subscription.plan_key &&
+    subscription.plan_key !== "early_access" &&
+    subscription.plan_key !== "free";
+
+  // For paid plans (starter, pro, vip), check current period end or end date. Never check old trial date!
+  if (isPaidPlan) {
+    if (subscription.status !== "active") return false;
+    const periodEnd = asTime(subscription.current_period_ends_at) || asTime(subscription.ends_at);
+    if (!periodEnd) return true; // Active paid plan with no expiration set yet
+    return Date.now() <= periodEnd;
+  }
+
+  // Free trial (early_access)
+  const trialEnd = asTime(subscription.trial_ends_at)
     || asTime(subscription.current_period_ends_at)
     || asTime(subscription.ends_at);
-  if (end) return Date.now() <= end;
+  if (trialEnd) return Date.now() <= trialEnd;
 
-  if (subscription.plan_key === "early_access") {
-    const activated = asTime(subscription.activated_at);
-    return Boolean(activated && Date.now() <= activated + 7 * 24 * 60 * 60 * 1000);
-  }
-  return true;
+  const activated = asTime(subscription.activated_at);
+  return Boolean(activated && Date.now() <= activated + 7 * 24 * 60 * 60 * 1000);
 }
 
 export async function authorizeCreatorRead(req: Request, creatorId: string, isPublicLookup: boolean) {
