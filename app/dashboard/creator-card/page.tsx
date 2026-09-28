@@ -3,11 +3,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
+  ArrowRight,
   BookOpen,
   Check,
   Copy,
   Cpu,
   Download,
+  Heart,
+  HeartHandshake,
   LayoutTemplate,
   Loader2,
   Palette,
@@ -40,12 +43,59 @@ const LAYOUT_ICONS: Record<CardLayoutType, React.ComponentType<{ className?: str
   editorial: BookOpen,
 };
 
+const EMOTIONAL_PRESETS = [
+  {
+    id: "journey",
+    label: "Support My Journey",
+    tagline: "Support my creative journey ❤️",
+    shareMessage: "Support my creative journey! 💖 Scan or tap to explore all my series, store & exclusive links:",
+    emoji: "❤️",
+  },
+  {
+    id: "world",
+    label: "Explore My World",
+    tagline: "Scan to explore my world ✨",
+    shareMessage: "Welcome to my creative universe! ✨ Everything I make and recommend, all in one place:",
+    emoji: "✨",
+  },
+  {
+    id: "community",
+    label: "Built for Community",
+    tagline: "Built with love for my community 💖",
+    shareMessage: "Made with genuine love for all of you ❤️ Tap or scan to explore my official creator hub:",
+    emoji: "💖",
+  },
+  {
+    id: "connect",
+    label: "Let's Connect",
+    tagline: "Let's connect & collaborate 🤝",
+    shareMessage: "Excited to share my official creator portfolio! 🤝 Check out my series & media kit:",
+    emoji: "🤝",
+  },
+  {
+    id: "official",
+    label: "Official Bio Hub",
+    tagline: "Official verified creator hub 🌟",
+    shareMessage: "Here's my verified Inflixo creator hub 🌟 All my links, videos & store in one place:",
+    emoji: "🌟",
+  },
+];
+
 export default function CreatorCardPage() {
-  const { profile, totalAudience, theme, loading } = useCreator();
+  const {
+    profile,
+    totalAudience,
+    theme,
+    loading,
+    isTrialExpired,
+    openTrialExpiredModal,
+  } = useCreator();
   const { showToast } = useToast();
 
   const [selectedLayout, setSelectedLayout] = useState<CardLayoutType>("classic");
   const [selectedThemeId, setSelectedThemeId] = useState<string>("profile");
+  const [selectedPresetId, setSelectedPresetId] = useState<string>("journey");
+  const [customTagline, setCustomTagline] = useState<string>("");
 
   const username = (profile.username || "").replace(/^@/, "");
   const profileUrl = username ? buildProfileUrl(username) : "";
@@ -61,7 +111,12 @@ export default function CreatorCardPage() {
 
   const category = formatCategoryDots(profile.category, profile.customCategory);
   const fanbase = totalAudience > 0 ? formatCount(totalAudience) : null;
-  const shareText = `Check out my Inflixo 👋\n${profileUrl}`;
+
+  // Active emotional message for the card and sharing caption
+  const activePreset = EMOTIONAL_PRESETS.find((p) => p.id === selectedPresetId) ?? EMOTIONAL_PRESETS[0];
+  const activeTagline = customTagline.trim() || activePreset.tagline;
+  const sharePrefix = customTagline.trim() ? customTagline.trim() : activePreset.shareMessage;
+  const shareText = `${sharePrefix}\n${profileUrl}`;
 
   // ── Preview scaling (layout stays 540×960 so preview === export) ──
   const frameRef = useRef<HTMLDivElement>(null);
@@ -88,6 +143,7 @@ export default function CreatorCardPage() {
     theme,
     selectedLayout,
     selectedThemeId,
+    activeTagline,
     avatar.src?.length,
   ].join("|");
   const cached = useRef<{ key: string; blob: Blob } | null>(null);
@@ -114,6 +170,11 @@ export default function CreatorCardPage() {
   }, [username, assetsReady, loading, getBlob]);
 
   const handleDownload = async () => {
+    if (isTrialExpired) {
+      showToast("Your public profile is hidden (Trial ended) — Reactivate to share with fans ❤️", "error");
+      openTrialExpiredModal();
+      return;
+    }
     setBusy("download");
     try {
       downloadBlob(await getBlob(), cardFileName(username));
@@ -127,6 +188,11 @@ export default function CreatorCardPage() {
   };
 
   const handleCopyLink = async () => {
+    if (isTrialExpired) {
+      showToast("Your public profile is hidden (Trial ended) — Reactivate now ❤️", "error");
+      openTrialExpiredModal();
+      return;
+    }
     const ok = await copyToClipboard(profileUrl);
     if (ok) {
       setLinkCopied(true);
@@ -139,6 +205,11 @@ export default function CreatorCardPage() {
   };
 
   const handleShare = async () => {
+    if (isTrialExpired) {
+      showToast("Your public profile is hidden (Trial ended) — Reactivate to share with fans ❤️", "error");
+      openTrialExpiredModal();
+      return;
+    }
     setBusy("share");
     try {
       const blob = await getBlob();
@@ -162,14 +233,45 @@ export default function CreatorCardPage() {
 
   return (
     <div className="w-full space-y-5 pb-12 text-left sm:space-y-6">
+      {/* Page Title & Subtitle */}
       <div>
         <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
           Creator Card
         </h1>
         <p className="mt-0.5 text-xs font-medium text-[#475569] sm:text-[13px]">
-          Choose your layout and color palette to share on Instagram Stories, WhatsApp Status, or print.
+          Design your custom card with emotional taglines, curated layouts, and high-impact themes to share on Stories & Status.
         </p>
       </div>
+
+      {/* Emotional Trial-Expired Banner */}
+      {isTrialExpired && (
+        <div className="relative overflow-hidden rounded-2xl border border-rose-200 bg-gradient-to-r from-rose-50 via-amber-50/70 to-rose-50 p-4 sm:p-5 shadow-sm">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-500 text-white shadow-sm">
+                <Heart className="h-5 w-5 fill-current animate-pulse" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-slate-900">
+                  Don&apos;t let your creative journey pause here, {profile.displayName || "Creator"}! ❤️
+                </h3>
+                <p className="mt-0.5 text-xs text-slate-600 leading-relaxed max-w-xl">
+                  Your 7-day free trial has ended. Right now, anyone scanning your Creator Card QR code sees that your profile is currently hidden. Reactivate your plan so fans and brands can explore your world.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={openTrialExpiredModal}
+              className="shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-[#043084] hover:bg-[#032363] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-all hover:scale-[1.02] cursor-pointer"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Keep Profile Live</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {!username ? (
         <div className="rounded-xl border border-[#e2e8f0] bg-white p-5 text-sm text-[#475569] shadow-xs">
@@ -204,6 +306,7 @@ export default function CreatorCardPage() {
                   profileUrl={profileUrl}
                   appearance={appearance}
                   layout={selectedLayout}
+                  customMessage={activeTagline}
                 />
               </div>
               {!assetsReady && (
@@ -218,7 +321,7 @@ export default function CreatorCardPage() {
             </p>
           </div>
 
-          {/* Controls: Layouts, Themes & Actions */}
+          {/* Controls: Layouts, Themes, Emotional Message & Actions */}
           <div className="w-full max-w-[440px] space-y-5 lg:pt-1">
             {/* 1. Layout Selector */}
             <div className="rounded-2xl border border-[#e2e8f0] bg-white p-4 shadow-xs sm:p-5">
@@ -354,7 +457,75 @@ export default function CreatorCardPage() {
               </div>
             </div>
 
-            {/* 3. Action Buttons */}
+            {/* 3. Emotional Message & Tagline */}
+            <div className="rounded-2xl border border-rose-100 bg-white p-4 shadow-xs sm:p-5">
+              <div className="flex items-center justify-between pb-3">
+                <div className="flex items-center gap-1.5">
+                  <HeartHandshake className="h-4 w-4 text-rose-500" />
+                  <span className="text-xs font-bold tracking-wider text-[#0f172a] uppercase">
+                    3. Emotional Message & Tagline
+                  </span>
+                </div>
+                <span className="text-[11px] font-medium text-rose-600">Connect with fans</span>
+              </div>
+
+              {/* Emotional Preset Pills */}
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                {EMOTIONAL_PRESETS.map((preset) => {
+                  const active = selectedPresetId === preset.id && !customTagline.trim();
+                  return (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedPresetId(preset.id);
+                        setCustomTagline("");
+                      }}
+                      className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer ${
+                        active
+                          ? "border-rose-500 bg-rose-50 text-rose-700 ring-1 ring-rose-500/50"
+                          : "border-[#e2e8f0] bg-white text-[#475569] hover:border-[#cbd5e1] hover:bg-[#f8fafc]"
+                      }`}
+                    >
+                      <span>{preset.emoji}</span>
+                      <span>{preset.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Custom Tagline input */}
+              <div className="space-y-1.5">
+                <label htmlFor="custom-tagline-input" className="text-[11px] font-medium text-[#64748b]">
+                  Card tagline & Story caption:
+                </label>
+                <div className="relative">
+                  <input
+                    id="custom-tagline-input"
+                    type="text"
+                    value={customTagline}
+                    onChange={(e) => setCustomTagline(e.target.value)}
+                    placeholder={activePreset.tagline}
+                    maxLength={60}
+                    className="w-full rounded-xl border border-[#cbd5e1] bg-[#f8fafc] px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder-[#94a3b8] transition-colors focus:border-[#043084] focus:bg-white focus:outline-none"
+                  />
+                  {customTagline && (
+                    <button
+                      type="button"
+                      onClick={() => setCustomTagline("")}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400 hover:text-slate-700"
+                    >
+                      Reset
+                    </button>
+                  )}
+                </div>
+                <p className="text-[10px] text-[#94a3b8]">
+                  Appears under the QR code on your card and in your shared Story caption.
+                </p>
+              </div>
+            </div>
+
+            {/* 4. Action Buttons */}
             <div className="space-y-2.5 pt-1">
               <button
                 type="button"

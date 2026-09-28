@@ -22,6 +22,7 @@ export interface CreatorCardProps {
   profileUrl: string;
   appearance: CardAppearance;
   layout?: CardLayoutType;
+  customMessage?: string;
 }
 
 const graphemeLength = (text: string) => {
@@ -80,6 +81,7 @@ function ClassicLayout({
   fanbase,
   profileUrl,
   appearance: a,
+  customMessage,
 }: CreatorCardProps) {
   const name = displayName.trim() || username;
   const handleSize = username.length > 22 ? 17 : 20;
@@ -214,8 +216,8 @@ function ClassicLayout({
           <QRCode value={profileUrl} size={CLASSIC_QR_SIZE} />
         </div>
 
-        <p style={{ margin: "16px 0 0", fontSize: 16, fontWeight: 500, color: a.secondaryText }}>
-          Scan to explore my world
+        <p style={{ margin: "16px 0 0", fontSize: 16, fontWeight: 600, color: a.secondaryText }}>
+          {customMessage || "Scan to explore my world"}
         </p>
         <p
           style={{
@@ -287,6 +289,7 @@ function MinimalLayout({
   fanbase,
   profileUrl,
   appearance: a,
+  customMessage,
 }: CreatorCardProps) {
   const name = displayName.trim() || username;
   const avatarSize = 142;
@@ -452,7 +455,7 @@ function MinimalLayout({
         <QRCode value={profileUrl} size={236} />
         <div style={{ height: 14 }} />
         <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "#0F172A" }}>
-          Point camera to scan
+          {customMessage || "Point camera to scan"}
         </p>
         <p style={{ margin: "3px 0 0", fontSize: 12, fontWeight: 600, color: "#64748B" }}>
           inflixo.com/@{username}
@@ -491,6 +494,7 @@ function BadgeLayout({
   fanbase,
   profileUrl,
   appearance: a,
+  customMessage,
 }: CreatorCardProps) {
   const name = displayName.trim() || username;
   const avatarSize = 124;
@@ -755,8 +759,12 @@ function BadgeLayout({
             <QRCode value={profileUrl} size={190} />
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, marginTop: 10 }}>
-            <BarcodeStripe width={220} height={28} color={a.isDark ? "#FFFFFF" : "#0F172A"} />
+          <p style={{ margin: "8px 0 0", fontSize: 13, fontWeight: 700, color: a.primaryText }}>
+            {customMessage || "SCAN FOR LIVE BIO & PORTFOLIO"}
+          </p>
+
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, marginTop: 8 }}>
+            <BarcodeStripe width={220} height={26} color={a.isDark ? "#FFFFFF" : "#0F172A"} />
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.18em", color: a.mutedText }}>
               PASS ID: #INF-{username.slice(0, 5).toUpperCase()}-2026
             </div>
@@ -806,6 +814,7 @@ function CyberLayout({
   fanbase,
   profileUrl,
   appearance: a,
+  customMessage,
 }: CreatorCardProps) {
   const name = displayName.trim() || username;
   const avatarSize = 136;
@@ -1028,7 +1037,7 @@ function CyberLayout({
             color: cyan,
           }}
         >
-          INITIALIZING SCAN // EXPLORE BIO
+          {customMessage ? `// ${customMessage.toUpperCase()}` : "INITIALIZING SCAN // EXPLORE BIO"}
         </p>
 
         <div style={{ flex: 1, minHeight: 14 }} />
@@ -1065,6 +1074,7 @@ function EditorialLayout({
   fanbase,
   profileUrl,
   appearance: a,
+  customMessage,
 }: CreatorCardProps) {
   const name = displayName.trim() || username;
   const avatarSize = 132;
@@ -1256,7 +1266,7 @@ function EditorialLayout({
             color: a.mutedText,
           }}
         >
-          Scan to view bio & portfolio
+          {customMessage || "Scan to view bio & portfolio"}
         </p>
 
         <div style={{ flex: 1, minHeight: 12 }} />
