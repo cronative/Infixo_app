@@ -13,6 +13,7 @@ import {
   HeartHandshake,
   LayoutTemplate,
   Loader2,
+  MessageCircle,
   Palette,
   Share2,
   Sparkles,
@@ -116,7 +117,13 @@ export default function CreatorCardPage() {
   const activePreset = EMOTIONAL_PRESETS.find((p) => p.id === selectedPresetId) ?? EMOTIONAL_PRESETS[0];
   const activeTagline = customTagline.trim() || activePreset.tagline;
   const sharePrefix = customTagline.trim() ? customTagline.trim() : activePreset.shareMessage;
-  const shareText = `${sharePrefix}\n${profileUrl}`;
+  const shareText = `Hey friends! 👋 Check out my official Inflixo Creator Card!
+${activeTagline}
+
+🔗 Tap to explore my series, shop, reviews & links:
+${profileUrl}
+
+⚡ Created with Inflixo — Create your own free Creator Card at https://inflixo.com`;
 
   // ── Preview scaling (layout stays 540×960 so preview === export) ──
   const frameRef = useRef<HTMLDivElement>(null);
@@ -193,15 +200,26 @@ export default function CreatorCardPage() {
       openTrialExpiredModal();
       return;
     }
-    const ok = await copyToClipboard(profileUrl);
+    const ok = await copyToClipboard(shareText);
     if (ok) {
       setLinkCopied(true);
       setTimeout(() => setLinkCopied(false), 2000);
-      showToast("Profile link copied!");
+      showToast("Card pitch & profile link copied! ✨");
     } else {
       showToast("Could not copy link", "error");
     }
     return ok;
+  };
+
+  const handleWhatsAppShare = () => {
+    if (isTrialExpired) {
+      showToast("Your public profile is hidden (Trial ended) — Reactivate to share with friends ❤️", "error");
+      openTrialExpiredModal();
+      return;
+    }
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+    window.open(url, "_blank");
+    showToast("Opening WhatsApp to share with friends ✨");
   };
 
   const handleShare = async () => {
@@ -534,7 +552,17 @@ export default function CreatorCardPage() {
                 className="inline-flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#043084] px-4 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
               >
                 {busy === "download" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-                Download Card (1080×1920)
+                Download Card (1080×1920 HD)
+              </button>
+
+              <button
+                type="button"
+                onClick={handleWhatsAppShare}
+                disabled={disabled}
+                className="inline-flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 text-sm font-bold text-white shadow-xs transition-all hover:-translate-y-0.5 hover:bg-[#1EBE5D] hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+              >
+                <MessageCircle className="h-4.5 w-4.5 fill-white text-[#25D366]" />
+                Share with Friends on WhatsApp
               </button>
 
               <button
@@ -544,7 +572,7 @@ export default function CreatorCardPage() {
                 className="inline-flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#e2e8f0] bg-white px-4 text-sm font-semibold text-[#043084] shadow-xs transition-all hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-[#f8fafc] hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
               >
                 {busy === "share" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Share2 className="h-4 w-4" />}
-                Share to Stories / Status
+                Share to Instagram Stories / Apps
               </button>
 
               <button
@@ -553,8 +581,19 @@ export default function CreatorCardPage() {
                 className="inline-flex h-10 w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl text-xs font-semibold text-[#475569] transition-colors hover:bg-[#f1f5f9] hover:text-[#043084]"
               >
                 {linkCopied ? <Check className="h-3.5 w-3.5 text-[#17845B]" /> : <Copy className="h-3.5 w-3.5" />}
-                {linkCopied ? "Link copied" : "Copy Profile Link"}
+                {linkCopied ? "Link & Story Caption copied!" : "Copy Link & Story Caption"}
               </button>
+
+              {/* Viral Inflixo Marketing & Referral Callout */}
+              <div className="rounded-xl border border-blue-100 bg-gradient-to-r from-blue-50/80 via-indigo-50/50 to-blue-50/80 p-3.5 text-center mt-3">
+                <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-[#043084]">
+                  <Sparkles className="h-3.5 w-3.5 text-[#043084]" />
+                  <span>Tell your creator friends about Inflixo!</span>
+                </div>
+                <p className="mt-1 text-[11px] leading-relaxed text-[#475569]">
+                  When friends scan your Creator Card, they can explore your work and also claim their own verified Creator Card at <strong className="text-[#043084]">inflixo.com</strong>.
+                </p>
+              </div>
 
               {!fanbase && !loading && (
                 <p className="pt-1 text-center text-[11px] text-[#64748b]">

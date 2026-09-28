@@ -239,15 +239,36 @@ function ClassicLayout({
         <div
           style={{
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
-            gap: 7,
-            fontSize: 13,
-            fontWeight: 700,
-            color: a.mutedText,
+            gap: 4,
           }}
         >
-          <InflixoLogoIcon color="current" className="h-4 w-4" />
-          <span>Made with Inflixo</span>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 7,
+              fontSize: 14,
+              fontWeight: 800,
+              color: a.primaryText,
+              letterSpacing: "0.02em",
+            }}
+          >
+            <InflixoLogoIcon color="color" className="h-4.5 w-4.5" />
+            <span>Made with Inflixo</span>
+          </div>
+          <p
+            style={{
+              margin: 0,
+              fontSize: 11,
+              fontWeight: 600,
+              color: a.mutedText,
+              letterSpacing: "0.03em",
+            }}
+          >
+            Create your free Creator Card at <strong style={{ color: a.accent }}>inflixo.com</strong>
+          </p>
         </div>
       </div>
 
@@ -468,15 +489,27 @@ function MinimalLayout({
       <div
         style={{
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
-          gap: 7,
-          fontSize: 13,
-          fontWeight: 700,
-          color: a.mutedText,
+          gap: 4,
         }}
       >
-        <InflixoLogoIcon color="current" className="h-4 w-4" />
-        <span>Made with Inflixo</span>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 7,
+            fontSize: 14,
+            fontWeight: 800,
+            color: a.primaryText,
+          }}
+        >
+          <InflixoLogoIcon color="color" className="h-4.5 w-4.5" />
+          <span>Inflixo Verified Creator</span>
+        </div>
+        <p style={{ margin: 0, fontSize: 11, fontWeight: 600, color: a.mutedText }}>
+          Claim your free card at <strong style={{ color: a.accent }}>inflixo.com</strong>
+        </p>
       </div>
     </div>
   );
@@ -773,15 +806,29 @@ function BadgeLayout({
           <div
             style={{
               display: "flex",
+              flexDirection: "column",
               alignItems: "center",
-              gap: 6,
-              fontSize: 12,
-              fontWeight: 700,
-              color: a.mutedText,
+              gap: 3,
             }}
           >
-            <InflixoLogoIcon color="current" className="h-3.5 w-3.5" />
-            <span>Official Inflixo Creator Pass</span>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                fontSize: 12,
+                fontWeight: 800,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: a.primaryText,
+              }}
+            >
+              <InflixoLogoIcon color="color" className="h-4 w-4" />
+              <span>Official Inflixo Creator Pass</span>
+            </div>
+            <p style={{ margin: 0, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: a.mutedText }}>
+              CLAIM YOUR PASS AT INFLIXO.COM
+            </p>
           </div>
         </div>
       </div>
@@ -1046,16 +1093,28 @@ function CyberLayout({
         <div
           style={{
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
-            gap: 7,
-            fontSize: 12,
-            fontWeight: 700,
-            letterSpacing: "0.12em",
-            color: "rgba(255, 255, 255, 0.5)",
+            gap: 3,
           }}
         >
-          <InflixoLogoIcon color="current" className="h-4 w-4" style={{ color: cyan }} />
-          <span>INFLIXO CYBER NETWORK · 2026</span>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 7,
+              fontSize: 12,
+              fontWeight: 800,
+              letterSpacing: "0.14em",
+              color: cyan,
+            }}
+          >
+            <InflixoLogoIcon color="current" className="h-4 w-4" style={{ color: cyan }} />
+            <span>INFLIXO CYBER CREATOR NETWORK</span>
+          </div>
+          <p style={{ margin: 0, fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", color: "rgba(255, 255, 255, 0.6)" }}>
+            LAUNCH YOUR CREATOR HUB AT INFLIXO.COM
+          </p>
         </div>
       </div>
     </div>
@@ -1283,14 +1342,14 @@ function EditorialLayout({
             fontSize: 11,
             fontWeight: 700,
             color: a.mutedText,
-            letterSpacing: "0.12em",
+            letterSpacing: "0.08em",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-            <InflixoLogoIcon color="current" className="h-3.5 w-3.5" />
-            <span>INFLIXO CURATED</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <InflixoLogoIcon color="color" className="h-3.5 w-3.5" />
+            <span style={{ fontWeight: 800, color: a.primaryText }}>INFLIXO CURATED</span>
           </div>
-          <span>inflixo.com/@{username}</span>
+          <span>Create yours at <strong style={{ color: a.accent }}>inflixo.com</strong></span>
         </div>
       </div>
     </div>
