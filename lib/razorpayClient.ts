@@ -70,18 +70,12 @@ export async function openRazorpayCheckout(options: CheckoutOptions): Promise<vo
     throw new Error(err.description);
   }
 
-  const key = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-  if (!key) {
-    const err = { description: "Razorpay Public Key ID is missing in client configuration." };
-    options.onError?.(err);
-    throw new Error(err.description);
-  }
-
   // By default, if planKey is specified and isSubscription is not explicitly false, use recurring subscriptions
   const useSubscription = options.isSubscription !== false && Boolean(options.planKey);
 
   let subscriptionId: string | null = null;
   let orderData: { order_id: string; amount: number; currency: string } | null = null;
+  let serverKeyId: string | null = null;
 
   try {
     if (useSubscription) {
@@ -102,6 +96,7 @@ export async function openRazorpayCheckout(options: CheckoutOptions): Promise<vo
         throw new Error(apiResponse.message || apiResponse.error || "Failed to create subscription on server");
       }
       subscriptionId = apiResponse.data?.subscription_id || apiResponse.subscription_id;
+      serverKeyId = apiResponse.data?.key_id || apiResponse.key_id || null;
     } else {
       // 1B. Create one-time order
       const httpResponse = await fetch("/api/create-order", {
@@ -118,6 +113,7 @@ export async function openRazorpayCheckout(options: CheckoutOptions): Promise<vo
         throw new Error(apiResponse.message || apiResponse.error || "Failed to create order on server");
       }
       orderData = apiResponse.data || apiResponse;
+      serverKeyId = apiResponse.data?.key_id || apiResponse.key_id || null;
     }
   } catch (err: any) {
     console.error("Order/Subscription creation failed:", err);
@@ -125,10 +121,17 @@ export async function openRazorpayCheckout(options: CheckoutOptions): Promise<vo
     throw err;
   }
 
+  const activeKey = serverKeyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+  if (!activeKey) {
+    const err = { description: "Razorpay Public Key ID is missing." };
+    options.onError?.(err);
+    throw new Error(err.description);
+  }
+
   // 2. Open Razorpay Checkout Modal
   return new Promise((resolve, reject) => {
     const rzpOptions: any = {
-      key,
+      key: activeKey,
       name: options.name || "Inflixo",
       description: options.description || `${options.planKey?.toUpperCase() || ""} Auto-Renewing Subscription`,
       image: options.image || "/icon.svg",

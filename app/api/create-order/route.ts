@@ -10,8 +10,8 @@ export async function POST(req: Request) {
     const auth = await requireCreator(req);
     if (auth.error) return auth.error;
 
-    const keyId = process.env.RAZORPAY_KEY_ID;
-    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+    const keyId = (process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_LIVE_KEY_ID || "").trim();
+    const keySecret = (process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_LIVE_KEY_SECRET || "").trim();
     if (!keyId || !keySecret) return apiError("Payments are not configured", 503);
 
     const body = await req.json();
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
         notes: { checkoutIntentId: intentId, creatorId: auth.creator.id },
       });
       await db.query("UPDATE payment_checkout_intents SET provider_id = ?, status = 'pending' WHERE id = ?", [order.id, intentId]);
-      return apiSuccess({ order_id: order.id, amount: order.amount, currency: order.currency }, "Order created successfully");
+      return apiSuccess({ order_id: order.id, amount: order.amount, currency: order.currency, key_id: keyId }, "Order created successfully");
     } catch (error) {
       await db.query("UPDATE payment_checkout_intents SET status = 'failed' WHERE id = ?", [intentId]);
       throw error;

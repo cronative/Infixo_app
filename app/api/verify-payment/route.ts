@@ -15,8 +15,8 @@ export async function POST(req: Request) {
   const auth = await requireCreator(req);
   if (auth.error) return auth.error;
 
-  const keyId = process.env.RAZORPAY_KEY_ID;
-  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+  const keyId = (process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_LIVE_KEY_ID || "").trim();
+  const keySecret = (process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_LIVE_KEY_SECRET || "").trim();
   if (!keyId || !keySecret) return apiError("Payments are not configured", 503);
 
   try {
