@@ -595,7 +595,7 @@ export function SeriesDetailClient({
                           />
                           <div
                             className="flex min-h-[22px] items-center justify-center gap-1.5 py-0.5 text-center text-xs font-semibold group-hover:underline"
-                            style={{ color: c.accentText }}
+                            style={{ color: c.primaryText }}
                           >
                             {epPlatform && platformIcon("h-3.5 w-3.5", epPlatform)}
                             <span>{epPlatform ? `Watch on ${epPlatform}` : "Watch Episode"}</span>

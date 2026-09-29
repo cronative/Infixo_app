@@ -1999,36 +1999,12 @@ export function LivePreviewCard({
                   <span>Series &amp; Playlists</span>
                 </h2>
                 {series.length > 0 && (
-                  <div className="flex items-center gap-2">
-                    {!seriesOnlyMode && allSeriesHref && (
-                      <button
-                        type="button"
-                        onPointerEnter={() => {
-                          if (allSeriesHref && !isInformationalMode) {
-                            router.prefetch(allSeriesHref);
-                          }
-                        }}
-                        onClick={() => {
-                          if (isInformationalMode) {
-                            showToast("Opens all creator series on live profile ✨");
-                            return;
-                          }
-                          router.push(allSeriesHref);
-                        }}
-                        style={{ color: c.accentText }}
-                        className="group text-[11px] sm:text-xs font-bold hover:opacity-80 transition-opacity cursor-pointer inline-flex items-center gap-0.5"
-                      >
-                        <span>See all</span>
-                        <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
-                      </button>
-                    )}
-                    <span
-                      style={{ color: c.mutedText }}
-                      className="text-[11px] sm:text-xs font-medium"
-                    >
-                      {series.length} {series.length === 1 ? "Series" : "Series"}
-                    </span>
-                  </div>
+                  <span
+                    style={{ color: c.mutedText }}
+                    className="shrink-0 text-[11px] sm:text-xs font-medium"
+                  >
+                    {series.length} {series.length === 1 ? "Series" : "Series"}
+                  </span>
                 )}
               </div>
               <p
@@ -2258,7 +2234,7 @@ export function LivePreviewCard({
                             />
                             <div
                               className="flex min-h-[24px] items-center justify-center gap-1.5 py-0.5 text-center text-xs sm:text-[12.5px] font-semibold group-hover:underline"
-                              style={{ color: c.accentText }}
+                              style={{ color: c.primaryText }}
                             >
                               <Play className="h-2.5 w-2.5 fill-current shrink-0" />
                               <span>Watch Now</span>
@@ -2406,7 +2382,7 @@ export function LivePreviewCard({
                         }
                       }}
                       className="flex min-h-[24px] items-center justify-center gap-1 rounded-[6px] py-0.5 text-center text-[10px] sm:text-[11px] font-semibold hover:underline"
-                      style={{ color: c.accentText }}
+                      style={{ color: c.primaryText }}
                     >
                       <span>View</span>
                       <ExternalLink className="h-2.5 w-2.5 shrink-0" />
