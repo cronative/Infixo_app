@@ -2249,20 +2249,21 @@ export function LivePreviewCard({
                             )}
                           </div>
 
-                          {/* "Watch Now" Button: Placed underneath the pills, matching theme pill styling */}
-                          <div className="flex items-center justify-end pt-0.5">
-                            <span
-                              style={{
-                                backgroundColor: c.elevatedBackground || "rgba(0, 0, 0, 0.04)",
-                                borderColor: c.border,
-                                color: c.primaryText,
-                              }}
-                              className="tap-scale inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] sm:text-xs font-bold transition-all duration-200 group-hover:scale-105 group-hover:border-current shadow-2xs select-none"
+                          {/* Watch Now CTA: Divider on top and centered text button (matching product view style) */}
+                          <div className="w-full pt-1.5">
+                            <div
+                              style={{ backgroundColor: c.divider }}
+                              className="-mx-2.5 sm:-mx-3 h-px opacity-70 mb-1.5"
+                              aria-hidden="true"
+                            />
+                            <div
+                              className="flex min-h-[24px] items-center justify-center gap-1.5 py-0.5 text-center text-xs sm:text-[12.5px] font-semibold group-hover:underline"
+                              style={{ color: c.accentText }}
                             >
                               <Play className="h-2.5 w-2.5 fill-current shrink-0" />
                               <span>Watch Now</span>
-                              <ArrowRight className="h-2.5 w-2.5 sm:h-3 sm:w-3 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5" />
-                            </span>
+                              <ArrowRight className="h-3 w-3 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5" />
+                            </div>
                           </div>
                         </div>
                       </div>

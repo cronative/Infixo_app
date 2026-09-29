@@ -565,29 +565,45 @@ export function SeriesDetailClient({
                         rel="noopener noreferrer"
                         onClick={() => trackEpisodeClick(ep)}
                         style={pt.itemStyle}
-                        className="group tap-scale flex min-h-[56px] w-full cursor-pointer items-center gap-3 rounded-[14px] border px-3.5 py-2.5 transition-all hover:opacity-90"
+                        className="group tap-scale flex flex-col w-full cursor-pointer rounded-[14px] border px-3.5 pt-3 pb-2 transition-all hover:opacity-90 shadow-2xs"
                       >
-                        <span
-                          style={{ backgroundColor: c.accentSoft, color: c.accentText }}
-                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] text-xs font-bold tabular-nums"
-                        >
-                          {partNumStr}
-                        </span>
-                        <span className="min-w-0 flex-1">
-                          <span style={{ color: c.primaryText }} className={`block line-clamp-2 break-words ${PUBLIC_TYPE.cardTitle}`}>
-                            {epTitleStr}
+                        <div className="flex items-start gap-3 w-full">
+                          <span
+                            style={{ backgroundColor: c.accentSoft, color: c.accentText }}
+                            className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-[10px] text-xs font-bold tabular-nums"
+                          >
+                            {partNumStr}
                           </span>
-                          {epPlatform && (
-                            <span style={{ color: c.mutedText }} className={`mt-0.5 flex items-center gap-1 ${PUBLIC_TYPE.meta}`}>
-                              {platformIcon("h-3 w-3", epPlatform)}
-                              Watch on {epPlatform}
+                          <div className="min-w-0 flex-1">
+                            <span style={{ color: c.primaryText }} className={`block line-clamp-2 break-words ${PUBLIC_TYPE.cardTitle}`}>
+                              {epTitleStr}
                             </span>
-                          )}
-                        </span>
-                        <ExternalLink
-                          className="h-4 w-4 shrink-0 opacity-70 transition-all group-hover:translate-x-0.5 group-hover:opacity-100"
-                          style={{ color: c.accentText }}
-                        />
+                            {ep.description && (
+                              <p style={{ color: c.mutedText }} className={`mt-0.5 line-clamp-2 ${PUBLIC_TYPE.meta}`}>
+                                {ep.description}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Divider & Center Action Button (matching product / series view style) */}
+                        <div className="w-full mt-2.5 pt-0.5">
+                          <div
+                            style={{ backgroundColor: c.divider }}
+                            className="-mx-3.5 h-px opacity-70 mb-1.5"
+                            aria-hidden="true"
+                          />
+                          <div
+                            className="flex min-h-[22px] items-center justify-center gap-1.5 py-0.5 text-center text-xs font-semibold group-hover:underline"
+                            style={{ color: c.accentText }}
+                          >
+                            {epPlatform && platformIcon("h-3.5 w-3.5", epPlatform)}
+                            <span>{epPlatform ? `Watch on ${epPlatform}` : "Watch Episode"}</span>
+                            <ExternalLink
+                              className="h-3 w-3 shrink-0 opacity-70 transition-transform duration-200 group-hover:translate-x-0.5"
+                            />
+                          </div>
+                        </div>
                       </a>
                     );
                   })}
