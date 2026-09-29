@@ -235,7 +235,7 @@ export default function AllSeriesClient() {
 
   if (!loaded) {
     return (
-      <div className="min-h-dvh flex flex-col items-center justify-center bg-[#f8fafc] text-[#043084]">
+      <div className="min-h-dvh flex flex-col items-center justify-center bg-white text-[#043084]">
         <div className="flex flex-col items-center gap-3">
           <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#043084] border-t-transparent" />
           <p className="text-xs font-semibold text-[#64748b]">Loading series...</p>
@@ -246,7 +246,7 @@ export default function AllSeriesClient() {
 
   if (notFound) {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-[#f8fafc] px-4 text-center">
+      <div className="flex min-h-dvh items-center justify-center bg-white px-4 text-center">
         <div className="w-full max-w-sm rounded-[24px] border border-[#e2e8f0] bg-white p-8 shadow-xl shadow-[#043084]/5">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#043084] text-white">
             <UserX className="h-7 w-7" />

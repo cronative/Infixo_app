@@ -4,7 +4,7 @@
   /* Indian-language font stack (loaded on demand via next/font, see app/layout.tsx) */
   --font-indic: var(--font-noto-devanagari), var(--font-noto-gujarati), var(--font-noto-tamil), var(--font-noto-telugu), var(--font-noto-kannada), var(--font-noto-bengali), var(--font-noto-gurmukhi);
   /* PAGE & LAYOUT */
-  --color-bg: #f8fafc;
+  --color-bg: #ffffff;
   --color-surface: #ffffff;
   --color-surface-alt: #f1f5f9;
   --color-muted-surface: #e2e8f0;
@@ -87,7 +87,7 @@
   --gradient-energy: linear-gradient(135deg, #043084 0%, #00b4d8 100%);
 
   /* Global Design Tokens */
-  --bg-page: #f8fafc;
+  --bg-page: #ffffff;
   --bg-surface: #ffffff;
   --bg-card: #ffffff;
   --bg-card-hover: #f1f5f9;
@@ -422,6 +422,7 @@ html,
 body {
   overflow-x: clip;
   max-width: 100vw;
+  background-color: #ffffff;
 }
 
 .scrollbar-none {

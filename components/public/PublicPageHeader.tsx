@@ -22,6 +22,8 @@ interface PublicPageHeaderProps {
   /** Show creator avatar and name in header (typically when scrolled down). */
   showCreatorIdentity?: boolean;
   className?: string;
+  /** When true, styling is adapted for floating over a dark/photo cover image. */
+  onImage?: boolean;
 }
 
 /**
@@ -40,6 +42,7 @@ export function PublicPageHeader({
   preferHistoryBack = false,
   showCreatorIdentity = false,
   className = "",
+  onImage = false,
 }: PublicPageHeaderProps) {
   const router = useRouter();
   const t = getPublicTheme(themeKey);
@@ -64,8 +67,12 @@ export function PublicPageHeader({
         type="button"
         onPointerEnter={() => router.prefetch(backHref)}
         onClick={goBack}
-        style={t.controlStyle}
-        className={PUBLIC_ICON_BUTTON}
+        style={onImage ? undefined : t.controlStyle}
+        className={`${PUBLIC_ICON_BUTTON} ${
+          onImage
+            ? "bg-black/45 hover:bg-black/60 backdrop-blur-md border-white/20 text-white shadow-xs"
+            : ""
+        }`}
         title={backLabel}
         aria-label={backLabel}
       >
@@ -85,15 +92,15 @@ export function PublicPageHeader({
             )}
             <div className="min-w-0 text-center truncate">
               <span
-                style={{ color: t.colors.primaryText }}
-                className="text-xs sm:text-sm font-bold tracking-tight truncate block leading-tight"
+                style={{ color: onImage ? "#FFFFFF" : t.colors.primaryText }}
+                className={`text-xs sm:text-sm font-bold tracking-tight truncate block leading-tight ${onImage ? "drop-shadow-xs" : ""}`}
               >
                 {creatorName || pageLabel}
               </span>
               {pageLabel && (
                 <span
-                  style={{ color: t.colors.secondaryText }}
-                  className="text-[10px] sm:text-[11px] font-medium opacity-80 truncate block leading-tight"
+                  style={{ color: onImage ? "rgba(255,255,255,0.85)" : t.colors.secondaryText }}
+                  className={`text-[10px] sm:text-[11px] font-medium opacity-80 truncate block leading-tight ${onImage ? "drop-shadow-xs" : ""}`}
                 >
                   {pageLabel}
                 </span>
@@ -103,8 +110,8 @@ export function PublicPageHeader({
         ) : (
           <div className="text-center truncate">
             <span
-              style={{ color: t.colors.primaryText }}
-              className="text-xs sm:text-sm font-bold tracking-tight truncate block"
+              style={{ color: onImage ? "#FFFFFF" : t.colors.primaryText }}
+              className={`text-xs sm:text-sm font-bold tracking-tight truncate block ${onImage ? "drop-shadow-xs" : ""}`}
             >
               {pageLabel || creatorName}
             </span>

@@ -169,7 +169,7 @@ export default function AllReviewsClient() {
 
   if (notFound) {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-[#f8fafc] px-4 text-center">
+      <div className="flex min-h-dvh items-center justify-center bg-white px-4 text-center">
         <div className="w-full max-w-sm rounded-[24px] border border-[#e2e8f0] bg-white p-8 shadow-xl shadow-[#043084]/5">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#043084] text-white">
             <UserX className="h-7 w-7" />

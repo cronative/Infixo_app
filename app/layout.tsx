@@ -267,7 +267,7 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className="min-h-full bg-background font-sans">
+      <body className="min-h-full bg-white font-sans">
         <SessionProvider>
           <ToastProvider>
             {children}

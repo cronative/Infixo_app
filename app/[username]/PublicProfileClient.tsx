@@ -549,7 +549,7 @@ export default function PublicProfileClient() {
     const displayName = profile.displayName || `@${handle}`;
 
     return (
-      <div className="relative flex min-h-dvh flex-col items-center justify-center bg-gradient-to-b from-[#FDFBF7] via-slate-50 to-white px-4 py-12 text-center text-slate-900 overflow-hidden">
+      <div className="relative flex min-h-dvh flex-col items-center justify-center bg-white px-4 py-12 text-center text-slate-900 overflow-hidden">
         {/* Ambient Warm Background Glow Orbs */}
         <div className="pointer-events-none absolute -top-24 -left-20 h-96 w-96 rounded-full bg-rose-200/30 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 -right-20 h-96 w-96 rounded-full bg-amber-100/40 blur-3xl" />
@@ -671,7 +671,7 @@ export default function PublicProfileClient() {
   if (notFound) {
     const handle = decodeURIComponent(params.username ?? "");
     return (
-      <div className="relative flex min-h-dvh flex-col items-center justify-center bg-gradient-to-b from-[#F6EBF1]/60 via-slate-50 to-white px-4 py-12 text-center text-slate-900 overflow-hidden">
+      <div className="relative flex min-h-dvh flex-col items-center justify-center bg-white px-4 py-12 text-center text-slate-900 overflow-hidden">
         {/* Ambient Maroon Background Glow Orbs */}
         <div className="pointer-events-none absolute -top-24 -left-20 h-96 w-96 rounded-full bg-[#043084]/10 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 -right-20 h-96 w-96 rounded-full bg-rose-200/40 blur-3xl" />

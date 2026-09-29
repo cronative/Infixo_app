@@ -2,6 +2,7 @@
 
 import type { CreatorProduct } from "@/types";
 import { ProductImage, formatProductPrice } from "@/components/products/ProductImage";
+import { ProductImageLightbox } from "@/components/products/ProductImageLightbox";
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -38,6 +39,8 @@ import {
   AtSign,
   Laptop,
   ShoppingBag,
+  ZoomIn,
+  Play,
 } from "lucide-react";
 import {
   CreatorProfile,
@@ -929,6 +932,7 @@ export function LivePreviewCard({
   const [otherSocialsList, setOtherSocialsList] = useState<OtherSocialAccount[]>(passedOtherSocials || []);
   const [sectionsList, setSectionsList] = useState<CreatorProfileSection[]>(passedSections || DEFAULT_PROFILE_SECTIONS);
   const [isCollabInquiryOpen, setIsCollabInquiryOpen] = useState(false);
+  const [selectedProductForZoom, setSelectedProductForZoom] = useState<CreatorProduct | null>(null);
   const [isDashboardPreview, setIsDashboardPreview] = useState<boolean>(false);
   const [isInformationalMode, setIsInformationalMode] = useState<boolean>(Boolean(isInformationalProp));
   const [isOnboardingMode, setIsOnboardingMode] = useState<boolean>(Boolean(isOnboardingProp));
@@ -1535,21 +1539,9 @@ export function LivePreviewCard({
         />
       ) : (
         <div
-          className={`relative z-30 flex items-center justify-between gap-2 w-full px-1 py-1 -mt-1 rounded-xl transition-all duration-300 ${
+          className={`relative z-30 flex items-center justify-between gap-2 w-full px-1 py-1 -mt-1 rounded-xl bg-transparent border-transparent ${
             containedScroll ? "shrink-0 mb-1" : "mb-1.5"
-          } ${
-            showStickyProfileHeader
-              ? "backdrop-blur-md shadow-xs border"
-              : "bg-transparent border-transparent"
           }`}
-          style={
-            showStickyProfileHeader
-              ? {
-                  backgroundColor: usesDarkControls ? "rgba(15, 23, 42, 0.75)" : "rgba(255, 255, 255, 0.85)",
-                  borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.06)",
-                }
-              : undefined
-          }
         >
           <div className="shrink-0 flex items-center">
             <Link
@@ -1567,35 +1559,24 @@ export function LivePreviewCard({
             </Link>
           </div>
 
-          {/* Sticky Creator Profile Picture & Name */}
+          {/* Sticky Creator Name (Smooth fade-in on scroll) */}
           <div
             onClick={handleMoveToTop}
             title="Scroll to top"
-            className={`min-w-0 flex-1 flex items-center justify-center gap-1.5 px-1 cursor-pointer transition-all duration-300 ease-out select-none ${
+            className={`min-w-0 flex-1 flex items-center justify-center gap-1 px-1 cursor-pointer transition-all duration-300 ease-out select-none ${
               showStickyProfileHeader
                 ? "opacity-100 translate-y-0 pointer-events-auto"
                 : "opacity-0 -translate-y-1.5 pointer-events-none"
             }`}
           >
-            <div className="relative shrink-0">
-              <CreatorAvatar
-                src={profile.photoDataUrl}
-                name={profile.displayName || "Creator"}
-                className="h-[26px] w-[26px] sm:h-[28px] sm:w-[28px] rounded-full aspect-square object-contain object-center overflow-hidden border border-white/80 ring-1 ring-black/5 shadow-xs mx-auto bg-white"
-                style={{ borderColor: c.border || "#FFFFFF", backgroundColor: c.cardBackground }}
-                textClassName="text-[10px] font-bold"
-                textStyle={{ color: c.primaryText }}
-                fallbackBgClass="bg-[#043084]"
-              />
-            </div>
-            <div className="min-w-0 flex items-center gap-1">
+            <div className="min-w-0 flex items-center justify-center gap-1">
               <span
                 style={{
                   color: c.primaryText,
                   fontFamily: typ.headingFontFamily,
                   fontWeight: 700,
                 }}
-                className="text-xs sm:text-[13px] font-bold truncate max-w-[120px] sm:max-w-[200px]"
+                className="text-xs sm:text-[13px] font-bold truncate max-w-[140px] sm:max-w-[220px]"
               >
                 {profile.displayName || "Creator"}
               </span>
@@ -2091,6 +2072,7 @@ export function LivePreviewCard({
                   const detectedPlatform = (() => {
                     const p = (s.platform || "").toLowerCase();
                     const u = (firstEpUrl || "").toLowerCase();
+                    if (p.includes("multi") || p.includes("mix")) return "Multi-Platform";
                     if (p.includes("youtube") || u.includes("youtube.com") || u.includes("youtu.be")) return "YouTube";
                     if (p.includes("instagram") || u.includes("instagram.com")) return "Instagram";
                     if (p.includes("facebook") || u.includes("facebook.com")) return "Facebook";
@@ -2104,6 +2086,11 @@ export function LivePreviewCard({
                   const seriesGenres = s.genre
                     ? s.genre.split(/[,•|/]/).map((g: string) => g.trim().replace(/^Genre:\s*/i, "")).filter(Boolean)
                     : [];
+                  const genreText = seriesGenres.length > 0
+                    ? seriesGenres.join(" · ")
+                    : s.genre
+                    ? s.genre.replace(/^Genre:\s*/i, "").replace(/[,•|/]/g, " · ")
+                    : null;
                   const seriesUrl = `/${cleanHandle || "creator"}/series/${s.id}`;
                   const hasPoster = Boolean(s.posterDataUrl && s.posterDataUrl.trim() !== "");
 
@@ -2191,24 +2178,91 @@ export function LivePreviewCard({
                           </p>
                         )}
 
-                        <div className="flex items-center justify-between gap-2 pt-0.5">
-                          <div className="min-w-0 flex-1 flex items-center gap-1.5 text-[10.5px] sm:text-[11.5px] font-medium truncate">
-                            {seriesGenres.length > 0 && (
-                              <span style={{ color: c.mutedText }} className="shrink-0">
-                                {seriesGenres.slice(0, 2).join(" · ")} •
+                        <div className="pt-2 space-y-2">
+                          {/* Exactly 4 Pill Badges: Episodes, Platform, Language, Genre (with dot separator) */}
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            {/* 1. Episodes pill */}
+                            <span
+                              style={{
+                                backgroundColor: c.elevatedBackground || "rgba(0, 0, 0, 0.04)",
+                                borderColor: c.border,
+                                color: c.primaryText,
+                              }}
+                              className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold shrink-0"
+                            >
+                              <Film className="h-2.5 w-2.5 opacity-70 shrink-0" />
+                              <span>{epCountStr}</span>
+                            </span>
+
+                            {/* 2. Platform pill with brand icon */}
+                            {detectedPlatform && (
+                              <span
+                                style={{
+                                  backgroundColor: c.elevatedBackground || "rgba(0, 0, 0, 0.04)",
+                                  borderColor: c.border,
+                                  color: c.primaryText,
+                                }}
+                                className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold shrink-0"
+                              >
+                                {detectedPlatform === "YouTube" ? (
+                                  <YoutubeIcon className="h-2.5 w-2.5 text-red-500 shrink-0" />
+                                ) : detectedPlatform === "Instagram" ? (
+                                  <InstagramIcon className="h-2.5 w-2.5 text-pink-500 shrink-0" />
+                                ) : detectedPlatform === "Facebook" ? (
+                                  <FacebookIcon className="h-2.5 w-2.5 text-blue-500 shrink-0" />
+                                ) : detectedPlatform === "Multi-Platform" ? (
+                                  <Sparkles className="h-2.5 w-2.5 text-amber-500 shrink-0" />
+                                ) : (
+                                  <Globe className="h-2.5 w-2.5 opacity-70 shrink-0" />
+                                )}
+                                <span>{detectedPlatform}</span>
                               </span>
                             )}
-                            <span style={{ color: c.secondaryText }} className="opacity-75 truncate">
-                              {subtitleStr}{s.language ? ` · ${s.language}` : ""}
-                            </span>
+
+                            {/* 3. Language pill */}
+                            {s.language && (
+                              <span
+                                style={{
+                                  backgroundColor: c.elevatedBackground || "rgba(0, 0, 0, 0.04)",
+                                  borderColor: c.border,
+                                  color: c.secondaryText,
+                                }}
+                                className="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] sm:text-[11px] font-medium shrink-0"
+                              >
+                                {s.language}
+                              </span>
+                            )}
+
+                            {/* 4. Single Genre pill with dot separator */}
+                            {genreText && (
+                              <span
+                                style={{
+                                  backgroundColor: c.elevatedBackground || "rgba(0, 0, 0, 0.04)",
+                                  borderColor: c.border,
+                                  color: c.secondaryText,
+                                }}
+                                className="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] sm:text-[11px] font-medium truncate max-w-[220px]"
+                                title={genreText}
+                              >
+                                {genreText}
+                              </span>
+                            )}
                           </div>
 
-                          <div
-                            style={{ color: c.accentText }}
-                            className="shrink-0 flex items-center gap-1 text-xs font-bold"
-                          >
-                            <span>Watch</span>
-                            <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                          {/* "Watch Now" Button: Placed underneath the pills, matching theme pill styling */}
+                          <div className="flex items-center justify-end pt-0.5">
+                            <span
+                              style={{
+                                backgroundColor: c.elevatedBackground || "rgba(0, 0, 0, 0.04)",
+                                borderColor: c.border,
+                                color: c.primaryText,
+                              }}
+                              className="tap-scale inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] sm:text-xs font-bold transition-all duration-200 group-hover:scale-105 group-hover:border-current shadow-2xs select-none"
+                            >
+                              <Play className="h-2.5 w-2.5 fill-current shrink-0" />
+                              <span>Watch Now</span>
+                              <ArrowRight className="h-2.5 w-2.5 sm:h-3 sm:w-3 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5" />
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -2308,11 +2362,24 @@ export function LivePreviewCard({
                     boxShadow: eff.cardShadow,
                   }}
                 >
-                  <ProductImage
-                    src={product.imageUrl}
-                    name={product.name}
-                    className="aspect-square w-full max-h-[96px] sm:max-h-[110px] rounded-[7px] overflow-hidden mx-auto"
-                  />
+                  <button
+                    type="button"
+                    onClick={() => setSelectedProductForZoom(product)}
+                    className="group/img relative aspect-square w-full max-h-[96px] sm:max-h-[110px] rounded-[7px] overflow-hidden mx-auto cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-[#043084]/40"
+                    title={`Click to zoom ${product.name} image`}
+                    aria-label={`View full image for ${product.name}`}
+                  >
+                    <ProductImage
+                      src={product.imageUrl}
+                      name={product.name}
+                      className="h-full w-full transition-transform duration-300 group-hover/img:scale-105"
+                    />
+                    <span className="absolute inset-0 flex items-center justify-center bg-black/25 opacity-0 transition-opacity duration-200 group-hover/img:opacity-100 pointer-events-none">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-black/60 backdrop-blur-xs text-white shadow-md">
+                        <ZoomIn className="h-3.5 w-3.5" />
+                      </span>
+                    </span>
+                  </button>
                   <h3 className="mt-1 break-words text-[11px] sm:text-xs font-semibold line-clamp-1 sm:line-clamp-2 leading-tight" style={{ color: c.primaryText }} title={product.name}>
                     {product.name}
                   </h3>
@@ -2321,22 +2388,29 @@ export function LivePreviewCard({
                       {formatProductPrice(product.pricePaise)}
                     </p>
                   )}
-                  <a
-                    href={product.productUrl}
-                    target="_blank"
-                    rel="noopener noreferrer sponsored"
-                    onClick={(e) => {
-                      if (isInformationalMode) {
-                        e.preventDefault();
-                        showToast(`Opens ${product.name} external product page ✨`);
-                      }
-                    }}
-                    className="mt-auto flex min-h-[26px] items-center justify-center gap-0.5 rounded-[6px] pt-1 pb-0.5 text-center text-[10px] sm:text-[11px] font-semibold hover:underline"
-                    style={{ color: c.accentText }}
-                  >
-                    <span>View</span>
-                    <ExternalLink className="h-2.5 w-2.5 shrink-0" />
-                  </a>
+                  <div className="mt-auto pt-1.5 w-full">
+                    <div
+                      style={{ backgroundColor: c.divider }}
+                      className="-mx-1.5 sm:-mx-2 h-px opacity-70 mb-1"
+                      aria-hidden="true"
+                    />
+                    <a
+                      href={product.productUrl}
+                      target="_blank"
+                      rel="noopener noreferrer sponsored"
+                      onClick={(e) => {
+                        if (isInformationalMode) {
+                          e.preventDefault();
+                          showToast(`Opens ${product.name} external product page ✨`);
+                        }
+                      }}
+                      className="flex min-h-[24px] items-center justify-center gap-1 rounded-[6px] py-0.5 text-center text-[10px] sm:text-[11px] font-semibold hover:underline"
+                      style={{ color: c.accentText }}
+                    >
+                      <span>View</span>
+                      <ExternalLink className="h-2.5 w-2.5 shrink-0" />
+                    </a>
+                  </div>
                 </article>
               ))}
             </div>
@@ -2950,6 +3024,15 @@ export function LivePreviewCard({
         onClose={() => setIsVisibilityModalOpen(false)}
         settings={visibilitySettings}
         onSave={handleSaveVisibilitySettings}
+      />
+
+      {/* Product Image Fullscreen Zoom Lightbox Modal */}
+      <ProductImageLightbox
+        product={selectedProductForZoom}
+        isOpen={Boolean(selectedProductForZoom)}
+        onClose={() => setSelectedProductForZoom(null)}
+        isInformationalMode={isInformationalMode}
+        onExternalClick={(name) => showToast(`Opens ${name} external product page ✨`)}
       />
     </div>
   );

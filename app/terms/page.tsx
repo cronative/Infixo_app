@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function TermsOfServicePage() {
   return (
-    <div className="min-h-dvh bg-[#FAF9F6] text-[#181716] flex flex-col font-sans selection:bg-[#043084]/10 selection:text-[#043084]">
+    <div className="min-h-dvh bg-white text-[#181716] flex flex-col font-sans selection:bg-[#043084]/10 selection:text-[#043084]">
       {/* Navbar */}
       <header className="safe-top sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#E7E3DC]">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 sm:px-8">

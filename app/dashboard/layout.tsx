@@ -138,7 +138,7 @@ function Shell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex h-dvh w-full overflow-hidden bg-[#f8fafc]">
+    <div className="flex h-dvh w-full overflow-hidden bg-white">
       {/* Desktop Sidebar */}
       <DashboardSidebar />
 

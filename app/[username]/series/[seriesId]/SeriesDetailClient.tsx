@@ -52,6 +52,12 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
       icon: <FacebookIcon className="h-3.5 w-3.5 text-blue-500" />,
     };
   }
+  if (p.includes("multi") || p.includes("mix")) {
+    return {
+      name: "Multi-Platform",
+      icon: <Sparkles className="h-3.5 w-3.5 text-amber-500" />,
+    };
+  }
   return {
     name: platformStr || "Watch",
     icon: <Film className="h-3.5 w-3.5 text-[#043084]" />,
@@ -213,6 +219,7 @@ export function SeriesDetailClient({
   const detectedPlatform = useMemo(() => {
     if (series?.platform && series.platform.trim()) {
       const p = series.platform.trim();
+      if (/multi|mix/i.test(p)) return "Multi-Platform";
       if (/youtube/i.test(p)) return "YouTube";
       if (/instagram/i.test(p)) return "Instagram";
       if (/facebook/i.test(p)) return "Facebook";
@@ -357,7 +364,8 @@ export function SeriesDetailClient({
     platform === "YouTube" ? <YoutubeIcon className={`${cls} text-red-500`} />
       : platform === "Instagram" ? <InstagramIcon className={`${cls} text-pink-500`} />
         : platform === "Facebook" ? <FacebookIcon className={`${cls} text-blue-500`} />
-          : <Globe className={`${cls} opacity-75`} />;
+          : platform === "Multi-Platform" ? <Sparkles className={`${cls} text-amber-500`} />
+            : <Globe className={`${cls} opacity-75`} />;
 
   const episodePlatform = (url?: string | null): string | null => {
     if (!url) return null;
@@ -373,6 +381,8 @@ export function SeriesDetailClient({
     ...(langTag ? [langTag] : []),
   ];
 
+  const isHeaderOnImage = hasValidCover && !isScrolledPastHeader;
+
   return (
     <CreatorPublicShell
       themeKey={themeKey}
@@ -386,40 +396,69 @@ export function SeriesDetailClient({
       }
     >
       <PublicCard themeKey={themeKey}>
-        {/* Compact creator header — same on every secondary public page */}
-        <PublicPageHeader
-          themeKey={themeKey}
-          backHref={`/${username}/series`}
-          backLabel="Back to series"
-          preferHistoryBack
-          creatorName={creator?.displayName || ""}
-          creatorHandle={username}
-          creatorPhoto={creator?.photoDataUrl}
-          pageLabel="Series"
-          showCreatorIdentity={isScrolledPastHeader}
-          className={`${PUBLIC_CARD_PADDING} pt-4 pb-3 sm:pt-5`}
-          actions={
-            <>
-              <PublicIconButton themeKey={themeKey} onClick={handleCopyLink} label="Copy series link">
-                <Copy className="h-4 w-4" />
-              </PublicIconButton>
-              <PublicIconButton themeKey={themeKey} onClick={() => setIsShareModalOpen(true)} label="Share series">
-                <Share2 className="h-4 w-4" />
-              </PublicIconButton>
-            </>
-          }
-        />
-
+        {/* Scrollable container starting from top 0 */}
         <div
           onScroll={(e) => setIsScrolledPastHeader(e.currentTarget.scrollTop > 80)}
-          className={`flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain scrollbar-none ${PUBLIC_CARD_PADDING} pb-5`}
+          className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain scrollbar-none relative"
         >
-          {/* Series hero */}
+          {/* Sticky Header over image */}
+          <div
+            className={`sticky top-0 z-20 transition-all duration-200 ${
+              hasValidCover ? "-mb-[60px] sm:-mb-[66px]" : ""
+            } ${
+              isScrolledPastHeader
+                ? "backdrop-blur-xl border-b shadow-2xs"
+                : hasValidCover
+                ? "bg-gradient-to-b from-black/60 via-black/20 to-transparent"
+                : ""
+            }`}
+            style={
+              isScrolledPastHeader
+                ? {
+                    backgroundColor: pt.surfaceStyle.backgroundColor || "rgba(255, 255, 255, 0.94)",
+                    borderColor: c.border,
+                  }
+                : undefined
+            }
+          >
+            <PublicPageHeader
+              themeKey={themeKey}
+              backHref={`/${username}/series`}
+              backLabel="Back to series"
+              preferHistoryBack
+              creatorName={creator?.displayName || ""}
+              creatorHandle={username}
+              creatorPhoto={creator?.photoDataUrl}
+              pageLabel="Series"
+              onImage={isHeaderOnImage}
+              showCreatorIdentity={isScrolledPastHeader}
+              className={`${PUBLIC_CARD_PADDING} pt-3 pb-3 sm:pt-4 sm:pb-3`}
+              actions={
+                <>
+                  <PublicIconButton
+                    themeKey={themeKey}
+                    onClick={handleCopyLink}
+                    label="Copy series link"
+                    onImage={isHeaderOnImage}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </PublicIconButton>
+                  <PublicIconButton
+                    themeKey={themeKey}
+                    onClick={() => setIsShareModalOpen(true)}
+                    label="Share series"
+                    onImage={isHeaderOnImage}
+                  >
+                    <Share2 className="h-4 w-4" />
+                  </PublicIconButton>
+                </>
+              }
+            />
+          </div>
+
+          {/* Series Hero: Starts at top 0, 100% full width of card */}
           {hasValidCover && (
-            <div
-              style={{ borderColor: c.border }}
-              className="relative mt-1 aspect-[16/9] max-h-[220px] w-full shrink-0 overflow-hidden rounded-[14px] border bg-black/10"
-            >
+            <div className="relative w-full aspect-[16/9] sm:aspect-[2/1] max-h-[340px] shrink-0 overflow-hidden bg-black/10">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={series.posterDataUrl!}
@@ -427,130 +466,134 @@ export function SeriesDetailClient({
                 onError={() => setCoverImageError(true)}
                 className="block h-full w-full object-cover object-center"
               />
+              <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/45 via-black/15 to-transparent pointer-events-none" />
             </div>
           )}
 
-          <div className={`${hasValidCover ? "mt-4" : "mt-2"} text-center`}>
-            <h1 style={pt.headingStyle} className={`break-words ${PUBLIC_TYPE.pageTitle}`}>
-              {series.title}
-            </h1>
+          {/* Content below hero with proper card padding */}
+          <div className={`flex flex-col ${PUBLIC_CARD_PADDING} pt-4 pb-6`}>
+            <div className={`${hasValidCover ? "mt-1" : "mt-2"} text-center`}>
+              <h1 style={pt.headingStyle} className={`break-words ${PUBLIC_TYPE.pageTitle}`}>
+                {series.title}
+              </h1>
 
-            <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5">
-              {detectedPlatform && (
-                <span
-                  style={pt.elevatedStyle}
-                  className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 ${PUBLIC_TYPE.label}`}
-                >
-                  {platformIcon("h-3.5 w-3.5")}
-                  <span>{detectedPlatform}</span>
-                </span>
-              )}
-              {genresList.slice(0, 3).map((g) => (
-                <span
-                  key={g}
-                  style={{ borderColor: c.border, color: c.secondaryText }}
-                  className={`inline-flex items-center rounded-full border px-2.5 py-1 ${PUBLIC_TYPE.label}`}
-                >
-                  {g}
-                </span>
-              ))}
-            </div>
+              <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5">
+                {detectedPlatform && (
+                  <span
+                    style={pt.elevatedStyle}
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 ${PUBLIC_TYPE.label}`}
+                  >
+                    {platformIcon("h-3.5 w-3.5")}
+                    <span>{detectedPlatform}</span>
+                  </span>
+                )}
+                {genresList.slice(0, 3).map((g) => (
+                  <span
+                    key={g}
+                    style={{ borderColor: c.border, color: c.secondaryText }}
+                    className={`inline-flex items-center rounded-full border px-2.5 py-1 ${PUBLIC_TYPE.label}`}
+                  >
+                    {g}
+                  </span>
+                ))}
+              </div>
 
-            <p style={{ color: c.mutedText }} className={`mt-2 ${PUBLIC_TYPE.meta}`}>
-              {metaParts.join(" · ")}
-            </p>
-
-            {series.description && series.description.trim() && (
-              <p
-                style={{ color: c.secondaryText }}
-                className={`mx-auto mt-2.5 max-w-md whitespace-pre-line break-words ${PUBLIC_TYPE.body}`}
-              >
-                {series.description}
+              <p style={{ color: c.mutedText }} className={`mt-2 ${PUBLIC_TYPE.meta}`}>
+                {metaParts.join(" · ")}
               </p>
-            )}
-          </div>
 
-          {/* Seasons */}
-          {seasonsList.length > 1 && (
-            <div className="-mx-1 mt-5 flex items-center gap-2 overflow-x-auto px-1 pb-1 scrollbar-none">
-              {seasonsList.map((sn, idx) => (
-                <button
-                  key={sn.id || idx}
-                  type="button"
-                  onClick={() => setActiveSeasonIndex(idx)}
-                  style={
-                    activeSeasonIndex === idx
-                      ? { backgroundColor: c.accentSoft, borderColor: c.accentBorder, color: c.accentText }
-                      : { backgroundColor: c.cardBackground, borderColor: c.border, color: c.secondaryText }
-                  }
-                  className={`tap-scale inline-flex h-9 shrink-0 cursor-pointer items-center rounded-full border px-3.5 transition-all ${PUBLIC_TYPE.label}`}
+              {series.description && series.description.trim() && (
+                <p
+                  style={{ color: c.secondaryText }}
+                  className={`mx-auto mt-2.5 max-w-md whitespace-pre-line break-words ${PUBLIC_TYPE.body}`}
                 >
-                  {sn.title || `Season ${sn.seasonNumber || idx + 1}`} · {sn.episodes?.length || 0}
-                </button>
-              ))}
+                  {series.description}
+                </p>
+              )}
             </div>
-          )}
 
-          {/* Episodes */}
-          <div className={`${seasonsList.length > 1 ? "mt-3" : "mt-6"} space-y-2.5`}>
-            <PublicSectionHeader
-              themeKey={themeKey}
-              title="Episodes"
-              icon={<Film className="h-4 w-4" />}
-              meta={`${currentEpisodes.length}`}
-            />
-
-            {currentEpisodes.length === 0 ? (
-              <div
-                style={{ ...pt.elevatedStyle, color: c.mutedText }}
-                className={`rounded-[14px] border border-dashed p-5 text-center ${PUBLIC_TYPE.meta}`}
-              >
-                No episodes added to this series yet.
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {currentEpisodes.map((ep: Episode, index: number) => {
-                  const partNum = ep.episodeNumber || index + 1;
-                  const partNumStr = partNum < 10 ? `0${partNum}` : `${partNum}`;
-                  const epTitleStr = ep.title?.trim() || `Episode ${partNum}`;
-                  const epPlatform = episodePlatform(ep.externalUrl);
-
-                  return (
-                    <a
-                      key={ep.id || index}
-                      href={ep.externalUrl || "#"}
-                      target={ep.externalUrl ? "_blank" : undefined}
-                      rel="noopener noreferrer"
-                      onClick={() => trackEpisodeClick(ep)}
-                      style={pt.itemStyle}
-                      className="group tap-scale flex min-h-[56px] w-full cursor-pointer items-center gap-3 rounded-[14px] border px-3.5 py-2.5 transition-all hover:opacity-90"
-                    >
-                      <span
-                        style={{ backgroundColor: c.accentSoft, color: c.accentText }}
-                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] text-xs font-bold tabular-nums"
-                      >
-                        {partNumStr}
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span style={{ color: c.primaryText }} className={`block line-clamp-2 break-words ${PUBLIC_TYPE.cardTitle}`}>
-                          {epTitleStr}
-                        </span>
-                        {epPlatform && (
-                          <span style={{ color: c.mutedText }} className={`mt-0.5 flex items-center gap-1 ${PUBLIC_TYPE.meta}`}>
-                            {platformIcon("h-3 w-3", epPlatform)}
-                            Watch on {epPlatform}
-                          </span>
-                        )}
-                      </span>
-                      <ExternalLink
-                        className="h-4 w-4 shrink-0 opacity-70 transition-all group-hover:translate-x-0.5 group-hover:opacity-100"
-                        style={{ color: c.accentText }}
-                      />
-                    </a>
-                  );
-                })}
+            {/* Seasons */}
+            {seasonsList.length > 1 && (
+              <div className="-mx-1 mt-5 flex items-center gap-2 overflow-x-auto px-1 pb-1 scrollbar-none">
+                {seasonsList.map((sn, idx) => (
+                  <button
+                    key={sn.id || idx}
+                    type="button"
+                    onClick={() => setActiveSeasonIndex(idx)}
+                    style={
+                      activeSeasonIndex === idx
+                        ? { backgroundColor: c.accentSoft, borderColor: c.accentBorder, color: c.accentText }
+                        : { backgroundColor: c.cardBackground, borderColor: c.border, color: c.secondaryText }
+                    }
+                    className={`tap-scale inline-flex h-9 shrink-0 cursor-pointer items-center rounded-full border px-3.5 transition-all ${PUBLIC_TYPE.label}`}
+                  >
+                    {sn.title || `Season ${sn.seasonNumber || idx + 1}`} · {sn.episodes?.length || 0}
+                  </button>
+                ))}
               </div>
             )}
+
+            {/* Episodes */}
+            <div className={`${seasonsList.length > 1 ? "mt-3" : "mt-6"} space-y-2.5`}>
+              <PublicSectionHeader
+                themeKey={themeKey}
+                title="Episodes"
+                icon={<Film className="h-4 w-4" />}
+                meta={`${currentEpisodes.length}`}
+              />
+
+              {currentEpisodes.length === 0 ? (
+                <div
+                  style={{ ...pt.elevatedStyle, color: c.mutedText }}
+                  className={`rounded-[14px] border border-dashed p-5 text-center ${PUBLIC_TYPE.meta}`}
+                >
+                  No episodes added to this series yet.
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {currentEpisodes.map((ep: Episode, index: number) => {
+                    const partNum = ep.episodeNumber || index + 1;
+                    const partNumStr = partNum < 10 ? `0${partNum}` : `${partNum}`;
+                    const epTitleStr = ep.title?.trim() || `Episode ${partNum}`;
+                    const epPlatform = episodePlatform(ep.externalUrl);
+
+                    return (
+                      <a
+                        key={ep.id || index}
+                        href={ep.externalUrl || "#"}
+                        target={ep.externalUrl ? "_blank" : undefined}
+                        rel="noopener noreferrer"
+                        onClick={() => trackEpisodeClick(ep)}
+                        style={pt.itemStyle}
+                        className="group tap-scale flex min-h-[56px] w-full cursor-pointer items-center gap-3 rounded-[14px] border px-3.5 py-2.5 transition-all hover:opacity-90"
+                      >
+                        <span
+                          style={{ backgroundColor: c.accentSoft, color: c.accentText }}
+                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] text-xs font-bold tabular-nums"
+                        >
+                          {partNumStr}
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span style={{ color: c.primaryText }} className={`block line-clamp-2 break-words ${PUBLIC_TYPE.cardTitle}`}>
+                            {epTitleStr}
+                          </span>
+                          {epPlatform && (
+                            <span style={{ color: c.mutedText }} className={`mt-0.5 flex items-center gap-1 ${PUBLIC_TYPE.meta}`}>
+                              {platformIcon("h-3 w-3", epPlatform)}
+                              Watch on {epPlatform}
+                            </span>
+                          )}
+                        </span>
+                        <ExternalLink
+                          className="h-4 w-4 shrink-0 opacity-70 transition-all group-hover:translate-x-0.5 group-hover:opacity-100"
+                          style={{ color: c.accentText }}
+                        />
+                      </a>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

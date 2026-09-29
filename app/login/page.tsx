@@ -46,7 +46,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-x-hidden overflow-y-auto bg-[#f8fafc] px-4 py-6 sm:py-10 text-[#181716]">
+    <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-x-hidden overflow-y-auto bg-white px-4 py-6 sm:py-10 text-[#181716]">
       <CreatorGridBackground showWordmark />
 
       {/* UNIFIED CENTER CARD: EXACT 420px WIDTH & MATCHING FIXED HEIGHT FOR BOTH SCREENS */}

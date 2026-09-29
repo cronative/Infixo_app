@@ -7,17 +7,22 @@ import {
   Sparkles,
   ShieldCheck,
   LogOut,
+  Crown,
+  Zap,
+  AlertTriangle,
 } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 import { NAV_GROUPS, isNavActive } from "@/components/dashboard/navConfig";
 import { AuthService } from "@/services/AuthService";
 import { useCreator } from "@/contexts/CreatorContext";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
+import { getPlanDisplayInfo } from "@/lib/trialStatus";
 
 export function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { profile, handleViewProfile, isTrialExpired } = useCreator();
+  const { profile, handleViewProfile, isTrialExpired, subscription } = useCreator();
+  const planInfo = getPlanDisplayInfo(subscription);
 
   const handleStr = profile.username || "username";
   const displayName = profile.displayName || profile.email?.split("@")[0] || "Creator";
@@ -100,10 +105,31 @@ export function DashboardSidebar() {
       <div className="mt-2 flex items-center gap-1 border-t border-[#e2e8f0] pt-2">
         <Link
           href="/dashboard/subscription"
-          className="flex min-w-0 flex-1 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#475569] transition-colors hover:bg-[#f1f5f9] hover:text-[#0f172a]"
+          title={`Subscription Plan: ${planInfo.label}`}
+          className={`flex min-w-0 flex-1 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
+            planInfo.tier === "vip"
+              ? "bg-amber-50 text-amber-900 border border-amber-200/90 hover:bg-amber-100 font-semibold"
+              : planInfo.tier === "pro"
+              ? "bg-blue-50 text-blue-800 border border-blue-200/90 hover:bg-blue-100 font-semibold"
+              : planInfo.tier === "starter"
+              ? "bg-[#043084]/[0.07] text-[#043084] border border-[#043084]/20 hover:bg-[#043084]/[0.12] font-semibold"
+              : planInfo.tier === "expired"
+              ? "bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 font-semibold"
+              : "text-[#475569] border border-transparent hover:bg-[#f1f5f9] hover:text-[#0f172a] font-medium"
+          }`}
         >
-          <Sparkles className="h-3.5 w-3.5 shrink-0 text-[#94a3b8]" />
-          <span className="truncate">{isTrialExpired ? "Choose Plan" : "Free Trial"}</span>
+          {planInfo.tier === "vip" ? (
+            <Crown className="h-3.5 w-3.5 shrink-0 text-amber-500 fill-amber-500/20" />
+          ) : planInfo.tier === "pro" ? (
+            <Zap className="h-3.5 w-3.5 shrink-0 text-blue-600 fill-blue-600/20" />
+          ) : planInfo.tier === "starter" ? (
+            <Sparkles className="h-3.5 w-3.5 shrink-0 text-[#043084]" />
+          ) : planInfo.tier === "expired" ? (
+            <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-rose-600" />
+          ) : (
+            <Sparkles className="h-3.5 w-3.5 shrink-0 text-[#94a3b8]" />
+          )}
+          <span className="truncate">{planInfo.label}</span>
         </Link>
         <button
           type="button"

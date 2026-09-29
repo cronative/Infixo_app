@@ -85,7 +85,7 @@ export function OnboardingLayout({
   }
 
   return (
-    <div className="min-h-dvh bg-[#f8fafc] scroll-pt-28">
+    <div className="min-h-dvh bg-white scroll-pt-28">
       {/* Sticky Header section with Top Navbar + Step Navigation (fixed/sticky so it never scrolls) */}
       <header className="sticky top-0 z-50 w-full border-b border-[#e2e8f0] bg-white shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
         {/* Top Navbar Row - Tight, neat, and minimal padding */}
@@ -141,7 +141,7 @@ export function OnboardingLayout({
 
             {/* Right live preview column - sticky below header and contained in viewport */}
             {preview && (
-              <aside className="hidden flex-1 border-l border-[#e2e8f0] bg-[#fbfbfb] px-3 py-1.5 pb-6 lg:block lg:w-[50%] min-w-[400px]">
+              <aside className="hidden flex-1 border-l border-[#e2e8f0] bg-white px-3 py-1.5 pb-6 lg:block lg:w-[50%] min-w-[400px]">
                 <div className="sticky top-[92px] max-h-[calc(100vh-104px)] overflow-y-auto pr-1 pb-2 scrollbar-thin flex flex-col items-center">
                   <div className="w-full max-w-[450px]">
                     {preview}
@@ -156,7 +156,7 @@ export function OnboardingLayout({
       {/* Dedicated Full-Screen Preview Sheet for Mobile & Tablet */}
       {preview && isMobilePreviewOpen && (
         <div className="fixed inset-0 z-50 flex flex-col bg-black/60 backdrop-blur-xs lg:hidden animate-fade-in">
-          <div className="relative flex flex-col w-full h-full max-h-dvh bg-[#fbfbfb] overflow-hidden shadow-2xl">
+          <div className="relative flex flex-col w-full h-full max-h-dvh bg-white overflow-hidden shadow-2xl">
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3.5 bg-white border-b border-[#E4DAD5] safe-top">
               <div className="flex items-center gap-2">

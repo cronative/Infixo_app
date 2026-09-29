@@ -209,7 +209,7 @@ export default function CreatorEmailSenderPage() {
   const progressPercentage = parsedEmails.length > 0 ? Math.round(((currentIndex + (isDispatching ? 1 : 0)) / parsedEmails.length) * 100) : 0;
 
   return (
-    <div className="min-h-dvh bg-[#f8fafc] text-slate-900 selection:bg-[#043084]/20">
+    <div className="min-h-dvh bg-white text-slate-900 selection:bg-[#043084]/20">
       {/* Light Top Navigation Bar */}
       <header className="sticky top-0 z-50 border-b border-[#e2e8f0] bg-white/90 backdrop-blur-md px-4 py-3 shadow-2xs">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">

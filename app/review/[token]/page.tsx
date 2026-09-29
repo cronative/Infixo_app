@@ -380,7 +380,7 @@ export default function PublicReviewSubmissionPage() {
 
   if (notFound || !reviewData) {
     return (
-      <div className="flex min-h-dvh flex-col items-center justify-center p-4 bg-[#FAF9F6] text-[#181716] text-center">
+      <div className="flex min-h-dvh flex-col items-center justify-center p-4 bg-white text-[#181716] text-center">
         <div className="max-w-sm">
           <EmptyState
             icon={<MessageSquare className="h-6 w-6 text-[#043084]" />}
@@ -399,7 +399,7 @@ export default function PublicReviewSubmissionPage() {
 
 
   return (
-    <div className="min-h-dvh bg-[#FAF9F6] text-[#181716] flex flex-col items-center justify-center p-4 sm:p-6 text-left relative">
+    <div className="min-h-dvh bg-white text-[#181716] flex flex-col items-center justify-center p-4 sm:p-6 text-left relative">
 
       <main className="max-w-lg w-full space-y-5 my-6">
 

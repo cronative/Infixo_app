@@ -219,7 +219,7 @@ export default function AllProductsClient() {
 
   if (notFound) {
     return (
-      <div className="flex min-h-screen items-center justify-center p-4">
+      <div className="flex min-h-screen items-center justify-center p-4 bg-white">
         <main className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-xl">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-500">
             <UserX className="h-7 w-7" />
@@ -240,7 +240,7 @@ export default function AllProductsClient() {
 
   if (isPrivate) {
     return (
-      <div className="flex min-h-screen items-center justify-center p-4">
+      <div className="flex min-h-screen items-center justify-center p-4 bg-white">
         <main className="w-full max-w-md rounded-2xl border border-amber-200 bg-white p-8 text-center shadow-xl">
           <h1 className="text-xl font-bold text-amber-900">Page Private</h1>
           <p className="mt-2 text-sm text-slate-600">This creator shop is currently private.</p>

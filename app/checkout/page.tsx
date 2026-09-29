@@ -92,7 +92,7 @@ function CheckoutContent() {
   const isLiveMode = activeKeyId.startsWith("rzp_live");
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#181716] py-10 px-4 sm:px-6">
+    <div className="min-h-screen bg-white text-[#181716] py-10 px-4 sm:px-6">
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Navigation Bar */}
         <div className="flex items-center justify-between flex-wrap gap-2">
@@ -421,7 +421,7 @@ export default function CheckoutPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center p-6">
+        <div className="min-h-screen bg-white flex items-center justify-center p-6">
           <div className="flex items-center gap-3 text-sm font-semibold text-[#043084]">
             <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#043084] border-t-transparent" />
             <span>Loading secure checkout...</span>

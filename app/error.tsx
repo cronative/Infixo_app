@@ -16,7 +16,7 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center p-6 bg-[#FCF7F3] text-[#241618]">
+    <div className="flex min-h-dvh flex-col items-center justify-center p-6 bg-white text-[#241618]">
       <div className="w-full max-w-md rounded-2xl border border-[#E4DAD5] bg-white p-6 shadow-md text-center space-y-4">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-rose-100 text-rose-600">
           ⚠️

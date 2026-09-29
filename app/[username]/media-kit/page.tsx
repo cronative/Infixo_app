@@ -335,7 +335,7 @@ export default function PublicMediaKitPage() {
   if (notFound || !profile) {
     const handle = decodeURIComponent(params.username ?? "");
     return (
-      <div className="min-h-dvh flex flex-col items-center justify-center bg-[#FAF8FA] px-4 py-12 text-center text-[#17131A]">
+      <div className="min-h-dvh flex flex-col items-center justify-center bg-white px-4 py-12 text-center text-[#17131A]">
         <div className="max-w-md space-y-6">
           <Logo />
           <div className="rounded-3xl border border-[#ECE8EB] bg-white p-8 space-y-4 shadow-2xs">

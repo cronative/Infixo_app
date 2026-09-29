@@ -543,14 +543,14 @@ export default function AdminDashboardPage() {
 
   if (!adminUser) {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-[#f8fafc]">
+      <div className="flex min-h-dvh items-center justify-center bg-white">
         <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#043084] border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-dvh bg-[#f8fafc] text-slate-800 font-sans selection:bg-[#043084]/10 selection:text-[#043084] text-left">
+    <div className="min-h-dvh bg-white text-slate-800 font-sans selection:bg-[#043084]/10 selection:text-[#043084] text-left">
       {/* 1. TOP HEADER NAVBAR — TIGHT & CLEAN */}
       <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur-md px-4 sm:px-6 py-2.5">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">

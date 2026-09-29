@@ -86,3 +86,115 @@ export function getTrialHeaderMessage(subscription?: Subscription | null, nowMs 
 
   return "Here's how your Inflixo profile is looking today.";
 }
+
+export type PlanDisplayTier = "trial" | "starter" | "pro" | "vip" | "expired";
+
+export interface PlanDisplayInfo {
+  label: string;
+  tier: PlanDisplayTier;
+  isFreeTrial: boolean;
+  isExpired: boolean;
+}
+
+export function getPlanDisplayInfo(
+  subscription?: Subscription | null,
+  nowMs = Date.now()
+): PlanDisplayInfo {
+  const trialStatus = getFreeTrialStatus(subscription, nowMs);
+
+  if (!subscription) {
+    return {
+      label: "Free Trial",
+      tier: "trial",
+      isFreeTrial: true,
+      isExpired: false,
+    };
+  }
+
+  const planKey = (subscription.planKey || "").toLowerCase();
+  const planName = (subscription.planName || "").toLowerCase();
+  const status = (subscription.status || "").toLowerCase();
+
+  const isVip = planKey === "vip" || planKey === "creator_vip" || planName.includes("vip");
+  const isPro = planKey === "pro" || planKey === "creator_pro" || planName.includes("pro");
+  const isStarter = planKey === "starter" || planName.includes("starter");
+
+  // Check if paid plan
+  if (isVip || isPro || isStarter) {
+    if (trialStatus.isExpired || status === "expired" || status === "cancelled") {
+      return {
+        label: "Choose Plan",
+        tier: "expired",
+        isFreeTrial: false,
+        isExpired: true,
+      };
+    }
+
+    if (isVip) {
+      return {
+        label: "VIP Plan",
+        tier: "vip",
+        isFreeTrial: false,
+        isExpired: false,
+      };
+    }
+
+    if (isPro) {
+      return {
+        label: "Pro Plan",
+        tier: "pro",
+        isFreeTrial: false,
+        isExpired: false,
+      };
+    }
+
+    if (isStarter) {
+      return {
+        label: "Starter Plan",
+        tier: "starter",
+        isFreeTrial: false,
+        isExpired: false,
+      };
+    }
+  }
+
+  // Any other active paid plan name
+  if (
+    subscription.planName &&
+    !planName.includes("trial") &&
+    planKey !== "early_access" &&
+    planKey !== "free"
+  ) {
+    if (trialStatus.isExpired || status === "expired" || status === "cancelled") {
+      return {
+        label: "Choose Plan",
+        tier: "expired",
+        isFreeTrial: false,
+        isExpired: true,
+      };
+    }
+    return {
+      label: subscription.planName,
+      tier: "starter",
+      isFreeTrial: false,
+      isExpired: false,
+    };
+  }
+
+  // Free trial
+  if (trialStatus.isExpired || status === "expired" || status === "cancelled") {
+    return {
+      label: "Choose Plan",
+      tier: "expired",
+      isFreeTrial: true,
+      isExpired: true,
+    };
+  }
+
+  return {
+    label: "Free Trial",
+    tier: "trial",
+    isFreeTrial: true,
+    isExpired: false,
+  };
+}

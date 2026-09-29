@@ -4,7 +4,7 @@ import { Logo } from "@/components/shared/Logo";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-between bg-[#f8fafc] text-[#043084] selection:bg-[#04308414] selection:text-[#043084]">
+    <div className="flex min-h-dvh flex-col items-center justify-between bg-white text-[#043084] selection:bg-[#04308414] selection:text-[#043084]">
       {/* Header */}
       <header className="w-full border-b border-[#e2e8f0] bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">

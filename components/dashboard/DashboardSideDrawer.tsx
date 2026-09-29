@@ -9,12 +9,16 @@ import {
   ExternalLink,
   LogOut,
   ShieldCheck,
+  Crown,
+  Zap,
+  AlertTriangle,
 } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { useCreator } from "@/contexts/CreatorContext";
 import { AuthService } from "@/services/AuthService";
 import { NAV_GROUPS, isNavActive } from "@/components/dashboard/navConfig";
+import { getPlanDisplayInfo } from "@/lib/trialStatus";
 
 interface DashboardSideDrawerProps {
   isOpen: boolean;
@@ -24,7 +28,8 @@ interface DashboardSideDrawerProps {
 export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { profile, handleViewProfile, isTrialExpired } = useCreator();
+  const { profile, handleViewProfile, isTrialExpired, subscription } = useCreator();
+  const planInfo = getPlanDisplayInfo(subscription);
 
   // Close drawer ONLY when user actually navigates to a new pathname
   const prevPathRef = useRef(pathname);
@@ -96,10 +101,17 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                 <p className="truncate text-xs text-[#64748b]">
                   @{handleStr}
                 </p>
-                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#047857]">
-                  <span className="h-1 w-1 rounded-full bg-[#10b981]" />
-                  Live
-                </span>
+                {isTrialExpired ? (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded-full border border-rose-200">
+                    <span className="h-1 w-1 rounded-full bg-rose-500" />
+                    Private
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#047857]">
+                    <span className="h-1 w-1 rounded-full bg-[#10b981]" />
+                    Live
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -144,10 +156,31 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
             <Link
               href="/dashboard/subscription"
               onClick={onClose}
-              className="flex items-center gap-1.5 hover:text-[#043084]"
+              title={`Subscription Plan: ${planInfo.label}`}
+              className={`flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
+                planInfo.tier === "vip"
+                  ? "bg-amber-50 text-amber-900 border border-amber-200/90 font-semibold"
+                  : planInfo.tier === "pro"
+                  ? "bg-blue-50 text-blue-800 border border-blue-200/90 font-semibold"
+                  : planInfo.tier === "starter"
+                  ? "bg-[#043084]/[0.07] text-[#043084] border border-[#043084]/20 font-semibold"
+                  : planInfo.tier === "expired"
+                  ? "bg-rose-50 text-rose-700 border border-rose-200 font-semibold"
+                  : "text-[#475569] border border-transparent font-medium hover:bg-[#f1f5f9] hover:text-[#0f172a]"
+              }`}
             >
-              <Sparkles className="h-4 w-4 text-[#94a3b8] shrink-0" />
-              <span className="text-sm font-semibold">{isTrialExpired ? "Choose Plan" : "Free Trial"}</span>
+              {planInfo.tier === "vip" ? (
+                <Crown className="h-4 w-4 shrink-0 text-amber-500 fill-amber-500/20" />
+              ) : planInfo.tier === "pro" ? (
+                <Zap className="h-4 w-4 shrink-0 text-blue-600 fill-blue-600/20" />
+              ) : planInfo.tier === "starter" ? (
+                <Sparkles className="h-4 w-4 shrink-0 text-[#043084]" />
+              ) : planInfo.tier === "expired" ? (
+                <AlertTriangle className="h-4 w-4 shrink-0 text-rose-600" />
+              ) : (
+                <Sparkles className="h-4 w-4 shrink-0 text-[#94a3b8]" />
+              )}
+              <span className="font-semibold">{planInfo.label}</span>
             </Link>
             <button
               type="button"

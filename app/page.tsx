@@ -299,14 +299,14 @@ export default function LandingHomePage() {
 
   if (checkingAuth && isLoggedIn) {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-[#f8fafc]">
+      <div className="flex min-h-dvh items-center justify-center bg-white">
         <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#043084] border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-dvh bg-[#f8fafc] text-[#043084] antialiased selection:bg-[#04308414] selection:text-[#043084]">
+    <div className="min-h-dvh bg-white text-[#043084] antialiased selection:bg-[#04308414] selection:text-[#043084]">
       <header className="fixed inset-x-0 top-0 z-50 border-b border-[#e2e8f0] bg-white/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 text-xs font-bold text-[#64748b] sm:px-6">
           <Logo size="sm" variant="transparent" />
@@ -494,7 +494,7 @@ export default function LandingHomePage() {
 
       </section>
 
-      <section ref={previewRef} className="relative overflow-hidden bg-[#f8fafc] py-12 sm:py-16">
+      <section ref={previewRef} className="relative overflow-hidden bg-white py-12 sm:py-16">
         <div className="pointer-events-none absolute inset-x-0 top-20 h-px bg-[linear-gradient(90deg,transparent,rgba(21,25,51,0.25),transparent)] [animation:infixo-scan-x_7s_ease-in-out_infinite]" aria-hidden="true" />
         <div data-scroll-reveal className="mx-auto max-w-4xl px-4 text-center sm:px-6">
           <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#94a3b8]">Live Demo</p>
@@ -577,7 +577,7 @@ export default function LandingHomePage() {
         </div>
       </section>
 
-      <section id="problem" className="bg-[#f8fafc] py-14 sm:py-20">
+      <section id="problem" className="bg-white py-14 sm:py-20">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <div data-scroll-reveal className="mx-auto max-w-2xl text-center">
             <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#94a3b8]">The Problem</p>
@@ -647,7 +647,7 @@ export default function LandingHomePage() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-[#f8fafc] py-14 text-[#043084] sm:py-20">
+      <section className="relative overflow-hidden bg-white py-14 text-[#043084] sm:py-20">
         <div className="pointer-events-none absolute inset-0 opacity-60" aria-hidden="true">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(21,25,51,0.045)_1px,transparent_1px),linear-gradient(to_bottom,rgba(21,25,51,0.045)_1px,transparent_1px)] bg-[size:42px_42px]" />
           <div className="absolute inset-x-0 top-10 h-px bg-[linear-gradient(90deg,transparent,rgba(21,25,51,0.25),transparent)] [animation:infixo-scan-x_7s_ease-in-out_infinite]" />
@@ -797,7 +797,7 @@ export default function LandingHomePage() {
         </div>
       </section>
 
-      <section id="faq" className="bg-[#f8fafc] py-14 sm:py-20">
+      <section id="faq" className="bg-white py-14 sm:py-20">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <div data-scroll-reveal className="text-center">
             <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#94a3b8]">FAQ</p>
