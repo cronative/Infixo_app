@@ -740,7 +740,7 @@ export default function PublicProfileClient() {
           sections={sections}
           totalAudience={totalAudience}
           variant="full"
-          containedScroll={true}
+          containedScroll={false}
           seriesOpenMode="page"
           seriesPreviewLimit={3}
           allSeriesHref={`/${handleStr.replace(/^@/, "")}/series`}

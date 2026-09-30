@@ -7,6 +7,7 @@ import { Series, Episode, Season, ThemeKey } from "@/types";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 import { MadeWithInflixo } from "@/components/shared/MadeWithInflixo";
 import { InflixoLogoIcon } from "@/components/shared/Logo";
+import { PlatformThumbnailBox } from "@/components/shared/PlatformThumbnailBox";
 
 interface EpisodeQuickDrawerProps {
   isOpen: boolean;
@@ -143,23 +144,18 @@ export function EpisodeQuickDrawer({
         onClick={(e) => e.stopPropagation()}
         className="relative w-full max-w-[520px] max-h-[calc(100dvh-28px)] sm:max-h-[calc(100dvh-44px)] bg-white rounded-[22px] border border-slate-200/90 shadow-2xl shadow-black/25 flex flex-col overflow-hidden text-left animate-in zoom-in-95 duration-200"
       >
-        {/* 1. Full-Width Hero Cover Header (Styled like Center Profile Card Hero) */}
-        <div className={`relative w-full overflow-hidden shrink-0 ${hasValidCover
-            ? "aspect-[21/10] sm:aspect-[21/9] min-h-[165px] sm:min-h-[190px] bg-slate-900"
-            : "min-h-[140px] bg-gradient-to-r from-[#043084] via-[#2A335E] to-[#043084]"
-          }`}>
-          {hasValidCover && (
-            <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={series.posterDataUrl || ""}
-                alt={series.title}
-                onError={() => setCoverError(true)}
-                className="w-full h-full object-cover object-center"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/92 via-black/45 to-black/25 pointer-events-none" />
-            </>
-          )}
+        {/* 1. Full-Width Hero Cover Header with Platform Thumbnail Fallback */}
+        <div className="relative w-full overflow-hidden shrink-0 aspect-[21/10] sm:aspect-[21/9] min-h-[165px] sm:min-h-[190px]">
+          <PlatformThumbnailBox
+            posterUrl={series.posterDataUrl}
+            videoUrl={allEpisodes[0]?.externalUrl}
+            platform={detectedPlatform || series.platform}
+            title={series.title}
+            badgeText={detectedPlatform}
+            className="w-full h-full"
+            size="lg"
+            showTitleOverlay={false}
+          />
 
           {/* Top Action Bar over Cover Image */}
           <div className="absolute top-3 inset-x-3 sm:top-3.5 sm:inset-x-3.5 z-20 flex items-center justify-between pointer-events-auto">
@@ -281,8 +277,8 @@ export function EpisodeQuickDrawer({
                     >
                       {/* Left: Number + Platform Icon + Title */}
                       <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <span className="font-mono text-xs font-bold text-slate-400 w-5 shrink-0 text-center">
-                          {partNumStr}
+                        <span className="font-mono text-xs font-bold text-slate-400 w-6 shrink-0 text-left">
+                          {partNumStr}.
                         </span>
 
                         <span className={`flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-xl text-white shadow-xs ${getPlatformBadgeBg(ep.platform || series.platform)}`}>

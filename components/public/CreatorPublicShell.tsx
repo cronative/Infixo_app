@@ -4,6 +4,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
 import { FocusOverlay } from "@/components/theme/FocusOverlay";
 import { getPublicTheme, PUBLIC_MAIN_CLASS, PUBLIC_RADIUS } from "@/components/public/publicTheme";
+import { PublicMadeWithInflixoFooter } from "@/components/public/PublicMadeWithInflixo";
 
 interface CreatorPublicShellProps {
   themeKey: string;
@@ -14,6 +15,8 @@ interface CreatorPublicShellProps {
   wrapperProps?: Record<string, unknown>;
   /** Rendered outside <main> (modals, <style> tags). */
   outside?: ReactNode;
+  /** Optional flag to suppress footer branding if needed */
+  hideFooter?: boolean;
 }
 
 /**
@@ -26,6 +29,7 @@ export function CreatorPublicShell({
   mainClassName = "",
   wrapperProps,
   outside,
+  hideFooter = false,
 }: CreatorPublicShellProps) {
   const t = getPublicTheme(themeKey);
   const { meta } = t;
@@ -60,7 +64,11 @@ export function CreatorPublicShell({
       {!t.hasPhotoBackdrop && <FocusOverlay overlay={meta.focusOverlay} />}
 
       {/* 4. Centered card column */}
-      <main className={`${PUBLIC_MAIN_CLASS} ${mainClassName}`}>{children}</main>
+      <main className={`${PUBLIC_MAIN_CLASS} ${mainClassName}`}>
+        {children}
+        {/* Subtle, center-aligned text footer at the bottom of the page */}
+        {!hideFooter && <PublicMadeWithInflixoFooter themeKey={themeKey} />}
+      </main>
 
       {outside}
     </div>
@@ -80,7 +88,7 @@ export function PublicCard({ themeKey, children, className = "", style }: Public
   return (
     <div
       style={{ ...t.surfaceStyle, ...style }}
-      className={`relative flex min-h-0 flex-1 flex-col overflow-hidden border backdrop-blur-xl transition-all ${PUBLIC_RADIUS.card} ${className}`}
+      className={`relative flex-1 flex flex-col border backdrop-blur-xl transition-all ${PUBLIC_RADIUS.card} ${className}`}
     >
       {children}
     </div>

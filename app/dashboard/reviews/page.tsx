@@ -54,6 +54,16 @@ export default function DashboardReviewsPage() {
   const [projectTitle, setProjectTitle] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Auto-open modal if navigated from "Request a Review" CTA
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("request") === "1" || params.get("action") === "request") {
+        setIsModalOpen(true);
+      }
+    }
+  }, []);
+
   // Fetch reviews on mount
   useEffect(() => {
     async function loadReviews() {
@@ -105,6 +115,11 @@ export default function DashboardReviewsPage() {
 
     if (!clientName.trim()) {
       showToast("Please enter client or brand name", "error");
+      return;
+    }
+
+    if (!clientEmail.trim()) {
+      showToast("Please enter client email address", "error");
       return;
     }
 
@@ -632,16 +647,20 @@ export default function DashboardReviewsPage() {
 
             <div className="space-y-1">
               <label htmlFor="client-email" className="block text-[13px] font-medium text-[#0f172a]">
-                Client email <span className="text-[#64748b] font-normal">(Optional if sharing link directly)</span>
+                Client email <span className="text-[#C2414B]">*</span>
               </label>
               <input
                 id="client-email"
                 type="email"
+                required
                 value={clientEmail}
                 onChange={(e) => setClientEmail(e.target.value)}
                 placeholder="collabs@brand.com"
                 className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:outline-none transition-colors"
               />
+              <p className="text-[11px] text-[#64748b]">
+                Review submission link will be emailed directly to this client.
+              </p>
             </div>
 
             <div className="space-y-1">
@@ -670,26 +689,13 @@ export default function DashboardReviewsPage() {
 
             <div className="flex items-center gap-2 ml-auto">
               <button
-                type="button"
-                disabled={isSubmitting || !clientName.trim()}
-                onClick={() => handleCreateRequest(undefined, true)}
-                className="h-10 px-4 rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs font-semibold text-[#043084] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5 disabled:opacity-50"
-                title="Create and copy shareable review link"
+                type="submit"
+                disabled={isSubmitting || !clientName.trim() || !clientEmail.trim()}
+                className="h-10 px-4 rounded-xl bg-[#043084] hover:bg-brand-hover text-white font-semibold text-xs transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5 disabled:opacity-50"
               >
-                <Copy className="h-3.5 w-3.5 text-[#64748b]" />
-                <span>Copy Review Link</span>
+                <Send className="h-3.5 w-3.5" />
+                <span>{isSubmitting ? "Sending..." : "Send Invitation"}</span>
               </button>
-
-              {clientEmail.trim() ? (
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="h-10 px-4 rounded-xl bg-[#043084] hover:bg-brand-hover text-white font-semibold text-xs transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5 disabled:opacity-50"
-                >
-                  <Send className="h-3.5 w-3.5" />
-                  <span>{isSubmitting ? "Sending..." : "Send Invitation"}</span>
-                </button>
-              ) : null}
             </div>
           </ModalFooter>
         </form>

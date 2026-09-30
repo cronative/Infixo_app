@@ -73,7 +73,7 @@ export default function DemoCreatorPage() {
           reviews={EXPERT_DEMO_REVIEWS}
           totalAudience={totalAudience}
           variant="full"
-          containedScroll={true}
+          containedScroll={false}
           seriesOpenMode="page"
           seriesPreviewLimit={3}
           allSeriesHref="/demo_creator/series"

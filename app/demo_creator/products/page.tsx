@@ -66,7 +66,7 @@ export default function DemoCreatorProductsPage() {
         reviews={[]}
         totalAudience={totalAudience}
         variant="full"
-        containedScroll={true}
+        containedScroll={false}
         productsOnlyMode={true}
         pageHeader={{ pageLabel: "Shop", backHref: "/demo_creator", backLabel: "Back to profile" }}
         onShare={handleShare}

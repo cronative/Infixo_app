@@ -74,9 +74,9 @@ export const PUBLIC_RADIUS = {
   chip: "rounded-full",
 } as const;
 
-/** Centered card: sleek mobile-first width on web (up to 580px). */
+/** Centered card: sleek mobile-first width on web (up to 580px), fills down to bottom of screen when content is short. */
 export const PUBLIC_MAIN_CLASS =
-  "relative z-10 h-dvh min-h-0 flex flex-col mx-auto w-full max-w-[580px] px-2 py-2 sm:px-3 sm:py-3 overflow-hidden animate-fade-in-up";
+  "relative z-10 flex-1 flex flex-col mx-auto w-full max-w-[580px] px-2.5 py-2.5 sm:px-3 sm:py-3.5 animate-fade-in-up";
 
 /** Inner padding of the centered card, shared by all pages. */
 export const PUBLIC_CARD_PADDING = "px-3.5 sm:px-5";

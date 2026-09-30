@@ -95,6 +95,7 @@ import { MadeWithInflixo } from "@/components/shared/MadeWithInflixo";
 import { isDarkTheme, PUBLIC_ICON_BUTTON, PUBLIC_TEXT_BUTTON, PUBLIC_TYPE } from "@/components/public/publicTheme";
 import { PublicPageHeader } from "@/components/public/PublicPageHeader";
 import { SeriesPoster } from "@/components/shared/SeriesPoster";
+import { PlatformThumbnailBox } from "@/components/shared/PlatformThumbnailBox";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { FocusOverlay } from "@/components/theme/FocusOverlay";
 import { BrandLeadQualifierModal } from "@/components/mediakit/BrandLeadQualifierModal";
@@ -1488,8 +1489,8 @@ export function LivePreviewCard({
         ["--desktop-surface-shadow" as any]: surfaceShadow,
         boxShadow: isPublicSurface ? "none" : undefined,
       }}
-      className={`relative flex-1 flex flex-col min-h-0 overflow-hidden ${isPublicSurface
-        ? "px-3.5 pt-3.5 pb-3.5 sm:px-5 sm:pt-4 sm:pb-4 rounded-[20px] border backdrop-blur-xl"
+      className={`relative ${containedScroll ? "flex-1 flex flex-col min-h-0 overflow-hidden" : "flex-1 flex flex-col"} ${isPublicSurface
+        ? "px-3.5 pt-3.5 pb-3.5 sm:px-5 sm:pt-4 sm:pb-4 rounded-[22px] border backdrop-blur-xl"
         : `${cardPadding ? cardPadding : "p-3 sm:p-4.5 pt-3.5 sm:pt-5"} rounded-[18px] border shadow-md`
         } transition-all`}
     >
@@ -1680,11 +1681,11 @@ export function LivePreviewCard({
             </p>
           )}
 
-          {/* Categories: Dot-separated text without pill */}
+          {/* Categories: Subtle, lighter grey & smaller font to let profile name pop */}
           {effectiveVisibilitySettings.showContentCategory !== false && formattedCategories && (
             <p
-              style={{ color: c.secondaryText }}
-              className="mt-0.5 text-xs font-medium text-center tracking-normal opacity-85 break-words line-clamp-2 px-2"
+              style={{ color: c.mutedText }}
+              className="mt-0.5 text-[11px] sm:text-xs font-normal text-center tracking-normal opacity-70 break-words line-clamp-2 px-2"
             >
               {formattedCategories}
             </p>
@@ -1984,24 +1985,24 @@ export function LivePreviewCard({
         {/* 4. Series Section */}
         {effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || isOnboardingMode || seriesOnlyMode) && (
           <div id="series-section" className="relative z-10 order-[10] mt-6 sm:mt-7 w-full text-left space-y-2.5">
-            {/* Section Header */}
+            {/* Section Header: Clean straight flex-row with baseline alignment */}
             <div>
-              <div className="flex items-center justify-between px-0.5">
+              <div className="flex items-baseline justify-between px-0.5">
                 <h2
                   style={{
                     color: c.primaryText,
                     fontFamily: typ.headingFontFamily,
                     fontWeight: 700,
                   }}
-                  className={`flex items-center gap-1.5 ${PUBLIC_TYPE.sectionTitle}`}
+                  className={`flex items-baseline gap-1.5 ${PUBLIC_TYPE.sectionTitle}`}
                 >
-                  <Film className="h-3.5 w-3.5 opacity-70" style={{ color: c.primaryText }} />
+                  <Film className="h-3.5 w-3.5 opacity-70 self-center" style={{ color: c.primaryText }} />
                   <span>Series &amp; Playlists</span>
                 </h2>
                 {series.length > 0 && (
                   <span
                     style={{ color: c.mutedText }}
-                    className="shrink-0 text-[11px] sm:text-xs font-medium"
+                    className="shrink-0 text-[11px] sm:text-xs font-medium tabular-nums"
                   >
                     {series.length} {series.length === 1 ? "Series" : "Series"}
                   </span>
@@ -2038,11 +2039,11 @@ export function LivePreviewCard({
                 </p>
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {displayedSeries.map((s) => {
                   const allEps = getSeriesEpisodes(s);
                   const epCount = allEps.length;
-                  const epCountStr = `${epCount} ${epCount === 1 ? "episode" : "episodes"}`;
+                  const epCountStr = `${epCount} ${epCount === 1 ? "Episode" : "Episodes"}`;
 
                   const firstEpUrl = allEps[0]?.externalUrl || "";
                   const detectedPlatform = (() => {
@@ -2056,19 +2057,24 @@ export function LivePreviewCard({
                     return null;
                   })();
 
-                  const subtitleParts: string[] = [epCountStr];
-                  if (detectedPlatform) subtitleParts.push(detectedPlatform);
-                  const subtitleStr = subtitleParts.join(" · ");
                   const seriesGenres = s.genre
                     ? s.genre.split(/[,•|/]/).map((g: string) => g.trim().replace(/^Genre:\s*/i, "")).filter(Boolean)
                     : [];
                   const genreText = seriesGenres.length > 0
-                    ? seriesGenres.join(" · ")
+                    ? seriesGenres.join(", ")
                     : s.genre
-                    ? s.genre.replace(/^Genre:\s*/i, "").replace(/[,•|/]/g, " · ")
+                    ? s.genre.replace(/^Genre:\s*/i, "").trim()
                     : null;
+
+                  // Clean, subtle text string: e.g. 3 Episodes • English • Action, Comedy
+                  const metaParts = [
+                    epCountStr,
+                    s.language?.trim(),
+                    genreText,
+                  ].filter(Boolean);
+                  const metaString = metaParts.join(" • ");
+
                   const seriesUrl = `/${cleanHandle || "creator"}/series/${s.id}`;
-                  const hasPoster = Boolean(s.posterDataUrl && s.posterDataUrl.trim() !== "");
 
                   return (
                     <div
@@ -2091,60 +2097,26 @@ export function LivePreviewCard({
                         }
                       }}
                       style={{
-                        backgroundColor: c.cardBackground,
-                        borderColor: c.border,
-                        boxShadow: eff.cardShadow,
+                        backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.05)" : "#FFFFFF",
+                        borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : "#f0f0f0",
+                        boxShadow: "0 2px 10px -2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03)",
                       }}
-                      className="group rounded-[12px] border overflow-hidden transition-all hover:shadow-xs cursor-pointer"
+                      className="group rounded-[14px] border overflow-hidden transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 cursor-pointer text-left"
                     >
-                      {/* Cover Image: ONLY rendered if genuine posterDataUrl exists */}
-                      {hasPoster && (
-                        <div className="relative w-full h-[92px] sm:h-[104px] overflow-hidden bg-slate-900/5">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={s.posterDataUrl!}
-                            alt={s.title}
-                            className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-300"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-                          <div className="absolute inset-x-0 bottom-2 px-3 sm:px-3.5">
-                            <div className="flex items-end justify-between gap-2">
-                              <div className="min-w-0 flex-1">
-                                <h3 className="line-clamp-1 text-sm sm:text-base font-bold leading-tight text-white drop-shadow-sm">
-                                  {s.title}
-                                </h3>
-                              </div>
-                              <span className="shrink-0 rounded-full border border-white/20 bg-black/40 px-2 py-0.5 text-[10px] sm:text-[11px] font-bold text-white/90 backdrop-blur-xs">
-                                {detectedPlatform || "Series"}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
+                      {/* Media Cover: Real Poster or Sleek Platform Placeholder Box */}
+                      <PlatformThumbnailBox
+                        posterUrl={s.posterDataUrl}
+                        videoUrl={firstEpUrl}
+                        platform={s.platform || detectedPlatform}
+                        title={s.title}
+                        badgeText={detectedPlatform || "Series"}
+                        className="h-[96px] sm:h-[110px]"
+                        size="md"
+                        showTitleOverlay={true}
+                      />
 
                       {/* Content */}
-                      <div className="p-2.5 sm:p-3 space-y-1">
-                        {!hasPoster && (
-                          <div className="flex items-start justify-between gap-2">
-                            <h3
-                              style={{ color: c.primaryText }}
-                              className={`break-words ${PUBLIC_TYPE.cardTitle}`}
-                            >
-                              {s.title}
-                            </h3>
-                            <span
-                              style={{
-                                backgroundColor: c.elevatedBackground || "rgba(0,0,0,0.04)",
-                                borderColor: c.border,
-                                color: c.secondaryText,
-                              }}
-                              className="shrink-0 rounded-full border px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold"
-                            >
-                              {detectedPlatform || "Series"}
-                            </span>
-                          </div>
-                        )}
-
+                      <div className="p-2.5 sm:p-3 space-y-1 text-left">
                         {s.description && (
                           <p
                             style={{ color: c.secondaryText }}
@@ -2154,94 +2126,13 @@ export function LivePreviewCard({
                           </p>
                         )}
 
-                        <div className="pt-2 space-y-2">
-                          {/* Exactly 4 Pill Badges: Episodes, Platform, Language, Genre (with dot separator) */}
-                          <div className="flex flex-wrap items-center gap-1.5">
-                            {/* 1. Episodes pill */}
-                            <span
-                              style={{
-                                backgroundColor: c.elevatedBackground || "rgba(0, 0, 0, 0.04)",
-                                borderColor: c.border,
-                                color: c.primaryText,
-                              }}
-                              className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold shrink-0"
-                            >
-                              <Film className="h-2.5 w-2.5 opacity-70 shrink-0" />
-                              <span>{epCountStr}</span>
-                            </span>
-
-                            {/* 2. Platform pill with brand icon */}
-                            {detectedPlatform && (
-                              <span
-                                style={{
-                                  backgroundColor: c.elevatedBackground || "rgba(0, 0, 0, 0.04)",
-                                  borderColor: c.border,
-                                  color: c.primaryText,
-                                }}
-                                className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold shrink-0"
-                              >
-                                {detectedPlatform === "YouTube" ? (
-                                  <YoutubeIcon className="h-2.5 w-2.5 text-red-500 shrink-0" />
-                                ) : detectedPlatform === "Instagram" ? (
-                                  <InstagramIcon className="h-2.5 w-2.5 text-pink-500 shrink-0" />
-                                ) : detectedPlatform === "Facebook" ? (
-                                  <FacebookIcon className="h-2.5 w-2.5 text-blue-500 shrink-0" />
-                                ) : detectedPlatform === "Multi-Platform" ? (
-                                  <Sparkles className="h-2.5 w-2.5 text-amber-500 shrink-0" />
-                                ) : (
-                                  <Globe className="h-2.5 w-2.5 opacity-70 shrink-0" />
-                                )}
-                                <span>{detectedPlatform}</span>
-                              </span>
-                            )}
-
-                            {/* 3. Language pill */}
-                            {s.language && (
-                              <span
-                                style={{
-                                  backgroundColor: c.elevatedBackground || "rgba(0, 0, 0, 0.04)",
-                                  borderColor: c.border,
-                                  color: c.secondaryText,
-                                }}
-                                className="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] sm:text-[11px] font-medium shrink-0"
-                              >
-                                {s.language}
-                              </span>
-                            )}
-
-                            {/* 4. Single Genre pill with dot separator */}
-                            {genreText && (
-                              <span
-                                style={{
-                                  backgroundColor: c.elevatedBackground || "rgba(0, 0, 0, 0.04)",
-                                  borderColor: c.border,
-                                  color: c.secondaryText,
-                                }}
-                                className="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] sm:text-[11px] font-medium truncate max-w-[220px]"
-                                title={genreText}
-                              >
-                                {genreText}
-                              </span>
-                            )}
-                          </div>
-
-                          {/* Watch Now CTA: Divider on top and centered text button (matching product view style) */}
-                          <div className="w-full pt-1.5">
-                            <div
-                              style={{ backgroundColor: c.divider }}
-                              className="-mx-2.5 sm:-mx-3 h-px opacity-70 mb-1.5"
-                              aria-hidden="true"
-                            />
-                            <div
-                              className="flex min-h-[24px] items-center justify-center gap-1.5 py-0.5 text-center text-xs sm:text-[12.5px] font-semibold group-hover:underline"
-                              style={{ color: c.primaryText }}
-                            >
-                              <Play className="h-2.5 w-2.5 fill-current shrink-0" />
-                              <span>Watch Now</span>
-                              <ArrowRight className="h-3 w-3 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5" />
-                            </div>
-                          </div>
-                        </div>
+                        {/* Single line of subtle grey text for metadata (e.g. 3 Episodes • English • Action, Comedy) */}
+                        <p
+                          style={{ color: c.mutedText }}
+                          className="text-xs sm:text-[13px] font-normal truncate tracking-normal pt-0.5"
+                        >
+                          {metaString}
+                        </p>
                       </div>
                     </div>
                   );
@@ -2908,7 +2799,7 @@ export function LivePreviewCard({
           </div>
         )}
 
-        {!containedScroll && (
+        {!containedScroll && !isPublicSurface && (
           <div className="relative z-10 order-[60] mt-6 mb-3 flex items-center justify-center select-none">
             <MadeWithInflixo
               color={c.secondaryText}
@@ -2941,7 +2832,7 @@ export function LivePreviewCard({
         </div>
       )}
 
-      {containedScroll && showMoveToTop && (
+      {showMoveToTop && (
         <button
           type="button"
           onClick={handleMoveToTop}
@@ -2950,7 +2841,7 @@ export function LivePreviewCard({
             color: "#FFFFFF",
             boxShadow: eff.shadow,
           }}
-          className="tap-scale absolute bottom-14 right-3.5 sm:bottom-16 sm:right-5 z-40 inline-flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-full shadow-lg transition-all hover:scale-110 cursor-pointer"
+          className="tap-scale fixed bottom-6 right-5 sm:bottom-20 sm:right-6 z-40 inline-flex h-11 w-11 sm:h-11 sm:w-11 items-center justify-center rounded-full shadow-lg transition-all hover:scale-110 cursor-pointer"
           aria-label="Scroll to top"
           title="Scroll to top"
         >
@@ -2961,7 +2852,7 @@ export function LivePreviewCard({
   );
 
   return (
-    <div className={`relative w-full mx-auto flex-1 flex flex-col min-h-full transition-all ${isFull ? "max-w-[580px]" : "max-w-[560px]"}`}>
+    <div className={`relative w-full mx-auto flex-1 flex flex-col transition-all ${isFull ? "max-w-[580px]" : "max-w-[560px]"}`}>
       {cardContent}
 
       {/* Collaboration Inquiry Modal */}

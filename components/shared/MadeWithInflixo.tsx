@@ -42,3 +42,5 @@ export function MadeWithInflixo({
     </a>
   );
 }
+
+export { PublicMadeWithInflixo } from "@/components/public/PublicMadeWithInflixo";

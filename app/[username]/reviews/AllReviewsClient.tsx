@@ -226,7 +226,7 @@ export default function AllReviewsClient() {
           reviews={reviews}
           totalAudience={totalAudience}
           variant="full"
-          containedScroll
+          containedScroll={false}
           seriesOpenMode="page"
           reviewsOnlyMode
           pageHeader={{ pageLabel: "Reviews", backHref: `/${cleanHandle}`, backLabel: "Back to profile" }}

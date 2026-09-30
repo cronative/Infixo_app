@@ -559,7 +559,7 @@ export default function PublicMediaKitPage() {
 
         <div
           data-media-kit-content
-          className={`min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain ${PUBLIC_CARD_PADDING} pt-2 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden print:overflow-visible`}
+          className={`flex-1 space-y-6 ${PUBLIC_CARD_PADDING} pt-2 pb-4 print:overflow-visible`}
         >
           {/* Creator identity: the "cover" of the media kit (also used in the PDF) */}
           <section className="text-center">
@@ -831,14 +831,6 @@ export default function PublicMediaKitPage() {
           <div className="h-2" aria-hidden="true" />
         </div>
 
-        {/* Pinned Made with Inflixo footer (same as profile) */}
-        <div data-media-kit-footer style={{ borderColor: c.divider }} className="flex shrink-0 select-none items-center justify-center border-t px-4 pt-3.5 pb-[15px]">
-          <MadeWithInflixo
-            color={isDark ? "#FFFFFF" : c.secondaryText}
-            backgroundColor={c.accentSoft}
-            borderColor={c.accentBorder}
-          />
-        </div>
       </PublicCard>
     </CreatorPublicShell>
   );

@@ -303,7 +303,7 @@ export default function AllSeriesClient() {
           reviews={[]}
           totalAudience={totalAudience}
           variant="full"
-          containedScroll
+          containedScroll={false}
           seriesOpenMode="page"
           seriesOnlyMode
           pageHeader={{ pageLabel: "Series", backHref: `/${cleanHandle}`, backLabel: "Back to profile" }}

@@ -150,6 +150,10 @@ export async function POST(req: Request) {
       return apiError("Client or brand name is required", 400);
     }
 
+    if (!clientEmail || !clientEmail.trim()) {
+      return apiError("Client email is required", 400);
+    }
+
     let resolvedCreatorId = auth.creator.id;
     let creatorDisplayName = "Creator";
 

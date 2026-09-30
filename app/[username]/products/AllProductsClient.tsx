@@ -285,7 +285,7 @@ export default function AllProductsClient() {
         reviews={[]}
         totalAudience={totalAudience}
         variant="full"
-        containedScroll
+        containedScroll={false}
         productsOnlyMode
         pageHeader={{ pageLabel: "Shop", backHref: `/${cleanHandle}`, backLabel: "Back to profile" }}
         onShare={handleShareProductsList}

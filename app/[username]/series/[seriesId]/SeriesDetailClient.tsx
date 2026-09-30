@@ -10,6 +10,7 @@ import {
   Sparkles,
   ExternalLink,
   Globe,
+  Play,
 } from "lucide-react";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 import { Series, Episode, ThemeKey, Season } from "@/types";
@@ -29,6 +30,7 @@ import {
   PUBLIC_TYPE,
 } from "@/components/public/publicTheme";
 import { MadeWithInflixo } from "@/components/shared/MadeWithInflixo";
+import { PlatformThumbnailBox } from "@/components/shared/PlatformThumbnailBox";
 
 function getPlatformInfo(platformStr?: string, urlStr?: string) {
   const p = (platformStr || "").toLowerCase();
@@ -105,6 +107,14 @@ export function SeriesDetailClient({
   const [coverImageError, setCoverImageError] = useState(false);
   const [activeSeasonIndex, setActiveSeasonIndex] = useState<number>(0);
   const [isScrolledPastHeader, setIsScrolledPastHeader] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolledPastHeader((window.scrollY || document.documentElement.scrollTop) > 80);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const prefetchedBackRef = useRef(false);
 
@@ -395,15 +405,12 @@ export function SeriesDetailClient({
         />
       }
     >
-      <PublicCard themeKey={themeKey}>
-        {/* Scrollable container starting from top 0 */}
-        <div
-          onScroll={(e) => setIsScrolledPastHeader(e.currentTarget.scrollTop > 80)}
-          className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain scrollbar-none relative"
-        >
+      <PublicCard themeKey={themeKey} className="overflow-hidden">
+        {/* Card content container */}
+        <div className="flex-1 flex flex-col relative rounded-t-[22px] overflow-hidden">
           {/* Sticky Header over image */}
           <div
-            className={`sticky top-0 z-20 transition-all duration-200 ${
+            className={`sticky top-0 z-20 transition-all duration-200 rounded-t-[22px] ${
               hasValidCover ? "-mb-[60px] sm:-mb-[66px]" : ""
             } ${
               isScrolledPastHeader
@@ -456,34 +463,32 @@ export function SeriesDetailClient({
             />
           </div>
 
-          {/* Series Hero: Starts at top 0, 100% full width of card */}
-          {hasValidCover && (
-            <div className="relative w-full aspect-[16/9] sm:aspect-[2/1] max-h-[340px] shrink-0 overflow-hidden bg-black/10">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={series.posterDataUrl!}
-                alt={series.title}
-                onError={() => setCoverImageError(true)}
-                className="block h-full w-full object-cover object-center"
-              />
-              <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/45 via-black/15 to-transparent pointer-events-none" />
-            </div>
-          )}
+          {/* Series Hero: Starts at top 0, 100% full width of card with top-left & top-right rounded corners */}
+          <PlatformThumbnailBox
+            posterUrl={series.posterDataUrl}
+            videoUrl={allEpisodes[0]?.externalUrl}
+            platform={detectedPlatform || series.platform}
+            title={series.title}
+            badgeText={detectedPlatform}
+            className="w-full aspect-[16/9] sm:aspect-[2/1] max-h-[340px] shrink-0 rounded-t-[22px] overflow-hidden"
+            size="lg"
+            showTitleOverlay={false}
+          />
 
           {/* Content below hero with proper card padding */}
-          <div className={`flex flex-col ${PUBLIC_CARD_PADDING} pt-4 pb-6`}>
-            <div className={`${hasValidCover ? "mt-1" : "mt-2"} text-center`}>
+          <div className={`flex flex-col ${PUBLIC_CARD_PADDING} pt-2.5 pb-4 sm:pt-3 sm:pb-5`}>
+            <div className="text-center">
               <h1 style={pt.headingStyle} className={`break-words ${PUBLIC_TYPE.pageTitle}`}>
                 {series.title}
               </h1>
 
-              <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5">
+              <div className="mt-1.5 flex flex-wrap items-center justify-center gap-1.5">
                 {detectedPlatform && (
                   <span
                     style={pt.elevatedStyle}
-                    className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 ${PUBLIC_TYPE.label}`}
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 ${PUBLIC_TYPE.label}`}
                   >
-                    {platformIcon("h-3.5 w-3.5")}
+                    {platformIcon("h-3 w-3")}
                     <span>{detectedPlatform}</span>
                   </span>
                 )}
@@ -491,21 +496,21 @@ export function SeriesDetailClient({
                   <span
                     key={g}
                     style={{ borderColor: c.border, color: c.secondaryText }}
-                    className={`inline-flex items-center rounded-full border px-2.5 py-1 ${PUBLIC_TYPE.label}`}
+                    className={`inline-flex items-center rounded-full border px-2.5 py-0.5 ${PUBLIC_TYPE.label}`}
                   >
                     {g}
                   </span>
                 ))}
               </div>
 
-              <p style={{ color: c.mutedText }} className={`mt-2 ${PUBLIC_TYPE.meta}`}>
+              <p style={{ color: c.mutedText }} className={`mt-1.5 ${PUBLIC_TYPE.meta}`}>
                 {metaParts.join(" · ")}
               </p>
 
               {series.description && series.description.trim() && (
                 <p
                   style={{ color: c.secondaryText }}
-                  className={`mx-auto mt-2.5 max-w-md whitespace-pre-line break-words ${PUBLIC_TYPE.body}`}
+                  className={`mx-auto mt-1.5 max-w-md whitespace-pre-line break-words ${PUBLIC_TYPE.body}`}
                 >
                   {series.description}
                 </p>
@@ -514,7 +519,7 @@ export function SeriesDetailClient({
 
             {/* Seasons */}
             {seasonsList.length > 1 && (
-              <div className="-mx-1 mt-5 flex items-center gap-2 overflow-x-auto px-1 pb-1 scrollbar-none">
+              <div className="-mx-1 mt-3 flex items-center gap-1.5 overflow-x-auto px-1 pb-1 scrollbar-none">
                 {seasonsList.map((sn, idx) => (
                   <button
                     key={sn.id || idx}
@@ -525,7 +530,7 @@ export function SeriesDetailClient({
                         ? { backgroundColor: c.accentSoft, borderColor: c.accentBorder, color: c.accentText }
                         : { backgroundColor: c.cardBackground, borderColor: c.border, color: c.secondaryText }
                     }
-                    className={`tap-scale inline-flex h-9 shrink-0 cursor-pointer items-center rounded-full border px-3.5 transition-all ${PUBLIC_TYPE.label}`}
+                    className={`tap-scale inline-flex h-8 shrink-0 cursor-pointer items-center rounded-full border px-3 transition-all ${PUBLIC_TYPE.label}`}
                   >
                     {sn.title || `Season ${sn.seasonNumber || idx + 1}`} · {sn.episodes?.length || 0}
                   </button>
@@ -534,7 +539,7 @@ export function SeriesDetailClient({
             )}
 
             {/* Episodes */}
-            <div className={`${seasonsList.length > 1 ? "mt-3" : "mt-6"} space-y-2.5`}>
+            <div className={`${seasonsList.length > 1 ? "mt-2.5" : "mt-3.5"} space-y-2`}>
               <PublicSectionHeader
                 themeKey={themeKey}
                 title="Episodes"
@@ -545,17 +550,25 @@ export function SeriesDetailClient({
               {currentEpisodes.length === 0 ? (
                 <div
                   style={{ ...pt.elevatedStyle, color: c.mutedText }}
-                  className={`rounded-[14px] border border-dashed p-5 text-center ${PUBLIC_TYPE.meta}`}
+                  className={`rounded-[14px] border border-dashed p-4 text-center ${PUBLIC_TYPE.meta}`}
                 >
                   No episodes added to this series yet.
                 </div>
               ) : (
-                <div className="space-y-2">
+                /* Flat Spotify/Apple Music Playlist Tracklist */
+                <div
+                  style={{
+                    backgroundColor: c.cardBackground,
+                    borderColor: c.border,
+                  }}
+                  className="rounded-[16px] border overflow-hidden divide-y divide-[#eaeaea] dark:divide-white/10 shadow-xs"
+                >
                   {currentEpisodes.map((ep: Episode, index: number) => {
                     const partNum = ep.episodeNumber || index + 1;
                     const partNumStr = partNum < 10 ? `0${partNum}` : `${partNum}`;
                     const epTitleStr = ep.title?.trim() || `Episode ${partNum}`;
                     const epPlatform = episodePlatform(ep.externalUrl);
+                    const isYouTube = !epPlatform || epPlatform === "YouTube" || (ep.externalUrl && /youtube|youtu\.be/i.test(ep.externalUrl));
 
                     return (
                       <a
@@ -564,46 +577,68 @@ export function SeriesDetailClient({
                         target={ep.externalUrl ? "_blank" : undefined}
                         rel="noopener noreferrer"
                         onClick={() => trackEpisodeClick(ep)}
-                        style={pt.itemStyle}
-                        className="group tap-scale flex flex-col w-full cursor-pointer rounded-[14px] border px-3.5 pt-3 pb-2 transition-all hover:opacity-90 shadow-2xs"
+                        className="group tap-scale flex items-center justify-between gap-3 px-3 py-2 sm:px-3.5 sm:py-2.5 transition-colors hover:bg-black/[0.025] dark:hover:bg-white/[0.04]"
                       >
-                        <div className="flex items-start gap-3 w-full">
+                        {/* Left: Minimal Number + Title & Description */}
+                        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
                           <span
-                            style={{ backgroundColor: c.accentSoft, color: c.accentText }}
-                            className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-[10px] text-xs font-bold tabular-nums"
+                            style={{ color: c.mutedText }}
+                            className="font-mono text-xs sm:text-[13px] font-bold tabular-nums w-5 sm:w-6 shrink-0 select-none text-left"
                           >
-                            {partNumStr}
+                            {partNumStr}.
                           </span>
-                          <div className="min-w-0 flex-1">
-                            <span style={{ color: c.primaryText }} className={`block line-clamp-2 break-words ${PUBLIC_TYPE.cardTitle}`}>
+
+                          <div className="min-w-0 flex-1 space-y-0.5">
+                            <span
+                              style={{ color: c.primaryText }}
+                              className={`block truncate text-xs sm:text-[13px] font-semibold group-hover:text-[#043084] dark:group-hover:text-blue-400 transition-colors`}
+                            >
                               {epTitleStr}
                             </span>
                             {ep.description && (
-                              <p style={{ color: c.mutedText }} className={`mt-0.5 line-clamp-2 ${PUBLIC_TYPE.meta}`}>
+                              <p
+                                style={{ color: c.mutedText }}
+                                className="truncate text-[11px] font-normal leading-tight"
+                              >
                                 {ep.description}
                               </p>
                             )}
                           </div>
                         </div>
 
-                        {/* Divider & Center Action Button (matching product / series view style) */}
-                        <div className="w-full mt-2.5 pt-0.5">
+                        {/* Right: Sleek Inline Action Button [▶ Watch] */}
+                        {ep.externalUrl ? (
                           <div
-                            style={{ backgroundColor: c.divider }}
-                            className="-mx-3.5 h-px opacity-70 mb-1.5"
-                            aria-hidden="true"
-                          />
-                          <div
-                            className="flex min-h-[22px] items-center justify-center gap-1.5 py-0.5 text-center text-xs font-semibold group-hover:underline"
-                            style={{ color: c.primaryText }}
+                            style={{
+                              backgroundColor: pt.isDark ? "rgba(255, 255, 255, 0.08)" : "#FFFFFF",
+                              borderColor: pt.isDark ? "rgba(255, 255, 255, 0.15)" : "#E5E7EB",
+                              color: c.primaryText,
+                            }}
+                            className="tap-scale shrink-0 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold shadow-2xs transition-all group-hover:scale-102 group-hover:border-red-500/50 cursor-pointer"
                           >
-                            {epPlatform && platformIcon("h-3.5 w-3.5", epPlatform)}
-                            <span>{epPlatform ? `Watch on ${epPlatform}` : "Watch Episode"}</span>
-                            <ExternalLink
-                              className="h-3 w-3 shrink-0 opacity-70 transition-transform duration-200 group-hover:translate-x-0.5"
-                            />
+                            {isYouTube ? (
+                              <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-600 text-white shrink-0">
+                                <Play className="h-2 w-2 fill-white ml-0.5" />
+                              </span>
+                            ) : epPlatform === "Instagram" ? (
+                              <InstagramIcon className="h-3.5 w-3.5 text-pink-500 shrink-0" />
+                            ) : epPlatform === "Facebook" ? (
+                              <FacebookIcon className="h-3.5 w-3.5 text-blue-500 shrink-0" />
+                            ) : (
+                              <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-600 text-white shrink-0">
+                                <Play className="h-2 w-2 fill-white ml-0.5" />
+                              </span>
+                            )}
+                            <span className="whitespace-nowrap text-xs font-semibold">Watch</span>
                           </div>
-                        </div>
+                        ) : (
+                          <span
+                            style={{ color: c.mutedText }}
+                            className="text-[11px] font-medium shrink-0 px-2"
+                          >
+                            Coming soon
+                          </span>
+                        )}
                       </a>
                     );
                   })}
@@ -613,17 +648,6 @@ export function SeriesDetailClient({
           </div>
         </div>
 
-        {/* Pinned Made with Inflixo footer (same as profile) */}
-        <div
-          style={{ borderColor: c.divider }}
-          className="flex shrink-0 select-none items-center justify-center border-t px-4 pt-3.5 pb-[15px]"
-        >
-          <MadeWithInflixo
-            color={usesDarkControls ? "#FFFFFF" : c.secondaryText}
-            backgroundColor={c.accentSoft}
-            borderColor={c.accentBorder}
-          />
-        </div>
       </PublicCard>
     </CreatorPublicShell>
   );

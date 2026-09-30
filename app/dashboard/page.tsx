@@ -19,6 +19,11 @@ import {
   ShoppingBag,
   Link2,
   Star,
+  CheckCircle2,
+  Circle,
+  Sparkles,
+  Trophy,
+  AlertTriangle,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -31,6 +36,8 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { ProductImage, formatProductPrice } from "@/components/products/ProductImage";
 import { ProductService } from "@/services/ProductService";
 import { MediaKitPackage, CreatorReview, CustomLink, Episode, CreatorProduct } from "@/types";
+import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
+import { PlatformThumbnailBox } from "@/components/shared/PlatformThumbnailBox";
 
 type DashboardAnalytics = {
   profileViews: number;
@@ -93,8 +100,9 @@ export default function DashboardOverviewPage() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [packages, setPackages] = useState<MediaKitPackage[]>([]);
   const [products, setProducts] = useState<CreatorProduct[]>([]);
-  const [reviews] = useState<CreatorReview[]>(() => reviewsRepository.getAll());
+  const [reviews, setReviews] = useState<CreatorReview[]>(() => reviewsRepository.getAll());
   const [customLinks, setCustomLinks] = useState<CustomLink[]>(() => customLinksRepository.get());
+  const [showChecklistModal, setShowChecklistModal] = useState(false);
   const [analytics, setAnalytics] = useState<DashboardAnalytics>({
     profileViews: 0,
     uniqueVisitors: 0,
@@ -161,6 +169,17 @@ export default function DashboardOverviewPage() {
           const pkgs = apiResponse.data?.packages || apiResponse.packages;
           if ((apiResponse.status === 1 || apiResponse.success) && Array.isArray(pkgs)) {
             setPackages(pkgs);
+          }
+        })
+        .catch(() => {});
+
+      fetch(`/api/creator/reviews?${query}`, { signal: controller.signal })
+        .then((httpResponse) => httpResponse.json())
+        .then((apiResponse) => {
+          const revs = apiResponse.data?.reviews || apiResponse.reviews;
+          if ((apiResponse.status === 1 || apiResponse.success) && Array.isArray(revs)) {
+            setReviews(revs);
+            reviewsRepository.saveAll(revs);
           }
         })
         .catch(() => {});
@@ -243,25 +262,28 @@ export default function DashboardOverviewPage() {
     const hasReviews = reviews.length > 0;
 
     const items = [
-      { id: "profile", label: "Profile details", completed: hasProfileDetails, link: "/dashboard/profile" },
-      { id: "socials", label: "Connected socials", completed: hasSocials, link: "/dashboard/socials" },
-      { id: "links", label: "Bio links", completed: hasCustomLinks, link: "/dashboard/links" },
-      { id: "series", label: "Content series", completed: hasSeries, link: "/dashboard/series" },
-      { id: "products", label: "Shop products", completed: hasProducts, link: "/dashboard/products" },
-      { id: "services", label: "Collab rates", completed: hasPackages, link: "/dashboard/mediakit" },
-      { id: "reviews", label: "Client reviews", completed: hasReviews, link: "/dashboard/reviews" },
+      { id: "profile", label: "Profile details", completed: hasProfileDetails, link: "/dashboard/profile", actionLabel: "Edit bio", hint: "Add bio or category" },
+      { id: "socials", label: "Connected socials", completed: hasSocials, link: "/dashboard/socials", actionLabel: "Connect", hint: "Connect Instagram or YouTube" },
+      { id: "links", label: "Bio links", completed: hasCustomLinks, link: "/dashboard/links", actionLabel: "Add link", hint: "Add 1 custom bio link" },
+      { id: "series", label: "Content series", completed: hasSeries, link: "/dashboard/series", actionLabel: "Create", hint: "Create a content series" },
+      { id: "products", label: "Shop products", completed: hasProducts, link: "/dashboard/products", actionLabel: "Add product", hint: "Add 1 shop product" },
+      { id: "services", label: "Collab rates", completed: hasPackages, link: "/dashboard/mediakit", actionLabel: "Set rates", hint: "Set brand collab packages" },
+      { id: "reviews", label: "Client reviews", completed: hasReviews, link: "/dashboard/reviews", actionLabel: "Request", hint: "Request 1 client review" },
     ];
 
     const completedCount = items.filter((i) => i.completed).length;
     const percentage = Math.round((completedCount / items.length) * 100);
+    const nextMissing = items.find((i) => !i.completed);
 
-    return { items, completedCount, totalCount: items.length, percentage };
+    return { items, completedCount, totalCount: items.length, percentage, nextMissing };
   }, [profile, connectedSocialsCount, customLinks, series, products, packages, reviews]);
 
   const animatedFanbase = useCountUp(totalAudience, 800, 150);
   const animatedPercentage = useCountUp(profileSteps.percentage, 800, 200);
 
   const activePackagesCount = packages.filter((p) => p.isActive !== false).length;
+
+  const cleanHandle = (profile.username || "creator").replace(/^@/, "");
 
   function formatQuotaLimit(max: number) {
     return max === Infinity ? "Unlimited" : max.toLocaleString("en-IN");
@@ -424,22 +446,53 @@ export default function DashboardOverviewPage() {
           </div>
         </div>
 
-        {/* Readiness Bar */}
-        <div className="mt-3.5 flex items-center gap-3">
-          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#eef2f7]">
-            <div
-              className="h-full rounded-full bg-[#043084] transition-all duration-700 ease-out"
-              style={{ width: isLoaded ? `${profileSteps.percentage}%` : "0%" }}
-            />
+        {/* Readiness Bar & Gamified Dopamine Loop */}
+        <div className="mt-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="h-2 flex-1 overflow-hidden rounded-full bg-[#eef2f7]">
+              <div
+                className={`h-full rounded-full transition-all duration-700 ease-out ${
+                  profileSteps.percentage === 100
+                    ? "bg-gradient-to-r from-emerald-500 to-teal-500"
+                    : "bg-gradient-to-r from-[#043084] to-[#2563eb]"
+                }`}
+                style={{ width: isLoaded ? `${profileSteps.percentage}%` : "0%" }}
+              />
+            </div>
+            <span className="shrink-0 text-xs text-[#64748b]">
+              <span className="font-semibold text-[#0f172a] tabular-nums">{animatedPercentage}%</span> complete
+            </span>
           </div>
-          <span className="shrink-0 text-xs text-[#64748b]">
-            <span className="font-semibold text-[#0f172a] tabular-nums">{animatedPercentage}%</span> complete
-          </span>
-          {profileSteps.percentage < 100 && (
-            <Link href="/dashboard/profile" className={`${quietLink} shrink-0`}>
-              Finish <ChevronRight className="h-3.5 w-3.5" />
-            </Link>
-          )}
+
+          <div className="flex items-center gap-2 shrink-0">
+            {profileSteps.percentage < 100 ? (
+              <button
+                type="button"
+                onClick={() => setShowChecklistModal(true)}
+                className="group inline-flex items-center gap-1.5 rounded-lg border border-[#043084]/20 bg-[#043084]/[0.05] hover:bg-[#043084]/[0.1] px-2.5 py-1 text-xs font-semibold text-[#043084] transition-all cursor-pointer shadow-2xs"
+                title="View what is remaining for 100%"
+              >
+                {profileSteps.nextMissing ? (
+                  <span className="text-[#475569] font-normal group-hover:text-[#0f172a] transition-colors truncate max-w-[200px] sm:max-w-none">
+                    Next: <strong className="font-semibold text-[#043084]">{profileSteps.nextMissing.label}</strong>
+                  </span>
+                ) : null}
+                <span className="inline-flex items-center gap-0.5 font-bold text-[#043084] ml-0.5 shrink-0">
+                  Finish <ChevronRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+                </span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setShowChecklistModal(true)}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 border border-emerald-200 px-2.5 py-1 text-xs font-bold text-emerald-700 hover:bg-emerald-100 transition-colors cursor-pointer"
+                title="VIP Creator Perks Active"
+              >
+                <Sparkles className="h-3.5 w-3.5 text-emerald-600 animate-pulse" />
+                <span>100% Ready · VIP Creator Active 🎉</span>
+              </button>
+            )}
+          </div>
         </div>
       </section>
 
@@ -520,20 +573,14 @@ export default function DashboardOverviewPage() {
                     href="/dashboard/series"
                     className="flex items-center gap-3 px-3.5 py-2.5 transition-colors hover:bg-[#f8fafc]"
                   >
-                    {s.posterDataUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={s.posterDataUrl}
-                        alt=""
-                        loading="lazy"
-                        decoding="async"
-                        className="h-10 w-10 shrink-0 rounded-lg border border-[#e2e8f0] object-cover"
-                      />
-                    ) : (
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
-                        <Film className="h-4 w-4" />
-                      </span>
-                    )}
+                    <PlatformThumbnailBox
+                      posterUrl={s.posterDataUrl}
+                      videoUrl={eps[0]?.externalUrl}
+                      platform={s.platform}
+                      className="h-10 w-10 shrink-0 rounded-lg border border-[#e2e8f0]"
+                      size="sm"
+                      showTitleOverlay={false}
+                    />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-xs sm:text-sm font-semibold text-[#0f172a]">{s.title}</span>
                       <span className="block truncate text-[11px] text-[#64748b]">
@@ -687,25 +734,65 @@ export default function DashboardOverviewPage() {
           <ChevronRight className="h-4 w-4 text-[#cbd5e1] group-hover:text-[#043084] shrink-0 transition-colors" />
         </Link>
 
-        <Link
-          href="/dashboard/reviews"
-          className="flex items-center justify-between rounded-xl border border-[#e2e8f0] bg-white p-3.5 transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] group"
-        >
-          <div className="flex items-center gap-3 min-w-0">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
-              <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
-            </span>
-            <div className="min-w-0">
-              <p className="text-xs font-semibold text-[#0f172a] truncate group-hover:text-[#043084] transition-colors">
-                Client Reviews
-              </p>
-              <p className="text-[11px] text-[#64748b] truncate">
-                {reviews.length} verified testimonials
-              </p>
+        {/* Client Reviews Card — Activated Empty State Loop */}
+        {reviews.length === 0 ? (
+          <div className="flex flex-col justify-between rounded-xl border border-amber-200/90 bg-gradient-to-br from-amber-50/60 via-white to-amber-50/30 p-3.5 shadow-2xs transition-all hover:border-amber-300">
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100/80 text-amber-600 ring-1 ring-amber-200/60">
+                  <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
+                </span>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-xs font-semibold text-[#0f172a]">Client Reviews</p>
+                    <span className="rounded-full bg-amber-100 px-1.5 py-0.2 text-[10px] font-bold text-amber-800">
+                      0 verified
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-[#64748b] truncate">
+                    Ask past clients for quick testimonials
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/dashboard/reviews"
+                className="shrink-0 text-[11px] font-medium text-[#64748b] hover:text-[#043084]"
+              >
+                All &gt;
+              </Link>
+            </div>
+
+            <div className="mt-3">
+              <Link
+                href="/dashboard/reviews?request=1"
+                className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-white text-xs font-semibold py-1.5 px-3 transition-colors shadow-xs"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                <span>Request a Review</span>
+              </Link>
             </div>
           </div>
-          <ChevronRight className="h-4 w-4 text-[#cbd5e1] group-hover:text-[#043084] shrink-0 transition-colors" />
-        </Link>
+        ) : (
+          <Link
+            href="/dashboard/reviews"
+            className="flex items-center justify-between rounded-xl border border-[#e2e8f0] bg-white p-3.5 transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] group"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+                <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-[#0f172a] truncate group-hover:text-[#043084] transition-colors">
+                  Client Reviews
+                </p>
+                <p className="text-[11px] text-[#64748b] truncate">
+                  {reviews.length} verified {reviews.length === 1 ? "testimonial" : "testimonials"}
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="h-4 w-4 text-[#cbd5e1] group-hover:text-[#043084] shrink-0 transition-colors" />
+          </Link>
+        )}
       </section>
 
 
@@ -754,43 +841,195 @@ export default function DashboardOverviewPage() {
         )}
       </section>
 
-      {/* 7. PLAN USAGE — Complete 6-feature Quota Bar */}
+      {/* 7. PLAN USAGE — Complete 6-feature Quota Bar with Strategic Upsell */}
       {showQuotaPanel && (
         <section className="rounded-xl border border-[#e2e8f0] bg-white">
           <div className="flex items-center justify-between px-4 pt-3.5">
-            <h2 className={sectionTitle}>
-              {quota.name} plan <span className="text-xs font-normal text-[#64748b]">· resource limits</span>
-            </h2>
-            <Link href="/dashboard/subscription" className={quietLink}>
-              View plan <ChevronRight className="h-3.5 w-3.5" />
-            </Link>
+            <div className="flex items-center gap-2">
+              <h2 className={sectionTitle}>
+                {quota.name} plan <span className="text-xs font-normal text-[#64748b]">· resource limits</span>
+              </h2>
+              {quotaItems.some((i) => i.max !== Infinity && (i.current / i.max) >= 0.8) && (
+                <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800">
+                  <AlertTriangle className="h-3 w-3 text-amber-600" />
+                  Limits near capacity
+                </span>
+              )}
+            </div>
+            {quotaItems.some((i) => i.max !== Infinity && (i.current / i.max) >= 0.8) ? (
+              <Link
+                href="/dashboard/subscription"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-white px-2.5 py-1 text-xs font-bold hover:from-amber-600 hover:to-orange-600 transition-all shadow-xs"
+              >
+                <span>⚡ Upgrade to Pro</span>
+                <ChevronRight className="h-3 w-3" />
+              </Link>
+            ) : (
+              <Link href="/dashboard/subscription" className={quietLink}>
+                View plan <ChevronRight className="h-3.5 w-3.5" />
+              </Link>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-x-4 gap-y-3 px-4 py-3 sm:grid-cols-3 lg:grid-cols-6">
             {quotaItems.map((item) => {
               const percentage = item.max === Infinity ? 0 : Math.min(100, Math.round((item.current / item.max) * 100));
-              const isNearLimit = item.max !== Infinity && percentage >= 80;
+              const isCritical = item.max !== Infinity && percentage >= 90;
+              const isWarning = item.max !== Infinity && percentage >= 80 && percentage < 90;
+
+              let barColor = "bg-gradient-to-r from-[#043084] to-[#2563eb]";
+              if (isCritical) {
+                barColor = "bg-gradient-to-r from-rose-500 to-red-600";
+              } else if (isWarning) {
+                barColor = "bg-gradient-to-r from-amber-500 to-orange-500";
+              }
+
               return (
                 <Link key={item.label} href={item.href} className="group min-w-0">
                   <div className="flex items-baseline justify-between gap-2">
                     <span className="truncate text-xs text-[#64748b] group-hover:text-[#0f172a] transition-colors">{item.label}</span>
                     <span className="shrink-0 text-xs tabular-nums text-[#0f172a]">
-                      <span className="font-semibold">{item.current.toLocaleString("en-IN")}</span>
+                      <span className={`font-semibold ${isCritical ? "text-rose-600" : isWarning ? "text-amber-600" : ""}`}>
+                        {item.current.toLocaleString("en-IN")}
+                      </span>
                       <span className="text-[#94a3b8]">/{formatQuotaLimit(item.max)}</span>
                     </span>
                   </div>
-                  <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-[#eef2f7]">
+                  <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-[#eef2f7]">
                     <div
-                      className={`h-full rounded-full transition-all duration-700 ${isNearLimit ? "bg-[#F59E0B]" : "bg-[#043084]"}`}
+                      className={`h-full rounded-full transition-all duration-700 ${barColor}`}
                       style={{ width: item.max === Infinity ? "100%" : `${percentage}%` }}
                     />
                   </div>
-                  <span className="sr-only">{formatQuotaRemaining(item.current, item.max)}</span>
+                  <div className="mt-1 flex items-center justify-between text-[10px]">
+                    {isCritical ? (
+                      <span className="font-bold text-rose-600 flex items-center gap-0.5">
+                        ⚠️ Almost full ({percentage}%)
+                      </span>
+                    ) : isWarning ? (
+                      <span className="font-semibold text-amber-600 flex items-center gap-0.5">
+                        ⚡ 80%+ used ({percentage}%)
+                      </span>
+                    ) : (
+                      <span className="text-[#94a3b8]">
+                        {formatQuotaRemaining(item.current, item.max)}
+                      </span>
+                    )}
+                  </div>
                 </Link>
               );
             })}
           </div>
         </section>
       )}
+
+      {/* Profile Readiness & Dopamine Reward Checklist Modal */}
+      <Modal
+        isOpen={showChecklistModal}
+        onClose={() => setShowChecklistModal(false)}
+        size="md"
+        title="Profile Readiness Checklist"
+        description="Complete all 7 elements to reach 100% and unlock VIP Creator status."
+        icon={<Trophy className="h-5 w-5 text-amber-500" />}
+      >
+        <ModalBody className="space-y-4">
+          {/* Progress Header */}
+          <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5">
+            <div className="flex items-center justify-between text-xs mb-1.5">
+              <span className="font-medium text-[#475569]">
+                {profileSteps.completedCount} of {profileSteps.totalCount} completed
+              </span>
+              <span className="font-bold text-[#043084]">{profileSteps.percentage}%</span>
+            </div>
+            <div className="h-2 overflow-hidden rounded-full bg-[#e2e8f0]">
+              <div
+                className={`h-full rounded-full transition-all duration-500 ${
+                  profileSteps.percentage === 100
+                    ? "bg-gradient-to-r from-emerald-500 to-teal-500"
+                    : "bg-gradient-to-r from-[#043084] to-[#2563eb]"
+                }`}
+                style={{ width: `${profileSteps.percentage}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Checklist Items */}
+          <div className="divide-y divide-[#f1f5f9] rounded-xl border border-[#e2e8f0] bg-white overflow-hidden">
+            {profileSteps.items.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center justify-between p-3 transition-colors hover:bg-[#f8fafc]"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  {item.completed ? (
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                  ) : (
+                    <Circle className="h-4 w-4 text-[#cbd5e1] shrink-0" />
+                  )}
+                  <div className="min-w-0">
+                    <p
+                      className={`text-xs font-semibold truncate ${
+                        item.completed ? "text-[#0f172a]" : "text-[#1e293b]"
+                      }`}
+                    >
+                      {item.label}
+                    </p>
+                    <p className="text-[11px] text-[#64748b] truncate">{item.hint}</p>
+                  </div>
+                </div>
+
+                {item.completed ? (
+                  <span className="shrink-0 text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                    Completed ✓
+                  </span>
+                ) : (
+                  <Link
+                    href={item.link}
+                    onClick={() => setShowChecklistModal(false)}
+                    className="shrink-0 inline-flex items-center gap-1 rounded-md bg-[#043084] hover:bg-brand-hover text-white text-[11px] font-semibold px-2.5 py-1 transition-colors cursor-pointer"
+                  >
+                    <span>{item.actionLabel}</span>
+                    <ChevronRight className="h-3 w-3" />
+                  </Link>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Dopamine Reward Card */}
+          {profileSteps.percentage === 100 ? (
+            <div className="rounded-xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-teal-50/50 to-white p-4 text-emerald-950">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-emerald-600 shrink-0" />
+                <h4 className="text-xs font-bold text-emerald-900">VIP Creator Discovery Active 🎉</h4>
+              </div>
+              <p className="mt-1 text-[11px] text-emerald-800 leading-relaxed">
+                Congratulations! Your profile has reached 100% completion. You now receive priority placement in brand discovery, an official verified showcase badge, and optimized media kit indexing.
+              </p>
+            </div>
+          ) : (
+            <div className="rounded-xl border border-amber-200 bg-gradient-to-br from-amber-50/70 via-white to-amber-50/30 p-3.5 text-[#0f172a]">
+              <div className="flex items-center gap-2">
+                <Trophy className="h-4 w-4 text-amber-500 shrink-0" />
+                <h4 className="text-xs font-bold text-[#0f172a]">Reach 100% to Unlock VIP Creator Reward</h4>
+              </div>
+              <p className="mt-1 text-[11px] text-[#64748b] leading-relaxed">
+                Hit 100% readiness to unlock priority brand matching, verified search rankings, and a 30-day Pro Media Kit boost!
+              </p>
+            </div>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <button
+            type="button"
+            onClick={() => setShowChecklistModal(false)}
+            className="rounded-lg border border-[#e2e8f0] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#0f172a] hover:bg-[#f8fafc] cursor-pointer"
+          >
+            Close
+          </button>
+        </ModalFooter>
+      </Modal>
+
+
 
       {/* Limit Reached Modal Popup */}
       <LimitReachedModal
