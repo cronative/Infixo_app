@@ -1759,7 +1759,7 @@ export function LivePreviewCard({
           )}
         </div>
 
-        {/* 2. Total Fanbase Unified Card with Interactive Social Chips (Option B) */}
+        {/* 2. Total Fanbase Unified Card with Full-Width Platform Rows */}
         {effectiveVisibilitySettings.showFanbase !== false && (totalAudience > 0 || fanbaseSocialCards.length > 0 || isOnboardingMode) && (
           <div className="relative z-10 mt-3 sm:mt-3.5 w-full">
             <div
@@ -1768,12 +1768,12 @@ export function LivePreviewCard({
                 borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : "#f0f0f0",
                 boxShadow: "0 2px 10px -2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02)",
               }}
-              className="rounded-[16px] border p-3 sm:p-3.5 space-y-2.5 text-left"
+              className="rounded-[16px] border overflow-hidden text-left"
             >
-              {/* Top Line: ✨ 1.3M Total Community */}
-              <div className="flex items-center justify-between px-0.5">
+              {/* Header: ✨ 1.3M Total Fanbase */}
+              <div className="flex items-center justify-between px-3.5 py-2.5 sm:px-4 sm:py-3 border-b border-[#f0f0f0] dark:border-white/10 bg-black/[0.015] dark:bg-white/[0.02]">
                 <div className="flex items-center gap-1.5">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-500/10 text-amber-500 shrink-0">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-500/10 text-amber-500 shrink-0 select-none">
                     <Sparkles className="h-3 w-3 fill-amber-500 text-amber-500" />
                   </span>
                   <span
@@ -1784,7 +1784,7 @@ export function LivePreviewCard({
                     className="text-xs sm:text-[13px] font-extrabold tracking-tight flex items-baseline gap-1"
                   >
                     <span className="text-sm sm:text-[15px] font-black tabular-nums">{formatCount(totalAudience)}</span>
-                    <span style={{ color: c.mutedText }} className="font-semibold">Total Community</span>
+                    <span style={{ color: c.mutedText }} className="font-semibold">Total Fanbase</span>
                   </span>
                 </div>
                 <span
@@ -1795,12 +1795,12 @@ export function LivePreviewCard({
                 </span>
               </div>
 
-              {/* Immediate Row Below: Compact Clickable Pills [📸 @demo_creator (450K) ↗] */}
+              {/* Full Width Platform Rows: Left side icon + @username, Right side count + Followers/Subscribers */}
               {fanbaseSocialCards.length > 0 && (
-                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <div className="divide-y divide-[#f0f0f0] dark:divide-white/10">
                   {fanbaseSocialCards.map((item) => {
                     const handleStr = (item.handle || item.name || item.label).replace(/^@/, "");
-                    const countFormatted = item.count > 0 ? formatCount(item.count) : null;
+                    const countFormatted = formatCount(item.count);
                     return (
                       <a
                         key={item.platform}
@@ -1813,38 +1813,44 @@ export function LivePreviewCard({
                             showToast(`Redirects to ${item.label} on live profile ✨`);
                           }
                         }}
-                        style={{
-                          backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.06)" : "#FFFFFF",
-                          borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.15)" : "#E5E7EB",
-                          color: c.primaryText,
-                        }}
-                        className="tap-scale inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all hover:scale-102 hover:border-[#043084]/40 hover:shadow-2xs cursor-pointer select-none"
+                        className="group/row tap-scale flex items-center justify-between px-3.5 sm:px-4 py-2.5 transition-colors hover:bg-black/[0.025] dark:hover:bg-white/[0.04] cursor-pointer text-left"
                         title={`Open ${item.label} (@${handleStr})`}
                       >
-                        <span className="shrink-0 flex items-center justify-center">
-                          {item.platform === "instagram" && <InstagramIcon className="h-3.5 w-3.5 text-pink-500" />}
-                          {item.platform === "youtube" && <YoutubeIcon className="h-3.5 w-3.5 text-red-500" />}
-                          {item.platform === "facebook" && <FacebookIcon className="h-3.5 w-3.5 text-blue-500" />}
-                          {item.platform === "twitter" && <XTwitterIcon className="h-3 w-3" style={{ color: c.primaryText }} />}
-                          {item.platform === "linkedin" && <LinkedinIcon className="h-3.5 w-3.5 text-sky-600" />}
-                          {item.platform === "threads" && <ThreadsIcon className="h-3.5 w-3.5" style={{ color: c.primaryText }} />}
-                          {item.platform === "snapchat" && <SnapchatIcon className="h-3.5 w-3.5 text-amber-400" />}
-                          {item.platform === "spotify" && <SpotifyIcon className="h-3.5 w-3.5 text-emerald-500" />}
-                          {item.platform === "twitch" && <TwitchIcon className="h-3.5 w-3.5 text-purple-500" />}
-                          {item.platform === "pinterest" && <PinterestIcon className="h-3.5 w-3.5 text-red-600" />}
-                          {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch", "pinterest"].includes(item.platform) && (
-                            <Globe className="h-3.5 w-3.5" style={{ color: c.accentText }} />
-                          )}
-                        </span>
-                        <span className="truncate max-w-[120px] sm:max-w-[160px] text-xs font-medium text-slate-700 dark:text-slate-200">
-                          @{handleStr}
-                        </span>
-                        {countFormatted && (
-                          <span style={{ color: c.mutedText }} className="text-[11px] font-bold tabular-nums">
-                            ({countFormatted})
+                        {/* Left side: Icon + Username */}
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <span className="shrink-0 flex h-6 w-6 items-center justify-center rounded-lg bg-black/[0.03] dark:bg-white/[0.06] transition-transform duration-200 group-hover/row:scale-110">
+                            {item.platform === "instagram" && <InstagramIcon className="h-4 w-4 text-pink-500" />}
+                            {item.platform === "youtube" && <YoutubeIcon className="h-4 w-4 text-red-500" />}
+                            {item.platform === "facebook" && <FacebookIcon className="h-4 w-4 text-blue-500" />}
+                            {item.platform === "twitter" && <XTwitterIcon className="h-3.5 w-3.5" style={{ color: c.primaryText }} />}
+                            {item.platform === "linkedin" && <LinkedinIcon className="h-4 w-4 text-sky-600" />}
+                            {item.platform === "threads" && <ThreadsIcon className="h-4 w-4" style={{ color: c.primaryText }} />}
+                            {item.platform === "snapchat" && <SnapchatIcon className="h-4 w-4 text-amber-400" />}
+                            {item.platform === "spotify" && <SpotifyIcon className="h-4 w-4 text-emerald-500" />}
+                            {item.platform === "twitch" && <TwitchIcon className="h-4 w-4 text-purple-500" />}
+                            {item.platform === "pinterest" && <PinterestIcon className="h-4 w-4 text-red-600" />}
+                            {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch", "pinterest"].includes(item.platform) && (
+                              <Globe className="h-4 w-4" style={{ color: c.accentText }} />
+                            )}
                           </span>
-                        )}
-                        <ArrowUpRight className="h-3 w-3 opacity-60 shrink-0 ml-0.5 group-hover:opacity-100 transition-opacity" />
+                          <span
+                            style={{ color: c.primaryText }}
+                            className="text-xs sm:text-[13px] font-semibold truncate group-hover/row:text-[#043084] dark:group-hover/row:text-blue-400 transition-colors"
+                          >
+                            @{handleStr}
+                          </span>
+                        </div>
+
+                        {/* Right side: 650k Followers, ya subscribers text k sath */}
+                        <div className="flex items-center gap-1.5 shrink-0 pl-2">
+                          <span
+                            style={{ color: c.mutedText }}
+                            className="text-xs sm:text-[12.5px] font-bold tabular-nums"
+                          >
+                            {countFormatted} {item.unit}
+                          </span>
+                          <ArrowUpRight className="h-3.5 w-3.5 opacity-40 group-hover/row:opacity-100 group-hover/row:translate-x-0.5 group-hover/row:-translate-y-0.5 transition-all shrink-0" />
+                        </div>
                       </a>
                     );
                   })}
