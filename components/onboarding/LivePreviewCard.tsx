@@ -27,6 +27,7 @@ import {
   Mail,
   Link as LinkIcon,
   ArrowRight,
+  ArrowUpRight,
   ArrowLeft,
   Star,
   Settings,
@@ -1758,56 +1759,51 @@ export function LivePreviewCard({
           )}
         </div>
 
-        {/* 2. Total Fanbase Sleek Stats Bar */}
+        {/* 2. Total Fanbase Unified Card with Interactive Social Chips (Option B) */}
         {effectiveVisibilitySettings.showFanbase !== false && (totalAudience > 0 || fanbaseSocialCards.length > 0 || isOnboardingMode) && (
           <div className="relative z-10 mt-3 sm:mt-3.5 w-full">
             <div
               style={{
                 backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.05)" : "#FFFFFF",
                 borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : "#f0f0f0",
-                boxShadow: "0 2px 8px -2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02)",
+                boxShadow: "0 2px 10px -2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02)",
               }}
-              className="rounded-[14px] border px-3 sm:px-3.5 py-2 sm:py-2.5 flex items-center justify-between gap-3 overflow-hidden transition-all text-left"
+              className="rounded-[16px] border p-3 sm:p-3.5 space-y-2.5 text-left"
             >
-              {/* Left: 🌟 1.3M Total Fans (Bold & slightly larger) */}
-              <div className="flex items-center gap-2 shrink-0">
-                <span className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-full bg-amber-500/10 text-amber-500 shrink-0 select-none">
-                  <Sparkles className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
-                </span>
-                <div className="flex items-baseline gap-1.5">
+              {/* Top Line: ✨ 1.3M Total Community */}
+              <div className="flex items-center justify-between px-0.5">
+                <div className="flex items-center gap-1.5">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-500/10 text-amber-500 shrink-0">
+                    <Sparkles className="h-3 w-3 fill-amber-500 text-amber-500" />
+                  </span>
                   <span
                     style={{
                       color: c.primaryText,
                       fontFamily: typ.headingFontFamily,
                     }}
-                    className="text-sm sm:text-base font-extrabold tracking-tight tabular-nums"
+                    className="text-xs sm:text-[13px] font-extrabold tracking-tight flex items-baseline gap-1"
                   >
-                    {formatCount(totalAudience)}
-                  </span>
-                  <span
-                    style={{ color: c.mutedText }}
-                    className="text-[11px] sm:text-xs font-semibold whitespace-nowrap"
-                  >
-                    Total Fans
+                    <span className="text-sm sm:text-[15px] font-black tabular-nums">{formatCount(totalAudience)}</span>
+                    <span style={{ color: c.mutedText }} className="font-semibold">Total Community</span>
                   </span>
                 </div>
+                <span
+                  style={{ color: c.mutedText }}
+                  className="text-[10px] sm:text-[11px] font-medium opacity-70 select-none"
+                >
+                  Primary Platforms
+                </span>
               </div>
 
-              {/* Right: 📸 450K | ▶️ 685K | 📘 210K (Chote icons aur numbers inline) */}
+              {/* Immediate Row Below: Compact Clickable Pills [📸 @demo_creator (450K) ↗] */}
               {fanbaseSocialCards.length > 0 && (
-                <div className="flex items-center gap-1.5 sm:gap-2.5 overflow-x-auto scrollbar-none shrink-0 max-w-[60%] justify-end">
-                  {fanbaseSocialCards.map((item, idx) => (
-                    <Fragment key={item.platform}>
-                      {idx > 0 && (
-                        <span
-                          style={{ color: usesDarkControls ? "rgba(255, 255, 255, 0.2)" : "#e2e8f0" }}
-                          className="select-none text-xs font-light"
-                          aria-hidden="true"
-                        >
-                          |
-                        </span>
-                      )}
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                  {fanbaseSocialCards.map((item) => {
+                    const handleStr = (item.handle || item.name || item.label).replace(/^@/, "");
+                    const countFormatted = item.count > 0 ? formatCount(item.count) : null;
+                    return (
                       <a
+                        key={item.platform}
                         href={item.url}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -1817,8 +1813,13 @@ export function LivePreviewCard({
                             showToast(`Redirects to ${item.label} on live profile ✨`);
                           }
                         }}
-                        className="group/stat inline-flex items-center gap-1 transition-all hover:opacity-80 cursor-pointer shrink-0"
-                        title={`Visit ${item.label} (@${(item.handle || item.name || item.label).replace(/^@/, "")})`}
+                        style={{
+                          backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.06)" : "#FFFFFF",
+                          borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.15)" : "#E5E7EB",
+                          color: c.primaryText,
+                        }}
+                        className="tap-scale inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all hover:scale-102 hover:border-[#043084]/40 hover:shadow-2xs cursor-pointer select-none"
+                        title={`Open ${item.label} (@${handleStr})`}
                       >
                         <span className="shrink-0 flex items-center justify-center">
                           {item.platform === "instagram" && <InstagramIcon className="h-3.5 w-3.5 text-pink-500" />}
@@ -1835,15 +1836,18 @@ export function LivePreviewCard({
                             <Globe className="h-3.5 w-3.5" style={{ color: c.accentText }} />
                           )}
                         </span>
-                        <span
-                          style={{ color: c.primaryText }}
-                          className="text-xs sm:text-[12.5px] font-bold tabular-nums group-hover/stat:underline whitespace-nowrap"
-                        >
-                          {formatCount(item.count)}
+                        <span className="truncate max-w-[120px] sm:max-w-[160px] text-xs font-medium text-slate-700 dark:text-slate-200">
+                          @{handleStr}
                         </span>
+                        {countFormatted && (
+                          <span style={{ color: c.mutedText }} className="text-[11px] font-bold tabular-nums">
+                            ({countFormatted})
+                          </span>
+                        )}
+                        <ArrowUpRight className="h-3 w-3 opacity-60 shrink-0 ml-0.5 group-hover:opacity-100 transition-opacity" />
                       </a>
-                    </Fragment>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
