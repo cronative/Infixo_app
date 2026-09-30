@@ -4,7 +4,7 @@ import type { CreatorProduct } from "@/types";
 import { ProductImage, formatProductPrice } from "@/components/products/ProductImage";
 import { ProductImageLightbox } from "@/components/products/ProductImageLightbox";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Fragment } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -1758,105 +1758,95 @@ export function LivePreviewCard({
           )}
         </div>
 
-        {/* 2. Total Fanbase USP Block */}
-        {effectiveVisibilitySettings.showFanbase !== false && (
-          <div className="relative z-10 mt-3 sm:mt-3.5 w-full space-y-1.5">
+        {/* 2. Total Fanbase Sleek Stats Bar */}
+        {effectiveVisibilitySettings.showFanbase !== false && (totalAudience > 0 || fanbaseSocialCards.length > 0 || isOnboardingMode) && (
+          <div className="relative z-10 mt-3 sm:mt-3.5 w-full">
             <div
               style={{
-                backgroundColor: c.cardBackground,
-                borderColor: c.border,
-                boxShadow: eff.cardShadow,
+                backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.05)" : "#FFFFFF",
+                borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : "#f0f0f0",
+                boxShadow: "0 2px 8px -2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02)",
               }}
-              className="rounded-[12px] border px-3 py-2 sm:py-2.5 text-center shadow-2xs"
+              className="rounded-[14px] border px-3 sm:px-3.5 py-2 sm:py-2.5 flex items-center justify-between gap-3 overflow-hidden transition-all text-left"
             >
-              <span
-                style={{ color: c.mutedText }}
-                className="block text-[10px] sm:text-[10.5px] font-extrabold tracking-[0.14em] uppercase"
-              >
-                Total Fanbase
-              </span>
-              <p
-                style={{
-                  color: c.primaryText,
-                  fontFamily: typ.headingFontFamily,
-                  fontWeight: 800,
-                }}
-                className={`mt-0.5 ${PUBLIC_TYPE.stat} tabular-nums`}
-              >
-                {formatCount(totalAudience)}
-              </p>
-              <p
-                style={{ color: c.secondaryText }}
-                className="mt-0.5 text-[10.5px] sm:text-[11px] font-medium opacity-80"
-              >
-                Total Fanbase Across Primary Platforms
-              </p>
-            </div>
-
-            {/* Clickable Platform Cards */}
-            {fanbaseSocialCards.length > 0 && (
-              <div
-                className="grid gap-1.5 sm:gap-2"
-                style={{ gridTemplateColumns: fanbaseSocialGridColumns }}
-              >
-                {fanbaseSocialCards.map((item) => (
-                  <a
-                    key={item.platform}
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => {
-                      if (isInformationalMode) {
-                        e.preventDefault();
-                        showToast(`Redirects to ${item.label} on live profile ✨`);
-                      }
-                    }}
+              {/* Left: 🌟 1.3M Total Fans (Bold & slightly larger) */}
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-full bg-amber-500/10 text-amber-500 shrink-0 select-none">
+                  <Sparkles className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
+                </span>
+                <div className="flex items-baseline gap-1.5">
+                  <span
                     style={{
-                      backgroundColor: c.cardBackground,
-                      borderColor: c.border,
-                      boxShadow: eff.cardShadow,
+                      color: c.primaryText,
+                      fontFamily: typ.headingFontFamily,
                     }}
-                    className="tap-scale flex min-h-[66px] sm:min-h-[72px] flex-col rounded-[12px] border text-center transition-all hover:scale-[1.02] cursor-pointer shadow-2xs overflow-hidden"
-                    title={`Visit ${item.label}`}
+                    className="text-sm sm:text-base font-extrabold tracking-tight tabular-nums"
                   >
-                    <span className="flex flex-1 flex-col items-center justify-center px-1.5 py-1.5">
-                      <span className="mb-0.5 flex h-4 items-center justify-center shrink-0">
-                        {item.platform === "instagram" && <InstagramIcon className="h-4 w-4 text-pink-500" />}
-                        {item.platform === "youtube" && <YoutubeIcon className="h-4 w-4 text-red-500" />}
-                        {item.platform === "facebook" && <FacebookIcon className="h-4 w-4 text-blue-500" />}
-                        {item.platform === "twitter" && <XTwitterIcon className="h-3.5 w-3.5" style={{ color: c.primaryText }} />}
-                        {item.platform === "linkedin" && <LinkedinIcon className="h-4 w-4 text-sky-600" />}
-                        {item.platform === "threads" && <ThreadsIcon className="h-4 w-4" style={{ color: c.primaryText }} />}
-                        {item.platform === "snapchat" && <SnapchatIcon className="h-4 w-4 text-amber-400" />}
-                        {item.platform === "spotify" && <SpotifyIcon className="h-4 w-4 text-emerald-500" />}
-                        {item.platform === "twitch" && <TwitchIcon className="h-4 w-4 text-purple-500" />}
-                        {item.platform === "pinterest" && <PinterestIcon className="h-4 w-4 text-red-600" />}
-                        {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch", "pinterest"].includes(item.platform) && (
-                          <Globe className="h-4 w-4" style={{ color: c.accentText }} />
-                        )}
-                      </span>
-                      <span style={{ color: c.primaryText }} className="text-xs sm:text-[12.5px] font-bold tabular-nums leading-tight">
-                        {formatCount(item.count)}
-                      </span>
-                      <span style={{ color: c.secondaryText }} className="mt-0.5 text-[10px] sm:text-[10.5px] font-semibold leading-none">
-                        {item.unit}
-                      </span>
-                    </span>
-                    <span
-                      style={{ color: c.mutedText, borderColor: c.divider }}
-                      className="block w-full border-t px-1.5 py-1 text-[10px] sm:text-[10.5px] font-medium leading-none"
-                    >
-                      <span className="inline-flex max-w-full items-center justify-center gap-1">
-                        <span className="block min-w-0 truncate">
-                          {(item.handle || item.name || item.label).replace(/^@/, "")}
-                        </span>
-                        <ExternalLink className="h-2.5 w-2.5 shrink-0 opacity-70" />
-                      </span>
-                    </span>
-                  </a>
-                ))}
+                    {formatCount(totalAudience)}
+                  </span>
+                  <span
+                    style={{ color: c.mutedText }}
+                    className="text-[11px] sm:text-xs font-semibold whitespace-nowrap"
+                  >
+                    Total Fans
+                  </span>
+                </div>
               </div>
-            )}
+
+              {/* Right: 📸 450K | ▶️ 685K | 📘 210K (Chote icons aur numbers inline) */}
+              {fanbaseSocialCards.length > 0 && (
+                <div className="flex items-center gap-1.5 sm:gap-2.5 overflow-x-auto scrollbar-none shrink-0 max-w-[60%] justify-end">
+                  {fanbaseSocialCards.map((item, idx) => (
+                    <Fragment key={item.platform}>
+                      {idx > 0 && (
+                        <span
+                          style={{ color: usesDarkControls ? "rgba(255, 255, 255, 0.2)" : "#e2e8f0" }}
+                          className="select-none text-xs font-light"
+                          aria-hidden="true"
+                        >
+                          |
+                        </span>
+                      )}
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => {
+                          if (isInformationalMode) {
+                            e.preventDefault();
+                            showToast(`Redirects to ${item.label} on live profile ✨`);
+                          }
+                        }}
+                        className="group/stat inline-flex items-center gap-1 transition-all hover:opacity-80 cursor-pointer shrink-0"
+                        title={`Visit ${item.label} (@${(item.handle || item.name || item.label).replace(/^@/, "")})`}
+                      >
+                        <span className="shrink-0 flex items-center justify-center">
+                          {item.platform === "instagram" && <InstagramIcon className="h-3.5 w-3.5 text-pink-500" />}
+                          {item.platform === "youtube" && <YoutubeIcon className="h-3.5 w-3.5 text-red-500" />}
+                          {item.platform === "facebook" && <FacebookIcon className="h-3.5 w-3.5 text-blue-500" />}
+                          {item.platform === "twitter" && <XTwitterIcon className="h-3 w-3" style={{ color: c.primaryText }} />}
+                          {item.platform === "linkedin" && <LinkedinIcon className="h-3.5 w-3.5 text-sky-600" />}
+                          {item.platform === "threads" && <ThreadsIcon className="h-3.5 w-3.5" style={{ color: c.primaryText }} />}
+                          {item.platform === "snapchat" && <SnapchatIcon className="h-3.5 w-3.5 text-amber-400" />}
+                          {item.platform === "spotify" && <SpotifyIcon className="h-3.5 w-3.5 text-emerald-500" />}
+                          {item.platform === "twitch" && <TwitchIcon className="h-3.5 w-3.5 text-purple-500" />}
+                          {item.platform === "pinterest" && <PinterestIcon className="h-3.5 w-3.5 text-red-600" />}
+                          {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch", "pinterest"].includes(item.platform) && (
+                            <Globe className="h-3.5 w-3.5" style={{ color: c.accentText }} />
+                          )}
+                        </span>
+                        <span
+                          style={{ color: c.primaryText }}
+                          className="text-xs sm:text-[12.5px] font-bold tabular-nums group-hover/stat:underline whitespace-nowrap"
+                        >
+                          {formatCount(item.count)}
+                        </span>
+                      </a>
+                    </Fragment>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
 
