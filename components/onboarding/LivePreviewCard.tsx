@@ -42,6 +42,7 @@ import {
   ShoppingBag,
   ZoomIn,
   Play,
+  Folder,
 } from "lucide-react";
 import {
   CreatorProfile,
@@ -785,6 +786,32 @@ export function buildSocialUrl(platform: string, rawUrlOrHandle?: string): strin
     default:
       return `https://${clean}`;
   }
+}
+
+function safeHostname(urlStr?: string): string {
+  if (!urlStr) return "";
+  try {
+    const raw = urlStr.trim().startsWith("http") ? urlStr.trim() : `https://${urlStr.trim()}`;
+    return new URL(raw).hostname.replace(/^www\./, "");
+  } catch {
+    return "";
+  }
+}
+
+function getLinkPlatformIcon(url?: string, title?: string, c?: { primaryText?: string; accentText?: string; [key: string]: any }) {
+  const u = (url || "").toLowerCase();
+  const t = (title || "").toLowerCase();
+  if (u.includes("instagram.com") || t.includes("instagram")) return <InstagramIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-pink-500" />;
+  if (u.includes("youtube.com") || u.includes("youtu.be") || t.includes("youtube")) return <YoutubeIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-red-500" />;
+  if (u.includes("spotify.com") || t.includes("spotify") || t.includes("podcast")) return <SpotifyIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-500" />;
+  if (u.includes("twitter.com") || u.includes("x.com") || t.includes("twitter")) return <XTwitterIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5" style={{ color: c?.primaryText }} />;
+  if (u.includes("linkedin.com") || t.includes("linkedin")) return <LinkedinIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-sky-600" />;
+  if (u.includes("threads.net") || t.includes("threads")) return <ThreadsIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" style={{ color: c?.primaryText }} />;
+  if (u.includes("facebook.com") || t.includes("facebook")) return <FacebookIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-500" />;
+  if (u.includes("snapchat.com") || t.includes("snapchat")) return <SnapchatIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-400" />;
+  if (u.includes("twitch.tv") || t.includes("twitch")) return <TwitchIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-500" />;
+  if (u.includes("pinterest.com") || t.includes("pinterest")) return <PinterestIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-red-600" />;
+  return <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4" style={{ color: c?.accentText || "#3b82f6" }} />;
 }
 
 import { formatCategoryDots } from "@/utils/format";
@@ -1886,95 +1913,128 @@ export function LivePreviewCard({
               <div style={{ backgroundColor: c.divider }} className="-mx-3.5 sm:-mx-5 h-px opacity-60" aria-hidden="true" />
             </div>
 
-            <div className="space-y-1.5 sm:space-y-2">
+            <div
+              style={{
+                backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.05)" : "#FFFFFF",
+                borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : "#f0f0f0",
+                boxShadow: "0 2px 10px -2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02)",
+              }}
+              className="rounded-[16px] border overflow-hidden text-left divide-y divide-[#f0f0f0] dark:divide-white/10"
+            >
               {customLinksList
                 .filter((l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url))))
                 .map((link) => {
                   const collectionItems = link.items?.filter((item) => item.isEnabled !== false && item.title && item.url) || [];
                   if (link.kind === "collection") {
                     return (
-                      <div
-                        key={link.id}
-                        style={{
-                          backgroundColor: c.cardBackground,
-                          borderColor: c.border,
-                          boxShadow: eff.cardShadow,
-                        }}
-                        className="rounded-[12px] border p-2.5 shadow-2xs"
-                      >
-                        <div className="mb-1.5 flex items-center gap-2">
-                          <Globe
-                            style={{ color: c.accentText }}
-                            className="h-3.5 w-3.5 shrink-0"
-                          />
+                      <div key={link.id} className="divide-y divide-[#f0f0f0] dark:divide-white/10">
+                        {/* Collection Sub-header */}
+                        <div className="flex items-center gap-2 px-3.5 sm:px-4 py-2 bg-black/[0.02] dark:bg-white/[0.03]">
+                          <Folder className="h-3.5 w-3.5 opacity-60" style={{ color: c.mutedText }} />
                           <span
-                            style={{ color: c.primaryText }}
-                            className={`block line-clamp-2 break-words ${PUBLIC_TYPE.cardTitle}`}
+                            style={{ color: c.mutedText }}
+                            className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider truncate"
                           >
                             {link.title}
                           </span>
                         </div>
-                        <div className="space-y-1.5">
-                          {collectionItems.map((item) => (
+                        {/* Collection Items */}
+                        {collectionItems.map((item) => {
+                          const host = safeHostname(item.url);
+                          return (
                             <a
                               key={item.id}
                               href={item.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
-                              style={{
-                                borderColor: c.border,
-                                color: c.primaryText,
+                              onClick={(e) => {
+                                if (isInformationalMode) {
+                                  e.preventDefault();
+                                  showToast(`Opens ${item.title} on live profile ✨`);
+                                }
                               }}
-                              className="tap-scale flex min-h-[40px] items-center justify-between gap-3 rounded-[10px] border px-3 py-1.5 text-xs font-semibold transition-all hover:scale-[1.01]"
+                              className="group/row tap-scale flex items-center justify-between px-3.5 sm:px-4 py-2.5 transition-colors hover:bg-black/[0.025] dark:hover:bg-white/[0.04] cursor-pointer text-left pl-6 sm:pl-7"
+                              title={item.title}
                             >
-                              <span className="min-w-0 truncate">{item.title}</span>
-                              <ExternalLink
-                                style={{ color: c.secondaryText }}
-                                className="h-3.5 w-3.5 shrink-0"
-                              />
+                              {/* Left side: Icon + Title */}
+                              <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                                <span className="shrink-0 flex h-6 w-6 items-center justify-center rounded-lg bg-black/[0.03] dark:bg-white/[0.06] transition-transform duration-200 group-hover/row:scale-110">
+                                  {getLinkPlatformIcon(item.url, item.title, c)}
+                                </span>
+                                <span
+                                  style={{ color: c.primaryText }}
+                                  className="text-xs sm:text-[13px] font-semibold truncate group-hover/row:text-[#043084] dark:group-hover/row:text-blue-400 transition-colors"
+                                >
+                                  {item.title}
+                                </span>
+                              </div>
+
+                              {/* Right side: Hostname + Arrow */}
+                              <div className="flex items-center gap-1.5 shrink-0 pl-2">
+                                {host && (
+                                  <span
+                                    style={{ color: c.mutedText }}
+                                    className="text-xs sm:text-[12.5px] font-medium opacity-70 group-hover/row:opacity-100 transition-opacity hidden xs:inline tabular-nums"
+                                  >
+                                    {host}
+                                  </span>
+                                )}
+                                <ArrowUpRight
+                                  style={{ color: c.secondaryText }}
+                                  className="h-3.5 w-3.5 opacity-40 group-hover/row:opacity-100 group-hover/row:translate-x-0.5 group-hover/row:-translate-y-0.5 transition-all shrink-0"
+                                />
+                              </div>
                             </a>
-                          ))}
-                        </div>
+                          );
+                        })}
                       </div>
                     );
                   }
+
+                  const host = safeHostname(link.url);
                   return (
                     <a
                       key={link.id}
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
-                      style={{
-                        backgroundColor: c.cardBackground,
-                        borderColor: c.border,
-                        boxShadow: eff.cardShadow,
+                      onClick={(e) => {
+                        if (isInformationalMode) {
+                          e.preventDefault();
+                          showToast(`Opens ${link.title} on live profile ✨`);
+                        }
                       }}
-                      className={`tap-scale relative h-[46px] sm:h-[48px] border flex items-center transition-all hover:scale-[1.01] hover:shadow-xs group cursor-pointer shadow-2xs ${isDefaultCleanLayout
-                        ? "rounded-[12px] px-5 justify-center"
-                        : "rounded-[12px] px-3.5 justify-between"
-                        }`}
+                      className="group/row tap-scale flex items-center justify-between px-3.5 sm:px-4 py-2.5 transition-colors hover:bg-black/[0.025] dark:hover:bg-white/[0.04] cursor-pointer text-left"
+                      title={link.title}
                     >
-                      <div className={`flex items-center gap-2.5 min-w-0 ${isDefaultCleanLayout ? "absolute left-4" : "pr-2"}`}>
-                        <Globe
-                          style={{ color: c.accentText }}
-                          className="h-3.5 w-3.5 shrink-0"
-                        />
-                      </div>
-                      <div className={isDefaultCleanLayout ? "max-w-[78%] px-2 text-center" : "min-w-0 flex-1"}>
+                      {/* Left side: Icon + Title */}
+                      <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                        <span className="shrink-0 flex h-6 w-6 items-center justify-center rounded-lg bg-black/[0.03] dark:bg-white/[0.06] transition-transform duration-200 group-hover/row:scale-110">
+                          {getLinkPlatformIcon(link.url, link.title, c)}
+                        </span>
                         <span
                           style={{ color: c.primaryText }}
-                          className={`block truncate ${PUBLIC_TYPE.cardTitle}`}
+                          className="text-xs sm:text-[13px] font-semibold truncate group-hover/row:text-[#043084] dark:group-hover/row:text-blue-400 transition-colors"
                         >
                           {link.title}
                         </span>
                       </div>
 
-                      <ExternalLink
-                        style={{ color: c.secondaryText }}
-                        className={`h-3.5 w-3.5 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 ${isDefaultCleanLayout ? "absolute right-4" : ""}`}
-                      />
+                      {/* Right side: Hostname + Arrow */}
+                      <div className="flex items-center gap-1.5 shrink-0 pl-2">
+                        {host && (
+                          <span
+                            style={{ color: c.mutedText }}
+                            className="text-xs sm:text-[12.5px] font-medium opacity-70 group-hover/row:opacity-100 transition-opacity hidden xs:inline tabular-nums"
+                          >
+                            {host}
+                          </span>
+                        )}
+                        <ArrowUpRight
+                          style={{ color: c.secondaryText }}
+                          className="h-3.5 w-3.5 opacity-40 group-hover/row:opacity-100 group-hover/row:translate-x-0.5 group-hover/row:-translate-y-0.5 transition-all shrink-0"
+                        />
+                      </div>
                     </a>
                   );
                 })}
