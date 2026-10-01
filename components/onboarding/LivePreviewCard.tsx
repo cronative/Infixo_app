@@ -1505,6 +1505,10 @@ export function LivePreviewCard({
     ? []
     : (teamData.members || []).filter((member) => member.isActive !== false && member.name?.trim());
 
+  const publicSurfaceShadow = themeMeta.profileSurface?.shadow || (isDark
+    ? "0 24px 60px -12px rgba(0, 0, 0, 0.45), 0 8px 24px -4px rgba(0, 0, 0, 0.3)"
+    : "0 20px 50px -12px rgba(0, 0, 0, 0.08), 0 4px 16px -2px rgba(0, 0, 0, 0.04)");
+
   const cardContent = (
     <div
       style={{
@@ -1515,10 +1519,10 @@ export function LivePreviewCard({
         fontFamily: typ.fontFamily,
         letterSpacing: typ.letterSpacing,
         ["--desktop-surface-shadow" as any]: surfaceShadow,
-        boxShadow: isPublicSurface ? "none" : undefined,
+        boxShadow: isPublicSurface ? publicSurfaceShadow : undefined,
       }}
       className={`relative ${containedScroll ? "flex-1 flex flex-col min-h-0 overflow-hidden" : "flex-1 flex flex-col"} ${isPublicSurface
-        ? "px-3.5 pt-3.5 pb-3.5 sm:px-5 sm:pt-4 sm:pb-4 rounded-[22px] border backdrop-blur-xl"
+        ? "px-3.5 pt-3.5 pb-3.5 sm:px-5 sm:pt-4 sm:pb-4 rounded-[24px] sm:rounded-[26px] border backdrop-blur-xl"
         : `${cardPadding ? cardPadding : "p-3 sm:p-4.5 pt-3.5 sm:pt-5"} rounded-[18px] border shadow-md`
         } transition-all`}
     >

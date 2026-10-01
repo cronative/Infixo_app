@@ -67,7 +67,7 @@ export const PUBLIC_TYPE = {
 /* Radius + layout                                                     */
 /* ------------------------------------------------------------------ */
 export const PUBLIC_RADIUS = {
-  card: "rounded-[22px]", // the centered main card
+  card: "rounded-[24px] sm:rounded-[26px]", // the centered main card
   item: "rounded-[14px]", // cards inside the main card
   control: "rounded-[12px]", // icon buttons, inputs
   button: "rounded-[14px]", // primary / secondary CTA
@@ -106,13 +106,16 @@ export function getPublicTheme(themeKey: string = "minimal-white") {
     meta.outerBgClass || THEME_PAGE_BACKGROUNDS[themeKey] || THEME_PAGE_BACKGROUNDS["minimal-white"];
   const hasPhotoBackdrop = Boolean(meta.outerBgClass?.includes("theme-bg-"));
 
+  const cardShadow = meta.profileSurface?.shadow || (isDark
+    ? "0 24px 60px -12px rgba(0, 0, 0, 0.45), 0 8px 24px -4px rgba(0, 0, 0, 0.3)"
+    : "0 20px 50px -12px rgba(0, 0, 0, 0.08), 0 4px 16px -2px rgba(0, 0, 0, 0.04)");
+
   /** The centered main card surface. Same on every page. */
   const surfaceStyle: CSSProperties = {
     ...(getThemeCssVariables(meta) as CSSProperties),
     backgroundColor: meta.profileSurface?.background || c.profileBackground,
     borderColor: meta.profileSurface?.border || c.border,
-    // No drop shadow around the centered card (clean look on every public page)
-    boxShadow: "none",
+    boxShadow: cardShadow,
     color: c.primaryText,
     fontFamily: typ.fontFamily,
     letterSpacing: typ.letterSpacing,

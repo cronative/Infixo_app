@@ -406,10 +406,10 @@ export function SeriesDetailClient({
     >
       <PublicCard themeKey={themeKey} className="overflow-hidden">
         {/* Card content container */}
-        <div className="flex-1 flex flex-col relative rounded-t-[22px] overflow-hidden">
+        <div className="flex-1 flex flex-col relative rounded-t-[24px] sm:rounded-t-[26px] overflow-hidden">
           {/* Sticky Header over image */}
           <div
-            className={`sticky top-0 z-20 transition-all duration-200 rounded-t-[22px] ${
+            className={`sticky top-0 z-20 transition-all duration-200 rounded-t-[24px] sm:rounded-t-[26px] ${
               hasValidCover ? "-mb-[60px] sm:-mb-[66px]" : ""
             } ${
               isScrolledPastHeader
@@ -469,7 +469,7 @@ export function SeriesDetailClient({
             platform={detectedPlatform || series.platform}
             title={series.title}
             badgeText={detectedPlatform}
-            className="w-full aspect-[16/9] sm:aspect-[2/1] max-h-[340px] shrink-0 rounded-t-[22px] overflow-hidden"
+            className="w-full aspect-[16/9] sm:aspect-[2/1] max-h-[340px] shrink-0 rounded-t-[24px] sm:rounded-t-[26px] overflow-hidden"
             size="lg"
             showTitleOverlay={false}
           />
