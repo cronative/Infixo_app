@@ -25,6 +25,7 @@ import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useToast } from "@/contexts/ToastContext";
+import { PublicMadeWithInflixoFooter } from "@/components/public/PublicMadeWithInflixo";
 
 // Function to generate 5 contextual, unique AI review suggestions <= 250 characters
 function generateContextualSuggestions(
@@ -669,6 +670,7 @@ export default function PublicReviewSubmissionPage() {
           </div>
         )}
 
+        <PublicMadeWithInflixoFooter />
       </main>
     </div>
   );

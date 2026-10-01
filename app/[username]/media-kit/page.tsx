@@ -44,7 +44,6 @@ import { copyToClipboard } from "@/lib/copyToClipboard";
 import { useToast } from "@/contexts/ToastContext";
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { getInitials } from "@/lib/avatar";
-import { MadeWithInflixo } from "@/components/shared/MadeWithInflixo";
 import { CreatorPublicShell, PublicCard } from "@/components/public/CreatorPublicShell";
 import { PublicPageHeader, PublicIconButton } from "@/components/public/PublicPageHeader";
 import { PublicSectionHeader } from "@/components/public/PublicSectionHeader";

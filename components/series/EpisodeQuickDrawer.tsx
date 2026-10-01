@@ -324,11 +324,7 @@ export function EpisodeQuickDrawer({
 
         {/* 3. Pinned Center Card Style Footer */}
         <div className="px-4 py-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-center shrink-0 select-none">
-          <MadeWithInflixo
-            color="#475569"
-            backgroundColor="rgba(255,255,255,0.86)"
-            borderColor="#e2e8f0"
-          />
+          <MadeWithInflixo />
         </div>
       </div>
     </div>,

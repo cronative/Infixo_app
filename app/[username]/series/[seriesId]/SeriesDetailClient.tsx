@@ -29,7 +29,6 @@ import {
   PUBLIC_CTA_BUTTON,
   PUBLIC_TYPE,
 } from "@/components/public/publicTheme";
-import { MadeWithInflixo } from "@/components/shared/MadeWithInflixo";
 import { PlatformThumbnailBox } from "@/components/shared/PlatformThumbnailBox";
 
 function getPlatformInfo(platformStr?: string, urlStr?: string) {
