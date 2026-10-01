@@ -312,7 +312,7 @@ export default function LandingHomePage() {
           <Logo size="sm" variant="transparent" />
           <nav className="hidden items-center gap-5 md:flex">
             <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="cursor-pointer transition-colors hover:text-brand-primary">Home</button>
-            <button onClick={() => previewRef.current?.scrollIntoView({ behavior: "smooth" })} className="cursor-pointer transition-colors hover:text-brand-primary">Series Preview</button>
+            <button onClick={() => previewRef.current?.scrollIntoView({ behavior: "smooth" })} className="cursor-pointer transition-colors hover:text-brand-primary">View Demo</button>
             <button onClick={() => scrollToSection("pillars")} className="cursor-pointer transition-colors hover:text-brand-primary">Creator Tools</button>
             <button onClick={() => scrollToSection("pricing")} className="cursor-pointer transition-colors hover:text-brand-primary">Pricing</button>
             <button onClick={() => scrollToSection("faq")} className="cursor-pointer transition-colors hover:text-brand-primary">FAQ</button>
@@ -854,7 +854,7 @@ export default function LandingHomePage() {
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 text-xs font-semibold text-[#64748b] sm:flex-row sm:px-6">
           <Logo size="sm" variant="transparent" />
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <button onClick={() => previewRef.current?.scrollIntoView({ behavior: "smooth" })} className="hover:text-brand-primary">Series Preview</button>
+            <button onClick={() => previewRef.current?.scrollIntoView({ behavior: "smooth" })} className="hover:text-brand-primary">View Demo</button>
             <button onClick={() => scrollToSection("pillars")} className="hover:text-brand-primary">Creator Tools</button>
             <button onClick={() => scrollToSection("pricing")} className="hover:text-brand-primary">Pricing</button>
             <Link href="/login" className="hover:text-brand-primary">Get Started</Link>
