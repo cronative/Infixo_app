@@ -1792,17 +1792,17 @@ export function LivePreviewCard({
 
         {/* 2. Total Fanbase Unified Card with Full-Width Platform Rows */}
         {effectiveVisibilitySettings.showFanbase !== false && (totalAudience > 0 || fanbaseSocialCards.length > 0 || isOnboardingMode) && (
-          <div className="relative z-10 mt-3 sm:mt-3.5 w-full">
+          <div className="relative z-10 mt-6 sm:mt-7 w-full">
             <div
               style={{
                 backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.05)" : "#FFFFFF",
-                borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : "#f0f0f0",
-                boxShadow: "0 2px 10px -2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02)",
+                borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : "#E5E7EB",
+                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02)",
               }}
               className="rounded-[16px] border overflow-hidden text-left"
             >
               {/* Header: ✨ 1.3M Total Fanbase */}
-              <div className="flex items-center justify-between px-3.5 py-2.5 sm:px-4 sm:py-3 border-b border-[#f0f0f0] dark:border-white/10 bg-black/[0.015] dark:bg-white/[0.02]">
+              <div className="flex items-center justify-between px-3.5 py-2 sm:px-4 sm:py-2.5 border-b border-[#E5E7EB] dark:border-white/10 bg-black/[0.015] dark:bg-white/[0.02]">
                 <div className="flex items-center gap-1.5">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-500/10 text-amber-500 shrink-0 select-none">
                     <Sparkles className="h-3 w-3 fill-amber-500 text-amber-500" />
@@ -1822,13 +1822,13 @@ export function LivePreviewCard({
                   style={{ color: c.mutedText }}
                   className="text-[10px] sm:text-[11px] font-medium opacity-70 select-none"
                 >
-                  Primary Platforms
+                  Across Platforms
                 </span>
               </div>
 
               {/* Full Width Platform Rows: Left side icon + @username, Right side count + Followers/Subscribers */}
               {fanbaseSocialCards.length > 0 && (
-                <div className="divide-y divide-[#f0f0f0] dark:divide-white/10">
+                <div className="divide-y divide-[#E5E7EB] dark:divide-white/10">
                   {fanbaseSocialCards.map((item) => {
                     const handleStr = (item.handle || item.name || item.label).replace(/^@/, "");
                     const countFormatted = formatCount(item.count);
@@ -1844,7 +1844,7 @@ export function LivePreviewCard({
                             showToast(`Redirects to ${item.label} on live profile ✨`);
                           }
                         }}
-                        className="group/row tap-scale flex items-center justify-between px-3.5 sm:px-4 py-2.5 transition-colors hover:bg-black/[0.025] dark:hover:bg-white/[0.04] cursor-pointer text-left"
+                        className="group/row tap-scale flex items-center justify-between px-3.5 sm:px-4 py-2 sm:py-2.5 transition-colors hover:bg-black/[0.025] dark:hover:bg-white/[0.04] cursor-pointer text-left"
                         title={`Open ${item.label} (@${handleStr})`}
                       >
                         {/* Left side: Icon + Username */}
@@ -1905,14 +1905,14 @@ export function LivePreviewCard({
                   className={`flex items-center gap-1.5 ${PUBLIC_TYPE.sectionTitle}`}
                 >
                   <LinkIcon className="h-3.5 w-3.5 opacity-70" style={{ color: c.primaryText }} />
-                  <span>Links</span>
+                  <span>My Links</span>
                 </h2>
               </div>
               <p
                 style={{ color: c.secondaryText }}
                 className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5 pb-2"
               >
-                Find me everywhere, all in one place.
+                Other places to find me, projects &amp; recommendations.
               </p>
               <div style={{ backgroundColor: c.divider }} className="-mx-3.5 sm:-mx-5 h-px opacity-60" aria-hidden="true" />
             </div>
@@ -1920,10 +1920,10 @@ export function LivePreviewCard({
             <div
               style={{
                 backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.05)" : "#FFFFFF",
-                borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : "#f0f0f0",
-                boxShadow: "0 2px 10px -2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02)",
+                borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : "#E5E7EB",
+                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02)",
               }}
-              className="rounded-[16px] border overflow-hidden text-left divide-y divide-[#f0f0f0] dark:divide-white/10"
+              className="rounded-[16px] border overflow-hidden text-left divide-y divide-[#E5E7EB] dark:divide-white/10"
             >
               {customLinksList
                 .filter((l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url))))
@@ -2061,7 +2061,7 @@ export function LivePreviewCard({
                   className={`flex items-baseline gap-1.5 ${PUBLIC_TYPE.sectionTitle}`}
                 >
                   <Film className="h-3.5 w-3.5 opacity-70 self-center" style={{ color: c.primaryText }} />
-                  <span>Series &amp; Playlists</span>
+                  <span>Video Series</span>
                 </h2>
                 {series.length > 0 && (
                   <span
@@ -2076,7 +2076,7 @@ export function LivePreviewCard({
                 style={{ color: c.secondaryText }}
                 className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5 pb-2"
               >
-                Watch my videos, series &amp; episodes in order.
+                Watch all my videos, series &amp; episodes in order.
               </p>
               <div style={{ backgroundColor: c.divider }} className="-mx-3.5 sm:-mx-5 h-px opacity-60" aria-hidden="true" />
             </div>
@@ -2162,8 +2162,8 @@ export function LivePreviewCard({
                       }}
                       style={{
                         backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.05)" : "#FFFFFF",
-                        borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : "#f0f0f0",
-                        boxShadow: "0 2px 10px -2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03)",
+                        borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : "#E5E7EB",
+                        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02)",
                       }}
                       className="group rounded-[14px] border overflow-hidden transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 cursor-pointer text-left"
                     >
@@ -2246,7 +2246,7 @@ export function LivePreviewCard({
                     className={`flex items-center gap-1.5 ${PUBLIC_TYPE.sectionTitle}`}
                   >
                     <ShoppingBag className="h-3.5 w-3.5 opacity-70" style={{ color: c.primaryText }} />
-                    <span>{productsOnlyMode ? "Curated Products & Recommendations" : "Shop"}</span>
+                    <span>{productsOnlyMode ? "Curated Products & Recommendations" : "Store & Recommendations"}</span>
                   </h2>
                 </div>
                 {products && products.length > 0 && (
@@ -2262,7 +2262,7 @@ export function LivePreviewCard({
                 style={{ color: c.secondaryText }}
                 className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5 pb-2"
               >
-                Shop my favorites, gear &amp; recommendations.
+                Things I personally use, love &amp; recommend.
               </p>
               <div style={{ backgroundColor: c.divider }} className="-mx-3.5 sm:-mx-5 h-px opacity-60" aria-hidden="true" />
             </div>
@@ -2393,7 +2393,7 @@ export function LivePreviewCard({
         {!seriesOnlyMode && !reviewsOnlyMode && !productsOnlyMode && activeTeamMembers.length > 0 && (
           <div id="team-section" className="relative z-10 order-[20] mt-6 sm:mt-7 w-full text-left space-y-2.5">
             <div>
-              <div className="flex items-center justify-between gap-3 px-0.5 pb-2">
+              <div className="flex items-center justify-between gap-3 px-0.5">
                 <h2
                   style={{
                     color: c.primaryText,
@@ -2403,7 +2403,7 @@ export function LivePreviewCard({
                   className={`flex items-center gap-1.5 ${PUBLIC_TYPE.sectionTitle}`}
                 >
                   <Users className="h-3.5 w-3.5 opacity-70" style={{ color: c.primaryText }} />
-                  <span>{teamData.team?.teamName || "Creator Team"}</span>
+                  <span>{teamData.team?.teamName || "My Team"}</span>
                 </h2>
                 <span
                   style={{ color: c.mutedText }}
@@ -2412,6 +2412,12 @@ export function LivePreviewCard({
                   {activeTeamMembers.length} {activeTeamMembers.length === 1 ? "member" : "members"}
                 </span>
               </div>
+              <p
+                style={{ color: c.secondaryText }}
+                className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5 pb-2"
+              >
+                The people behind the camera, edits &amp; stories.
+              </p>
               <div style={{ backgroundColor: c.divider }} className="-mx-3.5 sm:-mx-5 h-px opacity-60" aria-hidden="true" />
             </div>
 
@@ -2513,14 +2519,14 @@ export function LivePreviewCard({
                     className={`flex items-center gap-1.5 ${PUBLIC_TYPE.sectionTitle}`}
                   >
                     <Briefcase className="h-3.5 w-3.5 opacity-70" style={{ color: c.primaryText }} />
-                    <span>Work with me</span>
+                    <span>Work With Me</span>
                   </h2>
                 </div>
                 <p
                   style={{ color: c.secondaryText }}
                   className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5 pb-2"
                 >
-                  Let’s collaborate and create something great.
+                  Brand sponsorships, integrations &amp; custom collaborations.
                 </p>
                 <div style={{ backgroundColor: c.divider }} className="-mx-3.5 sm:-mx-5 h-px opacity-60" aria-hidden="true" />
               </div>
@@ -2648,7 +2654,7 @@ export function LivePreviewCard({
                   className={`flex items-center gap-1.5 ${PUBLIC_TYPE.sectionTitle}`}
                 >
                   <Star className="h-3.5 w-3.5 opacity-70" style={{ color: c.primaryText }} />
-                  <span>Reviews</span>
+                  <span>What Brands Say</span>
                 </h2>
                 {approvedReviews.length > 0 && (
                   <span
@@ -2663,7 +2669,7 @@ export function LivePreviewCard({
                 style={{ color: c.secondaryText }}
                 className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5 pb-2"
               >
-                What brands &amp; collaborators say about working with me.
+                Feedback from brands &amp; clients I&apos;ve worked with.
               </p>
               <div style={{ backgroundColor: c.divider }} className="-mx-3.5 sm:-mx-5 h-px opacity-60" aria-hidden="true" />
             </div>
@@ -2760,7 +2766,7 @@ export function LivePreviewCard({
         {!seriesOnlyMode && !reviewsOnlyMode && !productsOnlyMode && setupList && setupList.filter((it) => it.isActive !== false).length > 0 && (
           <div id="setup-section" className="relative z-10 order-[45] mt-6 sm:mt-7 w-full text-left space-y-2.5">
             <div>
-              <div className="flex items-center justify-between px-0.5 pb-2">
+              <div className="flex items-center justify-between px-0.5">
                 <h2
                   style={{
                     color: c.primaryText,
@@ -2770,7 +2776,7 @@ export function LivePreviewCard({
                   className={`flex items-center gap-1.5 ${PUBLIC_TYPE.sectionTitle}`}
                 >
                   <Laptop className="h-3.5 w-3.5 opacity-70" style={{ color: c.primaryText }} />
-                  <span>Gear &amp; Tools</span>
+                  <span>My Setup</span>
                 </h2>
                 <span
                   style={{ color: c.mutedText }}
@@ -2779,6 +2785,12 @@ export function LivePreviewCard({
                   {setupList.filter((it) => it.isActive !== false).length} Items
                 </span>
               </div>
+              <p
+                style={{ color: c.secondaryText }}
+                className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5 pb-2"
+              >
+                Stuff I use while creating videos.
+              </p>
               <div style={{ backgroundColor: c.divider }} className="-mx-3.5 sm:-mx-5 h-px opacity-60" aria-hidden="true" />
             </div>
 
