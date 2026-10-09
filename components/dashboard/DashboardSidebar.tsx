@@ -10,6 +10,7 @@ import {
   Crown,
   Zap,
   AlertTriangle,
+  Check,
 } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 import { NAV_GROUPS, isNavActive } from "@/components/dashboard/navConfig";
@@ -103,34 +104,31 @@ export function DashboardSidebar() {
 
       {/* Bottom Utility Row: plan · preview · logout */}
       <div className="mt-2 flex items-center gap-1 border-t border-[#e2e8f0] pt-2">
-        <Link
-          href="/dashboard/subscription"
-          title={`Subscription Plan: ${planInfo.label}`}
-          className={`flex min-w-0 flex-1 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
-            planInfo.tier === "vip"
-              ? "bg-amber-50 text-amber-900 border border-amber-200/90 hover:bg-amber-100 font-semibold"
-              : planInfo.tier === "pro"
-              ? "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white shadow-xs font-bold hover:opacity-95"
-              : planInfo.tier === "starter"
-              ? "bg-[#fdf2f8] text-[#7A2253] border border-[#fbcfe8] hover:bg-[#fce7f3] font-semibold"
-              : planInfo.tier === "expired"
-              ? "bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 font-semibold"
-              : "text-[#475569] border border-transparent hover:bg-[#f1f5f9] hover:text-[#0f172a] font-medium"
-          }`}
-        >
-          {planInfo.tier === "vip" ? (
-            <Crown className="h-3.5 w-3.5 shrink-0 text-amber-500 fill-amber-500/20" />
-          ) : planInfo.tier === "pro" ? (
-            <Zap className="h-3.5 w-3.5 shrink-0 text-white fill-white" />
-          ) : planInfo.tier === "starter" ? (
+        {planInfo.tier === "pro" || planInfo.tier === "vip" ? (
+          <Link
+            href="/dashboard/subscription"
+            title="Pro subscription active"
+            className="flex min-w-0 flex-1 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80 hover:bg-emerald-100/70 transition-colors"
+          >
+            <Check className="h-3.5 w-3.5 shrink-0 text-emerald-600 stroke-[2.5]" />
+            <span className="truncate">Pro ✓</span>
+          </Link>
+        ) : (
+          <Link
+            href="/dashboard/subscription"
+            title={`Subscription Plan: ${planInfo.label}`}
+            className={`flex min-w-0 flex-1 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
+              planInfo.tier === "starter"
+                ? "bg-[#fdf2f8] text-[#7A2253] border border-[#fbcfe8] hover:bg-[#fce7f3] font-semibold"
+                : planInfo.tier === "expired"
+                ? "bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 font-semibold"
+                : "bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-100 hover:text-slate-900 font-medium"
+            }`}
+          >
             <Sparkles className="h-3.5 w-3.5 shrink-0 text-[#7A2253]" />
-          ) : planInfo.tier === "expired" ? (
-            <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-rose-600" />
-          ) : (
-            <Sparkles className="h-3.5 w-3.5 shrink-0 text-[#94a3b8]" />
-          )}
-          <span className="truncate">{planInfo.label}</span>
-        </Link>
+            <span className="truncate">Upgrade to Pro</span>
+          </Link>
+        )}
         <button
           type="button"
           onClick={handleViewProfile}

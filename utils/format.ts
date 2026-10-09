@@ -80,3 +80,20 @@ export function formatCategoryDots(category?: string | null, customCategory?: st
     .filter(Boolean)
     .join(" · ");
 }
+
+export function formatMetricNumber(num: number): string {
+  if (!Number.isFinite(num) || num <= 0) return "0";
+  if (num < 1000) return num.toLocaleString("en-IN");
+  if (num < 1_000_000) {
+    const k = num / 1000;
+    return `${trimDecimal(k)}K`;
+  }
+  const m = num / 1_000_000;
+  return `${trimDecimal(m)}M`;
+}
+
+export function pluralize(count: number, singular: string, plural?: string): string {
+  const p = plural || `${singular}s`;
+  return `${count} ${count === 1 ? singular : p}`;
+}
+

@@ -512,6 +512,58 @@ export default function PublicProfileClient() {
   const handleStr = profile.username || decodeURIComponent(params.username ?? "username");
   const fullUrl = buildProfileUrl(handleStr);
 
+  const handleLinkClick = (link: any) => {
+    try {
+      const visitorKey = getPublicVisitorId();
+      const target = link?.id || link?.url || "link";
+      const eventId = `link:${profile.id || handleStr}:${target}:${Date.now()}`;
+      fetch("/api/analytics/track", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          creator_id: profile.id,
+          creator_username: handleStr.replace(/^@/, ""),
+          event_type: "link_click",
+          event_target: target,
+          visitor_id: visitorKey,
+          event_id: eventId,
+          source: "public_profile",
+          metadata: {
+            title: link?.title,
+            url: link?.url,
+            referrer: typeof document !== "undefined" ? document.referrer : "",
+          },
+        }),
+      }).catch(() => {});
+    } catch {}
+  };
+
+  const handleProductClick = (prod: any) => {
+    try {
+      const visitorKey = getPublicVisitorId();
+      const target = prod?.id || prod?.productUrl || prod?.name || "product";
+      const eventId = `prod:${profile.id || handleStr}:${target}:${Date.now()}`;
+      fetch("/api/analytics/track", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          creator_id: profile.id,
+          creator_username: handleStr.replace(/^@/, ""),
+          event_type: "product_click",
+          event_target: target,
+          visitor_id: visitorKey,
+          event_id: eventId,
+          source: "public_profile",
+          metadata: {
+            name: prod?.name,
+            url: prod?.productUrl,
+            referrer: typeof document !== "undefined" ? document.referrer : "",
+          },
+        }),
+      }).catch(() => {});
+    } catch {}
+  };
+
   async function handleShare() {
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
@@ -749,6 +801,8 @@ export default function PublicProfileClient() {
           reviewsPreviewLimit={3}
           allReviewsHref={`/${handleStr.replace(/^@/, "")}/reviews`}
           onShare={handleShare}
+          onLinkClick={handleLinkClick}
+          onProductClick={handleProductClick}
         />
     </CreatorPublicShell>
   );
