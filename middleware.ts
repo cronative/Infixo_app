@@ -20,6 +20,7 @@ export async function middleware(req: NextRequest) {
     pathname.startsWith("/images") ||
     pathname.startsWith("/favicon") ||
     pathname.startsWith("/logo") ||
+    pathname.startsWith("/admin/phpmyadmin") ||
     pathname.includes(".")
   ) {
     return NextResponse.next();
