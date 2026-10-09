@@ -80,7 +80,7 @@ function StarRatingRow({
     <div className="space-y-1 py-2.5 px-3.5 bg-[#fbfbfb] rounded-xl border border-[#E7E3DC]">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 min-w-0">
-          <Icon className="h-4 w-4 text-[#043084] shrink-0" />
+          <Icon className="h-4 w-4 text-[#7A2253] shrink-0" />
           <span className="text-xs font-bold text-[#181716] truncate">
             {label} {isRequired && <span className="text-[#C2414B]">*</span>}
           </span>
@@ -384,11 +384,11 @@ export default function PublicReviewSubmissionPage() {
       <div className="flex min-h-dvh flex-col items-center justify-center p-4 bg-white text-[#181716] text-center">
         <div className="max-w-sm">
           <EmptyState
-            icon={<MessageSquare className="h-6 w-6 text-[#043084]" />}
+            icon={<MessageSquare className="h-6 w-6 text-[#7A2253]" />}
             title="Review Link Invalid or Expired"
             description="This review request link doesn't exist or is invalid."
             action={
-              <Link href="/" className="text-xs font-bold text-[#043084] hover:underline">
+              <Link href="/" className="text-xs font-bold text-[#7A2253] hover:underline">
                 ← Return to Inflixo Home
               </Link>
             }
@@ -407,7 +407,7 @@ export default function PublicReviewSubmissionPage() {
         {/* Top Inflixo Branding Header */}
         <div className="flex items-center justify-between pb-3 border-b border-[#E7E3DC]">
           <Logo size="sm" />
-          <span className="inline-flex items-center gap-1 rounded-full bg-[#043084]/[0.09] border border-[#043084]/20 px-3 py-1 text-[10px] font-extrabold text-[#043084] uppercase tracking-wider">
+          <span className="inline-flex items-center gap-1 rounded-full bg-[#7A2253]/[0.09] border border-[#7A2253]/20 px-3 py-1 text-[10px] font-extrabold text-[#7A2253] uppercase tracking-wider">
             <ShieldCheck className="h-3 w-3 text-[#17845B]" /> Verified Brand Review
           </span>
         </div>
@@ -417,9 +417,9 @@ export default function PublicReviewSubmissionPage() {
           <CreatorAvatar
             src={creatorData?.photoDataUrl || null}
             name={creatorData?.displayName || "Creator"}
-            className="w-14 h-14 rounded-full border-2 border-[#043084]/30 object-cover shrink-0"
-            textClassName="text-lg font-black text-[#043084]"
-            fallbackBgClass="bg-[#043084]/[0.09]"
+            className="w-14 h-14 rounded-full border-2 border-[#7A2253]/30 object-cover shrink-0"
+            textClassName="text-lg font-black text-[#7A2253]"
+            fallbackBgClass="bg-[#7A2253]/[0.09]"
           />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
@@ -428,7 +428,7 @@ export default function PublicReviewSubmissionPage() {
               </h2>
               {creatorData?.isVerified && <ShieldCheck className="h-4 w-4 text-[#17845B] shrink-0" />}
             </div>
-            <p className="text-xs font-bold text-[#043084]">
+            <p className="text-xs font-bold text-[#7A2253]">
               @{creatorData?.username || "creator"}
             </p>
             {(creatorData?.category || creatorData?.profession) && (
@@ -443,7 +443,7 @@ export default function PublicReviewSubmissionPage() {
         <div className="rounded-2xl border border-[#E7E3DC] bg-[#fbfbfb] p-4 space-y-3 shadow-xs">
           <div className="flex items-center justify-between gap-2 border-b border-[#E7E3DC] pb-2.5">
             <div className="flex items-center gap-2 min-w-0">
-              <Building2 className="h-4 w-4 text-[#043084] shrink-0" />
+              <Building2 className="h-4 w-4 text-[#7A2253] shrink-0" />
               <div className="min-w-0 text-xs">
                 <span className="text-[10px] font-bold text-[#797570] uppercase tracking-wider block">
                   Reviewing For Brand / Client
@@ -462,7 +462,7 @@ export default function PublicReviewSubmissionPage() {
 
           <div className="flex items-center justify-between gap-2 pt-0.5">
             <div className="flex items-center gap-2 min-w-0">
-              <Package className="h-4 w-4 text-[#043084] shrink-0" />
+              <Package className="h-4 w-4 text-[#7A2253] shrink-0" />
               <div className="min-w-0 text-xs">
                 <span className="text-[10px] font-bold text-[#797570] uppercase tracking-wider block">
                   Collab Deliverable
@@ -478,7 +478,7 @@ export default function PublicReviewSubmissionPage() {
                 href={reviewData.contentUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-[#043084] hover:bg-brand-hover text-white font-extrabold text-xs px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1 shrink-0 shadow-xs"
+                className="bg-[#7A2253] hover:bg-brand-hover text-white font-extrabold text-xs px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1 shrink-0 shadow-xs"
               >
                 <Video className="h-3.5 w-3.5" />
                 <span>View Work ↗</span>
@@ -505,7 +505,7 @@ export default function PublicReviewSubmissionPage() {
             <div className="pt-3 border-t border-amber-200/80 text-xs">
               <Link
                 href={`/${creatorData?.username || "creator"}`}
-                className="bg-[#043084] hover:bg-brand-hover text-white font-extrabold px-4 py-2.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-sm"
+                className="bg-[#7A2253] hover:bg-brand-hover text-white font-extrabold px-4 py-2.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-sm"
               >
                 <span>Visit Creator Profile →</span>
               </Link>
@@ -599,7 +599,7 @@ export default function PublicReviewSubmissionPage() {
                     type="button"
                     onClick={handleGenerateAiReview}
                     disabled={isGeneratingAi}
-                    className="inline-flex items-center gap-1 bg-[#043084]/[0.09] hover:bg-brand-hover/15 text-[#043084] text-[11px] font-extrabold px-2.5 py-1 rounded-lg border border-[#043084]/20 transition-all cursor-pointer shadow-2xs"
+                    className="inline-flex items-center gap-1 bg-[#7A2253]/[0.09] hover:bg-brand-hover/15 text-[#7A2253] text-[11px] font-extrabold px-2.5 py-1 rounded-lg border border-[#7A2253]/20 transition-all cursor-pointer shadow-2xs"
                   >
                     <Wand2 className={`h-3 w-3 ${isGeneratingAi ? "animate-spin" : ""}`} />
                     <span>{isGeneratingAi ? "Generating..." : "✨ Auto-Write with AI"}</span>
@@ -612,13 +612,13 @@ export default function PublicReviewSubmissionPage() {
                   value={comment}
                   onChange={(e) => setComment(e.target.value.slice(0, 250))}
                   placeholder="Write a few words about working with this creator..."
-                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-medium text-[#181716] placeholder-[#797570] focus:border-[#043084] focus:bg-white focus:outline-none"
+                  className="w-full rounded-xl border border-[#E7E3DC] bg-[#fbfbfb] px-3.5 py-2.5 text-xs font-medium text-[#181716] placeholder-[#797570] focus:border-[#7A2253] focus:bg-white focus:outline-none"
                 />
 
                 {/* Character Counter Display */}
                 <div className="flex items-center justify-between text-[10.5px] px-1">
                   <div className="flex items-center gap-1 text-[#797570] font-bold">
-                    <Sparkles className="h-3 w-3 text-[#043084]" />
+                    <Sparkles className="h-3 w-3 text-[#7A2253]" />
                     <span>AI Review Suggestions:</span>
                   </div>
                   <span className={`font-extrabold ${comment.length >= 240 ? "text-amber-600" : "text-[#797570]"}`}>
@@ -646,7 +646,7 @@ export default function PublicReviewSubmissionPage() {
                     <button
                       type="button"
                       onClick={() => handleRefreshSuggestions()}
-                      className="inline-flex items-center gap-1 text-[10.5px] font-bold text-[#043084] hover:underline cursor-pointer"
+                      className="inline-flex items-center gap-1 text-[10.5px] font-bold text-[#7A2253] hover:underline cursor-pointer"
                     >
                       <RotateCw className="h-3 w-3" />
                       <span>Refresh 5 AI Ideas</span>
@@ -660,7 +660,7 @@ export default function PublicReviewSubmissionPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-[#043084] hover:bg-brand-hover text-white font-extrabold text-sm py-3.5 px-4 rounded-xl transition-all shadow-xs cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full bg-[#7A2253] hover:bg-brand-hover text-white font-extrabold text-sm py-3.5 px-4 rounded-xl transition-all shadow-xs cursor-pointer flex items-center justify-center gap-2"
                 >
                   <Send className="h-4 w-4" />
                   <span>{submitting ? "Submitting Review..." : "Submit Brand Review →"}</span>

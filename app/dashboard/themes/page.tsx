@@ -211,7 +211,7 @@ export default function DashboardThemesPage() {
             href={`/${profile.username || "creator"}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#043084] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#7A2253] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
           >
             <span>Live Profile</span>
             <ExternalLink className="h-3.5 w-3.5" />
@@ -220,7 +220,7 @@ export default function DashboardThemesPage() {
             type="button"
             onClick={handleApplyTheme}
             disabled={isApplying || previewThemeKey === theme}
-            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#043084] px-4 py-2 text-xs font-bold text-white shadow-2xs transition-all hover:bg-[#032363] disabled:opacity-50 cursor-pointer"
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#7A2253] px-4 py-2 text-xs font-bold text-white shadow-2xs transition-all hover:bg-[#5d193f] disabled:opacity-50 cursor-pointer"
           >
             {isApplying ? (
               <>
@@ -253,8 +253,8 @@ export default function DashboardThemesPage() {
                     type="button"
                     onClick={() => setActiveFilter(filter.key)}
                     className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer ${isSelected
-                      ? "border-[#043084] bg-[#043084] text-white shadow-xs"
-                      : "border-[#dbe3ee] bg-white text-[#64748b] hover:border-[#043084]/30 hover:bg-[#f8fafc] hover:text-[#043084]"
+                      ? "border-[#7A2253] bg-[#7A2253] text-white shadow-xs"
+                      : "border-[#dbe3ee] bg-white text-[#64748b] hover:border-[#7A2253]/30 hover:bg-[#f8fafc] hover:text-[#7A2253]"
                       }`}
                   >
                     {filter.label}
@@ -313,11 +313,11 @@ export default function DashboardThemesPage() {
               <p className="text-xs sm:text-[13px] text-[#475569] font-normal">
                 {isPreviewDifferent ? (
                   <span>
-                    Previewing: <strong className="text-[#043084] font-semibold">{previewThemeMeta.name}</strong>
+                    Previewing: <strong className="text-[#7A2253] font-semibold">{previewThemeMeta.name}</strong>
                   </span>
                 ) : (
                   <span>
-                    Active theme: <strong className="text-[#043084] font-semibold">{previewThemeMeta.name}</strong>
+                    Active theme: <strong className="text-[#7A2253] font-semibold">{previewThemeMeta.name}</strong>
                   </span>
                 )}
               </p>
@@ -330,7 +330,7 @@ export default function DashboardThemesPage() {
                     type="button"
                     onClick={handleApplyTheme}
                     disabled={isApplying}
-                    className="h-9 px-3.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-white text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm disabled:opacity-50 inline-flex items-center gap-1.5"
+                    className="h-9 px-3.5 rounded-lg bg-[#7A2253] hover:bg-brand-hover text-white text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm disabled:opacity-50 inline-flex items-center gap-1.5"
                   >
                     {isApplying ? (
                       <>
@@ -355,7 +355,7 @@ export default function DashboardThemesPage() {
               <button
                 type="button"
                 onClick={handleViewProfile}
-                className="h-9 px-3 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#043084] text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5"
+                className="h-9 px-3 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#7A2253] text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5"
                 title="View public profile in new tab"
               >
                 <span>View Profile</span>
@@ -366,9 +366,9 @@ export default function DashboardThemesPage() {
 
           {/* Clean Phone Mockup Frame (Expanded width & height, redundant outer container removed) */}
           <div className="w-full flex justify-center pt-1">
-            <div className="w-full max-w-[450px] sm:max-w-[470px] xl:max-w-[490px] rounded-[38px] border-[6px] border-[#043084] bg-black shadow-2xl overflow-hidden relative">
+            <div className="w-full max-w-[450px] sm:max-w-[470px] xl:max-w-[490px] rounded-[38px] border-[6px] border-[#7A2253] bg-black shadow-2xl overflow-hidden relative">
               {/* Phone Top Notch/Island */}
-              <div className="absolute top-2.5 left-1/2 -translate-x-1/2 h-4 w-28 bg-[#043084] rounded-full z-30 pointer-events-none" />
+              <div className="absolute top-2.5 left-1/2 -translate-x-1/2 h-4 w-28 bg-[#7A2253] rounded-full z-30 pointer-events-none" />
 
               {/* Scrollable Viewport inside phone */}
               <div
@@ -424,7 +424,7 @@ function ThemeCard({
   isPreviewing,
   onSelect,
 }: ThemeCardProps) {
-  const [bg, accent, text] = theme.swatch || ["#7c3aed", "#ede9fe", "#043084"];
+  const [bg, accent, text] = theme.swatch || ["#7c3aed", "#ede9fe", "#7A2253"];
   const isThemeAnimated = Boolean(theme.isAnimated || theme.group === "animated");
   const subtitle = THEME_SUBTITLES[theme.key] || theme.tag || (theme.mode === "dark" ? "Bold & Dark" : "Clean & Light");
   const hasImageBackground = Boolean(theme.outerBgClass?.includes("theme-bg-"));
@@ -439,7 +439,7 @@ function ThemeCard({
       type="button"
       onClick={onSelect}
       className={`group relative flex flex-col justify-between w-full rounded-xl border p-2 text-left transition-all duration-200 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-md ${isPreviewing
-        ? "border-[#043084] ring-2 ring-[#043084]/20 bg-[#043084]/[0.03]"
+        ? "border-[#7A2253] ring-2 ring-[#7A2253]/20 bg-[#7A2253]/[0.03]"
         : isActive
           ? "border-[#17845B]/40 ring-1 ring-[#17845B]/20 bg-white"
           : "border-[#e2e8f0] bg-white hover:border-[#cbd5e1] hover:shadow-sm"
@@ -469,7 +469,7 @@ function ThemeCard({
       {/* Card Info Footer */}
       <div className="pt-2.5 px-1 pb-0.5 flex items-center justify-between gap-2 w-full">
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[13px] sm:text-sm font-bold text-[#043084] leading-tight">
+          <p className="truncate text-[13px] sm:text-sm font-bold text-[#7A2253] leading-tight">
             {theme.name}
           </p>
           <p className="mt-0.5 truncate text-[11px] text-[#64748b] font-medium">
@@ -478,7 +478,7 @@ function ThemeCard({
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
           {isThemeAnimated && (
-            <span className="inline-flex items-center rounded-full bg-[#043084]/[0.08] px-1.5 py-1 text-[#043084]">
+            <span className="inline-flex items-center rounded-full bg-[#7A2253]/[0.08] px-1.5 py-1 text-[#7A2253]">
               <Sparkles className="h-3 w-3" />
             </span>
           )}

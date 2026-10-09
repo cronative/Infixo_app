@@ -120,7 +120,7 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
               aria-pressed={isSelected}
               onClick={() => toggleGenre(g)}
               className={`tap-scale inline-flex h-8 items-center gap-1 rounded-full border px-3 text-[13px] transition-colors cursor-pointer shrink-0 ${isSelected
-                ? "border-[#043084] bg-[#043084]/[0.06] font-medium text-[#043084]"
+                ? "border-[#7A2253] bg-[#7A2253]/[0.06] font-medium text-[#7A2253]"
                 : isMaxReached
                   ? "opacity-40 cursor-not-allowed border-[#e2e8f0] bg-white text-[#64748b]"
                   : "border-[#e2e8f0] bg-white text-[#475569] hover:border-[#cbd5e1] hover:bg-[#f8fafc] hover:text-[#0f172a]"
@@ -135,7 +135,7 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
           <button
             type="button"
             onClick={() => setShowAll((v) => !v)}
-            className="inline-flex h-8 items-center rounded-full px-3 text-[13px] font-medium text-[#043084] hover:bg-[#043084]/[0.06] cursor-pointer"
+            className="inline-flex h-8 items-center rounded-full px-3 text-[13px] font-medium text-[#7A2253] hover:bg-[#7A2253]/[0.06] cursor-pointer"
           >
             {showAll ? "Show fewer" : `+${hiddenCount} more`}
           </button>

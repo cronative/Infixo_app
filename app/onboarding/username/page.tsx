@@ -175,7 +175,7 @@ export default function UsernameStepPage() {
         <div className="rounded-2xl border border-[#e2e8f0] bg-white p-4 sm:p-5 space-y-3 text-center shadow-xs">
           {/* 1. Pill Badge */}
           <div className="flex justify-center">
-            <span className="inline-block rounded-full bg-[#043084]/[0.05] border border-[#043084]/15 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#043084]">
+            <span className="inline-block rounded-full bg-[#7A2253]/[0.05] border border-[#7A2253]/15 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#7A2253]">
               STEP 1 OF 4 · USERNAME
             </span>
           </div>
@@ -201,7 +201,7 @@ export default function UsernameStepPage() {
             </label>
 
             <div
-              className={`flex h-10.5 sm:h-11 items-center rounded-xl border px-3 bg-white transition-all focus-within:border-[#043084] focus-within:ring-2 focus-within:ring-[#043084]/10 ${error ? "border-[#ef4444]" : "border-[#cbd5e1]"
+              className={`flex h-10.5 sm:h-11 items-center rounded-xl border px-3 bg-white transition-all focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 ${error ? "border-[#ef4444]" : "border-[#cbd5e1]"
                 }`}
             >
               <span className="text-xs sm:text-sm font-medium text-[#64748b] select-none">
@@ -219,14 +219,14 @@ export default function UsernameStepPage() {
                 className="h-full w-full min-w-0 flex-1 bg-transparent px-1 text-xs sm:text-sm font-bold text-[#181716] outline-none placeholder:text-[#94a3b8]"
               />
               {checking && (
-                <Loader2 className="h-4 w-4 animate-spin text-[#043084] shrink-0" />
+                <Loader2 className="h-4 w-4 animate-spin text-[#7A2253] shrink-0" />
               )}
             </div>
 
             {/* Live Profile URL badge preview */}
             <div className="flex items-center justify-between px-2.5 py-1 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[11px]">
               <span className="text-[#64748b]">Your profile link:</span>
-              <span className="font-mono font-bold text-[#043084] truncate max-w-[220px]">
+              <span className="font-mono font-bold text-[#7A2253] truncate max-w-[220px]">
                 inflixo.com/{cleanHandle || "yourname"}
               </span>
             </div>
@@ -234,7 +234,7 @@ export default function UsernameStepPage() {
             {/* Availability Feedback (below input) */}
             {checking && cleanHandle.length >= 3 ? (
               <div className="flex items-center gap-1.5 text-xs font-medium text-[#64748b] pt-0.5 animate-fade-in">
-                <Loader2 className="h-3.5 w-3.5 animate-spin text-[#043084]" />
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-[#7A2253]" />
                 <span>Checking availability...</span>
               </div>
             ) : status?.available && cleanHandle ? (
@@ -284,7 +284,7 @@ export default function UsernameStepPage() {
             type="button"
             onClick={handleClaimUsername}
             disabled={!isReadyToClaim || submitting}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#043084] hover:bg-brand-hover text-white font-semibold text-xs sm:text-sm h-10.5 sm:h-11 transition-all cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#7A2253] hover:bg-brand-hover text-white font-semibold text-xs sm:text-sm h-10.5 sm:h-11 transition-all cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
           >
             {submitting ? (
               <>

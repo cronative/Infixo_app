@@ -141,7 +141,7 @@ export function ProductImageLightbox({
                   onExternalClick?.(product.name);
                 }
               }}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#043084] hover:bg-[#03256c] border border-blue-400/30 px-3.5 py-2 text-xs font-bold text-white shadow-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#7A2253] hover:bg-[#03256c] border border-blue-400/30 px-3.5 py-2 text-xs font-bold text-white shadow-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
             >
               <span>View Product</span>
               <ExternalLink className="h-3.5 w-3.5 shrink-0" />

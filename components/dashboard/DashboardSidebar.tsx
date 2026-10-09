@@ -48,7 +48,7 @@ export function DashboardSidebar() {
               {displayName}
             </p>
             {profile.isVerified && (
-              <ShieldCheck className="h-3.5 w-3.5 shrink-0 fill-[#043084] text-white" />
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0 fill-[#7A2253] text-white" />
             )}
           </div>
           <div className="flex items-center gap-1.5 mt-0.5">
@@ -87,11 +87,11 @@ export function DashboardSidebar() {
                     href={item.href}
                     aria-current={active ? "page" : undefined}
                     className={`flex h-8 items-center gap-2.5 rounded-lg px-2.5 text-[13px] transition-colors ${active
-                      ? "bg-[#043084]/[0.07] font-semibold text-[#043084]"
+                      ? "bg-[#7A2253]/[0.07] font-semibold text-[#7A2253]"
                       : "font-medium text-[#475569] hover:bg-[#f1f5f9] hover:text-[#0f172a]"
                       }`}
                   >
-                    <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#043084]" : "text-[#94a3b8]"}`} />
+                    <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#7A2253]" : "text-[#94a3b8]"}`} />
                     <span className="flex-1 truncate">{item.label}</span>
                   </Link>
                 );
@@ -112,7 +112,7 @@ export function DashboardSidebar() {
               : planInfo.tier === "pro"
               ? "bg-blue-50 text-blue-800 border border-blue-200/90 hover:bg-blue-100 font-semibold"
               : planInfo.tier === "starter"
-              ? "bg-[#043084]/[0.07] text-[#043084] border border-[#043084]/20 hover:bg-[#043084]/[0.12] font-semibold"
+              ? "bg-[#7A2253]/[0.07] text-[#7A2253] border border-[#7A2253]/20 hover:bg-[#7A2253]/[0.12] font-semibold"
               : planInfo.tier === "expired"
               ? "bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 font-semibold"
               : "text-[#475569] border border-transparent hover:bg-[#f1f5f9] hover:text-[#0f172a] font-medium"
@@ -123,7 +123,7 @@ export function DashboardSidebar() {
           ) : planInfo.tier === "pro" ? (
             <Zap className="h-3.5 w-3.5 shrink-0 text-blue-600 fill-blue-600/20" />
           ) : planInfo.tier === "starter" ? (
-            <Sparkles className="h-3.5 w-3.5 shrink-0 text-[#043084]" />
+            <Sparkles className="h-3.5 w-3.5 shrink-0 text-[#7A2253]" />
           ) : planInfo.tier === "expired" ? (
             <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-rose-600" />
           ) : (

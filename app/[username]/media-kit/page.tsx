@@ -128,8 +128,8 @@ function getPackageCardVisual(pkg: MediaKitPackage) {
   return {
     cardClass: "border-blue-100 bg-gradient-to-b from-blue-50/25 via-white to-white",
     icon: (
-      <div className="w-10 h-10 rounded-2xl bg-[#EEF2FF] border border-blue-200/80 flex items-center justify-center text-[#043084] shadow-xs shrink-0">
-        <Briefcase className="w-5 h-5 text-[#043084] stroke-[2.2]" />
+      <div className="w-10 h-10 rounded-2xl bg-[#EEF2FF] border border-blue-200/80 flex items-center justify-center text-[#7A2253] shadow-xs shrink-0">
+        <Briefcase className="w-5 h-5 text-[#7A2253] stroke-[2.2]" />
       </div>
     ),
   };
@@ -338,14 +338,14 @@ export default function PublicMediaKitPage() {
         <div className="max-w-md space-y-6">
           <Logo />
           <div className="rounded-3xl border border-[#ECE8EB] bg-white p-8 space-y-4 shadow-2xs">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F7EDF3] text-[#043084]">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F7EDF3] text-[#7A2253]">
               <UserX className="h-7 w-7" />
             </div>
             <h1 className="font-display text-xl font-bold text-[#17131A]">Media Kit Not Found</h1>
             <p className="text-xs text-[#6F6872]">No creator media kit registered for @{handle}.</p>
             <button
               onClick={() => router.push("/")}
-              className="w-full py-2.5 rounded-xl bg-[#043084] text-white text-xs font-semibold hover:bg-brand-hover transition-colors"
+              className="w-full py-2.5 rounded-xl bg-[#7A2253] text-white text-xs font-semibold hover:bg-brand-hover transition-colors"
             >
               Back to Home
             </button>
@@ -570,7 +570,7 @@ export default function PublicMediaKitPage() {
               style={{ borderColor: c.border, backgroundColor: c.cardBackground }}
               textClassName="text-lg font-extrabold sm:text-xl"
               textStyle={{ color: c.primaryText }}
-              fallbackBgClass="bg-[#043084]"
+              fallbackBgClass="bg-[#7A2253]"
             />
             <div className="mt-2 flex items-center justify-center gap-1.5 px-2">
               <h1 style={pt.headingStyle} className={`${PUBLIC_TYPE.creatorName} break-words line-clamp-2`}>

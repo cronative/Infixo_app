@@ -319,7 +319,7 @@ export default function DashboardTeamPage() {
             <button
               type="button"
               onClick={handleOpenTeamModal}
-              className="tap-scale flex items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] h-9 px-3.5 text-xs font-semibold text-[#043084] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+              className="tap-scale flex items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] h-9 px-3.5 text-xs font-semibold text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
             >
               <Pencil className="h-3.5 w-3.5 text-[#64748b]" />
               <span>Edit Team</span>
@@ -352,7 +352,7 @@ export default function DashboardTeamPage() {
             <button
               type="button"
               onClick={handleOpenTeamModal}
-              className="inline-flex items-center gap-2 rounded-lg bg-[#043084] h-9 px-4 text-xs font-semibold text-white shadow-xs transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-sm cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#7A2253] h-9 px-4 text-xs font-semibold text-white shadow-xs transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-sm cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Create Your Team</span>
@@ -370,11 +370,11 @@ export default function DashboardTeamPage() {
           >
             {/* Left: Squircle Badge + Title & Subtitle */}
             <div className="flex items-center gap-2.5 min-w-0 flex-1">
-              <div className="flex h-8.5 w-8.5 items-center justify-center rounded-lg bg-[#04308414] border border-[#e2e8f0] text-[#043084] font-extrabold text-xs shadow-2xs shrink-0 select-none">
+              <div className="flex h-8.5 w-8.5 items-center justify-center rounded-lg bg-[#7A225314] border border-[#e2e8f0] text-[#7A2253] font-extrabold text-xs shadow-2xs shrink-0 select-none">
                 {getInitials(team.teamName)}
               </div>
               <div className="min-w-0 flex-1 text-left space-y-0.5">
-                <p className="truncate text-xs sm:text-[13px] font-bold text-[#043084] group-hover:text-[#043084] transition-colors">
+                <p className="truncate text-xs sm:text-[13px] font-bold text-[#7A2253] group-hover:text-[#7A2253] transition-colors">
                   {team.teamName}
                 </p>
                 <p className="truncate text-[11px] font-medium text-[#64748b]">
@@ -403,11 +403,11 @@ export default function DashboardTeamPage() {
                 href={`/${profile.username || "creator"}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden sm:inline-flex items-center gap-1 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] px-2.5 py-1 text-xs font-semibold text-[#043084] transition-all hover:shadow-2xs"
+                className="hidden sm:inline-flex items-center gap-1 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] px-2.5 py-1 text-xs font-semibold text-[#7A2253] transition-all hover:shadow-2xs"
                 title="View public profile"
               >
                 <span>View</span>
-                <ExternalLink className="h-3 w-3 text-[#043084]" />
+                <ExternalLink className="h-3 w-3 text-[#7A2253]" />
               </a>
 
               {/* 3-Dot Overflow Menu (Always visible) */}
@@ -415,7 +415,7 @@ export default function DashboardTeamPage() {
                 <button
                   type="button"
                   onClick={() => setTeamMenuOpen(!teamMenuOpen)}
-                  className="flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#043084] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                  className="flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
                   aria-label="More actions"
                 >
                   <MoreVertical className="h-3.5 w-3.5" />
@@ -429,9 +429,9 @@ export default function DashboardTeamPage() {
                         setTeamMenuOpen(false);
                         handleOpenMemberModal();
                       }}
-                      className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#043084] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                      className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                     >
-                      <Plus className="h-3.5 w-3.5 text-[#043084]" />
+                      <Plus className="h-3.5 w-3.5 text-[#7A2253]" />
                       <span>Add Member</span>
                     </button>
 
@@ -440,7 +440,7 @@ export default function DashboardTeamPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => setTeamMenuOpen(false)}
-                      className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#043084] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                      className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                     >
                       <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
                       <span>View Public Page</span>
@@ -452,7 +452,7 @@ export default function DashboardTeamPage() {
                         setTeamMenuOpen(false);
                         handleOpenTeamModal();
                       }}
-                      className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#043084] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                      className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                     >
                       <Pencil className="h-3.5 w-3.5 text-[#64748b]" />
                       <span>Edit Team Name</span>
@@ -461,7 +461,7 @@ export default function DashboardTeamPage() {
                     <button
                       type="button"
                       onClick={handleCopyLink}
-                      className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#043084] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                      className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                     >
                       <Copy className="h-3.5 w-3.5 text-[#64748b]" />
                       <span>Copy Profile Link</span>
@@ -474,7 +474,7 @@ export default function DashboardTeamPage() {
               <button
                 type="button"
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="flex h-7 w-7 items-center justify-center rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#043084] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                className="flex h-7 w-7 items-center justify-center rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
                 aria-expanded={isExpanded}
                 title={isExpanded ? "Hide members" : "Show members"}
               >
@@ -495,14 +495,14 @@ export default function DashboardTeamPage() {
 
               {(!team.members || team.members.length === 0) ? (
                 <div className="p-4 sm:p-5 text-center space-y-2 bg-white rounded-b-xl">
-                  <p className="text-xs font-bold text-[#043084]">No team members added yet</p>
+                  <p className="text-xs font-bold text-[#7A2253]">No team members added yet</p>
                   <p className="text-xs text-[#64748b] max-w-sm mx-auto">
                     Add members to highlight directors, editors, writers, and collaborators on your public profile.
                   </p>
                   <button
                     type="button"
                     onClick={() => handleOpenMemberModal()}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-[#043084] hover:bg-brand-hover h-8.5 px-3 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-[#7A2253] hover:bg-brand-hover h-8.5 px-3 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     <span>Add First Member</span>
@@ -518,14 +518,14 @@ export default function DashboardTeamPage() {
                     >
                       {/* Left: Avatar Initial / Squircle + Info */}
                       <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                        <div className="flex h-8.5 w-8.5 items-center justify-center rounded-lg bg-[#04308414] border border-[#e2e8f0] text-[#043084] font-bold text-xs shadow-2xs shrink-0 select-none">
+                        <div className="flex h-8.5 w-8.5 items-center justify-center rounded-lg bg-[#7A225314] border border-[#e2e8f0] text-[#7A2253] font-bold text-xs shadow-2xs shrink-0 select-none">
                           {getInitials(member.name)}
                         </div>
 
                         <div className="min-w-0 flex-1 space-y-0.5">
                           <div className="flex items-center gap-2 flex-wrap">
                             <h3 className="truncate font-semibold text-xs sm:text-[13px] text-[#0f172a]">{member.name}</h3>
-                            <span className="text-[11px] font-semibold text-[#043084] truncate">
+                            <span className="text-[11px] font-semibold text-[#7A2253] truncate">
                               • {member.role}
                             </span>
                             {!member.isActive && (
@@ -581,7 +581,7 @@ export default function DashboardTeamPage() {
                           <button
                             type="button"
                             onClick={() => handleToggleMember(member)}
-                            className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#043084] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                            className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
                             title={member.isActive ? "Hide from profile" : "Show on profile"}
                           >
                             {member.isActive ? (
@@ -594,7 +594,7 @@ export default function DashboardTeamPage() {
                           <button
                             type="button"
                             onClick={() => handleOpenMemberModal(member)}
-                            className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#043084] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                            className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
                             title="Edit member"
                           >
                             <Pencil className="h-3.5 w-3.5" />
@@ -603,7 +603,7 @@ export default function DashboardTeamPage() {
                           <button
                             type="button"
                             onClick={() => setMemberToDelete(member)}
-                            className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#043084] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                            className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
                             title="Remove member"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -618,7 +618,7 @@ export default function DashboardTeamPage() {
                               e.stopPropagation();
                               setActiveMemberMenuId(activeMemberMenuId === member.id ? null : member.id);
                             }}
-                            className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#043084] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                            className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
                             aria-label="Member actions"
                           >
                             <MoreVertical className="h-3.5 w-3.5" />
@@ -635,7 +635,7 @@ export default function DashboardTeamPage() {
                                   setActiveMemberMenuId(null);
                                   handleToggleMember(member);
                                 }}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#043084] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                               >
                                 {member.isActive ? <EyeOff className="h-3.5 w-3.5 text-[#64748b]" /> : <Eye className="h-3.5 w-3.5 text-[#17845B]" />}
                                 <span>{member.isActive ? "Hide from profile" : "Show on profile"}</span>
@@ -647,7 +647,7 @@ export default function DashboardTeamPage() {
                                   setActiveMemberMenuId(null);
                                   handleOpenMemberModal(member);
                                 }}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#043084] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                               >
                                 <Pencil className="h-3.5 w-3.5 text-[#64748b]" />
                                 <span>Edit Member</span>
@@ -692,12 +692,12 @@ export default function DashboardTeamPage() {
           <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
             {/* Live Team Initials Badge Preview */}
             <div className="flex items-center gap-3 p-3 rounded-xl bg-[#f8fafc]/60 border border-[#e2e8f0]">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#04308414] border border-[#e2e8f0] text-[#043084] font-extrabold text-xs shadow-xs shrink-0">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#7A225314] border border-[#e2e8f0] text-[#7A2253] font-extrabold text-xs shadow-xs shrink-0">
                 {getInitials(teamName || "Team")}
               </div>
               <div className="min-w-0">
-                <p className="font-bold text-xs text-[#043084] truncate">{teamName.trim() || "Team Name"}</p>
-                <span className="inline-block text-[10px] font-semibold text-[#043084] bg-[#043084]/[0.09] border border-[#043084]/20 px-1.5 py-0.2 rounded-md">Creator Team</span>
+                <p className="font-bold text-xs text-[#7A2253] truncate">{teamName.trim() || "Team Name"}</p>
+                <span className="inline-block text-[10px] font-semibold text-[#7A2253] bg-[#7A2253]/[0.09] border border-[#7A2253]/20 px-1.5 py-0.2 rounded-md">Creator Team</span>
               </div>
             </div>
 
@@ -711,7 +711,7 @@ export default function DashboardTeamPage() {
                 value={teamName}
                 onChange={(e) => setTeamName(e.target.value)}
                 placeholder="e.g. MediaVerse Studio or Nikunj Films"
-                className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
           </ModalBody>
@@ -720,14 +720,14 @@ export default function DashboardTeamPage() {
             <button
               type="button"
               onClick={() => setIsTeamModalOpen(false)}
-              className="h-9 px-3.5 rounded-lg border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#043084] transition-colors cursor-pointer"
+              className="h-9 px-3.5 rounded-lg border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="tap-scale h-9 bg-[#043084] hover:bg-brand-hover text-white font-semibold text-xs px-4 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="tap-scale h-9 bg-[#7A2253] hover:bg-brand-hover text-white font-semibold text-xs px-4 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               <span>{isSubmitting ? "Saving..." : "Save Team"}</span>
             </button>
@@ -748,12 +748,12 @@ export default function DashboardTeamPage() {
           <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
             {/* Live Member Initials Avatar Preview */}
             <div className="flex items-center gap-3 p-3 rounded-xl bg-[#f8fafc]/60 border border-[#e2e8f0]">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#04308414] border border-[#e2e8f0] text-[#043084] font-extrabold text-xs shadow-xs shrink-0">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#7A225314] border border-[#e2e8f0] text-[#7A2253] font-extrabold text-xs shadow-xs shrink-0">
                 {getInitials(memberName || "Member")}
               </div>
               <div className="min-w-0">
-                <p className="font-bold text-xs text-[#043084] truncate">{memberName.trim() || "Member Name"}</p>
-                <p className="text-[11px] font-medium text-[#043084] truncate">{memberRole.trim() || "Member Role"}</p>
+                <p className="font-bold text-xs text-[#7A2253] truncate">{memberName.trim() || "Member Name"}</p>
+                <p className="text-[11px] font-medium text-[#7A2253] truncate">{memberRole.trim() || "Member Role"}</p>
               </div>
             </div>
 
@@ -768,7 +768,7 @@ export default function DashboardTeamPage() {
                   value={memberName}
                   onChange={(e) => setMemberName(e.target.value)}
                   placeholder="e.g. Rahul Sharma"
-                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
@@ -782,14 +782,14 @@ export default function DashboardTeamPage() {
                   value={memberRole}
                   onChange={(e) => setMemberRole(e.target.value)}
                   placeholder="e.g. Lead Video Editor"
-                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
             </div>
 
             <div className="space-y-2.5 pt-2 border-t border-[#e2e8f0]">
               <div>
-                <p className="text-xs font-bold text-[#043084]">Social Profiles (Optional)</p>
+                <p className="text-xs font-bold text-[#7A2253]">Social Profiles (Optional)</p>
                 <p className="text-[10px] text-[#64748b]">Enter username only — full profile links are generated automatically.</p>
               </div>
 
@@ -797,7 +797,7 @@ export default function DashboardTeamPage() {
                 <label className="block text-[11px] font-semibold text-[#64748b]">
                   Instagram Username
                 </label>
-                <div className="flex h-9 items-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3 transition-colors focus-within:border-[#043084] focus-within:bg-white">
+                <div className="flex h-9 items-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3 transition-colors focus-within:border-[#7A2253] focus-within:bg-white">
                   <span className="mr-2 text-[#E1306C] shrink-0">
                     <InstagramIcon className="h-3.5 w-3.5" />
                   </span>
@@ -815,7 +815,7 @@ export default function DashboardTeamPage() {
                 <label className="block text-[11px] font-semibold text-[#64748b]">
                   YouTube Channel Username
                 </label>
-                <div className="flex h-9 items-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3 transition-colors focus-within:border-[#043084] focus-within:bg-white">
+                <div className="flex h-9 items-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3 transition-colors focus-within:border-[#7A2253] focus-within:bg-white">
                   <span className="mr-2 text-[#FF0000] shrink-0">
                     <YoutubeIcon className="h-3.5 w-3.5" />
                   </span>
@@ -833,7 +833,7 @@ export default function DashboardTeamPage() {
                 <label className="block text-[11px] font-semibold text-[#64748b]">
                   Facebook Username
                 </label>
-                <div className="flex h-9 items-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3 transition-colors focus-within:border-[#043084] focus-within:bg-white">
+                <div className="flex h-9 items-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3 transition-colors focus-within:border-[#7A2253] focus-within:bg-white">
                   <span className="mr-2 text-[#1877F2] shrink-0">
                     <FacebookIcon className="h-3.5 w-3.5" />
                   </span>
@@ -853,14 +853,14 @@ export default function DashboardTeamPage() {
             <button
               type="button"
               onClick={() => setIsMemberModalOpen(false)}
-              className="h-9 px-3.5 rounded-lg border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#043084] transition-colors cursor-pointer"
+              className="h-9 px-3.5 rounded-lg border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="tap-scale h-9 bg-[#043084] hover:bg-brand-hover text-white font-semibold text-xs px-4 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="tap-scale h-9 bg-[#7A2253] hover:bg-brand-hover text-white font-semibold text-xs px-4 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               <span>{isSubmitting ? "Saving..." : editingMember ? "Save Changes" : "Add Member"}</span>
             </button>

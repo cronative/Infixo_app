@@ -87,7 +87,7 @@ export function RazorpayCheckoutButton({
   };
 
   const defaultClasses =
-    "w-full rounded-xl bg-[#043084] hover:bg-[#032360] active:scale-[0.99] text-white py-2.5 px-4 text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs disabled:opacity-70 disabled:cursor-not-allowed";
+    "w-full rounded-xl bg-[#7A2253] hover:bg-[#032360] active:scale-[0.99] text-white py-2.5 px-4 text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs disabled:opacity-70 disabled:cursor-not-allowed";
 
   return (
     <button

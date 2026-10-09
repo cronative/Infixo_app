@@ -120,7 +120,7 @@ export function CollaborationInquiryModal({
       size="md"
       title={`Collaborate with ${creatorName}`}
       description="Send a direct brand collaboration inquiry to the creator."
-      icon={<Briefcase className="h-4 w-4 text-[#043084]" />}
+      icon={<Briefcase className="h-4 w-4 text-[#7A2253]" />}
     >
       {isSuccess ? (
         <div className="p-8 text-center space-y-3">
@@ -137,7 +137,7 @@ export function CollaborationInquiryModal({
             <button
               type="button"
               onClick={handleClose}
-              className="bg-[#043084] hover:bg-brand-hover text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition-colors cursor-pointer"
+              className="bg-[#7A2253] hover:bg-brand-hover text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition-colors cursor-pointer"
             >
               Done
             </button>
@@ -160,7 +160,7 @@ export function CollaborationInquiryModal({
                     value={brandName}
                     onChange={(e) => setBrandName(e.target.value)}
                     placeholder="e.g. Mamaearth / Local Brand / Agency"
-                    className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
+                    className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20 transition-all shadow-2xs"
                   />
                 </div>
               </div>
@@ -175,7 +175,7 @@ export function CollaborationInquiryModal({
                   value={contactName}
                   onChange={(e) => setContactName(e.target.value)}
                   placeholder="e.g. Rohan Sharma"
-                  className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
+                  className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20 transition-all shadow-2xs"
                 />
               </div>
             </div>
@@ -194,7 +194,7 @@ export function CollaborationInquiryModal({
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
                     placeholder="contact@brand.com"
-                    className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
+                    className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20 transition-all shadow-2xs"
                   />
                 </div>
               </div>
@@ -210,7 +210,7 @@ export function CollaborationInquiryModal({
                     value={contactPhone}
                     onChange={(e) => setContactPhone(e.target.value)}
                     placeholder="+91 98765 43210"
-                    className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
+                    className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20 transition-all shadow-2xs"
                   />
                 </div>
               </div>
@@ -225,7 +225,7 @@ export function CollaborationInquiryModal({
                 <select
                   value={budgetRange}
                   onChange={(e) => setBudgetRange(e.target.value)}
-                  className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#043084] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs cursor-pointer"
+                  className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#7A2253] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20 transition-all shadow-2xs cursor-pointer"
                 >
                   <option value="Under ₹15,000">Under ₹15,000</option>
                   <option value="₹15,000 – ₹30,000">₹15,000 – ₹30,000</option>
@@ -247,7 +247,7 @@ export function CollaborationInquiryModal({
                     value={timeline}
                     onChange={(e) => setTimeline(e.target.value)}
                     placeholder="e.g. Next month / Q3"
-                    className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
+                    className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20 transition-all shadow-2xs"
                   />
                 </div>
               </div>
@@ -263,7 +263,7 @@ export function CollaborationInquiryModal({
                 value={deliverables}
                 onChange={(e) => setDeliverables(e.target.value)}
                 placeholder="e.g. 1x Dedicated Reel, 2x Stories with Link"
-                className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs"
+                className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20 transition-all shadow-2xs"
               />
             </div>
 
@@ -277,7 +277,7 @@ export function CollaborationInquiryModal({
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Share project goals, product details, or specific campaign requirements..."
-                className="w-full rounded-lg border border-[#e2e8f0] bg-white p-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all shadow-2xs resize-none"
+                className="w-full rounded-lg border border-[#e2e8f0] bg-white p-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20 transition-all shadow-2xs resize-none"
               />
             </div>
           </ModalBody>
@@ -286,14 +286,14 @@ export function CollaborationInquiryModal({
             <button
               type="button"
               onClick={handleClose}
-              className="h-9 px-4 rounded-lg border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#043084] transition-colors cursor-pointer"
+              className="h-9 px-4 rounded-lg border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="h-9 inline-flex items-center gap-1.5 rounded-lg bg-[#043084] hover:bg-brand-hover px-4.5 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm disabled:opacity-50"
+              className="h-9 inline-flex items-center gap-1.5 rounded-lg bg-[#7A2253] hover:bg-brand-hover px-4.5 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm disabled:opacity-50"
             >
               {submitting ? (
                 <>

@@ -115,7 +115,7 @@ export function EpisodeQuickDrawer({
       case "facebook":
         return "bg-[#1877F2]";
       default:
-        return "bg-[#043084]";
+        return "bg-[#7A2253]";
     }
   }
 
@@ -238,7 +238,7 @@ export function EpisodeQuickDrawer({
                   type="button"
                   onClick={() => setActiveSeasonIndex(idx)}
                   className={`tap-scale px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer border ${activeSeasonIndex === idx
-                      ? "bg-[#043084] text-white border-[#043084] shadow-xs"
+                      ? "bg-[#7A2253] text-white border-[#7A2253] shadow-xs"
                       : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
                     }`}
                 >
@@ -286,7 +286,7 @@ export function EpisodeQuickDrawer({
                         </span>
 
                         <div className="min-w-0 space-y-0.5">
-                          <p className="truncate text-xs sm:text-[13px] font-bold text-slate-900 group-hover:text-[#043084] transition-colors">
+                          <p className="truncate text-xs sm:text-[13px] font-bold text-slate-900 group-hover:text-[#7A2253] transition-colors">
                             {epTitleStr}
                           </p>
                           {(ep as any).duration && (
@@ -303,7 +303,7 @@ export function EpisodeQuickDrawer({
                           href={ep.externalUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="tap-scale shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-[#043084] hover:bg-brand-hover px-3.5 py-1.5 text-xs font-bold text-white transition-all shadow-xs cursor-pointer hover:scale-102"
+                          className="tap-scale shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-[#7A2253] hover:bg-brand-hover px-3.5 py-1.5 text-xs font-bold text-white transition-all shadow-xs cursor-pointer hover:scale-102"
                         >
                           <Play className="h-3 w-3 fill-current" />
                           <span>Play</span>

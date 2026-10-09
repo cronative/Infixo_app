@@ -349,7 +349,7 @@ export default function DashboardOverviewPage() {
 
   const sectionTitle = "text-[15px] font-semibold text-[#0f172a]";
   const quietLink = "inline-flex items-center gap-0.5 text-xs font-medium text-[#475569] hover:text-[#0f172a] transition-colors";
-  const primaryBtn = "h-9 px-3.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-white text-sm font-semibold inline-flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer";
+  const primaryBtn = "h-9 px-3.5 rounded-lg bg-[#7A2253] hover:bg-brand-hover text-white text-sm font-semibold inline-flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer";
 
   // Trailer command metrics strip: 6 clickable summary cards with counts
   const overview = [
@@ -407,13 +407,13 @@ export default function DashboardOverviewPage() {
               src={profile.photoDataUrl}
               name={displayName}
               className="w-11 h-11 rounded-full border border-[#e2e8f0] overflow-hidden object-cover aspect-square shrink-0"
-              textClassName="text-sm font-semibold text-[#043084]"
+              textClassName="text-sm font-semibold text-[#7A2253]"
               fallbackBgClass="bg-[#f8fafc]"
             />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
                 <h1 className="truncate text-base font-semibold text-[#0f172a]">{displayName}</h1>
-                {profile.isVerified && <ShieldCheck className="h-4 w-4 shrink-0 text-[#043084]" />}
+                {profile.isVerified && <ShieldCheck className="h-4 w-4 shrink-0 text-[#7A2253]" />}
               </div>
               <p className="flex items-center gap-2 text-xs text-[#64748b]">
                 <span className="truncate font-medium">@{handleStr}</span>
@@ -454,7 +454,7 @@ export default function DashboardOverviewPage() {
                 className={`h-full rounded-full transition-all duration-700 ease-out ${
                   profileSteps.percentage === 100
                     ? "bg-gradient-to-r from-emerald-500 to-teal-500"
-                    : "bg-gradient-to-r from-[#043084] to-[#2563eb]"
+                    : "bg-gradient-to-r from-[#7A2253] to-[#2563eb]"
                 }`}
                 style={{ width: isLoaded ? `${profileSteps.percentage}%` : "0%" }}
               />
@@ -469,15 +469,15 @@ export default function DashboardOverviewPage() {
               <button
                 type="button"
                 onClick={() => setShowChecklistModal(true)}
-                className="group inline-flex items-center gap-1.5 rounded-lg border border-[#043084]/20 bg-[#043084]/[0.05] hover:bg-[#043084]/[0.1] px-2.5 py-1 text-xs font-semibold text-[#043084] transition-all cursor-pointer shadow-2xs"
+                className="group inline-flex items-center gap-1.5 rounded-lg border border-[#7A2253]/20 bg-[#7A2253]/[0.05] hover:bg-[#7A2253]/[0.1] px-2.5 py-1 text-xs font-semibold text-[#7A2253] transition-all cursor-pointer shadow-2xs"
                 title="View what is remaining for 100%"
               >
                 {profileSteps.nextMissing ? (
                   <span className="text-[#475569] font-normal group-hover:text-[#0f172a] transition-colors truncate max-w-[200px] sm:max-w-none">
-                    Next: <strong className="font-semibold text-[#043084]">{profileSteps.nextMissing.label}</strong>
+                    Next: <strong className="font-semibold text-[#7A2253]">{profileSteps.nextMissing.label}</strong>
                   </span>
                 ) : null}
-                <span className="inline-flex items-center gap-0.5 font-bold text-[#043084] ml-0.5 shrink-0">
+                <span className="inline-flex items-center gap-0.5 font-bold text-[#7A2253] ml-0.5 shrink-0">
                   Finish <ChevronRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
                 </span>
               </button>
@@ -506,8 +506,8 @@ export default function DashboardOverviewPage() {
               href={item.href}
               className="group min-w-0 p-3 sm:p-3.5 transition-colors hover:bg-[#f8fafc]"
             >
-              <span className="flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-[#64748b] group-hover:text-[#043084] transition-colors">
-                <Icon className="h-3.5 w-3.5 text-[#94a3b8] group-hover:text-[#043084] shrink-0 transition-colors" />
+              <span className="flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-[#64748b] group-hover:text-[#7A2253] transition-colors">
+                <Icon className="h-3.5 w-3.5 text-[#94a3b8] group-hover:text-[#7A2253] shrink-0 transition-colors" />
                 <span className="truncate">{item.label}</span>
               </span>
               <span className="mt-1 block text-lg sm:text-xl font-bold leading-tight tracking-tight tabular-nums text-[#0f172a]">
@@ -536,7 +536,7 @@ export default function DashboardOverviewPage() {
         <section className="flex flex-col rounded-xl border border-[#e2e8f0] bg-white overflow-hidden">
           <div className="flex items-center justify-between border-b border-[#e2e8f0] px-4 py-3">
             <div className="flex items-center gap-2">
-              <Film className="h-4 w-4 text-[#043084]" />
+              <Film className="h-4 w-4 text-[#7A2253]" />
               <h2 className={sectionTitle}>Content Series</h2>
               <span className="rounded-full bg-[#f1f5f9] px-2 py-0.5 text-[11px] font-bold text-[#475569]">
                 {series.length}
@@ -604,7 +604,7 @@ export default function DashboardOverviewPage() {
               <button
                 type="button"
                 onClick={handleCreateSeriesClick}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-[#043084] hover:underline cursor-pointer"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[#7A2253] hover:underline cursor-pointer"
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span>New series</span>
@@ -617,7 +617,7 @@ export default function DashboardOverviewPage() {
         <section className="flex flex-col rounded-xl border border-[#e2e8f0] bg-white overflow-hidden">
           <div className="flex items-center justify-between border-b border-[#e2e8f0] px-4 py-3">
             <div className="flex items-center gap-2">
-              <ShoppingBag className="h-4 w-4 text-[#043084]" />
+              <ShoppingBag className="h-4 w-4 text-[#7A2253]" />
               <h2 className={sectionTitle}>Shop Products</h2>
               <span className="rounded-full bg-[#f1f5f9] px-2 py-0.5 text-[11px] font-bold text-[#475569]">
                 {products.length}
@@ -659,7 +659,7 @@ export default function DashboardOverviewPage() {
                     <span className="block truncate text-xs sm:text-sm font-semibold text-[#0f172a]">{prod.name}</span>
                     <span className="block truncate text-[11px] text-[#64748b]">
                       {prod.pricePaise !== null ? (
-                        <span className="font-semibold text-[#043084] mr-1.5">
+                        <span className="font-semibold text-[#7A2253] mr-1.5">
                           {formatProductPrice(prod.pricePaise)}
                         </span>
                       ) : null}
@@ -682,7 +682,7 @@ export default function DashboardOverviewPage() {
               <button
                 type="button"
                 onClick={handleAddProductClick}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-[#043084] hover:underline cursor-pointer"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[#7A2253] hover:underline cursor-pointer"
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span>Add product</span>
@@ -699,11 +699,11 @@ export default function DashboardOverviewPage() {
           className="flex items-center justify-between rounded-xl border border-[#e2e8f0] bg-white p-3.5 transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] group"
         >
           <div className="flex items-center gap-3 min-w-0">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#043084]/[0.08] text-[#043084]">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#7A2253]/[0.08] text-[#7A2253]">
               <Briefcase className="h-4 w-4" />
             </span>
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-[#0f172a] truncate group-hover:text-[#043084] transition-colors">
+              <p className="text-xs font-semibold text-[#0f172a] truncate group-hover:text-[#7A2253] transition-colors">
                 Collab Packages
               </p>
               <p className="text-[11px] text-[#64748b] truncate">
@@ -711,7 +711,7 @@ export default function DashboardOverviewPage() {
               </p>
             </div>
           </div>
-          <ChevronRight className="h-4 w-4 text-[#cbd5e1] group-hover:text-[#043084] shrink-0 transition-colors" />
+          <ChevronRight className="h-4 w-4 text-[#cbd5e1] group-hover:text-[#7A2253] shrink-0 transition-colors" />
         </Link>
 
         <Link
@@ -719,11 +719,11 @@ export default function DashboardOverviewPage() {
           className="flex items-center justify-between rounded-xl border border-[#e2e8f0] bg-white p-3.5 transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] group"
         >
           <div className="flex items-center gap-3 min-w-0">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#043084]/[0.08] text-[#043084]">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#7A2253]/[0.08] text-[#7A2253]">
               <Link2 className="h-4 w-4" />
             </span>
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-[#0f172a] truncate group-hover:text-[#043084] transition-colors">
+              <p className="text-xs font-semibold text-[#0f172a] truncate group-hover:text-[#7A2253] transition-colors">
                 Custom Links
               </p>
               <p className="text-[11px] text-[#64748b] truncate">
@@ -731,7 +731,7 @@ export default function DashboardOverviewPage() {
               </p>
             </div>
           </div>
-          <ChevronRight className="h-4 w-4 text-[#cbd5e1] group-hover:text-[#043084] shrink-0 transition-colors" />
+          <ChevronRight className="h-4 w-4 text-[#cbd5e1] group-hover:text-[#7A2253] shrink-0 transition-colors" />
         </Link>
 
         {/* Client Reviews Card — Activated Empty State Loop */}
@@ -756,7 +756,7 @@ export default function DashboardOverviewPage() {
               </div>
               <Link
                 href="/dashboard/reviews"
-                className="shrink-0 text-[11px] font-medium text-[#64748b] hover:text-[#043084]"
+                className="shrink-0 text-[11px] font-medium text-[#64748b] hover:text-[#7A2253]"
               >
                 All &gt;
               </Link>
@@ -765,7 +765,7 @@ export default function DashboardOverviewPage() {
             <div className="mt-3">
               <Link
                 href="/dashboard/reviews?request=1"
-                className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#043084] hover:bg-brand-hover text-white text-xs font-semibold py-1.5 px-3 transition-colors shadow-xs"
+                className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#7A2253] hover:bg-brand-hover text-white text-xs font-semibold py-1.5 px-3 transition-colors shadow-xs"
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span>Request a Review</span>
@@ -782,7 +782,7 @@ export default function DashboardOverviewPage() {
                 <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
               </span>
               <div className="min-w-0">
-                <p className="text-xs font-semibold text-[#0f172a] truncate group-hover:text-[#043084] transition-colors">
+                <p className="text-xs font-semibold text-[#0f172a] truncate group-hover:text-[#7A2253] transition-colors">
                   Client Reviews
                 </p>
                 <p className="text-[11px] text-[#64748b] truncate">
@@ -790,7 +790,7 @@ export default function DashboardOverviewPage() {
                 </p>
               </div>
             </div>
-            <ChevronRight className="h-4 w-4 text-[#cbd5e1] group-hover:text-[#043084] shrink-0 transition-colors" />
+            <ChevronRight className="h-4 w-4 text-[#cbd5e1] group-hover:text-[#7A2253] shrink-0 transition-colors" />
           </Link>
         )}
       </section>
@@ -876,7 +876,7 @@ export default function DashboardOverviewPage() {
               const isCritical = item.max !== Infinity && percentage >= 90;
               const isWarning = item.max !== Infinity && percentage >= 80 && percentage < 90;
 
-              let barColor = "bg-gradient-to-r from-[#043084] to-[#2563eb]";
+              let barColor = "bg-gradient-to-r from-[#7A2253] to-[#2563eb]";
               if (isCritical) {
                 barColor = "bg-gradient-to-r from-rose-500 to-red-600";
               } else if (isWarning) {
@@ -938,14 +938,14 @@ export default function DashboardOverviewPage() {
               <span className="font-medium text-[#475569]">
                 {profileSteps.completedCount} of {profileSteps.totalCount} completed
               </span>
-              <span className="font-bold text-[#043084]">{profileSteps.percentage}%</span>
+              <span className="font-bold text-[#7A2253]">{profileSteps.percentage}%</span>
             </div>
             <div className="h-2 overflow-hidden rounded-full bg-[#e2e8f0]">
               <div
                 className={`h-full rounded-full transition-all duration-500 ${
                   profileSteps.percentage === 100
                     ? "bg-gradient-to-r from-emerald-500 to-teal-500"
-                    : "bg-gradient-to-r from-[#043084] to-[#2563eb]"
+                    : "bg-gradient-to-r from-[#7A2253] to-[#2563eb]"
                 }`}
                 style={{ width: `${profileSteps.percentage}%` }}
               />
@@ -985,7 +985,7 @@ export default function DashboardOverviewPage() {
                   <Link
                     href={item.link}
                     onClick={() => setShowChecklistModal(false)}
-                    className="shrink-0 inline-flex items-center gap-1 rounded-md bg-[#043084] hover:bg-brand-hover text-white text-[11px] font-semibold px-2.5 py-1 transition-colors cursor-pointer"
+                    className="shrink-0 inline-flex items-center gap-1 rounded-md bg-[#7A2253] hover:bg-brand-hover text-white text-[11px] font-semibold px-2.5 py-1 transition-colors cursor-pointer"
                   >
                     <span>{item.actionLabel}</span>
                     <ChevronRight className="h-3 w-3" />

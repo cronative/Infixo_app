@@ -98,13 +98,13 @@ function CheckoutContent() {
         <div className="flex items-center justify-between flex-wrap gap-2">
           <Link
             href="/dashboard/subscription"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-[#475569] hover:text-[#043084] transition-colors"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-[#475569] hover:text-[#7A2253] transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
           </Link>
           <div className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
-            isLiveMode ? "bg-emerald-500/10 text-emerald-700" : "bg-[#043084]/10 text-[#043084]"
+            isLiveMode ? "bg-emerald-500/10 text-emerald-700" : "bg-[#7A2253]/10 text-[#7A2253]"
           }`}>
             <ShieldCheck className="h-3.5 w-3.5" />
             Razorpay {isRecurringActive ? "Recurring Subscriptions (AutoPay)" : "Standard Checkout"} ({isLiveMode ? "Live Mode" : "Test Mode"})
@@ -113,7 +113,7 @@ function CheckoutContent() {
 
         {/* Header */}
         <div className="text-left space-y-2">
-          <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#043084]">
+          <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#7A2253]">
             Complete Your Subscription
           </h1>
           <p className="text-sm text-[#64748b]">
@@ -135,11 +135,11 @@ function CheckoutContent() {
               }}
               className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex items-start gap-3 ${
                 checkoutMode === "recurring"
-                  ? "border-[#043084] bg-[#043084]/[0.06] ring-1 ring-[#043084]"
+                  ? "border-[#7A2253] bg-[#7A2253]/[0.06] ring-1 ring-[#7A2253]"
                   : "border-[#E4DAD5] bg-[#fbfbfb] hover:bg-white"
               }`}
             >
-              <Repeat className={`h-5 w-5 shrink-0 mt-0.5 ${checkoutMode === "recurring" ? "text-[#043084]" : "text-[#64748b]"}`} />
+              <Repeat className={`h-5 w-5 shrink-0 mt-0.5 ${checkoutMode === "recurring" ? "text-[#7A2253]" : "text-[#64748b]"}`} />
               <div>
                 <div className="text-xs font-bold text-[#181716] flex items-center gap-1.5">
                   <span>Recurring Auto-Debit (AutoPay)</span>
@@ -159,11 +159,11 @@ function CheckoutContent() {
               }}
               className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex items-start gap-3 ${
                 checkoutMode === "onetime"
-                  ? "border-[#043084] bg-[#043084]/[0.06] ring-1 ring-[#043084]"
+                  ? "border-[#7A2253] bg-[#7A2253]/[0.06] ring-1 ring-[#7A2253]"
                   : "border-[#E4DAD5] bg-[#fbfbfb] hover:bg-white"
               }`}
             >
-              <Zap className={`h-5 w-5 shrink-0 mt-0.5 ${checkoutMode === "onetime" ? "text-[#043084]" : "text-[#64748b]"}`} />
+              <Zap className={`h-5 w-5 shrink-0 mt-0.5 ${checkoutMode === "onetime" ? "text-[#7A2253]" : "text-[#64748b]"}`} />
               <div>
                 <div className="text-xs font-bold text-[#181716]">One-Time Order</div>
                 <div className="text-[11px] text-[#64748b] mt-0.5">
@@ -193,12 +193,12 @@ function CheckoutContent() {
                     }}
                     className={`rounded-xl p-3 border text-left transition-all cursor-pointer ${
                       selectedPlan === plan
-                        ? "border-[#043084] bg-[#043084]/[0.05] ring-1 ring-[#043084]"
+                        ? "border-[#7A2253] bg-[#7A2253]/[0.05] ring-1 ring-[#7A2253]"
                         : "border-[#E4DAD5] bg-[#fbfbfb] hover:bg-white"
                     }`}
                   >
                     <div className="text-xs font-bold capitalize text-[#181716]">{plan}</div>
-                    <div className="text-xs font-semibold text-[#043084] mt-1">
+                    <div className="text-xs font-semibold text-[#7A2253] mt-1">
                       {plan === "custom" ? "Custom" : `₹${planAmounts[plan].monthly}`}
                     </div>
                   </button>
@@ -218,7 +218,7 @@ function CheckoutContent() {
                     min={1}
                     value={customAmountRupees}
                     onChange={(e) => setCustomAmountRupees(Math.max(1, Number(e.target.value) || 1))}
-                    className="w-full rounded-xl border border-[#E4DAD5] pl-8 pr-4 py-2 text-sm font-semibold text-[#181716] focus:outline-none focus:border-[#043084]"
+                    className="w-full rounded-xl border border-[#E4DAD5] pl-8 pr-4 py-2 text-sm font-semibold text-[#181716] focus:outline-none focus:border-[#7A2253]"
                   />
                 </div>
                 <p className="text-[11px] text-[#64748b]">
@@ -242,7 +242,7 @@ function CheckoutContent() {
                     type="button"
                     onClick={() => setBillingCycle("yearly")}
                     className={`px-3 py-1 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
-                      billingCycle === "yearly" ? "bg-[#043084] text-white shadow-xs" : "text-[#64748b]"
+                      billingCycle === "yearly" ? "bg-[#7A2253] text-white shadow-xs" : "text-[#64748b]"
                     }`}
                   >
                     Yearly (₹{currentPlan.yearly}/yr)
@@ -256,7 +256,7 @@ function CheckoutContent() {
               isLiveMode ? "border-emerald-200 bg-emerald-50/50" : "border-[#e2e8f0] bg-[#f8fafc]"
             }`}>
               <div className={`flex items-center gap-1.5 font-bold ${
-                isLiveMode ? "text-emerald-800" : "text-[#043084]"
+                isLiveMode ? "text-emerald-800" : "text-[#7A2253]"
               }`}>
                 <Sparkles className="h-3.5 w-3.5" />
                 <span>{isLiveMode ? "Live Production Gateway Active" : "Test Mode Active"}</span>
@@ -338,7 +338,7 @@ function CheckoutContent() {
                 </div>
                 <div className="pt-2.5 border-t border-[#E4DAD5] flex justify-between text-sm font-bold text-[#181716]">
                   <span>Amount Due</span>
-                  <span className="text-[#043084] font-display text-lg">₹{amountRupees}</span>
+                  <span className="text-[#7A2253] font-display text-lg">₹{amountRupees}</span>
                 </div>
               </div>
             </div>
@@ -422,8 +422,8 @@ export default function CheckoutPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-white flex items-center justify-center p-6">
-          <div className="flex items-center gap-3 text-sm font-semibold text-[#043084]">
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#043084] border-t-transparent" />
+          <div className="flex items-center gap-3 text-sm font-semibold text-[#7A2253]">
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#7A2253] border-t-transparent" />
             <span>Loading secure checkout...</span>
           </div>
         </div>

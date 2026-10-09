@@ -216,17 +216,17 @@ const BLUSH_PAPER_STYLE: ThemeStyleConfig = {
 };
 
 const STUDIO_FROST_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#F8FAFC] via-white to-[#EEF4FF] border border-[#D8E2F0] text-[#043084] shadow-xl",
+  cardBg: "bg-gradient-to-b from-[#F8FAFC] via-white to-[#EEF4FF] border border-[#D8E2F0] text-[#7A2253] shadow-xl",
   profBadgeBg: "bg-white/92 backdrop-blur-md",
-  profBadgeText: "text-[#043084]",
+  profBadgeText: "text-[#7A2253]",
   profBadgeBorder: "border-[#D8E2F0]",
   fanbaseBg: "bg-white/92 backdrop-blur-md",
-  fanbaseText: "text-[#043084]",
+  fanbaseText: "text-[#7A2253]",
   socialItemBg: "bg-white/88 hover:bg-[#F1F5F9] backdrop-blur-md",
-  socialItemBorder: "border-[#D8E2F0] hover:border-[#043084]/24",
-  socialNameColor: "text-[#043084]",
+  socialItemBorder: "border-[#D8E2F0] hover:border-[#7A2253]/24",
+  socialNameColor: "text-[#7A2253]",
   socialUnitColor: "text-[#64748B]",
-  nameColor: "text-[#043084]",
+  nameColor: "text-[#7A2253]",
   bioColor: "text-[#475569]",
   handleColor: "text-[#64748B]",
 };
@@ -234,12 +234,12 @@ const STUDIO_FROST_STYLE: ThemeStyleConfig = {
 const TAJ_MAHAL_STYLE: ThemeStyleConfig = {
   cardBg: "bg-[#FFFDF7]/56 border border-white/45 text-[#221A12] shadow-xl backdrop-blur-lg",
   profBadgeBg: "bg-white/72 backdrop-blur-md",
-  profBadgeText: "text-[#043084]",
+  profBadgeText: "text-[#7A2253]",
   profBadgeBorder: "border-[#DCCDB2]/70",
   fanbaseBg: "bg-white/80 backdrop-blur-md",
   fanbaseText: "text-[#221A12]",
   socialItemBg: "bg-white/78 hover:bg-[#F7F0E4]/88 backdrop-blur-md",
-  socialItemBorder: "border-[#DCCDB2]/70 hover:border-[#043084]/28",
+  socialItemBorder: "border-[#DCCDB2]/70 hover:border-[#7A2253]/28",
   socialNameColor: "text-[#221A12]",
   socialUnitColor: "text-[#766A58]",
   nameColor: "text-[#221A12]",
@@ -282,12 +282,12 @@ const BURJ_KHALIFA_STYLE: ThemeStyleConfig = {
 const SOMNATH_TEMPLE_STYLE: ThemeStyleConfig = {
   cardBg: "bg-[#FFF8EC]/60 border border-white/42 text-[#261A0F] shadow-xl backdrop-blur-lg",
   profBadgeBg: "bg-white/74 backdrop-blur-md",
-  profBadgeText: "text-[#043084]",
+  profBadgeText: "text-[#7A2253]",
   profBadgeBorder: "border-[#E6C58B]/55",
   fanbaseBg: "bg-white/80 backdrop-blur-md",
   fanbaseText: "text-[#261A0F]",
   socialItemBg: "bg-white/78 hover:bg-[#FFF0D4]/90 backdrop-blur-md",
-  socialItemBorder: "border-[#E6C58B]/55 hover:border-[#043084]/28",
+  socialItemBorder: "border-[#E6C58B]/55 hover:border-[#7A2253]/28",
   socialNameColor: "text-[#261A0F]",
   socialUnitColor: "text-[#7B664E]",
   nameColor: "text-[#261A0F]",
@@ -298,12 +298,12 @@ const SOMNATH_TEMPLE_STYLE: ThemeStyleConfig = {
 const DWARKA_TEMPLE_STYLE: ThemeStyleConfig = {
   cardBg: "bg-[#F7FBF8]/58 border border-white/42 text-[#14251D] shadow-xl backdrop-blur-lg",
   profBadgeBg: "bg-white/74 backdrop-blur-md",
-  profBadgeText: "text-[#043084]",
+  profBadgeText: "text-[#7A2253]",
   profBadgeBorder: "border-[#B7D0C0]/60",
   fanbaseBg: "bg-white/80 backdrop-blur-md",
   fanbaseText: "text-[#14251D]",
   socialItemBg: "bg-white/78 hover:bg-[#EAF4ED]/90 backdrop-blur-md",
-  socialItemBorder: "border-[#B7D0C0]/60 hover:border-[#043084]/28",
+  socialItemBorder: "border-[#B7D0C0]/60 hover:border-[#7A2253]/28",
   socialNameColor: "text-[#14251D]",
   socialUnitColor: "text-[#597163]",
   nameColor: "text-[#14251D]",
@@ -314,12 +314,12 @@ const DWARKA_TEMPLE_STYLE: ThemeStyleConfig = {
 const GOA_BEACH_STYLE: ThemeStyleConfig = {
   cardBg: "bg-[#FFF8EF]/58 border border-white/44 text-[#241A12] shadow-xl backdrop-blur-lg",
   profBadgeBg: "bg-white/74 backdrop-blur-md",
-  profBadgeText: "text-[#043084]",
+  profBadgeText: "text-[#7A2253]",
   profBadgeBorder: "border-[#F0C98D]/60",
   fanbaseBg: "bg-white/80 backdrop-blur-md",
   fanbaseText: "text-[#241A12]",
   socialItemBg: "bg-white/78 hover:bg-[#FFF0D8]/90 backdrop-blur-md",
-  socialItemBorder: "border-[#F0C98D]/60 hover:border-[#043084]/28",
+  socialItemBorder: "border-[#F0C98D]/60 hover:border-[#7A2253]/28",
   socialNameColor: "text-[#241A12]",
   socialUnitColor: "text-[#7A5F49]",
   nameColor: "text-[#241A12]",
@@ -328,17 +328,17 @@ const GOA_BEACH_STYLE: ThemeStyleConfig = {
 };
 
 const CREATOR_STUDIO_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-[#F8FAFC] border border-[#D8E2F0] text-[#043084] shadow-xl",
+  cardBg: "bg-[#F8FAFC] border border-[#D8E2F0] text-[#7A2253] shadow-xl",
   profBadgeBg: "bg-white",
-  profBadgeText: "text-[#043084]",
+  profBadgeText: "text-[#7A2253]",
   profBadgeBorder: "border-[#D8E2F0]",
   fanbaseBg: "bg-white",
-  fanbaseText: "text-[#043084]",
+  fanbaseText: "text-[#7A2253]",
   socialItemBg: "bg-white hover:bg-[#F1F5F9]",
-  socialItemBorder: "border-[#D8E2F0] hover:border-[#043084]/25",
-  socialNameColor: "text-[#043084]",
+  socialItemBorder: "border-[#D8E2F0] hover:border-[#7A2253]/25",
+  socialNameColor: "text-[#7A2253]",
   socialUnitColor: "text-[#64748B]",
-  nameColor: "text-[#043084]",
+  nameColor: "text-[#7A2253]",
   bioColor: "text-[#475569]",
   handleColor: "text-[#64748B]",
 };
@@ -408,19 +408,19 @@ const GAMER_STREAM_STYLE: ThemeStyleConfig = {
 };
 
 const SIGNATURE_PURPLE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#FAF5FF] via-[#FDFBFE] to-[#F8F2F7] border border-[#043084]/18 text-slate-900 shadow-lg",
+  cardBg: "bg-gradient-to-b from-[#FAF5FF] via-[#FDFBFE] to-[#F8F2F7] border border-[#7A2253]/18 text-slate-900 shadow-lg",
   profBadgeBg: "bg-white/80 backdrop-blur-md",
-  profBadgeText: "text-[#043084]",
-  profBadgeBorder: "border-[#043084]/18",
+  profBadgeText: "text-[#7A2253]",
+  profBadgeBorder: "border-[#7A2253]/18",
   fanbaseBg: "bg-white/80 backdrop-blur-md",
   fanbaseText: "text-[#17131A]",
   socialItemBg: "bg-white/80 hover:bg-surface-soft backdrop-blur-md",
-  socialItemBorder: "border-[#043084]/18 hover:border-brand-primary/30",
+  socialItemBorder: "border-[#7A2253]/18 hover:border-brand-primary/30",
   socialNameColor: "text-[#17131A]",
   socialUnitColor: "text-[#6F6872]",
   nameColor: "text-[#17131A]",
   bioColor: "text-[#6F6872]",
-  handleColor: "text-[#043084]",
+  handleColor: "text-[#7A2253]",
 };
 
 const MIDNIGHT_DARK_STYLE: ThemeStyleConfig = {
@@ -523,19 +523,19 @@ const SUNSET_STUDIO_STYLE: ThemeStyleConfig = {
 };
 
 const MINIMAL_SPARK_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-white to-[#FAF8FA] text-[#17131A] border border-[#043084]/16 shadow-2xs",
+  cardBg: "bg-gradient-to-b from-white to-[#FAF8FA] text-[#17131A] border border-[#7A2253]/16 shadow-2xs",
   profBadgeBg: "bg-white/90",
-  profBadgeText: "text-[#043084]",
-  profBadgeBorder: "border-[#043084]/20",
+  profBadgeText: "text-[#7A2253]",
+  profBadgeBorder: "border-[#7A2253]/20",
   fanbaseBg: "bg-white/90 backdrop-blur-md",
   fanbaseText: "text-[#17131A]",
   socialItemBg: "bg-white/80 hover:bg-surface-soft backdrop-blur-md",
-  socialItemBorder: "border-[#043084]/16 hover:border-brand-primary/30",
+  socialItemBorder: "border-[#7A2253]/16 hover:border-brand-primary/30",
   socialNameColor: "text-[#17131A]",
   socialUnitColor: "text-[#6F6872]",
   nameColor: "text-[#17131A]",
   bioColor: "text-[#6F6872]",
-  handleColor: "text-[#043084]",
+  handleColor: "text-[#7A2253]",
 };
 
 const NEON_GRID_STYLE: ThemeStyleConfig = {
@@ -605,7 +605,7 @@ const SPOTLIGHT_STAGE_STYLE: ThemeStyleConfig = {
 const CREATIVE_PAPER_STYLE: ThemeStyleConfig = {
   cardBg: "bg-gradient-to-b from-[#FAF6F0] to-[#EDE5DB] text-[#29221D] border border-[#E3D9CC] shadow-xl",
   profBadgeBg: "bg-white/90",
-  profBadgeText: "text-[#043084]",
+  profBadgeText: "text-[#7A2253]",
   profBadgeBorder: "border-[#E3D9CC]",
   fanbaseBg: "bg-white/90 backdrop-blur-md",
   fanbaseText: "text-[#29221D]",
@@ -615,7 +615,7 @@ const CREATIVE_PAPER_STYLE: ThemeStyleConfig = {
   socialUnitColor: "text-[#6A5E57]",
   nameColor: "text-[#29221D]",
   bioColor: "text-[#6A5E57]",
-  handleColor: "text-[#043084]",
+  handleColor: "text-[#7A2253]",
 };
 
 const LOVE_LETTER_STYLE: ThemeStyleConfig = {
@@ -1680,7 +1680,7 @@ export function LivePreviewCard({
               style={{ borderColor: c.border || "#FFFFFF", backgroundColor: c.cardBackground }}
               textClassName="text-base sm:text-lg font-extrabold"
               textStyle={{ color: c.primaryText }}
-              fallbackBgClass="bg-[#043084]"
+              fallbackBgClass="bg-[#7A2253]"
             />
           </div>
 
@@ -1866,7 +1866,7 @@ export function LivePreviewCard({
                           </span>
                           <span
                             style={{ color: c.primaryText }}
-                            className="text-xs sm:text-[13px] font-semibold truncate group-hover/row:text-[#043084] dark:group-hover/row:text-blue-400 transition-colors"
+                            className="text-xs sm:text-[13px] font-semibold truncate group-hover/row:text-[#7A2253] dark:group-hover/row:text-blue-400 transition-colors"
                           >
                             @{handleStr}
                           </span>
@@ -1967,7 +1967,7 @@ export function LivePreviewCard({
                                 </span>
                                 <span
                                   style={{ color: c.primaryText }}
-                                  className="text-xs sm:text-[13px] font-semibold truncate group-hover/row:text-[#043084] dark:group-hover/row:text-blue-400 transition-colors"
+                                  className="text-xs sm:text-[13px] font-semibold truncate group-hover/row:text-[#7A2253] dark:group-hover/row:text-blue-400 transition-colors"
                                 >
                                   {item.title}
                                 </span>
@@ -2018,7 +2018,7 @@ export function LivePreviewCard({
                         </span>
                         <span
                           style={{ color: c.primaryText }}
-                          className="text-xs sm:text-[13px] font-semibold truncate group-hover/row:text-[#043084] dark:group-hover/row:text-blue-400 transition-colors"
+                          className="text-xs sm:text-[13px] font-semibold truncate group-hover/row:text-[#7A2253] dark:group-hover/row:text-blue-400 transition-colors"
                         >
                           {link.title}
                         </span>
@@ -2297,7 +2297,7 @@ export function LivePreviewCard({
                   <button
                     type="button"
                     onClick={() => setSelectedProductForZoom(product)}
-                    className="group/img relative aspect-square w-full max-h-[96px] sm:max-h-[110px] rounded-[7px] overflow-hidden mx-auto cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-[#043084]/40"
+                    className="group/img relative aspect-square w-full max-h-[96px] sm:max-h-[110px] rounded-[7px] overflow-hidden mx-auto cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-[#7A2253]/40"
                     title={`Click to zoom ${product.name} image`}
                     aria-label={`View full image for ${product.name}`}
                   >
@@ -2444,7 +2444,7 @@ export function LivePreviewCard({
                         src={member.avatarUrl || null}
                         name={member.name || "Team"}
                         className="h-10 w-10 shrink-0 rounded-[10px] object-cover"
-                        fallbackBgClass="bg-[#043084]"
+                        fallbackBgClass="bg-[#7A2253]"
                         textClassName="text-xs font-black tracking-tight text-white"
                         style={{ backgroundColor: c.accent }}
                       />
@@ -3016,9 +3016,9 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   return {
     name: platformStr || "Web",
     icon: <Film className="h-3 w-3 text-white" />,
-    badgeClass: "bg-[#043084] text-white shadow-2xs",
+    badgeClass: "bg-[#7A2253] text-white shadow-2xs",
     chipClass: "bg-indigo-50 text-indigo-700 border-indigo-200/80",
-    textColor: "text-[#043084]",
+    textColor: "text-[#7A2253]",
   };
 }
 
@@ -3108,7 +3108,7 @@ export function PreviewSeriesItem({
                           ? "bg-emerald-600 shadow-xs text-white"
                           : detectedPlatform === "Twitch"
                             ? "bg-purple-600 shadow-xs text-white"
-                            : "bg-[#04308414] text-[#043084]"
+                            : "bg-[#7A225314] text-[#7A2253]"
             }`}
         >
           {detectedPlatform === "YouTube" ? (

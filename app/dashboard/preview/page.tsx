@@ -123,16 +123,16 @@ export default function DashboardPreviewPage() {
           <button
             type="button"
             onClick={() => setIsVisibilityModalOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] h-9 px-3.5 text-xs font-semibold text-[#043084] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] h-9 px-3.5 text-xs font-semibold text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
           >
-            <Settings className="h-3.5 w-3.5 text-[#043084]" />
+            <Settings className="h-3.5 w-3.5 text-[#7A2253]" />
             <span>Display Settings</span>
           </button>
 
           <button
             type="button"
             onClick={handleViewProfile}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-[#043084] hover:bg-brand-hover h-9 px-3.5 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[#7A2253] hover:bg-brand-hover h-9 px-3.5 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
           >
             <span>Open Public Profile</span>
             <ExternalLink className="h-3.5 w-3.5" />
@@ -144,8 +144,8 @@ export default function DashboardPreviewPage() {
       <div className="flex items-center justify-between gap-3 rounded-xl border border-[#e2e8f0] bg-white px-3.5 py-2 shadow-xs">
         {/* Left: Active Theme Info */}
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#043084] bg-[#043084]/[0.09] border border-[#043084]/20 px-2.5 py-1 rounded-lg">
-            <Sparkles className="h-3.5 w-3.5 text-[#043084]" />
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#7A2253] bg-[#7A2253]/[0.09] border border-[#7A2253]/20 px-2.5 py-1 rounded-lg">
+            <Sparkles className="h-3.5 w-3.5 text-[#7A2253]" />
             <span>Active theme: {activeThemeMeta.name}</span>
           </span>
         </div>
@@ -155,10 +155,10 @@ export default function DashboardPreviewPage() {
           <button
             type="button"
             onClick={handleRefresh}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748b] hover:text-[#043084] px-2.5 py-1 rounded-lg hover:bg-[#f1f5f9] border border-transparent hover:border-brand-border transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748b] hover:text-[#7A2253] px-2.5 py-1 rounded-lg hover:bg-[#f1f5f9] border border-transparent hover:border-brand-border transition-colors cursor-pointer"
             title="Refresh preview canvas"
           >
-            <RotateCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-[#043084]" : ""}`} />
+            <RotateCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-[#7A2253]" : ""}`} />
             <span>Refresh</span>
           </button>
         </div>

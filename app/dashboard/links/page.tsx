@@ -83,7 +83,7 @@ export default function DashboardCustomLinksPage() {
           {linksCount >= maxLinks && !isUnlimited && (
             <Link
               href="/dashboard/subscription"
-              className="inline-flex items-center gap-1 rounded-lg border border-[#043084]/30 px-2.5 py-1 text-xs font-semibold text-[#043084] hover:bg-[#043084]/[0.06] transition-colors"
+              className="inline-flex items-center gap-1 rounded-lg border border-[#7A2253]/30 px-2.5 py-1 text-xs font-semibold text-[#7A2253] hover:bg-[#7A2253]/[0.06] transition-colors"
             >
               Upgrade
             </Link>
@@ -92,7 +92,7 @@ export default function DashboardCustomLinksPage() {
         {!isUnlimited && (
           <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-[#eef2f7]">
             <div
-              className={`h-full rounded-full transition-all duration-300 ${percentage >= 100 ? "bg-rose-500" : percentage >= 80 ? "bg-amber-500" : "bg-[#043084]"}`}
+              className={`h-full rounded-full transition-all duration-300 ${percentage >= 100 ? "bg-rose-500" : percentage >= 80 ? "bg-amber-500" : "bg-[#7A2253]"}`}
               style={{ width: `${percentage}%` }}
             />
           </div>

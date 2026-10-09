@@ -252,7 +252,7 @@ export default function DashboardBrandsPage() {
             <button
               type="button"
               onClick={() => handleOpenModal()}
-              className="inline-flex items-center gap-2 rounded-lg bg-[#043084] h-9 px-4 text-xs font-semibold text-white shadow-xs transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-sm cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#7A2253] h-9 px-4 text-xs font-semibold text-white shadow-xs transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-sm cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Add Your First Brand</span>
@@ -269,7 +269,7 @@ export default function DashboardBrandsPage() {
             >
               {/* Left: Brand Squircle Badge + Title & Links */}
               <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                <div className="flex h-8.5 w-8.5 items-center justify-center rounded-lg bg-[#04308414] border border-[#e2e8f0] text-[#043084] font-bold text-xs shrink-0 select-none">
+                <div className="flex h-8.5 w-8.5 items-center justify-center rounded-lg bg-[#7A225314] border border-[#e2e8f0] text-[#7A2253] font-bold text-xs shrink-0 select-none">
                   {getInitials(brand.brandName)}
                 </div>
 
@@ -285,7 +285,7 @@ export default function DashboardBrandsPage() {
                       href={brand.websiteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-[11px] font-medium text-[#64748b] hover:text-[#043084] truncate max-w-full"
+                      className="inline-flex items-center gap-1 text-[11px] font-medium text-[#64748b] hover:text-[#7A2253] truncate max-w-full"
                     >
                       <Globe className="h-3 w-3 shrink-0" />
                       <span className="truncate">{brand.websiteUrl.replace(/^https?:\/\/(www\.)?/, "")}</span>
@@ -355,7 +355,7 @@ export default function DashboardBrandsPage() {
                   <button
                     type="button"
                     onClick={() => handleOpenModal(brand)}
-                    className="flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#043084] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                    className="flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
                     title="Edit brand"
                   >
                     <Pencil className="h-3.5 w-3.5" />
@@ -380,7 +380,7 @@ export default function DashboardBrandsPage() {
                       e.stopPropagation();
                       setActiveMenuId(activeMenuId === brand.id ? null : brand.id);
                     }}
-                    className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#043084] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                    className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
                     aria-label="Brand options"
                   >
                     <MoreVertical className="h-3.5 w-3.5" />
@@ -398,7 +398,7 @@ export default function DashboardBrandsPage() {
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={() => setActiveMenuId(null)}
-                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#043084] hover:bg-[#f1f5f9] transition-colors"
+                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors"
                         >
                           <Globe className="h-3.5 w-3.5 text-[#64748b]" />
                           <span>Visit Website</span>
@@ -411,7 +411,7 @@ export default function DashboardBrandsPage() {
                           setActiveMenuId(null);
                           handleToggleBrand(brand);
                         }}
-                        className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#043084] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                        className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                       >
                         {brand.isActive ? <EyeOff className="h-3.5 w-3.5 text-[#64748b]" /> : <Eye className="h-3.5 w-3.5 text-[#17845B]" />}
                         <span>{brand.isActive ? "Hide from profile" : "Show on profile"}</span>
@@ -423,7 +423,7 @@ export default function DashboardBrandsPage() {
                           setActiveMenuId(null);
                           handleOpenModal(brand);
                         }}
-                        className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#043084] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                        className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                       >
                         <Pencil className="h-3.5 w-3.5 text-[#64748b]" />
                         <span>Edit Brand</span>
@@ -464,12 +464,12 @@ export default function DashboardBrandsPage() {
           <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
             {/* Live Brand Initials Badge Preview */}
             <div className="flex items-center gap-3 p-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#04308414] border border-[#e2e8f0] text-[#043084] font-bold text-xs shrink-0">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#7A225314] border border-[#e2e8f0] text-[#7A2253] font-bold text-xs shrink-0">
                 {getInitials(brandName || "Brand")}
               </div>
               <div className="min-w-0">
-                <p className="font-bold text-xs text-[#043084] truncate">{brandName.trim() || "Brand Name"}</p>
-                <span className="inline-block text-[10px] font-semibold text-[#043084] bg-[#043084]/[0.09] border border-[#043084]/20 px-1.5 py-0.2 rounded-md">Brand Venture</span>
+                <p className="font-bold text-xs text-[#7A2253] truncate">{brandName.trim() || "Brand Name"}</p>
+                <span className="inline-block text-[10px] font-semibold text-[#7A2253] bg-[#7A2253]/[0.09] border border-[#7A2253]/20 px-1.5 py-0.2 rounded-md">Brand Venture</span>
               </div>
             </div>
 
@@ -483,7 +483,7 @@ export default function DashboardBrandsPage() {
                 value={brandName}
                 onChange={(e) => setBrandName(e.target.value)}
                 placeholder="e.g. CreatorCloths or The Tech Show"
-                className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
@@ -496,13 +496,13 @@ export default function DashboardBrandsPage() {
                 value={websiteUrl}
                 onChange={(e) => setWebsiteUrl(e.target.value)}
                 placeholder="https://mybrand.com"
-                className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#043084] focus:bg-white focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
             <div className="space-y-2.5 pt-2 border-t border-[#e2e8f0]">
               <div>
-                <p className="text-xs font-bold text-[#043084]">Brand Social Links (Optional)</p>
+                <p className="text-xs font-bold text-[#7A2253]">Brand Social Links (Optional)</p>
                 <p className="text-[11px] text-[#64748b]">Enter username only — profile links are generated automatically.</p>
               </div>
 
@@ -510,7 +510,7 @@ export default function DashboardBrandsPage() {
                 <label className="block text-[11px] font-semibold text-[#64748b]">
                   Instagram Username
                 </label>
-                <div className="flex h-9 items-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 transition-colors focus-within:border-[#043084] focus-within:bg-white">
+                <div className="flex h-9 items-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 transition-colors focus-within:border-[#7A2253] focus-within:bg-white">
                   <span className="mr-2 text-[#E1306C] shrink-0">
                     <InstagramIcon className="h-3.5 w-3.5" />
                   </span>
@@ -528,7 +528,7 @@ export default function DashboardBrandsPage() {
                 <label className="block text-[11px] font-semibold text-[#64748b]">
                   YouTube Channel Username
                 </label>
-                <div className="flex h-9 items-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 transition-colors focus-within:border-[#043084] focus-within:bg-white">
+                <div className="flex h-9 items-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 transition-colors focus-within:border-[#7A2253] focus-within:bg-white">
                   <span className="mr-2 text-[#FF0000] shrink-0">
                     <YoutubeIcon className="h-3.5 w-3.5" />
                   </span>
@@ -546,7 +546,7 @@ export default function DashboardBrandsPage() {
                 <label className="block text-[11px] font-semibold text-[#64748b]">
                   Facebook Username
                 </label>
-                <div className="flex h-9 items-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 transition-colors focus-within:border-[#043084] focus-within:bg-white">
+                <div className="flex h-9 items-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc]/80 px-3 transition-colors focus-within:border-[#7A2253] focus-within:bg-white">
                   <span className="mr-2 text-[#1877F2] shrink-0">
                     <FacebookIcon className="h-3.5 w-3.5" />
                   </span>
@@ -566,14 +566,14 @@ export default function DashboardBrandsPage() {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="h-9 px-3.5 rounded-lg border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#043084] transition-colors cursor-pointer"
+              className="h-9 px-3.5 rounded-lg border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="h-9 bg-[#043084] hover:bg-brand-hover text-white font-semibold text-xs px-4 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="h-9 bg-[#7A2253] hover:bg-brand-hover text-white font-semibold text-xs px-4 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               <span>{isSubmitting ? "Saving..." : editingBrand ? "Save Changes" : "Add Brand"}</span>
             </button>

@@ -138,7 +138,7 @@ export default function SubscriptionStepPage() {
 
           {/* 1. Header Section */}
           <div className="space-y-1">
-            <span className="block text-[10px] font-bold uppercase tracking-wider text-[#043084]">
+            <span className="block text-[10px] font-bold uppercase tracking-wider text-[#7A2253]">
               STEP 4 OF 4 · PUBLIC PROFILE
             </span>
             <h1 className="font-display text-xl sm:text-[24px] font-extrabold text-[#181716] tracking-tight leading-tight">
@@ -156,7 +156,7 @@ export default function SubscriptionStepPage() {
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                 Live Preview
               </span>
-              <span className="text-[11px] font-semibold text-[#043084]">
+              <span className="text-[11px] font-semibold text-[#7A2253]">
                 inflixo.com/@{profile?.username || "username"}
               </span>
             </div>
@@ -189,9 +189,9 @@ export default function SubscriptionStepPage() {
                     type="button"
                     onClick={() => setSelectedOption(option.id)}
                     className={`w-full rounded-xl border p-2 sm:p-2.5 text-left transition-all cursor-pointer ${isSelected
-                      ? "border-2 border-[#043084] bg-[#f8fafc] shadow-2xs"
+                      ? "border-2 border-[#7A2253] bg-[#f8fafc] shadow-2xs"
                       : option.recommended
-                        ? "border-[#043084]/30 bg-white hover:border-[#043084]"
+                        ? "border-[#7A2253]/30 bg-white hover:border-[#7A2253]"
                         : "border-[#e2e8f0] bg-white hover:border-brand-border"
                       }`}
                   >
@@ -199,7 +199,7 @@ export default function SubscriptionStepPage() {
                       <div className="flex min-w-0 items-start gap-2">
                         <div
                           className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border transition-all ${isSelected
-                            ? "border-[#043084] bg-[#043084] text-white"
+                            ? "border-[#7A2253] bg-[#7A2253] text-white"
                             : "border-[#cbd5e1] bg-white"
                             }`}
                         >
@@ -210,7 +210,7 @@ export default function SubscriptionStepPage() {
                             <span className="text-xs sm:text-[13px] font-bold text-[#181716]">
                               {option.name}
                             </span>
-                            <span className={`${option.recommended ? "bg-[#043084] text-white border-[#043084]" : option.id === "free" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-[#043084]/[0.08] text-[#043084] border-[#043084]/20"} border text-[9px] font-bold px-1.5 py-0.2 rounded-full`}>
+                            <span className={`${option.recommended ? "bg-[#7A2253] text-white border-[#7A2253]" : option.id === "free" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-[#7A2253]/[0.08] text-[#7A2253] border-[#7A2253]/20"} border text-[9px] font-bold px-1.5 py-0.2 rounded-full`}>
                               {option.badge}
                             </span>
                           </div>
@@ -249,7 +249,7 @@ export default function SubscriptionStepPage() {
               type="button"
               onClick={handleLaunch}
               disabled={submitting}
-              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-[#043084] hover:bg-brand-hover text-white font-semibold text-xs sm:text-sm h-10.5 sm:h-11 transition-all cursor-pointer shadow-xs disabled:opacity-60 active:scale-98"
+              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-[#7A2253] hover:bg-brand-hover text-white font-semibold text-xs sm:text-sm h-10.5 sm:h-11 transition-all cursor-pointer shadow-xs disabled:opacity-60 active:scale-98"
             >
               {submitting ? (
                 <>

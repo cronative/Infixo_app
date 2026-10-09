@@ -141,7 +141,7 @@ export async function openRazorpayCheckout(options: CheckoutOptions): Promise<vo
         contact: options.prefill?.contact || "",
       },
       theme: {
-        color: "#043084",
+        color: "#7A2253",
       },
       modal: {
         ondismiss: () => {

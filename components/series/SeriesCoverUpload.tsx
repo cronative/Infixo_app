@@ -128,10 +128,10 @@ export function SeriesCoverUpload({
             fileInputRef.current?.click();
           }
         }}
-        className={`group relative w-full overflow-hidden rounded-xl border transition-colors cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#043084]/30 ${value
+        className={`group relative w-full overflow-hidden rounded-xl border transition-colors cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7A2253]/30 ${value
           ? "aspect-[16/9] border-[#e2e8f0] bg-slate-950"
           : isDragging
-            ? "h-20 border-dashed border-[#043084] bg-[#043084]/[0.05]"
+            ? "h-20 border-dashed border-[#7A2253] bg-[#7A2253]/[0.05]"
             : "h-20 border-dashed border-[#cbd5e1] bg-[#f8fafc] hover:border-[#94a3b8] hover:bg-[#f1f5f9]"
           }`}
       >

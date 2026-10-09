@@ -153,7 +153,7 @@ export default function DashboardSettingsPage() {
 
         <div className="space-y-0.5">
           <p className="text-[11px] font-medium text-[#64748b]">Email</p>
-          <p className="text-xs sm:text-sm font-semibold text-[#043084] break-all">
+          <p className="text-xs sm:text-sm font-semibold text-[#7A2253] break-all">
             {accountEmail}
           </p>
         </div>
@@ -167,7 +167,7 @@ export default function DashboardSettingsPage() {
 
         <div className="flex items-center justify-between gap-4">
           <div className="space-y-0.5 max-w-xl">
-            <p className="text-xs sm:text-sm font-semibold text-[#043084]">
+            <p className="text-xs sm:text-sm font-semibold text-[#7A2253]">
               Show profile in search engines
             </p>
             <p className="text-[11px] sm:text-xs text-[#475569] leading-relaxed">
@@ -192,7 +192,7 @@ export default function DashboardSettingsPage() {
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-0.5 max-w-xl">
-            <p className="text-xs sm:text-sm font-semibold text-[#043084]">
+            <p className="text-xs sm:text-sm font-semibold text-[#7A2253]">
               Permanently delete your account
             </p>
             <p className="text-[11px] sm:text-xs text-[#475569] leading-relaxed">
@@ -233,7 +233,7 @@ export default function DashboardSettingsPage() {
               <button
                 type="button"
                 onClick={() => !isDeleting && setShowDeleteModal(false)}
-                className="text-[#64748b] hover:text-[#043084] p-1 rounded-lg transition-colors cursor-pointer"
+                className="text-[#64748b] hover:text-[#7A2253] p-1 rounded-lg transition-colors cursor-pointer"
                 aria-label="Close modal"
               >
                 <X className="h-4 w-4" />
@@ -253,7 +253,7 @@ export default function DashboardSettingsPage() {
                 type="button"
                 disabled={isDeleting}
                 onClick={() => setShowDeleteModal(false)}
-                className="h-8.5 px-3.5 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#043084] text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50"
+                className="h-8.5 px-3.5 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#7A2253] text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -305,7 +305,7 @@ function SwitchToggle({
       aria-label={label}
       disabled={disabled}
       onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-[#043084]/20 disabled:cursor-not-allowed disabled:opacity-50 ${checked ? "bg-[#043084]" : "bg-[#e2e8f0]"
+      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-[#7A2253]/20 disabled:cursor-not-allowed disabled:opacity-50 ${checked ? "bg-[#7A2253]" : "bg-[#e2e8f0]"
         }`}
     >
       <span

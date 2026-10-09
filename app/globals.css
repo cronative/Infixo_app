@@ -696,7 +696,7 @@ body {
 
 .hover-lift:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 28px -6px rgba(4, 48, 132, 0.14), 0 6px 12px -4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 12px 28px -6px rgba(122, 34, 83, 0.14), 0 6px 12px -4px rgba(0, 0, 0, 0.04);
 }
 
 .tap-scale {
@@ -751,7 +751,7 @@ body {
 }
 
 .glass-card-dark {
-  background: #043084;
+  background: #7A2253;
   border: 1px solid #334155;
 }
 
@@ -761,7 +761,7 @@ body {
 
 .hover-glow:hover {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(4, 48, 132, 0.18);
+  box-shadow: 0 0 0 3px rgba(122, 34, 83, 0.18);
 }
 
 @keyframes toastProgress {

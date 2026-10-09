@@ -49,7 +49,7 @@ import { ProfileService } from "@/services/ProfileService";
 import { authRepository, profileRepository, onboardingRepository } from "@/repositories/localRepository";
 
 const AVATAR_PALETTES = [
-  "bg-blue-50 text-[#043084] border-blue-200/80",
+  "bg-blue-50 text-[#7A2253] border-blue-200/80",
   "bg-purple-50 text-purple-700 border-purple-200/80",
   "bg-emerald-50 text-emerald-700 border-emerald-200/80",
   "bg-amber-50 text-amber-800 border-amber-200/80",
@@ -170,34 +170,34 @@ const EMAIL_TEMPLATES = [
     id: "welcome",
     name: "🎉 Welcome Creator",
     subject: "Welcome to Inflixo! Set up your creator series & link in bio 🚀",
-    body: `<h2 style="color: #043084; margin-top: 0; font-size: 18px;">Welcome to Inflixo! 🎉</h2>
+    body: `<h2 style="color: #7A2253; margin-top: 0; font-size: 18px;">Welcome to Inflixo! 🎉</h2>
 <p>Hi Creator,</p>
 <p>Thank you for joining <strong>Inflixo</strong> — the video-first link in bio platform built for Indian creators to organize series, showcase their total fanbase, and feature brand collab rate cards.</p>
 <p>Log in to your dashboard to organize your YouTube and Instagram playlists today!</p>
 <div style="margin: 24px 0;">
-  <a href="https://inflixo.com/login" style="background: #043084; color: #FFFFFF; padding: 12px 24px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 13px; display: inline-block;">Open Inflixo Dashboard</a>
+  <a href="https://inflixo.com/login" style="background: #7A2253; color: #FFFFFF; padding: 12px 24px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 13px; display: inline-block;">Open Inflixo Dashboard</a>
 </div>`,
   },
   {
     id: "upgrade_pro",
     name: "⭐ Upgrade to Pro / VIP",
     subject: "Unlock unlimited series, brand rate cards & custom media kit on Inflixo ⭐",
-    body: `<h2 style="color: #043084; margin-top: 0; font-size: 18px;">Take your creator portfolio to the next level 🚀</h2>
+    body: `<h2 style="color: #7A2253; margin-top: 0; font-size: 18px;">Take your creator portfolio to the next level 🚀</h2>
 <p>Hi Creator,</p>
 <p>Your 7-day trial lets you experience the power of ordered series playlists. Upgrade to <strong>Pro or VIP</strong> to keep your public profile live 24/7, publish unlimited episodes, and share verified rate cards with brands.</p>
 <div style="margin: 24px 0;">
-  <a href="https://inflixo.com/dashboard/subscription" style="background: #043084; color: #FFFFFF; padding: 12px 24px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 13px; display: inline-block;">View Plans & Upgrade</a>
+  <a href="https://inflixo.com/dashboard/subscription" style="background: #7A2253; color: #FFFFFF; padding: 12px 24px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 13px; display: inline-block;">View Plans & Upgrade</a>
 </div>`,
   },
   {
     id: "india_creators",
     name: "🇮🇳 India Creators Mission",
     subject: "Building India's biggest creator community together — Inflixo 🇮🇳✨",
-    body: `<h2 style="color: #043084; margin-top: 0; font-size: 18px;">Hello Content Creator,</h2>
+    body: `<h2 style="color: #7A2253; margin-top: 0; font-size: 18px;">Hello Content Creator,</h2>
 <p>First of all, a massive <strong>THANK YOU</strong> for inspiring millions by creating amazing content in India! 🇮🇳✨</p>
 <p>As creators ourselves, we know how hard you work every day to script, shoot, and edit. Inflixo is built to ensure your best videos never get lost in the feed.</p>
 <div style="margin: 24px 0;">
-  <a href="https://inflixo.com" style="background: #043084; color: #FFFFFF; padding: 12px 24px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 13px; display: inline-block;">Visit Inflixo Home</a>
+  <a href="https://inflixo.com" style="background: #7A2253; color: #FFFFFF; padding: 12px 24px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 13px; display: inline-block;">Visit Inflixo Home</a>
 </div>`,
   },
 ];
@@ -544,19 +544,19 @@ export default function AdminDashboardPage() {
   if (!adminUser) {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-white">
-        <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#043084] border-t-transparent" />
+        <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#7A2253] border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-dvh bg-white text-slate-800 font-sans selection:bg-[#043084]/10 selection:text-[#043084] text-left">
+    <div className="min-h-dvh bg-white text-slate-800 font-sans selection:bg-[#7A2253]/10 selection:text-[#7A2253] text-left">
       {/* 1. TOP HEADER NAVBAR — TIGHT & CLEAN */}
       <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur-md px-4 sm:px-6 py-2.5">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
             <Logo size="sm" />
-            <span className="hidden sm:inline-block text-[10px] font-extrabold uppercase tracking-wider text-[#043084] bg-[#043084]/5 border border-[#043084]/15 px-2 py-0.5 rounded-[6px]">
+            <span className="hidden sm:inline-block text-[10px] font-extrabold uppercase tracking-wider text-[#7A2253] bg-[#7A2253]/5 border border-[#7A2253]/15 px-2 py-0.5 rounded-[6px]">
               Founder Cockpit
             </span>
           </div>
@@ -598,7 +598,7 @@ export default function AdminDashboardPage() {
           <div className="rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-2xs space-y-1">
             <div className="flex items-center justify-between text-slate-500">
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Total Creators</span>
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#043084]/10 text-[#043084]">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#7A2253]/10 text-[#7A2253]">
                 <Users className="h-3.5 w-3.5" />
               </div>
             </div>
@@ -672,7 +672,7 @@ export default function AdminDashboardPage() {
               onClick={() => setActiveTab("overview")}
               className={`tap-scale flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
                 activeTab === "overview"
-                  ? "bg-white text-[#043084] shadow-2xs"
+                  ? "bg-white text-[#7A2253] shadow-2xs"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -685,7 +685,7 @@ export default function AdminDashboardPage() {
               onClick={() => setActiveTab("creators")}
               className={`tap-scale flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
                 activeTab === "creators"
-                  ? "bg-white text-[#043084] shadow-2xs"
+                  ? "bg-white text-[#7A2253] shadow-2xs"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -698,7 +698,7 @@ export default function AdminDashboardPage() {
               onClick={() => setActiveTab("series")}
               className={`tap-scale flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
                 activeTab === "series"
-                  ? "bg-white text-[#043084] shadow-2xs"
+                  ? "bg-white text-[#7A2253] shadow-2xs"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -711,7 +711,7 @@ export default function AdminDashboardPage() {
               onClick={() => setActiveTab("analytics")}
               className={`tap-scale flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
                 activeTab === "analytics"
-                  ? "bg-white text-[#043084] shadow-2xs"
+                  ? "bg-white text-[#7A2253] shadow-2xs"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -724,7 +724,7 @@ export default function AdminDashboardPage() {
               onClick={() => setActiveTab("email")}
               className={`tap-scale flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
                 activeTab === "email"
-                  ? "bg-white text-[#043084] shadow-2xs"
+                  ? "bg-white text-[#7A2253] shadow-2xs"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -742,7 +742,7 @@ export default function AdminDashboardPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={`Search ${activeTab}...`}
-                className="w-full rounded-lg border border-slate-200 bg-white pl-8 pr-3 py-1.5 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:border-[#043084] focus:outline-none focus:ring-1 focus:ring-[#043084]/20 transition-all"
+                className="w-full rounded-lg border border-slate-200 bg-white pl-8 pr-3 py-1.5 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20 transition-all"
               />
               {searchQuery && (
                 <button
@@ -767,7 +767,7 @@ export default function AdminDashboardPage() {
               <div className="lg:col-span-8 rounded-xl border border-slate-200/80 bg-white p-4 shadow-2xs space-y-3">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                    <Crown className="h-3.5 w-3.5 text-[#043084]" />
+                    <Crown className="h-3.5 w-3.5 text-[#7A2253]" />
                     <span>Subscription Plan Distribution</span>
                   </h2>
                   <span className="text-xs font-bold text-slate-700">Total: {stats.totalCreators} Accounts</span>
@@ -777,7 +777,7 @@ export default function AdminDashboardPage() {
                 <div className="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden flex">
                   <div
                     style={{ width: `${stats.totalCreators ? (stats.vipSubscribers / stats.totalCreators) * 100 : 0}%` }}
-                    className="bg-[#043084]"
+                    className="bg-[#7A2253]"
                     title={`VIP: ${stats.vipSubscribers}`}
                   />
                   <div
@@ -800,7 +800,7 @@ export default function AdminDashboardPage() {
                 {/* Legend Items */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs">
                   <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-100">
-                    <span className="h-2.5 w-2.5 rounded-full bg-[#043084]" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#7A2253]" />
                     <div className="min-w-0">
                       <p className="font-extrabold text-slate-800">{stats.vipSubscribers} VIP</p>
                       <p className="text-[10px] text-slate-500 font-medium">₹1,499/mo</p>
@@ -836,7 +836,7 @@ export default function AdminDashboardPage() {
               {/* System Integrations Status Card */}
               <div className="lg:col-span-4 rounded-xl border border-slate-200/80 bg-white p-4 shadow-2xs space-y-2.5">
                 <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                  <Server className="h-3.5 w-3.5 text-[#043084]" />
+                  <Server className="h-3.5 w-3.5 text-[#7A2253]" />
                   <span>System Infrastructure</span>
                 </h2>
 
@@ -870,14 +870,14 @@ export default function AdminDashboardPage() {
               <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200/80">
                 <div>
                   <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                    <Users className="h-3.5 w-3.5 text-[#043084]" />
+                    <Users className="h-3.5 w-3.5 text-[#7A2253]" />
                     <span>Recent Creator Registrations</span>
                   </h3>
                 </div>
                 <button
                   type="button"
                   onClick={() => setActiveTab("creators")}
-                  className="text-xs font-bold text-[#043084] hover:underline flex items-center gap-1 cursor-pointer"
+                  className="text-xs font-bold text-[#7A2253] hover:underline flex items-center gap-1 cursor-pointer"
                 >
                   <span>View All Creators ({creators.length})</span>
                   <ChevronRight className="h-3.5 w-3.5" />
@@ -927,14 +927,14 @@ export default function AdminDashboardPage() {
                               <Link
                                 href={`/${c.username || "username"}`}
                                 target="_blank"
-                                className="font-mono font-bold text-[#043084] hover:underline"
+                                className="font-mono font-bold text-[#7A2253] hover:underline"
                               >
                                 @{c.username}
                               </Link>
                             </td>
                             <td className="px-3.5 py-2">
                               {isVip ? (
-                                <span className="inline-flex items-center gap-1 rounded bg-[#043084] text-white px-2 py-0.5 text-[10px] font-bold">
+                                <span className="inline-flex items-center gap-1 rounded bg-[#7A2253] text-white px-2 py-0.5 text-[10px] font-bold">
                                   ⭐ VIP
                                 </span>
                               ) : isPro ? (
@@ -973,7 +973,7 @@ export default function AdminDashboardPage() {
                                 <button
                                   type="button"
                                   onClick={() => handleImpersonate(c)}
-                                  className="rounded border border-slate-200 bg-white px-2 py-1 text-[11px] font-bold text-[#043084] hover:bg-[#043084]/5 transition-colors cursor-pointer"
+                                  className="rounded border border-slate-200 bg-white px-2 py-1 text-[11px] font-bold text-[#7A2253] hover:bg-[#7A2253]/5 transition-colors cursor-pointer"
                                   title="Login as this creator"
                                 >
                                   Login As
@@ -1003,7 +1003,7 @@ export default function AdminDashboardPage() {
                 onClick={() => setCreatorFilter("all")}
                 className={`rounded-md px-2.5 py-1 text-xs font-bold transition-colors cursor-pointer border ${
                   creatorFilter === "all"
-                    ? "bg-[#043084] text-white border-[#043084]"
+                    ? "bg-[#7A2253] text-white border-[#7A2253]"
                     : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
                 }`}
               >
@@ -1015,7 +1015,7 @@ export default function AdminDashboardPage() {
                 onClick={() => setCreatorFilter("vip")}
                 className={`rounded-md px-2.5 py-1 text-xs font-bold transition-colors cursor-pointer border ${
                   creatorFilter === "vip"
-                    ? "bg-[#043084] text-white border-[#043084]"
+                    ? "bg-[#7A2253] text-white border-[#7A2253]"
                     : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
                 }`}
               >
@@ -1027,7 +1027,7 @@ export default function AdminDashboardPage() {
                 onClick={() => setCreatorFilter("pro")}
                 className={`rounded-md px-2.5 py-1 text-xs font-bold transition-colors cursor-pointer border ${
                   creatorFilter === "pro"
-                    ? "bg-[#043084] text-white border-[#043084]"
+                    ? "bg-[#7A2253] text-white border-[#7A2253]"
                     : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
                 }`}
               >
@@ -1039,7 +1039,7 @@ export default function AdminDashboardPage() {
                 onClick={() => setCreatorFilter("starter")}
                 className={`rounded-md px-2.5 py-1 text-xs font-bold transition-colors cursor-pointer border ${
                   creatorFilter === "starter"
-                    ? "bg-[#043084] text-white border-[#043084]"
+                    ? "bg-[#7A2253] text-white border-[#7A2253]"
                     : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
                 }`}
               >
@@ -1051,7 +1051,7 @@ export default function AdminDashboardPage() {
                 onClick={() => setCreatorFilter("trial")}
                 className={`rounded-md px-2.5 py-1 text-xs font-bold transition-colors cursor-pointer border ${
                   creatorFilter === "trial"
-                    ? "bg-[#043084] text-white border-[#043084]"
+                    ? "bg-[#7A2253] text-white border-[#7A2253]"
                     : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
                 }`}
               >
@@ -1063,7 +1063,7 @@ export default function AdminDashboardPage() {
                 onClick={() => setCreatorFilter("gigs")}
                 className={`rounded-md px-2.5 py-1 text-xs font-bold transition-colors cursor-pointer border ${
                   creatorFilter === "gigs"
-                    ? "bg-[#043084] text-white border-[#043084]"
+                    ? "bg-[#7A2253] text-white border-[#7A2253]"
                     : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
                 }`}
               >
@@ -1137,7 +1137,7 @@ export default function AdminDashboardPage() {
                             <Link
                               href={`/${c.username || "username"}`}
                               target="_blank"
-                              className="font-mono font-bold text-[#043084] hover:underline"
+                              className="font-mono font-bold text-[#7A2253] hover:underline"
                             >
                               @{c.username || "username"}
                             </Link>
@@ -1146,7 +1146,7 @@ export default function AdminDashboardPage() {
                           {/* SUBSCRIPTION PLAN */}
                           <td className="px-3.5 py-2">
                             {isVip ? (
-                              <span className="inline-flex items-center gap-1 rounded bg-[#043084] text-white px-2 py-0.5 text-[10px] font-bold">
+                              <span className="inline-flex items-center gap-1 rounded bg-[#7A2253] text-white px-2 py-0.5 text-[10px] font-bold">
                                 ⭐ VIP
                               </span>
                             ) : isPro ? (
@@ -1255,9 +1255,9 @@ export default function AdminDashboardPage() {
                                     setOpenActionMenuId(null);
                                     setPlanChangerCreator(c);
                                   }}
-                                  className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold text-[#043084] hover:bg-blue-50 flex items-center gap-2 transition-colors cursor-pointer"
+                                  className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold text-[#7A2253] hover:bg-blue-50 flex items-center gap-2 transition-colors cursor-pointer"
                                 >
-                                  <Crown className="h-3.5 w-3.5 text-[#043084]" />
+                                  <Crown className="h-3.5 w-3.5 text-[#7A2253]" />
                                   <span>Change Plan</span>
                                 </button>
 
@@ -1353,7 +1353,7 @@ export default function AdminDashboardPage() {
                               <Link
                                 href={`/${s.creatorUsername}`}
                                 target="_blank"
-                                className="font-mono text-[10px] text-[#043084] hover:underline"
+                                className="font-mono text-[10px] text-[#7A2253] hover:underline"
                               >
                                 @{s.creatorUsername}
                               </Link>
@@ -1374,7 +1374,7 @@ export default function AdminDashboardPage() {
 
                           {/* EPISODES COUNT */}
                           <td className="px-3.5 py-2">
-                            <span className="inline-flex items-center gap-1 rounded bg-[#043084]/10 text-[#043084] font-bold px-2 py-0.5 text-[10px]">
+                            <span className="inline-flex items-center gap-1 rounded bg-[#7A2253]/10 text-[#7A2253] font-bold px-2 py-0.5 text-[10px]">
                               <Film className="h-3 w-3" />
                               <span>{episodesCount} {episodesCount === 1 ? "Ep" : "Eps"}</span>
                             </span>
@@ -1400,7 +1400,7 @@ export default function AdminDashboardPage() {
                               <Link
                                 href={`/${s.creatorUsername}/series/${s.id}`}
                                 target="_blank"
-                                className="inline-flex items-center gap-1 rounded border border-[#043084]/20 bg-[#043084]/5 px-2 py-1 text-[11px] font-bold text-[#043084] hover:bg-[#043084]/10 transition-colors"
+                                className="inline-flex items-center gap-1 rounded border border-[#7A2253]/20 bg-[#7A2253]/5 px-2 py-1 text-[11px] font-bold text-[#7A2253] hover:bg-[#7A2253]/10 transition-colors"
                               >
                                 <span>Public Page</span>
                                 <ExternalLink className="h-3 w-3" />
@@ -1426,7 +1426,7 @@ export default function AdminDashboardPage() {
             <div className="lg:col-span-8 rounded-xl border border-slate-200/80 bg-white p-4 shadow-2xs space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                  <TrendingUp className="h-3.5 w-3.5 text-[#043084]" />
+                  <TrendingUp className="h-3.5 w-3.5 text-[#7A2253]" />
                   <span>Top Performing Creators (By Traffic)</span>
                 </h3>
                 <span className="text-xs font-bold text-slate-400">Top 5</span>
@@ -1469,14 +1469,14 @@ export default function AdminDashboardPage() {
                         <td className="px-3 py-2 font-bold text-slate-900">
                           {c.profileViews || 0}
                         </td>
-                        <td className="px-3 py-2 font-bold text-[#043084]">
+                        <td className="px-3 py-2 font-bold text-[#7A2253]">
                           {c.episodeClicks || 0}
                         </td>
                         <td className="px-3 py-2 text-right">
                           <Link
                             href={`/${c.username}`}
                             target="_blank"
-                            className="inline-flex items-center gap-1 text-[11px] font-bold text-[#043084] hover:underline"
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-[#7A2253] hover:underline"
                           >
                             Open Profile
                             <ExternalLink className="h-3 w-3" />
@@ -1492,7 +1492,7 @@ export default function AdminDashboardPage() {
             {/* Engagement Metrics Summary */}
             <div className="lg:col-span-4 rounded-xl border border-slate-200/80 bg-white p-4 shadow-2xs space-y-3">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                <BarChart3 className="h-3.5 w-3.5 text-[#043084]" />
+                <BarChart3 className="h-3.5 w-3.5 text-[#7A2253]" />
                 <span>Conversion Metrics</span>
               </h3>
 
@@ -1538,7 +1538,7 @@ export default function AdminDashboardPage() {
             <div className="lg:col-span-7 rounded-xl border border-slate-200/80 bg-white p-4 sm:p-5 shadow-2xs space-y-3">
               <div className="pb-2 border-b border-slate-100">
                 <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
-                  <Mail className="h-3.5 w-3.5 text-[#043084]" />
+                  <Mail className="h-3.5 w-3.5 text-[#7A2253]" />
                   <span>Admin Broadcast Mailer</span>
                 </h2>
                 <p className="text-[11px] text-slate-500">
@@ -1561,7 +1561,7 @@ export default function AdminDashboardPage() {
                       }}
                       className={`tap-scale rounded-md px-2.5 py-1 text-xs font-semibold cursor-pointer border ${
                         selectedTemplateId === tmpl.id
-                          ? "bg-[#043084] text-white border-[#043084]"
+                          ? "bg-[#7A2253] text-white border-[#7A2253]"
                           : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
                       }`}
                     >
@@ -1579,7 +1579,7 @@ export default function AdminDashboardPage() {
                     <button
                       type="button"
                       onClick={() => handleAddRecipients("all")}
-                      className="text-[#043084] font-bold hover:underline"
+                      className="text-[#7A2253] font-bold hover:underline"
                     >
                       + All Creators ({creators.length})
                     </button>
@@ -1587,7 +1587,7 @@ export default function AdminDashboardPage() {
                     <button
                       type="button"
                       onClick={() => handleAddRecipients("vip")}
-                      className="text-[#043084] font-bold hover:underline"
+                      className="text-[#7A2253] font-bold hover:underline"
                     >
                       + VIPs ({stats.vipSubscribers})
                     </button>
@@ -1595,7 +1595,7 @@ export default function AdminDashboardPage() {
                     <button
                       type="button"
                       onClick={() => handleAddRecipients("trial")}
-                      className="text-[#043084] font-bold hover:underline"
+                      className="text-[#7A2253] font-bold hover:underline"
                     >
                       + Trial Users ({stats.freeTrialSubscribers})
                     </button>
@@ -1606,7 +1606,7 @@ export default function AdminDashboardPage() {
                   value={recipientsInput}
                   onChange={(e) => setRecipientsInput(e.target.value)}
                   placeholder="Enter email addresses separated by commas..."
-                  className="w-full rounded-lg border border-slate-200 bg-white p-2 text-xs font-mono text-slate-800 placeholder-slate-400 focus:border-[#043084] focus:outline-none"
+                  className="w-full rounded-lg border border-slate-200 bg-white p-2 text-xs font-mono text-slate-800 placeholder-slate-400 focus:border-[#7A2253] focus:outline-none"
                 />
               </div>
 
@@ -1618,7 +1618,7 @@ export default function AdminDashboardPage() {
                   value={emailSubject}
                   onChange={(e) => setEmailSubject(e.target.value)}
                   placeholder="Enter subject line..."
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:border-[#043084] focus:outline-none"
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:border-[#7A2253] focus:outline-none"
                 />
               </div>
 
@@ -1629,7 +1629,7 @@ export default function AdminDashboardPage() {
                   rows={6}
                   value={emailBody}
                   onChange={(e) => setEmailBody(e.target.value)}
-                  className="w-full rounded-lg border border-slate-200 bg-white p-2 text-xs font-mono text-slate-800 placeholder-slate-400 focus:border-[#043084] focus:outline-none"
+                  className="w-full rounded-lg border border-slate-200 bg-white p-2 text-xs font-mono text-slate-800 placeholder-slate-400 focus:border-[#7A2253] focus:outline-none"
                 />
               </div>
 
@@ -1637,7 +1637,7 @@ export default function AdminDashboardPage() {
                 type="button"
                 onClick={handleSendMail}
                 disabled={sendingEmail}
-                className="tap-scale inline-flex items-center gap-1.5 rounded-lg bg-[#043084] hover:bg-[#03256c] px-4 py-2 text-xs font-bold text-white shadow-2xs transition-all cursor-pointer disabled:opacity-50"
+                className="tap-scale inline-flex items-center gap-1.5 rounded-lg bg-[#7A2253] hover:bg-[#03256c] px-4 py-2 text-xs font-bold text-white shadow-2xs transition-all cursor-pointer disabled:opacity-50"
               >
                 {sendingEmail ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
                 <span>{sendingEmail ? "Sending Broadcast..." : "Send Broadcast Email"}</span>
@@ -1648,7 +1648,7 @@ export default function AdminDashboardPage() {
             <div className="lg:col-span-5 rounded-xl border border-slate-200/80 bg-white p-4 shadow-2xs space-y-2 lg:sticky lg:top-20">
               <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1">
-                  <Eye className="h-3 w-3 text-[#043084]" /> Preview
+                  <Eye className="h-3 w-3 text-[#7A2253]" /> Preview
                 </span>
                 <span className="text-[10px] text-slate-400 font-semibold">From: Inflixo App</span>
               </div>
@@ -1656,7 +1656,7 @@ export default function AdminDashboardPage() {
               <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-left space-y-2 max-h-[460px] overflow-y-auto">
                 <div className="border-b border-slate-200 pb-1.5">
                   <p className="text-[11px] font-bold text-slate-700 truncate">
-                    Subject: <span className="text-[#043084] font-black">{emailSubject || "(No Subject)"}</span>
+                    Subject: <span className="text-[#7A2253] font-black">{emailSubject || "(No Subject)"}</span>
                   </p>
                 </div>
                 <div
@@ -1685,7 +1685,7 @@ export default function AdminDashboardPage() {
             <div>
               <h3 className="text-sm font-bold text-slate-900">Change Creator Plan</h3>
               <p className="text-xs text-slate-500">
-                Select subscription tier for <span className="font-bold text-[#043084]">@{planChangerCreator.username}</span>
+                Select subscription tier for <span className="font-bold text-[#7A2253]">@{planChangerCreator.username}</span>
               </p>
             </div>
 
@@ -1693,10 +1693,10 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => handleSetPlan(planChangerCreator, "creator_VIP", "VIP")}
-                className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:border-[#043084] hover:bg-blue-50/50 transition-all text-left cursor-pointer"
+                className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:border-[#7A2253] hover:bg-blue-50/50 transition-all text-left cursor-pointer"
               >
                 <div>
-                  <p className="font-bold text-xs text-[#043084] flex items-center gap-1">⭐ VIP Plan</p>
+                  <p className="font-bold text-xs text-[#7A2253] flex items-center gap-1">⭐ VIP Plan</p>
                   <p className="text-[10px] text-slate-500">Unlimited series, custom media kit, daily stats</p>
                 </div>
                 <span className="text-xs font-bold text-slate-700">₹1,499/mo</span>
@@ -1761,7 +1761,7 @@ export default function AdminDashboardPage() {
               </div>
               <div>
                 <h3 className="font-bold text-sm text-slate-900">{viewGigsCreator.displayName}</h3>
-                <p className="text-xs text-[#043084] font-semibold">@{viewGigsCreator.username} &bull; Media Kit Packages</p>
+                <p className="text-xs text-[#7A2253] font-semibold">@{viewGigsCreator.username} &bull; Media Kit Packages</p>
               </div>
             </div>
 
@@ -1778,7 +1778,7 @@ export default function AdminDashboardPage() {
                   {creatorGigs.map((pkg) => (
                     <div key={pkg.id} className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 space-y-1.5 text-left">
                       <div className="flex items-center justify-between gap-2">
-                        <span className="bg-[#043084]/10 text-[#043084] text-[10px] font-bold px-2 py-0.5 rounded uppercase">
+                        <span className="bg-[#7A2253]/10 text-[#7A2253] text-[10px] font-bold px-2 py-0.5 rounded uppercase">
                           {pkg.platform}
                         </span>
                         <span className="font-bold text-sm text-slate-900">{pkg.price}</span>
@@ -1840,13 +1840,13 @@ export default function AdminDashboardPage() {
 
                 <div className="pt-2 flex items-center justify-between border-t border-slate-100 text-xs">
                   <p className="font-semibold text-slate-500">
-                    By <span className="text-[#043084] font-bold">{selectedSeries.creatorName || `@${selectedSeries.creatorUsername}`}</span>
+                    By <span className="text-[#7A2253] font-bold">{selectedSeries.creatorName || `@${selectedSeries.creatorUsername}`}</span>
                   </p>
 
                   <Link
                     href={`/${selectedSeries.creatorUsername}`}
                     target="_blank"
-                    className="flex items-center gap-1 font-bold text-[#043084] hover:underline"
+                    className="flex items-center gap-1 font-bold text-[#7A2253] hover:underline"
                   >
                     <span>Open Page</span>
                     <ArrowUpRight className="h-3.5 w-3.5" />
@@ -1857,7 +1857,7 @@ export default function AdminDashboardPage() {
 
             <div className="space-y-2 pt-2 border-t border-slate-100">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                <Film className="h-3.5 w-3.5 text-[#043084]" />
+                <Film className="h-3.5 w-3.5 text-[#7A2253]" />
                 <span>Episodes ({selectedSeries.seasons?.[0]?.episodes?.length || 0})</span>
               </h3>
 
@@ -1885,7 +1885,7 @@ export default function AdminDashboardPage() {
                           href={ep.externalUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="tap-scale inline-flex items-center gap-1 rounded bg-[#043084] px-2 py-1 text-[10px] font-bold text-white shrink-0 hover:bg-[#03256c] transition-colors"
+                          className="tap-scale inline-flex items-center gap-1 rounded bg-[#7A2253] px-2 py-1 text-[10px] font-bold text-white shrink-0 hover:bg-[#03256c] transition-colors"
                         >
                           <Play className="h-2.5 w-2.5 fill-current" />
                           <span>Watch</span>

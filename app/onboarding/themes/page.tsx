@@ -35,7 +35,7 @@ export default function ThemeStepPage() {
       <div className="w-full max-w-[460px] mx-auto pt-0 sm:pt-1 pb-4">
         <div className="rounded-2xl border border-[#e2e8f0] bg-white p-4 sm:p-5 space-y-3 text-left shadow-xs">
           <div className="space-y-1">
-            <span className="block text-[10px] font-bold uppercase tracking-wider text-[#043084]">
+            <span className="block text-[10px] font-bold uppercase tracking-wider text-[#7A2253]">
               DESIGN &amp; THEME
             </span>
             <h1 className="font-display text-xl sm:text-[24px] font-extrabold text-[#181716] tracking-tight leading-tight">
@@ -52,7 +52,7 @@ export default function ThemeStepPage() {
               type="button"
               onClick={() => setActiveGroup("all")}
               className={`tap-scale shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer ${activeGroup === "all"
-                ? "bg-[#043084]/[0.08] text-[#043084] border border-[#043084]/25"
+                ? "bg-[#7A2253]/[0.08] text-[#7A2253] border border-[#7A2253]/25"
                 : "bg-white border border-[#e2e8f0] text-[#54514D] hover:bg-surface-soft"
                 }`}
             >
@@ -63,7 +63,7 @@ export default function ThemeStepPage() {
               type="button"
               onClick={() => setActiveGroup("animated")}
               className={`tap-scale shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1 ${activeGroup === "animated"
-                ? "bg-[#043084]/[0.08] text-[#043084] border border-[#043084]/25"
+                ? "bg-[#7A2253]/[0.08] text-[#7A2253] border border-[#7A2253]/25"
                 : "bg-white border border-[#e2e8f0] text-[#54514D] hover:bg-surface-soft"
                 }`}
             >
@@ -75,7 +75,7 @@ export default function ThemeStepPage() {
               type="button"
               onClick={() => setActiveGroup("light")}
               className={`tap-scale shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer ${activeGroup === "light"
-                ? "bg-[#043084]/[0.08] text-[#043084] border border-[#043084]/25"
+                ? "bg-[#7A2253]/[0.08] text-[#7A2253] border border-[#7A2253]/25"
                 : "bg-white border border-[#e2e8f0] text-[#54514D] hover:bg-surface-soft"
                 }`}
             >
@@ -86,7 +86,7 @@ export default function ThemeStepPage() {
               type="button"
               onClick={() => setActiveGroup("dark")}
               className={`tap-scale shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer ${activeGroup === "dark"
-                ? "bg-[#043084]/[0.08] text-[#043084] border border-[#043084]/25"
+                ? "bg-[#7A2253]/[0.08] text-[#7A2253] border border-[#7A2253]/25"
                 : "bg-white border border-[#e2e8f0] text-[#54514D] hover:bg-surface-soft"
                 }`}
             >
@@ -122,7 +122,7 @@ export default function ThemeStepPage() {
               type="button"
               onClick={handleNext}
               disabled={submitting}
-              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-[#043084] hover:bg-brand-hover text-white font-semibold text-xs sm:text-sm h-10.5 sm:h-11 transition-all cursor-pointer shadow-xs disabled:opacity-60 active:scale-98"
+              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-[#7A2253] hover:bg-brand-hover text-white font-semibold text-xs sm:text-sm h-10.5 sm:h-11 transition-all cursor-pointer shadow-xs disabled:opacity-60 active:scale-98"
             >
               <span>Save &amp; Next →</span>
             </button>
@@ -151,7 +151,7 @@ function ThemeTile({
       type="button"
       onClick={onSelect}
       className={`tap-scale relative w-full h-24 sm:h-26 rounded-xl overflow-hidden p-2.5 sm:p-3 flex flex-col justify-between text-left transition-all cursor-pointer shadow-xs ${isSelected
-        ? "ring-2 ring-offset-2 ring-[#043084]"
+        ? "ring-2 ring-offset-2 ring-[#7A2253]"
         : "border border-gray-200/80 hover:border-brand-border hover:shadow-sm"
         }`}
       style={{
@@ -178,7 +178,7 @@ function ThemeTile({
           )}
 
           {isSelected && (
-            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#043084] text-white shadow-md border border-white">
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#7A2253] text-white shadow-md border border-white">
               <Check className="h-3 w-3 stroke-[3]" />
             </div>
           )}

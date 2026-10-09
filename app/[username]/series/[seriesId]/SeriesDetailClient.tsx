@@ -61,7 +61,7 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   }
   return {
     name: platformStr || "Watch",
-    icon: <Film className="h-3.5 w-3.5 text-[#043084]" />,
+    icon: <Film className="h-3.5 w-3.5 text-[#7A2253]" />,
   };
 }
 
@@ -590,7 +590,7 @@ export function SeriesDetailClient({
                           <div className="min-w-0 flex-1 space-y-0.5">
                             <span
                               style={{ color: c.primaryText }}
-                              className={`block truncate text-xs sm:text-[13px] font-semibold group-hover:text-[#043084] dark:group-hover:text-blue-400 transition-colors`}
+                              className={`block truncate text-xs sm:text-[13px] font-semibold group-hover:text-[#7A2253] dark:group-hover:text-blue-400 transition-colors`}
                             >
                               {epTitleStr}
                             </span>

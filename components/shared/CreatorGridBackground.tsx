@@ -84,8 +84,8 @@ export function CreatorGridBackground({
         <div key={tool.label} className={`absolute hidden md:block ${tool.className}`}>
           <div
             className={`creator-tool-float flex h-12 w-12 items-center justify-center rounded-[10px] border backdrop-blur-md ${isSoft
-              ? "border-[#043084]/5 bg-white/42 text-[#043084]/26 shadow-[0_14px_35px_rgba(21,25,51,0.035)] opacity-70"
-              : "border-[#043084]/10 bg-white/65 text-[#043084]/45 shadow-[0_14px_35px_rgba(21,25,51,0.06)]"
+              ? "border-[#7A2253]/5 bg-white/42 text-[#7A2253]/26 shadow-[0_14px_35px_rgba(21,25,51,0.035)] opacity-70"
+              : "border-[#7A2253]/10 bg-white/65 text-[#7A2253]/45 shadow-[0_14px_35px_rgba(21,25,51,0.06)]"
               }`}
             style={{
               "--float-duration": tool.duration,

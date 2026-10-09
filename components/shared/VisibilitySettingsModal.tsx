@@ -172,7 +172,7 @@ export function VisibilitySettingsModal({
             <button
               type="button"
               onClick={handleResetDefault}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-[#64748b] hover:text-[#043084] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[#64748b] hover:text-[#7A2253] transition-colors cursor-pointer"
             >
               <RotateCcw className="h-3 w-3" />
               <span>Reset Default</span>
@@ -201,15 +201,15 @@ export function VisibilitySettingsModal({
                       }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[#043084]/10 text-[10px] font-bold text-[#043084]">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[#7A2253]/10 text-[10px] font-bold text-[#7A2253]">
                         {idx + 1}
                       </span>
 
                       <div className="min-w-0 flex-1 space-y-0.5">
-                        <p className="text-xs font-bold text-[#043084] truncate flex items-center gap-1.5">
+                        <p className="text-xs font-bold text-[#7A2253] truncate flex items-center gap-1.5">
                           {info.name}
                           {isAbout && (
-                            <span className="text-[9px] font-semibold text-[#043084] bg-[#043084]/10 border border-[#043084]/20 px-1.5 py-0.2 rounded">
+                            <span className="text-[9px] font-semibold text-[#7A2253] bg-[#7A2253]/10 border border-[#7A2253]/20 px-1.5 py-0.2 rounded">
                               Locked
                             </span>
                           )}
@@ -225,7 +225,7 @@ export function VisibilitySettingsModal({
                         onClick={() => handleToggleVisibility(section.sectionKey)}
                         disabled={isAbout}
                         className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-colors cursor-pointer ${section.isVisible
-                          ? "border-[#e2e8f0] bg-[#f8fafc] text-[#043084] hover:bg-[#f1f5f9] hover:text-[#043084]"
+                          ? "border-[#e2e8f0] bg-[#f8fafc] text-[#7A2253] hover:bg-[#f1f5f9] hover:text-[#7A2253]"
                           : "border-[#C1443A]/20 bg-[#C1443A]/10 text-[#C1443A]"
                           } disabled:opacity-40 disabled:cursor-not-allowed`}
                         title={section.isVisible ? "Hide section" : "Show section"}
@@ -242,7 +242,7 @@ export function VisibilitySettingsModal({
                         type="button"
                         onClick={() => handleMove(idx, "up")}
                         disabled={isFirst}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-[#64748b] hover:text-[#043084] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-[#64748b] hover:text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                         title="Move up"
                       >
                         <ArrowUp className="h-3.5 w-3.5" />
@@ -253,7 +253,7 @@ export function VisibilitySettingsModal({
                         type="button"
                         onClick={() => handleMove(idx, "down")}
                         disabled={isLast}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-[#64748b] hover:text-[#043084] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-[#64748b] hover:text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                         title="Move down"
                       >
                         <ArrowDown className="h-3.5 w-3.5" />
@@ -269,7 +269,7 @@ export function VisibilitySettingsModal({
           <button
             type="button"
             onClick={onClose}
-            className="h-9 px-4 rounded-lg border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#043084] transition-colors cursor-pointer"
+            className="h-9 px-4 rounded-lg border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
           >
             Cancel
           </button>
@@ -277,7 +277,7 @@ export function VisibilitySettingsModal({
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="h-9 bg-[#043084] hover:bg-brand-hover text-white font-semibold text-xs px-4.5 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5 disabled:opacity-50"
+            className="h-9 bg-[#7A2253] hover:bg-brand-hover text-white font-semibold text-xs px-4.5 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5 disabled:opacity-50"
           >
             {saving ? (
               <>

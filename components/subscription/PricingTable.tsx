@@ -116,12 +116,12 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
               type="button"
               onClick={() => setCycle("yearly")}
               className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${cycle === "yearly"
-                ? "bg-[#043084] text-white shadow-xs"
+                ? "bg-[#7A2253] text-white shadow-xs"
                 : "text-[#797570] hover:text-foreground"
                 }`}
             >
               <span>Yearly</span>
-              <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded-md ${cycle === "yearly" ? "bg-white/20 text-white" : "bg-[#043084]/[0.09] text-[#043084] border border-[#043084]/20"
+              <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded-md ${cycle === "yearly" ? "bg-white/20 text-white" : "bg-[#7A2253]/[0.09] text-[#7A2253] border border-[#7A2253]/20"
                 }`}>
                 Save
               </span>
@@ -258,7 +258,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                     name: profile?.displayName || "Creator",
                     email: activeEmail,
                   }}
-                  className="w-full rounded-xl border border-[#043084] bg-white hover:bg-[#043084]/5 text-[#043084] py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
+                  className="w-full rounded-xl border border-[#7A2253] bg-white hover:bg-[#7A2253]/5 text-[#7A2253] py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
                   onSuccess={(data) => {
                     handleUpgradeSuccess("starter", "Starter Plan", data);
                   }}
@@ -331,7 +331,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                     name: profile?.displayName || "Creator",
                     email: activeEmail,
                   }}
-                  className="w-full rounded-xl bg-[#043084] hover:bg-[#032360] text-white py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
+                  className="w-full rounded-xl bg-[#7A2253] hover:bg-[#032360] text-white py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
                   onSuccess={(data) => {
                     handleUpgradeSuccess("creator_pro", "Creator Pro", data);
                   }}
@@ -344,11 +344,11 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
           </div>
 
           {/* Card 4: VIP (Recommended) */}
-          <div className="rounded-2xl border-2 border-[#043084] bg-white p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xs text-left relative">
+          <div className="rounded-2xl border-2 border-[#7A2253] bg-white p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xs text-left relative">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-display text-base font-bold text-[#181716]">VIP</h3>
-                <span className="text-[10px] font-bold text-[#043084] bg-[#043084]/[0.09] px-2.5 py-0.5 rounded-full border border-[#043084]/20">
+                <span className="text-[10px] font-bold text-[#7A2253] bg-[#7A2253]/[0.09] px-2.5 py-0.5 rounded-full border border-[#7A2253]/20">
                   Recommended
                 </span>
               </div>
@@ -422,7 +422,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                     name: profile?.displayName || "Creator",
                     email: activeEmail,
                   }}
-                  className="w-full rounded-xl bg-[#043084] hover:bg-[#032360] text-white py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
+                  className="w-full rounded-xl bg-[#7A2253] hover:bg-[#032360] text-white py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
                   onSuccess={(data) => {
                     handleUpgradeSuccess("creator_VIP", "Creator VIP", data);
                   }}
@@ -454,8 +454,8 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
               <tr className="border-b border-[#E4DAD5] bg-[#fbfbfb] text-xs font-bold text-[#181716]">
                 <th className="py-3.5 px-5">Feature</th>
                 {!hasSelectedFreeTrial && (
-                  <th className="py-3.5 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
-                    <div className="font-bold text-[#043084]">Free Trial</div>
+                  <th className="py-3.5 px-4 text-center bg-[#7A2253]/[0.05] border-x border-[#E4DAD5]">
+                    <div className="font-bold text-[#7A2253]">Free Trial</div>
                     <div className="text-[10px] font-medium text-[#797570] mt-0.5">7 days</div>
                   </th>
                 )}
@@ -486,13 +486,13 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                   Content Series
                 </td>
                 {!hasSelectedFreeTrial && (
-                  <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                  <td className="py-3 px-4 text-center bg-[#7A2253]/[0.05] border-x border-[#E4DAD5]">
                     3 series
                   </td>
                 )}
                 <td className="py-3 px-4 text-center">3 series</td>
                 <td className="py-3 px-4 text-center">20 series</td>
-                <td className="py-3 px-4 text-center font-semibold text-[#043084]">Unlimited</td>
+                <td className="py-3 px-4 text-center font-semibold text-[#7A2253]">Unlimited</td>
               </tr>
 
               {/* Row 2: Total Episodes */}
@@ -501,13 +501,13 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                   Total Episodes
                 </td>
                 {!hasSelectedFreeTrial && (
-                  <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                  <td className="py-3 px-4 text-center bg-[#7A2253]/[0.05] border-x border-[#E4DAD5]">
                     15 episodes
                   </td>
                 )}
                 <td className="py-3 px-4 text-center">15 episodes</td>
                 <td className="py-3 px-4 text-center">20 per series</td>
-                <td className="py-3 px-4 text-center font-semibold text-[#043084]">Unlimited</td>
+                <td className="py-3 px-4 text-center font-semibold text-[#7A2253]">Unlimited</td>
               </tr>
 
               {/* Row 3: Custom Links */}
@@ -516,13 +516,13 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                   Custom Links
                 </td>
                 {!hasSelectedFreeTrial && (
-                  <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                  <td className="py-3 px-4 text-center bg-[#7A2253]/[0.05] border-x border-[#E4DAD5]">
                     5 links
                   </td>
                 )}
                 <td className="py-3 px-4 text-center">5 links</td>
                 <td className="py-3 px-4 text-center">20 links</td>
-                <td className="py-3 px-4 text-center font-semibold text-[#043084]">Unlimited</td>
+                <td className="py-3 px-4 text-center font-semibold text-[#7A2253]">Unlimited</td>
               </tr>
 
               {/* Row: Shop Products */}
@@ -531,13 +531,13 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                   Shop Products
                 </td>
                 {!hasSelectedFreeTrial && (
-                  <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                  <td className="py-3 px-4 text-center bg-[#7A2253]/[0.05] border-x border-[#E4DAD5]">
                     1 product
                   </td>
                 )}
                 <td className="py-3 px-4 text-center">1 product</td>
                 <td className="py-3 px-4 text-center">20 products</td>
-                <td className="py-3 px-4 text-center font-semibold text-[#043084]">Unlimited</td>
+                <td className="py-3 px-4 text-center font-semibold text-[#7A2253]">Unlimited</td>
               </tr>
 
               {/* Row 4: Collab Packages */}
@@ -546,13 +546,13 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                   Collab Packages
                 </td>
                 {!hasSelectedFreeTrial && (
-                  <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                  <td className="py-3 px-4 text-center bg-[#7A2253]/[0.05] border-x border-[#E4DAD5]">
                     1 package
                   </td>
                 )}
                 <td className="py-3 px-4 text-center">1 package</td>
                 <td className="py-3 px-4 text-center">3 packages</td>
-                <td className="py-3 px-4 text-center font-semibold text-[#043084]">10 packages</td>
+                <td className="py-3 px-4 text-center font-semibold text-[#7A2253]">10 packages</td>
               </tr>
 
               {/* Row 5: Reviews */}
@@ -561,13 +561,13 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                   Reviews
                 </td>
                 {!hasSelectedFreeTrial && (
-                  <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                  <td className="py-3 px-4 text-center bg-[#7A2253]/[0.05] border-x border-[#E4DAD5]">
                     1 review
                   </td>
                 )}
                 <td className="py-3 px-4 text-center">1 review</td>
                 <td className="py-3 px-4 text-center">10 reviews</td>
-                <td className="py-3 px-4 text-center font-semibold text-[#043084]">Unlimited</td>
+                <td className="py-3 px-4 text-center font-semibold text-[#7A2253]">Unlimited</td>
               </tr>
 
               {/* Row 6: Public Profile */}
@@ -576,7 +576,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                   Public Profile
                 </td>
                 {!hasSelectedFreeTrial && (
-                  <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                  <td className="py-3 px-4 text-center bg-[#7A2253]/[0.05] border-x border-[#E4DAD5]">
                     7 days
                   </td>
                 )}
@@ -591,7 +591,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                   Rate Card
                 </td>
                 {!hasSelectedFreeTrial && (
-                  <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                  <td className="py-3 px-4 text-center bg-[#7A2253]/[0.05] border-x border-[#E4DAD5]">
                     <Minus className="h-4 w-4 mx-auto text-[#797570]/50" />
                   </td>
                 )}
@@ -610,7 +610,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                   Media Kit
                 </td>
                 {!hasSelectedFreeTrial && (
-                  <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                  <td className="py-3 px-4 text-center bg-[#7A2253]/[0.05] border-x border-[#E4DAD5]">
                     <Minus className="h-4 w-4 mx-auto text-[#797570]/50" />
                   </td>
                 )}
@@ -631,7 +631,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                   Inflixo Branding
                 </td>
                 {!hasSelectedFreeTrial && (
-                  <td className="py-3 px-4 text-center bg-[#043084]/[0.05] border-x border-[#E4DAD5]">
+                  <td className="py-3 px-4 text-center bg-[#7A2253]/[0.05] border-x border-[#E4DAD5]">
                     <Check className="h-4 w-4 mx-auto text-[#17845B]" />
                   </td>
                 )}

@@ -281,7 +281,7 @@ ${profileUrl}
             <button
               type="button"
               onClick={openTrialExpiredModal}
-              className="shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-[#043084] hover:bg-[#032363] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-all hover:scale-[1.02] cursor-pointer"
+              className="shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-[#7A2253] hover:bg-[#5d193f] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-all hover:scale-[1.02] cursor-pointer"
             >
               <Sparkles className="h-3.5 w-3.5" />
               <span>Keep Profile Live</span>
@@ -294,7 +294,7 @@ ${profileUrl}
       {!username ? (
         <div className="rounded-xl border border-[#e2e8f0] bg-white p-5 text-sm text-[#475569] shadow-xs">
           Set your username first so your card can link to your public profile.{" "}
-          <Link href="/dashboard/profile" className="font-semibold text-[#043084] underline underline-offset-2">
+          <Link href="/dashboard/profile" className="font-semibold text-[#7A2253] underline underline-offset-2">
             Go to Profile
           </Link>
         </div>
@@ -303,7 +303,7 @@ ${profileUrl}
           {/* Card Preview Frame */}
           <div ref={frameRef} className="w-full max-w-[380px] shrink-0">
             <div
-              className="relative mx-auto overflow-hidden rounded-[22px] shadow-[0_18px_50px_rgba(4,48,132,0.16)] ring-1 ring-black/5"
+              className="relative mx-auto overflow-hidden rounded-[22px] shadow-[0_18px_50px_rgba(122, 34, 83,0.16)] ring-1 ring-black/5"
               style={{ width: CARD_WIDTH * scale, height: CARD_HEIGHT * scale }}
             >
               <div
@@ -329,7 +329,7 @@ ${profileUrl}
               </div>
               {!assetsReady && (
                 <div className="absolute inset-0 flex items-center justify-center bg-white/40 backdrop-blur-[1px]">
-                  <Loader2 className="h-6 w-6 animate-spin text-[#043084]" />
+                  <Loader2 className="h-6 w-6 animate-spin text-[#7A2253]" />
                 </div>
               )}
             </div>
@@ -363,14 +363,14 @@ ${profileUrl}
                       onClick={() => setSelectedLayout(layout.id)}
                       className={`group relative flex items-start gap-3 rounded-xl border p-2.5 text-left transition-all cursor-pointer ${
                         active
-                          ? "border-[#043084] bg-[#043084]/5 ring-1 ring-[#043084]"
+                          ? "border-[#7A2253] bg-[#7A2253]/5 ring-1 ring-[#7A2253]"
                           : "border-[#e2e8f0] bg-white hover:border-[#cbd5e1] hover:bg-[#f8fafc]"
                       }`}
                     >
                       <div
                         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors ${
                           active
-                            ? "bg-[#043084] text-white"
+                            ? "bg-[#7A2253] text-white"
                             : "bg-[#f1f5f9] text-[#475569] group-hover:bg-[#e2e8f0] group-hover:text-[#0f172a]"
                         }`}
                       >
@@ -380,7 +380,7 @@ ${profileUrl}
                         <div className="flex items-center gap-1.5">
                           <span
                             className={`text-xs font-bold truncate ${
-                              active ? "text-[#043084]" : "text-[#0f172a]"
+                              active ? "text-[#7A2253]" : "text-[#0f172a]"
                             }`}
                           >
                             {layout.name}
@@ -400,7 +400,7 @@ ${profileUrl}
             <div className="rounded-2xl border border-[#e2e8f0] bg-white p-4 shadow-xs sm:p-5">
               <div className="flex items-center justify-between pb-3">
                 <div className="flex items-center gap-1.5">
-                  <Palette className="h-3.5 w-3.5 text-[#043084]" />
+                  <Palette className="h-3.5 w-3.5 text-[#7A2253]" />
                   <span className="text-xs font-bold tracking-wider text-[#0f172a] uppercase">
                     2. Color Theme
                   </span>
@@ -417,7 +417,7 @@ ${profileUrl}
                   onClick={() => setSelectedThemeId("profile")}
                   className={`flex flex-col items-center gap-2 rounded-xl border p-2.5 text-center transition-all cursor-pointer ${
                     selectedThemeId === "profile"
-                      ? "border-[#043084] bg-[#043084]/5 ring-1 ring-[#043084]"
+                      ? "border-[#7A2253] bg-[#7A2253]/5 ring-1 ring-[#7A2253]"
                       : "border-[#e2e8f0] bg-white hover:border-[#cbd5e1] hover:bg-[#f8fafc]"
                   }`}
                 >
@@ -432,7 +432,7 @@ ${profileUrl}
                   </div>
                   <span
                     className={`text-[11px] font-bold truncate max-w-full ${
-                      selectedThemeId === "profile" ? "text-[#043084]" : "text-[#0f172a]"
+                      selectedThemeId === "profile" ? "text-[#7A2253]" : "text-[#0f172a]"
                     }`}
                   >
                     My Theme
@@ -449,7 +449,7 @@ ${profileUrl}
                       onClick={() => setSelectedThemeId(preset.id)}
                       className={`flex flex-col items-center gap-2 rounded-xl border p-2.5 text-center transition-all cursor-pointer ${
                         active
-                          ? "border-[#043084] bg-[#043084]/5 ring-1 ring-[#043084]"
+                          ? "border-[#7A2253] bg-[#7A2253]/5 ring-1 ring-[#7A2253]"
                           : "border-[#e2e8f0] bg-white hover:border-[#cbd5e1] hover:bg-[#f8fafc]"
                       }`}
                     >
@@ -464,7 +464,7 @@ ${profileUrl}
                       </div>
                       <span
                         className={`text-[11px] font-bold truncate max-w-full ${
-                          active ? "text-[#043084]" : "text-[#0f172a]"
+                          active ? "text-[#7A2253]" : "text-[#0f172a]"
                         }`}
                       >
                         {preset.name.split(" ")[0]}
@@ -525,7 +525,7 @@ ${profileUrl}
                     onChange={(e) => setCustomTagline(e.target.value)}
                     placeholder={activePreset.tagline}
                     maxLength={60}
-                    className="w-full rounded-xl border border-[#cbd5e1] bg-[#f8fafc] px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder-[#94a3b8] transition-colors focus:border-[#043084] focus:bg-white focus:outline-none"
+                    className="w-full rounded-xl border border-[#cbd5e1] bg-[#f8fafc] px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder-[#94a3b8] transition-colors focus:border-[#7A2253] focus:bg-white focus:outline-none"
                   />
                   {customTagline && (
                     <button
@@ -549,7 +549,7 @@ ${profileUrl}
                 type="button"
                 onClick={handleDownload}
                 disabled={disabled}
-                className="inline-flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#043084] px-4 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+                className="inline-flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#7A2253] px-4 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
               >
                 {busy === "download" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                 Download Card (1080×1920 HD)
@@ -569,7 +569,7 @@ ${profileUrl}
                 type="button"
                 onClick={handleShare}
                 disabled={disabled}
-                className="inline-flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#e2e8f0] bg-white px-4 text-sm font-semibold text-[#043084] shadow-xs transition-all hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-[#f8fafc] hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+                className="inline-flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#e2e8f0] bg-white px-4 text-sm font-semibold text-[#7A2253] shadow-xs transition-all hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-[#f8fafc] hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
               >
                 {busy === "share" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Share2 className="h-4 w-4" />}
                 Share to Instagram Stories / Apps
@@ -578,7 +578,7 @@ ${profileUrl}
               <button
                 type="button"
                 onClick={handleCopyLink}
-                className="inline-flex h-10 w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl text-xs font-semibold text-[#475569] transition-colors hover:bg-[#f1f5f9] hover:text-[#043084]"
+                className="inline-flex h-10 w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl text-xs font-semibold text-[#475569] transition-colors hover:bg-[#f1f5f9] hover:text-[#7A2253]"
               >
                 {linkCopied ? <Check className="h-3.5 w-3.5 text-[#17845B]" /> : <Copy className="h-3.5 w-3.5" />}
                 {linkCopied ? "Link & Story Caption copied!" : "Copy Link & Story Caption"}
@@ -586,18 +586,18 @@ ${profileUrl}
 
               {/* Viral Inflixo Marketing & Referral Callout */}
               <div className="rounded-xl border border-blue-100 bg-gradient-to-r from-blue-50/80 via-indigo-50/50 to-blue-50/80 p-3.5 text-center mt-3">
-                <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-[#043084]">
-                  <Sparkles className="h-3.5 w-3.5 text-[#043084]" />
+                <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-[#7A2253]">
+                  <Sparkles className="h-3.5 w-3.5 text-[#7A2253]" />
                   <span>Tell your creator friends about Inflixo!</span>
                 </div>
                 <p className="mt-1 text-[11px] leading-relaxed text-[#475569]">
-                  When friends scan your Creator Card, they can explore your work and also claim their own verified Creator Card at <strong className="text-[#043084]">inflixo.com</strong>.
+                  When friends scan your Creator Card, they can explore your work and also claim their own verified Creator Card at <strong className="text-[#7A2253]">inflixo.com</strong>.
                 </p>
               </div>
 
               {!fanbase && !loading && (
                 <p className="pt-1 text-center text-[11px] text-[#64748b]">
-                  <Link href="/dashboard/socials" className="font-semibold text-[#043084] underline underline-offset-2">
+                  <Link href="/dashboard/socials" className="font-semibold text-[#7A2253] underline underline-offset-2">
                     Connect your socials
                   </Link>{" "}
                   to display your Total Fanbase on your card.

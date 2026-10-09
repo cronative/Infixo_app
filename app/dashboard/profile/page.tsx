@@ -126,7 +126,7 @@ export default function DashboardProfilePage() {
             href={`/${handleStr}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#043084] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#7A2253] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
           >
             <span>Live Profile</span>
             <ExternalLink className="h-3.5 w-3.5" />
@@ -135,7 +135,7 @@ export default function DashboardProfilePage() {
             type="button"
             onClick={handleSave}
             disabled={submitting}
-            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#043084] px-4 py-2 text-xs font-bold text-white shadow-2xs transition-all hover:bg-brand-hover cursor-pointer disabled:opacity-60"
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#7A2253] px-4 py-2 text-xs font-bold text-white shadow-2xs transition-all hover:bg-brand-hover cursor-pointer disabled:opacity-60"
           >
             {submitting ? "Saving..." : "Save Changes"}
           </button>
@@ -169,7 +169,7 @@ export default function DashboardProfilePage() {
                 src={profile.photoDataUrl}
                 name={profile.displayName || profile.username || "Creator"}
                 className="w-20 h-20 sm:w-22 sm:h-22 rounded-full border-2 border-[#e2e8f0] shadow-xs"
-                textClassName="text-xl font-extrabold text-[#043084]"
+                textClassName="text-xl font-extrabold text-[#7A2253]"
                 fallbackBgClass="bg-[#f8fafc]"
               />
 
@@ -188,7 +188,7 @@ export default function DashboardProfilePage() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-[#f8fafc] hover:bg-[#f1f5f9] hover:text-[#043084] px-2.5 py-1 text-xs font-semibold text-[#043084] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-[#f8fafc] hover:bg-[#f1f5f9] hover:text-[#7A2253] px-2.5 py-1 text-xs font-semibold text-[#7A2253] transition-colors cursor-pointer"
               >
                 <Camera className="h-3.5 w-3.5" />
                 <span>{profile.photoDataUrl ? "Change Photo" : "Upload Photo"}</span>
@@ -224,7 +224,7 @@ export default function DashboardProfilePage() {
                 }}
                 className={`w-full h-9.5 sm:h-10 rounded-lg border px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:outline-none transition-colors ${errors.displayName
                   ? "border-[#C2414B] bg-rose-50/20 focus:border-[#C2414B]"
-                  : "border-[#e2e8f0] bg-white focus:border-[#043084] focus:ring-2 focus:ring-[#043084]/10"
+                  : "border-[#e2e8f0] bg-white focus:border-[#7A2253] focus:ring-2 focus:ring-[#7A2253]/10"
                   }`}
               />
               {errors.displayName ? (
@@ -239,7 +239,7 @@ export default function DashboardProfilePage() {
               <label className="block text-[13px] font-medium text-[#0f172a] mb-1.5">
                 Profile URL
               </label>
-              <div className="flex items-center justify-between h-9.5 sm:h-10 rounded-lg border border-[#e2e8f0] bg-[#f8fafc] px-3 text-xs sm:text-sm font-medium text-[#043084]">
+              <div className="flex items-center justify-between h-9.5 sm:h-10 rounded-lg border border-[#e2e8f0] bg-[#f8fafc] px-3 text-xs sm:text-sm font-medium text-[#7A2253]">
                 <span className="truncate">inflixo.com/{handleStr}</span>
                 <Lock className="h-3.5 w-3.5 text-[#64748b] shrink-0" />
               </div>
@@ -289,9 +289,9 @@ export default function DashboardProfilePage() {
               <button
                 type="button"
                 onClick={handleSuggestBio}
-                className="inline-flex items-center gap-1 text-[11px] font-medium text-[#043084] bg-[#043084]/[0.08] hover:bg-brand-hover/15 border border-[#043084]/20 px-2 py-0.5 rounded-md transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 text-[11px] font-medium text-[#7A2253] bg-[#7A2253]/[0.08] hover:bg-brand-hover/15 border border-[#7A2253]/20 px-2 py-0.5 rounded-md transition-colors cursor-pointer"
               >
-                <Sparkles className="h-3 w-3 text-[#043084]" />
+                <Sparkles className="h-3 w-3 text-[#7A2253]" />
                 <span>Suggest Bio</span>
               </button>
               <span className="text-[11px] text-[#64748b]">
@@ -308,7 +308,7 @@ export default function DashboardProfilePage() {
             onChange={(e) => updateProfile({ bio: e.target.value })}
             className={`w-full rounded-lg border p-3 text-xs sm:text-sm font-normal text-[#0f172a] placeholder:text-[#64748b]/50 focus:outline-none transition-colors resize-y min-h-[80px] ${errors.bio
               ? "border-[#C2414B] bg-rose-50/20 focus:border-[#C2414B]"
-              : "border-[#e2e8f0] bg-white focus:border-[#043084] focus:ring-2 focus:ring-[#043084]/10"
+              : "border-[#e2e8f0] bg-white focus:border-[#7A2253] focus:ring-2 focus:ring-[#7A2253]/10"
               }`}
           />
           {errors.bio ? (
@@ -326,7 +326,7 @@ export default function DashboardProfilePage() {
         <button
           type="button"
           onClick={() => router.push("/dashboard")}
-          className="h-9 px-4 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs sm:text-sm font-medium text-[#475569] hover:text-[#043084] transition-colors cursor-pointer"
+          className="h-9 px-4 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs sm:text-sm font-medium text-[#475569] hover:text-[#7A2253] transition-colors cursor-pointer"
         >
           Cancel
         </button>
@@ -335,7 +335,7 @@ export default function DashboardProfilePage() {
           type="button"
           onClick={handleSave}
           disabled={submitting}
-          className="inline-flex items-center gap-1.5 h-9 px-5 rounded-lg bg-[#043084] hover:bg-brand-hover text-xs sm:text-sm font-medium text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm disabled:opacity-60"
+          className="inline-flex items-center gap-1.5 h-9 px-5 rounded-lg bg-[#7A2253] hover:bg-brand-hover text-xs sm:text-sm font-medium text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm disabled:opacity-60"
         >
           {submitting ? (
             <>

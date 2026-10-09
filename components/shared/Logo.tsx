@@ -283,9 +283,9 @@ export function Logo({
    * ============================================================
    *
    * Dark badge -> white logo
-   * White badge -> #043084 logo
+   * White badge -> #7A2253 logo
    * Color badge -> full 3D color logo
-   * Transparent badge -> #043084 primary logo
+   * Transparent badge -> #7A2253 primary logo
    */
   const primaryLogoColor: "dark" | "white" | "color" =
     variant === "color"

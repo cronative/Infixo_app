@@ -74,10 +74,10 @@ export function CategorySelect({
     <div className="w-full space-y-1.5 text-left">
       <div className="flex items-center justify-between gap-1.5">
         <label className="text-xs font-semibold text-[#181716] flex items-center gap-1.5">
-          <Tag className="h-3.5 w-3.5 text-[#043084]" />
+          <Tag className="h-3.5 w-3.5 text-[#7A2253]" />
           <span>Creator type (profession/category) <span className="text-red-500">*</span></span>
         </label>
-        <span className="bg-[#043084]/[0.06] text-[#043084] border border-[#043084]/15 text-[10.5px] font-bold px-2 py-0.5 rounded-full shrink-0">
+        <span className="bg-[#7A2253]/[0.06] text-[#7A2253] border border-[#7A2253]/15 text-[10.5px] font-bold px-2 py-0.5 rounded-full shrink-0">
           {selectedCategories.length} / {max} selected
         </span>
       </div>
@@ -89,14 +89,14 @@ export function CategorySelect({
           type="button"
           onClick={openPicker}
           className={`flex h-10.5 sm:h-11 w-full items-center justify-between gap-2.5 rounded-xl border bg-white px-3 text-left shadow-xs transition-all cursor-pointer ${isOpen
-            ? "border-[#043084] ring-2 ring-[#043084]/10"
+            ? "border-[#7A2253] ring-2 ring-[#7A2253]/10"
             : error
               ? "border-rose-400"
               : "border-[#cbd5e1] hover:border-[#94a3b8]"
             }`}
           aria-expanded={isOpen}
         >
-          <span className={`min-w-0 flex-1 truncate text-xs sm:text-sm font-semibold ${selectedCategories.length > 0 ? "text-[#043084]" : "text-[#94a3b8]"}`}>
+          <span className={`min-w-0 flex-1 truncate text-xs sm:text-sm font-semibold ${selectedCategories.length > 0 ? "text-[#7A2253]" : "text-[#94a3b8]"}`}>
             {selectedLabel}
           </span>
           <ChevronDown className={`h-4 w-4 shrink-0 text-[#64748b] transition-transform ${isOpen ? "rotate-180" : ""}`} />
@@ -109,7 +109,7 @@ export function CategorySelect({
                 key={category}
                 type="button"
                 onClick={() => removeCategory(category)}
-                className="inline-flex h-6.5 items-center gap-1.5 rounded-lg border border-[#dbe3ee] bg-[#f8fafc] px-2 text-[11px] font-semibold text-[#043084] transition-colors hover:border-[#cbd5e1] hover:bg-[#f1f5f9]"
+                className="inline-flex h-6.5 items-center gap-1.5 rounded-lg border border-[#dbe3ee] bg-[#f8fafc] px-2 text-[11px] font-semibold text-[#7A2253] transition-colors hover:border-[#cbd5e1] hover:bg-[#f1f5f9]"
               >
                 <span>{category === "Other" && customValue ? customValue : category}</span>
                 <X className="h-3 w-3 stroke-[2.5] text-[#64748b]" />
@@ -137,7 +137,7 @@ export function CategorySelect({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search actor, singer, YouTuber, food reviewer..."
-                  className="h-10 w-full rounded-xl border border-[#dbe3ee] bg-white pl-9 pr-3 text-sm font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-2 focus:ring-[#043084]/10"
+                  className="h-10 w-full rounded-xl border border-[#dbe3ee] bg-white pl-9 pr-3 text-sm font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-2 focus:ring-[#7A2253]/10"
                   autoFocus
                 />
               </div>
@@ -145,7 +145,7 @@ export function CategorySelect({
                 <p className="text-[11px] font-bold text-[#475569]">
                   Tap selected type again to remove.
                 </p>
-                <span className="rounded-full border border-[#043084]/20 bg-[#043084]/[0.08] px-2.5 py-0.5 text-xs font-bold text-[#043084]">
+                <span className="rounded-full border border-[#7A2253]/20 bg-[#7A2253]/[0.08] px-2.5 py-0.5 text-xs font-bold text-[#7A2253]">
                   {selectedCategories.length} / {max} selected
                 </span>
               </div>
@@ -163,7 +163,7 @@ export function CategorySelect({
                         key={category}
                         type="button"
                         onClick={() => removeCategory(category)}
-                        className="inline-flex min-h-7 items-center gap-1.5 rounded-full border border-[#043084]/20 bg-white px-2.5 py-1 text-[11px] font-bold text-[#043084] transition-colors hover:bg-[#f1f5f9]"
+                        className="inline-flex min-h-7 items-center gap-1.5 rounded-full border border-[#7A2253]/20 bg-white px-2.5 py-1 text-[11px] font-bold text-[#7A2253] transition-colors hover:bg-[#f1f5f9]"
                       >
                         <span>{category === "Other" && customValue ? customValue : category}</span>
                         <X className="h-3 w-3 stroke-[3] text-[#64748b]" />
@@ -199,14 +199,14 @@ export function CategorySelect({
                               disabled={isMaxReached}
                               onClick={() => toggleCategory(type)}
                               className={`flex min-h-10 w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left transition-all cursor-pointer ${isSelected
-                                  ? "bg-[#043084] text-white shadow-xs"
+                                  ? "bg-[#7A2253] text-white shadow-xs"
                                   : isMaxReached
                                     ? "cursor-not-allowed opacity-35"
-                                    : "bg-[#f8fafc] text-[#475569] hover:bg-[#f1f5f9] hover:text-[#043084]"
+                                    : "bg-[#f8fafc] text-[#475569] hover:bg-[#f1f5f9] hover:text-[#7A2253]"
                                 }`}
                             >
                               <span
-                                className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${isSelected ? "border-white bg-white text-[#043084]" : "border-[#cbd5e1] bg-white"
+                                className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${isSelected ? "border-white bg-white text-[#7A2253]" : "border-[#cbd5e1] bg-white"
                                   }`}
                               >
                                 {isSelected && <Check className="h-3 w-3 stroke-[3]" />}
@@ -231,7 +231,7 @@ export function CategorySelect({
               <button
                 type="button"
                 onClick={closePicker}
-                className="rounded-xl bg-[#043084] px-5 py-2 text-xs font-bold text-white shadow-xs transition-all hover:-translate-y-0.5 hover:bg-brand-hover"
+                className="rounded-xl bg-[#7A2253] px-5 py-2 text-xs font-bold text-white shadow-xs transition-all hover:-translate-y-0.5 hover:bg-brand-hover"
               >
                 Done
               </button>

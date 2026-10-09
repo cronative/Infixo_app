@@ -23,10 +23,10 @@ function ToastItem({ toast, onDismiss }: { toast: ToastMessage; onDismiss: (id: 
     progressClass = "bg-rose-500";
     icon = <AlertCircle className="h-4 w-4 stroke-[2.5]" />;
   } else if (toast.type === "info") {
-    chipClass = "bg-indigo-50 text-[#043084] border-indigo-100";
+    chipClass = "bg-indigo-50 text-[#7A2253] border-indigo-100";
     borderClass = "border-indigo-100";
-    progressClass = "bg-[#043084]";
-    icon = <Sparkles className="h-4 w-4 text-[#043084]" />;
+    progressClass = "bg-[#7A2253]";
+    icon = <Sparkles className="h-4 w-4 text-[#7A2253]" />;
   }
 
   return (

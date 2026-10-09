@@ -22,7 +22,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           </label>
         )}
         <div
-          className={`flex h-10 items-center rounded-xl border px-3.5 transition-colors focus-within:border-[#043084] focus-within:ring-2 focus-within:ring-[#043084]/10 ${rest.disabled ? "bg-[#f8fafc] cursor-not-allowed text-[#94a3b8] border-[#e2e8f0]" : "bg-[#ffffff]"
+          className={`flex h-10 items-center rounded-xl border px-3.5 transition-colors focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 ${rest.disabled ? "bg-[#f8fafc] cursor-not-allowed text-[#94a3b8] border-[#e2e8f0]" : "bg-[#ffffff]"
             } ${error ? "border-[#ef4444] bg-rose-50/20" : "border-[#cbd5e1]"}`}
         >
           {leftIcon && <span className="mr-2 shrink-0 text-[#64748b]">{leftIcon}</span>}

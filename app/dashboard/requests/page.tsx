@@ -11,8 +11,8 @@ import { EmptyState } from "@/components/ui/EmptyState";
 
 const STATUS_CONFIG: Record<CollaborationStatus, { label: string; bg: string; text: string; border: string }> = {
   NEW: { label: "New", bg: "bg-[#EAF7F0]", text: "text-[#17845B]", border: "border-[#17845B]/20" },
-  VIEWED: { label: "Viewed", bg: "bg-[#043084]/[0.09]", text: "text-[#043084]", border: "border-[#043084]/20" },
-  REPLIED: { label: "Replied", bg: "bg-[#043084]/[0.09]", text: "text-[#043084]", border: "border-[#043084]/20" },
+  VIEWED: { label: "Viewed", bg: "bg-[#7A2253]/[0.09]", text: "text-[#7A2253]", border: "border-[#7A2253]/20" },
+  REPLIED: { label: "Replied", bg: "bg-[#7A2253]/[0.09]", text: "text-[#7A2253]", border: "border-[#7A2253]/20" },
   CLOSED: { label: "Closed", bg: "bg-[#f8fafc]", text: "text-[#64748b]", border: "border-[#e2e8f0]" },
 };
 
@@ -186,8 +186,8 @@ export default function DashboardRequestsPage() {
               type="button"
               onClick={() => setActiveTab(tab)}
               className={`tap-scale flex items-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${isSelected
-                ? "bg-[#043084]/[0.08] text-[#043084]"
-                : "text-[#64748b] hover:text-[#043084] hover:bg-[#f1f5f9]"
+                ? "bg-[#7A2253]/[0.08] text-[#7A2253]"
+                : "text-[#64748b] hover:text-[#7A2253] hover:bg-[#f1f5f9]"
                 }`}
             >
               <span>{tab === "ALL" ? "All Inquiries" : STATUS_CONFIG[tab].label}</span>
@@ -226,20 +226,20 @@ export default function DashboardRequestsPage() {
                 className="group px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#f1f5f9] transition-colors cursor-pointer text-left"
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  <div className="flex h-8.5 w-8.5 items-center justify-center rounded-lg bg-[#04308414] border border-[#e2e8f0] text-[#043084] font-bold text-xs shrink-0">
+                  <div className="flex h-8.5 w-8.5 items-center justify-center rounded-lg bg-[#7A225314] border border-[#e2e8f0] text-[#7A2253] font-bold text-xs shrink-0">
                     {req.senderName.charAt(0).toUpperCase()}
                   </div>
 
                   <div className="min-w-0 flex-1 space-y-0.5">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-semibold text-xs sm:text-[13px] text-[#0f172a] truncate group-hover:text-[#043084] transition-colors">{req.senderName}</h3>
+                      <h3 className="font-semibold text-xs sm:text-[13px] text-[#0f172a] truncate group-hover:text-[#7A2253] transition-colors">{req.senderName}</h3>
                       {req.companyName && (
                         <span className="text-[11px] font-semibold text-[#64748b] truncate">
                           • {req.companyName}
                         </span>
                       )}
                       {req.approxBudget && (
-                        <span className="text-[10px] font-semibold text-[#043084] bg-[#043084]/[0.09] border border-[#043084]/20 px-1.5 py-0.5 rounded-md truncate">
+                        <span className="text-[10px] font-semibold text-[#7A2253] bg-[#7A2253]/[0.09] border border-[#7A2253]/20 px-1.5 py-0.5 rounded-md truncate">
                           {req.approxBudget}
                         </span>
                       )}
@@ -274,7 +274,7 @@ export default function DashboardRequestsPage() {
                       e.stopPropagation();
                       setRequestToDelete(req);
                     }}
-                    className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#043084] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                    className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
                     title="Delete inquiry"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -310,26 +310,26 @@ export default function DashboardRequestsPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#64748b]">
                   {selectedRequest.companyName && (
                     <div className="flex items-center gap-1.5">
-                      <Building2 className="h-3.5 w-3.5 text-[#043084]" />
+                      <Building2 className="h-3.5 w-3.5 text-[#7A2253]" />
                       <span className="truncate"><strong>Company:</strong> {selectedRequest.companyName}</span>
                     </div>
                   )}
 
                   <div className="flex items-center gap-1.5">
-                    <Mail className="h-3.5 w-3.5 text-[#043084]" />
+                    <Mail className="h-3.5 w-3.5 text-[#7A2253]" />
                     <span className="truncate"><strong>Email:</strong> {selectedRequest.email}</span>
                   </div>
 
                   {selectedRequest.campaignType && (
                     <div className="flex items-center gap-1.5">
-                      <MessageSquare className="h-3.5 w-3.5 text-[#043084]" />
+                      <MessageSquare className="h-3.5 w-3.5 text-[#7A2253]" />
                       <span className="truncate"><strong>Type:</strong> {selectedRequest.campaignType}</span>
                     </div>
                   )}
 
                   {selectedRequest.approxBudget && (
                     <div className="flex items-center gap-1.5">
-                      <DollarSign className="h-3.5 w-3.5 text-[#043084]" />
+                      <DollarSign className="h-3.5 w-3.5 text-[#7A2253]" />
                       <span className="truncate"><strong>Budget:</strong> {selectedRequest.approxBudget}</span>
                     </div>
                   )}
@@ -341,7 +341,7 @@ export default function DashboardRequestsPage() {
                 <label className="block text-[13px] font-medium text-[#0f172a]">
                   Message / Requirement:
                 </label>
-                <div className="rounded-xl border border-[#e2e8f0] bg-white p-3 text-xs text-[#043084] leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto">
+                <div className="rounded-xl border border-[#e2e8f0] bg-white p-3 text-xs text-[#7A2253] leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto">
                   {selectedRequest.message}
                 </div>
               </div>
@@ -359,7 +359,7 @@ export default function DashboardRequestsPage() {
                       disabled={isUpdating}
                       onClick={() => handleStatusChange(st)}
                       className={`tap-scale py-1.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${selectedRequest.status === st
-                        ? "bg-[#043084]/[0.08] text-[#043084] border-[#043084]/30"
+                        ? "bg-[#7A2253]/[0.08] text-[#7A2253] border-[#7A2253]/30"
                         : "border-[#e2e8f0] bg-white text-[#64748b] hover:bg-[#f1f5f9]"
                         }`}
                     >
@@ -382,7 +382,7 @@ export default function DashboardRequestsPage() {
               <div className="flex items-center gap-2">
                 <a
                   href={`mailto:${selectedRequest.email}?subject=Collaboration with ${encodeURIComponent(profile.displayName || "Inflixo Creator")}`}
-                  className="tap-scale bg-[#043084] hover:bg-brand-hover text-white font-semibold text-xs h-9 px-3.5 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5"
+                  className="tap-scale bg-[#7A2253] hover:bg-brand-hover text-white font-semibold text-xs h-9 px-3.5 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5"
                 >
                   <Mail className="h-3.5 w-3.5" />
                   <span>Reply via Email</span>

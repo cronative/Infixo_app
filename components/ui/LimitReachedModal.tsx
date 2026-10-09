@@ -97,25 +97,25 @@ export function LimitReachedModal({
         {/* Upgrade Plan Card Preview */}
         <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="font-display text-xs font-bold text-[#043084]">
+            <span className="font-display text-xs font-bold text-[#7A2253]">
               {targetUpgradePlan === "vip" ? "Inflixo VIP Plan" : "Inflixo Pro Plan"}
             </span>
-            <span className="rounded-md bg-[#043084] px-2 py-0.5 text-[9px] font-bold text-white">
+            <span className="rounded-md bg-[#7A2253] px-2 py-0.5 text-[9px] font-bold text-white">
               RECOMMENDED
             </span>
           </div>
 
           <div className="flex items-baseline gap-1.5">
-            <span className="text-xl font-bold text-[#043084]">
+            <span className="text-xl font-bold text-[#7A2253]">
               {formatPlanPrice(targetUpgradePlan, "monthly", pricingCurrency)}
             </span>
             <span className="text-xs text-[#64748b]">/ month</span>
-            <span className="text-xs font-semibold text-[#043084] ml-1">
+            <span className="text-xs font-semibold text-[#7A2253] ml-1">
               {`or ${formatPlanPrice(targetUpgradePlan, "yearly", pricingCurrency)} / year`}
             </span>
           </div>
 
-          <ul className="space-y-1.5 text-xs text-[#043084] font-medium">
+          <ul className="space-y-1.5 text-xs text-[#7A2253] font-medium">
             <li className="flex items-center gap-1.5 text-emerald-700 font-semibold">
               <Check className="h-3.5 w-3.5 text-emerald-600" />
               <span>
@@ -125,7 +125,7 @@ export function LimitReachedModal({
               </span>
             </li>
             <li className="flex items-center gap-1.5">
-              <Check className="h-3.5 w-3.5 text-[#043084]" />
+              <Check className="h-3.5 w-3.5 text-[#7A2253]" />
               <span>
                 {targetUpgradePlan === "vip"
                   ? "Custom media kit & premium themes"
@@ -133,7 +133,7 @@ export function LimitReachedModal({
               </span>
             </li>
             <li className="flex items-center gap-1.5">
-              <Check className="h-3.5 w-3.5 text-[#043084]" />
+              <Check className="h-3.5 w-3.5 text-[#7A2253]" />
               <span>
                 {targetUpgradePlan === "vip"
                   ? "Unlimited custom links & reviews"
@@ -148,7 +148,7 @@ export function LimitReachedModal({
         <button
           type="button"
           onClick={onClose}
-          className="px-4 py-2 rounded-xl border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#043084] transition-colors cursor-pointer"
+          className="px-4 py-2 rounded-xl border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
         >
           Close
         </button>
@@ -156,7 +156,7 @@ export function LimitReachedModal({
         <Link
           href="/dashboard/subscription"
           onClick={onClose}
-          className="bg-[#043084] hover:bg-[#032360] active:scale-[0.99] text-white font-semibold text-xs py-2 px-4 rounded-xl transition-all cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+          className="bg-[#7A2253] hover:bg-[#032360] active:scale-[0.99] text-white font-semibold text-xs py-2 px-4 rounded-xl transition-all cursor-pointer shadow-xs inline-flex items-center gap-1.5"
         >
           <Sparkles className="h-3.5 w-3.5" />
           <span>Upgrade Plan Now</span>

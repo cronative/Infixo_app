@@ -50,7 +50,7 @@ export default function LoginPage() {
       <CreatorGridBackground showWordmark />
 
       {/* UNIFIED CENTER CARD: EXACT 420px WIDTH & MATCHING FIXED HEIGHT FOR BOTH SCREENS */}
-      <div className="relative z-10 my-auto flex min-h-[530px] w-full max-w-[420px] flex-col justify-between rounded-[24px] border border-slate-200/80 bg-white/95 p-5 text-center shadow-[0_20px_60px_-15px_rgba(4,48,132,0.12)] backdrop-blur-xl transition-all sm:min-h-[550px] sm:p-6">
+      <div className="relative z-10 my-auto flex min-h-[530px] w-full max-w-[420px] flex-col justify-between rounded-[24px] border border-slate-200/80 bg-white/95 p-5 text-center shadow-[0_20px_60px_-15px_rgba(122, 34, 83,0.12)] backdrop-blur-xl transition-all sm:min-h-[550px] sm:p-6">
         
         {/* TOP BLOCK: Header & Trust Badge */}
         <div>

@@ -170,9 +170,9 @@ export function PlatformThumbnailBox({
         };
       default:
         return {
-          bgGradient: "bg-gradient-to-br from-[#043084] via-[#0d1c44] to-[#0a0e1a]",
-          glowColor: "rgba(4, 48, 132, 0.35)",
-          badgeBg: "bg-gradient-to-tr from-[#043084] to-[#2563eb] text-white shadow-indigo-950/60",
+          bgGradient: "bg-gradient-to-br from-[#7A2253] via-[#0d1c44] to-[#0a0e1a]",
+          glowColor: "rgba(122, 34, 83, 0.35)",
+          badgeBg: "bg-gradient-to-tr from-[#7A2253] to-[#2563eb] text-white shadow-indigo-950/60",
           icon: <Play className={size === "sm" ? "h-5 w-5 fill-white text-white" : "h-6 w-6 fill-white text-white translate-x-0.5"} />,
           watermark: <Film className="h-32 w-32 text-blue-500/10" />,
           pillLabel: badgeText || "Series",

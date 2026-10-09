@@ -94,7 +94,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                   {displayName}
                 </p>
                 {profile.isVerified && (
-                  <ShieldCheck className="h-3.5 w-3.5 shrink-0 fill-[#043084] text-white" />
+                  <ShieldCheck className="h-3.5 w-3.5 shrink-0 fill-[#7A2253] text-white" />
                 )}
               </div>
               <div className="flex items-center gap-1.5 mt-0.5">
@@ -136,11 +136,11 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                       aria-current={active ? "page" : undefined}
                       className={`flex min-h-[44px] items-center gap-3 rounded-xl px-3 text-sm transition-colors ${
                         active
-                          ? "bg-[#043084]/[0.07] font-semibold text-[#043084]"
+                          ? "bg-[#7A2253]/[0.07] font-semibold text-[#7A2253]"
                           : "font-medium text-[#334155] active:bg-[#f1f5f9]"
                       }`}
                     >
-                      <Icon className={`h-[18px] w-[18px] shrink-0 ${active ? "text-[#043084]" : "text-[#94a3b8]"}`} />
+                      <Icon className={`h-[18px] w-[18px] shrink-0 ${active ? "text-[#7A2253]" : "text-[#94a3b8]"}`} />
                       <span className="flex-1 truncate">{item.label}</span>
                     </Link>
                   );
@@ -163,7 +163,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                   : planInfo.tier === "pro"
                   ? "bg-blue-50 text-blue-800 border border-blue-200/90 font-semibold"
                   : planInfo.tier === "starter"
-                  ? "bg-[#043084]/[0.07] text-[#043084] border border-[#043084]/20 font-semibold"
+                  ? "bg-[#7A2253]/[0.07] text-[#7A2253] border border-[#7A2253]/20 font-semibold"
                   : planInfo.tier === "expired"
                   ? "bg-rose-50 text-rose-700 border border-rose-200 font-semibold"
                   : "text-[#475569] border border-transparent font-medium hover:bg-[#f1f5f9] hover:text-[#0f172a]"
@@ -174,7 +174,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
               ) : planInfo.tier === "pro" ? (
                 <Zap className="h-4 w-4 shrink-0 text-blue-600 fill-blue-600/20" />
               ) : planInfo.tier === "starter" ? (
-                <Sparkles className="h-4 w-4 shrink-0 text-[#043084]" />
+                <Sparkles className="h-4 w-4 shrink-0 text-[#7A2253]" />
               ) : planInfo.tier === "expired" ? (
                 <AlertTriangle className="h-4 w-4 shrink-0 text-rose-600" />
               ) : (
@@ -188,7 +188,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                 onClose();
                 handleViewProfile(e);
               }}
-              className="text-xs font-semibold text-[#043084] hover:underline inline-flex items-center gap-1 cursor-pointer"
+              className="text-xs font-semibold text-[#7A2253] hover:underline inline-flex items-center gap-1 cursor-pointer"
             >
               <span>View Profile</span>
               <ExternalLink className="h-3 w-3" />

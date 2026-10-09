@@ -56,22 +56,22 @@ const PLATFORM_ICONS: Record<EpisodePlatform, React.ReactNode> = {
   YouTube: <YoutubeIcon className="h-4 w-4 text-red-500" />,
   Instagram: <InstagramIcon className="h-4 w-4 text-pink-500" />,
   Facebook: <FacebookIcon className="h-4 w-4 text-blue-600" />,
-  Mix: <Globe className="h-4 w-4 text-[#043084]" />,
-  Other: <Globe className="h-4 w-4 text-[#043084]" />,
+  Mix: <Globe className="h-4 w-4 text-[#7A2253]" />,
+  Other: <Globe className="h-4 w-4 text-[#7A2253]" />,
 };
 
 /** Shared form styles for the Series / Episode forms (16px on mobile so iOS doesn't zoom). */
 const FIELD_LABEL = "block text-[13px] font-medium text-[#0f172a]";
 const FIELD_INPUT =
-  "w-full rounded-lg border border-[#e2e8f0] bg-white px-3 py-2 text-base sm:text-sm text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#043084] focus:outline-none focus:ring-2 focus:ring-[#043084]/10 transition-colors";
+  "w-full rounded-lg border border-[#e2e8f0] bg-white px-3 py-2 text-base sm:text-sm text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-2 focus:ring-[#7A2253]/10 transition-colors";
 const BTN_CANCEL =
   "inline-flex h-9 items-center rounded-lg px-3.5 text-sm font-medium text-[#475569] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer";
 const BTN_SUBMIT =
-  "inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#043084] px-4 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover cursor-pointer disabled:opacity-50";
+  "inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#7A2253] px-4 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover cursor-pointer disabled:opacity-50";
 
 /** Borderless icon button used for secondary row utilities on this page. */
 const GHOST_ICON =
-  "h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-lg text-[#64748b] transition-colors hover:bg-[#f1f5f9] hover:text-[#0f172a] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#043084]/30";
+  "h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-lg text-[#64748b] transition-colors hover:bg-[#f1f5f9] hover:text-[#0f172a] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7A2253]/30";
 
 function formatEpisodeNumber(num: number): string {
   return num < 10 ? `0${num}` : `${num}`;
@@ -111,7 +111,7 @@ function getPlatformInfo(url: string = ""): { name: string; host: string; icon: 
   if (lower.includes("spotify.com")) {
     return { name: "Spotify", host: "spotify.com", icon: <SpotifyIcon className="h-3.5 w-3.5 text-emerald-600" /> };
   }
-  return { name: "Web Video", host: "external link", icon: <Play className="h-3.5 w-3.5 text-[#043084]" /> };
+  return { name: "Web Video", host: "external link", icon: <Play className="h-3.5 w-3.5 text-[#7A2253]" /> };
 }
 
 type LegacySeries = Series & { episodes?: Episode[] };
@@ -305,14 +305,14 @@ function SeriesDrawer({
                     aria-pressed={isSelected}
                     className={`flex h-10 items-center justify-center gap-1.5 rounded-lg border text-sm font-medium transition-colors cursor-pointer ${
                       isSelected
-                        ? "border-[#043084] bg-[#043084]/[0.05] text-[#0f172a] ring-1 ring-[#043084]"
+                        ? "border-[#7A2253] bg-[#7A2253]/[0.05] text-[#0f172a] ring-1 ring-[#7A2253]"
                         : "border-[#e2e8f0] bg-white text-[#475569] hover:bg-[#f8fafc]"
                     }`}
                   >
                     {p === "YouTube" && <YoutubeIcon className="h-4 w-4 text-red-500" />}
                     {p === "Instagram" && <InstagramIcon className="h-4 w-4 text-pink-500" />}
                     {p === "Facebook" && <FacebookIcon className="h-4 w-4 text-blue-600" />}
-                    {p === "Mix" && <Globe className="h-4 w-4 text-[#043084]" />}
+                    {p === "Mix" && <Globe className="h-4 w-4 text-[#7A2253]" />}
                     <span>{p === "Mix" ? "Mix (All)" : p}</span>
                   </button>
                 );
@@ -537,7 +537,7 @@ function EpisodeDrawer({
                   href={url.trim()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-[#043084] hover:underline font-medium"
+                  className="inline-flex items-center gap-1 text-[#7A2253] hover:underline font-medium"
                   title="Test link in new tab"
                 >
                   <span>Test link</span>
@@ -721,7 +721,7 @@ function SeriesCard({
                               ? "bg-[#1DB954] shadow-xs text-white"
                               : detectedPlatform === "Twitch"
                                 ? "bg-[#9146FF] shadow-xs text-white"
-                                : "bg-[#04308414] border border-[#e2e8f0] text-[#043084]"
+                                : "bg-[#7A225314] border border-[#e2e8f0] text-[#7A2253]"
                 }`}
             >
               {detectedPlatform === "YouTube" ? (
@@ -781,10 +781,10 @@ function SeriesCard({
             type="button"
             onClick={() => onImportEpisodes(series)}
             disabled={epUsage.isLimitReached}
-            className="hidden sm:inline-flex h-8 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-[#043084] transition-colors hover:border-[#cbd5e1] hover:bg-blue-50/50 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+            className="hidden sm:inline-flex h-8 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-[#7A2253] transition-colors hover:border-[#cbd5e1] hover:bg-blue-50/50 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
             title="Import multiple episodes at once or from CSV"
           >
-            <Upload className="h-3.5 w-3.5 text-[#043084]" />
+            <Upload className="h-3.5 w-3.5 text-[#7A2253]" />
             <span>Import CSV</span>
           </button>
 
@@ -854,9 +854,9 @@ function SeriesCard({
                     setMenuOpen(false);
                     onImportEpisodes(series);
                   }}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium text-[#043084] hover:bg-blue-50/50 transition-colors cursor-pointer disabled:opacity-50"
+                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium text-[#7A2253] hover:bg-blue-50/50 transition-colors cursor-pointer disabled:opacity-50"
                 >
-                  <Upload className="h-3.5 w-3.5 text-[#043084]" />
+                  <Upload className="h-3.5 w-3.5 text-[#7A2253]" />
                   <span>Import Episodes (CSV)</span>
                 </button>
 
@@ -949,7 +949,7 @@ function SeriesCard({
                 <button
                   type="button"
                   onClick={() => onImportEpisodes(series)}
-                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#043084] hover:underline cursor-pointer"
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#7A2253] hover:underline cursor-pointer"
                 >
                   <Upload className="h-3 w-3" />
                   <span>Import CSV / Bulk</span>
@@ -983,7 +983,7 @@ function SeriesCard({
                   type="button"
                   onClick={() => onImportEpisodes(series)}
                   disabled={epUsage.isLimitReached}
-                  className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-[#043084] px-3.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-[#7A2253] px-3.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <Upload className="h-3.5 w-3.5" />
                   <span>Import Multiple (CSV)</span>
@@ -1085,7 +1085,7 @@ function SeriesCard({
                   <button
                     type="button"
                     onClick={() => onImportEpisodes(series)}
-                    className="flex flex-1 items-center justify-center gap-2 py-2.5 text-xs font-semibold text-[#043084] transition-colors hover:bg-blue-50/40 cursor-pointer"
+                    className="flex flex-1 items-center justify-center gap-2 py-2.5 text-xs font-semibold text-[#7A2253] transition-colors hover:bg-blue-50/40 cursor-pointer"
                   >
                     <Upload className="h-3.5 w-3.5" />
                     <span>Bulk Import (CSV)</span>
@@ -1264,7 +1264,7 @@ export default function DashboardContentPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 shrink-0 self-start sm:self-auto">
-          <button type="button" onClick={() => handleOpenImportEpisodes()} className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#043084] hover:bg-slate-50 cursor-pointer">
+          <button type="button" onClick={() => handleOpenImportEpisodes()} className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#7A2253] hover:bg-slate-50 cursor-pointer">
             <Upload className="h-3.5 w-3.5" /> Import CSV / Bulk
           </button>
           <a
@@ -1282,7 +1282,7 @@ export default function DashboardContentPage() {
             disabled={seriesUsage.isLimitReached}
             className={`inline-flex h-9 items-center justify-center gap-1.5 rounded-lg px-3.5 text-xs font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 ${series.length === 0 || seriesUsage.isLimitReached
               ? "border border-[#e2e8f0] bg-white text-[#0f172a] hover:bg-[#f8fafc]"
-              : "bg-[#043084] text-white hover:bg-brand-hover shadow-xs"
+              : "bg-[#7A2253] text-white hover:bg-brand-hover shadow-xs"
               }`}
           >
             <Plus className="h-3.5 w-3.5" />
@@ -1351,7 +1351,7 @@ export default function DashboardContentPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search series"
                 aria-label="Search series"
-                className="w-full h-8 rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-2.5 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none focus:border-[#043084] focus:ring-2 focus:ring-[#043084]/10 transition-colors"
+                className="w-full h-8 rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-2.5 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none focus:border-[#7A2253] focus:ring-2 focus:ring-[#7A2253]/10 transition-colors"
               />
             </div>
           )}
@@ -1367,7 +1367,7 @@ export default function DashboardContentPage() {
               <button
                 type="button"
                 onClick={handleOpenCreateSeries}
-                className="inline-flex items-center gap-2 rounded-[10px] bg-[#043084] px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-md cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-[10px] bg-[#7A2253] px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-md cursor-pointer"
               >
                 <Plus className="h-4 w-4" />
                 <span>Create Your First Series</span>

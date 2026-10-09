@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function TermsOfServicePage() {
   return (
-    <div className="min-h-dvh bg-white text-[#181716] flex flex-col font-sans selection:bg-[#043084]/10 selection:text-[#043084]">
+    <div className="min-h-dvh bg-white text-[#181716] flex flex-col font-sans selection:bg-[#7A2253]/10 selection:text-[#7A2253]">
       {/* Navbar */}
       <header className="safe-top sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#E7E3DC]">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 sm:px-8">
@@ -29,7 +29,7 @@ export default function TermsOfServicePage() {
       <main className="mx-auto max-w-4xl px-5 sm:px-8 py-12 sm:py-16 flex-1 text-left space-y-10">
         {/* Header Banner */}
         <div className="space-y-3 border-b border-[#E7E3DC] pb-8">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#043084]/[0.09] border border-[#043084]/20 px-3 py-1 text-xs font-bold text-[#043084]">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#7A2253]/[0.09] border border-[#7A2253]/20 px-3 py-1 text-xs font-bold text-[#7A2253]">
             <FileText className="h-4 w-4" />
             <span>TERMS &amp; CONDITIONS</span>
           </div>
@@ -96,7 +96,7 @@ export default function TermsOfServicePage() {
                 href="https://www.youtube.com/t/terms"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-bold text-[#043084] underline hover:text-brand-hover inline-flex items-center gap-0.5"
+                className="font-bold text-[#7A2253] underline hover:text-brand-hover inline-flex items-center gap-0.5"
               >
                 YouTube Terms of Service
                 <ExternalLink className="h-3 w-3" />
@@ -137,7 +137,7 @@ export default function TermsOfServicePage() {
               <div className="pt-2 border-t border-[#E7E3DC]">
                 <p className="font-bold text-[#181716]">D. Refund Policy:</p>
                 <p className="pt-0.5">
-                  Due to the immediate provisioning of digital profile hosting, creator tools, and cloud storage, subscription payments are non-refundable once the billing period has commenced. If you believe you were charged in error due to a technical duplicate transaction, please contact us at <strong className="text-[#043084]">billing@inflixo.com</strong> within seven (7) days of the transaction. Legitimate duplicate or erroneous charges will be refunded in full to the original payment method within 7–10 business days.
+                  Due to the immediate provisioning of digital profile hosting, creator tools, and cloud storage, subscription payments are non-refundable once the billing period has commenced. If you believe you were charged in error due to a technical duplicate transaction, please contact us at <strong className="text-[#7A2253]">billing@inflixo.com</strong> within seven (7) days of the transaction. Legitimate duplicate or erroneous charges will be refunded in full to the original payment method within 7–10 business days.
                 </p>
               </div>
             </div>
@@ -152,7 +152,7 @@ export default function TermsOfServicePage() {
               Inflixo complies with the <strong>Indian Copyright Act, 1957</strong> and the safe harbor notice provisions of the <strong>Digital Millennium Copyright Act (DMCA)</strong>. We respect intellectual property rights and will promptly remove content that infringes upon verified copyrights.
             </p>
             <div className="rounded-xl border border-[#E7E3DC] bg-white p-4 space-y-2 text-xs sm:text-sm text-[#54514D]">
-              <p className="font-semibold text-[#181716]">To file a copyright infringement notice, email our designated Copyright Agent at <strong className="text-[#043084]">legal@inflixo.com</strong> with:</p>
+              <p className="font-semibold text-[#181716]">To file a copyright infringement notice, email our designated Copyright Agent at <strong className="text-[#7A2253]">legal@inflixo.com</strong> with:</p>
               <ul className="list-disc pl-5 space-y-1">
                 <li>Identification of the copyrighted work claimed to have been infringed.</li>
                 <li>The exact Inflixo URL (`inflixo.com/...`) where the infringing material appears.</li>
@@ -222,7 +222,7 @@ export default function TermsOfServicePage() {
             </p>
             <div className="rounded-2xl bg-white border border-[#E7E3DC] p-4 space-y-1 text-xs sm:text-sm font-semibold text-[#181716]">
               <p>TrustIQ Labs PVT LTD — Inflixo Legal Division</p>
-              <p className="text-[#043084]">Email: legal@inflixo.com (Support: support@inflixo.com)</p>
+              <p className="text-[#7A2253]">Email: legal@inflixo.com (Support: support@inflixo.com)</p>
             </div>
           </section>
         </div>
@@ -238,7 +238,7 @@ export default function TermsOfServicePage() {
             <Link href="/privacy" className="hover:text-brand-primary transition-colors">Privacy Policy</Link>
             <Link href="/cookies" className="hover:text-brand-primary transition-colors">Cookie Policy</Link>
             <CookiePreferencesButton className="hover:text-brand-primary transition-colors cursor-pointer font-semibold" />
-            <Link href="/terms" className="text-[#043084] font-bold">Terms of Service</Link>
+            <Link href="/terms" className="text-[#7A2253] font-bold">Terms of Service</Link>
           </div>
           <p className="text-[#797570]">&copy; 2026 Inflixo. All rights reserved.</p>
         </div>

@@ -44,7 +44,7 @@ function nameFontSize(name: string, max = 40) {
 // Shared Micro Components
 // ─────────────────────────────────────────────────────────────
 
-function VerifiedCheckBadge({ color = "#043084", size = 26 }: { color?: string; size?: number }) {
+function VerifiedCheckBadge({ color = "#7A2253", size = 26 }: { color?: string; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ display: "block" }}>
       <circle cx="12" cy="12" r="11" fill={color} />
@@ -442,7 +442,7 @@ function MinimalLayout({
               style={{
                 padding: "6px 14px",
                 borderRadius: 999,
-                background: a.isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(4, 48, 132, 0.08)",
+                background: a.isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(122, 34, 83, 0.08)",
                 border: `1px solid ${a.border}`,
                 color: a.primaryText,
                 fontSize: 13,

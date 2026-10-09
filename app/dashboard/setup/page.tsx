@@ -383,8 +383,8 @@ export default function DashboardSetupPage() {
                 type="button"
                 onClick={() => setSelectedCategoryFilter(tab)}
                 className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition-all cursor-pointer ${active
-                    ? "bg-[#043084]/[0.08] text-[#043084]"
-                    : "bg-[#f8fafc] text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#043084]"
+                    ? "bg-[#7A2253]/[0.08] text-[#7A2253]"
+                    : "bg-[#f8fafc] text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253]"
                   }`}
               >
                 {tab}
@@ -401,12 +401,12 @@ export default function DashboardSetupPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search gear or software..."
-            className="h-8.5 w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc] pl-8.5 pr-3 text-xs text-[#043084] placeholder-[#94a3b8] focus:border-[#043084] focus:bg-white focus:outline-hidden"
+            className="h-8.5 w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc] pl-8.5 pr-3 text-xs text-[#7A2253] placeholder-[#94a3b8] focus:border-[#7A2253] focus:bg-white focus:outline-hidden"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#043084]"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#7A2253]"
             >
               <X className="h-3 w-3" />
             </button>
@@ -418,7 +418,7 @@ export default function DashboardSetupPage() {
       {loading ? (
         <div className="flex min-h-[180px] items-center justify-center rounded-xl border border-[#e2e8f0] bg-white">
           <div className="flex items-center gap-2 text-xs font-semibold text-[#64748b]">
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#043084] border-t-transparent" />
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#7A2253] border-t-transparent" />
             <span>Loading your creator setup...</span>
           </div>
         </div>
@@ -436,7 +436,7 @@ export default function DashboardSetupPage() {
               <button
                 type="button"
                 onClick={() => handleOpenModal()}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#043084] h-9 px-4 text-xs font-semibold text-white shadow-xs transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-sm cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-lg bg-[#7A2253] h-9 px-4 text-xs font-semibold text-white shadow-xs transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-sm cursor-pointer"
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span>Add Your First Gear</span>
@@ -466,7 +466,7 @@ export default function DashboardSetupPage() {
                       type="button"
                       onClick={() => handleToggleActive(item)}
                       title={item.isActive ? "Visible on profile. Click to hide." : "Hidden from profile. Click to show."}
-                      className="cursor-pointer text-[#64748b] transition-colors hover:text-[#043084]"
+                      className="cursor-pointer text-[#64748b] transition-colors hover:text-[#7A2253]"
                     >
                       {item.isActive ? (
                         <Eye className="h-3.5 w-3.5 text-emerald-600" />
@@ -498,7 +498,7 @@ export default function DashboardSetupPage() {
                           {item.brand}
                         </p>
                       )}
-                      <h4 className="truncate font-display text-xs sm:text-[13px] font-bold text-[#043084]" title={item.name}>
+                      <h4 className="truncate font-display text-xs sm:text-[13px] font-bold text-[#7A2253]" title={item.name}>
                         {item.name}
                       </h4>
                       {item.modelOrPlan && (
@@ -513,7 +513,7 @@ export default function DashboardSetupPage() {
                   {item.usedFor && (
                     <div className="mt-2.5 rounded-lg bg-[#f8fafc] px-2.5 py-1 border border-[#f1f5f9]">
                       <p className="text-[11px] font-medium text-[#475569]">
-                        <span className="font-semibold text-[#043084]">Used for: </span>
+                        <span className="font-semibold text-[#7A2253]">Used for: </span>
                         {item.usedFor}
                       </p>
                     </div>
@@ -533,7 +533,7 @@ export default function DashboardSetupPage() {
                       href={item.linkUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#043084] transition-colors hover:underline"
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#7A2253] transition-colors hover:underline"
                     >
                       <span>View Gear</span>
                       <ExternalLink className="h-3 w-3" />
@@ -546,7 +546,7 @@ export default function DashboardSetupPage() {
                     <button
                       type="button"
                       onClick={() => handleOpenModal(item)}
-                      className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white text-[#64748b] transition-colors hover:bg-[#f1f5f9] hover:text-[#043084] cursor-pointer shadow-2xs"
+                      className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white text-[#64748b] transition-colors hover:bg-[#f1f5f9] hover:text-[#7A2253] cursor-pointer shadow-2xs"
                       title="Edit item"
                     >
                       <Pencil className="h-3 w-3" />
@@ -584,7 +584,7 @@ export default function DashboardSetupPage() {
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value as CreatorSetupCategory)}
-                className="h-10 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#043084] focus:border-[#043084] focus:outline-hidden"
+                className="h-10 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#7A2253] focus:border-[#7A2253] focus:outline-hidden"
               >
                 {CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>
@@ -605,7 +605,7 @@ export default function DashboardSetupPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. FX3, SM7B, Final Cut Pro"
-                  className="h-10 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs text-[#043084] placeholder-[#94a3b8] focus:border-[#043084] focus:outline-hidden"
+                  className="h-10 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs text-[#7A2253] placeholder-[#94a3b8] focus:border-[#7A2253] focus:outline-hidden"
                   required
                 />
               </div>
@@ -619,7 +619,7 @@ export default function DashboardSetupPage() {
                   value={brand}
                   onChange={(e) => setBrand(e.target.value)}
                   placeholder="e.g. Sony, Shure, Apple, Adobe"
-                  className="h-10 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs text-[#043084] placeholder-[#94a3b8] focus:border-[#043084] focus:outline-hidden"
+                  className="h-10 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs text-[#7A2253] placeholder-[#94a3b8] focus:border-[#7A2253] focus:outline-hidden"
                 />
               </div>
             </div>
@@ -635,7 +635,7 @@ export default function DashboardSetupPage() {
                   value={modelOrPlan}
                   onChange={(e) => setModelOrPlan(e.target.value)}
                   placeholder="e.g. Cinema Line, Studio, v18"
-                  className="h-10 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs text-[#043084] placeholder-[#94a3b8] focus:border-[#043084] focus:outline-hidden"
+                  className="h-10 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs text-[#7A2253] placeholder-[#94a3b8] focus:border-[#7A2253] focus:outline-hidden"
                 />
               </div>
 
@@ -648,7 +648,7 @@ export default function DashboardSetupPage() {
                   value={usedFor}
                   onChange={(e) => setUsedFor(e.target.value)}
                   placeholder="e.g. Main 4K A-cam, Podcast mic"
-                  className="h-10 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs text-[#043084] placeholder-[#94a3b8] focus:border-[#043084] focus:outline-hidden"
+                  className="h-10 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs text-[#7A2253] placeholder-[#94a3b8] focus:border-[#7A2253] focus:outline-hidden"
                 />
               </div>
             </div>
@@ -663,7 +663,7 @@ export default function DashboardSetupPage() {
                 value={linkUrl}
                 onChange={(e) => setLinkUrl(e.target.value)}
                 placeholder="https://amazon.in/... or https://company.com"
-                className="h-10 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs text-[#043084] placeholder-[#94a3b8] focus:border-[#043084] focus:outline-hidden"
+                className="h-10 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs text-[#7A2253] placeholder-[#94a3b8] focus:border-[#7A2253] focus:outline-hidden"
               />
             </div>
 
@@ -722,21 +722,21 @@ export default function DashboardSetupPage() {
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="e.g. Best microphone for untreated rooms. Highly recommend pairing with a Cloudlifter."
                 rows={2}
-                className="w-full rounded-[10px] border border-[#e2e8f0] bg-white p-3 text-xs text-[#043084] placeholder-[#94a3b8] focus:border-[#043084] focus:outline-hidden"
+                className="w-full rounded-[10px] border border-[#e2e8f0] bg-white p-3 text-xs text-[#7A2253] placeholder-[#94a3b8] focus:border-[#7A2253] focus:outline-hidden"
               />
             </div>
 
             {/* Active Toggle */}
             <div className="flex items-center justify-between rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-3.5 py-2.5">
               <div>
-                <p className="text-xs font-bold text-[#043084]">Show on public profile</p>
+                <p className="text-xs font-bold text-[#7A2253]">Show on public profile</p>
                 <p className="text-[11px] text-[#64748b]">Turn off to keep as private gear reference</p>
               </div>
               <input
                 type="checkbox"
                 checked={isActive}
                 onChange={(e) => setIsActive(e.target.checked)}
-                className="h-4 w-4 rounded-sm border-[#cbd5e1] text-[#043084] focus:ring-[#043084] cursor-pointer"
+                className="h-4 w-4 rounded-sm border-[#cbd5e1] text-[#7A2253] focus:ring-[#7A2253] cursor-pointer"
               />
             </div>
           </ModalBody>
@@ -753,7 +753,7 @@ export default function DashboardSetupPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="h-9 rounded-lg bg-[#043084] px-5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-brand-hover hover:shadow-sm cursor-pointer disabled:opacity-60"
+              className="h-9 rounded-lg bg-[#7A2253] px-5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-brand-hover hover:shadow-sm cursor-pointer disabled:opacity-60"
             >
               {isSubmitting ? "Saving..." : editingItem ? "Update Gear" : "Add to Setup"}
             </button>

@@ -661,7 +661,7 @@ export default function LandingHomePage() {
           </div>
           <div data-scroll-reveal style={{ "--reveal-delay": "120ms" } as CSSProperties} className="group relative overflow-hidden rounded-[18px] border border-[#7A2253]/15 bg-white p-5 text-left shadow-[0_20px_60px_rgba(122,34,83,0.08)] sm:p-7 transition-all duration-300 hover:-translate-y-1 hover:border-[#7A2253]">
             <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]" aria-hidden="true" />
-            <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#043084]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
+            <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#7A2253]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
             <p className="text-sm font-medium leading-relaxed text-[#334155] sm:text-base">
               Our mission is to help creators organize their best work, reach new fans, and earn with confidence.
             </p>

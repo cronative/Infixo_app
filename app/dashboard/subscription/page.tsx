@@ -221,7 +221,7 @@ export default function DashboardSubscriptionPage() {
             <button
               type="button"
               onClick={handleScrollToUpgrade}
-              className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#043084] hover:bg-[#032363] active:scale-[0.99] text-white px-4 py-2.5 text-xs font-bold transition-all shadow-sm cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#7A2253] hover:bg-[#5d193f] active:scale-[0.99] text-white px-4 py-2.5 text-xs font-bold transition-all shadow-sm cursor-pointer"
             >
               <Sparkles className="h-3.5 w-3.5" />
               <span>Upgrade Plan</span>
@@ -231,13 +231,13 @@ export default function DashboardSubscriptionPage() {
       )}
 
       {/* 3. ACTIVE PLAN DETAILS CARD (PLAN K ANDAR KI DETAILS) */}
-      <section className="rounded-2xl border-2 border-[#043084]/20 bg-white shadow-xs overflow-hidden text-left">
+      <section className="rounded-2xl border-2 border-[#7A2253]/20 bg-white shadow-xs overflow-hidden text-left">
         {/* Card Header Banner */}
-        <div className="bg-gradient-to-r from-[#043084]/[0.07] via-[#043084]/[0.03] to-transparent p-5 sm:p-6 border-b border-[#e2e8f0]">
+        <div className="bg-gradient-to-r from-[#7A2253]/[0.07] via-[#7A2253]/[0.03] to-transparent p-5 sm:p-6 border-b border-[#e2e8f0]">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1.5">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#043084] text-white px-3 py-0.5 text-[11px] font-bold uppercase tracking-wider">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#7A2253] text-white px-3 py-0.5 text-[11px] font-bold uppercase tracking-wider">
                   <ShieldCheck className="h-3.5 w-3.5" />
                   Active Plan
                 </span>
@@ -279,10 +279,10 @@ export default function DashboardSubscriptionPage() {
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 shrink-0">
               <div className="rounded-xl border border-[#e2e8f0] bg-white p-3 shadow-2xs">
                 <div className="flex items-center gap-1 text-[10px] font-bold uppercase text-[#64748b]">
-                  <CalendarClock className="h-3.5 w-3.5 text-[#043084]" />
+                  <CalendarClock className="h-3.5 w-3.5 text-[#7A2253]" />
                   <span>Valid Until</span>
                 </div>
-                <p className="text-xs sm:text-sm font-bold text-[#043084] mt-1">
+                <p className="text-xs sm:text-sm font-bold text-[#7A2253] mt-1">
                   {formatSubscriptionDate(finishDate)}
                 </p>
               </div>
@@ -295,12 +295,12 @@ export default function DashboardSubscriptionPage() {
                 }`}
               >
                 <div className="flex items-center gap-1 text-[10px] font-bold uppercase text-[#64748b]">
-                  <CreditCard className="h-3.5 w-3.5 text-[#043084]" />
+                  <CreditCard className="h-3.5 w-3.5 text-[#7A2253]" />
                   <span>Next Debit</span>
                 </div>
                 <p
                   className={`text-xs sm:text-sm font-bold mt-1 ${
-                    isAutoRenewActive ? "text-emerald-800" : "text-[#043084]"
+                    isAutoRenewActive ? "text-emerald-800" : "text-[#7A2253]"
                   }`}
                 >
                   {renewalText}
@@ -329,13 +329,13 @@ export default function DashboardSubscriptionPage() {
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
               <div className="p-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] space-y-1">
                 <span className="text-[11px] text-[#64748b] font-medium block">Content Series</span>
-                <span className="font-bold text-[#043084] text-sm">
+                <span className="font-bold text-[#7A2253] text-sm">
                   {quota.maxSeries === Infinity ? "Unlimited" : `${quota.maxSeries} Series`}
                 </span>
               </div>
               <div className="p-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] space-y-1">
                 <span className="text-[11px] text-[#64748b] font-medium block">Shop Products</span>
-                <span className="font-bold text-[#043084] text-sm">
+                <span className="font-bold text-[#7A2253] text-sm">
                   {quota.maxProducts === Infinity
                     ? "Unlimited"
                     : `${quota.maxProducts} ${quota.maxProducts === 1 ? "Product" : "Products"}`}
@@ -343,7 +343,7 @@ export default function DashboardSubscriptionPage() {
               </div>
               <div className="p-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] space-y-1">
                 <span className="text-[11px] text-[#64748b] font-medium block">Episodes / Series</span>
-                <span className="font-bold text-[#043084] text-sm">
+                <span className="font-bold text-[#7A2253] text-sm">
                   {quota.maxEpisodesPerSeries === Infinity
                     ? "Unlimited"
                     : `${quota.maxEpisodesPerSeries} Episodes`}
@@ -351,13 +351,13 @@ export default function DashboardSubscriptionPage() {
               </div>
               <div className="p-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] space-y-1">
                 <span className="text-[11px] text-[#64748b] font-medium block">Custom Links</span>
-                <span className="font-bold text-[#043084] text-sm">
+                <span className="font-bold text-[#7A2253] text-sm">
                   {quota.maxCustomLinks === Infinity ? "Unlimited" : `${quota.maxCustomLinks} Links`}
                 </span>
               </div>
               <div className="p-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] space-y-1 col-span-2 sm:col-span-1">
                 <span className="text-[11px] text-[#64748b] font-medium block">Media Kit &amp; Rate Card</span>
-                <span className="font-bold text-[#043084] text-sm">
+                <span className="font-bold text-[#7A2253] text-sm">
                   {quota.hasMediaKit && quota.hasRateCard
                     ? "Full Access ✓"
                     : quota.hasMediaKit
@@ -378,16 +378,16 @@ export default function DashboardSubscriptionPage() {
               <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-[#475569] flex items-center gap-1.5">
-                    <Layers className="h-3.5 w-3.5 text-[#043084]" />
+                    <Layers className="h-3.5 w-3.5 text-[#7A2253]" />
                     <span>Series / Playlists</span>
                   </span>
-                  <span className="text-xs font-bold text-[#043084]">
+                  <span className="text-xs font-bold text-[#7A2253]">
                     {seriesUsage.current} of {seriesUsage.max === Infinity ? "Unlimited" : seriesUsage.max}
                   </span>
                 </div>
                 <div className="w-full bg-[#e2e8f0] h-2 rounded-full overflow-hidden">
                   <div
-                    className="bg-[#043084] h-full rounded-full transition-all"
+                    className="bg-[#7A2253] h-full rounded-full transition-all"
                     style={{ width: `${Math.min(100, seriesUsage.percentage)}%` }}
                   />
                 </div>
@@ -402,16 +402,16 @@ export default function DashboardSubscriptionPage() {
               <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-[#475569] flex items-center gap-1.5">
-                    <Film className="h-3.5 w-3.5 text-[#043084]" />
+                    <Film className="h-3.5 w-3.5 text-[#7A2253]" />
                     <span>Total Episodes</span>
                   </span>
-                  <span className="text-xs font-bold text-[#043084]">
+                  <span className="text-xs font-bold text-[#7A2253]">
                     {episodeUsage.current} of {episodeUsage.max === Infinity ? "Unlimited" : episodeUsage.max}
                   </span>
                 </div>
                 <div className="w-full bg-[#e2e8f0] h-2 rounded-full overflow-hidden">
                   <div
-                    className="bg-[#043084] h-full rounded-full transition-all"
+                    className="bg-[#7A2253] h-full rounded-full transition-all"
                     style={{ width: `${Math.min(100, episodeUsage.percentage)}%` }}
                   />
                 </div>
@@ -426,16 +426,16 @@ export default function DashboardSubscriptionPage() {
               <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-[#475569] flex items-center gap-1.5">
-                    <ShoppingBag className="h-3.5 w-3.5 text-[#043084]" />
+                    <ShoppingBag className="h-3.5 w-3.5 text-[#7A2253]" />
                     <span>Shop Products</span>
                   </span>
-                  <span className="text-xs font-bold text-[#043084]">
+                  <span className="text-xs font-bold text-[#7A2253]">
                     {productUsage.current} of {productUsage.max === Infinity ? "Unlimited" : productUsage.max}
                   </span>
                 </div>
                 <div className="w-full bg-[#e2e8f0] h-2 rounded-full overflow-hidden">
                   <div
-                    className="bg-[#043084] h-full rounded-full transition-all"
+                    className="bg-[#7A2253] h-full rounded-full transition-all"
                     style={{ width: `${Math.min(100, productUsage.percentage)}%` }}
                   />
                 </div>
@@ -450,16 +450,16 @@ export default function DashboardSubscriptionPage() {
               <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-[#475569] flex items-center gap-1.5">
-                    <Briefcase className="h-3.5 w-3.5 text-[#043084]" />
+                    <Briefcase className="h-3.5 w-3.5 text-[#7A2253]" />
                     <span>Collab Packages</span>
                   </span>
-                  <span className="text-xs font-bold text-[#043084]">
+                  <span className="text-xs font-bold text-[#7A2253]">
                     {gigUsage.current} of {gigUsage.max === Infinity ? "Unlimited" : gigUsage.max}
                   </span>
                 </div>
                 <div className="w-full bg-[#e2e8f0] h-2 rounded-full overflow-hidden">
                   <div
-                    className="bg-[#043084] h-full rounded-full transition-all"
+                    className="bg-[#7A2253] h-full rounded-full transition-all"
                     style={{ width: `${Math.min(100, gigUsage.percentage)}%` }}
                   />
                 </div>
@@ -474,10 +474,10 @@ export default function DashboardSubscriptionPage() {
 
           {/* 3. PROMINENT ACTION BAR: DO YOU WANT TO UPGRADE & CANCEL BUTTON */}
           <div className="pt-4 border-t border-[#e2e8f0]">
-            <div className="rounded-2xl border-2 border-[#043084] bg-gradient-to-r from-[#043084]/[0.08] via-[#043084]/[0.03] to-white p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
+            <div className="rounded-2xl border-2 border-[#7A2253] bg-gradient-to-r from-[#7A2253]/[0.08] via-[#7A2253]/[0.03] to-white p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
               <div className="space-y-1">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-[#043084]">
-                  <Sparkles className="h-4 w-4 text-[#043084]" />
+                <div className="flex items-center gap-1.5 text-xs font-bold text-[#7A2253]">
+                  <Sparkles className="h-4 w-4 text-[#7A2253]" />
                   <span>Do you want to upgrade your plan?</span>
                 </div>
                 <p className="text-xs sm:text-[13px] text-[#475569] font-medium max-w-xl">
@@ -493,7 +493,7 @@ export default function DashboardSubscriptionPage() {
                   <button
                     type="button"
                     onClick={handleScrollToUpgrade}
-                    className="rounded-xl bg-[#043084] hover:bg-[#032360] active:scale-[0.99] text-white py-2.5 px-5 text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md"
+                    className="rounded-xl bg-[#7A2253] hover:bg-[#032360] active:scale-[0.99] text-white py-2.5 px-5 text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md"
                   >
                     <Sparkles className="h-4 w-4" />
                     <span>Upgrade Plan</span>
@@ -531,7 +531,7 @@ export default function DashboardSubscriptionPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E4DAD5] pb-3">
           <div>
             <h2 className="font-display text-lg sm:text-xl font-bold text-[#181716] flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-[#043084]" />
+              <Sparkles className="h-5 w-5 text-[#7A2253]" />
               <span>Explore &amp; Upgrade Plans</span>
             </h2>
             <p className="text-xs text-[#797570] font-medium mt-0.5">
@@ -542,7 +542,7 @@ export default function DashboardSubscriptionPage() {
           <button
             type="button"
             onClick={() => setShowAllPlans(!showAllPlans)}
-            className="text-xs font-semibold text-[#043084] hover:underline self-start sm:self-auto cursor-pointer"
+            className="text-xs font-semibold text-[#7A2253] hover:underline self-start sm:self-auto cursor-pointer"
           >
             {showAllPlans ? "Hide Plans Table" : "Show Plans Table"}
           </button>
