@@ -67,7 +67,7 @@ const FIELD_INPUT =
 const BTN_CANCEL =
   "inline-flex h-9 items-center rounded-lg px-3.5 text-sm font-medium text-[#475569] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer";
 const BTN_SUBMIT =
-  "inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#7A2253] px-4 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover cursor-pointer disabled:opacity-50";
+  "inline-flex h-9 items-center gap-1.5 rounded-lg bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-4 text-sm font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer disabled:opacity-50";
 
 /** Borderless icon button used for secondary row utilities on this page. */
 const GHOST_ICON =
@@ -983,7 +983,7 @@ function SeriesCard({
                   type="button"
                   onClick={() => onImportEpisodes(series)}
                   disabled={epUsage.isLimitReached}
-                  className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-[#7A2253] px-3.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-3.5 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <Upload className="h-3.5 w-3.5" />
                   <span>Import Multiple (CSV)</span>
@@ -1282,7 +1282,7 @@ export default function DashboardContentPage() {
             disabled={seriesUsage.isLimitReached}
             className={`inline-flex h-9 items-center justify-center gap-1.5 rounded-lg px-3.5 text-xs font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 ${series.length === 0 || seriesUsage.isLimitReached
               ? "border border-[#e2e8f0] bg-white text-[#0f172a] hover:bg-[#f8fafc]"
-              : "bg-[#7A2253] text-white hover:bg-brand-hover shadow-xs"
+              : "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white hover:opacity-95 shadow-md shadow-[#7A2253]/20"
               }`}
           >
             <Plus className="h-3.5 w-3.5" />
@@ -1367,7 +1367,7 @@ export default function DashboardContentPage() {
               <button
                 type="button"
                 onClick={handleOpenCreateSeries}
-                className="inline-flex items-center gap-2 rounded-[10px] bg-[#7A2253] px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-md cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-[10px] bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-4 py-2 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer"
               >
                 <Plus className="h-4 w-4" />
                 <span>Create Your First Series</span>

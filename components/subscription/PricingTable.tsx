@@ -116,7 +116,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
               type="button"
               onClick={() => setCycle("yearly")}
               className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${cycle === "yearly"
-                ? "bg-[#7A2253] text-white shadow-xs"
+                ? "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white shadow-xs"
                 : "text-[#797570] hover:text-foreground"
                 }`}
             >

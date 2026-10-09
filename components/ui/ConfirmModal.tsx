@@ -66,7 +66,7 @@ export function ConfirmModal({
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className={`h-9 font-semibold text-xs px-4.5 rounded-[10px] transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50 text-white ${isDestructive ? "bg-rose-600 hover:bg-rose-700" : "bg-[#7A2253] hover:bg-brand-hover"
+          className={`h-9 font-semibold text-xs px-4.5 rounded-[10px] transition-all cursor-pointer shadow-md inline-flex items-center gap-1.5 disabled:opacity-50 text-white ${isDestructive ? "bg-rose-600 hover:bg-rose-700 shadow-rose-600/20" : "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 shadow-[#7A2253]/20"
             }`}
         >
           <span>{loading ? "Processing..." : confirmText}</span>

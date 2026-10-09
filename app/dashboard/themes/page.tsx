@@ -220,7 +220,7 @@ export default function DashboardThemesPage() {
             type="button"
             onClick={handleApplyTheme}
             disabled={isApplying || previewThemeKey === theme}
-            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#7A2253] px-4 py-2 text-xs font-bold text-white shadow-2xs transition-all hover:bg-[#5d193f] disabled:opacity-50 cursor-pointer"
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-4 py-2 text-xs font-bold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 disabled:opacity-50 cursor-pointer"
           >
             {isApplying ? (
               <>
@@ -253,7 +253,7 @@ export default function DashboardThemesPage() {
                     type="button"
                     onClick={() => setActiveFilter(filter.key)}
                     className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer ${isSelected
-                      ? "border-[#7A2253] bg-[#7A2253] text-white shadow-xs"
+                      ? "border-transparent bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white shadow-xs"
                       : "border-[#dbe3ee] bg-white text-[#64748b] hover:border-[#7A2253]/30 hover:bg-[#f8fafc] hover:text-[#7A2253]"
                       }`}
                   >
@@ -330,7 +330,7 @@ export default function DashboardThemesPage() {
                     type="button"
                     onClick={handleApplyTheme}
                     disabled={isApplying}
-                    className="h-9 px-3.5 rounded-lg bg-[#7A2253] hover:bg-brand-hover text-white text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm disabled:opacity-50 inline-flex items-center gap-1.5"
+                    className="h-9 px-3.5 rounded-lg bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 text-white text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 disabled:opacity-50 inline-flex items-center gap-1.5"
                   >
                     {isApplying ? (
                       <>

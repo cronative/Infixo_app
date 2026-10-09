@@ -100,7 +100,7 @@ export function LimitReachedModal({
             <span className="font-display text-xs font-bold text-[#7A2253]">
               {targetUpgradePlan === "vip" ? "Inflixo VIP Plan" : "Inflixo Pro Plan"}
             </span>
-            <span className="rounded-md bg-[#7A2253] px-2 py-0.5 text-[9px] font-bold text-white">
+            <span className="rounded-md bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-2 py-0.5 text-[9px] font-bold text-white shadow-2xs">
               RECOMMENDED
             </span>
           </div>

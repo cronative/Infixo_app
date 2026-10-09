@@ -284,7 +284,7 @@ export default function UsernameStepPage() {
             type="button"
             onClick={handleClaimUsername}
             disabled={!isReadyToClaim || submitting}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#7A2253] hover:bg-brand-hover text-white font-semibold text-xs sm:text-sm h-10.5 sm:h-11 transition-all cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 text-white font-semibold text-xs sm:text-sm h-10.5 sm:h-11 transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
           >
             {submitting ? (
               <>

@@ -685,7 +685,7 @@ export default function PublicProfileClient() {
           {/* Main Clean Light Theme Card */}
           <div className="rounded-[32px] border border-[#E8DCE4] bg-white/95 p-8 sm:p-10 shadow-2xl shadow-[#7A2253]/5 backdrop-blur-xl space-y-6 text-center">
             {/* Icon Badge */}
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#7A2253] text-white shadow-xl shadow-[#7A2253]/25 ring-4 ring-[#F6EBF1]">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#7A2253_0%,#B0437A_100%)] text-white shadow-xl shadow-[#7A2253]/25 ring-4 ring-[#F6EBF1]">
               <UserX className="h-8 w-8 stroke-[2.2]" />
             </div>
 

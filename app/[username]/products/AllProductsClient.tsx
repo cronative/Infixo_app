@@ -229,7 +229,7 @@ export default function AllProductsClient() {
           <button
             type="button"
             onClick={() => router.push("/")}
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#7A2253] px-5 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-105"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:scale-105"
           >
             Go to Inflixo Home
           </button>

@@ -135,7 +135,7 @@ export default function DashboardProfilePage() {
             type="button"
             onClick={handleSave}
             disabled={submitting}
-            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#7A2253] px-4 py-2 text-xs font-bold text-white shadow-2xs transition-all hover:bg-brand-hover cursor-pointer disabled:opacity-60"
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-4 py-2 text-xs font-bold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer disabled:opacity-60"
           >
             {submitting ? "Saving..." : "Save Changes"}
           </button>
@@ -335,7 +335,7 @@ export default function DashboardProfilePage() {
           type="button"
           onClick={handleSave}
           disabled={submitting}
-          className="inline-flex items-center gap-1.5 h-9 px-5 rounded-lg bg-[#7A2253] hover:bg-brand-hover text-xs sm:text-sm font-medium text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm disabled:opacity-60"
+          className="inline-flex items-center gap-1.5 h-9 px-5 rounded-lg bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 text-xs sm:text-sm font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 disabled:opacity-60"
         >
           {submitting ? (
             <>

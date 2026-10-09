@@ -345,7 +345,7 @@ export default function PublicMediaKitPage() {
             <p className="text-xs text-[#6F6872]">No creator media kit registered for @{handle}.</p>
             <button
               onClick={() => router.push("/")}
-              className="w-full py-2.5 rounded-xl bg-[#7A2253] text-white text-xs font-semibold hover:bg-brand-hover transition-colors"
+              className="w-full py-2.5 rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white text-xs font-semibold hover:opacity-95 shadow-md shadow-[#7A2253]/20 transition-all"
             >
               Back to Home
             </button>
@@ -570,7 +570,7 @@ export default function PublicMediaKitPage() {
               style={{ borderColor: c.border, backgroundColor: c.cardBackground }}
               textClassName="text-lg font-extrabold sm:text-xl"
               textStyle={{ color: c.primaryText }}
-              fallbackBgClass="bg-[#7A2253]"
+              fallbackBgClass="bg-[linear-gradient(135deg,#7A2253_0%,#B0437A_100%)]"
             />
             <div className="mt-2 flex items-center justify-center gap-1.5 px-2">
               <h1 style={pt.headingStyle} className={`${PUBLIC_TYPE.creatorName} break-words line-clamp-2`}>

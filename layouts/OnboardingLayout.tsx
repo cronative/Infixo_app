@@ -185,7 +185,7 @@ export function OnboardingLayout({
               <button
                 type="button"
                 onClick={() => setIsMobilePreviewOpen(false)}
-                className="w-full rounded-xl bg-[#7A2253] hover:bg-[#7A2253] py-3 text-xs font-bold text-white transition-colors cursor-pointer text-center shadow-xs"
+                className="w-full rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 py-3 text-xs font-bold text-white transition-all cursor-pointer text-center shadow-md shadow-[#7A2253]/20"
               >
                 Back to Editing Form
               </button>

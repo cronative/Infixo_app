@@ -510,7 +510,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
           disabled={isLimitReached}
           className={`inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm ${isLimitReached
             ? "bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b] opacity-60 cursor-not-allowed"
-            : "bg-[#7A2253] hover:bg-brand-hover text-white"
+            : "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 text-white shadow-md shadow-[#7A2253]/20"
             }`}
           title={isLimitReached ? "Limit reached (3 links max)" : "Add new custom link"}
         >
@@ -529,7 +529,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
             <button
               type="button"
               onClick={(e) => handleOpenCreate(e.currentTarget)}
-              className="inline-flex items-center gap-2 rounded-[10px] bg-[#7A2253] px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-md cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-[10px] bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 px-4 py-2 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:-translate-y-0.5 cursor-pointer"
             >
               <Plus className="h-4 w-4" />
               <span>Add Your First Link</span>
@@ -941,7 +941,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
             <button
               type="submit"
               disabled={isSaving}
-              className="h-9 px-4.5 rounded-[10px] bg-[#7A2253] hover:bg-brand-hover text-white font-semibold text-xs transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="h-9 px-4.5 rounded-[10px] bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 text-white font-semibold text-xs transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               <Check className="h-3.5 w-3.5 stroke-[2.5]" />
               <span>{isSaving ? "Saving..." : editingLink ? "Save Changes" : "Save Link"}</span>

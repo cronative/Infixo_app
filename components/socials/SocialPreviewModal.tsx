@@ -97,7 +97,7 @@ export function SocialPreviewCard({
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#7A2253] hover:bg-brand-hover py-2 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm disabled:opacity-60 active:scale-98"
+          className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 py-2 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 disabled:opacity-60 active:scale-98"
         >
           {loading ? (
             <>
@@ -198,7 +198,7 @@ export function SocialPreviewModal({
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className="flex-1 h-9 bg-[#7A2253] hover:bg-brand-hover text-white font-semibold text-xs px-4 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center justify-center gap-1.5 disabled:opacity-60 active:scale-98"
+          className="flex-1 h-9 bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 text-white font-semibold text-xs px-4 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center justify-center gap-1.5 disabled:opacity-60 active:scale-98"
         >
           {loading ? (
             <>

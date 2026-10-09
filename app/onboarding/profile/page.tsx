@@ -220,7 +220,7 @@ export default function ProfileStepPage() {
                   name={profile?.displayName || profile?.username || "Creator"}
                   className="h-9 w-9 rounded-full"
                   textClassName="text-xs font-extrabold text-white"
-                  fallbackBgClass="bg-[#7A2253]"
+                  fallbackBgClass="bg-[linear-gradient(135deg,#7A2253_0%,#B0437A_100%)]"
                 />
               </button>
 
@@ -477,7 +477,7 @@ export default function ProfileStepPage() {
               type="button"
               onClick={handleNext}
               disabled={submitting}
-              className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#7A2253] hover:bg-brand-hover text-white font-semibold text-xs sm:text-sm h-10.5 sm:h-11 transition-all cursor-pointer shadow-xs disabled:opacity-60 active:scale-98"
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 text-white font-semibold text-xs sm:text-sm h-10.5 sm:h-11 transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 disabled:opacity-60 active:scale-98"
             >
               {submitting ? (
                 <>

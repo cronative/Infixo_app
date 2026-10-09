@@ -25,7 +25,7 @@ function ToastItem({ toast, onDismiss }: { toast: ToastMessage; onDismiss: (id: 
   } else if (toast.type === "info") {
     chipClass = "bg-indigo-50 text-[#7A2253] border-indigo-100";
     borderClass = "border-indigo-100";
-    progressClass = "bg-[#7A2253]";
+    progressClass = "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]";
     icon = <Sparkles className="h-4 w-4 text-[#7A2253]" />;
   }
 

@@ -146,7 +146,7 @@ export default function FinishStepPage() {
             <button
               type="button"
               onClick={handleCopy}
-              className="tap-scale flex items-center gap-1 rounded-lg bg-[#7A2253] hover:bg-brand-hover px-2.5 py-1 text-xs font-bold text-white transition-all cursor-pointer shrink-0 shadow-2xs"
+              className="tap-scale flex items-center gap-1 rounded-lg bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 px-2.5 py-1 text-xs font-bold text-white transition-all cursor-pointer shrink-0 shadow-2xs"
             >
               {copied ? (
                 <>
@@ -169,7 +169,7 @@ export default function FinishStepPage() {
               type="button"
               onClick={handleGoToDashboard}
               disabled={isLoadingDashboard}
-              className="tap-scale w-full flex items-center justify-center gap-2 rounded-xl bg-[#7A2253] hover:bg-brand-hover text-white font-bold h-10 text-xs sm:text-sm transition-all cursor-pointer shadow-xs disabled:opacity-75"
+              className="tap-scale w-full flex items-center justify-center gap-2 rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 text-white font-bold h-10 text-xs sm:text-sm transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 disabled:opacity-75"
             >
               {isLoadingDashboard ? (
                 <>

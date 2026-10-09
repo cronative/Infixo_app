@@ -436,7 +436,7 @@ export default function DashboardSetupPage() {
               <button
                 type="button"
                 onClick={() => handleOpenModal()}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#7A2253] h-9 px-4 text-xs font-semibold text-white shadow-xs transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-sm cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-lg bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] h-9 px-4 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer"
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span>Add Your First Gear</span>
@@ -753,7 +753,7 @@ export default function DashboardSetupPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="h-9 rounded-lg bg-[#7A2253] px-5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-brand-hover hover:shadow-sm cursor-pointer disabled:opacity-60"
+              className="h-9 rounded-lg bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-5 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer disabled:opacity-60"
             >
               {isSubmitting ? "Saving..." : editingItem ? "Update Gear" : "Add to Setup"}
             </button>

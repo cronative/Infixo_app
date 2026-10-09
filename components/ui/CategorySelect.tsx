@@ -199,7 +199,7 @@ export function CategorySelect({
                               disabled={isMaxReached}
                               onClick={() => toggleCategory(type)}
                               className={`flex min-h-10 w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left transition-all cursor-pointer ${isSelected
-                                  ? "bg-[#7A2253] text-white shadow-xs"
+                                  ? "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white shadow-xs"
                                   : isMaxReached
                                     ? "cursor-not-allowed opacity-35"
                                     : "bg-[#f8fafc] text-[#475569] hover:bg-[#f1f5f9] hover:text-[#7A2253]"
@@ -231,7 +231,7 @@ export function CategorySelect({
               <button
                 type="button"
                 onClick={closePicker}
-                className="rounded-xl bg-[#7A2253] px-5 py-2 text-xs font-bold text-white shadow-xs transition-all hover:-translate-y-0.5 hover:bg-brand-hover"
+                className="rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-5 py-2 text-xs font-bold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer"
               >
                 Done
               </button>

@@ -122,6 +122,22 @@
   -webkit-text-fill-color: transparent;
 }
 
+.btn-brand-gradient {
+  background: linear-gradient(90deg, #7A2253 0%, #B0437A 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(122, 34, 83, 0.22);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-brand-gradient:hover {
+  opacity: 0.95;
+}
+
+.badge-brand-gradient {
+  background: linear-gradient(90deg, #7A2253 0%, #B0437A 100%) !important;
+  color: #ffffff !important;
+}
+
 .theme-bg-taj-mahal {
   --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Front_far_view_of_taj_mahal.jpg?width=1600");
   --theme-photo-tint: rgba(255, 251, 244, 0.30);

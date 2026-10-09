@@ -339,7 +339,7 @@ export default function DashboardReviewsPage() {
             <button
               type="button"
               onClick={() => setIsModalOpen(true)}
-              className="inline-flex items-center gap-2 rounded-[10px] bg-[#7A2253] px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-md cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-[10px] bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-4 py-2 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer"
             >
               <Plus className="h-4 w-4" />
               <span>Request Review</span>
@@ -534,7 +534,7 @@ export default function DashboardReviewsPage() {
                         <button
                           type="button"
                           onClick={() => handleUpdateStatus(rev.id, "approved")}
-                          className="px-2.5 py-1.5 rounded-lg bg-[#7A2253] hover:bg-brand-hover text-white text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1"
+                          className="px-2.5 py-1.5 rounded-lg bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 text-white text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1"
                         >
                           <Check className="h-3 w-3" />
                           <span>Publish</span>
@@ -691,7 +691,7 @@ export default function DashboardReviewsPage() {
               <button
                 type="submit"
                 disabled={isSubmitting || !clientName.trim() || !clientEmail.trim()}
-                className="h-10 px-4 rounded-xl bg-[#7A2253] hover:bg-brand-hover text-white font-semibold text-xs transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5 disabled:opacity-50"
+                className="h-10 px-4 rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 text-white font-semibold text-xs transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5 disabled:opacity-50"
               >
                 <Send className="h-3.5 w-3.5" />
                 <span>{isSubmitting ? "Sending..." : "Send Invitation"}</span>
