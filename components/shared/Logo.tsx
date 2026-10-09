@@ -22,7 +22,7 @@ export function LogoStadiumLinkI({
   style,
 }: {
   className?: string;
-  color?: "dark" | "white" | "color" | "current";
+  color?: "dark" | "white" | "color" | "current" | "gradient";
   style?: React.CSSProperties;
 }) {
   if (color === "current") {
@@ -30,8 +30,8 @@ export function LogoStadiumLinkI({
       <span
         className={`${className} inline-block shrink-0`}
         style={{
-          maskImage: "url(/images/inflixo-logo-icon-043084.png)",
-          WebkitMaskImage: "url(/images/inflixo-logo-icon-043084.png)",
+          maskImage: "url(/images/inflixo-logo-icon-white-transparent.png)",
+          WebkitMaskImage: "url(/images/inflixo-logo-icon-white-transparent.png)",
           maskSize: "contain",
           WebkitMaskSize: "contain",
           maskRepeat: "no-repeat",
@@ -51,7 +51,7 @@ export function LogoStadiumLinkI({
       ? "/images/inflixo-logo-icon-white-transparent.png"
       : color === "color"
       ? "/images/inflixo-logo-icon.png"
-      : "/images/inflixo-logo-icon-043084.png";
+      : "/images/inflixo-logo-icon-brand.png";
 
   return (
     <Image
@@ -358,7 +358,7 @@ export function Logo({
             transition-colors
             ${light
               ? "text-white"
-              : "text-[#7A2253]"
+              : "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] bg-clip-text text-transparent"
             }
           `}
         >
