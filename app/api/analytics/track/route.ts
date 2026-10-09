@@ -3,7 +3,6 @@ import { db } from "@/lib/db";
 import { ensureAnalyticsTable } from "@/lib/analyticsDb";
 import { isCreatorPublic } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
-import { getSessionFromRequest } from "@/lib/session";
 
 interface CreatorIdRow extends RowDataPacket {
   id: string;
@@ -28,31 +27,6 @@ const ALLOWED_PUBLIC_SOURCES = new Set([
   "public_products",
   "public_mediakit",
 ]);
-
-function parseTrafficSource(rawSource?: string, referrer?: string, utmSource?: string): string {
-  const candidate = (rawSource || utmSource || "").toLowerCase().trim();
-  if (candidate) {
-    if (candidate.includes("instagram") || candidate.includes("ig")) return "instagram";
-    if (candidate.includes("youtube") || candidate.includes("yt")) return "youtube";
-    if (candidate.includes("whatsapp") || candidate.includes("wa")) return "whatsapp";
-    if (candidate === "direct") return "direct";
-    return candidate.slice(0, 64);
-  }
-
-  if (!referrer || referrer.trim() === "") {
-    return "direct";
-  }
-
-  try {
-    const host = new URL(referrer).hostname.toLowerCase();
-    if (host.includes("instagram.com") || host.includes("ig.me")) return "instagram";
-    if (host.includes("youtube.com") || host.includes("youtu.be")) return "youtube";
-    if (host.includes("whatsapp.com") || host.includes("wa.me")) return "whatsapp";
-    return "other";
-  } catch {
-    return "other";
-  }
-}
 
 // POST /api/analytics/track (Public Event Tracker)
 export async function POST(req: Request) {
@@ -101,27 +75,15 @@ export async function POST(req: Request) {
       return apiError("Creator profile is private", 404);
     }
 
-    // Do NOT count views/clicks made by logged-in profile owner
-    const session = getSessionFromRequest(req);
-    if (session && session.creatorId === targetCreatorId) {
-      return apiSuccess({}, "Owner event skipped");
-    }
-
-    const trafficSource = parseTrafficSource(
-      body.traffic_source || body.trafficSource,
-      metadata?.referrer || body.referrer,
-      metadata?.utm_source || body.utm_source
-    );
-
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null;
     const userAgent = req.headers.get("user-agent") || null;
     const metaJson = metadata ? JSON.stringify(metadata) : null;
 
     await db.query(
       `INSERT IGNORE INTO analytics_events
-        (event_id, creator_id, event_type, event_target, visitor_id, source, traffic_source, ip_address, user_agent, metadata)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [eventId, targetCreatorId, eventType, eventTarget || null, visitorId || null, source, trafficSource, ip, userAgent, metaJson]
+        (event_id, creator_id, event_type, event_target, visitor_id, source, ip_address, user_agent, metadata)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [eventId, targetCreatorId, eventType, eventTarget || null, visitorId || null, source, ip, userAgent, metaJson]
     );
 
     return apiSuccess({}, "Event tracked successfully");
@@ -130,4 +92,3 @@ export async function POST(req: Request) {
     return apiError("Tracking error", 500);
   }
 }
-

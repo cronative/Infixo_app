@@ -47,7 +47,4 @@ export interface ThemeCardProps {
   reviewsOnlyMode?: boolean;
   pageHeader?: { pageLabel: string; backHref: string; backLabel: string };
   onShare?: () => void;
-  onLinkClick?: (link: any) => void;
-  onProductClick?: (product: any) => void;
 }
-

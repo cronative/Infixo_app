@@ -853,8 +853,6 @@ export interface LivePreviewCardProps {
   pageHeader?: { pageLabel: string; backHref: string; backLabel: string };
   showSettingsIcon?: boolean;
   onShare?: () => void;
-  onLinkClick?: (link: any) => void;
-  onProductClick?: (product: any) => void;
   isInformational?: boolean;
   isOnboarding?: boolean;
   isFinishStep?: boolean;
@@ -919,8 +917,6 @@ export function LivePreviewCard({
   pageHeader,
   showSettingsIcon: showSettingsIconProp,
   onShare,
-  onLinkClick,
-  onProductClick,
   isInformational: isInformationalProp,
   isOnboarding: isOnboardingProp,
   isFinishStep: isFinishStepProp,
@@ -1959,8 +1955,6 @@ export function LivePreviewCard({
                                 if (isInformationalMode) {
                                   e.preventDefault();
                                   showToast(`Opens ${item.title} on live profile ✨`);
-                                } else if (onLinkClick) {
-                                  onLinkClick(item);
                                 }
                               }}
                               className="group/row tap-scale flex items-center justify-between px-3.5 sm:px-4 py-2.5 transition-colors hover:bg-black/[0.025] dark:hover:bg-white/[0.04] cursor-pointer text-left pl-6 sm:pl-7"
@@ -2012,8 +2006,6 @@ export function LivePreviewCard({
                         if (isInformationalMode) {
                           e.preventDefault();
                           showToast(`Opens ${link.title} on live profile ✨`);
-                        } else if (onLinkClick) {
-                          onLinkClick(link);
                         }
                       }}
                       className="group/row tap-scale flex items-center justify-between px-3.5 sm:px-4 py-2.5 transition-colors hover:bg-black/[0.025] dark:hover:bg-white/[0.04] cursor-pointer text-left"
@@ -2342,8 +2334,6 @@ export function LivePreviewCard({
                         if (isInformationalMode) {
                           e.preventDefault();
                           showToast(`Opens ${product.name} external product page ✨`);
-                        } else if (onProductClick) {
-                          onProductClick(product);
                         }
                       }}
                       className="flex min-h-[24px] items-center justify-center gap-1 rounded-[6px] py-0.5 text-center text-[10px] sm:text-[11px] font-semibold hover:underline"

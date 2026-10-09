@@ -34,8 +34,6 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
     reviewsOnlyMode,
     pageHeader,
     onShare,
-    onLinkClick,
-    onProductClick,
   } = props;
   return (
     <LivePreviewCard
@@ -69,8 +67,6 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
       reviewsOnlyMode={reviewsOnlyMode}
       pageHeader={pageHeader}
       onShare={onShare}
-      onLinkClick={onLinkClick}
-      onProductClick={onProductClick}
     />
   );
 }

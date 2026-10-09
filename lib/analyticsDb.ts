@@ -37,12 +37,6 @@ export async function ensureAnalyticsTable() {
       await db.query("ALTER TABLE analytics_events ADD COLUMN source VARCHAR(50) DEFAULT NULL");
     } catch {}
     try {
-      await db.query("ALTER TABLE analytics_events ADD COLUMN traffic_source VARCHAR(64) DEFAULT NULL");
-    } catch {}
-    try {
-      await db.query("ALTER TABLE analytics_events ADD INDEX idx_creator_traffic_source (creator_id, traffic_source, created_at)");
-    } catch {}
-    try {
       await db.query("ALTER TABLE analytics_events ADD UNIQUE KEY unique_analytics_event_id (event_id)");
     } catch {}
     isEnsured = true;
