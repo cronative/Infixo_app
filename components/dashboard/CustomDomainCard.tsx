@@ -163,7 +163,7 @@ export function CustomDomainCard() {
   if (config && !config.canUseCustomDomain) {
     return (
       <section className="group relative overflow-hidden rounded-xl border border-[#7A2253]/20 bg-white p-4 sm:p-5 shadow-xs">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#7A2253]" aria-hidden="true" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]" aria-hidden="true" />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
@@ -180,7 +180,7 @@ export function CustomDomainCard() {
           </div>
           <Link
             href="/dashboard/subscription"
-            className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#7A2253] hover:bg-brand-hover text-white text-xs font-bold py-2.5 px-4 transition-all shrink-0 cursor-pointer shadow-xs"
+            className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 text-white text-xs font-bold py-2.5 px-4 transition-all shrink-0 cursor-pointer shadow-md shadow-[#7A2253]/20"
           >
             <Sparkles className="h-3.5 w-3.5" />
             <span>Upgrade to Pro</span>

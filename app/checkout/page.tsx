@@ -242,7 +242,7 @@ function CheckoutContent() {
                     type="button"
                     onClick={() => setBillingCycle("yearly")}
                     className={`px-3 py-1 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
-                      billingCycle === "yearly" ? "bg-[#7A2253] text-white shadow-xs" : "text-[#64748b]"
+                      billingCycle === "yearly" ? "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white shadow-xs" : "text-[#64748b]"
                     }`}
                   >
                     Yearly (₹{currentPlan.yearly}/yr)

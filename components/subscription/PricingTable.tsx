@@ -331,7 +331,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                     name: profile?.displayName || "Creator",
                     email: activeEmail,
                   }}
-                  className="w-full rounded-xl bg-[#7A2253] hover:bg-[#032360] text-white py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
+                  className="w-full rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 text-white py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-[#7A2253]/20"
                   onSuccess={(data) => {
                     handleUpgradeSuccess("creator_pro", "Creator Pro", data);
                   }}
@@ -422,7 +422,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                     name: profile?.displayName || "Creator",
                     email: activeEmail,
                   }}
-                  className="w-full rounded-xl bg-[#7A2253] hover:bg-[#032360] text-white py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
+                  className="w-full rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 text-white py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-[#7A2253]/20"
                   onSuccess={(data) => {
                     handleUpgradeSuccess("creator_VIP", "Creator VIP", data);
                   }}

@@ -161,7 +161,7 @@ export function TrialExpiredEmotionalModal({
           <button
             type="button"
             onClick={handleUpgrade}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#7A2253] hover:bg-[#5d193f] text-white py-3 px-5 text-sm font-bold shadow-lg shadow-[#7A2253]/20 transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 text-white py-3 px-5 text-sm font-bold shadow-lg shadow-[#7A2253]/25 transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
           >
             <Sparkles className="h-4 w-4" />
             <span>Reactivate & Keep Profile Live</span>

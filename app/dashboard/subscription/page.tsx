@@ -493,7 +493,7 @@ export default function DashboardSubscriptionPage() {
                   <button
                     type="button"
                     onClick={handleScrollToUpgrade}
-                    className="rounded-xl bg-[#7A2253] hover:bg-[#032360] active:scale-[0.99] text-white py-2.5 px-5 text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md"
+                    className="rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 active:scale-[0.99] text-white py-2.5 px-5 text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-[#7A2253]/20"
                   >
                     <Sparkles className="h-4 w-4" />
                     <span>Upgrade Plan</span>
