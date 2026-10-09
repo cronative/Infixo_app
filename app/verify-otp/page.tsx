@@ -147,14 +147,14 @@ export default function VerifyOtpPage() {
       <CreatorGridBackground showWordmark />
 
       {/* UNIFIED CENTER CARD: EXACT 420px WIDTH & MATCHING FIXED HEIGHT FOR BOTH SCREENS */}
-      <div className="relative z-10 my-auto flex min-h-[530px] w-full max-w-[420px] flex-col justify-between rounded-[24px] border border-slate-200/80 bg-white/95 p-5 text-center shadow-[0_20px_60px_-15px_rgba(4,48,132,0.12)] backdrop-blur-xl transition-all sm:min-h-[550px] sm:p-6">
+      <div className="relative z-10 my-auto flex min-h-[530px] w-full max-w-[420px] flex-col justify-between rounded-[24px] border border-slate-200/80 bg-white/95 p-5 text-center shadow-[0_20px_60px_-15px_rgba(122,34,83,0.12)] backdrop-blur-xl transition-all sm:min-h-[550px] sm:p-6">
         
         {/* TOP BLOCK: Header & Verification Info */}
         <div>
           {/* 1. Header: Logo & Badge */}
           <div className="flex flex-col items-center text-center">
             <Logo size="lg" orientation="vertical" variant="transparent" />
-            <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-[#043084]/[0.07] px-3 py-0.5 text-[11px] font-extrabold uppercase tracking-wider text-[#043084]">
+            <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-[#7A2253]/[0.08] px-3 py-0.5 text-[11px] font-extrabold uppercase tracking-wider text-[#7A2253]">
               <ShieldCheck className="h-3 w-3" />
               <span>Verification</span>
             </div>
@@ -173,7 +173,7 @@ export default function VerifyOtpPage() {
               <button
                 type="button"
                 onClick={() => router.push("/login")}
-                className="inline-flex items-center gap-0.5 font-bold text-[#043084] underline hover:text-[#032363] cursor-pointer text-[11px]"
+                className="inline-flex items-center gap-0.5 font-bold text-[#7A2253] underline hover:opacity-80 cursor-pointer text-[11px]"
                 title="Change email address"
               >
                 <Edit3 className="h-3 w-3" />
@@ -184,7 +184,7 @@ export default function VerifyOtpPage() {
 
           {/* 3. Expiry Pill (Matches Login Trust Pill) */}
           <div className="mx-auto mt-3 flex w-fit items-center justify-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold text-slate-600">
-            <Lock className="h-3 w-3 text-[#043084]" />
+            <Lock className="h-3 w-3 text-[#7A2253]" />
             <span>One-time password • Valid for 10 minutes</span>
           </div>
         </div>
@@ -214,8 +214,8 @@ export default function VerifyOtpPage() {
                     errorMessage
                       ? "border-rose-500 bg-rose-50/30 text-rose-600 ring-2 ring-rose-200"
                       : d
-                        ? "border-[#043084] bg-white text-slate-900 ring-4 ring-[#043084]/12 shadow-sm"
-                        : "border-slate-300 bg-slate-50/80 text-slate-900 focus:border-[#043084] focus:bg-white focus:ring-4 focus:ring-[#043084]/10"
+                        ? "border-[#7A2253] bg-white text-slate-900 ring-4 ring-[#7A2253]/15 shadow-sm"
+                        : "border-slate-300 bg-slate-50/80 text-slate-900 focus:border-[#7A2253] focus:bg-white focus:ring-4 focus:ring-[#7A2253]/10"
                   }`}
                 />
               ))}
@@ -230,7 +230,7 @@ export default function VerifyOtpPage() {
 
             {/* Code Sent Notification Banner */}
             {codeSent && (
-              <p className="animate-fade-in rounded-lg border border-[#043084]/20 bg-[#043084]/5 px-3 py-1.5 text-center text-xs font-bold text-[#043084]">
+              <p className="animate-fade-in rounded-lg border border-[#7A2253]/20 bg-[#7A2253]/5 px-3 py-1.5 text-center text-xs font-bold text-[#7A2253]">
                 New verification code sent 📩
               </p>
             )}
@@ -243,7 +243,7 @@ export default function VerifyOtpPage() {
             onClick={() => submit(digits.join(""))}
             className={`tap-scale mt-3.5 flex h-11.5 w-full cursor-pointer items-center justify-center gap-2 rounded-xl text-sm font-bold shadow-md transition-all active:scale-[0.98] ${
               isOtpComplete && !submitting
-                ? "bg-[#043084] text-white shadow-[#043084]/20 hover:bg-[#032363]"
+                ? "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white shadow-[#7A2253]/25 hover:opacity-95"
                 : "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
             }`}
           >
@@ -265,7 +265,7 @@ export default function VerifyOtpPage() {
             {countdown > 0 ? (
               <p>
                 Didn&apos;t get code? Resend in{" "}
-                <span className="font-mono font-bold text-[#043084]">
+                <span className="font-mono font-bold text-[#7A2253]">
                   00:{countdown.toString().padStart(2, "0")}
                 </span>
               </p>
@@ -276,7 +276,7 @@ export default function VerifyOtpPage() {
                   type="button"
                   onClick={handleResend}
                   disabled={resending}
-                  className="cursor-pointer font-bold text-[#043084] underline hover:text-[#032363]"
+                  className="cursor-pointer font-bold text-[#7A2253] underline hover:opacity-80"
                 >
                   {resending ? "Sending..." : "Resend Code"}
                 </button>

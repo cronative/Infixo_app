@@ -57,7 +57,7 @@ export default function LoginPage() {
           {/* 1. Header: Logo & Badge */}
           <div className="flex flex-col items-center text-center">
             <Logo size="lg" orientation="vertical" variant="transparent" />
-            <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-[#043084]/[0.07] px-3 py-0.5 text-[11px] font-extrabold uppercase tracking-wider text-[#043084]">
+            <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-[#7A2253]/[0.08] px-3 py-0.5 text-[11px] font-extrabold uppercase tracking-wider text-[#7A2253]">
               <Sparkles className="h-3 w-3" />
               <span>Creator Studio</span>
             </div>
@@ -75,7 +75,7 @@ export default function LoginPage() {
 
           {/* 3. Passwordless Trust Pill */}
           <div className="mx-auto mt-3 flex w-fit items-center justify-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold text-slate-600">
-            <Zap className="h-3 w-3 fill-[#043084] text-[#043084]" />
+            <Zap className="h-3 w-3 fill-[#7A2253] text-[#7A2253]" />
             <span>Passwordless • 4-digit OTP • Instant access</span>
           </div>
         </div>
@@ -93,7 +93,7 @@ export default function LoginPage() {
               </label>
 
               <div
-                className={`flex h-11.5 items-center rounded-xl border bg-slate-50/80 px-3.5 transition-all duration-150 focus-within:border-[#043084] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#043084]/10 ${
+                className={`flex h-11.5 items-center rounded-xl border bg-slate-50/80 px-3.5 transition-all duration-150 focus-within:border-[#7A2253] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#7A2253]/10 ${
                   error ? "border-rose-500 bg-rose-50/30" : "border-slate-300"
                 } ${isShaking ? "animate-shake" : ""}`}
               >
@@ -125,7 +125,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="tap-scale flex h-11.5 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#043084] text-sm font-bold text-white shadow-md shadow-[#043084]/20 transition-all hover:bg-[#032363] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-75"
+              className="tap-scale flex h-11.5 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-sm font-bold text-white shadow-md shadow-[#7A2253]/25 transition-all hover:opacity-95 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-75"
             >
               {loading ? (
                 <>
@@ -159,11 +159,11 @@ export default function LoginPage() {
         <div className="border-t border-slate-100 pt-3">
           <p className="text-center text-[11px] font-medium text-slate-400">
             By continuing, you agree to Inflixo&apos;s{" "}
-            <Link href="/terms" className="text-slate-600 underline hover:text-[#043084]">
+            <Link href="/terms" className="text-slate-600 underline hover:text-[#7A2253]">
               Terms
             </Link>{" "}
             and{" "}
-            <Link href="/privacy" className="text-slate-600 underline hover:text-[#043084]">
+            <Link href="/privacy" className="text-slate-600 underline hover:text-[#7A2253]">
               Privacy Policy
             </Link>
             .

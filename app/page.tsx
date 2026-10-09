@@ -300,13 +300,13 @@ export default function LandingHomePage() {
   if (checkingAuth && isLoggedIn) {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-white">
-        <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#043084] border-t-transparent" />
+        <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#7A2253] border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-dvh bg-white text-[#043084] antialiased selection:bg-[#04308414] selection:text-[#043084]">
+    <div className="min-h-dvh bg-white text-[#7A2253] antialiased selection:bg-[#7A2253]/15 selection:text-[#7A2253]">
       <header className="fixed inset-x-0 top-0 z-50 border-b border-[#e2e8f0] bg-white/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 text-xs font-bold text-[#64748b] sm:px-6">
           <Logo size="sm" variant="transparent" />
@@ -320,7 +320,7 @@ export default function LandingHomePage() {
           <div className="flex items-center gap-2">
             <Link
               href="/login"
-              className="tap-scale group relative inline-flex items-center gap-1.5 overflow-hidden rounded-[10px] bg-[#043084] px-4 py-2 text-xs font-bold text-white shadow-xs shadow-[#043084]/20 ring-2 ring-[#043084]/15 transition-all hover:-translate-y-0.5 hover:bg-[#03256c] hover:shadow-md hover:shadow-[#043084]/30 hover:ring-[#043084]/35 cursor-pointer"
+              className="tap-scale group relative inline-flex items-center gap-1.5 overflow-hidden rounded-[10px] bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-4 py-2 text-xs font-bold text-white shadow-xs shadow-[#7A2253]/20 ring-2 ring-[#7A2253]/15 transition-all hover:-translate-y-0.5 hover:opacity-95 hover:shadow-md hover:shadow-[#7A2253]/30 cursor-pointer"
             >
               <span className="absolute inset-0 -translate-x-full animate-[infixo-sheen_3s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
               <span className="relative z-10">Get Started</span>
@@ -340,7 +340,7 @@ export default function LandingHomePage() {
               className={`absolute hidden md:block ${tool.className}`}
             >
               <div
-                className="creator-tool-float flex h-12 w-12 items-center justify-center rounded-[14px] border border-[#043084]/10 bg-white/65 text-[#043084]/45 shadow-[0_14px_35px_rgba(21,25,51,0.06)] backdrop-blur-md"
+                className="creator-tool-float flex h-12 w-12 items-center justify-center rounded-[14px] border border-[#7A2253]/10 bg-white/65 text-[#7A2253]/45 shadow-[0_14px_35px_rgba(21,25,51,0.06)] backdrop-blur-md"
                 style={{
                   "--float-duration": tool.duration,
                   "--float-delay": tool.delay,
@@ -355,7 +355,7 @@ export default function LandingHomePage() {
         <div className="relative mx-auto max-w-5xl px-4 text-center sm:px-6">
           <div className="mx-auto flex h-[270px] max-w-4xl flex-col justify-center sm:h-[260px] md:h-[240px]">
             <div key={heroMessage.title} className="hero-copy-slide">
-              <h1 className="mx-auto max-w-3xl font-display text-4xl font-black leading-[0.98] tracking-tight text-[#043084] sm:text-6xl md:text-[76px]">
+              <h1 className="mx-auto max-w-3xl font-display text-4xl font-black leading-[0.98] tracking-tight text-[#7A2253] sm:text-6xl md:text-[76px]">
                 {heroMessage.title}
               </h1>
 
@@ -371,7 +371,7 @@ export default function LandingHomePage() {
                 key={message.title}
                 type="button"
                 onClick={() => setHeroMessageIndex(index)}
-                className={`h-1.5 rounded-full transition-all ${index === heroMessageIndex ? "w-7 bg-[#043084]" : "w-1.5 bg-[#043084]/20 hover:bg-[#043084]/35"}`}
+                className={`h-1.5 rounded-full transition-all ${index === heroMessageIndex ? "w-7 bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]" : "w-1.5 bg-[#7A2253]/20 hover:bg-[#7A2253]/35"}`}
                 aria-label={`Show message ${index + 1}`}
               />
             ))}
@@ -382,18 +382,18 @@ export default function LandingHomePage() {
               event.preventDefault();
               handleClaim(username);
             }}
-            className="mx-auto mt-7 flex max-w-md items-center rounded-[12px] border border-[#043084]/15 bg-white p-1.5 shadow-[0_18px_50px_rgba(21,25,51,0.10)] transition-all focus-within:-translate-y-0.5 focus-within:border-[#043084] focus-within:ring-4 focus-within:ring-[#043084]/10"
+            className="mx-auto mt-7 flex max-w-md items-center rounded-[12px] border border-[#7A2253]/15 bg-white p-1.5 shadow-[0_18px_50px_rgba(21,25,51,0.10)] transition-all focus-within:-translate-y-0.5 focus-within:border-[#7A2253] focus-within:ring-4 focus-within:ring-[#7A2253]/10"
           >
             <span className="shrink-0 pl-3 text-xs font-semibold text-[#94a3b8] sm:text-sm">inflixo.com/</span>
             <input
               value={username}
               onChange={(event) => setUsername(event.target.value)}
               placeholder="yourname"
-              className="min-w-0 flex-1 bg-transparent px-2 py-1.5 text-xs font-semibold text-[#043084] outline-none placeholder:text-[#94a3b8] sm:text-sm"
+              className="min-w-0 flex-1 bg-transparent px-2 py-1.5 text-xs font-semibold text-[#7A2253] outline-none placeholder:text-[#94a3b8] sm:text-sm"
             />
             <button
               type="submit"
-              className="group inline-flex shrink-0 items-center gap-1 rounded-[9px] bg-[#043084] px-4 py-2 text-xs font-black text-white transition-all hover:bg-brand-hover cursor-pointer"
+              className="group inline-flex shrink-0 items-center gap-1 rounded-[9px] bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-4 py-2 text-xs font-black text-white transition-all hover:opacity-95 cursor-pointer"
             >
               Claim
               <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
@@ -421,15 +421,15 @@ export default function LandingHomePage() {
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-2xl border border-[#043084]/15 bg-white/95 p-4 sm:p-6 shadow-[0_16px_45px_rgba(4,48,132,0.08)] backdrop-blur-md">
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#043084]" aria-hidden="true" />
+            <div className="relative overflow-hidden rounded-2xl border border-[#7A2253]/15 bg-white/95 p-4 sm:p-6 shadow-[0_16px_45px_rgba(122,34,83,0.08)] backdrop-blur-md">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]" aria-hidden="true" />
               <div className="grid grid-cols-2 gap-4 sm:gap-6 sm:grid-cols-4 divide-y divide-[#e2e8f0]/70 sm:divide-y-0 sm:divide-x sm:divide-[#e2e8f0]/70">
                 <div className="text-center pt-2 sm:pt-0 sm:px-3">
                   <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-emerald-600 mb-1">
                     <TrendingUp className="h-3.5 w-3.5" />
                     <span>So far with us</span>
                   </div>
-                  <div className="font-display text-2xl sm:text-3xl font-black tracking-tight text-[#043084]">
+                  <div className="font-display text-2xl sm:text-3xl font-black tracking-tight text-[#7A2253]">
                     100+
                   </div>
                   <div className="text-xs sm:text-[13px] font-bold text-[#0f172a] mt-0.5">
@@ -441,11 +441,11 @@ export default function LandingHomePage() {
                 </div>
 
                 <div className="text-center pt-2 sm:pt-0 sm:px-3">
-                  <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-[#043084] mb-1">
+                  <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-[#7A2253] mb-1">
                     <Film className="h-3.5 w-3.5" />
                     <span>Curated</span>
                   </div>
-                  <div className="font-display text-2xl sm:text-3xl font-black tracking-tight text-[#043084]">
+                  <div className="font-display text-2xl sm:text-3xl font-black tracking-tight text-[#7A2253]">
                     60+
                   </div>
                   <div className="text-xs sm:text-[13px] font-bold text-[#0f172a] mt-0.5">
@@ -461,7 +461,7 @@ export default function LandingHomePage() {
                     <Play className="h-3.5 w-3.5 fill-current" />
                     <span>Engagement</span>
                   </div>
-                  <div className="font-display text-2xl sm:text-3xl font-black tracking-tight text-[#043084]">
+                  <div className="font-display text-2xl sm:text-3xl font-black tracking-tight text-[#7A2253]">
                     25K+
                   </div>
                   <div className="text-xs sm:text-[13px] font-bold text-[#0f172a] mt-0.5">
@@ -477,7 +477,7 @@ export default function LandingHomePage() {
                     <Star className="h-3.5 w-3.5 fill-current" />
                     <span>Top Rated</span>
                   </div>
-                  <div className="font-display text-2xl sm:text-3xl font-black tracking-tight text-[#043084]">
+                  <div className="font-display text-2xl sm:text-3xl font-black tracking-tight text-[#7A2253]">
                     4.9 / 5
                   </div>
                   <div className="text-xs sm:text-[13px] font-bold text-[#0f172a] mt-0.5">
@@ -498,21 +498,21 @@ export default function LandingHomePage() {
         <div className="pointer-events-none absolute inset-x-0 top-20 h-px bg-[linear-gradient(90deg,transparent,rgba(21,25,51,0.25),transparent)] [animation:infixo-scan-x_7s_ease-in-out_infinite]" aria-hidden="true" />
         <div data-scroll-reveal className="mx-auto max-w-4xl px-4 text-center sm:px-6">
           <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#94a3b8]">Live Demo</p>
-          <h2 className="mt-2 font-display text-2xl font-black tracking-tight text-[#043084] sm:text-4xl">
+          <h2 className="mt-2 font-display text-2xl font-black tracking-tight text-[#7A2253] sm:text-4xl">
             {username.trim() ? `See @${previewHandle}'s Live Profile` : "See Live Creator Profile"}
           </h2>
           <p className="mt-2 text-sm font-medium text-[#64748b]">
             Explore complete creator series, shop & affiliate products, combined fanbase & brand collab cards.
           </p>
 
-          <div data-scroll-reveal style={{ "--reveal-delay": "120ms" } as CSSProperties} className="group mx-auto mt-8 max-w-[650px] rounded-[24px] border border-[#043084]/12 bg-[#043084] p-2 shadow-[0_30px_90px_rgba(21,25,51,0.22)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_42px_110px_rgba(21,25,51,0.28)] sm:p-3">
-            <div className="mb-3 flex items-center justify-between rounded-[10px] border border-[#e2e8f0] bg-[#f8fafc] px-3 py-2">
+          <div data-scroll-reveal style={{ "--reveal-delay": "120ms" } as CSSProperties} className="group mx-auto mt-8 max-w-[650px] rounded-[24px] border border-[#7A2253]/15 bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] p-2 shadow-[0_30px_90px_rgba(122,34,83,0.22)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_42px_110px_rgba(122,34,83,0.28)] sm:p-3">
+            <div className="mb-3 flex items-center justify-between rounded-[10px] border border-white/20 bg-white/10 backdrop-blur-md px-3 py-2">
               <div className="flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-[#043084]/25" />
-                <span className="h-2.5 w-2.5 rounded-full bg-[#043084]/40" />
-                <span className="h-2.5 w-2.5 rounded-full bg-[#043084]/60" />
+                <span className="h-2.5 w-2.5 rounded-full bg-white/40" />
+                <span className="h-2.5 w-2.5 rounded-full bg-white/60" />
+                <span className="h-2.5 w-2.5 rounded-full bg-white/80" />
               </div>
-              <span className="rounded-full bg-white px-3 py-0.5 text-[11px] font-bold text-[#64748b] ring-1 ring-[#e2e8f0]">
+              <span className="rounded-full bg-white px-3 py-0.5 text-[11px] font-bold text-[#7A2253] ring-1 ring-white/20 shadow-xs">
                 inflixo.com/{previewHandle}
               </span>
               <span className="w-10" />
@@ -542,7 +542,7 @@ export default function LandingHomePage() {
           <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
             <div data-scroll-reveal>
               <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#94a3b8]">How It Works</p>
-              <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-[#043084] sm:text-5xl">
+              <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-[#7A2253] sm:text-5xl">
                 Make your videos easy to watch in order.
               </h2>
               <p className="mt-3 text-sm font-medium leading-relaxed text-[#64748b]">
@@ -556,17 +556,17 @@ export default function LandingHomePage() {
                   key={step.title}
                   data-scroll-reveal
                   style={{ "--reveal-delay": `${index * 90}ms` } as CSSProperties}
-                  className="group relative overflow-hidden rounded-[16px] border border-[#e2e8f0] bg-white p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#043084] hover:shadow-[0_18px_45px_rgba(4,48,132,0.10)]"
+                  className="group relative overflow-hidden rounded-[16px] border border-[#e2e8f0] bg-white p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#7A2253] hover:shadow-[0_18px_45px_rgba(122,34,83,0.10)]"
                 >
-                  <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#043084]/25 transition-colors duration-300 group-hover:bg-[#043084]" aria-hidden="true" />
-                  <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#043084]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
+                  <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] opacity-30 transition-opacity duration-300 group-hover:opacity-100" aria-hidden="true" />
+                  <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#7A2253]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
                   <div className="flex items-start gap-4">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] bg-[#043084] font-display text-sm font-black text-white">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] font-display text-sm font-black text-white shadow-xs">
                       0{index + 1}
                     </div>
                     <div className="min-w-0">
                       <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[#94a3b8]">{step.label}</p>
-                      <h3 className="mt-1 font-display text-lg font-black text-[#043084]">{step.title}</h3>
+                      <h3 className="mt-1 font-display text-lg font-black text-[#7A2253]">{step.title}</h3>
                       <p className="mt-1 text-xs font-medium leading-relaxed text-[#64748b]">{step.text}</p>
                     </div>
                   </div>
@@ -581,7 +581,7 @@ export default function LandingHomePage() {
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <div data-scroll-reveal className="mx-auto max-w-2xl text-center">
             <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#94a3b8]">The Problem</p>
-            <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-[#043084] sm:text-5xl">
+            <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-[#7A2253] sm:text-5xl">
               Your best videos get lost in the feed
             </h2>
             <p className="mt-3 text-sm font-medium text-[#64748b]">
@@ -596,20 +596,20 @@ export default function LandingHomePage() {
               <ul className="mt-4 space-y-2 text-sm font-semibold text-[#64748b]">
                 {["Part 1, 2, and 3 get scattered in your feed", "Fans keep asking 'Where is the next part?'", "No place to showcase gear & affiliate links", "Bio has too many messy, confusing links", "No simple way to prove total reach to brands"].map((item) => (
                   <li key={item} className="flex gap-2">
-                    <X className="mt-0.5 h-4 w-4 shrink-0 text-[#043084]" />
+                    <X className="mt-0.5 h-4 w-4 shrink-0 text-[#7A2253]" />
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div data-scroll-reveal style={{ "--reveal-delay": "160ms" } as CSSProperties} className="group relative overflow-hidden rounded-[16px] border border-[#043084] bg-white p-5 text-left shadow-[0_18px_45px_rgba(21,25,51,0.10)] transition-all hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(21,25,51,0.14)]">
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#043084]" aria-hidden="true" />
-              <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#043084]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
-              <h3 className="font-display text-base font-black text-[#043084]">With Inflixo</h3>
+            <div data-scroll-reveal style={{ "--reveal-delay": "160ms" } as CSSProperties} className="group relative overflow-hidden rounded-[16px] border border-[#7A2253] bg-white p-5 text-left shadow-[0_18px_45px_rgba(122,34,83,0.10)] transition-all hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(122,34,83,0.14)]">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]" aria-hidden="true" />
+              <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#7A2253]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
+              <h3 className="font-display text-base font-black text-[#7A2253]">With Inflixo</h3>
               <ul className="mt-4 space-y-2 text-sm font-semibold text-[#334155]">
                 {["Organized series with Part 1, 2, 3 in order", "One simple link: inflixo.com/yourname", "Integrated Shop for digital products & affiliate gear", "Views stay 100% on your original platform", "Live fanbase counter and brand rate cards"].map((item) => (
                   <li key={item} className="flex gap-2">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#043084]" />
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#7A2253]" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -623,7 +623,7 @@ export default function LandingHomePage() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div data-scroll-reveal className="mx-auto max-w-2xl text-center">
             <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#94a3b8]">Creator Tools</p>
-            <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-[#043084] sm:text-5xl">
+            <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-[#7A2253] sm:text-5xl">
               Everything a video creator needs
             </h2>
             <p className="mt-3 text-sm font-medium text-[#64748b]">
@@ -633,13 +633,13 @@ export default function LandingHomePage() {
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {PILLARS.map((pillar, index) => (
-              <div key={pillar.title} data-scroll-reveal style={{ "--reveal-delay": `${index * 70}ms` } as CSSProperties} className="group relative overflow-hidden rounded-[16px] border border-[#043084]/15 bg-white p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#043084] hover:shadow-[0_20px_50px_rgba(4,48,132,0.12)]">
-                <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#043084]" aria-hidden="true" />
-                <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#043084]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
-                <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[#043084] text-white transition-transform duration-300 group-hover:rotate-3">
+              <div key={pillar.title} data-scroll-reveal style={{ "--reveal-delay": `${index * 70}ms` } as CSSProperties} className="group relative overflow-hidden rounded-[16px] border border-[#7A2253]/15 bg-white p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#7A2253] hover:shadow-[0_20px_50px_rgba(122,34,83,0.12)]">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]" aria-hidden="true" />
+                <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#7A2253]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
+                <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white transition-transform duration-300 group-hover:rotate-3">
                   <pillar.icon className="h-4 w-4" />
                 </div>
-                <h3 className="mt-4 font-display text-base font-black text-[#043084]">{pillar.title}</h3>
+                <h3 className="mt-4 font-display text-base font-black text-[#7A2253]">{pillar.title}</h3>
                 <p className="mt-2 text-xs font-medium leading-relaxed text-[#64748b]">{pillar.text}</p>
               </div>
             ))}
@@ -647,7 +647,7 @@ export default function LandingHomePage() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-white py-14 text-[#043084] sm:py-20">
+      <section className="relative overflow-hidden bg-white py-14 text-[#7A2253] sm:py-20">
         <div className="pointer-events-none absolute inset-0 opacity-60" aria-hidden="true">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(21,25,51,0.045)_1px,transparent_1px),linear-gradient(to_bottom,rgba(21,25,51,0.045)_1px,transparent_1px)] bg-[size:42px_42px]" />
           <div className="absolute inset-x-0 top-10 h-px bg-[linear-gradient(90deg,transparent,rgba(21,25,51,0.25),transparent)] [animation:infixo-scan-x_7s_ease-in-out_infinite]" />
@@ -659,8 +659,8 @@ export default function LandingHomePage() {
               Built for Indian creators.
             </h2>
           </div>
-          <div data-scroll-reveal style={{ "--reveal-delay": "120ms" } as CSSProperties} className="group relative overflow-hidden rounded-[18px] border border-[#043084]/15 bg-white p-5 text-left shadow-[0_20px_60px_rgba(4,48,132,0.08)] sm:p-7 transition-all duration-300 hover:-translate-y-1 hover:border-[#043084]">
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#043084]" aria-hidden="true" />
+          <div data-scroll-reveal style={{ "--reveal-delay": "120ms" } as CSSProperties} className="group relative overflow-hidden rounded-[18px] border border-[#7A2253]/15 bg-white p-5 text-left shadow-[0_20px_60px_rgba(122,34,83,0.08)] sm:p-7 transition-all duration-300 hover:-translate-y-1 hover:border-[#7A2253]">
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]" aria-hidden="true" />
             <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#043084]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
             <p className="text-sm font-medium leading-relaxed text-[#334155] sm:text-base">
               Our mission is to help creators organize their best work, reach new fans, and earn with confidence.
@@ -676,20 +676,20 @@ export default function LandingHomePage() {
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <div data-scroll-reveal className="text-center">
             <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#94a3b8]">Simple Pricing</p>
-            <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-[#043084] sm:text-5xl">
+            <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-[#7A2253] sm:text-5xl">
               Start free. Grow with your fans.
             </h2>
             <p className="mt-3 text-sm font-medium text-[#64748b]">Try all features free for 7 days. Upgrade anytime to keep your creator profile live.</p>
           </div>
 
           <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div data-scroll-reveal style={{ "--reveal-delay": "80ms" } as CSSProperties} className="group relative overflow-hidden flex flex-col justify-between rounded-[16px] border border-[#043084]/20 bg-white p-7 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-[#043084] hover:shadow-[0_22px_60px_rgba(4,48,132,0.12)]">
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#043084]" aria-hidden="true" />
-              <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#043084]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
+            <div data-scroll-reveal style={{ "--reveal-delay": "80ms" } as CSSProperties} className="group relative overflow-hidden flex flex-col justify-between rounded-[16px] border border-[#7A2253]/20 bg-white p-7 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-[#7A2253] hover:shadow-[0_22px_60px_rgba(122,34,83,0.12)]">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]" aria-hidden="true" />
+              <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#7A2253]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
               <div>
-                <h3 className="font-display text-xl font-black text-[#043084]">Free Trial</h3>
+                <h3 className="font-display text-xl font-black text-[#7A2253]">Free Trial</h3>
                 <p className="mt-1 text-sm font-medium text-[#64748b]">Try your public creator profile for 7 days.</p>
-                <p className="mt-7 font-display text-5xl font-black text-[#043084]">₹0</p>
+                <p className="mt-7 font-display text-5xl font-black text-[#7A2253]">₹0</p>
                 <p className="mt-1 text-xs font-semibold text-[#64748b]">7 days public</p>
                 <ul className="mt-7 space-y-2 text-sm font-semibold text-[#334155]">
                   {[
@@ -701,25 +701,25 @@ export default function LandingHomePage() {
                     "Free themes & social stats fetch",
                     "Inflixo branding",
                   ].map((item) => (
-                    <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-[#043084]" />{item}</li>
+                    <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-[#7A2253]" />{item}</li>
                   ))}
                 </ul>
                 <div className="mt-5 rounded-[8px] border border-amber-200 bg-amber-50/70 p-3 text-xs font-semibold text-amber-900 leading-relaxed">
                   After 7 days trial, your profile goes private, your fans can&apos;t see it.
                 </div>
               </div>
-              <button onClick={() => handleClaim(username)} className="group mt-7 w-full rounded-[8px] bg-[#043084] px-5 py-3 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-[0_14px_35px_rgba(21,25,51,0.20)] cursor-pointer">
+              <button onClick={() => handleClaim(username)} className="group mt-7 w-full rounded-[8px] bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-5 py-3 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:opacity-95 hover:shadow-[0_14px_35px_rgba(122,34,83,0.25)] cursor-pointer">
                 Build Free Profile
               </button>
             </div>
 
-            <div data-scroll-reveal style={{ "--reveal-delay": "120ms" } as CSSProperties} className="group relative overflow-hidden flex flex-col justify-between rounded-[16px] border border-[#043084]/20 bg-white p-7 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-[#043084] hover:shadow-[0_22px_60px_rgba(4,48,132,0.12)]">
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#043084]" aria-hidden="true" />
-              <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#043084]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
+            <div data-scroll-reveal style={{ "--reveal-delay": "120ms" } as CSSProperties} className="group relative overflow-hidden flex flex-col justify-between rounded-[16px] border border-[#7A2253]/20 bg-white p-7 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-[#7A2253] hover:shadow-[0_22px_60px_rgba(122,34,83,0.12)]">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]" aria-hidden="true" />
+              <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#7A2253]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
               <div>
-                <h3 className="font-display text-xl font-black text-[#043084]">Starter</h3>
+                <h3 className="font-display text-xl font-black text-[#7A2253]">Starter</h3>
                 <p className="mt-1 text-sm font-medium text-[#64748b]">Keep your public profile live after trial.</p>
-                <p className="mt-7 font-display text-5xl font-black text-[#043084]">{formatPlanPrice("starter", "monthly", pricingCurrency)}</p>
+                <p className="mt-7 font-display text-5xl font-black text-[#7A2253]">{formatPlanPrice("starter", "monthly", pricingCurrency)}</p>
                 <p className="mt-1 text-xs font-semibold text-[#64748b]">/month or {formatPlanPrice("starter", "yearly", pricingCurrency)}/year</p>
                 <ul className="mt-7 space-y-2 text-sm font-semibold text-[#334155]">
                   {[
@@ -731,22 +731,22 @@ export default function LandingHomePage() {
                     "Free themes & social stats fetch",
                     "Inflixo branding",
                   ].map((item) => (
-                    <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-[#043084]" />{item}</li>
+                    <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-[#7A2253]" />{item}</li>
                   ))}
                 </ul>
               </div>
-              <button onClick={() => handleClaim(username)} className="group mt-7 w-full rounded-[8px] border border-[#043084] bg-white px-5 py-3 text-sm font-black text-[#043084] transition-all hover:-translate-y-0.5 hover:bg-[#043084] hover:text-white hover:shadow-[0_14px_35px_rgba(21,25,51,0.16)] cursor-pointer">
+              <button onClick={() => handleClaim(username)} className="group mt-7 w-full rounded-[8px] border border-[#7A2253] bg-white px-5 py-3 text-sm font-black text-[#7A2253] transition-all hover:-translate-y-0.5 hover:bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:text-white hover:shadow-[0_14px_35px_rgba(122,34,83,0.20)] cursor-pointer">
                 Keep Profile Public
               </button>
             </div>
 
-            <div data-scroll-reveal style={{ "--reveal-delay": "160ms" } as CSSProperties} className="group relative overflow-hidden flex flex-col justify-between rounded-[16px] border border-[#043084]/20 bg-white p-7 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-[#043084] hover:shadow-[0_22px_60px_rgba(4,48,132,0.12)]">
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#043084]" aria-hidden="true" />
-              <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#043084]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
+            <div data-scroll-reveal style={{ "--reveal-delay": "160ms" } as CSSProperties} className="group relative overflow-hidden flex flex-col justify-between rounded-[16px] border border-[#7A2253]/20 bg-white p-7 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-[#7A2253] hover:shadow-[0_22px_60px_rgba(122,34,83,0.12)]">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]" aria-hidden="true" />
+              <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#7A2253]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
               <div>
-                <h3 className="font-display text-xl font-black text-[#043084]">Pro</h3>
+                <h3 className="font-display text-xl font-black text-[#7A2253]">Pro</h3>
                 <p className="mt-1 text-sm font-medium text-[#64748b]">For active creators who publish regular series, sell products and work with brands.</p>
-                <p className="mt-7 font-display text-5xl font-black text-[#043084]">{formatPlanPrice("pro", "monthly", pricingCurrency)}</p>
+                <p className="mt-7 font-display text-5xl font-black text-[#7A2253]">{formatPlanPrice("pro", "monthly", pricingCurrency)}</p>
                 <p className="mt-1 text-xs font-semibold text-[#64748b]">/month or {formatPlanPrice("pro", "yearly", pricingCurrency)}/year</p>
                 <ul className="mt-7 space-y-2 text-sm font-semibold text-[#334155]">
                   {[
@@ -757,23 +757,23 @@ export default function LandingHomePage() {
                     "10 reviews & rate card access",
                     "Default media kit & weekly stats refresh",
                   ].map((item) => (
-                    <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-[#043084]" />{item}</li>
+                    <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-[#7A2253]" />{item}</li>
                   ))}
                 </ul>
               </div>
-              <button onClick={() => handleClaim(username)} className="mt-7 w-full rounded-[8px] bg-[#043084] px-5 py-3 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-[0_14px_35px_rgba(21,25,51,0.20)] cursor-pointer">
+              <button onClick={() => handleClaim(username)} className="mt-7 w-full rounded-[8px] bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-5 py-3 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:opacity-95 hover:shadow-[0_14px_35px_rgba(122,34,83,0.25)] cursor-pointer">
                 Get Started with Pro
               </button>
             </div>
 
-            <div data-scroll-reveal style={{ "--reveal-delay": "200ms" } as CSSProperties} className="group relative overflow-hidden flex flex-col justify-between rounded-[16px] border-2 border-[#043084] bg-white p-7 text-left shadow-[0_16px_40px_rgba(4,48,132,0.12)] transition-all hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(4,48,132,0.18)]">
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-1.5 bg-[#043084]" aria-hidden="true" />
-              <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#043084]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
+            <div data-scroll-reveal style={{ "--reveal-delay": "200ms" } as CSSProperties} className="group relative overflow-hidden flex flex-col justify-between rounded-[16px] border-2 border-[#7A2253] bg-white p-7 text-left shadow-[0_16px_40px_rgba(122,34,83,0.12)] transition-all hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(122,34,83,0.18)]">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-1.5 bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]" aria-hidden="true" />
+              <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#7A2253]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
               <div>
-                <span className="absolute top-5 right-5 rounded-full bg-[#043084] px-3 py-1 text-[10px] font-black uppercase tracking-wide text-white">Recommended</span>
-                <h3 className="font-display text-xl font-black text-[#043084]">VIP</h3>
+                <span className="absolute top-5 right-5 rounded-full bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-3 py-1 text-[10px] font-black uppercase tracking-wide text-white shadow-xs">Recommended</span>
+                <h3 className="font-display text-xl font-black text-[#7A2253]">VIP</h3>
                 <p className="mt-1 text-sm font-medium text-[#64748b]">Unlimited series, products, custom media kit, and premium creator tools.</p>
-                <p className="mt-7 font-display text-5xl font-black text-[#043084]">{formatPlanPrice("vip", "monthly", pricingCurrency)}</p>
+                <p className="mt-7 font-display text-5xl font-black text-[#7A2253]">{formatPlanPrice("vip", "monthly", pricingCurrency)}</p>
                 <p className="mt-1 text-xs font-semibold text-[#64748b]">/month or {formatPlanPrice("vip", "yearly", pricingCurrency)}/year</p>
                 <ul className="mt-7 space-y-2 text-sm font-semibold text-[#334155]">
                   {[
@@ -785,11 +785,11 @@ export default function LandingHomePage() {
                     "Premium themes & daily stats refresh",
                     "Priority support",
                   ].map((item) => (
-                    <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-[#043084]" />{item}</li>
+                    <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-[#7A2253]" />{item}</li>
                   ))}
                 </ul>
               </div>
-              <button onClick={() => handleClaim(username)} className="group mt-7 w-full rounded-[8px] bg-[#043084] px-5 py-3 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-[0_14px_35px_rgba(21,25,51,0.20)] cursor-pointer">
+              <button onClick={() => handleClaim(username)} className="group mt-7 w-full rounded-[8px] bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-5 py-3 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:opacity-95 hover:shadow-[0_14px_35px_rgba(122,34,83,0.25)] cursor-pointer">
                 Go VIP
               </button>
             </div>
@@ -801,21 +801,21 @@ export default function LandingHomePage() {
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <div data-scroll-reveal className="text-center">
             <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#94a3b8]">FAQ</p>
-            <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-[#043084] sm:text-5xl">Frequently Asked Questions</h2>
+            <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-[#7A2253] sm:text-5xl">Frequently Asked Questions</h2>
           </div>
           <div className="mt-9 space-y-3">
             {FAQS.map((faq, index) => {
               const isOpen = openFaqIndex === index;
               return (
-                <div key={faq.q} data-scroll-reveal style={{ "--reveal-delay": `${index * 55}ms` } as CSSProperties} className="overflow-hidden rounded-[12px] border border-[#e2e8f0] bg-white text-left shadow-sm transition-all hover:border-[#043084]/20 hover:shadow-[0_14px_35px_rgba(21,25,51,0.07)]">
+                <div key={faq.q} data-scroll-reveal style={{ "--reveal-delay": `${index * 55}ms` } as CSSProperties} className="overflow-hidden rounded-[12px] border border-[#e2e8f0] bg-white text-left shadow-sm transition-all hover:border-[#7A2253]/20 hover:shadow-[0_14px_35px_rgba(122,34,83,0.07)]">
                   <button
                     type="button"
                     onClick={() => setOpenFaqIndex(isOpen ? -1 : index)}
                     className="flex w-full items-center justify-between gap-4 p-5 text-left"
                     aria-expanded={isOpen}
                   >
-                    <span className="font-display text-sm font-black text-[#043084]">{faq.q}</span>
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#f1f5f9] text-lg font-black leading-none text-[#043084]">
+                    <span className="font-display text-sm font-black text-[#7A2253]">{faq.q}</span>
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#fdf2f8] text-lg font-black leading-none text-[#7A2253]">
                       {isOpen ? "−" : "+"}
                     </span>
                   </button>
@@ -831,7 +831,7 @@ export default function LandingHomePage() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-[#043084] py-16 text-center sm:py-24">
+      <section className="relative overflow-hidden bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] py-16 text-center sm:py-24">
         <div className="pointer-events-none absolute inset-0 opacity-25" aria-hidden="true">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:40px_40px]" />
           <div className="absolute inset-x-0 top-1/2 h-px bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.6),transparent)] [animation:infixo-scan-x_6s_ease-in-out_infinite]" />
@@ -840,10 +840,10 @@ export default function LandingHomePage() {
           <h2 className="relative font-display text-3xl font-black tracking-tight text-white sm:text-5xl">
             Make it easy for fans to watch your videos.
           </h2>
-          <p className="relative mx-auto mt-3 max-w-xl text-sm font-medium leading-relaxed text-white/70">
+          <p className="relative mx-auto mt-3 max-w-xl text-sm font-medium leading-relaxed text-white/80">
             Create your custom link in 2 minutes. Organize your series, showcase your reach, and start your 7-day free trial.
           </p>
-          <button onClick={() => handleClaim(username)} className="relative mt-8 inline-flex items-center gap-2 rounded-[10px] bg-white px-5 py-3 text-sm font-black text-[#043084] transition-transform hover:scale-[1.02] cursor-pointer">
+          <button onClick={() => handleClaim(username)} className="relative mt-8 inline-flex items-center gap-2 rounded-[10px] bg-white px-5 py-3 text-sm font-black text-[#7A2253] shadow-md transition-transform hover:scale-[1.02] cursor-pointer">
             Create Your Inflixo
             <ArrowRight className="h-4 w-4" />
           </button>
@@ -867,7 +867,7 @@ export default function LandingHomePage() {
       </footer>
 
       <div className={`fixed bottom-6 right-6 z-40 transition-all duration-300 ${showScrollTop ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"}`}>
-        <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-1.5 rounded-full border border-[#e2e8f0] bg-white px-3 py-2 text-xs font-black text-[#043084] shadow-sm">
+        <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-1.5 rounded-full border border-[#e2e8f0] bg-white px-3 py-2 text-xs font-black text-[#7A2253] shadow-sm">
           <ArrowUp className="h-4 w-4" />
           <span className="hidden sm:inline">Top</span>
         </button>

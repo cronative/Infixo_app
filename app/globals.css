@@ -10,20 +10,21 @@
   --color-muted-surface: #e2e8f0;
 
   /* TEXT */
-  --color-ink: #043084;
+  --color-ink: #7A2253;
   --color-ink-muted: #475569;
   --color-caption: #64748b;
   --color-very-muted: #94a3b8;
 
   /* BRAND & BUTTONS */
-  --color-primary: #043084;
-  --color-primary-hover: #03256c;
-  --color-primary-tint: #eff6ff;
+  --color-primary: #7A2253;
+  --color-primary-hover: #5d193f;
+  --color-primary-tint: #fdf2f8;
+  --color-primary-gradient: linear-gradient(90deg, #7A2253 0%, #B0437A 100%);
 
   /* BORDERS & DIVIDERS */
   --color-border: #e2e8f0;
   --color-border-hover: #cbd5e1;
-  --color-border-active: #043084;
+  --color-border-active: #7A2253;
 
   /* STATUS COLORS */
   --color-success: #10b981;
@@ -64,7 +65,7 @@
   --primary-soft: var(--color-primary-tint);
   --inflixo-purple: var(--color-primary);
   --inflixo-purple-dark: var(--color-primary-hover);
-  --inflixo-purple-secondary: var(--color-primary);
+  --inflixo-purple-secondary: #B0437A;
   --inflixo-purple-light: var(--color-primary-tint);
   --inflixo-lavender: var(--color-surface-alt);
   --inflixo-blue: #1877f2;
@@ -77,38 +78,48 @@
   --radius-input: 12px;
 
   /* Shadows */
-  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(4, 48, 132, 0.03);
-  --shadow-elevated: 0 12px 30px rgba(4, 48, 132, 0.08);
-  --shadow-premium: 0 12px 30px rgba(4, 48, 132, 0.08);
-  --shadow-hover: 0 4px 16px rgba(4, 48, 132, 0.08);
+  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(122, 34, 83, 0.04);
+  --shadow-elevated: 0 12px 30px rgba(122, 34, 83, 0.09);
+  --shadow-premium: 0 12px 30px rgba(122, 34, 83, 0.09);
+  --shadow-hover: 0 4px 16px rgba(122, 34, 83, 0.09);
 
-  --gradient-premium: linear-gradient(135deg, #043084 0%, #0284c7 100%);
-  --gradient-gold: linear-gradient(135deg, #043084 0%, #38bdf8 100%);
-  --gradient-energy: linear-gradient(135deg, #043084 0%, #00b4d8 100%);
+  --gradient-premium: linear-gradient(90deg, #7A2253 0%, #B0437A 100%);
+  --gradient-gold: linear-gradient(135deg, #7A2253 0%, #d946ef 100%);
+  --gradient-energy: linear-gradient(90deg, #7A2253 0%, #B0437A 100%);
 
   /* Global Design Tokens */
   --bg-page: #ffffff;
   --bg-surface: #ffffff;
   --bg-card: #ffffff;
-  --bg-card-hover: #f1f5f9;
+  --bg-card-hover: #fdf2f8;
   --bg-muted: #e2e8f0;
-  --text-primary: #043084;
+  --text-primary: #7A2253;
   --text-secondary: #475569;
   --text-muted: #64748b;
   --border-card: #e2e8f0;
-  --border-card-hover: #cbd5e1;
-  --accent-color: #043084;
-  --accent-glow: rgba(4, 48, 132, 0.15);
-  --btn-primary-bg: #043084;
-  --btn-primary-hover: #03256c;
+  --border-card-hover: #fbcfe8;
+  --accent-color: #7A2253;
+  --accent-glow: rgba(122, 34, 83, 0.18);
+  --btn-primary-bg: linear-gradient(90deg, #7A2253 0%, #B0437A 100%);
+  --btn-primary-hover: linear-gradient(90deg, #631942 0%, #9c386b 100%);
   --btn-primary-text: #ffffff;
-  --badge-bg: #eff6ff;
-  --badge-text: #043084;
-  --badge-border: #dbeafe;
-  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(4, 48, 132, 0.03);
+  --badge-bg: #fdf2f8;
+  --badge-text: #7A2253;
+  --badge-border: #fbcfe8;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(122, 34, 83, 0.04);
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
+}
+
+.bg-primary-gradient {
+  background: linear-gradient(90deg, #7A2253 0%, #B0437A 100%) !important;
+}
+
+.text-primary-gradient {
+  background: linear-gradient(90deg, #7A2253 0%, #B0437A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .theme-bg-taj-mahal {

@@ -270,12 +270,12 @@ export function Logo({
   const badgeStyles = isTransparent
     ? "bg-transparent"
     : ({
-        gradient: "bg-[#043084]",
-        black: "bg-[#043084]",
-        brand: "bg-[#043084]",
+        gradient: "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]",
+        black: "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]",
+        brand: "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]",
         white: "bg-white border border-[#e2e8f0]",
-        color: "bg-[#eff6ff] border border-[#dbeafe]",
-      }[variant] || "bg-[#043084]");
+        color: "bg-[#fdf2f8] border border-[#fbcfe8]",
+      }[variant] || "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]");
 
   /**
    * ============================================================
@@ -329,9 +329,9 @@ export function Logo({
             className={`
               ${iconSize}
               ${variant === "white"
-                ? "text-[#043084]"
+                ? "text-[#7A2253]"
                 : variant === "transparent"
-                ? (light ? "text-white" : "text-[#043084]")
+                ? (light ? "text-white" : "text-[#7A2253]")
                 : "text-white"
               }
             `}
@@ -358,7 +358,7 @@ export function Logo({
             transition-colors
             ${light
               ? "text-white"
-              : "text-[#043084]"
+              : "text-[#7A2253]"
             }
           `}
         >

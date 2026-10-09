@@ -134,7 +134,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
-  themeColor: "#043084",
+  themeColor: "#7A2253",
 };
 
 const jsonLd = {
