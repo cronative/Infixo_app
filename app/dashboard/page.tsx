@@ -10,13 +10,23 @@ import {
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
-import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
+import {
+  InstagramIcon,
+  YoutubeIcon,
+  FacebookIcon,
+  XTwitterIcon,
+  LinkedinIcon,
+  ThreadsIcon,
+  SpotifyIcon,
+} from "@/components/shared/BrandIcons";
 import { QRCode } from "@/components/creator-card/QRCode";
 import { Modal, ModalBody } from "@/components/ui/Modal";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { formatSimplifiedSyncDate } from "@/lib/socialSyncDate";
 import { buildProfileUrl, formatCount, formatQuantity } from "@/utils/format";
+import { SocialService } from "@/services/SocialService";
 import type { DashboardSummary } from "@/lib/dashboardSummary";
+import type { SocialAccounts } from "@/types";
 
 const adminBtnClass =
   "inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-300 active:scale-98 cursor-pointer";
@@ -25,8 +35,19 @@ function MetricSkeleton({ small = false }: { small?: boolean }) {
   return <span aria-hidden="true" className={`block animate-pulse rounded bg-slate-100 ${small ? "h-3 w-16" : "h-6 w-20"}`} />;
 }
 
+function extractUsername(url?: string | null): string {
+  if (!url) return "";
+  const cleaned = url.trim();
+  if (cleaned.includes("/")) {
+    const parts = cleaned.split("/").filter(Boolean);
+    const last = parts[parts.length - 1];
+    return last.replace(/^@/, "");
+  }
+  return cleaned.replace(/^@/, "");
+}
+
 export default function DashboardOverviewPage() {
-  const { profile, loading: profileLoading, series } = useCreator();
+  const { profile, socials, totalAudience, loading: profileLoading, series } = useCreator();
   const { showToast } = useToast();
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -95,19 +116,121 @@ export default function DashboardOverviewPage() {
     showToast(success ? "Bio link copied to clipboard! ✨" : "Could not copy link", success ? "success" : "error");
   }
 
-  const socialSummary = summary?.socials;
-  const platforms = socialSummary
-    ? Object.entries(socialSummary.accounts).flatMap(([key, value]) => {
-        if (!value || typeof value !== "object" || !("url" in value)) return [];
-        const account = value as { url?: string; username?: string; followers?: number; subscribers?: number; lastSyncedAt?: string };
-        const count = account.subscribers ?? account.followers ?? 0;
-        if (!account.url && !account.username && !count) return [];
-        const username = account.username || account.url?.split("/").filter(Boolean).pop() || key;
-        return [{ key, username: username.replace(/^@/, ""), count, syncedAt: account.lastSyncedAt || socialSummary.accounts.updatedAt }];
-      })
-    : [];
+  // Effective socials combining useCreator() and summary (instant paint + live sync)
+  const effectiveSocials: SocialAccounts = {
+    ...socials,
+    ...(summary?.socials?.accounts || {}),
+  };
 
-  const syncedAt = socialSummary?.accounts.updatedAt;
+  const effectiveTotalAudience =
+    totalAudience > 0
+      ? totalAudience
+      : summary?.socials?.total && summary.socials.total > 0
+      ? summary.socials.total
+      : SocialService.calculateTotalAudience(effectiveSocials);
+
+  // Extract platforms cleanly from effectiveSocials
+  const platforms: Array<{
+    key: string;
+    label: string;
+    username: string;
+    count: number;
+    unit: string;
+    syncedAt?: string;
+  }> = [];
+
+  const igHandle = effectiveSocials.instagram?.username || extractUsername(effectiveSocials.instagram?.url);
+  const igFollowers = Number(effectiveSocials.instagram?.followers ?? 0);
+  if (igHandle || igFollowers > 0 || effectiveSocials.instagram?.url) {
+    platforms.push({
+      key: "instagram",
+      label: "Instagram",
+      username: igHandle || "instagram",
+      count: igFollowers,
+      unit: "followers",
+      syncedAt: effectiveSocials.instagram?.lastSyncedAt || effectiveSocials.updatedAt,
+    });
+  }
+
+  const ytHandle = effectiveSocials.youtube?.username || effectiveSocials.youtube?.channelTitle || extractUsername(effectiveSocials.youtube?.url);
+  const ytSubs = Number(effectiveSocials.youtube?.subscribers ?? effectiveSocials.youtube?.followers ?? 0);
+  if (ytHandle || ytSubs > 0 || effectiveSocials.youtube?.url) {
+    platforms.push({
+      key: "youtube",
+      label: "YouTube",
+      username: ytHandle || "youtube",
+      count: ytSubs,
+      unit: "subscribers",
+      syncedAt: effectiveSocials.youtube?.lastSyncedAt || effectiveSocials.updatedAt,
+    });
+  }
+
+  const fbHandle = effectiveSocials.facebook?.username || effectiveSocials.facebook?.name || extractUsername(effectiveSocials.facebook?.url);
+  const fbFollowers = Number(effectiveSocials.facebook?.followers ?? 0);
+  if (fbHandle || fbFollowers > 0 || effectiveSocials.facebook?.url) {
+    platforms.push({
+      key: "facebook",
+      label: "Facebook",
+      username: fbHandle || "facebook",
+      count: fbFollowers,
+      unit: "followers",
+      syncedAt: effectiveSocials.facebook?.lastSyncedAt || effectiveSocials.updatedAt,
+    });
+  }
+
+  const twHandle = effectiveSocials.twitter?.username || extractUsername(effectiveSocials.twitter?.url);
+  const twFollowers = Number(effectiveSocials.twitter?.followers ?? 0);
+  if (twHandle || twFollowers > 0 || effectiveSocials.twitter?.url) {
+    platforms.push({
+      key: "twitter",
+      label: "X (Twitter)",
+      username: twHandle || "x",
+      count: twFollowers,
+      unit: "followers",
+      syncedAt: effectiveSocials.twitter?.lastSyncedAt,
+    });
+  }
+
+  const liHandle = effectiveSocials.linkedin?.username || extractUsername(effectiveSocials.linkedin?.url);
+  const liFollowers = Number(effectiveSocials.linkedin?.followers ?? 0);
+  if (liHandle || liFollowers > 0 || effectiveSocials.linkedin?.url) {
+    platforms.push({
+      key: "linkedin",
+      label: "LinkedIn",
+      username: liHandle || "linkedin",
+      count: liFollowers,
+      unit: "connections",
+      syncedAt: effectiveSocials.linkedin?.lastSyncedAt,
+    });
+  }
+
+  const thHandle = effectiveSocials.threads?.username || extractUsername(effectiveSocials.threads?.url);
+  const thFollowers = Number(effectiveSocials.threads?.followers ?? 0);
+  if (thHandle || thFollowers > 0 || effectiveSocials.threads?.url) {
+    platforms.push({
+      key: "threads",
+      label: "Threads",
+      username: thHandle || "threads",
+      count: thFollowers,
+      unit: "followers",
+      syncedAt: effectiveSocials.threads?.lastSyncedAt,
+    });
+  }
+
+  const spHandle = effectiveSocials.spotify?.username || extractUsername(effectiveSocials.spotify?.url);
+  const spFollowers = Number(effectiveSocials.spotify?.followers ?? 0);
+  if (spHandle || spFollowers > 0 || effectiveSocials.spotify?.url) {
+    platforms.push({
+      key: "spotify",
+      label: "Spotify",
+      username: spHandle || "spotify",
+      count: spFollowers,
+      unit: "listeners",
+      syncedAt: effectiveSocials.spotify?.lastSyncedAt,
+    });
+  }
+
+  const syncedAt = effectiveSocials.updatedAt;
   const lastSynced = syncedAt && Number.isFinite(Date.parse(syncedAt))
     ? new Date(syncedAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })
     : "Live";
@@ -231,7 +354,7 @@ export default function DashboardOverviewPage() {
             <Users className="h-3.5 w-3.5 text-[#7A2253]" />
           </div>
           <div className="mt-1 text-xl font-extrabold tracking-tight text-[#181716] tabular-nums sm:text-2xl">
-            {waiting ? <MetricSkeleton /> : socialSummary ? formatCount(socialSummary.total) : "0"}
+            {waiting && effectiveTotalAudience === 0 ? <MetricSkeleton /> : formatCount(effectiveTotalAudience)}
           </div>
           <div className="mt-1.5 flex items-center justify-between text-[11px] text-slate-500">
             <span>{platforms.length > 0 ? `${platforms.length} platforms linked` : "No socials connected"}</span>
@@ -352,6 +475,14 @@ export default function DashboardOverviewPage() {
                       ? YoutubeIcon
                       : platform.key === "facebook"
                       ? FacebookIcon
+                      : platform.key === "twitter"
+                      ? XTwitterIcon
+                      : platform.key === "linkedin"
+                      ? LinkedinIcon
+                      : platform.key === "threads"
+                      ? ThreadsIcon
+                      : platform.key === "spotify"
+                      ? SpotifyIcon
                       : Users;
                   return (
                     <div key={platform.key} className="flex items-center justify-between py-2.5 first:pt-2.5 last:pb-0">
@@ -374,7 +505,7 @@ export default function DashboardOverviewPage() {
                           {formatCount(platform.count)}
                         </span>
                         <span className="ml-1 text-[10.5px] font-normal text-slate-500">
-                          {platform.key === "youtube" ? "subscribers" : "followers"}
+                          {platform.unit || (platform.key === "youtube" ? "subscribers" : "followers")}
                         </span>
                       </div>
                     </div>
