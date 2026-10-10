@@ -1797,7 +1797,7 @@ export function LivePreviewCard({
         </div>
 
         {/* 2. Total Fanbase Unified Card with Full-Width Platform Rows */}
-        {effectiveVisibilitySettings.showFanbase !== false && (totalAudience > 0 || fanbaseSocialCards.length > 0 || isOnboardingMode) && (
+        {effectiveVisibilitySettings.showFanbase !== false && (totalAudience > 0 || fanbaseSocialCards.length > 0) && (
           <div className="relative z-10 mt-5 sm:mt-6 w-full">
             <div
               style={{
@@ -2077,7 +2077,7 @@ export function LivePreviewCard({
         )}
 
         {/* 4. Series Section */}
-        {effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || isOnboardingMode || seriesOnlyMode) && (
+        {effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || seriesOnlyMode) && (
           <div id="series-section" className="relative z-10 order-[10] mt-6 sm:mt-7 w-full text-left space-y-2.5">
             {/* Section Header: Clean straight flex-row with baseline alignment */}
             <div>

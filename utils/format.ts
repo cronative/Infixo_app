@@ -73,10 +73,9 @@ export function buildSeriesUrl(username: string, seriesId: string): string {
 export function formatCategoryDots(category?: string | null, customCategory?: string | null): string {
   const raw = (category || customCategory || "").trim();
   if (!raw) return "";
-  if (raw.includes("·")) return raw;
-  return raw
-    .split(/[,/|&]+/)
+  const parts = raw
+    .split(/[,/|&·•]+/)
     .map((s) => s.trim().replace(/^Genre:\s*/i, ""))
-    .filter(Boolean)
-    .join(" · ");
+    .filter(Boolean);
+  return Array.from(new Set(parts)).slice(0, 3).join(" · ");
 }
