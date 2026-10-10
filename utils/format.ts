@@ -17,9 +17,7 @@ function trimDecimal(n: number): string {
 export function slugifyUsername(input: string): string {
   return input
     .toLowerCase()
-    .replace(/\s+/g, "_")
     .replace(/[^a-z0-9_]/g, "")
-    .replace(/_{2,}/g, "_")
     .slice(0, 30);
 }
 

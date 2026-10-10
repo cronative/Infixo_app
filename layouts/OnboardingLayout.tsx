@@ -95,23 +95,23 @@ export function OnboardingLayout({
             <Logo size="sm" />
           </div>
 
-          {/* Center: Subtle Verified Email Indicator */}
-          {email && (
-            <div className="flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-800 shadow-2xs">
-              <Check className="h-3 w-3 text-emerald-600 stroke-[3]" />
-              <span className="truncate max-w-[140px] sm:max-w-xs font-medium">{email}</span>
-            </div>
-          )}
-
-          {/* Right: Save & Logout */}
-          <button
-            onClick={handleSaveAndLogout}
-            className="tap-scale flex shrink-0 items-center gap-1.5 rounded-full border border-[#e2e8f0] bg-white px-2.5 py-1 text-xs font-bold text-[#475569] transition-all hover:border-[#cbd5e1] hover:bg-[#f8fafc] hover:text-[#7A2253] shadow-2xs cursor-pointer"
-          >
-            <LogOut className="h-3.5 w-3.5 text-[#64748b]" />
-            <span className="hidden sm:inline">Save &amp; logout</span>
-            <span className="sm:hidden">Logout</span>
-          </button>
+          {/* Right: Email indicator + Save & Logout */}
+          <div className="flex items-center gap-2">
+            {email && (
+              <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800 shadow-2xs">
+                <Check className="h-3 w-3 text-emerald-600 stroke-[3]" />
+                <span className="truncate max-w-[160px] font-medium">{email}</span>
+              </div>
+            )}
+            <button
+              onClick={handleSaveAndLogout}
+              className="tap-scale flex shrink-0 items-center gap-1.5 rounded-full border border-[#e2e8f0] bg-white px-2.5 py-1 text-xs font-bold text-[#475569] transition-all hover:border-[#cbd5e1] hover:bg-[#f8fafc] hover:text-[#7A2253] shadow-2xs cursor-pointer"
+            >
+              <LogOut className="h-3.5 w-3.5 text-[#64748b]" />
+              <span className="hidden sm:inline">Save &amp; logout</span>
+              <span className="sm:hidden">Logout</span>
+            </button>
+          </div>
         </div>
 
         {/* Subheader bar below Top Navbar containing step progress - Centered */}
@@ -125,23 +125,23 @@ export function OnboardingLayout({
       {/* Main Content Area with Natural Spacing Below Sticky Header */}
       <div className="w-full">
         {isFullWidthStep ? (
-          /* Full Screen / Full Width Layout for Subscription & Finish steps */
-          <div className="mx-auto max-w-full sm:max-w-[95%] w-full px-3 pb-6 pt-1.5 sm:px-6 sm:pb-8 sm:pt-2">
-            <main key={step} className="onboarding-step-enter w-full">
+          /* Full Screen / Full Width Layout for steps without preview */
+          <div className="mx-auto max-w-full sm:max-w-[95%] w-full px-3 pb-8 pt-4 sm:px-6 sm:pb-12 sm:pt-6 min-h-[calc(100vh-140px)] flex flex-col justify-center items-center">
+            <main key={step} className="onboarding-step-enter w-full flex flex-col justify-center items-center">
               {children}
             </main>
           </div>
         ) : (
           /* Split Layout with 50-50 wide desktop split */
-          <div className="mx-auto flex max-w-7xl w-full flex-col lg:flex-row gap-4 lg:gap-6">
-            {/* Left form column - scrolls normally */}
-            <main className="flex-1 px-3 pb-6 pt-1.5 sm:px-5 sm:pb-8 sm:pt-2 lg:w-[50%] max-w-xl mx-auto lg:max-w-none">
-              <div key={step} className="onboarding-step-enter">{children}</div>
+          <div className="mx-auto flex max-w-7xl w-full flex-col lg:flex-row gap-4 lg:gap-8 items-center min-h-[calc(100vh-140px)]">
+            {/* Left form column - vertically centered */}
+            <main className="flex-1 px-3 pb-8 pt-4 sm:px-5 sm:pb-10 sm:pt-6 lg:w-[50%] max-w-xl mx-auto lg:max-w-none flex flex-col justify-center">
+              <div key={step} className="onboarding-step-enter w-full">{children}</div>
             </main>
 
             {/* Right live preview column - sticky below header and contained in viewport */}
             {preview && (
-              <aside className="hidden flex-1 border-l border-[#e2e8f0] bg-white px-3 py-1.5 pb-6 lg:block lg:w-[50%] min-w-[400px]">
+              <aside className="hidden flex-1 border-l border-[#e2e8f0] bg-white px-3 py-4 pb-6 lg:flex lg:flex-col lg:justify-center lg:w-[50%] min-w-[400px]">
                 <div className="sticky top-[92px] max-h-[calc(100vh-104px)] overflow-y-auto pr-1 pb-2 scrollbar-thin flex flex-col items-center">
                   <div className="w-full max-w-[450px]">
                     {preview}

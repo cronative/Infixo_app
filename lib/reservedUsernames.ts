@@ -83,6 +83,27 @@ export const RESERVED_USERNAMES = new Set([
   "themes",
   "analytics",
   "profile",
+
+  // Top public creators & celebrity impersonation protections
+  "mrbeast",
+  "pewdiepie",
+  "carryminati",
+  "bbkivines",
+  "bhuvanbam",
+  "technicalguruji",
+  "ashishchanchlani",
+  "flyingbeast",
+  "triggeredinsaan",
+  "fukrainsaan",
+  "elvishyadav",
+  "round2hell",
+  "dhruvrathee",
+  "sandeepmaheshwari",
+  "tanmaybhat",
+  "cristiano",
+  "ronaldo",
+  "messi",
+  "leomessi",
 ]);
 
 /**

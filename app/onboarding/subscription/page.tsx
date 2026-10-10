@@ -139,7 +139,7 @@ export default function SubscriptionStepPage() {
           {/* 1. Header Section */}
           <div className="space-y-1">
             <span className="block text-[10px] font-bold uppercase tracking-wider text-[#7A2253]">
-              STEP 4 OF 4 · GO LIVE
+              STEP 4 OF 4 · PUBLIC PROFILE
             </span>
             <h1 className="font-display text-xl sm:text-[24px] font-extrabold text-[#181716] tracking-tight leading-tight">
               Your profile is ready to go live!

@@ -110,42 +110,42 @@ export const PUBLIC_PROFILE_LAYOUTS: Array<{
   tagline: string;
   description: string;
 }> = [
-  {
-    id: "default",
-    name: "Default",
-    badge: "Classic",
-    tagline: "Classic continuous stream",
-    description: "Original balanced Inflixo profile layout with vertical flow.",
-  },
-  {
-    id: "minimal",
-    name: "Minimal",
-    badge: "Fast & Clean",
-    tagline: "Ultra-compact scanning",
-    description: "Compact creator header, zero wasted padding, instant content access.",
-  },
-  {
-    id: "creator",
-    name: "Creator",
-    badge: "Influencer-First",
-    tagline: "High-engagement app feel",
-    description: "Influencer focus with bold stats, prominent CTA, and rich visual media.",
-  },
-  {
-    id: "spotlight",
-    name: "Spotlight",
-    badge: "Content-First",
-    tagline: "Featured series in prime view",
-    description: "Spotlights your top series first with immediate watch actions.",
-  },
-  {
-    id: "studio",
-    name: "Studio",
-    badge: "Brand & Portfolio",
-    tagline: "Professional media-kit balance",
-    description: "Audience reach, series portfolio, collaboration packages & client proof.",
-  },
-];
+    {
+      id: "default",
+      name: "Default",
+      badge: "Classic",
+      tagline: "Classic continuous stream",
+      description: "Original balanced Inflixo profile layout with vertical flow.",
+    },
+    {
+      id: "minimal",
+      name: "Minimal",
+      badge: "Fast & Clean",
+      tagline: "Ultra-compact scanning",
+      description: "Compact creator header, zero wasted padding, instant content access.",
+    },
+    {
+      id: "creator",
+      name: "Creator",
+      badge: "Influencer-First",
+      tagline: "High-engagement app feel",
+      description: "Influencer focus with bold stats, prominent CTA, and rich visual media.",
+    },
+    {
+      id: "spotlight",
+      name: "Spotlight",
+      badge: "Content-First",
+      tagline: "Featured series in prime view",
+      description: "Spotlights your top series first with immediate watch actions.",
+    },
+    {
+      id: "studio",
+      name: "Studio",
+      badge: "Brand & Portfolio",
+      tagline: "Professional media-kit balance",
+      description: "Audience reach, series portfolio, collaboration packages & client proof.",
+    },
+  ];
 
 export interface VisibilitySettings {
   profileLayout?: "list" | "tabs";
@@ -596,7 +596,7 @@ export const ONBOARDING_STEPS: { key: OnboardingStep; label: string; path: strin
   { key: "username", label: "Username", path: "/onboarding/username" },
   { key: "profile", label: "Profile", path: "/onboarding/profile" },
   { key: "socials", label: "Socials", path: "/onboarding/socials" },
-  { key: "subscription", label: "Go Live", path: "/onboarding/subscription" },
+  { key: "subscription", label: "Public Profile", path: "/onboarding/subscription" },
 ];
 
 // ---------------------------------------------------------------------------

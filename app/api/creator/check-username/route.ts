@@ -23,7 +23,8 @@ export async function GET(req: Request) {
       return apiSuccess({
         available: false,
         username,
-      }, `@${username} is reserved for platform use`);
+        isReserved: true,
+      }, "This one's not available — try another handle 👇");
     }
 
     // Check if username exists in MySQL DB for another creator
@@ -36,13 +37,15 @@ export async function GET(req: Request) {
       return apiSuccess({
         available: false,
         username,
-      }, `@${username} is already taken by another creator`);
+        isReserved: false,
+      }, `inflixo.com/${username} is already taken`);
     }
 
     return apiSuccess({
       available: true,
       username,
-    }, `@${username} is available! ✨`);
+      isReserved: false,
+    }, `inflixo.com/${username} is available! ✨`);
   } catch (err: any) {
     console.error("Check Username API Error:", err);
     return apiError("Could not check username", 500, { available: true, username: "" });
