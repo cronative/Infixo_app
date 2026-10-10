@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import type { RowDataPacket } from "mysql2";
 import { db } from "@/lib/db";
 import PublicProfileClient from "./PublicProfileClient";
+import { SkeletonProfileCard } from "@/components/ui/Skeleton";
 
 interface PageProps {
   params: Promise<{ username: string }>;
@@ -208,6 +210,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
       }
     : null;
 
+
   return (
     <>
       {jsonLd && (
@@ -216,7 +219,9 @@ export default async function PublicProfilePage({ params }: PageProps) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
         />
       )}
-      <PublicProfileClient />
+      <Suspense fallback={<SkeletonProfileCard />}>
+        <PublicProfileClient />
+      </Suspense>
     </>
   );
 }

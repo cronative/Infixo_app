@@ -29,10 +29,18 @@ const DARK_THEME_KEYS = new Set([
   "cafe-mocha",
   "aurora-gradient",
   "royal-glow",
+  "neon-grid",
+  "liquid-aurora",
+  "spotlight-stage",
 ]);
 
 export function isDarkTheme(themeKey: string = "minimal-white"): boolean {
-  return DARK_THEME_KEYS.has(themeKey);
+  if (DARK_THEME_KEYS.has(themeKey)) return true;
+  try {
+    const meta = ThemeService.getThemeMeta(themeKey as any);
+    if (meta?.mode === "dark") return true;
+  } catch {}
+  return false;
 }
 
 /* ------------------------------------------------------------------ */

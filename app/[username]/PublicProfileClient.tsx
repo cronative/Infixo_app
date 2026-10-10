@@ -3,13 +3,13 @@
 import type { CreatorProduct } from "@/types";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Play, UserX, Home, Sparkles, Film, Users, Lock, ShieldAlert, ArrowRight, Clock, ExternalLink } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 import { SkeletonProfileCard } from "@/components/ui/Skeleton";
 import { ProfileService } from "@/services/ProfileService";
 import { SocialService } from "@/services/SocialService";
-import { ThemeService } from "@/services/ThemeService";
+import { ThemeService, THEME_LIST } from "@/services/ThemeService";
 import { SeriesService } from "@/services/SeriesService";
 import { ThemeCard } from "@/themes/registry";
 import { CreatorProfile, SocialAccounts, Series, ThemeKey, EMPTY_SOCIAL_ACCOUNTS, CreatorReview, MediaKitPackage, MediaKitSettings, CreatorSetupItem } from "@/types";
@@ -76,11 +76,17 @@ function getPageViewEventId(creatorId: string, username: string, visitorId: stri
 export default function PublicProfileClient() {
   const params = useParams<{ username: string }>();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { showToast } = useToast();
 
   const [profile, setProfile] = useState<CreatorProfile>(EMPTY_PROFILE);
   const [socials, setSocials] = useState<SocialAccounts>(EMPTY_SOCIAL_ACCOUNTS);
   const [theme, setTheme] = useState<ThemeKey>("minimal-white");
+  const queryTheme = searchParams?.get("theme") as ThemeKey | null;
+  const effectiveTheme: ThemeKey =
+    queryTheme && THEME_LIST.some((t) => t.key === queryTheme)
+      ? queryTheme
+      : theme;
   const [series, setSeries] = useState<Series[]>([]);
   const [customLinks, setCustomLinks] = useState<any[]>([]);
   const [mediaKitPackages, setMediaKitPackages] = useState<MediaKitPackage[]>([]);
@@ -720,10 +726,10 @@ export default function PublicProfileClient() {
   }
 
   return (
-    <CreatorPublicShell themeKey={theme}>
+    <CreatorPublicShell themeKey={effectiveTheme}>
         {/* Main Theme Profile Card (Renders Profile, Socials, Series, Services, Reviews & Custom Links) */}
         <ThemeCard
-          themeKey={theme}
+          themeKey={effectiveTheme}
           profile={profile}
           socials={socials}
           series={series}
