@@ -92,6 +92,7 @@ export async function GET(req: Request) {
       profileViews: counts["profile_view"]?.total || 0,
       uniqueVisitors: counts["profile_view"]?.unique || 0,
       socialClicks: counts["social_click"]?.total || 0,
+      linkClicks: counts["link_click"]?.total || 0,
       seriesViews: counts["series_view"]?.total || 0,
       episodeClicks: counts["episode_click"]?.total || 0,
       serviceViews: counts["service_view"]?.total || 0,

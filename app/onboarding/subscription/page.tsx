@@ -38,14 +38,14 @@ export default function SubscriptionStepPage() {
   }> = [
     {
       id: "free",
-      name: "Free Plan",
+      name: "Free Trial",
       badge: "No card needed",
       price: "₹0",
-      period: "free forever",
+      period: "7 days",
       planKey: "early_access",
-      planName: "Free",
+      planName: "Free Trial",
       bullets: [
-        "Public inflixo.com bio link",
+        "Public inflixo.com bio link for 7 days",
         "Up to 3 video series & 5 custom links",
         "1 shop product & 1 brand collab package",
       ],
@@ -128,7 +128,7 @@ export default function SubscriptionStepPage() {
   const selectedPlanObj = launchOptions.find((o) => o.id === selectedOption) || launchOptions[0];
   const ctaLabel =
     selectedOption === "free"
-      ? "Go Live for Free 🚀"
+      ? "Start 7-Day Free Trial 🚀"
       : `Go Live with ${selectedPlanObj.name} – ${selectedPlanObj.price}${billingCycle === "yearly" ? "/yr" : "/mo"}`;
 
   return (
@@ -143,7 +143,7 @@ export default function SubscriptionStepPage() {
               Your profile is ready to go live!
             </h1>
             <p className="text-xs font-normal text-[#54514D] leading-relaxed">
-              Start with the Free plan to launch instantly, or pick a plan with extra limits.
+              Start with a 7-day free trial to launch instantly, or pick a paid plan.
             </p>
           </div>
 
@@ -159,7 +159,7 @@ export default function SubscriptionStepPage() {
               </span>
             </div>
 
-            <div className="rounded-lg overflow-hidden shadow-2xs border border-[#e2e8f0] bg-white max-h-[300px] sm:max-h-[340px] overflow-y-auto scrollbar-thin">
+            <div className="rounded-xl overflow-hidden shadow-2xs border border-[#e2e8f0] bg-white">
               <LivePreviewCard
                 profile={profile}
                 socials={socials}
@@ -264,6 +264,11 @@ export default function SubscriptionStepPage() {
                             </li>
                           ))}
                         </ul>
+                        <p className="mt-2 text-[11px] font-semibold leading-relaxed text-[#7A2253]">
+                          {option.id === "free"
+                            ? "After 7 days, your profile will be private. Upgrade to keep it public."
+                            : "Your profile stays public while your subscription is active."}
+                        </p>
                       </div>
                     </div>
 
@@ -321,7 +326,7 @@ export default function SubscriptionStepPage() {
               disabled={submitting}
               className="text-xs font-semibold text-[#7A2253] hover:underline cursor-pointer transition-colors"
             >
-              Skip for now &amp; continue with Free profile →
+              Skip for now &amp; start 7-day free trial →
             </button>
             <p className="text-[10px] text-[#64748b]">
               ⚡ No credit card needed · Supports UPI, Cards &amp; NetBanking · Upgrade anytime

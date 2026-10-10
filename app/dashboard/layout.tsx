@@ -50,6 +50,8 @@ function DesktopTopHeader() {
     showToast(success ? "Profile link copied! ✨" : "Could not copy link", success ? "success" : "error");
   };
 
+  if (isHome) return null;
+
   return (
     <header className="hidden h-13 shrink-0 items-center justify-between border-b border-[#e2e8f0] bg-white px-6 lg:flex lg:px-8">
       {isHome ? (
@@ -117,6 +119,7 @@ function TrialAccessBar() {
 
 function Shell({ children }: { children: ReactNode }) {
   const router = useRouter();
+  const isHome = usePathname() === "/dashboard";
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { profile, loading, isTrialModalOpen, closeTrialExpiredModal } = useCreator();
 
@@ -153,7 +156,7 @@ function Shell({ children }: { children: ReactNode }) {
         <DashboardMobileHeader onOpenDrawer={() => setDrawerOpen(true)} />
 
         {/* Scrollable Content Viewport */}
-        <main className="flex-1 overflow-y-auto overscroll-contain px-3.5 pt-3.5 pb-[calc(env(safe-area-inset-bottom)+5rem)] sm:px-6 sm:py-4.5 lg:px-8 lg:py-5">
+        <main className={`flex-1 overflow-y-auto overscroll-contain pb-[calc(env(safe-area-inset-bottom)+5rem)] ${isHome ? "px-3 pt-3 sm:p-4" : "px-3.5 pt-3.5 sm:px-6 sm:py-4.5 lg:px-8 lg:py-5"}`}>
           <div className="w-full">
             {children}
           </div>

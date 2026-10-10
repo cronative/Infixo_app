@@ -1,4 +1,5 @@
 "use client";
+import { getSeriesEpisodes } from "@/lib/seriesMetrics";
 
 import { useState, useMemo, useEffect, useRef } from "react";
 import {
@@ -112,12 +113,6 @@ function getPlatformInfo(url: string = ""): { name: string; host: string; icon: 
     return { name: "Spotify", host: "spotify.com", icon: <SpotifyIcon className="h-3.5 w-3.5 text-emerald-600" /> };
   }
   return { name: "Web Video", host: "external link", icon: <Play className="h-3.5 w-3.5 text-[#7A2253]" /> };
-}
-
-type LegacySeries = Series & { episodes?: Episode[] };
-
-function getSeriesEpisodes(series: Series): Episode[] {
-  return series.seasons?.flatMap((season) => season.episodes) || (series as LegacySeries).episodes || [];
 }
 
 /* ==========================================================================

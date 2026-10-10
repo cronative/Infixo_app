@@ -79,3 +79,8 @@ export function formatCategoryDots(category?: string | null, customCategory?: st
     .filter(Boolean);
   return Array.from(new Set(parts)).slice(0, 3).join(" · ");
 }
+
+/** Compact quantities with consistent singular/plural labels. */
+export function formatQuantity(count: number, singular: string, plural = `${singular}s`): string {
+  return `${formatCount(count)} ${count === 1 ? singular : plural}`;
+}

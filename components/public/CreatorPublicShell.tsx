@@ -38,7 +38,7 @@ export function CreatorPublicShell({
     <div
       {...wrapperProps}
       style={{ backgroundColor: meta.colors.pageBackground }}
-      className="relative min-h-dvh flex flex-col antialiased transition-colors duration-500"
+      className="relative min-h-dvh flex flex-col justify-between antialiased transition-colors duration-500"
     >
       {/* 1. Full-screen theme background (photo themes get a soft blurred backdrop) */}
       <div

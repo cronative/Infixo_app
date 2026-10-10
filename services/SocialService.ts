@@ -1,3 +1,4 @@
+import { mapSocialAccounts, calculateTotalAudience } from "@/lib/socialAccounts";
 import { socialRepository, authRepository, customLinksRepository, profileRepository } from "@/repositories/localRepository";
 import { SocialAccounts, EMPTY_SOCIAL_ACCOUNTS, GenericSocialStats } from "@/types";
 
@@ -118,61 +119,7 @@ export const SocialService = {
       const customLinks = apiResponse.data?.customLinks || apiResponse.customLinks;
 
       if ((apiResponse.status === 1 || apiResponse.success) && Array.isArray(socials)) {
-        const current = this.getAccounts();
-        const updated: SocialAccounts = { ...current };
-
-        socials.forEach((s: any) => {
-          const platform = (s.platform || "").toLowerCase().trim();
-          const handle = (s.username || s.accountName || "").replace(/^@/, "").trim();
-
-          if (platform === "instagram" && handle) {
-            updated.instagram = {
-              ...updated.instagram,
-              username: handle,
-              name: s.accountName || handle,
-              followers: s.followerCount ?? updated.instagram.followers ?? 0,
-              posts: s.mediaCount ?? updated.instagram.posts ?? 0,
-              isVerified: Boolean(s.isVerified),
-              url: `https://instagram.com/${handle}`,
-              lastSyncedAt: s.lastSyncedAt || new Date().toISOString(),
-            };
-          } else if (platform === "youtube" && handle) {
-            updated.youtube = {
-              ...updated.youtube,
-              username: handle,
-              channelTitle: s.accountName || handle,
-              subscribers: s.followerCount ?? updated.youtube.subscribers ?? 0,
-              videos: s.mediaCount ?? updated.youtube.videos ?? 0,
-              isVerified: Boolean(s.isVerified),
-              url: `https://youtube.com/@${handle}`,
-              lastSyncedAt: s.lastSyncedAt || new Date().toISOString(),
-            };
-          } else if (platform === "facebook" && handle) {
-            updated.facebook = {
-              ...updated.facebook,
-              username: handle,
-              name: s.accountName || handle,
-              followers: s.followerCount ?? updated.facebook.followers ?? 0,
-              posts: s.mediaCount ?? updated.facebook.posts ?? 0,
-              isVerified: Boolean(s.isVerified),
-              url: `https://facebook.com/${handle}`,
-              lastSyncedAt: s.lastSyncedAt || new Date().toISOString(),
-            };
-          } else if (handle) {
-            const pInfo = PLATFORMS_LIST.find((p) => p.platform === platform);
-            if (pInfo) {
-              const key = pInfo.key;
-              (updated as any)[key] = {
-                url: `${pInfo.urlPrefix}${handle}`,
-                username: handle,
-                name: s.accountName || handle,
-                followers: s.followerCount || 0,
-                isVerified: Boolean(s.isVerified),
-                lastSyncedAt: s.lastSyncedAt || new Date().toISOString(),
-              };
-            }
-          }
-        });
+        const updated = mapSocialAccounts(socials, this.getAccounts());
 
         socialRepository.save(updated);
 
@@ -189,21 +136,7 @@ export const SocialService = {
     return null;
   },
 
-  calculateTotalAudience(accounts: SocialAccounts): number {
-    let total =
-      (accounts.instagram?.followers ?? 0) +
-      (accounts.youtube?.subscribers ?? 0) +
-      (accounts.facebook?.followers ?? 0);
-
-    PLATFORMS_LIST.forEach(({ key }) => {
-      const item = accounts[key] as GenericSocialStats | undefined;
-      if (item && item.followers) {
-        total += item.followers;
-      }
-    });
-
-    return total;
-  },
+  calculateTotalAudience,
 
   reset(): SocialAccounts {
     socialRepository.save(EMPTY_SOCIAL_ACCOUNTS);

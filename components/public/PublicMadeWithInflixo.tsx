@@ -23,7 +23,7 @@ export function PublicMadeWithInflixoFooter({
     : (c.mutedText || "#94a3b8");
 
   return (
-    <footer className={`w-full py-6 mt-3 mb-6 flex items-center justify-center text-center select-none ${className}`}>
+    <footer className={`w-full py-2.5 mt-auto mb-1 flex items-center justify-center text-center select-none ${className}`}>
       <a
         href="https://inflixo.com"
         target="_blank"
