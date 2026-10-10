@@ -9,7 +9,7 @@ import { copyToClipboard } from "@/lib/copyToClipboard";
 import { Logo } from "@/components/shared/Logo";
 
 const ICON_BTN =
-  "flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-[#334155] transition-colors hover:bg-[#f1f5f9] active:bg-[#e2e8f0]";
+  "flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-[#334155] transition-colors hover:bg-[#fdf2f8] hover:text-[#7A2253] active:bg-[#fce7f3]";
 
 /** Native-style mobile app bar: menu · brand (or title) · profile shortcuts. */
 export function DashboardMobileHeader({

@@ -72,8 +72,8 @@ function CheckoutContent() {
 
   const planAmounts: Record<string, { name: string; monthly: number; yearly: number }> = {
     starter: { name: "Starter Plan", monthly: 99, yearly: 999 },
-    pro: { name: "Pro Plan", monthly: 199, yearly: 1999 },
-    vip: { name: "VIP Plan", monthly: 399, yearly: 3999 },
+    pro: { name: "Pro Plan", monthly: 199, yearly: 1499 },
+    vip: { name: "VIP Plan", monthly: 399, yearly: 2499 },
     custom: { name: "Custom Test Amount", monthly: customAmountRupees, yearly: customAmountRupees },
   };
 
@@ -242,7 +242,7 @@ function CheckoutContent() {
                     type="button"
                     onClick={() => setBillingCycle("yearly")}
                     className={`px-3 py-1 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
-                      billingCycle === "yearly" ? "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white shadow-xs" : "text-[#64748b]"
+                      billingCycle === "yearly" ? "bg-[#7A2253] text-white shadow-xs" : "text-[#64748b]"
                     }`}
                   >
                     Yearly (₹{currentPlan.yearly}/yr)

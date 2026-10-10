@@ -34,7 +34,7 @@ export const RAZORPAY_RECURRING_PLANS: Record<string, PlanConfig> = {
     key: "pro_yearly",
     name: "Inflixo Pro Yearly",
     period: "yearly",
-    amountInPaise: 199900, // ₹1999
+    amountInPaise: 149900, // ₹1499
     description: "Inflixo Pro plan billed yearly with recurring auto-renewal",
   },
   vip_monthly: {
@@ -48,7 +48,7 @@ export const RAZORPAY_RECURRING_PLANS: Record<string, PlanConfig> = {
     key: "vip_yearly",
     name: "Inflixo VIP Yearly",
     period: "yearly",
-    amountInPaise: 399900, // ₹3999
+    amountInPaise: 249900, // ₹2499
     description: "Inflixo VIP plan billed yearly with recurring auto-renewal",
   },
 };

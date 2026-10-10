@@ -6,6 +6,7 @@ import { ProductImageLightbox } from "@/components/products/ProductImageLightbox
 
 import { useState, useEffect, useRef, Fragment } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   Users,
@@ -853,6 +854,7 @@ export interface LivePreviewCardProps {
   pageHeader?: { pageLabel: string; backHref: string; backLabel: string };
   showSettingsIcon?: boolean;
   onShare?: () => void;
+  hideFooter?: boolean;
   isInformational?: boolean;
   isOnboarding?: boolean;
   isFinishStep?: boolean;
@@ -917,6 +919,7 @@ export function LivePreviewCard({
   pageHeader,
   showSettingsIcon: showSettingsIconProp,
   onShare,
+  hideFooter = false,
   isInformational: isInformationalProp,
   isOnboarding: isOnboardingProp,
   isFinishStep: isFinishStepProp,
@@ -1579,16 +1582,18 @@ export function LivePreviewCard({
           <div className="shrink-0 flex items-center">
             <Link
               href="/"
-              style={{
-                backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.cardBackground,
-                borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : c.border,
-                color: usesDarkControls ? "#FFFFFF" : c.primaryText,
-              }}
-              className={PUBLIC_ICON_BUTTON}
+              className="tap-scale flex h-9 w-9 sm:h-9.5 sm:w-9.5 shrink-0 items-center justify-center rounded-[11px] overflow-hidden shadow-2xs border border-white/20 transition-all hover:scale-105 cursor-pointer select-none bg-[#7A2253]"
               title="Inflixo"
               aria-label="Inflixo"
             >
-              <InflixoLogoIcon light={usesDarkControls} className="h-4.5 w-4.5 sm:h-5 sm:w-5 object-contain" />
+              <Image
+                src="/images/inflixo-logo-3d.png"
+                alt="Inflixo"
+                width={38}
+                height={38}
+                className="h-full w-full object-cover select-none"
+                priority
+              />
             </Link>
           </div>
 
@@ -1792,38 +1797,60 @@ export function LivePreviewCard({
 
         {/* 2. Total Fanbase Unified Card with Full-Width Platform Rows */}
         {effectiveVisibilitySettings.showFanbase !== false && (totalAudience > 0 || fanbaseSocialCards.length > 0 || isOnboardingMode) && (
-          <div className="relative z-10 mt-6 sm:mt-7 w-full">
+          <div className="relative z-10 mt-5 sm:mt-6 w-full">
             <div
               style={{
                 backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.05)" : "#FFFFFF",
                 borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : "#E5E7EB",
-                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02)",
+                boxShadow: usesDarkControls
+                  ? "0 8px 30px rgba(0, 0, 0, 0.45)"
+                  : "0 8px 30px -4px rgba(122, 34, 83, 0.08), 0 2px 8px -2px rgba(0, 0, 0, 0.04)",
               }}
-              className="rounded-[16px] border overflow-hidden text-left"
+              className="rounded-[20px] border overflow-hidden text-left transition-all"
             >
-              {/* Header: ✨ 1.3M Total Fanbase */}
-              <div className="flex items-center justify-between px-3.5 py-2 sm:px-4 sm:py-2.5 border-b border-[#E5E7EB] dark:border-white/10 bg-black/[0.015] dark:bg-white/[0.02]">
-                <div className="flex items-center gap-1.5">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-500/10 text-amber-500 shrink-0 select-none">
-                    <Sparkles className="h-3 w-3 fill-amber-500 text-amber-500" />
-                  </span>
+              {/* Prominent Hero Stat: Big Shimmer Animated Number on Top, Clean Text Below (No Chip) */}
+              <div className="relative flex flex-col items-center justify-center px-4 pt-6 pb-5 sm:pt-7 sm:pb-6 border-b border-[#E5E7EB] dark:border-white/10 bg-gradient-to-b from-[#7A2253]/[0.03] via-transparent to-transparent dark:from-white/[0.03] text-center overflow-hidden">
+                {/* 1. Big Number On Top with Shimmer Animation */}
+                <div className="relative flex items-center justify-center">
                   <span
                     style={{
-                      color: c.primaryText,
                       fontFamily: typ.headingFontFamily,
                     }}
-                    className="text-xs sm:text-[13px] font-extrabold tracking-tight flex items-baseline gap-1"
+                    className={`text-4xl sm:text-5xl lg:text-[54px] font-black tabular-nums tracking-tight leading-none select-none ${
+                      usesDarkControls
+                        ? "fanbase-shimmer-dark"
+                        : "fanbase-shimmer-light"
+                    }`}
                   >
-                    <span className="text-sm sm:text-[15px] font-black tabular-nums">{formatCount(totalAudience)}</span>
-                    <span style={{ color: c.mutedText }} className="font-semibold">Total Fanbase</span>
+                    {formatCount(totalAudience)}
                   </span>
                 </div>
-                <span
+
+                {/* 2. Total Fanbase Simple Text (No Chip, Bold & Prominent) */}
+                <div className="mt-2.5 sm:mt-3 flex items-center justify-center gap-2 select-none">
+                  <span
+                    style={{
+                      fontFamily: typ.headingFontFamily,
+                    }}
+                    className={`text-xs sm:text-sm font-black tracking-[0.18em] uppercase ${
+                      usesDarkControls ? "text-white/90" : "text-[#7A2253]"
+                    }`}
+                  >
+                    TOTAL FANBASE
+                  </span>
+                  <span className="relative flex h-2 w-2 items-center justify-center" title="Live Synced">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                  </span>
+                </div>
+
+                {/* 3. Subtitle: Verified community reach */}
+                <p
                   style={{ color: c.mutedText }}
-                  className="text-[10px] sm:text-[11px] font-medium opacity-70 select-none"
+                  className="text-[11px] sm:text-xs font-medium mt-1 select-none"
                 >
-                  Across Platforms
-                </span>
+                  Verified community across {fanbaseSocialCards.length > 0 ? `${fanbaseSocialCards.length} connected platforms` : "platforms"}
+                </p>
               </div>
 
               {/* Full Width Platform Rows: Left side icon + @username, Right side count + Followers/Subscribers */}
@@ -2306,6 +2333,9 @@ export function LivePreviewCard({
                       name={product.name}
                       className="h-full w-full transition-transform duration-300 group-hover/img:scale-105"
                     />
+                    <span className="absolute top-1 left-1 rounded bg-black/60 px-1.5 py-0.5 text-[9px] font-bold text-white tracking-wide uppercase backdrop-blur-xs">
+                      Affiliate
+                    </span>
                     <span className="absolute inset-0 flex items-center justify-center bg-black/25 opacity-0 transition-opacity duration-200 group-hover/img:opacity-100 pointer-events-none">
                       <span className="flex h-7 w-7 items-center justify-center rounded-full bg-black/60 backdrop-blur-xs text-white shadow-md">
                         <ZoomIn className="h-3.5 w-3.5" />
@@ -2875,7 +2905,7 @@ export function LivePreviewCard({
           </div>
         )}
 
-        {!containedScroll && !isPublicSurface && (
+        {!containedScroll && !isPublicSurface && !hideFooter && (
           <div className="relative z-10 order-[60] mt-6 mb-3 flex items-center justify-center select-none">
             <MadeWithInflixo
               color={c.secondaryText}

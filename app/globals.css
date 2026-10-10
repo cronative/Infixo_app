@@ -17,13 +17,13 @@
 
   /* BRAND & BUTTONS */
   --color-primary: #7A2253;
-  --color-primary-hover: #5d193f;
+  --color-primary-hover: #631841;
   --color-primary-tint: #fdf2f8;
-  --color-primary-gradient: linear-gradient(90deg, #7A2253 0%, #B0437A 100%);
+  --color-primary-gradient: #7A2253;
 
   /* BORDERS & DIVIDERS */
   --color-border: #e2e8f0;
-  --color-border-hover: #cbd5e1;
+  --color-border-hover: #7A2253;
   --color-border-active: #7A2253;
 
   /* STATUS COLORS */
@@ -83,9 +83,9 @@
   --shadow-premium: 0 12px 30px rgba(122, 34, 83, 0.09);
   --shadow-hover: 0 4px 16px rgba(122, 34, 83, 0.09);
 
-  --gradient-premium: linear-gradient(90deg, #7A2253 0%, #B0437A 100%);
-  --gradient-gold: linear-gradient(135deg, #7A2253 0%, #d946ef 100%);
-  --gradient-energy: linear-gradient(90deg, #7A2253 0%, #B0437A 100%);
+  --gradient-premium: #7A2253;
+  --gradient-gold: #7A2253;
+  --gradient-energy: #7A2253;
 
   /* Global Design Tokens */
   --bg-page: #ffffff;
@@ -100,8 +100,8 @@
   --border-card-hover: #fbcfe8;
   --accent-color: #7A2253;
   --accent-glow: rgba(122, 34, 83, 0.18);
-  --btn-primary-bg: linear-gradient(90deg, #7A2253 0%, #B0437A 100%);
-  --btn-primary-hover: linear-gradient(90deg, #631942 0%, #9c386b 100%);
+  --btn-primary-bg: #7A2253;
+  --btn-primary-hover: #631841;
   --btn-primary-text: #ffffff;
   --badge-bg: #fdf2f8;
   --badge-text: #7A2253;
@@ -113,28 +113,28 @@
 }
 
 .bg-primary-gradient {
-  background: linear-gradient(90deg, #7A2253 0%, #B0437A 100%) !important;
+  background: #7A2253 !important;
 }
 
 .text-primary-gradient {
-  background: linear-gradient(90deg, #7A2253 0%, #B0437A 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #7A2253 !important;
+  -webkit-text-fill-color: #7A2253 !important;
 }
 
 .btn-brand-gradient {
-  background: linear-gradient(90deg, #7A2253 0%, #B0437A 100%) !important;
+  background: #7A2253 !important;
   color: #ffffff !important;
   box-shadow: 0 4px 14px rgba(122, 34, 83, 0.22);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-brand-gradient:hover {
-  opacity: 0.95;
+  background: #631841 !important;
+  opacity: 1;
 }
 
 .badge-brand-gradient {
-  background: linear-gradient(90deg, #7A2253 0%, #B0437A 100%) !important;
+  background: #7A2253 !important;
   color: #ffffff !important;
 }
 
@@ -429,8 +429,9 @@
   --color-inflixo-gold: var(--warning);
   --color-inflixo-gold-light: #FEF3C7;
 
-  --font-sans: var(--font-inter), "Inter", var(--font-indic), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-display: var(--font-plus-jakarta), "Plus Jakarta Sans", var(--font-inter), "Inter", var(--font-indic), sans-serif;
+  --font-sans: var(--font-plus-jakarta), "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-plus-jakarta), "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-inter: var(--font-plus-jakarta), "Plus Jakarta Sans", sans-serif;
   --font-sora: var(--font-plus-jakarta), "Plus Jakarta Sans", sans-serif;
 }
 
@@ -1212,3 +1213,121 @@ body {
     font-size: 16px !important;
   }
 }
+
+/* ============================================================
+   LANDING PAGE DESIGN TOKENS & TYPOGRAPHY SYSTEM
+   ============================================================ */
+.landing-scope {
+  --brand: #7A2253;
+  --brand-strong: #631841;
+  --brand-soft: #fdf2f8;
+  --ink: #18181B;
+  --muted: #52525B;
+  --line: #E4E4E7;
+  --bg: #FFFCFB;
+
+  font-family: var(--font-plus-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg);
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+/* Landing Strict Type Scale */
+.landing-text-12 { font-size: 12px; line-height: 1.4; }
+.landing-text-14 { font-size: 14px; line-height: 1.5; }
+.landing-text-16 { font-size: 16px; line-height: 1.6; }
+.landing-text-18 { font-size: 18px; line-height: 1.5; }
+.landing-text-24 { font-size: 24px; line-height: 1.3; }
+.landing-text-32 { font-size: 32px; line-height: 1.25; }
+.landing-text-48 { font-size: 48px; line-height: 1.15; }
+.landing-text-hero { font-size: 40px; line-height: 1.15; }
+@media (min-width: 768px) {
+  .landing-text-hero { font-size: 64px; line-height: 1.08; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-float {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* ============================================================
+   BRAND UTILITIES (#7A2253)
+   ============================================================ */
+.brand-grad {
+  background-color: #7A2253;
+}
+
+.brand-grad-btn {
+  background-color: #7A2253;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px 0 rgba(122, 34, 83, 0.25);
+}
+
+.brand-grad-btn:hover {
+  background-color: #631841;
+  box-shadow: 0 6px 20px 0 rgba(122, 34, 83, 0.35);
+}
+
+.brand-grad-text {
+  color: #7A2253;
+}
+
+/* ============================================================
+   FANBASE HERO STAT SHIMMER ANIMATION
+   ============================================================ */
+@keyframes text-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.fanbase-shimmer-light {
+  background: linear-gradient(
+    90deg,
+    #7A2253 0%,
+    #9B2C6B 22%,
+    #ec4899 48%,
+    #9B2C6B 74%,
+    #7A2253 100%
+  );
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: text-shimmer 3.2s linear infinite;
+  display: inline-block;
+}
+
+.fanbase-shimmer-dark {
+  background: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #fed7aa 25%,
+    #ffffff 50%,
+    #fbcfe8 75%,
+    #ffffff 100%
+  );
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: text-shimmer 3.2s linear infinite;
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fanbase-shimmer-light,
+  .fanbase-shimmer-dark {
+    animation: none;
+    color: inherit;
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+  }
+}
+

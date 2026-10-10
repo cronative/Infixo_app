@@ -24,9 +24,9 @@ export function ProgressSteps({ current }: { current: OnboardingStep }) {
                 {/* Step Circle */}
                 <div
                   className={`relative flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold transition-all duration-300 ${isDone
-                    ? "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white shadow-2xs"
+                    ? "bg-[#7A2253] text-white shadow-2xs"
                     : isActive
-                      ? "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white ring-2 ring-[#7A2253]/25 shadow-xs"
+                      ? "bg-[#7A2253] text-white ring-2 ring-[#7A2253]/25 shadow-xs"
                       : "bg-white border border-[#e2e8f0] text-[#64748b]"
                     }`}
                 >
@@ -61,7 +61,7 @@ export function ProgressSteps({ current }: { current: OnboardingStep }) {
               {i < ONBOARDING_STEPS.length - 1 && (
                 <div className="mx-2 sm:mx-3 h-[2px] flex-1 overflow-hidden rounded-full bg-[#e2e8f0]">
                   <div
-                    className="h-full rounded-full transition-all duration-500 ease-out bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]"
+                    className="h-full rounded-full transition-all duration-500 ease-out bg-[#7A2253]"
                     style={{
                       width: isDone ? "100%" : isActive ? "50%" : "0%",
                     }}
@@ -77,7 +77,7 @@ export function ProgressSteps({ current }: { current: OnboardingStep }) {
       <div className="sm:hidden">
         <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-[10px] font-bold text-white shadow-2xs">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#7A2253] text-[10px] font-bold text-white shadow-2xs">
               {currentIndex + 1}
             </span>
             <span className="text-xs font-bold text-[#7A2253]">
@@ -90,7 +90,7 @@ export function ProgressSteps({ current }: { current: OnboardingStep }) {
         </div>
         <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#e2e8f0]">
           <div
-            className="h-full rounded-full transition-all duration-300 ease-out bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]"
+            className="h-full rounded-full transition-all duration-300 ease-out bg-[#7A2253]"
             style={{
               width: `${progressPercent}%`,
             }}

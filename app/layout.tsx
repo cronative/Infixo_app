@@ -1,17 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import {
-  Inter,
-  Plus_Jakarta_Sans,
-  Outfit,
-  Sora,
-  Noto_Sans_Devanagari,
-  Noto_Sans_Gujarati,
-  Noto_Sans_Tamil,
-  Noto_Sans_Telugu,
-  Noto_Sans_Kannada,
-  Noto_Sans_Bengali,
-  Noto_Sans_Gurmukhi,
-} from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { ToastProvider } from "@/contexts/ToastContext";
@@ -20,46 +8,12 @@ import { GA_MEASUREMENT_ID } from "@/lib/analytics";
 import { PwaInstallPrompt } from "@/components/shared/PwaInstallPrompt";
 import { CookieConsentBanner } from "@/components/shared/CookieConsentBanner";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const sora = Sora({
-  subsets: ["latin"],
-  variable: "--font-sora",
-  display: "swap",
-  weight: ["400", "600", "700", "800"],
-});
-
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-plus-jakarta",
   display: "swap",
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "600", "700", "800"],
 });
-
-const outfit = Outfit({
-  subsets: ["latin"],
-  variable: "--font-outfit",
-  display: "swap",
-  weight: ["500", "600", "700", "800", "900"],
-});
-
-// Indian-language fonts (Hindi/Marathi, Gujarati, Tamil, Telugu, Kannada, Bengali, Punjabi).
-// Only the script subset is requested and nothing is preloaded, so a browser downloads a
-// file only when that script actually appears on the page (unicode-range).
-const notoDevanagari = Noto_Sans_Devanagari({ display: "swap", preload: false, subsets: ["devanagari"], variable: "--font-noto-devanagari" });
-const notoGujarati = Noto_Sans_Gujarati({ display: "swap", preload: false, subsets: ["gujarati"], variable: "--font-noto-gujarati" });
-const notoTamil = Noto_Sans_Tamil({ display: "swap", preload: false, subsets: ["tamil"], variable: "--font-noto-tamil" });
-const notoTelugu = Noto_Sans_Telugu({ display: "swap", preload: false, subsets: ["telugu"], variable: "--font-noto-telugu" });
-const notoKannada = Noto_Sans_Kannada({ display: "swap", preload: false, subsets: ["kannada"], variable: "--font-noto-kannada" });
-const notoBengali = Noto_Sans_Bengali({ display: "swap", preload: false, subsets: ["bengali"], variable: "--font-noto-bengali" });
-const notoGurmukhi = Noto_Sans_Gurmukhi({ display: "swap", preload: false, subsets: ["gurmukhi"], variable: "--font-noto-gurmukhi" });
-const indicFontVariables = [notoDevanagari, notoGujarati, notoTamil, notoTelugu, notoKannada, notoBengali, notoGurmukhi]
-  .map((font) => font.variable)
-  .join(" ");
 
 export const metadata: Metadata = {
   title: "Inflixo — The Video-First Link in Bio & Creator Hub",
@@ -205,10 +159,10 @@ const jsonLd = {
         },
         {
           "@type": "Question",
-          "name": "What is Total Fanbase?",
+          "name": "How does 0% platform commission work?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "It is the sum of your public audience across Instagram, Facebook, and YouTube, displayed as one combined reach metric for fans and brands."
+            "text": "Inflixo takes 0% cut on all digital product sales and sponsorships. 100% of customer payments go directly to your connected bank account or UPI via Razorpay."
           }
         }
       ]
@@ -224,7 +178,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`min-h-full antialiased ${inter.variable} ${sora.variable} ${plusJakartaSans.variable} ${outfit.variable} ${indicFontVariables}`}
+      className={`min-h-full antialiased ${plusJakartaSans.variable}`}
     >
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />

@@ -33,7 +33,7 @@ export function SocialDataConsentCard({
           disabled={disabled}
           onClick={() => !disabled && onToggle(!accepted)}
           className={`flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-md border transition-colors cursor-pointer ${disabled || accepted
-            ? "border-transparent bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white shadow-2xs"
+            ? "border-transparent bg-[#7A2253] text-white shadow-2xs"
             : error
               ? "border-rose-400 bg-white"
               : "border-slate-300 bg-white hover:border-[#7A2253]"
@@ -81,7 +81,7 @@ export function SocialDataConsentCard({
           disabled={disabled}
           onClick={() => !disabled && onToggle(!accepted)}
           className={`mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-md border transition-colors ${disabled || accepted
-            ? "border-transparent bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white cursor-default shadow-xs"
+            ? "border-transparent bg-[#7A2253] text-white cursor-default shadow-xs"
             : error
               ? "border-rose-400 bg-white"
               : "border-slate-300 bg-white hover:border-[#7A2253]"

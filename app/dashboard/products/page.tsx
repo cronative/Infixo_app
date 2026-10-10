@@ -16,7 +16,7 @@ import { ProductService, type ProductInput } from "@/services/ProductService";
 import type { CreatorProduct } from "@/types";
 
 const blank: ProductInput = { name: "", image: "", price: "", productUrl: "" };
-const primaryButton = "inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-4 text-sm font-semibold text-white shadow-md shadow-[#7A2253]/20 hover:opacity-95 disabled:opacity-50 cursor-pointer transition-all";
+const primaryButton = "inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-[#7A2253] px-4 text-sm font-semibold text-white shadow-md shadow-[#7A2253]/20 hover:opacity-95 disabled:opacity-50 cursor-pointer transition-all";
 const inputClass = "mt-1.5 w-full min-w-0 rounded-lg border border-[#e2e8f0] bg-white px-3 py-2.5 text-sm text-[#0f172a] outline-none focus:border-[#7A2253] focus:ring-2 focus:ring-[#7A2253]/10";
 
 function safeHostname(urlStr?: string): string {

@@ -357,7 +357,7 @@ export default function SocialsStepPage() {
               type="button"
               onClick={handleNext}
               disabled={submitting}
-              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 text-white font-semibold text-xs sm:text-sm h-10.5 sm:h-11 transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 disabled:opacity-60 active:scale-98"
+              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs sm:text-sm h-10.5 sm:h-11 transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 disabled:opacity-60 active:scale-98"
             >
               {submitting ? (
                 <>

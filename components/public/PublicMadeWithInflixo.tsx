@@ -29,10 +29,14 @@ export function PublicMadeWithInflixoFooter({
         target="_blank"
         rel="noopener noreferrer"
         style={{ color: textColor }}
-        className="group inline-flex items-center gap-1.5 text-xs font-medium transition-colors hover:text-slate-900 dark:hover:text-white"
+        className="group inline-flex items-center gap-2 text-xs font-medium transition-colors hover:text-slate-900 dark:hover:text-white"
         aria-label="Powered by Inflixo"
       >
-        <span className="text-[11px] opacity-80 group-hover:scale-110 transition-transform select-none">⚡</span>
+        <img
+          src="/images/inflixo-logo-3d.png"
+          alt="Inflixo"
+          className="h-4.5 w-4.5 rounded-[5px] object-cover inline-block shrink-0 shadow-2xs group-hover:scale-110 transition-transform select-none"
+        />
         <span className="tracking-normal">
           Powered by <strong className="font-semibold text-current">Inflixo</strong>
         </span>

@@ -16,19 +16,19 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white shadow-sm hover:-translate-y-0.5 hover:opacity-95 hover:shadow-md active:scale-[0.99] disabled:translate-y-0 disabled:opacity-50 disabled:bg-[#f1f5f9] disabled:text-[#94a3b8] disabled:cursor-not-allowed disabled:shadow-none",
+    "bg-[#7A2253] hover:bg-[#631841] text-white shadow-md shadow-[#7A2253]/25 transition-all active:scale-[0.99] disabled:translate-y-0 disabled:opacity-50 disabled:bg-[#fdf2f8] disabled:text-[#71717A] disabled:cursor-not-allowed disabled:shadow-none",
   secondary:
-    "bg-[#ffffff] text-[#7A2253] border border-[#e2e8f0] shadow-xs hover:-translate-y-0.5 hover:bg-[#fdf2f8] hover:border-[#fbcfe8] hover:shadow-sm",
+    "bg-white text-[#18181B] border border-[#E4E4E7] shadow-xs hover:bg-[#fdf2f8] hover:border-[#7A2253] hover:text-[#7A2253] hover:shadow-sm",
   outline:
-    "bg-transparent text-[#7A2253] border border-[#e2e8f0] hover:-translate-y-0.5 hover:bg-[#fdf2f8] hover:border-[#fbcfe8]",
-  ghost: "bg-transparent text-[#475569] hover:text-[#7A2253] hover:bg-[#fdf2f8]",
+    "bg-transparent text-[#7A2253] border border-[#E4E4E7] hover:bg-[#fdf2f8] hover:border-[#7A2253]",
+  ghost: "bg-transparent text-[#52525B] hover:text-[#7A2253] hover:bg-[#fdf2f8]",
   danger: "bg-rose-50 text-[#ef4444] border border-rose-200 hover:-translate-y-0.5 hover:bg-rose-100",
 };
 
 const sizeClasses: Record<Size, string> = {
-  sm: "h-8 px-3 text-xs font-semibold rounded-lg gap-1.5",
-  md: "h-9 sm:h-10 px-4 text-xs sm:text-sm font-semibold rounded-xl gap-2",
-  lg: "h-10 sm:h-11 px-5 text-xs sm:text-sm font-bold rounded-xl gap-2",
+  sm: "h-9 px-3 text-xs font-semibold rounded-lg gap-1.5",
+  md: "h-11 px-4 text-sm font-bold rounded-xl gap-2",
+  lg: "h-12 px-5 text-sm sm:text-base font-bold rounded-xl gap-2",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(

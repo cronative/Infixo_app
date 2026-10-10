@@ -67,7 +67,7 @@ export function SubtypeMultiSelect({
               disabled={isMaxReached}
               onClick={() => toggleSubtype(st)}
               className={`tap-scale flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${isSelected
-                ? "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white shadow-xs ring-2 ring-[#7A2253]/25"
+                ? "bg-[#7A2253] text-white shadow-xs ring-2 ring-[#7A2253]/25"
                 : isMaxReached
                   ? "opacity-40 cursor-not-allowed bg-white border border-[#e2e8f0] text-[#64748b]"
                   : "bg-white border border-[#e2e8f0] text-[#475569] hover:border-[#cbd5e1] hover:text-[#7A2253]"

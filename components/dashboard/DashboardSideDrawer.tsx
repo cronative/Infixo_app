@@ -134,13 +134,17 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                       href={item.href}
                       onClick={onClose}
                       aria-current={active ? "page" : undefined}
-                      className={`flex min-h-[44px] items-center gap-3 rounded-xl px-3 text-sm transition-colors ${
+                      className={`group flex min-h-[44px] items-center gap-3 rounded-xl px-3 text-sm transition-colors ${
                         active
-                          ? "bg-[#7A2253]/[0.07] font-semibold text-[#7A2253]"
-                          : "font-medium text-[#334155] active:bg-[#f1f5f9]"
+                          ? "bg-[#7A2253]/[0.08] font-semibold text-[#7A2253]"
+                          : "font-medium text-[#334155] hover:bg-[#fdf2f8] hover:text-[#7A2253] active:bg-[#fdf2f8]"
                       }`}
                     >
-                      <Icon className={`h-[18px] w-[18px] shrink-0 ${active ? "text-[#7A2253]" : "text-[#94a3b8]"}`} />
+                      <Icon
+                        className={`h-[18px] w-[18px] shrink-0 transition-colors ${
+                          active ? "text-[#7A2253]" : "text-[#94a3b8] group-hover:text-[#7A2253]"
+                        }`}
+                      />
                       <span className="flex-1 truncate">{item.label}</span>
                     </Link>
                   );
@@ -161,12 +165,12 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                 planInfo.tier === "vip"
                   ? "bg-amber-50 text-amber-900 border border-amber-200/90 font-semibold"
                   : planInfo.tier === "pro"
-                  ? "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white shadow-xs font-bold"
+                  ? "bg-[#7A2253] text-white shadow-xs font-bold"
                   : planInfo.tier === "starter"
                   ? "bg-[#fdf2f8] text-[#7A2253] border border-[#fbcfe8] font-semibold"
                   : planInfo.tier === "expired"
                   ? "bg-rose-50 text-rose-700 border border-rose-200 font-semibold"
-                  : "text-[#475569] border border-transparent font-medium hover:bg-[#f1f5f9] hover:text-[#0f172a]"
+                  : "text-[#475569] border border-transparent font-medium hover:bg-[#fdf2f8] hover:text-[#7A2253]"
               }`}
             >
               {planInfo.tier === "vip" ? (
@@ -200,7 +204,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
               AuthService.logout();
               router.push("/login");
             }}
-            className="flex w-full items-center gap-3 rounded-xl px-3 text-sm font-medium text-[#475569] active:bg-[#f1f5f9] hover:bg-[#f1f5f9] transition-colors min-h-[44px] cursor-pointer"
+            className="flex w-full items-center gap-3 rounded-xl px-3 text-sm font-medium text-[#475569] hover:bg-rose-50 hover:text-rose-600 active:bg-rose-50 transition-colors min-h-[44px] cursor-pointer"
           >
             <LogOut className="h-4 w-4 shrink-0" />
             <span>Logout</span>

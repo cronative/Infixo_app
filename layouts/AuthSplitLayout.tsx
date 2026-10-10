@@ -8,7 +8,7 @@ export function AuthSplitLayout({ children }: { children: ReactNode }) {
       {/* Left / form column */}
       <div className="flex w-full flex-col justify-between px-6 py-8 sm:px-10 sm:py-10 lg:w-[48%] lg:px-14 lg:py-12 xl:w-[45%] bg-white border-r border-[#e2e8f0] min-h-dvh">
         <div>
-          <Logo variant="transparent" />
+          <Logo size="md" />
         </div>
 
         {/* Vertically Centered Form Container */}
@@ -23,7 +23,7 @@ export function AuthSplitLayout({ children }: { children: ReactNode }) {
       </div>
 
       {/* Right / visual column */}
-      <div className="relative hidden flex-1 overflow-hidden lg:block bg-[linear-gradient(135deg,#7A2253_0%,#B0437A_100%)]">
+      <div className="relative hidden flex-1 overflow-hidden lg:block bg-[#7A2253]">
         {/* Glow ambient background orbs */}
         <div className="absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-white/10 blur-3xl pointer-events-none animate-blob" />
         <div className="absolute bottom-10 right-10 h-80 w-80 rounded-full bg-white/5 blur-3xl pointer-events-none animate-blob" />

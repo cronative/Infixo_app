@@ -221,7 +221,7 @@ export default function DashboardSubscriptionPage() {
             <button
               type="button"
               onClick={handleScrollToUpgrade}
-              className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 active:scale-[0.99] text-white px-4 py-2.5 text-xs font-bold transition-all shadow-md shadow-[#7A2253]/20 cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#7A2253] hover:opacity-95 active:scale-[0.99] text-white px-4 py-2.5 text-xs font-bold transition-all shadow-md shadow-[#7A2253]/20 cursor-pointer"
             >
               <Sparkles className="h-3.5 w-3.5" />
               <span>Upgrade Plan</span>
@@ -237,7 +237,7 @@ export default function DashboardSubscriptionPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1.5">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white px-3 py-0.5 text-[11px] font-bold uppercase tracking-wider shadow-xs">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#7A2253] text-white px-3 py-0.5 text-[11px] font-bold uppercase tracking-wider shadow-xs">
                   <ShieldCheck className="h-3.5 w-3.5" />
                   Active Plan
                 </span>
@@ -387,7 +387,7 @@ export default function DashboardSubscriptionPage() {
                 </div>
                 <div className="w-full bg-[#e2e8f0] h-2 rounded-full overflow-hidden">
                   <div
-                    className="bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] h-full rounded-full transition-all"
+                    className="bg-[#7A2253] h-full rounded-full transition-all"
                     style={{ width: `${Math.min(100, seriesUsage.percentage)}%` }}
                   />
                 </div>
@@ -411,7 +411,7 @@ export default function DashboardSubscriptionPage() {
                 </div>
                 <div className="w-full bg-[#e2e8f0] h-2 rounded-full overflow-hidden">
                   <div
-                    className="bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] h-full rounded-full transition-all"
+                    className="bg-[#7A2253] h-full rounded-full transition-all"
                     style={{ width: `${Math.min(100, episodeUsage.percentage)}%` }}
                   />
                 </div>
@@ -435,7 +435,7 @@ export default function DashboardSubscriptionPage() {
                 </div>
                 <div className="w-full bg-[#e2e8f0] h-2 rounded-full overflow-hidden">
                   <div
-                    className="bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] h-full rounded-full transition-all"
+                    className="bg-[#7A2253] h-full rounded-full transition-all"
                     style={{ width: `${Math.min(100, productUsage.percentage)}%` }}
                   />
                 </div>
@@ -459,7 +459,7 @@ export default function DashboardSubscriptionPage() {
                 </div>
                 <div className="w-full bg-[#e2e8f0] h-2 rounded-full overflow-hidden">
                   <div
-                    className="bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] h-full rounded-full transition-all"
+                    className="bg-[#7A2253] h-full rounded-full transition-all"
                     style={{ width: `${Math.min(100, gigUsage.percentage)}%` }}
                   />
                 </div>
@@ -493,7 +493,7 @@ export default function DashboardSubscriptionPage() {
                   <button
                     type="button"
                     onClick={handleScrollToUpgrade}
-                    className="rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 active:scale-[0.99] text-white py-2.5 px-5 text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-[#7A2253]/20"
+                    className="rounded-xl bg-[#7A2253] hover:opacity-95 active:scale-[0.99] text-white py-2.5 px-5 text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-[#7A2253]/20"
                   >
                     <Sparkles className="h-4 w-4" />
                     <span>Upgrade Plan</span>

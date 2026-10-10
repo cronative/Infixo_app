@@ -13,11 +13,11 @@ const PLAN_PRICES: Record<PaidPlanKey, Record<BillingPeriod, Record<PricingCurre
   },
   pro: {
     monthly: { INR: 199, USD: 4.99 },
-    yearly: { INR: 1999, USD: 49 },
+    yearly: { INR: 1499, USD: 39 },
   },
   vip: {
     monthly: { INR: 399, USD: 9.99 },
-    yearly: { INR: 3999, USD: 99 },
+    yearly: { INR: 2499, USD: 69 },
   },
 };
 

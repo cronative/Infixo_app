@@ -22,44 +22,25 @@ export function LogoStadiumLinkI({
   style,
 }: {
   className?: string;
-  color?: "dark" | "white" | "color" | "current" | "gradient";
+  color?: "dark" | "white" | "color" | "current" | "gradient" | "3d";
   style?: React.CSSProperties;
 }) {
-  if (color === "current") {
-    return (
-      <span
-        className={`${className} inline-block shrink-0`}
-        style={{
-          maskImage: "url(/images/inflixo-logo-icon-white-transparent.png)",
-          WebkitMaskImage: "url(/images/inflixo-logo-icon-white-transparent.png)",
-          maskSize: "contain",
-          WebkitMaskSize: "contain",
-          maskRepeat: "no-repeat",
-          WebkitMaskRepeat: "no-repeat",
-          maskPosition: "center",
-          WebkitMaskPosition: "center",
-          backgroundColor: "currentColor",
-          ...style,
-        }}
-        aria-hidden="true"
-      />
-    );
-  }
-
   const imageSrc =
-    color === "white"
+    color === "3d"
+      ? "/images/inflixo-logo-3d.png"
+      : color === "white"
       ? "/images/inflixo-logo-icon-white-transparent.png"
       : color === "color"
-      ? "/images/inflixo-logo-icon.png"
+      ? "/images/inflixo-logo-3d.png"
       : "/images/inflixo-logo-icon-brand.png";
 
   return (
     <Image
       src={imageSrc}
       alt="Inflixo"
-      width={100}
-      height={100}
-      className={`${className} object-contain`}
+      width={120}
+      height={120}
+      className={`${className} object-contain select-none`}
       style={style}
       priority
     />
@@ -68,10 +49,8 @@ export function LogoStadiumLinkI({
 
 /**
  * ============================================================
- * BACKUP ICON
+ * BACKUP ICON (3D Fallback)
  * ============================================================
- *
- * Keeping your previous universal-link icon as fallback.
  */
 export function LogoUniversalLinkI({
   className = "h-6 w-6",
@@ -79,52 +58,10 @@ export function LogoUniversalLinkI({
   className?: string;
 }) {
   return (
-    <svg
-      viewBox="0 0 100 100"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+    <LogoStadiumLinkI
       className={className}
-      aria-hidden="true"
-    >
-      <g
-        transform="rotate(-45 50 50)"
-        stroke="currentColor"
-        strokeWidth="8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      >
-        <path d="M 34 46 L 34 20 A 16 16 0 0 1 66 20 L 66 54 A 16 16 0 0 1 50 70 L 44 70" />
-
-        <path d="M 66 54 L 66 80 A 16 16 0 0 1 34 80 L 34 46 A 16 16 0 0 1 50 30 L 56 30" />
-      </g>
-
-      <g fill="currentColor">
-        <rect
-          x="33"
-          y="22"
-          width="34"
-          height="8.5"
-          rx="4.25"
-        />
-
-        <rect
-          x="44"
-          y="30.5"
-          width="12"
-          height="39"
-          rx="6"
-        />
-
-        <rect
-          x="33"
-          y="69.5"
-          width="34"
-          height="8.5"
-          rx="4.25"
-        />
-      </g>
-    </svg>
+      color="dark"
+    />
   );
 }
 
@@ -135,22 +72,22 @@ export function LogoUniversalLinkI({
  */
 export function InflixoLogoIcon({
   className = "h-6 w-6",
-  light = false,
-  color,
   style,
 }: {
   className?: string;
   light?: boolean;
-  color?: "dark" | "white" | "color" | "current";
+  color?: "dark" | "white" | "color" | "current" | "3d";
   style?: React.CSSProperties;
 }) {
-  const resolvedColor = color || (light ? "white" : "current");
-
   return (
-    <LogoStadiumLinkI
-      className={className}
-      color={resolvedColor}
+    <Image
+      src="/images/inflixo-logo-3d.png"
+      alt="Inflixo"
+      width={120}
+      height={120}
+      className={`${className} rounded-[22%] object-cover select-none shrink-0 shadow-2xs`}
       style={style}
+      priority
     />
   );
 }
@@ -257,9 +194,9 @@ export function Logo({
    */
   const radius = {
     sm: "rounded-[10px]",
-    md: "rounded-[10px]",
-    lg: "rounded-[10px]",
-    xl: "rounded-[10px]",
+    md: "rounded-[11px]",
+    lg: "rounded-[14px]",
+    xl: "rounded-[22px]",
   }[size];
 
   /**
@@ -270,12 +207,12 @@ export function Logo({
   const badgeStyles = isTransparent
     ? "bg-transparent"
     : ({
-        gradient: "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]",
-        black: "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]",
-        brand: "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]",
+        gradient: "bg-[#7A2253]",
+        black: "bg-[#7A2253]",
+        brand: "bg-[#7A2253]",
         white: "bg-white border border-[#e2e8f0]",
         color: "bg-[#fdf2f8] border border-[#fbcfe8]",
-      }[variant] || "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)]");
+      }[variant] || "bg-[#7A2253]");
 
   /**
    * ============================================================
@@ -313,35 +250,23 @@ export function Logo({
       `}
     >
       {/* =====================================================
-          ICON BADGE
+          ICON BADGE (3D EMBOSSED)
          ===================================================== */}
       <div
         className={`
           ${badgeSize}
-          ${isTransparent
-            ? "flex shrink-0 items-center justify-center transition-transform duration-200 group-hover:scale-105"
-            : `${radius} ${badgeStyles} flex shrink-0 items-center justify-center overflow-hidden transition-all duration-200 shadow-sm group-hover:shadow-md`
-          }
+          ${radius}
+          flex shrink-0 items-center justify-center overflow-hidden transition-all duration-200 shadow-sm group-hover:shadow-md group-hover:scale-[1.03]
         `}
       >
-        {styleName === "universal-link-i" ? (
-          <LogoUniversalLinkI
-            className={`
-              ${iconSize}
-              ${variant === "white"
-                ? "text-[#7A2253]"
-                : variant === "transparent"
-                ? (light ? "text-white" : "text-[#7A2253]")
-                : "text-white"
-              }
-            `}
-          />
-        ) : (
-          <LogoStadiumLinkI
-            className={iconSize}
-            color={primaryLogoColor}
-          />
-        )}
+        <Image
+          src="/images/inflixo-logo-3d.png"
+          alt="Inflixo"
+          width={120}
+          height={120}
+          className="h-full w-full object-cover select-none"
+          priority
+        />
       </div>
 
       {/* =====================================================
@@ -350,7 +275,7 @@ export function Logo({
       {showText && (
         <span
           className={`
-            font-[family-name:var(--font-outfit)]
+            font-[family-name:var(--font-plus-jakarta)]
             ${textSize}
             font-black
             ${casing === "uppercase" ? "uppercase tracking-[0.05em]" : "tracking-tight"}
@@ -358,7 +283,7 @@ export function Logo({
             transition-colors
             ${light
               ? "text-white"
-              : "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] bg-clip-text text-transparent"
+              : "text-[#7A2253]"
             }
           `}
         >

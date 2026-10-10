@@ -126,7 +126,7 @@ export function PwaInstallPrompt() {
 
         <div className="flex items-center gap-3.5 pr-6">
           {/* App Icon */}
-          <div className="relative h-13 w-13 shrink-0 overflow-hidden rounded-2xl border border-white/20 shadow-md bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] p-0.5">
+          <div className="relative h-13 w-13 shrink-0 overflow-hidden rounded-2xl border border-white/20 shadow-md bg-[#7A2253] p-0.5">
             <Image
               src="/logo-square.png"
               alt="Inflixo App Icon"
@@ -142,7 +142,7 @@ export function PwaInstallPrompt() {
               <h4 className="font-display text-sm font-black text-slate-900 truncate">
                 Install Inflixo App
               </h4>
-              <span className="inline-flex items-center gap-0.5 rounded-full bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-2 py-0.5 text-[9px] font-black text-white shadow-xs">
+              <span className="inline-flex items-center gap-0.5 rounded-full bg-[#7A2253] px-2 py-0.5 text-[9px] font-black text-white shadow-xs">
                 <Sparkles className="h-2.5 w-2.5" /> FREE
               </span>
             </div>
@@ -176,7 +176,7 @@ export function PwaInstallPrompt() {
             <button
               type="button"
               onClick={handleInstallClick}
-              className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 py-2.5 px-4 text-xs font-black text-white shadow-md shadow-[#7A2253]/25 transition-all hover:scale-[1.01] cursor-pointer"
+              className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#7A2253] hover:opacity-95 py-2.5 px-4 text-xs font-black text-white shadow-md shadow-[#7A2253]/25 transition-all hover:scale-[1.01] cursor-pointer"
             >
               <Download className="h-4 w-4" />
               <span>Add to Home Screen</span>

@@ -53,6 +53,8 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
       sections={sections}
       totalAudience={totalAudience}
       compact={variant === "compact"}
+      variant={variant}
+      hideFooter={true}
       themeKey={themeKey}
       containedScroll={containedScroll}
       seriesOpenMode={seriesOpenMode}

@@ -16,9 +16,9 @@ const RAZORPAY_RECURRING_PLANS = {
   starter_monthly: { name: "Inflixo Starter Monthly", period: "monthly", amountInPaise: 9900, description: "Inflixo Starter plan billed monthly with recurring auto-renewal" },
   starter_yearly: { name: "Inflixo Starter Yearly", period: "yearly", amountInPaise: 99900, description: "Inflixo Starter plan billed yearly with recurring auto-renewal" },
   pro_monthly: { name: "Inflixo Pro Monthly", period: "monthly", amountInPaise: 19900, description: "Inflixo Pro plan billed monthly with recurring auto-renewal" },
-  pro_yearly: { name: "Inflixo Pro Yearly", period: "yearly", amountInPaise: 199900, description: "Inflixo Pro plan billed yearly with recurring auto-renewal" },
+  pro_yearly: { name: "Inflixo Pro Yearly", period: "yearly", amountInPaise: 149900, description: "Inflixo Pro plan billed yearly with recurring auto-renewal" },
   vip_monthly: { name: "Inflixo VIP Monthly", period: "monthly", amountInPaise: 39900, description: "Inflixo VIP plan billed monthly with recurring auto-renewal" },
-  vip_yearly: { name: "Inflixo VIP Yearly", period: "yearly", amountInPaise: 399900, description: "Inflixo VIP plan billed yearly with recurring auto-renewal" },
+  vip_yearly: { name: "Inflixo VIP Yearly", period: "yearly", amountInPaise: 249900, description: "Inflixo VIP plan billed yearly with recurring auto-renewal" },
 };
 
 const planIdCache = new Map();

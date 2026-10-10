@@ -67,15 +67,15 @@ export function SyncingLoader({
       <div className="relative z-10 flex flex-col items-center max-w-lg w-full space-y-4">
         {/* Animated Brand Logo Container */}
         <div className="relative flex h-16 w-16 items-center justify-center">
-          <div className="absolute inset-0 rounded-[22px] bg-[#7A2253]/10 blur-xl" />
-          <div className="absolute inset-1 rounded-[18px] bg-[#7A2253]/12 animate-ping opacity-20" />
-          <div className="relative flex h-12 w-12 items-center justify-center rounded-[14px] bg-[linear-gradient(135deg,#7A2253_0%,#B0437A_100%)] shadow-[0_14px_36px_rgba(21,25,51,0.16)]">
+          <div className="absolute inset-0 rounded-[22px] bg-[#7A2253]/15 blur-xl" />
+          <div className="absolute inset-1 rounded-[18px] bg-[#7A2253]/15 animate-ping opacity-25" />
+          <div className="relative flex h-14 w-14 items-center justify-center rounded-[16px] overflow-hidden shadow-[0_14px_36px_rgba(122,34,83,0.25)] border border-[#7A2253]/20">
             <Image
-              src="/images/inflixo-logo-icon-white-transparent.png"
+              src="/images/inflixo-logo-3d.png"
               alt="Inflixo"
-              width={64}
-              height={64}
-              className="h-8 w-8 object-contain"
+              width={120}
+              height={120}
+              className="h-full w-full object-cover select-none"
               priority
             />
           </div>

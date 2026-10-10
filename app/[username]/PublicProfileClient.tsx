@@ -608,7 +608,7 @@ export default function PublicProfileClient() {
                 <div className="pt-2 space-y-2">
                   <button
                     onClick={() => router.push("/dashboard/subscription")}
-                    className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#7A2253]/20 transition-all hover:scale-[1.02] cursor-pointer"
+                    className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#7A2253] hover:opacity-95 px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#7A2253]/20 transition-all hover:scale-[1.02] cursor-pointer"
                   >
                     <Sparkles className="h-4 w-4" />
                     <span>Reactivate My Profile (Choose Plan)</span>
@@ -640,7 +640,7 @@ export default function PublicProfileClient() {
                 <div className="pt-3 space-y-3">
                   <button
                     onClick={() => router.push("/")}
-                    className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#7A2253]/20 transition-all hover:scale-[1.02] cursor-pointer"
+                    className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#7A2253] hover:opacity-95 px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#7A2253]/20 transition-all hover:scale-[1.02] cursor-pointer"
                   >
                     <Sparkles className="h-4 w-4" />
                     <span>Explore Inflixo Creators</span>
@@ -685,7 +685,7 @@ export default function PublicProfileClient() {
           {/* Main Clean Light Theme Card */}
           <div className="rounded-[32px] border border-[#E8DCE4] bg-white/95 p-8 sm:p-10 shadow-2xl shadow-[#7A2253]/5 backdrop-blur-xl space-y-6 text-center">
             {/* Icon Badge */}
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#7A2253_0%,#B0437A_100%)] text-white shadow-xl shadow-[#7A2253]/25 ring-4 ring-[#F6EBF1]">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#7A2253] text-white shadow-xl shadow-[#7A2253]/25 ring-4 ring-[#F6EBF1]">
               <UserX className="h-8 w-8 stroke-[2.2]" />
             </div>
 
@@ -703,7 +703,7 @@ export default function PublicProfileClient() {
             <div className="pt-2">
               <button
                 onClick={() => router.push("/login")}
-                className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#7A2253]/20 transition-all border border-[#7A2253] hover:scale-[1.02] cursor-pointer"
+                className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#7A2253] hover:opacity-95 px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#7A2253]/20 transition-all border border-[#7A2253] hover:scale-[1.02] cursor-pointer"
               >
                 <Sparkles className="h-4 w-4" />
                 <span>Claim Handle &amp; Create Profile</span>

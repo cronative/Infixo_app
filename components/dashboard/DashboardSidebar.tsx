@@ -86,12 +86,17 @@ export function DashboardSidebar() {
                     key={item.href}
                     href={item.href}
                     aria-current={active ? "page" : undefined}
-                    className={`flex h-8 items-center gap-2.5 rounded-lg px-2.5 text-[13px] transition-colors ${active
-                      ? "bg-[#7A2253]/[0.07] font-semibold text-[#7A2253]"
-                      : "font-medium text-[#475569] hover:bg-[#f1f5f9] hover:text-[#0f172a]"
-                      }`}
+                    className={`group flex h-8 items-center gap-2.5 rounded-lg px-2.5 text-[13px] transition-all ${
+                      active
+                        ? "bg-[#7A2253]/[0.08] font-semibold text-[#7A2253]"
+                        : "font-medium text-[#475569] hover:bg-[#fdf2f8] hover:text-[#7A2253]"
+                    }`}
                   >
-                    <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[#7A2253]" : "text-[#94a3b8]"}`} />
+                    <Icon
+                      className={`h-4 w-4 shrink-0 transition-colors ${
+                        active ? "text-[#7A2253]" : "text-[#94a3b8] group-hover:text-[#7A2253]"
+                      }`}
+                    />
                     <span className="flex-1 truncate">{item.label}</span>
                   </Link>
                 );
@@ -110,12 +115,12 @@ export function DashboardSidebar() {
             planInfo.tier === "vip"
               ? "bg-amber-50 text-amber-900 border border-amber-200/90 hover:bg-amber-100 font-semibold"
               : planInfo.tier === "pro"
-              ? "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white shadow-xs font-bold hover:opacity-95"
+              ? "bg-[#7A2253] text-white shadow-xs font-bold hover:bg-[#631841]"
               : planInfo.tier === "starter"
               ? "bg-[#fdf2f8] text-[#7A2253] border border-[#fbcfe8] hover:bg-[#fce7f3] font-semibold"
               : planInfo.tier === "expired"
               ? "bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 font-semibold"
-              : "text-[#475569] border border-transparent hover:bg-[#f1f5f9] hover:text-[#0f172a] font-medium"
+              : "text-[#475569] border border-transparent hover:bg-[#fdf2f8] hover:text-[#7A2253] font-medium"
           }`}
         >
           {planInfo.tier === "vip" ? (
@@ -134,7 +139,7 @@ export function DashboardSidebar() {
         <button
           type="button"
           onClick={handleViewProfile}
-          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-[#64748b] transition-colors hover:bg-[#f1f5f9] hover:text-[#0f172a]"
+          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-[#64748b] transition-colors hover:bg-[#fdf2f8] hover:text-[#7A2253]"
           title="View live profile"
           aria-label="View live profile"
         >
@@ -145,7 +150,7 @@ export function DashboardSidebar() {
             AuthService.logout();
             router.push("/login");
           }}
-          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-[#64748b] transition-colors hover:bg-[#f1f5f9] hover:text-[#0f172a]"
+          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-[#64748b] transition-colors hover:bg-rose-50 hover:text-rose-600"
           title="Logout"
           aria-label="Logout"
         >

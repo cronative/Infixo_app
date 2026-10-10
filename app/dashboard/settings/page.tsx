@@ -305,7 +305,7 @@ function SwitchToggle({
       aria-label={label}
       disabled={disabled}
       onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-[#7A2253]/20 disabled:cursor-not-allowed disabled:opacity-50 ${checked ? "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] shadow-2xs" : "bg-[#e2e8f0]"
+      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-[#7A2253]/20 disabled:cursor-not-allowed disabled:opacity-50 ${checked ? "bg-[#7A2253] shadow-2xs" : "bg-[#e2e8f0]"
         }`}
     >
       <span

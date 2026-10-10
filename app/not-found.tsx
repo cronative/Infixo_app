@@ -11,7 +11,7 @@ export default function NotFound() {
           <Logo size="sm" />
           <Link
             href="/login"
-            className="rounded-lg bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-4 py-1.5 text-xs font-bold text-white transition-all hover:opacity-95 shadow-xs"
+            className="rounded-lg bg-[#7A2253] px-4 py-1.5 text-xs font-bold text-white transition-all hover:opacity-95 shadow-xs"
           >
             Sign In
           </Link>
@@ -40,7 +40,7 @@ export default function NotFound() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <Link
               href="/"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-6 py-3 text-xs font-bold text-white shadow-sm transition-all hover:opacity-95 hover:-translate-y-0.5 cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[#7A2253] px-6 py-3 text-xs font-bold text-white shadow-sm transition-all hover:opacity-95 hover:-translate-y-0.5 cursor-pointer"
             >
               <ArrowLeft className="h-4 w-4" />
               <span>Back to Homepage</span>

@@ -47,9 +47,9 @@ export function CreatorGridBackground({
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden select-none" aria-hidden="true">
-      <div className="absolute inset-0 bg-white" />
-      <div className={`absolute inset-0 bg-[linear-gradient(to_right,rgba(21,25,51,0.045)_1px,transparent_1px),linear-gradient(to_bottom,rgba(21,25,51,0.045)_1px,transparent_1px)] bg-[size:44px_44px] ${isSoft ? "opacity-70" : ""}`} />
-      <div className={`absolute left-0 top-0 h-px w-full bg-[linear-gradient(90deg,transparent,rgba(21,25,51,0.45),transparent)] [animation:infixo-scan-x_5s_ease-in-out_infinite] ${isSoft ? "opacity-25" : ""}`} />
+      <div className="absolute inset-0 bg-[#FFFCFB]" />
+      <div className={`absolute inset-0 bg-[linear-gradient(to_right,rgba(184,92,107,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(184,92,107,0.04)_1px,transparent_1px)] bg-[size:44px_44px] ${isSoft ? "opacity-70" : ""}`} />
+      <div className={`absolute left-0 top-0 h-px w-full bg-[linear-gradient(90deg,transparent,rgba(184,92,107,0.25),transparent)] [animation:infixo-scan-x_5s_ease-in-out_infinite] ${isSoft ? "opacity-25" : ""}`} />
 
       {showWordmark && (
         <div

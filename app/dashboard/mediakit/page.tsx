@@ -769,7 +769,7 @@ export default function DashboardMediaKitPage() {
             <button
               type="button"
               onClick={handleShareMediaKit}
-              className="order-first col-span-3 inline-flex h-10 items-center justify-center gap-1.5 rounded-lg bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-3.5 text-sm font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer sm:order-last sm:ml-1 sm:h-9"
+              className="order-first col-span-3 inline-flex h-10 items-center justify-center gap-1.5 rounded-lg bg-[#7A2253] px-3.5 text-sm font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer sm:order-last sm:ml-1 sm:h-9"
             >
               <Share2 className="h-4 w-4" />
               <span>Share media kit</span>
@@ -847,7 +847,7 @@ export default function DashboardMediaKitPage() {
                 <button
                   type="button"
                   onClick={handleOpenAddModal}
-                  className="inline-flex h-9 items-center gap-2 rounded-lg bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] px-4 text-sm font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer"
+                  className="inline-flex h-9 items-center gap-2 rounded-lg bg-[#7A2253] px-4 text-sm font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer"
                 >
                   <Plus className="h-4 w-4" />
                   <span>Create Collab Package</span>
@@ -1065,7 +1065,7 @@ export default function DashboardMediaKitPage() {
                         onClick={() => setFormTurnaround(days)}
                         className={`flex-1 h-10 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
                           isSelected
-                            ? "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white border-transparent shadow-xs"
+                            ? "bg-[#7A2253] text-white border-transparent shadow-xs"
                             : "bg-white text-[#7A2253] border-[#e2e8f0] hover:bg-[#f8fafc]"
                         }`}
                       >
@@ -1163,7 +1163,7 @@ export default function DashboardMediaKitPage() {
                 <button
                   type="button"
                   onClick={handleAddDeliverable}
-                  className="h-10 px-4 rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white text-xs font-semibold hover:opacity-95 shadow-md shadow-[#7A2253]/20 transition-all cursor-pointer shrink-0"
+                  className="h-10 px-4 rounded-xl bg-[#7A2253] text-white text-xs font-semibold hover:opacity-95 shadow-md shadow-[#7A2253]/20 transition-all cursor-pointer shrink-0"
                 >
                   + Add
                 </button>
@@ -1272,7 +1272,7 @@ export default function DashboardMediaKitPage() {
                       onClick={() => setFormPackageName(isSelected ? "" : badge.label)}
                       className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
                         isSelected
-                          ? "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white border-transparent shadow-xs"
+                          ? "bg-[#7A2253] text-white border-transparent shadow-xs"
                           : "bg-white text-[#7A2253] border-[#e2e8f0] hover:bg-[#f8fafc]"
                       }`}
                     >
@@ -1303,7 +1303,7 @@ export default function DashboardMediaKitPage() {
             <button
               type="submit"
               form="service-form"
-              className="h-10 px-5 rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 text-white font-semibold text-xs transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5"
+              className="h-10 px-5 rounded-xl bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5"
             >
               <span>{editingPkgId ? "Save Changes" : "Create Collab Package"}</span>
             </button>
@@ -1343,7 +1343,7 @@ export default function DashboardMediaKitPage() {
                 <button
                   type="button"
                   onClick={() => handleApplyTemplate(example)}
-                  className="px-3 py-1 rounded-lg bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white text-xs font-semibold hover:opacity-95 shadow-sm shadow-[#7A2253]/20 transition-all cursor-pointer"
+                  className="px-3 py-1 rounded-lg bg-[#7A2253] text-white text-xs font-semibold hover:opacity-95 shadow-sm shadow-[#7A2253]/20 transition-all cursor-pointer"
                 >
                   Use Template
                 </button>
@@ -1418,7 +1418,7 @@ export default function DashboardMediaKitPage() {
             </button>
             <button
               type="submit"
-              className="h-10 px-5 rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 text-white font-semibold text-xs transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5"
+              className="h-10 px-5 rounded-xl bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5"
             >
               Save Settings
             </button>

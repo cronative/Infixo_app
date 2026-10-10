@@ -116,7 +116,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
               type="button"
               onClick={() => setCycle("yearly")}
               className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${cycle === "yearly"
-                ? "bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] text-white shadow-xs"
+                ? "bg-[#7A2253] text-white shadow-xs"
                 : "text-[#797570] hover:text-foreground"
                 }`}
             >
@@ -331,7 +331,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                     name: profile?.displayName || "Creator",
                     email: activeEmail,
                   }}
-                  className="w-full rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 text-white py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-[#7A2253]/20"
+                  className="w-full rounded-xl bg-[#7A2253] hover:opacity-95 text-white py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-[#7A2253]/20"
                   onSuccess={(data) => {
                     handleUpgradeSuccess("creator_pro", "Creator Pro", data);
                   }}
@@ -422,7 +422,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                     name: profile?.displayName || "Creator",
                     email: activeEmail,
                   }}
-                  className="w-full rounded-xl bg-[linear-gradient(90deg,#7A2253_0%,#B0437A_100%)] hover:opacity-95 text-white py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-[#7A2253]/20"
+                  className="w-full rounded-xl bg-[#7A2253] hover:opacity-95 text-white py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-[#7A2253]/20"
                   onSuccess={(data) => {
                     handleUpgradeSuccess("creator_VIP", "Creator VIP", data);
                   }}
