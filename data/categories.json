@@ -1,52 +1,156 @@
 [
-  { "category": "Vlogging", "emoji": "🎥", "subtypes": ["Vlogger", "Daily Vlogger", "Lifestyle Vlogger", "Family Vlogger", "Couple Vlogger", "Student Vlogger", "Village Vlogger", "City Vlogger"] },
-  { "category": "Travel", "emoji": "✈️", "subtypes": ["Travel Vlogger", "Travel Creator", "Travel Blogger", "Travel Photographer", "Backpacker", "Adventure Creator", "Luxury Travel Creator", "Solo Travel Creator", "Couple Travel Creator", "Travel Guide"] },
-  { "category": "Food", "emoji": "🍕", "subtypes": ["Food Vlogger", "Food Blogger", "Food Reviewer", "Food Critic", "Chef", "Home Chef", "Recipe Creator", "Baking Creator", "Baker", "Street Food Creator", "Restaurant Reviewer", "Mukbang Creator"] },
-  { "category": "Comedy", "emoji": "😂", "subtypes": ["Stand-up Comedian", "Comedian", "Sketch Comedian", "Comedy Creator", "Mimicry Artist", "Satirist", "Prank Creator", "Meme Creator", "Roast Creator", "Improv Comedian", "Comedy Actor"] },
-  { "category": "Gaming", "emoji": "🎮", "subtypes": ["Gamer", "Gaming Creator", "Gaming Streamer", "Esports Player", "Mobile Gamer", "PC Gamer", "Console Gamer", "Gaming Reviewer", "Gaming Commentator", "Gaming Coach"] },
-  { "category": "Music & Singing", "emoji": "🎤", "subtypes": ["Singer", "Playback Singer", "Independent Singer", "Musician", "Rapper", "Songwriter", "Composer", "Music Producer", "DJ", "Guitarist", "Pianist", "Drummer", "Beatboxer", "Instrumentalist", "Cover Artist"] },
-  { "category": "Dance", "emoji": "💃", "subtypes": ["Dancer", "Choreographer", "Dance Creator", "Dance Teacher", "Dance Instructor", "Hip-Hop Dancer", "Classical Dancer", "Bollywood Dancer", "Folk Dancer", "Contemporary Dancer", "Street Dancer"] },
-  { "category": "Acting", "emoji": "🎭", "subtypes": ["Actor", "Actress", "Film Actor", "Film Actress", "TV Actor", "TV Actress", "Theatre Actor", "Theatre Actress", "Web Series Actor", "Web Series Actress", "Supporting Actor", "Child Actor", "Character Artist", "Theatre Artist", "Entertainer", "Performer"] },
-  { "category": "Modeling", "emoji": "👗", "subtypes": ["Model", "Male Model", "Female Model", "Fashion Model", "Commercial Model", "Fitness Model", "Lifestyle Model", "Glamour Model", "Runway Model", "Print Model", "Catalogue Model", "E-commerce Model"] },
-  { "category": "Film & Cinema", "emoji": "🎬", "subtypes": ["Filmmaker", "Film Director", "Director", "Assistant Director", "Producer", "Cinematographer", "Videographer", "Screenwriter", "Scriptwriter", "Video Editor", "Casting Director", "Film Critic", "Film Reviewer", "Movie Reviewer", "Short Film Creator", "Documentary Creator", "Reel Creator"] },
-  { "category": "TV & OTT", "emoji": "📺", "subtypes": ["TV Artist", "OTT Artist", "Web Series Actor", "Web Series Actress", "TV Host", "Reality Show Artist", "Television Presenter", "Anchor"] },
-  { "category": "Hosting & Anchoring", "emoji": "🎤", "subtypes": ["Anchor", "Host", "Event Host", "TV Host", "Show Host", "Emcee (MC)", "Presenter", "Interviewer"] },
-  { "category": "Voice & Performance", "emoji": "🎙️", "subtypes": ["Voice Artist", "Voice-over Artist", "Dubbing Artist", "Narrator", "Radio Jockey (RJ)", "Podcast Host", "Storyteller"] },
-  { "category": "Photography", "emoji": "📸", "subtypes": ["Photographer", "Portrait Photographer", "Fashion Photographer", "Wedding Photographer", "Wildlife Photographer", "Travel Photographer", "Street Photographer", "Product Photographer", "Mobile Photographer"] },
-  { "category": "Fashion & Glamour", "emoji": "📸", "subtypes": ["Fashion Creator", "Fashion Influencer", "Fashion Blogger", "Stylist", "Personal Stylist", "Celebrity Stylist", "Makeup Artist", "Hairstylist", "Fashion Photographer", "Beauty Creator", "Streetwear Creator", "Luxury Fashion Creator", "Ethnic Fashion Creator"] },
-  { "category": "Beauty", "emoji": "💄", "subtypes": ["Beauty Creator", "Beauty Influencer", "Makeup Artist", "Makeup Creator", "Skincare Creator", "Haircare Creator", "Hairstylist", "Nail Artist", "Grooming Creator", "Beauty Reviewer"] },
-  { "category": "Fitness", "emoji": "🏋️", "subtypes": ["Fitness Creator", "Fitness Influencer", "Fitness Trainer", "Personal Trainer", "Gym Creator", "Bodybuilder", "Yoga Instructor", "Yoga Creator", "Running Creator", "CrossFit Creator", "Calisthenics Creator"] },
-  { "category": "Sports", "emoji": "⚽", "subtypes": ["Sports Creator", "Athlete", "Cricketer", "Footballer", "Sports Coach", "Cricket Creator", "Football Creator", "Sports Analyst", "Sports Commentator", "Sports Journalist", "Fantasy Sports Creator"] },
-  { "category": "Technology", "emoji": "💻", "subtypes": ["Tech Creator", "Tech YouTuber", "Tech Reviewer", "Gadget Reviewer", "Mobile Reviewer", "Laptop Reviewer", "App Reviewer", "Software Creator", "Developer Creator", "Coding Creator", "AI Creator", "Cybersecurity Creator"] },
-  { "category": "Automobile", "emoji": "🚗", "subtypes": ["Automobile Creator", "Auto Vlogger", "Car Reviewer", "Bike Reviewer", "Moto Vlogger", "Motorcycle Creator", "EV Creator", "Car Enthusiast", "Bike Enthusiast", "Auto Journalist"] },
-  { "category": "Education", "emoji": "📚", "subtypes": ["Educator", "Teacher", "Tutor", "Education Creator", "Online Teacher", "Study Creator", "Exam Preparation Creator", "Career Coach", "Language Teacher", "Coding Educator", "Science Creator", "History Creator"] },
-  { "category": "Finance", "emoji": "💰", "subtypes": ["Finance Creator", "Personal Finance Creator", "Investment Creator", "Stock Market Creator", "Trading Creator", "Crypto Creator", "Tax Creator", "Insurance Creator", "Money Coach", "Finance Educator"] },
-  { "category": "Business & Entrepreneurship", "emoji": "💼", "subtypes": ["Business Creator", "Entrepreneur", "Startup Creator", "Founder Creator", "Marketing Creator", "Sales Creator", "E-commerce Creator", "Business Coach", "Leadership Creator", "Freelancing Creator"] },
-  { "category": "Digital Marketing", "emoji": "📱", "subtypes": ["Digital Marketer", "Social Media Creator", "Social Media Expert", "SEO Creator", "Content Marketing Creator", "Branding Creator", "Ads Expert", "Growth Creator", "Creator Coach"] },
-  { "category": "Podcast & Audio", "emoji": "🎙️", "subtypes": ["Podcaster", "Podcast Host", "Interviewer", "Radio Host", "Audio Creator", "Story Podcaster", "Business Podcaster", "Comedy Podcaster", "News Podcaster"] },
-  { "category": "Art & Design", "emoji": "🎨", "subtypes": ["Artist", "Illustrator", "Graphic Designer", "Digital Artist", "Painter", "Sketch Artist", "Animator", "3D Artist", "UI/UX Creator", "Calligraphy Artist", "Tattoo Artist", "Craft Artist"] },
-  { "category": "Writing & Literature", "emoji": "✍️", "subtypes": ["Writer", "Author", "Blogger", "Poet", "Shayari Creator", "Storyteller", "Scriptwriter", "Screenwriter", "Copywriter", "Book Reviewer", "Literature Creator"] },
-  { "category": "Motivation & Self Growth", "emoji": "🧠", "subtypes": ["Motivational Speaker", "Motivational Creator", "Life Coach", "Self-Improvement Creator", "Productivity Creator", "Mindset Coach", "Leadership Coach", "Public Speaker"] },
-  { "category": "Lifestyle", "emoji": "🏠", "subtypes": ["Lifestyle Creator", "Lifestyle Influencer", "Home Creator", "Home Decor Creator", "Interior Creator", "Minimalism Creator", "Organization Creator", "Luxury Lifestyle Creator"] },
-  { "category": "Family & Parenting", "emoji": "👨‍👩‍👧", "subtypes": ["Parenting Creator", "Mom Creator", "Dad Creator", "Family Vlogger", "Couple Creator", "Pregnancy Creator", "Baby Care Creator", "Kids Creator"] },
-  { "category": "Relationships", "emoji": "❤️", "subtypes": ["Relationship Creator", "Dating Creator", "Relationship Coach", "Marriage Creator", "Couple Creator", "Relationship Podcaster"] },
-  { "category": "Health & Wellness", "emoji": "🩺", "subtypes": ["Health Creator", "Wellness Creator", "Doctor Creator", "Nutrition Creator", "Nutritionist", "Dietitian", "Mental Wellness Creator", "Meditation Creator", "Physiotherapy Creator"] },
-  { "category": "Grooming", "emoji": "🧴", "subtypes": ["Men's Grooming Creator", "Beard Creator", "Haircare Creator", "Hairstyle Creator", "Fragrance Creator", "Grooming Reviewer"] },
-  { "category": "Home & Interior", "emoji": "🏡", "subtypes": ["Interior Designer", "Interior Creator", "Home Decor Creator", "Architecture Creator", "DIY Home Creator", "Gardening Creator", "Home Improvement Creator"] },
-  { "category": "DIY & Crafts", "emoji": "🔨", "subtypes": ["DIY Creator", "Craft Creator", "Handmade Creator", "Woodworking Creator", "Resin Artist", "Sewing Creator", "Crochet Creator", "Origami Creator"] },
-  { "category": "Science & Knowledge", "emoji": "🔬", "subtypes": ["Science Creator", "Knowledge Creator", "Facts Creator", "History Creator", "Geography Creator", "Space Creator", "Astronomy Creator", "Research Creator"] },
-  { "category": "News & Current Affairs", "emoji": "📰", "subtypes": ["News Creator", "Journalist", "Independent Journalist", "News Commentator", "Current Affairs Creator", "Political Commentator", "Explainer Creator"] },
-  { "category": "Spirituality & Devotional", "emoji": "🙏", "subtypes": ["Spiritual Creator", "Devotional Creator", "Spiritual Speaker", "Meditation Creator", "Astrology Creator", "Tarot Creator", "Religious Educator", "Bhajan Singer"] },
-  { "category": "Nature & Environment", "emoji": "🌱", "subtypes": ["Nature Creator", "Environmental Creator", "Sustainability Creator", "Wildlife Creator", "Gardening Creator", "Farming Creator", "Agriculture Creator"] },
-  { "category": "Adventure & Outdoors", "emoji": "🏕️", "subtypes": ["Adventure Creator", "Trekking Creator", "Hiking Creator", "Camping Creator", "Cycling Creator", "Mountaineering Creator", "Outdoor Creator"] },
-  { "category": "Hospitality", "emoji": "🍹", "subtypes": ["Hotel Reviewer", "Resort Reviewer", "Cafe Reviewer", "Restaurant Reviewer", "Hospitality Creator", "Luxury Hotel Creator"] },
-  { "category": "Shopping & Reviews", "emoji": "🛍️", "subtypes": ["Product Reviewer", "Unboxing Creator", "Shopping Creator", "Deals Creator", "Amazon Creator", "Product Recommendation Creator"] },
-  { "category": "Kids Content", "emoji": "👶", "subtypes": ["Kids Creator", "Kids Entertainer", "Educational Kids Creator", "Toy Reviewer", "Kids Storyteller", "Family Kids Creator"] },
-  { "category": "Performance & Talent", "emoji": "🎩", "subtypes": ["Magician", "Mentalist", "Illusionist", "Juggler", "Beatboxer", "Puppeteer", "Acrobat", "Street Performer", "Stage Performer"] },
-  { "category": "Performing Arts", "emoji": "🎪", "subtypes": ["Performer", "Theatre Artist", "Stage Performer", "Magician", "Mentalist", "Illusionist", "Puppeteer", "Juggler", "Acrobat", "Street Performer"] },
-  { "category": "Rural & Agriculture", "emoji": "🌾", "subtypes": ["Farmer Creator", "Agriculture Creator", "Farming Vlogger", "Village Vlogger", "Dairy Farming Creator", "Gardening Creator", "Organic Farming Creator"] },
-  { "category": "Real Estate", "emoji": "🏢", "subtypes": ["Real Estate Creator", "Property Creator", "Realtor Creator", "Broker Creator", "Property Reviewer", "Architecture Creator", "Real Estate Educator"] },
-  { "category": "Professional & Career", "emoji": "⚖️", "subtypes": ["Lawyer Creator", "CA Creator", "Doctor Creator", "Engineer Creator", "HR Creator", "Recruiter Creator", "Career Creator", "Consultant Creator"] },
-  { "category": "Influencer", "emoji": "🌟", "subtypes": ["Influencer", "Digital Creator", "Content Creator", "Instagram Creator", "YouTuber", "UGC Creator", "Lifestyle Influencer", "Fashion Influencer", "Celebrity Influencer", "Micro Influencer", "Social Media Influencer", "Facebook Creator", "Streamer", "Blogger", "Nano Influencer"] },
-  { "category": "General Creator", "emoji": "🌐", "subtypes": ["Content Creator", "Digital Creator", "Influencer", "Social Media Influencer", "YouTuber", "Instagram Creator", "Facebook Creator", "Streamer", "Blogger", "UGC Creator", "Micro Influencer", "Nano Influencer", "Other Creator"] }
+  {
+    "category": "Comedy & Entertainment",
+    "emoji": "😂",
+    "subtypes": [
+      "Stand-up Comedian",
+      "Sketch Comedy",
+      "Mimicry Artist",
+      "Satire & Spoof",
+      "Roast & Memes",
+      "Storyteller"
+    ]
+  },
+  {
+    "category": "Food & Cooking",
+    "emoji": "🍕",
+    "subtypes": [
+      "Food Vlogger",
+      "Home Chef & Recipes",
+      "Baker & Pastry",
+      "Street Food",
+      "Restaurant Reviews"
+    ]
+  },
+  {
+    "category": "Travel & Adventure",
+    "emoji": "✈️",
+    "subtypes": [
+      "Travel Vlogger",
+      "Backpacker",
+      "Adventure & Trekking",
+      "Luxury Travel",
+      "City & Culture Guide"
+    ]
+  },
+  {
+    "category": "Technology & AI",
+    "emoji": "💻",
+    "subtypes": [
+      "Tech Reviewer & Gadgets",
+      "Smartphone & PC",
+      "Coding & Software",
+      "AI & Future Tech",
+      "Cybersecurity"
+    ]
+  },
+  {
+    "category": "Fashion & Beauty",
+    "emoji": "💄",
+    "subtypes": [
+      "Fashion Stylist",
+      "Makeup Artist",
+      "Skincare & Haircare",
+      "Streetwear & Thrift",
+      "Ethnic & Bridal Fashion"
+    ]
+  },
+  {
+    "category": "Fitness & Wellness",
+    "emoji": "🏋️",
+    "subtypes": [
+      "Gym & Bodybuilding",
+      "Yoga & Mindfulness",
+      "Personal Trainer",
+      "Calisthenics & Athletics",
+      "Nutrition & Diet"
+    ]
+  },
+  {
+    "category": "Education & Science",
+    "emoji": "📚",
+    "subtypes": [
+      "Online Educator",
+      "Exam Preparation",
+      "Science & Facts",
+      "History & Geopolitics",
+      "Language Tutor"
+    ]
+  },
+  {
+    "category": "Gaming & Esports",
+    "emoji": "🎮",
+    "subtypes": [
+      "Live Streamer",
+      "Esports Player",
+      "Mobile Gamer",
+      "PC & Console Gamer",
+      "Gaming Reviews"
+    ]
+  },
+  {
+    "category": "Music & Audio",
+    "emoji": "🎵",
+    "subtypes": [
+      "Singer & Vocalist",
+      "Songwriter & Composer",
+      "Musician & Instrumentalist",
+      "Music Producer & Beatmaker",
+      "Podcaster & Audio Host"
+    ]
+  },
+  {
+    "category": "Finance & Business",
+    "emoji": "💰",
+    "subtypes": [
+      "Personal Finance & Investing",
+      "Stock Market & Trading",
+      "Startup & Entrepreneurship",
+      "E-commerce & Freelancing",
+      "Tax & Wealth Planning"
+    ]
+  },
+  {
+    "category": "Art & Design",
+    "emoji": "🎨",
+    "subtypes": [
+      "Digital Artist & Illustrator",
+      "Painter & Sketch Artist",
+      "Graphic & UI/UX Designer",
+      "3D Artist & Animator",
+      "DIY & Handmade Craft"
+    ]
+  },
+  {
+    "category": "Lifestyle & Vlogs",
+    "emoji": "🎥",
+    "subtypes": [
+      "Daily Vlogger",
+      "Lifestyle & Minimalism",
+      "Home Decor & Plants",
+      "Parenting & Family",
+      "Student Life"
+    ]
+  },
+  {
+    "category": "Filmmaking & Photography",
+    "emoji": "🎬",
+    "subtypes": [
+      "Filmmaker & Director",
+      "Cinematographer",
+      "Video Editor & Colorist",
+      "Portrait & Wedding Photographer",
+      "Drone & Visual Artist"
+    ]
+  },
+  {
+    "category": "Automobile",
+    "emoji": "🚗",
+    "subtypes": [
+      "Car Reviews & Supercars",
+      "Moto Vlogger & Biker",
+      "EV & Future Mobility",
+      "Auto Mechanic & Tuning"
+    ]
+  }
 ]

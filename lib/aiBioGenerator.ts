@@ -166,8 +166,8 @@ function resolveNiche(categories: string[], customCategory?: string) {
 }
 
 function truncateTo160(str: string): string {
-  if (str.length <= 160) return str;
-  return str.slice(0, 157).trim() + "...";
+  if (str.length <= 150) return str;
+  return str.slice(0, 147).trim() + "...";
 }
 
 /**

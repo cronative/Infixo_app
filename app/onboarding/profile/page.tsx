@@ -21,6 +21,7 @@ export default function ProfileStepPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [submitting, setSubmitting] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   const [errors, setErrors] = useState<{
     displayName?: string;
     categories?: string;
@@ -55,14 +56,12 @@ export default function ProfileStepPage() {
   function handleGenerateAiBio() {
     const displayName = (profile?.displayName || "").trim();
     if (!displayName) {
-      setErrors((prev) => ({ ...prev, displayName: "Please enter your creator name first" }));
-      showToast("Please enter your creator or display name first! ✍️", "error");
+      showToast("Please enter your display name first! ✍️", "error");
       return;
     }
 
     if (selectedCategories.length === 0) {
-      setErrors((prev) => ({ ...prev, categories: "Please select at least 1 creator type" }));
-      showToast("Please select your creator type first! 🏷️", "error");
+      showToast("Please select what you create first! 🏷️", "error");
       return;
     }
 
@@ -90,7 +89,7 @@ export default function ProfileStepPage() {
       setShowSuggestions(true);
       setSelectedBioIndex(null);
       setIsGenerating(false);
-      showToast(`Generated 3 AI bio suggestions! (${3 - nextCount}/3 uses left) ✨`);
+      showToast(`Generated 3 AI bio suggestions! (${3 - nextCount} left) ✨`);
     }, 450);
   }
 
@@ -123,6 +122,7 @@ export default function ProfileStepPage() {
   }
 
   async function handleNext() {
+    setHasSubmitted(true);
     const displayName = (profile?.displayName || "").trim();
     const newErrors: typeof errors = {};
 
@@ -171,35 +171,30 @@ export default function ProfileStepPage() {
     <OnboardingLayout step="profile">
       <div className="w-full max-w-[460px] mx-auto pt-0 sm:pt-1 pb-4">
         {/* SINGLE UNIFIED WHITE CARD */}
-        <div className="rounded-2xl border border-[#e2e8f0] bg-white p-4 sm:p-5 space-y-3 text-left shadow-xs">
+        <div className="rounded-2xl border border-[#e2e8f0] bg-white p-4 sm:p-5 space-y-3.5 text-left shadow-xs">
 
           {/* 1. Header Section */}
           <div className="space-y-1">
-            <span className="block text-[10px] font-bold uppercase tracking-wider text-[#7A2253]">
-              STEP 2 OF 4 · YOUR PROFILE
-            </span>
             <h1 className="font-display text-xl sm:text-[24px] font-extrabold text-[#181716] tracking-tight leading-tight">
               Introduce yourself to your audience
             </h1>
             <p className="text-xs font-normal text-[#54514D] leading-relaxed">
-              Add the essentials people and brands should understand about you at a glance.
+              How fans and brands will see you.
             </p>
           </div>
 
-          {/* 2. Claimed Username Box */}
-          <div className="flex items-center justify-between rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-3 py-2">
-            <div className="space-y-0.5">
-              <span className="block text-[9.5px] font-bold uppercase tracking-wider text-[#64748b]">
-                CLAIMED USERNAME
-              </span>
-              <span className="block text-xs sm:text-sm font-bold text-[#181716]">
-                @{profile?.username || "username"}
+          {/* 2. Compact Claimed Link Line */}
+          <div className="flex items-center justify-between rounded-lg bg-[#f8fafc] border border-[#e2e8f0] px-3 py-1.5 text-xs text-[#64748b]">
+            <div className="flex items-center gap-1.5 min-w-0 truncate">
+              <span className="text-[#94a3b8] font-normal shrink-0">Link:</span>
+              <span className="font-semibold text-[#181716] truncate">
+                inflixo.com/{profile?.username || "yourname"}
               </span>
             </div>
             <button
               type="button"
               onClick={() => router.push("/onboarding/username")}
-              className="text-xs font-semibold text-[#7A2253] hover:underline cursor-pointer"
+              className="text-xs font-semibold text-[#7A2253] hover:underline cursor-pointer shrink-0 ml-2"
             >
               Change
             </button>
@@ -226,10 +221,7 @@ export default function ProfileStepPage() {
 
               {/* Text Information */}
               <div className="space-y-0.5">
-                <div className="flex items-center gap-1.5">
-                  <p className="text-xs font-bold text-[#181716]">Profile photo</p>
-                  <span className="text-[10px] font-medium text-[#64748b] bg-[#f1f5f9] px-1.5 py-0.2 rounded">Optional</span>
-                </div>
+                <p className="text-xs font-bold text-[#181716]">Profile photo</p>
                 <p className="text-[10.5px] text-[#64748b]">Square JPG or PNG · up to 5 MB</p>
               </div>
             </div>
@@ -253,57 +245,45 @@ export default function ProfileStepPage() {
             />
           </div>
 
-          {/* 4. Creator or Display Name */}
+          {/* 4. Display Name */}
           <div className="space-y-1">
             <div className="flex items-center justify-between">
               <label
                 htmlFor="display-name"
                 className="block text-xs font-semibold text-[#181716]"
               >
-                Creator or display name <span className="text-red-500">*</span>
+                Display name <span className="text-red-500">*</span>
               </label>
               <span className="text-[10.5px] text-[#64748b]">Visible on your profile</span>
             </div>
-            <div
-              className={`flex h-10.5 sm:h-11 items-center rounded-xl border bg-white px-3 transition-all focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 ${errors.displayName ? "border-[#ef4444]" : "border-[#cbd5e1]"
-                }`}
-            >
-              <svg
-                className="h-4 w-4 text-[#94a3b8] shrink-0 mr-2.5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <circle cx="12" cy="12" r="8" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-              <input
-                id="display-name"
-                type="text"
-                value={profile?.displayName || ""}
-                onChange={(e) => {
-                  updateProfile({ displayName: e.target.value });
-                  if (errors.displayName) {
-                    setErrors((prev) => ({ ...prev, displayName: undefined }));
-                  }
-                }}
-                placeholder="e.g. Nikunj Creates"
-                className="h-full w-full bg-transparent text-xs sm:text-sm font-medium text-[#181716] outline-none placeholder:text-[#94a3b8]"
-              />
-            </div>
-            {errors.displayName && (
+            <input
+              id="display-name"
+              type="text"
+              autoComplete="off"
+              value={profile?.displayName || ""}
+              onChange={(e) => {
+                updateProfile({ displayName: e.target.value });
+                if (errors.displayName) {
+                  setErrors((prev) => ({ ...prev, displayName: undefined }));
+                }
+              }}
+              placeholder="e.g. Nikunj Creates"
+              className={`h-10.5 sm:h-11 w-full rounded-xl border bg-white px-3 text-xs sm:text-sm font-medium text-[#181716] outline-none placeholder:text-[#94a3b8] transition-all focus:border-[#7A2253] focus:ring-2 focus:ring-[#7A2253]/10 ${
+                hasSubmitted && errors.displayName ? "border-[#ef4444]" : "border-[#cbd5e1]"
+              }`}
+            />
+            {hasSubmitted && errors.displayName && (
               <p className="text-xs text-[#ef4444] font-medium pt-0.5">
                 {errors.displayName}
               </p>
             )}
           </div>
 
-          {/* 5. Creator profession/type */}
+          {/* 5. What do you create? */}
           <CategorySelect
             value={profile?.category || selectedCategories.join(", ")}
             customValue={profile?.customCategory || ""}
-            error={errors.categories}
+            error={hasSubmitted ? errors.categories : undefined}
             max={3}
             onChange={(category, customCategory) => {
               updateProfile({
@@ -319,19 +299,24 @@ export default function ProfileStepPage() {
           {/* 6. Short Bio */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between gap-1.5 flex-wrap">
-              <label
-                htmlFor="short-bio"
-                className="text-xs font-semibold text-[#181716]"
-              >
-                Short bio
-              </label>
+              <div className="flex items-center gap-1.5">
+                <label
+                  htmlFor="short-bio"
+                  className="text-xs font-semibold text-[#181716]"
+                >
+                  Short bio
+                </label>
+                <span className="text-[10px] font-medium text-[#64748b] bg-[#f1f5f9] px-1.5 py-0.2 rounded">
+                  Optional
+                </span>
+              </div>
               <div className="flex items-center gap-1.5">
                 {/* AI Bio Suggestion Button */}
                 <button
                   type="button"
                   onClick={handleGenerateAiBio}
                   disabled={isGenerating || aiUsesLeft <= 0}
-                  className={`inline-flex items-center gap-1.5 rounded-lg px-2 py-0.5 text-[11px] font-semibold transition-all cursor-pointer ${
+                  className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-all cursor-pointer ${
                     aiUsesLeft <= 0
                       ? "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed"
                       : "bg-[#eff6ff] text-[#7A2253] hover:bg-[#dbeafe] border border-[#bfdbfe]/80 active:scale-95 shadow-2xs"
@@ -340,28 +325,28 @@ export default function ProfileStepPage() {
                     aiUsesLeft <= 0
                       ? "Maximum 3 AI suggestions reached"
                       : !profile?.displayName?.trim()
-                      ? "Enter your creator name first to generate AI bios"
+                      ? "Enter your display name first to generate AI bios"
                       : selectedCategories.length === 0
-                      ? "Select creator type first to generate AI bios"
+                      ? "Select what you create first to generate AI bios"
                       : "Generate tailored bio ideas with AI"
                   }
                 >
                   {isGenerating ? (
-                    <Loader2 className="h-3 w-3 animate-spin text-[#7A2253]" />
+                    <>
+                      <Loader2 className="h-3 w-3 animate-spin text-[#7A2253]" />
+                      <span>Generating...</span>
+                    </>
                   ) : (
-                    <Sparkles className="h-3 w-3 text-[#7A2253]" />
+                    <span>
+                      {aiUsesLeft > 0
+                        ? `✨ Write with AI · ${aiUsesLeft} left`
+                        : "AI limit reached"}
+                    </span>
                   )}
-                  <span>
-                    {isGenerating
-                      ? "Generating..."
-                      : aiUsesLeft > 0
-                      ? `AI Bio (${aiUsesLeft}/3)`
-                      : "AI limit reached"}
-                  </span>
                 </button>
 
                 <span className="text-[11px] font-medium text-[#64748b]">
-                  {(profile?.bio || "").length}/160
+                  {(profile?.bio || "").length}/150
                 </span>
               </div>
             </div>
@@ -369,7 +354,7 @@ export default function ProfileStepPage() {
             <textarea
               id="short-bio"
               rows={2}
-              maxLength={160}
+              maxLength={150}
               value={profile?.bio || ""}
               onChange={(e) => updateProfile({ bio: e.target.value })}
               placeholder="Tell followers and brands what makes your content worth following."
@@ -395,7 +380,7 @@ export default function ProfileStepPage() {
                     type="button"
                     onClick={() => setShowSuggestions(false)}
                     className="text-gray-400 hover:text-gray-600 p-0.5 rounded-md hover:bg-white/80 transition-colors"
-                    title="Close suggestions"
+                    aria-label="Close suggestions"
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>
@@ -423,7 +408,7 @@ export default function ProfileStepPage() {
                           </div>
                           <div className="flex items-center gap-1.5">
                             <span className="text-[9.5px] font-medium text-[#64748b]">
-                              {sug.text.length}/160
+                              {sug.text.length}/150
                             </span>
                             <span
                               className={`inline-flex items-center gap-1 text-[10.5px] font-bold px-1.5 py-0.2 rounded transition-all ${
@@ -461,7 +446,7 @@ export default function ProfileStepPage() {
                       className="inline-flex items-center gap-1 font-semibold text-[#7A2253] hover:underline cursor-pointer disabled:opacity-50"
                     >
                       <RotateCcw className={`h-2.5 w-2.5 ${isGenerating ? "animate-spin" : ""}`} />
-                      <span>Regenerate ({aiUsesLeft}/3)</span>
+                      <span>Regenerate ({aiUsesLeft} left)</span>
                     </button>
                   ) : (
                     <span className="font-semibold text-amber-700">3/3 AI uses used</span>

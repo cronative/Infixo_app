@@ -10,6 +10,17 @@ export const CREATOR_TAXONOMY: CategoryItem[] = categoriesData as CategoryItem[]
 
 export const BROAD_CATEGORIES: string[] = CREATOR_TAXONOMY.map((item) => item.category);
 
+export const POPULAR_NICHES: string[] = [
+  "Comedy & Entertainment",
+  "Food & Cooking",
+  "Travel & Adventure",
+  "Technology & AI",
+  "Fashion & Beauty",
+  "Fitness & Wellness",
+  "Gaming & Esports",
+  "Daily Vlogger",
+];
+
 export const CATEGORY_EMOJIS: Record<string, string> = CREATOR_TAXONOMY.reduce((acc, curr) => {
   acc[curr.category] = curr.emoji;
   curr.subtypes.forEach((subtype) => {

@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Check, ChevronDown, Search, Tag, X } from "lucide-react";
-import { CREATOR_TAXONOMY } from "@/data/categories";
+import { Check, ChevronDown, Search, Tag, X, Sparkles } from "lucide-react";
+import { CREATOR_TAXONOMY, POPULAR_NICHES } from "@/data/categories";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 
 interface CategorySelectProps {
@@ -29,7 +29,7 @@ export function CategorySelect({
 
   const selectedLabel = selectedCategories.length > 0
     ? selectedCategories.map((category) => category === "Other" && customValue ? customValue : category).join(", ")
-    : "Select creator type";
+    : "e.g. Food, Comedy, Tech";
 
   const filteredTaxonomy = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -75,7 +75,7 @@ export function CategorySelect({
       <div className="flex items-center justify-between gap-1.5">
         <label className="text-xs font-semibold text-[#181716] flex items-center gap-1.5">
           <Tag className="h-3.5 w-3.5 text-[#7A2253]" />
-          <span>Creator type (profession/category) <span className="text-red-500">*</span></span>
+          <span>What do you create? <span className="text-red-500">*</span></span>
         </label>
         <span className="bg-[#7A2253]/[0.06] text-[#7A2253] border border-[#7A2253]/15 text-[10.5px] font-bold px-2 py-0.5 rounded-full shrink-0">
           {selectedCategories.length} / {max} selected
@@ -88,7 +88,7 @@ export function CategorySelect({
         <button
           type="button"
           onClick={openPicker}
-          className={`flex h-10.5 sm:h-11 w-full items-center justify-between gap-2.5 rounded-xl border bg-white px-3 text-left shadow-xs transition-all cursor-pointer ${isOpen
+          className={`flex h-11 sm:h-12 w-full items-center justify-between gap-2.5 rounded-xl border bg-white px-3 text-left shadow-xs transition-all cursor-pointer ${isOpen
             ? "border-[#7A2253] ring-2 ring-[#7A2253]/10"
             : error
               ? "border-rose-400"
@@ -122,28 +122,58 @@ export function CategorySelect({
           isOpen={isOpen}
           onClose={closePicker}
           size="xl"
-          title="Choose creator type"
-          description={`Select up to ${max} professions/types that best describe you.`}
+          title="What do you create?"
+          description={`Select up to ${max} niches or specific creator types that best describe you.`}
           icon={<Tag className="h-4 w-4" />}
           className="max-sm:h-[100dvh] max-sm:max-h-[100dvh] max-sm:rounded-none sm:max-w-3xl"
           headerClassName="px-4 py-3 sm:px-5"
         >
           <div className="flex min-h-0 flex-1 flex-col">
-            <div className="border-b border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 sm:px-5">
+            <div className="border-b border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 sm:px-5 space-y-2">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#64748b]" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search actor, singer, YouTuber, food reviewer..."
+                  placeholder="Search Food, Comedy, Tech, Gaming..."
                   className="h-10 w-full rounded-xl border border-[#dbe3ee] bg-white pl-9 pr-3 text-sm font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-2 focus:ring-[#7A2253]/10"
                   autoFocus
                 />
               </div>
-              <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+
+              {/* Popular Niches Quick Row */}
+              {!searchQuery && (
+                <div className="pt-1">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 block mb-1.5 flex items-center gap-1">
+                    <Sparkles className="h-3 w-3 text-[#7A2253]" />
+                    Popular niches
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {POPULAR_NICHES.map((niche) => {
+                      const isSelected = selectedCategories.includes(niche);
+                      return (
+                        <button
+                          key={niche}
+                          type="button"
+                          onClick={() => toggleCategory(niche)}
+                          className={`rounded-full px-2.5 py-1 text-xs font-bold border transition-all cursor-pointer ${
+                            isSelected
+                              ? "bg-[#7A2253] text-white border-[#7A2253] shadow-xs"
+                              : "bg-white text-slate-700 border-slate-300 hover:border-[#7A2253]/40 hover:bg-[#7A2253]/[0.04]"
+                          }`}
+                        >
+                          {niche}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-200/80">
                 <p className="text-[11px] font-bold text-[#475569]">
-                  Tap selected type again to remove.
+                  Tap any type to select or remove.
                 </p>
                 <span className="rounded-full border border-[#7A2253]/20 bg-[#7A2253]/[0.08] px-2.5 py-0.5 text-xs font-bold text-[#7A2253]">
                   {selectedCategories.length} / {max} selected
