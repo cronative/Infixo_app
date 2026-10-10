@@ -596,7 +596,7 @@ export const ONBOARDING_STEPS: { key: OnboardingStep; label: string; path: strin
   { key: "username", label: "Username", path: "/onboarding/username" },
   { key: "profile", label: "Profile", path: "/onboarding/profile" },
   { key: "socials", label: "Socials", path: "/onboarding/socials" },
-  { key: "subscription", label: "Public Profile", path: "/onboarding/subscription" },
+  { key: "subscription", label: "Go Live", path: "/onboarding/subscription" },
 ];
 
 // ---------------------------------------------------------------------------
