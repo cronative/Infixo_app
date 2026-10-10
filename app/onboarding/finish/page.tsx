@@ -110,7 +110,7 @@ export default function FinishStepPage() {
       <div className="relative flex flex-col items-center justify-center overflow-hidden py-1 sm:py-2">
         <ConfettiBurst />
 
-        <div className="pop-in relative z-10 flex w-full max-w-[420px] flex-col items-center text-center">
+        <div className="pop-in relative z-10 flex w-full max-w-[460px] mx-auto flex-col items-center text-center">
           {/* Circular Creator Avatar with Green Success Check Badge */}
           <div className="relative mb-1.5">
             <CreatorAvatar

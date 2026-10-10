@@ -5,7 +5,7 @@ import { Check, Trash2, BadgeCheck } from "lucide-react";
 import { formatCount } from "@/utils/format";
 
 interface ConnectedAccountCardProps {
-  platform: "instagram" | "youtube" | "facebook";
+  platform: "instagram" | "youtube" | "facebook" | "twitter" | "linkedin" | "threads" | "spotify" | string;
   icon: React.ReactNode;
   accentClass: string;
   name: string;
@@ -60,7 +60,13 @@ export function ConnectedAccountCard({
           </div>
 
           <p className="text-xs font-semibold text-[#64748b] mt-0.5">
-            <span className="font-bold text-[#7A2253]">{formatCount(count)}</span> {countLabel}
+            {count > 0 ? (
+              <>
+                <span className="font-bold text-[#7A2253]">{formatCount(count)}</span> {countLabel}
+              </>
+            ) : (
+              <span>{countLabel || "Linked to profile"}</span>
+            )}
           </p>
         </div>
       </div>

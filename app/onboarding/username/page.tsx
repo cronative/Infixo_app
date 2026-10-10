@@ -208,9 +208,9 @@ export default function UsernameStepPage() {
 
   return (
     <OnboardingLayout step="username">
-      <div className="w-full max-w-[480px] mx-auto py-6 sm:py-10 my-auto flex flex-col justify-center">
+      <div className="w-full max-w-[460px] mx-auto pt-0 sm:pt-1 pb-4">
         {/* SINGLE UNIFIED WHITE CARD */}
-        <div className="rounded-2xl border border-[#e2e8f0] bg-white p-5 sm:p-7 space-y-4 text-left shadow-xs">
+        <div className="rounded-2xl border border-[#e2e8f0] bg-white p-4 sm:p-5 space-y-3.5 text-left shadow-xs">
           
           {/* 1. Headline & Creator-First Subtitle */}
           <div className="space-y-1.5">

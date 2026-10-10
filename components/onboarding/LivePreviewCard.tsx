@@ -1785,7 +1785,8 @@ export function LivePreviewCard({
                     {item.platform === "snapchat" && <SnapchatIcon className="h-[18px] w-[18px] text-amber-400" />}
                     {item.platform === "spotify" && <SpotifyIcon className="h-[18px] w-[18px] text-emerald-500" />}
                     {item.platform === "twitch" && <TwitchIcon className="h-[18px] w-[18px] text-purple-500" />}
-                    {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch"].includes(item.platform) && (
+                    {item.platform === "pinterest" && <PinterestIcon className="h-[18px] w-[18px] text-red-600" />}
+                    {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch", "pinterest"].includes(item.platform) && (
                       <Globe className="h-[18px] w-[18px]" style={{ color: c.accentText }} />
                     )}
                   </span>
@@ -1857,8 +1858,10 @@ export function LivePreviewCard({
               {fanbaseSocialCards.length > 0 && (
                 <div className="divide-y divide-[#E5E7EB] dark:divide-white/10">
                   {fanbaseSocialCards.map((item) => {
-                    const handleStr = (item.handle || item.name || item.label).replace(/^@/, "");
-                    const countFormatted = formatCount(item.count);
+                    const rawHandle = (item.handle || item.name || item.label).replace(/^@/, "");
+                    const isServiceOnly = item.platform === "spotify" && rawHandle.toLowerCase() === "spotify";
+                    const displayHandle = isServiceOnly ? "Spotify Artist" : `@${rawHandle}`;
+                    const countFormatted = item.count > 0 ? formatCount(item.count) : null;
                     return (
                       <a
                         key={item.platform}
@@ -1872,7 +1875,7 @@ export function LivePreviewCard({
                           }
                         }}
                         className="group/row tap-scale flex items-center justify-between px-3.5 sm:px-4 py-2 sm:py-2.5 transition-colors hover:bg-black/[0.025] dark:hover:bg-white/[0.04] cursor-pointer text-left"
-                        title={`Open ${item.label} (@${handleStr})`}
+                        title={`Open ${item.label} (${displayHandle})`}
                       >
                         {/* Left side: Icon + Username */}
                         <div className="flex items-center gap-2.5 min-w-0">
@@ -1895,17 +1898,17 @@ export function LivePreviewCard({
                             style={{ color: c.primaryText }}
                             className="text-xs sm:text-[13px] font-semibold truncate group-hover/row:text-[#7A2253] dark:group-hover/row:text-blue-400 transition-colors"
                           >
-                            @{handleStr}
+                            {displayHandle}
                           </span>
                         </div>
 
-                        {/* Right side: 650k Followers, ya subscribers text k sath */}
+                        {/* Right side: Count + Followers / Subscribers or Connected */}
                         <div className="flex items-center gap-1.5 shrink-0 pl-2">
                           <span
                             style={{ color: c.mutedText }}
                             className="text-xs sm:text-[12.5px] font-bold tabular-nums"
                           >
-                            {countFormatted} {item.unit}
+                            {countFormatted ? `${countFormatted} ${item.unit}` : item.unit || "Connected"}
                           </span>
                           <ArrowUpRight className="h-3.5 w-3.5 opacity-40 group-hover/row:opacity-100 group-hover/row:translate-x-0.5 group-hover/row:-translate-y-0.5 transition-all shrink-0" />
                         </div>
