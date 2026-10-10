@@ -156,8 +156,8 @@ function Shell({ children }: { children: ReactNode }) {
         <DashboardMobileHeader onOpenDrawer={() => setDrawerOpen(true)} />
 
         {/* Scrollable Content Viewport */}
-        <main className={`flex-1 overflow-y-auto overscroll-contain pb-[calc(env(safe-area-inset-bottom)+5rem)] ${isHome ? "px-3 py-3 sm:px-6 sm:py-5" : "px-3.5 pt-3.5 sm:px-6 sm:py-4.5 lg:px-8 lg:py-5"}`}>
-          <div className="mx-auto w-full max-w-7xl">
+        <main className={`flex-1 overflow-y-auto overscroll-contain pb-[calc(env(safe-area-inset-bottom)+5rem)] ${isHome ? "p-3 sm:p-4" : "px-3.5 pt-3.5 sm:px-6 sm:py-4.5 lg:px-8 lg:py-5"}`}>
+          <div className="w-full">
             {children}
           </div>
         </main>
