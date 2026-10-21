@@ -34,8 +34,9 @@ function isFreeTrialExpired(subscription?: {
   endsAt?: string | Date | null;
   currentPeriodEndsAt?: string | Date | null;
 }) {
-  if (!subscription || subscription.planKey !== "early_access") return false;
+  if (!subscription) return false;
   if (subscription.status && !["active", "trial"].includes(subscription.status)) return true;
+  if (subscription.planKey && subscription.planKey !== "early_access" && subscription.planKey !== "trial" && subscription.planKey !== "free") return false;
 
   const nowMs = Date.now();
   const trialEndMs = subscription.trialEndsAt ? new Date(subscription.trialEndsAt).getTime() : 0;

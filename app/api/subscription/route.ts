@@ -25,15 +25,24 @@ export async function GET(req: Request) {
       });
     }
 
+    let status = s.status || "trial";
+    const trialEndsAt = toIso(s.trial_ends_at);
+    const planKey = s.plan_key || "early_access";
+    if (status === "trial" && (planKey === "early_access" || planKey === "trial" || planKey === "free")) {
+      if (trialEndsAt && Date.now() >= new Date(trialEndsAt).getTime()) {
+        status = "expired";
+      }
+    }
+
     return apiSuccess({
       subscription: {
-        planKey: s.plan_key || "early_access",
-        planName: s.plan_name || "Free Trial",
+        planKey,
+        planName: s.plan_name || (planKey === "early_access" ? "Free Trial" : "Starter"),
         billingCycle: s.billing_cycle || "yearly",
-        status: s.status || "trial",
+        status,
         activatedAt: toIso(s.activated_at) || toIso(s.created_at),
         trialStartedAt: toIso(s.trial_started_at),
-        trialEndsAt: toIso(s.trial_ends_at),
+        trialEndsAt,
         currentPeriodStartedAt: toIso(s.current_period_started_at),
         currentPeriodEndsAt: toIso(s.current_period_ends_at),
         renewsAt: toIso(s.renews_at),

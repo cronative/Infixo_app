@@ -58,13 +58,16 @@ export function getFreeTrialStatus(subscription?: Subscription | null, nowMs = D
   const expiresAtMs = Number.isNaN(explicitExpiresAtMs)
     ? safeActivatedMs + TRIAL_DAYS * DAY_MS
     : explicitExpiresAtMs;
-  const daysLeft = Math.max(0, Math.ceil((expiresAtMs - nowMs) / DAY_MS));
+
+  const rawDays = (expiresAtMs - nowMs) / DAY_MS;
+  const isExpired = subscription.status === "expired" || rawDays <= 0 || nowMs >= expiresAtMs;
+  const daysLeft = isExpired ? 0 : Math.min(TRIAL_DAYS, Math.max(0, Math.ceil(rawDays)));
 
   return {
     isFreeTrial: true,
-    isExpired: daysLeft <= 0,
+    isExpired,
     daysLeft,
-    shouldWarn: daysLeft <= 3,
+    shouldWarn: isExpired || daysLeft <= 3,
   };
 }
 

@@ -33,6 +33,7 @@ import { MediaKitService } from "@/services/MediaKitService";
 import { ProductService } from "@/services/ProductService";
 import { SubscriptionService } from "@/services/SubscriptionService";
 import { getPlanPrice, formatPlanPrice } from "@/lib/pricing";
+import { getFreeTrialStatus } from "@/lib/trialStatus";
 
 function formatSubscriptionDate(value?: string | null) {
   if (!value) return "Not scheduled";
@@ -123,19 +124,10 @@ export default function DashboardSubscriptionPage() {
         billingCycle === "yearly" ? "year" : "month"
       }`;
 
-  const isFreeTrial =
-    planKey === "early_access" ||
-    (subscription?.status === "trial" &&
-      planKey !== "starter" &&
-      planKey !== "pro" &&
-      planKey !== "vip" &&
-      planKey !== "creator_pro" &&
-      planKey !== "creator_VIP");
-
-  const activatedMs = subscription?.activatedAt ? new Date(subscription.activatedAt).getTime() : renderedAt;
-  const safeActivatedMs = Number.isNaN(activatedMs) ? renderedAt : activatedMs;
-  const explicitEndMs = finishDate ? new Date(finishDate).getTime() : safeActivatedMs + 7 * 24 * 60 * 60 * 1000;
-  const daysLeft = Math.max(0, Math.ceil((explicitEndMs - renderedAt) / (1000 * 60 * 60 * 24)));
+  const trialStatus = getFreeTrialStatus(subscription, renderedAt);
+  const isFreeTrial = trialStatus.isFreeTrial;
+  const isTrialExpired = trialStatus.isExpired;
+  const daysLeft = trialStatus.daysLeft ?? 0;
   const dayText = daysLeft === 1 ? "1 day" : `${daysLeft} days`;
 
   const handleScrollToUpgrade = () => {
@@ -197,37 +189,71 @@ export default function DashboardSubscriptionPage() {
 
       {/* 2. FREE TRIAL 7-DAYS COUNTDOWN BANNER ("PATTI") */}
       {isFreeTrial && (
-        <div className="rounded-2xl border border-amber-300 bg-gradient-to-r from-amber-50 via-amber-50/50 to-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs text-left">
-          <div className="flex items-start sm:items-center gap-3.5">
-            <div className="h-10 w-10 rounded-xl bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-600 shrink-0">
-              <Zap className="h-5 w-5 fill-amber-500 text-amber-600 animate-pulse" />
-            </div>
-            <div className="space-y-0.5">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="font-display text-sm sm:text-base font-bold text-amber-950">
-                  ⚡ {dayText} left in your Free Trial
-                </h3>
-                <span className="rounded-full bg-amber-200/80 border border-amber-300 text-amber-900 text-[10px] font-extrabold px-2.5 py-0.5 uppercase tracking-wide">
-                  {daysLeft} Days Remaining
-                </span>
+        isTrialExpired ? (
+          <div className="rounded-2xl border border-rose-300 bg-gradient-to-r from-rose-50 via-rose-50/60 to-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs text-left">
+            <div className="flex items-start sm:items-center gap-3.5">
+              <div className="h-10 w-10 rounded-xl bg-rose-100 border border-rose-300 flex items-center justify-center text-rose-600 shrink-0">
+                <AlertTriangle className="h-5 w-5 text-rose-600 animate-pulse" />
               </div>
-              <p className="text-xs text-amber-900/80 font-medium leading-relaxed">
-                Your creator profile is currently live and public during this 7-day trial. After {dayText}, your profile will become private so fans cannot view it. Upgrade to any plan to keep your profile permanently live!
-              </p>
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="font-display text-sm sm:text-base font-bold text-rose-950">
+                    🚨 7-Day Free Trial Ended (Profile is Private)
+                  </h3>
+                  <span className="rounded-full bg-rose-200/80 border border-rose-300 text-rose-900 text-[10px] font-extrabold px-2.5 py-0.5 uppercase tracking-wide">
+                    Action Required
+                  </span>
+                </div>
+                <p className="text-xs text-rose-900/80 font-medium leading-relaxed">
+                  Your free trial has ended and your public profile is currently hidden from fans and brand inquiries. Choose a plan below to immediately reactivate your profile and keep your creator bio live!
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+              <button
+                type="button"
+                onClick={handleScrollToUpgrade}
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#7A2253] hover:opacity-95 active:scale-[0.99] text-white px-4 py-2.5 text-xs font-bold transition-all shadow-md shadow-[#7A2253]/20 cursor-pointer"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>Choose a Plan</span>
+              </button>
             </div>
           </div>
+        ) : (
+          <div className="rounded-2xl border border-amber-300 bg-gradient-to-r from-amber-50 via-amber-50/50 to-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs text-left">
+            <div className="flex items-start sm:items-center gap-3.5">
+              <div className="h-10 w-10 rounded-xl bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-600 shrink-0">
+                <Zap className="h-5 w-5 fill-amber-500 text-amber-600 animate-pulse" />
+              </div>
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="font-display text-sm sm:text-base font-bold text-amber-950">
+                    ⚡ {dayText} left in your Free Trial
+                  </h3>
+                  <span className="rounded-full bg-amber-200/80 border border-amber-300 text-amber-900 text-[10px] font-extrabold px-2.5 py-0.5 uppercase tracking-wide">
+                    {daysLeft} Days Remaining
+                  </span>
+                </div>
+                <p className="text-xs text-amber-900/80 font-medium leading-relaxed">
+                  Your creator profile is currently live and public during this 7-day trial. After {dayText}, your profile will become private so fans cannot view it. Upgrade to any plan to keep your profile permanently live!
+                </p>
+              </div>
+            </div>
 
-          <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-            <button
-              type="button"
-              onClick={handleScrollToUpgrade}
-              className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#7A2253] hover:opacity-95 active:scale-[0.99] text-white px-4 py-2.5 text-xs font-bold transition-all shadow-md shadow-[#7A2253]/20 cursor-pointer"
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>Upgrade Plan</span>
-            </button>
+            <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+              <button
+                type="button"
+                onClick={handleScrollToUpgrade}
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#7A2253] hover:opacity-95 active:scale-[0.99] text-white px-4 py-2.5 text-xs font-bold transition-all shadow-md shadow-[#7A2253]/20 cursor-pointer"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>Upgrade Plan</span>
+              </button>
+            </div>
           </div>
-        </div>
+        )
       )}
 
       {/* 3. ACTIVE PLAN DETAILS CARD (PLAN K ANDAR KI DETAILS) */}

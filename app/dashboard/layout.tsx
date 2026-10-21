@@ -119,9 +119,10 @@ function TrialAccessBar() {
 
 function Shell({ children }: { children: ReactNode }) {
   const router = useRouter();
-  const isHome = usePathname() === "/dashboard";
+  const pathname = usePathname();
+  const isHome = pathname === "/dashboard";
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { profile, loading, isTrialModalOpen, closeTrialExpiredModal } = useCreator();
+  const { profile, loading, isTrialExpired, isTrialModalOpen, openTrialExpiredModal, closeTrialExpiredModal } = useCreator();
 
   useEffect(() => {
     if (!loading) {
@@ -133,6 +134,13 @@ function Shell({ children }: { children: ReactNode }) {
       OnboardingService.setStep("finish");
     }
   }, [loading, profile.username, profile.displayName, router]);
+
+  // Whenever user arrives on or navigates to Home (/dashboard) and trial is expired, show the popup modal
+  useEffect(() => {
+    if (!loading && isHome && isTrialExpired) {
+      openTrialExpiredModal();
+    }
+  }, [loading, isHome, isTrialExpired, openTrialExpiredModal]);
 
   // Only block on a true first load. When cached creator data exists (returning
   // creator, or a background refresh after a save) keep the dashboard mounted.

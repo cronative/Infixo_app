@@ -35,8 +35,9 @@ function isFreeTrialExpired(subscription?: {
   endsAt?: string | Date | null;
   currentPeriodEndsAt?: string | Date | null;
 }) {
-  if (!subscription || subscription.planKey !== "early_access") return false;
+  if (!subscription) return false;
   if (subscription.status && !["active", "trial"].includes(subscription.status)) return true;
+  if (subscription.planKey && subscription.planKey !== "early_access" && subscription.planKey !== "trial" && subscription.planKey !== "free") return false;
 
   const explicitEnd = subscription.trialEndsAt || subscription.endsAt || subscription.currentPeriodEndsAt;
   const explicitEndMs = explicitEnd ? new Date(explicitEnd).getTime() : Number.NaN;

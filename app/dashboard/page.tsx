@@ -67,7 +67,17 @@ function extractUsername(url?: string | null): string {
 }
 
 export default function DashboardOverviewPage() {
-  const { profile, socials, totalAudience, loading: profileLoading, series, theme, handleViewProfile } = useCreator();
+  const {
+    profile,
+    socials,
+    totalAudience,
+    loading: profileLoading,
+    series,
+    theme,
+    handleViewProfile,
+    isTrialExpired,
+    openTrialExpiredModal,
+  } = useCreator();
   const { showToast } = useToast();
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -143,6 +153,11 @@ export default function DashboardOverviewPage() {
   }, [copied]);
 
   async function copyProfile() {
+    if (isTrialExpired) {
+      showToast("Public profile is currently hidden (Free trial ended)", "error");
+      openTrialExpiredModal();
+      return;
+    }
     const success = await copyToClipboard(profileUrl);
     setCopied(success);
     setShareOpen(false);
@@ -330,8 +345,10 @@ export default function DashboardOverviewPage() {
                 className="h-12 w-12 rounded-xl border border-slate-200/80 object-cover shadow-2xs sm:h-13 sm:w-13"
               />
               <span
-                className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-white bg-emerald-500"
-                title="Profile active"
+                className={`absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-white ${
+                  isTrialExpired ? "bg-rose-500" : "bg-emerald-500"
+                }`}
+                title={isTrialExpired ? "Profile hidden (Trial ended)" : "Profile active"}
               />
             </div>
 
@@ -354,10 +371,17 @@ export default function DashboardOverviewPage() {
               </div>
 
               <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                <span className="inline-flex items-center gap-1 font-medium text-emerald-600">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  Public Profile Active
-                </span>
+                {isTrialExpired ? (
+                  <span className="inline-flex items-center gap-1 font-semibold text-rose-600">
+                    <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
+                    Profile Hidden (Trial Ended)
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 font-medium text-emerald-600">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    Public Profile Active
+                  </span>
+                )}
                 <span className="text-slate-300">·</span>
                 <span>Theme: <strong className="font-semibold text-slate-700 capitalize">{theme.replace(/-/g, " ")}</strong></span>
               </div>

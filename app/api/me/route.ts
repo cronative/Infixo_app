@@ -25,6 +25,7 @@ export async function GET(req: Request) {
     // 1. Fetch creator + subscription in one query
     const [creatorRows]: any = await db.query(
       `SELECT c.*,
+              s.id AS sub_id,
               s.plan_key, s.plan_name, s.billing_cycle,
               s.status AS sub_status,
               s.activated_at, s.trial_started_at, s.trial_ends_at,
@@ -125,23 +126,107 @@ export async function GET(req: Request) {
       updatedAt: c.updated_at,
     };
 
+    const toIso = (value: unknown) => {
+      if (!value) return null;
+      const date = new Date(value as string | Date);
+      return Number.isNaN(date.getTime()) ? null : date.toISOString();
+    };
+
+    const toMysqlDate = (value: unknown) => {
+      if (!value) return null;
+      const date = new Date(value as string | Date);
+      if (Number.isNaN(date.getTime())) return null;
+      return date.toISOString().slice(0, 19).replace("T", " ");
+    };
+
+    const planKey = c.plan_key || "early_access";
+    const planName = c.plan_name || (planKey === "early_access" ? "Free Trial" : "Starter");
+    const billingCycle = c.billing_cycle || "monthly";
+    const paymentMode = c.payment_mode || (planKey === "early_access" ? "free_trial" : "recurring");
+
+    // Compute dates safely from existing subscription or creator creation date
+    const activatedAt = toIso(c.activated_at) || toIso(c.created_at) || new Date().toISOString();
+    const trialStartedAt = toIso(c.trial_started_at) || (planKey === "early_access" ? activatedAt : null);
+    const trialEndsAt =
+      toIso(c.trial_ends_at) ||
+      (planKey === "early_access" && activatedAt
+        ? new Date(new Date(activatedAt).getTime() + 7 * 24 * 60 * 60 * 1000).toISOString()
+        : null);
+    const currentPeriodStartedAt = toIso(c.current_period_started_at) || activatedAt;
+    const currentPeriodEndsAt = toIso(c.current_period_ends_at) || trialEndsAt;
+    const endsAt = toIso(c.ends_at) || trialEndsAt;
+
+    // Check expiration status
+    let status = c.sub_status;
+    const nowMs = Date.now();
+    const trialEndMs = trialEndsAt ? new Date(trialEndsAt).getTime() : 0;
+    const isFreeTrial = planKey === "early_access" || planKey === "trial" || planKey === "free";
+
+    if (!status || status === "trial") {
+      if (isFreeTrial && trialEndMs && nowMs >= trialEndMs) {
+        status = "expired";
+      } else {
+        status = status || "trial";
+      }
+    }
+
+    // Auto-create missing subscription in MySQL
+    if (!c.sub_id && c.id) {
+      try {
+        await db.query(
+          `INSERT INTO subscriptions (
+             creator_id, plan_key, plan_name, billing_cycle, status, activated_at,
+             trial_started_at, trial_ends_at, current_period_started_at,
+             current_period_ends_at, ends_at, payment_mode, auto_renew
+           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+           ON DUPLICATE KEY UPDATE status = VALUES(status)`,
+          [
+            c.id,
+            planKey,
+            planName,
+            billingCycle,
+            status,
+            toMysqlDate(activatedAt),
+            toMysqlDate(trialStartedAt),
+            toMysqlDate(trialEndsAt),
+            toMysqlDate(currentPeriodStartedAt),
+            toMysqlDate(currentPeriodEndsAt),
+            toMysqlDate(endsAt),
+            paymentMode,
+          ]
+        );
+      } catch (err) {
+        console.error("Auto-insert subscription failed in /api/me:", err);
+      }
+    } else if (c.sub_id && status === "expired" && c.sub_status === "trial") {
+      // Sync expired status to DB
+      try {
+        await db.query(
+          "UPDATE subscriptions SET status = 'expired', updated_at = NOW() WHERE id = ?",
+          [c.sub_id]
+        );
+      } catch (err) {
+        console.error("Auto-update expired subscription failed in /api/me:", err);
+      }
+    }
+
     const subscription = {
-      planKey: c.plan_key || "early_access",
-      planName: c.plan_name || "Free Trial",
-      billingCycle: c.billing_cycle || "yearly",
-      status: c.sub_status || "trial",
-      activatedAt: c.activated_at || new Date().toISOString(),
-      trialStartedAt: c.trial_started_at || null,
-      trialEndsAt: c.trial_ends_at || null,
-      currentPeriodStartedAt: c.current_period_started_at || null,
-      currentPeriodEndsAt: c.current_period_ends_at || null,
-      renewsAt: c.renews_at || null,
-      endsAt: c.ends_at || null,
-      cancelledAt: c.cancelled_at || null,
+      planKey,
+      planName,
+      billingCycle,
+      status,
+      activatedAt,
+      trialStartedAt,
+      trialEndsAt,
+      currentPeriodStartedAt,
+      currentPeriodEndsAt,
+      renewsAt: toIso(c.renews_at),
+      endsAt,
+      cancelledAt: toIso(c.cancelled_at),
       cancelAtPeriodEnd: Boolean(c.cancel_at_period_end),
-      paymentMode: c.payment_mode || "free_trial",
+      paymentMode,
       autoRenew: Boolean(c.auto_renew),
-      hasUsedTrial: Boolean(c.trial_started_at),
+      hasUsedTrial: Boolean(trialStartedAt || c.has_used_trial),
     };
 
     return apiSuccess({

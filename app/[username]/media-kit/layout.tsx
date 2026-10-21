@@ -44,8 +44,9 @@ function parseVisibility(value?: string | null): { showCollabGigs?: boolean; sho
 }
 
 function isTrialPrivate(creator?: CreatorMediaKitSeoRow | null) {
-  if (!creator || creator.plan_key !== "early_access") return false;
+  if (!creator) return false;
   if (creator.sub_status && !["active", "trial"].includes(creator.sub_status)) return true;
+  if (creator.plan_key && creator.plan_key !== "early_access" && creator.plan_key !== "trial" && creator.plan_key !== "free") return false;
 
   const explicitEndMs = toDateMs(creator.trial_ends_at);
   if (explicitEndMs) return Date.now() > explicitEndMs;
