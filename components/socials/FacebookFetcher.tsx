@@ -103,22 +103,20 @@ export function FacebookFetcher({ username, onConfirmSync, onBeforeFetch, varian
       updateSocials(updatedSocials);
       SocialService.saveAccounts(updatedSocials);
 
-      const email = authRepository.getPendingEmail();
-      if (email) {
-        await fetch("/api/creator/socials", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email,
-            platform: "facebook",
-            accountName: fetchedPage.name || fetchedPage.username,
-            username: fetchedPage.username,
-            followerCount: fetchedPage.followers || 0,
-            mediaCount: fetchedPage.likes || 0,
-            isVerified: Boolean(fetchedPage.verified),
-          }),
-        }).catch((e) => console.error("Failed to save Facebook to DB:", e));
-      }
+      const email = authRepository.getPendingEmail() || profile.email;
+      await fetch("/api/creator/socials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email || undefined,
+          platform: "facebook",
+          accountName: fetchedPage.name || fetchedPage.username,
+          username: fetchedPage.username,
+          followerCount: fetchedPage.followers || 0,
+          mediaCount: fetchedPage.likes || 0,
+          isVerified: Boolean(fetchedPage.verified),
+        }),
+      }).catch((e) => console.error("Failed to save Facebook to DB:", e));
 
       const patch: Partial<typeof profile> = {};
       if (!profile.displayName || profile.displayName === "Your name") {

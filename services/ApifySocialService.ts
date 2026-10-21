@@ -48,6 +48,21 @@ interface CacheEntry<T> {
 // 1 hour in-memory cache TTL to avoid unnecessary repeated Apify calls
 const CACHE_TTL_MS = 60 * 60 * 1000;
 
+function parseCount(val: unknown): number {
+  if (typeof val === "number") return Number.isFinite(val) ? val : 0;
+  if (!val || typeof val !== "string") return 0;
+  const clean = val.trim();
+  const match = clean.match(/([\d.,]+)\s*([KMBkmb])?/);
+  if (!match) return 0;
+  const num = parseFloat(match[1].replace(/,/g, ""));
+  if (Number.isNaN(num)) return 0;
+  const mult = (match[2] || "").toUpperCase();
+  if (mult === "K") return Math.round(num * 1000);
+  if (mult === "M") return Math.round(num * 1000000);
+  if (mult === "B") return Math.round(num * 1000000000);
+  return Math.round(num);
+}
+
 export class ApifySocialService {
   private static instagramCache = new Map<string, CacheEntry<ApifyInstagramResult>>();
   private static facebookCache = new Map<string, CacheEntry<ApifyFacebookResult>>();
@@ -77,7 +92,7 @@ export class ApifySocialService {
     if (!token) return null;
 
     try {
-      const endpoint = `https://api.apify.com/v2/acts/apify~instagram-profile-scraper/run-sync-get-dataset-items?token=${encodeURIComponent(token)}&timeout=30`;
+      const endpoint = `https://api.apify.com/v2/acts/apify~instagram-profile-scraper/run-sync-get-dataset-items?token=${encodeURIComponent(token)}&timeout=45`;
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -100,9 +115,9 @@ export class ApifySocialService {
       const result: ApifyInstagramResult = {
         username: profile.username || cleanUsername,
         full_name: profile.fullName || profile.username || cleanUsername,
-        follower_count: Number(profile.followersCount || profile.follower_count || 0),
-        following_count: Number(profile.followsCount || profile.following_count || 0),
-        media_count: Number(profile.postsCount || profile.media_count || 0),
+        follower_count: parseCount(profile.followersCount ?? profile.follower_count ?? profile.followers),
+        following_count: parseCount(profile.followsCount ?? profile.following_count ?? profile.following),
+        media_count: parseCount(profile.postsCount ?? profile.media_count ?? profile.posts),
         biography: profile.biography || "",
         profile_pic_url: profile.profilePicUrlHD || profile.profilePicUrl || "",
         is_verified: Boolean(profile.verified || profile.is_verified),
@@ -140,7 +155,7 @@ export class ApifySocialService {
       : `https://www.facebook.com/${clean}`;
 
     try {
-      const endpoint = `https://api.apify.com/v2/acts/apify~facebook-pages-scraper/run-sync-get-dataset-items?token=${encodeURIComponent(token)}&timeout=30`;
+      const endpoint = `https://api.apify.com/v2/acts/apify~facebook-pages-scraper/run-sync-get-dataset-items?token=${encodeURIComponent(token)}&timeout=45`;
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -160,15 +175,21 @@ export class ApifySocialService {
       const page = items[0];
       if (!page || page.error) return null;
 
+      let rawFollowers = page.followers ?? page.followersCount;
+      if (!rawFollowers && Array.isArray(page.info)) {
+        const followerItem = page.info.find((str: any) => typeof str === "string" && str.toLowerCase().includes("follower"));
+        if (followerItem) rawFollowers = followerItem;
+      }
+
       const result: ApifyFacebookResult = {
-        name: page.name || clean,
+        name: page.name || page.title || page.pageName || clean,
         username: clean,
-        page_id: page.id || page.pageId || "",
+        page_id: page.id || page.pageId || page.facebookId || "",
         url: targetUrl,
-        image: page.profilePicture || page.avatarUrl || page.image || "",
-        cover_image: page.coverPhoto || page.coverImage || "",
-        followers: Number(page.followers || page.followersCount || 0),
-        likes: Number(page.likes || page.likesCount || 0),
+        image: page.profilePictureUrl || page.profilePicture || page.avatarUrl || page.image || "",
+        cover_image: page.coverPhotoUrl || page.coverPhoto || page.coverImage || "",
+        followers: parseCount(rawFollowers),
+        likes: parseCount(page.likes ?? page.likesCount),
         verified: Boolean(page.isVerified || page.verified),
         categories: Array.isArray(page.categories) ? page.categories : page.category ? [page.category] : [],
         intro: page.intro || page.about || page.description || "",

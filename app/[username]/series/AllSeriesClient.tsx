@@ -293,11 +293,11 @@ export default function AllSeriesClient() {
 
 
   return (
-    <CreatorPublicShell themeKey={theme}>
+    <CreatorPublicShell themeKey={theme} hideFooter={true}>
         <ThemeCard
           themeKey={theme}
           profile={profile}
-          socials={socials}
+          socials={EMPTY_SOCIAL_ACCOUNTS}
           series={series}
           customLinks={[]}
           mediaKitPackages={[]}

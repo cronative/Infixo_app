@@ -96,17 +96,32 @@ export default function DashboardSocialsPage() {
         const apiResponse = await httpResponse.json();
         const u = apiResponse.data?.user || apiResponse.user;
         if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && u) {
+          const followerCount = Number(u.follower_count || 0);
+          const mediaCount = Number(u.media_count || 0);
           updateSocials({
             instagram: {
               ...socials.instagram,
               username: u.username,
               name: u.full_name,
-              followers: u.follower_count,
-              posts: u.media_count,
+              followers: followerCount,
+              posts: mediaCount,
               isVerified: u.is_verified,
               lastSyncedAt: new Date().toISOString(),
             },
           });
+          await fetch("/api/creator/socials", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: profile.email || undefined,
+              platform: "instagram",
+              accountName: u.full_name || u.username,
+              username: u.username,
+              followerCount,
+              mediaCount,
+              isVerified: Boolean(u.is_verified),
+            }),
+          }).catch((err) => console.error("Failed to sync Instagram to DB:", err));
           showToast("Instagram profile synced! 📸");
         } else {
           showToast("Could not refresh Instagram. Please check handle.", "error");
@@ -120,17 +135,32 @@ export default function DashboardSocialsPage() {
         const apiResponse = await httpResponse.json();
         const c = apiResponse.data?.channel || apiResponse.channel;
         if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && c) {
+          const subscribers = Number(c.subscribers || 0);
+          const videoCount = Number(c.video_count || 0);
           updateSocials({
             youtube: {
               ...socials.youtube,
               username: c.channel_name || ytConnectedHandle,
               channelTitle: c.title,
-              subscribers: c.subscribers,
-              videos: c.video_count,
+              subscribers,
+              videos: videoCount,
               isVerified: c.verified,
               lastSyncedAt: new Date().toISOString(),
             },
           });
+          await fetch("/api/creator/socials", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: profile.email || undefined,
+              platform: "youtube",
+              accountName: c.title || c.channel_name || ytConnectedHandle,
+              username: c.channel_name || ytConnectedHandle,
+              followerCount: subscribers,
+              mediaCount: videoCount,
+              isVerified: Boolean(c.verified),
+            }),
+          }).catch((err) => console.error("Failed to sync YouTube to DB:", err));
           showToast("YouTube channel synced! 📺");
         } else {
           showToast("Could not refresh YouTube. Please check handle.", "error");
@@ -144,16 +174,30 @@ export default function DashboardSocialsPage() {
         const apiResponse = await httpResponse.json();
         const p = apiResponse.data?.page || apiResponse.page;
         if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && p) {
+          const followers = Number(p.followers || 0);
           updateSocials({
             facebook: {
               ...socials.facebook,
               username: p.username || fbConnectedHandle,
               name: p.name,
-              followers: p.followers,
+              followers,
               isVerified: p.verified,
               lastSyncedAt: new Date().toISOString(),
             },
           });
+          await fetch("/api/creator/socials", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: profile.email || undefined,
+              platform: "facebook",
+              accountName: p.name || fbConnectedHandle,
+              username: p.username || fbConnectedHandle,
+              followerCount: followers,
+              mediaCount: 0,
+              isVerified: Boolean(p.verified),
+            }),
+          }).catch((err) => console.error("Failed to sync Facebook to DB:", err));
           showToast("Facebook page synced! 📘");
         } else {
           showToast("Could not refresh Facebook. Please check handle.", "error");

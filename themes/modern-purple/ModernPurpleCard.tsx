@@ -26,10 +26,6 @@ export function ModernPurpleCard({ profile, socials, series, totalAudience, vari
         {/* 2. Name */}
         <p className={`font-display mt-4 ${full ? "text-2xl" : "text-lg"} font-bold tracking-tight`}>{profile.displayName || "Your name"}</p>
 
-        {/* 3. Link of Inflixo */}
-        <p className="text-xs font-semibold text-white/80 mt-0.5">
-          {profile.username ? `inflixo.com/${profile.username}` : "inflixo.com/username"}
-        </p>
 
         {/* 4. Category & Sub-category Badges */}
         {(profile.category || profile.profession) && (() => {

@@ -127,41 +127,110 @@ export async function GET(req: Request) {
 // POST /api/creator/socials (Upsert single platform social account)
 export async function POST(req: Request) {
   try {
-    const auth = await requireCreator(req);
-    if (auth.error) return auth.error;
-
     const body = await req.json();
     const { platform, accountName, username } = body;
-    const email = auth.creator.email;
 
     if (!platform || !username) {
       return apiError("Platform and username required", 400);
     }
-    const creatorId = auth.creator.id;
+
+    let creatorId: string | null = null;
+    let email: string = "";
+
+    const auth = await requireCreator(req);
+    if (!auth.error && auth.creator) {
+      creatorId = auth.creator.id;
+      email = auth.creator.email;
+    } else if (body.email) {
+      const [rows]: any = await db.query(
+        "SELECT id, email FROM creators WHERE LOWER(email) = LOWER(?) LIMIT 1",
+        [String(body.email).trim()]
+      );
+      if (rows?.[0]) {
+        creatorId = rows[0].id;
+        email = rows[0].email;
+      }
+    } else if (body.creatorId) {
+      const [rows]: any = await db.query(
+        "SELECT id, email FROM creators WHERE id = ? LIMIT 1",
+        [String(body.creatorId).trim()]
+      );
+      if (rows?.[0]) {
+        creatorId = rows[0].id;
+        email = rows[0].email;
+      }
+    }
+
+    if (!creatorId) {
+      return auth.error || apiError("Unauthorized", 401);
+    }
+
+    const rawFollowers =
+      body.followerCount ??
+      body.followers ??
+      body.subscribers ??
+      body.count ??
+      0;
+    const followerCount = Math.max(0, Number(rawFollowers) || 0);
+
+    const rawMedia =
+      body.mediaCount ??
+      body.posts ??
+      body.videos ??
+      0;
+    const mediaCount = Math.max(0, Number(rawMedia) || 0);
+
+    const audienceCount =
+      body.audienceCount !== undefined
+        ? Math.max(0, Number(body.audienceCount) || 0)
+        : followerCount;
+
+    const isVerified = Boolean(body.isVerified) ? 1 : 0;
+    const cleanPlatform = String(platform).toLowerCase().trim();
+    const cleanUsername = String(username).replace(/^@/, "").trim();
+    const displayName = accountName || cleanUsername;
 
     await db.query(
-      `INSERT INTO social_accounts (creator_id, platform, account_name, username, follower_count, media_count, audience_count, is_verified, last_synced_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+      `INSERT INTO social_accounts (
+         creator_id, platform, account_name, username,
+         follower_count, media_count, audience_count,
+         is_verified, last_synced_at
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
        ON DUPLICATE KEY UPDATE
          account_name = VALUES(account_name),
          username = VALUES(username),
-         last_synced_at = last_synced_at`,
+         follower_count = CASE 
+           WHEN VALUES(follower_count) > 0 THEN VALUES(follower_count)
+           ELSE follower_count
+         END,
+         media_count = CASE 
+           WHEN VALUES(media_count) > 0 THEN VALUES(media_count)
+           ELSE media_count
+         END,
+         audience_count = CASE 
+           WHEN VALUES(audience_count) > 0 THEN VALUES(audience_count)
+           ELSE audience_count
+         END,
+         is_verified = VALUES(is_verified),
+         last_synced_at = NOW()`,
       [
         creatorId,
-        platform,
-        accountName || username,
-        username,
-        0,
-        0,
-        0,
-        0,
+        cleanPlatform,
+        displayName,
+        cleanUsername,
+        followerCount,
+        mediaCount,
+        audienceCount,
+        isVerified,
       ]
     );
 
     // Record / Update current step in creator_onboarding_steps table (1 row per email)
-    await recordOnboardingStep(email, "socials", creatorId);
+    if (email) {
+      await recordOnboardingStep(email, "socials", creatorId);
+    }
 
-    return apiSuccess({}, `Saved ${platform} account to MySQL`);
+    return apiSuccess({ followerCount, platform: cleanPlatform }, `Saved ${cleanPlatform} account to MySQL`);
   } catch (err: any) {
     console.error("POST Socials Error:", err);
     return apiError(err.message || "Failed to save social account", 500);

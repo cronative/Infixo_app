@@ -19,7 +19,7 @@ export const SocialService = {
 
   saveAccounts(accounts: Partial<SocialAccounts>): SocialAccounts {
     const current = SocialService.getAccounts();
-    const email = authRepository.getPendingEmail();
+    const email = authRepository.getPendingEmail() || profileRepository.get()?.email;
     const updated: SocialAccounts = {
       ...current,
       ...accounts,
@@ -28,78 +28,76 @@ export const SocialService = {
     socialRepository.save(updated);
 
     // Save platforms to MySQL Database via API
-    if (email) {
-      const igHandle = updated.instagram?.username || updated.instagram?.url?.split("/").filter(Boolean).pop();
-      if (igHandle) {
-        fetch("/api/creator/socials", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email,
-            platform: "instagram",
-            accountName: updated.instagram.name || igHandle,
-            username: igHandle,
-            followerCount: updated.instagram.followers || 0,
-            mediaCount: updated.instagram.posts || 0,
-            isVerified: updated.instagram.isVerified || false,
-          }),
-        }).catch((e) => console.error("Failed to save Instagram to MySQL DB:", e));
-      }
-
-      const ytHandle = updated.youtube?.username || updated.youtube?.channelTitle || updated.youtube?.url?.split("/").filter(Boolean).pop();
-      if (ytHandle) {
-        fetch("/api/creator/socials", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email,
-            platform: "youtube",
-            accountName: updated.youtube.channelTitle || ytHandle,
-            username: ytHandle,
-            followerCount: updated.youtube.subscribers || 0,
-            mediaCount: updated.youtube.videos || 0,
-            isVerified: updated.youtube.isVerified || false,
-          }),
-        }).catch((e) => console.error("Failed to save YouTube to MySQL DB:", e));
-      }
-
-      const fbHandle = updated.facebook?.username || updated.facebook?.name || updated.facebook?.url?.split("/").filter(Boolean).pop();
-      if (fbHandle) {
-        fetch("/api/creator/socials", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email,
-            platform: "facebook",
-            accountName: updated.facebook.name || fbHandle,
-            username: fbHandle,
-            followerCount: updated.facebook.followers || 0,
-            mediaCount: updated.facebook.posts || 0,
-            isVerified: updated.facebook.isVerified || false,
-          }),
-        }).catch((e) => console.error("Failed to save Facebook to MySQL DB:", e));
-      }
-
-      // Save additional platforms
-      PLATFORMS_LIST.forEach(({ key, platform }) => {
-        const item = updated[key] as GenericSocialStats | undefined;
-        const handle = item?.username || item?.name || item?.url?.split("/").filter(Boolean).pop();
-        if (handle) {
-          fetch("/api/creator/socials", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email,
-              platform,
-              accountName: item?.name || handle,
-              username: handle,
-              followerCount: item?.followers || 0,
-              isVerified: item?.isVerified || false,
-            }),
-          }).catch((e) => console.error(`Failed to save ${platform} to DB:`, e));
-        }
-      });
+    const igHandle = updated.instagram?.username || updated.instagram?.url?.split("/").filter(Boolean).pop();
+    if (igHandle) {
+      fetch("/api/creator/socials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email || undefined,
+          platform: "instagram",
+          accountName: updated.instagram?.name || igHandle,
+          username: igHandle,
+          followerCount: updated.instagram?.followers || 0,
+          mediaCount: updated.instagram?.posts || 0,
+          isVerified: updated.instagram?.isVerified || false,
+        }),
+      }).catch((e) => console.error("Failed to save Instagram to MySQL DB:", e));
     }
+
+    const ytHandle = updated.youtube?.username || updated.youtube?.channelTitle || updated.youtube?.url?.split("/").filter(Boolean).pop();
+    if (ytHandle) {
+      fetch("/api/creator/socials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email || undefined,
+          platform: "youtube",
+          accountName: updated.youtube?.channelTitle || ytHandle,
+          username: ytHandle,
+          followerCount: updated.youtube?.subscribers || 0,
+          mediaCount: updated.youtube?.videos || 0,
+          isVerified: updated.youtube?.isVerified || false,
+        }),
+      }).catch((e) => console.error("Failed to save YouTube to MySQL DB:", e));
+    }
+
+    const fbHandle = updated.facebook?.username || updated.facebook?.name || updated.facebook?.url?.split("/").filter(Boolean).pop();
+    if (fbHandle) {
+      fetch("/api/creator/socials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email || undefined,
+          platform: "facebook",
+          accountName: updated.facebook?.name || fbHandle,
+          username: fbHandle,
+          followerCount: updated.facebook?.followers || 0,
+          mediaCount: updated.facebook?.posts || 0,
+          isVerified: updated.facebook?.isVerified || false,
+        }),
+      }).catch((e) => console.error("Failed to save Facebook to MySQL DB:", e));
+    }
+
+    // Save additional platforms
+    PLATFORMS_LIST.forEach(({ key, platform }) => {
+      const item = updated[key] as GenericSocialStats | undefined;
+      const handle = item?.username || item?.name || item?.url?.split("/").filter(Boolean).pop();
+      if (handle) {
+        fetch("/api/creator/socials", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: email || undefined,
+            platform,
+            accountName: item?.name || handle,
+            username: handle,
+            followerCount: item?.followers || 0,
+            isVerified: item?.isVerified || false,
+          }),
+        }).catch((e) => console.error(`Failed to save ${platform} to DB:`, e));
+      }
+    });
 
     return updated;
   },

@@ -19,19 +19,20 @@ export async function POST(req: Request) {
       ? username
       : `https://www.facebook.com/${username}`;
 
-    const apiKey = process.env.RAPIDAPI_KEY;
-
     // 1. Primary: Try Apify Facebook Page Scraper
-    if (apiKey) try {
-      const apifyPage = await ApifySocialService.fetchFacebookPage(username);
-      if (apifyPage) {
-        return apiSuccess({ page: apifyPage, provider: "apify" }, "Facebook page fetched via Apify");
+    if (process.env.APIFY_API_TOKEN || process.env.APIFY_TOKEN) {
+      try {
+        const apifyPage = await ApifySocialService.fetchFacebookPage(username);
+        if (apifyPage) {
+          return apiSuccess({ page: apifyPage, provider: "apify" }, "Facebook page fetched via Apify");
+        }
+      } catch (err) {
+        console.warn("[Facebook API] Apify error, falling back to RapidAPI:", err);
       }
-    } catch (err) {
-      console.warn("[Facebook API] Apify error, falling back to RapidAPI:", err);
     }
 
     // 2. Fallback: Try RapidAPI Facebook Scraper
+    const apiKey = process.env.RAPIDAPI_KEY;
     try {
       const response = await fetch(
         `https://facebook-scraper3.p.rapidapi.com/page/details?url=${encodeURIComponent(fbUrl)}`,

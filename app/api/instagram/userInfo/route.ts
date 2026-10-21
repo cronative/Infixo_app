@@ -15,17 +15,19 @@ export async function POST(req: Request) {
     }
 
     // 1. Primary: Try Apify Instagram Profile Scraper
-    const rapidApiKey = process.env.RAPIDAPI_KEY;
-    if (rapidApiKey) try {
-      const apifyUser = await ApifySocialService.fetchInstagramProfile(username);
-      if (apifyUser) {
-        return apiSuccess({ user: apifyUser, provider: "apify" }, "Instagram profile fetched via Apify");
+    if (process.env.APIFY_API_TOKEN || process.env.APIFY_TOKEN) {
+      try {
+        const apifyUser = await ApifySocialService.fetchInstagramProfile(username);
+        if (apifyUser) {
+          return apiSuccess({ user: apifyUser, provider: "apify" }, "Instagram profile fetched via Apify");
+        }
+      } catch (err) {
+        console.warn("[Instagram API] Apify error, falling back to RapidAPI:", err);
       }
-    } catch (err) {
-      console.warn("[Instagram API] Apify error, falling back to RapidAPI:", err);
     }
 
     // 2. Fallback: Try RapidAPI
+    const rapidApiKey = process.env.RAPIDAPI_KEY;
     try {
       const response = await fetch("https://instagram120.p.rapidapi.com/api/instagram/userInfo", {
         method: "POST",

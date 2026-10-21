@@ -100,22 +100,20 @@ export function InstagramFetcher({ username, onConfirmSync, onBeforeFetch, varia
       updateSocials(updatedSocials);
       SocialService.saveAccounts(updatedSocials);
 
-      const email = authRepository.getPendingEmail();
-      if (email) {
-        await fetch("/api/creator/socials", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email,
-            platform: "instagram",
-            accountName: fetchedUser.full_name || fetchedUser.username,
-            username: fetchedUser.username,
-            followerCount: fetchedUser.follower_count || 0,
-            mediaCount: fetchedUser.media_count || 0,
-            isVerified: Boolean(fetchedUser.is_verified),
-          }),
-        }).catch((e) => console.error("Failed to save Instagram to DB:", e));
-      }
+      const email = authRepository.getPendingEmail() || profile.email;
+      await fetch("/api/creator/socials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email || undefined,
+          platform: "instagram",
+          accountName: fetchedUser.full_name || fetchedUser.username,
+          username: fetchedUser.username,
+          followerCount: fetchedUser.follower_count || 0,
+          mediaCount: fetchedUser.media_count || 0,
+          isVerified: Boolean(fetchedUser.is_verified),
+        }),
+      }).catch((e) => console.error("Failed to save Instagram to DB:", e));
 
       const patch: Partial<typeof profile> = {};
       if (!profile.displayName || profile.displayName === "Your name") {

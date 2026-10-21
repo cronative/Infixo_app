@@ -25,10 +25,6 @@ export function MinimalWhiteCard({ profile, socials, series, totalAudience, vari
           {profile.displayName || "Your name"}
         </p>
 
-        {/* 3. Link of Inflixo */}
-        <p className="text-xs font-bold text-purple-600 mt-0.5">
-          {profile.username ? `inflixo.com/${profile.username}` : "inflixo.com/username"}
-        </p>
 
         {/* 4. Category & Sub-category Badges */}
         {(profile.category || profile.profession) && (() => {

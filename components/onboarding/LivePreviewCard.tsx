@@ -1194,12 +1194,16 @@ export function LivePreviewCard({
   const usesDarkControls = isDark || themeMeta.mode === "dark";
 
   useEffect(() => {
+    if (seriesOnlyMode) {
+      setCustomLinksList([]);
+      return;
+    }
     if (passedCustomLinks) {
       setCustomLinksList(passedCustomLinks);
     } else {
       setCustomLinksList(customLinksRepository.get());
     }
-  }, [passedCustomLinks]);
+  }, [passedCustomLinks, seriesOnlyMode]);
 
   useEffect(() => {
     if (passedMediaKitPackages !== undefined) {
@@ -1756,7 +1760,7 @@ export function LivePreviewCard({
           )}
 
           {/* Clickable Social Icons Row */}
-          {headerSocialList.length > 0 && (
+          {!seriesOnlyMode && headerSocialList.length > 0 && (
             <div className="mt-2 flex items-center justify-center gap-2 sm:gap-2.5 flex-wrap">
               {headerSocialList.map((item) => (
                 <a
@@ -1922,7 +1926,7 @@ export function LivePreviewCard({
         )}
 
         {/* 3. Links Section */}
-        {effectiveVisibilitySettings.showCustomLinks !== false && customLinksList && customLinksList.filter((l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url)))).length > 0 && (
+        {!seriesOnlyMode && effectiveVisibilitySettings.showCustomLinks !== false && customLinksList && customLinksList.filter((l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url)))).length > 0 && (
           <div id="links-section" className="relative z-10 order-[5] mt-6 sm:mt-7 w-full text-left space-y-2.5">
             <div>
               <div className="flex items-center justify-between px-0.5">

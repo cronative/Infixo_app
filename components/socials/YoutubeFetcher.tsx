@@ -99,22 +99,20 @@ export function YoutubeFetcher({ handle, onConfirmSync, onBeforeFetch, variant =
       updateSocials(updatedSocials);
       SocialService.saveAccounts(updatedSocials);
 
-      const email = authRepository.getPendingEmail();
-      if (email) {
-        await fetch("/api/creator/socials", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email,
-            platform: "youtube",
-            accountName: fetchedChannel.title || fetchedChannel.channel_name,
-            username: fetchedChannel.channel_name,
-            followerCount: fetchedChannel.subscribers || 0,
-            mediaCount: 0,
-            isVerified: Boolean(fetchedChannel.verified),
-          }),
-        }).catch((e) => console.error("Failed to save YouTube to DB:", e));
-      }
+      const email = authRepository.getPendingEmail() || profile.email;
+      await fetch("/api/creator/socials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email || undefined,
+          platform: "youtube",
+          accountName: fetchedChannel.title || fetchedChannel.channel_name,
+          username: fetchedChannel.channel_name,
+          followerCount: fetchedChannel.subscribers || 0,
+          mediaCount: 0,
+          isVerified: Boolean(fetchedChannel.verified),
+        }),
+      }).catch((e) => console.error("Failed to save YouTube to DB:", e));
 
       const patch: Partial<typeof profile> = {};
       if (!profile.displayName || profile.displayName === "Your name") {
