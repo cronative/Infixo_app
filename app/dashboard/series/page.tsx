@@ -698,16 +698,14 @@ function SeriesCard({
   const subtitleParts: string[] = [`${episodes.length} ${episodes.length === 1 ? "episode" : "episodes"}`];
   if (detectedPlatform) subtitleParts.push(detectedPlatform);
   if (series.genre) subtitleParts.push(series.genre.split(/[,•|/]/)[0].trim());
-  if (series.language) subtitleParts.push(series.language.trim());
   const subtitleStr = subtitleParts.join(" · ");
 
   return (
-    <div id={`series-${series.id}`} className="transition-colors first:rounded-t-[5px] last:rounded-b-[5px]">
+    <div id={`series-${series.id}`} className="rounded-[5px] border border-[#e2e8f0] bg-white shadow-2xs overflow-hidden transition-all duration-200">
       {/* Series Row Header */}
       <div
         onClick={onToggle}
-        className={`px-3 sm:px-4 py-2.5 flex items-center justify-between gap-3 cursor-pointer hover:bg-[#f1f5f9] transition-colors group first:rounded-t-[5px] ${!expanded ? "last:rounded-b-[5px]" : ""
-          }`}
+        className="px-3.5 sm:px-4 py-3 flex items-center justify-between gap-3 cursor-pointer hover:bg-[#f8fafc] transition-colors group"
       >
         {/* Left: Thumbnail + Title & Subtitle */}
         <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -718,7 +716,7 @@ function SeriesCard({
               alt={series.title}
               loading="lazy"
               decoding="async"
-              className="w-10 h-10 rounded-lg border border-[#e2e8f0] shrink-0 object-cover"
+              className="w-10 h-10 rounded-[5px] border border-[#e2e8f0] shrink-0 object-cover"
             />
           ) : (
             <span
@@ -770,44 +768,44 @@ function SeriesCard({
           )}
 
           <div className="min-w-0 flex-1 text-left space-y-0.5">
-            <p className="truncate text-sm sm:text-[15px] font-semibold text-[#0f172a]" title={series.title}>
+            <p className="truncate text-sm sm:text-base font-bold text-[#0f172a]" title={series.title}>
               {series.title}
             </p>
-            <p className="truncate text-xs text-[#64748b]">
+            <p className="truncate text-xs text-[#64748b] font-medium">
               {subtitleStr}
             </p>
           </div>
         </div>
 
-        {/* Right: + Add Episode | View | Copy | Share | ⋮ | Chevron */}
+        {/* Right: + Add Episode | Import CSV | View | Copy | Share | ⋮ | Chevron */}
         <div
           onClick={(e) => e.stopPropagation()}
           className="flex items-center gap-1.5 sm:gap-2 shrink-0"
         >
-          {/* Add Episode: the row's main action, neutral outline (page primary is Create Series) */}
+          {/* Add Episode */}
           <button
             type="button"
             onClick={() => onAddEpisode(series)}
             disabled={epUsage.isLimitReached}
-            className="hidden sm:inline-flex h-8 items-center gap-1 rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+            className="hidden sm:inline-flex h-8 items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-bold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <Plus className="h-3.5 w-3.5 text-[#64748b]" />
+            <Plus className="h-3.5 w-3.5 text-[#0f172a]" />
             <span>Add Episode</span>
           </button>
 
-          {/* Import Episodes in Bulk / CSV */}
+          {/* Import CSV */}
           <button
             type="button"
             onClick={() => onImportEpisodes(series)}
             disabled={epUsage.isLimitReached}
-            className="hidden sm:inline-flex h-8 items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-[#7A2253] transition-colors hover:border-[#cbd5e1] hover:bg-blue-50/50 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+            className="hidden sm:inline-flex h-8 items-center gap-1.5 rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7] px-3 text-xs font-bold text-[#7A2253] transition-colors hover:bg-[#FCE7F3]/70 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 shadow-2xs"
             title="Import multiple episodes at once or from CSV"
           >
             <Upload className="h-3.5 w-3.5 text-[#7A2253]" />
             <span>Import CSV</span>
           </button>
 
-          {/* Utilities: borderless ghost icons, still one click on desktop */}
+          {/* Utilities: borderless ghost icons */}
           <a
             href={`/${username}/series/${series.id}`}
             target="_blank"
@@ -873,7 +871,7 @@ function SeriesCard({
                     setMenuOpen(false);
                     onImportEpisodes(series);
                   }}
-                  className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#7A2253] hover:bg-blue-50/50 transition-colors cursor-pointer disabled:opacity-50"
+                  className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#7A2253] hover:bg-[#FFF5F7] transition-colors cursor-pointer disabled:opacity-50"
                 >
                   <Upload className="h-3.5 w-3.5 text-[#7A2253]" />
                   <span>Import Episodes (CSV)</span>
@@ -941,36 +939,36 @@ function SeriesCard({
             )}
           </div>
 
-          {/* Expand / Collapse Chevron */}
+          {/* Expand / Collapse Chevron with pink tint border */}
           <button
             type="button"
             onClick={onToggle}
-            className={`inline-flex ${GHOST_ICON}`}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7] hover:bg-[#FCE7F3]/70 text-[#7A2253] transition-colors cursor-pointer shadow-2xs"
             aria-expanded={expanded}
             aria-label={expanded ? "Hide episodes" : "Show episodes"}
             title={expanded ? "Hide episodes" : "Show episodes"}
           >
-            {expanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </button>
         </div>
       </div>
 
       {/* Expanded Episodes List */}
       {expanded && (
-        <div className="border-t border-[#e2e8f0] bg-[#f8fafc]/50 last:rounded-b-[5px]">
-          {/* Header strip: Episodes · 1/5 */}
-          <div className="px-3 sm:px-4 py-1.5 bg-[#f8fafc] flex items-center justify-between border-b border-[#e2e8f0]">
-            <span className="text-[11px] font-semibold uppercase tracking-wide text-[#64748b]">
-              Episodes · {episodes.length}/{epUsage.max === Infinity ? "Unlimited" : epUsage.max}
+        <div className="border-t border-[#FCE7F3] bg-white">
+          {/* Header strip: EPISODES · 3/5 */}
+          <div className="px-3.5 sm:px-4 py-2 bg-[#FFF5F7]/40 flex items-center justify-between border-b border-[#FCE7F3]/70">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748b]">
+              EPISODES · {episodes.length}/{epUsage.max === Infinity ? "Unlimited" : epUsage.max}
             </span>
             <div className="flex items-center gap-2">
               {!epUsage.isLimitReached && (
                 <button
                   type="button"
                   onClick={() => onImportEpisodes(series)}
-                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#7A2253] hover:underline cursor-pointer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#7A2253] hover:underline cursor-pointer"
                 >
-                  <Upload className="h-3 w-3" />
+                  <Upload className="h-3.5 w-3.5" />
                   <span>Import CSV / Bulk</span>
                 </button>
               )}
@@ -983,7 +981,7 @@ function SeriesCard({
           </div>
 
           {episodes.length === 0 ? (
-            <div className="p-4 text-center space-y-3 bg-white last:rounded-b-[5px]">
+            <div className="p-4 text-center space-y-3 bg-white">
               <p className="text-sm font-semibold text-[#0f172a]">No episodes added yet</p>
               <p className="text-xs text-[#64748b] max-w-sm mx-auto">
                 Add your episodes one by one or import multiple episodes together using CSV / bulk links.
@@ -1010,7 +1008,7 @@ function SeriesCard({
               </div>
             </div>
           ) : (
-            <div className="divide-y divide-[#e2e8f0] bg-white last:rounded-b-[5px]">
+            <div className="divide-y divide-[#f1f5f9] bg-white">
               {series.seasons.flatMap((season) =>
                 season.episodes.map((ep, idx) => {
                   const plat = getPlatformInfo(ep.externalUrl);
@@ -1019,7 +1017,7 @@ function SeriesCard({
                   return (
                     <div
                       key={ep.id}
-                      className="px-3 sm:px-4 py-2 transition-colors flex items-center justify-between hover:bg-[#f8fafc] group"
+                      className="px-3.5 sm:px-4 py-2.5 transition-colors flex items-center justify-between hover:bg-[#f8fafc] group"
                     >
                       {/* Left: 01 & Episode Info */}
                       <div className="flex items-center gap-3 min-w-0 flex-1 pr-3">
@@ -1028,87 +1026,63 @@ function SeriesCard({
                         </span>
 
                         <div className="min-w-0 flex-1 text-left space-y-0.5">
-                          <p className="truncate text-sm font-medium text-[#0f172a]">
+                          <p className="truncate text-sm font-semibold text-[#0f172a]">
                             {ep.title || `Episode ${epNumStr}`}
                           </p>
-                          <div className="flex items-center gap-1.5 text-xs text-[#64748b]">
+                          <div className="flex items-center gap-1.5 text-xs text-[#64748b] font-medium">
                             {plat.icon}
                             <span>{plat.name}</span>
                           </div>
                         </div>
                       </div>
 
-                      {/* Right: Actions (Edit, ⋮ with Delete inside) */}
-                      <div className="flex items-center gap-0.5 shrink-0">
+                      {/* Right: Actions (Direct Pencil & Trash with divider) */}
+                      <div className="flex items-center gap-1 shrink-0">
                         <button
                           type="button"
                           onClick={() => onEditEpisode(series, season.id, ep)}
-                          className="inline-flex h-9 sm:h-8 items-center gap-1 rounded-[5px] px-2.5 text-xs font-medium text-[#475569] transition-colors hover:bg-[#f1f5f9] hover:text-[#0f172a] cursor-pointer"
+                          className="p-1.5 text-[#64748b] hover:text-[#0f172a] hover:bg-slate-100 rounded-[5px] transition-colors cursor-pointer"
                           title="Edit Episode"
                         >
-                          <Pencil className="h-3.5 w-3.5" />
-                          <span>Edit</span>
+                          <Pencil className="h-4 w-4" />
                         </button>
-
-                        {/* ⋮ Menu for Episode (Contains Delete episode per #11) */}
-                        <div className="relative" data-ep-menu>
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setActiveEpMenuId(activeEpMenuId === ep.id ? null : ep.id);
-                            }}
-                            className={`inline-flex ${GHOST_ICON}`}
-                            aria-label="Episode options"
-                            aria-expanded={activeEpMenuId === ep.id}
-                          >
-                            <MoreVertical className="h-3.5 w-3.5" />
-                          </button>
-
-                          {activeEpMenuId === ep.id && (
-                            <div
-                              onClick={(e) => e.stopPropagation()}
-                              className="absolute right-0 top-full mt-1.5 w-36 rounded-[5px] border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in"
-                            >
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setActiveEpMenuId(null);
-                                  onDeleteEpisode(series, season.id, ep);
-                                }}
-                                className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#C2414B] hover:bg-[#fef2f2] transition-colors cursor-pointer"
-                              >
-                                <Trash2 className="h-3.5 w-3.5" />
-                                <span>Delete episode</span>
-                              </button>
-                            </div>
-                          )}
-                        </div>
+                        <div className="h-4 w-px bg-[#e2e8f0]" />
+                        <button
+                          type="button"
+                          onClick={() => onDeleteEpisode(series, season.id, ep)}
+                          className="p-1.5 text-[#ef4444] hover:text-red-700 hover:bg-red-50 rounded-[5px] transition-colors cursor-pointer"
+                          title="Delete Episode"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
                       </div>
                     </div>
                   );
                 })
               )}
 
-              {/* Always-visible add actions: Add episode & Bulk import */}
+              {/* Bottom Action Bar inside Card */}
               {!epUsage.isLimitReached && (
-                <div className="flex items-center divide-x divide-[#e2e8f0] border-t border-[#e2e8f0] bg-white last:rounded-b-[5px]">
-                  <button
-                    type="button"
-                    onClick={() => onAddEpisode(series)}
-                    className="flex flex-1 items-center justify-center gap-2 py-2.5 text-xs font-semibold text-[#475569] transition-colors hover:bg-[#f8fafc] hover:text-[#0f172a] cursor-pointer"
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                    <span>Add episode</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => onImportEpisodes(series)}
-                    className="flex flex-1 items-center justify-center gap-2 py-2.5 text-xs font-semibold text-[#7A2253] transition-colors hover:bg-blue-50/40 cursor-pointer"
-                  >
-                    <Upload className="h-3.5 w-3.5" />
-                    <span>Bulk Import (CSV)</span>
-                  </button>
+                <div className="p-3 sm:p-3.5 bg-white">
+                  <div className="rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7] p-2 flex items-center justify-between text-xs font-bold text-[#7A2253]">
+                    <button
+                      type="button"
+                      onClick={() => onAddEpisode(series)}
+                      className="flex-1 flex items-center justify-center gap-1.5 hover:underline cursor-pointer text-[#7A2253] py-0.5"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                      <span>Add episode</span>
+                    </button>
+                    <div className="h-4 w-px bg-[#FCE7F3]" />
+                    <button
+                      type="button"
+                      onClick={() => onImportEpisodes(series)}
+                      className="flex-1 flex items-center justify-center gap-1.5 hover:underline cursor-pointer text-[#7A2253] py-0.5"
+                    >
+                      <Upload className="h-3.5 w-3.5" />
+                      <span>Import CSV / Bulk</span>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -1283,14 +1257,19 @@ export default function DashboardContentPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 shrink-0 self-start sm:self-auto">
-          <button type="button" onClick={() => handleOpenImportEpisodes()} className="inline-flex h-9 items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#7A2253] hover:bg-slate-50 cursor-pointer">
-            <Upload className="h-3.5 w-3.5" /> Import CSV / Bulk
+          <button
+            type="button"
+            onClick={() => handleOpenImportEpisodes()}
+            className="inline-flex h-9 items-center gap-1.5 rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7] hover:bg-[#FCE7F3]/70 px-3.5 text-xs font-bold text-[#7A2253] transition-colors cursor-pointer shadow-2xs"
+          >
+            <Upload className="h-3.5 w-3.5 text-[#7A2253]" />
+            <span>Import CSV / Bulk</span>
           </button>
           <a
             href={publicSeriesListingUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex h-9 items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc]"
+            className="inline-flex h-9 items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] shadow-2xs"
           >
             <span>Live Series</span>
             <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
@@ -1299,10 +1278,7 @@ export default function DashboardContentPage() {
             type="button"
             onClick={handleOpenCreateSeries}
             disabled={seriesUsage.isLimitReached}
-            className={`inline-flex h-9 items-center justify-center gap-1.5 rounded-[5px] px-3.5 text-xs font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 ${series.length === 0 || seriesUsage.isLimitReached
-              ? "border border-[#e2e8f0] bg-white text-[#0f172a] hover:bg-[#f8fafc]"
-              : "bg-[#7A2253] text-white hover:opacity-95 shadow-md shadow-[#7A2253]/20"
-              }`}
+            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#681c46] px-4 text-xs font-bold text-white shadow-2xs transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Plus className="h-3.5 w-3.5" />
             <span>Create Series</span>
@@ -1310,10 +1286,10 @@ export default function DashboardContentPage() {
         </div>
       </div>
 
-      {/* 2. USAGE + LISTING LINK — one compact row */}
-      <div className="flex flex-col gap-2 rounded-[5px] border border-[#e2e8f0] bg-white px-3 sm:px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between">
+      {/* 2. USAGE + SHARE ROW */}
+      <div className="flex flex-col gap-2 rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7] px-4 py-2.5 sm:py-3 sm:flex-row sm:items-center sm:justify-between text-left shadow-2xs">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#64748b]">
-          <span className="font-semibold text-[#0f172a]">
+          <span className="font-bold text-[#0f172a]">
             {series.length} / {seriesUsage.max === Infinity ? "Unlimited" : seriesUsage.max} series
           </span>
           <span aria-hidden="true">·</span>
@@ -1321,7 +1297,7 @@ export default function DashboardContentPage() {
             {totalEpisodesCount} {totalEpisodesCount === 1 ? "episode" : "episodes"}
           </span>
           <span aria-hidden="true">·</span>
-          <span>{quota.name}</span>
+          <span className="capitalize">{quota.name}</span>
           <span aria-hidden="true">·</span>
           <span>
             {seriesUsage.max === Infinity
@@ -1332,14 +1308,11 @@ export default function DashboardContentPage() {
           </span>
         </div>
 
-        <div className="flex min-w-0 items-center gap-1 sm:max-w-[55%]">
-          <span className="min-w-0 flex-1 truncate text-xs text-[#475569]" title={publicSeriesListingUrl}>
-            {publicSeriesListingUrl.replace(/^https?:\/\//, "")}
-          </span>
+        <div className="flex items-center gap-3 shrink-0">
           <button
             type="button"
             onClick={handleCopySeriesListingLink}
-            className="inline-flex h-9 sm:h-8 shrink-0 items-center gap-1 rounded-[5px] px-2 text-xs font-medium text-[#475569] transition-colors hover:bg-[#f1f5f9] hover:text-[#0f172a] cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748b] hover:text-[#0f172a] transition-colors cursor-pointer"
           >
             <Copy className="h-3.5 w-3.5" />
             <span>Copy</span>
@@ -1347,7 +1320,7 @@ export default function DashboardContentPage() {
           <button
             type="button"
             onClick={handleShareSeriesListingLink}
-            className="inline-flex h-9 sm:h-8 shrink-0 items-center gap-1 rounded-[5px] px-2 text-xs font-medium text-[#475569] transition-colors hover:bg-[#f1f5f9] hover:text-[#0f172a] cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748b] hover:text-[#0f172a] transition-colors cursor-pointer"
           >
             <Share2 className="h-3.5 w-3.5" />
             <span>Share</span>
@@ -1356,26 +1329,24 @@ export default function DashboardContentPage() {
       </div>
 
       {/* 3. SERIES LIST */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between gap-3">
-          <h2 className="text-sm font-semibold text-[#0f172a]">
-            Your series {series.length > 0 && <span className="font-normal text-[#64748b]">({series.length})</span>}
+      <div className="space-y-2.5">
+        <div className="flex items-center justify-between gap-3 pt-1">
+          <h2 className="text-sm font-bold text-[#0f172a]">
+            Your series {series.length > 0 && <span className="font-semibold text-[#64748b]">({series.length})</span>}
           </h2>
-          {series.length > 1 && (
-            <div className="flex items-center w-full max-w-[220px] h-8 rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
-                <Search className="h-3.5 w-3.5" />
-              </span>
-              <input
-                type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search series"
-                aria-label="Search series"
-                className="flex-1 h-8 px-2.5 text-xs text-[#0f172a] placeholder:text-[#94a3b8] bg-transparent outline-none"
-              />
-            </div>
-          )}
+          <div className="flex items-center w-full max-w-[220px] sm:max-w-[240px] h-8.5 rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors shadow-2xs">
+            <span className="flex h-8.5 w-8.5 shrink-0 items-center justify-center text-[#64748b]">
+              <Search className="h-3.5 w-3.5" />
+            </span>
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search series"
+              aria-label="Search series"
+              className="flex-1 h-8.5 pr-2.5 text-xs text-[#0f172a] placeholder:text-[#94a3b8] bg-transparent outline-none"
+            />
+          </div>
         </div>
 
         {/* Clean Empty State */}
@@ -1402,7 +1373,7 @@ export default function DashboardContentPage() {
             description={`No series matching "${searchQuery}". Try adjusting your search query.`}
           />
         ) : (
-          <div className="rounded-[5px] border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0]">
+          <div className="space-y-3 sm:space-y-3.5">
             {filteredSeries.map((s) => (
               <SeriesCard
                 key={s.id}
