@@ -101,11 +101,11 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
           </div>
 
           {/* Billing Switcher Toggle */}
-          <div className="inline-flex items-center rounded-xl bg-[#fbfbfb] p-1 border border-[#E4DAD5] shrink-0 self-start sm:self-auto">
+          <div className="inline-flex items-center rounded-[5px] bg-[#fbfbfb] p-1 border border-[#E4DAD5] shrink-0 self-start sm:self-auto">
             <button
               type="button"
               onClick={() => setCycle("monthly")}
-              className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${cycle === "monthly"
+              className={`rounded-[5px] px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${cycle === "monthly"
                 ? "bg-white text-[#181716] shadow-xs border border-[#E4DAD5]"
                 : "text-[#797570] hover:text-foreground"
                 }`}
@@ -115,15 +115,15 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
             <button
               type="button"
               onClick={() => setCycle("yearly")}
-              className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${cycle === "yearly"
+              className={`rounded-[5px] px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${cycle === "yearly"
                 ? "bg-[#7A2253] text-white shadow-xs"
                 : "text-[#797570] hover:text-foreground"
                 }`}
             >
               <span>Yearly</span>
-              <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded-md ${cycle === "yearly" ? "bg-white/20 text-white" : "bg-[#7A2253]/[0.09] text-[#7A2253] border border-[#7A2253]/20"
+              <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded-[5px] ${cycle === "yearly" ? "bg-white/20 text-white" : "bg-[#7A2253]/[0.09] text-[#7A2253] border border-[#7A2253]/20"
                 }`}>
-                Save
+              Save
               </span>
             </button>
           </div>
@@ -134,11 +134,11 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
 
           {/* Card 1: Free Trial (hidden once free trial has been selected/used) */}
           {!hasSelectedFreeTrial && (
-            <div className="rounded-2xl border border-[#E4DAD5] bg-white p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xs text-left">
+            <div className="rounded-[5px] border border-[#E4DAD5] bg-white p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xs text-left">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="font-display text-base font-bold text-[#181716]">Free Trial</h3>
-                  <span className="text-[10px] font-bold text-[#17845B] bg-[#EAF7F0] px-2 py-0.5 rounded-full border border-[#17845B]/20">
+                  <span className="text-[10px] font-bold text-[#17845B] bg-[#EAF7F0] px-2 py-0.5 rounded-[5px] border border-[#17845B]/20">
                     7 Days
                   </span>
                 </div>
@@ -185,7 +185,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                 <button
                   type="button"
                   disabled
-                  className={`w-full rounded-xl py-2.5 px-3 text-xs font-semibold cursor-default text-center ${
+                  className={`w-full rounded-[5px] py-2.5 px-3 text-xs font-semibold cursor-default text-center ${
                     currentPlanKey === "early_access"
                       ? "bg-[#EAF7F0] border border-[#17845B]/20 text-[#17845B]"
                       : "bg-[#fbfbfb] border border-[#E4DAD5] text-[#797570]"
@@ -198,11 +198,11 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
           )}
 
           {/* Card 2: Starter */}
-          <div className="rounded-2xl border border-[#E4DAD5] bg-white p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xs text-left">
+          <div className="rounded-[5px] border border-[#E4DAD5] bg-white p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xs text-left">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-display text-base font-bold text-[#181716]">Starter</h3>
-                <span className="text-[10px] font-semibold text-[#797570] bg-[#fbfbfb] border border-[#E4DAD5] px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-semibold text-[#797570] bg-[#fbfbfb] border border-[#E4DAD5] px-2 py-0.5 rounded-[5px]">
                   Public
                 </span>
               </div>
@@ -243,7 +243,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                 <button
                   type="button"
                   disabled
-                  className="w-full rounded-xl bg-[#EAF7F0] border border-[#17845B]/20 py-2.5 px-3 text-xs font-semibold text-[#17845B] cursor-default text-center"
+                  className="w-full rounded-[5px] bg-[#EAF7F0] border border-[#17845B]/20 py-2.5 px-3 text-xs font-semibold text-[#17845B] cursor-default text-center"
                 >
                   Current Plan ✓
                 </button>
@@ -258,7 +258,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                     name: profile?.displayName || "Creator",
                     email: activeEmail,
                   }}
-                  className="w-full rounded-xl border border-[#7A2253] bg-white hover:bg-[#7A2253]/5 text-[#7A2253] py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
+                  className="w-full rounded-[5px] border border-[#7A2253] bg-white hover:bg-[#7A2253]/5 text-[#7A2253] py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
                   onSuccess={(data) => {
                     handleUpgradeSuccess("starter", "Starter Plan", data);
                   }}
@@ -271,11 +271,11 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
           </div>
 
           {/* Card 3: Pro */}
-          <div className="rounded-2xl border border-[#E4DAD5] bg-white p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xs text-left">
+          <div className="rounded-[5px] border border-[#E4DAD5] bg-white p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xs text-left">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-display text-base font-bold text-[#181716]">Pro</h3>
-                <span className="text-[10px] font-semibold text-[#797570] bg-[#fbfbfb] border border-[#E4DAD5] px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-semibold text-[#797570] bg-[#fbfbfb] border border-[#E4DAD5] px-2 py-0.5 rounded-[5px]">
                   Growth
                 </span>
               </div>
@@ -316,7 +316,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                 <button
                   type="button"
                   disabled
-                  className="w-full rounded-xl bg-[#EAF7F0] border border-[#17845B]/20 py-2.5 px-3 text-xs font-semibold text-[#17845B] cursor-default text-center"
+                  className="w-full rounded-[5px] bg-[#EAF7F0] border border-[#17845B]/20 py-2.5 px-3 text-xs font-semibold text-[#17845B] cursor-default text-center"
                 >
                   Current Plan ✓
                 </button>
@@ -331,7 +331,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                     name: profile?.displayName || "Creator",
                     email: activeEmail,
                   }}
-                  className="w-full rounded-xl bg-[#7A2253] hover:opacity-95 text-white py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-[#7A2253]/20"
+                  className="w-full rounded-[5px] bg-[#7A2253] hover:opacity-95 text-white py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-[#7A2253]/20"
                   onSuccess={(data) => {
                     handleUpgradeSuccess("creator_pro", "Creator Pro", data);
                   }}
@@ -344,11 +344,11 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
           </div>
 
           {/* Card 4: VIP (Recommended) */}
-          <div className="rounded-2xl border-2 border-[#7A2253] bg-white p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xs text-left relative">
+          <div className="rounded-[5px] border-2 border-[#7A2253] bg-white p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xs text-left relative">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-display text-base font-bold text-[#181716]">VIP</h3>
-                <span className="text-[10px] font-bold text-[#7A2253] bg-[#7A2253]/[0.09] px-2.5 py-0.5 rounded-full border border-[#7A2253]/20">
+                <span className="text-[10px] font-bold text-[#7A2253] bg-[#7A2253]/[0.09] px-2.5 py-0.5 rounded-[5px] border border-[#7A2253]/20">
                   Recommended
                 </span>
               </div>
@@ -407,7 +407,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                 <button
                   type="button"
                   disabled
-                  className="w-full rounded-xl bg-[#EAF7F0] border border-[#17845B]/20 py-2.5 px-3 text-xs font-semibold text-[#17845B] cursor-default text-center"
+                  className="w-full rounded-[5px] bg-[#EAF7F0] border border-[#17845B]/20 py-2.5 px-3 text-xs font-semibold text-[#17845B] cursor-default text-center"
                 >
                   Current Plan ✓
                 </button>
@@ -422,7 +422,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
                     name: profile?.displayName || "Creator",
                     email: activeEmail,
                   }}
-                  className="w-full rounded-xl bg-[#7A2253] hover:opacity-95 text-white py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-[#7A2253]/20"
+                  className="w-full rounded-[5px] bg-[#7A2253] hover:opacity-95 text-white py-2.5 px-3 text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-[#7A2253]/20"
                   onSuccess={(data) => {
                     handleUpgradeSuccess("creator_VIP", "Creator VIP", data);
                   }}
@@ -448,7 +448,7 @@ export function PricingTable({ hideFreeTrial }: PricingTableProps) {
           </p>
         </div>
 
-        <div className="overflow-x-auto rounded-2xl border border-[#E4DAD5] bg-white shadow-xs">
+        <div className="overflow-x-auto rounded-[5px] border border-[#E4DAD5] bg-white shadow-xs">
           <table className="w-full text-left border-collapse min-w-[760px]">
             <thead>
               <tr className="border-b border-[#E4DAD5] bg-[#fbfbfb] text-xs font-bold text-[#181716]">

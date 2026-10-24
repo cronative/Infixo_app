@@ -17,6 +17,8 @@ interface CreatorPublicShellProps {
   outside?: ReactNode;
   /** Optional flag to suppress footer branding if needed */
   hideFooter?: boolean;
+  /** Lock viewport to screen height with internal scrolling */
+  fixedViewport?: boolean;
 }
 
 /**
@@ -30,6 +32,7 @@ export function CreatorPublicShell({
   wrapperProps,
   outside,
   hideFooter = false,
+  fixedViewport = false,
 }: CreatorPublicShellProps) {
   const t = getPublicTheme(themeKey);
   const { meta } = t;
@@ -37,8 +40,8 @@ export function CreatorPublicShell({
   return (
     <div
       {...wrapperProps}
-      style={{ backgroundColor: meta.colors.pageBackground }}
-      className="relative min-h-dvh flex flex-col justify-between antialiased transition-colors duration-500"
+      style={{ backgroundColor: meta.colors.pageBackground, ...((wrapperProps as any)?.style || {}) }}
+      className={`relative ${fixedViewport ? "h-screen h-[100dvh] max-h-[100dvh] overflow-hidden" : "min-h-dvh"} flex flex-col justify-between antialiased transition-colors duration-500`}
     >
       {/* 1. Full-screen theme background (photo themes get a soft blurred backdrop) */}
       <div
@@ -64,7 +67,13 @@ export function CreatorPublicShell({
       {!t.hasPhotoBackdrop && <FocusOverlay overlay={meta.focusOverlay} />}
 
       {/* 4. Centered card column */}
-      <main className={`${PUBLIC_MAIN_CLASS} ${mainClassName}`}>
+      <main
+        className={`${
+          fixedViewport
+            ? "relative z-10 flex-1 flex flex-col justify-between mx-auto w-full max-w-[620px] px-2 sm:px-3 pt-0 pb-1 h-full max-h-full min-h-0 overflow-hidden animate-fade-in-up"
+            : PUBLIC_MAIN_CLASS
+        } ${mainClassName}`}
+      >
         {children}
         {/* Subtle, center-aligned text footer at the bottom of the page */}
         {!hideFooter && <PublicMadeWithInflixoFooter themeKey={themeKey} />}

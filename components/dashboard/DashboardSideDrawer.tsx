@@ -73,7 +73,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
           <Logo size="sm" />
           <button
             onClick={onClose}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
+            className="flex h-10 w-10 items-center justify-center rounded-[5px] text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
             aria-label="Close menu"
           >
             <X className="h-5 w-5" />
@@ -81,7 +81,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
         </div>
 
         {/* Creator Info Card */}
-        <div className="mx-3 mb-2 rounded-xl bg-[#f8fafc] p-3">
+        <div className="mx-3 mb-2 rounded-[5px] bg-[#f8fafc] p-3">
           <div className="flex items-center gap-3">
             <CreatorAvatar
               src={profile.photoDataUrl}
@@ -102,7 +102,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                   @{handleStr}
                 </p>
                 {isTrialExpired ? (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded-full border border-rose-200">
+                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded-[5px] border border-rose-200">
                     <span className="h-1 w-1 rounded-full bg-rose-500" />
                     Private
                   </span>
@@ -134,7 +134,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                       href={item.href}
                       onClick={onClose}
                       aria-current={active ? "page" : undefined}
-                      className={`group flex min-h-[44px] items-center gap-3 rounded-xl px-3 text-sm transition-colors ${
+                      className={`group flex min-h-[44px] items-center gap-3 rounded-[5px] px-3 text-sm transition-colors ${
                         active
                           ? "bg-[#7A2253]/[0.08] font-semibold text-[#7A2253]"
                           : "font-medium text-[#334155] hover:bg-[#fdf2f8] hover:text-[#7A2253] active:bg-[#fdf2f8]"
@@ -156,12 +156,12 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
 
         {/* Bottom Utility Area */}
         <div className="px-3 pt-2 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] border-t border-[#e2e8f0] space-y-1">
-          <div className="flex min-h-[44px] items-center justify-between rounded-xl px-3 text-sm font-medium text-[#0f172a]">
+          <div className="flex min-h-[44px] items-center justify-between rounded-[5px] px-3 text-sm font-medium text-[#0f172a]">
             <Link
               href="/dashboard/subscription"
               onClick={onClose}
               title={`Subscription Plan: ${planInfo.label}`}
-              className={`flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
+              className={`flex items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs transition-colors ${
                 planInfo.tier === "vip"
                   ? "bg-amber-50 text-amber-900 border border-amber-200/90 font-semibold"
                   : planInfo.tier === "pro"
@@ -204,7 +204,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
               AuthService.logout();
               router.push("/login");
             }}
-            className="flex w-full items-center gap-3 rounded-xl px-3 text-sm font-medium text-[#475569] hover:bg-rose-50 hover:text-rose-600 active:bg-rose-50 transition-colors min-h-[44px] cursor-pointer"
+            className="flex w-full items-center gap-3 rounded-[5px] px-3 text-sm font-medium text-[#475569] hover:bg-rose-50 hover:text-rose-600 active:bg-rose-50 transition-colors min-h-[44px] cursor-pointer"
           >
             <LogOut className="h-4 w-4 shrink-0" />
             <span>Logout</span>

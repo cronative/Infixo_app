@@ -38,7 +38,7 @@ export function ConfirmModal({
     >
       <ModalBody className="p-5 sm:p-6 space-y-3">
         <div className="flex items-start gap-3.5">
-          <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] shadow-xs ${isDestructive ? "bg-rose-50 text-[#ef4444] border border-rose-200" : "bg-[#7A2253]/[0.08] text-[#7A2253] border border-[#7A2253]/10"
+          <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] shadow-xs ${isDestructive ? "bg-rose-50 text-[#ef4444] border border-rose-200" : "bg-[#7A2253]/[0.08] text-[#7A2253] border border-[#7A2253]/10"
             }`}>
             <AlertCircle className="h-4.5 w-4.5" />
           </div>
@@ -58,7 +58,7 @@ export function ConfirmModal({
           type="button"
           onClick={onClose}
           disabled={loading}
-          className="h-9 px-4 rounded-[10px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer disabled:opacity-50"
+          className="h-9 px-4 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer disabled:opacity-50"
         >
           {cancelText}
         </button>
@@ -66,7 +66,7 @@ export function ConfirmModal({
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className={`h-9 font-semibold text-xs px-4.5 rounded-[10px] transition-all cursor-pointer shadow-md inline-flex items-center gap-1.5 disabled:opacity-50 text-white ${isDestructive ? "bg-rose-600 hover:bg-rose-700 shadow-rose-600/20" : "bg-[#7A2253] hover:opacity-95 shadow-[#7A2253]/20"
+          className={`h-9 font-semibold text-xs px-4.5 rounded-[5px] transition-all cursor-pointer shadow-md inline-flex items-center gap-1.5 disabled:opacity-50 text-white ${isDestructive ? "bg-rose-600 hover:bg-rose-700 shadow-rose-600/20" : "bg-[#7A2253] hover:opacity-95 shadow-[#7A2253]/20"
             }`}
         >
           <span>{loading ? "Processing..." : confirmText}</span>

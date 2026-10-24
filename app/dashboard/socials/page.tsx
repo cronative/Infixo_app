@@ -259,7 +259,7 @@ export default function DashboardSocialsPage() {
             <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
               Social Accounts
             </h1>
-            <span className="inline-flex items-center gap-1 rounded-full bg-[#ecfdf5] px-2 py-0.5 text-xs font-medium text-[#047857]">
+            <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#ecfdf5] px-2 py-0.5 text-xs font-medium text-[#047857]">
               <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
               <span>Live Fanbase Sync</span>
             </span>
@@ -272,7 +272,7 @@ export default function DashboardSocialsPage() {
         <div className="flex items-center gap-2 shrink-0">
           <Link
             href="/dashboard/links"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#7A2253] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
+            className="inline-flex items-center gap-1.5 rounded-[5px] border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#7A2253] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
           >
             <LinkIcon className="h-3.5 w-3.5" />
             <span>Custom Links</span>
@@ -281,7 +281,7 @@ export default function DashboardSocialsPage() {
             href={`/${profile.username || "username"}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#7A2253] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
+            className="inline-flex items-center gap-1.5 rounded-[5px] border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#7A2253] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
           >
             <span>Live Profile</span>
             <ExternalLink className="h-3.5 w-3.5" />
@@ -290,7 +290,7 @@ export default function DashboardSocialsPage() {
       </div>
 
       {/* 2. COMPACT SUMMARY LINE */}
-      <div className="flex flex-wrap items-center justify-between gap-2.5 rounded-xl border border-[#e2e8f0] bg-white px-4 py-2.5 sm:py-3 shadow-xs text-left">
+      <div className="flex flex-wrap items-center justify-between gap-2.5 rounded-[5px] border border-[#e2e8f0] bg-white px-4 py-2.5 sm:py-3 shadow-xs text-left">
         <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm font-medium text-[#7A2253]">
           <span className="font-semibold text-[#7A2253]">{connectedCount} social accounts connected</span>
           <span className="text-[#64748b]/40">·</span>
@@ -415,9 +415,9 @@ export default function DashboardSocialsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {/* Instagram Unconnected */}
               {!isInstaConnected && (
-                <div className="rounded-xl border border-[#e2e8f0] bg-white p-3.5 sm:p-4 space-y-2.5 shadow-xs text-left">
+                <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 sm:p-4 space-y-2.5 shadow-xs text-left">
                   <div className="flex items-center gap-2.5">
-                    <div className="flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-lg bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-xs text-white shrink-0">
+                    <div className="flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[5px] bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-xs text-white shrink-0">
                       <InstagramIcon className="h-4 w-4" />
                     </div>
                     <div>
@@ -427,14 +427,16 @@ export default function DashboardSocialsPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <div className="relative">
-                      <AtSign className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#64748b]" />
+                    <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#E1306C]">
+                        <InstagramIcon className="h-4 w-4" />
+                      </span>
                       <input
                         type="text"
                         value={draftInsta}
                         onChange={(e) => setDraftInsta(e.target.value.trim().replace(/^@/, ""))}
                         placeholder="Instagram username"
-                        className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-2.5 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 focus:outline-none focus:border-[#7A2253] transition-colors"
+                        className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
                       />
                     </div>
                     <InstagramFetcher username={draftInsta} />
@@ -444,9 +446,9 @@ export default function DashboardSocialsPage() {
 
               {/* YouTube Unconnected */}
               {!isYtConnected && (
-                <div className="rounded-xl border border-[#e2e8f0] bg-white p-3.5 sm:p-4 space-y-2.5 shadow-xs text-left">
+                <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 sm:p-4 space-y-2.5 shadow-xs text-left">
                   <div className="flex items-center gap-2.5">
-                    <div className="flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-red-600 shadow-xs text-white shrink-0">
+                    <div className="flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[5px] bg-red-600 shadow-xs text-white shrink-0">
                       <YoutubeIcon className="h-4 w-4" />
                     </div>
                     <div>
@@ -456,14 +458,16 @@ export default function DashboardSocialsPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <div className="relative">
-                      <AtSign className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#64748b]" />
+                    <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#FF0000]">
+                        <YoutubeIcon className="h-4 w-4" />
+                      </span>
                       <input
                         type="text"
                         value={draftYt}
                         onChange={(e) => setDraftYt(e.target.value.trim().replace(/^@/, ""))}
                         placeholder="YouTube channel handle"
-                        className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-2.5 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 focus:outline-none focus:border-[#7A2253] transition-colors"
+                        className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
                       />
                     </div>
                     <YoutubeFetcher handle={draftYt} />
@@ -473,9 +477,9 @@ export default function DashboardSocialsPage() {
 
               {/* Facebook Unconnected */}
               {!isFbConnected && (
-                <div className="rounded-xl border border-[#e2e8f0] bg-white p-3.5 sm:p-4 space-y-2.5 shadow-xs text-left">
+                <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 sm:p-4 space-y-2.5 shadow-xs text-left">
                   <div className="flex items-center gap-2.5">
-                    <div className="flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-blue-600 shadow-xs text-white shrink-0">
+                    <div className="flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[5px] bg-blue-600 shadow-xs text-white shrink-0">
                       <FacebookIcon className="h-4 w-4" />
                     </div>
                     <div>
@@ -485,14 +489,16 @@ export default function DashboardSocialsPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <div className="relative">
-                      <AtSign className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#64748b]" />
+                    <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#1877F2]">
+                        <FacebookIcon className="h-4 w-4" />
+                      </span>
                       <input
                         type="text"
                         value={draftFb}
                         onChange={(e) => setDraftFb(e.target.value.trim().replace(/^@/, ""))}
                         placeholder="Facebook page username"
-                        className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white pl-8 pr-2.5 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 focus:outline-none focus:border-[#7A2253] transition-colors"
+                        className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
                       />
                     </div>
                     <FacebookFetcher username={draftFb} />
@@ -505,9 +511,9 @@ export default function DashboardSocialsPage() {
       </section>
 
       {/* 4. SHORTCUT TO CUSTOM LINKS */}
-      <section className="rounded-2xl border border-slate-200/80 bg-white p-4 sm:p-5 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
+      <section className="rounded-[5px] border border-slate-200/80 bg-white p-4 sm:p-5 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#7A2253]/10 text-[#7A2253]">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] bg-[#7A2253]/10 text-[#7A2253]">
             <ExternalLink className="h-5 w-5" />
           </div>
           <div>
@@ -517,7 +523,7 @@ export default function DashboardSocialsPage() {
         </div>
         <Link
           href="/dashboard/links"
-          className="inline-flex items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3.5 py-2 text-xs font-semibold text-[#0f172a] hover:border-[#cbd5e1] hover:bg-[#f8fafc] transition-colors shrink-0 self-start sm:self-auto"
+          className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 py-2 text-xs font-semibold text-[#0f172a] hover:border-[#cbd5e1] hover:bg-[#f8fafc] transition-colors shrink-0 self-start sm:self-auto"
         >
           <span>Custom Links Manager</span>
           <ExternalLink className="h-3.5 w-3.5" />
@@ -525,7 +531,7 @@ export default function DashboardSocialsPage() {
       </section>
 
       {/* 5. HOW SOCIAL DATA WORKS (Compact Info Row + Learn more Modal) */}
-      <section className="rounded-2xl border border-[#e2e8f0] bg-[#f8fafc]/80 px-5 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-xs text-left">
+      <section className="rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc]/80 px-5 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-xs text-left">
         <div className="flex items-center gap-2 min-w-0">
           <Info className="h-4 w-4 text-[#7A2253] shrink-0" />
           <span className="text-xs sm:text-sm font-semibold text-[#7A2253] shrink-0">How social data works</span>
@@ -630,7 +636,7 @@ function ConnectedSocialCard({
   }, [menuOpen]);
 
   return (
-    <div className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-4.5 space-y-3 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:shadow-sm text-left flex flex-col justify-between">
+    <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-4.5 space-y-3 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:shadow-sm text-left flex flex-col justify-between">
       {/* Top: Icon, Platform Name & Connected Status */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2.5 min-w-0">
@@ -639,7 +645,7 @@ function ConnectedSocialCard({
             <h3 className="text-sm sm:text-base font-semibold text-[#0f172a] truncate">{platformName}</h3>
           </div>
         </div>
-        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#17845B] bg-[#EAF7F0] px-2 py-0.5 rounded-full border border-[#17845B]/20 shrink-0">
+        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#17845B] bg-[#EAF7F0] px-2 py-0.5 rounded-[5px] border border-[#17845B]/20 shrink-0">
           <span className="h-1.5 w-1.5 rounded-full bg-[#17845B]" />
           Connected
         </span>
@@ -674,7 +680,7 @@ function ConnectedSocialCard({
               href={profileUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] px-3 py-1.5 text-xs font-semibold text-[#7A2253] transition-all hover:shadow-sm"
+              className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] px-3 py-1.5 text-xs font-semibold text-[#7A2253] transition-all hover:shadow-sm"
               title="View profile in new tab"
             >
               <span>View Profile</span>
@@ -687,14 +693,14 @@ function ConnectedSocialCard({
             <button
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
-              className="flex h-8 w-8 items-center justify-center rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+              className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
               aria-label="More actions"
             >
               <MoreVertical className="h-4 w-4" />
             </button>
 
             {menuOpen && (
-              <div className="absolute right-0 bottom-full mb-2 w-40 rounded-xl border border-[#e2e8f0] bg-white p-1.5 shadow-lg z-50 space-y-0.5 animate-in fade-in">
+              <div className="absolute right-0 bottom-full mb-2 w-40 rounded-[5px] border border-[#e2e8f0] bg-white p-1.5 shadow-lg z-50 space-y-0.5 animate-in fade-in">
                 <button
                   type="button"
                   disabled={isSyncing}
@@ -702,7 +708,7 @@ function ConnectedSocialCard({
                     setMenuOpen(false);
                     onSync();
                   }}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-50"
+                  className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-50"
                 >
                   <RefreshCw className={`h-3.5 w-3.5 text-[#64748b] ${isSyncing ? "animate-spin text-[#7A2253]" : ""}`} />
                   <span>{isSyncing ? "Syncing..." : "Refresh data"}</span>
@@ -716,7 +722,7 @@ function ConnectedSocialCard({
                     setMenuOpen(false);
                     onDisconnect();
                   }}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                  className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   <span>Disconnect</span>

@@ -43,6 +43,9 @@ export function CookieConsentBanner() {
       applyGtagConsent(existing.preferences);
       setShowBanner(false);
     } else {
+      if (typeof window !== "undefined" && window.location.pathname.startsWith("/demo_creator")) {
+        return;
+      }
       // First visit: Show banner after a slight natural delay
       const timer = setTimeout(() => {
         setShowBanner(true);

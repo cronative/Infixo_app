@@ -11,6 +11,11 @@ import {
   ExternalLink,
   Globe,
   Play,
+  ArrowUpRight,
+  ArrowLeft,
+  Clock,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 import { Series, Episode, ThemeKey, Season } from "@/types";
@@ -29,7 +34,7 @@ import {
   PUBLIC_CTA_BUTTON,
   PUBLIC_TYPE,
 } from "@/components/public/publicTheme";
-import { PlatformThumbnailBox } from "@/components/shared/PlatformThumbnailBox";
+import { PlatformThumbnailBox, extractYouTubeVideoId } from "@/components/shared/PlatformThumbnailBox";
 
 function getPlatformInfo(platformStr?: string, urlStr?: string) {
   const p = (platformStr || "").toLowerCase();
@@ -82,6 +87,56 @@ function createEpisodeClickEventId(seriesId: string, episodeId: string) {
   return `episode:${seriesId}:${episodeId}:${randomPart}`;
 }
 
+function InlineExpandableDescription({
+  text,
+  maxChars = 92,
+  className = "",
+  style,
+  buttonStyle,
+}: {
+  text: string;
+  maxChars?: number;
+  className?: string;
+  style?: React.CSSProperties;
+  buttonStyle?: React.CSSProperties;
+}) {
+  const [expanded, setExpanded] = useState(false);
+
+  if (!text || !text.trim()) return null;
+
+  const isLong = text.length > maxChars + 15;
+  if (!isLong) {
+    return (
+      <p style={style} className={className}>
+        {text}
+      </p>
+    );
+  }
+
+  const snippet = (() => {
+    const sub = text.slice(0, maxChars);
+    const lastSpace = sub.lastIndexOf(" ");
+    return (lastSpace > 50 ? sub.slice(0, lastSpace) : sub).replace(/[.,;!?]+$/, "");
+  })();
+
+  return (
+    <p style={style} className={className}>
+      <span>{expanded ? text : `${snippet}...`}</span>
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          setExpanded((prev) => !prev);
+        }}
+        style={buttonStyle}
+        className="ml-1 inline-flex items-center text-[11px] sm:text-xs font-bold hover:underline cursor-pointer select-none"
+      >
+        {expanded ? "Show less" : "Read more"}
+      </button>
+    </p>
+  );
+}
+
 interface SeriesDetailClientProps {
   username: string;
   seriesId: string;
@@ -106,6 +161,7 @@ export function SeriesDetailClient({
   const [coverImageError, setCoverImageError] = useState(false);
   const [activeSeasonIndex, setActiveSeasonIndex] = useState<number>(0);
   const [isScrolledPastHeader, setIsScrolledPastHeader] = useState(false);
+  const [isDescExpanded, setIsDescExpanded] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -407,167 +463,207 @@ export function SeriesDetailClient({
       <PublicCard themeKey={themeKey} className="overflow-hidden">
         {/* Card content container */}
         <div className="flex-1 flex flex-col relative rounded-t-[24px] sm:rounded-t-[26px] overflow-hidden">
-          {/* Sticky Header over image */}
-          <div
-            className={`sticky top-0 z-20 transition-all duration-200 rounded-t-[24px] sm:rounded-t-[26px] ${
-              hasValidCover ? "-mb-[60px] sm:-mb-[66px]" : ""
-            } ${
-              isScrolledPastHeader
-                ? "backdrop-blur-xl border-b shadow-2xs"
-                : hasValidCover
-                ? "bg-gradient-to-b from-black/60 via-black/20 to-transparent"
-                : ""
-            }`}
-            style={
-              isScrolledPastHeader
-                ? {
-                    backgroundColor: pt.surfaceStyle.backgroundColor || "rgba(255, 255, 255, 0.94)",
-                    borderColor: c.border,
-                  }
-                : undefined
-            }
-          >
-            <PublicPageHeader
-              themeKey={themeKey}
-              backHref={`/${username}/series`}
-              backLabel="Back to series"
-              preferHistoryBack
-              creatorName={creator?.displayName || ""}
-              creatorHandle={username}
-              creatorPhoto={creator?.photoDataUrl}
-              pageLabel="Series"
-              onImage={isHeaderOnImage}
-              showCreatorIdentity={isScrolledPastHeader}
-              className={`${PUBLIC_CARD_PADDING} pt-3 pb-3 sm:pt-4 sm:pb-3`}
-              actions={
-                <>
-                  <PublicIconButton
-                    themeKey={themeKey}
-                    onClick={handleCopyLink}
-                    label="Copy series link"
-                    onImage={isHeaderOnImage}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </PublicIconButton>
-                  <PublicIconButton
-                    themeKey={themeKey}
-                    onClick={() => setIsShareModalOpen(true)}
-                    label="Share series"
-                    onImage={isHeaderOnImage}
-                  >
-                    <Share2 className="h-4 w-4" />
-                  </PublicIconButton>
-                </>
-              }
+          {/* Series Hero: Full width with floating controls, center play button, and bottom-left badge */}
+          <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] max-h-[380px] shrink-0 rounded-t-[24px] sm:rounded-t-[26px] overflow-hidden group bg-slate-900">
+            <PlatformThumbnailBox
+              posterUrl={series.posterDataUrl}
+              videoUrl={allEpisodes[0]?.externalUrl}
+              platform={detectedPlatform || series.platform}
+              title={series.title}
+              badgeText={null}
+              className="w-full h-full object-cover"
+              size="lg"
+              showTitleOverlay={false}
             />
+
+            {/* Top Floating Glass Controls */}
+            <div className="absolute top-3 inset-x-3 sm:top-4 sm:inset-x-4 flex items-center justify-between z-10 pointer-events-auto">
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof window !== "undefined" && window.history.length > 1) {
+                    router.back();
+                  } else {
+                    router.push(`/${username}/series`);
+                  }
+                }}
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all cursor-pointer shadow-md"
+                title="Back to series"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </button>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all cursor-pointer shadow-md"
+                  title="Copy series link"
+                >
+                  <Copy className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsShareModalOpen(true)}
+                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all cursor-pointer shadow-md"
+                  title="Share series"
+                >
+                  <Share2 className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Center Floating White Play Button */}
+            {allEpisodes[0]?.externalUrl && (
+              <a
+                href={allEpisodes[0].externalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackEpisodeClick(allEpisodes[0])}
+                className="absolute inset-0 flex items-center justify-center z-10 group/play cursor-pointer"
+                title="Play Episode 1"
+              >
+                <span className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-white text-[#7A2253] shadow-2xl transition-transform duration-300 group-hover/play:scale-110">
+                  <Play className="h-6 w-6 fill-[#7A2253] ml-0.5" />
+                </span>
+              </a>
+            )}
+
+            {/* Bottom Subtle Vignette Overlay */}
+            <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/60 via-black/25 to-transparent pointer-events-none" />
+
+            {/* Bottom-Left Overlay Badge */}
+            <div className="absolute left-3.5 bottom-3.5 z-10 pointer-events-none">
+              <div className="inline-flex items-center gap-2 rounded-full bg-black/60 backdrop-blur-md px-3.5 py-1.5 text-white text-[11px] font-medium shadow-md">
+                <span className="flex items-center gap-1.5">
+                  <Play className="h-3 w-3 fill-white" />
+                  <span>{allEpisodes.length} Episodes</span>
+                </span>
+                <span className="opacity-40">|</span>
+                <span className="flex items-center gap-1.5">
+                  <Clock className="h-3 w-3" />
+                  <span>{genresList[0] || "Travel"} Series</span>
+                </span>
+              </div>
+            </div>
           </div>
 
-          {/* Series Hero: Starts at top 0, 100% full width of card with top-left & top-right rounded corners */}
-          <PlatformThumbnailBox
-            posterUrl={series.posterDataUrl}
-            videoUrl={allEpisodes[0]?.externalUrl}
-            platform={detectedPlatform || series.platform}
-            title={series.title}
-            badgeText={detectedPlatform}
-            className="w-full aspect-[16/9] sm:aspect-[2/1] max-h-[340px] shrink-0 rounded-t-[24px] sm:rounded-t-[26px] overflow-hidden"
-            size="lg"
-            showTitleOverlay={false}
-          />
+          {/* Content below hero */}
+          <div className="flex flex-col p-4 sm:p-5 space-y-3.5">
+            {/* 1. Series Title */}
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight leading-snug">
+              {series.title}
+            </h1>
 
-          {/* Content below hero with proper card padding */}
-          <div className={`flex flex-col ${PUBLIC_CARD_PADDING} pt-2.5 pb-4 sm:pt-3 sm:pb-5`}>
-            <div className="text-center">
-              <h1 style={pt.headingStyle} className={`break-words ${PUBLIC_TYPE.pageTitle}`}>
-                {series.title}
-              </h1>
-
-              <div className="mt-1.5 flex flex-wrap items-center justify-center gap-1.5">
-                {detectedPlatform && (
-                  <span
-                    style={pt.elevatedStyle}
-                    className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 ${PUBLIC_TYPE.label}`}
-                  >
-                    {platformIcon("h-3 w-3")}
-                    <span>{detectedPlatform}</span>
-                  </span>
+            {/* 2. Platform & Category Badges */}
+            <div className="flex flex-wrap items-center gap-2 pt-0.5">
+              {/* Platform Pill */}
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 text-slate-800 dark:bg-white/10 dark:text-slate-200 border border-slate-200/60 dark:border-white/10 px-3 py-1 text-xs font-bold">
+                {detectedPlatform === "Instagram" ? (
+                  <InstagramIcon className="h-3.5 w-3.5 text-pink-500" />
+                ) : detectedPlatform === "Facebook" ? (
+                  <FacebookIcon className="h-3.5 w-3.5 text-blue-500" />
+                ) : (
+                  <YoutubeIcon className="h-3.5 w-3.5 text-red-500" />
                 )}
-                {genresList.slice(0, 3).map((g) => (
-                  <span
-                    key={g}
-                    style={{ borderColor: c.border, color: c.secondaryText }}
-                    className={`inline-flex items-center rounded-full border px-2.5 py-0.5 ${PUBLIC_TYPE.label}`}
-                  >
-                    {g}
-                  </span>
-                ))}
-              </div>
+                <span>{detectedPlatform || "YouTube"}</span>
+              </span>
 
-              <p style={{ color: c.mutedText }} className={`mt-1.5 ${PUBLIC_TYPE.meta}`}>
-                {metaParts.join(" · ")}
-              </p>
+              {/* Category Pill 1 (Pink) */}
+              {genresList[0] && (
+                <span className="inline-flex items-center rounded-full bg-pink-50 text-[#7A2253] dark:bg-pink-950/40 dark:text-pink-300 border border-pink-200/60 dark:border-pink-900/50 px-3 py-1 text-xs font-bold">
+                  {genresList[0]}
+                </span>
+              )}
 
-              {series.description && series.description.trim() && (
-                <p
-                  style={{ color: c.secondaryText }}
-                  className={`mx-auto mt-1.5 max-w-md whitespace-pre-line break-words ${PUBLIC_TYPE.body}`}
-                >
-                  {series.description}
-                </p>
+              {/* Sub-genre Pill 2 (Blue) */}
+              {genresList[1] && (
+                <span className="inline-flex items-center rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300 border border-blue-200/60 dark:border-blue-900/50 px-3 py-1 text-xs font-bold">
+                  {genresList[1]}
+                </span>
+              )}
+
+              {/* Additional genres if any */}
+              {genresList.slice(2).map((g) => (
+                <span key={g} className="inline-flex items-center rounded-full bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-slate-300 border border-slate-200/60 dark:border-white/10 px-3 py-1 text-xs font-semibold">
+                  {g}
+                </span>
+              ))}
+
+              {/* Language Pill */}
+              {langTag && (
+                <span className="inline-flex items-center rounded-full bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-slate-300 border border-slate-200/60 dark:border-white/10 px-3 py-1 text-xs font-medium">
+                  {langTag}
+                </span>
               )}
             </div>
 
-            {/* Seasons */}
-            {seasonsList.length > 1 && (
-              <div className="-mx-1 mt-3 flex items-center gap-1.5 overflow-x-auto px-1 pb-1 scrollbar-none">
-                {seasonsList.map((sn, idx) => (
+            {/* 3. Description with Read More / Read Less */}
+            {series.description && (
+              <div className="pt-0.5 text-slate-600 dark:text-slate-300 text-xs sm:text-[13px] leading-relaxed">
+                <p className={isDescExpanded ? "" : "line-clamp-2"}>
+                  {series.description}
+                </p>
+                {series.description.length > 90 && (
                   <button
-                    key={sn.id || idx}
                     type="button"
-                    onClick={() => setActiveSeasonIndex(idx)}
-                    style={
-                      activeSeasonIndex === idx
-                        ? { backgroundColor: c.accentSoft, borderColor: c.accentBorder, color: c.accentText }
-                        : { backgroundColor: c.cardBackground, borderColor: c.border, color: c.secondaryText }
-                    }
-                    className={`tap-scale inline-flex h-8 shrink-0 cursor-pointer items-center rounded-full border px-3 transition-all ${PUBLIC_TYPE.label}`}
+                    onClick={() => setIsDescExpanded(!isDescExpanded)}
+                    className="text-[#7A2253] dark:text-pink-400 font-bold text-xs inline-flex items-center gap-1 mt-1 hover:underline cursor-pointer"
                   >
-                    {sn.title || `Season ${sn.seasonNumber || idx + 1}`} · {sn.episodes?.length || 0}
+                    <span>{isDescExpanded ? "Read less" : "Read more"}</span>
+                    {isDescExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
                   </button>
-                ))}
+                )}
               </div>
             )}
 
-            {/* Episodes */}
-            <div className={`${seasonsList.length > 1 ? "mt-2.5" : "mt-3.5"} space-y-2`}>
-              <PublicSectionHeader
-                themeKey={themeKey}
-                title="Episodes"
-                icon={<Film className="h-4 w-4" />}
-                meta={`${currentEpisodes.length}`}
-              />
+            {/* 5. Episodes Section */}
+            <div className="space-y-3 pt-1">
+              {/* Header */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-slate-900 dark:text-white font-black text-base sm:text-lg">
+                  <Film className="h-5 w-5 text-slate-700 dark:text-slate-300" />
+                  <span>Episodes</span>
+                </div>
+                <span className="text-xs font-semibold text-slate-400">
+                  {currentEpisodes.length} Episodes
+                </span>
+              </div>
 
+              {/* Seasons Selector if multiple seasons */}
+              {seasonsList.length > 1 && (
+                <div className="-mx-1 flex items-center gap-1.5 overflow-x-auto px-1 pb-1 scrollbar-none">
+                  {seasonsList.map((sn, idx) => (
+                    <button
+                      key={sn.id || idx}
+                      type="button"
+                      onClick={() => setActiveSeasonIndex(idx)}
+                      className={`tap-scale inline-flex h-8 shrink-0 cursor-pointer items-center rounded-full border px-3 transition-all text-xs font-semibold ${
+                        activeSeasonIndex === idx
+                          ? "bg-pink-50 border-pink-200 text-[#7A2253]"
+                          : "bg-white border-slate-200 text-slate-600"
+                      }`}
+                    >
+                      {sn.title || `Season ${sn.seasonNumber || idx + 1}`} · {sn.episodes?.length || 0}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Episode Cards */}
               {currentEpisodes.length === 0 ? (
-                <div
-                  style={{ ...pt.elevatedStyle, color: c.mutedText }}
-                  className={`rounded-[14px] border border-dashed p-4 text-center ${PUBLIC_TYPE.meta}`}
-                >
+                <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 p-6 text-center text-xs text-slate-400">
                   No episodes added to this series yet.
                 </div>
               ) : (
-                /* Flat Spotify/Apple Music Playlist Tracklist */
-                <div
-                  style={{
-                    backgroundColor: c.cardBackground,
-                    borderColor: c.border,
-                  }}
-                  className="rounded-[16px] border overflow-hidden divide-y divide-[#eaeaea] dark:divide-white/10 shadow-xs"
-                >
+                <div className="space-y-2.5">
                   {currentEpisodes.map((ep: Episode, index: number) => {
                     const partNum = ep.episodeNumber || index + 1;
                     const partNumStr = partNum < 10 ? `0${partNum}` : `${partNum}`;
                     const epTitleStr = ep.title?.trim() || `Episode ${partNum}`;
+                    const cleanTitle = epTitleStr.replace(/^Part\s*0?\d+[:\s-]*/i, "").replace(/^Episode\s*0?\d+[:\s-]*/i, "").trim() || epTitleStr;
                     const epPlatform = episodePlatform(ep.externalUrl);
-                    const isYouTube = !epPlatform || epPlatform === "YouTube" || (ep.externalUrl && /youtube|youtu\.be/i.test(ep.externalUrl));
+                    const isEpYouTube = !epPlatform || epPlatform === "YouTube" || (ep.externalUrl && /youtube|youtu\.be/i.test(ep.externalUrl));
 
                     return (
                       <a
@@ -576,66 +672,37 @@ export function SeriesDetailClient({
                         target={ep.externalUrl ? "_blank" : undefined}
                         rel="noopener noreferrer"
                         onClick={() => trackEpisodeClick(ep)}
-                        className="group tap-scale flex items-center justify-between gap-3 px-3 py-2 sm:px-3.5 sm:py-2.5 transition-colors hover:bg-black/[0.025] dark:hover:bg-white/[0.04]"
+                        className="tap-scale group/ep flex items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl border border-slate-100 dark:border-white/10 bg-white dark:bg-zinc-900 shadow-2xs hover:shadow-xs hover:border-slate-200 dark:hover:border-white/20 transition-all cursor-pointer text-left"
                       >
-                        {/* Left: Minimal Number + Title & Description */}
-                        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
-                          <span
-                            style={{ color: c.mutedText }}
-                            className="font-mono text-xs sm:text-[13px] font-bold tabular-nums w-5 sm:w-6 shrink-0 select-none text-left"
-                          >
-                            {partNumStr}.
+                        {/* Left: Pink Number Box + Platform + Title */}
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                          <span className="shrink-0 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl bg-pink-50 dark:bg-pink-950/40 text-[#7A2253] dark:text-pink-300 text-xs sm:text-[13px] font-black tabular-nums border border-pink-100/60 dark:border-pink-900/40">
+                            {partNumStr}
                           </span>
-
                           <div className="min-w-0 flex-1 space-y-0.5">
-                            <span
-                              style={{ color: c.primaryText }}
-                              className={`block truncate text-xs sm:text-[13px] font-semibold group-hover:text-[#7A2253] dark:group-hover:text-blue-400 transition-colors`}
-                            >
-                              {epTitleStr}
-                            </span>
-                            {ep.description && (
-                              <p
-                                style={{ color: c.mutedText }}
-                                className="truncate text-[11px] font-normal leading-tight"
-                              >
-                                {ep.description}
-                              </p>
-                            )}
+                            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                              {isEpYouTube ? (
+                                <YoutubeIcon className="h-3.5 w-3.5 text-red-500" />
+                              ) : epPlatform === "Instagram" ? (
+                                <InstagramIcon className="h-3.5 w-3.5 text-pink-500" />
+                              ) : epPlatform === "Facebook" ? (
+                                <FacebookIcon className="h-3.5 w-3.5 text-blue-500" />
+                              ) : (
+                                <Film className="h-3.5 w-3.5 text-slate-400" />
+                              )}
+                              <span>{isEpYouTube ? "YouTube" : epPlatform || "Video"}</span>
+                            </div>
+                            <h3 className="text-xs sm:text-[13px] font-bold text-slate-900 dark:text-white truncate group-hover/ep:text-[#7A2253] dark:group-hover/ep:text-pink-400 transition-colors">
+                              {cleanTitle}
+                            </h3>
                           </div>
                         </div>
 
-                        {/* Right: Sleek Inline Action Button [▶ Watch] */}
-                        {ep.externalUrl ? (
-                          <div
-                            style={{
-                              backgroundColor: pt.isDark ? "rgba(255, 255, 255, 0.08)" : "#FFFFFF",
-                              borderColor: pt.isDark ? "rgba(255, 255, 255, 0.15)" : "#E5E7EB",
-                              color: c.primaryText,
-                            }}
-                            className="tap-scale shrink-0 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold shadow-2xs transition-all group-hover:scale-102 group-hover:border-red-500/50 cursor-pointer"
-                          >
-                            {isYouTube ? (
-                              <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-600 text-white shrink-0">
-                                <Play className="h-2 w-2 fill-white ml-0.5" />
-                              </span>
-                            ) : epPlatform === "Instagram" ? (
-                              <InstagramIcon className="h-3.5 w-3.5 text-pink-500 shrink-0" />
-                            ) : epPlatform === "Facebook" ? (
-                              <FacebookIcon className="h-3.5 w-3.5 text-blue-500 shrink-0" />
-                            ) : (
-                              <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-600 text-white shrink-0">
-                                <Play className="h-2 w-2 fill-white ml-0.5" />
-                              </span>
-                            )}
-                            <span className="whitespace-nowrap text-xs font-semibold">Watch</span>
-                          </div>
-                        ) : (
-                          <span
-                            style={{ color: c.mutedText }}
-                            className="text-[11px] font-medium shrink-0 px-2"
-                          >
-                            Coming soon
+                        {/* Right: Watch Pill */}
+                        {ep.externalUrl && (
+                          <span className="shrink-0 inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-pink-50 dark:bg-pink-950/40 text-[#7A2253] dark:text-pink-300 border border-pink-100 dark:border-pink-900/50 text-xs font-bold hover:bg-pink-100 transition-all">
+                            <span>Watch</span>
+                            <ArrowUpRight className="h-3 w-3" />
                           </span>
                         )}
                       </a>
@@ -644,9 +711,51 @@ export function SeriesDetailClient({
                 </div>
               )}
             </div>
+
+            {/* 6. Bottom Creator Card */}
+            <div className="mt-5 rounded-2xl bg-slate-50/80 dark:bg-white/[0.04] border border-slate-100 dark:border-white/10 p-3.5 sm:p-4 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="relative h-11 w-11 sm:h-12 sm:w-12 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 shrink-0 border border-slate-200 dark:border-white/10">
+                  {creator?.photoDataUrl ? (
+                    <img src={creator.photoDataUrl} alt={creator.displayName} className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="flex h-full w-full items-center justify-center text-sm font-bold text-slate-600">
+                      {creator?.displayName?.[0] || "C"}
+                    </span>
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <span className="text-[11px] font-medium text-slate-400 block leading-tight">
+                    Created by
+                  </span>
+                  <div className="flex items-center gap-1.5 pt-0.5">
+                    <span className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                      {creator?.displayName || username}
+                    </span>
+                    <svg className="w-3.5 h-3.5 text-blue-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L9 14.17l9.59-9.59L20 6l-10 11z" />
+                    </svg>
+                  </div>
+                  <span className="text-xs text-slate-400 block truncate pt-0.5">
+                    {creator?.category || "Travel · Food · Lifestyle"}
+                  </span>
+                </div>
+              </div>
+
+              <a
+                href={profileUrl}
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push(profileUrl);
+                }}
+                className="tap-scale shrink-0 inline-flex items-center gap-1 px-4 py-2 rounded-full bg-pink-50 dark:bg-pink-950/40 text-[#7A2253] dark:text-pink-300 border border-pink-100 dark:border-pink-900/50 text-xs font-bold hover:bg-pink-100 transition-all cursor-pointer"
+              >
+                <span>View Profile</span>
+                <ArrowUpRight className="h-3 w-3" />
+              </a>
+            </div>
           </div>
         </div>
-
       </PublicCard>
     </CreatorPublicShell>
   );

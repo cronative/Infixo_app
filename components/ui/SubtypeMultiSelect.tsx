@@ -45,7 +45,7 @@ export function SubtypeMultiSelect({
           <span>{label}</span>
         </label>
         <span
-          className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border transition-all shrink-0 ${selectedSubtypes.length >= max
+          className={`text-[11px] font-bold px-2.5 py-0.5 rounded-[5px] border transition-all shrink-0 ${selectedSubtypes.length >= max
             ? "bg-amber-50 text-amber-700 border-amber-200"
             : "bg-[#7A2253]/[0.08] text-[#7A2253] border-[#7A2253]/25"
             }`}
@@ -55,7 +55,7 @@ export function SubtypeMultiSelect({
       </div>
 
       {/* Chips Container */}
-      <div className="flex flex-wrap gap-2 rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] p-3 max-h-48 overflow-y-auto">
+      <div className="flex flex-wrap gap-2 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] p-3 max-h-48 overflow-y-auto">
         {availableSubtypes.map((st) => {
           const isSelected = selectedSubtypes.includes(st);
           const isMaxReached = !isSelected && selectedSubtypes.length >= max;
@@ -66,7 +66,7 @@ export function SubtypeMultiSelect({
               type="button"
               disabled={isMaxReached}
               onClick={() => toggleSubtype(st)}
-              className={`tap-scale flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${isSelected
+              className={`tap-scale flex items-center gap-1.5 rounded-[5px] px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${isSelected
                 ? "bg-[#7A2253] text-white shadow-xs ring-2 ring-[#7A2253]/25"
                 : isMaxReached
                   ? "opacity-40 cursor-not-allowed bg-white border border-[#e2e8f0] text-[#64748b]"

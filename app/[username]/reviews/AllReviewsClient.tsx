@@ -216,7 +216,7 @@ export default function AllReviewsClient() {
 
 
   return (
-    <CreatorPublicShell themeKey={theme}>
+    <CreatorPublicShell themeKey={theme} fixedViewport={true}>
         <ThemeCard
           themeKey={theme}
           profile={profile}

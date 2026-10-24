@@ -23,6 +23,11 @@ import {
   Gift,
   Share2,
   Download,
+  FileText,
+  Calendar,
+  List,
+  Tag,
+  Info,
 } from "lucide-react";
 import {
   InstagramIcon,
@@ -1016,36 +1021,50 @@ export default function DashboardMediaKitPage() {
         icon={<Briefcase className="h-4 w-4" />}
       >
         <form id="service-form" onSubmit={handleSavePackage} className="flex flex-col flex-1 min-h-0">
-          <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
+          <ModalBody className="p-4 sm:p-5 space-y-4 text-left">
+            {/* Package title */}
             <div className="space-y-1">
-              <label className="block text-[13px] font-medium text-[#0f172a]">Package title <span className="text-[#C2414B]">*</span></label>
-              <input
-                type="text"
-                value={formTitle}
-                onChange={(e) => setFormTitle(e.target.value)}
-                placeholder="e.g., Cafe Visit Reel, Brand Promo Reel, or Store Launch"
-                className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:outline-none transition-colors"
-                required
-              />
+              <label className="block text-[13px] font-medium text-[#0f172a]">
+                Package title <span className="text-[#C2414B]">*</span>
+              </label>
+              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                  <FileText className="h-4 w-4" />
+                </div>
+                <input
+                  type="text"
+                  value={formTitle}
+                  onChange={(e) => setFormTitle(e.target.value)}
+                  placeholder="e.g., Cafe Visit Reel, Brand Promo Reel, or Store Launch"
+                  className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  required
+                />
+              </div>
             </div>
 
+            {/* Collaboration Type & Delivery Time */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
                 <label className="block text-[13px] font-medium text-[#0f172a]">Collaboration Type</label>
-                <select
-                  value={formPlatform}
-                  onChange={(e) => {
-                    setFormPlatform(e.target.value);
-                    setShowAllSuggestions(false);
-                  }}
-                  className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3 text-xs sm:text-sm font-medium text-[#7A2253] focus:border-[#7A2253] focus:outline-none transition-colors"
-                >
-                  {COLLABORATION_TYPES.map((type) => (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                    <Film className="h-4 w-4" />
+                  </div>
+                  <select
+                    value={formPlatform}
+                    onChange={(e) => {
+                      setFormPlatform(e.target.value);
+                      setShowAllSuggestions(false);
+                    }}
+                    className="flex-1 h-10 px-3 text-xs sm:text-sm font-medium text-[#7A2253] bg-transparent outline-none cursor-pointer"
+                  >
+                    {COLLABORATION_TYPES.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <div className="space-y-1">
@@ -1063,17 +1082,17 @@ export default function DashboardMediaKitPage() {
                         key={days}
                         type="button"
                         onClick={() => setFormTurnaround(days)}
-                        className={`flex-1 h-10 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                        className={`flex-1 h-10 rounded-[5px] text-xs font-semibold border transition-all cursor-pointer ${
                           isSelected
-                            ? "bg-[#7A2253] text-white border-transparent shadow-xs"
-                            : "bg-white text-[#7A2253] border-[#e2e8f0] hover:bg-[#f8fafc]"
+                            ? "bg-[#7A2253] text-white border-[#7A2253] shadow-xs"
+                            : "bg-white text-[#0f172a] border-[#e2e8f0] hover:bg-[#f8fafc]"
                         }`}
                       >
                         {days}D
                       </button>
                     );
                   })}
-                  <div className="relative w-20 shrink-0">
+                  <div className="relative w-28 shrink-0">
                     <input
                       type="number"
                       value={formTurnaround}
@@ -1081,7 +1100,8 @@ export default function DashboardMediaKitPage() {
                       min={1}
                       max={60}
                       title="Custom Days"
-                      className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-2 text-center text-xs font-semibold text-[#7A2253] focus:border-[#7A2253] focus:outline-none transition-colors"
+                      placeholder="Custom days"
+                      className="w-full h-10 rounded-[5px] border border-[#e2e8f0] bg-white px-2 text-center text-xs font-semibold text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none transition-colors"
                     />
                   </div>
                 </div>
@@ -1098,7 +1118,7 @@ export default function DashboardMediaKitPage() {
                   value={customPlatform}
                   onChange={(e) => setCustomPlatform(e.target.value)}
                   placeholder="e.g., Live Stream Sponsorship, Workshop, Brand Ambassador"
-                  className="w-full h-10 rounded-xl border border-[#7A2253] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:outline-none transition-colors shadow-xs"
+                  className="w-full h-10 rounded-[5px] border border-[#7A2253] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:outline-none transition-colors shadow-xs"
                   required
                 />
               </div>
@@ -1106,39 +1126,52 @@ export default function DashboardMediaKitPage() {
 
             {/* Package Pricing Inputs */}
             <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
-                  Package Pricing (INR)
-                </label>
-                <span className="text-[10px] text-[#64748b]">
-                  Leave &quot;Up to&quot; empty for fixed price
-                </span>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[10px] font-bold text-[#64748b] mb-0.5">
+              <label className="block text-[13px] font-medium text-[#0f172a]">
+                Package Pricing (INR)
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                <div className="sm:col-span-4">
+                  <label className="block text-[10px] font-bold text-[#64748b] mb-1">
                     Starting Price (₹) <span className="text-[#C2414B]">*</span>
                   </label>
-                  <input
-                    type="text"
-                    value={formMinPrice}
-                    onChange={(e) => setFormMinPrice(e.target.value)}
-                    placeholder="₹10,000"
-                    className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:outline-none transition-colors"
-                    required
-                  />
+                  <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                    <div className="flex h-10 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-sm font-semibold text-[#64748b]">
+                      ₹
+                    </div>
+                    <input
+                      type="text"
+                      value={formMinPrice}
+                      onChange={(e) => setFormMinPrice(e.target.value)}
+                      placeholder="10,000"
+                      className="flex-1 h-10 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                      required
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-[#64748b] mb-0.5">
+
+                <div className="sm:col-span-4">
+                  <label className="block text-[10px] font-bold text-[#64748b] mb-1">
                     Up to ₹ <span className="text-[#64748b] font-normal">(Optional)</span>
                   </label>
-                  <input
-                    type="text"
-                    value={formMaxPrice}
-                    onChange={(e) => setFormMaxPrice(e.target.value)}
-                    placeholder="e.g. ₹15,000"
-                    className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:outline-none transition-colors"
-                  />
+                  <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                    <div className="flex h-10 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-sm font-semibold text-[#64748b]">
+                      ₹
+                    </div>
+                    <input
+                      type="text"
+                      value={formMaxPrice}
+                      onChange={(e) => setFormMaxPrice(e.target.value)}
+                      placeholder="e.g. 15,000"
+                      className="flex-1 h-10 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="sm:col-span-4">
+                  <div className="flex items-center gap-2 rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] px-3 h-10 text-[11px] text-[#7A2253] leading-tight">
+                    <Info className="h-4 w-4 shrink-0 text-[#7A2253]" />
+                    <span>Leave &quot;Up to&quot; empty for fixed price package.</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1147,23 +1180,28 @@ export default function DashboardMediaKitPage() {
             <div className="space-y-2">
               <label className="block text-[13px] font-medium text-[#0f172a]">Included deliverables</label>
               <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={formDeliverableInput}
-                  onChange={(e) => setFormDeliverableInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddDeliverable();
-                    }
-                  }}
-                  placeholder="e.g. Brand Collaborator Tag"
-                  className="flex-1 h-10 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:outline-none transition-colors"
-                />
+                <div className="flex-1 flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                    <List className="h-4 w-4" />
+                  </div>
+                  <input
+                    type="text"
+                    value={formDeliverableInput}
+                    onChange={(e) => setFormDeliverableInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddDeliverable();
+                      }
+                    }}
+                    placeholder="e.g. Brand Collaborator Tag"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  />
+                </div>
                 <button
                   type="button"
                   onClick={handleAddDeliverable}
-                  className="h-10 px-4 rounded-xl bg-[#7A2253] text-white text-xs font-semibold hover:opacity-95 shadow-md shadow-[#7A2253]/20 transition-all cursor-pointer shrink-0"
+                  className="h-10 px-4 rounded-[5px] bg-[#7A2253] text-white text-xs font-semibold hover:opacity-95 shadow-md shadow-[#7A2253]/20 transition-all cursor-pointer shrink-0"
                 >
                   + Add
                 </button>
@@ -1176,10 +1214,12 @@ export default function DashboardMediaKitPage() {
                 const hasMore = suggestionsList.length > 5;
 
                 return (
-                  <div className="space-y-2 bg-[#f8fafc] border border-[#e2e8f0] rounded-xl p-3">
-                    <div className="flex items-center justify-between text-[10px] font-bold text-[#64748b] uppercase tracking-wider">
-                      <span>💡 Popular suggestions for {formPlatform === "Other" ? (customPlatform.trim() || "Collaboration") : formPlatform}:</span>
-                      <span className="text-[9px] text-[#7A2253] font-bold">Click chip to add +</span>
+                  <div className="space-y-2 bg-[#FFF0F5]/40 border border-[#FCE7F1] rounded-[5px] p-3">
+                    <div className="flex items-center justify-between text-[11px] font-semibold text-[#0f172a]">
+                      <span className="flex items-center gap-1.5">
+                        <span className="text-amber-500">💡</span> Popular suggestions for {formPlatform === "Other" ? (customPlatform.trim() || "Collaboration") : formPlatform}:
+                      </span>
+                      <span className="text-[10px] text-[#7A2253] font-bold">Click on any chip to add</span>
                     </div>
                     <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
                       {displayedList.map((item, idx) => {
@@ -1194,10 +1234,10 @@ export default function DashboardMediaKitPage() {
                               }
                             }}
                             disabled={isAdded}
-                            className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
+                            className={`text-[11px] font-medium px-2.5 py-1.5 rounded-[5px] border transition-all cursor-pointer ${
                               isAdded
                                 ? "bg-[#EAF7F0] text-[#17845B] border-[#17845B]/20 cursor-default opacity-70"
-                                : "bg-white hover:bg-[#f1f5f9] text-[#7A2253] border-[#e2e8f0] hover:border-[#7A2253]/30"
+                                : "bg-white hover:bg-slate-50 text-[#0f172a] border-[#e2e8f0] hover:border-[#7A2253]/30 shadow-2xs"
                             }`}
                           >
                             {isAdded ? `✓ ${item}` : `+ ${item}`}
@@ -1212,7 +1252,7 @@ export default function DashboardMediaKitPage() {
                           onClick={() => setShowAllSuggestions(!showAllSuggestions)}
                           className="text-[11px] font-bold text-[#7A2253] hover:underline cursor-pointer"
                         >
-                          {showAllSuggestions ? "Show fewer suggestions ↑" : `+ Show ${suggestionsList.length - 5} more suggestions ↓`}
+                          {showAllSuggestions ? "Show fewer suggestions ↑" : `+ Show ${suggestionsList.length - 5} more suggestions`}
                         </button>
                       </div>
                     )}
@@ -1225,7 +1265,7 @@ export default function DashboardMediaKitPage() {
                 <div className="space-y-1.5 max-h-28 overflow-y-auto pt-1">
                   <p className="text-[10px] font-bold text-[#64748b] uppercase tracking-wider">Added Deliverables ({formDeliverables.length}):</p>
                   {formDeliverables.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between bg-[#f8fafc] border border-[#e2e8f0] rounded-lg px-2.5 py-1 text-xs font-medium text-[#7A2253]">
+                    <div key={idx} className="flex items-center justify-between bg-[#f8fafc] border border-[#e2e8f0] rounded-[5px] px-2.5 py-1 text-xs font-medium text-[#7A2253]">
                       <span>• {item}</span>
                       <button
                         type="button"
@@ -1243,8 +1283,8 @@ export default function DashboardMediaKitPage() {
             {/* Highlight badge with Quick Chips */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
-                  Highlight badge <span className="text-[#64748b] font-normal">(Optional)</span>
+                <label className="block text-[13px] font-medium text-[#0f172a] flex items-center gap-1.5">
+                  <span>👑</span> Highlight badge <span className="text-[#64748b] font-normal">(Optional)</span>
                 </label>
                 {formPackageName && (
                   <button
@@ -1257,7 +1297,7 @@ export default function DashboardMediaKitPage() {
                 )}
               </div>
 
-              <div className="flex flex-wrap items-center gap-1.5">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {[
                   { label: "Most Popular", icon: "🔥" },
                   { label: "Best Value", icon: "💎" },
@@ -1270,40 +1310,46 @@ export default function DashboardMediaKitPage() {
                       key={badge.label}
                       type="button"
                       onClick={() => setFormPackageName(isSelected ? "" : badge.label)}
-                      className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
+                      className={`h-9 px-3 rounded-[5px] text-xs font-semibold border flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                         isSelected
-                          ? "bg-[#7A2253] text-white border-transparent shadow-xs"
-                          : "bg-white text-[#7A2253] border-[#e2e8f0] hover:bg-[#f8fafc]"
+                          ? "bg-[#FFF0F5] text-[#7A2253] border-[#7A2253] ring-1 ring-[#7A2253]"
+                          : "bg-white text-[#0f172a] border-[#e2e8f0] hover:bg-[#f8fafc]"
                       }`}
                     >
-                      <span>{badge.icon} {badge.label}</span>
+                      <span>{badge.icon}</span>
+                      <span>{badge.label}</span>
                     </button>
                   );
                 })}
               </div>
 
-              <input
-                type="text"
-                value={formPackageName}
-                onChange={(e) => setFormPackageName(e.target.value)}
-                placeholder="Or type a custom badge (e.g. Creator Choice, Limited Edition)"
-                className="w-full h-9 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:outline-none transition-colors"
-              />
+              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                  <Tag className="h-3.5 w-3.5" />
+                </div>
+                <input
+                  type="text"
+                  value={formPackageName}
+                  onChange={(e) => setFormPackageName(e.target.value)}
+                  placeholder="Or type a custom badge (e.g. Creator Choice, Limited Edition)"
+                  className="flex-1 h-9 px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                />
+              </div>
             </div>
           </ModalBody>
 
-          <ModalFooter className="px-4 sm:px-5 py-3">
+          <ModalFooter className="px-5 sm:px-6 py-4">
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
+              className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               form="service-form"
-              className="h-10 px-5 rounded-xl bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5"
+              className="h-10 px-5 rounded-[5px] bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5"
             >
               <span>{editingPkgId ? "Save Changes" : "Create Collab Package"}</span>
             </button>

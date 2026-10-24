@@ -91,25 +91,25 @@ export function Modal({
       <div
         ref={modalRef}
         onClick={(e) => e.stopPropagation()}
-        className={`relative w-full ${SIZE_CLASSES[size]} max-h-[92dvh] sm:max-h-[calc(100dvh-48px)] bg-white rounded-t-2xl sm:rounded-xl border border-[#e2e8f0] shadow-xl flex flex-col overflow-hidden text-left pb-[env(safe-area-inset-bottom)] sm:pb-0 animate-sheet-in ${className}`}
+        className={`relative w-full ${SIZE_CLASSES[size]} max-h-[92dvh] sm:max-h-[calc(100dvh-48px)] bg-white rounded-[5px] border border-[#e2e8f0] shadow-2xl flex flex-col overflow-hidden text-left pb-[env(safe-area-inset-bottom)] sm:pb-0 animate-sheet-in ${className}`}
       >
         {/* Grab handle — mobile bottom-sheet affordance */}
         <div className="flex justify-center pt-2 sm:hidden" aria-hidden="true">
-          <span className="h-1 w-9 rounded-full bg-[#cbd5e1]" />
+          <span className="h-1 w-9 rounded-[5px] bg-[#cbd5e1]" />
         </div>
 
         {/* Optional Automatic Header */}
         {(title || showCloseButton) && (
-          <div className={`flex items-center justify-between border-b border-[#e2e8f0] bg-white px-4 sm:px-5 py-3 shrink-0 ${headerClassName}`}>
+          <div className={`flex items-center justify-between border-b border-[#e2e8f0] bg-white px-5 sm:px-6 py-4 shrink-0 ${headerClassName}`}>
             <div className="flex items-center gap-3 min-w-0 pr-2">
               {icon && (
-                <div className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg bg-[#f1f5f9] text-[#475569] shrink-0">
+                <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253] shrink-0">
                   {icon}
                 </div>
               )}
               <div className="min-w-0">
                 {title && (
-                  <h3 className="text-base font-semibold text-[#0f172a] truncate">
+                  <h3 className="text-base sm:text-lg font-bold text-[#0f172a] truncate">
                     {title}
                   </h3>
                 )}
@@ -126,7 +126,7 @@ export function Modal({
                 type="button"
                 onClick={onClose}
                 aria-label="Close modal"
-                className="flex h-9 w-9 items-center justify-center rounded-full text-[#64748b] hover:text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer shrink-0"
+                className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#64748b] hover:text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer shrink-0"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -158,15 +158,15 @@ export function ModalHeader({
   className?: string;
 }) {
   return (
-    <div className={`flex items-center justify-between border-b border-[#e2e8f0] bg-white px-4 sm:px-5 py-3 shrink-0 ${className}`}>
+    <div className={`flex items-center justify-between border-b border-[#e2e8f0] bg-white px-5 sm:px-6 py-4 shrink-0 ${className}`}>
       <div className="flex items-center gap-3 min-w-0 pr-2">
         {icon && (
-          <div className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg bg-[#f1f5f9] text-[#475569] shrink-0">
+          <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253] shrink-0">
             {icon}
           </div>
         )}
         <div className="min-w-0">
-          <h3 className="text-base font-semibold text-[#0f172a] truncate">
+          <h3 className="text-base sm:text-lg font-bold text-[#0f172a] truncate">
             {title}
           </h3>
           {description && (
@@ -182,7 +182,7 @@ export function ModalHeader({
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="flex h-9 w-9 items-center justify-center rounded-full text-[#64748b] hover:text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer shrink-0"
+          className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#64748b] hover:text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer shrink-0"
         >
           <X className="h-4 w-4" />
         </button>

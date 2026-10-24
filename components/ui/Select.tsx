@@ -21,7 +21,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           </label>
         )}
         <div
-          className={`relative flex h-12 items-center rounded-2xl border bg-white px-4 shadow-[0_1px_2px_rgba(23,20,31,0.03)] transition-all focus-within:border-inflixo-purple focus-within:shadow-[0_0_0_4px_rgba(109,40,217,0.10)] ${
+          className={`relative flex h-12 items-center rounded-[5px] border bg-white px-4 shadow-[0_1px_2px_rgba(23,20,31,0.03)] transition-all focus-within:border-inflixo-purple focus-within:shadow-[0_0_0_4px_rgba(109,40,217,0.10)] ${
             error ? "border-rose-400" : "border-inflixo-border"
           }`}
         >

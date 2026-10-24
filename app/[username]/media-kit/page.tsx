@@ -14,6 +14,7 @@ import {
   Check,
   Gift,
   ArrowRight,
+  ArrowLeft,
   Clock,
   UserX,
   MapPin,
@@ -160,6 +161,26 @@ export default function PublicMediaKitPage() {
       if (!usernameParam) {
         setNotFound(true);
         setLoaded(true);
+        return;
+      }
+
+      if (usernameParam === "demo_creator") {
+        const {
+          EXPERT_DEMO_PROFILE,
+          EXPERT_DEMO_SOCIALS,
+          EXPERT_DEMO_SERIES,
+          EXPERT_DEMO_GIGS,
+          EXPERT_DEMO_REVIEWS,
+          EXPERT_DEMO_THEME,
+        } = await import("@/data/expertDemoCreator");
+        setProfile(EXPERT_DEMO_PROFILE);
+        setSocials(EXPERT_DEMO_SOCIALS);
+        setSeries(EXPERT_DEMO_SERIES);
+        setPackages(EXPERT_DEMO_GIGS);
+        setReviews(EXPERT_DEMO_REVIEWS);
+        setTheme(EXPERT_DEMO_THEME);
+        setLoaded(true);
+        setNotFound(false);
         return;
       }
 
@@ -534,26 +555,41 @@ export default function PublicMediaKitPage() {
         themeKey={theme}
         className="print:overflow-visible print:rounded-none print:border-0 print:shadow-none"
       >
-        <div data-media-kit-actions className={`${PUBLIC_CARD_PADDING} shrink-0 pt-4 pb-3 sm:pt-5`}>
-          <PublicPageHeader
-            themeKey={theme}
-            backHref={`/${cleanHandle}`}
-            backLabel="Back to profile"
-            creatorName={profile.displayName || ""}
-            creatorHandle={cleanHandle}
-            creatorPhoto={profile.photoDataUrl}
-            pageLabel="Media kit"
-            actions={
-              <>
-                <PublicIconButton themeKey={theme} onClick={handlePrint} label="Export PDF">
-                  <Printer className="h-4 w-4" />
-                </PublicIconButton>
-                <PublicIconButton themeKey={theme} onClick={handleCopyLink} label="Share media kit">
-                  <Share2 className="h-4 w-4" />
-                </PublicIconButton>
-              </>
-            }
-          />
+        <div data-media-kit-actions className={`${PUBLIC_CARD_PADDING} shrink-0 pt-3 pb-2 sm:pt-4`}>
+          <div className="relative z-20 flex shrink-0 items-center justify-between gap-2">
+            <button
+              type="button"
+              onPointerEnter={() => router.prefetch(`/${cleanHandle}`)}
+              onClick={() => router.push(`/${cleanHandle}`)}
+              style={pt.controlStyle}
+              className={PUBLIC_ICON_BUTTON}
+              title="Back to profile"
+              aria-label="Back to profile"
+            >
+              <ArrowLeft className="h-[18px] w-[18px]" />
+            </button>
+
+            <div className="flex-1 flex items-center justify-center">
+              <CreatorAvatar
+                src={profile.photoDataUrl}
+                name={profile.displayName || "Creator"}
+                className="h-11 w-11 sm:h-12 sm:w-12 rounded-full aspect-square object-contain object-center overflow-hidden border-2 border-white/85 ring-2 ring-black/5 shadow-xs mx-auto bg-white transition-transform hover:scale-105"
+                style={{ borderColor: c.border || "#FFFFFF", backgroundColor: c.cardBackground }}
+                textClassName="text-sm sm:text-base font-extrabold"
+                textStyle={{ color: c.primaryText }}
+                fallbackBgClass="bg-[#7A2253]"
+              />
+            </div>
+
+            <div className="flex items-center gap-1.5 shrink-0">
+              <PublicIconButton themeKey={theme} onClick={handlePrint} label="Export PDF">
+                <Printer className="h-4 w-4" />
+              </PublicIconButton>
+              <PublicIconButton themeKey={theme} onClick={handleCopyLink} label="Share media kit">
+                <Share2 className="h-4 w-4" />
+              </PublicIconButton>
+            </div>
+          </div>
         </div>
 
         <div
@@ -562,17 +598,7 @@ export default function PublicMediaKitPage() {
         >
           {/* Creator identity: the "cover" of the media kit (also used in the PDF) */}
           <section className="text-center">
-            <p style={{ color: c.accentText }} className={PUBLIC_TYPE.eyebrow}>Media kit</p>
-            <CreatorAvatar
-              src={profile.photoDataUrl}
-              name={profile.displayName || "Creator"}
-              className="mx-auto mt-3 h-[72px] w-[72px] overflow-hidden rounded-full border-2 object-cover object-center shadow-sm sm:h-20 sm:w-20"
-              style={{ borderColor: c.border, backgroundColor: c.cardBackground }}
-              textClassName="text-lg font-extrabold sm:text-xl"
-              textStyle={{ color: c.primaryText }}
-              fallbackBgClass="bg-[#7A2253]"
-            />
-            <div className="mt-2 flex items-center justify-center gap-1.5 px-2">
+            <div className="mt-1 flex items-center justify-center gap-1.5 px-2">
               <h1 style={pt.headingStyle} className={`${PUBLIC_TYPE.creatorName} break-words line-clamp-2`}>
                 {profile.displayName || "Creator"}
               </h1>
@@ -580,19 +606,60 @@ export default function PublicMediaKitPage() {
             </div>
             <p style={{ color: c.mutedText }} className={`mt-0.5 ${PUBLIC_TYPE.meta}`}>@{cleanHandle}</p>
             {creatorTypes && (
-              <p style={{ color: c.secondaryText }} className={`mt-1 break-words px-2 ${PUBLIC_TYPE.meta}`}>{creatorTypes}</p>
+              <p style={{ color: c.secondaryText }} className={`mt-0.5 break-words px-2 text-[11px] sm:text-xs font-normal opacity-70`}>{creatorTypes}</p>
             )}
             {Boolean(profile.city) && (
-              <p style={{ color: c.mutedText }} className={`mt-1 inline-flex items-center justify-center gap-1 ${PUBLIC_TYPE.meta}`}>
-                <MapPin className="h-3.5 w-3.5 shrink-0" />
+              <p style={{ color: c.mutedText }} className={`mt-0.5 inline-flex items-center justify-center gap-1 text-[11px] sm:text-xs opacity-70`}>
+                <MapPin className="h-3 w-3 shrink-0" />
                 <span>{[profile.city, profile.state].filter(Boolean).join(", ")}</span>
               </p>
             )}
-            {profile.bio && profile.bio.trim() && (
-              <p style={{ color: c.secondaryText }} className={`mx-auto mt-2 max-w-md break-words px-1 ${PUBLIC_TYPE.body}`}>
-                {profile.bio}
-              </p>
+
+            {/* Clickable Social Icons Row */}
+            {headerSocials.length > 0 && (
+              <div data-media-kit-actions className="mt-2.5 flex flex-wrap items-center justify-center gap-2">
+                {headerSocials.map((item) => (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={item.label}
+                    title={item.label}
+                    style={pt.controlStyle}
+                    className="tap-scale flex h-7 w-7 items-center justify-center rounded-lg border border-black/10 dark:border-white/10 transition-all hover:scale-110 cursor-pointer"
+                  >
+                    {item.icon}
+                  </a>
+                ))}
+              </div>
             )}
+
+            {/* Centered Total Fanbase Pill Badge */}
+            <div className="mt-2.5 pb-[30px] flex items-center justify-center">
+              <div
+                style={{
+                  backgroundColor: isDark ? "rgba(255, 255, 255, 0.06)" : "#F8FAFC",
+                  borderColor: isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)",
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border shadow-2xs"
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span
+                  style={{ color: isDark ? "#FFFFFF" : "#0F172A" }}
+                  className="text-xs font-black tracking-tight"
+                >
+                  {formatCount(totalAudience)}
+                </span>
+                <span
+                  style={{ color: isDark ? "rgba(255, 255, 255, 0.6)" : "#64748B" }}
+                  className="text-[11px] font-medium"
+                >
+                  Total Fanbase
+                </span>
+              </div>
+            </div>
+
             {/* PDF only: clickable profile + social links (the icon buttons are hidden on paper) */}
             <div className="mt-2 hidden print:block">
               <a
@@ -618,24 +685,6 @@ export default function PublicMediaKitPage() {
                 </p>
               )}
             </div>
-            {headerSocials.length > 0 && (
-              <div data-media-kit-actions className="mt-3 flex flex-wrap items-center justify-center gap-2">
-                {headerSocials.map((item) => (
-                  <a
-                    key={item.label}
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={item.label}
-                    title={item.label}
-                    style={pt.controlStyle}
-                    className={PUBLIC_ICON_BUTTON}
-                  >
-                    {item.icon}
-                  </a>
-                ))}
-              </div>
-            )}
           </section>
 
           {/* Total fanbase + platform breakdown */}

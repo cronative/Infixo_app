@@ -128,7 +128,7 @@ export function SeriesCoverUpload({
             fileInputRef.current?.click();
           }
         }}
-        className={`group relative w-full overflow-hidden rounded-xl border transition-colors cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7A2253]/30 ${value
+        className={`group relative w-full overflow-hidden rounded-[5px] border transition-colors cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7A2253]/30 ${value
           ? "aspect-[16/9] border-[#e2e8f0] bg-slate-950"
           : isDragging
             ? "h-20 border-dashed border-[#7A2253] bg-[#7A2253]/[0.05]"
@@ -157,7 +157,7 @@ export function SeriesCoverUpload({
                   e.stopPropagation();
                   fileInputRef.current?.click();
                 }}
-                className="tap-scale flex h-8 items-center gap-1.5 rounded-lg bg-white/95 hover:bg-white text-[#0f172a] px-3 text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+                className="tap-scale flex h-8 items-center gap-1.5 rounded-[5px] bg-white/95 hover:bg-white text-[#0f172a] px-3 text-xs font-semibold shadow-sm transition-colors cursor-pointer"
               >
                 <Camera className="h-3.5 w-3.5 text-[#64748b]" />
                 <span>Change Cover</span>
@@ -168,7 +168,7 @@ export function SeriesCoverUpload({
                   type="button"
                   onClick={cyclePosition}
                   title={`Position: ${position.toUpperCase()} (Click to toggle)`}
-                  className="tap-scale flex h-8 items-center gap-1 rounded-lg bg-white/95 hover:bg-white text-[#475569] px-2.5 text-xs font-medium shadow-sm transition-colors cursor-pointer"
+                  className="tap-scale flex h-8 items-center gap-1 rounded-[5px] bg-white/95 hover:bg-white text-[#475569] px-2.5 text-xs font-medium shadow-sm transition-colors cursor-pointer"
                 >
                   <MoveVertical className="h-3.5 w-3.5 text-[#64748b]" />
                   <span className="capitalize text-[11px]">{position}</span>
@@ -179,7 +179,7 @@ export function SeriesCoverUpload({
                   onClick={handleRemove}
                   title="Remove cover"
                   aria-label="Remove cover"
-                  className="tap-scale flex h-8 w-8 items-center justify-center rounded-lg bg-white/95 hover:bg-white text-[#64748b] hover:text-[#C2414B] shadow-sm transition-colors cursor-pointer"
+                  className="tap-scale flex h-8 w-8 items-center justify-center rounded-[5px] bg-white/95 hover:bg-white text-[#64748b] hover:text-[#C2414B] shadow-sm transition-colors cursor-pointer"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
@@ -189,7 +189,7 @@ export function SeriesCoverUpload({
         ) : (
           /* Empty state — compact dropzone so the form's required fields stay above the fold */
           <div className="absolute inset-0 flex items-center justify-center gap-3 px-4 text-left">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white text-[#64748b]">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white text-[#64748b]">
               <ImagePlus className="h-5 w-5" />
             </span>
             <span className="min-w-0">
@@ -202,7 +202,7 @@ export function SeriesCoverUpload({
 
       {/* Inline Error State */}
       {errorMessage && (
-        <div className="flex items-center gap-1.5 rounded-xl bg-rose-50 px-3 py-2 text-xs font-semibold text-[#C2414B] border border-rose-100 animate-in fade-in duration-150">
+        <div className="flex items-center gap-1.5 rounded-[5px] bg-rose-50 px-3 py-2 text-xs font-semibold text-[#C2414B] border border-rose-100 animate-in fade-in duration-150">
           <AlertCircle className="h-3.5 w-3.5 shrink-0" />
           <span>{errorMessage}</span>
         </div>

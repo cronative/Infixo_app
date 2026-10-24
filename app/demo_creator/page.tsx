@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { ThemeCard } from "@/themes/registry";
 import { SocialService } from "@/services/SocialService";
 import { useToast } from "@/contexts/ToastContext";
@@ -18,9 +19,15 @@ import {
   EXPERT_DEMO_SETUP_ITEMS,
 } from "@/data/expertDemoCreator";
 
-export default function DemoCreatorPage() {
+function DemoCreatorContent() {
+  const searchParams = useSearchParams();
+  const rawTab = searchParams?.get("tab");
+  const initialTab = rawTab && ["about", "series", "fanbase", "links", "shop", "reviews", "work", "setup"].includes(rawTab)
+    ? (rawTab === "fanbase" ? "about" : (rawTab as any))
+    : "about";
+  const rawTheme = searchParams?.get("theme") as any;
+  const theme = rawTheme || EXPERT_DEMO_THEME;
   const { showToast } = useToast();
-  const theme = EXPERT_DEMO_THEME;
   const totalAudience = SocialService.calculateTotalAudience(EXPERT_DEMO_SOCIALS);
 
   useEffect(() => {
@@ -59,8 +66,8 @@ export default function DemoCreatorPage() {
   }
 
   return (
-    <CreatorPublicShell themeKey={theme}>
-        {/* Main Theme Profile Card (seriesOpenMode="internal" keeps series details in popup drawer) */}
+    <CreatorPublicShell themeKey={theme} fixedViewport={true}>
+        {/* Main Theme Profile Card with Navigation Tabs layout for Series, My Links, My Shop, Reviews, Work */}
         <ThemeCard
           themeKey={theme}
           profile={EXPERT_DEMO_PROFILE}
@@ -74,13 +81,23 @@ export default function DemoCreatorPage() {
           totalAudience={totalAudience}
           variant="full"
           containedScroll={false}
+          layoutMode="tabs"
+          initialTab={initialTab}
           seriesOpenMode="page"
-          seriesPreviewLimit={3}
+          seriesPreviewLimit={5}
           allSeriesHref="/demo_creator/series"
-          productsPreviewLimit={3}
+          productsPreviewLimit={9}
           allProductsHref="/demo_creator/products"
           onShare={handleShare}
         />
     </CreatorPublicShell>
+  );
+}
+
+export default function DemoCreatorPage() {
+  return (
+    <Suspense fallback={null}>
+      <DemoCreatorContent />
+    </Suspense>
   );
 }

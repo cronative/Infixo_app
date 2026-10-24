@@ -69,7 +69,7 @@ export function SyncingLoader({
         <div className="relative flex h-16 w-16 items-center justify-center">
           <div className="absolute inset-0 rounded-[22px] bg-[#7A2253]/15 blur-xl" />
           <div className="absolute inset-1 rounded-[18px] bg-[#7A2253]/15 animate-ping opacity-25" />
-          <div className="relative flex h-14 w-14 items-center justify-center rounded-[16px] overflow-hidden shadow-[0_14px_36px_rgba(122,34,83,0.25)] border border-[#7A2253]/20">
+          <div className="relative flex h-14 w-14 items-center justify-center rounded-[5px] overflow-hidden shadow-[0_14px_36px_rgba(122,34,83,0.25)] border border-[#7A2253]/20">
             <Image
               src="/images/inflixo-logo-3d.png"
               alt="Inflixo"

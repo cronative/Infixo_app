@@ -54,7 +54,7 @@ export default function DemoCreatorProductsPage() {
   }
 
   return (
-    <CreatorPublicShell themeKey={theme}>
+    <CreatorPublicShell themeKey={theme} fixedViewport={true}>
       <ThemeCard
         themeKey={theme}
         profile={EXPERT_DEMO_PROFILE}

@@ -159,23 +159,23 @@ export function VisibilitySettingsModal({
       onClose={onClose}
       size="md"
       title="Profile Sections & Layout"
-      description="Customize the order and visibility of sections on your public creator page."
-      icon={<Layers className="h-4 w-4" />}
+      description="Choose which sections to show on your public creator page."
+      icon={<Layers className="h-5 w-5" />}
     >
       <div className="flex flex-col flex-1 min-h-0">
-        <ModalBody className="p-4 sm:p-5 space-y-3 text-left max-h-[60vh] overflow-y-auto">
+        <ModalBody className="p-4 sm:p-5 space-y-3 text-left max-h-[65vh] overflow-y-auto">
           {/* Header Action: Reset Default */}
           <div className="flex items-center justify-between pb-2 border-b border-[#e2e8f0]">
             <span className="text-[11px] font-bold text-[#64748b] uppercase tracking-wider">
-              Sections ({sections.length})
+              SECTIONS ({sections.length})
             </span>
             <button
               type="button"
               onClick={handleResetDefault}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-[#64748b] hover:text-[#7A2253] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748b] hover:text-[#7A2253] transition-colors cursor-pointer"
             >
-              <RotateCcw className="h-3 w-3" />
-              <span>Reset Default</span>
+              <RotateCcw className="h-3.5 w-3.5" />
+              <span>Reset to Default</span>
             </button>
           </div>
 
@@ -188,76 +188,71 @@ export function VisibilitySettingsModal({
                   name: section.sectionKey,
                   desc: "Custom profile block",
                 };
-                const isFirst = idx === 0;
-                const isLast = idx === sections.length - 1;
                 const isAbout = section.sectionKey === "ABOUT";
 
                 return (
                   <div
                     key={section.sectionKey}
-                    className={`flex items-center justify-between p-2.5 sm:p-3 rounded-lg border transition-all ${section.isVisible
-                      ? "bg-white border-[#e2e8f0] shadow-xs"
-                      : "bg-[#f8fafc] border-[#e2e8f0]/60 opacity-60"
-                      }`}
+                    className={`flex items-center justify-between p-3 rounded-[5px] border transition-all ${
+                      section.isVisible
+                        ? "bg-white border-[#e2e8f0] shadow-xs"
+                        : "bg-[#f8fafc] border-[#e2e8f0]/80 opacity-70"
+                    }`}
                   >
-                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[#7A2253]/10 text-[10px] font-bold text-[#7A2253]">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-xs font-bold text-[#7A2253]">
                         {idx + 1}
                       </span>
 
-                      <div className="min-w-0 flex-1 space-y-0.5">
-                        <p className="text-xs font-bold text-[#7A2253] truncate flex items-center gap-1.5">
-                          {info.name}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs sm:text-sm font-bold text-[#0f172a] truncate flex items-center gap-1.5">
+                          <span>{info.name}</span>
                           {isAbout && (
-                            <span className="text-[9px] font-semibold text-[#7A2253] bg-[#7A2253]/10 border border-[#7A2253]/20 px-1.5 py-0.2 rounded">
+                            <span className="text-[10px] font-semibold text-[#7A2253] bg-[#FFF0F5] border border-[#FCE7F1] px-1.5 py-0.5 rounded-[5px]">
                               Locked
                             </span>
                           )}
                         </p>
-                        <p className="text-[10px] text-[#64748b] truncate">{info.desc}</p>
+                        <p className="text-[11px] text-[#64748b] truncate mt-0.5">{info.desc}</p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1 shrink-0 ml-2">
-                      {/* Visibility Toggle */}
-                      <button
-                        type="button"
-                        onClick={() => handleToggleVisibility(section.sectionKey)}
-                        disabled={isAbout}
-                        className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-colors cursor-pointer ${section.isVisible
-                          ? "border-[#e2e8f0] bg-[#f8fafc] text-[#7A2253] hover:bg-[#f1f5f9] hover:text-[#7A2253]"
-                          : "border-[#C1443A]/20 bg-[#C1443A]/10 text-[#C1443A]"
-                          } disabled:opacity-40 disabled:cursor-not-allowed`}
-                        title={section.isVisible ? "Hide section" : "Show section"}
-                      >
-                        {section.isVisible ? (
-                          <Eye className="h-3.5 w-3.5" />
-                        ) : (
-                          <EyeOff className="h-3.5 w-3.5" />
-                        )}
-                      </button>
-
-                      {/* Move Up */}
-                      <button
-                        type="button"
-                        onClick={() => handleMove(idx, "up")}
-                        disabled={isFirst}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-[#64748b] hover:text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                        title="Move up"
-                      >
-                        <ArrowUp className="h-3.5 w-3.5" />
-                      </button>
-
-                      {/* Move Down */}
-                      <button
-                        type="button"
-                        onClick={() => handleMove(idx, "down")}
-                        disabled={isLast}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-[#64748b] hover:text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                        title="Move down"
-                      >
-                        <ArrowDown className="h-3.5 w-3.5" />
-                      </button>
+                    <div className="shrink-0 ml-3">
+                      {isAbout ? (
+                        <div className="flex items-center gap-2">
+                          <span className="relative inline-flex h-5 w-9 shrink-0 rounded-full bg-slate-200 opacity-60">
+                            <span className="inline-block h-4 w-4 transform rounded-full bg-white shadow-xs translate-x-4 mt-0.5" />
+                          </span>
+                          <span className="text-xs font-medium text-[#64748b]">Always shown</span>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          role="switch"
+                          aria-checked={section.isVisible}
+                          onClick={() => handleToggleVisibility(section.sectionKey)}
+                          className="flex items-center gap-2 cursor-pointer group focus:outline-none"
+                        >
+                          <span
+                            className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors duration-200 ease-in-out ${
+                              section.isVisible ? "bg-[#7A2253]" : "bg-slate-200"
+                            }`}
+                          >
+                            <span
+                              className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-xs transition duration-200 ease-in-out mt-0.5 ${
+                                section.isVisible ? "translate-x-4" : "translate-x-0.5"
+                              }`}
+                            />
+                          </span>
+                          <span
+                            className={`text-xs font-semibold w-8 text-left ${
+                              section.isVisible ? "text-[#7A2253]" : "text-[#64748b]"
+                            }`}
+                          >
+                            {section.isVisible ? "Show" : "Hide"}
+                          </span>
+                        </button>
+                      )}
                     </div>
                   </div>
                 );
@@ -265,11 +260,11 @@ export function VisibilitySettingsModal({
           </div>
         </ModalBody>
 
-        <ModalFooter className="px-4 sm:px-5 py-3">
+        <ModalFooter className="px-5 sm:px-6 py-4">
           <button
             type="button"
             onClick={onClose}
-            className="h-9 px-4 rounded-lg border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
+            className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
           >
             Cancel
           </button>
@@ -277,7 +272,7 @@ export function VisibilitySettingsModal({
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="h-9 bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs px-4.5 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5 disabled:opacity-50"
+            className="h-10 bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs px-5 rounded-[5px] transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5 disabled:opacity-50"
           >
             {saving ? (
               <>
@@ -285,10 +280,7 @@ export function VisibilitySettingsModal({
                 <span>Saving...</span>
               </>
             ) : (
-              <>
-                <Check className="h-3.5 w-3.5" />
-                <span>Save Layout</span>
-              </>
+              <span>Save Layout</span>
             )}
           </button>
         </ModalFooter>

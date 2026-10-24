@@ -78,9 +78,9 @@ export function BrandLeadQualifierModal({
       icon={<MessageCircle className="h-4 w-4 text-[#17845B]" />}
     >
       <form id="brand-lead-form" onSubmit={handleSendWhatsApp} className="flex flex-col flex-1 min-h-0">
-        <ModalBody className="p-5 space-y-4 text-left">
+        <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
           {/* Deliverable Summary Badge */}
-          <div className="rounded-lg border border-[#e2e8f0] bg-[#f8fafc] p-3 flex items-center gap-3">
+          <div className="rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] p-3 flex items-center gap-3">
             <Package className="h-4 w-4 text-[#7A2253] shrink-0" />
             <div className="min-w-0 text-xs">
               <p className="font-bold text-[#7A2253] truncate">{packageName}</p>
@@ -89,60 +89,73 @@ export function BrandLeadQualifierModal({
           </div>
 
           <div className="space-y-1">
-            <label className="block text-[13px] font-medium text-[#0f172a] flex items-center gap-1.5">
-              <Building2 className="h-3.5 w-3.5 text-[#7A2253]" />
-              <span>Brand or Agency name</span> <span className="text-[#C2414B]">*</span>
+            <label className="block text-[13px] font-medium text-[#0f172a]">
+              Brand or Agency name <span className="text-[#C2414B]">*</span>
             </label>
-            <input
-              type="text"
-              required
-              value={brandName}
-              onChange={(e) => setBrandName(e.target.value)}
-              placeholder="e.g. Mamaearth / Local Brand / Agency"
-              className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20 transition-all shadow-2xs"
-            />
+            <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <Building2 className="h-4 w-4" />
+              </span>
+              <input
+                type="text"
+                required
+                value={brandName}
+                onChange={(e) => setBrandName(e.target.value)}
+                placeholder="e.g. Mamaearth / Local Brand / Agency"
+                className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+              />
+            </div>
           </div>
 
           <div className="space-y-1">
-            <label className="block text-[13px] font-medium text-[#0f172a] flex items-center gap-1.5">
-              <span className="h-3.5 w-3.5 text-[#17845B] font-extrabold text-xs flex items-center justify-center">₹</span>
-              <span>Campaign budget</span> <span className="text-[#C2414B]">*</span>
+            <label className="block text-[13px] font-medium text-[#0f172a]">
+              Campaign budget <span className="text-[#C2414B]">*</span>
             </label>
-            <input
-              type="text"
-              required
-              value={budget}
-              onChange={(e) => setBudget(e.target.value)}
-              placeholder="e.g. ₹15,000 or ₹25,000"
-              className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20 transition-all shadow-2xs"
-            />
+            <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#17845B] font-bold text-sm">
+                ₹
+              </span>
+              <input
+                type="text"
+                required
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+                placeholder="e.g. 15,000 or 25,000"
+                className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+              />
+            </div>
           </div>
 
           <div className="space-y-1">
             <label className="block text-[13px] font-medium text-[#0f172a]">
               Selected package
             </label>
-            <input
-              type="text"
-              value={selectedDeliverable}
-              onChange={(e) => setSelectedDeliverable(e.target.value)}
-              className="h-9.5 w-full rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs sm:text-[13px] font-medium text-[#7A2253] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20 transition-all shadow-2xs"
-            />
+            <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <Package className="h-4 w-4" />
+              </span>
+              <input
+                type="text"
+                value={selectedDeliverable}
+                onChange={(e) => setSelectedDeliverable(e.target.value)}
+                className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#7A2253] bg-transparent outline-none"
+              />
+            </div>
           </div>
         </ModalBody>
 
-        <ModalFooter className="px-5 py-3">
+        <ModalFooter className="px-4 sm:px-5 py-3">
           <button
             type="button"
             onClick={onClose}
-            className="h-9 px-4 rounded-lg border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
+            className="h-9 px-4 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
             form="brand-lead-form"
-            className="h-9 bg-[#17845B] hover:bg-[#126c4a] text-white font-semibold text-xs px-4.5 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5"
+            className="h-9 bg-[#17845B] hover:bg-[#126c4a] text-white font-semibold text-xs px-4.5 rounded-[5px] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5"
           >
             <Send className="h-3.5 w-3.5" />
             <span>Open WhatsApp with Brief →</span>

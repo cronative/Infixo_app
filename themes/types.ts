@@ -47,4 +47,6 @@ export interface ThemeCardProps {
   reviewsOnlyMode?: boolean;
   pageHeader?: { pageLabel: string; backHref: string; backLabel: string };
   onShare?: () => void;
+  layoutMode?: "tabs" | "stacked";
+  initialTab?: "about" | "series" | "fanbase" | "links" | "shop" | "reviews" | "work" | "setup";
 }

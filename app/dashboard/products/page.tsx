@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import Link from "next/link";
-import { ExternalLink, Pencil, Plus, ShoppingBag, Trash2, UploadCloud } from "lucide-react";
+import { ExternalLink, Pencil, Plus, ShoppingBag, Trash2, UploadCloud, Tag, Link as LinkIcon, X, Image as ImageIcon } from "lucide-react";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -16,8 +16,8 @@ import { ProductService, type ProductInput } from "@/services/ProductService";
 import type { CreatorProduct } from "@/types";
 
 const blank: ProductInput = { name: "", image: "", price: "", productUrl: "" };
-const primaryButton = "inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-[#7A2253] px-4 text-sm font-semibold text-white shadow-md shadow-[#7A2253]/20 hover:opacity-95 disabled:opacity-50 cursor-pointer transition-all";
-const inputClass = "mt-1.5 w-full min-w-0 rounded-lg border border-[#e2e8f0] bg-white px-3 py-2.5 text-sm text-[#0f172a] outline-none focus:border-[#7A2253] focus:ring-2 focus:ring-[#7A2253]/10";
+const primaryButton = "inline-flex min-h-10 items-center justify-center gap-2 rounded-[5px] bg-[#7A2253] px-4.5 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 hover:opacity-95 disabled:opacity-50 cursor-pointer transition-all";
+const inputClass = "mt-1.5 w-full min-w-0 rounded-[5px] border border-[#e2e8f0] bg-white px-3 py-2.5 text-xs sm:text-sm text-[#0f172a] outline-none focus:border-[#7A2253] focus:ring-2 focus:ring-[#7A2253]/10";
 
 function safeHostname(urlStr?: string): string {
   if (!urlStr) return "";
@@ -190,18 +190,179 @@ export default function ProductsPage() {
           ))}
         </div>
       )}
-      <Modal isOpen={open} onClose={() => { if (!busy) { imageVersion.current++; setOpen(false); } }} title={editing ? "Edit Product" : "Add Product"} size="md" showCloseButton={!busy} closeOnEscape={!busy}>
+      <Modal
+        isOpen={open}
+        onClose={() => {
+          if (!busy) {
+            imageVersion.current++;
+            setOpen(false);
+          }
+        }}
+        title={editing ? "Edit Product" : "Add Product"}
+        description="Show a product you use or recommend on your profile."
+        icon={<ShoppingBag className="h-5 w-5" />}
+        size="lg"
+        showCloseButton={!busy}
+        closeOnEscape={!busy}
+      >
         <form onSubmit={save} className="flex min-h-0 flex-col">
-          <ModalBody className="space-y-4">
+          <ModalBody className="p-4 sm:p-5 space-y-4 text-left">
             <fieldset disabled={busy} className="min-w-0 space-y-4">
-              <div><span className="text-xs font-semibold text-[#475569]">Product Image *</span><div className="mt-2 flex items-center gap-3"><ProductImage src={form.image} name="Product image preview" className="h-24 w-24" /><div className="min-w-0"><label className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-lg border border-[#e2e8f0] px-3 text-xs font-semibold text-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]"><UploadCloud className="h-4 w-4" />{imageBusy ? "Preparing…" : form.image ? "Replace image" : "Choose image"}<input aria-label="Product image" type="file" accept="image/jpeg,image/png,image/webp" onChange={imageSelected} disabled={busy || imageBusy} className="sr-only" /></label><p className="mt-2 text-xs text-[#64748b]">JPEG, PNG or WebP · up to 5MB</p></div></div></div>
-              <label className="block text-xs font-semibold text-[#475569]">Product Name *<input autoFocus value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required maxLength={180} className={inputClass} /></label>
-              <label className="block text-xs font-semibold text-[#475569]">Price <span className="font-normal text-[#94a3b8]">(₹, optional)</span><input type="number" inputMode="decimal" min="0.01" max="21474836.47" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="e.g. 1499" className={inputClass} /></label>
-              <label className="block text-xs font-semibold text-[#475569]">Product / Affiliate Link *<input type="url" value={form.productUrl} onChange={(e) => setForm({ ...form, productUrl: e.target.value })} required maxLength={2048} placeholder="https://..." className={inputClass} /></label>
+              {/* Product Image + Tips Card */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <label className="block text-[13px] font-medium text-[#0f172a]">
+                    Product Image <span className="text-[#C2414B]">*</span>
+                  </label>
+                  <span className="text-[11px] text-[#64748b]">Use a clear, high-quality product image.</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-stretch">
+                  {/* Upload Dropzone */}
+                  <label className="relative flex flex-col items-center justify-center p-4 border border-dashed border-[#cbd5e1] rounded-[5px] bg-[#f8fafc] hover:bg-[#f1f5f9] transition-colors cursor-pointer min-h-[108px] group">
+                    <input
+                      aria-label="Product image"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={imageSelected}
+                      disabled={busy || imageBusy}
+                      className="sr-only"
+                    />
+                    {form.image ? (
+                      <div className="flex items-center gap-3 w-full">
+                        <ProductImage src={form.image} name="Product preview" className="h-16 w-16 rounded-[5px] shrink-0 border border-[#e2e8f0]" />
+                        <div className="min-w-0 flex-1">
+                          <span className="block text-xs font-semibold text-[#0f172a]">{imageBusy ? "Preparing..." : "Image selected"}</span>
+                          <span className="block text-[11px] text-[#7A2253] font-medium">Click to replace image</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center text-center">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#64748b] group-hover:text-[#7A2253] mb-1">
+                          <ImageIcon className="h-5 w-5" />
+                        </div>
+                        <span className="text-xs font-semibold text-[#0f172a]">{imageBusy ? "Preparing..." : "Upload Image"}</span>
+                        <span className="text-[11px] text-[#94a3b8]">JPG, PNG or WebP · Max 5MB</span>
+                      </div>
+                    )}
+                  </label>
+
+                  {/* Tips Card */}
+                  <div className="flex flex-col justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] p-3 text-left">
+                    <div className="flex items-center gap-1.5 font-bold text-xs text-[#7A2253] mb-1">
+                      <span>💡</span>
+                      <span>Tips</span>
+                    </div>
+                    <ul className="text-[11px] text-[#64748b] space-y-0.5 leading-snug list-disc list-inside">
+                      <li>Use a clean product image (no text or watermark).</li>
+                      <li>Square image looks best (1:1 ratio).</li>
+                      <li>Recommended size: 1000 × 1000 px.</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Product Name */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <label className="block text-[13px] font-medium text-[#0f172a]">
+                    Product Name <span className="text-[#C2414B]">*</span>
+                  </label>
+                  <span className="text-[11px] text-[#64748b]">Enter the exact product name.</span>
+                </div>
+                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                    <Tag className="h-4 w-4" />
+                  </div>
+                  <input
+                    autoFocus
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    required
+                    maxLength={180}
+                    placeholder="e.g. Sony A7 IV, iPhone 15 Pro, Final Cut Pro"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Price */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <label className="block text-[13px] font-medium text-[#0f172a]">
+                    Price <span className="font-normal text-[#94a3b8]">(₹, optional)</span>
+                  </label>
+                  <span className="text-[11px] text-[#64748b]">Enter the price you paid or current price.</span>
+                </div>
+                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-sm font-semibold text-[#64748b]">
+                    ₹
+                  </div>
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    min="0.01"
+                    max="21474836.47"
+                    step="0.01"
+                    value={form.price}
+                    onChange={(e) => setForm({ ...form, price: e.target.value })}
+                    placeholder="e.g. 1499"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Product / Affiliate Link */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <label className="block text-[13px] font-medium text-[#0f172a]">
+                    Product / Affiliate Link <span className="text-[#C2414B]">*</span>
+                  </label>
+                  <span className="text-[11px] text-[#64748b]">Add a direct product or affiliate link.</span>
+                </div>
+                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                    <LinkIcon className="h-4 w-4" />
+                  </div>
+                  <input
+                    type="url"
+                    value={form.productUrl}
+                    onChange={(e) => setForm({ ...form, productUrl: e.target.value })}
+                    required
+                    maxLength={2048}
+                    placeholder="https://..."
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  />
+                </div>
+              </div>
             </fieldset>
-            {error && <p role="alert" className="rounded-lg bg-rose-50 p-3 text-sm text-rose-700">{error}</p>}
+
+            {error && (
+              <p role="alert" className="rounded-[5px] bg-rose-50 p-3 text-xs font-semibold text-rose-700 border border-rose-100">
+                {error}
+              </p>
+            )}
           </ModalBody>
-          <ModalFooter><button type="button" disabled={busy} onClick={() => { imageVersion.current++; setOpen(false); }} className="min-h-10 rounded-lg border border-[#e2e8f0] px-4 text-sm font-semibold text-[#64748b] disabled:opacity-50">Cancel</button><button type="submit" disabled={busy || imageBusy} className={primaryButton}>{busy ? "Saving…" : editing ? "Save Changes" : "Add Product"}</button></ModalFooter>
+
+          <ModalFooter className="px-5 sm:px-6 py-4">
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => {
+                imageVersion.current++;
+                setOpen(false);
+              }}
+              className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={busy || imageBusy}
+              className="h-10 px-5 rounded-[5px] bg-[#7A2253] text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 hover:opacity-95 disabled:opacity-50 inline-flex items-center gap-1.5"
+            >
+              <span>{busy ? "Saving…" : editing ? "Save Changes" : "+ Add Product"}</span>
+            </button>
+          </ModalFooter>
         </form>
       </Modal>
       <ConfirmModal isOpen={Boolean(deleting)} onClose={() => { if (!busy) setDeleting(null); }} onConfirm={remove} title="Delete Product?" description="This product will be removed from your public Shop." confirmText="Delete" isDestructive loading={busy} />

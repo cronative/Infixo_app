@@ -28,7 +28,7 @@ export const Chip = forwardRef<HTMLDivElement, ChipProps>(
     return (
       <div
         ref={ref}
-        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold select-none transition-colors ${variantClass} ${className}`}
+        className={`inline-flex items-center gap-1.5 rounded-[5px] px-3 py-1 text-xs font-semibold select-none transition-colors ${variantClass} ${className}`}
         {...rest}
       >
         {icon && <span className="shrink-0">{icon}</span>}

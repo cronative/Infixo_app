@@ -31,7 +31,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     },
     ref
   ) => {
-    const radiusClass = size === "lg" ? "rounded-[24px]" : "rounded-[16px]";
+    const radiusClass = "rounded-[5px]";
 
     const variantClass = {
       default: "bg-white border border-[#E4E4E7] shadow-sm",

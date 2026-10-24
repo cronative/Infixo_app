@@ -121,10 +121,10 @@ export function SectionOrderManager() {
   };
 
   return (
-    <section className="space-y-4 rounded-2xl border border-[#e2e8f0] bg-white p-4 text-left shadow-xs sm:p-5">
+    <section className="space-y-4 rounded-[5px] border border-[#e2e8f0] bg-white p-4 text-left shadow-xs sm:p-5">
       <div className="flex items-center justify-between border-b border-[#e2e8f0] pb-3.5">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#7A225314] text-[#7A2253] border border-[#7A2253]/20 shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-[5px] bg-[#7A225314] text-[#7A2253] border border-[#7A2253]/20 shrink-0">
             <Layers className="h-5 w-5" />
           </div>
           <div>
@@ -141,7 +141,7 @@ export function SectionOrderManager() {
         <button
           type="button"
           onClick={handleResetDefault}
-          className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white px-3 py-1.5 text-xs font-semibold text-[#64748b] shadow-xs transition-all hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-[#f8fafc] hover:text-[#7A2253] hover:shadow-sm"
+          className="inline-flex cursor-pointer items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3 py-1.5 text-xs font-semibold text-[#64748b] shadow-xs transition-all hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-[#f8fafc] hover:text-[#7A2253] hover:shadow-sm"
           title="Reset to default order"
         >
           <RotateCcw className="h-3.5 w-3.5" />
@@ -164,13 +164,13 @@ export function SectionOrderManager() {
             return (
               <div
                 key={section.sectionKey}
-                className={`flex items-center justify-between rounded-xl border p-3 transition-all hover:border-[#cbd5e1] hover:shadow-sm sm:p-3.5 ${section.isVisible
+                className={`flex items-center justify-between rounded-[5px] border p-3 transition-all hover:border-[#cbd5e1] hover:shadow-sm sm:p-3.5 ${section.isVisible
                   ? "bg-white border-[#e2e8f0] shadow-xs"
                   : "bg-[#f8fafc] border-[#e2e8f0]/60 opacity-60"
                   }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[11px] font-bold text-[#64748b]">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] bg-[#f8fafc] border border-[#e2e8f0] text-[11px] font-bold text-[#64748b]">
                     {idx + 1}
                   </span>
 
@@ -178,7 +178,7 @@ export function SectionOrderManager() {
                     <p className="text-xs font-bold text-[#7A2253] truncate flex items-center gap-1.5">
                       {info.name}
                       {isAbout && (
-                        <span className="text-[10px] font-semibold text-[#7A2253] bg-[#7A225314] border border-[#7A2253]/20 px-1.5 py-0.2 rounded-md">
+                        <span className="text-[10px] font-semibold text-[#7A2253] bg-[#7A225314] border border-[#7A2253]/20 px-1.5 py-0.2 rounded-[5px]">
                           Locked
                         </span>
                       )}
@@ -193,7 +193,7 @@ export function SectionOrderManager() {
                     type="button"
                     onClick={() => handleToggleVisibility(section.sectionKey)}
                     disabled={isAbout}
-                    className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-colors cursor-pointer ${section.isVisible
+                    className={`flex h-7 w-7 items-center justify-center rounded-[5px] border transition-colors cursor-pointer ${section.isVisible
                       ? "border-[#e2e8f0] bg-[#f8fafc] text-[#7A2253] hover:bg-[#f1f5f9] hover:text-[#7A2253]"
                       : "border-[#C1443A]/20 bg-[#C1443A]/10 text-[#C1443A]"
                       } disabled:opacity-40 disabled:cursor-not-allowed`}
@@ -211,7 +211,7 @@ export function SectionOrderManager() {
                     type="button"
                     onClick={() => handleMove(idx, "up")}
                     disabled={isFirst}
-                    className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-[#64748b] hover:text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] text-[#64748b] hover:text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                     title="Move up"
                   >
                     <ArrowUp className="h-3.5 w-3.5" />
@@ -222,7 +222,7 @@ export function SectionOrderManager() {
                     type="button"
                     onClick={() => handleMove(idx, "down")}
                     disabled={isLast}
-                    className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-[#64748b] hover:text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] text-[#64748b] hover:text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                     title="Move down"
                   >
                     <ArrowDown className="h-3.5 w-3.5" />

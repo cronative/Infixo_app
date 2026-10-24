@@ -33,6 +33,7 @@ export function PwaInstallPrompt() {
   const [isStandalone] = useState(isStandaloneMode);
 
   useEffect(() => {
+    if (typeof window !== "undefined" && window.location.pathname.startsWith("/demo_creator")) return;
     // 1. Check if already installed / running in standalone PWA mode
     if (isStandalone) return;
 

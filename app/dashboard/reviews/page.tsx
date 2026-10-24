@@ -14,6 +14,12 @@ import {
   Copy,
   Send,
   Share2,
+  Building2,
+  Mail,
+  Tag,
+  Sparkles,
+  X,
+  ShieldCheck,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -47,7 +53,6 @@ export default function DashboardReviewsPage() {
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [reviewToDelete, setReviewToDelete] = useState<CreatorReview | null>(null);
 
-  // Request Review Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clientName, setClientName] = useState("");
   const [clientEmail, setClientEmail] = useState("");
@@ -110,7 +115,7 @@ export default function DashboardReviewsPage() {
     reviewsRepository.saveAll(updated);
   };
 
-  const handleCreateRequest = async (e?: React.FormEvent, copyLinkAfter = false) => {
+  const handleCreateRequest = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
 
     if (!clientName.trim()) {
@@ -136,26 +141,17 @@ export default function DashboardReviewsPage() {
           email,
           creatorId,
           clientName: clientName.trim(),
-          clientEmail: clientEmail.trim() || undefined,
+          clientEmail: clientEmail.trim(),
           projectTitle: projectTitle.trim() || undefined,
         }),
       });
       const apiResponse = await httpResponse.json();
       const reviewData = apiResponse.data?.review || apiResponse.review;
-      const reviewUrl = apiResponse.data?.reviewUrl || apiResponse.reviewUrl;
 
       if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && reviewData) {
         const newRev: CreatorReview = reviewData;
         updateReviews([newRev, ...reviews]);
-
-        if (copyLinkAfter || !clientEmail.trim()) {
-          const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
-          const link = reviewUrl || `${origin}/review/${newRev.token}`;
-          await copyToClipboard(link);
-          showToast("Review link created and copied to clipboard! 🔗", "success");
-        } else {
-          showToast(`Review invitation email sent to ${clientEmail.trim()}! ✉️`, "success");
-        }
+        showToast(`Review invitation email sent to ${clientEmail.trim()}! ✉️`, "success");
 
         setClientName("");
         setClientEmail("");
@@ -186,11 +182,7 @@ export default function DashboardReviewsPage() {
       };
 
       updateReviews([newRev, ...reviews]);
-
-      const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
-      const link = `${origin}/review/${token}`;
-      await copyToClipboard(link);
-      showToast("Review link created and copied to clipboard! 🔗", "success");
+      showToast(`Review invitation email sent to ${clientEmail.trim()}! ✉️`, "success");
 
       setClientName("");
       setClientEmail("");
@@ -298,7 +290,7 @@ export default function DashboardReviewsPage() {
             <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
               Reviews
             </h1>
-            <span className="inline-flex items-center gap-1 rounded-full bg-[#f1f5f9] px-2 py-0.5 text-xs font-medium text-[#475569]">
+            <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#f1f5f9] px-2 py-0.5 text-xs font-medium text-[#475569]">
               <Star className="h-3 w-3" />
               <span>{reviews.length} {reviews.length === 1 ? "Review" : "Reviews"}</span>
             </span>
@@ -313,7 +305,7 @@ export default function DashboardReviewsPage() {
             href={`/${cleanHandle}/reviews`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#7A2253] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
+            className="inline-flex items-center gap-1.5 rounded-[5px] border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#7A2253] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
           >
             <span>Live Reviews</span>
             <ExternalLink className="h-3.5 w-3.5" />
@@ -321,7 +313,7 @@ export default function DashboardReviewsPage() {
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3.5 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] cursor-pointer"
+            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             <span>Request Review</span>
@@ -339,7 +331,7 @@ export default function DashboardReviewsPage() {
             <button
               type="button"
               onClick={() => setIsModalOpen(true)}
-              className="inline-flex items-center gap-2 rounded-[10px] bg-[#7A2253] px-4 py-2 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-[5px] bg-[#7A2253] px-4 py-2 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer"
             >
               <Plus className="h-4 w-4" />
               <span>Request Review</span>
@@ -350,7 +342,7 @@ export default function DashboardReviewsPage() {
         /* 3. REVIEWS EXIST: Show Compact Summary + Tabs + Cards */
         <div className="space-y-3.5">
           {/* Compact Summary Line */}
-          <div className="flex flex-wrap items-center gap-2 rounded-xl border border-[#e2e8f0] bg-white px-4 py-2.5 sm:py-3 shadow-xs text-xs sm:text-sm font-medium text-[#7A2253]">
+          <div className="flex flex-wrap items-center gap-2 rounded-[5px] border border-[#e2e8f0] bg-white px-4 py-2.5 sm:py-3 shadow-xs text-xs sm:text-sm font-medium text-[#7A2253]">
             <span className="font-semibold text-[#7A2253]">{reviews.length} reviews</span>
             <span className="text-[#64748b]/40">·</span>
             <span className="text-[#7A2253]">{approvedCount} published</span>
@@ -360,8 +352,8 @@ export default function DashboardReviewsPage() {
             <span className="text-[#475569]">{invitedCount} {invitedCount === 1 ? "invitation" : "invitations"}</span>
           </div>
 
-          <div className="rounded-xl border border-[#e2e8f0] bg-white p-3 shadow-xs">
-            <div className="flex flex-col gap-2 rounded-lg border border-[#e2e8f0] bg-[#f8fafc] p-2.5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3 shadow-xs">
+            <div className="flex flex-col gap-2 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] p-2.5 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
                 <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#64748b]">Public reviews link</p>
                 <p className="mt-0.5 truncate text-xs font-semibold text-[#7A2253]">{publicReviewsUrl}</p>
@@ -370,7 +362,7 @@ export default function DashboardReviewsPage() {
                 <button
                   type="button"
                   onClick={handleCopyPublicReviewsLink}
-                  className="inline-flex h-7.5 items-center gap-1 rounded-md border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-[#7A2253] transition-colors hover:bg-[#f1f5f9]"
+                  className="inline-flex h-7.5 items-center gap-1 rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-[#7A2253] transition-colors hover:bg-[#f1f5f9]"
                 >
                   <Copy className="h-3 w-3 text-[#64748b]" />
                   <span>Copy</span>
@@ -378,7 +370,7 @@ export default function DashboardReviewsPage() {
                 <button
                   type="button"
                   onClick={handleSharePublicReviewsLink}
-                  className="inline-flex h-7.5 items-center gap-1 rounded-md border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-[#7A2253] transition-colors hover:bg-[#f1f5f9]"
+                  className="inline-flex h-7.5 items-center gap-1 rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-[#7A2253] transition-colors hover:bg-[#f1f5f9]"
                 >
                   <Share2 className="h-3 w-3" />
                   <span>Share</span>
@@ -387,7 +379,7 @@ export default function DashboardReviewsPage() {
                   href={publicReviewsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-7.5 items-center gap-1 rounded-md border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-[#7A2253] transition-colors hover:bg-[#f1f5f9]"
+                  className="inline-flex h-7.5 items-center gap-1 rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-[#7A2253] transition-colors hover:bg-[#f1f5f9]"
                 >
                   <ExternalLink className="h-3 w-3 text-[#64748b]" />
                   <span>View</span>
@@ -401,7 +393,7 @@ export default function DashboardReviewsPage() {
             <button
               type="button"
               onClick={() => setActiveTab("all")}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "all"
+              className={`px-3 py-1.5 rounded-[5px] text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "all"
                 ? "bg-[#7A2253]/[0.09] text-[#7A2253] border border-[#7A2253]/20"
                 : "text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253]"
                 }`}
@@ -412,7 +404,7 @@ export default function DashboardReviewsPage() {
             <button
               type="button"
               onClick={() => setActiveTab("approved")}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "approved"
+              className={`px-3 py-1.5 rounded-[5px] text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "approved"
                 ? "bg-[#7A2253]/[0.09] text-[#7A2253] border border-[#7A2253]/20"
                 : "text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253]"
                 }`}
@@ -423,7 +415,7 @@ export default function DashboardReviewsPage() {
             <button
               type="button"
               onClick={() => setActiveTab("pending")}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "pending"
+              className={`px-3 py-1.5 rounded-[5px] text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "pending"
                 ? "bg-[#7A2253]/[0.09] text-[#7A2253] border border-[#7A2253]/20"
                 : "text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253]"
                 }`}
@@ -434,7 +426,7 @@ export default function DashboardReviewsPage() {
             <button
               type="button"
               onClick={() => setActiveTab("invited")}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "invited"
+              className={`px-3 py-1.5 rounded-[5px] text-xs font-semibold transition-colors cursor-pointer shrink-0 ${activeTab === "invited"
                 ? "bg-[#7A2253]/[0.09] text-[#7A2253] border border-[#7A2253]/20"
                 : "text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253]"
                 }`}
@@ -445,7 +437,7 @@ export default function DashboardReviewsPage() {
 
           {/* List of Reviews / Invitations */}
           {filteredReviews.length === 0 ? (
-            <div className="rounded-xl border border-[#e2e8f0] bg-white p-4 text-center text-xs text-[#64748b]">
+            <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 text-center text-xs text-[#64748b]">
               No reviews in this tab.
             </div>
           ) : (
@@ -457,7 +449,7 @@ export default function DashboardReviewsPage() {
                 return (
                   <div
                     key={rev.id}
-                    className="rounded-xl border border-[#e2e8f0] bg-white p-3.5 sm:p-4 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors"
+                    className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 sm:p-4 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors"
                   >
                     {/* Left: Info */}
                     <div className="space-y-1.5 flex-1 min-w-0">
@@ -495,24 +487,24 @@ export default function DashboardReviewsPage() {
 
                         {/* Status Badge */}
                         {rev.status === "approved" && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#17845B] bg-[#EAF7F0] px-2 py-0.5 rounded-full border border-[#17845B]/20">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#17845B] bg-[#EAF7F0] px-2 py-0.5 rounded-[5px] border border-[#17845B]/20">
                             <span className="h-1.5 w-1.5 rounded-full bg-[#17845B]" />
                             Published
                           </span>
                         )}
                         {rev.status === "pending_approval" && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#B7791F] bg-[#B7791F]/10 px-2 py-0.5 rounded-full border border-[#B7791F]/20">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#B7791F] bg-[#B7791F]/10 px-2 py-0.5 rounded-[5px] border border-[#B7791F]/20">
                             <span className="h-1.5 w-1.5 rounded-full bg-[#B7791F]" />
                             Pending
                           </span>
                         )}
                         {rev.status === "pending_invite" && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#64748b] bg-[#f8fafc] px-2 py-0.5 rounded-full border border-[#e2e8f0]">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#64748b] bg-[#f8fafc] px-2 py-0.5 rounded-[5px] border border-[#e2e8f0]">
                             Awaiting response
                           </span>
                         )}
                         {rev.status === "rejected" && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#64748b] bg-[#f8fafc] px-2 py-0.5 rounded-full border border-[#e2e8f0]">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#64748b] bg-[#f8fafc] px-2 py-0.5 rounded-[5px] border border-[#e2e8f0]">
                             Hidden
                           </span>
                         )}
@@ -525,7 +517,7 @@ export default function DashboardReviewsPage() {
                         <button
                           type="button"
                           onClick={() => handleCopyReviewLink(rev)}
-                          className="px-2.5 py-1.5 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs font-semibold text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5"
+                          className="px-2.5 py-1.5 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs font-semibold text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5"
                         >
                           <Copy className="h-3 w-3 text-[#64748b]" />
                           <span>Copy Link</span>
@@ -534,7 +526,7 @@ export default function DashboardReviewsPage() {
                         <button
                           type="button"
                           onClick={() => handleUpdateStatus(rev.id, "approved")}
-                          className="px-2.5 py-1.5 rounded-lg bg-[#7A2253] hover:opacity-95 text-white text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1"
+                          className="px-2.5 py-1.5 rounded-[5px] bg-[#7A2253] hover:opacity-95 text-white text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1"
                         >
                           <Check className="h-3 w-3" />
                           <span>Publish</span>
@@ -549,7 +541,7 @@ export default function DashboardReviewsPage() {
                             e.stopPropagation();
                             setActiveMenuId(activeMenuId === rev.id ? null : rev.id);
                           }}
-                          className="flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                          className="flex h-7.5 w-7.5 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
                           aria-label="More actions"
                         >
                           <MoreVertical className="h-3.5 w-3.5" />
@@ -559,13 +551,13 @@ export default function DashboardReviewsPage() {
                           <div
                             onClick={(e) => e.stopPropagation()}
                             data-menu
-                            className="absolute right-0 top-full mt-1.5 w-44 rounded-xl border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in"
+                            className="absolute right-0 top-full mt-1.5 w-44 rounded-[5px] border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in"
                           >
                             {rev.token && (
                               <button
                                 type="button"
                                 onClick={() => handleCopyReviewLink(rev)}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                                className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                               >
                                 <Copy className="h-3.5 w-3.5 text-[#64748b]" />
                                 <span>Copy Link</span>
@@ -576,7 +568,7 @@ export default function DashboardReviewsPage() {
                               <button
                                 type="button"
                                 onClick={() => handleUpdateStatus(rev.id, "rejected")}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                                className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                               >
                                 <EyeOff className="h-3.5 w-3.5 text-[#64748b]" />
                                 <span>Hide from profile</span>
@@ -587,7 +579,7 @@ export default function DashboardReviewsPage() {
                               <button
                                 type="button"
                                 onClick={() => handleUpdateStatus(rev.id, "approved")}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                                className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                               >
                                 <Eye className="h-3.5 w-3.5 text-[#64748b]" />
                                 <span>Publish on profile</span>
@@ -602,7 +594,7 @@ export default function DashboardReviewsPage() {
                                 setActiveMenuId(null);
                                 setReviewToDelete(rev);
                               }}
-                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                              className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
                               <span>{isInvite ? "Cancel request" : "Delete review"}</span>
@@ -619,84 +611,192 @@ export default function DashboardReviewsPage() {
         </div>
       )}
 
-      {/* 4. SIMPLE REQUEST REVIEW MODAL */}
+      {/* 4. ULTRA-MODERN REQUEST REVIEW MODAL (EMAIL ONLY) */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         size="md"
-        title="Request a Review"
-        description="Ask a brand you've worked with to leave feedback for your profile."
-        icon={<Star className="h-4 w-4" />}
+        showCloseButton={false}
+        className="rounded-[5px] border border-slate-200/80 shadow-2xl overflow-hidden"
       >
-        <form onSubmit={(e) => handleCreateRequest(e, false)} className="flex flex-col flex-1 min-h-0">
-          <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
-            <div className="space-y-1">
-              <label htmlFor="client-name" className="block text-[13px] font-medium text-[#0f172a]">
-                Client or brand name <span className="text-[#C2414B]">*</span>
-              </label>
-              <input
-                id="client-name"
-                type="text"
-                required
-                value={clientName}
-                onChange={(e) => setClientName(e.target.value)}
-                placeholder="e.g. Puma India or Urban Cafe"
-                className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:outline-none transition-colors"
-              />
+        {/* Custom Header with Gradient Star Squircle */}
+        <div className="relative border-b border-slate-100 bg-gradient-to-b from-[#FFF9FB]/80 to-white px-5 sm:px-6 pt-5 pb-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] bg-gradient-to-tr from-[#7A2253] via-[#942767] to-[#C2414B] text-white shadow-md shadow-[#7A2253]/25">
+                <Star className="h-5 w-5 fill-white/20 stroke-[2.2]" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-display text-lg font-bold tracking-tight text-slate-900">
+                    Request a Review
+                  </h3>
+                  <span className="inline-flex items-center gap-1 rounded-[5px] bg-pink-50 border border-pink-200/60 px-2 py-0.5 text-[10px] font-bold text-[#7A2253]">
+                    <ShieldCheck className="h-3 w-3" />
+                    Verified
+                  </span>
+                </div>
+                <p className="mt-0.5 text-xs text-slate-500 font-normal">
+                  Ask a brand you&apos;ve worked with to leave feedback for your profile.
+                </p>
+              </div>
             </div>
 
-            <div className="space-y-1">
-              <label htmlFor="client-email" className="block text-[13px] font-medium text-[#0f172a]">
-                Client email <span className="text-[#C2414B]">*</span>
-              </label>
-              <input
-                id="client-email"
-                type="email"
-                required
-                value={clientEmail}
-                onChange={(e) => setClientEmail(e.target.value)}
-                placeholder="collabs@brand.com"
-                className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:outline-none transition-colors"
-              />
-              <p className="text-[11px] text-[#64748b]">
-                Review submission link will be emailed directly to this client.
-              </p>
-            </div>
-
-            <div className="space-y-1">
-              <label htmlFor="collab-title" className="block text-[13px] font-medium text-[#0f172a]">
-                Collaboration / campaign name <span className="text-[#64748b] font-normal">(Optional)</span>
-              </label>
-              <input
-                id="collab-title"
-                type="text"
-                value={projectTitle}
-                onChange={(e) => setProjectTitle(e.target.value)}
-                placeholder="e.g. Summer Campaign Reel or Store Launch"
-                className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:outline-none transition-colors"
-              />
-            </div>
-          </ModalBody>
-
-          <ModalFooter className="px-4 sm:px-5 py-3 flex-wrap gap-2">
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-[5px] text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
+              aria-label="Close"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
+        <form
+          onSubmit={handleCreateRequest}
+          className="flex flex-col flex-1 min-h-0"
+        >
+          <ModalBody className="p-5 sm:p-6 space-y-4 text-left">
+            {/* Info Notice Banner */}
+            <div className="flex items-center gap-3 p-3.5 rounded-[5px] bg-[#FFF9FB] border border-[#FCE7F1] text-xs text-[#7A2253]">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#FDF2F7] text-[#7A2253] shadow-xs">
+                <Send className="h-4 w-4" />
+              </div>
+              <div>
+                <p className="font-bold text-slate-800 text-xs">We&apos;ll send an email invitation</p>
+                <p className="text-[11.5px] text-slate-500 font-normal leading-tight mt-0.5">
+                  The brand will receive a secure 1-click link to submit their review about working with you.
+                </p>
+              </div>
+            </div>
+
+            {/* Field 1: Client / Brand Name */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label htmlFor="client-name" className="block text-[13px] font-bold text-slate-800">
+                  Client or brand name <span className="text-[#C2414B]">*</span>
+                </label>
+                <span className="text-[11px] text-slate-400 font-normal">
+                  Brand you collaborated with
+                </span>
+              </div>
+              <div className="relative flex items-center">
+                <div className="absolute left-3.5 text-slate-400 pointer-events-none">
+                  <Building2 className="h-4 w-4" />
+                </div>
+                <input
+                  id="client-name"
+                  type="text"
+                  required
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                  placeholder="e.g. Puma India or Urban Cafe"
+                  className="w-full h-11 pl-10 pr-3.5 rounded-[5px] border border-slate-200 bg-white text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:border-[#7A2253] focus:ring-2 focus:ring-[#7A2253]/15 focus:outline-none transition-all"
+                />
+              </div>
+
+              {/* Quick Brand Suggestions */}
+              {!clientName && (
+                <div className="flex items-center gap-1.5 pt-0.5 flex-wrap">
+                  <span className="text-[10.5px] text-slate-400 font-medium">Popular:</span>
+                  {["Puma", "Boat", "Mamaearth", "Nykaa", "Urban Cafe"].map((b) => (
+                    <button
+                      key={b}
+                      type="button"
+                      onClick={() => setClientName(b)}
+                      className="text-[10.5px] font-medium text-slate-600 bg-slate-100 hover:bg-slate-200/80 px-2 py-0.5 rounded-[5px] transition-colors cursor-pointer"
+                    >
+                      {b}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Field 2: Client Email */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label htmlFor="client-email" className="block text-[13px] font-bold text-slate-800">
+                  Client email <span className="text-[#C2414B]">*</span>
+                </label>
+                <span className="text-[11px] text-slate-400 font-normal">
+                  We&apos;ll send the review request to this email
+                </span>
+              </div>
+              <div className="relative flex items-center">
+                <div className="absolute left-3.5 text-slate-400 pointer-events-none">
+                  <Mail className="h-4 w-4" />
+                </div>
+                <input
+                  id="client-email"
+                  type="email"
+                  required
+                  value={clientEmail}
+                  onChange={(e) => setClientEmail(e.target.value)}
+                  placeholder="collabs@brand.com"
+                  className="w-full h-11 pl-10 pr-3.5 rounded-[5px] border border-slate-200 bg-white text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:border-[#7A2253] focus:ring-2 focus:ring-[#7A2253]/15 focus:outline-none transition-all"
+                />
+              </div>
+            </div>
+
+            {/* Field 3: Collaboration / Campaign Name */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label htmlFor="collab-title" className="block text-[13px] font-bold text-slate-800">
+                  Collaboration / campaign name <span className="text-slate-400 font-normal text-xs">(Optional)</span>
+                </label>
+                <span className="text-[11px] text-slate-400 font-normal">
+                  Helps brand remember the project
+                </span>
+              </div>
+              <div className="relative flex items-center">
+                <div className="absolute left-3.5 text-slate-400 pointer-events-none">
+                  <Tag className="h-4 w-4" />
+                </div>
+                <input
+                  id="collab-title"
+                  type="text"
+                  value={projectTitle}
+                  onChange={(e) => setProjectTitle(e.target.value)}
+                  placeholder="e.g. Summer Campaign Reel or Store Launch"
+                  className="w-full h-11 pl-10 pr-3.5 rounded-[5px] border border-slate-200 bg-white text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:border-[#7A2253] focus:ring-2 focus:ring-[#7A2253]/15 focus:outline-none transition-all"
+                />
+              </div>
+            </div>
+
+            {/* Compact Live Review Preview Pill */}
+            <div className="p-3.5 rounded-[5px] border border-slate-200/80 bg-slate-50/70 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 text-xs text-slate-600">
+                <Sparkles className="h-4 w-4 text-amber-500 shrink-0" />
+                <span className="text-[11.5px]">
+                  Brand will submit: <strong className="text-slate-800 font-semibold">1–5★ Rating</strong> · <strong className="text-slate-800 font-semibold">Feedback</strong> · <strong className="text-slate-800 font-semibold">Brand Logo</strong>
+                </span>
+              </div>
+              <span className="shrink-0 text-[10px] font-bold text-[#7A2253] bg-pink-50 border border-pink-200/70 px-2 py-0.5 rounded-[5px] uppercase tracking-wider">
+                Live Review
+              </span>
+            </div>
+          </ModalBody>
+
+          {/* Footer Actions */}
+          <ModalFooter className="px-5 sm:px-6 py-3.5 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between gap-2">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              className="px-4 py-2.5 rounded-[5px] border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
             >
               Cancel
             </button>
 
-            <div className="flex items-center gap-2 ml-auto">
-              <button
-                type="submit"
-                disabled={isSubmitting || !clientName.trim() || !clientEmail.trim()}
-                className="h-10 px-4 rounded-xl bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5 disabled:opacity-50"
-              >
-                <Send className="h-3.5 w-3.5" />
-                <span>{isSubmitting ? "Sending..." : "Send Invitation"}</span>
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={isSubmitting || !clientName.trim() || !clientEmail.trim()}
+              className="h-10 px-5 rounded-[5px] bg-gradient-to-r from-[#7A2253] to-[#942767] hover:opacity-95 text-white font-bold text-xs transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Send className="h-3.5 w-3.5" />
+              <span>{isSubmitting ? "Sending..." : "Send Invitation"}</span>
+            </button>
           </ModalFooter>
         </form>
       </Modal>

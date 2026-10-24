@@ -275,8 +275,8 @@ export default function AllSeriesClient() {
     : `https://inflixo.com/${cleanHandle}/series`;
 
   async function handleShareSeriesList() {
-    const title = `${profile.displayName || cleanHandle}'s Series & Playlists on Inflixo`;
-    const text = `Explore ${profile.displayName || cleanHandle}'s video series and playlists on Inflixo.`;
+    const title = `${profile.displayName || cleanHandle}'s Original Series & Shows on Inflixo`;
+    const text = `Watch ${profile.displayName || cleanHandle}'s original video series and playlists on Inflixo.`;
 
     try {
       if (typeof navigator !== "undefined" && navigator.share) {
@@ -293,11 +293,11 @@ export default function AllSeriesClient() {
 
 
   return (
-    <CreatorPublicShell themeKey={theme} hideFooter={true}>
+    <CreatorPublicShell themeKey={theme} fixedViewport={true}>
         <ThemeCard
           themeKey={theme}
           profile={profile}
-          socials={EMPTY_SOCIAL_ACCOUNTS}
+          socials={socials}
           series={series}
           customLinks={[]}
           mediaKitPackages={[]}
@@ -307,7 +307,7 @@ export default function AllSeriesClient() {
           containedScroll={false}
           seriesOpenMode="page"
           seriesOnlyMode
-          pageHeader={{ pageLabel: "Series", backHref: `/${cleanHandle}`, backLabel: "Back to profile" }}
+          pageHeader={{ pageLabel: "Shows & Series", backHref: `/${cleanHandle}`, backLabel: "Back to profile" }}
           onShare={handleShareSeriesList}
         />
     </CreatorPublicShell>

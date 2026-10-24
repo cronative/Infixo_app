@@ -77,7 +77,7 @@ export function PhotoUpload({
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="bg-[#7A2253]/[0.09] text-[#7A2253] hover:bg-brand-hover/15 text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#7A2253]/20 transition-colors cursor-pointer"
+        className="bg-[#7A2253]/[0.09] text-[#7A2253] hover:bg-brand-hover/15 text-xs font-semibold px-3 py-1.5 rounded-[5px] border border-[#7A2253]/20 transition-colors cursor-pointer"
       >
         {label ?? (value ? (isLandscape ? "Change poster" : "Change Profile Photo") : (isLandscape ? "Upload poster preview" : "Upload Profile Photo"))}
       </button>

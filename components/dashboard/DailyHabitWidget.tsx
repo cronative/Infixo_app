@@ -175,14 +175,14 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
   };
 
   return (
-    <div className="rounded-2xl border border-[#e2e8f0] bg-white p-5 sm:p-6 space-y-5 shadow-xs text-left">
+    <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-5 sm:p-6 space-y-5 shadow-xs text-left">
 
       {/* Top Banner: Daily Streak & Peak Posting Window */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#e2e8f0]">
 
         {/* Streak Counter */}
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#7A2253] text-white shadow-md animate-pulse shrink-0">
+          <div className="flex h-12 w-12 items-center justify-center rounded-[5px] bg-[#7A2253] text-white shadow-md animate-pulse shrink-0">
             <Flame className="h-6 w-6 fill-white" />
           </div>
           <div>
@@ -190,7 +190,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
               <span className="font-black text-lg text-[#7A2253]">
                 🔥 {streakCount}-Day Creator Streak
               </span>
-              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-[5px] bg-amber-50 text-amber-800 border border-amber-200">
                 Active
               </span>
             </div>
@@ -201,7 +201,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
         </div>
 
         {/* Peak Best Time to Post Badge */}
-        <div className="flex items-center gap-2.5 bg-[#f8fafc] px-3.5 py-2 rounded-xl border border-[#e2e8f0] shadow-xs shrink-0">
+        <div className="flex items-center gap-2.5 bg-[#f8fafc] px-3.5 py-2 rounded-[5px] border border-[#e2e8f0] shadow-xs shrink-0">
           <Clock className="h-4 w-4 text-[#7A2253]" />
           <div>
             <p className="text-[10px] font-extrabold uppercase tracking-wider text-[#64748b]">
@@ -239,11 +239,11 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
         {ideas.map((item, idx) => (
           <div
             key={item.id}
-            className="rounded-xl border border-[#e2e8f0] bg-white p-4 space-y-2.5 shadow-xs hover:border-[#cbd5e1] transition-all flex flex-col justify-between"
+            className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 space-y-2.5 shadow-xs hover:border-[#cbd5e1] transition-all flex flex-col justify-between"
           >
             <div className="space-y-1.5">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-[#7A225314] text-[#7A2253] border border-[#7A2253]/20">
+                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-[5px] bg-[#7A225314] text-[#7A2253] border border-[#7A2253]/20">
                   Idea #{idx + 1} • {item.category}
                 </span>
                 <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-0.5">
@@ -255,7 +255,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
                 {item.title}
               </h4>
 
-              <div className="p-2.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[11px] font-medium text-[#64748b] italic leading-relaxed">
+              <div className="p-2.5 rounded-[5px] bg-[#f8fafc] border border-[#e2e8f0] text-[11px] font-medium text-[#64748b] italic leading-relaxed">
                 &ldquo;{item.hook}&rdquo;
               </div>
             </div>
@@ -267,7 +267,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
               <button
                 type="button"
                 onClick={() => handleCopyHook(item)}
-                className="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#7A2253] hover:text-[#7A2253] bg-[#7A225314] border border-[#7A2253]/20 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#7A2253] hover:text-[#7A2253] bg-[#7A225314] border border-[#7A2253]/20 px-2.5 py-1 rounded-[5px] transition-colors cursor-pointer"
               >
                 {copiedId === item.id ? (
                   <>

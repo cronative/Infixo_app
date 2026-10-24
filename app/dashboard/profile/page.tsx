@@ -6,10 +6,12 @@ import Link from "next/link";
 import {
   Camera,
   Sparkles,
-  Lock,
   RefreshCw,
   UserRound,
   ExternalLink,
+  User,
+  FileText,
+  CheckCircle2,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -111,7 +113,7 @@ export default function DashboardProfilePage() {
             <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
               Profile
             </h1>
-            <span className="inline-flex items-center gap-1 rounded-full bg-[#f1f5f9] px-2 py-0.5 text-xs font-medium text-[#475569]">
+            <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#f1f5f9] px-2 py-0.5 text-xs font-medium text-[#475569]">
               <UserRound className="h-3 w-3" />
               <span>@{handleStr}</span>
             </span>
@@ -126,7 +128,7 @@ export default function DashboardProfilePage() {
             href={`/${handleStr}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#7A2253] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
+            className="inline-flex items-center gap-1.5 rounded-[5px] border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#7A2253] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
           >
             <span>Live Profile</span>
             <ExternalLink className="h-3.5 w-3.5" />
@@ -135,7 +137,7 @@ export default function DashboardProfilePage() {
             type="button"
             onClick={handleSave}
             disabled={submitting}
-            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#7A2253] px-4 py-2 text-xs font-bold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer disabled:opacity-60"
+            className="inline-flex items-center justify-center gap-1.5 rounded-[5px] bg-[#7A2253] px-4 py-2 text-xs font-bold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer disabled:opacity-60"
           >
             {submitting ? "Saving..." : "Save Changes"}
           </button>
@@ -143,25 +145,30 @@ export default function DashboardProfilePage() {
       </div>
 
       {/* SECTION 1 — PROFILE IDENTITY CARD */}
-      <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-xs space-y-4">
-        {/* Card Header with Live Badge */}
+      <section className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-xs space-y-4">
+        {/* Card Header with Icon Badge & Live Badge */}
         <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-sm sm:text-base font-semibold text-[#0f172a]">
-              Profile identity
-            </h2>
-            <p className="text-xs text-[#475569] font-normal mt-0.5">
-              This is how people will recognize you across Inflixo.
-            </p>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F3] text-[#7A2253] shrink-0">
+              <User className="h-5 w-5" />
+            </div>
+            <div>
+              <h2 className="text-sm sm:text-base font-semibold text-[#0f172a]">
+                Profile identity
+              </h2>
+              <p className="text-xs text-[#64748b] font-normal mt-0.5">
+                This is how people will recognize you across Inflixo.
+              </p>
+            </div>
           </div>
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#17845B] bg-[#EAF7F0] px-2.5 py-0.5 rounded-full border border-[#17845B]/20">
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#17845B] bg-[#EAF7F0] px-2.5 py-0.5 rounded-[5px] border border-[#17845B]/20">
             <span className="h-1.5 w-1.5 rounded-full bg-[#17845B]" />
             Live
           </span>
         </div>
 
         {/* 2-Column Desktop Structure */}
-        <div className="grid grid-cols-1 md:grid-cols-10 gap-5 items-start pt-0.5">
+        <div className="grid grid-cols-1 md:grid-cols-10 gap-5 items-start pt-1">
           {/* Left: Profile photo */}
           <div className="md:col-span-3 flex flex-col items-center sm:items-start text-center sm:text-left">
             <div className="relative group">
@@ -173,7 +180,7 @@ export default function DashboardProfilePage() {
                 fallbackBgClass="bg-[#f8fafc]"
               />
 
-              {/* Hover overlay */}
+              {/* Hover / Camera overlay button */}
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
@@ -184,17 +191,17 @@ export default function DashboardProfilePage() {
               </button>
             </div>
 
-            <div className="mt-2.5 space-y-1">
+            <div className="mt-3 space-y-1 w-full flex flex-col items-center sm:items-start">
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-[#f8fafc] hover:bg-[#f1f5f9] hover:text-[#7A2253] px-2.5 py-1 text-xs font-semibold text-[#7A2253] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] px-4 py-2 text-xs font-semibold text-[#7A2253] transition-colors cursor-pointer shadow-2xs"
               >
                 <Camera className="h-3.5 w-3.5" />
-                <span>{profile.photoDataUrl ? "Change Photo" : "Upload Photo"}</span>
+                <span>Upload Photo</span>
               </button>
-              <p className="text-[11px] text-[#475569] leading-tight">
-                Square JPG or PNG, up to 5MB.
+              <p className="text-[11px] text-[#64748b] leading-tight pt-0.5">
+                JPG or PNG, square (1:1), up to 5MB.
               </p>
             </div>
 
@@ -211,37 +218,52 @@ export default function DashboardProfilePage() {
           <div className="md:col-span-7 space-y-4">
             {/* Display Name Input */}
             <div>
-              <label className="block text-[13px] font-medium text-[#0f172a] mb-1.5">
-                Display name
+              <label className="block text-xs sm:text-[13px] font-semibold text-[#0f172a] mb-1.5">
+                Display name <span className="text-red-500">*</span>
               </label>
-              <input
-                type="text"
-                value={displayName}
-                placeholder="e.g. Nikunj Munjiyasara"
-                onChange={(e) => {
-                  updateProfile({ displayName: e.target.value });
-                  if (errors.displayName) setErrors((prev) => ({ ...prev, displayName: undefined }));
-                }}
-                className={`w-full h-9.5 sm:h-10 rounded-lg border px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:outline-none transition-colors ${errors.displayName
-                  ? "border-[#C2414B] bg-rose-50/20 focus:border-[#C2414B]"
-                  : "border-[#e2e8f0] bg-white focus:border-[#7A2253] focus:ring-2 focus:ring-[#7A2253]/10"
-                  }`}
-              />
+              <div
+                className={`flex items-center h-11 rounded-[5px] border overflow-hidden transition-colors ${
+                  errors.displayName
+                    ? "border-[#C2414B] bg-rose-50/20 focus-within:border-[#C2414B]"
+                    : "border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-1 focus-within:ring-[#7A2253]"
+                }`}
+              >
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                  <User className="h-4 w-4" />
+                </span>
+                <input
+                  type="text"
+                  value={displayName}
+                  placeholder="e.g. Rahul Sharma"
+                  onChange={(e) => {
+                    updateProfile({ displayName: e.target.value });
+                    if (errors.displayName) setErrors((prev) => ({ ...prev, displayName: undefined }));
+                  }}
+                  className="flex-1 h-full px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                />
+              </div>
               {errors.displayName ? (
                 <p className="text-xs font-medium text-[#C2414B] mt-1">{errors.displayName}</p>
               ) : (
-                <p className="text-[11px] text-[#64748b] mt-1">The name followers and brands will see.</p>
+                <p className="text-[11px] text-[#64748b] mt-1">This name will be visible to your followers and brands.</p>
               )}
             </div>
 
             {/* Profile URL */}
             <div>
-              <label className="block text-[13px] font-medium text-[#0f172a] mb-1.5">
-                Profile URL
+              <label className="block text-xs sm:text-[13px] font-semibold text-[#0f172a] mb-1.5">
+                Profile URL <span className="text-red-500">*</span>
               </label>
-              <div className="flex items-center justify-between h-9.5 sm:h-10 rounded-lg border border-[#e2e8f0] bg-[#f8fafc] px-3 text-xs sm:text-sm font-medium text-[#7A2253]">
-                <span className="truncate">inflixo.com/{handleStr}</span>
-                <Lock className="h-3.5 w-3.5 text-[#64748b] shrink-0" />
+              <div className="flex items-center h-11 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] overflow-hidden">
+                <span className="flex h-11 items-center px-3.5 border-r border-[#e2e8f0] bg-[#f1f5f9] text-xs sm:text-sm font-medium text-[#64748b] select-none">
+                  inflixo.com/
+                </span>
+                <div className="flex-1 px-3.5 h-full flex items-center text-xs sm:text-sm font-semibold text-[#0f172a]">
+                  {handleStr}
+                </div>
+                <span className="pr-3.5 flex items-center justify-center">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600 fill-emerald-50" />
+                </span>
               </div>
               <p className="text-[11px] text-[#64748b] mt-1">
                 Your unique Inflixo profile address.
@@ -252,7 +274,7 @@ export default function DashboardProfilePage() {
       </section>
 
       {/* SECTION 2 — CREATOR TYPE / PROFESSION CARD */}
-      <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-xs space-y-3.5">
+      <section className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-xs">
         <CategorySelect
           value={profile.category || null}
           customValue={profile.customCategory || ""}
@@ -269,47 +291,51 @@ export default function DashboardProfilePage() {
       </section>
 
       {/* SECTION 3 — ABOUT YOUR CONTENT */}
-      <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-xs space-y-3.5">
-        <div>
-          <h2 className="text-sm sm:text-base font-semibold text-[#0f172a]">
-            About your content
-          </h2>
-          <p className="text-xs text-[#475569] font-normal mt-0.5">
-            Help followers and brands understand what you create.
-          </p>
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <label className="block text-[13px] font-medium text-[#0f172a]">
-              Short bio
-            </label>
-
-            <div className="flex items-center gap-2.5">
-              <button
-                type="button"
-                onClick={handleSuggestBio}
-                className="inline-flex items-center gap-1 text-[11px] font-medium text-[#7A2253] bg-[#7A2253]/[0.08] hover:bg-brand-hover/15 border border-[#7A2253]/20 px-2 py-0.5 rounded-md transition-colors cursor-pointer"
-              >
-                <Sparkles className="h-3 w-3 text-[#7A2253]" />
-                <span>Suggest Bio</span>
-              </button>
-              <span className="text-[11px] text-[#64748b]">
-                {profile.bio ? profile.bio.length : 0} of 160
-              </span>
+      <section className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-xs space-y-3.5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F3] text-[#7A2253] shrink-0">
+              <FileText className="h-5 w-5" />
+            </div>
+            <div>
+              <h2 className="text-sm sm:text-base font-semibold text-[#0f172a]">
+                About your content
+              </h2>
+              <p className="text-xs text-[#64748b] font-normal mt-0.5">
+                Help followers and brands understand what you create.
+              </p>
             </div>
           </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handleSuggestBio}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#7A2253] bg-white hover:bg-[#FFF0F5] border border-[#e2e8f0] px-3 py-1.5 rounded-[5px] shadow-2xs transition-colors cursor-pointer"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-[#7A2253]" />
+              <span>Suggest Bio</span>
+            </button>
+            <span className="text-xs text-[#64748b] font-medium">
+              {profile.bio ? profile.bio.length : 0} / 160
+            </span>
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="block text-xs sm:text-[13px] font-semibold text-[#0f172a]">
+            Short bio <span className="text-red-500">*</span>
+          </label>
 
           <textarea
             rows={3}
             maxLength={160}
             value={profile.bio || ""}
-            placeholder="Tell people what you create and what they can expect from your content..."
+            placeholder="Write a clear introduction to your content and creator identity..."
             onChange={(e) => updateProfile({ bio: e.target.value })}
-            className={`w-full rounded-lg border p-3 text-xs sm:text-sm font-normal text-[#0f172a] placeholder:text-[#64748b]/50 focus:outline-none transition-colors resize-y min-h-[80px] ${errors.bio
-              ? "border-[#C2414B] bg-rose-50/20 focus:border-[#C2414B]"
-              : "border-[#e2e8f0] bg-white focus:border-[#7A2253] focus:ring-2 focus:ring-[#7A2253]/10"
-              }`}
+            className={`w-full rounded-[5px] border bg-white p-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:ring-1 focus:ring-[#7A2253] outline-none min-h-[88px] resize-y transition-colors ${
+              errors.bio ? "border-[#C2414B] bg-rose-50/20" : "border-[#e2e8f0]"
+            }`}
           />
           {errors.bio ? (
             <p className="text-xs font-medium text-[#C2414B]">{errors.bio}</p>
@@ -326,7 +352,7 @@ export default function DashboardProfilePage() {
         <button
           type="button"
           onClick={() => router.push("/dashboard")}
-          className="h-9 px-4 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs sm:text-sm font-medium text-[#475569] hover:text-[#7A2253] transition-colors cursor-pointer"
+          className="h-9 px-4 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs sm:text-sm font-medium text-[#475569] hover:text-[#7A2253] transition-colors cursor-pointer"
         >
           Cancel
         </button>
@@ -335,7 +361,7 @@ export default function DashboardProfilePage() {
           type="button"
           onClick={handleSave}
           disabled={submitting}
-          className="inline-flex items-center gap-1.5 h-9 px-5 rounded-lg bg-[#7A2253] hover:opacity-95 text-xs sm:text-sm font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 disabled:opacity-60"
+          className="inline-flex items-center gap-1.5 h-9 px-5 rounded-[5px] bg-[#7A2253] hover:bg-[#681B46] text-xs sm:text-sm font-semibold text-white transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 disabled:opacity-60"
         >
           {submitting ? (
             <>

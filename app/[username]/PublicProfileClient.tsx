@@ -78,6 +78,10 @@ export default function PublicProfileClient() {
   const params = useParams<{ username: string }>();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const rawTab = searchParams?.get("tab");
+  const initialTab = rawTab && ["about", "series", "fanbase", "links", "shop", "reviews", "work", "setup"].includes(rawTab)
+    ? (rawTab === "fanbase" ? "about" : (rawTab as any))
+    : "about";
   const { showToast } = useToast();
 
   const [profile, setProfile] = useState<CreatorProfile>(EMPTY_PROFILE);
@@ -727,7 +731,7 @@ export default function PublicProfileClient() {
   }
 
   return (
-    <CreatorPublicShell themeKey={effectiveTheme}>
+    <CreatorPublicShell themeKey={effectiveTheme} fixedViewport={true}>
         {/* Main Theme Profile Card (Renders Profile, Socials, Series, Services, Reviews & Custom Links) */}
         <ThemeCard
           themeKey={effectiveTheme}
@@ -748,10 +752,12 @@ export default function PublicProfileClient() {
           totalAudience={totalAudience}
           variant="full"
           containedScroll={false}
+          layoutMode="tabs"
+          initialTab={initialTab}
           seriesOpenMode="page"
-          seriesPreviewLimit={3}
+          seriesPreviewLimit={5}
           allSeriesHref={`/${handleStr.replace(/^@/, "")}/series`}
-          productsPreviewLimit={3}
+          productsPreviewLimit={handleStr.replace(/^@/, "") === "demo_creator" ? 9 : 6}
           allProductsHref={`/${handleStr.replace(/^@/, "")}/products`}
           reviewsPreviewLimit={3}
           allReviewsHref={`/${handleStr.replace(/^@/, "")}/reviews`}

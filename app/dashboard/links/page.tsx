@@ -48,7 +48,7 @@ export default function DashboardCustomLinksPage() {
         <div className="flex items-center gap-1 shrink-0">
           <Link
             href="/dashboard/socials"
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-xs font-medium text-[#475569] transition-colors hover:bg-[#f1f5f9] hover:text-[#0f172a]"
+            className="inline-flex h-9 items-center gap-1.5 rounded-[5px] px-3 text-xs font-medium text-[#475569] transition-colors hover:bg-[#f1f5f9] hover:text-[#0f172a]"
           >
             <span>Social accounts</span>
           </Link>
@@ -56,7 +56,7 @@ export default function DashboardCustomLinksPage() {
             href={`/${handleStr}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc]"
+            className="inline-flex h-9 items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc]"
           >
             <span>Live profile</span>
             <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
@@ -65,7 +65,7 @@ export default function DashboardCustomLinksPage() {
       </div>
 
       {/* 2. Plan usage — one compact row */}
-      <div className="rounded-xl border border-[#e2e8f0] bg-white px-3 sm:px-4 py-2.5">
+      <div className="rounded-[5px] border border-[#e2e8f0] bg-white px-3 sm:px-4 py-2.5">
         <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
           <p className="text-[#64748b]">
             <span className="font-semibold text-[#0f172a]">
@@ -83,16 +83,16 @@ export default function DashboardCustomLinksPage() {
           {linksCount >= maxLinks && !isUnlimited && (
             <Link
               href="/dashboard/subscription"
-              className="inline-flex items-center gap-1 rounded-lg border border-[#7A2253]/30 px-2.5 py-1 text-xs font-semibold text-[#7A2253] hover:bg-[#7A2253]/[0.06] transition-colors"
+              className="inline-flex items-center gap-1 rounded-[5px] border border-[#7A2253]/30 px-2.5 py-1 text-xs font-semibold text-[#7A2253] hover:bg-[#7A2253]/[0.06] transition-colors"
             >
               Upgrade
             </Link>
           )}
         </div>
         {!isUnlimited && (
-          <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-[#eef2f7]">
+          <div className="mt-2 h-1 w-full overflow-hidden rounded-[5px] bg-[#eef2f7]">
             <div
-              className={`h-full rounded-full transition-all duration-300 ${percentage >= 100 ? "bg-rose-500" : percentage >= 80 ? "bg-amber-500" : "bg-[#7A2253]"}`}
+              className={`h-full rounded-[5px] transition-all duration-300 ${percentage >= 100 ? "bg-rose-500" : percentage >= 80 ? "bg-amber-500" : "bg-[#7A2253]"}`}
               style={{ width: `${percentage}%` }}
             />
           </div>

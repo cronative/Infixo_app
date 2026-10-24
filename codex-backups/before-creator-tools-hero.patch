@@ -3347,7 +3347,7 @@ index 73463bd..eb400fc 100644
 +          </p>
  
 -            {/* Center Profile Preview Container */}
--            <div className="w-full max-w-[560px] rounded-[16px] border border-[#e2e8f0] bg-white p-4 relative z-10 space-y-3 shadow-md">
+-            <div className="w-full max-w-[560px] rounded-[5px] border border-[#e2e8f0] bg-white p-4 relative z-10 space-y-3 shadow-md">
 -              <div className="flex items-center justify-between bg-[#f8fafc] px-3.5 py-2 rounded-[8px] border border-[#e2e8f0]">
 -                <div className="flex items-center gap-1.5">
 -                  <span className="h-2.5 w-2.5 rounded-full bg-[#cbd5e1]" />
@@ -3717,7 +3717,7 @@ index 73463bd..eb400fc 100644
 +              {SERIES_STEPS.map((step, index) => (
 +                <div
 +                  key={step.title}
-+                  className="group relative overflow-hidden rounded-[16px] border border-[#e2e8f0] bg-[#f8fafc] p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#151933]/25 hover:bg-white hover:shadow-[0_18px_45px_rgba(21,25,51,0.09)]"
++                  className="group relative overflow-hidden rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#151933]/25 hover:bg-white hover:shadow-[0_18px_45px_rgba(21,25,51,0.09)]"
 +                >
 +                  <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#151933]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
 +                  <div className="flex items-start gap-4">
@@ -3810,7 +3810,7 @@ index 73463bd..eb400fc 100644
 -                </div>
 -              </div>
 +          <div className="mt-10 grid gap-5 md:grid-cols-2">
-+            <div className="rounded-[16px] border border-[#e2e8f0] bg-[#f8fafc] p-5 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-[#151933]/20 hover:shadow-[0_18px_45px_rgba(21,25,51,0.08)]">
++            <div className="rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] p-5 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-[#151933]/20 hover:shadow-[0_18px_45px_rgba(21,25,51,0.08)]">
 +              <h3 className="font-display text-base font-black text-[#151933]">Without Inflixo</h3>
 +              <ul className="mt-4 space-y-2 text-sm font-semibold text-[#64748b]">
 +                {["Part 1, Part 2 and Part 3 get lost in your feed", "New fans do not know where to start", "Old videos stop getting attention", "You keep sending many different links", "Fans open one video and miss the full series"].map((item) => (
@@ -3842,7 +3842,7 @@ index 73463bd..eb400fc 100644
 -                  <Check className="h-4 w-4 text-[#10b981] shrink-0" />
 -                  <span>Native YouTube &amp; Instagram views and ad revenue preserved</span>
 -                </li>
-+            <div className="group relative overflow-hidden rounded-[16px] border border-[#151933] bg-white p-5 text-left shadow-[0_18px_45px_rgba(21,25,51,0.10)] transition-all hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(21,25,51,0.14)]">
++            <div className="group relative overflow-hidden rounded-[5px] border border-[#151933] bg-white p-5 text-left shadow-[0_18px_45px_rgba(21,25,51,0.10)] transition-all hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(21,25,51,0.14)]">
 +              <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#151933]" aria-hidden="true" />
 +              <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-[#151933]/5 to-transparent opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" aria-hidden="true" />
 +              <h3 className="font-display text-base font-black text-[#151933]">With Inflixo</h3>
@@ -3975,7 +3975,7 @@ index 73463bd..eb400fc 100644
 -                  </span>
 +          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 +            {PILLARS.map((pillar) => (
-+              <div key={pillar.title} className="group rounded-[16px] border border-[#e2e8f0] bg-white p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#151933]/25 hover:shadow-[0_18px_45px_rgba(21,25,51,0.08)]">
++              <div key={pillar.title} className="group rounded-[5px] border border-[#e2e8f0] bg-white p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#151933]/25 hover:shadow-[0_18px_45px_rgba(21,25,51,0.08)]">
 +                <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[#151933] text-white transition-transform duration-300 group-hover:rotate-3">
 +                  <pillar.icon className="h-4 w-4" />
                  </div>
@@ -4138,7 +4138,7 @@ index 73463bd..eb400fc 100644
 -          {/* 3 Pricing Cards */}
 -          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
 -            {/* Plan 1: Starter (Regular Card) */}
--            <div className="p-6 rounded-[16px] border border-[#e2e8f0] bg-[#f8fafc] space-y-5 flex flex-col justify-between shadow-sm">
+-            <div className="p-6 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] space-y-5 flex flex-col justify-between shadow-sm">
 -              <div className="space-y-4">
 -                <div className="flex items-center justify-between">
 -                  <h4 className="font-display font-bold text-base text-[#151933]">Starter</h4>
@@ -4200,7 +4200,7 @@ index 73463bd..eb400fc 100644
 -            </div>
 -
 -            {/* Plan 2: Pro (Featured Card) */}
--            <div className="p-6 rounded-[16px] border-2 border-[#151933] bg-white space-y-5 flex flex-col justify-between relative shadow-[0_12px_30px_rgba(15,23,42,0.08)]">
+-            <div className="p-6 rounded-[5px] border-2 border-[#151933] bg-white space-y-5 flex flex-col justify-between relative shadow-[0_12px_30px_rgba(15,23,42,0.08)]">
 -              <div className="space-y-4">
 -                <div className="flex items-center justify-between">
 -                  <h4 className="font-display font-bold text-base text-[#151933]">Pro</h4>
@@ -4262,7 +4262,7 @@ index 73463bd..eb400fc 100644
 -            </div>
 -
 -            {/* Plan 3: VIP (Regular Card) */}
--            <div className="p-6 rounded-[16px] border border-[#e2e8f0] bg-[#f8fafc] space-y-5 flex flex-col justify-between shadow-sm">
+-            <div className="p-6 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] space-y-5 flex flex-col justify-between shadow-sm">
 -              <div className="space-y-4">
 -                <div className="flex items-center justify-between">
 -                  <h4 className="font-display font-bold text-base text-[#151933]">VIP</h4>
@@ -4330,7 +4330,7 @@ index 73463bd..eb400fc 100644
 +      </section>
  
 -          {/* Final Bottom CTA (Final CTA Section BG: #f1f5f9) */}
--          <div className="mt-8 sm:mt-10 rounded-[16px] border border-[#e2e8f0] bg-[#f1f5f9] p-6 sm:p-8 text-center space-y-5">
+-          <div className="mt-8 sm:mt-10 rounded-[5px] border border-[#e2e8f0] bg-[#f1f5f9] p-6 sm:p-8 text-center space-y-5">
 -            <div className="space-y-2 max-w-xl mx-auto">
 -              <h3 className="font-display text-2xl sm:text-4xl font-bold text-[#151933]">
 -                Your fanbase. Your content. Your work. One Inflixo link.
@@ -8252,7 +8252,7 @@ index 0000000..6d3cee7
 +-            borderColor: c.border,
 +-            boxShadow: eff.cardShadow,
 +-          }}
-+-          className="relative z-10 mt-8 rounded-[16px] p-5 sm:p-6 border text-center w-full shadow-xs"
++-          className="relative z-10 mt-8 rounded-[5px] p-5 sm:p-6 border text-center w-full shadow-xs"
 +-        >
 +-          <div className="space-y-1">
 ++        <div className="relative z-10 mt-5 sm:mt-6 w-full space-y-2.5">
@@ -8459,7 +8459,7 @@ index 0000000..6d3cee7
 +                 <div
 +@@ -1303,8 +1400,8 @@ export function LivePreviewCard({
 +                   }}
-+                   className="group rounded-[16px] border overflow-hidden transition-all hover:shadow-md cursor-pointer shadow-xs"
++                   className="group rounded-[5px] border overflow-hidden transition-all hover:shadow-md cursor-pointer shadow-xs"
 +                 >
 +-                  {/* Cover Image — 16:9, max 200px tall */}
 +-                  <div className="relative w-full aspect-video max-h-[200px] overflow-hidden bg-slate-900/5">
@@ -8629,7 +8629,7 @@ index 0000000..6d3cee7
 +                     borderColor: c.border,
 +                     boxShadow: eff.cardShadow,
 +                   }}
-+-                  className="rounded-[16px] border p-4 sm:p-5 space-y-2.5 text-left shadow-xs"
++-                  className="rounded-[5px] border p-4 sm:p-5 space-y-2.5 text-left shadow-xs"
 ++                  className="rounded-[14px] border p-3.5 sm:p-4 space-y-2 text-left shadow-xs"
 +                 >
 +                   <div className="flex items-center gap-1 text-amber-400">
@@ -10321,7 +10321,7 @@ index e188a23..44bbaac 100644
 -            borderColor: c.border,
 -            boxShadow: eff.cardShadow,
 -          }}
--          className="relative z-10 mt-8 rounded-[16px] p-5 sm:p-6 border text-center w-full shadow-xs"
+-          className="relative z-10 mt-8 rounded-[5px] p-5 sm:p-6 border text-center w-full shadow-xs"
 -        >
 -          <div className="space-y-1">
 +        <div className="relative z-10 mt-5 sm:mt-6 w-full space-y-2.5">
@@ -10537,7 +10537,7 @@ index e188a23..44bbaac 100644
                        window.location.href = seriesUrl;
 @@ -1303,8 +1444,8 @@ export function LivePreviewCard({
                    }}
-                   className="group rounded-[16px] border overflow-hidden transition-all hover:shadow-md cursor-pointer shadow-xs"
+                   className="group rounded-[5px] border overflow-hidden transition-all hover:shadow-md cursor-pointer shadow-xs"
                  >
 -                  {/* Cover Image — 16:9, max 200px tall */}
 -                  <div className="relative w-full aspect-video max-h-[200px] overflow-hidden bg-slate-900/5">
@@ -10716,7 +10716,7 @@ index e188a23..44bbaac 100644
                      borderColor: c.border,
                      boxShadow: eff.cardShadow,
                    }}
--                  className="rounded-[16px] border p-4 sm:p-5 space-y-2.5 text-left shadow-xs"
+-                  className="rounded-[5px] border p-4 sm:p-5 space-y-2.5 text-left shadow-xs"
 +                  className="rounded-[14px] border p-3.5 sm:p-4 space-y-2 text-left shadow-xs"
                  >
                    <div className="flex items-center gap-1 text-amber-400">

@@ -34,6 +34,8 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
     reviewsOnlyMode,
     pageHeader,
     onShare,
+    layoutMode,
+    initialTab,
   } = props;
   return (
     <LivePreviewCard
@@ -69,6 +71,8 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
       reviewsOnlyMode={reviewsOnlyMode}
       pageHeader={pageHeader}
       onShare={onShare}
+      layoutMode={layoutMode}
+      initialTab={initialTab}
     />
   );
 }

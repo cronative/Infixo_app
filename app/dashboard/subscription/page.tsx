@@ -155,7 +155,7 @@ export default function DashboardSubscriptionPage() {
     <div className="space-y-6 w-full pb-10 text-left relative">
       {/* Floating Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#181716] text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-2.5 text-xs font-semibold animate-in fade-in slide-in-from-bottom-2 duration-300">
+        <div className="fixed bottom-6 right-6 z-50 bg-[#181716] text-white px-4 py-3 rounded-[5px] shadow-xl flex items-center gap-2.5 text-xs font-semibold animate-in fade-in slide-in-from-bottom-2 duration-300">
           <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
           <span>{toastMessage}</span>
           <button
@@ -180,7 +180,7 @@ export default function DashboardSubscriptionPage() {
         </div>
 
         <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-          <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#EAF7F0] border border-[#17845B]/20 px-3 py-1.5 text-xs font-bold text-[#17845B]">
+          <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#EAF7F0] border border-[#17845B]/20 px-3 py-1.5 text-xs font-bold text-[#17845B]">
             <span className="h-2 w-2 rounded-full bg-[#17845B] animate-pulse" />
             {planName} {statusLabel}
           </span>
@@ -190,9 +190,9 @@ export default function DashboardSubscriptionPage() {
       {/* 2. FREE TRIAL 7-DAYS COUNTDOWN BANNER ("PATTI") */}
       {isFreeTrial && (
         isTrialExpired ? (
-          <div className="rounded-2xl border border-rose-300 bg-gradient-to-r from-rose-50 via-rose-50/60 to-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs text-left">
+          <div className="rounded-[5px] border border-rose-300 bg-gradient-to-r from-rose-50 via-rose-50/60 to-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs text-left">
             <div className="flex items-start sm:items-center gap-3.5">
-              <div className="h-10 w-10 rounded-xl bg-rose-100 border border-rose-300 flex items-center justify-center text-rose-600 shrink-0">
+              <div className="h-10 w-10 rounded-[5px] bg-rose-100 border border-rose-300 flex items-center justify-center text-rose-600 shrink-0">
                 <AlertTriangle className="h-5 w-5 text-rose-600 animate-pulse" />
               </div>
               <div className="space-y-0.5">
@@ -200,7 +200,7 @@ export default function DashboardSubscriptionPage() {
                   <h3 className="font-display text-sm sm:text-base font-bold text-rose-950">
                     🚨 7-Day Free Trial Ended (Profile is Private)
                   </h3>
-                  <span className="rounded-full bg-rose-200/80 border border-rose-300 text-rose-900 text-[10px] font-extrabold px-2.5 py-0.5 uppercase tracking-wide">
+                  <span className="rounded-[5px] bg-rose-200/80 border border-rose-300 text-rose-900 text-[10px] font-extrabold px-2.5 py-0.5 uppercase tracking-wide">
                     Action Required
                   </span>
                 </div>
@@ -214,7 +214,7 @@ export default function DashboardSubscriptionPage() {
               <button
                 type="button"
                 onClick={handleScrollToUpgrade}
-                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#7A2253] hover:opacity-95 active:scale-[0.99] text-white px-4 py-2.5 text-xs font-bold transition-all shadow-md shadow-[#7A2253]/20 cursor-pointer"
+                className="inline-flex items-center justify-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:opacity-95 active:scale-[0.99] text-white px-4 py-2.5 text-xs font-bold transition-all shadow-md shadow-[#7A2253]/20 cursor-pointer"
               >
                 <Sparkles className="h-3.5 w-3.5" />
                 <span>Choose a Plan</span>
@@ -222,9 +222,9 @@ export default function DashboardSubscriptionPage() {
             </div>
           </div>
         ) : (
-          <div className="rounded-2xl border border-amber-300 bg-gradient-to-r from-amber-50 via-amber-50/50 to-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs text-left">
+          <div className="rounded-[5px] border border-amber-300 bg-gradient-to-r from-amber-50 via-amber-50/50 to-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs text-left">
             <div className="flex items-start sm:items-center gap-3.5">
-              <div className="h-10 w-10 rounded-xl bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-600 shrink-0">
+              <div className="h-10 w-10 rounded-[5px] bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-600 shrink-0">
                 <Zap className="h-5 w-5 fill-amber-500 text-amber-600 animate-pulse" />
               </div>
               <div className="space-y-0.5">
@@ -232,7 +232,7 @@ export default function DashboardSubscriptionPage() {
                   <h3 className="font-display text-sm sm:text-base font-bold text-amber-950">
                     ⚡ {dayText} left in your Free Trial
                   </h3>
-                  <span className="rounded-full bg-amber-200/80 border border-amber-300 text-amber-900 text-[10px] font-extrabold px-2.5 py-0.5 uppercase tracking-wide">
+                  <span className="rounded-[5px] bg-amber-200/80 border border-amber-300 text-amber-900 text-[10px] font-extrabold px-2.5 py-0.5 uppercase tracking-wide">
                     {daysLeft} Days Remaining
                   </span>
                 </div>
@@ -246,7 +246,7 @@ export default function DashboardSubscriptionPage() {
               <button
                 type="button"
                 onClick={handleScrollToUpgrade}
-                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#7A2253] hover:opacity-95 active:scale-[0.99] text-white px-4 py-2.5 text-xs font-bold transition-all shadow-md shadow-[#7A2253]/20 cursor-pointer"
+                className="inline-flex items-center justify-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:opacity-95 active:scale-[0.99] text-white px-4 py-2.5 text-xs font-bold transition-all shadow-md shadow-[#7A2253]/20 cursor-pointer"
               >
                 <Sparkles className="h-3.5 w-3.5" />
                 <span>Upgrade Plan</span>
@@ -257,18 +257,18 @@ export default function DashboardSubscriptionPage() {
       )}
 
       {/* 3. ACTIVE PLAN DETAILS CARD (PLAN K ANDAR KI DETAILS) */}
-      <section className="rounded-2xl border-2 border-[#7A2253]/20 bg-white shadow-xs overflow-hidden text-left">
+      <section className="rounded-[5px] border-2 border-[#7A2253]/20 bg-white shadow-xs overflow-hidden text-left">
         {/* Card Header Banner */}
         <div className="bg-gradient-to-r from-[#7A2253]/[0.07] via-[#7A2253]/[0.03] to-transparent p-5 sm:p-6 border-b border-[#e2e8f0]">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1.5">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#7A2253] text-white px-3 py-0.5 text-[11px] font-bold uppercase tracking-wider shadow-xs">
+                <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] text-white px-3 py-0.5 text-[11px] font-bold uppercase tracking-wider shadow-xs">
                   <ShieldCheck className="h-3.5 w-3.5" />
                   Active Plan
                 </span>
                 <span
-                  className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${
+                  className={`inline-flex items-center gap-1 rounded-[5px] px-2.5 py-0.5 text-[10px] font-bold uppercase ${
                     isAutoRenewActive
                       ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
                       : isTrial
@@ -289,7 +289,7 @@ export default function DashboardSubscriptionPage() {
                 <h2 className="font-display text-2xl sm:text-3xl font-semibold text-[#0f172a]">
                   Inflixo {planName}
                 </h2>
-                <span className="text-sm font-bold text-[#181716] bg-white border border-[#E4DAD5] px-3 py-1 rounded-lg shadow-2xs">
+                <span className="text-sm font-bold text-[#181716] bg-white border border-[#E4DAD5] px-3 py-1 rounded-[5px] shadow-2xs">
                   {activePriceDisplay}
                 </span>
               </div>
@@ -303,7 +303,7 @@ export default function DashboardSubscriptionPage() {
 
             {/* Quick Summary Badges */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 shrink-0">
-              <div className="rounded-xl border border-[#e2e8f0] bg-white p-3 shadow-2xs">
+              <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3 shadow-2xs">
                 <div className="flex items-center gap-1 text-[10px] font-bold uppercase text-[#64748b]">
                   <CalendarClock className="h-3.5 w-3.5 text-[#7A2253]" />
                   <span>Valid Until</span>
@@ -314,7 +314,7 @@ export default function DashboardSubscriptionPage() {
               </div>
 
               <div
-                className={`rounded-xl border p-3 shadow-2xs ${
+                className={`rounded-[5px] border p-3 shadow-2xs ${
                   isAutoRenewActive
                     ? "border-emerald-200 bg-emerald-50/40"
                     : "border-[#e2e8f0] bg-white"
@@ -333,7 +333,7 @@ export default function DashboardSubscriptionPage() {
                 </p>
               </div>
 
-              <div className="rounded-xl border border-[#e2e8f0] bg-white p-3 shadow-2xs col-span-2 sm:col-span-1">
+              <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3 shadow-2xs col-span-2 sm:col-span-1">
                 <div className="flex items-center gap-1 text-[10px] font-bold uppercase text-[#64748b]">
                   <ShieldCheck className="h-3.5 w-3.5 text-[#17845B]" />
                   <span>Billing Cycle</span>
@@ -353,13 +353,13 @@ export default function DashboardSubscriptionPage() {
               Included in Your Active Plan
             </span>
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
-              <div className="p-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] space-y-1">
+              <div className="p-3 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] space-y-1">
                 <span className="text-[11px] text-[#64748b] font-medium block">Content Series</span>
                 <span className="font-bold text-[#7A2253] text-sm">
                   {quota.maxSeries === Infinity ? "Unlimited" : `${quota.maxSeries} Series`}
                 </span>
               </div>
-              <div className="p-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] space-y-1">
+              <div className="p-3 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] space-y-1">
                 <span className="text-[11px] text-[#64748b] font-medium block">Shop Products</span>
                 <span className="font-bold text-[#7A2253] text-sm">
                   {quota.maxProducts === Infinity
@@ -367,7 +367,7 @@ export default function DashboardSubscriptionPage() {
                     : `${quota.maxProducts} ${quota.maxProducts === 1 ? "Product" : "Products"}`}
                 </span>
               </div>
-              <div className="p-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] space-y-1">
+              <div className="p-3 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] space-y-1">
                 <span className="text-[11px] text-[#64748b] font-medium block">Episodes / Series</span>
                 <span className="font-bold text-[#7A2253] text-sm">
                   {quota.maxEpisodesPerSeries === Infinity
@@ -375,13 +375,13 @@ export default function DashboardSubscriptionPage() {
                     : `${quota.maxEpisodesPerSeries} Episodes`}
                 </span>
               </div>
-              <div className="p-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] space-y-1">
+              <div className="p-3 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] space-y-1">
                 <span className="text-[11px] text-[#64748b] font-medium block">Custom Links</span>
                 <span className="font-bold text-[#7A2253] text-sm">
                   {quota.maxCustomLinks === Infinity ? "Unlimited" : `${quota.maxCustomLinks} Links`}
                 </span>
               </div>
-              <div className="p-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] space-y-1 col-span-2 sm:col-span-1">
+              <div className="p-3 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] space-y-1 col-span-2 sm:col-span-1">
                 <span className="text-[11px] text-[#64748b] font-medium block">Media Kit &amp; Rate Card</span>
                 <span className="font-bold text-[#7A2253] text-sm">
                   {quota.hasMediaKit && quota.hasRateCard
@@ -401,7 +401,7 @@ export default function DashboardSubscriptionPage() {
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {/* Metric 1: Content Series */}
-              <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
+              <div className="rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-[#475569] flex items-center gap-1.5">
                     <Layers className="h-3.5 w-3.5 text-[#7A2253]" />
@@ -411,9 +411,9 @@ export default function DashboardSubscriptionPage() {
                     {seriesUsage.current} of {seriesUsage.max === Infinity ? "Unlimited" : seriesUsage.max}
                   </span>
                 </div>
-                <div className="w-full bg-[#e2e8f0] h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-[#e2e8f0] h-2 rounded-[5px] overflow-hidden">
                   <div
-                    className="bg-[#7A2253] h-full rounded-full transition-all"
+                    className="bg-[#7A2253] h-full rounded-[5px] transition-all"
                     style={{ width: `${Math.min(100, seriesUsage.percentage)}%` }}
                   />
                 </div>
@@ -425,7 +425,7 @@ export default function DashboardSubscriptionPage() {
               </div>
 
               {/* Metric 2: Total Episodes */}
-              <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
+              <div className="rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-[#475569] flex items-center gap-1.5">
                     <Film className="h-3.5 w-3.5 text-[#7A2253]" />
@@ -435,9 +435,9 @@ export default function DashboardSubscriptionPage() {
                     {episodeUsage.current} of {episodeUsage.max === Infinity ? "Unlimited" : episodeUsage.max}
                   </span>
                 </div>
-                <div className="w-full bg-[#e2e8f0] h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-[#e2e8f0] h-2 rounded-[5px] overflow-hidden">
                   <div
-                    className="bg-[#7A2253] h-full rounded-full transition-all"
+                    className="bg-[#7A2253] h-full rounded-[5px] transition-all"
                     style={{ width: `${Math.min(100, episodeUsage.percentage)}%` }}
                   />
                 </div>
@@ -449,7 +449,7 @@ export default function DashboardSubscriptionPage() {
               </div>
 
               {/* Metric 3: Shop Products */}
-              <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
+              <div className="rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-[#475569] flex items-center gap-1.5">
                     <ShoppingBag className="h-3.5 w-3.5 text-[#7A2253]" />
@@ -459,9 +459,9 @@ export default function DashboardSubscriptionPage() {
                     {productUsage.current} of {productUsage.max === Infinity ? "Unlimited" : productUsage.max}
                   </span>
                 </div>
-                <div className="w-full bg-[#e2e8f0] h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-[#e2e8f0] h-2 rounded-[5px] overflow-hidden">
                   <div
-                    className="bg-[#7A2253] h-full rounded-full transition-all"
+                    className="bg-[#7A2253] h-full rounded-[5px] transition-all"
                     style={{ width: `${Math.min(100, productUsage.percentage)}%` }}
                   />
                 </div>
@@ -473,7 +473,7 @@ export default function DashboardSubscriptionPage() {
               </div>
 
               {/* Metric 4: Collab Packages */}
-              <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
+              <div className="rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-[#475569] flex items-center gap-1.5">
                     <Briefcase className="h-3.5 w-3.5 text-[#7A2253]" />
@@ -483,9 +483,9 @@ export default function DashboardSubscriptionPage() {
                     {gigUsage.current} of {gigUsage.max === Infinity ? "Unlimited" : gigUsage.max}
                   </span>
                 </div>
-                <div className="w-full bg-[#e2e8f0] h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-[#e2e8f0] h-2 rounded-[5px] overflow-hidden">
                   <div
-                    className="bg-[#7A2253] h-full rounded-full transition-all"
+                    className="bg-[#7A2253] h-full rounded-[5px] transition-all"
                     style={{ width: `${Math.min(100, gigUsage.percentage)}%` }}
                   />
                 </div>
@@ -500,7 +500,7 @@ export default function DashboardSubscriptionPage() {
 
           {/* 3. PROMINENT ACTION BAR: DO YOU WANT TO UPGRADE & CANCEL BUTTON */}
           <div className="pt-4 border-t border-[#e2e8f0]">
-            <div className="rounded-2xl border-2 border-[#7A2253] bg-gradient-to-r from-[#7A2253]/[0.08] via-[#7A2253]/[0.03] to-white p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
+            <div className="rounded-[5px] border-2 border-[#7A2253] bg-gradient-to-r from-[#7A2253]/[0.08] via-[#7A2253]/[0.03] to-white p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
               <div className="space-y-1">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-[#7A2253]">
                   <Sparkles className="h-4 w-4 text-[#7A2253]" />
@@ -519,7 +519,7 @@ export default function DashboardSubscriptionPage() {
                   <button
                     type="button"
                     onClick={handleScrollToUpgrade}
-                    className="rounded-xl bg-[#7A2253] hover:opacity-95 active:scale-[0.99] text-white py-2.5 px-5 text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-[#7A2253]/20"
+                    className="rounded-[5px] bg-[#7A2253] hover:opacity-95 active:scale-[0.99] text-white py-2.5 px-5 text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-[#7A2253]/20"
                   >
                     <Sparkles className="h-4 w-4" />
                     <span>Upgrade Plan</span>
@@ -532,7 +532,7 @@ export default function DashboardSubscriptionPage() {
                   <button
                     type="button"
                     onClick={() => setShowCancelModal(true)}
-                    className="rounded-lg py-2 px-3 text-xs font-medium text-[#64748b] underline-offset-2 transition-colors hover:bg-[#fef2f2] hover:text-rose-700 cursor-pointer flex items-center justify-center gap-1.5"
+                    className="rounded-[5px] py-2 px-3 text-xs font-medium text-[#64748b] underline-offset-2 transition-colors hover:bg-[#fef2f2] hover:text-rose-700 cursor-pointer flex items-center justify-center gap-1.5"
                   >
                     <XCircle className="h-3.5 w-3.5" />
                     <span>Cancel Auto-Renewal</span>
@@ -541,7 +541,7 @@ export default function DashboardSubscriptionPage() {
 
                 {/* If already cancelled or trial */}
                 {!isTrial && !isAutoRenewActive && (
-                  <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-2 rounded-xl flex items-center gap-1.5">
+                  <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-2 rounded-[5px] flex items-center gap-1.5">
                     <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
                     <span>Auto-renewal cancelled</span>
                   </span>
@@ -580,17 +580,17 @@ export default function DashboardSubscriptionPage() {
       {/* 5. CANCEL SUBSCRIPTION CONFIRMATION MODAL */}
       {showCancelModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md rounded-2xl border border-[#E4DAD5] bg-white p-6 shadow-2xl space-y-4 text-left">
+          <div className="relative w-full max-w-md rounded-[5px] border border-[#E4DAD5] bg-white p-6 shadow-2xl space-y-4 text-left">
             <button
               type="button"
               onClick={() => setShowCancelModal(false)}
-              className="absolute top-4 right-4 text-[#64748b] hover:text-[#181716] p-1 rounded-lg"
+              className="absolute top-4 right-4 text-[#64748b] hover:text-[#181716] p-1 rounded-[5px]"
             >
               <X className="h-4 w-4" />
             </button>
 
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 shrink-0">
+              <div className="h-10 w-10 rounded-[5px] bg-rose-100 flex items-center justify-center text-rose-600 shrink-0">
                 <AlertTriangle className="h-5 w-5" />
               </div>
               <div>
@@ -603,7 +603,7 @@ export default function DashboardSubscriptionPage() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-rose-100 bg-rose-50/60 p-3.5 text-xs text-rose-900 space-y-1.5">
+            <div className="rounded-[5px] border border-rose-100 bg-rose-50/60 p-3.5 text-xs text-rose-900 space-y-1.5">
               <p className="font-semibold">Here is what will happen:</p>
               <ul className="list-disc list-inside space-y-1 text-[11px] text-rose-800">
                 <li>
@@ -623,7 +623,7 @@ export default function DashboardSubscriptionPage() {
                 type="button"
                 onClick={() => setShowCancelModal(false)}
                 disabled={isCancelling}
-                className="rounded-xl border border-[#E4DAD5] bg-white hover:bg-[#fbfbfb] px-4 py-2 text-xs font-semibold text-[#181716] cursor-pointer"
+                className="rounded-[5px] border border-[#E4DAD5] bg-white hover:bg-[#fbfbfb] px-4 py-2 text-xs font-semibold text-[#181716] cursor-pointer"
               >
                 Keep My Subscription
               </button>
@@ -632,7 +632,7 @@ export default function DashboardSubscriptionPage() {
                 type="button"
                 onClick={handleConfirmCancel}
                 disabled={isCancelling}
-                className="rounded-xl bg-rose-600 hover:bg-rose-700 active:scale-[0.99] text-white px-4 py-2 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5"
+                className="rounded-[5px] bg-rose-600 hover:bg-rose-700 active:scale-[0.99] text-white px-4 py-2 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5"
               >
                 {isCancelling ? (
                   <>

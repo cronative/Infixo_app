@@ -9,15 +9,32 @@ import {
   Trash2,
   Eye,
   EyeOff,
-  ExternalLink,
   Search,
   Camera,
   Mic,
-  Lightbulb,
+  Sun,
   Sparkles,
   Layers,
-  UploadCloud,
   X,
+  Briefcase,
+  Tag,
+  Building2,
+  List,
+  Link as LinkIcon,
+  ExternalLink,
+  FileText,
+  Globe,
+  Disc,
+  Compass,
+  Sliders,
+  MonitorPlay,
+  PenTool,
+  Headphones,
+  BarChart2,
+  Calendar,
+  Cloud,
+  ShoppingBag,
+  MoreHorizontal,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -76,6 +93,12 @@ const CATEGORY_GROUPS: { label: string; categories: CreatorSetupCategory[] }[] =
   },
 ];
 
+function getCategoryDisplayLabel(category: string): string {
+  if (category === "Mic") return "Microphone";
+  if (category === "Light") return "Lighting";
+  return category;
+}
+
 function getCategoryIcon(category: string) {
   switch (category) {
     case "Camera / Phone":
@@ -83,21 +106,121 @@ function getCategoryIcon(category: string) {
     case "Drone":
       return Camera;
     case "Mic":
+    case "Microphone":
     case "Audio Tool":
       return Mic;
     case "Light":
-      return Lightbulb;
+    case "Lighting":
+      return Sun;
+    case "Tripod / Stand":
+      return Compass;
+    case "Gimbal / Stabilizer":
+      return Sliders;
     case "AI Tool":
       return Sparkles;
     case "Editing Software":
-    case "Design Tool":
-    case "Analytics Tool":
-    case "Scheduling Tool":
       return Laptop;
+    case "Design Tool":
+      return PenTool;
+    case "Analytics Tool":
+      return BarChart2;
+    case "Scheduling Tool":
+      return Calendar;
+    case "Storage / Backup":
+      return Cloud;
+    case "Studio / Accessory":
+      return ShoppingBag;
     default:
       return Layers;
   }
 }
+
+const DEFAULT_SETUP_ITEMS: CreatorSetupItem[] = [
+  {
+    id: "setup_sony_a73",
+    creatorId: "demo",
+    category: "Camera / Phone",
+    name: "A7 III",
+    brand: "SONY",
+    modelOrPlan: "2023",
+    usedFor: "shoot the video",
+    note: "Best camera for vlogging and cinematic shots.",
+    linkUrl: "https://amazon.com",
+    imageUrl: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&auto=format&fit=crop&q=80",
+    sortOrder: 0,
+    isActive: true,
+  },
+  {
+    id: "setup_rode_mic",
+    creatorId: "demo",
+    category: "Microphone",
+    name: "VideoMic Pro",
+    brand: "RØDE",
+    modelOrPlan: "2023",
+    usedFor: "clear audio recording",
+    note: "Great mic for outdoor and indoor shoots.",
+    linkUrl: "https://amazon.com",
+    imageUrl: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=400&auto=format&fit=crop&q=80",
+    sortOrder: 1,
+    isActive: true,
+  },
+  {
+    id: "setup_manfrotto",
+    creatorId: "demo",
+    category: "Tripod / Stand",
+    name: "Tripod",
+    brand: "Manfrotto",
+    modelOrPlan: "2022",
+    usedFor: "stable shots",
+    note: "Perfect for travel and studio setups.",
+    linkUrl: "https://amazon.com",
+    imageUrl: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=400&auto=format&fit=crop&q=80",
+    sortOrder: 2,
+    isActive: true,
+  },
+  {
+    id: "setup_godox",
+    creatorId: "demo",
+    category: "Lighting",
+    name: "LED SL60W",
+    brand: "Godox",
+    modelOrPlan: "2022",
+    usedFor: "lighting setup",
+    note: "Budget friendly and powerful light.",
+    linkUrl: "https://amazon.com",
+    imageUrl: "https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=400&auto=format&fit=crop&q=80",
+    sortOrder: 3,
+    isActive: true,
+  },
+  {
+    id: "setup_premiere",
+    creatorId: "demo",
+    category: "Editing Software",
+    name: "Premiere Pro",
+    brand: "Adobe",
+    modelOrPlan: "2023",
+    usedFor: "video editing",
+    note: "My main editing software for all videos.",
+    linkUrl: "https://adobe.com",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/4/40/Adobe_Premiere_Pro_CC_icon.svg",
+    sortOrder: 4,
+    isActive: true,
+  },
+  {
+    id: "setup_chatgpt",
+    creatorId: "demo",
+    category: "AI Tool",
+    name: "ChatGPT",
+    brand: "OpenAI",
+    modelOrPlan: "2024",
+    usedFor: "content ideas, scripts",
+    note: "Helps me with ideation and script writing.",
+    linkUrl: "https://chatgpt.com",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg",
+    sortOrder: 5,
+    isActive: true,
+  },
+];
 
 export default function DashboardSetupPage() {
   const { profile } = useCreator();
@@ -127,54 +250,46 @@ export default function DashboardSetupPage() {
 
   const creatorLookup = profile.id || profile.email || profile.username;
 
-  const loadSetupItems = async () => {
-    if (!creatorLookup) return;
-    setLoading(true);
-    try {
-      const httpResponse = await fetch(
-        `/api/creator/setup?creatorId=${encodeURIComponent(creatorLookup)}`
-      );
-      const apiResponse = await httpResponse.json();
-      const items = apiResponse.data?.items || apiResponse.items;
-
-      if (apiResponse.status === 1 && Array.isArray(items)) {
-        setItems(items);
-        creatorSetupRepository.saveAll(items);
-      } else {
-        const local = creatorSetupRepository.getAll();
-        setItems(local);
-      }
-    } catch {
-      const local = creatorSetupRepository.getAll();
-      setItems(local);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    if (!creatorLookup) return;
-
     let cancelled = false;
 
-    fetch(`/api/creator/setup?creatorId=${encodeURIComponent(creatorLookup)}`)
-      .then((httpResponse) => httpResponse.json())
-      .then((apiResponse) => {
-        if (cancelled) return;
-        const items = apiResponse.data?.items || apiResponse.items;
-        if (apiResponse.status === 1 && Array.isArray(items)) {
-          setItems(items);
-          creatorSetupRepository.saveAll(items);
-          return;
+    const load = async () => {
+      setLoading(true);
+      try {
+        if (creatorLookup) {
+          const httpResponse = await fetch(
+            `/api/creator/setup?creatorId=${encodeURIComponent(creatorLookup)}`
+          );
+          const apiResponse = await httpResponse.json();
+          const fetchedItems = apiResponse.data?.items || apiResponse.items;
+
+          if (!cancelled && apiResponse.status === 1 && Array.isArray(fetchedItems) && fetchedItems.length > 0) {
+            setItems(fetchedItems);
+            creatorSetupRepository.saveAll(fetchedItems);
+            return;
+          }
         }
-        setItems(creatorSetupRepository.getAll());
-      })
-      .catch(() => {
-        if (!cancelled) setItems(creatorSetupRepository.getAll());
-      })
-      .finally(() => {
+
+        const local = creatorSetupRepository.getAll();
+        if (!cancelled) {
+          const finalItems = local.length > 0 ? local : DEFAULT_SETUP_ITEMS;
+          setItems(finalItems);
+          if (local.length === 0) {
+            creatorSetupRepository.saveAll(DEFAULT_SETUP_ITEMS);
+          }
+        }
+      } catch {
+        const local = creatorSetupRepository.getAll();
+        if (!cancelled) {
+          const finalItems = local.length > 0 ? local : DEFAULT_SETUP_ITEMS;
+          setItems(finalItems);
+        }
+      } finally {
         if (!cancelled) setLoading(false);
-      });
+      }
+    };
+
+    load();
 
     return () => {
       cancelled = true;
@@ -217,7 +332,9 @@ export default function DashboardSetupPage() {
       return;
     }
 
-    resizeImageToDataUrl(file, 800).then(setImageUrl).catch(() => showToast("Could not read that image.", "error"));
+    resizeImageToDataUrl(file, 800)
+      .then(setImageUrl)
+      .catch(() => showToast("Could not read that image.", "error"));
   };
 
   const handleSaveItem = async (e: React.FormEvent) => {
@@ -233,8 +350,9 @@ export default function DashboardSetupPage() {
 
     setIsSubmitting(true);
     try {
-      const payloadItem = {
-        id: editingItem?.id,
+      const newItem: CreatorSetupItem = {
+        id: editingItem?.id || `setup_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+        creatorId: creatorLookup || "anonymous",
         category,
         name: name.trim(),
         brand: brand.trim() || undefined,
@@ -242,56 +360,35 @@ export default function DashboardSetupPage() {
         usedFor: usedFor.trim() || undefined,
         note: note.trim() || undefined,
         linkUrl: linkUrl.trim() || undefined,
-        imageUrl: imageUrl || null,
-        sortOrder: editingItem ? editingItem.sortOrder : items.length,
+        imageUrl: imageUrl || undefined,
         isActive,
+        sortOrder: editingItem ? editingItem.sortOrder : items.length,
       };
 
-      const httpResponse = await fetch("/api/creator/setup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          creatorId: profile.id || creatorLookup,
-          email: profile.email,
-          item: payloadItem,
-        }),
-      });
-      const apiResponse = await httpResponse.json();
+      const updated = editingItem
+        ? items.map((it) => (it.id === editingItem.id ? newItem : it))
+        : [newItem, ...items];
 
-      if (apiResponse.status === 1) {
-        showToast(editingItem ? "Setup item updated! ✨" : "Gear added to your setup! 🚀");
-        setIsModalOpen(false);
-        loadSetupItems();
-      } else {
-        showToast(apiResponse.message || "Failed to save item", "error");
+      setItems(updated);
+      creatorSetupRepository.saveAll(updated);
+
+      if (creatorLookup) {
+        await fetch("/api/creator/setup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            creatorId: creatorLookup,
+            items: updated,
+          }),
+        }).catch(() => null);
       }
+
+      showToast(editingItem ? "Gear updated successfully! ✨" : "Gear added to your setup! ✨");
+      setIsModalOpen(false);
     } catch {
-      showToast("An error occurred while saving item", "error");
+      showToast("Could not save setup item. Please try again.", "error");
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  const handleToggleActive = async (item: CreatorSetupItem) => {
-    try {
-      const updated = { ...item, isActive: !item.isActive };
-      const httpResponse = await fetch("/api/creator/setup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          creatorId: profile.id || creatorLookup,
-          email: profile.email,
-          item: updated,
-        }),
-      });
-      const apiResponse = await httpResponse.json();
-
-      if (apiResponse.status === 1) {
-        showToast(updated.isActive ? "Item visible on profile" : "Item hidden from profile");
-        setItems((prev) => prev.map((it) => (it.id === item.id ? updated : it)));
-      }
-    } catch {
-      showToast("Failed to toggle visibility", "error");
     }
   };
 
@@ -299,64 +396,96 @@ export default function DashboardSetupPage() {
     if (!itemToDelete) return;
     setIsSubmitting(true);
     try {
-      const httpResponse = await fetch(
-        `/api/creator/setup?id=${encodeURIComponent(itemToDelete.id)}&creatorId=${encodeURIComponent(
-          creatorLookup || ""
-        )}`,
-        { method: "DELETE" }
-      );
-      const apiResponse = await httpResponse.json();
+      const updated = items.filter((it) => it.id !== itemToDelete.id);
+      setItems(updated);
+      creatorSetupRepository.saveAll(updated);
 
-      if (apiResponse.status === 1) {
-        showToast("Item removed from your setup");
-        setItemToDelete(null);
-        loadSetupItems();
-      } else {
-        showToast(apiResponse.message || "Failed to delete item", "error");
+      if (creatorLookup) {
+        await fetch("/api/creator/setup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            creatorId: creatorLookup,
+            items: updated,
+          }),
+        }).catch(() => null);
       }
+
+      showToast("Gear item removed.");
+      setItemToDelete(null);
     } catch {
-      showToast("Failed to remove item", "error");
+      showToast("Could not remove item.", "error");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const handleToggleActive = async (item: CreatorSetupItem) => {
+    const updated = items.map((it) =>
+      it.id === item.id ? { ...it, isActive: !it.isActive } : it
+    );
+    setItems(updated);
+    creatorSetupRepository.saveAll(updated);
+
+    if (creatorLookup) {
+      await fetch("/api/creator/setup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          creatorId: creatorLookup,
+          items: updated,
+        }),
+      }).catch(() => null);
+    }
+
+    showToast(item.isActive ? "Item hidden from profile." : "Item visible on profile.");
+  };
+
   const filteredItems = useMemo(() => {
     return items.filter((it) => {
-      const matchesSearch =
-        !searchQuery.trim() ||
-        it.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (it.brand && it.brand.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (it.modelOrPlan && it.modelOrPlan.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        it.category.toLowerCase().includes(searchQuery.toLowerCase());
+      // Search Query filter
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        const matchesName = it.name.toLowerCase().includes(q);
+        const matchesBrand = it.brand?.toLowerCase().includes(q);
+        const matchesCategory = it.category.toLowerCase().includes(q);
+        const matchesUsedFor = it.usedFor?.toLowerCase().includes(q);
+        const matchesModel = it.modelOrPlan?.toLowerCase().includes(q);
+        if (!matchesName && !matchesBrand && !matchesCategory && !matchesUsedFor && !matchesModel) {
+          return false;
+        }
+      }
 
-      if (!matchesSearch) return false;
-
+      // Category Group Filter
       if (selectedCategoryFilter === "All") return true;
-      if (selectedCategoryFilter === "Hardware & Gear") {
-        return CATEGORY_GROUPS[0].categories.includes(it.category as CreatorSetupCategory);
+
+      const group = CATEGORY_GROUPS.find((g) => g.label === selectedCategoryFilter);
+      if (group) {
+        return (
+          group.categories.includes(it.category as CreatorSetupCategory) ||
+          (selectedCategoryFilter === "Hardware & Gear" &&
+            (it.category === "Microphone" || it.category === "Lighting"))
+        );
       }
-      if (selectedCategoryFilter === "Software & AI") {
-        return CATEGORY_GROUPS[1].categories.includes(it.category as CreatorSetupCategory);
-      }
+
       return it.category === selectedCategoryFilter;
     });
   }, [items, searchQuery, selectedCategoryFilter]);
 
   return (
-    <div className="w-full space-y-4 sm:space-y-4.5 pb-8 text-left">
+    <div className="w-full space-y-5 pb-12 text-left">
       {/* Top Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#e2e8f0] pb-4">
         <div>
           <div className="flex items-center gap-2">
             <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
               Creator Setup &amp; Gear
             </h1>
-            <span className="rounded-full bg-[#f1f5f9] px-2 py-0.5 text-xs font-medium text-[#475569]">
+            <span className="rounded-[5px] bg-[#f1f5f9] border border-[#e2e8f0] px-2.5 py-0.5 text-xs font-semibold text-[#475569]">
               {items.length} {items.length === 1 ? "item" : "items"}
             </span>
           </div>
-          <p className="mt-0.5 text-xs sm:text-[13px] text-[#475569] font-medium">
+          <p className="mt-1 text-xs sm:text-sm font-medium text-[#64748b]">
             Showcase your cameras, mics, editing software, AI tools, and desk gear on your public profile.
           </p>
         </div>
@@ -364,59 +493,81 @@ export default function DashboardSetupPage() {
         <button
           type="button"
           onClick={() => handleOpenModal()}
-          className="tap-scale inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3.5 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] cursor-pointer"
+          className="inline-flex h-9 items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#601b41] px-4 text-xs sm:text-sm font-semibold text-white shadow-xs transition-all hover:-translate-y-0.5 cursor-pointer shrink-0 self-start sm:self-auto"
         >
-          <Plus className="h-3.5 w-3.5" />
+          <Plus className="h-4 w-4" />
           <span>Add Gear / Tool</span>
         </button>
       </div>
 
-      {/* Filter & Search Bar */}
-      <div className="flex flex-col gap-2.5 rounded-xl border border-[#e2e8f0] bg-white p-2.5 sm:p-3 shadow-xs sm:flex-row sm:items-center sm:justify-between">
-        {/* Category Pills */}
-        <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-          {["All", "Hardware & Gear", "Software & AI"].map((tab) => {
-            const active = selectedCategoryFilter === tab;
-            return (
-              <button
-                key={tab}
-                type="button"
-                onClick={() => setSelectedCategoryFilter(tab)}
-                className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition-all cursor-pointer ${active
-                    ? "bg-[#7A2253]/[0.08] text-[#7A2253]"
-                    : "bg-[#f8fafc] text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253]"
-                  }`}
-              >
-                {tab}
-              </button>
-            );
-          })}
+      {/* Filter Tabs & Search Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        {/* Category Filter Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+          <button
+            type="button"
+            onClick={() => setSelectedCategoryFilter("All")}
+            className={`shrink-0 rounded-[5px] px-3.5 py-1.5 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+              selectedCategoryFilter === "All"
+                ? "bg-[#7A2253] text-white shadow-xs"
+                : "border border-[#e2e8f0] bg-white text-[#475569] hover:border-[#cbd5e1] hover:text-[#0f172a]"
+            }`}
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-white" />
+            <span>All</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setSelectedCategoryFilter("Hardware & Gear")}
+            className={`shrink-0 rounded-[5px] border px-3.5 py-1.5 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+              selectedCategoryFilter === "Hardware & Gear"
+                ? "border-[#7A2253] bg-[#7A2253] text-white shadow-xs"
+                : "border-[#e2e8f0] bg-white text-[#475569] hover:border-[#cbd5e1] hover:text-[#0f172a]"
+            }`}
+          >
+            <Camera className="h-3.5 w-3.5" />
+            <span>Hardware &amp; Gear</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setSelectedCategoryFilter("Software & AI")}
+            className={`shrink-0 rounded-[5px] border px-3.5 py-1.5 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+              selectedCategoryFilter === "Software & AI"
+                ? "border-[#7A2253] bg-[#7A2253] text-white shadow-xs"
+                : "border-[#e2e8f0] bg-white text-[#475569] hover:border-[#cbd5e1] hover:text-[#0f172a]"
+            }`}
+          >
+            <Laptop className="h-3.5 w-3.5" />
+            <span>Software &amp; AI</span>
+          </button>
         </div>
 
-        {/* Search Input */}
-        <div className="relative w-full sm:w-60">
-          <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#94a3b8]" />
+        {/* Search Input Box */}
+        <div className="relative w-full sm:w-72">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#94a3b8]" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search gear or software..."
-            className="h-8.5 w-full rounded-lg border border-[#e2e8f0] bg-[#f8fafc] pl-8.5 pr-3 text-xs text-[#7A2253] placeholder-[#94a3b8] focus:border-[#7A2253] focus:bg-white focus:outline-hidden"
+            className="h-9 w-full rounded-[5px] border border-[#e2e8f0] bg-white pl-9 pr-8 text-xs text-[#0f172a] placeholder-[#94a3b8] focus:border-[#7A2253] focus:outline-hidden transition-colors"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#7A2253]"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#7A2253] cursor-pointer"
             >
-              <X className="h-3 w-3" />
+              <X className="h-3.5 w-3.5" />
             </button>
           )}
         </div>
       </div>
 
-      {/* Items Listing */}
+      {/* Items Listing Cards Grid */}
       {loading ? (
-        <div className="flex min-h-[180px] items-center justify-center rounded-xl border border-[#e2e8f0] bg-white">
+        <div className="flex min-h-[220px] items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white">
           <div className="flex items-center gap-2 text-xs font-semibold text-[#64748b]">
             <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#7A2253] border-t-transparent" />
             <span>Loading your creator setup...</span>
@@ -436,7 +587,7 @@ export default function DashboardSetupPage() {
               <button
                 type="button"
                 onClick={() => handleOpenModal()}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#7A2253] h-9 px-4 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-[5px] bg-[#7A2253] h-9 px-4 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer"
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span>Add Your First Gear</span>
@@ -445,108 +596,113 @@ export default function DashboardSetupPage() {
           }
         />
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4">
           {filteredItems.map((item) => {
             const IconComponent = getCategoryIcon(item.category);
+            const displayCategory = getCategoryDisplayLabel(item.category);
+
             return (
               <div
                 key={item.id}
-                className={`group relative flex flex-col justify-between rounded-xl border bg-white p-3.5 shadow-xs transition-all hover:shadow-sm ${item.isActive ? "border-[#e2e8f0]" : "border-[#e2e8f0] opacity-60 bg-[#f8fafc]"
-                  }`}
+                className={`group relative flex flex-col justify-between rounded-[5px] border bg-white p-3.5 sm:p-4 shadow-2xs transition-all hover:shadow-xs ${
+                  item.isActive ? "border-[#e2e8f0]" : "border-[#e2e8f0] opacity-65 bg-[#f8fafc]"
+                }`}
               >
                 <div>
-                  {/* Card Header: Category & Visibility Status */}
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-[#f1f5f9] px-2 py-0.5 text-[10px] font-bold text-[#475569]">
-                      <IconComponent className="h-3 w-3" />
-                      <span>{item.category}</span>
+                  {/* Top Bar: Category Chip + Visibility Toggle */}
+                  <div className="flex items-center justify-between gap-2 pb-1">
+                    <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#f8fafc] border border-[#e2e8f0] px-2 py-0.5 text-[11px] font-semibold text-[#475569]">
+                      <IconComponent className="h-3 w-3 text-[#64748b]" />
+                      <span>{displayCategory}</span>
                     </span>
 
                     <button
                       type="button"
                       onClick={() => handleToggleActive(item)}
                       title={item.isActive ? "Visible on profile. Click to hide." : "Hidden from profile. Click to show."}
-                      className="cursor-pointer text-[#64748b] transition-colors hover:text-[#7A2253]"
+                      className="cursor-pointer text-emerald-500 hover:text-emerald-600 transition-colors p-0.5"
                     >
                       {item.isActive ? (
-                        <Eye className="h-3.5 w-3.5 text-emerald-600" />
+                        <Eye className="h-4 w-4 text-emerald-500" />
                       ) : (
-                        <EyeOff className="h-3.5 w-3.5 text-[#94a3b8]" />
+                        <EyeOff className="h-4 w-4 text-[#94a3b8]" />
                       )}
                     </button>
                   </div>
 
-                  {/* Thumbnail & Item Title */}
-                  <div className="mt-2.5 flex items-start gap-2.5">
-                    <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#e2e8f0] bg-[#f8fafc]">
+                  {/* Middle Row: Product Image on Left + Info on Right */}
+                  <div className="flex items-center gap-3 pt-2.5 pb-1.5">
+                    {/* Image Container */}
+                    <div className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-[6px] bg-[#fafafa] p-1.5 border border-[#f1f5f9]">
                       {item.imageUrl ? (
                         <Image
                           src={item.imageUrl}
                           alt={item.name}
-                          width={48}
-                          height={48}
-                          className="h-full w-full object-cover"
+                          width={80}
+                          height={80}
+                          className="h-full w-full object-contain"
                         />
                       ) : (
-                        <IconComponent className="h-5 w-5 text-[#94a3b8]" />
+                        <IconComponent className="h-7 w-7 text-[#cbd5e1]" />
                       )}
                     </div>
 
-                    <div className="min-w-0 flex-1">
+                    {/* Product Details: Brand, Name, Year, Used For */}
+                    <div className="min-w-0 flex-1 space-y-0.5">
                       {item.brand && (
-                        <p className="truncate text-[10px] font-semibold uppercase tracking-wider text-[#64748b]">
+                        <p className="truncate text-[11px] font-semibold uppercase tracking-wide text-[#64748b]">
                           {item.brand}
                         </p>
                       )}
-                      <h4 className="truncate font-display text-xs sm:text-[13px] font-bold text-[#7A2253]" title={item.name}>
+                      <h3 className="truncate font-display text-sm sm:text-[15px] font-bold text-[#0f172a] leading-tight" title={item.name}>
                         {item.name}
-                      </h4>
+                      </h3>
                       {item.modelOrPlan && (
-                        <p className="truncate text-[11px] text-[#64748b]" title={item.modelOrPlan}>
+                        <p className="truncate text-[11px] text-[#94a3b8] font-normal leading-tight" title={item.modelOrPlan}>
                           {item.modelOrPlan}
+                        </p>
+                      )}
+                      {item.usedFor && (
+                        <p className="text-[11px] text-[#475569] pt-1 leading-snug line-clamp-1">
+                          <span className="font-bold text-[#7A2253]">Used for: </span>
+                          <span>{item.usedFor}</span>
                         </p>
                       )}
                     </div>
                   </div>
 
-                  {/* Usage / Note */}
-                  {item.usedFor && (
-                    <div className="mt-2.5 rounded-lg bg-[#f8fafc] px-2.5 py-1 border border-[#f1f5f9]">
-                      <p className="text-[11px] font-medium text-[#475569]">
-                        <span className="font-semibold text-[#7A2253]">Used for: </span>
-                        {item.usedFor}
-                      </p>
-                    </div>
-                  )}
-
+                  {/* Note / Description */}
                   {item.note && (
-                    <p className="mt-1.5 text-[11px] text-[#64748b] line-clamp-2">
+                    <p className="mt-1.5 text-xs text-[#64748b] leading-relaxed line-clamp-2">
                       {item.note}
                     </p>
                   )}
                 </div>
 
-                {/* Footer: Link & Actions */}
+                {/* Footer: View Gear -> on left, Edit & Delete on right */}
                 <div className="mt-3 flex items-center justify-between border-t border-[#f1f5f9] pt-2.5">
                   {item.linkUrl ? (
                     <a
                       href={item.linkUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#7A2253] transition-colors hover:underline"
+                      className="inline-flex items-center gap-1 text-xs font-bold text-[#7A2253] transition-colors hover:underline cursor-pointer"
                     >
                       <span>View Gear</span>
-                      <ExternalLink className="h-3 w-3" />
+                      <span className="text-sm font-bold">&rarr;</span>
                     </a>
                   ) : (
-                    <span className="text-[11px] text-[#94a3b8]">No link</span>
+                    <span className="inline-flex items-center gap-1 text-xs font-bold text-[#7A2253] cursor-default">
+                      <span>View Gear</span>
+                      <span className="text-sm font-bold">&rarr;</span>
+                    </span>
                   )}
 
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
                     <button
                       type="button"
                       onClick={() => handleOpenModal(item)}
-                      className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white text-[#64748b] transition-colors hover:bg-[#f1f5f9] hover:text-[#7A2253] cursor-pointer shadow-2xs"
+                      className="flex h-7.5 w-7.5 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white text-[#475569] hover:bg-[#f8fafc] hover:text-[#0f172a] transition-colors cursor-pointer shadow-2xs"
                       title="Edit item"
                     >
                       <Pencil className="h-3 w-3" />
@@ -554,7 +710,7 @@ export default function DashboardSetupPage() {
                     <button
                       type="button"
                       onClick={() => setItemToDelete(item)}
-                      className="flex h-7 w-7 items-center justify-center rounded-lg border border-rose-100 bg-white text-[#C2414B] transition-colors hover:bg-rose-50 cursor-pointer shadow-2xs"
+                      className="flex h-7.5 w-7.5 items-center justify-center rounded-[5px] border border-rose-200 bg-white text-[#e11d48] hover:bg-rose-50 transition-colors cursor-pointer shadow-2xs"
                       title="Delete item"
                     >
                       <Trash2 className="h-3 w-3" />
@@ -572,188 +728,290 @@ export default function DashboardSetupPage() {
         isOpen={isModalOpen}
         onClose={() => !isSubmitting && setIsModalOpen(false)}
         title={editingItem ? "Edit Setup Item" : "Add Gear or Tool"}
-        size="md"
+        description="Show the tools, gadgets and software you use to create your content."
+        icon={<Briefcase className="h-5 w-5" />}
+        size="lg"
       >
-        <form onSubmit={handleSaveItem}>
-          <ModalBody className="space-y-4">
-            {/* Category */}
-            <div>
-              <label className="block text-[13px] font-medium text-[#0f172a] mb-1">
+        <form onSubmit={handleSaveItem} className="flex flex-col flex-1 min-h-0">
+          <ModalBody className="p-4 sm:p-5 space-y-4 text-left">
+            {/* Category Grid */}
+            <div className="space-y-1.5">
+              <label className="block text-[13px] font-medium text-[#0f172a]">
                 Category <span className="text-rose-500">*</span>
+                <span className="block text-xs font-normal text-[#64748b]">Select the category that best fits your item.</span>
               </label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value as CreatorSetupCategory)}
-                className="h-10 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#7A2253] focus:border-[#7A2253] focus:outline-hidden"
-              >
-                {CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 pt-1">
+                {CATEGORIES.map((cat) => {
+                  const isSelected = category === cat;
+                  const icon =
+                    cat === "Camera / Phone" ? <Camera className="h-4 w-4" /> :
+                    cat === "Lens" ? <Disc className="h-4 w-4" /> :
+                    cat === "Mic" ? <Mic className="h-4 w-4" /> :
+                    cat === "Light" ? <Sun className="h-4 w-4" /> :
+                    cat === "Tripod / Stand" ? <Compass className="h-4 w-4" /> :
+                    cat === "Gimbal / Stabilizer" ? <Sliders className="h-4 w-4" /> :
+                    cat === "Drone" ? <Laptop className="h-4 w-4" /> :
+                    cat === "Editing Software" ? <MonitorPlay className="h-4 w-4" /> :
+                    cat === "AI Tool" ? <Sparkles className="h-4 w-4" /> :
+                    cat === "Design Tool" ? <PenTool className="h-4 w-4" /> :
+                    cat === "Audio Tool" ? <Headphones className="h-4 w-4" /> :
+                    cat === "Analytics Tool" ? <BarChart2 className="h-4 w-4" /> :
+                    cat === "Scheduling Tool" ? <Calendar className="h-4 w-4" /> :
+                    cat === "Storage / Backup" ? <Cloud className="h-4 w-4" /> :
+                    cat === "Studio / Accessory" ? <ShoppingBag className="h-4 w-4" /> :
+                    <MoreHorizontal className="h-4 w-4" />;
+
+                  return (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => setCategory(cat)}
+                      className={`flex flex-col items-center justify-center p-2.5 h-16 rounded-[5px] border text-center transition-all cursor-pointer ${
+                        isSelected
+                          ? "border-[#7A2253] bg-[#FFF0F5] text-[#7A2253] ring-1 ring-[#7A2253]"
+                          : "border-[#e2e8f0] bg-white text-[#475569] hover:bg-[#f8fafc] hover:border-[#cbd5e1]"
+                      }`}
+                    >
+                      <div className={`mb-1 shrink-0 ${isSelected ? "text-[#7A2253]" : "text-[#64748b]"}`}>
+                        {icon}
+                      </div>
+                      <span className="text-[11px] font-semibold truncate w-full leading-tight">
+                        {cat}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Name & Brand */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div>
-                <label className="block text-[13px] font-medium text-[#0f172a] mb-1">
+              <div className="space-y-1">
+                <label className="block text-[13px] font-medium text-[#0f172a]">
                   Item Name <span className="text-rose-500">*</span>
                 </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. FX3, SM7B, Final Cut Pro"
-                  className="h-10 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs text-[#7A2253] placeholder-[#94a3b8] focus:border-[#7A2253] focus:outline-hidden"
-                  required
-                />
+                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                    <Tag className="h-4 w-4" />
+                  </div>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="e.g. A7 III, VideoMic Pro, Tripod"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    required
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-[13px] font-medium text-[#0f172a] mb-1">
+              <div className="space-y-1">
+                <label className="block text-[13px] font-medium text-[#0f172a]">
                   Brand / Maker
                 </label>
-                <input
-                  type="text"
-                  value={brand}
-                  onChange={(e) => setBrand(e.target.value)}
-                  placeholder="e.g. Sony, Shure, Apple, Adobe"
-                  className="h-10 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs text-[#7A2253] placeholder-[#94a3b8] focus:border-[#7A2253] focus:outline-hidden"
-                />
+                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                    <Building2 className="h-4 w-4" />
+                  </div>
+                  <input
+                    type="text"
+                    value={brand}
+                    onChange={(e) => setBrand(e.target.value)}
+                    placeholder="e.g. Sony, RØDE, Manfrotto, Godox"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Model / Plan & Used For */}
+            {/* Model / Year & Used For */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div>
-                <label className="block text-[13px] font-medium text-[#0f172a] mb-1">
-                  Model / Version / Plan
+              <div className="space-y-1">
+                <label className="block text-[13px] font-medium text-[#0f172a]">
+                  Model / Year / Version
                 </label>
-                <input
-                  type="text"
-                  value={modelOrPlan}
-                  onChange={(e) => setModelOrPlan(e.target.value)}
-                  placeholder="e.g. Cinema Line, Studio, v18"
-                  className="h-10 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs text-[#7A2253] placeholder-[#94a3b8] focus:border-[#7A2253] focus:outline-hidden"
-                />
+                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                    <List className="h-4 w-4" />
+                  </div>
+                  <input
+                    type="text"
+                    value={modelOrPlan}
+                    onChange={(e) => setModelOrPlan(e.target.value)}
+                    placeholder="e.g. 2023, 2024, Pro"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-[13px] font-medium text-[#0f172a] mb-1">
+              <div className="space-y-1">
+                <label className="block text-[13px] font-medium text-[#0f172a]">
                   What do you use it for?
                 </label>
-                <input
-                  type="text"
-                  value={usedFor}
-                  onChange={(e) => setUsedFor(e.target.value)}
-                  placeholder="e.g. Main 4K A-cam, Podcast mic"
-                  className="h-10 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs text-[#7A2253] placeholder-[#94a3b8] focus:border-[#7A2253] focus:outline-hidden"
-                />
+                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                    <Sparkles className="h-4 w-4" />
+                  </div>
+                  <input
+                    type="text"
+                    value={usedFor}
+                    onChange={(e) => setUsedFor(e.target.value)}
+                    placeholder="e.g. shoot the video, clear audio recording"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  />
+                </div>
               </div>
             </div>
 
             {/* Link URL */}
-            <div>
-              <label className="block text-[13px] font-medium text-[#0f172a] mb-1">
+            <div className="space-y-1">
+              <label className="block text-[13px] font-medium text-[#0f172a]">
                 Product / Affiliate / Store Link
               </label>
-              <input
-                type="url"
-                value={linkUrl}
-                onChange={(e) => setLinkUrl(e.target.value)}
-                placeholder="https://amazon.in/... or https://company.com"
-                className="h-10 w-full rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-xs text-[#7A2253] placeholder-[#94a3b8] focus:border-[#7A2253] focus:outline-hidden"
-              />
-            </div>
-
-            {/* Image Upload */}
-            <div>
-              <label className="block text-[13px] font-medium text-[#0f172a] mb-1">
-                Item Photo / Icon (Optional)
-              </label>
-              <div className="flex items-center gap-3">
-                <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#e2e8f0] bg-[#f8fafc]">
-                  {imageUrl ? (
-                    <Image
-                      src={imageUrl}
-                      alt="Preview"
-                      width={56}
-                      height={56}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <Camera className="h-5 w-5 text-[#94a3b8]" />
-                  )}
+              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                  <LinkIcon className="h-4 w-4" />
                 </div>
-
-                <div className="flex flex-1 items-center gap-2">
-                  <label className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-[10px] border border-[#e2e8f0] bg-white px-3 text-[13px] font-medium text-[#0f172a] transition-all hover:bg-[#f8fafc]">
-                    <UploadCloud className="h-3.5 w-3.5" />
-                    <span>Upload Image</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                    />
-                  </label>
-
-                  {imageUrl && (
-                    <button
-                      type="button"
-                      onClick={() => setImageUrl(null)}
-                      className="rounded-[10px] border border-[#e2e8f0] p-2 text-xs font-semibold text-[#64748b] hover:bg-rose-50 hover:text-rose-600"
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </button>
-                  )}
+                <input
+                  type="url"
+                  value={linkUrl}
+                  onChange={(e) => setLinkUrl(e.target.value)}
+                  placeholder="https://amazon.com/... or https://company.com"
+                  className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                />
+                <div className="pr-3 text-[#64748b]">
+                  <ExternalLink className="h-4 w-4" />
                 </div>
               </div>
             </div>
 
-            {/* Note / Advice */}
-            <div>
-              <label className="block text-[13px] font-medium text-[#0f172a] mb-1">
+            {/* Image Upload + Tips Container */}
+            <div className="space-y-1">
+              <label className="block text-[13px] font-medium text-[#0f172a]">
+                Item Photo / Icon <span className="font-normal text-[#94a3b8]">(Optional)</span>
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-stretch">
+                {/* Upload Dropzone */}
+                <div className="relative flex flex-col items-center justify-center p-4 border border-dashed border-[#cbd5e1] rounded-[5px] bg-[#f8fafc] hover:bg-[#f1f5f9] transition-colors cursor-pointer min-h-[96px] group">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                    aria-label="Upload item image"
+                  />
+                  {imageUrl ? (
+                    <div className="relative flex items-center gap-3 w-full">
+                      <div className="relative h-14 w-14 shrink-0 rounded-[5px] overflow-hidden border border-[#e2e8f0] bg-white">
+                        <Image
+                          src={imageUrl}
+                          alt="Preview"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <span className="block text-xs font-semibold text-[#0f172a]">Image selected</span>
+                        <span className="block text-[11px] text-[#64748b]">Click to change image</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setImageUrl(null);
+                        }}
+                        className="relative z-20 h-7 w-7 flex items-center justify-center rounded-[5px] text-[#64748b] hover:text-rose-600 hover:bg-rose-50 cursor-pointer"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center text-center">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#7A2253] mb-1">
+                        <Camera className="h-5 w-5" />
+                      </div>
+                      <span className="text-xs font-semibold text-[#0f172a]">Upload Image</span>
+                      <span className="text-[11px] text-[#94a3b8]">JPG, PNG (Max 5MB)</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Tips Box */}
+                <div className="flex flex-col justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] p-3 text-left">
+                  <div className="flex items-center gap-1.5 font-bold text-xs text-[#7A2253] mb-1">
+                    <span>💡</span>
+                    <span>Tips</span>
+                  </div>
+                  <ul className="text-[11px] text-[#64748b] space-y-0.5 leading-snug list-disc list-inside">
+                    <li>Use a clean photo or official product image</li>
+                    <li>It will be shown on your public profile</li>
+                    <li>Recommended size: 1:1 ratio (square)</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Note or Recommendation */}
+            <div className="space-y-1">
+              <label className="block text-[13px] font-medium text-[#0f172a]">
                 Note or Recommendation
               </label>
-              <textarea
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder="e.g. Best microphone for untreated rooms. Highly recommend pairing with a Cloudlifter."
-                rows={2}
-                className="w-full rounded-[10px] border border-[#e2e8f0] bg-white p-3 text-xs text-[#7A2253] placeholder-[#94a3b8] focus:border-[#7A2253] focus:outline-hidden"
-              />
+              <div className="flex rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex w-10 shrink-0 items-start justify-center pt-2.5 border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                  <FileText className="h-4 w-4" />
+                </div>
+                <textarea
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  placeholder="e.g. Best camera for vlogging and cinematic shots."
+                  rows={2}
+                  className="flex-1 p-2.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none resize-y"
+                />
+              </div>
             </div>
 
-            {/* Active Toggle */}
-            <div className="flex items-center justify-between rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-3.5 py-2.5">
-              <div>
-                <p className="text-xs font-bold text-[#7A2253]">Show on public profile</p>
-                <p className="text-[11px] text-[#64748b]">Turn off to keep as private gear reference</p>
+            {/* Show on public profile Switch Banner */}
+            <div className="flex items-center justify-between rounded-[5px] border border-[#FCE7F1] bg-[#FFF0F5] px-4 py-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-white border border-[#FCE7F1] text-[#7A2253]">
+                  <Globe className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-[#7A2253]">Show on public profile</p>
+                  <p className="text-[11px] text-[#64748b]">Turn off to keep as private gear reference.</p>
+                </div>
               </div>
-              <input
-                type="checkbox"
-                checked={isActive}
-                onChange={(e) => setIsActive(e.target.checked)}
-                className="h-4 w-4 rounded-sm border-[#cbd5e1] text-[#7A2253] focus:ring-[#7A2253] cursor-pointer"
-              />
+              <button
+                type="button"
+                role="switch"
+                aria-checked={isActive}
+                onClick={() => setIsActive(!isActive)}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  isActive ? "bg-[#7A2253]" : "bg-slate-200"
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                    isActive ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
             </div>
           </ModalBody>
 
-          <ModalFooter>
+          <ModalFooter className="px-5 sm:px-6 py-4">
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
               disabled={isSubmitting}
-              className="h-9 rounded-lg border border-[#e2e8f0] bg-white px-4 text-xs font-semibold text-[#64748b] transition-colors hover:bg-[#f8fafc] cursor-pointer"
+              className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f8fafc] hover:text-[#0f172a] transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="h-9 rounded-lg bg-[#7A2253] px-5 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer disabled:opacity-60"
+              className="h-10 px-5 rounded-[5px] bg-[#7A2253] text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 hover:bg-[#601b41] disabled:opacity-60"
             >
               {isSubmitting ? "Saving..." : editingItem ? "Update Gear" : "Add to Setup"}
             </button>

@@ -205,7 +205,9 @@ export function PlatformThumbnailBox({
             onError={() => setHasImageError(true)}
             className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-300"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent pointer-events-none" />
+          {showTitleOverlay && (
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent pointer-events-none" />
+          )}
         </>
       ) : (
         /* Sleek Dynamic Platform Icon Fallback Box */
@@ -235,12 +237,14 @@ export function PlatformThumbnailBox({
           </div>
 
           {/* Subtle bottom vignette to support title legibility */}
-          <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
+          {showTitleOverlay && (
+            <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
+          )}
         </div>
       )}
 
       {/* Title & Platform Pill Overlay */}
-      {showTitleOverlay && (
+      {showTitleOverlay ? (
         <div className="absolute inset-x-0 bottom-2 px-3 sm:px-3.5 z-20 pointer-events-none">
           <div className="flex items-end justify-between gap-2">
             {title && (
@@ -255,6 +259,14 @@ export function PlatformThumbnailBox({
             </span>
           </div>
         </div>
+      ) : (
+        config.pillLabel && badgeText !== null && badgeText !== "" ? (
+          <div className="absolute top-2 right-2 z-20 pointer-events-none">
+            <span className="shrink-0 rounded-full border border-white/25 bg-black/55 px-2 py-0.5 text-[10px] sm:text-[10.5px] font-bold text-white/95 backdrop-blur-xs shadow-xs">
+              {config.pillLabel}
+            </span>
+          </div>
+        ) : null
       )}
     </div>
   );

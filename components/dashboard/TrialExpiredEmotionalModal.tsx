@@ -73,7 +73,7 @@ export function TrialExpiredEmotionalModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="trial-modal-title"
-        className="relative w-full max-w-[620px] rounded-[2rem] sm:rounded-[2.25rem] border border-pink-100 bg-white p-5 sm:p-7 shadow-2xl shadow-pink-950/20 overflow-hidden text-left z-10 transition-all transform animate-in zoom-in-95 duration-200"
+        className="relative w-full max-w-[620px] rounded-[5px] border border-pink-100 bg-white p-5 sm:p-7 shadow-2xl shadow-pink-950/20 overflow-hidden text-left z-10 transition-all transform animate-in zoom-in-95 duration-200"
       >
         {/* Soft pastel pink ambient background glow/waves */}
         <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-gradient-to-br from-pink-200/50 via-rose-100/40 to-transparent blur-3xl" />
@@ -96,7 +96,7 @@ export function TrialExpiredEmotionalModal({
           onClick={onClose}
           type="button"
           aria-label="Close dialog"
-          className="absolute top-4 right-4 sm:top-5 sm:right-5 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100/90 hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer z-20"
+          className="absolute top-4 right-4 sm:top-5 sm:right-5 flex h-8 w-8 items-center justify-center rounded-[5px] bg-slate-100/90 hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer z-20"
         >
           <X className="h-4 w-4" />
         </button>
@@ -117,7 +117,7 @@ export function TrialExpiredEmotionalModal({
               <path d="M14 18L18 6" />
             </svg>
 
-            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-[#7A2253] via-[#8E2660] to-[#581838] flex items-center justify-center text-white font-extrabold text-xl shadow-md border-2 border-white ring-2 ring-pink-100 overflow-hidden">
+            <div className="h-14 w-14 rounded-[5px] bg-gradient-to-br from-[#7A2253] via-[#8E2660] to-[#581838] flex items-center justify-center text-white font-extrabold text-xl shadow-md border-2 border-white ring-2 ring-pink-100 overflow-hidden">
               {profile?.photoDataUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -131,7 +131,7 @@ export function TrialExpiredEmotionalModal({
             </div>
 
             {/* Lock Badge */}
-            <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-[#E11D48] text-white shadow-sm ring-2 ring-white">
+            <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-[5px] bg-[#E11D48] text-white shadow-sm ring-2 ring-white">
               <Lock className="h-3 w-3" strokeWidth={2.5} />
             </span>
           </div>
@@ -141,7 +141,7 @@ export function TrialExpiredEmotionalModal({
             <p className="truncate text-sm sm:text-base font-bold text-slate-900 leading-tight">
               @{handle}
             </p>
-            <div className="mt-1 inline-flex items-center gap-1 rounded-full bg-[#FFF1F2] border border-[#FECDD3] px-2.5 py-0.5 text-[11px] font-bold text-[#E11D48]">
+            <div className="mt-1 inline-flex items-center gap-1 rounded-[5px] bg-[#FFF1F2] border border-[#FECDD3] px-2.5 py-0.5 text-[11px] font-bold text-[#E11D48]">
               <span>Free Trial Ended</span>
             </div>
           </div>
@@ -226,9 +226,9 @@ export function TrialExpiredEmotionalModal({
         {/* 3 Feature Preview Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 my-4 sm:my-5">
           {/* Card 1: All Your Links */}
-          <div className="rounded-2xl border border-pink-100 bg-[#FFF8FA] p-3 sm:p-3.5 text-center transition-all hover:bg-white hover:shadow-md hover:border-pink-200">
+          <div className="rounded-[5px] border border-pink-100 bg-[#FFF8FA] p-3 sm:p-3.5 text-center transition-all hover:bg-white hover:shadow-md hover:border-pink-200">
             <div className="relative inline-block mb-1.5">
-              <div className="h-10 w-10 rounded-full bg-[#FFE4EC] text-[#E11D48] flex items-center justify-center mx-auto">
+              <div className="h-10 w-10 rounded-[5px] bg-[#FFE4EC] text-[#E11D48] flex items-center justify-center mx-auto">
                 <Link2 className="h-5 w-5" strokeWidth={2.5} />
               </div>
               <svg
@@ -249,9 +249,9 @@ export function TrialExpiredEmotionalModal({
           </div>
 
           {/* Card 2: Your Series */}
-          <div className="rounded-2xl border border-pink-100 bg-[#FFF8FA] p-3 sm:p-3.5 text-center transition-all hover:bg-white hover:shadow-md hover:border-pink-200">
+          <div className="rounded-[5px] border border-pink-100 bg-[#FFF8FA] p-3 sm:p-3.5 text-center transition-all hover:bg-white hover:shadow-md hover:border-pink-200">
             <div className="relative inline-block mb-1.5">
-              <div className="h-10 w-10 rounded-full bg-[#FFE4EC] text-[#E11D48] flex items-center justify-center mx-auto">
+              <div className="h-10 w-10 rounded-[5px] bg-[#FFE4EC] text-[#E11D48] flex items-center justify-center mx-auto">
                 <Play className="h-5 w-5 fill-current" />
               </div>
               <svg
@@ -272,9 +272,9 @@ export function TrialExpiredEmotionalModal({
           </div>
 
           {/* Card 3: Your Creator Brand */}
-          <div className="rounded-2xl border border-purple-100 bg-[#FCF8FF] p-3 sm:p-3.5 text-center transition-all hover:bg-white hover:shadow-md hover:border-purple-200">
+          <div className="rounded-[5px] border border-purple-100 bg-[#FCF8FF] p-3 sm:p-3.5 text-center transition-all hover:bg-white hover:shadow-md hover:border-purple-200">
             <div className="relative inline-block mb-1.5">
-              <div className="h-10 w-10 rounded-full bg-[#F3E8FF] text-[#7E22CE] flex items-center justify-center mx-auto">
+              <div className="h-10 w-10 rounded-[5px] bg-[#F3E8FF] text-[#7E22CE] flex items-center justify-center mx-auto">
                 <BarChart3 className="h-5 w-5" strokeWidth={2.5} />
               </div>
               <svg
@@ -300,7 +300,7 @@ export function TrialExpiredEmotionalModal({
           <button
             type="button"
             onClick={handleUpgrade}
-            className="w-full inline-flex items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-r from-[#7A2253] via-[#8C1D5E] to-[#A82570] hover:opacity-95 text-white py-3.5 px-6 text-sm sm:text-base font-bold shadow-xl shadow-[#7A2253]/25 transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+            className="w-full inline-flex items-center justify-center gap-2.5 rounded-[5px] bg-gradient-to-r from-[#7A2253] via-[#8C1D5E] to-[#A82570] hover:opacity-95 text-white py-3.5 px-6 text-sm sm:text-base font-bold shadow-xl shadow-[#7A2253]/25 transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
           >
             <Rocket className="h-5 w-5 shrink-0" />
             <span>Reactivate My Profile</span>

@@ -150,7 +150,7 @@ export function CustomDomainCard() {
 
   if (loading) {
     return (
-      <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-xs">
+      <section className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-xs">
         <div className="flex items-center gap-2 text-xs font-semibold text-[#64748b]">
           <RefreshCw className="h-4 w-4 animate-spin text-[#7A2253]" />
           <span>Loading domain settings...</span>
@@ -162,14 +162,14 @@ export function CustomDomainCard() {
   // If creator is on Starter/Free and cannot use custom domains
   if (config && !config.canUseCustomDomain) {
     return (
-      <section className="group relative overflow-hidden rounded-xl border border-[#7A2253]/20 bg-white p-4 sm:p-5 shadow-xs">
+      <section className="group relative overflow-hidden rounded-[5px] border border-[#7A2253]/20 bg-white p-4 sm:p-5 shadow-xs">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#7A2253]" aria-hidden="true" />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <Globe className="h-4 w-4 text-[#7A2253]" />
               <h2 className="text-sm font-bold text-[#0f172a]">Custom Domain Mapping</h2>
-              <span className="inline-flex items-center gap-1 rounded-full bg-[#7A2253]/[0.08] px-2 py-0.5 text-[10px] font-bold text-[#7A2253]">
+              <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#7A2253]/[0.08] px-2 py-0.5 text-[10px] font-bold text-[#7A2253]">
                 <Lock className="h-2.5 w-2.5" />
                 Pro & VIP Feature
               </span>
@@ -180,7 +180,7 @@ export function CustomDomainCard() {
           </div>
           <Link
             href="/dashboard/subscription"
-            className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#7A2253] hover:opacity-95 text-white text-xs font-bold py-2.5 px-4 transition-all shrink-0 cursor-pointer shadow-md shadow-[#7A2253]/20"
+            className="inline-flex items-center justify-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:opacity-95 text-white text-xs font-bold py-2.5 px-4 transition-all shrink-0 cursor-pointer shadow-md shadow-[#7A2253]/20"
           >
             <Sparkles className="h-3.5 w-3.5" />
             <span>Upgrade to Pro</span>
@@ -195,7 +195,7 @@ export function CustomDomainCard() {
   const targetCname = config?.targetCname || "cname.inflixo.com";
 
   return (
-    <section className="group relative overflow-hidden rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-xs space-y-4">
+    <section className="group relative overflow-hidden rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-xs space-y-4">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#7A2253]" aria-hidden="true" />
 
       {/* Header */}
@@ -207,11 +207,10 @@ export function CustomDomainCard() {
 
         {hasDomain && (
           <span
-            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ${
-              isVerified
+            className={`inline-flex items-center gap-1 rounded-[5px] px-2.5 py-0.5 text-xs font-bold ${isVerified
                 ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                 : "bg-amber-50 text-amber-800 border border-amber-200"
-            }`}
+              }`}
           >
             {isVerified ? (
               <>
@@ -236,15 +235,18 @@ export function CustomDomainCard() {
       {/* Form */}
       <form onSubmit={handleSaveDomain} className="space-y-3">
         <div className="flex flex-col sm:flex-row gap-2">
-          <div className="relative flex-1">
-            <span className="absolute left-3 top-2.5 text-xs font-medium text-[#94a3b8]">https://</span>
+          <div className="flex-1 flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+              <Globe className="h-4 w-4" />
+            </span>
+            <span className="pl-3 pr-1 text-xs font-semibold text-[#94a3b8] select-none">https://</span>
             <input
               type="text"
               value={domainInput}
               onChange={(e) => setDomainInput(e.target.value.toLowerCase().trim())}
               placeholder="links.yourdomain.com"
               disabled={saving || hasDomain}
-              className="w-full rounded-lg border border-[#e2e8f0] bg-white pl-18 pr-3 py-2 text-xs font-semibold text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none disabled:bg-[#f8fafc] disabled:text-[#64748b]"
+              className="flex-1 h-10 pr-3 text-xs sm:text-sm font-semibold text-[#0f172a] placeholder:text-[#94a3b8] bg-transparent outline-none disabled:bg-[#f8fafc] disabled:text-[#64748b]"
             />
           </div>
 
@@ -252,7 +254,7 @@ export function CustomDomainCard() {
             <button
               type="submit"
               disabled={saving || !domainInput.trim()}
-              className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#7A2253] hover:bg-brand-hover text-white text-xs font-bold px-4 py-2 transition-all cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-brand-hover text-white text-xs font-bold px-4 py-2 h-10 transition-all cursor-pointer disabled:opacity-50"
             >
               {saving ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
               <span>Connect Domain</span>
@@ -264,7 +266,7 @@ export function CustomDomainCard() {
                   type="button"
                   onClick={handleVerifyDNS}
                   disabled={verifying}
-                  className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#7A2253] hover:bg-brand-hover text-white text-xs font-bold px-3 py-2 transition-all cursor-pointer disabled:opacity-50"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-brand-hover text-white text-xs font-bold px-3 py-2 h-10 transition-all cursor-pointer disabled:opacity-50"
                 >
                   {verifying ? (
                     <RefreshCw className="h-3.5 w-3.5 animate-spin" />
@@ -280,7 +282,7 @@ export function CustomDomainCard() {
                 onClick={handleDisconnectDomain}
                 disabled={disconnecting}
                 title="Disconnect custom domain"
-                className="inline-flex items-center justify-center gap-1 rounded-lg border border-rose-200 bg-white hover:bg-rose-50 text-rose-700 text-xs font-semibold px-3 py-2 transition-all cursor-pointer"
+                className="inline-flex items-center justify-center gap-1 rounded-[5px] border border-rose-200 bg-white hover:bg-rose-50 text-rose-700 text-xs font-semibold px-3 py-2 h-10 transition-all cursor-pointer"
               >
                 <Trash2 className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Disconnect</span>
@@ -292,7 +294,7 @@ export function CustomDomainCard() {
 
       {/* DNS Configuration Instructions (Shown when domain is saved) */}
       {hasDomain && (
-        <div className="rounded-lg border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2.5 text-xs text-left">
+        <div className="rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2.5 text-xs text-left">
           <div className="flex items-center justify-between">
             <span className="font-bold text-[#0f172a]">Required DNS Record:</span>
             {isVerified && (
@@ -308,7 +310,7 @@ export function CustomDomainCard() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-white rounded border border-[#e2e8f0] p-2.5 text-[11px]">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-white rounded-[5px] border border-[#e2e8f0] p-2.5 text-[11px]">
             <div>
               <p className="text-[#64748b] font-medium">Record Type</p>
               <p className="font-bold text-[#0f172a]">CNAME</p>

@@ -3616,7 +3616,7 @@ index e188a23..8090227 100644
 -            borderColor: c.border,
 -            boxShadow: eff.cardShadow,
 -          }}
--          className="relative z-10 mt-8 rounded-[16px] p-5 sm:p-6 border text-center w-full shadow-xs"
+-          className="relative z-10 mt-8 rounded-[5px] p-5 sm:p-6 border text-center w-full shadow-xs"
 -        >
 -          <div className="space-y-1">
 +        <div className="relative z-10 mt-5 sm:mt-6 w-full space-y-2.5">
@@ -3823,7 +3823,7 @@ index e188a23..8090227 100644
                  <div
 @@ -1303,8 +1400,8 @@ export function LivePreviewCard({
                    }}
-                   className="group rounded-[16px] border overflow-hidden transition-all hover:shadow-md cursor-pointer shadow-xs"
+                   className="group rounded-[5px] border overflow-hidden transition-all hover:shadow-md cursor-pointer shadow-xs"
                  >
 -                  {/* Cover Image — 16:9, max 200px tall */}
 -                  <div className="relative w-full aspect-video max-h-[200px] overflow-hidden bg-slate-900/5">
@@ -3993,7 +3993,7 @@ index e188a23..8090227 100644
                      borderColor: c.border,
                      boxShadow: eff.cardShadow,
                    }}
--                  className="rounded-[16px] border p-4 sm:p-5 space-y-2.5 text-left shadow-xs"
+-                  className="rounded-[5px] border p-4 sm:p-5 space-y-2.5 text-left shadow-xs"
 +                  className="rounded-[14px] border p-3.5 sm:p-4 space-y-2 text-left shadow-xs"
                  >
                    <div className="flex items-center gap-1 text-amber-400">

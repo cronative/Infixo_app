@@ -1,4 +1,4 @@
-import { CreatorProfile, SocialAccounts, Series, MediaKitPackage, CustomLink, ThemeKey, CreatorReview, CreatorSetupItem, CreatorProduct } from "@/types";
+import { CreatorProfile, SocialAccounts, Series, MediaKitPackage, CustomLink, ThemeKey, CreatorReview, CreatorSetupItem, CreatorProduct, DEFAULT_VISIBILITY_SETTINGS } from "@/types";
 
 export const EXPERT_DEMO_PROFILE: CreatorProfile = {
   id: "cr_expert_demo_creator",
@@ -13,6 +13,7 @@ export const EXPERT_DEMO_PROFILE: CreatorProfile = {
   state: "Maharashtra",
   country: "India",
   updatedAt: new Date().toISOString(),
+  visibilitySettings: DEFAULT_VISIBILITY_SETTINGS,
 };
 
 export const EXPERT_DEMO_SOCIALS: SocialAccounts = {
@@ -46,10 +47,10 @@ export const EXPERT_DEMO_THEME: ThemeKey = "minimal-white";
 export const EXPERT_DEMO_SERIES: Series[] = [
   {
     id: "ser_spiti_ladakh_tour",
-    title: "Spiti & Ladakh: The Ultimate Himalayan Bike Tour",
+    title: "Spiti & Ladakh: The Ultimate Himalayan Ride",
     posterDataUrl: "/images/demo/series-1.webp",
-    description: "An epic 14-day motorcycle expedition across the highest motorable mountain passes of Spiti Valley and Ladakh. From Atal Tunnel and Kaza to Pangong Tso and Khardung La at 17,982 ft.",
-    genre: "Travel & Himalayan Expedition",
+    description: "An epic 14-day motorcycle expedition across the highest motorable mountain passes of Spiti Valley and Ladakh. Breathtaking landscapes, challenging roads, remote villages and unforgettable experiences from the Himalayas.",
+    genre: "Travel, Himalayan Expedition",
     language: "Hindi",
     platform: "YouTube",
     createdAt: new Date().toISOString(),
@@ -101,10 +102,10 @@ export const EXPERT_DEMO_SERIES: Series[] = [
   },
   {
     id: "ser_mumbai_creator_vlogs",
-    title: "Dilli Se Mumbai: Daily Life & Creator Hustle Vlogs",
+    title: "Dilli Se Mumbai: Daily Life & Creator Journey",
     posterDataUrl: "/images/demo/series-2.webp",
-    description: "Real, unscripted everyday daily vlogs. Moving from Delhi to Mumbai, late-night creator studio setups, Mumbai local train adventures, and midnight Marine Drive chai sessions.",
-    genre: "Lifestyle & Daily Vlogs",
+    description: "Real, unscripted everyday vlogs. Moving from Delhi to Mumbai, late-night studio work, events, and behind the scenes.",
+    genre: "Lifestyle, Daily Vlogs",
     language: "Hindi",
     platform: "YouTube",
     createdAt: new Date().toISOString(),
@@ -156,10 +157,10 @@ export const EXPERT_DEMO_SERIES: Series[] = [
   },
   {
     id: "ser_desi_rasoi_recipes",
-    title: "Desi Rasoi: 15-Minute Restaurant & Dhaba Style Recipes",
+    title: "Desi Rasoi: 15-Minute Restaurant Recipes",
     posterDataUrl: "/images/demo/series-3.webp",
-    description: "Quick, delicious, and fail-proof Indian recipes. Secret dhaba gravies, street style crispy snacks, and ghar ka swad explained step-by-step in 60-second reels.",
-    genre: "Food & Authentic Indian Recipes",
+    description: "Quick, delicious, and fail-proof Indian recipes. Secret dhaba gravies, street style snacks, and authentic home food.",
+    genre: "Food, Indian Recipes",
     language: "Hindi",
     platform: "Instagram",
     createdAt: new Date().toISOString(),
@@ -211,10 +212,10 @@ export const EXPERT_DEMO_SERIES: Series[] = [
   },
   {
     id: "ser_bharat_darshan_fb",
-    title: "Bharat Darshan: Hidden Cultural Wonders & Street Stories",
+    title: "Bharat Darshan: Hidden Cultural Gems",
     posterDataUrl: "/images/demo/series-4.webp",
-    description: "Exploring ancient Indian architecture, royal palace secrets of Rajasthan, sunrise Ganga aarti in Varanasi, and untold folklore across historic towns.",
-    genre: "Culture, Heritage & Storytelling",
+    description: "Exploring ancient Indian architecture, royal palaces, local traditions and offbeat destinations across India.",
+    genre: "Culture, Heritage",
     language: "Hindi",
     platform: "Facebook",
     createdAt: new Date().toISOString(),
@@ -265,13 +266,13 @@ export const EXPERT_DEMO_SERIES: Series[] = [
     ],
   },
   {
-    id: "ser_indian_streetfood_trail",
-    title: "The Great Indian Street Food Safari: Delhi, Mumbai & Lucknow",
+    id: "ser_creator_life_bts",
+    title: "Creator Life: Behind The Scenes",
     posterDataUrl: "/images/demo/series-5.webp",
-    description: "A pan-India culinary expedition finding legendary hidden food gems. Long-form video deep-dives on YouTube, viral quick bites on Instagram Reels, and community reviews on Facebook Watch.",
-    genre: "Street Food Safari & Exploration",
+    description: "My studio setup, editing workflow, gear, Q&A and real talk about being a full-time creator.",
+    genre: "Behind The Scenes, Creator Journey",
     language: "Hindi",
-    platform: "Multi-Platform",
+    platform: "Creator",
     createdAt: new Date().toISOString(),
     seasons: [
       {
@@ -380,22 +381,76 @@ export const EXPERT_DEMO_GIGS: MediaKitPackage[] = [
 
 export const EXPERT_DEMO_CUSTOM_LINKS: CustomLink[] = [
   {
-    id: "link_standup_tour",
-    title: "Book Tickets: 'Middle Class Dreams' Tour 🎟️",
-    url: "https://bookmyshow.com",
+    id: "link_himalayan_tour",
+    title: "Himalayan Motorcycle Expedition 2027 – Group Tour Pre-Bookings 🏔️",
+    url: "https://in.bookmyshow.com",
     isEnabled: true,
   },
   {
-    id: "link_podcast",
-    title: "The Devom Show Podcast 🎙️",
-    url: "https://open.spotify.com",
+    id: "link_yt_membership",
+    title: "Official YouTube Channel Membership & VIP Community 🟡",
+    url: "https://www.youtube.com/@inflixo",
     isEnabled: true,
   },
   {
-    id: "link_merch",
-    title: "Official Relatable Merch Store ☕",
-    url: "https://inflixo.com",
+    id: "link_gear_kit",
+    title: "My Complete Moto-Vlog & Studio Filming Gear Kit (Cameras, Mics & Mounts) 🎥",
+    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     isEnabled: true,
+  },
+  {
+    id: "col_travel_guides",
+    title: "FEATURED TRAVEL GUIDES & ITINERARIES",
+    kind: "collection",
+    url: "",
+    isEnabled: true,
+    items: [
+      {
+        id: "link_spiti_guide",
+        title: "Complete 14-Day Spiti Valley Road Trip Route & Permits Guide",
+        url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        isEnabled: true,
+      },
+      {
+        id: "link_mumbai_food",
+        title: "Top 25 Must-Try Mumbai Street Food Stalls & Secret Cafes",
+        url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        isEnabled: true,
+      },
+      {
+        id: "link_delhi_walk",
+        title: "Old Delhi 24-Hour Food Walk & Heritage Map",
+        url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        isEnabled: true,
+      },
+    ],
+  },
+  {
+    id: "col_channels_community",
+    title: "COMMUNITY & CHANNELS",
+    kind: "collection",
+    url: "",
+    isEnabled: true,
+    items: [
+      {
+        id: "link_whatsapp_vip",
+        title: "Himalayan Riders | WhatsApp VIP Community Channel",
+        url: "https://whatsapp.com",
+        isEnabled: true,
+      },
+      {
+        id: "link_spotify_podcast",
+        title: "Chai & Road Stories on Spotify Podcast",
+        url: "https://open.spotify.com",
+        isEnabled: true,
+      },
+      {
+        id: "link_merch_official",
+        title: "Official Nomad Explorer Merch & Travel Tees",
+        url: "https://inflixo.com",
+        isEnabled: true,
+      },
+    ],
   },
 ];
 
@@ -529,24 +584,59 @@ export const EXPERT_DEMO_PRODUCTS: CreatorProduct[] = [
     productUrl: "https://amazon.in/dp/B08DP45C57",
   },
   {
-    id: "prod_shure_sm7b",
-    name: "Shure SM7B Cardioid Dynamic Vocal Mic",
+    id: "prod_dji_mic_2",
+    name: "DJI Mic 2 (2 TX + 1 RX)",
     imageUrl: "/images/demo/product-2.webp",
     pricePaise: 3890000,
-    productUrl: "https://amazon.in/dp/B0002E4Z8M",
+    productUrl: "https://amazon.in",
   },
   {
-    id: "prod_dji_rs3_pro",
-    name: "DJI RS 3 Pro Gimbal Stabilizer",
+    id: "prod_aputure_300d",
+    name: "Aputure LS 300d II + Light Dome III",
     imageUrl: "/images/demo/product-3.webp",
     pricePaise: 7499000,
-    productUrl: "https://amazon.in/dp/B09V7YQ8Q1",
+    productUrl: "https://aputure.com",
   },
   {
-    id: "prod_nanlite_forza",
-    name: "Nanlite Forza 300B II Bi-Color LED",
+    id: "prod_davinci_resolve",
+    name: "DaVinci Resolve Studio",
     imageUrl: "/images/demo/product-4.webp",
-    pricePaise: 8499000,
-    productUrl: "https://amazon.in/dp/B0B64P4B62",
+    pricePaise: 2650000,
+    productUrl: "https://blackmagicdesign.com",
+  },
+  {
+    id: "prod_midjourney_claude",
+    name: "Midjourney & Claude Pro",
+    imageUrl: "/images/demo/product-5.webp",
+    pricePaise: 149900,
+    productUrl: "https://claude.ai",
+  },
+  {
+    id: "prod_pgytech_backpack",
+    name: "PGYTECH Camera Backpack",
+    imageUrl: "/images/demo/product-6.webp",
+    pricePaise: 1299000,
+    productUrl: "https://pgytech.com",
+  },
+  {
+    id: "prod_gopro_hero_12",
+    name: "GoPro HERO 12 Black",
+    imageUrl: "/images/demo/product-7.webp",
+    pricePaise: 3699000,
+    productUrl: "https://gopro.com",
+  },
+  {
+    id: "prod_dji_osmo_6",
+    name: "DJI Osmo Mobile 6",
+    imageUrl: "/images/demo/product-8.webp",
+    pricePaise: 1399000,
+    productUrl: "https://dji.com",
+  },
+  {
+    id: "prod_samsung_t7",
+    name: "Samsung T7 1TB Portable SSD",
+    imageUrl: "/images/demo/product-9.webp",
+    pricePaise: 899900,
+    productUrl: "https://samsung.com",
   },
 ];

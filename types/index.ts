@@ -276,6 +276,7 @@ export interface SocialAccounts {
   pinterest?: GenericSocialStats;
   twitch?: GenericSocialStats;
   spotify?: GenericSocialStats;
+  tiktok?: GenericSocialStats;
   updatedAt: string;
 }
 
@@ -283,6 +284,7 @@ export const EMPTY_SOCIAL_ACCOUNTS: SocialAccounts = {
   instagram: { url: "", followers: 0, posts: 0 },
   youtube: { url: "", subscribers: 0, videos: 0, totalViews: 0 },
   facebook: { url: "", followers: 0, posts: 0 },
+  tiktok: { url: "", followers: 0 },
   twitter: { url: "", followers: 0 },
   linkedin: { url: "", followers: 0 },
   threads: { url: "", followers: 0 },
@@ -297,6 +299,7 @@ export interface CustomLink {
   id: string;
   title: string;
   url: string;
+  subtitle?: string;
   icon?: string;
   isEnabled?: boolean;
   kind?: "link" | "collection";
@@ -497,9 +500,11 @@ export interface Series {
 export interface MediaKitPackage {
   id: string;
   title: string;
+  description?: string;
   platform: "YouTube" | "Instagram" | "Instagram Bundle" | "Monthly Retainer" | "Facebook" | "Multi-Platform" | string;
   deliverables: string[];
   price: string;
+  priceUnit?: string;
   minPrice?: string;
   maxPrice?: string;
   packageName?: string;
@@ -684,6 +689,7 @@ export interface CreatorTeam {
   creatorId: string;
   teamName: string;
   teamLogoUrl?: string | null;
+  teamDescription?: string | null;
   members: TeamMember[];
   isActive: boolean;
   createdAt?: string;

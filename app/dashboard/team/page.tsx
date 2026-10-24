@@ -1,7 +1,28 @@
 "use client";
 
 import { useEffect, useState, useMemo, useRef } from "react";
-import { Users, Plus, Pencil, Trash2, ShieldCheck, Eye, EyeOff, Camera, ExternalLink, Sparkles, ChevronDown, ChevronUp, MoreVertical, Copy } from "lucide-react";
+import {
+  Users,
+  Plus,
+  Pencil,
+  Trash2,
+  ShieldCheck,
+  Eye,
+  EyeOff,
+  Camera,
+  ExternalLink,
+  Sparkles,
+  ChevronDown,
+  ChevronUp,
+  MoreVertical,
+  Copy,
+  User,
+  UserPlus,
+  Briefcase,
+  FileText,
+  Image as ImageIcon,
+  X,
+} from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { CreatorTeam, TeamMember } from "@/types";
@@ -12,6 +33,7 @@ import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { teamRepository } from "@/repositories/localRepository";
 import { getInitials } from "@/lib/avatar";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { resizeImageToDataUrl } from "@/lib/imageResize";
 
 export default function DashboardTeamPage() {
   const { profile } = useCreator();
@@ -34,6 +56,7 @@ export default function DashboardTeamPage() {
   // Team Form State
   const [teamName, setTeamName] = useState("");
   const [teamLogoUrl, setTeamLogoUrl] = useState<string | null>(null);
+  const [teamDescription, setTeamDescription] = useState("");
 
   // Member Form State
   const [memberName, setMemberName] = useState("");
@@ -96,10 +119,22 @@ export default function DashboardTeamPage() {
     loadTeam();
   }, [creatorLookup]);
 
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const dataUrl = await resizeImageToDataUrl(file, 600);
+      setTeamLogoUrl(dataUrl);
+    } catch {
+      showToast("Failed to process image", "error");
+    }
+  };
+
   // Open Edit Team Modal
   const handleOpenTeamModal = () => {
     setTeamName(team?.teamName || `${profile.displayName || "Creator"}'s Team`);
     setTeamLogoUrl(team?.teamLogoUrl || null);
+    setTeamDescription(team?.teamDescription || "");
     setIsTeamModalOpen(true);
   };
 
@@ -123,6 +158,7 @@ export default function DashboardTeamPage() {
           id: team?.id,
           teamName: teamName.trim(),
           teamLogoUrl,
+          teamDescription: teamDescription.trim(),
           isActive: team?.isActive !== false,
         }),
       });
@@ -510,7 +546,7 @@ export default function DashboardTeamPage() {
                 </div>
               ) : (
                 <div className="divide-y divide-[#e2e8f0] bg-white rounded-b-xl">
-                  {team.members.map((member) => (
+                  {team.members.map((member: TeamMember) => (
                     <div
                       key={member.id}
                       className={`px-3.5 py-2 sm:py-2.5 flex items-center justify-between gap-3 hover:bg-[#f1f5f9] transition-colors text-left last:rounded-b-xl ${member.isActive ? "" : "opacity-60 bg-[#f8fafc]/40"
@@ -679,57 +715,139 @@ export default function DashboardTeamPage() {
         </div>
       )}
 
-      {/* TEAM EDIT MODAL */}
+      {/* TEAM EDIT / CREATE MODAL */}
       <Modal
         isOpen={isTeamModalOpen}
         onClose={() => setIsTeamModalOpen(false)}
         size="md"
         title={team ? "Edit Team Details" : "Create Creator Team"}
-        description="Set up your team name for your public profile."
-        icon={<Users className="h-4 w-4" />}
+        description="Set up your team name and identity for your public profile."
+        icon={<Users className="h-5 w-5" />}
       >
         <form onSubmit={handleSaveTeam} className="flex flex-col flex-1 min-h-0">
-          <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
-            {/* Live Team Initials Badge Preview */}
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-[#f8fafc]/60 border border-[#e2e8f0]">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#7A225314] border border-[#e2e8f0] text-[#7A2253] font-extrabold text-xs shadow-xs shrink-0">
-                {getInitials(teamName || "Team")}
+          <ModalBody className="p-4 sm:p-5 space-y-4 text-left">
+            {/* Info Banner */}
+            <div className="flex items-center gap-3 p-3.5 rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1]">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-white border border-[#FCE7F1] text-[#7A2253]">
+                <Users className="h-4 w-4" />
               </div>
               <div className="min-w-0">
-                <p className="font-bold text-xs text-[#7A2253] truncate">{teamName.trim() || "Team Name"}</p>
-                <span className="inline-block text-[10px] font-semibold text-[#7A2253] bg-[#7A2253]/[0.09] border border-[#7A2253]/20 px-1.5 py-0.2 rounded-md">Creator Team</span>
+                <p className="text-xs font-bold text-[#7A2253]">What is a Creator Team?</p>
+                <p className="text-[11px] text-[#64748b] mt-0.5">Highlight your directors, editors, writers, and collaborators. Team members will be featured on your Inflixo public profile.</p>
               </div>
             </div>
 
+            {/* Team Name */}
             <div className="space-y-1">
-              <label className="block text-[13px] font-medium text-[#0f172a]">
-                Team Name <span className="text-[#C2414B]">*</span>
+              <div className="flex items-center justify-between">
+                <label className="block text-[13px] font-medium text-[#0f172a]">
+                  Team Name <span className="text-[#C2414B]">*</span>
+                </label>
+                <span className="text-[11px] text-[#64748b]">Choose a name that represents your team.</span>
+              </div>
+              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                  <Users className="h-4 w-4" />
+                </div>
+                <input
+                  type="text"
+                  required
+                  value={teamName}
+                  onChange={(e) => setTeamName(e.target.value)}
+                  placeholder="e.g. Nikunj's Team, Studio 8, The Creators"
+                  className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Team Logo (Optional) */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <label className="block text-[13px] font-medium text-[#0f172a]">
+                  Team Logo <span className="font-normal text-[#94a3b8]">(Optional)</span>
+                </label>
+                <span className="text-[11px] text-[#64748b]">Add a team logo to make it stand out.</span>
+              </div>
+              <label className="relative flex flex-col items-center justify-center p-4 border border-dashed border-[#cbd5e1] rounded-[5px] bg-[#f8fafc] hover:bg-[#f1f5f9] transition-colors cursor-pointer min-h-[96px] group">
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handleLogoUpload}
+                  className="sr-only"
+                />
+                {teamLogoUrl ? (
+                  <div className="flex items-center gap-3 w-full">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={teamLogoUrl}
+                      alt="Team logo preview"
+                      className="h-14 w-14 rounded-[5px] object-cover border border-[#e2e8f0]"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <span className="block text-xs font-semibold text-[#0f172a]">Logo uploaded</span>
+                      <span className="block text-[11px] text-[#7A2253] font-medium">Click to change logo</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setTeamLogoUrl(null);
+                      }}
+                      className="h-7 w-7 flex items-center justify-center rounded-[5px] text-[#64748b] hover:text-rose-600 hover:bg-rose-50"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center text-center">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#64748b] group-hover:text-[#7A2253] mb-1">
+                      <ImageIcon className="h-5 w-5" />
+                    </div>
+                    <span className="text-xs font-semibold text-[#0f172a]">Upload Team Logo</span>
+                    <span className="text-[11px] text-[#94a3b8]">JPG, PNG or WebP · Max 5MB</span>
+                  </div>
+                )}
               </label>
-              <input
-                type="text"
-                required
-                value={teamName}
-                onChange={(e) => setTeamName(e.target.value)}
-                placeholder="e.g. MediaVerse Studio or Nikunj Films"
-                className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:bg-white focus:outline-none transition-colors"
-              />
+            </div>
+
+            {/* Team Description (Optional) */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <label className="block text-[13px] font-medium text-[#0f172a]">
+                  Team Description <span className="font-normal text-[#94a3b8]">(Optional)</span>
+                </label>
+                <span className="text-[11px] text-[#64748b]">A short description about your team.</span>
+              </div>
+              <div className="flex rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex w-10 shrink-0 items-start justify-center pt-2.5 border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                  <FileText className="h-4 w-4" />
+                </div>
+                <textarea
+                  value={teamDescription}
+                  onChange={(e) => setTeamDescription(e.target.value)}
+                  placeholder="e.g. A team of filmmakers, editors and storytellers creating travel and lifestyle content."
+                  rows={2}
+                  className="flex-1 p-2.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none resize-y"
+                />
+              </div>
             </div>
           </ModalBody>
 
-          <ModalFooter className="px-4 sm:px-5 py-3">
+          <ModalFooter className="px-5 sm:px-6 py-4">
             <button
               type="button"
               onClick={() => setIsTeamModalOpen(false)}
-              className="h-9 px-3.5 rounded-lg border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
+              className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="tap-scale h-9 bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs px-4 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="h-10 px-5 rounded-[5px] bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5 disabled:opacity-50"
             >
-              <span>{isSubmitting ? "Saving..." : "Save Team"}</span>
+              <span>{isSubmitting ? "Saving..." : team ? "Save Changes" : "+ Create Team"}</span>
             </button>
           </ModalFooter>
         </form>
@@ -742,126 +860,142 @@ export default function DashboardTeamPage() {
         size="md"
         title={editingMember ? "Edit Team Member" : "Add Team Member"}
         description="Add member information, role and social links."
-        icon={<Users className="h-4 w-4" />}
+        icon={<Users className="h-5 w-5" />}
       >
         <form onSubmit={handleSaveMember} className="flex flex-col flex-1 min-h-0">
-          <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
-            {/* Live Member Initials Avatar Preview */}
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-[#f8fafc]/60 border border-[#e2e8f0]">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#7A225314] border border-[#e2e8f0] text-[#7A2253] font-extrabold text-xs shadow-xs shrink-0">
-                {getInitials(memberName || "Member")}
+          <ModalBody className="p-4 sm:p-5 space-y-4 text-left">
+            {/* Info Banner */}
+            <div className="flex items-center gap-3 p-3.5 rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1]">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-white border border-[#FCE7F1] text-[#7A2253]">
+                <User className="h-4 w-4" />
               </div>
               <div className="min-w-0">
-                <p className="font-bold text-xs text-[#7A2253] truncate">{memberName.trim() || "Member Name"}</p>
-                <p className="text-[11px] font-medium text-[#7A2253] truncate">{memberRole.trim() || "Member Role"}</p>
+                <p className="text-xs font-bold text-[#7A2253]">Team members appear on your public profile</p>
+                <p className="text-[11px] text-[#64748b] mt-0.5">Add their details and social handles to give them proper credit for their work.</p>
               </div>
             </div>
 
+            {/* Name & Role Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
                 <label className="block text-[13px] font-medium text-[#0f172a]">
                   Name <span className="text-[#C2414B]">*</span>
                 </label>
-                <input
-                  type="text"
-                  required
-                  value={memberName}
-                  onChange={(e) => setMemberName(e.target.value)}
-                  placeholder="e.g. Rahul Sharma"
-                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:bg-white focus:outline-none transition-colors"
-                />
+                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                    <User className="h-4 w-4" />
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    value={memberName}
+                    onChange={(e) => setMemberName(e.target.value)}
+                    placeholder="e.g. Rahul Sharma"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  />
+                </div>
               </div>
 
               <div className="space-y-1">
                 <label className="block text-[13px] font-medium text-[#0f172a]">
                   Role <span className="text-[#C2414B]">*</span>
                 </label>
-                <input
-                  type="text"
-                  required
-                  value={memberRole}
-                  onChange={(e) => setMemberRole(e.target.value)}
-                  placeholder="e.g. Lead Video Editor"
-                  className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3.5 py-2 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:bg-white focus:outline-none transition-colors"
-                />
+                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                    <Briefcase className="h-4 w-4" />
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    value={memberRole}
+                    onChange={(e) => setMemberRole(e.target.value)}
+                    placeholder="e.g. Lead Video Editor"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="space-y-2.5 pt-2 border-t border-[#e2e8f0]">
+            {/* Social Profiles (Optional) */}
+            <div className="space-y-3 pt-2">
               <div>
                 <p className="text-xs font-bold text-[#7A2253]">Social Profiles (Optional)</p>
-                <p className="text-[10px] text-[#64748b]">Enter username only — full profile links are generated automatically.</p>
+                <p className="text-[11px] text-[#64748b] mt-0.5">Enter username only — we&apos;ll generate the full profile links automatically.</p>
               </div>
 
+              {/* Instagram */}
               <div className="space-y-1">
-                <label className="block text-[11px] font-semibold text-[#64748b]">
-                  Instagram Username
-                </label>
-                <div className="flex h-9 items-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3 transition-colors focus-within:border-[#7A2253] focus-within:bg-white">
-                  <span className="mr-2 text-[#E1306C] shrink-0">
-                    <InstagramIcon className="h-3.5 w-3.5" />
-                  </span>
-                  <input
-                    type="text"
-                    value={memberInstagram}
-                    onChange={(e) => setMemberInstagram(extractHandle(e.target.value, "instagram"))}
-                    placeholder="username (e.g. johndoe)"
-                    className="h-full w-full min-w-0 flex-1 bg-transparent text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/40 outline-none"
-                  />
+                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc]">
+                    <InstagramIcon className="h-5 w-5 text-[#E1306C]" />
+                  </div>
+                  <div className="flex-1 px-3 py-1.5 min-w-0">
+                    <span className="block text-[10px] font-semibold text-[#64748b] leading-tight">Instagram Username</span>
+                    <input
+                      type="text"
+                      value={memberInstagram}
+                      onChange={(e) => setMemberInstagram(extractHandle(e.target.value, "instagram"))}
+                      placeholder="e.g. johndoe"
+                      className="w-full text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/40 bg-transparent outline-none pt-0.5"
+                    />
+                  </div>
                 </div>
               </div>
 
+              {/* YouTube */}
               <div className="space-y-1">
-                <label className="block text-[11px] font-semibold text-[#64748b]">
-                  YouTube Channel Username
-                </label>
-                <div className="flex h-9 items-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3 transition-colors focus-within:border-[#7A2253] focus-within:bg-white">
-                  <span className="mr-2 text-[#FF0000] shrink-0">
-                    <YoutubeIcon className="h-3.5 w-3.5" />
-                  </span>
-                  <input
-                    type="text"
-                    value={memberYoutube}
-                    onChange={(e) => setMemberYoutube(extractHandle(e.target.value, "youtube"))}
-                    placeholder="channel username (e.g. channelname)"
-                    className="h-full w-full min-w-0 flex-1 bg-transparent text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/40 outline-none"
-                  />
+                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc]">
+                    <YoutubeIcon className="h-5 w-5 text-[#FF0000]" />
+                  </div>
+                  <div className="flex-1 px-3 py-1.5 min-w-0">
+                    <span className="block text-[10px] font-semibold text-[#64748b] leading-tight">YouTube Channel Username</span>
+                    <input
+                      type="text"
+                      value={memberYoutube}
+                      onChange={(e) => setMemberYoutube(extractHandle(e.target.value, "youtube"))}
+                      placeholder="e.g. channelname"
+                      className="w-full text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/40 bg-transparent outline-none pt-0.5"
+                    />
+                  </div>
                 </div>
               </div>
 
+              {/* Facebook */}
               <div className="space-y-1">
-                <label className="block text-[11px] font-semibold text-[#64748b]">
-                  Facebook Username
-                </label>
-                <div className="flex h-9 items-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 px-3 transition-colors focus-within:border-[#7A2253] focus-within:bg-white">
-                  <span className="mr-2 text-[#1877F2] shrink-0">
-                    <FacebookIcon className="h-3.5 w-3.5" />
-                  </span>
-                  <input
-                    type="text"
-                    value={memberFacebook}
-                    onChange={(e) => setMemberFacebook(extractHandle(e.target.value, "facebook"))}
-                    placeholder="page username (e.g. pagename)"
-                    className="h-full w-full min-w-0 flex-1 bg-transparent text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/40 outline-none"
-                  />
+                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc]">
+                    <FacebookIcon className="h-5 w-5 text-[#1877F2]" />
+                  </div>
+                  <div className="flex-1 px-3 py-1.5 min-w-0">
+                    <span className="block text-[10px] font-semibold text-[#64748b] leading-tight">Facebook Username</span>
+                    <input
+                      type="text"
+                      value={memberFacebook}
+                      onChange={(e) => setMemberFacebook(extractHandle(e.target.value, "facebook"))}
+                      placeholder="e.g. pagename"
+                      className="w-full text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/40 bg-transparent outline-none pt-0.5"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </ModalBody>
 
-          <ModalFooter className="px-4 sm:px-5 py-3">
+          <ModalFooter className="px-5 sm:px-6 py-4">
             <button
               type="button"
               onClick={() => setIsMemberModalOpen(false)}
-              className="h-9 px-3.5 rounded-lg border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
+              className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="tap-scale h-9 bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs px-4 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="h-10 px-5 rounded-[5px] bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5 disabled:opacity-50"
             >
+              <UserPlus className="h-4 w-4" />
               <span>{isSubmitting ? "Saving..." : editingMember ? "Save Changes" : "Add Member"}</span>
             </button>
           </ModalFooter>

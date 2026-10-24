@@ -26,7 +26,7 @@ export function DashboardBottomNav() {
             }`}
           >
             <span
-              className={`flex h-7 w-12 items-center justify-center rounded-full transition-colors ${
+              className={`flex h-7 w-12 items-center justify-center rounded-[5px] transition-colors ${
                 active ? "bg-[#7A2253]/[0.09]" : ""
               }`}
             >

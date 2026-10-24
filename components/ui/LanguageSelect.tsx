@@ -66,41 +66,41 @@ export function LanguageSelect({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex h-12 w-full items-center justify-between rounded-2xl border bg-white px-4 text-left shadow-[0_1px_2px_rgba(23,20,31,0.03)] transition-all focus:outline-none ${
+        className={`flex h-11 w-full items-center justify-between rounded-[5px] border bg-white px-4 text-left shadow-xs transition-all focus:outline-none ${
           isOpen
-            ? "border-inflixo-purple ring-4 ring-inflixo-purple/10"
+            ? "border-[#7A2253] ring-2 ring-[#7A2253]/10"
             : error
             ? "border-rose-400"
-            : "border-inflixo-border hover:border-inflixo-purple/40"
+            : "border-[#e2e8f0] hover:border-[#7A2253]/40"
         }`}
       >
         <div className="flex items-center gap-2.5 min-w-0">
-          <Globe className="h-4 w-4 text-inflixo-purple shrink-0" />
+          <Globe className="h-4 w-4 text-[#7A2253] shrink-0" />
           {value ? (
-            <span className="truncate text-[15px] font-medium text-inflixo-navy">
+            <span className="truncate text-sm font-medium text-[#0f172a]">
               {selectedLang ? `${selectedLang.name} (${selectedLang.nativeName})` : value}
             </span>
           ) : (
-            <span className="text-[15px] text-muted/70">{placeholder}</span>
+            <span className="text-sm text-[#94a3b8]">{placeholder}</span>
           )}
         </div>
-        <ChevronDown className={`h-4 w-4 text-muted transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+        <ChevronDown className={`h-4 w-4 text-[#64748b] transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
       </button>
 
       {error && <p className="mt-1.5 text-xs font-medium text-rose-500">{error}</p>}
 
       {/* Searchable Dropdown Popover */}
       {isOpen && (
-        <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-72 w-full overflow-hidden rounded-2xl border border-inflixo-border bg-white p-2 shadow-xl ring-1 ring-black/5 animate-in fade-in-50 slide-in-from-top-2">
+        <div className="absolute left-0 right-0 top-full z-50 mt-1.5 max-h-72 w-full overflow-hidden rounded-[5px] border border-[#e2e8f0] bg-white p-2 shadow-xl ring-1 ring-black/5 animate-in fade-in-50 slide-in-from-top-2">
           {/* Search Box */}
           <div className="relative mb-2 px-1">
-            <Search className="absolute left-3.5 top-3 h-4 w-4 text-muted" />
+            <Search className="absolute left-3.5 top-3 h-4 w-4 text-[#94a3b8]" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search language..."
-              className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 text-xs font-medium text-inflixo-navy placeholder:text-muted focus:border-inflixo-purple focus:bg-white focus:outline-none"
+              className="h-9 w-full rounded-[5px] border border-slate-200 bg-slate-50 pl-9 pr-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:bg-white focus:outline-none"
               autoFocus
             />
           </div>
@@ -108,7 +108,7 @@ export function LanguageSelect({
           {/* Languages List */}
           <div className="no-scrollbar max-h-52 overflow-y-auto space-y-0.5 pr-1">
             {filtered.length === 0 ? (
-              <div className="p-4 text-center text-xs text-muted">No language found for &quot;{search}&quot;</div>
+              <div className="p-4 text-center text-xs text-[#94a3b8]">No language found for &quot;{search}&quot;</div>
             ) : (
               filtered.map((l) => {
                 const isSelected =
@@ -123,17 +123,17 @@ export function LanguageSelect({
                       setIsOpen(false);
                       setSearch("");
                     }}
-                    className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-xs transition-colors ${
+                    className={`flex w-full items-center justify-between rounded-[5px] px-3 py-2 text-left text-xs transition-colors cursor-pointer ${
                       isSelected
-                        ? "bg-inflixo-purple-light text-inflixo-purple font-bold"
-                        : "text-inflixo-navy hover:bg-[#f1f5f9]"
+                        ? "bg-[#FFF0F5] text-[#7A2253] font-bold"
+                        : "text-[#0f172a] hover:bg-[#f1f5f9]"
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <span className="font-extrabold">{l.name}</span>
-                      <span className="text-muted font-normal">({l.nativeName})</span>
+                      <span className="font-semibold">{l.name}</span>
+                      <span className="text-[#94a3b8] font-normal">({l.nativeName})</span>
                     </div>
-                    {isSelected && <Check className="h-4 w-4 text-inflixo-purple stroke-[3]" />}
+                    {isSelected && <Check className="h-4 w-4 text-[#7A2253] stroke-[3]" />}
                   </button>
                 );
               })

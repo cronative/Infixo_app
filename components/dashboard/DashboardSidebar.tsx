@@ -35,7 +35,7 @@ export function DashboardSidebar() {
       </div>
 
       {/* Creator Profile Mini Card */}
-      <div className="mb-3 flex items-center gap-2.5 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-2">
+      <div className="mb-3 flex items-center gap-2.5 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] p-2">
         <CreatorAvatar
           src={profile.photoDataUrl}
           name={displayName}
@@ -56,7 +56,7 @@ export function DashboardSidebar() {
               @{handleStr}
             </p>
             {isTrialExpired ? (
-              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded-full border border-rose-200">
+              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded-[5px] border border-rose-200">
                 <span className="h-1 w-1 rounded-full bg-rose-500" />
                 Private
               </span>
@@ -86,7 +86,7 @@ export function DashboardSidebar() {
                     key={item.href}
                     href={item.href}
                     aria-current={active ? "page" : undefined}
-                    className={`group flex h-8 items-center gap-2.5 rounded-lg px-2.5 text-[13px] transition-all ${
+                    className={`group flex h-8 items-center gap-2.5 rounded-[5px] px-2.5 text-[13px] transition-all ${
                       active
                         ? "bg-[#7A2253]/[0.08] font-semibold text-[#7A2253]"
                         : "font-medium text-[#475569] hover:bg-[#fdf2f8] hover:text-[#7A2253]"
@@ -111,7 +111,7 @@ export function DashboardSidebar() {
         <Link
           href="/dashboard/subscription"
           title={`Subscription Plan: ${planInfo.label}`}
-          className={`flex min-w-0 flex-1 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
+          className={`flex min-w-0 flex-1 items-center gap-1.5 rounded-[5px] px-2.5 py-1.5 text-xs transition-colors ${
             planInfo.tier === "vip"
               ? "bg-amber-50 text-amber-900 border border-amber-200/90 hover:bg-amber-100 font-semibold"
               : planInfo.tier === "pro"
@@ -139,7 +139,7 @@ export function DashboardSidebar() {
         <button
           type="button"
           onClick={handleViewProfile}
-          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-[#64748b] transition-colors hover:bg-[#fdf2f8] hover:text-[#7A2253]"
+          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-[5px] text-[#64748b] transition-colors hover:bg-[#fdf2f8] hover:text-[#7A2253]"
           title="View live profile"
           aria-label="View live profile"
         >
@@ -150,7 +150,7 @@ export function DashboardSidebar() {
             AuthService.logout();
             router.push("/login");
           }}
-          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-[#64748b] transition-colors hover:bg-rose-50 hover:text-rose-600"
+          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-[5px] text-[#64748b] transition-colors hover:bg-rose-50 hover:text-rose-600"
           title="Logout"
           aria-label="Logout"
         >
