@@ -345,24 +345,50 @@ export default function ProductsPage() {
           </button>
         </div>
       ) : displayProducts.length === 0 ? (
-        <EmptyState
-          icon={<ShoppingBag className="h-5 w-5" />}
-          title={searchQuery ? "No matching products" : activeTab !== "all" ? `No ${activeTab} products` : "No products yet"}
-          description={searchQuery ? "Try a different search term." : "Add products you recommend and display them on your Inflixo profile."}
-          action={
+        searchQuery ? (
+          <EmptyState
+            icon={<ShoppingBag className="h-5 w-5" />}
+            title="No matching products"
+            description="Try a different search term."
+            action={
+              <button
+                type="button"
+                className="inline-flex items-center gap-1.5 h-9 px-4 rounded-[5px] bg-[#7A2253] text-white text-xs font-bold hover:bg-[#681c46] shadow-2xs transition-colors cursor-pointer"
+                onClick={() => setSearchQuery("")}
+              >
+                <Plus className="h-4 w-4" />
+                <span>Clear Search</span>
+              </button>
+            }
+          />
+        ) : (
+          <div className="rounded-[5px] border-2 border-dashed border-[#e2e8f0] bg-white/40 p-8 sm:p-10 text-center flex flex-col items-center justify-center">
+            <div className="relative mb-3 flex items-center justify-center">
+              <span className="absolute -top-2 -left-3 text-sm text-[#F43F5E] opacity-70">✦</span>
+              <span className="absolute -bottom-1 -right-3 text-xs text-[#F43F5E] opacity-70">✦</span>
+              <div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-[#FFF5F7] text-[#7A2253] border border-[#FCE7F3]">
+                <ShoppingBag className="h-6 w-6" />
+                <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#7A2253] text-[10px] font-bold text-white shadow-xs">
+                  +
+                </span>
+              </div>
+            </div>
+            <h4 className="font-bold text-sm sm:text-base text-[#0f172a]">
+              Add your first product
+            </h4>
+            <p className="mt-1 text-xs text-[#64748b] max-w-sm">
+              Show the tools, gadgets and products you use and recommend to your audience.
+            </p>
             <button
               type="button"
-              className="inline-flex items-center gap-1.5 h-9 px-4 rounded-[5px] bg-[#7A2253] text-white text-xs font-bold hover:bg-[#681c46] shadow-2xs transition-colors cursor-pointer"
-              onClick={() => {
-                if (searchQuery) setSearchQuery("");
-                else edit();
-              }}
+              onClick={() => edit()}
+              className="mt-4 inline-flex items-center gap-1.5 h-9 px-4 rounded-[5px] bg-[#7A2253] text-white text-xs font-bold hover:bg-[#681c46] shadow-2xs transition-colors cursor-pointer"
             >
               <Plus className="h-4 w-4" />
-              <span>{searchQuery ? "Clear Search" : "Add Product"}</span>
+              <span>Add Product</span>
             </button>
-          }
-        />
+          </div>
+        )
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {displayProducts.map((product) => (
@@ -441,34 +467,6 @@ export default function ProductsPage() {
           ))}
         </div>
       )}
-
-      {/* 4. Bottom Add More Products Dashed Box */}
-      <div className="rounded-[5px] border-2 border-dashed border-[#e2e8f0] bg-white/40 p-8 sm:p-10 text-center flex flex-col items-center justify-center mt-6">
-        <div className="relative mb-3 flex items-center justify-center">
-          <span className="absolute -top-2 -left-3 text-sm text-[#F43F5E] opacity-70">✦</span>
-          <span className="absolute -bottom-1 -right-3 text-xs text-[#F43F5E] opacity-70">✦</span>
-          <div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-[#FFF5F7] text-[#7A2253] border border-[#FCE7F3]">
-            <ShoppingBag className="h-6 w-6" />
-            <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#7A2253] text-[10px] font-bold text-white shadow-xs">
-              +
-            </span>
-          </div>
-        </div>
-        <h4 className="font-bold text-sm sm:text-base text-[#0f172a]">
-          Add more products
-        </h4>
-        <p className="mt-1 text-xs text-[#64748b] max-w-sm">
-          Show the tools, gadgets and products you use and recommend to your audience.
-        </p>
-        <button
-          type="button"
-          onClick={() => edit()}
-          className="mt-4 inline-flex items-center gap-1.5 h-9 px-4 rounded-[5px] bg-[#7A2253] text-white text-xs font-bold hover:bg-[#681c46] shadow-2xs transition-colors cursor-pointer"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Add Product</span>
-        </button>
-      </div>
       <Modal
         isOpen={open}
         onClose={() => {
