@@ -1,80 +1,72 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
-  ExternalLink,
   Sparkles,
-  ShieldCheck,
-  LogOut,
-  Crown,
-  Zap,
-  AlertTriangle,
+  ChevronRight,
 } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 import { NAV_GROUPS, isNavActive } from "@/components/dashboard/navConfig";
-import { AuthService } from "@/services/AuthService";
 import { useCreator } from "@/contexts/CreatorContext";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
-import { getPlanDisplayInfo } from "@/lib/trialStatus";
+import { getInitials } from "@/lib/avatar";
 
 export function DashboardSidebar() {
   const pathname = usePathname();
-  const router = useRouter();
-  const { profile, handleViewProfile, isTrialExpired, subscription } = useCreator();
-  const planInfo = getPlanDisplayInfo(subscription);
+  const { profile, subscription } = useCreator();
 
   const handleStr = profile.username || "username";
   const displayName = profile.displayName || profile.email?.split("@")[0] || "Creator";
 
   return (
-    <aside className="hidden lg:flex flex-col w-60 shrink-0 border-r border-[#e2e8f0] bg-white px-3 py-4 h-dvh">
+    <aside className="hidden lg:flex flex-col w-64 shrink-0 border-r border-[#e2e8f0] bg-white px-3 py-4 h-dvh">
       {/* Top Brand Logo */}
-      <div className="flex items-center justify-between px-1.5 mb-3">
+      <div className="flex items-center justify-between px-1.5 mb-3.5">
         <Logo size="md" />
       </div>
 
       {/* Creator Profile Mini Card */}
-      <div className="mb-3 flex items-center gap-2.5 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] p-2">
-        <CreatorAvatar
-          src={profile.photoDataUrl}
-          name={displayName}
-          className="h-9 w-9 shrink-0 rounded-full border border-[#e2e8f0]"
-        />
-
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1">
-            <p className="truncate text-[13px] font-semibold text-[#0f172a]" title={displayName}>
+      <Link
+        href={`/${handleStr}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mb-3.5 flex items-center justify-between rounded-[5px] border border-[#f1f5f9] bg-[#f8fafc] hover:bg-[#f1f5f9] p-2.5 transition-colors group cursor-pointer shadow-2xs"
+      >
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+          {profile.photoDataUrl ? (
+            <CreatorAvatar
+              src={profile.photoDataUrl}
+              name={displayName}
+              className="h-9 w-9 shrink-0 rounded-full border border-[#e2e8f0]"
+            />
+          ) : (
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#7A2253] text-white font-bold text-xs shrink-0 select-none">
+              {getInitials(displayName)}
+            </div>
+          )}
+          <div className="min-w-0 flex-1 text-left">
+            <p className="truncate text-xs font-bold text-[#0f172a]" title={displayName}>
               {displayName}
             </p>
-            {profile.isVerified && (
-              <ShieldCheck className="h-3.5 w-3.5 shrink-0 fill-[#7A2253] text-white" />
-            )}
-          </div>
-          <div className="flex items-center gap-1.5 mt-0.5">
-            <p className="truncate text-[11px] text-[#64748b]">
-              @{handleStr}
-            </p>
-            {isTrialExpired ? (
-              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded-[5px] border border-rose-200">
-                <span className="h-1 w-1 rounded-full bg-rose-500" />
-                Private
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#047857]">
-                <span className="h-1 w-1 rounded-full bg-[#10b981]" />
+            <div className="flex items-center gap-1.5 text-[11px] text-[#64748b] mt-0.5">
+              <span className="truncate">@{handleStr}</span>
+              <span>•</span>
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#10b981]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
                 Live
               </span>
-            )}
+            </div>
           </div>
         </div>
-      </div>
+        <ChevronRight className="h-4 w-4 text-[#94a3b8] group-hover:text-[#0f172a] shrink-0 transition-colors" />
+      </Link>
 
-      {/* Main Navigation List: 3 Creator-First Groups (Studio, Growth, Account) */}
-      <nav className="flex-1 space-y-3.5 overflow-y-auto pt-1 no-scrollbar" aria-label="Dashboard">
+      {/* Main Navigation List with Subtitles */}
+      <nav className="flex-1 space-y-3.5 overflow-y-auto pr-1 no-scrollbar text-left" aria-label="Dashboard">
         {NAV_GROUPS.map((group) => (
-          <div key={group.id}>
-            <p className="px-2.5 text-[10px] font-semibold uppercase tracking-wider text-[#94a3b8] mb-1">
+          <div key={group.id} className="space-y-1">
+            <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#64748b]">
               {group.title}
             </p>
             <div className="space-y-0.5">
@@ -86,18 +78,43 @@ export function DashboardSidebar() {
                     key={item.href}
                     href={item.href}
                     aria-current={active ? "page" : undefined}
-                    className={`group flex h-8 items-center gap-2.5 rounded-[5px] px-2.5 text-[13px] transition-all ${
+                    className={`group relative flex items-center gap-3 rounded-[5px] px-3 py-2 text-left transition-all ${
                       active
-                        ? "bg-[#7A2253]/[0.08] font-semibold text-[#7A2253]"
-                        : "font-medium text-[#475569] hover:bg-[#fdf2f8] hover:text-[#7A2253]"
+                        ? "bg-[#FFF5F7] text-[#7A2253]"
+                        : "hover:bg-[#f8fafc] text-[#0f172a]"
                     }`}
                   >
+                    {/* Active left indicator bar */}
+                    {active && (
+                      <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-[#7A2253] rounded-r-full" />
+                    )}
+
                     <Icon
-                      className={`h-4 w-4 shrink-0 transition-colors ${
-                        active ? "text-[#7A2253]" : "text-[#94a3b8] group-hover:text-[#7A2253]"
+                      className={`h-4.5 w-4.5 shrink-0 transition-colors ${
+                        active ? "text-[#7A2253]" : "text-[#64748b] group-hover:text-[#0f172a]"
                       }`}
                     />
-                    <span className="flex-1 truncate">{item.label}</span>
+
+                    <div className="min-w-0 flex-1">
+                      <p
+                        className={`truncate text-xs font-semibold leading-tight ${
+                          active
+                            ? "text-[#7A2253] font-bold"
+                            : "text-[#0f172a] group-hover:text-[#7A2253]"
+                        }`}
+                      >
+                        {item.label}
+                      </p>
+                      {item.subtitle && (
+                        <p
+                          className={`truncate text-[11px] leading-tight mt-0.5 ${
+                            active ? "text-[#64748b]" : "text-[#94a3b8]"
+                          }`}
+                        >
+                          {item.subtitle}
+                        </p>
+                      )}
+                    </div>
                   </Link>
                 );
               })}
@@ -106,56 +123,27 @@ export function DashboardSidebar() {
         ))}
       </nav>
 
-      {/* Bottom Utility Row: plan · preview · logout */}
-      <div className="mt-2 flex items-center gap-1 border-t border-[#e2e8f0] pt-2">
+      {/* Bottom Plan Card */}
+      <div className="mt-3 pt-2 border-t border-[#f1f5f9]">
         <Link
           href="/dashboard/subscription"
-          title={`Subscription Plan: ${planInfo.label}`}
-          className={`flex min-w-0 flex-1 items-center gap-1.5 rounded-[5px] px-2.5 py-1.5 text-xs transition-colors ${
-            planInfo.tier === "vip"
-              ? "bg-amber-50 text-amber-900 border border-amber-200/90 hover:bg-amber-100 font-semibold"
-              : planInfo.tier === "pro"
-              ? "bg-[#7A2253] text-white shadow-xs font-bold hover:bg-[#631841]"
-              : planInfo.tier === "starter"
-              ? "bg-[#fdf2f8] text-[#7A2253] border border-[#fbcfe8] hover:bg-[#fce7f3] font-semibold"
-              : planInfo.tier === "expired"
-              ? "bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 font-semibold"
-              : "text-[#475569] border border-transparent hover:bg-[#fdf2f8] hover:text-[#7A2253] font-medium"
-          }`}
+          className="flex items-center justify-between rounded-[5px] bg-[#FFF5F7] border border-[#FCE7F3] p-2.5 transition-colors hover:bg-[#FCE7F3]/70 group cursor-pointer shadow-2xs text-left"
         >
-          {planInfo.tier === "vip" ? (
-            <Crown className="h-3.5 w-3.5 shrink-0 text-amber-500 fill-amber-500/20" />
-          ) : planInfo.tier === "pro" ? (
-            <Zap className="h-3.5 w-3.5 shrink-0 text-white fill-white" />
-          ) : planInfo.tier === "starter" ? (
-            <Sparkles className="h-3.5 w-3.5 shrink-0 text-[#7A2253]" />
-          ) : planInfo.tier === "expired" ? (
-            <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-rose-600" />
-          ) : (
-            <Sparkles className="h-3.5 w-3.5 shrink-0 text-[#94a3b8]" />
-          )}
-          <span className="truncate">{planInfo.label}</span>
+          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+            <div className="flex h-7 w-7 items-center justify-center rounded-[5px] bg-white border border-[#FCE7F3] text-[#7A2253] shrink-0">
+              <Sparkles className="h-3.5 w-3.5" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs font-bold text-[#7A2253]">
+                {subscription?.planName || "Starter Plan"}
+              </p>
+              <p className="truncate text-[11px] text-[#64748b]">
+                Unlock more features
+              </p>
+            </div>
+          </div>
+          <ChevronRight className="h-4 w-4 text-[#7A2253] group-hover:translate-x-0.5 shrink-0 transition-transform" />
         </Link>
-        <button
-          type="button"
-          onClick={handleViewProfile}
-          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-[5px] text-[#64748b] transition-colors hover:bg-[#fdf2f8] hover:text-[#7A2253]"
-          title="View live profile"
-          aria-label="View live profile"
-        >
-          <ExternalLink className="h-3.5 w-3.5" />
-        </button>
-        <button
-          onClick={() => {
-            AuthService.logout();
-            router.push("/login");
-          }}
-          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-[5px] text-[#64748b] transition-colors hover:bg-rose-50 hover:text-rose-600"
-          title="Logout"
-          aria-label="Logout"
-        >
-          <LogOut className="h-3.5 w-3.5" />
-        </button>
       </div>
     </aside>
   );

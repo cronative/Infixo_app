@@ -1,6 +1,6 @@
 import {
-  LayoutGrid,
-  UserRound,
+  Home,
+  User,
   Link2,
   AtSign,
   Layers,
@@ -21,6 +21,7 @@ import {
 export interface NavItem {
   href: string;
   label: string;
+  subtitle?: string;
   icon: React.ComponentType<{ className?: string }>;
   badge?: string;
 }
@@ -31,54 +32,57 @@ export interface NavGroup {
   items: NavItem[];
 }
 
-/**
- * Priority-ordered navigation groups:
- * 1. STUDIO — the creator's page and content (Series first after Home).
- * 2. BRAND DEALS — everything a brand sees or sends (Media Kit, inquiries, proof).
- * 3. SHOWCASE — optional profile sections (brands, team, gear).
- * 4. ACCOUNT — plan and settings.
- */
 export const NAV_GROUPS: NavGroup[] = [
   {
-    id: "studio",
-    title: "Studio",
+    id: "overview",
+    title: "OVERVIEW",
     items: [
-      { href: "/dashboard", label: "Home", icon: LayoutGrid },
-      { href: "/dashboard/series", label: "Series", icon: Layers },
-      { href: "/dashboard/products", label: "Products", icon: ShoppingBag },
-      { href: "/dashboard/links", label: "Links", icon: Link2 },
-      { href: "/dashboard/socials", label: "Socials", icon: AtSign },
-      { href: "/dashboard/profile", label: "Profile", icon: UserRound },
-      { href: "/dashboard/themes", label: "Themes", icon: Palette },
-      { href: "/dashboard/preview", label: "Preview", icon: Eye },
+      { href: "/dashboard", label: "Home", subtitle: "Your dashboard & quick stats", icon: Home },
     ],
   },
   {
-    id: "growth",
-    title: "Brand deals",
+    id: "content",
+    title: "CONTENT",
     items: [
-      { href: "/dashboard/mediakit", label: "Media Kit", icon: Briefcase },
-
-      { href: "/dashboard/reviews", label: "Reviews", icon: Star },
-
-      { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
-      { href: "/dashboard/creator-card", label: "Creator Card", icon: IdCard },
+      { href: "/dashboard/series", label: "Series", subtitle: "Organize your videos into series", icon: Layers },
+      { href: "/dashboard/products", label: "Products", subtitle: "Manage affiliate products", icon: ShoppingBag },
+      { href: "/dashboard/links", label: "Links", subtitle: "Custom links & collections", icon: Link2 },
     ],
   },
   {
-    id: "showcase",
-    title: "Showcase",
+    id: "engage",
+    title: "ENGAGE",
     items: [
-      { href: "/dashboard/team", label: "Team", icon: Users },
-      { href: "/dashboard/setup", label: "Gear & Setup", icon: Laptop },
+      { href: "/dashboard/socials", label: "Socials", subtitle: "Connect your social accounts", icon: AtSign },
+      { href: "/dashboard/team", label: "Team", subtitle: "Manage collaborators", icon: Users },
+    ],
+  },
+  {
+    id: "grow",
+    title: "GROW",
+    items: [
+      { href: "/dashboard/analytics", label: "Analytics", subtitle: "Track performance & audience", icon: BarChart3 },
+      { href: "/dashboard/reviews", label: "Reviews", subtitle: "View feedback from fans", icon: Star },
+    ],
+  },
+  {
+    id: "brand",
+    title: "BRAND",
+    items: [
+      { href: "/dashboard/profile", label: "Profile", subtitle: "Manage your public profile", icon: User },
+      { href: "/dashboard/themes", label: "Themes", subtitle: "Customize your storefront", icon: Palette },
+      { href: "/dashboard/preview", label: "Preview", subtitle: "See how your profile looks", icon: Eye },
+      { href: "/dashboard/creator-card", label: "Creator Card", subtitle: "Your digital creator card", icon: IdCard },
+      { href: "/dashboard/mediakit", label: "Media Kit", subtitle: "Logos, banners & assets", icon: Briefcase },
     ],
   },
   {
     id: "account",
-    title: "Account",
+    title: "ACCOUNT",
     items: [
-      { href: "/dashboard/subscription", label: "Plan", icon: CreditCard },
-      { href: "/dashboard/settings", label: "Settings", icon: Settings },
+      { href: "/dashboard/setup", label: "Gear & Setup", subtitle: "Tools, gear & studio setup", icon: Laptop },
+      { href: "/dashboard/subscription", label: "Plan", subtitle: "Manage your subscription", icon: CreditCard },
+      { href: "/dashboard/settings", label: "Settings", subtitle: "Account & preferences", icon: Settings },
     ],
   },
 ];
@@ -91,7 +95,7 @@ export const WORKSPACE_NAV: NavItem[] = [...NAV_GROUPS[0].items, ...NAV_GROUPS[1
 export const ACCOUNT_NAV: NavItem[] = NAV_GROUPS[3].items;
 
 export const BOTTOM_NAV: NavItem[] = [
-  { href: "/dashboard", label: "Home", icon: LayoutGrid },
+  { href: "/dashboard", label: "Home", icon: Home },
   { href: "/dashboard/series", label: "Series", icon: Layers },
   { href: "/dashboard/links", label: "Links", icon: Link2 },
   { href: "/dashboard/mediakit", label: "Media Kit", icon: Briefcase },

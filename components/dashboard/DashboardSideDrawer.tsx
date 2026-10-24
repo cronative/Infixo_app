@@ -134,18 +134,40 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                       href={item.href}
                       onClick={onClose}
                       aria-current={active ? "page" : undefined}
-                      className={`group flex min-h-[44px] items-center gap-3 rounded-[5px] px-3 text-sm transition-colors ${
+                      className={`group relative flex items-center gap-3 rounded-[5px] px-3 py-2 text-left transition-all ${
                         active
-                          ? "bg-[#7A2253]/[0.08] font-semibold text-[#7A2253]"
-                          : "font-medium text-[#334155] hover:bg-[#fdf2f8] hover:text-[#7A2253] active:bg-[#fdf2f8]"
+                          ? "bg-[#FFF5F7] text-[#7A2253]"
+                          : "hover:bg-[#f8fafc] text-[#0f172a]"
                       }`}
                     >
+                      {active && (
+                        <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-[#7A2253] rounded-r-full" />
+                      )}
                       <Icon
-                        className={`h-[18px] w-[18px] shrink-0 transition-colors ${
-                          active ? "text-[#7A2253]" : "text-[#94a3b8] group-hover:text-[#7A2253]"
+                        className={`h-4.5 w-4.5 shrink-0 transition-colors ${
+                          active ? "text-[#7A2253]" : "text-[#64748b] group-hover:text-[#0f172a]"
                         }`}
                       />
-                      <span className="flex-1 truncate">{item.label}</span>
+                      <div className="min-w-0 flex-1">
+                        <p
+                          className={`truncate text-xs font-semibold leading-tight ${
+                            active
+                              ? "text-[#7A2253] font-bold"
+                              : "text-[#0f172a] group-hover:text-[#7A2253]"
+                          }`}
+                        >
+                          {item.label}
+                        </p>
+                        {item.subtitle && (
+                          <p
+                            className={`truncate text-[11px] leading-tight mt-0.5 ${
+                              active ? "text-[#64748b]" : "text-[#94a3b8]"
+                            }`}
+                          >
+                            {item.subtitle}
+                          </p>
+                        )}
+                      </div>
                     </Link>
                   );
                 })}
