@@ -17,6 +17,7 @@ import {
   Eye,
   Users,
   TrendingUp,
+  Calendar,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -257,300 +258,320 @@ export default function DashboardSocialsPage() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-4.5 w-full pb-8 text-left">
-      {/* 1. PAGE HEADER */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#e2e8f0] pb-4">
+    <div className="space-y-4 sm:space-y-5 w-full pb-8 text-left">
+      {/* 1. BREADCRUMB */}
+      <div className="flex items-center gap-1.5 text-xs text-[#64748b] font-medium">
+        <span>Studio</span>
+        <span className="text-slate-400">&gt;</span>
+        <span className="text-[#0f172a] font-semibold">Social Accounts</span>
+      </div>
+
+      {/* 2. PAGE HEADER */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
               Social Accounts
             </h1>
-            <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#ecfdf5] px-2 py-0.5 text-xs font-medium text-[#047857]">
+            <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#ecfdf5] border border-[#d1fae5] px-2.5 py-0.5 text-xs font-semibold text-[#047857]">
               <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
               <span>Live Fanbase Sync</span>
             </span>
           </div>
-          <p className="mt-1 text-xs sm:text-sm font-medium text-slate-500">
+          <p className="mt-1 text-xs sm:text-sm font-medium text-[#64748b]">
             Connect YouTube, Instagram, and Facebook to verify your audience and calculate your Total Fanbase.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <Link
-            href="/dashboard/links"
-            className="inline-flex items-center gap-1.5 rounded-[5px] border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#7A2253] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
+        <div className="shrink-0">
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById("connect-accounts-section");
+              if (el) {
+                el.scrollIntoView({ behavior: "smooth" });
+              } else {
+                showToast("All major social accounts are connected! 🎉");
+              }
+            }}
+            className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#681c46] px-4 py-2 text-xs sm:text-sm font-bold text-white shadow-2xs transition-colors cursor-pointer"
           >
-            <LinkIcon className="h-3.5 w-3.5" />
-            <span>Custom Links</span>
-          </Link>
-          <Link
-            href={`/${profile.username || "username"}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-[5px] border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#7A2253] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
-          >
-            <span>Live Profile</span>
-            <ExternalLink className="h-3.5 w-3.5" />
-          </Link>
+            <span>+</span>
+            <span>Connect Account</span>
+          </button>
         </div>
       </div>
 
-      {/* 2. COMPACT SUMMARY LINE */}
-      <div className="flex flex-wrap items-center justify-between gap-2.5 rounded-[5px] border border-[#e2e8f0] bg-white px-4 py-2.5 sm:py-3 shadow-xs text-left">
-        <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm font-medium text-[#7A2253]">
-          <span className="font-semibold text-[#7A2253]">{connectedCount} social accounts connected</span>
-          <span className="text-[#64748b]/40">·</span>
-          <span className="font-semibold text-[#7A2253]">{formatCount(totalAudience || 0)} total fanbase</span>
-        </div>
-        <Link
-          href="/dashboard/links"
-          className="text-xs font-bold text-[#7A2253] hover:underline inline-flex items-center gap-1"
-        >
-          <span>Manage custom links</span>
-          <ExternalLink className="h-3 w-3" />
-        </Link>
-      </div>
-
-      {/* 3. SOCIAL ACCOUNTS SECTION */}
-      <section className="space-y-2.5 text-left">
-        <div>
-          <h2 className="text-sm sm:text-base font-semibold text-[#0f172a]">
-            Social accounts
-          </h2>
-          <p className="text-xs text-[#475569] font-normal mt-0.5">
-            Manage the platforms connected to your Inflixo profile.
-          </p>
-        </div>
-
-        {/* Connected Cards Grid (3 Columns) */}
-        {connectedCount > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {/* INSTAGRAM CONNECTED CARD */}
-            {isInstaConnected && (
-              <ConnectedSocialCard
-                platformName="Instagram"
-                icon={
-                  <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-xs text-white">
-                    <InstagramIcon className="h-5 w-5" />
-                  </div>
-                }
-                handle={instaConnectedHandle}
-                displayName={socials?.instagram?.name || "Instagram Profile"}
-                isVerified={socials?.instagram?.isVerified}
-                count={socials?.instagram?.followers || 0}
-                countLabel="followers"
-                lastSyncedAt={socials?.instagram?.lastSyncedAt || socials?.updatedAt}
-                profileUrl={socials?.instagram?.url || `https://instagram.com/${instaConnectedHandle}`}
-                isSyncing={syncingPlatform === "instagram"}
-                onSync={() => handleSyncPlatform("instagram")}
-                onDisconnect={() =>
-                  setDisconnectModal({
-                    platform: "instagram",
-                    platformName: "Instagram",
-                    handle: instaConnectedHandle,
-                  })
-                }
-              />
-            )}
-
-            {/* YOUTUBE CONNECTED CARD */}
-            {isYtConnected && (
-              <ConnectedSocialCard
-                platformName="YouTube"
-                icon={
-                  <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-red-600 shadow-xs text-white">
-                    <YoutubeIcon className="h-5 w-5" />
-                  </div>
-                }
-                handle={ytConnectedHandle}
-                displayName={socials?.youtube?.channelTitle || "YouTube Channel"}
-                isVerified={socials?.youtube?.isVerified}
-                count={socials?.youtube?.subscribers || 0}
-                countLabel="subscribers"
-                lastSyncedAt={socials?.youtube?.lastSyncedAt || socials?.updatedAt}
-                profileUrl={socials?.youtube?.url || `https://youtube.com/@${ytConnectedHandle}`}
-                isSyncing={syncingPlatform === "youtube"}
-                onSync={() => handleSyncPlatform("youtube")}
-                onDisconnect={() =>
-                  setDisconnectModal({
-                    platform: "youtube",
-                    platformName: "YouTube",
-                    handle: ytConnectedHandle,
-                  })
-                }
-              />
-            )}
-
-            {/* FACEBOOK CONNECTED CARD */}
-            {isFbConnected && (
-              <ConnectedSocialCard
-                platformName="Facebook"
-                icon={
-                  <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-blue-600 shadow-xs text-white">
-                    <FacebookIcon className="h-5 w-5" />
-                  </div>
-                }
-                handle={fbConnectedHandle}
-                displayName={socials?.facebook?.name || "Facebook Page"}
-                isVerified={socials?.facebook?.isVerified}
-                count={socials?.facebook?.followers || 0}
-                countLabel="followers"
-                lastSyncedAt={socials?.facebook?.lastSyncedAt || socials?.updatedAt}
-                profileUrl={socials?.facebook?.url || `https://facebook.com/${fbConnectedHandle}`}
-                isSyncing={syncingPlatform === "facebook"}
-                onSync={() => handleSyncPlatform("facebook")}
-                onDisconnect={() =>
-                  setDisconnectModal({
-                    platform: "facebook",
-                    platformName: "Facebook",
-                    handle: fbConnectedHandle,
-                  })
-                }
-              />
-            )}
-          </div>
-        ) : null}
-
-        {/* CONNECT ANOTHER PLATFORM SECTION */}
-        {connectedCount < 3 && (
-          <div className="space-y-3 pt-1">
-            <h3 className="text-xs font-semibold text-[#64748b] uppercase tracking-wider">
-              {connectedCount === 0 ? "Connect your creator accounts" : "Connect another platform"}
-            </h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-              {/* Instagram Unconnected */}
-              {!isInstaConnected && (
-                <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 sm:p-4 space-y-2.5 shadow-xs text-left">
-                  <div className="flex items-center gap-2.5">
-                    <div className="flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[5px] bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-xs text-white shrink-0">
-                      <InstagramIcon className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <h4 className="text-xs sm:text-sm font-bold text-[#7A2253]">Instagram</h4>
-                      <p className="text-[11px] text-[#64748b]">Show profile &amp; followers.</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#E1306C]">
-                        <InstagramIcon className="h-4 w-4" />
-                      </span>
-                      <input
-                        type="text"
-                        value={draftInsta}
-                        onChange={(e) => setDraftInsta(e.target.value.trim().replace(/^@/, ""))}
-                        placeholder="Instagram username"
-                        className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
-                      />
-                    </div>
-                    <InstagramFetcher username={draftInsta} />
-                  </div>
-                </div>
-              )}
-
-              {/* YouTube Unconnected */}
-              {!isYtConnected && (
-                <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 sm:p-4 space-y-2.5 shadow-xs text-left">
-                  <div className="flex items-center gap-2.5">
-                    <div className="flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[5px] bg-red-600 shadow-xs text-white shrink-0">
-                      <YoutubeIcon className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <h4 className="text-xs sm:text-sm font-bold text-[#7A2253]">YouTube</h4>
-                      <p className="text-[11px] text-[#64748b]">Show channel &amp; subscribers.</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#FF0000]">
-                        <YoutubeIcon className="h-4 w-4" />
-                      </span>
-                      <input
-                        type="text"
-                        value={draftYt}
-                        onChange={(e) => setDraftYt(e.target.value.trim().replace(/^@/, ""))}
-                        placeholder="YouTube channel handle"
-                        className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
-                      />
-                    </div>
-                    <YoutubeFetcher handle={draftYt} />
-                  </div>
-                </div>
-              )}
-
-              {/* Facebook Unconnected */}
-              {!isFbConnected && (
-                <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 sm:p-4 space-y-2.5 shadow-xs text-left">
-                  <div className="flex items-center gap-2.5">
-                    <div className="flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[5px] bg-blue-600 shadow-xs text-white shrink-0">
-                      <FacebookIcon className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <h4 className="text-xs sm:text-sm font-bold text-[#7A2253]">Facebook</h4>
-                      <p className="text-[11px] text-[#64748b]">Show page &amp; followers.</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#1877F2]">
-                        <FacebookIcon className="h-4 w-4" />
-                      </span>
-                      <input
-                        type="text"
-                        value={draftFb}
-                        onChange={(e) => setDraftFb(e.target.value.trim().replace(/^@/, ""))}
-                        placeholder="Facebook page username"
-                        className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
-                      />
-                    </div>
-                    <FacebookFetcher username={draftFb} />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </section>
-
-      {/* 4. SHORTCUT TO CUSTOM LINKS */}
-      <section className="rounded-[5px] border border-slate-200/80 bg-white p-4 sm:p-5 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] bg-[#7A2253]/10 text-[#7A2253]">
-            <ExternalLink className="h-5 w-5" />
+      {/* 3. TOP STATS BANNER */}
+      <div className="rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7]/80 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs text-left">
+        {/* Left: Accounts Connected */}
+        <div className="flex items-center gap-3 sm:gap-4 flex-1">
+          <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F3] text-[#7A2253]">
+            <Users className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="text-xs sm:text-sm font-bold text-slate-900">Looking to add custom links &amp; bio buttons?</h3>
-            <p className="text-[11px] text-slate-500 font-medium">Add affiliate products, brand stores, WhatsApp, and custom website links on your profile.</p>
+            <h3 className="text-sm sm:text-base font-bold text-[#0f172a] leading-tight">
+              {connectedCount} social accounts connected
+            </h3>
+            <p className="text-xs text-[#64748b] font-medium mt-0.5">
+              Your audience across all platforms
+            </p>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="hidden sm:block h-8 w-px bg-[#FCE7F3]" />
+
+        {/* Right: Total Fanbase */}
+        <div className="flex items-center gap-3 sm:gap-4 sm:pl-4 flex-1 sm:justify-start">
+          <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F3] text-[#7A2253]">
+            <BarChart2 className="h-5 w-5" />
+          </div>
+          <div>
+            <div className="font-display text-base sm:text-lg font-bold text-[#0f172a] leading-none">
+              {formatCount(totalAudience || 0)}
+            </div>
+            <p className="text-xs text-[#64748b] font-medium mt-0.5">
+              Total Fanbase
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* 4. CONNECTED SOCIAL CARDS (3 COLUMNS) */}
+      {connectedCount > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+          {/* INSTAGRAM CONNECTED CARD */}
+          {isInstaConnected && (
+            <ConnectedSocialCard
+              platformName="Instagram"
+              icon={
+                <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-gradient-to-tr from-[#fd5949] via-[#d6249f] to-[#285AEB] text-white shadow-2xs shrink-0">
+                  <InstagramIcon className="h-4 w-4 fill-white" />
+                </div>
+              }
+              handle={instaConnectedHandle || (isInstaConnected ? profile.username : "")}
+              displayName={socials?.instagram?.name || "Instagram Profile"}
+              isVerified={socials?.instagram?.isVerified ?? true}
+              count={socials?.instagram?.followers || 0}
+              countLabel="Followers"
+              lastSyncedAt={socials?.instagram?.lastSyncedAt || socials?.updatedAt}
+              profileUrl={socials?.instagram?.url || (instaConnectedHandle ? `https://instagram.com/${instaConnectedHandle}` : "")}
+              isSyncing={syncingPlatform === "instagram"}
+              onSync={() => handleSyncPlatform("instagram")}
+              onDisconnect={() =>
+                setDisconnectModal({
+                  platform: "instagram",
+                  platformName: "Instagram",
+                  handle: instaConnectedHandle,
+                })
+              }
+            />
+          )}
+
+          {/* YOUTUBE CONNECTED CARD */}
+          {isYtConnected && (
+            <ConnectedSocialCard
+              platformName="YouTube"
+              icon={
+                <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FF0000] text-white shadow-2xs shrink-0">
+                  <YoutubeIcon className="h-4 w-4 fill-white" />
+                </div>
+              }
+              handle={ytConnectedHandle}
+              displayName={socials?.youtube?.channelTitle || "YouTube Channel"}
+              isVerified={socials?.youtube?.isVerified ?? true}
+              count={socials?.youtube?.subscribers || 0}
+              countLabel="Subscribers"
+              lastSyncedAt={socials?.youtube?.lastSyncedAt || socials?.updatedAt}
+              profileUrl={socials?.youtube?.url || (ytConnectedHandle ? `https://youtube.com/@${ytConnectedHandle}` : "")}
+              isSyncing={syncingPlatform === "youtube"}
+              onSync={() => handleSyncPlatform("youtube")}
+              onDisconnect={() =>
+                setDisconnectModal({
+                  platform: "youtube",
+                  platformName: "YouTube",
+                  handle: ytConnectedHandle,
+                })
+              }
+            />
+          )}
+
+          {/* FACEBOOK CONNECTED CARD */}
+          {isFbConnected && (
+            <ConnectedSocialCard
+              platformName="Facebook"
+              icon={
+                <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#1877F2] text-white shadow-2xs shrink-0">
+                  <FacebookIcon className="h-4 w-4 fill-white" />
+                </div>
+              }
+              handle={fbConnectedHandle || instaConnectedHandle}
+              displayName={socials?.facebook?.name || "Facebook Page"}
+              isVerified={socials?.facebook?.isVerified ?? true}
+              count={socials?.facebook?.followers || 0}
+              countLabel="Followers"
+              lastSyncedAt={socials?.facebook?.lastSyncedAt || socials?.updatedAt}
+              profileUrl={socials?.facebook?.url || (fbConnectedHandle ? `https://facebook.com/${fbConnectedHandle}` : "")}
+              isSyncing={syncingPlatform === "facebook"}
+              onSync={() => handleSyncPlatform("facebook")}
+              onDisconnect={() =>
+                setDisconnectModal({
+                  platform: "facebook",
+                  platformName: "Facebook",
+                  handle: fbConnectedHandle,
+                })
+              }
+            />
+          )}
+        </div>
+      )}
+
+      {/* 5. CONNECT ANOTHER PLATFORM SECTION */}
+      {connectedCount < 3 && (
+        <div id="connect-accounts-section" className="space-y-3 pt-1 text-left">
+          <h3 className="text-xs font-semibold text-[#64748b] uppercase tracking-wider">
+            {connectedCount === 0 ? "Connect your creator accounts" : "Connect another platform"}
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            {/* Instagram Unconnected */}
+            {!isInstaConnected && (
+              <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 sm:p-4 space-y-2.5 shadow-xs text-left">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-gradient-to-tr from-[#fd5949] via-[#d6249f] to-[#285AEB] text-white shadow-2xs shrink-0">
+                    <InstagramIcon className="h-4 w-4 fill-white" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs sm:text-sm font-bold text-[#0f172a]">Instagram</h4>
+                    <p className="text-[11px] text-[#64748b]">Show profile &amp; followers.</p>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#E1306C]">
+                      <InstagramIcon className="h-4 w-4" />
+                    </span>
+                    <input
+                      type="text"
+                      value={draftInsta}
+                      onChange={(e) => setDraftInsta(e.target.value.trim().replace(/^@/, ""))}
+                      placeholder="Instagram username"
+                      className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
+                    />
+                  </div>
+                  <InstagramFetcher username={draftInsta} />
+                </div>
+              </div>
+            )}
+
+            {/* YouTube Unconnected */}
+            {!isYtConnected && (
+              <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 sm:p-4 space-y-2.5 shadow-xs text-left">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FF0000] text-white shadow-2xs shrink-0">
+                    <YoutubeIcon className="h-4 w-4 fill-white" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs sm:text-sm font-bold text-[#0f172a]">YouTube</h4>
+                    <p className="text-[11px] text-[#64748b]">Show channel &amp; subscribers.</p>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#FF0000]">
+                      <YoutubeIcon className="h-4 w-4" />
+                    </span>
+                    <input
+                      type="text"
+                      value={draftYt}
+                      onChange={(e) => setDraftYt(e.target.value.trim().replace(/^@/, ""))}
+                      placeholder="YouTube channel handle"
+                      className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
+                    />
+                  </div>
+                  <YoutubeFetcher handle={draftYt} />
+                </div>
+              </div>
+            )}
+
+            {/* Facebook Unconnected */}
+            {!isFbConnected && (
+              <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 sm:p-4 space-y-2.5 shadow-xs text-left">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#1877F2] text-white shadow-2xs shrink-0">
+                    <FacebookIcon className="h-4 w-4 fill-white" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs sm:text-sm font-bold text-[#0f172a]">Facebook</h4>
+                    <p className="text-[11px] text-[#64748b]">Show page &amp; followers.</p>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#1877F2]">
+                      <FacebookIcon className="h-4 w-4" />
+                    </span>
+                    <input
+                      type="text"
+                      value={draftFb}
+                      onChange={(e) => setDraftFb(e.target.value.trim().replace(/^@/, ""))}
+                      placeholder="Facebook page username"
+                      className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
+                    />
+                  </div>
+                  <FacebookFetcher username={draftFb} />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 6. SHORTCUT TO CUSTOM LINKS */}
+      <section className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F3] text-[#7A2253]">
+            <LinkIcon className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="text-xs sm:text-sm font-bold text-[#0f172a]">
+              Looking to add custom links &amp; bio buttons?
+            </h3>
+            <p className="text-[11px] text-[#64748b] font-medium">
+              Add affiliate products, brand stores, WhatsApp, and custom website links on your profile.
+            </p>
           </div>
         </div>
         <Link
           href="/dashboard/links"
-          className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 py-2 text-xs font-semibold text-[#0f172a] hover:border-[#cbd5e1] hover:bg-[#f8fafc] transition-colors shrink-0 self-start sm:self-auto"
+          className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 py-2 text-xs font-bold text-[#0f172a] hover:border-[#cbd5e1] hover:bg-[#f8fafc] transition-colors shrink-0 self-start sm:self-auto shadow-2xs"
         >
           <span>Custom Links Manager</span>
-          <ExternalLink className="h-3.5 w-3.5" />
+          <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
         </Link>
       </section>
 
-      {/* 5. HOW SOCIAL DATA WORKS (Compact Info Row + Learn more Modal) */}
+      {/* 7. HOW SOCIAL DATA WORKS (Compact Info Row + Learn more Modal) */}
       <section className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs text-left">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] bg-[#7A2253]/10 text-[#7A2253]">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F3] text-[#7A2253]">
             <Info className="h-5 w-5" />
           </div>
           <div>
             <h3 className="text-xs sm:text-sm font-bold text-[#0f172a]">How social data works</h3>
-            <p className="text-[11px] text-[#64748b] font-medium">Inflixo uses publicly available profile information to calculate your Total Fanbase.</p>
+            <p className="text-[11px] text-[#64748b] font-medium">
+              Inflixo uses publicly available profile information to calculate your Total Fanbase.
+            </p>
           </div>
         </div>
         <button
           type="button"
           onClick={() => setIsInfoModalOpen(true)}
-          className="inline-flex items-center gap-1 text-xs font-semibold text-[#7A2253] hover:underline cursor-pointer shrink-0 self-start sm:self-auto"
+          className="inline-flex items-center gap-1 text-xs font-bold text-[#7A2253] hover:underline cursor-pointer shrink-0 self-start sm:self-auto"
         >
           <span>Learn more</span>
           <span>&rarr;</span>
@@ -819,6 +840,46 @@ export default function DashboardSocialsPage() {
 }
 
 /* ==========================================================================
+   BLUE VERIFIED BADGE & LAST UPDATED HELPER
+   ========================================================================== */
+function BlueVerifiedBadge({ className = "h-3.5 w-3.5" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none">
+      <path
+        d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.79-4-4-4-.495 0-.965.084-1.4.238C14.55 2.475 13.18 1.6 11.6 1.6c-1.58 0-2.95.875-3.6 2.148-.435-.154-.905-.238-1.4-.238-2.21 0-4 1.79-4 4 0 .495.084.965.238 1.4C1.575 9.55.7 10.92.7 12.5c0 1.58.875 2.95 2.148 3.6-.154.435-.238.905-.238 1.4 0 2.21 1.79 4 4 4 .495 0 .965-.084 1.4-.238.65 1.273 2.02 2.148 3.6 2.148 1.58 0 2.95-.875 3.6-2.148.435.154.905.238 1.4.238 2.21 0 4-1.79 4-4 0-.495-.084-.965-.238-1.4 1.273-.65 2.148-2.02 2.148-3.6z"
+        fill="#1D9BF0"
+      />
+      <path
+        d="M10.2 16.2l-3.5-3.5 1.4-1.4 2.1 2.1 5.3-5.3 1.4 1.4-6.7 6.7z"
+        fill="#ffffff"
+      />
+    </svg>
+  );
+}
+
+function formatLastUpdated(dateStr?: string | null): { label: string; time: string } {
+  if (!dateStr) return { label: "Last updated", time: "recently" };
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return { label: "Last updated", time: "recently" };
+    const now = new Date();
+    const diffMs = now.getTime() - d.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    if (diffHours < 1) return { label: "Last updated", time: "just now" };
+    if (diffHours < 24) return { label: "Last updated", time: `${diffHours} hours ago` };
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays === 1) return { label: "Last updated", time: "yesterday" };
+    if (diffDays < 30) return { label: "Last updated", time: `${diffDays} days ago` };
+    return {
+      label: "Last updated",
+      time: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+    };
+  } catch {
+    return { label: "Last updated", time: "recently" };
+  }
+}
+
+/* ==========================================================================
    CONNECTED SOCIAL CARD SUB-COMPONENT
    ========================================================================== */
 interface ConnectedSocialCardProps {
@@ -841,7 +902,7 @@ function ConnectedSocialCard({
   icon,
   handle,
   displayName,
-  isVerified,
+  isVerified = true,
   count,
   countLabel,
   lastSyncedAt,
@@ -863,72 +924,38 @@ function ConnectedSocialCard({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [menuOpen]);
 
+  const updatedInfo = formatLastUpdated(lastSyncedAt);
+
   return (
-    <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-4.5 space-y-3 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:shadow-sm text-left flex flex-col justify-between">
-      {/* Top: Icon, Platform Name & Connected Status */}
+    <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-4.5 shadow-2xs transition-all duration-200 hover:border-[#cbd5e1] hover:shadow-xs text-left flex flex-col justify-between space-y-3.5">
+      {/* 1. TOP ROW: Platform Icon & Name + Connected Badge & 3-dots */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2.5 min-w-0">
           <div className="shrink-0">{icon}</div>
-          <div className="min-w-0">
-            <h3 className="text-sm sm:text-base font-semibold text-[#0f172a] truncate">{platformName}</h3>
-          </div>
+          <h3 className="text-sm sm:text-base font-bold text-[#0f172a] truncate">
+            {platformName}
+          </h3>
         </div>
-        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#17845B] bg-[#EAF7F0] px-2 py-0.5 rounded-[5px] border border-[#17845B]/20 shrink-0">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#17845B]" />
-          Connected
-        </span>
-      </div>
-
-      {/* Identity & Audience Hierarchy */}
-      <div className="space-y-0.5">
-        <div className="flex items-center gap-1.5">
-          <p className="font-bold text-sm sm:text-base text-[#7A2253] truncate" title={displayName}>
-            {displayName}
-          </p>
-          {isVerified && <ShieldCheck className="h-3.5 w-3.5 text-[#17845B] shrink-0" />}
-        </div>
-        <p className="text-xs text-[#64748b] font-medium truncate">@{handle}</p>
-        <div className="pt-1.5 flex items-baseline gap-1.5">
-          <span className="font-display text-2xl sm:text-[26px] font-bold text-[#7A2253] leading-none">
-            {formatCount(count)}
-          </span>
-          <span className="text-xs font-normal text-[#64748b]">{countLabel}</span>
-        </div>
-      </div>
-
-      {/* Bottom: Sync status & Actions */}
-      <div className="pt-2.5 border-t border-[#e2e8f0] flex items-center justify-between text-xs text-[#64748b]">
-        <span className="truncate max-w-[130px] sm:max-w-[150px]" title={lastSyncedAt ? formatSimplifiedSyncDate(lastSyncedAt) : "Updated recently"}>
-          {formatSimplifiedSyncDate(lastSyncedAt)}
-        </span>
 
         <div className="flex items-center gap-2 shrink-0">
-          {profileUrl && (
-            <a
-              href={profileUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] px-3 py-1.5 text-xs font-semibold text-[#7A2253] transition-all hover:shadow-sm"
-              title="View profile in new tab"
-            >
-              <span>View Profile</span>
-              <ExternalLink className="h-3 w-3 text-[#64748b]" />
-            </a>
-          )}
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#047857] bg-[#ecfdf5] border border-[#d1fae5] px-2.5 py-0.5 rounded-[5px]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
+            Connected
+          </span>
 
-          {/* Three-dot menu */}
+          {/* Three-dots menu */}
           <div className="relative" ref={menuRef}>
             <button
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
-              className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+              className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-slate-50 text-[#64748b] hover:text-[#0f172a] transition-colors cursor-pointer shadow-2xs"
               aria-label="More actions"
             >
-              <MoreVertical className="h-4 w-4" />
+              <MoreVertical className="h-3.5 w-3.5" />
             </button>
 
             {menuOpen && (
-              <div className="absolute right-0 bottom-full mb-2 w-40 rounded-[5px] border border-[#e2e8f0] bg-white p-1.5 shadow-lg z-50 space-y-0.5 animate-in fade-in">
+              <div className="absolute right-0 top-full mt-1.5 w-40 rounded-[5px] border border-[#e2e8f0] bg-white p-1.5 shadow-lg z-50 space-y-0.5 animate-in fade-in">
                 <button
                   type="button"
                   disabled={isSyncing}
@@ -936,9 +963,11 @@ function ConnectedSocialCard({
                     setMenuOpen(false);
                     onSync();
                   }}
-                  className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-50"
+                  className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-50"
                 >
-                  <RefreshCw className={`h-3.5 w-3.5 text-[#64748b] ${isSyncing ? "animate-spin text-[#7A2253]" : ""}`} />
+                  <RefreshCw
+                    className={`h-3.5 w-3.5 text-[#64748b] ${isSyncing ? "animate-spin text-[#7A2253]" : ""}`}
+                  />
                   <span>{isSyncing ? "Syncing..." : "Refresh data"}</span>
                 </button>
 
@@ -959,6 +988,54 @@ function ConnectedSocialCard({
             )}
           </div>
         </div>
+      </div>
+
+      {/* 2. MIDDLE ROW: Username with Verified Badge + Count & Label */}
+      <div className="flex items-center justify-between gap-3 pt-1">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <span className="text-xs sm:text-sm font-bold text-[#0f172a] truncate">
+            {handle ? (handle.startsWith("@") ? handle : `@${handle}`) : `@${displayName}`}
+          </span>
+          {isVerified && <BlueVerifiedBadge className="h-3.5 w-3.5 shrink-0" />}
+        </div>
+
+        <div className="text-right shrink-0">
+          <div className="font-display text-base sm:text-lg font-bold text-[#0f172a] leading-none">
+            {formatCount(count)}
+          </div>
+          <div className="text-[11px] font-medium text-[#64748b] mt-0.5">
+            {countLabel}
+          </div>
+        </div>
+      </div>
+
+      {/* 3. SUB-ROW: Calendar icon + Last updated */}
+      <div className="flex items-start gap-2 text-xs text-[#64748b]">
+        <Calendar className="h-3.5 w-3.5 text-[#94a3b8] shrink-0 mt-0.5" />
+        <div className="text-[11px] leading-tight text-[#64748b]">
+          <span>{updatedInfo.label}</span>
+          <span className="block font-medium text-[#475569]">{updatedInfo.time}</span>
+        </div>
+      </div>
+
+      {/* 4. BOTTOM ACTION: Full width View Profile button */}
+      <div className="pt-0.5">
+        {profileUrl ? (
+          <a
+            href={profileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7] hover:bg-[#FCE7F3]/70 py-2 px-3 text-xs font-bold text-[#7A2253] flex items-center justify-center gap-1.5 transition-colors shadow-2xs"
+          >
+            <span>View Profile</span>
+            <ExternalLink className="h-3.5 w-3.5 text-[#7A2253]" />
+          </a>
+        ) : (
+          <div className="w-full rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7] py-2 px-3 text-xs font-bold text-[#7A2253]/60 flex items-center justify-center gap-1.5">
+            <span>View Profile</span>
+            <ExternalLink className="h-3.5 w-3.5" />
+          </div>
+        )}
       </div>
     </div>
   );
