@@ -13,6 +13,8 @@ import {
   Pencil,
   GripVertical,
   FolderOpen,
+  Folder,
+  Globe,
   X,
   Eye,
 } from "lucide-react";
@@ -54,6 +56,14 @@ function getLinkPlatform(link: CustomLink): {
 } {
   const url = (link.url || "").toLowerCase();
   const title = (link.title || "").toLowerCase();
+  const type = ((link as { type?: string }).type || link.icon || "").toLowerCase();
+
+  if (link.kind === "collection") {
+    return {
+      icon: <Folder className="h-4 w-4 text-[#475569]" />,
+      bgClass: "bg-[#eef2f6]",
+    };
+  }
 
   if (url.includes("instagram.com") || title.includes("instagram")) {
     return {
@@ -64,7 +74,7 @@ function getLinkPlatform(link: CustomLink): {
   if (url.includes("youtube.com") || url.includes("youtu.be") || title.includes("youtube")) {
     return {
       icon: <YoutubeIcon className="h-4 w-4 text-white" />,
-      bgClass: "bg-red-600 shadow-xs",
+      bgClass: "bg-[#FF0000] shadow-xs",
     };
   }
   if (url.includes("facebook.com") || url.includes("fb.com") || title.includes("facebook")) {
@@ -109,6 +119,18 @@ function getLinkPlatform(link: CustomLink): {
       bgClass: "bg-[#9146FF] shadow-xs",
     };
   }
+  if (type === "portfolio" || title.includes("portfolio")) {
+    return {
+      icon: <Globe className="h-4 w-4 text-[#0284c7]" />,
+      bgClass: "bg-[#e0f2fe]",
+    };
+  }
+  if (type === "website" || title.includes("website") || title.includes("official")) {
+    return {
+      icon: <Globe className="h-4 w-4 text-[#7A2253]" />,
+      bgClass: "bg-[#FFF5F7] border border-[#FCE7F3]",
+    };
+  }
 
   // Fallback to title initials with pink/maroon squircle badge
   return {
@@ -117,7 +139,7 @@ function getLinkPlatform(link: CustomLink): {
         {getInitials(link.title)}
       </span>
     ),
-    bgClass: "bg-[#7A225314] border border-[#e2e8f0]",
+    bgClass: "bg-[#FFF5F7] border border-[#FCE7F3]",
   };
 }
 
@@ -499,9 +521,9 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
 
   return (
     <div className="w-full space-y-3 text-left">
-      {/* Section Header: count badge + Add Link button */}
+      {/* Section Subheader: count badge + Add Link button */}
       <div className="flex items-center justify-between gap-3">
-        <span className="inline-flex items-center text-xs text-[#64748b]">
+        <span className="inline-flex items-center text-xs text-[#64748b] font-medium">
           {links.length} / {maxLinks === Infinity ? "Unlimited" : maxLinks} links
         </span>
 
@@ -509,11 +531,12 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
           type="button"
           onClick={(e) => handleOpenCreate(e.currentTarget)}
           disabled={isLimitReached}
-          className={`inline-flex items-center gap-1.5 h-9 px-3.5 rounded-[5px] text-xs font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm ${isLimitReached
-            ? "bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b] opacity-60 cursor-not-allowed"
-            : "bg-[#7A2253] hover:opacity-95 text-white shadow-md shadow-[#7A2253]/20"
-            }`}
-          title={isLimitReached ? "Limit reached (3 links max)" : "Add new custom link"}
+          className={`inline-flex items-center gap-1.5 h-8 px-3.5 rounded-[5px] text-xs font-bold transition-all cursor-pointer shadow-2xs ${
+            isLimitReached
+              ? "bg-[#7A2253] text-white opacity-85"
+              : "bg-[#7A2253] hover:bg-[#681c46] text-white"
+          }`}
+          title={isLimitReached ? "Plan limit reached" : "Add new custom link"}
         >
           <Plus className="h-4 w-4" />
           <span>Add Link</span>
@@ -538,33 +561,34 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
           }
         />
       ) : (
-        <div className="rounded-[5px] border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0] shadow-xs">
+        <div className="rounded-[5px] border border-[#e2e8f0] bg-white divide-y divide-[#f1f5f9] shadow-2xs overflow-hidden">
           {links.map((item, idx) => {
             const isCollection = item.kind === "collection";
             const enabledItems = item.items?.filter((child) => child.isEnabled !== false && child.title && child.url) || [];
             const domain = isCollection ? `${enabledItems.length} links in collection` : extractDomain(item.url);
             const platformInfo = getLinkPlatform(item);
-            const faviconUrl = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64` : "";
+            const faviconUrl = domain && !isCollection ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64` : "";
 
             return (
               <div
                 key={item.id || idx}
-                className="px-3.5 sm:px-4 py-2.5 min-h-[52px] hover:bg-[#f1f5f9] transition-colors text-left"
+                className="px-3.5 sm:px-4 py-3 min-h-[58px] hover:bg-[#fafafa] transition-colors text-left"
               >
                 <div className="flex items-center justify-between gap-3">
                   {/* Left: Drag handle + Favicon/Icon + Title/Domain */}
-                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                    <span className="text-[#64748b]/40 cursor-grab active:cursor-grabbing shrink-0" title="Drag to reorder">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <span className="text-[#cbd5e1] hover:text-[#94a3b8] cursor-grab active:cursor-grabbing shrink-0" title="Drag to reorder">
                       <GripVertical className="h-4 w-4" />
                     </span>
 
                     <div
-                      className={`h-8 w-8 rounded-[5px] flex items-center justify-center shrink-0 overflow-hidden ${isCollection ? "bg-[#f1f5f9] text-[#475569]" : platformInfo.bgClass
-                        }`}
+                      className={`h-9 w-9 rounded-[5px] flex items-center justify-center shrink-0 overflow-hidden ${
+                        isCollection ? "bg-[#eef2f6] text-[#475569]" : platformInfo.bgClass
+                      }`}
                     >
                       {isCollection ? (
-                        <FolderOpen className="h-4 w-4" />
-                      ) : domain && !platformInfo.bgClass.includes("gradient") && !platformInfo.bgClass.includes("red") && !platformInfo.bgClass.includes("blue") ? (
+                        <Folder className="h-4 w-4 text-[#475569]" />
+                      ) : domain && !platformInfo.bgClass.includes("gradient") && !platformInfo.bgClass.includes("FF0000") && !platformInfo.bgClass.includes("red") && !platformInfo.bgClass.includes("blue") && !platformInfo.bgClass.includes("black") && !platformInfo.bgClass.includes("0284c7") && !platformInfo.bgClass.includes("e0f2fe") ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={faviconUrl}
@@ -584,133 +608,63 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                       className="min-w-0 flex-1 cursor-pointer group"
                       title="Click to edit link"
                     >
-                      <p className="truncate text-sm font-semibold text-[#0f172a] group-hover:underline">
+                      <p className="truncate text-sm font-bold text-[#0f172a] group-hover:text-[#7A2253] transition-colors">
                         {item.title}
                       </p>
-                      <p className="truncate text-xs text-[#475569]">
+                      <p className="truncate text-xs text-[#64748b]">
                         {domain}
                       </p>
                     </div>
                   </div>
 
-                  {/* Right: Actions (Edit + Open ↗ + ⋮) */}
-                  <div className="flex items-center gap-1.5 shrink-0">
+                  {/* Right: 3 Action Buttons (Pencil | Open ↗ | Trash) matching screenshot */}
+                  <div className="flex items-center gap-2 shrink-0">
                     <button
                       type="button"
                       onClick={() => handleOpenEdit(item)}
-                      className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs font-semibold text-[#7A2253] transition-colors shadow-2xs cursor-pointer"
-                      title="Edit this link"
+                      className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] text-[#64748b] hover:text-[#0f172a] transition-colors shadow-2xs cursor-pointer"
+                      title="Edit link"
                     >
-                      <Pencil className="h-3 w-3 text-[#64748b]" />
-                      <span className="hidden xs:inline">Edit</span>
+                      <Pencil className="h-3.5 w-3.5" />
                     </button>
 
-                    {!isCollection && item.url && (
-                      <a
-                        href={item.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hidden sm:inline-flex items-center gap-1.5 h-7 px-2.5 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-xs font-medium text-[#7A2253] transition-colors shadow-2xs"
-                        title="Open link in new tab"
-                      >
-                        <span>Open</span>
-                        <ExternalLink className="h-3 w-3 text-[#64748b]" />
-                      </a>
-                    )}
+                    <a
+                      href={item.url || (enabledItems[0]?.url) || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 h-8 px-3 rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7] hover:bg-[#FCE7F3]/70 text-xs font-bold text-[#7A2253] transition-colors shadow-2xs cursor-pointer"
+                      title="Open link"
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                      <span>Open</span>
+                    </a>
 
-                    {/* Three-dot menu */}
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setActiveMenuId(activeMenuId === item.id ? null : item.id);
-                        }}
-                        className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-colors cursor-pointer shadow-2xs"
-                        aria-label="More actions"
-                      >
-                        <MoreVertical className="h-3.5 w-3.5" />
-                      </button>
-
-                      {activeMenuId === item.id && (
-                        <div
-                          onClick={(e) => e.stopPropagation()}
-                          data-menu
-                          className="absolute right-0 top-full mt-1.5 w-36 rounded-[5px] border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in"
-                        >
-                          {item.url && (
-                            <a
-                              href={item.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={() => setActiveMenuId(null)}
-                              className="sm:hidden flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#0f172a] hover:bg-[#f1f5f9] transition-colors"
-                            >
-                              <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
-                              <span>Open Link</span>
-                            </a>
-                          )}
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setActiveMenuId(null);
-                              handleOpenEdit(item);
-                            }}
-                            className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
-                          >
-                            <Pencil className="h-3.5 w-3.5 text-[#64748b]" />
-                            <span>Edit Link</span>
-                          </button>
-
-                          {!isCollection && (
-                            <button
-                              type="button"
-                              onClick={() => handleCopy(item.url)}
-                              className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
-                            >
-                              <Copy className="h-3.5 w-3.5 text-[#64748b]" />
-                              <span>Copy Link</span>
-                            </button>
-                          )}
-
-                          <div className="my-1 border-t border-[#e2e8f0]" />
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setActiveMenuId(null);
-                              setLinkToDelete(item);
-                            }}
-                            className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                            <span>Delete Link</span>
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setLinkToDelete(item)}
+                      className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7] hover:bg-rose-50 text-[#ef4444] hover:text-red-700 transition-colors shadow-2xs cursor-pointer"
+                      title="Delete link"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
                   </div>
                 </div>
+
+                {/* Collection items: styled as pink full-width cards with bold title and external link icon */}
                 {isCollection && enabledItems.length > 0 && (
-                  <div className="ml-7 mt-3 grid gap-2 sm:ml-12">
-                    {enabledItems.slice(0, 4).map((child) => (
+                  <div className="pt-2.5 pb-0.5 space-y-1.5">
+                    {enabledItems.map((child) => (
                       <a
                         key={child.id}
                         href={child.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-between gap-3 rounded-[5px] border border-[#e2e8f0] bg-white px-3 py-2 text-xs font-semibold text-[#7A2253] transition-colors hover:border-[#7A2253]/25 hover:bg-[#f8fafc]"
+                        className="flex items-center justify-between rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7] hover:bg-[#FCE7F3]/80 px-4 py-2.5 text-xs font-bold text-[#7A2253] transition-colors shadow-2xs"
                       >
                         <span className="truncate">{child.title}</span>
-                        <ExternalLink className="h-3.5 w-3.5 shrink-0 text-[#64748b]" />
+                        <ExternalLink className="h-3.5 w-3.5 shrink-0 text-[#7A2253]" />
                       </a>
                     ))}
-                    {enabledItems.length > 4 && (
-                      <p className="px-1 text-[11px] font-semibold text-[#64748b]">
-                        +{enabledItems.length - 4} more links
-                      </p>
-                    )}
                   </div>
                 )}
               </div>
