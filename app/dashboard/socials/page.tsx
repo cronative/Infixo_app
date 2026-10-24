@@ -927,7 +927,7 @@ function ConnectedSocialCard({
   const updatedInfo = formatLastUpdated(lastSyncedAt);
 
   return (
-    <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 sm:p-4 shadow-2xs transition-all duration-200 hover:border-[#cbd5e1] hover:shadow-xs text-left flex flex-col justify-between space-y-2.5">
+    <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 sm:p-4 shadow-2xs transition-all duration-200 hover:border-[#cbd5e1] hover:shadow-xs text-left flex flex-col justify-between">
       {/* 1. TOP ROW: Platform Icon & Name + Connected Badge & 3-dots */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
@@ -991,7 +991,7 @@ function ConnectedSocialCard({
       </div>
 
       {/* 2. MIDDLE ROW: Username with Verified Badge + Count & Label */}
-      <div className="flex items-center justify-between gap-3 pt-0.5">
+      <div className="flex items-center justify-between gap-3 pt-2.5 pb-0.5">
         <div className="flex items-center gap-1.5 min-w-0">
           <span className="text-xs sm:text-sm font-bold text-[#0f172a] truncate">
             {handle ? (handle.startsWith("@") ? handle : `@${handle}`) : `@${displayName}`}
@@ -1009,15 +1009,16 @@ function ConnectedSocialCard({
         </div>
       </div>
 
-      {/* 3. SUB-ROW: Divider line above Last updated + Last updated on left, timing on right */}
-      <div className="pt-2 border-t border-[#f1f5f9] flex items-center justify-between text-xs text-[#64748b]">
-        <div className="flex items-center gap-1.5 min-w-0">
-          <Calendar className="h-3.5 w-3.5 text-[#94a3b8] shrink-0" />
-          <span className="text-[11px] text-[#64748b]">{updatedInfo.label}</span>
+      {/* 3. HORIZONTAL DIVIDER */}
+      <div className="border-t border-[#e2e8f0] my-2.5" />
+
+      {/* 4. SUB-ROW: Calendar icon + Last updated & timing stacked */}
+      <div className="flex items-start gap-2 text-xs text-[#64748b] pb-2.5">
+        <Calendar className="h-4 w-4 text-[#64748b] shrink-0 mt-0.5" />
+        <div className="text-xs text-[#64748b] font-medium leading-tight">
+          <div>{updatedInfo.label}</div>
+          <div className="mt-0.5 text-[#64748b]">{updatedInfo.time}</div>
         </div>
-        <span className="text-[11px] font-medium text-[#475569] shrink-0">
-          {updatedInfo.time}
-        </span>
       </div>
 
       {/* 4. BOTTOM ACTION: Full width View Profile button */}
