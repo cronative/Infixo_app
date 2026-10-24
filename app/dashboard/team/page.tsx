@@ -338,48 +338,46 @@ export default function DashboardTeamPage() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-4.5 w-full pb-8 text-left">
+    <div className="space-y-4 w-full pb-8 text-left">
       {/* Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-[#0f172a]">
             Team &amp; Collaborators
           </h1>
-          <p className="text-xs sm:text-[13px] text-[#475569] font-medium mt-0.5">
+          <p className="text-xs sm:text-[13px] text-[#64748b] mt-0.5">
             Showcase the core creative crew behind your videos, content, and productions.
           </p>
         </div>
 
-        {team && (
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              type="button"
-              onClick={handleOpenTeamModal}
-              className="tap-scale flex items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] h-9 px-3.5 text-xs font-semibold text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
-            >
-              <Pencil className="h-3.5 w-3.5 text-[#64748b]" />
-              <span>Edit Team</span>
-            </button>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={handleOpenTeamModal}
+            className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-slate-50 h-8 px-3.5 text-xs font-semibold text-[#7A2253] transition-colors cursor-pointer shadow-2xs"
+          >
+            <Pencil className="h-3.5 w-3.5 text-[#7A2253]" />
+            <span>Edit Team</span>
+          </button>
 
-            <button
-              type="button"
-              onClick={() => handleOpenMemberModal()}
-              className="tap-scale inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3.5 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] cursor-pointer"
-            >
-              <Plus className="h-3.5 w-3.5 stroke-[2.5]" />
-              <span>Add Member</span>
-            </button>
-          </div>
-        )}
+          <button
+            type="button"
+            onClick={() => handleOpenMemberModal()}
+            className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#681c46] text-white h-8 px-3.5 text-xs font-bold transition-colors cursor-pointer shadow-2xs"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            <span>Add Member</span>
+          </button>
+        </div>
       </div>
 
       {/* Main Content Area */}
       {loading ? (
-        <div className="rounded-xl border border-[#e2e8f0] bg-white p-6 text-center text-xs text-[#64748b]">
+        <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-6 text-center text-xs text-[#64748b]">
           Loading team details...
         </div>
       ) : !team ? (
-        /* Empty State: Create Team */
+        /* Empty State */
         <EmptyState
           icon={<Users className="h-7 w-7" />}
           title="Build the team behind your content"
@@ -388,7 +386,7 @@ export default function DashboardTeamPage() {
             <button
               type="button"
               onClick={handleOpenTeamModal}
-              className="inline-flex items-center gap-2 rounded-lg bg-[#7A2253] h-9 px-4 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-[5px] bg-[#7A2253] h-9 px-4 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:bg-[#681c46] cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Create Your Team</span>
@@ -396,141 +394,71 @@ export default function DashboardTeamPage() {
           }
         />
       ) : (
-        /* Unified Series-Style Expandable Team Card */
-        <div className="rounded-xl border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0] shadow-xs">
-          {/* Team Row Header */}
-          <div
-            onClick={() => setIsExpanded(!isExpanded)}
-            className={`px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 cursor-pointer hover:bg-[#f1f5f9] transition-colors group text-left ${isExpanded ? "rounded-t-xl" : "rounded-xl"
-              }`}
-          >
-            {/* Left: Squircle Badge + Title & Subtitle */}
-            <div className="flex items-center gap-2.5 min-w-0 flex-1">
-              <div className="flex h-8.5 w-8.5 items-center justify-center rounded-lg bg-[#7A225314] border border-[#e2e8f0] text-[#7A2253] font-extrabold text-xs shadow-2xs shrink-0 select-none">
+        /* Main Team Container */
+        <div className="rounded-[5px] border border-[#e2e8f0] bg-white shadow-2xs overflow-hidden">
+          {/* Top Team Summary Row */}
+          <div className="p-4 sm:px-5 sm:py-4 flex items-center justify-between gap-3 text-left">
+            {/* Left: Avatar Squircle + Team Name & Members count */}
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="flex h-11 w-11 items-center justify-center rounded-[5px] bg-[#FFF5F7] text-[#7A2253] font-bold text-sm shrink-0 select-none">
                 {getInitials(team.teamName)}
               </div>
-              <div className="min-w-0 flex-1 text-left space-y-0.5">
-                <p className="truncate text-xs sm:text-[13px] font-bold text-[#7A2253] group-hover:text-[#7A2253] transition-colors">
+              <div className="min-w-0 flex-1 space-y-0.5">
+                <h2 className="truncate text-base font-bold text-[#0f172a]">
                   {team.teamName}
-                </p>
-                <p className="truncate text-[11px] font-medium text-[#64748b]">
+                </h2>
+                <p className="truncate text-xs text-[#64748b]">
                   {team.members?.length || 0} team {team.members?.length === 1 ? "member" : "members"}
                 </p>
               </div>
             </div>
 
-            {/* Right: Actions */}
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-1.5 sm:gap-2 shrink-0"
-            >
-              {/* Add Member Button (Desktop) */}
+            {/* Right: + Add Member, View ↗, Collapse/Expand */}
+            <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
                 onClick={() => handleOpenMemberModal()}
-                className="hidden sm:inline-flex items-center gap-1 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] text-[#0f172a] px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-slate-50 text-xs font-semibold text-[#0f172a] transition-colors shadow-2xs cursor-pointer"
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span>Add Member</span>
               </button>
 
-              {/* View Public Page (Desktop) */}
               <a
                 href={`/${profile.username || "creator"}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden sm:inline-flex items-center gap-1 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] px-2.5 py-1 text-xs font-semibold text-[#7A2253] transition-all hover:shadow-2xs"
+                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-slate-50 text-xs font-semibold text-[#7A2253] transition-colors shadow-2xs"
                 title="View public profile"
               >
                 <span>View</span>
-                <ExternalLink className="h-3 w-3 text-[#7A2253]" />
+                <ExternalLink className="h-3.5 w-3.5 text-[#7A2253]" />
               </a>
 
-              {/* 3-Dot Overflow Menu (Always visible) */}
-              <div className="relative" ref={teamMenuRef}>
-                <button
-                  type="button"
-                  onClick={() => setTeamMenuOpen(!teamMenuOpen)}
-                  className="flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
-                  aria-label="More actions"
-                >
-                  <MoreVertical className="h-3.5 w-3.5" />
-                </button>
-
-                {teamMenuOpen && (
-                  <div className="absolute right-0 top-full mt-1.5 w-44 rounded-xl border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in text-left">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setTeamMenuOpen(false);
-                        handleOpenMemberModal();
-                      }}
-                      className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
-                    >
-                      <Plus className="h-3.5 w-3.5 text-[#7A2253]" />
-                      <span>Add Member</span>
-                    </button>
-
-                    <a
-                      href={`/${profile.username || "creator"}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => setTeamMenuOpen(false)}
-                      className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
-                    >
-                      <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
-                      <span>View Public Page</span>
-                    </a>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setTeamMenuOpen(false);
-                        handleOpenTeamModal();
-                      }}
-                      className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
-                    >
-                      <Pencil className="h-3.5 w-3.5 text-[#64748b]" />
-                      <span>Edit Team Name</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={handleCopyLink}
-                      className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
-                    >
-                      <Copy className="h-3.5 w-3.5 text-[#64748b]" />
-                      <span>Copy Profile Link</span>
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {/* Expand / Collapse Chevron */}
               <button
                 type="button"
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="flex h-7 w-7 items-center justify-center rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                className="h-8 w-8 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-slate-50 text-[#64748b] hover:text-[#0f172a] flex items-center justify-center transition-colors shadow-2xs cursor-pointer"
                 aria-expanded={isExpanded}
-                title={isExpanded ? "Hide members" : "Show members"}
+                title={isExpanded ? "Collapse" : "Expand"}
               >
-                {isExpanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+                {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
               </button>
             </div>
           </div>
 
-          {/* Expanded Members List */}
+          {/* Expanded Members Area */}
           {isExpanded && (
-            <div className="border-t border-[#e2e8f0] bg-[#f8fafc]/80 rounded-b-xl">
-              {/* Header Strip */}
-              <div className="px-3.5 py-1.5 bg-[#f8fafc] flex items-center justify-between border-b border-[#e2e8f0]">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748b]">
-                  Team Members ({team.members?.length || 0})
+            <div>
+              {/* Divider Bar: TEAM MEMBERS (3) */}
+              <div className="border-t border-b border-[#e2e8f0] bg-[#f8fafc] px-4 sm:px-5 py-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748b]">
+                  TEAM MEMBERS ({team.members?.length || 0})
                 </span>
               </div>
 
               {(!team.members || team.members.length === 0) ? (
-                <div className="p-4 sm:p-5 text-center space-y-2 bg-white rounded-b-xl">
+                <div className="p-6 text-center space-y-2 bg-white">
                   <p className="text-xs font-bold text-[#7A2253]">No team members added yet</p>
                   <p className="text-xs text-[#64748b] max-w-sm mx-auto">
                     Add members to highlight directors, editors, writers, and collaborators on your public profile.
@@ -538,173 +466,105 @@ export default function DashboardTeamPage() {
                   <button
                     type="button"
                     onClick={() => handleOpenMemberModal()}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-[#7A2253] hover:opacity-95 h-8.5 px-3 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20"
+                    className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#681c46] h-8 px-3 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs mt-2"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     <span>Add First Member</span>
                   </button>
                 </div>
               ) : (
-                <div className="divide-y divide-[#e2e8f0] bg-white rounded-b-xl">
+                <div className="divide-y divide-[#f1f5f9] bg-white">
                   {team.members.map((member: TeamMember) => (
                     <div
                       key={member.id}
-                      className={`px-3.5 py-2 sm:py-2.5 flex items-center justify-between gap-3 hover:bg-[#f1f5f9] transition-colors text-left last:rounded-b-xl ${member.isActive ? "" : "opacity-60 bg-[#f8fafc]/40"
-                        }`}
+                      className="px-4 sm:px-5 py-3 flex items-center justify-between gap-3 hover:bg-[#fafafa] transition-colors text-left"
                     >
-                      {/* Left: Avatar Initial / Squircle + Info */}
-                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                        <div className="flex h-8.5 w-8.5 items-center justify-center rounded-lg bg-[#7A225314] border border-[#e2e8f0] text-[#7A2253] font-bold text-xs shadow-2xs shrink-0 select-none">
+                      {/* Left: Avatar Initial / Squircle + Name & Role */}
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#FFF5F7] text-[#7A2253] font-bold text-xs shrink-0 select-none">
                           {getInitials(member.name)}
                         </div>
 
-                        <div className="min-w-0 flex-1 space-y-0.5">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <h3 className="truncate font-semibold text-xs sm:text-[13px] text-[#0f172a]">{member.name}</h3>
-                            <span className="text-[11px] font-semibold text-[#7A2253] truncate">
-                              • {member.role}
-                            </span>
-                            {!member.isActive && (
-                              <span className="text-[10px] font-semibold text-[#64748b] bg-[#f8fafc] border border-[#e2e8f0] px-1.5 py-0.2 rounded-md">
-                                Hidden
-                              </span>
-                            )}
-                          </div>
-
-                          {/* Social Icons */}
-                          <div className="flex items-center gap-1.5 pt-0.5">
-                            {member.instagramUrl && (
-                              <a
-                                href={member.instagramUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex h-5 w-5 items-center justify-center rounded-md bg-pink-50 text-[#E1306C] hover:scale-110 transition-transform"
-                                title="Instagram"
-                              >
-                                <InstagramIcon className="h-3 w-3" />
-                              </a>
-                            )}
-                            {member.youtubeUrl && (
-                              <a
-                                href={member.youtubeUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex h-5 w-5 items-center justify-center rounded-md bg-red-50 text-[#FF0000] hover:scale-110 transition-transform"
-                                title="YouTube"
-                              >
-                                <YoutubeIcon className="h-3 w-3" />
-                              </a>
-                            )}
-                            {member.facebookUrl && (
-                              <a
-                                href={member.facebookUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex h-5 w-5 items-center justify-center rounded-md bg-blue-50 text-[#1877F2] hover:scale-110 transition-transform"
-                                title="Facebook"
-                              >
-                                <FacebookIcon className="h-3 w-3" />
-                              </a>
-                            )}
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate font-bold text-sm text-[#0f172a]">
+                            {member.name}
+                          </p>
+                          <div className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#FFF5F7] text-[#7A2253] px-2.5 py-0.5 text-xs font-bold mt-0.5">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#7A2253]"></span>
+                            <span>{member.role}</span>
                           </div>
                         </div>
                       </div>
 
-                      {/* Right: Actions */}
+                      {/* Center: Social Icons */}
                       <div className="flex items-center gap-1.5 shrink-0">
-                        {/* Desktop Actions */}
-                        <div className="hidden sm:flex items-center gap-1.5">
-                          <button
-                            type="button"
-                            onClick={() => handleToggleMember(member)}
-                            className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
-                            title={member.isActive ? "Hide from profile" : "Show on profile"}
+                        {member.instagramUrl && (
+                          <a
+                            href={member.instagramUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFF5F7] text-[#E1306C] hover:scale-105 transition-transform"
+                            title="Instagram"
                           >
-                            {member.isActive ? (
-                              <Eye className="h-3.5 w-3.5 text-[#17845B]" />
-                            ) : (
-                              <EyeOff className="h-3.5 w-3.5 text-[#64748b]" />
-                            )}
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => handleOpenMemberModal(member)}
-                            className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
-                            title="Edit member"
+                            <InstagramIcon className="h-3.5 w-3.5" />
+                          </a>
+                        )}
+                        {member.youtubeUrl && (
+                          <a
+                            href={member.youtubeUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFF5F7] text-[#FF0000] hover:scale-105 transition-transform"
+                            title="YouTube"
                           >
-                            <Pencil className="h-3.5 w-3.5" />
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => setMemberToDelete(member)}
-                            className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
-                            title="Remove member"
+                            <YoutubeIcon className="h-3.5 w-3.5" />
+                          </a>
+                        )}
+                        {member.facebookUrl && (
+                          <a
+                            href={member.facebookUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFF5F7] text-[#1877F2] hover:scale-105 transition-transform"
+                            title="Facebook"
                           >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
+                            <FacebookIcon className="h-3.5 w-3.5" />
+                          </a>
+                        )}
+                      </div>
 
-                        {/* Mobile 3-Dot Menu */}
-                        <div className="relative sm:hidden">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setActiveMemberMenuId(activeMemberMenuId === member.id ? null : member.id);
-                            }}
-                            className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
-                            aria-label="Member actions"
-                          >
-                            <MoreVertical className="h-3.5 w-3.5" />
-                          </button>
-
-                          {activeMemberMenuId === member.id && (
-                            <div
-                              onClick={(e) => e.stopPropagation()}
-                              className="absolute right-0 top-full mt-1.5 w-44 rounded-xl border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in"
-                            >
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setActiveMemberMenuId(null);
-                                  handleToggleMember(member);
-                                }}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
-                              >
-                                {member.isActive ? <EyeOff className="h-3.5 w-3.5 text-[#64748b]" /> : <Eye className="h-3.5 w-3.5 text-[#17845B]" />}
-                                <span>{member.isActive ? "Hide from profile" : "Show on profile"}</span>
-                              </button>
-
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setActiveMemberMenuId(null);
-                                  handleOpenMemberModal(member);
-                                }}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
-                              >
-                                <Pencil className="h-3.5 w-3.5 text-[#64748b]" />
-                                <span>Edit Member</span>
-                              </button>
-
-                              <div className="my-1 border-t border-[#e2e8f0]" />
-
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setActiveMemberMenuId(null);
-                                  setMemberToDelete(member);
-                                }}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
-                              >
-                                <Trash2 className="h-3.5 w-3.5" />
-                                <span>Remove Member</span>
-                              </button>
-                            </div>
+                      {/* Right: 3 Action Buttons [ 👁️ ] [ ✏️ ] [ 🗑️ ] */}
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => handleToggleMember(member)}
+                          className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-slate-50 transition-colors shadow-2xs cursor-pointer"
+                          title={member.isActive ? "Hide from profile" : "Show on profile"}
+                        >
+                          {member.isActive ? (
+                            <Eye className="h-4 w-4 text-[#10b981]" />
+                          ) : (
+                            <EyeOff className="h-4 w-4 text-[#94a3b8]" />
                           )}
-                        </div>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleOpenMemberModal(member)}
+                          className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-slate-50 text-[#64748b] hover:text-[#0f172a] transition-colors shadow-2xs cursor-pointer"
+                          title="Edit member"
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setMemberToDelete(member)}
+                          className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7] hover:bg-rose-50 text-[#ef4444] hover:text-red-700 transition-colors shadow-2xs cursor-pointer"
+                          title="Remove member"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
                       </div>
                     </div>
                   ))}
