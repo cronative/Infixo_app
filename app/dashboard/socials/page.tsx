@@ -11,6 +11,12 @@ import {
   RefreshCw,
   Info,
   Link as LinkIcon,
+  BarChart2,
+  Sparkles,
+  Unlink,
+  Eye,
+  Users,
+  TrendingUp,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -531,21 +537,23 @@ export default function DashboardSocialsPage() {
       </section>
 
       {/* 5. HOW SOCIAL DATA WORKS (Compact Info Row + Learn more Modal) */}
-      <section className="rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc]/80 px-5 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-xs text-left">
-        <div className="flex items-center gap-2 min-w-0">
-          <Info className="h-4 w-4 text-[#7A2253] shrink-0" />
-          <span className="text-xs sm:text-sm font-semibold text-[#7A2253] shrink-0">How social data works</span>
-          <span className="hidden sm:inline text-[#64748b]/40">·</span>
-          <span className="text-xs text-[#475569] font-normal truncate">
-            Inflixo uses supported public profile information to calculate your Total Fanbase.
-          </span>
+      <section className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs text-left">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] bg-[#7A2253]/10 text-[#7A2253]">
+            <Info className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="text-xs sm:text-sm font-bold text-[#0f172a]">How social data works</h3>
+            <p className="text-[11px] text-[#64748b] font-medium">Inflixo uses publicly available profile information to calculate your Total Fanbase.</p>
+          </div>
         </div>
         <button
           type="button"
           onClick={() => setIsInfoModalOpen(true)}
-          className="text-xs font-semibold text-[#7A2253] hover:underline cursor-pointer shrink-0 self-start sm:self-auto"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-[#7A2253] hover:underline cursor-pointer shrink-0 self-start sm:self-auto"
         >
-          Learn more
+          <span>Learn more</span>
+          <span>&rarr;</span>
         </button>
       </section>
 
@@ -554,22 +562,242 @@ export default function DashboardSocialsPage() {
         isOpen={isInfoModalOpen}
         onClose={() => setIsInfoModalOpen(false)}
         title="How social data works"
-        description="Inflixo uses supported public profile information to display connected accounts and calculate Total Fanbase."
-        icon={<Info className="h-4 w-4" />}
+        description="Inflixo uses publicly available profile information to display connected account details and calculate your Total Fanbase."
+        icon={<Info className="h-5 w-5" />}
+        size="xl"
+        className="max-w-4xl lg:max-w-5xl"
       >
-        <ModalBody className="p-5 space-y-3 text-left">
-          <div className="space-y-2.5 text-xs text-[#475569]">
-            <div className="flex items-start gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#7A2253] mt-1.5 shrink-0" />
-              <span>Reads supported public profile information to show follower and subscriber metrics.</span>
+        <ModalBody className="p-4 sm:p-6 text-left">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* LEFT COLUMN: 7 Explanatory Feature Items */}
+            <div className="lg:col-span-7 space-y-4">
+              {/* Item 1 */}
+              <div className="flex items-start gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253]">
+                  <BarChart2 className="h-4 w-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-xs sm:text-[13px] font-bold text-[#0f172a] leading-tight">
+                    Reads public profile information
+                  </h4>
+                  <p className="mt-0.5 text-xs text-[#64748b] leading-relaxed">
+                    We access publicly available data like followers, subscribers, profile avatar, and username to show your stats.
+                  </p>
+                </div>
+              </div>
+
+              {/* Item 2 */}
+              <div className="flex items-start gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253]">
+                  <Sparkles className="h-4 w-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h4 className="text-xs sm:text-[13px] font-bold text-[#0f172a] leading-tight">
+                      AI-powered data insights
+                    </h4>
+                    <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F3] px-2 py-0.5 text-[10px] font-bold text-[#7A2253]">
+                      ✨ Powered by AI
+                    </span>
+                  </div>
+                  <p className="mt-0.5 text-xs text-[#64748b] leading-relaxed">
+                    Our AI analyzes your connected accounts to get accurate follower and subscriber counts, detect anomalies, and keep your Total Fanbase up to date.
+                  </p>
+                </div>
+              </div>
+
+              {/* Item 3 */}
+              <div className="flex items-start gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253]">
+                  <ShieldCheck className="h-4 w-4 text-[#10b981]" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-xs sm:text-[13px] font-bold text-[#0f172a] leading-tight">
+                    Secure &amp; read-only access
+                  </h4>
+                  <p className="mt-0.5 text-xs text-[#64748b] leading-relaxed">
+                    We never receive or store your social platform passwords. Your account remains safe and private.
+                  </p>
+                </div>
+              </div>
+
+              {/* Item 4 */}
+              <div className="flex items-start gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253]">
+                  <RefreshCw className="h-4 w-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-xs sm:text-[13px] font-bold text-[#0f172a] leading-tight">
+                    Auto-sync &amp; update
+                  </h4>
+                  <p className="mt-0.5 text-xs text-[#64748b] leading-relaxed">
+                    Your follower counts and profile details are updated regularly using AI to ensure accurate Total Fanbase.
+                  </p>
+                </div>
+              </div>
+
+              {/* Item 5 */}
+              <div className="flex items-start gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253]">
+                  <Unlink className="h-4 w-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-xs sm:text-[13px] font-bold text-[#0f172a] leading-tight">
+                    Disconnect anytime
+                  </h4>
+                  <p className="mt-0.5 text-xs text-[#64748b] leading-relaxed">
+                    You can disconnect any social account at any time with just one click.
+                  </p>
+                </div>
+              </div>
+
+              {/* Item 6 */}
+              <div className="flex items-start gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253]">
+                  <Eye className="h-4 w-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-xs sm:text-[13px] font-bold text-[#0f172a] leading-tight">
+                    Only public data is used
+                  </h4>
+                  <p className="mt-0.5 text-xs text-[#64748b] leading-relaxed">
+                    We can only access information that is publicly visible on your social profiles.
+                  </p>
+                </div>
+              </div>
+
+              {/* Item 7 */}
+              <div className="flex items-start gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253]">
+                  <Users className="h-4 w-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-xs sm:text-[13px] font-bold text-[#0f172a] leading-tight">
+                    Calculate Total Fanbase
+                  </h4>
+                  <p className="mt-0.5 text-xs text-[#64748b] leading-relaxed">
+                    We combine followers/subscribers from all connected platforms using AI to show your Total Fanbase.
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="flex items-start gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#7A2253] mt-1.5 shrink-0" />
-              <span>Never receives or stores your social platform passwords.</span>
-            </div>
-            <div className="flex items-start gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#7A2253] mt-1.5 shrink-0" />
-              <span>Lets you disconnect an account at any time with one click.</span>
+
+            {/* RIGHT COLUMN: Interactive Visual Diagram */}
+            <div className="lg:col-span-5 rounded-[5px] bg-[#FAF8FA] border border-[#F3E8EE] p-4 sm:p-5 flex flex-col justify-between space-y-3.5">
+              {/* Top AI Badge */}
+              <div className="flex justify-center">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FCE7F3] text-[#7A2253] px-3 py-1 text-xs font-bold shadow-2xs">
+                  <span className="text-sm">🤖</span>
+                  <span>AI Analyzes &amp; Syncs Data</span>
+                </span>
+              </div>
+
+              {/* Curved dotted pink connectors down to 3 cards */}
+              <div className="w-full flex justify-center -my-1">
+                <svg className="w-full max-w-[260px] h-9 overflow-visible" viewBox="0 0 260 36" fill="none">
+                  <path d="M 130 0 L 130 36" stroke="#F472B6" strokeWidth="1.5" strokeDasharray="3 3" />
+                  <path d="M 130 0 C 130 18 45 14 45 36" stroke="#F472B6" strokeWidth="1.5" strokeDasharray="3 3" />
+                  <path d="M 130 0 C 130 18 215 14 215 36" stroke="#F472B6" strokeWidth="1.5" strokeDasharray="3 3" />
+                </svg>
+              </div>
+
+              {/* 3 Connected Platform Cards */}
+              <div className="grid grid-cols-3 gap-2">
+                {/* Instagram */}
+                <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-2 sm:p-2.5 text-center flex flex-col items-center justify-center shadow-2xs">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-tr from-[#fd5949] via-[#d6249f] to-[#285AEB] text-white shadow-2xs mb-1">
+                    <InstagramIcon className="h-3.5 w-3.5 fill-white" />
+                  </div>
+                  <span className="font-display text-xs sm:text-sm font-bold text-[#0f172a] leading-none">
+                    {socials?.instagram?.followers ? formatCount(socials.instagram.followers) : "654"}
+                  </span>
+                  <span className="text-[10px] text-[#64748b] font-medium mt-0.5">Followers</span>
+                </div>
+
+                {/* YouTube */}
+                <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-2 sm:p-2.5 text-center flex flex-col items-center justify-center shadow-2xs">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#FF0000] text-white shadow-2xs mb-1">
+                    <YoutubeIcon className="h-3.5 w-3.5 fill-white" />
+                  </div>
+                  <span className="font-display text-xs sm:text-sm font-bold text-[#0f172a] leading-none">
+                    {socials?.youtube?.subscribers ? formatCount(socials.youtube.subscribers) : "11.8K"}
+                  </span>
+                  <span className="text-[10px] text-[#64748b] font-medium mt-0.5">Subscribers</span>
+                </div>
+
+                {/* Facebook */}
+                <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-2 sm:p-2.5 text-center flex flex-col items-center justify-center shadow-2xs">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1877F2] text-white shadow-2xs mb-1">
+                    <FacebookIcon className="h-3.5 w-3.5 fill-white" />
+                  </div>
+                  <span className="font-display text-xs sm:text-sm font-bold text-[#0f172a] leading-none">
+                    {socials?.facebook?.followers ? formatCount(socials.facebook.followers) : "1.8K"}
+                  </span>
+                  <span className="text-[10px] text-[#64748b] font-medium mt-0.5">Followers</span>
+                </div>
+              </div>
+
+              {/* Curved dotted pink connectors down to Total Fanbase */}
+              <div className="w-full flex justify-center -my-1 relative">
+                <svg className="w-full max-w-[260px] h-9 overflow-visible" viewBox="0 0 260 36" fill="none">
+                  <path d="M 130 0 L 130 36" stroke="#F472B6" strokeWidth="1.5" strokeDasharray="3 3" />
+                  <path d="M 45 0 C 45 22 130 18 130 36" stroke="#F472B6" strokeWidth="1.5" strokeDasharray="3 3" />
+                  <path d="M 215 0 C 215 22 130 18 130 36" stroke="#F472B6" strokeWidth="1.5" strokeDasharray="3 3" />
+                </svg>
+                <span className="absolute left-4 top-1 text-[#F472B6] text-xs">✨</span>
+                <span className="absolute right-4 top-1 text-[#F472B6] text-xs">✨</span>
+              </div>
+
+              {/* Total Fanbase Card */}
+              <div className="rounded-[5px] border border-[#FCE7F3] bg-white p-3 sm:p-3.5 shadow-xs space-y-2.5">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFF0F5] text-[#7A2253]">
+                      <Users className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-semibold text-[#64748b] leading-tight">Total Fanbase</p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="font-display text-lg sm:text-xl font-bold text-[#0f172a] leading-none">
+                          {totalAudience > 0 ? formatCount(totalAudience) : "14.3K"}
+                        </span>
+                        <TrendingUp className="h-3.5 w-3.5 text-[#7A2253]" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F3] px-2 py-0.5 text-[10px] font-bold text-[#7A2253]">
+                    ✨ Calculated by AI
+                  </span>
+                </div>
+
+                <div className="pt-2 border-t border-[#f1f5f9] flex items-center justify-between gap-2">
+                  <div className="flex -space-x-1.5 overflow-hidden shrink-0">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img className="inline-block h-5 w-5 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=64&fit=crop&q=80" alt="Avatar 1" />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img className="inline-block h-5 w-5 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=64&fit=crop&q=80" alt="Avatar 2" />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img className="inline-block h-5 w-5 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&fit=crop&q=80" alt="Avatar 3" />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img className="inline-block h-5 w-5 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=64&fit=crop&q=80" alt="Avatar 4" />
+                    <div className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#f1f5f9] text-[8px] font-bold text-[#475569] ring-2 ring-white">
+                      +12K
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-[#64748b] font-medium truncate">
+                    Your total audience across platforms
+                  </p>
+                </div>
+              </div>
+
+              {/* Bottom Tip Callout */}
+              <div className="rounded-[5px] bg-[#FFF5F7] border border-[#FCE7F1] p-2.5 flex items-start gap-2 text-left">
+                <span className="text-xs shrink-0">💡</span>
+                <p className="text-[11px] text-[#7A2253] font-medium leading-snug">
+                  V2 AI detects inactive or fake followers to give you more accurate and reliable numbers.
+                </p>
+              </div>
             </div>
           </div>
         </ModalBody>
