@@ -2,7 +2,20 @@
 
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import Link from "next/link";
-import { ExternalLink, Pencil, Plus, ShoppingBag, Trash2, UploadCloud, Tag, Link as LinkIcon, X, Image as ImageIcon } from "lucide-react";
+import {
+  ExternalLink,
+  Pencil,
+  Plus,
+  ShoppingBag,
+  Trash2,
+  Tag,
+  Link as LinkIcon,
+  X,
+  Image as ImageIcon,
+  Search,
+  ArrowUpDown,
+  ChevronDown,
+} from "lucide-react";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -44,6 +57,10 @@ export default function ProductsPage() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [imageBusy, setImageBusy] = useState(false);
+  const [activeTab, setActiveTab] = useState<"all" | "active" | "draft" | "hidden">("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<"latest" | "oldest" | "price-high" | "price-low">("latest");
+  const [sortOpen, setSortOpen] = useState(false);
   const operation = useRef(false);
   const imageVersion = useRef(0);
 
@@ -52,7 +69,6 @@ export default function ProductsPage() {
   const maxProducts = quota.maxProducts;
   const isUnlimited = maxProducts === Infinity;
   const isLimitReached = !isUnlimited && products.length >= maxProducts;
-  const percentage = isUnlimited ? 15 : Math.min(100, Math.round((products.length / maxProducts) * 100));
 
   useEffect(() => {
     const controller = new AbortController();
@@ -122,74 +138,337 @@ export default function ProductsPage() {
     finally { operation.current = false; setBusy(false); }
   }
 
+  const filteredProducts = products.filter((p) => {
+    if (activeTab === "draft" || activeTab === "hidden") return false;
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      const matchName = p.name.toLowerCase().includes(q);
+      const matchUrl = (p.productUrl || "").toLowerCase().includes(q);
+      if (!matchName && !matchUrl) return false;
+    }
+    return true;
+  });
+
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (sortBy === "price-high") {
+      return (b.pricePaise || 0) - (a.pricePaise || 0);
+    }
+    if (sortBy === "price-low") {
+      return (a.pricePaise || 0) - (b.pricePaise || 0);
+    }
+    return 0;
+  });
+
+  const displayProducts = sortBy === "oldest" ? [...sortedProducts].reverse() : sortedProducts;
+
   return (
-    <div className="w-full min-w-0 space-y-4 pb-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="w-full min-w-0 space-y-4 pb-8 text-left">
+      {/* 1. Header */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-xl font-bold tracking-tight text-[#0f172a] sm:text-2xl">My Products</h1>
-          <p className="mt-1 text-xs text-[#64748b] sm:text-sm">Products you recommend, displayed in your public Shop.</p>
+          <h1 className="font-display text-2xl font-bold tracking-tight text-[#0f172a]">
+            My Products
+          </h1>
+          <p className="mt-0.5 text-xs sm:text-[13px] text-[#64748b]">
+            Products you recommend, displayed in your public Shop.
+          </p>
         </div>
-        <button type="button" className={primaryButton} onClick={() => edit()}>
-          <Plus className="h-4 w-4" />Add Product
+        <button
+          type="button"
+          onClick={() => edit()}
+          className="inline-flex items-center gap-1.5 h-9 px-4 rounded-[5px] bg-[#7A2253] text-white text-xs font-bold hover:bg-[#681c46] shadow-2xs transition-colors cursor-pointer self-start sm:self-auto shrink-0"
+        >
+          <Plus className="h-4 w-4" />
+          <span>Add Product</span>
         </button>
       </div>
 
-      {/* Plan usage progress row */}
-      <div className="rounded-xl border border-[#e2e8f0] bg-white px-3 sm:px-4 py-2.5">
-        <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-          <p className="text-[#64748b]">
-            <span className="font-semibold text-[#0f172a]">
-              {isUnlimited ? "Unlimited products" : `${products.length} / ${maxProducts} products`}
-            </span>
-            <span aria-hidden="true"> · </span>
-            {quota.name} Plan
-            <span aria-hidden="true"> · </span>
-            {isUnlimited
-              ? "unlimited products in shop"
-              : isLimitReached
-                ? "plan limit reached"
-                : `${maxProducts - products.length} ${maxProducts - products.length === 1 ? "slot" : "slots"} left`}
-          </p>
-          {isLimitReached && !isUnlimited && (
-            <Link
-              href="/dashboard/subscription"
-              className="inline-flex items-center gap-1 rounded-lg border border-[#7A2253]/30 px-2.5 py-1 text-xs font-semibold text-[#7A2253] hover:bg-[#7A2253]/[0.06] transition-colors"
-            >
-              Upgrade
-            </Link>
-          )}
+      {/* 2. Filter tabs + Search + Sort */}
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 pt-1">
+        {/* Left Filter Tabs */}
+        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
+          <button
+            type="button"
+            onClick={() => setActiveTab("all")}
+            className={`rounded-[5px] px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap ${
+              activeTab === "all"
+                ? "bg-[#FFF5F7] text-[#7A2253] font-bold"
+                : "text-[#64748b] hover:text-[#0f172a]"
+            }`}
+          >
+            All ({products.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("active")}
+            className={`rounded-[5px] px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap ${
+              activeTab === "active"
+                ? "bg-[#FFF5F7] text-[#7A2253] font-bold"
+                : "text-[#64748b] hover:text-[#0f172a]"
+            }`}
+          >
+            Active ({products.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("draft")}
+            className={`rounded-[5px] px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap ${
+              activeTab === "draft"
+                ? "bg-[#FFF5F7] text-[#7A2253] font-bold"
+                : "text-[#64748b] hover:text-[#0f172a]"
+            }`}
+          >
+            Draft (0)
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("hidden")}
+            className={`rounded-[5px] px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap ${
+              activeTab === "hidden"
+                ? "bg-[#FFF5F7] text-[#7A2253] font-bold"
+                : "text-[#64748b] hover:text-[#0f172a]"
+            }`}
+          >
+            Hidden (0)
+          </button>
         </div>
-        {!isUnlimited && (
-          <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-[#eef2f7]">
-            <div
-              className={`h-full rounded-full transition-all duration-300 ${percentage >= 100 ? "bg-rose-500" : percentage >= 80 ? "bg-amber-500" : "bg-[#7A2253]"}`}
-              style={{ width: `${percentage}%` }}
+
+        {/* Right: Search + Sort Dropdown */}
+        <div className="flex items-center gap-2">
+          {/* Search */}
+          <div className="relative flex items-center h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 gap-2 flex-1 sm:w-64 focus-within:border-[#7A2253] shadow-2xs transition-colors">
+            <Search className="h-4 w-4 text-[#94a3b8] shrink-0" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search products..."
+              className="w-full text-xs text-[#0f172a] placeholder:text-[#94a3b8] bg-transparent outline-none"
             />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="text-[#94a3b8] hover:text-[#0f172a]"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
-        )}
+
+          {/* Sort */}
+          <div className="relative shrink-0">
+            <button
+              type="button"
+              onClick={() => setSortOpen(!sortOpen)}
+              className="inline-flex items-center gap-2 h-9 px-3 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#0f172a] hover:bg-[#f8fafc] shadow-2xs transition-colors cursor-pointer"
+            >
+              <ArrowUpDown className="h-3.5 w-3.5 text-[#64748b]" />
+              <span>
+                {sortBy === "latest"
+                  ? "Latest First"
+                  : sortBy === "oldest"
+                    ? "Oldest First"
+                    : sortBy === "price-high"
+                      ? "Price: High to Low"
+                      : "Price: Low to High"}
+              </span>
+              <ChevronDown className="h-3.5 w-3.5 text-[#64748b]" />
+            </button>
+            {sortOpen && (
+              <div
+                className="absolute right-0 top-full mt-1.5 w-44 rounded-[5px] border border-[#e2e8f0] bg-white p-1 shadow-lg z-30 text-xs space-y-0.5"
+                onClick={() => setSortOpen(false)}
+              >
+                <button
+                  type="button"
+                  onClick={() => setSortBy("latest")}
+                  className={`w-full text-left px-2.5 py-1.5 rounded-[5px] font-medium transition-colors ${
+                    sortBy === "latest"
+                      ? "bg-[#FFF5F7] text-[#7A2253] font-bold"
+                      : "text-[#0f172a] hover:bg-[#f1f5f9]"
+                  }`}
+                >
+                  Latest First
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSortBy("oldest")}
+                  className={`w-full text-left px-2.5 py-1.5 rounded-[5px] font-medium transition-colors ${
+                    sortBy === "oldest"
+                      ? "bg-[#FFF5F7] text-[#7A2253] font-bold"
+                      : "text-[#0f172a] hover:bg-[#f1f5f9]"
+                  }`}
+                >
+                  Oldest First
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSortBy("price-high")}
+                  className={`w-full text-left px-2.5 py-1.5 rounded-[5px] font-medium transition-colors ${
+                    sortBy === "price-high"
+                      ? "bg-[#FFF5F7] text-[#7A2253] font-bold"
+                      : "text-[#0f172a] hover:bg-[#f1f5f9]"
+                  }`}
+                >
+                  Price: High to Low
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSortBy("price-low")}
+                  className={`w-full text-left px-2.5 py-1.5 rounded-[5px] font-medium transition-colors ${
+                    sortBy === "price-low"
+                      ? "bg-[#FFF5F7] text-[#7A2253] font-bold"
+                      : "text-[#0f172a] hover:bg-[#f1f5f9]"
+                  }`}
+                >
+                  Price: Low to High
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
+      {/* 3. Products Grid */}
       {loading ? (
-        <div role="status" aria-label="Loading products" className="space-y-3">{[1, 2, 3].map((id) => <div key={id} className="h-28 animate-pulse rounded-xl border border-[#e2e8f0] bg-slate-100" />)}</div>
+        <div role="status" aria-label="Loading products" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[1, 2, 3].map((id) => (
+            <div key={id} className="h-64 animate-pulse rounded-[5px] border border-[#e2e8f0] bg-slate-100" />
+          ))}
+        </div>
       ) : loadError ? (
-        <div role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700"><p>{loadError}</p><button className="mt-2 min-h-10 font-semibold underline" onClick={() => setReload((value) => value + 1)}>Try again</button></div>
-      ) : !products.length ? (
-        <EmptyState icon={<ShoppingBag className="h-5 w-5" />} title="No products yet" description="Add products you recommend and display them on your Inflixo profile." action={<button className={primaryButton} onClick={() => edit()}><Plus className="h-4 w-4" />Add Product</button>} />
+        <div role="alert" className="rounded-[5px] border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+          <p>{loadError}</p>
+          <button className="mt-2 min-h-10 font-semibold underline" onClick={() => setReload((value) => value + 1)}>
+            Try again
+          </button>
+        </div>
+      ) : displayProducts.length === 0 ? (
+        <EmptyState
+          icon={<ShoppingBag className="h-5 w-5" />}
+          title={searchQuery ? "No matching products" : activeTab !== "all" ? `No ${activeTab} products` : "No products yet"}
+          description={searchQuery ? "Try a different search term." : "Add products you recommend and display them on your Inflixo profile."}
+          action={
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 h-9 px-4 rounded-[5px] bg-[#7A2253] text-white text-xs font-bold hover:bg-[#681c46] shadow-2xs transition-colors cursor-pointer"
+              onClick={() => {
+                if (searchQuery) setSearchQuery("");
+                else edit();
+              }}
+            >
+              <Plus className="h-4 w-4" />
+              <span>{searchQuery ? "Clear Search" : "Add Product"}</span>
+            </button>
+          }
+        />
       ) : (
-        <div className="overflow-hidden rounded-xl border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0]">
-          {products.map((product) => (
-            <article key={product.id} className="flex flex-wrap items-center gap-3 p-3 sm:gap-4 sm:p-4">
-              <ProductImage src={product.imageUrl} name={product.name} className="h-20 w-20" />
-              <div className="min-w-0 flex-1"><h2 className="break-words text-sm font-semibold text-[#0f172a]">{product.name}</h2>{product.pricePaise !== null && <p className="mt-1 text-sm font-semibold text-[#7A2253]">{formatProductPrice(product.pricePaise)}</p>}<p className="mt-1 truncate text-xs text-[#64748b]">{safeHostname(product.productUrl)}</p></div>
-              <div className="flex w-full items-center justify-end gap-1 border-t border-[#f1f5f9] pt-2 sm:w-auto sm:border-0 sm:pt-0">
-                <a href={product.productUrl} target="_blank" rel="noopener noreferrer sponsored" className="inline-flex min-h-10 items-center gap-1.5 rounded-lg px-3 text-xs font-semibold text-[#7A2253] hover:bg-slate-50">View Product<ExternalLink className="h-3.5 w-3.5" /></a>
-                <button type="button" aria-label={`Edit ${product.name}`} onClick={() => edit(product)} className="flex h-10 w-10 items-center justify-center rounded-lg text-[#64748b] hover:bg-slate-100"><Pencil className="h-4 w-4" /></button>
-                <button type="button" aria-label={`Delete ${product.name}`} onClick={() => setDeleting(product)} className="flex h-10 w-10 items-center justify-center rounded-lg text-rose-600 hover:bg-rose-50"><Trash2 className="h-4 w-4" /></button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {displayProducts.map((product) => (
+            <article
+              key={product.id}
+              className="group rounded-[5px] border border-[#e2e8f0] bg-white overflow-hidden shadow-2xs flex flex-col transition-all hover:shadow-xs"
+            >
+              {/* Product Image */}
+              <div className="relative w-full aspect-[16/10] bg-[#f8fafc] overflow-hidden border-b border-[#f1f5f9]">
+                {product.imageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={product.imageUrl}
+                    alt={product.name}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLElement).style.display = "none";
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400">
+                    <ShoppingBag className="h-8 w-8" />
+                  </div>
+                )}
+              </div>
+
+              {/* Product Details & Actions */}
+              <div className="p-3.5 flex flex-col flex-1 justify-between gap-3 text-left">
+                <div>
+                  <h2
+                    className="font-bold text-sm text-[#0f172a] line-clamp-1"
+                    title={product.name}
+                  >
+                    {product.name}
+                  </h2>
+                  <p className="font-bold text-base text-[#7A2253] mt-1">
+                    {product.pricePaise !== null ? formatProductPrice(product.pricePaise) : ""}
+                  </p>
+                </div>
+
+                {/* Bottom Action Row matching screenshot */}
+                <div className="flex items-center gap-2 pt-1">
+                  <a
+                    href={product.productUrl}
+                    target="_blank"
+                    rel="noopener noreferrer sponsored"
+                    className="flex-1 h-8 rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7] hover:bg-[#FCE7F3]/70 text-[#7A2253] text-xs font-bold flex items-center justify-center gap-1.5 transition-colors shadow-2xs"
+                  >
+                    <LinkIcon className="h-3.5 w-3.5" />
+                    <span>View Product</span>
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+
+                  <button
+                    type="button"
+                    aria-label={`Edit ${product.name}`}
+                    onClick={() => edit(product)}
+                    className="h-8 w-8 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-slate-50 text-[#64748b] hover:text-[#0f172a] flex items-center justify-center transition-colors shadow-2xs cursor-pointer shrink-0"
+                    title="Edit product"
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                  </button>
+
+                  <button
+                    type="button"
+                    aria-label={`Delete ${product.name}`}
+                    onClick={() => setDeleting(product)}
+                    className="h-8 w-8 rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7] hover:bg-rose-50 text-[#ef4444] hover:text-red-700 flex items-center justify-center transition-colors shadow-2xs cursor-pointer shrink-0"
+                    title="Delete product"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               </div>
             </article>
           ))}
         </div>
       )}
+
+      {/* 4. Bottom Add More Products Dashed Box */}
+      <div className="rounded-[5px] border-2 border-dashed border-[#e2e8f0] bg-white/40 p-8 sm:p-10 text-center flex flex-col items-center justify-center mt-6">
+        <div className="relative mb-3 flex items-center justify-center">
+          <span className="absolute -top-2 -left-3 text-sm text-[#F43F5E] opacity-70">✦</span>
+          <span className="absolute -bottom-1 -right-3 text-xs text-[#F43F5E] opacity-70">✦</span>
+          <div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-[#FFF5F7] text-[#7A2253] border border-[#FCE7F3]">
+            <ShoppingBag className="h-6 w-6" />
+            <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#7A2253] text-[10px] font-bold text-white shadow-xs">
+              +
+            </span>
+          </div>
+        </div>
+        <h4 className="font-bold text-sm sm:text-base text-[#0f172a]">
+          Add more products
+        </h4>
+        <p className="mt-1 text-xs text-[#64748b] max-w-sm">
+          Show the tools, gadgets and products you use and recommend to your audience.
+        </p>
+        <button
+          type="button"
+          onClick={() => edit()}
+          className="mt-4 inline-flex items-center gap-1.5 h-9 px-4 rounded-[5px] bg-[#7A2253] text-white text-xs font-bold hover:bg-[#681c46] shadow-2xs transition-colors cursor-pointer"
+        >
+          <Plus className="h-4 w-4" />
+          <span>Add Product</span>
+        </button>
+      </div>
       <Modal
         isOpen={open}
         onClose={() => {
