@@ -2201,8 +2201,8 @@ export function LivePreviewCard({
                         ? (usesDarkControls ? "#FFFFFF" : "#7A2253")
                         : "transparent",
                     }}
-                    className={`group/tab relative flex-1 shrink-0 flex items-center justify-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-none text-xs font-bold border-b-2 border-r border-black/[0.05] dark:border-white/[0.06] last:border-r-0 transition-colors duration-150 cursor-pointer whitespace-nowrap select-none bg-white dark:bg-[#18181B] ${isActive
-                        ? "-mb-px"
+                    className={`group/tab relative flex-1 shrink-0 flex items-center justify-center gap-1.5 px-3.5 py-2.5 sm:py-3 min-h-[42px] sm:min-h-[46px] rounded-none text-xs sm:text-[12.5px] font-bold border-b-[3.5px] sm:border-b-4 border-r border-black/[0.05] dark:border-white/[0.06] last:border-r-0 transition-colors duration-150 cursor-pointer whitespace-nowrap select-none bg-white dark:bg-[#18181B] -mb-px ${isActive
+                        ? ""
                         : "hover:bg-slate-50/80 dark:hover:bg-white/[0.04] hover:text-black dark:hover:text-white"
                       }`}
                   >
@@ -2223,7 +2223,7 @@ export function LivePreviewCard({
                             ? (usesDarkControls ? "#FFFFFF" : "#7A2253")
                             : (usesDarkControls ? "rgba(255, 255, 255, 0.7)" : "#64748B"),
                         }}
-                        className="text-[9.5px] font-black px-1.5 py-0.5 rounded-[5px] tabular-nums"
+                        className="text-[9.5px] font-black px-1.5 py-0.5 rounded-none tabular-nums"
                       >
                         {tab.count}
                       </span>
