@@ -1841,19 +1841,19 @@ export function LivePreviewCard({
   const hasExploreTab = hasLinksContent || hasShopContent || hasSetupContent;
   const hasWorkTab = hasWorkCollab || hasReviewsContent || hasTeamContent;
 
-  const aboutTabObj = { id: "about" as CreatorNavTabId, label: "About", icon: User, count: totalAudience > 0 ? formatCount(totalAudience) : undefined };
+  const aboutTabObj = { id: "about" as CreatorNavTabId, label: "About", icon: User };
   const watchTabObj = { id: "watch" as CreatorNavTabId, label: "Watch", icon: Film, count: series.length > 0 ? series.length : undefined };
   const exploreTabObj = {
     id: "explore" as CreatorNavTabId,
-    label: "Explore",
-    icon: Compass,
+    label: "Links & Shop",
+    icon: ShoppingBag,
     count: (validLinksCount + (products?.length || 0) + validSetupList.length) > 0
       ? (validLinksCount + (products?.length || 0) + validSetupList.length)
       : undefined,
   };
   const workTabObj = {
     id: "work" as CreatorNavTabId,
-    label: "Work",
+    label: "Collab",
     icon: Briefcase,
     count: (navActivePackages.length + approvedReviews.length) > 0
       ? (navActivePackages.length + approvedReviews.length)
@@ -2655,19 +2655,23 @@ export function LivePreviewCard({
             {/* Header: My Links + Subtitle (clean, compact) */}
             <div className="pb-1.5 sm:pb-2">
               <div className="flex items-center justify-between px-0.5">
-                <h2
-                  style={{
-                    color: c.primaryText,
-                    fontFamily: typ.headingFontFamily,
-                  }}
-                  className="text-base sm:text-lg font-bold tracking-tight"
-                >
-                  My Links
-                </h2>
+                <div className="flex items-center gap-2">
+                  <LinkIcon className="h-4.5 w-4.5 text-[#7A2253] dark:text-pink-400 shrink-0" />
+                  <h2
+                    style={{
+                      color: c.primaryText,
+                      fontFamily: typ.headingFontFamily,
+                      fontWeight: 700,
+                    }}
+                    className="text-base sm:text-lg font-bold tracking-tight"
+                  >
+                    My Links
+                  </h2>
+                </div>
               </div>
               <p
                 style={{ color: c.secondaryText }}
-                className="text-xs text-slate-500 dark:text-slate-400 font-normal px-0.5 mt-0.5"
+                className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-normal px-0.5 mt-0.5"
               >
                 Find all my important links, projects and more.
               </p>
@@ -2821,17 +2825,17 @@ export function LivePreviewCard({
               <div className="pb-1">
                 <div className="flex items-center justify-between gap-2 px-0.5">
                   <div className="min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <Film className="h-4 w-4 text-slate-700 dark:text-slate-300 shrink-0" />
+                    <div className="flex items-center gap-2">
+                      <Film className="h-4.5 w-4.5 text-[#7A2253] dark:text-pink-400 shrink-0" />
                       <h2
                         style={{
                           color: c.primaryText,
                           fontFamily: typ.headingFontFamily,
                           fontWeight: 700,
                         }}
-                        className="text-[14px] sm:text-[15px] font-bold tracking-tight truncate"
+                        className="text-base sm:text-lg font-bold tracking-tight truncate"
                       >
-                        Featured Series &amp; Shows
+                        Series
                       </h2>
                     </div>
                     <p
@@ -3117,13 +3121,14 @@ export function LivePreviewCard({
               <div className="pb-1">
                 <div className="flex items-center justify-between px-0.5">
                   <div className="flex items-center gap-2">
-                    <ShoppingBag className="h-5 w-5 text-[#7A2253] dark:text-pink-400" />
+                    <ShoppingBag className="h-4.5 w-4.5 text-[#7A2253] dark:text-pink-400 shrink-0" />
                     <h2
                       style={{
                         color: c.primaryText,
                         fontFamily: typ.headingFontFamily,
+                        fontWeight: 700,
                       }}
-                      className="text-base sm:text-lg font-black tracking-tight"
+                      className="text-base sm:text-lg font-bold tracking-tight"
                     >
                       My Shop
                     </h2>
@@ -3294,17 +3299,19 @@ export function LivePreviewCard({
           <div id="team-section" className={`relative z-10 order-[25] w-full text-left animate-fade-in ${isTabsLayout ? "mt-3 sm:mt-3.5 space-y-2" : "mt-6 sm:mt-7 space-y-2.5"}`}>
             <div>
               <div className="flex items-center justify-between gap-3 px-0.5">
-                <h2
-                  style={{
-                    color: c.primaryText,
-                    fontFamily: typ.headingFontFamily,
-                    fontWeight: 700,
-                  }}
-                  className={`flex items-center gap-1.5 ${PUBLIC_TYPE.sectionTitle}`}
-                >
-                  <Users className="h-3.5 w-3.5 opacity-70" style={{ color: c.primaryText }} />
-                  <span>{teamData.team?.teamName || "My Team"}</span>
-                </h2>
+                <div className="flex items-center gap-2">
+                  <Users className="h-4.5 w-4.5 text-[#7A2253] dark:text-pink-400 shrink-0" />
+                  <h2
+                    style={{
+                      color: c.primaryText,
+                      fontFamily: typ.headingFontFamily,
+                      fontWeight: 700,
+                    }}
+                    className="text-base sm:text-lg font-bold tracking-tight"
+                  >
+                    {teamData.team?.teamName || "My Team"}
+                  </h2>
+                </div>
                 <span
                   style={{ color: c.mutedText }}
                   className="text-[11px] sm:text-xs font-medium"
@@ -3408,29 +3415,29 @@ export function LivePreviewCard({
 
           return (
             <div id="work-with-me-section" className={`relative z-10 order-[20] w-full text-left animate-fade-in ${isTabsLayout ? "mt-3 sm:mt-3.5 space-y-3.5" : "mt-6 sm:mt-7 space-y-4"}`}>
-              {/* Work Header with Shopping Bag Icon and Title */}
-              <div className="flex items-center gap-3 px-0.5">
-                <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-[5px] bg-pink-50/80 dark:bg-white/[0.05] border border-pink-200/60 dark:border-white/10 text-[#7A2253] dark:text-pink-400">
-                  <ShoppingBag className="h-5 w-5 sm:h-6 sm:w-6 stroke-[2.2]" />
+              {/* Work Header with Briefcase Icon and Title */}
+              <div className="pb-1">
+                <div className="flex items-center justify-between px-0.5">
+                  <div className="flex items-center gap-2">
+                    <Briefcase className="h-4.5 w-4.5 text-[#7A2253] dark:text-pink-400 shrink-0" />
+                    <h2
+                      style={{
+                        color: c.primaryText,
+                        fontFamily: typ.headingFontFamily,
+                        fontWeight: 700,
+                      }}
+                      className="text-base sm:text-lg font-bold tracking-tight"
+                    >
+                      Work with Me
+                    </h2>
+                  </div>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <h2
-                    style={{
-                      color: c.primaryText || "#111827",
-                      fontFamily: typ.headingFontFamily,
-                      fontWeight: 700,
-                    }}
-                    className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
-                  >
-                    Work
-                  </h2>
-                  <p
-                    style={{ color: c.secondaryText || "#6B7280" }}
-                    className="text-xs sm:text-[13px] font-normal mt-0.5 text-gray-500 dark:text-gray-400"
-                  >
-                    Collaboration packages and services to work with me.
-                  </p>
-                </div>
+                <p
+                  style={{ color: c.secondaryText }}
+                  className="text-[11px] sm:text-xs font-normal mt-0.5 px-0.5"
+                >
+                  Collaboration packages and services to work with me.
+                </p>
               </div>
 
               {/* Collaboration Packages Listing */}
@@ -3567,17 +3574,19 @@ export function LivePreviewCard({
             {!reviewsOnlyMode && (
               <div>
                 <div className="flex items-center justify-between px-0.5">
-                  <h2
-                    style={{
-                      color: c.primaryText,
-                      fontFamily: typ.headingFontFamily,
-                      fontWeight: 700,
-                    }}
-                    className={`flex items-center gap-1.5 ${PUBLIC_TYPE.sectionTitle}`}
-                  >
-                    <Star className="h-3.5 w-3.5 opacity-70" style={{ color: c.primaryText }} />
-                    <span>Brand Endorsements &amp; Trust</span>
-                  </h2>
+                  <div className="flex items-center gap-2">
+                    <Star className="h-4.5 w-4.5 text-[#7A2253] dark:text-pink-400 shrink-0" />
+                    <h2
+                      style={{
+                        color: c.primaryText,
+                        fontFamily: typ.headingFontFamily,
+                        fontWeight: 700,
+                      }}
+                      className="text-base sm:text-lg font-bold tracking-tight"
+                    >
+                      Client Reviews
+                    </h2>
+                  </div>
                   {approvedReviews.length > 0 && (
                     <span
                       style={{ color: c.mutedText }}
@@ -3702,17 +3711,19 @@ export function LivePreviewCard({
           <div id="setup-section" className={`relative z-10 order-[45] w-full text-left animate-fade-in ${isTabsLayout ? "mt-3 sm:mt-3.5 space-y-2" : "mt-6 sm:mt-7 space-y-2.5"}`}>
             <div>
               <div className="flex items-center justify-between px-0.5">
-                <h2
-                  style={{
-                    color: c.primaryText,
-                    fontFamily: typ.headingFontFamily,
-                    fontWeight: 700,
-                  }}
-                  className={`flex items-center gap-1.5 ${PUBLIC_TYPE.sectionTitle}`}
-                >
-                  <Laptop className="h-3.5 w-3.5 opacity-70" style={{ color: c.primaryText }} />
-                  <span>Studio Rig &amp; Creative Setup</span>
-                </h2>
+                <div className="flex items-center gap-2">
+                  <Laptop className="h-4.5 w-4.5 text-[#7A2253] dark:text-pink-400 shrink-0" />
+                  <h2
+                    style={{
+                      color: c.primaryText,
+                      fontFamily: typ.headingFontFamily,
+                      fontWeight: 700,
+                    }}
+                    className="text-base sm:text-lg font-bold tracking-tight"
+                  >
+                    Studio Rig &amp; Creative Setup
+                  </h2>
+                </div>
                 <span
                   style={{ color: c.mutedText }}
                   className="text-[11px] sm:text-xs font-semibold"

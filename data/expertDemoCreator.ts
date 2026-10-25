@@ -400,7 +400,7 @@ export const EXPERT_DEMO_CUSTOM_LINKS: CustomLink[] = [
   },
   {
     id: "col_travel_guides",
-    title: "FEATURED TRAVEL GUIDES & ITINERARIES",
+    title: "Featured Travel Guides & Itineraries",
     kind: "collection",
     url: "",
     isEnabled: true,
@@ -427,7 +427,7 @@ export const EXPERT_DEMO_CUSTOM_LINKS: CustomLink[] = [
   },
   {
     id: "col_channels_community",
-    title: "COMMUNITY & CHANNELS",
+    title: "Community & Channels",
     kind: "collection",
     url: "",
     isEnabled: true,
