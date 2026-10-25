@@ -347,7 +347,7 @@ export default function DashboardSocialsPage() {
               platformName="Instagram"
               icon={
                 <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-gradient-to-tr from-[#fd5949] via-[#d6249f] to-[#285AEB] text-white shadow-2xs shrink-0">
-                  <InstagramIcon className="h-4 w-4 fill-white" />
+                  <InstagramIcon className="h-4.5 w-4.5 text-white" />
                 </div>
               }
               handle={instaConnectedHandle || (isInstaConnected ? profile.username : "")}
@@ -1012,13 +1012,13 @@ function ConnectedSocialCard({
       {/* 3. HORIZONTAL DIVIDER */}
       <div className="border-t border-[#e2e8f0] my-2.5" />
 
-      {/* 4. SUB-ROW: Calendar icon + Last updated & timing stacked */}
-      <div className="flex items-start gap-2 text-xs text-[#64748b] pb-2.5">
-        <Calendar className="h-4 w-4 text-[#64748b] shrink-0 mt-0.5" />
-        <div className="text-xs text-[#64748b] font-medium leading-tight">
-          <div>{updatedInfo.label}</div>
-          <div className="mt-0.5 text-[#64748b]">{updatedInfo.time}</div>
+      {/* 4. SUB-ROW: Calendar icon + Sync title on left, sync timing on right */}
+      <div className="flex items-center justify-between text-xs text-[#64748b] pb-2.5">
+        <div className="flex items-center gap-1.5 font-medium">
+          <Calendar className="h-3.5 w-3.5 text-[#64748b] shrink-0" />
+          <span>{updatedInfo.label}</span>
         </div>
+        <span className="text-xs text-[#64748b] font-medium">{updatedInfo.time}</span>
       </div>
 
       {/* 4. BOTTOM ACTION: Full width View Profile button */}
