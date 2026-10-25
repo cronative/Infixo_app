@@ -4,6 +4,7 @@ import { forwardRef } from "react";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { InflixoLogoIcon } from "@/components/shared/Logo";
 import { QRCode } from "@/components/creator-card/QRCode";
+import { FacebookIcon, InstagramIcon, XTwitterIcon, YoutubeIcon } from "@/components/shared/BrandIcons";
 import type { CardAppearance, CardLayoutType } from "@/components/creator-card/cardAppearance";
 
 /** Card layout size in CSS px. Exported at 2x → 1080 × 1920 (9:16). */
@@ -1136,7 +1137,7 @@ function EditorialLayout({
   customMessage,
 }: CreatorCardProps) {
   const name = displayName.trim() || username;
-  const avatarSize = 132;
+  const avatarSize = 124;
 
   return (
     <div
@@ -1145,211 +1146,392 @@ function EditorialLayout({
         width: CARD_WIDTH,
         height: CARD_HEIGHT,
         overflow: "hidden",
-        background: a.bodyBackground,
-        color: a.primaryText,
+        backgroundColor: "#FAF7F2",
+        color: "#0F172A",
         fontFamily: a.bodyFont,
         boxSizing: "border-box",
         WebkitFontSmoothing: "antialiased",
-        padding: "24px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        padding: "36px 32px 28px",
       }}
     >
-      {/* Editorial Double Border */}
+      {/* Decorative Organic Beige Shapes */}
       <div
         style={{
+          position: "absolute",
+          top: -80,
+          right: -80,
+          width: 380,
+          height: 380,
+          borderRadius: "45% 55% 60% 40% / 50% 45% 55% 50%",
+          backgroundColor: "#EFE5D8",
+          opacity: 0.85,
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          top: 260,
+          left: -120,
+          width: 320,
+          height: 380,
+          borderRadius: "55% 45% 40% 60% / 45% 55% 45% 55%",
+          backgroundColor: "#F2E8DC",
+          opacity: 0.75,
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          bottom: -60,
+          right: -60,
+          width: 340,
+          height: 340,
+          borderRadius: "60% 40% 55% 45% / 50% 60% 40% 50%",
+          backgroundColor: "#EBE0D2",
+          opacity: 0.8,
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* 1. Header */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 2,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
           width: "100%",
-          height: "100%",
-          borderRadius: 20,
-          border: `1.5px solid ${a.border}`,
-          padding: "28px 24px 22px",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <InflixoLogoIcon color="color" className="h-6 w-6" />
+          <span style={{ fontWeight: 900, fontSize: 17, color: "#7A2253", letterSpacing: "0.04em" }}>
+            INFLIXO
+          </span>
+        </div>
+        <span
+          style={{
+            fontSize: 11,
+            fontWeight: 800,
+            letterSpacing: "0.14em",
+            textTransform: "uppercase",
+            color: "#64748B",
+          }}
+        >
+          CREATOR CARD
+        </span>
+      </div>
+
+      {/* 2. Middle Hero */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 2,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           textAlign: "center",
-          boxSizing: "border-box",
+          marginTop: 6,
         }}
       >
-        {/* Magazine Masthead */}
-        <div
+        {/* Avatar with white border and verified check */}
+        <div style={{ position: "relative", width: avatarSize, height: avatarSize, margin: "0 auto" }}>
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              borderRadius: "50%",
+              padding: 4,
+              backgroundColor: "#FFFFFF",
+              boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
+            }}
+          >
+            <CreatorAvatar
+              src={photoSrc}
+              name={name}
+              className="h-full w-full rounded-full object-cover"
+              textClassName="font-extrabold text-white"
+              textStyle={{ fontSize: 44 }}
+              style={{ background: "#7A2253", boxShadow: "none", borderColor: "transparent" }}
+            />
+          </div>
+          {/* Blue Verified Checkmark */}
+          <div
+            style={{
+              position: "absolute",
+              bottom: 4,
+              right: 4,
+              width: 28,
+              height: 28,
+              borderRadius: "50%",
+              backgroundColor: "#2563EB",
+              border: "2.5px solid #FFFFFF",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 2px 6px rgba(37,99,235,0.35)",
+            }}
+          >
+            <svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+              <path d="M5 13l4 4L19 7" stroke="#FFFFFF" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Name & Handle */}
+        <h1
           style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            width: "100%",
-            fontSize: 11,
+            margin: "14px 0 0",
+            fontFamily: a.headingFont,
             fontWeight: 800,
-            letterSpacing: "0.25em",
-            textTransform: "uppercase",
-            color: a.mutedText,
-            borderBottom: `1.5px solid ${a.border}`,
-            paddingBottom: 10,
+            fontSize: 32,
+            lineHeight: 1.15,
+            letterSpacing: "-0.02em",
+            color: "#0F172A",
           }}
         >
-          <span>THE CREATOR ISSUE</span>
-          <span>VOL. 2026</span>
-        </div>
+          {name}
+        </h1>
+        <p style={{ margin: "2px 0 0", fontSize: 14, fontWeight: 600, color: "#64748B" }}>
+          @{username}
+        </p>
 
-        <div style={{ marginTop: 14 }}>
+        {/* Social Icons Row */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12 }}>
+          {/* Instagram */}
           <div
             style={{
-              fontFamily: "ui-serif, Georgia, Cambria, serif",
-              fontSize: 40,
-              fontWeight: 800,
-              letterSpacing: "0.14em",
-              lineHeight: 1,
-              color: a.primaryText,
+              width: 28,
+              height: 28,
+              borderRadius: 7,
+              background: "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#FFFFFF",
+              boxShadow: "0 2px 5px rgba(220,39,67,0.25)",
             }}
           >
-            INFLIXO
+            <InstagramIcon className="w-4 h-4 text-white" />
           </div>
+          {/* YouTube */}
           <div
             style={{
-              marginTop: 4,
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: "0.28em",
-              textTransform: "uppercase",
-              color: a.accent,
+              width: 28,
+              height: 28,
+              borderRadius: 7,
+              backgroundColor: "#FF0000",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#FFFFFF",
+              boxShadow: "0 2px 5px rgba(255,0,0,0.25)",
             }}
           >
-            OFFICIAL EDITORIAL SPOTLIGHT
+            <YoutubeIcon className="w-4 h-4 text-white" />
           </div>
-        </div>
-
-        <div style={{ height: 22 }} />
-
-        {/* Editorial Framed Avatar */}
-        <div
-          style={{
-            position: "relative",
-            width: avatarSize,
-            height: avatarSize,
-            borderRadius: "50%",
-            padding: 5,
-            border: `2px solid ${a.accent}`,
-            boxShadow: `0 12px 30px ${a.accentGlow || "rgba(0,0,0,0.12)"}`,
-          }}
-        >
-          <CreatorAvatar
-            src={photoSrc}
-            name={name}
-            className="h-full w-full rounded-full"
-            textClassName="font-extrabold text-white"
-            textStyle={{ fontSize: 44 }}
-            style={{ background: a.accent, boxShadow: "none", borderColor: "transparent" }}
-          />
-        </div>
-
-        {/* Name in Editorial Serif */}
-        <div style={{ marginTop: 18, maxWidth: "100%" }}>
-          <h1
-            style={{
-              margin: 0,
-              fontFamily: "ui-serif, Georgia, Cambria, serif",
-              fontWeight: 700,
-              fontSize: nameFontSize(name, 38),
-              lineHeight: 1.15,
-              color: a.primaryText,
-              letterSpacing: "-0.01em",
-            }}
-          >
-            {name}
-          </h1>
-
-          <p
-            style={{
-              margin: "4px 0 0",
-              fontSize: 17,
-              fontWeight: 600,
-              color: a.accent,
-              fontStyle: "italic",
-            }}
-          >
-            @{username}
-          </p>
-
-          <p
-            style={{
-              margin: "8px 0 0",
-              fontSize: 13,
-              fontWeight: 700,
-              letterSpacing: "0.15em",
-              textTransform: "uppercase",
-              color: a.secondaryText,
-            }}
-          >
-            {category ? `${category} · Verified Creator` : "Verified Inflixo Creator"}
-          </p>
-        </div>
-
-        <div style={{ flex: 1, minHeight: 12 }} />
-
-        {fanbase && (
+          {/* X */}
           <div
             style={{
-              padding: "6px 18px",
-              borderRadius: 999,
-              background: a.chipBackground,
-              border: `1px solid ${a.border}`,
-              fontSize: 13,
-              fontWeight: 800,
-              letterSpacing: "0.12em",
-              color: a.primaryText,
+              width: 28,
+              height: 28,
+              borderRadius: 7,
+              backgroundColor: "#000000",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#FFFFFF",
+              boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
             }}
           >
-            ✦ {fanbase} AUDIENCE REACH ✦
+            <XTwitterIcon className="w-3.5 h-3.5 text-white" />
           </div>
-        )}
-
-        <div style={{ flex: 1, minHeight: 12 }} />
-
-        {/* Minimalist QR Feature */}
-        <div
-          style={{
-            padding: 12,
-            borderRadius: 16,
-            background: "#FFFFFF",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.06)",
-            border: `1.5px solid ${a.border}`,
-          }}
-        >
-          <QRCode value={profileUrl} size={198} />
+          {/* Facebook */}
+          <div
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: 7,
+              backgroundColor: "#1877F2",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#FFFFFF",
+              boxShadow: "0 2px 5px rgba(24,119,242,0.25)",
+            }}
+          >
+            <FacebookIcon className="w-4 h-4 text-white" />
+          </div>
         </div>
 
+        {/* Category & Verified tag */}
         <p
           style={{
             margin: "12px 0 0",
-            fontSize: 12,
-            fontWeight: 700,
-            letterSpacing: "0.18em",
+            fontSize: 11,
+            fontWeight: 800,
+            letterSpacing: "0.14em",
             textTransform: "uppercase",
-            color: a.mutedText,
+            color: "#0F172A",
           }}
         >
-          {customMessage || "Scan to view bio & portfolio"}
+          {category ? `${category.replace(/•/g, "·")} · VERIFIED CREATOR` : "CONTENT CREATOR · VERIFIED CREATOR"}
         </p>
 
-        <div style={{ flex: 1, minHeight: 12 }} />
-
-        {/* Luxury Signature */}
+        {/* Total Fanbase Pill */}
         <div
           style={{
-            width: "100%",
-            borderTop: `1.5px solid ${a.border}`,
-            paddingTop: 10,
-            display: "flex",
+            marginTop: 10,
+            display: "inline-flex",
             alignItems: "center",
-            justifyContent: "space-between",
-            fontSize: 11,
-            fontWeight: 700,
-            color: a.mutedText,
-            letterSpacing: "0.08em",
+            gap: 7,
+            backgroundColor: "#FFFFFF",
+            border: "1px solid #E2E8F0",
+            borderRadius: 999,
+            padding: "5px 14px",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <InflixoLogoIcon color="color" className="h-3.5 w-3.5" />
-            <span style={{ fontWeight: 800, color: a.primaryText }}>INFLIXO CURATED</span>
+          <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="#0F172A" strokeWidth={2}>
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          <span style={{ fontSize: 13, fontWeight: 800, color: "#0F172A" }}>
+            {fanbase || "14.3K"}
+          </span>
+          <span style={{ fontSize: 11, fontWeight: 600, color: "#64748B" }}>
+            Total Fanbase
+          </span>
+          <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth={2.5}>
+            <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
+
+        {/* QR Code Container */}
+        <div
+          style={{
+            marginTop: 14,
+            padding: 10,
+            borderRadius: 18,
+            backgroundColor: "#FFFFFF",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.06)",
+            border: "1px solid #E2E8F0",
+          }}
+        >
+          <QRCode value={profileUrl} size={156} />
+        </div>
+
+        {/* Emotional Tagline */}
+        <p
+          style={{
+            margin: "12px 0 0",
+            fontSize: 13,
+            fontWeight: 700,
+            color: "#0F172A",
+          }}
+        >
+          {customMessage || "Support my creative journey ❤️"}
+        </p>
+
+        {/* Action Quick Pills */}
+        <div style={{ display: "flex", alignItems: "center", gap: 7, marginTop: 12 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 5,
+              padding: "6px 12px",
+              borderRadius: 999,
+              backgroundColor: "#FFFFFF",
+              border: "1px solid #E2E8F0",
+              boxShadow: "0 2px 5px rgba(0,0,0,0.03)",
+              fontSize: 10,
+              fontWeight: 700,
+              color: "#0F172A",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <span style={{ color: "#E11D48", fontSize: 11 }}>▷</span>
+            <div style={{ lineHeight: 1.15, textAlign: "left" }}>
+              <span>Watch My</span>
+              <br />
+              <span style={{ fontSize: 9, color: "#64748B" }}>Series</span>
+            </div>
           </div>
-          <span>Create yours at <strong style={{ color: a.accent }}>inflixo.com</strong></span>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 5,
+              padding: "6px 12px",
+              borderRadius: 999,
+              backgroundColor: "#FFFFFF",
+              border: "1px solid #E2E8F0",
+              boxShadow: "0 2px 5px rgba(0,0,0,0.03)",
+              fontSize: 10,
+              fontWeight: 700,
+              color: "#0F172A",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <span style={{ color: "#7A2253", fontSize: 11 }}>🛍</span>
+            <div style={{ lineHeight: 1.15, textAlign: "left" }}>
+              <span>Explore My</span>
+              <br />
+              <span style={{ fontSize: 9, color: "#64748B" }}>Shop</span>
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 5,
+              padding: "6px 14px",
+              borderRadius: 999,
+              backgroundColor: "#FFFFFF",
+              border: "1px solid #E2E8F0",
+              boxShadow: "0 2px 5px rgba(0,0,0,0.03)",
+              fontSize: 10,
+              fontWeight: 700,
+              color: "#0F172A",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <span style={{ color: "#0F172A", fontSize: 11 }}>🔗</span>
+            <span>My Links</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Footer */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 2,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          paddingTop: 12,
+          borderTop: "1px solid rgba(0,0,0,0.06)",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <InflixoLogoIcon color="color" className="h-4 w-4" />
+          <span style={{ fontWeight: 800, fontSize: 13, color: "#7A2253" }}>INFLIXO</span>
+        </div>
+        <div style={{ fontSize: 10, fontWeight: 600, color: "#64748B" }}>
+          Create yours at <strong style={{ color: "#7A2253", fontWeight: 700 }}>inflixo.com</strong>
         </div>
       </div>
     </div>
