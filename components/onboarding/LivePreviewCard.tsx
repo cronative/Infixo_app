@@ -1175,6 +1175,9 @@ export function LivePreviewCard({
     if (initialTab && ["about", "series", "links", "shop", "reviews", "work", "setup"].includes(initialTab)) {
       return initialTab;
     }
+    if (series && series.length > 0) return "series";
+    const passedLinks = passedCustomLinks || [];
+    if (passedLinks.length > 0 || (incomingProfile as any)?.username === "demo_creator") return "links";
     return "about";
   });
   const [isBioExpanded, setIsBioExpanded] = useState(false);
@@ -1817,9 +1820,16 @@ export function LivePreviewCard({
   const hasAboutTab = !isListingPage && (Boolean(profile.bio?.trim()) || hasFanbaseTab);
 
   const navTabs: { id: CreatorNavTabId; label: string; icon: any; count?: number | string }[] = [];
-  if (hasAboutTab) navTabs.push({ id: "about", label: "About", icon: User, count: totalAudience > 0 ? formatCount(totalAudience) : undefined });
-  if (hasSeriesTab) navTabs.push({ id: "series", label: "Series", icon: Film, count: series.length });
-  if (hasLinksTab) navTabs.push({ id: "links", label: "My Links", icon: LinkIcon, count: validLinksCount });
+  if (hasSeriesTab) {
+    navTabs.push({ id: "series", label: "Series", icon: Film, count: series.length });
+    if (hasLinksTab) navTabs.push({ id: "links", label: "My Links", icon: LinkIcon, count: validLinksCount });
+    if (hasAboutTab) navTabs.push({ id: "about", label: "About", icon: User, count: totalAudience > 0 ? formatCount(totalAudience) : undefined });
+  } else if (hasLinksTab) {
+    navTabs.push({ id: "links", label: "My Links", icon: LinkIcon, count: validLinksCount });
+    if (hasAboutTab) navTabs.push({ id: "about", label: "About", icon: User, count: totalAudience > 0 ? formatCount(totalAudience) : undefined });
+  } else if (hasAboutTab) {
+    navTabs.push({ id: "about", label: "About", icon: User, count: totalAudience > 0 ? formatCount(totalAudience) : undefined });
+  }
   if (hasShopTab) navTabs.push({ id: "shop", label: "My Shop", icon: ShoppingBag, count: products?.length || 0 });
   if (hasReviewsTab) navTabs.push({ id: "reviews", label: "Reviews", icon: Star, count: approvedReviews.length });
   if (hasWorkTab) navTabs.push({ id: "work", label: "Work", icon: Briefcase, count: navActivePackages.length > 0 ? navActivePackages.length : undefined });
@@ -1860,11 +1870,15 @@ export function LivePreviewCard({
         setActiveNavTab(normalizedTab);
         return;
       }
+      if (!tabParam && !initialTab && navTabs.length > 0) {
+        setActiveNavTab(navTabs[0].id);
+        return;
+      }
     }
     if (navTabs.length > 0 && !navTabs.some((t) => t.id === activeNavTab)) {
       setActiveNavTab(navTabs[0].id);
     }
-  }, [navTabs.length]);
+  }, [navTabs.length, initialTab]);
 
   const handleTabChange = (tabId: CreatorNavTabId) => {
     setActiveNavTab(tabId);

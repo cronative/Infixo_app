@@ -81,7 +81,7 @@ export default function PublicProfileClient() {
   const rawTab = searchParams?.get("tab");
   const initialTab = rawTab && ["about", "series", "fanbase", "links", "shop", "reviews", "work", "setup"].includes(rawTab)
     ? (rawTab === "fanbase" ? "about" : (rawTab as any))
-    : "about";
+    : undefined;
   const { showToast } = useToast();
 
   const [profile, setProfile] = useState<CreatorProfile>(EMPTY_PROFILE);
