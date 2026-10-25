@@ -2,7 +2,17 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { BarChart3, Eye, MousePointerClick, Users, ExternalLink, RefreshCw } from "lucide-react";
+import {
+  BarChart3,
+  Calendar,
+  ChevronDown,
+  ExternalLink,
+  Eye,
+  Link2,
+  MousePointerClick,
+  RefreshCw,
+  Users,
+} from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { EmptyState } from "@/components/ui/EmptyState";
 
@@ -35,7 +45,7 @@ const EMPTY_ANALYTICS: AnalyticsState = {
 export default function DashboardAnalyticsPage() {
   const { profile } = useCreator();
   const [analytics, setAnalytics] = useState<AnalyticsState>(EMPTY_ANALYTICS);
-  const [period, setPeriod] = useState<"7d" | "30d">("30d");
+  const [period, setPeriod] = useState<"7d" | "30d">("7d");
 
   const query = useMemo(() => {
     if (profile.email) return `email=${encodeURIComponent(profile.email)}`;
@@ -85,78 +95,90 @@ export default function DashboardAnalyticsPage() {
   }, [period, query]);
 
   const handleStr = profile.username || "username";
-  const clickedParts = analytics.topTargets.filter((item) => item.event_type === "episode_click");
 
   return (
-    <div className="space-y-4 sm:space-y-4.5 w-full pb-8 text-left">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#e2e8f0] pb-4">
+    <div className="space-y-4 sm:space-y-5 w-full pb-8 text-left">
+      {/* ── Top Header Row ── */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
             <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
               Analytics
             </h1>
-            <span className="inline-flex items-center gap-1 rounded-full bg-[#f1f5f9] px-2 py-0.5 text-xs font-medium text-[#475569]">
-              <BarChart3 className="h-3 w-3" />
+
+            {/* Past 7 Days / 30 Days Dropdown-style Badge */}
+            <button
+              type="button"
+              onClick={() => setPeriod(period === "7d" ? "30d" : "7d")}
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#FFF5F7] border border-[#FCE7F3] px-2.5 py-0.5 text-xs font-semibold text-[#7A2253] hover:bg-[#FCE7F3]/60 transition-colors cursor-pointer"
+            >
+              <Calendar className="h-3 w-3 text-[#7A2253]" />
               <span>{period === "7d" ? "Past 7 Days" : "Past 30 Days"}</span>
-            </span>
+              <ChevronDown className="h-3 w-3 text-[#7A2253]" />
+            </button>
           </div>
-          <p className="mt-1 text-xs sm:text-sm font-medium text-slate-500">
+
+          <p className="mt-1 text-xs sm:text-sm font-medium text-[#64748b]">
             Public profile opens, unique visitors, and series link click engagement.
           </p>
         </div>
 
+        {/* Right Actions: Segmented Toggle & Live Profile Button */}
         <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-          <div className="rounded-xl border border-slate-200 bg-white p-1 shadow-2xs flex items-center">
+          <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-0.5 shadow-2xs flex items-center">
             {(["7d", "30d"] as const).map((value) => (
               <button
                 key={value}
                 type="button"
                 onClick={() => setPeriod(value)}
-                className={`h-7.5 rounded-lg px-2.5 text-xs font-bold transition-all cursor-pointer ${period === value
-                    ? "bg-[#7A2253]/[0.08] text-[#7A2253]"
-                    : "text-[#64748b] hover:bg-[#f8fafc] hover:text-[#7A2253]"
-                  }`}
+                className={`rounded-[5px] px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                  period === value
+                    ? "bg-[#FFF5F7] text-[#7A2253]"
+                    : "text-[#64748b] hover:text-[#0f172a]"
+                }`}
               >
                 {value === "7d" ? "7 days" : "30 days"}
               </button>
             ))}
           </div>
+
           <Link
             href={`/${handleStr}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#7A2253] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
+            className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 py-1.5 text-xs font-bold text-[#7A2253] shadow-2xs transition-colors hover:bg-[#f8fafc]"
           >
             <span>Live Profile</span>
-            <ExternalLink className="h-3.5 w-3.5" />
+            <ExternalLink className="h-3.5 w-3.5 text-[#7A2253]" />
           </Link>
         </div>
       </div>
 
-      <section className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {/* ── 4 Metrics Cards ── */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <MetricCard
-          icon={<Eye className="h-4 w-4" />}
+          icon={<Eye className="h-5 w-5" />}
           label="Profile opens"
           value={analytics.profileViews}
           helper="Public profile link opened"
           loading={analytics.loading}
         />
         <MetricCard
-          icon={<Users className="h-4 w-4" />}
+          icon={<Users className="h-5 w-5" />}
           label="Unique visitors"
           value={analytics.uniqueVisitors}
           helper="Approx browser visitors"
           loading={analytics.loading}
         />
         <MetricCard
-          icon={<MousePointerClick className="h-4 w-4" />}
+          icon={<MousePointerClick className="h-5 w-5" />}
           label="Series episode clicks"
           value={analytics.episodeClicks}
           helper="Episode links clicked"
           loading={analytics.loading}
         />
         <MetricCard
-          icon={<ExternalLink className="h-4 w-4" />}
+          icon={<ExternalLink className="h-5 w-5" />}
           label="Social & link clicks"
           value={analytics.socialClicks + analytics.linkClicks}
           helper="Social handles & bio links"
@@ -164,11 +186,12 @@ export default function DashboardAnalyticsPage() {
         />
       </section>
 
-      <section className="rounded-xl border border-[#e2e8f0] bg-white shadow-xs overflow-hidden">
-        <div className="flex items-center justify-between gap-3 border-b border-[#e2e8f0] bg-[#f8fafc] px-3.5 py-2.5">
+      {/* ── Top Clicked Links & Series Parts ── */}
+      <section className="rounded-[5px] border border-[#e2e8f0] bg-white shadow-2xs overflow-hidden">
+        <div className="flex items-center justify-between gap-3 border-b border-[#e2e8f0] bg-[#f8fafc]/80 px-4 py-3">
           <div>
-            <h2 className="text-xs sm:text-sm font-semibold text-[#0f172a]">Top clicked links & series parts</h2>
-            <p className="text-[11px] text-[#64748b]">Real-time fan engagement across your public profile.</p>
+            <h2 className="text-sm font-bold text-[#0f172a]">Top clicked links &amp; series parts</h2>
+            <p className="text-xs text-[#64748b] mt-0.5">Real-time fan engagement across your public profile.</p>
           </div>
           {analytics.loading && <RefreshCw className="h-3.5 w-3.5 animate-spin text-[#64748b]" />}
         </div>
@@ -178,7 +201,7 @@ export default function DashboardAnalyticsPage() {
             icon={<BarChart3 className="h-7 w-7" />}
             title="No click events yet"
             description="Share your public profile and series links. Fan clicks on your episodes and bio links will appear here."
-            className="border-none bg-transparent"
+            className="border-none bg-transparent py-8"
           />
         ) : (
           <div className="divide-y divide-[#e2e8f0]">
@@ -193,14 +216,23 @@ export default function DashboardAnalyticsPage() {
                   : "Profile target";
 
               return (
-                <div key={`${item.event_target}-${index}`} className="flex items-center justify-between gap-3 px-3.5 py-2.5">
-                  <div className="min-w-0">
-                    <p className="truncate text-xs sm:text-sm font-semibold text-[#7A2253]">
-                      {item.event_target || "Profile link"}
-                    </p>
-                    <p className="text-[11px] text-[#64748b]">{label}</p>
+                <div
+                  key={`${item.event_target}-${index}`}
+                  className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-[#f8fafc]/50 transition-colors"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF5F7] border border-[#FCE7F3] text-[#7A2253] shadow-2xs">
+                      <Link2 className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="truncate text-xs sm:text-sm font-bold text-[#0f172a]">
+                        {item.event_target || "Profile link"}
+                      </p>
+                      <p className="text-xs text-[#64748b] mt-0.5">{label}</p>
+                    </div>
                   </div>
-                  <span className="shrink-0 rounded-full bg-[#7A2253]/[0.08] border border-[#7A2253]/10 px-2 py-0.5 text-[11px] font-bold text-[#7A2253]">
+
+                  <span className="shrink-0 rounded-full bg-[#FFF5F7] border border-[#FCE7F3] px-3 py-1 text-xs font-bold text-[#7A2253] shadow-2xs">
                     {Number(item.clicks || 0).toLocaleString("en-IN")} clicks
                   </span>
                 </div>
@@ -227,17 +259,17 @@ function MetricCard({
   loading: boolean;
 }) {
   return (
-    <div className="rounded-xl border border-[#e2e8f0] bg-white p-3.5 sm:p-4 shadow-xs">
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold text-[#64748b]">{label}</span>
-        <span className="flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc] text-[#7A2253]">
-          {icon}
-        </span>
+    <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 shadow-2xs flex items-start gap-3.5 hover:border-[#cbd5e1] transition-colors">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF5F7] border border-[#FCE7F3] text-[#7A2253] shadow-2xs">
+        {icon}
       </div>
-      <p className="mt-2 text-2xl sm:text-[28px] font-bold leading-none tracking-tight text-[#7A2253] tabular-nums">
-        {loading ? "..." : value.toLocaleString("en-IN")}
-      </p>
-      <p className="mt-1.5 text-[11px] text-[#64748b]">{helper}</p>
+      <div className="min-w-0 flex-1">
+        <h3 className="text-xs sm:text-sm font-bold text-[#0f172a] truncate">{label}</h3>
+        <p className="mt-1 text-2xl sm:text-[26px] font-bold leading-none tracking-tight text-[#7A2253] tabular-nums">
+          {loading ? "..." : value.toLocaleString("en-IN")}
+        </p>
+        <p className="mt-1.5 text-xs text-[#64748b] truncate">{helper}</p>
+      </div>
     </div>
   );
 }
