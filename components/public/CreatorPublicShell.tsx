@@ -96,7 +96,7 @@ export function PublicCard({ themeKey, children, className = "", style }: Public
   const t = getPublicTheme(themeKey);
   return (
     <div
-      style={{ ...t.surfaceStyle, ...style }}
+      style={{ ...t.surfaceStyle, boxShadow: "none", ...style }}
       className={`relative flex-1 flex flex-col border backdrop-blur-xl transition-all ${PUBLIC_RADIUS.card} ${className}`}
     >
       {children}

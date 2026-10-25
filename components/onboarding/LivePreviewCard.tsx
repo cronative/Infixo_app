@@ -1889,9 +1889,7 @@ export function LivePreviewCard({
     checkTabScroll();
   }, [activeNavTab]);
 
-  const publicSurfaceShadow = themeMeta.profileSurface?.shadow || (isDark
-    ? "0 24px 60px -12px rgba(0, 0, 0, 0.45), 0 8px 24px -4px rgba(0, 0, 0, 0.3)"
-    : "0 20px 50px -12px rgba(0, 0, 0, 0.08), 0 4px 16px -2px rgba(0, 0, 0, 0.04)");
+  const publicSurfaceShadow = "none";
 
   const cardContent = (
     <div
@@ -1902,8 +1900,8 @@ export function LivePreviewCard({
         color: c.primaryText,
         fontFamily: typ.fontFamily,
         letterSpacing: typ.letterSpacing,
-        ["--desktop-surface-shadow" as any]: surfaceShadow,
-        boxShadow: isPublicSurface ? publicSurfaceShadow : undefined,
+        ["--desktop-surface-shadow" as any]: isPublicSurface ? "none" : surfaceShadow,
+        boxShadow: isPublicSurface ? "none" : undefined,
       }}
       className={`relative w-full max-w-full overflow-hidden flex-1 min-h-0 h-full max-h-full flex flex-col ${isPublicSurface
         ? "px-3 pt-[20px] sm:px-4 sm:pt-[20px] rounded-[24px] sm:rounded-[26px] border backdrop-blur-xl"
@@ -2376,7 +2374,7 @@ export function LivePreviewCard({
                 style={{
                   backgroundColor: usesDarkControls ? "#18181B" : "#FFFFFF",
                   borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)",
-                  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.03)",
+                  boxShadow: "none",
                 }}
                 className="rounded-[5px] border p-3.5 sm:p-4 text-left transition-all space-y-2.5"
               >
@@ -2417,7 +2415,7 @@ export function LivePreviewCard({
                     ? "linear-gradient(135deg, rgba(122, 34, 83, 0.14) 0%, rgba(30, 20, 28, 0.6) 100%)"
                     : "linear-gradient(135deg, rgba(254, 242, 247, 0.75) 0%, rgba(255, 255, 255, 0.95) 100%)",
                   borderColor: usesDarkControls ? "rgba(244, 63, 94, 0.22)" : "rgba(244, 63, 94, 0.16)",
-                  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.03)",
+                  boxShadow: "none",
                 }}
                 className="rounded-[5px] border p-4 sm:p-5 text-left transition-all"
               >
@@ -2477,7 +2475,7 @@ export function LivePreviewCard({
                 style={{
                   backgroundColor: usesDarkControls ? "#18181B" : "#FFFFFF",
                   borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)",
-                  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.03)",
+                  boxShadow: "none",
                 }}
                 className="rounded-[5px] border p-3.5 sm:p-4 text-left transition-all space-y-3"
               >
@@ -2910,9 +2908,9 @@ export function LivePreviewCard({
                         style={{
                           backgroundColor: usesDarkControls ? "#18181B" : "#FFFFFF",
                           borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)",
-                          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.03)",
+                          boxShadow: "none",
                         }}
-                        className="group flex items-center gap-3 sm:gap-4 p-2.5 sm:p-3 rounded-[5px] border transition-all duration-200 hover:border-black/20 dark:hover:border-white/20 hover:shadow-xs cursor-pointer text-left"
+                        className="group flex items-center gap-3 sm:gap-4 p-2.5 sm:p-3 rounded-[5px] border transition-all duration-200 hover:border-black/20 dark:hover:border-white/20 cursor-pointer text-left"
                       >
                         {/* Left: Thumbnail Image + Badges */}
                         <div className="relative shrink-0 w-[140px] sm:w-[170px] h-[95px] sm:h-[105px] rounded-[14px] overflow-hidden bg-black/5 dark:bg-white/5">
@@ -3275,9 +3273,9 @@ export function LivePreviewCard({
                     style={{
                       backgroundColor: c.cardBackground,
                       borderColor: c.border,
-                      boxShadow: eff.cardShadow,
+                      boxShadow: "none",
                     }}
-                    className="rounded-[12px] border p-2.5 shadow-2xs"
+                    className="rounded-[12px] border p-2.5"
                   >
                     <div className="flex items-center gap-2.5">
                       <CreatorAvatar
@@ -3393,9 +3391,9 @@ export function LivePreviewCard({
                         style={{
                           backgroundColor: usesDarkControls ? "#1F1F23" : "#FFFFFF",
                           borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)",
-                          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.02)",
+                          boxShadow: "none",
                         }}
-                        className="rounded-2xl border p-4 sm:p-5 flex flex-col sm:flex-row sm:items-stretch justify-between gap-4 transition-all hover:border-black/20 dark:hover:border-white/20 hover:shadow-xs group"
+                        className="rounded-2xl border p-4 sm:p-5 flex flex-col sm:flex-row sm:items-stretch justify-between gap-4 transition-all hover:border-black/20 dark:hover:border-white/20 group"
                       >
                         {/* Left Details */}
                         <div className="min-w-0 flex-1 flex flex-col justify-between space-y-2.5">
@@ -3568,9 +3566,9 @@ export function LivePreviewCard({
                       style={{
                         backgroundColor: usesDarkControls ? "#1F1F23" : "#FFFFFF",
                         borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)",
-                        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.03)",
+                        boxShadow: "none",
                       }}
-                      className="rounded-[12px] border p-3 sm:p-3.5 space-y-2 text-left transition-all hover:border-black/20 dark:hover:border-white/20 hover:shadow-xs"
+                      className="rounded-[12px] border p-3 sm:p-3.5 space-y-2 text-left transition-all hover:border-black/20 dark:hover:border-white/20"
                     >
                       {/* Top Row: Client Avatar + Name & Verified Badge + Stars */}
                       <div className="flex items-center justify-between gap-2">
@@ -3678,9 +3676,9 @@ export function LivePreviewCard({
                     style={{
                       backgroundColor: usesDarkControls ? "#1F1F23" : "#FFFFFF",
                       borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)",
-                      boxShadow: "0 1px 3px rgba(0, 0, 0, 0.03)",
+                      boxShadow: "none",
                     }}
-                    className="rounded-[12px] border p-2.5 flex flex-col justify-between space-y-1.5 transition-all hover:border-black/20 dark:hover:border-white/20 hover:shadow-xs"
+                    className="rounded-[12px] border p-2.5 flex flex-col justify-between space-y-1.5 transition-all hover:border-black/20 dark:hover:border-white/20"
                   >
                     <div>
                       <div className="flex items-center justify-between gap-1.5 mb-1">
