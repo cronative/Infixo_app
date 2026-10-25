@@ -1953,10 +1953,10 @@ export function LivePreviewCard({
             <Link
               href="/"
               className="tap-scale flex items-center gap-1.5 select-none group cursor-pointer"
-              title="Inflixo"
+              title="Inflixo - For Creators. By Creators."
               aria-label="Inflixo"
             >
-              <div className="flex h-7 w-7 sm:h-7.5 sm:w-7.5 shrink-0 items-center justify-center rounded-[8px] overflow-hidden shadow-2xs border border-white/20 bg-[#7A2253]">
+              <div className="flex h-7 w-7 sm:h-7.5 sm:w-7.5 shrink-0 items-center justify-center rounded-[5px] overflow-hidden shadow-2xs border border-white/20 bg-[#7A2253]">
                 <Image
                   src="/images/inflixo-logo-3d.png"
                   alt="Inflixo"
@@ -1966,9 +1966,18 @@ export function LivePreviewCard({
                   priority
                 />
               </div>
-              <span className="text-[#7A2253] text-[17px] sm:text-[18px] font-bold tracking-tight lowercase select-none leading-none">
-                inflixo
-              </span>
+              <Image
+                src={
+                  usesDarkControls
+                    ? "/images/inflixo-wordmark-tagline-white.png"
+                    : "/images/inflixo-wordmark-tagline.png"
+                }
+                alt="Inflixo - For Creators. By Creators."
+                width={628}
+                height={238}
+                className="h-[24px] sm:h-[26px] w-auto max-w-[80px] sm:max-w-[90px] object-contain select-none"
+                priority
+              />
             </Link>
           )}
         </div>
