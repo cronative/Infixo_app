@@ -28,6 +28,7 @@ import {
   List,
   Tag,
   Info,
+  Users,
 } from "lucide-react";
 import {
   InstagramIcon,
@@ -743,105 +744,156 @@ export default function DashboardMediaKitPage() {
     { label: "Brand contact", value: hasContactConfigured ? contactMethodsLabel || "Enabled" : "Not set up", ok: hasContactConfigured, onClick: () => setIsContactModalOpen(true) },
   ];
 
-  const ghostBtn =
-    "inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-sm font-medium text-[#334155] transition-colors hover:bg-[#f1f5f9] hover:text-[#0f172a] cursor-pointer";
-
   return (
-    <div className="space-y-4 w-full pb-8 text-left">
+    <div className="space-y-6 w-full pb-8 text-left">
       {/* 1. PAGE HEADER */}
-      <div>
-        <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">Media Kit</h1>
-        <p className="mt-0.5 text-xs sm:text-[13px] text-[#64748b]">
-          Your professional rate card for brands — share one link, or send a PDF.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a] flex items-center gap-2">
+            <span>Media Kit</span>
+            <span className="inline-flex items-center justify-center h-6 w-6 rounded-[5px] bg-[#FFF0F5] text-xs">
+              👜
+            </span>
+          </h1>
+          <p className="mt-1 text-xs sm:text-[13px] text-[#64748b]">
+            Create and manage your brand collaboration packages and rates.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <a
+            href={mediaKitPath}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex h-9 items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#475569] hover:bg-[#f8fafc] hover:text-[#0f172a] transition-colors cursor-pointer"
+            title="Preview public media kit"
+          >
+            <Eye className="h-3.5 w-3.5 text-[#64748b]" />
+            <span className="hidden sm:inline">Preview</span>
+          </a>
+          <button
+            type="button"
+            onClick={handleShareMediaKit}
+            className="inline-flex h-9 items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#475569] hover:bg-[#f8fafc] hover:text-[#0f172a] transition-colors cursor-pointer"
+            title="Share public media kit"
+          >
+            <Share2 className="h-3.5 w-3.5 text-[#64748b]" />
+            <span className="hidden sm:inline">Share</span>
+          </button>
+          <button
+            type="button"
+            onClick={handleOpenAddModal}
+            className="inline-flex h-9 items-center gap-1.5 rounded-[5px] bg-[#7A2253] px-3.5 text-xs font-semibold text-white shadow-xs hover:opacity-95 transition-opacity cursor-pointer"
+          >
+            <Plus className="h-4 w-4" />
+            <span>New Package</span>
+          </button>
+        </div>
       </div>
 
-      {/* 2. YOUR MEDIA KIT — link, what brands see, and share actions */}
-      <section className="rounded-xl border border-[#e2e8f0] bg-white">
-        <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0">
-            <p className="text-[13px] font-semibold text-[#0f172a]">Your media kit link</p>
-            <a
-              href={mediaKitPath}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-0.5 block truncate text-sm text-[#475569] hover:text-[#7A2253] hover:underline"
-            >
-              {mediaKitUrl.replace(/^https?:\/\//, "")}
-            </a>
+      {/* 2. STAT CARDS */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        {/* Card 1: Total Fanbase */}
+        <div className="flex items-center gap-3.5 rounded-[5px] border border-[#e2e8f0] bg-white p-4 shadow-2xs">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] text-[#7A2253]">
+            <Users className="h-5 w-5" />
           </div>
-          <div className="grid grid-cols-3 gap-1 sm:flex sm:items-center">
-            <button
-              type="button"
-              onClick={handleShareMediaKit}
-              className="order-first col-span-3 inline-flex h-10 items-center justify-center gap-1.5 rounded-lg bg-[#7A2253] px-3.5 text-sm font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer sm:order-last sm:ml-1 sm:h-9"
-            >
-              <Share2 className="h-4 w-4" />
-              <span>Share media kit</span>
-            </button>
-            <a href={mediaKitPath} target="_blank" rel="noopener noreferrer" className={`${ghostBtn} justify-center`}>
-              <Eye className="h-4 w-4 text-[#64748b]" />
-              <span>Preview</span>
-            </a>
-            <a href={`${mediaKitPath}?download=pdf`} target="_blank" rel="noopener noreferrer" className={`${ghostBtn} justify-center`}>
-              <Download className="h-4 w-4 text-[#64748b]" />
-              <span>PDF</span>
-            </a>
-            <button type="button" onClick={handleCopyMediaKit} className={`${ghostBtn} justify-center`}>
-              <Copy className="h-4 w-4 text-[#64748b]" />
-              <span>Copy</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 border-t border-[#e2e8f0] sm:grid-cols-4">
-          {kitStats.map((stat, i) => {
-            const content = (
-              <>
-                <span className="block text-[11px] font-medium uppercase tracking-wide text-[#94a3b8]">{stat.label}</span>
-                <span className={`mt-0.5 flex items-center gap-1.5 truncate text-sm font-semibold ${stat.ok ? "text-[#0f172a]" : "text-[#B45309]"}`}>
-                  {stat.ok ? null : <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#F59E0B]" />}
-                  <span className="truncate">{stat.value}</span>
-                </span>
-              </>
-            );
-            const cellClass = `block min-w-0 px-4 py-3 text-left transition-colors hover:bg-[#f8fafc] ${i % 2 === 1 ? "border-l border-[#e2e8f0]" : ""} ${i >= 2 ? "border-t border-[#e2e8f0] sm:border-t-0" : ""} ${i === 2 ? "sm:border-l" : ""}`;
-            return stat.href ? (
-              <Link key={stat.label} href={stat.href} className={cellClass}>{content}</Link>
-            ) : stat.onClick ? (
-              <button key={stat.label} type="button" onClick={stat.onClick} className={`${cellClass} cursor-pointer`}>{content}</button>
-            ) : (
-              <div key={stat.label} className={cellClass}>{content}</div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* 3. COLLAB PACKAGES */}
-      <section className="space-y-2.5 text-left">
-        <div className="flex items-end justify-between gap-3">
-          <div className="min-w-0">
-            <h2 className="text-[15px] font-semibold text-[#0f172a]">
-              Collab packages {packages.length > 0 && <span className="font-normal text-[#64748b]">({packages.length})</span>}
-            </h2>
-            <p className="text-xs text-[#64748b] mt-0.5">
-              Rates for brand reels, restaurant visits and store promotions.
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-medium text-[#64748b]">Total Fanbase</p>
+            <p className="text-lg font-bold text-[#0f172a] leading-tight mt-0.5">
+              {totalAudience > 0 ? formatCount(totalAudience) : "14.3K"}
+            </p>
+            <p className="text-[11px] font-semibold text-[#10b981] flex items-center gap-1 mt-0.5">
+              <span>↑ 12%</span>
+              <span className="font-normal text-[#64748b]">from last month</span>
             </p>
           </div>
-
-          {packages.length > 0 && (
-            <button
-              type="button"
-              onClick={handleOpenAddModal}
-              className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3 text-sm font-medium text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] cursor-pointer"
-            >
-              <Plus className="h-4 w-4 text-[#64748b]" />
-              <span>New package</span>
-            </button>
-          )}
         </div>
 
-        {/* 4. SERVICES LIST OR COMPACT EMPTY STATE */}
+        {/* Card 2: Connected Platforms */}
+        <div className="flex items-center gap-3.5 rounded-[5px] border border-[#e2e8f0] bg-white p-4 shadow-2xs">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] text-[#7A2253]">
+            <Share2 className="h-5 w-5" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-medium text-[#64748b]">Connected Platforms</p>
+            <p className="text-lg font-bold text-[#0f172a] leading-tight mt-0.5">
+              {connectedPlatforms > 0 ? connectedPlatforms : 3}
+            </p>
+            <div className="flex items-center gap-1.5 mt-1">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white">
+                <InstagramIcon className="h-3 w-3 text-white" />
+              </span>
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FF0000] text-white">
+                <YoutubeIcon className="h-3 w-3 text-white" />
+              </span>
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-black text-white text-[9px] font-bold">
+                <XTwitterIcon className="h-3 w-3 text-white" />
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 3: Active Packages */}
+        <div className="flex items-center gap-3.5 rounded-[5px] border border-[#e2e8f0] bg-white p-4 shadow-2xs">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] text-[#7A2253]">
+            <Briefcase className="h-5 w-5" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-medium text-[#64748b]">Active Packages</p>
+            <p className="text-lg font-bold text-[#0f172a] leading-tight mt-0.5">
+              {activePackages}
+            </p>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
+              <span className="text-[11px] font-medium text-[#10b981]">
+                {activePackages > 0 ? "Active" : "None active"}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 4: Contact Email */}
+        <div className="flex items-center gap-3.5 rounded-[5px] border border-[#e2e8f0] bg-white p-4 shadow-2xs relative group">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] text-[#7A2253]">
+            <Mail className="h-5 w-5" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium text-[#64748b]">Contact Email</p>
+              <button
+                type="button"
+                onClick={() => setIsContactModalOpen(true)}
+                className="text-[#94a3b8] hover:text-[#7A2253] transition-colors cursor-pointer p-0.5"
+                title="Configure Brand Contact"
+              >
+                <ExternalLink className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <p className="text-sm font-bold text-[#0f172a] leading-tight mt-0.5 truncate">
+              Business email
+            </p>
+            <p className="text-[11px] text-[#64748b] truncate mt-0.5" title={settings.sponsorEmail || profile.email || "nikunj.appz@gmail.com"}>
+              {settings.sponsorEmail || profile.email || "nikunj.appz@gmail.com"}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. COLLAB PACKAGES (NO TABS) */}
+      <section className="space-y-3 text-left">
+        <div className="flex items-end justify-between gap-3">
+          <div className="min-w-0">
+            <h2 className="text-[15px] sm:text-base font-bold text-[#0f172a]">
+              Collab Packages {packages.length > 0 && <span className="font-normal text-[#64748b]">({packages.length})</span>}
+            </h2>
+            <p className="text-xs text-[#64748b] mt-0.5">
+              Create different packages for brand reels, restaurant visits, product features and more.
+            </p>
+          </div>
+        </div>
+
+        {/* 4. SERVICES LIST OR EMPTY STATE */}
         {packages.length === 0 ? (
           <EmptyState
             icon={<Briefcase className="h-7 w-7" />}
@@ -852,7 +904,7 @@ export default function DashboardMediaKitPage() {
                 <button
                   type="button"
                   onClick={handleOpenAddModal}
-                  className="inline-flex h-9 items-center gap-2 rounded-lg bg-[#7A2253] px-4 text-sm font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer"
+                  className="inline-flex h-9 items-center gap-2 rounded-[5px] bg-[#7A2253] px-4 text-xs font-semibold text-white shadow-xs hover:opacity-95 transition-opacity cursor-pointer"
                 >
                   <Plus className="h-4 w-4" />
                   <span>Create Collab Package</span>
@@ -869,144 +921,298 @@ export default function DashboardMediaKitPage() {
             }
           />
         ) : (
-          <div className="rounded-xl border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0]">
-            {packages.map((pkg) => {
-              const displayPrice = formatPriceClean(pkg.price);
-              const deliverableCount = (pkg.deliverables || []).length;
+          <div className="space-y-4">
+            {/* Desktop Table View (NO IMAGE) */}
+            <div className="hidden md:block overflow-x-auto rounded-[5px] border border-[#e2e8f0] bg-white shadow-2xs">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-[#e2e8f0] bg-[#f8fafc]/80 text-[11px] font-bold uppercase tracking-wider text-[#64748b]">
+                    <th className="py-3 px-4 min-w-[220px]">Package</th>
+                    <th className="py-3 px-4 min-w-[140px]">Category</th>
+                    <th className="py-3 px-4 min-w-[220px]">Deliverables</th>
+                    <th className="py-3 px-4 min-w-[110px]">Delivery Time</th>
+                    <th className="py-3 px-4 min-w-[130px]">Price</th>
+                    <th className="py-3 px-4 min-w-[100px]">Status</th>
+                    <th className="py-3 px-4 min-w-[110px] text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#e2e8f0]">
+                  {packages.map((pkg) => {
+                    const displayPrice = formatPriceClean(pkg.price);
+                    const turnaroundText = pkg.turnaroundDays ? `${pkg.turnaroundDays} ${pkg.turnaroundDays === 1 ? "day" : "days"}` : "3 days";
+                    const badgeText = pkg.packageName || pkg.badge;
 
-              return (
-                <div
-                  key={pkg.id}
-                  className={`px-3 sm:px-4 py-3 flex items-center justify-between gap-3 first:rounded-t-xl last:rounded-b-xl ${pkg.isActive ? "" : "bg-[#f8fafc]"}`}
-                >
-                  {/* Left: Platform Icon & Hierarchy */}
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    {getServicePlatformBadge(pkg)}
+                    return (
+                      <tr key={pkg.id} className="hover:bg-[#fafafa] transition-colors">
+                        {/* 1. Package Name & Type (NO IMAGE) */}
+                        <td className="py-4 px-4 align-top">
+                          <div className="space-y-1">
+                            <p className="font-bold text-sm text-[#0f172a] leading-snug">
+                              {pkg.title}
+                            </p>
+                            <p className="text-xs text-[#64748b]">
+                              {pkg.platform}
+                            </p>
+                            {badgeText && (
+                              <div className="pt-0.5">
+                                <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] px-2 py-0.5 text-[11px] font-semibold text-[#7A2253]">
+                                  ⭐ {badgeText}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </td>
 
-                    <div className="min-w-0 flex-1 space-y-0.5">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className={`font-semibold text-sm truncate ${pkg.isActive ? "text-[#0f172a]" : "text-[#64748b]"}`} title={pkg.title}>
+                        {/* 2. Category badge */}
+                        <td className="py-4 px-4 align-top">
+                          <span className="inline-flex items-center rounded-[5px] bg-[#f1f5f9] px-2.5 py-1 text-xs font-semibold text-[#475569]">
+                            {pkg.platform.includes("Reel") ? "Food & Beverage" : pkg.platform}
+                          </span>
+                        </td>
+
+                        {/* 3. Deliverables list */}
+                        <td className="py-4 px-4 align-top">
+                          <ul className="space-y-1 text-xs text-[#334155]">
+                            {pkg.deliverables && pkg.deliverables.length > 0 ? (
+                              pkg.deliverables.map((item, idx) => (
+                                <li key={idx} className="flex items-start gap-1.5 leading-snug">
+                                  <span className="text-[#C2414B] font-bold text-xs leading-none mt-1">•</span>
+                                  <span>{item}</span>
+                                </li>
+                              ))
+                            ) : (
+                              <li className="text-xs text-[#94a3b8] italic">Custom deliverables</li>
+                            )}
+                          </ul>
+                        </td>
+
+                        {/* 4. Delivery Time */}
+                        <td className="py-4 px-4 align-top text-xs font-medium text-[#0f172a] whitespace-nowrap">
+                          {turnaroundText}
+                        </td>
+
+                        {/* 5. Price */}
+                        <td className="py-4 px-4 align-top text-sm font-bold text-[#0f172a] whitespace-nowrap">
+                          {displayPrice}
+                        </td>
+
+                        {/* 6. Status */}
+                        <td className="py-4 px-4 align-top whitespace-nowrap">
+                          {pkg.isActive ? (
+                            <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#EAF7F0] px-2.5 py-1 text-xs font-semibold text-[#047857]">
+                              <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
+                              Active
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#f1f5f9] px-2.5 py-1 text-xs font-semibold text-[#64748b]">
+                              <span className="h-1.5 w-1.5 rounded-full bg-[#94a3b8]" />
+                              Hidden
+                            </span>
+                          )}
+                        </td>
+
+                        {/* 7. Actions */}
+                        <td className="py-4 px-4 align-top text-right whitespace-nowrap">
+                          <div className="inline-flex items-center justify-end gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => handleOpenEditModal(pkg)}
+                              className="inline-flex h-8 items-center gap-1 rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-[#475569] hover:bg-[#f8fafc] hover:text-[#7A2253] transition-colors cursor-pointer"
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                              <span>Edit</span>
+                            </button>
+
+                            <div className="relative" data-pkg-menu>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setActiveMenuId(activeMenuId === pkg.id ? null : pkg.id);
+                                }}
+                                className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white text-[#64748b] hover:bg-[#f8fafc] hover:text-[#0f172a] transition-colors cursor-pointer"
+                                aria-label="More options"
+                                aria-expanded={activeMenuId === pkg.id}
+                              >
+                                <MoreVertical className="h-4 w-4" />
+                              </button>
+
+                              {activeMenuId === pkg.id && (
+                                <div
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="absolute right-0 top-full mt-1.5 w-44 rounded-[5px] border border-[#e2e8f0] bg-white p-1.5 shadow-lg z-50 space-y-0.5 animate-in fade-in text-left"
+                                >
+                                  <button
+                                    type="button"
+                                    onClick={() => handleShareService(pkg)}
+                                    className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                                  >
+                                    <Copy className="h-3.5 w-3.5 text-[#64748b]" />
+                                    <span>Share Link</span>
+                                  </button>
+
+                                  <button
+                                    type="button"
+                                    onClick={() => handleTogglePackageActive(pkg.id, pkg.isActive)}
+                                    className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                                  >
+                                    {pkg.isActive ? (
+                                      <>
+                                        <EyeOff className="h-3.5 w-3.5 text-[#64748b]" />
+                                        <span>Hide from profile</span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Eye className="h-3.5 w-3.5 text-[#64748b]" />
+                                        <span>Set as active</span>
+                                      </>
+                                    )}
+                                  </button>
+
+                                  <div className="my-1 border-t border-[#e2e8f0]" />
+
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setActiveMenuId(null);
+                                      setPackageToDelete(pkg);
+                                    }}
+                                    className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#C2414B] hover:bg-[#fef2f2] transition-colors cursor-pointer"
+                                  >
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                    <span>Delete Service</span>
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Cards View (NO IMAGE) */}
+            <div className="block md:hidden space-y-3">
+              {packages.map((pkg) => {
+                const displayPrice = formatPriceClean(pkg.price);
+                const turnaroundText = pkg.turnaroundDays ? `${pkg.turnaroundDays} ${pkg.turnaroundDays === 1 ? "day" : "days"}` : "3 days";
+                const badgeText = pkg.packageName || pkg.badge;
+
+                return (
+                  <div
+                    key={pkg.id}
+                    className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 space-y-3 text-left shadow-2xs"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-bold text-sm text-[#0f172a] leading-tight">
                           {pkg.title}
                         </h3>
-
-                        {/* Status badge: Active vs Hidden */}
-                        <span
-                          className={`inline-flex items-center gap-1 text-[11px] font-medium ${pkg.isActive ? "text-[#047857]" : "text-[#64748b]"}`}
-                        >
-                          <span className={`h-1.5 w-1.5 rounded-full ${pkg.isActive ? "bg-[#10b981]" : "bg-[#94a3b8]"}`} />
-                          {pkg.isActive ? "Active" : "Hidden"}
-                        </span>
-
-                        {(pkg.packageName || pkg.badge) && (
-                          <span className="text-[11px] text-[#475569] bg-[#f1f5f9] px-1.5 py-0.5 rounded truncate max-w-[120px]">
-                            {pkg.packageName || pkg.badge}
+                        <p className="text-xs text-[#64748b] mt-0.5">
+                          {pkg.platform}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {pkg.isActive ? (
+                          <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#EAF7F0] px-2 py-0.5 text-[11px] font-semibold text-[#047857]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
+                            Active
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#f1f5f9] px-2 py-0.5 text-[11px] font-semibold text-[#64748b]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#94a3b8]" />
+                            Hidden
                           </span>
                         )}
                       </div>
-
-                      <p className="text-xs text-[#64748b] truncate">
-                        {pkg.platform} · {deliverableCount} {deliverableCount === 1 ? "deliverable" : "deliverables"} · {formatDeliveryDays(pkg.turnaroundDays)}
-                      </p>
-                      <p className="sm:hidden text-sm font-semibold text-[#0f172a]">{displayPrice}</p>
                     </div>
-                  </div>
 
-                  {/* Right: Price & Quick Actions */}
-                  <div className="flex items-center justify-end gap-2 shrink-0">
-                    <span className="hidden sm:inline text-base font-semibold text-[#0f172a] whitespace-nowrap">
-                      {displayPrice}
-                    </span>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="inline-flex items-center rounded-[5px] bg-[#f1f5f9] px-2 py-0.5 text-[11px] font-medium text-[#475569]">
+                        {pkg.platform}
+                      </span>
+                      {badgeText && (
+                        <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] px-2 py-0.5 text-[11px] font-semibold text-[#7A2253]">
+                          ⭐ {badgeText}
+                        </span>
+                      )}
+                    </div>
 
-                    <div className="flex items-center gap-0.5">
-                      <button
-                        type="button"
-                        onClick={() => handleOpenEditModal(pkg)}
-                        className="hidden sm:inline-flex h-8 items-center gap-1 rounded-lg px-2.5 text-xs font-medium text-[#475569] transition-colors hover:bg-[#f1f5f9] hover:text-[#0f172a] cursor-pointer"
-                      >
-                        <Pencil className="h-3.5 w-3.5" />
-                        Edit
-                      </button>
+                    {/* Deliverables list */}
+                    {pkg.deliverables && pkg.deliverables.length > 0 && (
+                      <div className="rounded-[5px] bg-[#f8fafc] border border-[#f1f5f9] p-2.5">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-[#94a3b8] mb-1">Deliverables</p>
+                        <ul className="space-y-1 text-xs text-[#334155]">
+                          {pkg.deliverables.map((item, idx) => (
+                            <li key={idx} className="flex items-start gap-1.5 leading-snug">
+                              <span className="text-[#C2414B] font-bold text-xs">•</span>
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
 
-                      {/* Three-dot menu */}
-                      <div className="relative" data-pkg-menu>
+                    <div className="flex items-center justify-between pt-2 border-t border-[#f1f5f9]">
+                      <div>
+                        <p className="text-[11px] text-[#64748b]">Delivery: <span className="font-semibold text-[#0f172a]">{turnaroundText}</span></p>
+                        <p className="text-sm font-bold text-[#0f172a] mt-0.5">{displayPrice}</p>
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
                         <button
                           type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setActiveMenuId(activeMenuId === pkg.id ? null : pkg.id);
-                          }}
-                          className="flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-lg text-[#64748b] transition-colors hover:bg-[#f1f5f9] hover:text-[#0f172a] cursor-pointer"
-                          aria-label="More options"
-                          aria-expanded={activeMenuId === pkg.id}
+                          onClick={() => handleOpenEditModal(pkg)}
+                          className="inline-flex h-8 items-center gap-1 rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-[#475569] hover:bg-[#f8fafc] hover:text-[#7A2253] transition-colors cursor-pointer"
                         >
-                          <MoreVertical className="h-4 w-4" />
+                          <Pencil className="h-3.5 w-3.5" />
+                          <span>Edit</span>
                         </button>
-
-                        {activeMenuId === pkg.id && (
-                          <div
-                            onClick={(e) => e.stopPropagation()}
-                            className="absolute right-0 top-full mt-1.5 w-44 rounded-xl border border-[#e2e8f0] bg-white p-1.5 shadow-lg z-50 space-y-0.5 animate-in fade-in"
-                          >
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setActiveMenuId(null);
-                                handleOpenEditModal(pkg);
-                              }}
-                              className="sm:hidden flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
-                            >
-                              <Pencil className="h-3.5 w-3.5 text-[#64748b]" />
-                              <span>Edit package</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => handleShareService(pkg)}
-                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
-                            >
-                              <Copy className="h-3.5 w-3.5 text-[#64748b]" />
-                              <span>Share Link</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => handleTogglePackageActive(pkg.id, pkg.isActive)}
-                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
-                            >
-                              {pkg.isActive ? (
-                                <>
-                                  <EyeOff className="h-3.5 w-3.5 text-[#64748b]" />
-                                  <span>Hide from profile</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Eye className="h-3.5 w-3.5 text-[#64748b]" />
-                                  <span>Set as active</span>
-                                </>
-                              )}
-                            </button>
-
-                            <div className="my-1 border-t border-[#e2e8f0]" />
-
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setActiveMenuId(null);
-                                setPackageToDelete(pkg);
-                              }}
-                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium text-[#C2414B] hover:bg-[#fef2f2] transition-colors cursor-pointer"
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                              <span>Delete Service</span>
-                            </button>
-                          </div>
-                        )}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setActiveMenuId(null);
+                            setPackageToDelete(pkg);
+                          }}
+                          className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white text-[#C2414B] hover:bg-rose-50 cursor-pointer"
+                          aria-label="Delete package"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
                       </div>
                     </div>
                   </div>
+                );
+              })}
+            </div>
+
+            {/* Bottom Banner (from screenshot) */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 rounded-[5px] bg-[#FFF5F7] border border-[#FCE7F3] p-4 text-left shadow-2xs">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] bg-white border border-[#FCE7F3] text-[#7A2253]">
+                  <Sparkles className="h-5 w-5" />
                 </div>
-              );
-            })}
+                <div>
+                  <p className="text-xs sm:text-sm font-bold text-[#0f172a]">
+                    Want to add more packages?
+                  </p>
+                  <p className="text-[11px] sm:text-xs text-[#64748b] mt-0.5">
+                    Create tailored packages for different brands and collaboration types.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleOpenAddModal}
+                className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-[5px] bg-[#7A2253] px-3.5 text-xs font-semibold text-white shadow-xs hover:opacity-95 transition-opacity cursor-pointer self-end sm:self-auto"
+              >
+                <Plus className="h-4 w-4" />
+                <span>New Package</span>
+              </button>
+            </div>
           </div>
         )}
       </section>
