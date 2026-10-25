@@ -3,7 +3,7 @@ import {
   User,
   Link2,
   AtSign,
-  Layers,
+  Clapperboard,
   Palette,
   CreditCard,
   Settings,
@@ -37,52 +37,52 @@ export const NAV_GROUPS: NavGroup[] = [
     id: "overview",
     title: "OVERVIEW",
     items: [
-      { href: "/dashboard", label: "Home", subtitle: "Your dashboard & quick stats", icon: Home },
+      { href: "/dashboard", label: "Dashboard", subtitle: "Your creator studio at a glance", icon: Home },
     ],
   },
   {
-    id: "content",
-    title: "CONTENT",
+    id: "content-links",
+    title: "CONTENT & LINKS",
     items: [
-      { href: "/dashboard/series", label: "Series", subtitle: "Organize your videos into series", icon: Layers },
-      { href: "/dashboard/products", label: "Products", subtitle: "Manage affiliate products", icon: ShoppingBag },
-      { href: "/dashboard/links", label: "Links", subtitle: "Custom links & collections", icon: Link2 },
+      { href: "/dashboard/series", label: "My Series", subtitle: "Organize your videos & episodes", icon: Clapperboard },
+      { href: "/dashboard/products", label: "My Shop", subtitle: "Products you recommend", icon: ShoppingBag },
+      { href: "/dashboard/links", label: "My Links", subtitle: "Share important links", icon: Link2 },
     ],
   },
   {
-    id: "engage",
-    title: "ENGAGE",
+    id: "audience-trust",
+    title: "AUDIENCE & TRUST",
     items: [
-      { href: "/dashboard/socials", label: "Socials", subtitle: "Connect your social accounts", icon: AtSign },
-      { href: "/dashboard/team", label: "Team", subtitle: "Manage collaborators", icon: Users },
+      { href: "/dashboard/socials", label: "Social Accounts", subtitle: "Connect & sync your social media", icon: AtSign },
+      { href: "/dashboard/reviews", label: "Reviews", subtitle: "Showcase brand feedback", icon: Star },
+      { href: "/dashboard/analytics", label: "Analytics", subtitle: "See profile visits & link clicks", icon: BarChart3 },
     ],
   },
   {
-    id: "grow",
-    title: "GROW",
+    id: "brand-collaborations",
+    title: "BRAND & COLLABORATIONS",
     items: [
-      { href: "/dashboard/analytics", label: "Analytics", subtitle: "Track performance & audience", icon: BarChart3 },
-      { href: "/dashboard/reviews", label: "Reviews", subtitle: "View feedback from fans", icon: Star },
+      { href: "/dashboard/mediakit", label: "Media Kit & Rates", subtitle: "Show your services & pricing", icon: Briefcase },
+      { href: "/dashboard/team", label: "My Team", subtitle: "Manage collaborators", icon: Users },
+      { href: "/dashboard/setup", label: "My Gear & Tools", subtitle: "Show your creator setup", icon: Laptop },
     ],
   },
   {
-    id: "brand",
-    title: "BRAND",
+    id: "profile-appearance",
+    title: "PROFILE & APPEARANCE",
     items: [
-      { href: "/dashboard/profile", label: "Profile", subtitle: "Manage your public profile", icon: User },
-      { href: "/dashboard/themes", label: "Themes", subtitle: "Customize your storefront", icon: Palette },
-      { href: "/dashboard/preview", label: "Preview", subtitle: "See how your profile looks", icon: Eye },
-      { href: "/dashboard/creator-card", label: "Creator Card", subtitle: "Your digital creator card", icon: IdCard },
-      { href: "/dashboard/mediakit", label: "Media Kit", subtitle: "Logos, banners & assets", icon: Briefcase },
+      { href: "/dashboard/profile", label: "My Profile", subtitle: "Edit your creator details", icon: User },
+      { href: "/dashboard/themes", label: "Themes", subtitle: "Customize your profile look", icon: Palette },
+      { href: "/dashboard/preview", label: "Live Preview", subtitle: "See how your public profile looks", icon: Eye },
+      { href: "/dashboard/creator-card", label: "Creator Card", subtitle: "Share your digital creator card", icon: IdCard },
     ],
   },
   {
     id: "account",
     title: "ACCOUNT",
     items: [
-      { href: "/dashboard/setup", label: "Gear & Setup", subtitle: "Tools, gear & studio setup", icon: Laptop },
-      { href: "/dashboard/subscription", label: "Plan", subtitle: "Manage your subscription", icon: CreditCard },
-      { href: "/dashboard/settings", label: "Settings", subtitle: "Account & preferences", icon: Settings },
+      { href: "/dashboard/subscription", label: "My Plan", subtitle: "View limits & upgrade", icon: CreditCard },
+      { href: "/dashboard/settings", label: "Settings", subtitle: "Account & privacy controls", icon: Settings },
     ],
   },
 ];
@@ -95,11 +95,11 @@ export const WORKSPACE_NAV: NavItem[] = [...NAV_GROUPS[0].items, ...NAV_GROUPS[1
 export const ACCOUNT_NAV: NavItem[] = NAV_GROUPS[3].items;
 
 export const BOTTOM_NAV: NavItem[] = [
-  { href: "/dashboard", label: "Home", icon: Home },
-  { href: "/dashboard/series", label: "Series", icon: Layers },
-  { href: "/dashboard/links", label: "Links", icon: Link2 },
+  { href: "/dashboard", label: "Dashboard", icon: Home },
+  { href: "/dashboard/series", label: "My Series", icon: Clapperboard },
+  { href: "/dashboard/links", label: "My Links", icon: Link2 },
   { href: "/dashboard/mediakit", label: "Media Kit", icon: Briefcase },
-  { href: "/dashboard/settings", label: "Account", icon: Settings },
+  { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
 /** Page title for the current route (longest matching nav href). */

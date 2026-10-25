@@ -12,6 +12,7 @@ import {
   Crown,
   Zap,
   AlertTriangle,
+  ChevronRight,
 } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
@@ -117,11 +118,11 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
           </div>
         </div>
 
-        {/* Navigation List: 3 Creator-First Groups (Studio, Growth, Account) */}
+        {/* Navigation List: 6 Groups */}
         <nav className="flex-1 space-y-4 px-3 py-2 overflow-y-auto no-scrollbar" aria-label="Dashboard">
           {NAV_GROUPS.map((group) => (
-            <div key={group.id}>
-              <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-[#94a3b8] mb-1">
+            <div key={group.id} className="space-y-1">
+              <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#64748b]">
                 {group.title}
               </p>
               <div className="space-y-0.5">
@@ -134,40 +135,47 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                       href={item.href}
                       onClick={onClose}
                       aria-current={active ? "page" : undefined}
-                      className={`group relative flex items-center gap-3 rounded-[5px] px-3 py-2 text-left transition-all ${
+                      className={`group relative flex items-center justify-between rounded-[5px] px-3 py-2 text-left transition-all ${
                         active
                           ? "bg-[#FFF5F7] text-[#7A2253]"
                           : "hover:bg-[#f8fafc] text-[#0f172a]"
                       }`}
                     >
-                      {active && (
-                        <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-[#7A2253] rounded-r-full" />
-                      )}
-                      <Icon
-                        className={`h-4.5 w-4.5 shrink-0 transition-colors ${
-                          active ? "text-[#7A2253]" : "text-[#64748b] group-hover:text-[#0f172a]"
-                        }`}
-                      />
-                      <div className="min-w-0 flex-1">
-                        <p
-                          className={`truncate text-xs font-semibold leading-tight ${
-                            active
-                              ? "text-[#7A2253] font-bold"
-                              : "text-[#0f172a] group-hover:text-[#7A2253]"
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <Icon
+                          className={`h-4.5 w-4.5 shrink-0 transition-colors ${
+                            active ? "text-[#7A2253]" : "text-[#64748b] group-hover:text-[#0f172a]"
                           }`}
-                        >
-                          {item.label}
-                        </p>
-                        {item.subtitle && (
+                        />
+                        <div className="min-w-0 flex-1">
                           <p
-                            className={`truncate text-[11px] leading-tight mt-0.5 ${
-                              active ? "text-[#64748b]" : "text-[#94a3b8]"
+                            className={`truncate text-xs font-semibold leading-tight ${
+                              active
+                                ? "text-[#7A2253] font-bold"
+                                : "text-[#0f172a] group-hover:text-[#7A2253]"
                             }`}
                           >
-                            {item.subtitle}
+                            {item.label}
                           </p>
-                        )}
+                          {item.subtitle && (
+                            <p
+                              className={`truncate text-[11px] leading-tight mt-0.5 ${
+                                active ? "text-[#7A2253]/70" : "text-[#64748b]"
+                              }`}
+                            >
+                              {item.subtitle}
+                            </p>
+                          )}
+                        </div>
                       </div>
+
+                      <ChevronRight
+                        className={`h-4 w-4 shrink-0 transition-colors ${
+                          active
+                            ? "text-[#7A2253]"
+                            : "text-[#cbd5e1] group-hover:text-[#64748b]"
+                        }`}
+                      />
                     </Link>
                   );
                 })}

@@ -78,43 +78,48 @@ export function DashboardSidebar() {
                     key={item.href}
                     href={item.href}
                     aria-current={active ? "page" : undefined}
-                    className={`group relative flex items-center gap-3 rounded-[5px] px-3 py-2 text-left transition-all ${
+                    className={`group relative flex items-center justify-between rounded-[5px] px-3 py-2 text-left transition-all ${
                       active
                         ? "bg-[#FFF5F7] text-[#7A2253]"
                         : "hover:bg-[#f8fafc] text-[#0f172a]"
                     }`}
                   >
-                    {/* Active left indicator bar */}
-                    {active && (
-                      <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-[#7A2253] rounded-r-full" />
-                    )}
-
-                    <Icon
-                      className={`h-4.5 w-4.5 shrink-0 transition-colors ${
-                        active ? "text-[#7A2253]" : "text-[#64748b] group-hover:text-[#0f172a]"
-                      }`}
-                    />
-
-                    <div className="min-w-0 flex-1">
-                      <p
-                        className={`truncate text-xs font-semibold leading-tight ${
-                          active
-                            ? "text-[#7A2253] font-bold"
-                            : "text-[#0f172a] group-hover:text-[#7A2253]"
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <Icon
+                        className={`h-4.5 w-4.5 shrink-0 transition-colors ${
+                          active ? "text-[#7A2253]" : "text-[#64748b] group-hover:text-[#0f172a]"
                         }`}
-                      >
-                        {item.label}
-                      </p>
-                      {item.subtitle && (
+                      />
+
+                      <div className="min-w-0 flex-1">
                         <p
-                          className={`truncate text-[11px] leading-tight mt-0.5 ${
-                            active ? "text-[#64748b]" : "text-[#94a3b8]"
+                          className={`truncate text-xs font-semibold leading-tight ${
+                            active
+                              ? "text-[#7A2253] font-bold"
+                              : "text-[#0f172a] group-hover:text-[#7A2253]"
                           }`}
                         >
-                          {item.subtitle}
+                          {item.label}
                         </p>
-                      )}
+                        {item.subtitle && (
+                          <p
+                            className={`truncate text-[11px] leading-tight mt-0.5 ${
+                              active ? "text-[#7A2253]/70" : "text-[#64748b]"
+                            }`}
+                          >
+                            {item.subtitle}
+                          </p>
+                        )}
+                      </div>
                     </div>
+
+                    <ChevronRight
+                      className={`h-4 w-4 shrink-0 transition-colors ${
+                        active
+                          ? "text-[#7A2253]"
+                          : "text-[#cbd5e1] group-hover:text-[#64748b]"
+                      }`}
+                    />
                   </Link>
                 );
               })}
@@ -135,7 +140,9 @@ export function DashboardSidebar() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-xs font-bold text-[#7A2253]">
-                {subscription?.planName || "Starter Plan"}
+                {subscription?.planKey === "pro" || subscription?.planKey === "vip"
+                  ? `${subscription.planName || "Pro"} Plan`
+                  : "Upgrade to Pro"}
               </p>
               <p className="truncate text-[11px] text-[#64748b]">
                 Unlock more features
