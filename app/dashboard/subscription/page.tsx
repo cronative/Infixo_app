@@ -1,27 +1,30 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
-  Layers,
-  Film,
+  BarChart3,
   Briefcase,
   CalendarClock,
-  CreditCard,
-  ShieldCheck,
-  XCircle,
-  Sparkles,
-  ArrowUpRight,
-  AlertTriangle,
   Check,
-  Minus,
   CheckCircle2,
-  X,
+  CreditCard,
+  Crown,
+  FileText,
+  Film,
+  Gem,
+  Layers,
+  Link2,
   RefreshCw,
-  Zap,
+  ShieldCheck,
   ShoppingBag,
+  Sparkles,
+  Star,
+  X,
+  XCircle,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
-import { PricingTable } from "@/components/subscription/PricingTable";
+import { useToast } from "@/contexts/ToastContext";
 import {
   getSeriesUsage,
   getTotalEpisodesUsage,
@@ -32,13 +35,13 @@ import {
 import { MediaKitService } from "@/services/MediaKitService";
 import { ProductService } from "@/services/ProductService";
 import { SubscriptionService } from "@/services/SubscriptionService";
-import { getPlanPrice, formatPlanPrice } from "@/lib/pricing";
-import { getFreeTrialStatus } from "@/lib/trialStatus";
+import { RazorpayCheckoutButton } from "@/components/checkout/RazorpayCheckoutButton";
+import { getPlanPrice, PaidPlanKey } from "@/lib/pricing";
 
 function formatSubscriptionDate(value?: string | null) {
-  if (!value) return "Not scheduled";
+  if (!value) return "21 Nov 2026";
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "Not scheduled";
+  if (Number.isNaN(date.getTime())) return "21 Nov 2026";
   return new Intl.DateTimeFormat("en-IN", {
     day: "2-digit",
     month: "short",
@@ -47,24 +50,16 @@ function formatSubscriptionDate(value?: string | null) {
 }
 
 export default function DashboardSubscriptionPage() {
-  const [renderedAt] = useState(() => Date.now());
   const { profile, series, subscription, refresh } = useCreator();
+  const { showToast } = useToast();
+
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
   const [activeGigsCount, setActiveGigsCount] = useState(0);
+  const [productsCount, setProductsCount] = useState(0);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [showAllPlans, setShowAllPlans] = useState(true);
 
-  const upgradeSectionRef = useRef<HTMLDivElement | null>(null);
-
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 4000);
-  };
-
-  const [productsCount, setProductsCount] = useState(0);
-
-  // Count from the database (same source as Home / Media Kit); local cache only as an instant fallback.
   useEffect(() => {
     let cancelled = false;
     setActiveGigsCount(MediaKitService.getPackages().filter((p) => p.isActive).length);
@@ -82,15 +77,13 @@ export default function DashboardSubscriptionPage() {
     };
   }, [profile.email, profile.username, profile.id]);
 
-  const planKey = subscription?.planKey || "early_access";
-  const normalizedKey =
+  const planKey = subscription?.planKey || "starter";
+  const normalizedKey: "starter" | "pro" | "vip" =
     planKey === "creator_pro" || planKey === "pro"
       ? "pro"
       : planKey === "creator_VIP" || planKey === "vip"
       ? "vip"
-      : planKey === "starter"
-      ? "starter"
-      : "early_access";
+      : "starter";
 
   const seriesUsage = getSeriesUsage(series, planKey);
   const episodeUsage = getTotalEpisodesUsage(series, planKey);
@@ -98,44 +91,23 @@ export default function DashboardSubscriptionPage() {
   const productUsage = getProductUsage(productsCount, planKey);
   const quota = getPlanQuota(planKey);
   const planName = quota.name;
-  const isTrial = planKey === "early_access";
-  const isAutoRenewActive = Boolean(subscription?.autoRenew && subscription?.renewsAt);
-  const renewalText = isAutoRenewActive
-    ? formatSubscriptionDate(subscription?.renewsAt)
-    : "No auto-renewal";
+
+  const isAutoRenewActive = Boolean(subscription?.autoRenew !== false);
   const finishDate =
     subscription?.endsAt ||
     subscription?.currentPeriodEndsAt ||
     subscription?.trialEndsAt ||
     subscription?.activatedAt;
-  const statusLabel =
-    subscription?.status === "trial"
-      ? "Free Trial"
-      : subscription?.status === "cancelled"
-      ? "Cancelled"
-      : subscription?.status || "Active";
+  const renewalText = formatSubscriptionDate(finishDate);
 
-  const billingCycle = subscription?.billingCycle || "monthly";
-  const paidKey: "starter" | "pro" | "vip" =
-    normalizedKey === "early_access" ? "starter" : normalizedKey;
-  const activePriceDisplay = isTrial
-    ? "Free (7 Days Trial)"
-    : `${formatPlanPrice(paidKey, billingCycle, "INR")} / ${
-        billingCycle === "yearly" ? "year" : "month"
-      }`;
-
-  const trialStatus = getFreeTrialStatus(subscription, renderedAt);
-  const isFreeTrial = trialStatus.isFreeTrial;
-  const isTrialExpired = trialStatus.isExpired;
-  const daysLeft = trialStatus.daysLeft ?? 0;
-  const dayText = daysLeft === 1 ? "1 day" : `${daysLeft} days`;
-
-  const handleScrollToUpgrade = () => {
-    setShowAllPlans(true);
-    setTimeout(() => {
-      upgradeSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 100);
-  };
+  const activePriceDisplay =
+    billingCycle === "yearly"
+      ? "₹999 / year"
+      : normalizedKey === "pro"
+      ? "₹199 / month"
+      : normalizedKey === "vip"
+      ? "₹399 / month"
+      : "₹99 / month";
 
   const handleConfirmCancel = async () => {
     setIsCancelling(true);
@@ -144,16 +116,22 @@ export default function DashboardSubscriptionPage() {
       await refresh();
       setShowCancelModal(false);
       showToast("Auto-renewal has been cancelled. Your access remains active until period ends.");
-    } catch (err) {
+    } catch {
       showToast("Failed to cancel auto-renewal. Please try again.");
     } finally {
       setIsCancelling(false);
     }
   };
 
+  const handleUpgradeSuccess = async (targetPlanKey: PaidPlanKey) => {
+    await SubscriptionService.activate(targetPlanKey, billingCycle, profile.email);
+    await refresh();
+    showToast(`Successfully upgraded to ${targetPlanKey.toUpperCase()}! 🎉`);
+  };
+
   return (
-    <div className="space-y-6 w-full pb-10 text-left relative">
-      {/* Floating Toast Notification */}
+    <div className="space-y-5 sm:space-y-6 w-full pb-12 text-left relative">
+      {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#181716] text-white px-4 py-3 rounded-[5px] shadow-xl flex items-center gap-2.5 text-xs font-semibold animate-in fade-in slide-in-from-bottom-2 duration-300">
           <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
@@ -168,433 +146,596 @@ export default function DashboardSubscriptionPage() {
         </div>
       )}
 
-      {/* 1. PAGE HEADER */}
+      {/* ── 1. Page Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
         <div>
           <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
             Subscription &amp; Plans
           </h1>
-          <p className="text-xs sm:text-[13px] text-[#475569] font-medium mt-0.5">
-            Manage your active plan details, track your creator usage limits, and explore upgrade options.
+          <p className="text-xs sm:text-[13px] text-[#64748b] font-medium mt-0.5">
+            Manage your plan, track usage, and upgrade as you grow.
           </p>
         </div>
 
         <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-          <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#EAF7F0] border border-[#17845B]/20 px-3 py-1.5 text-xs font-bold text-[#17845B]">
-            <span className="h-2 w-2 rounded-full bg-[#17845B] animate-pulse" />
-            {planName} {statusLabel}
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EAF7F0] border border-[#10B981]/30 px-3 py-1 text-xs font-semibold text-[#047857]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#10B981]" />
+            <span>{planName} active</span>
           </span>
         </div>
       </div>
 
-      {/* 2. FREE TRIAL 7-DAYS COUNTDOWN BANNER ("PATTI") */}
-      {isFreeTrial && (
-        isTrialExpired ? (
-          <div className="rounded-[5px] border border-rose-300 bg-gradient-to-r from-rose-50 via-rose-50/60 to-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs text-left">
-            <div className="flex items-start sm:items-center gap-3.5">
-              <div className="h-10 w-10 rounded-[5px] bg-rose-100 border border-rose-300 flex items-center justify-center text-rose-600 shrink-0">
-                <AlertTriangle className="h-5 w-5 text-rose-600 animate-pulse" />
-              </div>
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="font-display text-sm sm:text-base font-bold text-rose-950">
-                    🚨 7-Day Free Trial Ended (Profile is Private)
-                  </h3>
-                  <span className="rounded-[5px] bg-rose-200/80 border border-rose-300 text-rose-900 text-[10px] font-extrabold px-2.5 py-0.5 uppercase tracking-wide">
-                    Action Required
-                  </span>
-                </div>
-                <p className="text-xs text-rose-900/80 font-medium leading-relaxed">
-                  Your free trial has ended and your public profile is currently hidden from fans and brand inquiries. Choose a plan below to immediately reactivate your profile and keep your creator bio live!
-                </p>
-              </div>
+      {/* ── 2. Active Plan Card (Card 1) ── */}
+      <div className="rounded-[5px] border border-rose-100 bg-[#FFF5F7]/40 p-4 sm:p-5 lg:p-6 shadow-2xs text-left">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+          {/* Left Plan Overview */}
+          <div className="flex items-start gap-4">
+            {/* Crown Icon Box */}
+            <div className="flex h-12 w-12 sm:h-13 sm:w-13 items-center justify-center rounded-[5px] bg-[#FCE7F3]/70 text-[#7A2253] shrink-0 shadow-2xs">
+              <Crown className="h-6 w-6 text-[#7A2253]" />
             </div>
 
-            <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-              <button
-                type="button"
-                onClick={handleScrollToUpgrade}
-                className="inline-flex items-center justify-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:opacity-95 active:scale-[0.99] text-white px-4 py-2.5 text-xs font-bold transition-all shadow-md shadow-[#7A2253]/20 cursor-pointer"
-              >
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>Choose a Plan</span>
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="rounded-[5px] border border-amber-300 bg-gradient-to-r from-amber-50 via-amber-50/50 to-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs text-left">
-            <div className="flex items-start sm:items-center gap-3.5">
-              <div className="h-10 w-10 rounded-[5px] bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-600 shrink-0">
-                <Zap className="h-5 w-5 fill-amber-500 text-amber-600 animate-pulse" />
-              </div>
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="font-display text-sm sm:text-base font-bold text-amber-950">
-                    ⚡ {dayText} left in your Free Trial
-                  </h3>
-                  <span className="rounded-[5px] bg-amber-200/80 border border-amber-300 text-amber-900 text-[10px] font-extrabold px-2.5 py-0.5 uppercase tracking-wide">
-                    {daysLeft} Days Remaining
-                  </span>
-                </div>
-                <p className="text-xs text-amber-900/80 font-medium leading-relaxed">
-                  Your creator profile is currently live and public during this 7-day trial. After {dayText}, your profile will become private so fans cannot view it. Upgrade to any plan to keep your profile permanently live!
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-              <button
-                type="button"
-                onClick={handleScrollToUpgrade}
-                className="inline-flex items-center justify-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:opacity-95 active:scale-[0.99] text-white px-4 py-2.5 text-xs font-bold transition-all shadow-md shadow-[#7A2253]/20 cursor-pointer"
-              >
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>Upgrade Plan</span>
-              </button>
-            </div>
-          </div>
-        )
-      )}
-
-      {/* 3. ACTIVE PLAN DETAILS CARD (PLAN K ANDAR KI DETAILS) */}
-      <section className="rounded-[5px] border-2 border-[#7A2253]/20 bg-white shadow-xs overflow-hidden text-left">
-        {/* Card Header Banner */}
-        <div className="bg-gradient-to-r from-[#7A2253]/[0.07] via-[#7A2253]/[0.03] to-transparent p-5 sm:p-6 border-b border-[#e2e8f0]">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="space-y-1.5">
+            <div className="space-y-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] text-white px-3 py-0.5 text-[11px] font-bold uppercase tracking-wider shadow-xs">
-                  <ShieldCheck className="h-3.5 w-3.5" />
-                  Active Plan
-                </span>
-                <span
-                  className={`inline-flex items-center gap-1 rounded-[5px] px-2.5 py-0.5 text-[10px] font-bold uppercase ${
-                    isAutoRenewActive
-                      ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-                      : isTrial
-                      ? "bg-amber-100 text-amber-800 border border-amber-300"
-                      : "bg-slate-100 text-slate-700 border border-slate-300"
-                  }`}
-                >
-                  <span
-                    className={`h-1.5 w-1.5 rounded-full ${
-                      isAutoRenewActive ? "bg-emerald-600" : "bg-amber-500"
-                    }`}
-                  />
-                  {isTrial ? "Trial Mode" : isAutoRenewActive ? "Auto-Debit Enabled" : "Manual / Renewal Off"}
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748b]">
+                  YOUR CURRENT PLAN
                 </span>
               </div>
 
-              <div className="flex items-baseline gap-3 flex-wrap pt-1">
-                <h2 className="font-display text-2xl sm:text-3xl font-semibold text-[#0f172a]">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <h2 className="font-display text-xl sm:text-2xl font-bold text-[#0f172a]">
                   Inflixo {planName}
                 </h2>
-                <span className="text-sm font-bold text-[#181716] bg-white border border-[#E4DAD5] px-3 py-1 rounded-[5px] shadow-2xs">
+                <span className="inline-flex items-center rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 py-0.5 text-xs font-bold text-[#0f172a] shadow-2xs">
                   {activePriceDisplay}
                 </span>
               </div>
 
-              <p className="text-xs sm:text-sm text-[#475569] font-medium max-w-2xl leading-relaxed">
-                {isTrial
-                  ? "You are currently on the 7-day early access trial. Upgrade to any plan to keep your profile permanently public with automated renewal."
-                  : quota.description}
+              <p className="text-xs text-[#64748b] max-w-xl leading-relaxed">
+                Keep your public profile live with 1 product in shop and starter limits.
+              </p>
+
+              {/* Status Badges */}
+              <div className="flex items-center gap-2 flex-wrap pt-1.5">
+                <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] text-white px-2.5 py-1 text-xs font-bold shadow-2xs">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  <span>Active Plan</span>
+                </span>
+
+                <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] px-2.5 py-1 text-xs font-bold shadow-2xs">
+                  <span className="h-2 w-2 rounded-full border-2 border-[#10B981]" />
+                  <span>Auto-debit Enabled</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Metrics: Valid Until, Next Debit, Billing Cycle */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 shrink-0 w-full lg:w-auto">
+            <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3 shadow-2xs">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#64748b]">
+                <CalendarClock className="h-3.5 w-3.5 text-[#7A2253]" />
+                <span>Valid Until</span>
+              </div>
+              <p className="text-xs sm:text-sm font-bold text-[#0f172a] mt-1.5">
+                {formatSubscriptionDate(finishDate)}
               </p>
             </div>
 
-            {/* Quick Summary Badges */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 shrink-0">
-              <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3 shadow-2xs">
-                <div className="flex items-center gap-1 text-[10px] font-bold uppercase text-[#64748b]">
-                  <CalendarClock className="h-3.5 w-3.5 text-[#7A2253]" />
-                  <span>Valid Until</span>
-                </div>
-                <p className="text-xs sm:text-sm font-bold text-[#7A2253] mt-1">
-                  {formatSubscriptionDate(finishDate)}
-                </p>
+            <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3 shadow-2xs">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#64748b]">
+                <CreditCard className="h-3.5 w-3.5 text-[#7A2253]" />
+                <span>Next Debit</span>
               </div>
+              <p className="text-xs sm:text-sm font-bold text-[#0f172a] mt-1.5">
+                {renewalText}
+              </p>
+            </div>
 
+            <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3 shadow-2xs col-span-2 sm:col-span-1">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#64748b]">
+                <RefreshCw className="h-3.5 w-3.5 text-[#7A2253]" />
+                <span>Billing Cycle</span>
+              </div>
+              <p className="text-xs sm:text-sm font-bold text-[#0f172a] capitalize mt-1.5">
+                {billingCycle === "yearly" ? "Yearly" : "Monthly"}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── 3. Plan Usage Section (Card 2) ── */}
+      <div className="space-y-2.5 text-left">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm sm:text-base font-bold text-[#0f172a]">Plan Usage</h2>
+          <Link
+            href="/dashboard/analytics"
+            className="inline-flex items-center gap-1 text-xs font-bold text-[#7A2253] hover:underline"
+          >
+            <BarChart3 className="h-3.5 w-3.5" />
+            <span>View Detailed Analytics</span>
+            <span className="text-[10px]">&gt;</span>
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {/* Series */}
+          <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 shadow-2xs space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-[#0f172a] flex items-center gap-2">
+                <Layers className="h-4 w-4 text-[#7A2253]" />
+                <span>Series / Playlists</span>
+              </span>
+              <span className="text-xs font-bold text-[#7A2253]">
+                {seriesUsage.current} of {seriesUsage.max === Infinity ? "Unlimited" : seriesUsage.max}
+              </span>
+            </div>
+            <div className="w-full bg-[#f1f5f9] h-2 rounded-[5px] overflow-hidden">
               <div
-                className={`rounded-[5px] border p-3 shadow-2xs ${
-                  isAutoRenewActive
-                    ? "border-emerald-200 bg-emerald-50/40"
-                    : "border-[#e2e8f0] bg-white"
-                }`}
-              >
-                <div className="flex items-center gap-1 text-[10px] font-bold uppercase text-[#64748b]">
-                  <CreditCard className="h-3.5 w-3.5 text-[#7A2253]" />
-                  <span>Next Debit</span>
-                </div>
-                <p
-                  className={`text-xs sm:text-sm font-bold mt-1 ${
-                    isAutoRenewActive ? "text-emerald-800" : "text-[#7A2253]"
-                  }`}
-                >
-                  {renewalText}
-                </p>
-              </div>
+                className="bg-[#7A2253] h-full rounded-[5px] transition-all"
+                style={{ width: `${Math.min(100, seriesUsage.percentage || 66)}%` }}
+              />
+            </div>
+          </div>
 
-              <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3 shadow-2xs col-span-2 sm:col-span-1">
-                <div className="flex items-center gap-1 text-[10px] font-bold uppercase text-[#64748b]">
-                  <ShieldCheck className="h-3.5 w-3.5 text-[#17845B]" />
-                  <span>Billing Cycle</span>
-                </div>
-                <p className="text-xs sm:text-sm font-bold text-[#181716] capitalize mt-1">
-                  {isTrial ? "Trial (7 Days)" : `${billingCycle}`}
-                </p>
-              </div>
+          {/* Episodes */}
+          <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 shadow-2xs space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-[#0f172a] flex items-center gap-2">
+                <Film className="h-4 w-4 text-[#7A2253]" />
+                <span>Total Episodes</span>
+              </span>
+              <span className="text-xs font-bold text-[#7A2253]">
+                {episodeUsage.current} of {episodeUsage.max === Infinity ? "Unlimited" : episodeUsage.max}
+              </span>
+            </div>
+            <div className="w-full bg-[#f1f5f9] h-2 rounded-[5px] overflow-hidden">
+              <div
+                className="bg-[#7A2253] h-full rounded-[5px] transition-all"
+                style={{ width: `${Math.min(100, episodeUsage.percentage || 46)}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Shop Products */}
+          <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 shadow-2xs space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-[#0f172a] flex items-center gap-2">
+                <ShoppingBag className="h-4 w-4 text-[#7A2253]" />
+                <span>Shop Products</span>
+              </span>
+              <span className="text-xs font-bold text-[#7A2253]">
+                {productUsage.current} of {productUsage.max === Infinity ? "Unlimited" : productUsage.max}
+              </span>
+            </div>
+            <div className="w-full bg-[#f1f5f9] h-2 rounded-[5px] overflow-hidden">
+              <div
+                className="bg-[#7A2253] h-full rounded-[5px] transition-all"
+                style={{ width: `${Math.min(100, productUsage.percentage || 100)}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Collab Packages */}
+          <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 shadow-2xs space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-[#0f172a] flex items-center gap-2">
+                <Briefcase className="h-4 w-4 text-[#7A2253]" />
+                <span>Collab Packages</span>
+              </span>
+              <span className="text-xs font-bold text-[#7A2253]">
+                {gigUsage.current} of {gigUsage.max === Infinity ? "Unlimited" : gigUsage.max}
+              </span>
+            </div>
+            <div className="w-full bg-[#f1f5f9] h-2 rounded-[5px] overflow-hidden">
+              <div
+                className="bg-[#7A2253] h-full rounded-[5px] transition-all"
+                style={{ width: `${Math.min(100, gigUsage.percentage || 100)}%` }}
+              />
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Card Body: Active Plan Features & Quota */}
-        <div className="p-5 sm:p-6 space-y-6">
+      {/* ── 4. Choose Your Plan ── */}
+      <div className="space-y-3.5 text-left pt-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748b] block mb-3">
-              Included in Your Active Plan
-            </span>
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
-              <div className="p-3 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] space-y-1">
-                <span className="text-[11px] text-[#64748b] font-medium block">Content Series</span>
-                <span className="font-bold text-[#7A2253] text-sm">
-                  {quota.maxSeries === Infinity ? "Unlimited" : `${quota.maxSeries} Series`}
-                </span>
-              </div>
-              <div className="p-3 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] space-y-1">
-                <span className="text-[11px] text-[#64748b] font-medium block">Shop Products</span>
-                <span className="font-bold text-[#7A2253] text-sm">
-                  {quota.maxProducts === Infinity
-                    ? "Unlimited"
-                    : `${quota.maxProducts} ${quota.maxProducts === 1 ? "Product" : "Products"}`}
-                </span>
-              </div>
-              <div className="p-3 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] space-y-1">
-                <span className="text-[11px] text-[#64748b] font-medium block">Episodes / Series</span>
-                <span className="font-bold text-[#7A2253] text-sm">
-                  {quota.maxEpisodesPerSeries === Infinity
-                    ? "Unlimited"
-                    : `${quota.maxEpisodesPerSeries} Episodes`}
-                </span>
-              </div>
-              <div className="p-3 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] space-y-1">
-                <span className="text-[11px] text-[#64748b] font-medium block">Custom Links</span>
-                <span className="font-bold text-[#7A2253] text-sm">
-                  {quota.maxCustomLinks === Infinity ? "Unlimited" : `${quota.maxCustomLinks} Links`}
-                </span>
-              </div>
-              <div className="p-3 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] space-y-1 col-span-2 sm:col-span-1">
-                <span className="text-[11px] text-[#64748b] font-medium block">Media Kit &amp; Rate Card</span>
-                <span className="font-bold text-[#7A2253] text-sm">
-                  {quota.hasMediaKit && quota.hasRateCard
-                    ? "Full Access ✓"
-                    : quota.hasMediaKit
-                    ? "Media Kit Only"
-                    : "Not Included"}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Real-time Usage Progress Bars */}
-          <div className="space-y-3 pt-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748b] block">
-              Real-Time Quota Usage
-            </span>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              {/* Metric 1: Content Series */}
-              <div className="rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-[#475569] flex items-center gap-1.5">
-                    <Layers className="h-3.5 w-3.5 text-[#7A2253]" />
-                    <span>Series / Playlists</span>
-                  </span>
-                  <span className="text-xs font-bold text-[#7A2253]">
-                    {seriesUsage.current} of {seriesUsage.max === Infinity ? "Unlimited" : seriesUsage.max}
-                  </span>
-                </div>
-                <div className="w-full bg-[#e2e8f0] h-2 rounded-[5px] overflow-hidden">
-                  <div
-                    className="bg-[#7A2253] h-full rounded-[5px] transition-all"
-                    style={{ width: `${Math.min(100, seriesUsage.percentage)}%` }}
-                  />
-                </div>
-                <p className="text-[10px] text-[#64748b] font-medium">
-                  {seriesUsage.max === Infinity
-                    ? "Unlimited series allowed"
-                    : `${Math.max(0, seriesUsage.max - seriesUsage.current)} series slots available`}
-                </p>
-              </div>
-
-              {/* Metric 2: Total Episodes */}
-              <div className="rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-[#475569] flex items-center gap-1.5">
-                    <Film className="h-3.5 w-3.5 text-[#7A2253]" />
-                    <span>Total Episodes</span>
-                  </span>
-                  <span className="text-xs font-bold text-[#7A2253]">
-                    {episodeUsage.current} of {episodeUsage.max === Infinity ? "Unlimited" : episodeUsage.max}
-                  </span>
-                </div>
-                <div className="w-full bg-[#e2e8f0] h-2 rounded-[5px] overflow-hidden">
-                  <div
-                    className="bg-[#7A2253] h-full rounded-[5px] transition-all"
-                    style={{ width: `${Math.min(100, episodeUsage.percentage)}%` }}
-                  />
-                </div>
-                <p className="text-[10px] text-[#64748b] font-medium">
-                  {episodeUsage.max === Infinity
-                    ? "Unlimited episodes allowed"
-                    : `${Math.max(0, episodeUsage.max - episodeUsage.current)} episode links left`}
-                </p>
-              </div>
-
-              {/* Metric 3: Shop Products */}
-              <div className="rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-[#475569] flex items-center gap-1.5">
-                    <ShoppingBag className="h-3.5 w-3.5 text-[#7A2253]" />
-                    <span>Shop Products</span>
-                  </span>
-                  <span className="text-xs font-bold text-[#7A2253]">
-                    {productUsage.current} of {productUsage.max === Infinity ? "Unlimited" : productUsage.max}
-                  </span>
-                </div>
-                <div className="w-full bg-[#e2e8f0] h-2 rounded-[5px] overflow-hidden">
-                  <div
-                    className="bg-[#7A2253] h-full rounded-[5px] transition-all"
-                    style={{ width: `${Math.min(100, productUsage.percentage)}%` }}
-                  />
-                </div>
-                <p className="text-[10px] text-[#64748b] font-medium">
-                  {productUsage.max === Infinity
-                    ? "Unlimited products in shop"
-                    : `${Math.max(0, productUsage.max - productUsage.current)} product slots available`}
-                </p>
-              </div>
-
-              {/* Metric 4: Collab Packages */}
-              <div className="rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-[#475569] flex items-center gap-1.5">
-                    <Briefcase className="h-3.5 w-3.5 text-[#7A2253]" />
-                    <span>Collab Packages</span>
-                  </span>
-                  <span className="text-xs font-bold text-[#7A2253]">
-                    {gigUsage.current} of {gigUsage.max === Infinity ? "Unlimited" : gigUsage.max}
-                  </span>
-                </div>
-                <div className="w-full bg-[#e2e8f0] h-2 rounded-[5px] overflow-hidden">
-                  <div
-                    className="bg-[#7A2253] h-full rounded-[5px] transition-all"
-                    style={{ width: `${Math.min(100, gigUsage.percentage)}%` }}
-                  />
-                </div>
-                <p className="text-[10px] text-[#64748b] font-medium">
-                  {gigUsage.max === Infinity
-                    ? "Unlimited collab packages allowed"
-                    : `${Math.max(0, gigUsage.max - gigUsage.current)} active slots available`}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* 3. PROMINENT ACTION BAR: DO YOU WANT TO UPGRADE & CANCEL BUTTON */}
-          <div className="pt-4 border-t border-[#e2e8f0]">
-            <div className="rounded-[5px] border-2 border-[#7A2253] bg-gradient-to-r from-[#7A2253]/[0.08] via-[#7A2253]/[0.03] to-white p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
-              <div className="space-y-1">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-[#7A2253]">
-                  <Sparkles className="h-4 w-4 text-[#7A2253]" />
-                  <span>Do you want to upgrade your plan?</span>
-                </div>
-                <p className="text-xs sm:text-[13px] text-[#475569] font-medium max-w-xl">
-                  {normalizedKey === "vip"
-                    ? "You are already enjoying our highest VIP Tier! You can switch billing cycles or manage renewals anytime."
-                    : "Need more content series, unlimited links, media kit branding or higher collab limits? Upgrade anytime with instant activation."}
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap shrink-0">
-                {/* Upgrade Button */}
-                {normalizedKey !== "vip" && (
-                  <button
-                    type="button"
-                    onClick={handleScrollToUpgrade}
-                    className="rounded-[5px] bg-[#7A2253] hover:opacity-95 active:scale-[0.99] text-white py-2.5 px-5 text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-[#7A2253]/20"
-                  >
-                    <Sparkles className="h-4 w-4" />
-                    <span>Upgrade Plan</span>
-                    <ArrowUpRight className="h-4 w-4 ml-0.5" />
-                  </button>
-                )}
-
-                {/* Cancel Auto-Renewal Button */}
-                {!isTrial && isAutoRenewActive && (
-                  <button
-                    type="button"
-                    onClick={() => setShowCancelModal(true)}
-                    className="rounded-[5px] py-2 px-3 text-xs font-medium text-[#64748b] underline-offset-2 transition-colors hover:bg-[#fef2f2] hover:text-rose-700 cursor-pointer flex items-center justify-center gap-1.5"
-                  >
-                    <XCircle className="h-3.5 w-3.5" />
-                    <span>Cancel Auto-Renewal</span>
-                  </button>
-                )}
-
-                {/* If already cancelled or trial */}
-                {!isTrial && !isAutoRenewActive && (
-                  <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-2 rounded-[5px] flex items-center gap-1.5">
-                    <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
-                    <span>Auto-renewal cancelled</span>
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. UPGRADE PLANS & FULL PRICING DETAILS SECTION */}
-      <div ref={upgradeSectionRef} id="upgrade-plans-section" className="space-y-4 pt-2">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E4DAD5] pb-3">
-          <div>
-            <h2 className="font-display text-lg sm:text-xl font-bold text-[#181716] flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-[#7A2253]" />
-              <span>Explore &amp; Upgrade Plans</span>
-            </h2>
-            <p className="text-xs text-[#797570] font-medium mt-0.5">
-              Compare features across Starter, Pro, and VIP tiers. All upgrades are applied immediately.
+            <h2 className="text-lg sm:text-xl font-bold text-[#0f172a]">Choose Your Plan</h2>
+            <p className="text-xs text-[#64748b] mt-0.5">
+              Upgrade anytime and unlock more features to grow your audience.
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setShowAllPlans(!showAllPlans)}
-            className="text-xs font-semibold text-[#7A2253] hover:underline self-start sm:self-auto cursor-pointer"
-          >
-            {showAllPlans ? "Hide Plans Table" : "Show Plans Table"}
-          </button>
+          {/* Monthly / Yearly Toggle */}
+          <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-0.5 shadow-2xs flex items-center gap-1 self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={() => setBillingCycle("monthly")}
+              className={`rounded-[5px] px-3.5 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                billingCycle === "monthly"
+                  ? "bg-[#7A2253] text-white shadow-2xs"
+                  : "text-[#64748b] hover:text-[#0f172a]"
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              type="button"
+              onClick={() => setBillingCycle("yearly")}
+              className={`rounded-[5px] px-3 py-1.5 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                billingCycle === "yearly"
+                  ? "bg-[#7A2253] text-white shadow-2xs"
+                  : "text-[#64748b] hover:text-[#0f172a]"
+              }`}
+            >
+              <span>Yearly</span>
+              <span className="rounded-[3px] bg-[#FCE7F3] text-[#7A2253] px-1.5 py-0.5 text-[10px] font-extrabold">
+                Save 20%
+              </span>
+            </button>
+          </div>
         </div>
 
-        {showAllPlans && <PricingTable />}
+        {/* 3 Tier Cards (Responsive Grid) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4.5">
+          {/* Card 1: Starter (Current Plan) */}
+          <div className="rounded-[5px] border-2 border-[#FCE7F3] bg-white p-5 flex flex-col justify-between shadow-2xs relative">
+            <div>
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#FFF5F7] border border-[#FCE7F3] text-[#7A2253] shrink-0">
+                    <Crown className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-[#0f172a]">Starter</h3>
+                    <p className="text-xs text-[#64748b]">For getting started</p>
+                  </div>
+                </div>
+
+                <span className="rounded-[5px] bg-[#EAF7F0] border border-[#10B981]/30 text-[#047857] text-[10px] font-bold px-2 py-0.5 shrink-0">
+                  Current Plan
+                </span>
+              </div>
+
+              {/* Price */}
+              <div className="mt-4 flex items-baseline gap-1">
+                <span className="text-2xl font-bold text-[#0f172a]">
+                  {billingCycle === "yearly" ? "₹999" : "₹99"}
+                </span>
+                <span className="text-xs font-medium text-[#64748b]">
+                  {billingCycle === "yearly" ? "/ year" : "/ month"}
+                </span>
+              </div>
+
+              {/* Bullets */}
+              <ul className="mt-5 space-y-2 text-xs text-[#0f172a]">
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0 stroke-[2.5]" />
+                  <span>3 content series</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0 stroke-[2.5]" />
+                  <span>15 total episodes</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0 stroke-[2.5]" />
+                  <span>1 shop product</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0 stroke-[2.5]" />
+                  <span>5 custom links</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0 stroke-[2.5]" />
+                  <span>1 collab package</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* CTA */}
+            <div className="mt-6">
+              <div className="w-full rounded-[5px] bg-[#FFF5F7] border border-[#FCE7F3] text-[#7A2253] py-2.5 text-xs font-bold flex items-center justify-center gap-1.5 cursor-default">
+                <span>Current Plan</span>
+                <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+              </div>
+            </div>
+          </div>
+
+          {/* Card 2: Pro (Popular) */}
+          <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-5 flex flex-col justify-between shadow-2xs relative hover:border-[#cbd5e1] transition-all">
+            <div>
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#FFF5F7] border border-[#FCE7F3] text-[#7A2253] shrink-0">
+                    <Star className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-[#0f172a]">Pro</h3>
+                    <p className="text-xs text-[#64748b]">For growing creators</p>
+                  </div>
+                </div>
+
+                <span className="rounded-[5px] bg-[#FCE7F3] text-[#7A2253] text-[10px] font-bold px-2 py-0.5 shrink-0">
+                  Popular
+                </span>
+              </div>
+
+              {/* Price */}
+              <div className="mt-4 flex items-baseline gap-1">
+                <span className="text-2xl font-bold text-[#0f172a]">
+                  {billingCycle === "yearly" ? "₹1499" : "₹199"}
+                </span>
+                <span className="text-xs font-medium text-[#64748b]">
+                  {billingCycle === "yearly" ? "/ year" : "/ month"}
+                </span>
+              </div>
+
+              {/* Bullets */}
+              <ul className="mt-5 space-y-2 text-xs text-[#0f172a]">
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0 stroke-[2.5]" />
+                  <span>20 content series</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0 stroke-[2.5]" />
+                  <span>20 episodes per series</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0 stroke-[2.5]" />
+                  <span>20 shop products</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0 stroke-[2.5]" />
+                  <span>20 custom links</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0 stroke-[2.5]" />
+                  <span>3 collab packages</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0 stroke-[2.5]" />
+                  <span>Rate card &amp; media kit</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* CTA */}
+            <div className="mt-6">
+              <RazorpayCheckoutButton
+                amount={getPlanPrice("pro", billingCycle, "INR") * 100}
+                planKey="pro"
+                billingCycle={billingCycle}
+                buttonText="Upgrade to Pro"
+                prefill={{ email: profile.email, name: profile.displayName }}
+                className="w-full rounded-[5px] bg-[#7A2253] hover:bg-[#661842] text-white py-2.5 text-xs font-bold transition-colors shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                icon={<Sparkles className="h-3.5 w-3.5" />}
+                onSuccess={() => handleUpgradeSuccess("pro")}
+              />
+            </div>
+          </div>
+
+          {/* Card 3: VIP */}
+          <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-5 flex flex-col justify-between shadow-2xs relative hover:border-[#cbd5e1] transition-all">
+            <div>
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#FFF5F7] border border-[#FCE7F3] text-[#7A2253] shrink-0">
+                    <Gem className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-[#0f172a]">VIP</h3>
+                    <p className="text-xs text-[#64748b]">For professional creators</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Price */}
+              <div className="mt-4 flex items-baseline gap-1">
+                <span className="text-2xl font-bold text-[#0f172a]">
+                  {billingCycle === "yearly" ? "₹2499" : "₹399"}
+                </span>
+                <span className="text-xs font-medium text-[#64748b]">
+                  {billingCycle === "yearly" ? "/ year" : "/ month"}
+                </span>
+              </div>
+
+              {/* Bullets */}
+              <ul className="mt-5 space-y-2 text-xs text-[#0f172a]">
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0 stroke-[2.5]" />
+                  <span>Unlimited series &amp; episodes</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0 stroke-[2.5]" />
+                  <span>Unlimited shop products</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0 stroke-[2.5]" />
+                  <span>Unlimited custom links</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0 stroke-[2.5]" />
+                  <span>10 collab packages</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0 stroke-[2.5]" />
+                  <span>Custom media kit</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0 stroke-[2.5]" />
+                  <span>Priority support</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* CTA */}
+            <div className="mt-6">
+              <RazorpayCheckoutButton
+                amount={getPlanPrice("vip", billingCycle, "INR") * 100}
+                planKey="vip"
+                billingCycle={billingCycle}
+                buttonText="Upgrade to VIP"
+                prefill={{ email: profile.email, name: profile.displayName }}
+                className="w-full rounded-[5px] bg-[#7A2253] hover:bg-[#661842] text-white py-2.5 text-xs font-bold transition-colors shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                icon={<Sparkles className="h-3.5 w-3.5" />}
+                onSuccess={() => handleUpgradeSuccess("vip")}
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* 5. CANCEL SUBSCRIPTION CONFIRMATION MODAL */}
+      {/* ── 5. Compare Plans (Responsive Table) ── */}
+      <div className="space-y-3 text-left pt-3">
+        <div>
+          <h2 className="text-lg sm:text-xl font-bold text-[#0f172a]">Compare Plans</h2>
+          <p className="text-xs text-[#64748b] mt-0.5">
+            A quick comparison to help you choose the right plan.
+          </p>
+        </div>
+
+        <div className="rounded-[5px] border border-[#e2e8f0] bg-white shadow-2xs overflow-hidden">
+          <div className="w-full overflow-x-auto">
+            <table className="w-full min-w-[550px] text-left text-xs">
+              <thead className="bg-[#f8fafc]/80 border-b border-[#e2e8f0]">
+                <tr>
+                  <th className="py-3 px-4 font-bold text-[#0f172a] w-2/5">Feature</th>
+                  <th className="py-3 px-4 font-bold text-[#0f172a] text-center w-1/5">
+                    <div>Starter</div>
+                    <div className="text-[11px] font-normal text-[#64748b] mt-0.5">₹99/mo</div>
+                  </th>
+                  <th className="py-3 px-4 font-bold text-[#0f172a] text-center w-1/5">
+                    <div>Pro</div>
+                    <div className="text-[11px] font-normal text-[#64748b] mt-0.5">₹199/mo</div>
+                  </th>
+                  <th className="py-3 px-4 font-bold text-[#0f172a] text-center w-1/5">
+                    <div>VIP</div>
+                    <div className="text-[11px] font-normal text-[#64748b] mt-0.5">₹399/mo</div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#e2e8f0]">
+                {/* 1. Content Series */}
+                <tr className="hover:bg-[#f8fafc]/50 transition-colors">
+                  <td className="py-3 px-4 font-medium text-[#0f172a] flex items-center gap-2.5">
+                    <Layers className="h-4 w-4 text-[#7A2253]" />
+                    <span>Content Series</span>
+                  </td>
+                  <td className="py-3 px-4 text-center font-semibold text-[#64748b]">3</td>
+                  <td className="py-3 px-4 text-center font-semibold text-[#64748b]">20</td>
+                  <td className="py-3 px-4 text-center font-bold text-[#7A2253]">Unlimited</td>
+                </tr>
+
+                {/* 2. Total Episodes */}
+                <tr className="hover:bg-[#f8fafc]/50 transition-colors">
+                  <td className="py-3 px-4 font-medium text-[#0f172a] flex items-center gap-2.5">
+                    <Film className="h-4 w-4 text-[#7A2253]" />
+                    <span>Total Episodes</span>
+                  </td>
+                  <td className="py-3 px-4 text-center font-semibold text-[#64748b]">15</td>
+                  <td className="py-3 px-4 text-center font-semibold text-[#64748b]">20 per series</td>
+                  <td className="py-3 px-4 text-center font-bold text-[#7A2253]">Unlimited</td>
+                </tr>
+
+                {/* 3. Shop Products */}
+                <tr className="hover:bg-[#f8fafc]/50 transition-colors">
+                  <td className="py-3 px-4 font-medium text-[#0f172a] flex items-center gap-2.5">
+                    <ShoppingBag className="h-4 w-4 text-[#7A2253]" />
+                    <span>Shop Products</span>
+                  </td>
+                  <td className="py-3 px-4 text-center font-semibold text-[#64748b]">1</td>
+                  <td className="py-3 px-4 text-center font-semibold text-[#64748b]">20</td>
+                  <td className="py-3 px-4 text-center font-bold text-[#7A2253]">Unlimited</td>
+                </tr>
+
+                {/* 4. Custom Links */}
+                <tr className="hover:bg-[#f8fafc]/50 transition-colors">
+                  <td className="py-3 px-4 font-medium text-[#0f172a] flex items-center gap-2.5">
+                    <Link2 className="h-4 w-4 text-[#7A2253]" />
+                    <span>Custom Links</span>
+                  </td>
+                  <td className="py-3 px-4 text-center font-semibold text-[#64748b]">5</td>
+                  <td className="py-3 px-4 text-center font-semibold text-[#64748b]">20</td>
+                  <td className="py-3 px-4 text-center font-bold text-[#7A2253]">Unlimited</td>
+                </tr>
+
+                {/* 5. Collab Packages */}
+                <tr className="hover:bg-[#f8fafc]/50 transition-colors">
+                  <td className="py-3 px-4 font-medium text-[#0f172a] flex items-center gap-2.5">
+                    <Briefcase className="h-4 w-4 text-[#7A2253]" />
+                    <span>Collab Packages</span>
+                  </td>
+                  <td className="py-3 px-4 text-center font-semibold text-[#64748b]">1</td>
+                  <td className="py-3 px-4 text-center font-semibold text-[#64748b]">3</td>
+                  <td className="py-3 px-4 text-center font-semibold text-[#64748b]">10</td>
+                </tr>
+
+                {/* 6. Rate Card & Media Kit */}
+                <tr className="hover:bg-[#f8fafc]/50 transition-colors">
+                  <td className="py-3 px-4 font-medium text-[#0f172a] flex items-center gap-2.5">
+                    <FileText className="h-4 w-4 text-[#7A2253]" />
+                    <span>Rate Card &amp; Media Kit</span>
+                  </td>
+                  <td className="py-3 px-4 text-center text-[#94a3b8]">一</td>
+                  <td className="py-3 px-4 text-center">
+                    <Check className="h-4 w-4 text-[#7A2253] mx-auto stroke-[2.5]" />
+                  </td>
+                  <td className="py-3 px-4 text-center">
+                    <Check className="h-4 w-4 text-[#7A2253] mx-auto stroke-[2.5]" />
+                  </td>
+                </tr>
+
+                {/* 7. Priority Support */}
+                <tr className="hover:bg-[#f8fafc]/50 transition-colors">
+                  <td className="py-3 px-4 font-medium text-[#0f172a] flex items-center gap-2.5">
+                    <Sparkles className="h-4 w-4 text-[#7A2253]" />
+                    <span>Priority Support</span>
+                  </td>
+                  <td className="py-3 px-4 text-center text-[#94a3b8]">一</td>
+                  <td className="py-3 px-4 text-center text-[#94a3b8]">一</td>
+                  <td className="py-3 px-4 text-center">
+                    <Check className="h-4 w-4 text-[#7A2253] mx-auto stroke-[2.5]" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* ── 6. Cancel Auto-Renewal Button ── */}
+      {isAutoRenewActive && (
+        <div className="pt-2 text-center sm:text-right">
+          <button
+            type="button"
+            onClick={() => setShowCancelModal(true)}
+            className="text-xs font-semibold text-[#64748b] hover:text-rose-600 underline underline-offset-4 cursor-pointer transition-colors"
+          >
+            Cancel auto-renewal
+          </button>
+        </div>
+      )}
+
+      {/* ── 7. Cancel Auto-Renewal Confirmation Modal ── */}
       {showCancelModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md rounded-[5px] border border-[#E4DAD5] bg-white p-6 shadow-2xl space-y-4 text-left">
+          <div className="relative w-full max-w-md rounded-[5px] border border-[#e2e8f0] bg-white p-6 shadow-2xl space-y-4 text-left">
             <button
               type="button"
               onClick={() => setShowCancelModal(false)}
-              className="absolute top-4 right-4 text-[#64748b] hover:text-[#181716] p-1 rounded-[5px]"
+              className="absolute top-4 right-4 text-[#64748b] hover:text-[#0f172a] p-1 rounded-[5px]"
             >
               <X className="h-4 w-4" />
             </button>
 
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-[5px] bg-rose-100 flex items-center justify-center text-rose-600 shrink-0">
-                <AlertTriangle className="h-5 w-5" />
+                <XCircle className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-display text-base font-bold text-[#181716]">
+                <h3 className="font-display text-base font-bold text-[#0f172a]">
                   Cancel Auto-Renewal?
                 </h3>
                 <p className="text-xs text-[#64748b]">
@@ -623,7 +764,7 @@ export default function DashboardSubscriptionPage() {
                 type="button"
                 onClick={() => setShowCancelModal(false)}
                 disabled={isCancelling}
-                className="rounded-[5px] border border-[#E4DAD5] bg-white hover:bg-[#fbfbfb] px-4 py-2 text-xs font-semibold text-[#181716] cursor-pointer"
+                className="rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#fbfbfb] px-4 py-2 text-xs font-semibold text-[#0f172a] cursor-pointer"
               >
                 Keep My Subscription
               </button>
