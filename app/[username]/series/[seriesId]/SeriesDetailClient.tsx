@@ -341,6 +341,14 @@ export function SeriesDetailClient({
           seriesId: series?.id,
           episodeId,
           url: ep.externalUrl,
+          metadata: {
+            seriesId: currentSeriesId,
+            seriesTitle: series?.title,
+            episodeId,
+            episodeTitle: ep.title,
+            episodeNumber: ep.episodeNumber,
+            url: ep.externalUrl,
+          },
         }),
       }).catch(() => { });
     } catch { }

@@ -11,6 +11,7 @@ import {
   Link2,
   MousePointerClick,
   RefreshCw,
+  Tv,
   Users,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
@@ -20,6 +21,11 @@ type AnalyticsTarget = {
   event_type: string;
   event_target: string | null;
   clicks: number;
+  series_title?: string | null;
+  episode_title?: string | null;
+  episode_number?: number | null;
+  display_title?: string | null;
+  display_subtitle?: string | null;
 };
 
 type AnalyticsState = {
@@ -43,7 +49,7 @@ const EMPTY_ANALYTICS: AnalyticsState = {
 };
 
 export default function DashboardAnalyticsPage() {
-  const { profile } = useCreator();
+  const { profile, series: creatorSeries } = useCreator();
   const [analytics, setAnalytics] = useState<AnalyticsState>(EMPTY_ANALYTICS);
   const [period, setPeriod] = useState<"7d" | "30d">("7d");
 
@@ -95,6 +101,106 @@ export default function DashboardAnalyticsPage() {
   }, [period, query]);
 
   const handleStr = profile.username || "username";
+
+  const resolveTargetInfo = (item: AnalyticsTarget) => {
+    // If backend provided clean title (and not equal to raw ID), use it!
+    if (item.display_title && item.display_title !== item.event_target) {
+      return {
+        title: item.display_title,
+        subtitle:
+          item.display_subtitle ||
+          (item.event_type === "episode_click" ? "Series episode link" : "Profile target"),
+        isSeries: item.event_type === "episode_click" || Boolean(item.series_title),
+      };
+    }
+
+    const raw = String(item.event_target || "").trim();
+    if (
+      item.event_type === "episode_click" ||
+      raw.includes("series_") ||
+      raw.includes("ep_")
+    ) {
+      let sId = "";
+      let epId = "";
+      if (raw.includes(":")) {
+        const parts = raw.split(":");
+        sId = parts[0] || "";
+        epId = parts[1] || "";
+      } else if (raw.startsWith("series_")) {
+        sId = raw;
+      } else if (raw.startsWith("ep_")) {
+        epId = raw;
+      }
+
+      const matchedSeries = creatorSeries?.find((s) => s.id === sId);
+      const allEpisodes =
+        matchedSeries?.seasons?.flatMap((sea) => sea.episodes || []) ||
+        ((matchedSeries as any)?.episodes as any[] | undefined) ||
+        [];
+      let matchedEpisode = allEpisodes.find((e: any) => e.id === epId);
+
+      if (!matchedEpisode && epId && creatorSeries) {
+        for (const s of creatorSeries) {
+          const sEps =
+            s.seasons?.flatMap((sea) => sea.episodes || []) ||
+            ((s as any)?.episodes as any[] | undefined) ||
+            [];
+          const ep = sEps.find((e: any) => e.id === epId);
+          if (ep) {
+            matchedEpisode = ep;
+            break;
+          }
+        }
+      }
+
+      if (matchedSeries && matchedEpisode) {
+        return {
+          title: matchedSeries.title,
+          subtitle: `Episode ${matchedEpisode.episodeNumber || 1}: ${matchedEpisode.title}`,
+          isSeries: true,
+        };
+      }
+      if (matchedSeries) {
+        return {
+          title: matchedSeries.title,
+          subtitle: "Series link",
+          isSeries: true,
+        };
+      }
+      if (matchedEpisode) {
+        return {
+          title: matchedEpisode.title,
+          subtitle: `Episode ${matchedEpisode.episodeNumber || 1}`,
+          isSeries: true,
+        };
+      }
+      return {
+        title: item.series_title || "Series Episode",
+        subtitle: "Series episode link",
+        isSeries: true,
+      };
+    }
+
+    if (item.event_type === "social_click") {
+      let name = "Social profile link";
+      if (raw.includes("instagram.com")) name = "Instagram";
+      else if (raw.includes("youtube.com")) name = "YouTube";
+      else if (raw.includes("twitter.com") || raw.includes("x.com")) name = "X (Twitter)";
+      return {
+        title: name,
+        subtitle: raw || "Social link",
+        isSeries: false,
+      };
+    }
+
+    return {
+      title: item.display_title || item.event_target || "Profile link",
+      subtitle:
+        item.display_subtitle ||
+        (item.event_type === "link_click" ? "Custom bio link" : "Profile target"),
+      isSeries: false,
+    };
+  };
 
   return (
     <div className="space-y-4 sm:space-y-5 w-full pb-8 text-left">
@@ -206,14 +312,7 @@ export default function DashboardAnalyticsPage() {
         ) : (
           <div className="divide-y divide-[#e2e8f0]">
             {analytics.topTargets.slice(0, 10).map((item, index) => {
-              const label =
-                item.event_type === "episode_click"
-                  ? "Series episode link"
-                  : item.event_type === "social_click"
-                  ? "Social profile link"
-                  : item.event_type === "link_click"
-                  ? "Custom bio link"
-                  : "Profile target";
+              const info = resolveTargetInfo(item);
 
               return (
                 <div
@@ -222,13 +321,17 @@ export default function DashboardAnalyticsPage() {
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF5F7] border border-[#FCE7F3] text-[#7A2253] shadow-2xs">
-                      <Link2 className="h-4 w-4" />
+                      {info.isSeries ? (
+                        <Tv className="h-4 w-4" />
+                      ) : (
+                        <Link2 className="h-4 w-4" />
+                      )}
                     </div>
                     <div className="min-w-0">
                       <p className="truncate text-xs sm:text-sm font-bold text-[#0f172a]">
-                        {item.event_target || "Profile link"}
+                        {info.title}
                       </p>
-                      <p className="text-xs text-[#64748b] mt-0.5">{label}</p>
+                      <p className="truncate text-xs text-[#64748b] mt-0.5">{info.subtitle}</p>
                     </div>
                   </div>
 

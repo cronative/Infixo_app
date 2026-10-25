@@ -84,9 +84,98 @@ export async function GET(req: Request) {
        WHERE creator_id = ? AND event_target IS NOT NULL AND created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
        GROUP BY event_type, event_target
        ORDER BY clicks DESC
-       LIMIT 8`,
+       LIMIT 10`,
       [targetId, days]
     );
+
+    // Fetch series and episodes for this creator to enrich targets
+    const [seriesList]: any = await db.query(
+      `SELECT id, title FROM series WHERE creator_id = ?`,
+      [targetId]
+    );
+    const [episodesList]: any = await db.query(
+      `SELECT e.id, e.series_id, e.episode_number, e.title, s.title as series_title
+       FROM episodes e
+       INNER JOIN series s ON e.series_id = s.id
+       WHERE s.creator_id = ?`,
+      [targetId]
+    );
+
+    const seriesMap = new Map<string, string>();
+    (seriesList || []).forEach((s: any) => {
+      seriesMap.set(String(s.id), s.title);
+    });
+
+    const episodeMap = new Map<string, { id: string; seriesId: string; episodeNumber: number; title: string; seriesTitle: string }>();
+    (episodesList || []).forEach((e: any) => {
+      episodeMap.set(String(e.id), {
+        id: e.id,
+        seriesId: e.series_id,
+        episodeNumber: Number(e.episode_number || 1),
+        title: e.title,
+        seriesTitle: e.series_title || seriesMap.get(String(e.series_id)) || "Series",
+      });
+    });
+
+    const enrichedTargets = (topTargets || []).map((target: any) => {
+      const rawTarget = String(target.event_target || "").trim();
+      let seriesTitle: string | null = null;
+      let episodeTitle: string | null = null;
+      let episodeNumber: number | null = null;
+      let displayTitle = rawTarget;
+      let displaySubtitle: string | null = null;
+
+      if (target.event_type === "episode_click" || rawTarget.includes("series_") || rawTarget.includes("ep_")) {
+        let sId = "";
+        let epId = "";
+        if (rawTarget.includes(":")) {
+          const parts = rawTarget.split(":");
+          sId = parts[0] || "";
+          epId = parts[1] || "";
+        } else if (rawTarget.startsWith("series_")) {
+          sId = rawTarget;
+        } else if (rawTarget.startsWith("ep_")) {
+          epId = rawTarget;
+        }
+
+        const epInfo = epId ? episodeMap.get(epId) : null;
+        if (epInfo) {
+          seriesTitle = epInfo.seriesTitle;
+          episodeTitle = epInfo.title;
+          episodeNumber = epInfo.episodeNumber;
+        } else if (sId && seriesMap.has(sId)) {
+          seriesTitle = seriesMap.get(sId) || null;
+        }
+
+        if (seriesTitle && episodeTitle) {
+          displayTitle = seriesTitle;
+          displaySubtitle = `Episode ${episodeNumber || 1}: ${episodeTitle}`;
+        } else if (seriesTitle) {
+          displayTitle = seriesTitle;
+          displaySubtitle = "Series link";
+        } else if (episodeTitle) {
+          displayTitle = episodeTitle;
+          displaySubtitle = `Episode ${episodeNumber || 1}`;
+        }
+      } else if (target.event_type === "social_click") {
+        displaySubtitle = "Social profile link";
+        if (rawTarget.includes("instagram.com")) displayTitle = "Instagram";
+        else if (rawTarget.includes("youtube.com")) displayTitle = "YouTube";
+        else if (rawTarget.includes("twitter.com") || rawTarget.includes("x.com")) displayTitle = "X (Twitter)";
+        else if (rawTarget.includes("facebook.com")) displayTitle = "Facebook";
+      } else if (target.event_type === "link_click") {
+        displaySubtitle = "Custom bio link";
+      }
+
+      return {
+        ...target,
+        series_title: seriesTitle,
+        episode_title: episodeTitle,
+        episode_number: episodeNumber,
+        display_title: displayTitle,
+        display_subtitle: displaySubtitle,
+      };
+    });
 
     const metrics = {
       profileViews: counts["profile_view"]?.total || 0,
@@ -111,7 +200,7 @@ export async function GET(req: Request) {
       days,
       metrics,
       dailyTrend: dailyTrend || [],
-      topTargets: topTargets || [],
+      topTargets: enrichedTargets || topTargets || [],
     }, "Analytics retrieved successfully");
   } catch (err: any) {
     console.error("GET analytics error:", err);
