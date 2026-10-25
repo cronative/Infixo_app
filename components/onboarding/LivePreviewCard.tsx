@@ -53,6 +53,7 @@ import {
   Clapperboard,
   Crown,
   Rocket,
+  Compass,
 } from "lucide-react";
 import {
   CreatorProfile,
@@ -890,7 +891,17 @@ export interface LivePreviewCardProps {
   initialTab?: CreatorNavTabId;
 }
 
-export type CreatorNavTabId = "about" | "series" | "fanbase" | "links" | "shop" | "reviews" | "work" | "setup";
+export type CreatorNavTabId =
+  | "about"
+  | "watch"
+  | "explore"
+  | "work"
+  | "series"
+  | "fanbase"
+  | "links"
+  | "shop"
+  | "reviews"
+  | "setup";
 
 function getSeriesEpisodes(s: Series): any[] {
   if (s && Array.isArray(s.seasons) && s.seasons.length > 0) {
@@ -1171,13 +1182,21 @@ export function LivePreviewCard({
   const [selectedSeriesDetail, setSelectedSeriesDetail] = useState<Series | null>(null);
   const [selectedSeriesSeasonIdx, setSelectedSeriesSeasonIdx] = useState<number>(0);
   const [activeNavTab, setActiveNavTab] = useState<CreatorNavTabId>(() => {
-    if (initialTab === "fanbase") return "about";
-    if (initialTab && ["about", "series", "links", "shop", "reviews", "work", "setup"].includes(initialTab)) {
-      return initialTab;
-    }
-    if (series && series.length > 0) return "series";
+    const raw = initialTab;
+    const normalized =
+      raw === "series" || raw === "watch" ? "watch" :
+      raw === "links" || raw === "shop" || raw === "setup" || raw === "explore" ? "explore" :
+      raw === "reviews" || raw === "work" ? "work" :
+      raw === "fanbase" || raw === "about" ? "about" :
+      undefined;
+
+    if (normalized) return normalized;
+
+    if (series && series.length > 0) return "watch";
     const passedLinks = passedCustomLinks || [];
-    if (passedLinks.length > 0 || (incomingProfile as any)?.username === "demo_creator") return "links";
+    if (passedLinks.length > 0 || (products && products.length > 0) || (incomingProfile as any)?.username === "demo_creator") {
+      return "explore";
+    }
     return "about";
   });
   const [isBioExpanded, setIsBioExpanded] = useState(false);
@@ -1803,37 +1822,60 @@ export function LivePreviewCard({
 
   const isListingPage = Boolean(seriesOnlyMode || productsOnlyMode || reviewsOnlyMode);
 
-  const hasSeriesTab = !isListingPage && effectiveVisibilitySettings.showSeries !== false && series.length > 0;
-  const hasLinksTab = !isListingPage && (safeProfile.username === "demo_creator" || (effectiveVisibilitySettings.showCustomLinks !== false && validLinksCount > 0));
-  const hasShopTab = !isListingPage && (products && products.length > 0);
+  const hasSeriesContent = !isListingPage && effectiveVisibilitySettings.showSeries !== false && series.length > 0;
+  const hasLinksContent = !isListingPage && (safeProfile.username === "demo_creator" || (effectiveVisibilitySettings.showCustomLinks !== false && validLinksCount > 0));
+  const hasShopContent = !isListingPage && (products && products.length > 0);
+  const validSetupList = (setupList || []).filter((it) => it.isActive !== false);
+  const hasSetupContent = !isListingPage && validSetupList.length > 0;
 
   const navWhatsappNum = mediaKitSettings?.whatsappNumber?.trim() || (profile as any).whatsappNumber?.trim() || "";
   const navContactEmail = mediaKitSettings?.sponsorEmail?.trim() || profile.email?.trim() || "";
   const navActivePackages = (mediaKitPackages || []).filter((p) => p.isActive);
-  const hasWorkTab = !isListingPage && effectiveVisibilitySettings.showCollabGigs !== false && (Boolean(navWhatsappNum) || Boolean(navContactEmail) || navActivePackages.length > 0);
+  const hasWorkCollab = !isListingPage && effectiveVisibilitySettings.showCollabGigs !== false && (Boolean(navWhatsappNum) || Boolean(navContactEmail) || navActivePackages.length > 0);
+  const hasReviewsContent = !isListingPage && effectiveVisibilitySettings.showReviews !== false && approvedReviews.length > 0;
+  const hasTeamContent = !isListingPage && activeTeamMembers.length > 0;
 
-  const hasReviewsTab = !isListingPage && effectiveVisibilitySettings.showReviews !== false && approvedReviews.length > 0;
-
-  const validSetupList = (setupList || []).filter((it) => it.isActive !== false);
-  const hasSetupTab = !isListingPage && validSetupList.length > 0;
   const hasFanbaseTab = !isListingPage && effectiveVisibilitySettings.showFanbase !== false && (totalAudience > 0 || fanbaseSocialCards.length > 0);
   const hasAboutTab = !isListingPage && (Boolean(profile.bio?.trim()) || hasFanbaseTab);
+  const hasWatchTab = hasSeriesContent;
+  const hasExploreTab = hasLinksContent || hasShopContent || hasSetupContent;
+  const hasWorkTab = hasWorkCollab || hasReviewsContent || hasTeamContent;
+
+  const aboutTabObj = { id: "about" as CreatorNavTabId, label: "About", icon: User, count: totalAudience > 0 ? formatCount(totalAudience) : undefined };
+  const watchTabObj = { id: "watch" as CreatorNavTabId, label: "Watch", icon: Film, count: series.length > 0 ? series.length : undefined };
+  const exploreTabObj = {
+    id: "explore" as CreatorNavTabId,
+    label: "Explore",
+    icon: Compass,
+    count: (validLinksCount + (products?.length || 0) + validSetupList.length) > 0
+      ? (validLinksCount + (products?.length || 0) + validSetupList.length)
+      : undefined,
+  };
+  const workTabObj = {
+    id: "work" as CreatorNavTabId,
+    label: "Work",
+    icon: Briefcase,
+    count: (navActivePackages.length + approvedReviews.length) > 0
+      ? (navActivePackages.length + approvedReviews.length)
+      : undefined,
+  };
 
   const navTabs: { id: CreatorNavTabId; label: string; icon: any; count?: number | string }[] = [];
-  if (hasSeriesTab) {
-    navTabs.push({ id: "series", label: "Series", icon: Film, count: series.length });
-    if (hasLinksTab) navTabs.push({ id: "links", label: "My Links", icon: LinkIcon, count: validLinksCount });
-    if (hasAboutTab) navTabs.push({ id: "about", label: "About", icon: User, count: totalAudience > 0 ? formatCount(totalAudience) : undefined });
-  } else if (hasLinksTab) {
-    navTabs.push({ id: "links", label: "My Links", icon: LinkIcon, count: validLinksCount });
-    if (hasAboutTab) navTabs.push({ id: "about", label: "About", icon: User, count: totalAudience > 0 ? formatCount(totalAudience) : undefined });
+  if (hasWatchTab) {
+    navTabs.push(watchTabObj);
+    if (hasExploreTab) navTabs.push(exploreTabObj);
+    if (hasAboutTab) navTabs.push(aboutTabObj);
+    if (hasWorkTab) navTabs.push(workTabObj);
+  } else if (hasExploreTab) {
+    navTabs.push(exploreTabObj);
+    if (hasAboutTab) navTabs.push(aboutTabObj);
+    if (hasWorkTab) navTabs.push(workTabObj);
   } else if (hasAboutTab) {
-    navTabs.push({ id: "about", label: "About", icon: User, count: totalAudience > 0 ? formatCount(totalAudience) : undefined });
+    navTabs.push(aboutTabObj);
+    if (hasWorkTab) navTabs.push(workTabObj);
+  } else if (hasWorkTab) {
+    navTabs.push(workTabObj);
   }
-  if (hasShopTab) navTabs.push({ id: "shop", label: "My Shop", icon: ShoppingBag, count: products?.length || 0 });
-  if (hasReviewsTab) navTabs.push({ id: "reviews", label: "Reviews", icon: Star, count: approvedReviews.length });
-  if (hasWorkTab) navTabs.push({ id: "work", label: "Work", icon: Briefcase, count: navActivePackages.length > 0 ? navActivePackages.length : undefined });
-  if (hasSetupTab) navTabs.push({ id: "setup", label: "Setup", icon: Laptop, count: validSetupList.length });
 
   const isTabsLayout = layoutMode !== "stacked" && !isListingPage && navTabs.length >= 1;
 
@@ -1865,7 +1907,13 @@ export function LivePreviewCard({
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
       const tabParam = urlParams.get("tab") as CreatorNavTabId | null;
-      const normalizedTab = tabParam === "fanbase" ? "about" : tabParam;
+      const normalizedTab: CreatorNavTabId | null =
+        tabParam === "fanbase" || tabParam === "about" ? "about" :
+        tabParam === "series" || tabParam === "watch" ? "watch" :
+        tabParam === "links" || tabParam === "shop" || tabParam === "setup" || tabParam === "explore" ? "explore" :
+        tabParam === "reviews" || tabParam === "work" ? "work" :
+        tabParam;
+
       if (normalizedTab && navTabs.some((t) => t.id === normalizedTab)) {
         setActiveNavTab(normalizedTab);
         return;
@@ -2602,7 +2650,7 @@ export function LivePreviewCard({
         )}
 
         {/* 3. Links Section */}
-        {!isListingPage && (!isTabsLayout || activeNavTab === "links") && (safeProfile.username === "demo_creator" || (effectiveVisibilitySettings.showCustomLinks !== false && customLinksList && customLinksList.filter((l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url)))).length > 0)) && (
+        {!isListingPage && (!isTabsLayout || activeNavTab === "explore" || activeNavTab === "links") && (safeProfile.username === "demo_creator" || (effectiveVisibilitySettings.showCustomLinks !== false && customLinksList && customLinksList.filter((l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url)))).length > 0)) && (
           <div id="links-section" className={`relative z-10 order-[5] w-full text-left animate-fade-in ${isTabsLayout ? "mt-2.5 sm:mt-3" : "mt-5 sm:mt-6 space-y-2"}`}>
             {/* Header: My Links + Subtitle (clean, compact) */}
             <div className="pb-1.5 sm:pb-2">
@@ -2767,7 +2815,7 @@ export function LivePreviewCard({
         )}
 
         {/* 4. Series Section */}
-        {(seriesOnlyMode || (!isListingPage && (!isTabsLayout || activeNavTab === "series"))) && effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || seriesOnlyMode) && (
+        {(seriesOnlyMode || (!isListingPage && (!isTabsLayout || activeNavTab === "watch" || activeNavTab === "series"))) && effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || seriesOnlyMode) && (
           <div id="series-section" className={`relative z-10 order-[10] w-full text-left animate-fade-in ${seriesOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7 space-y-2.5"}`}>
             {!seriesOnlyMode && (
               <div className="pb-1">
@@ -3063,7 +3111,7 @@ export function LivePreviewCard({
         )}
 
         {/* Shop / Products Section */}
-        {(productsOnlyMode || (!isListingPage && (!isTabsLayout || activeNavTab === "shop"))) && ((products && products.length > 0) || productsOnlyMode) && (
+        {(productsOnlyMode || (!isListingPage && (!isTabsLayout || activeNavTab === "explore" || activeNavTab === "shop"))) && ((products && products.length > 0) || productsOnlyMode) && (
           <section id="shop-section" aria-label="Shop" className={`relative z-10 order-[15] w-full text-left animate-fade-in ${productsOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7 space-y-2.5"}`}>
             {!productsOnlyMode && (
               <div className="pb-1">
@@ -3242,8 +3290,8 @@ export function LivePreviewCard({
         )}
 
         {/* 5. Creator Team */}
-        {!isListingPage && (!isTabsLayout ? true : activeNavTab === "work") && activeTeamMembers.length > 0 && (
-          <div id="team-section" className={`relative z-10 order-[20] w-full text-left animate-fade-in ${isTabsLayout ? "mt-3 sm:mt-3.5 space-y-2" : "mt-6 sm:mt-7 space-y-2.5"}`}>
+        {!isListingPage && (!isTabsLayout ? true : (activeNavTab === "work" || activeNavTab === "reviews")) && activeTeamMembers.length > 0 && (
+          <div id="team-section" className={`relative z-10 order-[25] w-full text-left animate-fade-in ${isTabsLayout ? "mt-3 sm:mt-3.5 space-y-2" : "mt-6 sm:mt-7 space-y-2.5"}`}>
             <div>
               <div className="flex items-center justify-between gap-3 px-0.5">
                 <h2
@@ -3359,7 +3407,7 @@ export function LivePreviewCard({
           if (!hasWhatsApp && !hasEmail && activePackages.length === 0) return null;
 
           return (
-            <div id="work-with-me-section" className={`relative z-10 order-[40] w-full text-left animate-fade-in ${isTabsLayout ? "mt-3 sm:mt-3.5 space-y-3.5" : "mt-6 sm:mt-7 space-y-4"}`}>
+            <div id="work-with-me-section" className={`relative z-10 order-[20] w-full text-left animate-fade-in ${isTabsLayout ? "mt-3 sm:mt-3.5 space-y-3.5" : "mt-6 sm:mt-7 space-y-4"}`}>
               {/* Work Header with Shopping Bag Icon and Title */}
               <div className="flex items-center gap-3 px-0.5">
                 <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-[5px] bg-pink-50/80 dark:bg-white/[0.05] border border-pink-200/60 dark:border-white/10 text-[#7A2253] dark:text-pink-400">
@@ -3514,7 +3562,7 @@ export function LivePreviewCard({
         })()}
 
         {/* 6. Reviews (Compact, only when reviews exist, or when reviewsOnlyMode is true) */}
-        {(reviewsOnlyMode || (!isListingPage && (!isTabsLayout || activeNavTab === "reviews"))) && effectiveVisibilitySettings.showReviews !== false && (approvedReviews.length > 0 || reviewsOnlyMode) && (
+        {(reviewsOnlyMode || (!isListingPage && (!isTabsLayout || activeNavTab === "work" || activeNavTab === "reviews"))) && effectiveVisibilitySettings.showReviews !== false && (approvedReviews.length > 0 || reviewsOnlyMode) && (
           <div id="reviews-section" className={`relative z-10 order-[30] w-full text-left animate-fade-in ${reviewsOnlyMode ? "mt-1.5 sm:mt-2 space-y-2" : isTabsLayout ? "mt-3 sm:mt-3.5 space-y-2" : "mt-6 sm:mt-7 space-y-2.5"}`}>
             {!reviewsOnlyMode && (
               <div>
@@ -3650,7 +3698,7 @@ export function LivePreviewCard({
         )}
 
         {/* 7. Setup & Gear Section */}
-        {!isListingPage && (!isTabsLayout || activeNavTab === "setup") && setupList && setupList.filter((it) => it.isActive !== false).length > 0 && (
+        {!isListingPage && (!isTabsLayout || activeNavTab === "explore" || activeNavTab === "setup") && setupList && setupList.filter((it) => it.isActive !== false).length > 0 && (
           <div id="setup-section" className={`relative z-10 order-[45] w-full text-left animate-fade-in ${isTabsLayout ? "mt-3 sm:mt-3.5 space-y-2" : "mt-6 sm:mt-7 space-y-2.5"}`}>
             <div>
               <div className="flex items-center justify-between px-0.5">
