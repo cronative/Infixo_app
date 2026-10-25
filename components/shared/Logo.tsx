@@ -106,7 +106,8 @@ export function Logo({
   orientation = "horizontal",
   showText = true,
   className = "",
-  casing = "uppercase",
+  casing = "title",
+  showTagline = true,
 }: {
   size?: "sm" | "md" | "lg" | "xl";
   href?: string;
@@ -117,6 +118,7 @@ export function Logo({
   showText?: boolean;
   className?: string;
   casing?: "uppercase" | "title";
+  showTagline?: boolean;
 }) {
   const router = useRouter();
 
@@ -270,25 +272,54 @@ export function Logo({
       </div>
 
       {/* =====================================================
-          BRAND NAME
+          BRAND NAME & TAGLINE
          ===================================================== */}
       {showText && (
-        <span
+        <div
           className={`
-            font-[family-name:var(--font-plus-jakarta)]
-            ${textSize}
-            font-black
-            ${casing === "uppercase" ? "uppercase tracking-[0.05em]" : "tracking-tight"}
-            leading-none
-            transition-colors
-            ${light
-              ? "text-white"
-              : "text-[#7A2253]"
-            }
+            flex flex-col
+            ${orientation === "vertical" ? "items-center text-center mt-1" : "items-start text-left"}
+            justify-center
+            min-w-0
           `}
         >
-          {casing === "uppercase" ? "INFLIXO" : "Inflixo"}
-        </span>
+          <Image
+            src={
+              showTagline
+                ? light
+                  ? "/images/inflixo-wordmark-tagline-white.png"
+                  : "/images/inflixo-wordmark-tagline.png"
+                : light
+                ? "/images/inflixo-wordmark-title-white.png"
+                : "/images/inflixo-wordmark-title.png"
+            }
+            alt="Inflixo - For Creators. By Creators."
+            width={628}
+            height={showTagline ? 238 : 186}
+            className={`
+              ${
+                showTagline
+                  ? size === "sm"
+                    ? "h-[26px] w-auto max-w-[80px]"
+                    : size === "md"
+                    ? "h-[34px] w-auto max-w-[102px]"
+                    : size === "lg"
+                    ? "h-[42px] w-auto max-w-[125px]"
+                    : "h-[76px] w-auto max-w-[220px]"
+                  : size === "sm"
+                  ? "h-[18px] w-auto max-w-[65px]"
+                  : size === "md"
+                  ? "h-[22px] w-auto max-w-[80px]"
+                  : size === "lg"
+                  ? "h-[28px] w-auto max-w-[100px]"
+                  : "h-[50px] w-auto max-w-[180px]"
+              }
+              object-contain
+              select-none
+            `}
+            priority
+          />
+        </div>
       )}
     </Link>
   );
