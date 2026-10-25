@@ -3748,38 +3748,27 @@ export function LivePreviewCard({
           </div>
         )}
 
-        {!containedScroll && !isPublicSurface && !hideFooter && (
-          <div className="relative z-10 order-[60] mt-6 mb-3 flex items-center justify-center select-none">
-            <MadeWithInflixo
-              color={c.secondaryText}
-              backgroundColor={c.accentSoft}
-              borderColor={c.accentBorder}
-              disabled={isInformationalMode}
-            />
-          </div>
-        )}
-        {containedScroll && <div className="order-[70] h-6 sm:h-8 shrink-0" aria-hidden="true" />}
+        <div className="order-[70] h-3 shrink-0" aria-hidden="true" />
       </div>
 
-      {containedScroll && (
-        <div
-          className={`relative z-30 shrink-0 select-none ${isPublicSurface ? "-mx-3.5 -mb-3.5 sm:-mx-5 sm:-mb-4" : "-mx-3.5 -mb-5 sm:-mx-7 sm:-mb-7"}`}
-        >
-          <div
-            style={{ backgroundColor: c.divider }}
-            className="h-px w-full"
-            aria-hidden="true"
+      {/* Static Footer inside Center Card (20px padding) */}
+      <div
+        className={`relative z-30 shrink-0 select-none py-[20px] ${
+          isPublicSurface ? "-mx-3 sm:-mx-4" : "-mx-3.5 sm:-mx-4.5"
+        } border-t border-black/[0.06] dark:border-white/[0.08]`}
+        style={{
+          backgroundColor: surfaceBg,
+        }}
+      >
+        <div className="flex items-center justify-center">
+          <MadeWithInflixo
+            color={c.secondaryText}
+            backgroundColor={c.accentSoft}
+            borderColor={c.accentBorder}
+            disabled={isInformationalMode}
           />
-          <div className="flex items-center justify-center pt-2.5 pb-2.5">
-            <MadeWithInflixo
-              color={c.secondaryText}
-              backgroundColor={c.accentSoft}
-              borderColor={c.accentBorder}
-              disabled={isInformationalMode}
-            />
-          </div>
         </div>
-      )}
+      </div>
 
       {showMoveToTop && (
         <button

@@ -4,7 +4,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
 import { FocusOverlay } from "@/components/theme/FocusOverlay";
 import { getPublicTheme, PUBLIC_MAIN_CLASS, PUBLIC_RADIUS } from "@/components/public/publicTheme";
-import { PublicMadeWithInflixoFooter } from "@/components/public/PublicMadeWithInflixo";
+import { MadeWithInflixo } from "@/components/shared/MadeWithInflixo";
 
 interface CreatorPublicShellProps {
   themeKey: string;
@@ -23,7 +23,7 @@ interface CreatorPublicShellProps {
 
 /**
  * One layout for every public creator page:
- *   theme background  →  centered 600px card  →  page content
+ *   theme background  →  centered 600px card (full-height with 20px top/bottom padding)  →  page content
  */
 export function CreatorPublicShell({
   themeKey,
@@ -32,7 +32,7 @@ export function CreatorPublicShell({
   wrapperProps,
   outside,
   hideFooter = false,
-  fixedViewport = false,
+  fixedViewport = true,
 }: CreatorPublicShellProps) {
   const t = getPublicTheme(themeKey);
   const { meta } = t;
@@ -41,7 +41,7 @@ export function CreatorPublicShell({
     <div
       {...wrapperProps}
       style={{ backgroundColor: meta.colors.pageBackground, ...((wrapperProps as any)?.style || {}) }}
-      className={`relative ${fixedViewport ? "h-screen h-[100dvh] max-h-[100dvh] overflow-hidden" : "min-h-dvh"} flex flex-col justify-between antialiased transition-colors duration-500`}
+      className="relative h-screen h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between antialiased transition-colors duration-500"
     >
       {/* 1. Full-screen theme background (photo themes get a soft blurred backdrop) */}
       <div
@@ -66,17 +66,11 @@ export function CreatorPublicShell({
       {/* 3. Focus overlay (skipped on photo themes; the backdrop has its own tint) */}
       {!t.hasPhotoBackdrop && <FocusOverlay overlay={meta.focusOverlay} />}
 
-      {/* 4. Centered card column */}
+      {/* 4. Centered card column with 20px top & bottom padding */}
       <main
-        className={`${
-          fixedViewport
-            ? "relative z-10 flex-1 flex flex-col justify-between mx-auto w-full max-w-[620px] px-2 sm:px-3 pt-0 pb-1 h-full max-h-full min-h-0 overflow-hidden animate-fade-in-up"
-            : PUBLIC_MAIN_CLASS
-        } ${mainClassName}`}
+        className={`relative z-10 flex-1 flex flex-col mx-auto w-full max-w-[620px] px-2.5 sm:px-3 py-[20px] h-full max-h-full min-h-0 overflow-hidden animate-fade-in-up ${mainClassName}`}
       >
         {children}
-        {/* Subtle, center-aligned text footer at the bottom of the page */}
-        {!hideFooter && <PublicMadeWithInflixoFooter themeKey={themeKey} />}
       </main>
 
       {outside}
@@ -89,17 +83,27 @@ interface PublicCardProps {
   children: ReactNode;
   className?: string;
   style?: CSSProperties;
+  showFooter?: boolean;
 }
 
 /** The centered main card surface, identical on every public page. */
-export function PublicCard({ themeKey, children, className = "", style }: PublicCardProps) {
+export function PublicCard({ themeKey, children, className = "", style, showFooter = true }: PublicCardProps) {
   const t = getPublicTheme(themeKey);
+  const { colors: c } = t;
   return (
     <div
       style={{ ...t.surfaceStyle, boxShadow: "none", ...style }}
-      className={`relative flex-1 flex flex-col border backdrop-blur-xl transition-all ${PUBLIC_RADIUS.card} ${className}`}
+      className={`relative flex-1 min-h-0 h-full max-h-full flex flex-col border backdrop-blur-xl transition-all overflow-hidden ${PUBLIC_RADIUS.card} ${className}`}
     >
-      {children}
+      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {children}
+      </div>
+
+      {showFooter && (
+        <div className="relative z-30 shrink-0 select-none py-[20px] border-t border-black/[0.06] dark:border-white/[0.08] flex items-center justify-center">
+          <MadeWithInflixo color={c.secondaryText} />
+        </div>
+      )}
     </div>
   );
 }
