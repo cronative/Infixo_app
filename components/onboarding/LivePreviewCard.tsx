@@ -1966,8 +1966,8 @@ export function LivePreviewCard({
         boxShadow: isPublicSurface ? "none" : undefined,
       }}
       className={`relative w-full max-w-full overflow-hidden flex-1 min-h-0 h-full max-h-full flex flex-col ${isPublicSurface
-        ? "px-3 pt-[20px] sm:px-4 sm:pt-[20px] rounded-[5px] border backdrop-blur-xl"
-        : `${cardPadding ? cardPadding : "p-3 sm:p-4.5 pt-[20px]"} rounded-[5px] border shadow-md`
+        ? "px-4 pt-[20px] sm:px-5 sm:pt-[20px] rounded-[5px] border backdrop-blur-xl"
+        : `${cardPadding ? cardPadding : "px-4 sm:px-5 pt-[20px]"} rounded-[5px] border shadow-none`
         } transition-all`}
     >
       {/* Ambient Animation in Preview mode when theme supports it */}
@@ -2236,7 +2236,7 @@ export function LivePreviewCard({
 
         {/* Navigation Tabs Bar - Fixed at bottom of top header (Never scrolls) */}
         {isTabsLayout && (
-          <div className="relative z-20 mt-2 sm:mt-2.5 -mx-3 sm:-mx-4 text-left select-none border-y border-black/[0.08] dark:border-white/10 bg-white dark:bg-[#18181B]">
+          <div className="relative z-20 mt-2 sm:mt-2.5 -mx-4 sm:-mx-5 text-left select-none border-y border-black/[0.08] dark:border-white/10 bg-white dark:bg-[#18181B]">
             <div
               ref={navScrollRef}
               role="tablist"
@@ -2263,18 +2263,18 @@ export function LivePreviewCard({
                         ? (usesDarkControls ? "#FFFFFF" : "#7A2253")
                         : "transparent",
                     }}
-                    className={`group/tab relative flex-1 shrink-0 flex items-center justify-center gap-1.5 px-3.5 py-2.5 sm:py-3 min-h-[42px] sm:min-h-[46px] rounded-none text-xs sm:text-[12.5px] font-bold border-b-[3.5px] sm:border-b-4 border-r border-black/[0.05] dark:border-white/[0.06] last:border-r-0 transition-colors duration-150 cursor-pointer whitespace-nowrap select-none bg-white dark:bg-[#18181B] -mb-px ${isActive
+                    className={`group/tab relative flex-1 min-w-0 shrink-0 flex items-center justify-center gap-1 sm:gap-1.5 px-1.5 min-[360px]:px-2 sm:px-3 py-2.5 sm:py-3 min-h-[42px] sm:min-h-[46px] rounded-none text-[11px] min-[360px]:text-[11.5px] sm:text-xs md:text-[12.5px] font-bold border-b-[3.5px] sm:border-b-4 border-r border-black/[0.05] dark:border-white/[0.06] last:border-r-0 transition-colors duration-150 cursor-pointer whitespace-nowrap select-none bg-white dark:bg-[#18181B] -mb-px ${isActive
                         ? ""
                         : "hover:bg-slate-50/80 dark:hover:bg-white/[0.04] hover:text-black dark:hover:text-white"
                       }`}
                   >
                     <IconComponent
-                      className={`h-3.5 w-3.5 shrink-0 transition-opacity ${isActive
+                      className={`h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0 transition-opacity ${isActive
                           ? "opacity-100"
                           : "opacity-60 group-hover/tab:opacity-90"
                         }`}
                     />
-                    <span>{tab.label}</span>
+                    <span className="shrink-0">{tab.label}</span>
                     {tab.count !== undefined && tab.count !== null && tab.count !== 0 && tab.count !== "" && (
                       <span
                         style={{
@@ -2285,7 +2285,7 @@ export function LivePreviewCard({
                             ? (usesDarkControls ? "#FFFFFF" : "#7A2253")
                             : (usesDarkControls ? "rgba(255, 255, 255, 0.7)" : "#64748B"),
                         }}
-                        className="text-[9.5px] font-black px-1.5 py-0.5 rounded-none tabular-nums"
+                        className="text-[9px] sm:text-[9.5px] font-black px-1.5 py-0.5 rounded-[3px] tabular-nums shrink-0"
                       >
                         {tab.count}
                       </span>
@@ -2299,13 +2299,13 @@ export function LivePreviewCard({
 
         {/* Fixed Listing Header on Dedicated Listing Pages (Series / Shop / Reviews) */}
         {isListingPage && (
-          <div className="relative z-20 -mx-3.5 sm:-mx-5 select-none bg-white dark:bg-[#18181B]">
+          <div className="relative z-20 -mx-4 sm:-mx-5 select-none bg-white dark:bg-[#18181B]">
             {/* Divider between Total Fanbase and Title */}
             <div style={{ backgroundColor: c.divider }} className="h-px opacity-60" aria-hidden="true" />
 
             {/* Title & Subtitle for Series */}
             {seriesOnlyMode && (
-              <div className="px-3.5 sm:px-5 pt-3 pb-2.5 text-left">
+              <div className="px-4 sm:px-5 pt-3 pb-2.5 text-left">
                 <div className="flex items-center justify-between gap-2 px-0.5">
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5">
@@ -2333,7 +2333,7 @@ export function LivePreviewCard({
                     <select
                       value={seriesSortOrder}
                       onChange={(e) => setSeriesSortOrder(e.target.value)}
-                      className="appearance-none bg-white dark:bg-[#18181B] border border-black/15 dark:border-white/15 rounded-[5px] text-[11px] sm:text-xs font-medium text-slate-700 dark:text-slate-200 py-1 pl-2.5 pr-6 cursor-pointer focus:outline-hidden hover:border-black/30 dark:hover:border-white/30 transition-colors shadow-2xs"
+                      className="appearance-none bg-white dark:bg-[#18181B] border border-black/15 dark:border-white/15 rounded-[5px] text-[11px] sm:text-xs font-medium text-slate-700 dark:text-slate-200 py-1 pl-2.5 pr-6 cursor-pointer focus:outline-hidden hover:border-black/30 dark:hover:border-white/30 transition-colors shadow-none"
                     >
                       <option value="latest">Latest First</option>
                       <option value="oldest">Oldest First</option>
@@ -2347,7 +2347,7 @@ export function LivePreviewCard({
 
             {/* Title & Subtitle for Products / Shop */}
             {productsOnlyMode && (
-              <div className="px-3.5 sm:px-5 pt-2.5 pb-2 text-left">
+              <div className="px-4 sm:px-5 pt-2.5 pb-2 text-left">
                 <div className="flex items-center justify-between px-0.5">
                   <div className="min-w-0">
                     <h2
@@ -2382,7 +2382,7 @@ export function LivePreviewCard({
 
             {/* Title & Subtitle for Reviews */}
             {reviewsOnlyMode && (
-              <div className="px-3.5 sm:px-5 pt-2.5 pb-2 text-left">
+              <div className="px-4 sm:px-5 pt-2.5 pb-2 text-left">
                 <div className="flex items-center justify-between px-0.5">
                   <h2
                     style={{
@@ -2822,9 +2822,9 @@ export function LivePreviewCard({
         {(seriesOnlyMode || (!isListingPage && (!isTabsLayout || activeNavTab === "watch" || activeNavTab === "series"))) && effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || seriesOnlyMode) && (
           <div id="series-section" className={`relative z-10 order-[10] w-full text-left animate-fade-in ${seriesOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7 space-y-2.5"}`}>
             {!seriesOnlyMode && (
-              <div className="pb-1">
-                <div className="flex items-center justify-between gap-2 px-0.5">
-                  <div className="min-w-0">
+              <div className="pb-1.5">
+                <div className="flex flex-wrap sm:flex-nowrap items-start sm:items-center justify-between gap-2 px-0.5">
+                  <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <Film className="h-4.5 w-4.5 text-[#7A2253] dark:text-pink-400 shrink-0" />
                       <h2
@@ -2837,27 +2837,28 @@ export function LivePreviewCard({
                       >
                         Series
                       </h2>
+                      <span
+                        style={{ color: c.mutedText }}
+                        className="text-[11px] sm:text-xs font-semibold tabular-nums ml-0.5"
+                      >
+                        ({series.length})
+                      </span>
                     </div>
                     <p
                       style={{ color: c.secondaryText }}
-                      className="text-[11px] sm:text-xs font-normal mt-0.5"
+                      className="text-[11px] sm:text-xs font-normal mt-0.5 line-clamp-1 sm:line-clamp-none"
                     >
                       Binge-worthy multi-part series, masterclasses &amp; playlists in structured order.
                     </p>
                   </div>
 
-                  <div className="flex flex-col items-end gap-1 shrink-0">
-                    <span
-                      style={{ color: c.mutedText }}
-                      className="text-[11px] sm:text-xs font-semibold tabular-nums"
-                    >
-                      {series.length} {series.length === 1 ? "Series" : "Series"}
-                    </span>
+                  <div className="flex items-center gap-2 shrink-0 self-start sm:self-center">
                     <div className="relative">
                       <select
                         value={seriesFilter}
                         onChange={(e) => setSeriesFilter(e.target.value)}
-                        className="appearance-none bg-white dark:bg-[#18181B] border border-black/15 dark:border-white/15 rounded-[5px] text-[11px] sm:text-xs font-medium text-slate-700 dark:text-slate-200 py-0.5 pl-2.5 pr-6 cursor-pointer focus:outline-hidden hover:border-black/30 dark:hover:border-white/30 transition-colors shadow-2xs"
+                        aria-label="Filter series by platform"
+                        className="appearance-none bg-white dark:bg-[#18181B] border border-black/15 dark:border-white/15 rounded-[5px] text-[11px] sm:text-xs font-medium text-slate-700 dark:text-slate-200 py-1 pl-2.5 pr-6 cursor-pointer focus:outline-hidden hover:border-black/30 dark:hover:border-white/30 transition-colors shadow-none"
                       >
                         <option value="all">All Series</option>
                         <option value="youtube">YouTube</option>
@@ -2976,25 +2977,25 @@ export function LivePreviewCard({
                           borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)",
                           boxShadow: "none",
                         }}
-                        className="group flex items-center gap-3 sm:gap-4 p-2.5 sm:p-3 rounded-[5px] border transition-all duration-200 hover:border-black/20 dark:hover:border-white/20 cursor-pointer text-left"
+                        className="group flex items-center gap-2.5 sm:gap-3.5 p-2 sm:p-2.5 rounded-[5px] border transition-all duration-200 hover:border-black/20 dark:hover:border-white/20 cursor-pointer text-left shadow-none"
                       >
                         {/* Left: Thumbnail Image + Badges */}
-                        <div className="relative shrink-0 w-[140px] sm:w-[170px] h-[95px] sm:h-[105px] rounded-[5px] overflow-hidden bg-black/5 dark:bg-white/5">
+                        <div className="relative shrink-0 w-[100px] min-[360px]:w-[115px] sm:w-[150px] aspect-[16/10] rounded-[5px] overflow-hidden bg-black/5 dark:bg-white/5">
                           {/* Top-Left Badge: Featured on 1st, or Platform Series on others */}
                           {idx === 0 ? (
-                            <span className="absolute top-2 left-2 z-10 inline-flex items-center gap-1 rounded-[5px] bg-[#FEF08A] text-amber-950 px-2 py-0.5 text-[9px] sm:text-[9.5px] font-black shadow-xs tracking-wide">
-                              <Crown className="h-2.5 w-2.5 fill-amber-950 text-amber-950" />
-                              <span>Featured</span>
+                            <span className="absolute top-1.5 left-1.5 z-10 inline-flex items-center gap-1 rounded-[5px] bg-[#FEF08A] text-amber-950 px-1.5 sm:px-2 py-0.5 text-[8.5px] sm:text-[9px] font-black shadow-none tracking-wide">
+                              <Crown className="h-2.5 w-2.5 fill-amber-950 text-amber-950 shrink-0" />
+                              <span className="shrink-0">Featured</span>
                             </span>
                           ) : (
-                            <span className="absolute top-2 left-2 z-10 inline-flex items-center gap-1 rounded-[5px] bg-black/80 backdrop-blur-xs text-white px-2 py-0.5 text-[9px] sm:text-[9.5px] font-bold shadow-xs">
-                              {isYoutube && <YoutubeIcon className="h-2.5 w-2.5 text-red-500 fill-red-500" />}
-                              {isInstagram && <InstagramIcon className="h-2.5 w-2.5 text-pink-400" />}
-                              {isFacebook && <FacebookIcon className="h-2.5 w-2.5 text-blue-400 fill-blue-400" />}
-                              {isCreator && <Rocket className="h-2.5 w-2.5 text-slate-200" />}
-                              {isMulti && <Layers className="h-2.5 w-2.5 text-slate-200" />}
-                              {!isYoutube && !isInstagram && !isFacebook && !isCreator && !isMulti && <Film className="h-2.5 w-2.5 text-white" />}
-                              <span>
+                            <span className="absolute top-1.5 left-1.5 z-10 inline-flex items-center gap-1 rounded-[5px] bg-black/80 backdrop-blur-xs text-white px-1.5 sm:px-2 py-0.5 text-[8.5px] sm:text-[9px] font-bold shadow-none">
+                              {isYoutube && <YoutubeIcon className="h-2.5 w-2.5 text-red-500 fill-red-500 shrink-0" />}
+                              {isInstagram && <InstagramIcon className="h-2.5 w-2.5 text-pink-400 shrink-0" />}
+                              {isFacebook && <FacebookIcon className="h-2.5 w-2.5 text-blue-400 fill-blue-400 shrink-0" />}
+                              {isCreator && <Rocket className="h-2.5 w-2.5 text-slate-200 shrink-0" />}
+                              {isMulti && <Layers className="h-2.5 w-2.5 text-slate-200 shrink-0" />}
+                              {!isYoutube && !isInstagram && !isFacebook && !isCreator && !isMulti && <Film className="h-2.5 w-2.5 text-white shrink-0" />}
+                              <span className="shrink-0">
                                 {isCreator
                                   ? "Creator Series"
                                   : isYoutube
@@ -3009,9 +3010,9 @@ export function LivePreviewCard({
                           )}
 
                           {/* Bottom-Left Badge: Episodes Count */}
-                          <span className="absolute bottom-2 left-2 z-10 inline-flex items-center gap-1 rounded-[5px] bg-black/80 backdrop-blur-xs text-white px-2 py-0.5 text-[9px] sm:text-[9.5px] font-bold shadow-xs">
-                            <Play className="h-2 w-2 fill-white text-white" />
-                            <span>{epCountStr}</span>
+                          <span className="absolute bottom-1.5 left-1.5 z-10 inline-flex items-center gap-1 rounded-[5px] bg-black/80 backdrop-blur-xs text-white px-1.5 sm:px-2 py-0.5 text-[8.5px] sm:text-[9px] font-bold shadow-none">
+                            <Play className="h-2 w-2 fill-white text-white shrink-0" />
+                            <span className="shrink-0">{epCountStr}</span>
                           </span>
 
                           {/* Image */}
@@ -3042,7 +3043,7 @@ export function LivePreviewCard({
                               color: c.primaryText,
                               fontFamily: typ.headingFontFamily,
                             }}
-                            className="text-[13.5px] sm:text-[14.5px] font-bold leading-snug line-clamp-1 group-hover:text-[#7A2253] dark:group-hover:text-pink-400 transition-colors"
+                            className="text-[15px] sm:text-base font-semibold leading-snug line-clamp-2 break-words group-hover:text-[#7A2253] dark:group-hover:text-pink-400 transition-colors"
                           >
                             {s.title}
                           </h3>
@@ -3050,15 +3051,15 @@ export function LivePreviewCard({
                           {s.description && (
                             <p
                               style={{ color: c.secondaryText }}
-                              className="text-[11px] sm:text-xs leading-relaxed line-clamp-2"
+                              className="text-[13px] leading-[1.5] line-clamp-3 break-words"
                             >
                               {s.description}
                             </p>
                           )}
 
-                          {/* Distinct Colored Tags Matching Screenshot: Pink, Blue, Slate */}
+                          {/* Distinct Colored Tags: Pink, Blue, Slate */}
                           {seriesPills.length > 0 && (
-                            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                            <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 pt-1 min-w-0">
                               {seriesPills.map((pill, pIdx) => {
                                 const pillStyleClass = pIdx === 0
                                   ? "bg-pink-50 dark:bg-pink-950/40 text-[#7A2253] dark:text-pink-300 border border-pink-200/50 dark:border-pink-900/40"
@@ -3068,7 +3069,7 @@ export function LivePreviewCard({
                                 return (
                                   <span
                                     key={pIdx}
-                                    className={`inline-flex items-center rounded-[5px] px-2 py-0.5 text-[10px] font-medium ${pillStyleClass}`}
+                                    className={`inline-flex items-center rounded-[5px] px-1.5 sm:px-2 py-0.5 text-[10px] font-medium shrink-0 leading-tight ${pillStyleClass}`}
                                   >
                                     {pill}
                                   </span>
@@ -3079,8 +3080,8 @@ export function LivePreviewCard({
                         </div>
 
                         {/* Far Right: Circular Plum Arrow Button */}
-                        <div className="shrink-0 flex items-center justify-center h-8 w-8 sm:h-9 sm:w-9 rounded-[5px] bg-pink-50 dark:bg-pink-950/40 text-[#7A2253] dark:text-pink-300 group-hover:bg-pink-100 dark:group-hover:bg-pink-900/60 transition-colors self-center">
-                          <ArrowRight className="h-4 w-4" />
+                        <div className="shrink-0 flex items-center justify-center h-7 w-7 sm:h-8 sm:w-8 rounded-[5px] bg-pink-50 dark:bg-pink-950/40 text-[#7A2253] dark:text-pink-300 group-hover:bg-pink-100 dark:group-hover:bg-pink-900/60 transition-colors self-center">
+                          <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
                         </div>
                       </div>
                     );
@@ -3104,10 +3105,10 @@ export function LivePreviewCard({
                     }
                     router.push(allSeriesHref);
                   }}
-                  className="w-full py-2.5 px-4 rounded-[5px] bg-pink-50/70 hover:bg-pink-100/90 text-[#7A2253] dark:bg-pink-950/40 dark:text-pink-300 border border-pink-200/60 dark:border-pink-900/40 text-xs sm:text-[13px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  className="w-full py-2.5 px-3 sm:px-4 rounded-[5px] bg-pink-50/70 hover:bg-pink-100/90 text-[#7A2253] dark:bg-pink-950/40 dark:text-pink-300 border border-pink-200/60 dark:border-pink-900/40 text-xs sm:text-[13px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center"
                 >
-                  <span>View all series &amp; shows</span>
-                  <ArrowRight className="h-3.5 w-3.5" />
+                  <span className="whitespace-normal sm:whitespace-nowrap">View all series &amp; shows</span>
+                  <ArrowRight className="h-3.5 w-3.5 shrink-0" />
                 </button>
               </div>
             )}

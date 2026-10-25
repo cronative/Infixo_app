@@ -608,8 +608,8 @@ export function SeriesDetailClient({
 
             {/* 3. Description with Read More / Read Less */}
             {series.description && (
-              <div className="pt-0.5 text-slate-600 dark:text-slate-300 text-xs sm:text-[13px] leading-relaxed">
-                <p className={isDescExpanded ? "" : "line-clamp-2"}>
+              <div className="pt-0.5 text-slate-600 dark:text-slate-300 text-[13px] leading-[1.5] break-words">
+                <p className={isDescExpanded ? "" : "line-clamp-3"}>
                   {series.description}
                 </p>
                 {series.description.length > 90 && (
