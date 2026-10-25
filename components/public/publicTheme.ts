@@ -75,11 +75,11 @@ export const PUBLIC_TYPE = {
 /* Radius + layout                                                     */
 /* ------------------------------------------------------------------ */
 export const PUBLIC_RADIUS = {
-  card: "rounded-[24px] sm:rounded-[26px]", // the centered main card
-  item: "rounded-[14px]", // cards inside the main card
-  control: "rounded-[12px]", // icon buttons, inputs
-  button: "rounded-[14px]", // primary / secondary CTA
-  chip: "rounded-full",
+  card: "rounded-[5px]", // the centered main card
+  item: "rounded-[5px]", // cards inside the main card
+  control: "rounded-[5px]", // icon buttons, inputs
+  button: "rounded-[5px]", // primary / secondary CTA
+  chip: "rounded-[5px]",
 } as const;
 
 /** Centered card: sleek mobile-first width on web (up to 620px), fills down to bottom of screen when content is short. */
@@ -91,15 +91,15 @@ export const PUBLIC_CARD_PADDING = "px-3.5 sm:px-5";
 
 /** 36-38px square icon control (header buttons). */
 export const PUBLIC_ICON_BUTTON =
-  "tap-scale flex h-9 w-9 sm:h-9.5 sm:w-9.5 shrink-0 items-center justify-center rounded-[11px] border transition-all hover:scale-105 cursor-pointer select-none";
+  "tap-scale flex h-9 w-9 sm:h-9.5 sm:w-9.5 shrink-0 items-center justify-center rounded-[5px] border transition-all hover:scale-105 cursor-pointer select-none";
 
 /** Text control (e.g. "View all", "Media kit"). */
 export const PUBLIC_TEXT_BUTTON =
-  "tap-scale inline-flex h-9 sm:h-9.5 items-center justify-center gap-1.5 rounded-[11px] border px-3 text-xs sm:text-[13px] font-semibold transition-all hover:opacity-90 cursor-pointer";
+  "tap-scale inline-flex h-9 sm:h-9.5 items-center justify-center gap-1.5 rounded-[5px] border px-3 text-xs sm:text-[13px] font-semibold transition-all hover:opacity-90 cursor-pointer";
 
 /** Full-width CTA button. */
 export const PUBLIC_CTA_BUTTON =
-  "tap-scale inline-flex h-11 sm:h-11.5 w-full items-center justify-center gap-2 rounded-[12px] border px-4 text-xs sm:text-sm font-bold transition-all hover:brightness-95 cursor-pointer";
+  "tap-scale inline-flex h-11 sm:h-11.5 w-full items-center justify-center gap-2 rounded-[5px] border px-4 text-xs sm:text-sm font-bold transition-all hover:brightness-95 cursor-pointer";
 
 /* ------------------------------------------------------------------ */
 /* Theme-derived styles                                                */

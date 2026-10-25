@@ -572,10 +572,10 @@ export default function PublicProfileClient() {
           </div>
 
           {/* Main Card */}
-          <div className="rounded-[32px] border border-rose-100 bg-white/95 p-8 sm:p-10 shadow-2xl shadow-rose-950/5 backdrop-blur-xl space-y-6 text-center">
+          <div className="rounded-[5px] border border-rose-100 bg-white/95 p-8 sm:p-10 shadow-2xl shadow-rose-950/5 backdrop-blur-xl space-y-6 text-center">
             {/* Avatar / Lock Badge */}
             <div className="relative mx-auto w-fit">
-              <div className="h-20 w-20 rounded-2xl border-2 border-white shadow-xl ring-2 ring-rose-200 overflow-hidden bg-rose-50 flex items-center justify-center mx-auto">
+              <div className="h-20 w-20 rounded-full border-2 border-white shadow-xl ring-2 ring-rose-200 overflow-hidden bg-rose-50 flex items-center justify-center mx-auto">
                 {profile.photoDataUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={profile.photoDataUrl} alt={displayName} className="h-full w-full object-cover" />
@@ -585,7 +585,7 @@ export default function PublicProfileClient() {
                   </span>
                 )}
               </div>
-              <span className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-rose-500 text-white shadow-md ring-2 ring-white">
+              <span className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-[5px] bg-rose-500 text-white shadow-md ring-2 ring-white">
                 <Lock className="h-3.5 w-3.5" />
               </span>
             </div>
@@ -593,7 +593,7 @@ export default function PublicProfileClient() {
             {viewerIsOwner ? (
               /* Case A: The Creator viewing their own profile */
               <div className="space-y-3">
-                <div className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 border border-rose-200/80 px-3 py-1 text-xs font-bold text-rose-700">
+                <div className="inline-flex items-center gap-1.5 rounded-[5px] bg-rose-50 border border-rose-200/80 px-3 py-1 text-xs font-bold text-rose-700">
                   <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" />
                   <span>Free Trial Ended · Profile Hidden</span>
                 </div>
@@ -604,7 +604,7 @@ export default function PublicProfileClient() {
                   Hey <strong>{displayName}</strong>, your 7-day free trial has expired. Your public profile (<code className="bg-slate-100 px-1 py-0.5 rounded text-[11px] font-mono text-slate-800">inflixo.com/@{handle}</code>) is currently hidden from fans and brand inquiries.
                 </p>
 
-                <div className="rounded-2xl border border-rose-100 bg-rose-50/60 p-3 text-left space-y-1.5">
+                <div className="rounded-[5px] border border-rose-100 bg-rose-50/60 p-3 text-left space-y-1.5">
                   <p className="text-[11px] font-bold text-rose-800 uppercase tracking-wider flex items-center gap-1">
                     <ShieldAlert className="h-3.5 w-3.5 text-rose-600" />
                     <span>What&apos;s paused:</span>
@@ -619,7 +619,7 @@ export default function PublicProfileClient() {
                 <div className="pt-2 space-y-2">
                   <button
                     onClick={() => router.push("/dashboard/subscription")}
-                    className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#7A2253] hover:opacity-95 px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#7A2253]/20 transition-all hover:scale-[1.02] cursor-pointer"
+                    className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-[5px] bg-[#7A2253] hover:opacity-95 px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#7A2253]/20 transition-all hover:scale-[1.02] cursor-pointer"
                   >
                     <Sparkles className="h-4 w-4" />
                     <span>Reactivate My Profile (Choose Plan)</span>
@@ -637,7 +637,7 @@ export default function PublicProfileClient() {
             ) : (
               /* Case B: Public visitor / Fan / Brand */
               <div className="space-y-3">
-                <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-200/80 px-3 py-1 text-xs font-semibold text-amber-800">
+                <div className="inline-flex items-center gap-1.5 rounded-[5px] bg-amber-50 border border-amber-200/80 px-3 py-1 text-xs font-semibold text-amber-800">
                   <Clock className="h-3 w-3 text-amber-600" />
                   <span>Profile Temporarily Inactive</span>
                 </div>
@@ -651,7 +651,7 @@ export default function PublicProfileClient() {
                 <div className="pt-3 space-y-3">
                   <button
                     onClick={() => router.push("/")}
-                    className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#7A2253] hover:opacity-95 px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#7A2253]/20 transition-all hover:scale-[1.02] cursor-pointer"
+                    className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-[5px] bg-[#7A2253] hover:opacity-95 px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#7A2253]/20 transition-all hover:scale-[1.02] cursor-pointer"
                   >
                     <Sparkles className="h-4 w-4" />
                     <span>Explore Inflixo Creators</span>
@@ -694,9 +694,9 @@ export default function PublicProfileClient() {
           </div>
 
           {/* Main Clean Light Theme Card */}
-          <div className="rounded-[32px] border border-[#E8DCE4] bg-white/95 p-8 sm:p-10 shadow-2xl shadow-[#7A2253]/5 backdrop-blur-xl space-y-6 text-center">
+          <div className="rounded-[5px] border border-[#E8DCE4] bg-white/95 p-8 sm:p-10 shadow-2xl shadow-[#7A2253]/5 backdrop-blur-xl space-y-6 text-center">
             {/* Icon Badge */}
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#7A2253] text-white shadow-xl shadow-[#7A2253]/25 ring-4 ring-[#F6EBF1]">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[5px] bg-[#7A2253] text-white shadow-xl shadow-[#7A2253]/25 ring-4 ring-[#F6EBF1]">
               <UserX className="h-8 w-8 stroke-[2.2]" />
             </div>
 
@@ -714,7 +714,7 @@ export default function PublicProfileClient() {
             <div className="pt-2">
               <button
                 onClick={() => router.push("/login")}
-                className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#7A2253] hover:opacity-95 px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#7A2253]/20 transition-all border border-[#7A2253] hover:scale-[1.02] cursor-pointer"
+                className="tap-scale w-full inline-flex items-center justify-center gap-2 rounded-[5px] bg-[#7A2253] hover:opacity-95 px-6 py-3.5 text-xs font-black text-white shadow-xl shadow-[#7A2253]/20 transition-all border border-[#7A2253] hover:scale-[1.02] cursor-pointer"
               >
                 <Sparkles className="h-4 w-4" />
                 <span>Claim Handle &amp; Create Profile</span>

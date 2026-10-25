@@ -37,7 +37,7 @@ export function PublicSectionHeader({
       <ChevronRight className="h-3.5 w-3.5" />
     </>
   ) : null;
-  const actionClass = `tap-scale inline-flex min-h-8 shrink-0 items-center gap-0.5 rounded-lg px-1 ${PUBLIC_TYPE.label} transition-opacity hover:opacity-75`;
+  const actionClass = `tap-scale inline-flex min-h-8 shrink-0 items-center gap-0.5 rounded-[5px] px-1 ${PUBLIC_TYPE.label} transition-opacity hover:opacity-75`;
 
   return (
     <div className={`px-0.5 ${className}`}>

@@ -360,19 +360,19 @@ export function SeriesDetailClient({
       <CreatorPublicShell themeKey={themeKey}>
         <PublicCard themeKey={themeKey} className={`${PUBLIC_CARD_PADDING} py-4 sm:py-5 animate-pulse`}>
           <div className="flex items-center gap-2.5">
-            <div className="h-10 w-10 rounded-[12px] bg-black/10" />
-            <div className="h-10 w-10 rounded-full bg-black/10" />
+            <div className="h-10 w-10 rounded-[5px] bg-black/10" />
+            <div className="h-10 w-10 rounded-[5px] bg-black/10" />
             <div className="flex-1 space-y-1.5">
-              <div className="h-3.5 w-32 rounded bg-black/10" />
-              <div className="h-3 w-20 rounded bg-black/10" />
+              <div className="h-3.5 w-32 rounded-[5px] bg-black/10" />
+              <div className="h-3 w-20 rounded-[5px] bg-black/10" />
             </div>
           </div>
-          <div className="mt-4 h-40 w-full rounded-[14px] bg-black/10" />
-          <div className="mx-auto mt-4 h-5 w-1/2 rounded bg-black/10" />
-          <div className="mx-auto mt-2 h-3.5 w-3/4 rounded bg-black/10" />
+          <div className="mt-4 h-40 w-full rounded-[5px] bg-black/10" />
+          <div className="mx-auto mt-4 h-5 w-1/2 rounded-[5px] bg-black/10" />
+          <div className="mx-auto mt-2 h-3.5 w-3/4 rounded-[5px] bg-black/10" />
           <div className="mt-5 space-y-2">
-            <div className="h-12 w-full rounded-[14px] bg-black/10" />
-            <div className="h-12 w-full rounded-[14px] bg-black/10" />
+            <div className="h-12 w-full rounded-[5px] bg-black/10" />
+            <div className="h-12 w-full rounded-[5px] bg-black/10" />
           </div>
         </PublicCard>
       </CreatorPublicShell>
@@ -386,7 +386,7 @@ export function SeriesDetailClient({
         <PublicCard themeKey={themeKey} className={`${PUBLIC_CARD_PADDING} items-center justify-center py-10 text-center`}>
           <div
             style={pt.elevatedStyle}
-            className="mx-auto flex h-14 w-14 items-center justify-center rounded-[14px] border"
+            className="mx-auto flex h-14 w-14 items-center justify-center rounded-[5px] border"
           >
             <Film className="h-7 w-7" style={{ color: c.accentText }} />
           </div>
@@ -470,9 +470,9 @@ export function SeriesDetailClient({
     >
       <PublicCard themeKey={themeKey} className="overflow-hidden">
         {/* Card content container */}
-        <div className="flex-1 flex flex-col relative rounded-t-[24px] sm:rounded-t-[26px] overflow-hidden">
+        <div className="flex-1 flex flex-col relative rounded-t-[5px] overflow-hidden">
           {/* Series Hero: Full width with floating controls, center play button, and bottom-left badge */}
-          <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] max-h-[380px] shrink-0 rounded-t-[24px] sm:rounded-t-[26px] overflow-hidden group bg-slate-900">
+          <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] max-h-[380px] shrink-0 rounded-t-[5px] overflow-hidden group bg-slate-900">
             <PlatformThumbnailBox
               posterUrl={series.posterDataUrl}
               videoUrl={allEpisodes[0]?.externalUrl}
@@ -495,7 +495,7 @@ export function SeriesDetailClient({
                     router.push(`/${username}/series`);
                   }
                 }}
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all cursor-pointer shadow-md"
+                className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all cursor-pointer shadow-md"
                 title="Back to series"
               >
                 <ArrowLeft className="h-5 w-5" />
@@ -505,7 +505,7 @@ export function SeriesDetailClient({
                 <button
                   type="button"
                   onClick={handleCopyLink}
-                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all cursor-pointer shadow-md"
+                  className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all cursor-pointer shadow-md"
                   title="Copy series link"
                 >
                   <Copy className="h-4 w-4" />
@@ -513,7 +513,7 @@ export function SeriesDetailClient({
                 <button
                   type="button"
                   onClick={() => setIsShareModalOpen(true)}
-                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all cursor-pointer shadow-md"
+                  className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all cursor-pointer shadow-md"
                   title="Share series"
                 >
                   <Share2 className="h-4 w-4" />
@@ -531,7 +531,7 @@ export function SeriesDetailClient({
                 className="absolute inset-0 flex items-center justify-center z-10 group/play cursor-pointer"
                 title="Play Episode 1"
               >
-                <span className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-white text-[#7A2253] shadow-2xl transition-transform duration-300 group-hover/play:scale-110">
+                <span className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-[5px] bg-white text-[#7A2253] shadow-2xl transition-transform duration-300 group-hover/play:scale-110">
                   <Play className="h-6 w-6 fill-[#7A2253] ml-0.5" />
                 </span>
               </a>
@@ -542,7 +542,7 @@ export function SeriesDetailClient({
 
             {/* Bottom-Left Overlay Badge */}
             <div className="absolute left-3.5 bottom-3.5 z-10 pointer-events-none">
-              <div className="inline-flex items-center gap-2 rounded-full bg-black/60 backdrop-blur-md px-3.5 py-1.5 text-white text-[11px] font-medium shadow-md">
+              <div className="inline-flex items-center gap-2 rounded-[5px] bg-black/60 backdrop-blur-md px-3.5 py-1.5 text-white text-[11px] font-medium shadow-md">
                 <span className="flex items-center gap-1.5">
                   <Play className="h-3 w-3 fill-white" />
                   <span>{allEpisodes.length} Episodes</span>
@@ -566,7 +566,7 @@ export function SeriesDetailClient({
             {/* 2. Platform & Category Badges */}
             <div className="flex flex-wrap items-center gap-2 pt-0.5">
               {/* Platform Pill */}
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 text-slate-800 dark:bg-white/10 dark:text-slate-200 border border-slate-200/60 dark:border-white/10 px-3 py-1 text-xs font-bold">
+              <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-slate-100 text-slate-800 dark:bg-white/10 dark:text-slate-200 border border-slate-200/60 dark:border-white/10 px-3 py-1 text-xs font-bold">
                 {detectedPlatform === "Instagram" ? (
                   <InstagramIcon className="h-3.5 w-3.5 text-pink-500" />
                 ) : detectedPlatform === "Facebook" ? (
@@ -579,28 +579,28 @@ export function SeriesDetailClient({
 
               {/* Category Pill 1 (Pink) */}
               {genresList[0] && (
-                <span className="inline-flex items-center rounded-full bg-pink-50 text-[#7A2253] dark:bg-pink-950/40 dark:text-pink-300 border border-pink-200/60 dark:border-pink-900/50 px-3 py-1 text-xs font-bold">
+                <span className="inline-flex items-center rounded-[5px] bg-pink-50 text-[#7A2253] dark:bg-pink-950/40 dark:text-pink-300 border border-pink-200/60 dark:border-pink-900/50 px-3 py-1 text-xs font-bold">
                   {genresList[0]}
                 </span>
               )}
 
               {/* Sub-genre Pill 2 (Blue) */}
               {genresList[1] && (
-                <span className="inline-flex items-center rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300 border border-blue-200/60 dark:border-blue-900/50 px-3 py-1 text-xs font-bold">
+                <span className="inline-flex items-center rounded-[5px] bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300 border border-blue-200/60 dark:border-blue-900/50 px-3 py-1 text-xs font-bold">
                   {genresList[1]}
                 </span>
               )}
 
               {/* Additional genres if any */}
               {genresList.slice(2).map((g) => (
-                <span key={g} className="inline-flex items-center rounded-full bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-slate-300 border border-slate-200/60 dark:border-white/10 px-3 py-1 text-xs font-semibold">
+                <span key={g} className="inline-flex items-center rounded-[5px] bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-slate-300 border border-slate-200/60 dark:border-white/10 px-3 py-1 text-xs font-semibold">
                   {g}
                 </span>
               ))}
 
               {/* Language Pill */}
               {langTag && (
-                <span className="inline-flex items-center rounded-full bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-slate-300 border border-slate-200/60 dark:border-white/10 px-3 py-1 text-xs font-medium">
+                <span className="inline-flex items-center rounded-[5px] bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-slate-300 border border-slate-200/60 dark:border-white/10 px-3 py-1 text-xs font-medium">
                   {langTag}
                 </span>
               )}
@@ -646,7 +646,7 @@ export function SeriesDetailClient({
                       key={sn.id || idx}
                       type="button"
                       onClick={() => setActiveSeasonIndex(idx)}
-                      className={`tap-scale inline-flex h-8 shrink-0 cursor-pointer items-center rounded-full border px-3 transition-all text-xs font-semibold ${
+                      className={`tap-scale inline-flex h-8 shrink-0 cursor-pointer items-center rounded-[5px] border px-3 transition-all text-xs font-semibold ${
                         activeSeasonIndex === idx
                           ? "bg-pink-50 border-pink-200 text-[#7A2253]"
                           : "bg-white border-slate-200 text-slate-600"
@@ -660,7 +660,7 @@ export function SeriesDetailClient({
 
               {/* Episode Cards */}
               {currentEpisodes.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 p-6 text-center text-xs text-slate-400">
+                <div className="rounded-[5px] border border-dashed border-slate-200 dark:border-white/10 p-6 text-center text-xs text-slate-400">
                   No episodes added to this series yet.
                 </div>
               ) : (
@@ -680,11 +680,11 @@ export function SeriesDetailClient({
                         target={ep.externalUrl ? "_blank" : undefined}
                         rel="noopener noreferrer"
                         onClick={() => trackEpisodeClick(ep)}
-                        className="tap-scale group/ep flex items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl border border-slate-100 dark:border-white/10 bg-white dark:bg-zinc-900 shadow-2xs hover:shadow-xs hover:border-slate-200 dark:hover:border-white/20 transition-all cursor-pointer text-left"
+                        className="tap-scale group/ep flex items-center justify-between gap-3 p-3.5 sm:p-4 rounded-[5px] border border-slate-100 dark:border-white/10 bg-white dark:bg-zinc-900 shadow-2xs hover:shadow-xs hover:border-slate-200 dark:hover:border-white/20 transition-all cursor-pointer text-left"
                       >
                         {/* Left: Pink Number Box + Platform + Title */}
                         <div className="flex items-center gap-3 min-w-0 flex-1">
-                          <span className="shrink-0 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl bg-pink-50 dark:bg-pink-950/40 text-[#7A2253] dark:text-pink-300 text-xs sm:text-[13px] font-black tabular-nums border border-pink-100/60 dark:border-pink-900/40">
+                          <span className="shrink-0 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-[5px] bg-pink-50 dark:bg-pink-950/40 text-[#7A2253] dark:text-pink-300 text-xs sm:text-[13px] font-black tabular-nums border border-pink-100/60 dark:border-pink-900/40">
                             {partNumStr}
                           </span>
                           <div className="min-w-0 flex-1 space-y-0.5">
@@ -708,7 +708,7 @@ export function SeriesDetailClient({
 
                         {/* Right: Watch Pill */}
                         {ep.externalUrl && (
-                          <span className="shrink-0 inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-pink-50 dark:bg-pink-950/40 text-[#7A2253] dark:text-pink-300 border border-pink-100 dark:border-pink-900/50 text-xs font-bold hover:bg-pink-100 transition-all">
+                          <span className="shrink-0 inline-flex items-center gap-1 px-3.5 py-1.5 rounded-[5px] bg-pink-50 dark:bg-pink-950/40 text-[#7A2253] dark:text-pink-300 border border-pink-100 dark:border-pink-900/50 text-xs font-bold hover:bg-pink-100 transition-all">
                             <span>Watch</span>
                             <ArrowUpRight className="h-3 w-3" />
                           </span>
@@ -721,7 +721,7 @@ export function SeriesDetailClient({
             </div>
 
             {/* 6. Bottom Creator Card */}
-            <div className="mt-5 rounded-2xl bg-slate-50/80 dark:bg-white/[0.04] border border-slate-100 dark:border-white/10 p-3.5 sm:p-4 flex items-center justify-between gap-3">
+            <div className="mt-5 rounded-[5px] bg-slate-50/80 dark:bg-white/[0.04] border border-slate-100 dark:border-white/10 p-3.5 sm:p-4 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="relative h-11 w-11 sm:h-12 sm:w-12 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 shrink-0 border border-slate-200 dark:border-white/10">
                   {creator?.photoDataUrl ? (
@@ -756,7 +756,7 @@ export function SeriesDetailClient({
                   e.preventDefault();
                   router.push(profileUrl);
                 }}
-                className="tap-scale shrink-0 inline-flex items-center gap-1 px-4 py-2 rounded-full bg-pink-50 dark:bg-pink-950/40 text-[#7A2253] dark:text-pink-300 border border-pink-100 dark:border-pink-900/50 text-xs font-bold hover:bg-pink-100 transition-all cursor-pointer"
+                className="tap-scale shrink-0 inline-flex items-center gap-1 px-4 py-2 rounded-[5px] bg-pink-50 dark:bg-pink-950/40 text-[#7A2253] dark:text-pink-300 border border-pink-100 dark:border-pink-900/50 text-xs font-bold hover:bg-pink-100 transition-all cursor-pointer"
               >
                 <span>View Profile</span>
                 <ArrowUpRight className="h-3 w-3" />

@@ -83,7 +83,7 @@ function getPackageCardVisual(pkg: MediaKitPackage) {
     return {
       cardClass: "border-rose-100 bg-gradient-to-b from-rose-50/25 via-white to-white",
       icon: (
-        <div className="w-10 h-10 rounded-2xl bg-[#FF0000] flex items-center justify-center text-white shadow-xs shrink-0">
+        <div className="w-10 h-10 rounded-[5px] bg-[#FF0000] flex items-center justify-center text-white shadow-xs shrink-0">
           <YoutubeIcon className="w-5 h-5 text-white" />
         </div>
       ),
@@ -101,7 +101,7 @@ function getPackageCardVisual(pkg: MediaKitPackage) {
     return {
       cardClass: "border-purple-100 bg-gradient-to-b from-purple-50/25 via-white to-white",
       icon: (
-        <div className="w-10 h-10 rounded-2xl bg-[#FAF5FF] border border-purple-200/80 flex items-center justify-center text-purple-600 shadow-xs shrink-0">
+        <div className="w-10 h-10 rounded-[5px] bg-[#FAF5FF] border border-purple-200/80 flex items-center justify-center text-purple-600 shadow-xs shrink-0">
           <Gift className="w-5 h-5 text-purple-600 stroke-[2.2]" />
         </div>
       ),
@@ -119,7 +119,7 @@ function getPackageCardVisual(pkg: MediaKitPackage) {
     return {
       cardClass: "border-pink-200/80 bg-gradient-to-b from-pink-50/25 via-white to-white",
       icon: (
-        <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#FD5949] via-[#D6249F] to-[#285AEB] flex items-center justify-center text-white shadow-xs shrink-0">
+        <div className="w-10 h-10 rounded-[5px] bg-gradient-to-tr from-[#FD5949] via-[#D6249F] to-[#285AEB] flex items-center justify-center text-white shadow-xs shrink-0">
           <InstagramIcon className="w-5 h-5 text-white" />
         </div>
       ),
@@ -129,7 +129,7 @@ function getPackageCardVisual(pkg: MediaKitPackage) {
   return {
     cardClass: "border-blue-100 bg-gradient-to-b from-blue-50/25 via-white to-white",
     icon: (
-      <div className="w-10 h-10 rounded-2xl bg-[#EEF2FF] border border-blue-200/80 flex items-center justify-center text-[#7A2253] shadow-xs shrink-0">
+      <div className="w-10 h-10 rounded-[5px] bg-[#EEF2FF] border border-blue-200/80 flex items-center justify-center text-[#7A2253] shadow-xs shrink-0">
         <Briefcase className="w-5 h-5 text-[#7A2253] stroke-[2.2]" />
       </div>
     ),
@@ -358,15 +358,15 @@ export default function PublicMediaKitPage() {
       <div className="min-h-dvh flex flex-col items-center justify-center bg-white px-4 py-12 text-center text-[#17131A]">
         <div className="max-w-md space-y-6">
           <Logo />
-          <div className="rounded-3xl border border-[#ECE8EB] bg-white p-8 space-y-4 shadow-2xs">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F7EDF3] text-[#7A2253]">
+          <div className="rounded-[5px] border border-[#ECE8EB] bg-white p-8 space-y-4 shadow-2xs">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-[5px] bg-[#F7EDF3] text-[#7A2253]">
               <UserX className="h-7 w-7" />
             </div>
             <h1 className="font-display text-xl font-bold text-[#17131A]">Media Kit Not Found</h1>
             <p className="text-xs text-[#6F6872]">No creator media kit registered for @{handle}.</p>
             <button
               onClick={() => router.push("/")}
-              className="w-full py-2.5 rounded-xl bg-[#7A2253] text-white text-xs font-semibold hover:opacity-95 shadow-md shadow-[#7A2253]/20 transition-all"
+              className="w-full py-2.5 rounded-[5px] bg-[#7A2253] text-white text-xs font-semibold hover:opacity-95 shadow-md shadow-[#7A2253]/20 transition-all"
             >
               Back to Home
             </button>
@@ -627,7 +627,7 @@ export default function PublicMediaKitPage() {
                     aria-label={item.label}
                     title={item.label}
                     style={pt.controlStyle}
-                    className="tap-scale flex h-7 w-7 items-center justify-center rounded-lg border border-black/10 dark:border-white/10 transition-all hover:scale-110 cursor-pointer"
+                    className="tap-scale flex h-7 w-7 items-center justify-center rounded-[5px] border border-black/10 dark:border-white/10 transition-all hover:scale-110 cursor-pointer"
                   >
                     {item.icon}
                   </a>
@@ -642,7 +642,7 @@ export default function PublicMediaKitPage() {
                   backgroundColor: isDark ? "rgba(255, 255, 255, 0.06)" : "#F8FAFC",
                   borderColor: isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)",
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border shadow-2xs"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[5px] border shadow-2xs"
               >
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span
@@ -688,7 +688,7 @@ export default function PublicMediaKitPage() {
           </section>
 
           {/* Total fanbase + platform breakdown */}
-          <section data-media-kit-section data-media-kit-keep style={cardStyle} className="rounded-[14px] border p-4 text-center sm:p-5">
+          <section data-media-kit-section data-media-kit-keep style={cardStyle} className="rounded-[5px] border p-4 text-center sm:p-5">
             <p style={{ color: c.mutedText }} className={PUBLIC_TYPE.eyebrow}>Total fanbase</p>
             <p style={{ ...pt.headingStyle, color: c.accentText }} className={`mt-1.5 ${PUBLIC_TYPE.stat}`}>{formatCount(totalAudience)}</p>
             <p style={{ color: c.secondaryText }} className={`mt-1 ${PUBLIC_TYPE.meta}`}>Across primary social platforms</p>
@@ -698,7 +698,7 @@ export default function PublicMediaKitPage() {
                 { label: "YouTube", unit: "Subscribers", value: socials.youtube.subscribers || 0, icon: <YoutubeIcon className="h-4 w-4 text-red-500" /> },
                 { label: "Facebook", unit: "Followers", value: socials.facebook.followers || 0, icon: <FacebookIcon className="h-4 w-4 text-blue-500" /> },
               ].map((item) => (
-                <div key={item.label} style={subtleStyle} className="min-w-0 rounded-[12px] border px-1.5 py-3">
+                <div key={item.label} style={subtleStyle} className="min-w-0 rounded-[5px] border px-1.5 py-3">
                   <div className="mx-auto flex justify-center">{item.icon}</div>
                   <p className="mt-1.5 text-base font-bold tabular-nums">{formatCount(item.value)}</p>
                   <p style={{ color: c.mutedText }} className={`truncate ${PUBLIC_TYPE.label}`}>{item.label}</p>
@@ -720,7 +720,7 @@ export default function PublicMediaKitPage() {
                 {displayPackages.map((pkg) => {
                   const visual = getPackageCardVisual(pkg);
                   return (
-                    <article key={pkg.id} style={cardStyle} className="rounded-[14px] border p-3.5 sm:p-4">
+                    <article key={pkg.id} style={cardStyle} className="rounded-[5px] border p-3.5 sm:p-4">
                       <div className="flex items-start gap-3">
                         {visual.icon}
                         <div className="min-w-0 flex-1">
@@ -757,7 +757,7 @@ export default function PublicMediaKitPage() {
                                 aria-label={`Email about ${pkg.title}`}
                                 title="Email creator"
                                 style={{ background: c.accent }}
-                                className="tap-scale flex h-10 items-center gap-1.5 rounded-[12px] px-3.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
+                                className="tap-scale flex h-10 items-center gap-1.5 rounded-[5px] px-3.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
                               >
                                 <Mail className="h-4 w-4" /> Email
                               </a>
@@ -769,7 +769,7 @@ export default function PublicMediaKitPage() {
                                 rel="noopener noreferrer"
                                 aria-label={`WhatsApp about ${pkg.title}`}
                                 title="WhatsApp creator"
-                                className="tap-scale flex h-10 items-center gap-1.5 rounded-[12px] bg-[#16a34a] px-3.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
+                                className="tap-scale flex h-10 items-center gap-1.5 rounded-[5px] bg-[#16a34a] px-3.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
                               >
                                 <MessageCircle className="h-4 w-4" /> WhatsApp
                               </a>
@@ -807,8 +807,8 @@ export default function PublicMediaKitPage() {
               />
               <div className="grid grid-cols-1 gap-2 min-[380px]:grid-cols-2">
                 {team.members.map((member) => (
-                  <div key={member.id} style={cardStyle} className="flex min-w-0 items-center gap-2.5 rounded-[14px] border p-3">
-                    <div style={{ background: c.accent }} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] text-xs font-bold text-white">
+                  <div key={member.id} style={cardStyle} className="flex min-w-0 items-center gap-2.5 rounded-[5px] border p-3">
+                    <div style={{ background: c.accent }} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] text-xs font-bold text-white">
                       {getInitials(member.name)}
                     </div>
                     <div className="min-w-0">
@@ -834,7 +834,7 @@ export default function PublicMediaKitPage() {
               {reviews.slice(0, 3).map((review) => {
                 const rating = Math.max(0, Math.min(5, Math.round(Number(review.rating) || 0)));
                 return (
-                  <article key={review.id} style={cardStyle} className="rounded-[14px] border p-3.5 sm:p-4">
+                  <article key={review.id} style={cardStyle} className="rounded-[5px] border p-3.5 sm:p-4">
                     {rating > 0 && (
                       <div className="flex gap-0.5" aria-label={`${rating} out of 5 stars`}>
                         {Array.from({ length: rating }).map((_, index) => (
@@ -857,7 +857,7 @@ export default function PublicMediaKitPage() {
 
           {/* Brand CTA */}
           {hasDirectContact && (
-            <section data-media-kit-section data-media-kit-keep style={cardStyle} className="rounded-[14px] border p-5 text-center">
+            <section data-media-kit-section data-media-kit-keep style={cardStyle} className="rounded-[5px] border p-5 text-center">
               <h2 style={pt.headingStyle} className={PUBLIC_TYPE.sectionTitle}>Let&apos;s create something together</h2>
               <p style={{ color: c.secondaryText }} className={`mx-auto mt-1 max-w-xs ${PUBLIC_TYPE.metaRegular}`}>
                 Contact @{cleanHandle} directly for collaborations and campaign enquiries.
