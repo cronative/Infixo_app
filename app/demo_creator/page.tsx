@@ -24,9 +24,10 @@ function DemoCreatorContent() {
   const rawTab = searchParams?.get("tab");
   const initialTab =
     rawTab === "series" || rawTab === "watch" ? "watch" :
-    rawTab === "links" || rawTab === "shop" || rawTab === "setup" || rawTab === "explore" ? "explore" :
+    rawTab === "links" || rawTab === "explore" ? "links" :
+    rawTab === "shop" || rawTab === "products" ? "shop" :
+    rawTab === "setup" || rawTab === "about" || rawTab === "fanbase" ? "about" :
     rawTab === "reviews" || rawTab === "work" ? "work" :
-    rawTab === "about" || rawTab === "fanbase" ? "about" :
     undefined;
   const rawTheme = searchParams?.get("theme") as any;
   const theme = rawTheme || EXPERT_DEMO_THEME;
@@ -80,6 +81,11 @@ function DemoCreatorContent() {
           setupItems={EXPERT_DEMO_SETUP_ITEMS}
           customLinks={EXPERT_DEMO_CUSTOM_LINKS}
           mediaKitPackages={EXPERT_DEMO_GIGS}
+          mediaKitSettings={{
+            whatsappNumber: "+91 98765 43210",
+            sponsorEmail: "devom@inflixo.com",
+            acceptingSponsors: true,
+          }}
           reviews={EXPERT_DEMO_REVIEWS}
           totalAudience={totalAudience}
           variant="full"
@@ -91,7 +97,6 @@ function DemoCreatorContent() {
           allSeriesHref="/demo_creator/series"
           productsPreviewLimit={9}
           allProductsHref="/demo_creator/products"
-          onShare={handleShare}
         />
     </CreatorPublicShell>
   );

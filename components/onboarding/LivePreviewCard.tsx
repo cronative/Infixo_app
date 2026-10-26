@@ -117,6 +117,7 @@ import { BrandLeadQualifierModal } from "@/components/mediakit/BrandLeadQualifie
 import { CollaborationInquiryModal } from "@/components/mediakit/CollaborationInquiryModal";
 import { EpisodeQuickDrawer } from "@/components/series/EpisodeQuickDrawer";
 import { VisibilitySettingsModal } from "@/components/shared/VisibilitySettingsModal";
+import { ShareProfileModal } from "@/components/public/ShareProfileModal";
 import { STORAGE_KEYS, storage } from "@/utils/storage";
 import { getInitials } from "@/lib/avatar";
 
@@ -1146,9 +1147,9 @@ export function LivePreviewCard({
   const [seriesSortOrder, setSeriesSortOrder] = useState<string>("latest");
   const [shopSortOrder, setShopSortOrder] = useState<string>("latest");
   const [isShopSortOpen, setIsShopSortOpen] = useState(false);
-  const [collapsedCollectionsMap, setCollapsedCollectionsMap] = useState<Record<string, boolean>>({});
+  const [openCollectionsMap, setOpenCollectionsMap] = useState<Record<string, boolean>>({});
   const toggleCollection = (id: string) => {
-    setCollapsedCollectionsMap((prev) => ({
+    setOpenCollectionsMap((prev) => ({
       ...prev,
       [id]: !prev[id],
     }));
@@ -1182,21 +1183,22 @@ export function LivePreviewCard({
   const [selectedSeriesDetail, setSelectedSeriesDetail] = useState<Series | null>(null);
   const [selectedSeriesSeasonIdx, setSelectedSeriesSeasonIdx] = useState<number>(0);
   const [activeNavTab, setActiveNavTab] = useState<CreatorNavTabId>(() => {
-    const raw = initialTab;
+    const raw = (initialTab || (profile as any)?.defaultTab || profile.visibilitySettings?.defaultTab) as string | undefined;
     const normalized =
       raw === "series" || raw === "watch" ? "watch" :
-      raw === "links" || raw === "shop" || raw === "setup" || raw === "explore" ? "explore" :
+      raw === "links" || raw === "explore" ? "links" :
+      raw === "shop" || raw === "products" ? "shop" :
+      raw === "setup" || raw === "fanbase" || raw === "about" ? "about" :
       raw === "reviews" || raw === "work" ? "work" :
-      raw === "fanbase" || raw === "about" ? "about" :
       undefined;
 
     if (normalized) return normalized;
 
+    // Series is hero feature: Watch is the default tab whenever series exist!
     if (series && series.length > 0) return "watch";
     const passedLinks = passedCustomLinks || [];
-    if (passedLinks.length > 0 || (products && products.length > 0) || (incomingProfile as any)?.username === "demo_creator") {
-      return "explore";
-    }
+    if (passedLinks.length > 0) return "links";
+    if (products && products.length > 0) return "shop";
     return "about";
   });
   const [isBioExpanded, setIsBioExpanded] = useState(false);
@@ -1338,10 +1340,15 @@ export function LivePreviewCard({
     return passedCustomLinks || [];
   });
   const [selectedGigForWhatsApp, setSelectedGigForWhatsApp] = useState<MediaKitPackage | null>(null);
+  const [selectedPackageForInquiry, setSelectedPackageForInquiry] = useState<MediaKitPackage | null>(null);
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [drawerSeries, setDrawerSeries] = useState<Series | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [showAllGigs, setShowAllGigs] = useState(false);
+  const [isProductsExpanded, setIsProductsExpanded] = useState(false);
+  const [isSetupExpanded, setIsSetupExpanded] = useState(false);
+  const [isLinksExpanded, setIsLinksExpanded] = useState(false);
   const profileScrollRef = useRef<HTMLDivElement | null>(null);
   const [showMoveToTop, setShowMoveToTop] = useState(false);
   const [showStickyProfileHeader, setShowStickyProfileHeader] = useState(false);
@@ -1717,29 +1724,7 @@ export function LivePreviewCard({
       showToast("Share options active on your live public profile 🚀");
       return;
     }
-    if (onShare) {
-      onShare();
-      return;
-    }
-    const cleanUsername = (profile.username || "username").replace(/^@/, "");
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://inflixo.com";
-    const shareUrl = typeof window !== "undefined"
-      ? (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-        ? `${window.location.origin}/${cleanUsername}`
-        : `${baseUrl.replace(/\/$/, "")}/${cleanUsername}`)
-      : `${baseUrl.replace(/\/$/, "")}/${cleanUsername}`;
-
-    const title = `${profile.displayName || "Creator"} on Inflixo`;
-    try {
-      if (typeof navigator !== "undefined" && navigator.share) {
-        await navigator.share({ title, url: shareUrl });
-      } else {
-        const success = await copyToClipboard(shareUrl);
-        if (success) showToast("Profile link copied! ✨");
-      }
-    } catch {
-      // User dismissed share sheet
-    }
+    setIsShareModalOpen(true);
   };
 
   const headerTouchStartY = useRef<number | null>(null);
@@ -1836,38 +1821,44 @@ export function LivePreviewCard({
   const hasTeamContent = !isListingPage && activeTeamMembers.length > 0;
 
   const hasFanbaseTab = !isListingPage && effectiveVisibilitySettings.showFanbase !== false && (totalAudience > 0 || fanbaseSocialCards.length > 0);
-  const hasAboutTab = !isListingPage && (Boolean(profile.bio?.trim()) || hasFanbaseTab);
+  const hasAboutTab = !isListingPage && (Boolean(profile.bio?.trim()) || hasFanbaseTab || hasSetupContent);
   const hasWatchTab = hasSeriesContent;
-  const hasExploreTab = hasLinksContent || hasShopContent || hasSetupContent;
+  const hasLinksTab = hasLinksContent;
+  const hasShopTab = hasShopContent;
   const hasWorkTab = hasWorkCollab || hasReviewsContent || hasTeamContent;
 
   const aboutTabObj = { id: "about" as CreatorNavTabId, label: "About", icon: User };
-  const watchTabObj = { id: "watch" as CreatorNavTabId, label: "Watch", icon: Film, count: series.length > 0 ? series.length : undefined };
-  const exploreTabObj = {
-    id: "explore" as CreatorNavTabId,
-    label: "Links & Shop",
+  const watchTabObj = { id: "watch" as CreatorNavTabId, label: "Watch", icon: Film };
+  const linksTabObj = {
+    id: "links" as CreatorNavTabId,
+    label: "Links",
+    icon: LinkIcon,
+  };
+  const shopTabObj = {
+    id: "shop" as CreatorNavTabId,
+    label: "Shop",
     icon: ShoppingBag,
-    count: (validLinksCount + (products?.length || 0) + validSetupList.length) > 0
-      ? (validLinksCount + (products?.length || 0) + validSetupList.length)
-      : undefined,
   };
   const workTabObj = {
     id: "work" as CreatorNavTabId,
     label: "Collab",
     icon: Briefcase,
-    count: (navActivePackages.length + approvedReviews.length) > 0
-      ? (navActivePackages.length + approvedReviews.length)
-      : undefined,
   };
 
   const navTabs: { id: CreatorNavTabId; label: string; icon: any; count?: number | string }[] = [];
   if (hasWatchTab) {
     navTabs.push(watchTabObj);
-    if (hasExploreTab) navTabs.push(exploreTabObj);
+    if (hasLinksTab) navTabs.push(linksTabObj);
+    if (hasShopTab) navTabs.push(shopTabObj);
     if (hasAboutTab) navTabs.push(aboutTabObj);
     if (hasWorkTab) navTabs.push(workTabObj);
-  } else if (hasExploreTab) {
-    navTabs.push(exploreTabObj);
+  } else if (hasLinksTab) {
+    navTabs.push(linksTabObj);
+    if (hasShopTab) navTabs.push(shopTabObj);
+    if (hasAboutTab) navTabs.push(aboutTabObj);
+    if (hasWorkTab) navTabs.push(workTabObj);
+  } else if (hasShopTab) {
+    navTabs.push(shopTabObj);
     if (hasAboutTab) navTabs.push(aboutTabObj);
     if (hasWorkTab) navTabs.push(workTabObj);
   } else if (hasAboutTab) {
@@ -1906,13 +1897,14 @@ export function LivePreviewCard({
   useEffect(() => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
-      const tabParam = urlParams.get("tab") as CreatorNavTabId | null;
+      const tabParam = urlParams.get("tab");
       const normalizedTab: CreatorNavTabId | null =
-        tabParam === "fanbase" || tabParam === "about" ? "about" :
+        tabParam === "fanbase" || tabParam === "about" || tabParam === "setup" ? "about" :
         tabParam === "series" || tabParam === "watch" ? "watch" :
-        tabParam === "links" || tabParam === "shop" || tabParam === "setup" || tabParam === "explore" ? "explore" :
+        tabParam === "links" || tabParam === "explore" ? "links" :
+        tabParam === "shop" || tabParam === "products" ? "shop" :
         tabParam === "reviews" || tabParam === "work" ? "work" :
-        tabParam;
+        (tabParam as CreatorNavTabId | null);
 
       if (normalizedTab && navTabs.some((t) => t.id === normalizedTab)) {
         setActiveNavTab(normalizedTab);
@@ -1928,6 +1920,24 @@ export function LivePreviewCard({
     }
   }, [navTabs.length, initialTab]);
 
+  const resetContentScrollToTop = () => {
+    if (profileScrollRef.current) {
+      profileScrollRef.current.scrollTop = 0;
+    }
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+    // Double ensure after DOM updates
+    requestAnimationFrame(() => {
+      if (profileScrollRef.current) {
+        profileScrollRef.current.scrollTop = 0;
+      }
+      if (typeof window !== "undefined") {
+        window.scrollTo({ top: 0, behavior: "instant" });
+      }
+    });
+  };
+
   const handleTabChange = (tabId: CreatorNavTabId) => {
     setActiveNavTab(tabId);
     if (typeof window !== "undefined") {
@@ -1941,6 +1951,7 @@ export function LivePreviewCard({
     if (tabEl) {
       tabEl.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
     }
+    resetContentScrollToTop();
   };
 
   useEffect(() => {
@@ -1949,7 +1960,55 @@ export function LivePreviewCard({
       tabEl.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
     }
     checkTabScroll();
+    resetContentScrollToTop();
   }, [activeNavTab]);
+
+  const handleGetPackage = (pkg: MediaKitPackage) => {
+    setSelectedPackageForInquiry(pkg);
+    setSelectedGigForWhatsApp(pkg);
+
+    const whatsappNum = mediaKitSettings?.whatsappNumber?.trim() || (profile as any)?.whatsappNumber?.trim() || (profile as any)?.phone?.trim() || "";
+    const contactEmail = mediaKitSettings?.sponsorEmail?.trim() || profile.email?.trim() || "";
+
+    const rawPrice = pkg.price?.trim() || "";
+    const displayPrice = rawPrice ? (rawPrice.startsWith("₹") ? rawPrice : `₹${rawPrice}`) : "Custom Price";
+    const creatorName = profile.displayName || "Creator";
+    const profileUrl = typeof window !== "undefined" ? window.location.href : `https://inflixo.com/${cleanHandle || "creator"}`;
+    const deliverablesList = pkg.deliverables?.length ? `\n• Deliverables: ${pkg.deliverables.join(", ")}` : "";
+
+    // 1. Agar creator ne phone / WhatsApp number diya ho -> directly open WhatsApp with pre-filled package inquiry message:
+    if (whatsappNum) {
+      const cleanDigits = whatsappNum.replace(/\D/g, "");
+      const fullPhone = cleanDigits.length === 10 ? `91${cleanDigits}` : cleanDigits;
+      const waText = `Hi ${creatorName}, I want to book your "${pkg.title}" package (${displayPrice}) listed on your Inflixo profile (${profileUrl}).${deliverablesList}\n\nPlease share your availability and collaboration details!`;
+      const waUrl = `https://wa.me/${fullPhone}?text=${encodeURIComponent(waText)}`;
+
+      showToast(`Opening WhatsApp for "${pkg.title}"... ✨`);
+      window.open(waUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    // 2. Agar email dala ho (aur phone number nahi hai) -> directly open Email with pre-filled package inquiry:
+    if (contactEmail) {
+      const subject = `Collaboration Inquiry: ${pkg.title} (${displayPrice}) - ${creatorName}`;
+      const body = `Hi ${creatorName},\n\nI want to book your "${pkg.title}" collaboration package (${displayPrice}) listed on your Inflixo profile (${profileUrl}).${deliverablesList}\n\nPlease let me know your availability and next steps!\n\nBest regards,\n[Your Name / Brand Name]\n[Contact Info]`;
+      const mailtoUrl = `mailto:${contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+      showToast(`Opening Email for "${pkg.title}"... ✨`);
+      try {
+        window.open(mailtoUrl, "_blank");
+      } catch {
+        window.location.href = mailtoUrl;
+      }
+
+      // Also open on-site inquiry modal with pre-selected package as fallback in case mailto has no handler
+      setIsCollabInquiryOpen(true);
+      return;
+    }
+
+    // 3. Fallback: on-site inquiry modal
+    setIsCollabInquiryOpen(true);
+  };
 
   const publicSurfaceShadow = "none";
 
@@ -2224,7 +2283,6 @@ export function LivePreviewCard({
                 }}
                 className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[5px] border text-[10px] sm:text-[10.5px] font-semibold shadow-2xs select-none backdrop-blur-xs leading-none"
               >
-                <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="font-extrabold tabular-nums text-[11px]">{formatCount(totalAudience)}</span>
                 <span className="text-gray-300 dark:text-gray-600 font-light mx-0.5">|</span>
                 <span style={{ color: c.mutedText }} className="font-medium text-[10px]">Total Fanbase</span>
@@ -2359,7 +2417,7 @@ export function LivePreviewCard({
                       className={`flex items-center gap-1.5 ${PUBLIC_TYPE.sectionTitle}`}
                     >
                       <ShoppingBag className="h-3.5 w-3.5 opacity-70" style={{ color: c.primaryText }} />
-                      <span>Curated Store &amp; Gear Picks</span>
+                      <span>My Products</span>
                     </h2>
                   </div>
                   {products && products.length > 0 && (
@@ -2367,7 +2425,7 @@ export function LivePreviewCard({
                       style={{ color: c.mutedText }}
                       className="shrink-0 text-[11px] sm:text-xs font-semibold"
                     >
-                      {products.length} {products.length === 1 ? "Pick" : "Picks"}
+                      {products.length} {products.length === 1 ? "Product" : "Products"}
                     </span>
                   )}
                 </div>
@@ -2375,7 +2433,7 @@ export function LivePreviewCard({
                   style={{ color: c.secondaryText }}
                   className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5"
                 >
-                  Handpicked tech, creative tools &amp; daily essentials I personally trust &amp; recommend.
+                  Check out my products.
                 </p>
               </div>
             )}
@@ -2446,13 +2504,13 @@ export function LivePreviewCard({
                     <User className="h-4 w-4 text-[#7A2253] dark:text-pink-400 shrink-0" />
                     <h2
                       style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                      className="text-[13.5px] sm:text-sm font-bold truncate"
+                      className="text-base sm:text-lg font-bold tracking-tight truncate"
                     >
                       About {profile.displayName || "The Creator"}
                     </h2>
                   </div>
                   {formattedCategories && (
-                    <span className="shrink-0 rounded-[5px] bg-pink-50 dark:bg-pink-950/40 text-[#7A2253] dark:text-pink-300 border border-pink-200/60 dark:border-pink-800/40 px-2.5 py-0.5 text-[10.5px] sm:text-[11px] font-semibold truncate max-w-[180px]">
+                    <span className="shrink-0 rounded-[5px] bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-white/10 px-2.5 py-0.5 text-[10.5px] sm:text-[11px] font-semibold truncate max-w-[180px]">
                       {formattedCategories}
                     </span>
                   )}
@@ -2497,7 +2555,6 @@ export function LivePreviewCard({
                       >
                         {formatCount(totalAudience)}
                       </span>
-                      <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
                     </div>
                     <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-medium mt-1.5">
                       Verified community across {fanbaseSocialCards.length > 0 ? `${fanbaseSocialCards.length} connected platforms` : "3 connected platforms"}
@@ -2505,24 +2562,24 @@ export function LivePreviewCard({
                   </div>
 
                   {/* Vertical Divider for sm+ screens */}
-                  <div className="hidden sm:block h-14 w-px bg-pink-200/60 dark:bg-pink-800/40" />
+                  <div className="hidden sm:block h-14 w-px bg-slate-200 dark:bg-white/10" />
 
                   {/* Right Column: Community Graphic & 3 Bullet Points */}
                   <div className="flex items-center gap-3.5 shrink-0">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-[5px] bg-pink-100/60 dark:bg-pink-950/40 text-[#7A2253] dark:text-pink-400 shrink-0">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-[5px] bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-slate-200 shrink-0">
                       <Users className="h-6 w-6 stroke-[1.75]" />
                     </div>
                     <div className="space-y-1 text-xs sm:text-[12px] font-medium text-slate-700 dark:text-slate-200">
                       <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-[#7A2253] dark:text-pink-400 shrink-0 fill-pink-100 dark:fill-pink-950" />
+                        <CheckCircle2 className="h-3.5 w-3.5 text-[#7A2253] dark:text-white shrink-0 fill-slate-100 dark:fill-white/10" />
                         <span>{fanbaseSocialCards.length > 0 ? `${fanbaseSocialCards.length} Platforms Connected` : "3 Platforms Connected"}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-[#7A2253] dark:text-pink-400 shrink-0 fill-pink-100 dark:fill-pink-950" />
+                        <CheckCircle2 className="h-3.5 w-3.5 text-[#7A2253] dark:text-white shrink-0 fill-slate-100 dark:fill-white/10" />
                         <span>Real Audience</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-[#7A2253] dark:text-pink-400 shrink-0 fill-pink-100 dark:fill-pink-950" />
+                        <CheckCircle2 className="h-3.5 w-3.5 text-[#7A2253] dark:text-white shrink-0 fill-slate-100 dark:fill-white/10" />
                         <span>Growing Community</span>
                       </div>
                     </div>
@@ -2650,172 +2707,153 @@ export function LivePreviewCard({
         )}
 
         {/* 3. Links Section */}
-        {!isListingPage && (!isTabsLayout || activeNavTab === "explore" || activeNavTab === "links") && (safeProfile.username === "demo_creator" || (effectiveVisibilitySettings.showCustomLinks !== false && customLinksList && customLinksList.filter((l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url)))).length > 0)) && (
-          <div id="links-section" className={`relative z-10 order-[5] w-full text-left animate-fade-in ${isTabsLayout ? "mt-2.5 sm:mt-3" : "mt-5 sm:mt-6 space-y-2"}`}>
-            {/* Header: My Links + Subtitle (clean, compact) */}
-            <div className="pb-1.5 sm:pb-2">
-              <div className="flex items-center justify-between px-0.5">
-                <div className="flex items-center gap-2">
-                  <LinkIcon className="h-4.5 w-4.5 text-[#7A2253] dark:text-pink-400 shrink-0" />
-                  <h2
-                    style={{
-                      color: c.primaryText,
-                      fontFamily: typ.headingFontFamily,
-                      fontWeight: 700,
-                    }}
-                    className="text-base sm:text-lg font-bold tracking-tight"
+        {!isListingPage && (!isTabsLayout || activeNavTab === "explore" || activeNavTab === "links") && (
+          (() => {
+            const validLinks = (customLinksList || []).filter(
+              (l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url)))
+            );
+            if (validLinks.length === 0) return null;
+
+            const directLinks = validLinks.filter((l) => l.kind !== "collection" && Boolean(l.url));
+            const linkGroups = validLinks.filter((l) => l.kind === "collection");
+            const visibleDirectLinks = isLinksExpanded ? directLinks : directLinks.slice(0, 3);
+
+            return (
+              <div id="links-section" className={`relative z-10 order-[5] w-full text-left animate-fade-in ${isTabsLayout ? "mt-2.5 sm:mt-3" : "mt-5 sm:mt-6 space-y-2"}`}>
+                {/* Header: My Links + Subtitle */}
+                <div className="pb-1.5 sm:pb-2">
+                  <div className="flex items-center justify-between px-0.5">
+                    <div className="flex items-center gap-2">
+                      <LinkIcon className="h-4.5 w-4.5 text-[#7A2253] dark:text-pink-400 shrink-0" />
+                      <h2
+                        style={{
+                          color: c.primaryText,
+                          fontFamily: typ.headingFontFamily,
+                          fontWeight: 800,
+                        }}
+                        className="text-lg sm:text-xl font-extrabold tracking-tight"
+                      >
+                        My Links
+                      </h2>
+                    </div>
+                  </div>
+                  <p
+                    style={{ color: c.secondaryText }}
+                    className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-normal px-0.5 mt-0.5"
                   >
-                    My Links
-                  </h2>
+                    Check out my important links.
+                  </p>
                 </div>
-              </div>
-              <p
-                style={{ color: c.secondaryText }}
-                className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-normal px-0.5 mt-0.5"
-              >
-                Find all my important links, projects and more.
-              </p>
-            </div>
 
-            <div className="space-y-2 sm:space-y-2.5 w-full">
-              {(() => {
-                const getCollectionTheme = (index: number, link: CustomLink) => {
-                  const titleLower = (link.title || "").toLowerCase();
-                  if (titleLower.includes("official") || titleLower.includes("channel") || index === 0) {
-                    return {
-                      container: "bg-[#FFF9FB] dark:bg-white/[0.02] border-[#FCE7F1] dark:border-pink-950/50",
-                      title: "text-[#7A2253] dark:text-pink-400",
-                      badge: "bg-[#FDF2F7] text-[#7A2253] dark:bg-pink-950/40 dark:text-pink-300 border-pink-200/60 dark:border-pink-900/50",
-                      chevron: "text-[#7A2253] dark:text-pink-400",
-                    };
-                  }
-                  if (titleLower.includes("project") || titleLower.includes("collab") || index === 1) {
-                    return {
-                      container: "bg-[#F8FAFC] dark:bg-white/[0.02] border-[#E0E7FF] dark:border-sky-950/50",
-                      title: "text-[#1E3A8A] dark:text-sky-400",
-                      badge: "bg-[#EFF6FF] text-[#1E3A8A] dark:bg-sky-950/40 dark:text-sky-300 border-sky-200/60 dark:border-sky-900/50",
-                      chevron: "text-[#1E3A8A] dark:text-sky-400",
-                    };
-                  }
-                  return {
-                    container: "bg-[#F0FDF4]/50 dark:bg-white/[0.02] border-[#D1FAE5] dark:border-emerald-950/50",
-                    title: "text-[#065F46] dark:text-emerald-400",
-                    badge: "bg-[#ECFDF5] text-[#065F46] dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-900/50",
-                    chevron: "text-[#065F46] dark:text-emerald-400",
-                  };
-                };
+                <div className="space-y-2 sm:space-y-2.5 w-full">
+                  {/* 1. Direct Links (Top 3 Initially) */}
+                  {visibleDirectLinks.map((link) => (
+                    <a
+                      key={link.id}
+                      href={link.url || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => {
+                        if (isInformationalMode) {
+                          e.preventDefault();
+                          showToast(`Opens ${link.title} ✨`);
+                        }
+                      }}
+                      className="group w-full rounded-[5px] border border-slate-200/80 dark:border-white/10 bg-white dark:bg-zinc-900 px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 shadow-none hover:border-black/20 dark:hover:border-white/20 transition-all text-left cursor-pointer"
+                    >
+                      <span className="text-xs sm:text-[13px] font-bold text-slate-900 dark:text-white min-w-0 break-words line-clamp-2 leading-snug flex-1">
+                        {link.title}
+                      </span>
+                      <ArrowUpRight className="h-4 w-4 text-[#7A2253] dark:text-pink-400 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </a>
+                  ))}
 
-                let collectionIndex = 0;
+                  {/* Direct Links Show More Button if > 3 */}
+                  {directLinks.length > 3 && (
+                    <div className="pt-0.5 text-center">
+                      <button
+                        type="button"
+                        onClick={() => setIsLinksExpanded(!isLinksExpanded)}
+                        className="w-full py-2 px-3 rounded-[5px] bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/10 dark:text-white border border-slate-200/80 dark:border-white/10 text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-none"
+                      >
+                        <span>{isLinksExpanded ? "Show Less Links" : `View All Direct Links (${directLinks.length})`}</span>
+                        {isLinksExpanded ? <ChevronUp className="h-3.5 w-3.5 shrink-0" /> : <ChevronDown className="h-3.5 w-3.5 shrink-0" />}
+                      </button>
+                    </div>
+                  )}
 
-                return customLinksList
-                  .filter((l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url))))
-                  .map((link) => {
-                    if (link.kind === "collection") {
-                      const collectionItems = link.items?.filter((item) => item.isEnabled !== false && item.title && item.url) || [];
-                      const theme = getCollectionTheme(collectionIndex, link);
-                      collectionIndex++;
-                      const isCollapsed = Boolean(collapsedCollectionsMap[link.id]);
+                  {/* 2. Link Groups in Collapsible Sections */}
+                  {linkGroups.map((group) => {
+                    const collectionItems = group.items?.filter((item) => item.isEnabled !== false && item.title && item.url) || [];
+                    if (collectionItems.length === 0) return null;
+                    const isOpen = Boolean(openCollectionsMap[group.id]);
 
-                      return (
-                        <div
-                          key={link.id}
-                          className={`rounded-[5px] border p-2.5 sm:p-3 space-y-2 transition-all shadow-2xs ${theme.container}`}
-                        >
-                          {/* Folder Header */}
-                          <button
-                            type="button"
-                            onClick={() => toggleCollection(link.id)}
-                            className="w-full flex items-center justify-between text-left cursor-pointer select-none group/colheader"
-                            aria-expanded={!isCollapsed}
-                          >
-                            <div className="min-w-0 pr-2">
-                              <h3 className={`text-[14px] sm:text-[14.5px] font-bold tracking-tight ${theme.title}`}>
-                                {link.title}
-                              </h3>
-                              {link.subtitle ? (
-                                <p className="text-[11px] text-slate-500 dark:text-slate-400 font-normal mt-0.5 line-clamp-1">
-                                  {link.subtitle}
-                                </p>
-                              ) : null}
-                            </div>
-                            <div className="flex items-center gap-1.5 shrink-0">
-                              <span className={`rounded-[5px] border text-[10px] font-bold px-2.5 py-0.5 shadow-2xs leading-none ${theme.badge}`}>
-                                {collectionItems.length} {collectionItems.length === 1 ? "Link" : "Links"}
-                              </span>
-                              {isCollapsed ? (
-                                <ChevronDown className={`h-3.5 w-3.5 ${theme.chevron} transition-transform duration-200`} />
-                              ) : (
-                                <ChevronUp className={`h-3.5 w-3.5 ${theme.chevron} transition-transform duration-200`} />
-                              )}
-                            </div>
-                          </button>
-
-                          {/* Expanded Items */}
-                          {!isCollapsed && (
-                            <div className="space-y-1.5 pt-0.5 animate-in fade-in duration-200">
-                              {collectionItems.map((item) => (
-                                <div
-                                  key={item.id}
-                                  className="group/item rounded-[5px] border border-slate-100 dark:border-white/10 bg-white dark:bg-zinc-900 px-3 py-2 sm:px-3.5 sm:py-2.5 flex items-center justify-between gap-3 shadow-2xs hover:border-black/15 dark:hover:border-white/20 transition-all"
-                                >
-                                  <span className="text-xs sm:text-[13px] font-semibold text-slate-800 dark:text-slate-100 min-w-0 truncate">
-                                    {item.title}
-                                  </span>
-                                  <a
-                                    href={item.url || "#"}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={(e) => {
-                                      if (isInformationalMode) {
-                                        e.preventDefault();
-                                        showToast(`Opens ${item.title} ✨`);
-                                      }
-                                    }}
-                                    className="tap-scale shrink-0 h-6.5 w-6.5 sm:h-7 sm:w-7 rounded-[5px] bg-pink-50 dark:bg-pink-950/40 border border-pink-100 dark:border-pink-900/40 text-[#7A2253] dark:text-pink-300 flex items-center justify-center hover:bg-pink-100 dark:hover:bg-pink-950/70 transition-all shadow-2xs cursor-pointer"
-                                    aria-label={`Open ${item.title}`}
-                                    title={`Open ${item.title}`}
-                                  >
-                                    <ArrowUpRight className="h-3 w-3" />
-                                  </a>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    }
-
-                    // Standalone Card (e.g. Book Tickets: Middle Class Dreams Tour)
                     return (
                       <div
-                        key={link.id}
-                        className="rounded-[5px] border border-slate-200/80 dark:border-white/10 bg-white dark:bg-zinc-900 px-3 py-2.5 sm:px-3.5 sm:py-3 flex items-center justify-between gap-3 shadow-2xs hover:border-black/20 dark:hover:border-white/20 transition-all"
+                        key={group.id}
+                        className="rounded-[5px] border border-slate-200/80 dark:border-white/10 bg-white dark:bg-zinc-900 transition-all overflow-hidden shadow-none"
                       >
-                        <span className="text-xs sm:text-[13.5px] font-bold text-slate-900 dark:text-white min-w-0 truncate">
-                          {link.title}
-                        </span>
-                        <a
-                          href={link.url || "#"}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => {
-                            if (isInformationalMode) {
-                              e.preventDefault();
-                              showToast(`Opens ${link.title} ✨`);
-                            }
-                          }}
-                          className="tap-scale shrink-0 h-6.5 w-6.5 sm:h-7 sm:w-7 rounded-[5px] bg-pink-50 dark:bg-pink-950/40 border border-pink-100 dark:border-pink-900/40 text-[#7A2253] dark:text-pink-300 flex items-center justify-center hover:bg-pink-100 dark:hover:bg-pink-950/70 transition-all shadow-2xs cursor-pointer"
-                          aria-label={`Open ${link.title}`}
-                          title={`Open ${link.title}`}
+                        {/* Collapsible Folder Header */}
+                        <button
+                          type="button"
+                          onClick={() => toggleCollection(group.id)}
+                          className="w-full flex items-center justify-between p-3 text-left cursor-pointer select-none group/colheader hover:bg-slate-50/80 dark:hover:bg-white/[0.02] transition-colors"
+                          aria-expanded={isOpen}
                         >
-                          <ArrowUpRight className="h-3 w-3" />
-                        </a>
+                          <div className="min-w-0 pr-2">
+                            <h3 className="text-xs sm:text-[13.5px] font-bold text-slate-900 dark:text-white truncate">
+                              {group.title}
+                            </h3>
+                            {group.subtitle ? (
+                              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-normal mt-0.5 line-clamp-1">
+                                {group.subtitle}
+                              </p>
+                            ) : null}
+                          </div>
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <span className="rounded-[5px] bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-300 text-[10px] font-bold px-2 py-0.5 leading-none">
+                              {collectionItems.length} {collectionItems.length === 1 ? "Link" : "Links"}
+                            </span>
+                            {isOpen ? (
+                              <ChevronUp className="h-3.5 w-3.5 text-slate-400 group-hover/colheader:text-slate-600 transition-transform duration-200" />
+                            ) : (
+                              <ChevronDown className="h-3.5 w-3.5 text-slate-400 group-hover/colheader:text-slate-600 transition-transform duration-200" />
+                            )}
+                          </div>
+                        </button>
+
+                        {/* Expanded Items */}
+                        {isOpen && (
+                          <div className="px-3 pb-3 space-y-1.5 pt-0.5 border-t border-slate-100 dark:border-white/5 animate-in fade-in duration-200">
+                            {collectionItems.map((item) => (
+                              <a
+                                key={item.id}
+                                href={item.url || "#"}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => {
+                                  if (isInformationalMode) {
+                                    e.preventDefault();
+                                    showToast(`Opens ${item.title} ✨`);
+                                  }
+                                }}
+                                className="group w-full rounded-[5px] border border-slate-100 dark:border-white/10 bg-slate-50/70 dark:bg-white/[0.03] px-3 py-2 sm:px-3.5 sm:py-2.5 flex items-center justify-between gap-3 hover:border-black/15 dark:hover:border-white/20 transition-all shadow-none cursor-pointer text-left"
+                              >
+                                <span className="text-xs sm:text-[13px] font-semibold text-slate-800 dark:text-slate-200 min-w-0 break-words line-clamp-2 leading-snug flex-1">
+                                  {item.title}
+                                </span>
+                                <ArrowUpRight className="h-3.5 w-3.5 text-[#7A2253] dark:text-pink-400 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                              </a>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     );
-                  });
-              })()}
-            </div>
-          </div>
+                  })}
+                </div>
+              </div>
+            );
+          })()
         )}
 
         {/* 4. Series Section */}
@@ -2831,9 +2869,9 @@ export function LivePreviewCard({
                         style={{
                           color: c.primaryText,
                           fontFamily: typ.headingFontFamily,
-                          fontWeight: 700,
+                          fontWeight: 800,
                         }}
-                        className="text-base sm:text-lg font-bold tracking-tight truncate"
+                        className="text-lg sm:text-xl font-extrabold tracking-tight truncate"
                       >
                         Series
                       </h2>
@@ -2983,8 +3021,8 @@ export function LivePreviewCard({
                         <div className="relative shrink-0 w-[100px] min-[360px]:w-[115px] sm:w-[150px] aspect-[16/10] rounded-[5px] overflow-hidden bg-black/5 dark:bg-white/5">
                           {/* Top-Left Badge: Featured on 1st, or Platform Series on others */}
                           {idx === 0 ? (
-                            <span className="absolute top-1.5 left-1.5 z-10 inline-flex items-center gap-1 rounded-[5px] bg-[#FEF08A] text-amber-950 px-1.5 sm:px-2 py-0.5 text-[8.5px] sm:text-[9px] font-black shadow-none tracking-wide">
-                              <Crown className="h-2.5 w-2.5 fill-amber-950 text-amber-950 shrink-0" />
+                            <span className="absolute top-1.5 left-1.5 z-10 inline-flex items-center gap-1 rounded-[5px] bg-[#7A2253] text-white px-1.5 sm:px-2 py-0.5 text-[8.5px] sm:text-[9px] font-black shadow-none tracking-wide">
+                              <Crown className="h-2.5 w-2.5 fill-white text-white shrink-0" />
                               <span className="shrink-0">Featured</span>
                             </span>
                           ) : (
@@ -3061,11 +3099,7 @@ export function LivePreviewCard({
                           {seriesPills.length > 0 && (
                             <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 pt-1 min-w-0">
                               {seriesPills.map((pill, pIdx) => {
-                                const pillStyleClass = pIdx === 0
-                                  ? "bg-pink-50 dark:bg-pink-950/40 text-[#7A2253] dark:text-pink-300 border border-pink-200/50 dark:border-pink-900/40"
-                                  : pIdx === 1
-                                    ? "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200/50 dark:border-blue-900/40"
-                                    : "bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 border border-slate-200/50 dark:border-white/10";
+                                const pillStyleClass = "bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-white/10";
                                 return (
                                   <span
                                     key={pIdx}
@@ -3079,8 +3113,8 @@ export function LivePreviewCard({
                           )}
                         </div>
 
-                        {/* Far Right: Circular Plum Arrow Button */}
-                        <div className="shrink-0 flex items-center justify-center h-7 w-7 sm:h-8 sm:w-8 rounded-[5px] bg-pink-50 dark:bg-pink-950/40 text-[#7A2253] dark:text-pink-300 group-hover:bg-pink-100 dark:group-hover:bg-pink-900/60 transition-colors self-center">
+                        {/* Far Right: Arrow Button */}
+                        <div className="shrink-0 flex items-center justify-center h-7 w-7 sm:h-8 sm:w-8 rounded-[5px] bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-200 group-hover:bg-slate-200 dark:group-hover:bg-white/20 transition-colors self-center">
                           <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
                         </div>
                       </div>
@@ -3105,7 +3139,7 @@ export function LivePreviewCard({
                     }
                     router.push(allSeriesHref);
                   }}
-                  className="w-full py-2.5 px-3 sm:px-4 rounded-[5px] bg-pink-50/70 hover:bg-pink-100/90 text-[#7A2253] dark:bg-pink-950/40 dark:text-pink-300 border border-pink-200/60 dark:border-pink-900/40 text-xs sm:text-[13px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center"
+                  className="w-full py-2.5 px-3 sm:px-4 rounded-[5px] bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/10 dark:text-white border border-slate-200/80 dark:border-white/10 text-xs sm:text-[13px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center"
                 >
                   <span className="whitespace-normal sm:whitespace-nowrap">View all series &amp; shows</span>
                   <ArrowRight className="h-3.5 w-3.5 shrink-0" />
@@ -3116,7 +3150,7 @@ export function LivePreviewCard({
         )}
 
         {/* Shop / Products Section */}
-        {(productsOnlyMode || (!isListingPage && (!isTabsLayout || activeNavTab === "explore" || activeNavTab === "shop"))) && ((products && products.length > 0) || productsOnlyMode) && (
+        {((productsOnlyMode || (!isListingPage && (!isTabsLayout || activeNavTab === "shop"))) && ((products && products.length > 0) || productsOnlyMode)) && (
           <section id="shop-section" aria-label="Shop" className={`relative z-10 order-[15] w-full text-left animate-fade-in ${productsOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7 space-y-2.5"}`}>
             {!productsOnlyMode && (
               <div className="pb-1">
@@ -3127,23 +3161,23 @@ export function LivePreviewCard({
                       style={{
                         color: c.primaryText,
                         fontFamily: typ.headingFontFamily,
-                        fontWeight: 700,
+                        fontWeight: 800,
                       }}
-                      className="text-base sm:text-lg font-bold tracking-tight"
+                      className="text-lg sm:text-xl font-extrabold tracking-tight"
                     >
-                      My Shop
+                      My Products
                     </h2>
                   </div>
 
-                  {/* Latest First Dropdown */}
+                  {/* Latest Dropdown */}
                   <div className="relative">
                     <button
                       type="button"
                       onClick={() => setIsShopSortOpen(!isShopSortOpen)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/10 transition-all cursor-pointer shadow-2xs"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-[5px] border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/10 transition-all cursor-pointer shadow-none"
                     >
                       <span>
-                        {shopSortOrder === "price_asc" ? "Price: Low to High" : shopSortOrder === "price_desc" ? "Price: High to Low" : "Latest First"}
+                        {shopSortOrder === "price_asc" ? "Price: Low to High" : shopSortOrder === "price_desc" ? "Price: High to Low" : "Latest"}
                       </span>
                       <ChevronDown className="h-3.5 w-3.5 opacity-60" />
                     </button>
@@ -3153,21 +3187,21 @@ export function LivePreviewCard({
                         <button
                           type="button"
                           onClick={() => { setShopSortOrder("latest"); setIsShopSortOpen(false); }}
-                          className={`w-full text-left px-3 py-1.5 rounded-[5px] text-xs font-semibold ${shopSortOrder === "latest" ? "bg-pink-50 text-[#7A2253] dark:bg-pink-950/40 dark:text-pink-300" : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5"}`}
+                          className={`w-full text-left px-3 py-1.5 rounded-[5px] text-xs font-semibold ${shopSortOrder === "latest" ? "bg-slate-100 text-slate-900 font-bold dark:bg-white/10 dark:text-white" : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5"}`}
                         >
-                          Latest First
+                          Latest
                         </button>
                         <button
                           type="button"
                           onClick={() => { setShopSortOrder("price_asc"); setIsShopSortOpen(false); }}
-                          className={`w-full text-left px-3 py-1.5 rounded-[5px] text-xs font-semibold ${shopSortOrder === "price_asc" ? "bg-pink-50 text-[#7A2253] dark:bg-pink-950/40 dark:text-pink-300" : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5"}`}
+                          className={`w-full text-left px-3 py-1.5 rounded-[5px] text-xs font-semibold ${shopSortOrder === "price_asc" ? "bg-slate-100 text-slate-900 font-bold dark:bg-white/10 dark:text-white" : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5"}`}
                         >
                           Price: Low to High
                         </button>
                         <button
                           type="button"
                           onClick={() => { setShopSortOrder("price_desc"); setIsShopSortOpen(false); }}
-                          className={`w-full text-left px-3 py-1.5 rounded-[5px] text-xs font-semibold ${shopSortOrder === "price_desc" ? "bg-pink-50 text-[#7A2253] dark:bg-pink-950/40 dark:text-pink-300" : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5"}`}
+                          className={`w-full text-left px-3 py-1.5 rounded-[5px] text-xs font-semibold ${shopSortOrder === "price_desc" ? "bg-slate-100 text-slate-900 font-bold dark:bg-white/10 dark:text-white" : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5"}`}
                         >
                           Price: High to Low
                         </button>
@@ -3180,7 +3214,7 @@ export function LivePreviewCard({
                   style={{ color: c.secondaryText }}
                   className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 font-normal px-0.5 mt-1"
                 >
-                  Handpicked gear, creative tools &amp; daily essentials I personally use and recommend.
+                  Check out my products.
                 </p>
               </div>
             )}
@@ -3191,28 +3225,28 @@ export function LivePreviewCard({
                   backgroundColor: c.elevatedBackground,
                   borderColor: c.border,
                 }}
-                className="rounded-[5px] border p-3.5 sm:p-4 text-center space-y-0.5"
+                className="rounded-[5px] border p-3.5 sm:p-4 text-center space-y-0.5 shadow-none"
               >
                 <p style={{ color: c.primaryText }} className="text-xs sm:text-sm font-semibold">
                   No products yet
                 </p>
                 <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs">
-                  Curated recommendations and products will appear here once added.
+                  Products will appear here once added.
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3 pt-2">
-                {sortedProducts.map((product: CreatorProduct) => (
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-3 pt-1.5">
+                {(isProductsExpanded || productsOnlyMode ? sortedProducts : sortedProducts.slice(0, 4)).map((product: CreatorProduct) => (
                   <article
                     key={product.id}
-                    className="group flex flex-col justify-between rounded-[5px] border border-slate-100 dark:border-white/10 bg-white dark:bg-zinc-900 p-2.5 shadow-2xs hover:shadow-md transition-all duration-200"
+                    className="group flex flex-col justify-between rounded-[5px] border border-slate-200/80 dark:border-white/10 bg-white dark:bg-zinc-900 p-2.5 shadow-none hover:border-black/20 dark:hover:border-white/20 transition-all duration-200"
                   >
-                    <div className="w-full">
-                      {/* Image Container */}
+                    <div className="w-full flex-1 flex flex-col">
+                      {/* Image Container with square aspect ratio */}
                       <button
                         type="button"
                         onClick={() => setSelectedProductForZoom(product)}
-                        className="relative aspect-[4/3] w-full rounded-[5px] overflow-hidden bg-slate-100 dark:bg-white/5 cursor-zoom-in block"
+                        className="relative aspect-square w-full rounded-[5px] overflow-hidden bg-slate-100 dark:bg-white/5 cursor-zoom-in block shrink-0"
                         title={`Click to zoom ${product.name}`}
                         aria-label={`View full image for ${product.name}`}
                       >
@@ -3223,24 +3257,28 @@ export function LivePreviewCard({
                         />
                       </button>
 
-                      {/* Title */}
+                      {/* Title: exactly 2 lines min-height so every card title aligns */}
                       <h3
-                        className="mt-2 text-[11px] sm:text-[12px] font-bold text-slate-900 dark:text-white line-clamp-1 leading-tight tracking-tight"
+                        className="mt-2 text-xs sm:text-[13px] font-bold text-slate-900 dark:text-white line-clamp-2 leading-snug tracking-tight min-h-[34px] break-words"
                         title={product.name}
                       >
                         {product.name}
                       </h3>
 
-                      {/* Price in Plum */}
-                      {product.pricePaise !== null && (
-                        <p className="mt-0.5 text-[11px] sm:text-xs font-extrabold text-[#7A2253] dark:text-pink-400 tabular-nums">
-                          {formatProductPrice(product.pricePaise)}
-                        </p>
-                      )}
+                      {/* Price: cleanly aligned */}
+                      <div className="mt-1 flex items-center justify-between">
+                        {product.pricePaise !== null ? (
+                          <p className="text-xs sm:text-[13px] font-extrabold text-[#7A2253] dark:text-pink-400 tabular-nums">
+                            {formatProductPrice(product.pricePaise)}
+                          </p>
+                        ) : (
+                          <span />
+                        )}
+                      </div>
                     </div>
 
                     {/* Solid Plum CTA Button */}
-                    <div className="pt-2 w-full">
+                    <div className="pt-2 w-full mt-auto">
                       <a
                         href={product.productUrl}
                         target="_blank"
@@ -3251,10 +3289,10 @@ export function LivePreviewCard({
                             showToast(`Opens ${product.name} external product page ✨`);
                           }
                         }}
-                        className="tap-scale w-full py-1.5 sm:py-2 px-2.5 rounded-[5px] bg-[#7A2253] hover:bg-[#681c46] text-white text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1 shadow-xs transition-all cursor-pointer"
+                        className="tap-scale w-full py-1.5 sm:py-2 px-2.5 rounded-[5px] bg-[#7A2253] hover:bg-[#681c46] text-white text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1 shadow-none transition-all cursor-pointer"
                       >
                         <span>View Product</span>
-                        <ArrowUpRight className="h-3 w-3" />
+                        <ArrowUpRight className="h-3 w-3 shrink-0" />
                       </a>
                     </div>
                   </article>
@@ -3262,26 +3300,15 @@ export function LivePreviewCard({
               </div>
             )}
 
-            {!productsOnlyMode && allProductsHref && products.length > 0 && (
-              <div className="pt-3 w-full">
+            {!productsOnlyMode && sortedProducts.length > 4 && (
+              <div className="pt-2.5 w-full text-center">
                 <button
                   type="button"
-                  onPointerEnter={() => {
-                    if (allProductsHref && !isInformationalMode) {
-                      router.prefetch(allProductsHref);
-                    }
-                  }}
-                  onClick={() => {
-                    if (isInformationalMode) {
-                      showToast("Opens all creator products on live profile ✨");
-                      return;
-                    }
-                    router.push(allProductsHref);
-                  }}
-                  className="tap-scale w-full py-2.5 sm:py-3 px-4 rounded-[5px] bg-pink-50 dark:bg-pink-950/40 border border-pink-100 dark:border-pink-900/50 text-[#7A2253] dark:text-pink-300 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-2 hover:bg-pink-100 dark:hover:bg-pink-950/60 transition-all cursor-pointer shadow-2xs"
+                  onClick={() => setIsProductsExpanded(!isProductsExpanded)}
+                  className="w-full py-2.5 px-4 rounded-[5px] bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/10 dark:text-white border border-slate-200/80 dark:border-white/10 text-xs sm:text-[13px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center shadow-none"
                 >
-                  <span>View All Products</span>
-                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
+                  <span>{isProductsExpanded ? "Show Less Products" : `View All Products (${sortedProducts.length})`}</span>
+                  {isProductsExpanded ? <ChevronUp className="h-3.5 w-3.5 shrink-0" /> : <ChevronDown className="h-3.5 w-3.5 shrink-0" />}
                 </button>
               </div>
             )}
@@ -3425,9 +3452,9 @@ export function LivePreviewCard({
                       style={{
                         color: c.primaryText,
                         fontFamily: typ.headingFontFamily,
-                        fontWeight: 700,
+                        fontWeight: 800,
                       }}
-                      className="text-base sm:text-lg font-bold tracking-tight"
+                      className="text-lg sm:text-xl font-extrabold tracking-tight"
                     >
                       Work with Me
                     </h2>
@@ -3470,7 +3497,7 @@ export function LivePreviewCard({
                           <div>
                             {/* Most Popular Badge */}
                             {isMostPopular && (
-                              <span className="inline-block bg-[#FDF2F8] text-[#9D174D] border border-[#FCE7F3] text-[10.5px] font-bold px-2.5 py-0.5 rounded-[5px] mb-1.5">
+                              <span className="inline-block bg-[#7A2253] text-white border border-[#7A2253] text-[10.5px] font-bold px-2.5 py-0.5 rounded-[5px] mb-1.5">
                                 Most Popular
                               </span>
                             )}
@@ -3499,7 +3526,7 @@ export function LivePreviewCard({
                             <div className="flex flex-wrap items-center gap-2 pt-1">
                               {turnaround && (
                                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[5px] bg-white dark:bg-white/[0.05] border border-slate-200/80 dark:border-white/10 text-xs font-medium text-slate-700 dark:text-slate-300 shadow-2xs">
-                                  <Clock className="h-3.5 w-3.5 text-rose-500 shrink-0" />
+                                  <Clock className="h-3.5 w-3.5 text-slate-500 shrink-0" />
                                   <span>{turnaround}</span>
                                 </span>
                               )}
@@ -3532,7 +3559,7 @@ export function LivePreviewCard({
                         </div>
 
                         {/* Right Pricing & Action Box */}
-                        <div className="shrink-0 w-full sm:w-[155px] md:w-[165px] rounded-[5px] p-3.5 sm:p-4 bg-[#FDF2F8]/80 dark:bg-white/[0.05] border border-[#FCE7F3] dark:border-white/10 flex flex-col items-center justify-between text-center self-stretch">
+                        <div className="shrink-0 w-full sm:w-[155px] md:w-[165px] rounded-[5px] p-3.5 sm:p-4 bg-slate-50 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/10 flex flex-col items-center justify-between text-center self-stretch">
                           <div>
                             <div className="text-xl sm:text-2xl font-black text-[#7A2253] dark:text-pink-400 tabular-nums tracking-tight">
                               {displayPrice}
@@ -3544,16 +3571,7 @@ export function LivePreviewCard({
 
                           <button
                             type="button"
-                            onClick={() => {
-                              setSelectedGigForWhatsApp(pkg);
-                              if (hasWhatsApp) {
-                                setIsLeadModalOpen(true);
-                              } else if (hasEmail) {
-                                window.location.href = `mailto:${contactEmail}?subject=${encodeURIComponent(`Collaboration Inquiry: ${pkg.title} (@${cleanHandle || "creator"})`)}`;
-                              } else {
-                                setIsCollabInquiryOpen(true);
-                              }
-                            }}
+                            onClick={() => handleGetPackage(pkg)}
                             className="tap-scale flex items-center justify-center gap-1.5 w-full bg-[#7A2253] hover:bg-[#631B43] text-white text-xs font-bold py-2.5 px-3 rounded-[5px] mt-3 shadow-2xs transition-all cursor-pointer"
                           >
                             <span>Get This Package</span>
@@ -3707,119 +3725,126 @@ export function LivePreviewCard({
           </div>
         )}
 
-        {/* 7. Setup & Gear Section */}
-        {!isListingPage && (!isTabsLayout || activeNavTab === "explore" || activeNavTab === "setup") && setupList && setupList.filter((it) => it.isActive !== false).length > 0 && (
-          <div id="setup-section" className={`relative z-10 order-[45] w-full text-left animate-fade-in ${isTabsLayout ? "mt-3 sm:mt-3.5 space-y-2" : "mt-6 sm:mt-7 space-y-2.5"}`}>
-            <div>
-              <div className="flex items-center justify-between px-0.5">
-                <div className="flex items-center gap-2">
-                  <Laptop className="h-4.5 w-4.5 text-[#7A2253] dark:text-pink-400 shrink-0" />
-                  <h2
-                    style={{
-                      color: c.primaryText,
-                      fontFamily: typ.headingFontFamily,
-                      fontWeight: 700,
-                    }}
-                    className="text-base sm:text-lg font-bold tracking-tight"
-                  >
-                    Studio Rig &amp; Creative Setup
-                  </h2>
-                </div>
-                <span
-                  style={{ color: c.mutedText }}
-                  className="text-[11px] sm:text-xs font-semibold"
-                >
-                  {setupList.filter((it) => it.isActive !== false).length} Items
-                </span>
-              </div>
-              <p
-                style={{ color: c.secondaryText }}
-                className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5 pb-2"
-              >
-                The exact hardware, cameras &amp; workstation gear behind my content creation.
-              </p>
-              <div style={{ backgroundColor: c.divider }} className="-mx-3.5 sm:-mx-5 h-px opacity-60" aria-hidden="true" />
-            </div>
+        {/* 7. Setup & Gear Section (Moved to About tab) */}
+        {!isListingPage && (!isTabsLayout || activeNavTab === "about" || activeNavTab === "setup") && (
+          (() => {
+            const activeSetupItems = (setupList || []).filter((it) => it.isActive !== false);
+            if (activeSetupItems.length === 0) return null;
+            const visibleSetupItems = isSetupExpanded ? activeSetupItems : activeSetupItems.slice(0, 3);
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {setupList
-                .filter((it) => it.isActive !== false)
-                .map((item) => (
-                  <div
-                    key={item.id}
-                    style={{
-                      backgroundColor: usesDarkControls ? "#1F1F23" : "#FFFFFF",
-                      borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)",
-                      boxShadow: "none",
-                    }}
-                    className="rounded-[5px] border p-2.5 flex flex-col justify-between space-y-1.5 transition-all hover:border-black/20 dark:hover:border-white/20"
+            return (
+              <div id="setup-section" className={`relative z-10 ${isTabsLayout ? "order-[4] mt-3 sm:mt-3.5 space-y-2" : "order-[45] mt-6 sm:mt-7 space-y-2.5"} w-full text-left animate-fade-in`}>
+                <div>
+                  <div className="flex items-center justify-between px-0.5">
+                    <div className="flex items-center gap-2">
+                      <Laptop className="h-4.5 w-4.5 text-[#7A2253] dark:text-pink-400 shrink-0" />
+                      <h2
+                        style={{
+                          color: c.primaryText,
+                          fontFamily: typ.headingFontFamily,
+                          fontWeight: 800,
+                        }}
+                        className="text-lg sm:text-xl font-extrabold tracking-tight"
+                      >
+                        My Setup
+                      </h2>
+                    </div>
+                  </div>
+                  <p
+                    style={{ color: c.secondaryText }}
+                    className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 font-normal px-0.5 mt-1"
                   >
-                    <div>
-                      <div className="flex items-center justify-between gap-1.5 mb-1">
-                        <span
-                          style={{
-                            backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.04)",
-                            color: c.secondaryText,
-                          }}
-                          className="rounded-[5px] px-1.5 py-0.5 text-[9.5px] font-black uppercase tracking-wider"
-                        >
-                          {item.category}
-                        </span>
-                        {item.brand && (
+                    Tools and equipment I use to create content.
+                  </p>
+                </div>
+
+                <div className="space-y-2 w-full pt-1">
+                  {visibleSetupItems.map((item) => (
+                    <div
+                      key={item.id}
+                      style={{
+                        backgroundColor: usesDarkControls ? "#1F1F23" : "#FFFFFF",
+                        borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)",
+                        boxShadow: "none",
+                      }}
+                      className="rounded-[5px] border p-2.5 sm:p-3 flex items-start justify-between gap-3 transition-all hover:border-black/20 dark:hover:border-white/20 shadow-none text-left"
+                    >
+                      <div className="min-w-0 flex-1">
+                        {/* Category & Brand */}
+                        <div className="flex items-center gap-1.5 mb-1 flex-wrap">
                           <span
-                            style={{ color: c.mutedText }}
-                            className="text-[10px] sm:text-[11px] font-semibold truncate"
+                            style={{
+                              backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.04)",
+                              color: c.secondaryText,
+                            }}
+                            className="rounded-[5px] px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wider"
                           >
-                            {item.brand}
+                            {item.category}
                           </span>
+                          {item.brand && (
+                            <span
+                              style={{ color: c.mutedText }}
+                              className="text-[11px] font-semibold truncate"
+                            >
+                              • {item.brand}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Product Name */}
+                        <h4
+                          style={{ color: c.primaryText }}
+                          className="text-xs sm:text-[13.5px] font-bold text-slate-900 dark:text-white line-clamp-2 break-words leading-snug"
+                          title={item.name}
+                        >
+                          {item.name}
+                        </h4>
+
+                        {/* Short Usage Description */}
+                        {(item.usedFor || item.modelOrPlan) && (
+                          <p
+                            style={{ color: c.secondaryText }}
+                            className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 break-words leading-relaxed"
+                          >
+                            {item.usedFor || item.modelOrPlan}
+                          </p>
                         )}
                       </div>
 
-                      <h4
-                        style={{ color: c.primaryText }}
-                        className={`line-clamp-2 break-words ${PUBLIC_TYPE.cardTitle}`}
-                        title={item.name}
-                      >
-                        {item.name}
-                      </h4>
-
-                      {item.modelOrPlan && (
-                        <p
-                          style={{ color: c.secondaryText }}
-                          className="text-[10.5px] truncate mt-0.5"
-                        >
-                          {item.modelOrPlan}
-                        </p>
-                      )}
-
-                      {item.usedFor && (
-                        <p
-                          style={{ color: c.secondaryText }}
-                          className="text-[10.5px] line-clamp-2 mt-1 opacity-90"
-                        >
-                          <span className="font-semibold">Used for: </span>
-                          {item.usedFor}
-                        </p>
+                      {/* View Product Link */}
+                      {item.linkUrl && (
+                        <div className="shrink-0 self-center sm:self-start pt-0.5">
+                          <a
+                            href={item.linkUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-[5px] bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/10 dark:text-white border border-slate-200/80 dark:border-white/10 text-xs font-bold transition-all cursor-pointer shadow-none whitespace-nowrap"
+                          >
+                            <span>View Product</span>
+                            <ArrowUpRight className="h-3 w-3 shrink-0" />
+                          </a>
+                        </div>
                       )}
                     </div>
+                  ))}
+                </div>
 
-                    {item.linkUrl && (
-                      <a
-                        href={item.linkUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
-                        style={{ color: c.accentText }}
-                        className="inline-flex items-center gap-1 text-[11px] font-bold pt-0.5 transition-opacity hover:opacity-80"
-                      >
-                        <span>View Gear</span>
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
-                    )}
+                {activeSetupItems.length > 3 && (
+                  <div className="pt-2 w-full text-center">
+                    <button
+                      type="button"
+                      onClick={() => setIsSetupExpanded(!isSetupExpanded)}
+                      className="w-full py-2.5 px-4 rounded-[5px] bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/10 dark:text-white border border-slate-200/80 dark:border-white/10 text-xs sm:text-[13px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center shadow-none"
+                    >
+                      <span>{isSetupExpanded ? "Show Less Items" : `View All Items (${activeSetupItems.length})`}</span>
+                      {isSetupExpanded ? <ChevronUp className="h-3.5 w-3.5 shrink-0" /> : <ChevronDown className="h-3.5 w-3.5 shrink-0" />}
+                    </button>
                   </div>
-                ))}
-            </div>
-          </div>
+                )}
+              </div>
+            );
+          })()
         )}
 
         <div className="order-[70] h-3 shrink-0" aria-hidden="true" />
@@ -3870,12 +3895,16 @@ export function LivePreviewCard({
       {/* Collaboration Inquiry Modal */}
       <CollaborationInquiryModal
         isOpen={isCollabInquiryOpen}
-        onClose={() => setIsCollabInquiryOpen(false)}
+        onClose={() => {
+          setIsCollabInquiryOpen(false);
+          setSelectedPackageForInquiry(null);
+        }}
         creatorId={profile.id || profile.username || "creator"}
         creatorEmail={profile.email}
         creatorName={profile.displayName || "Creator"}
         creatorUsername={profile.username || "creator"}
         packages={mediaKitPackages}
+        selectedPackageTitle={selectedPackageForInquiry?.title}
       />
 
       {/* Brand Lead Qualifier Anti-Spam Modal */}
@@ -3913,6 +3942,23 @@ export function LivePreviewCard({
         onClose={() => setSelectedProductForZoom(null)}
         isInformationalMode={isInformationalMode}
         onExternalClick={(name) => showToast(`Opens ${name} external product page ✨`)}
+      />
+
+      {/* Share Profile & QR Code Modal */}
+      <ShareProfileModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        displayName={profile.displayName || "Creator"}
+        username={profile.username || "creator"}
+        shareUrl={(() => {
+          const cleanUsername = (profile.username || "username").replace(/^@/, "");
+          const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://inflixo.com";
+          return typeof window !== "undefined"
+            ? (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+              ? `${window.location.origin}/${cleanUsername}`
+              : `${baseUrl.replace(/\/$/, "")}/${cleanUsername}`)
+            : `${baseUrl.replace(/\/$/, "")}/${cleanUsername}`;
+        })()}
       />
     </div>
   );

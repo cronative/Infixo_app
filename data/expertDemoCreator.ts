@@ -9,6 +9,7 @@ export const EXPERT_DEMO_PROFILE: CreatorProfile = {
   bio: "Doing crazy 10-day food challenges & 15-day daily vlogs 🍕🎥 Documenting the real journey, raw & unscripted. Chai, street food & good vibes only! 🇮🇳",
   photoDataUrl: "/images/demo/avatar.webp",
   email: "devom@inflixo.com",
+  whatsappNumber: "+91 98765 43210",
   city: "Ahmedabad",
   state: "Gujarat",
   country: "India",

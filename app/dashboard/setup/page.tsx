@@ -688,12 +688,12 @@ export default function DashboardSetupPage() {
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 text-xs font-bold text-[#7A2253] transition-colors hover:underline cursor-pointer"
                     >
-                      <span>View Gear</span>
+                      <span>View Product</span>
                       <span className="text-sm font-bold">&rarr;</span>
                     </a>
                   ) : (
                     <span className="inline-flex items-center gap-1 text-xs font-bold text-[#7A2253] cursor-default">
-                      <span>View Gear</span>
+                      <span>View Product</span>
                       <span className="text-sm font-bold">&rarr;</span>
                     </span>
                   )}

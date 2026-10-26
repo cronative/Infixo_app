@@ -577,16 +577,16 @@ export function SeriesDetailClient({
                 <span>{detectedPlatform || "YouTube"}</span>
               </span>
 
-              {/* Category Pill 1 (Pink) */}
+              {/* Category Pill 1 */}
               {genresList[0] && (
-                <span className="inline-flex items-center rounded-[5px] bg-pink-50 text-[#7A2253] dark:bg-pink-950/40 dark:text-pink-300 border border-pink-200/60 dark:border-pink-900/50 px-3 py-1 text-xs font-bold">
+                <span className="inline-flex items-center rounded-[5px] bg-slate-100 text-slate-800 dark:bg-white/10 dark:text-slate-200 border border-slate-200/80 dark:border-white/10 px-3 py-1 text-xs font-bold">
                   {genresList[0]}
                 </span>
               )}
 
-              {/* Sub-genre Pill 2 (Blue) */}
+              {/* Sub-genre Pill 2 */}
               {genresList[1] && (
-                <span className="inline-flex items-center rounded-[5px] bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300 border border-blue-200/60 dark:border-blue-900/50 px-3 py-1 text-xs font-bold">
+                <span className="inline-flex items-center rounded-[5px] bg-slate-100 text-slate-800 dark:bg-white/10 dark:text-slate-200 border border-slate-200/80 dark:border-white/10 px-3 py-1 text-xs font-bold">
                   {genresList[1]}
                 </span>
               )}
@@ -648,8 +648,8 @@ export function SeriesDetailClient({
                       onClick={() => setActiveSeasonIndex(idx)}
                       className={`tap-scale inline-flex h-8 shrink-0 cursor-pointer items-center rounded-[5px] border px-3 transition-all text-xs font-semibold ${
                         activeSeasonIndex === idx
-                          ? "bg-pink-50 border-pink-200 text-[#7A2253]"
-                          : "bg-white border-slate-200 text-slate-600"
+                          ? "bg-[#7A2253] border-[#7A2253] text-white"
+                          : "bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/10"
                       }`}
                     >
                       {sn.title || `Season ${sn.seasonNumber || idx + 1}`} · {sn.episodes?.length || 0}
@@ -682,9 +682,9 @@ export function SeriesDetailClient({
                         onClick={() => trackEpisodeClick(ep)}
                         className="tap-scale group/ep flex items-center justify-between gap-3 p-3.5 sm:p-4 rounded-[5px] border border-slate-100 dark:border-white/10 bg-white dark:bg-zinc-900 shadow-2xs hover:shadow-xs hover:border-slate-200 dark:hover:border-white/20 transition-all cursor-pointer text-left"
                       >
-                        {/* Left: Pink Number Box + Platform + Title */}
+                        {/* Left: Number Box + Platform + Title */}
                         <div className="flex items-center gap-3 min-w-0 flex-1">
-                          <span className="shrink-0 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-[5px] bg-pink-50 dark:bg-pink-950/40 text-[#7A2253] dark:text-pink-300 text-xs sm:text-[13px] font-black tabular-nums border border-pink-100/60 dark:border-pink-900/40">
+                          <span className="shrink-0 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-[5px] bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-white text-xs sm:text-[13px] font-black tabular-nums border border-slate-200/80 dark:border-white/10">
                             {partNumStr}
                           </span>
                           <div className="min-w-0 flex-1 space-y-0.5">
@@ -708,7 +708,7 @@ export function SeriesDetailClient({
 
                         {/* Right: Watch Pill */}
                         {ep.externalUrl && (
-                          <span className="shrink-0 inline-flex items-center gap-1 px-3.5 py-1.5 rounded-[5px] bg-pink-50 dark:bg-pink-950/40 text-[#7A2253] dark:text-pink-300 border border-pink-100 dark:border-pink-900/50 text-xs font-bold hover:bg-pink-100 transition-all">
+                          <span className="shrink-0 inline-flex items-center gap-1 px-3.5 py-1.5 rounded-[5px] bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/10 dark:text-white border border-slate-200/80 dark:border-white/10 text-xs font-bold transition-all">
                             <span>Watch</span>
                             <ArrowUpRight className="h-3 w-3" />
                           </span>
@@ -756,7 +756,7 @@ export function SeriesDetailClient({
                   e.preventDefault();
                   router.push(profileUrl);
                 }}
-                className="tap-scale shrink-0 inline-flex items-center gap-1 px-4 py-2 rounded-[5px] bg-pink-50 dark:bg-pink-950/40 text-[#7A2253] dark:text-pink-300 border border-pink-100 dark:border-pink-900/50 text-xs font-bold hover:bg-pink-100 transition-all cursor-pointer"
+                className="tap-scale shrink-0 inline-flex items-center gap-1 px-4 py-2 rounded-[5px] bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/10 dark:text-white border border-slate-200/80 dark:border-white/10 text-xs font-bold transition-all cursor-pointer"
               >
                 <span>View Profile</span>
                 <ArrowUpRight className="h-3 w-3" />

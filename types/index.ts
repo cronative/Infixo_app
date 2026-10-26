@@ -167,6 +167,7 @@ export interface VisibilitySettings {
   showReviews: boolean;
   showCustomLinks: boolean;
   showInSearchEngines?: boolean;
+  defaultTab?: string;
 }
 
 export const DEFAULT_VISIBILITY_SETTINGS: VisibilitySettings = {
@@ -204,6 +205,8 @@ export interface CreatorProfile {
   city?: string;
   state?: string;
   country?: string;
+  whatsappNumber?: string;
+  phone?: string;
   isVerified?: boolean;
   themeKey?: ThemeKey;
   theme_key?: string;

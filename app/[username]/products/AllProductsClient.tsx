@@ -257,8 +257,8 @@ export default function AllProductsClient() {
     : `https://inflixo.com/${cleanHandle}/products`;
 
   async function handleShareProductsList() {
-    const title = `${profile.displayName || cleanHandle}'s Curated Store & Gear Picks on Inflixo`;
-    const text = `Explore ${profile.displayName || cleanHandle}'s handpicked gear and creator essentials on Inflixo.`;
+    const title = `${profile.displayName || cleanHandle}'s Products on Inflixo`;
+    const text = `Check out ${profile.displayName || cleanHandle}'s products on Inflixo.`;
 
     try {
       if (typeof navigator !== "undefined" && navigator.share) {
@@ -288,7 +288,7 @@ export default function AllProductsClient() {
         variant="full"
         containedScroll={false}
         productsOnlyMode
-        pageHeader={{ pageLabel: "Store & Gear", backHref: `/${cleanHandle}`, backLabel: "Back to profile" }}
+        pageHeader={{ pageLabel: "My Products", backHref: `/${cleanHandle}`, backLabel: "Back to profile" }}
         onShare={handleShareProductsList}
       />
     </CreatorPublicShell>

@@ -52,7 +52,7 @@ export const PUBLIC_TYPE = {
   /** Title of a secondary page (Series, Reviews, Media kit, series title) */
   pageTitle: "text-lg sm:text-xl font-bold tracking-tight leading-snug",
   /** Section heading inside the card */
-  sectionTitle: "text-[15px] sm:text-base font-bold tracking-tight",
+  sectionTitle: "text-lg sm:text-xl font-extrabold tracking-tight",
   /** Title of an item card (series, package, review author) */
   cardTitle: "text-sm sm:text-[15px] font-semibold leading-snug",
   /** Body copy / descriptions */

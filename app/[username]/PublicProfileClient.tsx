@@ -81,9 +81,10 @@ export default function PublicProfileClient() {
   const rawTab = searchParams?.get("tab");
   const initialTab =
     rawTab === "series" || rawTab === "watch" ? "watch" :
-    rawTab === "links" || rawTab === "shop" || rawTab === "setup" || rawTab === "explore" ? "explore" :
+    rawTab === "links" || rawTab === "explore" ? "links" :
+    rawTab === "shop" || rawTab === "products" ? "shop" :
+    rawTab === "setup" || rawTab === "about" || rawTab === "fanbase" ? "about" :
     rawTab === "reviews" || rawTab === "work" ? "work" :
-    rawTab === "about" || rawTab === "fanbase" ? "about" :
     undefined;
   const { showToast } = useToast();
 
@@ -764,7 +765,6 @@ export default function PublicProfileClient() {
           allProductsHref={`/${handleStr.replace(/^@/, "")}/products`}
           reviewsPreviewLimit={3}
           allReviewsHref={`/${handleStr.replace(/^@/, "")}/reviews`}
-          onShare={handleShare}
         />
     </CreatorPublicShell>
   );
