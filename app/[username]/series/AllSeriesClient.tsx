@@ -16,6 +16,12 @@ import {
   SocialAccounts,
   ThemeKey,
 } from "@/types";
+import {
+  EXPERT_DEMO_PROFILE,
+  EXPERT_DEMO_SOCIALS,
+  EXPERT_DEMO_SERIES,
+  EXPERT_DEMO_THEME,
+} from "@/data/expertDemoCreator";
 
 const EMPTY_PROFILE: CreatorProfile = {
   photoDataUrl: null,
@@ -144,12 +150,6 @@ export default function AllSeriesClient() {
       fetchingRef.current = true;
 
       if (username === "demo_creator") {
-        const {
-          EXPERT_DEMO_PROFILE,
-          EXPERT_DEMO_SOCIALS,
-          EXPERT_DEMO_SERIES,
-          EXPERT_DEMO_THEME,
-        } = await import("@/data/expertDemoCreator");
         setProfile(EXPERT_DEMO_PROFILE);
         setSocials(EXPERT_DEMO_SOCIALS);
         setSeries(EXPERT_DEMO_SERIES);

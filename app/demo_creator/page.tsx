@@ -13,21 +13,24 @@ import {
   EXPERT_DEMO_SERIES,
   EXPERT_DEMO_GIGS,
   EXPERT_DEMO_CUSTOM_LINKS,
+  TEST_EDGE_CASES_LINKS,
   EXPERT_DEMO_REVIEWS,
   EXPERT_DEMO_THEME,
   EXPERT_DEMO_PRODUCTS,
   EXPERT_DEMO_SETUP_ITEMS,
+  EXPERT_DEMO_MEDIA_KIT_SETTINGS,
 } from "@/data/expertDemoCreator";
 
 function DemoCreatorContent() {
   const searchParams = useSearchParams();
+  const testMode = searchParams?.get("testMode");
   const rawTab = searchParams?.get("tab");
   const initialTab =
     rawTab === "series" || rawTab === "watch" ? "watch" :
     rawTab === "links" || rawTab === "explore" ? "links" :
     rawTab === "shop" || rawTab === "products" ? "shop" :
     rawTab === "setup" || rawTab === "about" || rawTab === "fanbase" ? "about" :
-    rawTab === "reviews" || rawTab === "work" ? "work" :
+    rawTab === "reviews" || rawTab === "work" || rawTab === "collab" ? "collab" :
     undefined;
   const rawTheme = searchParams?.get("theme") as any;
   const theme = rawTheme || EXPERT_DEMO_THEME;
@@ -79,13 +82,15 @@ function DemoCreatorContent() {
           series={EXPERT_DEMO_SERIES}
           products={EXPERT_DEMO_PRODUCTS}
           setupItems={EXPERT_DEMO_SETUP_ITEMS}
-          customLinks={EXPERT_DEMO_CUSTOM_LINKS}
+          customLinks={
+            testMode === "empty"
+              ? []
+              : testMode === "edge_cases"
+              ? TEST_EDGE_CASES_LINKS
+              : EXPERT_DEMO_CUSTOM_LINKS
+          }
           mediaKitPackages={EXPERT_DEMO_GIGS}
-          mediaKitSettings={{
-            whatsappNumber: "+91 98765 43210",
-            sponsorEmail: "devom@inflixo.com",
-            acceptingSponsors: true,
-          }}
+          mediaKitSettings={EXPERT_DEMO_MEDIA_KIT_SETTINGS}
           reviews={EXPERT_DEMO_REVIEWS}
           totalAudience={totalAudience}
           variant="full"

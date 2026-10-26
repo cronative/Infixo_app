@@ -417,9 +417,24 @@ export default function DashboardMediaKitPage() {
   const [formMaxPrice, setFormMaxPrice] = useState("");
   const [formPackageName, setFormPackageName] = useState("");
   const [formTurnaround, setFormTurnaround] = useState<number>(2);
+  const [formPriceUnit, setFormPriceUnit] = useState<string>("per_package");
+  const [formIsStartingPrice, setFormIsStartingPrice] = useState(false);
+  const [formIsPopular, setFormIsPopular] = useState(false);
   const [formDeliverableInput, setFormDeliverableInput] = useState("");
   const [formDeliverables, setFormDeliverables] = useState<string[]>([]);
   const [showAllSuggestions, setShowAllSuggestions] = useState(false);
+
+  // Collab requests & snapshot fields
+  const [collabRequests, setCollabRequests] = useState<any[]>([]);
+  const [loadingRequests, setLoadingRequests] = useState(false);
+  const [settingAvgReelViews, setSettingAvgReelViews] = useState("");
+  const [settingEngagementRate, setSettingEngagementRate] = useState("");
+  const [settingTopCities, setSettingTopCities] = useState("");
+  const [settingLanguages, setSettingLanguages] = useState("");
+  const [settingCategories, setSettingCategories] = useState("");
+  const [settingPastBrands, setSettingPastBrands] = useState("");
+  const [settingAllowWhatsapp, setSettingAllowWhatsapp] = useState(true);
+  const [settingAllowEmail, setSettingAllowEmail] = useState(true);
 
   const activeEmail = profile.email || authRepository.getPendingEmail() || "";
   const activeCreatorId = profile.id;
@@ -449,19 +464,64 @@ export default function DashboardMediaKitPage() {
           whatsappNumber: dbSettings.whatsappNumber ?? "",
           minBudget: dbSettings.minBudget ?? "",
         });
+        setSettingAvgReelViews(String(dbSettings.avgReelViews || ""));
+        setSettingEngagementRate(String(dbSettings.engagementRate || ""));
+        setSettingTopCities(String(dbSettings.topCities || ""));
+        setSettingLanguages(Array.isArray(dbSettings.contentLanguages) ? dbSettings.contentLanguages.join(", ") : String(dbSettings.contentLanguages || ""));
+        setSettingCategories(Array.isArray(dbSettings.categories) ? dbSettings.categories.join(", ") : String(dbSettings.categories || ""));
+        setSettingPastBrands(Array.isArray(dbSettings.pastBrands) ? dbSettings.pastBrands.map((b: any) => b.name).join(", ") : "");
+        setSettingAllowWhatsapp(dbSettings.allowWhatsapp !== false);
+        setSettingAllowEmail(dbSettings.allowEmail !== false);
       }
     }
     initMediaKit();
   }, [creatorQueryKey, activeCreatorId]);
 
+  useEffect(() => {
+    async function loadCollabRequests() {
+      if (!creatorQueryKey) return;
+      setLoadingRequests(true);
+      try {
+        const res = await fetch(`/api/collab-requests?creatorId=${encodeURIComponent(activeCreatorId || creatorQueryKey)}`);
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data?.requests)) {
+          setCollabRequests(data.data.requests);
+        }
+      } catch {
+        // non-fatal
+      } finally {
+        setLoadingRequests(false);
+      }
+    }
+    loadCollabRequests();
+  }, [creatorQueryKey, activeCreatorId]);
+
   const handleSaveContactSettings = async (e: React.FormEvent) => {
     e.preventDefault();
-    MediaKitService.saveSettings(settings);
+    const parsedLanguages = settingLanguages.split(",").map((s) => s.trim()).filter(Boolean);
+    const parsedCategories = settingCategories.split(",").map((s) => s.trim()).filter(Boolean);
+    const parsedPastBrands = settingPastBrands.split(",").map((s) => ({ name: s.trim() })).filter((b) => Boolean(b.name));
+
+    const updatedSettings: MediaKitSettings = {
+      ...settings,
+      avgReelViews: settingAvgReelViews.trim() || undefined,
+      engagementRate: settingEngagementRate.trim() || undefined,
+      topCities: settingTopCities.trim() || undefined,
+      contentLanguages: parsedLanguages,
+      categories: parsedCategories,
+      pastBrands: parsedPastBrands,
+      allowWhatsapp: settingAllowWhatsapp,
+      allowEmail: settingAllowEmail,
+      updatedAt: new Date().toISOString(),
+    };
+
+    setSettings(updatedSettings);
+    MediaKitService.saveSettings(updatedSettings);
     if (activeEmail) {
-      await MediaKitService.saveToDb(activeEmail, settings, packages, activeCreatorId);
+      await MediaKitService.saveToDb(activeEmail, updatedSettings, packages, activeCreatorId);
     }
     setIsContactModalOpen(false);
-    showToast("Brand contact options updated! 💼");
+    showToast("Media kit & brand contact options updated! 💼");
   };
 
   const handleOpenAddModal = () => {
@@ -477,6 +537,9 @@ export default function DashboardMediaKitPage() {
     setFormMaxPrice("");
     setFormPackageName("");
     setFormTurnaround(2);
+    setFormPriceUnit("per_package");
+    setFormIsStartingPrice(false);
+    setFormIsPopular(false);
     setFormDeliverableInput("");
     setFormDeliverables([]);
     setShowAllSuggestions(false);
@@ -508,6 +571,9 @@ export default function DashboardMediaKitPage() {
     }
     setFormPackageName(pkg.packageName || pkg.badge || "");
     setFormTurnaround(pkg.turnaroundDays);
+    setFormPriceUnit(pkg.priceUnit || (pkg.title.toLowerCase().includes("monthly") ? "per_month" : "per_package"));
+    setFormIsStartingPrice(Boolean(pkg.isStartingPrice));
+    setFormIsPopular(Boolean(pkg.isPopular));
     setFormDeliverableInput("");
     setFormDeliverables([...pkg.deliverables]);
     setShowAllSuggestions(false);
@@ -528,6 +594,9 @@ export default function DashboardMediaKitPage() {
     setFormMaxPrice(template.maxPrice);
     setFormPackageName(template.badge);
     setFormTurnaround(template.turnaroundDays);
+    setFormPriceUnit(template.title.toLowerCase().includes("monthly") ? "per_month" : "per_package");
+    setFormIsStartingPrice(false);
+    setFormIsPopular(false);
     setFormDeliverables([...template.deliverables]);
     setFormDeliverableInput("");
     setShowAllSuggestions(false);
@@ -563,7 +632,7 @@ export default function DashboardMediaKitPage() {
     const maxStr = formMaxPrice.trim() ? formatCurrencyString(formMaxPrice) : "";
     const formattedPrice = maxStr ? `${minStr}–${maxStr}` : minStr;
     const resolvedBadge = formPackageName.trim() || undefined;
-    const resolvedIsPopular = formPackageName.toLowerCase().includes("popular");
+    const resolvedIsPopular = formIsPopular || formPackageName.toLowerCase().includes("popular");
 
     let updatedPkgs: MediaKitPackage[] = [];
     if (editingPkgId) {
@@ -581,6 +650,8 @@ export default function DashboardMediaKitPage() {
             deliverables: formDeliverables.length > 0 ? formDeliverables : ["Product Integration"],
             badge: resolvedBadge,
             isPopular: resolvedIsPopular,
+            priceUnit: formPriceUnit,
+            isStartingPrice: formIsStartingPrice,
           }
           : p
       );
@@ -597,6 +668,8 @@ export default function DashboardMediaKitPage() {
         deliverables: formDeliverables.length > 0 ? formDeliverables : ["Product Integration"],
         badge: resolvedBadge,
         isPopular: resolvedIsPopular,
+        priceUnit: formPriceUnit,
+        isStartingPrice: formIsStartingPrice,
         isActive: true,
       };
       updatedPkgs = [newPkg, ...packages];
@@ -1217,6 +1290,77 @@ export default function DashboardMediaKitPage() {
         )}
       </section>
 
+      {/* 4.5. COLLAB REQUESTS INBOX */}
+      <section className="space-y-4 pt-2">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-base font-bold text-[#0f172a]">Collab Requests</h2>
+            <p className="text-xs text-[#64748b]">Inquiries submitted by brands and agencies from your public profile.</p>
+          </div>
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#f1f5f9] text-[#475569]">
+            {collabRequests.length} {collabRequests.length === 1 ? "request" : "requests"}
+          </span>
+        </div>
+
+        {loadingRequests ? (
+          <div className="p-8 text-center text-xs text-[#64748b] bg-white rounded-xl border border-[#e2e8f0]">
+            Loading collab requests...
+          </div>
+        ) : collabRequests.length === 0 ? (
+          <div className="p-8 text-center bg-white rounded-xl border border-dashed border-[#cbd5e1]">
+            <Mail className="h-8 w-8 text-[#94a3b8] mx-auto mb-2" />
+            <p className="text-xs font-bold text-[#0f172a]">No collab requests yet</p>
+            <p className="text-[11px] text-[#64748b] mt-1 max-w-sm mx-auto">
+              When brands submit an inquiry via the &quot;Send a collab request&quot; button on your profile, it will appear here.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {collabRequests.map((req) => (
+              <div key={req.id} className="p-4 bg-white rounded-xl border border-[#e2e8f0] shadow-2xs space-y-2 text-left">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <span className="font-bold text-sm text-[#0f172a]">{req.brand_name || req.brandName}</span>
+                    <span className="text-xs text-[#64748b] ml-2">by {req.contact_name || req.contactName}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                      (req.status === "new" || !req.status)
+                        ? "bg-amber-50 text-amber-700 border border-amber-200"
+                        : req.status === "replied"
+                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                        : "bg-slate-100 text-slate-600"
+                    }`}>
+                      {req.status || "new"}
+                    </span>
+                    <span className="text-[11px] text-[#94a3b8]">
+                      {new Date(req.created_at || req.createdAt || Date.now()).toLocaleDateString("en-IN", { month: "short", day: "numeric" })}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#475569]">
+                  <div><span className="text-[#94a3b8]">Email:</span> <a href={`mailto:${req.email}`} className="text-[#7A2253] hover:underline">{req.email}</a></div>
+                  {(req.phone || req.whatsapp) && (
+                    <div><span className="text-[#94a3b8]">Phone/WA:</span> {req.phone || req.whatsapp}</div>
+                  )}
+                  {req.budget && (
+                    <div><span className="text-[#94a3b8]">Budget:</span> <span className="font-semibold text-[#0f172a]">{req.budget}</span></div>
+                  )}
+                  {req.package_name && (
+                    <div><span className="text-[#94a3b8]">Package:</span> <span className="font-semibold text-[#0f172a]">{req.package_name}</span></div>
+                  )}
+                </div>
+                {req.message && (
+                  <p className="text-xs text-[#334155] bg-[#f8fafc] p-2.5 rounded-lg border border-[#f1f5f9] whitespace-pre-wrap">
+                    {req.message}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
       {/* 5. CREATE / EDIT SERVICE MODAL */}
       <Modal
         isOpen={isModalOpen}
@@ -1275,7 +1419,7 @@ export default function DashboardMediaKitPage() {
 
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <label className="block text-[13px] font-medium text-[#0f172a]">Delivery Time</label>
+                  <label className="block text-[13px] font-medium text-[#0f172a]">Delivery time (days)</label>
                   <span className="text-[10px] text-[#64748b] font-medium">
                     {formTurnaround} {formTurnaround === 1 ? "day" : "days"}
                   </span>
@@ -1331,14 +1475,14 @@ export default function DashboardMediaKitPage() {
             )}
 
             {/* Package Pricing Inputs */}
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <label className="block text-[13px] font-medium text-[#0f172a]">
-                Package Pricing (INR)
+                Package Pricing (INR) &amp; Billing Unit
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
                 <div className="sm:col-span-4">
                   <label className="block text-[10px] font-bold text-[#64748b] mb-1">
-                    Starting Price (₹) <span className="text-[#C2414B]">*</span>
+                    Price (₹) <span className="text-[#C2414B]">*</span>
                   </label>
                   <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
                     <div className="flex h-10 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-sm font-semibold text-[#64748b]">
@@ -1357,26 +1501,41 @@ export default function DashboardMediaKitPage() {
 
                 <div className="sm:col-span-4">
                   <label className="block text-[10px] font-bold text-[#64748b] mb-1">
-                    Up to ₹ <span className="text-[#64748b] font-normal">(Optional)</span>
+                    Price Unit
                   </label>
-                  <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                    <div className="flex h-10 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-sm font-semibold text-[#64748b]">
-                      ₹
-                    </div>
-                    <input
-                      type="text"
-                      value={formMaxPrice}
-                      onChange={(e) => setFormMaxPrice(e.target.value)}
-                      placeholder="e.g. 15,000"
-                      className="flex-1 h-10 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
-                    />
-                  </div>
+                  <select
+                    value={formPriceUnit}
+                    onChange={(e) => setFormPriceUnit(e.target.value)}
+                    className="w-full h-10 px-3 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#0f172a] outline-none cursor-pointer"
+                  >
+                    <option value="per_package">/ package (fixed)</option>
+                    <option value="per_reel">/ reel</option>
+                    <option value="per_post">/ post</option>
+                    <option value="per_video">/ video</option>
+                    <option value="per_month">/ month</option>
+                  </select>
                 </div>
 
                 <div className="sm:col-span-4">
-                  <div className="flex items-center gap-2 rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] px-3 h-10 text-[11px] text-[#7A2253] leading-tight">
-                    <Info className="h-4 w-4 shrink-0 text-[#7A2253]" />
-                    <span>Leave &quot;Up to&quot; empty for fixed price package.</span>
+                  <div className="flex flex-col justify-center gap-1.5 h-10">
+                    <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-[#0f172a]">
+                      <input
+                        type="checkbox"
+                        checked={formIsStartingPrice}
+                        onChange={(e) => setFormIsStartingPrice(e.target.checked)}
+                        className="rounded border-[#cbd5e1] text-[#7A2253] focus:ring-[#7A2253]"
+                      />
+                      <span>Starting price (&quot;From ₹...&quot;)</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-[#0f172a]">
+                      <input
+                        type="checkbox"
+                        checked={formIsPopular}
+                        onChange={(e) => setFormIsPopular(e.target.checked)}
+                        className="rounded border-[#cbd5e1] text-[#7A2253] focus:ring-[#7A2253]"
+                      />
+                      <span>Mark as &quot;Most popular&quot;</span>
+                    </label>
                   </div>
                 </div>
               </div>
@@ -1605,62 +1764,157 @@ export default function DashboardMediaKitPage() {
         </ModalBody>
       </Modal>
 
-      {/* 7. CONTACT SETUP MODAL */}
+      {/* 7. CONTACT & MEDIA KIT SETTINGS MODAL */}
       <Modal
         isOpen={isContactModalOpen}
         onClose={() => setIsContactModalOpen(false)}
-        title="Brand Contact Settings"
-        description="Configure how brands can reach you when inquiring about collaborations."
+        size="lg"
+        title="Collab & Media Kit Settings"
+        description="Configure your audience snapshot, past brand logos, and direct contact options for brand inquiries."
         icon={<SlidersHorizontal className="h-4 w-4" />}
       >
         <form onSubmit={handleSaveContactSettings} className="flex flex-col flex-1 min-h-0">
-          <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
-            <div className="space-y-1">
-              <label className="block text-[13px] font-medium text-[#0f172a]">
-                Official WhatsApp Number
-              </label>
-              <div className="relative">
+          <ModalBody className="p-4 sm:p-5 space-y-4 text-left max-h-[70vh] overflow-y-auto">
+            {/* Section A: Audience Snapshot */}
+            <div className="space-y-3 pb-3 border-b border-[#e2e8f0]">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[#7A2253]">Audience Snapshot</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="block text-xs font-medium text-[#0f172a]">Avg. Reel Views</label>
+                  <input
+                    type="text"
+                    value={settingAvgReelViews}
+                    onChange={(e) => setSettingAvgReelViews(e.target.value)}
+                    placeholder="e.g., 45K or 1.2M"
+                    className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-xs font-medium text-[#0f172a]">Engagement Rate (%)</label>
+                  <input
+                    type="text"
+                    value={settingEngagementRate}
+                    onChange={(e) => setSettingEngagementRate(e.target.value)}
+                    placeholder="e.g., 4.8%"
+                    className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-xs font-medium text-[#0f172a]">Top Cities</label>
+                <input
+                  type="text"
+                  value={settingTopCities}
+                  onChange={(e) => setSettingTopCities(e.target.value)}
+                  placeholder="e.g., Mumbai, Delhi, Bengaluru (up to 3)"
+                  className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="block text-xs font-medium text-[#0f172a]">Content Languages</label>
+                  <input
+                    type="text"
+                    value={settingLanguages}
+                    onChange={(e) => setSettingLanguages(e.target.value)}
+                    placeholder="e.g., Hindi, English (comma-separated)"
+                    className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-xs font-medium text-[#0f172a]">Categories / Niches</label>
+                  <input
+                    type="text"
+                    value={settingCategories}
+                    onChange={(e) => setSettingCategories(e.target.value)}
+                    placeholder="e.g., Street Food, Travel, Vlogs"
+                    className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-xs font-medium text-[#0f172a]">Past Brands Worked With</label>
+                <input
+                  type="text"
+                  value={settingPastBrands}
+                  onChange={(e) => setSettingPastBrands(e.target.value)}
+                  placeholder="e.g., Chai Tapri Co., Masala Munch Snacks, Monsoon Sips"
+                  className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                />
+                <p className="text-[11px] text-[#64748b]">Separate multiple brands with commas.</p>
+              </div>
+            </div>
+
+            {/* Section B: Contact & Routing */}
+            <div className="space-y-3">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[#7A2253]">Contact Options</h4>
+
+              <div className="space-y-1">
+                <label className="block text-xs font-medium text-[#0f172a]">
+                  Official WhatsApp Number
+                </label>
                 <input
                   type="text"
                   value={settings.whatsappNumber || ""}
                   onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })}
                   placeholder="+91 9876543210"
-                  className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:outline-none transition-colors"
+                  className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
                 />
               </div>
-              <p className="text-[11px] text-[#64748b]">Enables instant WhatsApp collaboration inquiries.</p>
-            </div>
 
-            <div className="space-y-1">
-              <label className="block text-[13px] font-medium text-[#0f172a]">
-                Business Email Address
-              </label>
-              <input
-                type="email"
-                value={settings.sponsorEmail || ""}
-                onChange={(e) => setSettings({ ...settings, sponsorEmail: e.target.value })}
-                placeholder={profile.email || "collabs@yourdomain.com"}
-                className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:outline-none transition-colors"
-              />
-              <p className="text-[11px] text-[#64748b]">Brands will receive email routing to this address.</p>
-            </div>
+              <div className="space-y-1">
+                <label className="block text-xs font-medium text-[#0f172a]">
+                  Business Email Address
+                </label>
+                <input
+                  type="email"
+                  value={settings.sponsorEmail || ""}
+                  onChange={(e) => setSettings({ ...settings, sponsorEmail: e.target.value })}
+                  placeholder={profile.email || "collabs@yourdomain.com"}
+                  className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                />
+              </div>
 
-            <div className="space-y-1">
-              <label className="block text-[13px] font-medium text-[#0f172a]">
-                Minimum Campaign Budget (Optional)
-              </label>
-              <input
-                type="text"
-                value={settings.minBudget || ""}
-                onChange={(e) => setSettings({ ...settings, minBudget: e.target.value })}
-                placeholder="₹0 (Accept all deals)"
-                className="w-full h-10 rounded-xl border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:outline-none transition-colors"
-              />
-              <p className="text-[11px] text-[#64748b]">Filter out brand inquiries below this amount.</p>
+              <div className="space-y-2 pt-1">
+                <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-[#0f172a]">
+                  <input
+                    type="checkbox"
+                    checked={settingAllowWhatsapp}
+                    onChange={(e) => setSettingAllowWhatsapp(e.target.checked)}
+                    className="rounded accent-[#7A2253]"
+                  />
+                  <span>Show &quot;Prefer WhatsApp?&quot; direct link in collab sheet</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-[#0f172a]">
+                  <input
+                    type="checkbox"
+                    checked={settingAllowEmail}
+                    onChange={(e) => setSettingAllowEmail(e.target.checked)}
+                    className="rounded accent-[#7A2253]"
+                  />
+                  <span>Show &quot;Email instead&quot; direct link in collab sheet</span>
+                </label>
+              </div>
+
+              <div className="space-y-1 pt-1">
+                <label className="block text-xs font-medium text-[#0f172a]">
+                  Minimum Campaign Budget (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={settings.minBudget || ""}
+                  onChange={(e) => setSettings({ ...settings, minBudget: e.target.value })}
+                  placeholder="₹0 (Accept all deals)"
+                  className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                />
+              </div>
             </div>
           </ModalBody>
 
-          <ModalFooter className="px-4 sm:px-5 py-3">
+          <ModalFooter className="px-4 sm:px-5 py-3 border-t border-[#e2e8f0] bg-[#f8fafc]">
             <button
               type="button"
               onClick={() => setIsContactModalOpen(false)}
@@ -1670,7 +1924,7 @@ export default function DashboardMediaKitPage() {
             </button>
             <button
               type="submit"
-              className="h-10 px-5 rounded-xl bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5"
+              className="h-9 px-5 rounded-xl bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer shadow-xs inline-flex items-center gap-1.5"
             >
               Save Settings
             </button>

@@ -339,3 +339,42 @@ CREATE TABLE IF NOT EXISTS mediakit_gigs (
   INDEX idx_mediakit_gigs_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 15. COLLAB REQUESTS TABLE & MEDIA KIT EXTENSIONS
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS collab_requests (
+  id VARCHAR(64) PRIMARY KEY,
+  creator_id VARCHAR(64) NOT NULL,
+  package_id VARCHAR(100) DEFAULT NULL,
+  package_name VARCHAR(255) DEFAULT NULL,
+  brand_name VARCHAR(150) NOT NULL,
+  contact_name VARCHAR(150) NOT NULL,
+  work_email VARCHAR(255) NOT NULL,
+  phone VARCHAR(50) DEFAULT NULL,
+  budget VARCHAR(50) DEFAULT NULL,
+  message TEXT NOT NULL,
+  website_or_social VARCHAR(255) DEFAULT NULL,
+  status ENUM('new', 'replied', 'closed') NOT NULL DEFAULT 'new',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_collab_creator_status (creator_id, status),
+  INDEX idx_collab_creator_created (creator_id, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Media kit settings extensions: audience snapshot, categories, past brands, contact preferences
+ALTER TABLE mediakit_settings ADD COLUMN IF NOT EXISTS avg_reel_views VARCHAR(50) DEFAULT NULL;
+ALTER TABLE mediakit_settings ADD COLUMN IF NOT EXISTS engagement_rate VARCHAR(50) DEFAULT NULL;
+ALTER TABLE mediakit_settings ADD COLUMN IF NOT EXISTS top_cities VARCHAR(255) DEFAULT NULL;
+ALTER TABLE mediakit_settings ADD COLUMN IF NOT EXISTS content_languages VARCHAR(255) DEFAULT NULL;
+ALTER TABLE mediakit_settings ADD COLUMN IF NOT EXISTS categories VARCHAR(255) DEFAULT NULL;
+ALTER TABLE mediakit_settings ADD COLUMN IF NOT EXISTS past_brands JSON DEFAULT NULL;
+ALTER TABLE mediakit_settings ADD COLUMN IF NOT EXISTS allow_whatsapp TINYINT(1) DEFAULT 1;
+ALTER TABLE mediakit_settings ADD COLUMN IF NOT EXISTS allow_email TINYINT(1) DEFAULT 1;
+
+-- Media kit gigs extensions: price unit & starting price toggle
+ALTER TABLE mediakit_gigs ADD COLUMN IF NOT EXISTS price_unit VARCHAR(50) DEFAULT 'per_package';
+ALTER TABLE mediakit_gigs ADD COLUMN IF NOT EXISTS is_starting_price TINYINT(1) DEFAULT 0;
+
+-- Reviews extension: is_verified flag
+ALTER TABLE creator_reviews ADD COLUMN IF NOT EXISTS is_verified TINYINT(1) DEFAULT 0;
+
+

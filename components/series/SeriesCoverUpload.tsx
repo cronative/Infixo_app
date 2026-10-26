@@ -25,10 +25,12 @@ export function SeriesCoverUpload({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isPortraitWarning, setIsPortraitWarning] = useState(false);
   const [position, setPosition] = useState<"center" | "top" | "bottom">("center");
 
   const validateAndProcessFile = (file?: File) => {
     setErrorMessage(null);
+    setIsPortraitWarning(false);
     if (!file) return;
 
     const extension = `.${file.name.split(".").pop()?.toLowerCase()}`;
@@ -46,6 +48,22 @@ export function SeriesCoverUpload({
       setErrorMessage(`File size exceeds ${maxSizeMB}MB limit. Please upload a smaller image.`);
       return;
     }
+
+    // Check if the uploaded image is portrait (height > width)
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      if (img.height > img.width) {
+        setIsPortraitWarning(true);
+      } else {
+        setIsPortraitWarning(false);
+      }
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+    img.src = objectUrl;
 
     resizeImageToDataUrl(file, 1600)
       .then((result) => {
@@ -81,6 +99,7 @@ export function SeriesCoverUpload({
     e.stopPropagation();
     onChange(null);
     setErrorMessage(null);
+    setIsPortraitWarning(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -194,11 +213,24 @@ export function SeriesCoverUpload({
             </span>
             <span className="min-w-0">
               <span className="block text-sm font-medium text-[#0f172a]">Upload a cover</span>
-              <span className="block text-xs text-[#64748b]">Drop an image or tap to browse · 1920 × 1080 recommended</span>
+              <span className="block text-xs text-[#64748b]">Drop an image or tap to browse · 1600 × 900 px recommended</span>
             </span>
           </div>
         )}
       </div>
+
+      {/* Helper Guidance Text */}
+      <p className="text-[11.5px] text-[#64748b] leading-relaxed">
+        Best size: 1600×900 px (landscape). The important part should be in the centre — it will be cropped for the profile.
+      </p>
+
+      {/* Portrait Aspect Ratio Warning */}
+      {isPortraitWarning && (
+        <div className="flex items-start gap-2 rounded-[5px] bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800 border border-amber-200/80 animate-in fade-in duration-150">
+          <AlertCircle className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
+          <span>Portrait images get cropped heavily. Upload a landscape image for the best look.</span>
+        </div>
+      )}
 
       {/* Inline Error State */}
       {errorMessage && (

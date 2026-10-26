@@ -53,7 +53,18 @@ async function ensureMediaKitTables() {
 
     // Ensure columns exist on existing tables if created previously
     try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN creator_id VARCHAR(100) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN avg_reel_views VARCHAR(50) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN engagement_rate VARCHAR(50) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN top_cities VARCHAR(255) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN content_languages VARCHAR(255) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN categories VARCHAR(255) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN past_brands JSON DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN allow_whatsapp TINYINT(1) DEFAULT 1"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN allow_email TINYINT(1) DEFAULT 1"); } catch {}
+
     try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN creator_id VARCHAR(100) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN price_unit VARCHAR(50) DEFAULT 'per_package'"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN is_starting_price TINYINT(1) DEFAULT 0"); } catch {}
 
     mediaKitTablesEnsured = true;
   } catch (e) {
@@ -118,7 +129,9 @@ export async function GET(req: Request) {
 
     // 1. Fetch Contact & Lead Routing Settings for THIS Creator only
     const [settingsRows]: any = await db.query(
-      `SELECT whatsapp_number, sponsor_email, min_budget, bio_highlight, accepting_sponsors 
+      `SELECT whatsapp_number, sponsor_email, min_budget, bio_highlight, accepting_sponsors,
+              avg_reel_views, engagement_rate, top_cities, content_languages, categories, past_brands,
+              allow_whatsapp, allow_email, updated_at 
        FROM mediakit_settings 
        WHERE creator_id = ? OR email = ? OR email = ?
        ORDER BY (creator_id = ?) DESC LIMIT 1`,
@@ -126,19 +139,54 @@ export async function GET(req: Request) {
     );
 
     const s = settingsRows[0] || {};
+    let contentLanguages = [];
+    try {
+      contentLanguages = typeof s.content_languages === "string" && s.content_languages.startsWith("[")
+        ? JSON.parse(s.content_languages)
+        : (s.content_languages ? s.content_languages.split(",").map((x: string) => x.trim()).filter(Boolean) : []);
+    } catch {
+      contentLanguages = [];
+    }
+
+    let categories = [];
+    try {
+      categories = typeof s.categories === "string" && s.categories.startsWith("[")
+        ? JSON.parse(s.categories)
+        : (s.categories ? s.categories.split(",").map((x: string) => x.trim()).filter(Boolean) : []);
+    } catch {
+      categories = [];
+    }
+
+    let pastBrands = [];
+    try {
+      pastBrands = typeof s.past_brands === "string" ? JSON.parse(s.past_brands) : (s.past_brands || []);
+    } catch {
+      pastBrands = [];
+    }
+
     const settings = {
       whatsappNumber: s.whatsapp_number || "",
       sponsorEmail: s.sponsor_email || "",
       minBudget: (s.min_budget === "₹0" || !s.min_budget) ? "" : s.min_budget,
       bioHighlight: s.bio_highlight || "",
       acceptingSponsors: s.accepting_sponsors === 1 || s.accepting_sponsors === true,
+      avgReelViews: s.avg_reel_views || undefined,
+      engagementRate: s.engagement_rate || undefined,
+      topCities: s.top_cities || undefined,
+      contentLanguages,
+      categories,
+      pastBrands,
+      allowWhatsapp: s.allow_whatsapp !== 0 && s.allow_whatsapp !== false,
+      allowEmail: s.allow_email !== 0 && s.allow_email !== false,
+      updatedAt: s.updated_at ? new Date(s.updated_at).toISOString() : undefined,
     };
 
     // 2. Fetch Gigs created strictly by THIS Creator only
     const [gigsRows]: any = await db.query(
       `SELECT id, creator_id AS creatorId, email, title, platform, price, min_price AS minPrice, max_price AS maxPrice, 
               package_name AS packageName, turnaround_days AS turnaroundDays, 
-              deliverables, badge, is_popular AS isPopular, is_active AS isActive 
+              deliverables, badge, is_popular AS isPopular, is_active AS isActive,
+              price_unit AS priceUnit, is_starting_price AS isStartingPrice 
        FROM mediakit_gigs 
        WHERE creator_id = ? OR (email = ? AND (creator_id IS NULL OR creator_id = ''))
        ORDER BY created_at ASC`,
@@ -166,6 +214,8 @@ export async function GET(req: Request) {
         badge: row.badge || undefined,
         isPopular: Boolean(row.isPopular),
         isActive: Boolean(row.isActive),
+        priceUnit: row.priceUnit || (row.title?.toLowerCase().includes("monthly") ? "per_month" : "per_package"),
+        isStartingPrice: Boolean(row.isStartingPrice),
       };
     });
 
@@ -199,18 +249,56 @@ export async function POST(req: Request) {
     const minBudget = settings?.minBudget || null;
     const bioHighlight = settings?.bioHighlight || null;
     const accepting = settings?.acceptingSponsors !== false ? 1 : 0;
+    const avgReelViews = settings?.avgReelViews || null;
+    const engagementRate = settings?.engagementRate || null;
+    const topCities = settings?.topCities || null;
+    const contentLanguages = settings?.contentLanguages
+      ? (Array.isArray(settings.contentLanguages) ? JSON.stringify(settings.contentLanguages) : String(settings.contentLanguages))
+      : null;
+    const categories = settings?.categories
+      ? (Array.isArray(settings.categories) ? JSON.stringify(settings.categories) : String(settings.categories))
+      : null;
+    const pastBrands = settings?.pastBrands ? JSON.stringify(settings.pastBrands) : null;
+    const allowWhatsapp = settings?.allowWhatsapp !== false ? 1 : 0;
+    const allowEmail = settings?.allowEmail !== false ? 1 : 0;
 
     await db.query(
-      `INSERT INTO mediakit_settings (creator_id, email, whatsapp_number, sponsor_email, min_budget, bio_highlight, accepting_sponsors)
-       VALUES (?, ?, ?, ?, ?, ?, ?)
+      `INSERT INTO mediakit_settings 
+        (creator_id, email, whatsapp_number, sponsor_email, min_budget, bio_highlight, accepting_sponsors,
+         avg_reel_views, engagement_rate, top_cities, content_languages, categories, past_brands, allow_whatsapp, allow_email)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
          email = VALUES(email),
          whatsapp_number = VALUES(whatsapp_number),
          sponsor_email = VALUES(sponsor_email),
          min_budget = VALUES(min_budget),
          bio_highlight = VALUES(bio_highlight),
-         accepting_sponsors = VALUES(accepting_sponsors)`,
-      [resolvedCreatorId, resolvedEmail, whatsapp, sponsorEmail, minBudget, bioHighlight, accepting]
+         accepting_sponsors = VALUES(accepting_sponsors),
+         avg_reel_views = VALUES(avg_reel_views),
+         engagement_rate = VALUES(engagement_rate),
+         top_cities = VALUES(top_cities),
+         content_languages = VALUES(content_languages),
+         categories = VALUES(categories),
+         past_brands = VALUES(past_brands),
+         allow_whatsapp = VALUES(allow_whatsapp),
+         allow_email = VALUES(allow_email)`,
+      [
+        resolvedCreatorId,
+        resolvedEmail,
+        whatsapp,
+        sponsorEmail,
+        minBudget,
+        bioHighlight,
+        accepting,
+        avgReelViews,
+        engagementRate,
+        topCities,
+        contentLanguages,
+        categories,
+        pastBrands,
+        allowWhatsapp,
+        allowEmail,
+      ]
     );
 
     // 2. Synchronize Gigs tied to creator_id & email
@@ -255,11 +343,13 @@ export async function POST(req: Request) {
       const isPopular = pkg.isPopular ? 1 : 0;
       const isActive = pkg.isActive !== false ? 1 : 0;
       const turnaround = Number(pkg.turnaroundDays) || 2;
+      const priceUnit = pkg.priceUnit || (pkg.title?.toLowerCase().includes("monthly") ? "per_month" : "per_package");
+      const isStartingPrice = pkg.isStartingPrice ? 1 : 0;
 
       await db.query(
         `INSERT INTO mediakit_gigs 
-           (id, creator_id, email, title, platform, price, min_price, max_price, package_name, turnaround_days, deliverables, badge, is_popular, is_active)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+           (id, creator_id, email, title, platform, price, min_price, max_price, package_name, turnaround_days, deliverables, badge, is_popular, is_active, price_unit, is_starting_price)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
            creator_id = VALUES(creator_id),
            email = VALUES(email),
@@ -273,7 +363,9 @@ export async function POST(req: Request) {
            deliverables = VALUES(deliverables),
            badge = VALUES(badge),
            is_popular = VALUES(is_popular),
-           is_active = VALUES(is_active)`,
+           is_active = VALUES(is_active),
+           price_unit = VALUES(price_unit),
+           is_starting_price = VALUES(is_starting_price)`,
         [
           pkg.id,
           resolvedCreatorId,
@@ -289,6 +381,8 @@ export async function POST(req: Request) {
           badge,
           isPopular,
           isActive,
+          priceUnit,
+          isStartingPrice,
         ]
       );
     }

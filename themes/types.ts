@@ -48,5 +48,5 @@ export interface ThemeCardProps {
   pageHeader?: { pageLabel: string; backHref: string; backLabel: string };
   onShare?: () => void;
   layoutMode?: "tabs" | "stacked";
-  initialTab?: "about" | "watch" | "explore" | "work" | "series" | "fanbase" | "links" | "shop" | "reviews" | "setup";
+  initialTab?: "about" | "watch" | "explore" | "work" | "collab" | "series" | "fanbase" | "links" | "shop" | "reviews" | "setup";
 }

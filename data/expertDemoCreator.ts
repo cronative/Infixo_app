@@ -1,4 +1,4 @@
-import { CreatorProfile, SocialAccounts, Series, MediaKitPackage, CustomLink, ThemeKey, CreatorReview, CreatorSetupItem, CreatorProduct, DEFAULT_VISIBILITY_SETTINGS } from "@/types";
+import { CreatorProfile, SocialAccounts, Series, MediaKitPackage, MediaKitSettings, CustomLink, ThemeKey, CreatorReview, CreatorSetupItem, CreatorProduct, DEFAULT_VISIBILITY_SETTINGS } from "@/types";
 
 export const EXPERT_DEMO_PROFILE: CreatorProfile = {
   id: "cr_expert_demo_creator",
@@ -220,6 +220,71 @@ export const EXPERT_DEMO_SERIES: Series[] = [
       },
     ],
   },
+  {
+    id: "ser_mixed_platform",
+    title: "Street Food Secrets",
+    posterDataUrl: "/images/demo/series-1.webp",
+    description: "Quick city eats guide.",
+    genre: "Street Food",
+    language: "Hindi",
+    platform: "Multi-Platform",
+    createdAt: new Date().toISOString(),
+    seasons: [
+      {
+        id: "season_mixed_1",
+        title: "Season 1",
+        seasonNumber: 1,
+        episodes: [
+          {
+            id: "ep_mixed_1",
+            episodeNumber: 1,
+            title: "Old City Katori Chaat Secrets",
+            thumbnailDataUrl: null,
+            platform: "YouTube",
+            externalUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            description: "Chaat secrets and recipes.",
+          },
+          {
+            id: "ep_mixed_2",
+            episodeNumber: 2,
+            title: "Secret Cheese Sandwich Reel",
+            thumbnailDataUrl: null,
+            platform: "Instagram",
+            externalUrl: "https://www.instagram.com/reels/xyz123/",
+            description: "Quick reel guide.",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "ser_single_episode",
+    title: "Ultimate Vada Pav Documentary",
+    posterDataUrl: "/images/demo/series-2.webp",
+    description: "A deep dive into the history of Mumbai's most iconic street food.",
+    genre: "Documentary",
+    language: "Hindi",
+    platform: "YouTube",
+    createdAt: new Date().toISOString(),
+    seasons: [
+      {
+        id: "season_single_1",
+        title: "Season 1",
+        seasonNumber: 1,
+        episodes: [
+          {
+            id: "ep_single_1",
+            episodeNumber: 1,
+            title: "The Story of Shivaji Park Vada Pav",
+            thumbnailDataUrl: null,
+            platform: "YouTube",
+            externalUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            description: "Origins and history of Shivaji Park vada pav.",
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 export const EXPERT_DEMO_GIGS: MediaKitPackage[] = [
@@ -227,6 +292,8 @@ export const EXPERT_DEMO_GIGS: MediaKitPackage[] = [
     id: "gig_dedicated_reel",
     title: "1x Dedicated Instagram Reel",
     price: "12,000",
+    priceUnit: "per_reel",
+    isStartingPrice: false,
     platform: "Instagram",
     deliverables: [
       "1 natural, engaging Reel featuring your cafe or brand organically",
@@ -241,6 +308,9 @@ export const EXPERT_DEMO_GIGS: MediaKitPackage[] = [
     id: "gig_reel_story_bundle",
     title: "1x Reel + 3x Stories with Link",
     price: "18,000",
+    priceUnit: "per_package",
+    isPopular: true,
+    isStartingPrice: false,
     platform: "Instagram",
     deliverables: [
       "1 high-engagement Reel (tasting, review, or vlog integration)",
@@ -255,6 +325,8 @@ export const EXPERT_DEMO_GIGS: MediaKitPackage[] = [
     id: "gig_vlog_integration",
     title: "Food Brand / Cafe In-Depth Vlog Integration",
     price: "25,000",
+    priceUnit: "per_video",
+    isStartingPrice: true,
     platform: "YouTube",
     deliverables: [
       "Dedicated 60-90 second organic integration in my next Daily Vlog",
@@ -269,6 +341,8 @@ export const EXPERT_DEMO_GIGS: MediaKitPackage[] = [
     id: "gig_monthly_ambassador",
     title: "Monthly Brand Partnership (4 Reels + 8 Stories)",
     price: "45,000",
+    priceUnit: "per_month",
+    isStartingPrice: false,
     platform: "Multi-Platform",
     deliverables: [
       "4 dedicated Reels across 30 days (1 per week)",
@@ -276,10 +350,30 @@ export const EXPERT_DEMO_GIGS: MediaKitPackage[] = [
       "Bio mention & regular brand placement in vlogs",
       "Ideal for cafes, snack brands, beverage companies & lifestyle apps",
     ],
-    turnaroundDays: 7,
+    turnaroundDays: 4,
     isActive: true,
   },
 ];
+
+export const EXPERT_DEMO_MEDIA_KIT_SETTINGS: MediaKitSettings = {
+  sponsorEmail: "devom@inflixo.com",
+  whatsappNumber: "+91 98765 43210",
+  acceptingSponsors: true,
+  avgReelViews: "45K",
+  engagementRate: "4.8",
+  topCities: "Mumbai, Ahmedabad, Surat",
+  contentLanguages: ["Hindi", "Gujarati"],
+  categories: ["Street Food", "Travel", "Daily Vlogs"],
+  pastBrands: [
+    { name: "Chai Tapri Co." },
+    { name: "Masala Munch Snacks" },
+    { name: "Monsoon Sips" },
+    { name: "Desi Bites" },
+  ],
+  allowWhatsapp: true,
+  allowEmail: true,
+  updatedAt: "2026-10-01T00:00:00.000Z",
+};
 
 export const EXPERT_DEMO_CUSTOM_LINKS: CustomLink[] = [
   {
@@ -287,6 +381,7 @@ export const EXPERT_DEMO_CUSTOM_LINKS: CustomLink[] = [
     title: "My Top 25 Street Food Spots in Ahmedabad & Mumbai (Google Maps) 📍",
     url: "https://maps.google.com",
     isEnabled: true,
+    isPinned: true,
   },
   {
     id: "link_vlog_gear",
@@ -356,43 +451,98 @@ export const EXPERT_DEMO_CUSTOM_LINKS: CustomLink[] = [
   },
 ];
 
+export const TEST_EDGE_CASES_LINKS: CustomLink[] = [
+  {
+    id: "link_unknown_domain",
+    title: "Personal Engineering Notes & Deep Dives",
+    url: "https://inflixo.tech/engineering/deep-dive",
+    isEnabled: true,
+  },
+  {
+    id: "link_long_title",
+    title: "Super Incredibly Long Destination Link Title To Test Line Clamping and Two Line Wrapping Under 400px Mobile Screen Widths 🚀🔥",
+    url: "https://amazon.in/dp/vlogging-kit",
+    isEnabled: true,
+  },
+  {
+    id: "col_street_guides",
+    title: "Street Food Guides & Maps",
+    kind: "collection",
+    url: "",
+    isEnabled: true,
+    items: [
+      {
+        id: "link_vip_whatsapp_pinned",
+        title: "Join VIP Food Walk WhatsApp Group (Pinned Inside Group - Moves to Top!) 📌💬",
+        url: "https://wa.me/919876543210",
+        isEnabled: true,
+        isPinned: true,
+      },
+      {
+        id: "link_google_drive_assets",
+        title: "Google Drive High-Res Photos & Assets",
+        url: "https://drive.google.com/drive/folders/food-assets",
+        isEnabled: true,
+      },
+    ],
+  },
+  {
+    id: "col_single_item",
+    title: "Single Item Collection",
+    kind: "collection",
+    url: "",
+    isEnabled: true,
+    items: [
+      {
+        id: "link_spotify_mix",
+        title: "My Cooking & Walking Spotify Mix",
+        url: "https://open.spotify.com/playlist/test",
+        isEnabled: true,
+      },
+    ],
+  },
+];
+
 export const EXPERT_DEMO_REVIEWS: CreatorReview[] = [
   {
-    id: "rev_chai_story",
+    id: "rev_chai_tapri",
     creatorId: "cr_expert_demo_creator",
-    token: "tok_chai_story",
-    clientName: "The Chai Story Cafe",
-    clientEmail: "contact@thechaistory.in",
+    token: "tok_chai_tapri",
+    clientName: "Chai Tapri Co.",
+    clientEmail: "partners@chaitaprico.in",
     projectTitle: "Cafe Launch & Food Tasting Reel",
     contentUrl: "https://instagram.com/reels/",
     rating: 5,
-    comment: "Devom visited our new cafe during his 10-day food challenge. His reel got over 45,000 views and brought 80+ walk-in customers that very weekend! Super genuine and honest creator.",
+    comment: "Devom visited our new location during his street food challenge. His reel organically crossed 45,000 views and brought 80+ walk-in customers that very weekend! Honest and engaging creator.",
+    isVerified: false,
     status: "approved",
     createdAt: new Date().toISOString(),
   },
   {
-    id: "rev_snackible",
+    id: "rev_masala_munch",
     creatorId: "cr_expert_demo_creator",
-    token: "tok_snackible",
-    clientName: "Snackible India",
-    clientEmail: "partnerships@snackible.com",
+    token: "tok_masala_munch",
+    clientName: "Masala Munch Snacks",
+    clientEmail: "growth@masalamunch.in",
     projectTitle: "Healthy Snacks Integration in Daily Vlog",
     contentUrl: "https://youtube.com/watch",
     rating: 5,
-    comment: "Devom integrated our snacks into his 15-day daily vlog so naturally. Our website saw a noticeable bump in orders from Gujarat and Maharashtra. Very professional to work with!",
+    comment: "Devom integrated our snacks into his 15-day daily vlog series seamlessly. Our website saw a noticeable spike in orders from Gujarat and Maharashtra. Very professional to work with!",
+    isVerified: false,
     status: "approved",
     createdAt: new Date().toISOString(),
   },
   {
-    id: "rev_paperboat",
+    id: "rev_monsoon_sips",
     creatorId: "cr_expert_demo_creator",
-    token: "tok_paperboat",
-    clientName: "Paper Boat Drinks",
-    clientEmail: "collabs@paperboatdrinks.com",
+    token: "tok_monsoon_sips",
+    clientName: "Monsoon Sips",
+    clientEmail: "collabs@monsoonsips.in",
     projectTitle: "Street Food & Beverage Pairing",
     contentUrl: "https://instagram.com/reels/",
     rating: 5,
-    comment: "Devom's storytelling feels like a trusted friend talking to you. His audience genuinely loves his food recommendations. Delivered on time with great numbers!",
+    comment: "Devom's storytelling feels genuine and relatable. His audience actively engages with his recommendations. Delivered ahead of schedule with standout performance metrics!",
+    isVerified: false,
     status: "approved",
     createdAt: new Date().toISOString(),
   },

@@ -239,6 +239,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
   const [collectionItems, setCollectionItems] = useState<CustomLinkItem[]>([]);
   const [isTitleManuallyEdited, setIsTitleManuallyEdited] = useState<boolean>(false);
   const [lastSuggestedTitle, setLastSuggestedTitle] = useState<string>("");
+  const [formIsPinned, setFormIsPinned] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState(false);
   const [linkToDelete, setLinkToDelete] = useState<CustomLink | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
@@ -304,6 +305,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
     setCollectionItems([createEmptyCollectionItem()]);
     setIsTitleManuallyEdited(false);
     setLastSuggestedTitle("");
+    setFormIsPinned(false);
     setIsModalOpen(true);
   }
 
@@ -320,6 +322,7 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
     );
     setIsTitleManuallyEdited(true);
     setLastSuggestedTitle("");
+    setFormIsPinned(Boolean(link.isPinned));
     setIsModalOpen(true);
   }
 
@@ -404,20 +407,39 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
       return;
     }
 
+    const anyChildPinned = formMode === "collection" && cleanedItems.some((it) => it.isPinned);
+    const isThisPinned = formIsPinned || anyChildPinned;
+
     let updatedList: CustomLink[] = [];
     if (editingLink) {
-      updatedList = links.map((l) => (
-        String(l.id) === String(editingLink.id)
-          ? {
+      updatedList = links.map((l) => {
+        if (String(l.id) === String(editingLink.id)) {
+          return {
             ...l,
             title: cleanTitle,
             url: formMode === "collection" ? "" : cleanUrl,
             kind: formMode,
             items: formMode === "collection" ? cleanedItems : [],
-          }
-          : l
-      ));
+            isPinned: formIsPinned,
+          };
+        }
+        return {
+          ...l,
+          isPinned: isThisPinned ? false : l.isPinned,
+          items: isThisPinned && l.items
+            ? l.items.map((it) => ({ ...it, isPinned: false }))
+            : l.items,
+        };
+      });
     } else {
+      const baseLinks = isThisPinned
+        ? links.map((l) => ({
+            ...l,
+            isPinned: false,
+            items: l.items ? l.items.map((it) => ({ ...it, isPinned: false })) : l.items,
+          }))
+        : links;
+
       const newLink: CustomLink = {
         id: createClientId("link"),
         title: cleanTitle,
@@ -425,8 +447,9 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
         isEnabled: true,
         kind: formMode,
         items: formMode === "collection" ? cleanedItems : [],
+        isPinned: formIsPinned,
       };
-      updatedList = [...links, newLink];
+      updatedList = [...baseLinks, newLink];
     }
 
     const previousLinks = links;
@@ -464,6 +487,32 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
       showToast("Could not delete custom link. Please try again.", "error");
     }
   }
+
+  async function handleTogglePin(linkId: string) {
+    const target = links.find((l) => String(l.id) === String(linkId));
+    if (!target) return;
+    const willPin = !target.isPinned;
+
+    const updatedList = links.map((l) => {
+      if (String(l.id) === String(linkId)) {
+        return { ...l, isPinned: willPin };
+      }
+      return {
+        ...l,
+        isPinned: willPin ? false : l.isPinned,
+        items: willPin && l.items
+          ? l.items.map((it) => ({ ...it, isPinned: false }))
+          : l.items,
+      };
+    });
+
+    setLinks(updatedList);
+    customLinksRepository.save(updatedList);
+    onChangeRef.current?.(updatedList);
+    showToast(willPin ? "Link pinned to top! 📌" : "Link unpinned");
+    await syncToBackend(updatedList);
+  }
+
 
   async function syncToBackend(updatedLinks: CustomLink[]) {
     const targetEmail = creatorCtx?.profile?.email || authRepository.getPendingEmail() || authRepository.get()?.email || creatorCtx?.profile?.username;
@@ -608,17 +657,37 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                       className="min-w-0 flex-1 cursor-pointer group"
                       title="Click to edit link"
                     >
-                      <p className="truncate text-sm font-bold text-[#0f172a] group-hover:text-[#7A2253] transition-colors">
-                        {item.title}
-                      </p>
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        {item.isPinned && (
+                          <span className="shrink-0 text-[10.5px] font-bold bg-[#FCE7F1] text-[#7A2253] px-1.5 py-0.5 rounded-[4px] leading-none">
+                            📌 Pinned
+                          </span>
+                        )}
+                        <p className="truncate text-sm font-bold text-[#0f172a] group-hover:text-[#7A2253] transition-colors">
+                          {item.title}
+                        </p>
+                      </div>
                       <p className="truncate text-xs text-[#64748b]">
                         {domain}
                       </p>
                     </div>
                   </div>
 
-                  {/* Right: 3 Action Buttons (Pencil | Open ↗ | Trash) matching screenshot */}
+                  {/* Right: Action Buttons (Pin | Pencil | Open ↗ | Trash) */}
                   <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleTogglePin(item.id)}
+                      className={`h-8 w-8 flex items-center justify-center rounded-[5px] border transition-colors shadow-2xs cursor-pointer ${
+                        item.isPinned
+                          ? "border-[#7A2253] bg-[#FFF5F8] text-[#7A2253]"
+                          : "border-[#e2e8f0] bg-white hover:bg-[#f8fafc] text-slate-400 hover:text-slate-700"
+                      }`}
+                      title={item.isPinned ? "Unpin link" : "Pin this link to top"}
+                    >
+                      <span className="text-xs">📌</span>
+                    </button>
+
                     <button
                       type="button"
                       onClick={() => handleOpenEdit(item)}
@@ -881,6 +950,31 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                   </div>
                 </div>
 
+                {/* Field 4: Pin link toggle */}
+                <div className="flex items-center justify-between p-3.5 rounded-[5px] border border-slate-200 bg-white hover:bg-slate-50/50 transition-colors">
+                  <div className="space-y-0.5 pr-3">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm">📌</span>
+                      <label htmlFor="custom-link-pin" className="text-xs sm:text-[13px] font-bold text-slate-900 cursor-pointer">
+                        Pin this link
+                      </label>
+                    </div>
+                    <p className="text-[11px] text-slate-500 font-normal">
+                      Show this link at the very top of your public Links tab (only one pinned at a time; pinning a new one unpins the old one).
+                    </p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                    <input
+                      id="custom-link-pin"
+                      type="checkbox"
+                      checked={formIsPinned}
+                      onChange={(e) => setFormIsPinned(e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#7A2253]"></div>
+                  </label>
+                </div>
+
                 {/* Info Eye Banner */}
                 <div className="flex items-center gap-2.5 p-3 rounded-[5px] bg-[#FFF5F8] border border-[#FCE7F1] text-xs text-[#7A2253]">
                   <Eye className="h-4 w-4 shrink-0 text-[#7A2253]" />
@@ -981,6 +1075,31 @@ export function CustomLinksManager({ onChange }: CustomLinksManagerProps) {
                             className="w-full h-full px-3 text-xs font-mono font-medium text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:outline-none bg-transparent"
                           />
                         </div>
+
+                        {/* Pin Item Action */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const willPin = !item.isPinned;
+                            setCollectionItems((items) =>
+                              items.map((it) => ({
+                                ...it,
+                                isPinned: it.id === item.id ? willPin : false,
+                              }))
+                            );
+                            if (willPin) {
+                              setFormIsPinned(false);
+                            }
+                          }}
+                          className={`self-center p-2 rounded-[5px] transition-colors cursor-pointer shrink-0 ${
+                            item.isPinned
+                              ? "bg-[#FFF5F8] text-[#7A2253]"
+                              : "text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+                          }`}
+                          title={item.isPinned ? "Unpin item" : "Pin this item (will move to top level)"}
+                        >
+                          <span className="text-xs">📌</span>
+                        </button>
 
                         {/* Remove Action */}
                         <button

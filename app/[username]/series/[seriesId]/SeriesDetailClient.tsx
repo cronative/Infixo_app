@@ -162,6 +162,20 @@ export function SeriesDetailClient({
   const [activeSeasonIndex, setActiveSeasonIndex] = useState<number>(0);
   const [isScrolledPastHeader, setIsScrolledPastHeader] = useState(false);
   const [isDescExpanded, setIsDescExpanded] = useState(false);
+  const descMeasureRef = useRef<HTMLParagraphElement>(null);
+  const [isDescOverflowing, setIsDescOverflowing] = useState(false);
+
+  useEffect(() => {
+    const checkOverflow = () => {
+      const el = descMeasureRef.current;
+      if (!el) return;
+      setIsDescOverflowing(el.scrollHeight > el.clientHeight + 1);
+    };
+
+    checkOverflow();
+    window.addEventListener("resize", checkOverflow);
+    return () => window.removeEventListener("resize", checkOverflow);
+  }, [series?.description]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -433,12 +447,14 @@ export function SeriesDetailClient({
       ? series.language.trim()
       : null;
 
-  const platformIcon = (cls: string, platform: string | null = detectedPlatform) =>
-    platform === "YouTube" ? <YoutubeIcon className={`${cls} text-red-500`} />
-      : platform === "Instagram" ? <InstagramIcon className={`${cls} text-pink-500`} />
-        : platform === "Facebook" ? <FacebookIcon className={`${cls} text-blue-500`} />
-          : platform === "Multi-Platform" ? <Sparkles className={`${cls} text-amber-500`} />
-            : <Globe className={`${cls} opacity-75`} />;
+  const renderPlatformIcon = (platform?: string | null, cls: string = "h-3.5 w-3.5") => {
+    const p = (platform || "").toLowerCase();
+    if (p.includes("youtube")) return <YoutubeIcon className={`${cls} text-red-500 fill-red-500 shrink-0`} />;
+    if (p.includes("instagram")) return <InstagramIcon className={`${cls} text-pink-500 shrink-0`} />;
+    if (p.includes("facebook")) return <FacebookIcon className={`${cls} text-blue-500 fill-blue-500 shrink-0`} />;
+    if (p.includes("multi") || p.includes("mix")) return <Sparkles className={`${cls} text-amber-500 shrink-0`} />;
+    return <Film className={`${cls} text-slate-400 shrink-0`} />;
+  };
 
   const episodePlatform = (url?: string | null): string | null => {
     if (!url) return null;
@@ -448,10 +464,36 @@ export function SeriesDetailClient({
     return null;
   };
 
-  const metaParts = [
-    `${allEpisodes.length} ${allEpisodes.length === 1 ? "episode" : "episodes"}`,
-    ...(seasonsList.length > 1 ? [`${seasonsList.length} seasons`] : []),
-    ...(langTag ? [langTag] : []),
+  const allSamePlatform = useMemo(() => {
+    if (currentEpisodes.length === 0) return null;
+    const getEpPlat = (ep: Episode): string => {
+      const detected = episodePlatform(ep.externalUrl);
+      if (detected) return detected;
+      if (detectedPlatform && detectedPlatform !== "Multi-Platform") return detectedPlatform;
+      return "YouTube";
+    };
+
+    const first = getEpPlat(currentEpisodes[0]);
+    const allMatch = currentEpisodes.every((ep) => getEpPlat(ep).toLowerCase() === first.toLowerCase());
+    return allMatch ? first : null;
+  }, [currentEpisodes, detectedPlatform]);
+
+  const episodeCountText = `${allEpisodes.length} ${allEpisodes.length === 1 ? "episode" : "episodes"}`;
+  const validPlatform =
+    detectedPlatform &&
+    detectedPlatform !== "Creator" &&
+    detectedPlatform !== "Multi-Platform"
+      ? detectedPlatform
+      : "";
+
+  const metaLineParts: { text: string; icon?: React.ReactNode }[] = [
+    { text: episodeCountText },
+    ...(series.language && series.language.trim()
+      ? [{ text: series.language.trim() }]
+      : []),
+    ...(validPlatform
+      ? [{ text: validPlatform, icon: renderPlatformIcon(validPlatform, "h-3.5 w-3.5") }]
+      : []),
   ];
 
   const isHeaderOnImage = hasValidCover && !isScrolledPastHeader;
@@ -485,14 +527,21 @@ export function SeriesDetailClient({
             />
 
             {/* Top Floating Glass Controls */}
-            <div className="absolute top-3 inset-x-3 sm:top-4 sm:inset-x-4 flex items-center justify-between z-10 pointer-events-auto">
+            <div className="absolute top-3 inset-x-3 sm:top-4 sm:inset-x-4 flex items-center justify-between z-30 pointer-events-auto">
               <button
                 type="button"
                 onClick={() => {
                   if (typeof window !== "undefined" && window.history.length > 1) {
                     router.back();
+                    setTimeout(() => {
+                      if (typeof window !== "undefined" && window.location.pathname.includes("/series/")) {
+                        const profilePath = username === "demo_creator" ? "/demo_creator?tab=watch" : `/${username}?tab=watch`;
+                        router.push(profilePath);
+                      }
+                    }, 350);
                   } else {
-                    router.push(`/${username}/series`);
+                    const profilePath = username === "demo_creator" ? "/demo_creator?tab=watch" : `/${username}?tab=watch`;
+                    router.push(profilePath);
                   }
                 }}
                 className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all cursor-pointer shadow-md"
@@ -523,18 +572,20 @@ export function SeriesDetailClient({
 
             {/* Center Floating White Play Button */}
             {allEpisodes[0]?.externalUrl && (
-              <a
-                href={allEpisodes[0].externalUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => trackEpisodeClick(allEpisodes[0])}
-                className="absolute inset-0 flex items-center justify-center z-10 group/play cursor-pointer"
-                title="Play Episode 1"
-              >
-                <span className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-[5px] bg-white text-[#7A2253] shadow-2xl transition-transform duration-300 group-hover/play:scale-110">
-                  <Play className="h-6 w-6 fill-[#7A2253] ml-0.5" />
-                </span>
-              </a>
+              <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                <a
+                  href={allEpisodes[0].externalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => trackEpisodeClick(allEpisodes[0])}
+                  className="group/play cursor-pointer pointer-events-auto"
+                  title="Play Episode 1"
+                >
+                  <span className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-[5px] bg-white text-[#7A2253] shadow-2xl transition-transform duration-300 group-hover/play:scale-110">
+                    <Play className="h-6 w-6 fill-[#7A2253] ml-0.5" />
+                  </span>
+                </a>
+              </div>
             )}
 
             {/* Bottom Subtle Vignette Overlay */}
@@ -563,60 +614,50 @@ export function SeriesDetailClient({
               {series.title}
             </h1>
 
-            {/* 2. Platform & Category Badges */}
-            <div className="flex flex-wrap items-center gap-2 pt-0.5">
-              {/* Platform Pill */}
-              <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-slate-100 text-slate-800 dark:bg-white/10 dark:text-slate-200 border border-slate-200/60 dark:border-white/10 px-3 py-1 text-xs font-bold">
-                {detectedPlatform === "Instagram" ? (
-                  <InstagramIcon className="h-3.5 w-3.5 text-pink-500" />
-                ) : detectedPlatform === "Facebook" ? (
-                  <FacebookIcon className="h-3.5 w-3.5 text-blue-500" />
-                ) : (
-                  <YoutubeIcon className="h-3.5 w-3.5 text-red-500" />
-                )}
-                <span>{detectedPlatform || "YouTube"}</span>
-              </span>
-
-              {/* Category Pill 1 */}
-              {genresList[0] && (
-                <span className="inline-flex items-center rounded-[5px] bg-slate-100 text-slate-800 dark:bg-white/10 dark:text-slate-200 border border-slate-200/80 dark:border-white/10 px-3 py-1 text-xs font-bold">
-                  {genresList[0]}
-                </span>
-              )}
-
-              {/* Sub-genre Pill 2 */}
-              {genresList[1] && (
-                <span className="inline-flex items-center rounded-[5px] bg-slate-100 text-slate-800 dark:bg-white/10 dark:text-slate-200 border border-slate-200/80 dark:border-white/10 px-3 py-1 text-xs font-bold">
-                  {genresList[1]}
-                </span>
-              )}
-
-              {/* Additional genres if any */}
-              {genresList.slice(2).map((g) => (
-                <span key={g} className="inline-flex items-center rounded-[5px] bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-slate-300 border border-slate-200/60 dark:border-white/10 px-3 py-1 text-xs font-semibold">
-                  {g}
+            {/* 2. Meta line: "5 episodes · Hindi · [IG icon] Instagram" */}
+            <div className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 font-medium flex-wrap pt-0.5">
+              {metaLineParts.map((part, idx) => (
+                <span key={idx} className="inline-flex items-center gap-1.5">
+                  {idx > 0 && <span className="opacity-40 font-normal">·</span>}
+                  {part.icon}
+                  <span>{part.text}</span>
                 </span>
               ))}
-
-              {/* Language Pill */}
-              {langTag && (
-                <span className="inline-flex items-center rounded-[5px] bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-slate-300 border border-slate-200/60 dark:border-white/10 px-3 py-1 text-xs font-medium">
-                  {langTag}
-                </span>
-              )}
             </div>
 
-            {/* 3. Description with Read More / Read Less */}
+            {/* Category Tags as small neutral chips below meta line */}
+            {genresList.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                {genresList.map((g) => (
+                  <span
+                    key={g}
+                    className="inline-flex items-center rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 px-2.5 py-0.5 text-xs font-medium"
+                  >
+                    {g}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* 3. Description with Read More / Read Less (measured accurately on 2-line clamp) */}
             {series.description && (
-              <div className="pt-0.5 text-slate-600 dark:text-slate-300 text-[13px] leading-[1.5] break-words">
-                <p className={isDescExpanded ? "" : "line-clamp-3"}>
+              <div className="relative pt-0.5 text-slate-600 dark:text-slate-300 text-[13px] leading-relaxed break-words">
+                <p className={isDescExpanded ? "" : "line-clamp-2"}>
                   {series.description}
                 </p>
-                {series.description.length > 90 && (
+                {/* Invisible measurement node with line-clamp-2 to check overflow on resize */}
+                <p
+                  ref={descMeasureRef}
+                  aria-hidden="true"
+                  className="line-clamp-2 invisible pointer-events-none absolute inset-x-0 top-0.5 -z-50 select-none opacity-0"
+                >
+                  {series.description}
+                </p>
+                {isDescOverflowing && (
                   <button
                     type="button"
                     onClick={() => setIsDescExpanded(!isDescExpanded)}
-                    className="text-[#7A2253] dark:text-pink-400 font-bold text-xs inline-flex items-center gap-1 mt-1 hover:underline cursor-pointer"
+                    className="text-[#7A2253] dark:text-pink-400 font-bold text-xs inline-flex items-center gap-1 mt-1 hover:underline cursor-pointer select-none"
                   >
                     <span>{isDescExpanded ? "Read less" : "Read more"}</span>
                     {isDescExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
@@ -625,17 +666,18 @@ export function SeriesDetailClient({
               </div>
             )}
 
-            {/* 5. Episodes Section */}
+            {/* 4. Episodes Section */}
             <div className="space-y-3 pt-1">
-              {/* Header */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-slate-900 dark:text-white font-black text-base sm:text-lg">
-                  <Film className="h-5 w-5 text-slate-700 dark:text-slate-300" />
-                  <span>Episodes</span>
-                </div>
-                <span className="text-xs font-semibold text-slate-400">
-                  {currentEpisodes.length} Episodes
-                </span>
+              {/* Episodes Heading */}
+              <div>
+                <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight">
+                  Episodes ({currentEpisodes.length})
+                </h2>
+                {allSamePlatform && (
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-normal mt-0.5">
+                    Episodes open on {allSamePlatform}
+                  </p>
+                )}
               </div>
 
               {/* Seasons Selector if multiple seasons */}
@@ -646,7 +688,7 @@ export function SeriesDetailClient({
                       key={sn.id || idx}
                       type="button"
                       onClick={() => setActiveSeasonIndex(idx)}
-                      className={`tap-scale inline-flex h-8 shrink-0 cursor-pointer items-center rounded-[5px] border px-3 transition-all text-xs font-semibold ${
+                      className={`tap-scale inline-flex h-8 shrink-0 cursor-pointer items-center rounded-lg border px-3 transition-all text-xs font-semibold ${
                         activeSeasonIndex === idx
                           ? "bg-[#7A2253] border-[#7A2253] text-white"
                           : "bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/10"
@@ -658,20 +700,19 @@ export function SeriesDetailClient({
                 </div>
               )}
 
-              {/* Episode Cards */}
+              {/* Episode Cards (Compact Rows: ~56-60px height, 8px gap) */}
               {currentEpisodes.length === 0 ? (
-                <div className="rounded-[5px] border border-dashed border-slate-200 dark:border-white/10 p-6 text-center text-xs text-slate-400">
+                <div className="rounded-xl border border-dashed border-slate-200 dark:border-white/10 p-6 text-center text-xs text-slate-400">
                   No episodes added to this series yet.
                 </div>
               ) : (
-                <div className="space-y-2.5">
+                <div className="space-y-2">
                   {currentEpisodes.map((ep: Episode, index: number) => {
                     const partNum = ep.episodeNumber || index + 1;
                     const partNumStr = partNum < 10 ? `0${partNum}` : `${partNum}`;
                     const epTitleStr = ep.title?.trim() || `Episode ${partNum}`;
                     const cleanTitle = epTitleStr.replace(/^Part\s*0?\d+[:\s-]*/i, "").replace(/^Episode\s*0?\d+[:\s-]*/i, "").trim() || epTitleStr;
-                    const epPlatform = episodePlatform(ep.externalUrl);
-                    const isEpYouTube = !epPlatform || epPlatform === "YouTube" || (ep.externalUrl && /youtube|youtu\.be/i.test(ep.externalUrl));
+                    const epPlatformName = episodePlatform(ep.externalUrl) || detectedPlatform || "Video";
 
                     return (
                       <a
@@ -680,39 +721,28 @@ export function SeriesDetailClient({
                         target={ep.externalUrl ? "_blank" : undefined}
                         rel="noopener noreferrer"
                         onClick={() => trackEpisodeClick(ep)}
-                        className="tap-scale group/ep flex items-center justify-between gap-3 p-3.5 sm:p-4 rounded-[5px] border border-slate-100 dark:border-white/10 bg-white dark:bg-zinc-900 shadow-2xs hover:shadow-xs hover:border-slate-200 dark:hover:border-white/20 transition-all cursor-pointer text-left"
+                        aria-label={`Watch episode ${partNum}: ${cleanTitle} on ${epPlatformName}`}
+                        className="group/ep flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl border border-slate-200/70 dark:border-white/10 bg-white dark:bg-zinc-900 hover:bg-[#7A2253]/[0.03] dark:hover:bg-white/[0.04] hover:border-[#7A2253]/30 dark:hover:border-white/20 transition-all text-left focus-visible:ring-2 focus-visible:ring-[#7A2253] focus-visible:outline-hidden cursor-pointer"
                       >
-                        {/* Left: Number Box + Platform + Title */}
+                        {/* Left: Number Box (36×36) + (Optional Mixed Platform Icon) + Title */}
                         <div className="flex items-center gap-3 min-w-0 flex-1">
-                          <span className="shrink-0 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-[5px] bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-white text-xs sm:text-[13px] font-black tabular-nums border border-slate-200/80 dark:border-white/10">
+                          <span className="shrink-0 flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-white text-xs font-bold tabular-nums border border-slate-200/60 dark:border-white/10">
                             {partNumStr}
                           </span>
-                          <div className="min-w-0 flex-1 space-y-0.5">
-                            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
-                              {isEpYouTube ? (
-                                <YoutubeIcon className="h-3.5 w-3.5 text-red-500" />
-                              ) : epPlatform === "Instagram" ? (
-                                <InstagramIcon className="h-3.5 w-3.5 text-pink-500" />
-                              ) : epPlatform === "Facebook" ? (
-                                <FacebookIcon className="h-3.5 w-3.5 text-blue-500" />
-                              ) : (
-                                <Film className="h-3.5 w-3.5 text-slate-400" />
-                              )}
-                              <span>{isEpYouTube ? "YouTube" : epPlatform || "Video"}</span>
-                            </div>
-                            <h3 className="text-xs sm:text-[13px] font-bold text-slate-900 dark:text-white truncate group-hover/ep:text-[#7A2253] dark:group-hover/ep:text-pink-400 transition-colors">
+                          <div className="flex items-center gap-2 min-w-0 flex-1">
+                            {!allSamePlatform && (
+                              <span className="shrink-0">
+                                {renderPlatformIcon(epPlatformName, "h-3.5 w-3.5")}
+                              </span>
+                            )}
+                            <h3 className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white truncate group-hover/ep:text-[#7A2253] dark:group-hover/ep:text-rose-400 transition-colors">
                               {cleanTitle}
                             </h3>
                           </div>
                         </div>
 
-                        {/* Right: Watch Pill */}
-                        {ep.externalUrl && (
-                          <span className="shrink-0 inline-flex items-center gap-1 px-3.5 py-1.5 rounded-[5px] bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/10 dark:text-white border border-slate-200/80 dark:border-white/10 text-xs font-bold transition-all">
-                            <span>Watch</span>
-                            <ArrowUpRight className="h-3 w-3" />
-                          </span>
-                        )}
+                        {/* Right: small ↗ icon */}
+                        <ArrowUpRight className="h-4 w-4 text-slate-400 group-hover/ep:text-[#7A2253] dark:group-hover/ep:text-rose-400 transition-colors shrink-0" />
                       </a>
                     );
                   })}
@@ -720,8 +750,8 @@ export function SeriesDetailClient({
               )}
             </div>
 
-            {/* 6. Bottom Creator Card */}
-            <div className="mt-5 rounded-[5px] bg-slate-50/80 dark:bg-white/[0.04] border border-slate-100 dark:border-white/10 p-3.5 sm:p-4 flex items-center justify-between gap-3">
+            {/* 5. Bottom Creator Card */}
+            <div className="mt-5 rounded-xl bg-slate-50/80 dark:bg-white/[0.04] border border-slate-200/70 dark:border-white/10 p-3.5 sm:p-4 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="relative h-11 w-11 sm:h-12 sm:w-12 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 shrink-0 border border-slate-200 dark:border-white/10">
                   {creator?.photoDataUrl ? (
@@ -734,7 +764,7 @@ export function SeriesDetailClient({
                 </div>
                 <div className="min-w-0">
                   <span className="text-[11px] font-medium text-slate-400 block leading-tight">
-                    Created by
+                    Series by
                   </span>
                   <div className="flex items-center gap-1.5 pt-0.5">
                     <span className="text-sm font-bold text-slate-900 dark:text-white truncate">
@@ -744,9 +774,15 @@ export function SeriesDetailClient({
                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L9 14.17l9.59-9.59L20 6l-10 11z" />
                     </svg>
                   </div>
-                  <span className="text-xs text-slate-400 block truncate pt-0.5">
-                    {creator?.category || "Travel · Food · Lifestyle"}
-                  </span>
+                  <p className="text-xs text-slate-400 truncate pt-0.5">
+                    <span>@{username.replace(/^@/, "")}</span>
+                    {(creator?.bio || creator?.category) && (
+                      <>
+                        <span className="mx-1 text-slate-400">·</span>
+                        <span>{creator.bio || creator.category}</span>
+                      </>
+                    )}
+                  </p>
                 </div>
               </div>
 
@@ -756,10 +792,9 @@ export function SeriesDetailClient({
                   e.preventDefault();
                   router.push(profileUrl);
                 }}
-                className="tap-scale shrink-0 inline-flex items-center gap-1 px-4 py-2 rounded-[5px] bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/10 dark:text-white border border-slate-200/80 dark:border-white/10 text-xs font-bold transition-all cursor-pointer"
+                className="tap-scale shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/10 dark:text-white border border-slate-200/80 dark:border-white/10 text-xs font-bold transition-all cursor-pointer"
               >
-                <span>View Profile</span>
-                <ArrowUpRight className="h-3 w-3" />
+                <span>View profile →</span>
               </a>
             </div>
           </div>

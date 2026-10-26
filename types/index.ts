@@ -307,6 +307,8 @@ export interface CustomLink {
   isEnabled?: boolean;
   kind?: "link" | "collection";
   items?: CustomLinkItem[];
+  thumbnail?: string;
+  isPinned?: boolean;
 }
 
 export interface CustomLinkItem {
@@ -315,6 +317,8 @@ export interface CustomLinkItem {
   url: string;
   icon?: string;
   isEnabled?: boolean;
+  thumbnail?: string;
+  isPinned?: boolean;
 }
 
 export const DEFAULT_CUSTOM_LINKS: CustomLink[] = [];
@@ -500,6 +504,8 @@ export interface Series {
 // Media Kit & Collaboration Packages
 // ---------------------------------------------------------------------------
 
+export type PackagePriceUnit = "per_reel" | "per_post" | "per_video" | "per_package" | "per_month";
+
 export interface MediaKitPackage {
   id: string;
   title: string;
@@ -507,7 +513,8 @@ export interface MediaKitPackage {
   platform: "YouTube" | "Instagram" | "Instagram Bundle" | "Monthly Retainer" | "Facebook" | "Multi-Platform" | string;
   deliverables: string[];
   price: string;
-  priceUnit?: string;
+  priceUnit?: PackagePriceUnit | string;
+  isStartingPrice?: boolean;
   minPrice?: string;
   maxPrice?: string;
   packageName?: string;
@@ -517,6 +524,11 @@ export interface MediaKitPackage {
   isActive: boolean;
 }
 
+export interface PastBrandItem {
+  name: string;
+  logoUrl?: string;
+}
+
 export interface MediaKitSettings {
   sponsorEmail?: string;
   whatsappNumber?: string;
@@ -524,6 +536,32 @@ export interface MediaKitSettings {
   acceptingSponsors: boolean;
   minBudget?: string;
   preferredCategories?: string[];
+  avgReelViews?: string | number;
+  engagementRate?: string | number;
+  topCities?: string;
+  contentLanguages?: string[] | string;
+  categories?: string[] | string;
+  pastBrands?: PastBrandItem[];
+  allowWhatsapp?: boolean;
+  allowEmail?: boolean;
+  updatedAt?: string;
+}
+
+export interface CollabRequest {
+  id: string;
+  creatorId: string;
+  packageId?: string | null;
+  packageName?: string | null;
+  brandName: string;
+  contactName: string;
+  workEmail: string;
+  phone?: string | null;
+  budget?: string | null;
+  message: string;
+  websiteOrSocial?: string | null;
+  status: "new" | "replied" | "closed";
+  createdAt: string;
+  updatedAt?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -645,6 +683,7 @@ export interface CreatorReview {
   ratingProfessionalism?: number; // 1 to 5 Professionalism
   ratingTimelyDelivery?: number; // 1 to 5 Timely Delivery
   comment: string;
+  isVerified?: boolean;
   status: ReviewStatus;
   createdAt: string;
   updatedAt?: string;

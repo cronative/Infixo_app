@@ -84,7 +84,7 @@ export default function PublicProfileClient() {
     rawTab === "links" || rawTab === "explore" ? "links" :
     rawTab === "shop" || rawTab === "products" ? "shop" :
     rawTab === "setup" || rawTab === "about" || rawTab === "fanbase" ? "about" :
-    rawTab === "reviews" || rawTab === "work" ? "work" :
+    rawTab === "reviews" || rawTab === "work" || rawTab === "collab" ? "collab" :
     undefined;
   const { showToast } = useToast();
 

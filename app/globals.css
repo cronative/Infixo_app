@@ -519,7 +519,7 @@ body {
 }
 
 @theme inline {
-  --animate-fade-in: fade-in 0.35s ease forwards;
+  --animate-fade-in: fade-in 0.18s ease forwards;
   --animate-slide-up: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-toast-in: toast-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-shimmer: shimmer 2.2s linear infinite;
@@ -698,7 +698,7 @@ body {
 
 /* Global Animation Utilities */
 .animate-fade-in-up {
-  animation: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fade-in-up 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-scale-in {
@@ -1436,4 +1436,39 @@ nextjs-portal,
 [data-nextjs-toast="true"],
 #nextjs-dev-overlay {
   display: none !important;
+}
+
+/* Featured Series Watch button text responsive toggle (<400px shows 'Watch', >=400px shows 'Start watching') */
+@media (max-width: 400px) {
+  .watch-text-short {
+    display: inline !important;
+  }
+  .watch-text-long {
+    display: none !important;
+  }
+}
+@media (min-width: 400.01px) {
+  .watch-text-short {
+    display: none !important;
+  }
+  .watch-text-long {
+    display: inline !important;
+  }
+}
+
+/* Link row title clamping: 1 line truncate on >=400px, 2 lines clamp on <400px */
+.link-row-title {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 399.98px) {
+  .link-row-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    white-space: normal;
+    word-break: break-word;
+  }
 }

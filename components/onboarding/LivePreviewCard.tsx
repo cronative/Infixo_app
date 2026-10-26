@@ -55,6 +55,11 @@ import {
   Rocket,
   Compass,
 } from "lucide-react";
+import { TabSectionHeader, TabSectionBody } from "@/components/profile/TabSectionHeader";
+import { PackageCard } from "@/components/collab/PackageCard";
+import { MediaKitSnapshotCard } from "@/components/collab/MediaKitSnapshotCard";
+import { BrandLogosWrap } from "@/components/collab/BrandLogosWrap";
+import { CollabEnquirySheet } from "@/components/collab/CollabEnquirySheet";
 import {
   CreatorProfile,
   SocialAccounts,
@@ -63,6 +68,7 @@ import {
   MediaKitPackage,
   MediaKitSettings,
   CustomLink,
+  CustomLinkItem,
   CreatorReview,
   VisibilitySettings,
   DEFAULT_VISIBILITY_SETTINGS,
@@ -110,6 +116,8 @@ import { MadeWithInflixo } from "@/components/shared/MadeWithInflixo";
 import { isDarkTheme, PUBLIC_ICON_BUTTON, PUBLIC_TEXT_BUTTON, PUBLIC_TYPE } from "@/components/public/publicTheme";
 import { PublicPageHeader } from "@/components/public/PublicPageHeader";
 import { SeriesPoster } from "@/components/shared/SeriesPoster";
+import { FeaturedSeriesCard } from "@/components/series/FeaturedSeriesCard";
+import { SeriesPosterCard } from "@/components/series/SeriesPosterCard";
 import { PlatformThumbnailBox } from "@/components/shared/PlatformThumbnailBox";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { FocusOverlay } from "@/components/theme/FocusOverlay";
@@ -118,8 +126,12 @@ import { CollaborationInquiryModal } from "@/components/mediakit/CollaborationIn
 import { EpisodeQuickDrawer } from "@/components/series/EpisodeQuickDrawer";
 import { VisibilitySettingsModal } from "@/components/shared/VisibilitySettingsModal";
 import { ShareProfileModal } from "@/components/public/ShareProfileModal";
+import { ProfileHeader } from "@/components/public/ProfileHeader";
 import { STORAGE_KEYS, storage } from "@/utils/storage";
+import { LinkRow } from "@/components/links/LinkRow";
+import { LinkGroupRow } from "@/components/links/LinkGroupRow";
 import { getInitials } from "@/lib/avatar";
+
 
 function formatIndianPackagePrice(pkg: MediaKitPackage): string {
   const min = pkg.minPrice?.trim();
@@ -896,6 +908,7 @@ export type CreatorNavTabId =
   | "about"
   | "watch"
   | "explore"
+  | "collab"
   | "work"
   | "series"
   | "fanbase"
@@ -1144,6 +1157,26 @@ export function LivePreviewCard({
     return series && series.length > 0 ? { [series[0].id]: true } : {};
   });
   const [seriesFilter, setSeriesFilter] = useState<string>("all");
+  const seriesPlatformCounts = useMemo(() => {
+    const counts: Record<string, number> = { youtube: 0, instagram: 0, facebook: 0 };
+    (series || []).forEach((s) => {
+      const allEps = getSeriesEpisodes(s);
+      const firstUrl = (allEps[0]?.externalUrl || "").toLowerCase();
+      const p = (s.platform || "").toLowerCase();
+      if (p.includes("youtube") || firstUrl.includes("youtube.com") || firstUrl.includes("youtu.be")) {
+        counts.youtube = (counts.youtube || 0) + 1;
+      } else if (p.includes("instagram") || firstUrl.includes("instagram.com")) {
+        counts.instagram = (counts.instagram || 0) + 1;
+      } else if (p.includes("facebook") || firstUrl.includes("facebook.com")) {
+        counts.facebook = (counts.facebook || 0) + 1;
+      }
+    });
+    return counts;
+  }, [series]);
+
+  const distinctPlatformCount = Object.values(seriesPlatformCounts).filter((c) => c > 0).length;
+  const showPlatformChips = (series || []).length > 6 && distinctPlatformCount >= 2;
+
   const [seriesSortOrder, setSeriesSortOrder] = useState<string>("latest");
   const [shopSortOrder, setShopSortOrder] = useState<string>("latest");
   const [isShopSortOpen, setIsShopSortOpen] = useState(false);
@@ -1182,21 +1215,48 @@ export function LivePreviewCard({
 
   const [selectedSeriesDetail, setSelectedSeriesDetail] = useState<Series | null>(null);
   const [selectedSeriesSeasonIdx, setSelectedSeriesSeasonIdx] = useState<number>(0);
+  const [isEnquirySheetOpen, setIsEnquirySheetOpen] = useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const p = new URLSearchParams(window.location.search);
+        return p.get("enquire") === "1" || p.get("enquire") === "true";
+      } catch {}
+    }
+    return false;
+  });
+  const [selectedEnquiryPackage, setSelectedEnquiryPackage] = useState<MediaKitPackage | null>(null);
+  const [showAllReviews, setShowAllReviews] = useState(false);
   const [activeNavTab, setActiveNavTab] = useState<CreatorNavTabId>(() => {
-    const raw = (initialTab || (profile as any)?.defaultTab || profile.visibilitySettings?.defaultTab) as string | undefined;
+    let urlTab: string | null = null;
+    if (typeof window !== "undefined") {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        urlTab = urlParams.get("tab");
+      } catch {}
+    }
+    const raw = (urlTab || initialTab || (profile as any)?.defaultTab || profile.visibilitySettings?.defaultTab) as string | undefined;
     const normalized =
       raw === "series" || raw === "watch" ? "watch" :
       raw === "links" || raw === "explore" ? "links" :
       raw === "shop" || raw === "products" ? "shop" :
       raw === "setup" || raw === "fanbase" || raw === "about" ? "about" :
-      raw === "reviews" || raw === "work" ? "work" :
+      raw === "reviews" || raw === "work" || raw === "collab" ? "collab" :
       undefined;
 
-    if (normalized) return normalized;
+    const hasSeries = Boolean(series && series.length > 0);
+    const passedLinks = passedCustomLinks || [];
+
+    if (normalized) {
+      if (normalized === "watch" && !hasSeries) {
+        if (passedLinks.length > 0) return "links";
+        if (products && products.length > 0) return "shop";
+        return "about";
+      }
+      return normalized;
+    }
 
     // Series is hero feature: Watch is the default tab whenever series exist!
-    if (series && series.length > 0) return "watch";
-    const passedLinks = passedCustomLinks || [];
+    if (hasSeries) return "watch";
     if (passedLinks.length > 0) return "links";
     if (products && products.length > 0) return "shop";
     return "about";
@@ -1224,10 +1284,13 @@ export function LivePreviewCard({
       const pathname = window.location.pathname;
       const isFinish = Boolean(isFinishStepProp || pathname === "/onboarding/finish");
       const onb = pathname.startsWith("/onboarding") && !isFinish;
+      const search = window.location.search;
+      const isOwnerParam = search.includes("owner=true") || search.includes("preview=true");
       setIsDashboardPreview(
         showSettingsIconProp ?? (
           pathname.startsWith("/dashboard") ||
-          onb
+          onb ||
+          isOwnerParam
         )
       );
       setIsInformationalMode(isInformationalProp ?? onb);
@@ -1468,14 +1531,12 @@ export function LivePreviewCard({
       setCustomLinksList([]);
       return;
     }
-    if (passedCustomLinks && passedCustomLinks.length > 0) {
+    if (passedCustomLinks !== undefined) {
       setCustomLinksList(passedCustomLinks);
     } else if (safeProfile.username === "demo_creator") {
       import("@/data/expertDemoCreator").then(({ EXPERT_DEMO_CUSTOM_LINKS }) => {
         setCustomLinksList(EXPERT_DEMO_CUSTOM_LINKS);
       });
-    } else if (passedCustomLinks) {
-      setCustomLinksList(passedCustomLinks);
     } else {
       setCustomLinksList(customLinksRepository.get());
     }
@@ -1808,24 +1869,24 @@ export function LivePreviewCard({
   const isListingPage = Boolean(seriesOnlyMode || productsOnlyMode || reviewsOnlyMode);
 
   const hasSeriesContent = !isListingPage && effectiveVisibilitySettings.showSeries !== false && series.length > 0;
-  const hasLinksContent = !isListingPage && (safeProfile.username === "demo_creator" || (effectiveVisibilitySettings.showCustomLinks !== false && validLinksCount > 0));
+  const hasLinksContent = !isListingPage && (
+    (effectiveVisibilitySettings.showCustomLinks !== false && validLinksCount > 0) ||
+    (isDashboardPreview && effectiveVisibilitySettings.showCustomLinks !== false)
+  );
   const hasShopContent = !isListingPage && (products && products.length > 0);
   const validSetupList = (setupList || []).filter((it) => it.isActive !== false);
   const hasSetupContent = !isListingPage && validSetupList.length > 0;
 
-  const navWhatsappNum = mediaKitSettings?.whatsappNumber?.trim() || (profile as any).whatsappNumber?.trim() || "";
-  const navContactEmail = mediaKitSettings?.sponsorEmail?.trim() || profile.email?.trim() || "";
   const navActivePackages = (mediaKitPackages || []).filter((p) => p.isActive);
-  const hasWorkCollab = !isListingPage && effectiveVisibilitySettings.showCollabGigs !== false && (Boolean(navWhatsappNum) || Boolean(navContactEmail) || navActivePackages.length > 0);
+  const hasWorkCollab = !isListingPage && effectiveVisibilitySettings.showCollabGigs !== false && navActivePackages.length > 0;
   const hasReviewsContent = !isListingPage && effectiveVisibilitySettings.showReviews !== false && approvedReviews.length > 0;
-  const hasTeamContent = !isListingPage && activeTeamMembers.length > 0;
 
   const hasFanbaseTab = !isListingPage && effectiveVisibilitySettings.showFanbase !== false && (totalAudience > 0 || fanbaseSocialCards.length > 0);
   const hasAboutTab = !isListingPage && (Boolean(profile.bio?.trim()) || hasFanbaseTab || hasSetupContent);
   const hasWatchTab = hasSeriesContent;
   const hasLinksTab = hasLinksContent;
   const hasShopTab = hasShopContent;
-  const hasWorkTab = hasWorkCollab || hasReviewsContent || hasTeamContent;
+  const hasWorkTab = hasWorkCollab || hasReviewsContent;
 
   const aboutTabObj = { id: "about" as CreatorNavTabId, label: "About", icon: User };
   const watchTabObj = { id: "watch" as CreatorNavTabId, label: "Watch", icon: Film };
@@ -1839,8 +1900,8 @@ export function LivePreviewCard({
     label: "Shop",
     icon: ShoppingBag,
   };
-  const workTabObj = {
-    id: "work" as CreatorNavTabId,
+  const collabTabObj = {
+    id: "collab" as CreatorNavTabId,
     label: "Collab",
     icon: Briefcase,
   };
@@ -1851,21 +1912,21 @@ export function LivePreviewCard({
     if (hasLinksTab) navTabs.push(linksTabObj);
     if (hasShopTab) navTabs.push(shopTabObj);
     if (hasAboutTab) navTabs.push(aboutTabObj);
-    if (hasWorkTab) navTabs.push(workTabObj);
+    if (hasWorkTab) navTabs.push(collabTabObj);
   } else if (hasLinksTab) {
     navTabs.push(linksTabObj);
     if (hasShopTab) navTabs.push(shopTabObj);
     if (hasAboutTab) navTabs.push(aboutTabObj);
-    if (hasWorkTab) navTabs.push(workTabObj);
+    if (hasWorkTab) navTabs.push(collabTabObj);
   } else if (hasShopTab) {
     navTabs.push(shopTabObj);
     if (hasAboutTab) navTabs.push(aboutTabObj);
-    if (hasWorkTab) navTabs.push(workTabObj);
+    if (hasWorkTab) navTabs.push(collabTabObj);
   } else if (hasAboutTab) {
     navTabs.push(aboutTabObj);
-    if (hasWorkTab) navTabs.push(workTabObj);
+    if (hasWorkTab) navTabs.push(collabTabObj);
   } else if (hasWorkTab) {
-    navTabs.push(workTabObj);
+    navTabs.push(collabTabObj);
   }
 
   const isTabsLayout = layoutMode !== "stacked" && !isListingPage && navTabs.length >= 1;
@@ -1898,16 +1959,24 @@ export function LivePreviewCard({
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
       const tabParam = urlParams.get("tab");
+      const target = tabParam || initialTab;
       const normalizedTab: CreatorNavTabId | null =
-        tabParam === "fanbase" || tabParam === "about" || tabParam === "setup" ? "about" :
-        tabParam === "series" || tabParam === "watch" ? "watch" :
-        tabParam === "links" || tabParam === "explore" ? "links" :
-        tabParam === "shop" || tabParam === "products" ? "shop" :
-        tabParam === "reviews" || tabParam === "work" ? "work" :
-        (tabParam as CreatorNavTabId | null);
+        target === "fanbase" || target === "about" || target === "setup" ? "about" :
+        target === "series" || target === "watch" ? "watch" :
+        target === "links" || target === "explore" ? "links" :
+        target === "shop" || target === "products" ? "shop" :
+        target === "reviews" || target === "work" || target === "collab" ? "collab" :
+        (target as CreatorNavTabId | null);
 
       if (normalizedTab && navTabs.some((t) => t.id === normalizedTab)) {
         setActiveNavTab(normalizedTab);
+        if (tabParam === "work" || tabParam === "reviews") {
+          try {
+            const url = new URL(window.location.href);
+            url.searchParams.set("tab", "collab");
+            window.history.replaceState({}, "", url.toString());
+          } catch {}
+        }
         return;
       }
       if (!tabParam && !initialTab && navTabs.length > 0) {
@@ -1918,7 +1987,7 @@ export function LivePreviewCard({
     if (navTabs.length > 0 && !navTabs.some((t) => t.id === activeNavTab)) {
       setActiveNavTab(navTabs[0].id);
     }
-  }, [navTabs.length, initialTab]);
+  }, [navTabs, initialTab]);
 
   const resetContentScrollToTop = () => {
     if (profileScrollRef.current) {
@@ -2042,110 +2111,7 @@ export function LivePreviewCard({
       {/* Focus Overlay between animated background and content */}
       {!isPublicSurface && <FocusOverlay overlay={themeMeta.focusOverlay} contained={true} />}
 
-      {/* Top Action Bar: Inflixo Logo & Wordmark on Left, Share on Right */}
-      <div
-        onWheel={handleHeaderWheel}
-        onTouchStart={handleHeaderTouchStart}
-        onTouchMove={handleHeaderTouchMove}
-        onTouchEnd={handleHeaderTouchEnd}
-        className="relative z-30 flex items-center justify-between gap-2 w-full px-0.5 py-0 rounded-[5px] bg-transparent border-transparent shrink-0 mb-0"
-      >
-        {/* Left: Back button (if pageHeader) OR Inflixo Logo + Wordmark */}
-        <div className="shrink-0 flex items-center">
-          {pageHeader ? (
-            <button
-              type="button"
-              onPointerEnter={() => router.prefetch(pageHeader.backHref)}
-              onClick={() => router.push(pageHeader.backHref)}
-              style={{
-                backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.cardBackground,
-                borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : c.border,
-                color: usesDarkControls ? "#FFFFFF" : c.primaryText,
-              }}
-              className="tap-scale flex h-7.5 w-7.5 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-[5px] border shadow-2xs transition-all hover:scale-105 cursor-pointer select-none"
-              title={pageHeader.backLabel}
-              aria-label={pageHeader.backLabel}
-            >
-              <ArrowLeft className="h-3.5 w-3.5" />
-            </button>
-          ) : (
-            <Link
-              href="/"
-              className="tap-scale flex items-center gap-1.5 select-none group cursor-pointer"
-              title="Inflixo - For Creators. By Creators."
-              aria-label="Inflixo"
-            >
-              <div className="flex h-7 w-7 sm:h-7.5 sm:w-7.5 shrink-0 items-center justify-center rounded-[5px] overflow-hidden shadow-2xs border border-white/20 bg-[#7A2253]">
-                <Image
-                  src="/images/inflixo-logo-3d.png"
-                  alt="Inflixo"
-                  width={28}
-                  height={28}
-                  className="h-full w-full object-cover select-none"
-                  priority
-                />
-              </div>
-              <Image
-                src={
-                  usesDarkControls
-                    ? "/images/inflixo-wordmark-tagline-white.png"
-                    : "/images/inflixo-wordmark-tagline.png"
-                }
-                alt="Inflixo - For Creators. By Creators."
-                width={628}
-                height={238}
-                className="h-[24px] sm:h-[26px] w-auto max-w-[80px] sm:max-w-[90px] object-contain select-none"
-                priority
-              />
-            </Link>
-          )}
-        </div>
-
-        {/* Right: Share & Media Kit Button */}
-        {!isOnboardingMode ? (
-          <div className="flex items-center gap-1.5 shrink-0">
-            {containedScroll && cleanHandle && cleanHandle !== "demo_creator" && !isDashboardPreview && !pageHeader && (
-              <Link
-                href={`/${cleanHandle}/media-kit`}
-                onClick={(e) => {
-                  if (isInformationalMode) {
-                    e.preventDefault();
-                    showToast("Opens the creator's media kit on the live profile ✨");
-                  }
-                }}
-                style={{
-                  backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : c.cardBackground,
-                  borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : c.border,
-                  color: usesDarkControls ? "#FFFFFF" : c.primaryText,
-                }}
-                className={PUBLIC_TEXT_BUTTON}
-                title="View media kit"
-              >
-                <Briefcase className="h-3 w-3" />
-                <span className="text-xs">Media kit</span>
-              </Link>
-            )}
-            <button
-              type="button"
-              onClick={handleShareClick}
-              style={{
-                backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 0.8)",
-                borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.22)" : "rgba(0, 0, 0, 0.06)",
-                color: usesDarkControls ? "#FFFFFF" : c.primaryText,
-              }}
-              className="flex h-7 w-7 sm:h-7.5 sm:w-7.5 items-center justify-center rounded-[5px] border shadow-2xs transition-all hover:scale-105 cursor-pointer backdrop-blur-xs"
-              title={pageHeader ? `Share ${pageHeader.pageLabel.toLowerCase()}` : "Share profile"}
-              aria-label={pageHeader ? `Share ${pageHeader.pageLabel.toLowerCase()}` : "Share profile"}
-            >
-              <Share2 className="h-3.5 w-3.5" />
-            </button>
-          </div>
-        ) : (
-          <div className="w-7 shrink-0" aria-hidden="true" />
-        )}
-      </div>
-
-      {/* 1. FIXED TOP HEADER AREA (Centered Avatar, Creator Info, Socials, Tabs) */}
+      {/* 1. FIXED TOP HEADER AREA (Horizontal Compact ProfileHeader) */}
       <div
         onWheel={handleHeaderWheel}
         onTouchStart={handleHeaderTouchStart}
@@ -2153,144 +2119,42 @@ export function LivePreviewCard({
         onTouchEnd={handleHeaderTouchEnd}
         className="shrink-0 w-full z-20"
       >
-        <div className="relative flex flex-col items-center text-center -mt-7 sm:-mt-7">
-          {/* Centered Compact Creator Avatar with Instagram Story Gradient Ring */}
-          <div className="relative inline-block">
-            <div className="p-[2px] rounded-full bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF] shadow-xs">
-              <div className="p-[1.5px] bg-white dark:bg-[#18181B] rounded-full">
-                <CreatorAvatar
-                  src={profile.photoDataUrl}
-                  name={profile.displayName || "Creator"}
-                  className="h-13 w-13 sm:h-14 sm:w-14 rounded-full aspect-square object-cover object-center overflow-hidden mx-auto bg-white"
-                  textClassName="text-sm font-extrabold"
-                  textStyle={{ color: c.primaryText }}
-                  fallbackBgClass="bg-[#7A2253]"
-                />
-              </div>
-            </div>
-            {profile.isVerified !== false && (
-              <span className="absolute bottom-0 right-0 flex items-center justify-center" title="Verified Creator">
-                <BadgeCheck className="h-4 w-4 fill-[#1877F2] text-white drop-shadow-xs" />
-              </span>
-            )}
-          </div>
-
-          {/* Creator Name (8px from avatar) */}
-          <h1
-            style={{
-              color: c.primaryText,
-              fontFamily: typ.headingFontFamily,
-              fontWeight: 700,
-            }}
-            className="mt-2 text-[16px] sm:text-[17px] font-bold tracking-tight text-center break-words line-clamp-1 px-2 leading-tight"
-          >
-            {profile.displayName || "Creator Name"}
-          </h1>
-
-          {/* Username (8px from name) */}
-          {cleanHandle && (
-            <p
-              style={{ color: c.mutedText }}
-              className="mt-2 text-[11px] font-semibold text-center text-gray-500 truncate max-w-[280px] leading-none"
-            >
-              @{cleanHandle}
-            </p>
-          )}
-
-          {/* Categories (8px from username) */}
-          {effectiveVisibilitySettings.showContentCategory !== false && formattedCategories && (
-            <p
-              style={{ color: c.mutedText }}
-              className="mt-2 text-[10px] sm:text-[10.5px] font-medium text-center text-gray-500/90 break-words line-clamp-1 px-4 leading-tight"
-            >
-              {formattedCategories.replace(/,\s*/g, " • ")}
-            </p>
-          )}
-
-          {/* Clickable Social Icons Row (8px from category) */}
-          {headerSocialList.length > 0 && (
-            <div className="mt-2 flex items-center justify-center gap-1.5 flex-wrap">
-              {headerSocialList.map((item) => {
-                let bgClass = "bg-gray-800 text-white";
-                if (item.platform === "instagram") {
-                  bgClass = "bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF] text-white";
-                } else if (item.platform === "youtube") {
-                  bgClass = "bg-[#FF0000] text-white";
-                } else if (item.platform === "facebook") {
-                  bgClass = "bg-[#1877F2] text-white";
-                } else if (item.platform === "tiktok") {
-                  bgClass = "bg-[#000000] text-white";
-                } else if (item.platform === "twitter" || item.platform === "threads") {
-                  bgClass = "bg-black text-white";
-                } else if (item.platform === "linkedin") {
-                  bgClass = "bg-[#0A66C2] text-white";
-                } else if (item.platform === "snapchat") {
-                  bgClass = "bg-[#FFFC00] text-black";
-                } else if (item.platform === "spotify") {
-                  bgClass = "bg-[#1DB954] text-white";
-                } else if (item.platform === "twitch") {
-                  bgClass = "bg-[#9146FF] text-white";
-                } else if (item.platform === "pinterest") {
-                  bgClass = "bg-[#E60023] text-white";
-                }
-
-                return (
-                  <a
-                    key={item.platform}
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => {
-                      if (isInformationalMode) {
-                        e.preventDefault();
-                        showToast(`Redirects to ${item.label} on live profile ✨`);
-                      }
-                    }}
-                    className={`tap-scale flex h-6.5 w-6.5 items-center justify-center rounded-[5px] ${bgClass} shadow-2xs hover:scale-105 transition-all cursor-pointer`}
-                    title={`Visit ${item.label}`}
-                    aria-label={item.label}
-                  >
-                    <span className="flex items-center justify-center">
-                      {item.platform === "instagram" && <InstagramIcon className="h-3 w-3" />}
-                      {item.platform === "youtube" && <YoutubeIcon className="h-3 w-3" />}
-                      {item.platform === "facebook" && <FacebookIcon className="h-3 w-3" />}
-                      {item.platform === "twitter" && <XTwitterIcon className="h-2.5 w-2.5" />}
-                      {item.platform === "linkedin" && <LinkedinIcon className="h-2.5 w-2.5" />}
-                      {item.platform === "threads" && <ThreadsIcon className="h-2.5 w-2.5" />}
-                      {item.platform === "snapchat" && <SnapchatIcon className="h-2.5 w-2.5" />}
-                      {item.platform === "spotify" && <SpotifyIcon className="h-2.5 w-2.5" />}
-                      {item.platform === "twitch" && <TwitchIcon className="h-2.5 w-2.5" />}
-                      {item.platform === "pinterest" && <PinterestIcon className="h-2.5 w-2.5" />}
-                      {item.platform === "tiktok" && <TikTokIcon className="h-3 w-3" />}
-                      {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch", "pinterest", "tiktok"].includes(item.platform) && (
-                        <Globe className="h-2.5 w-2.5 text-white" />
-                      )}
-                    </span>
-                  </a>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Total Fanbase Pill (8px from social icons) */}
-          {totalAudience > 0 && (
-            <div className="mt-2 flex items-center justify-center">
-              <div
-                style={{
-                  backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.9)",
-                  borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.16)" : "rgba(0, 0, 0, 0.06)",
-                  color: c.primaryText,
-                }}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[5px] border text-[10px] sm:text-[10.5px] font-semibold shadow-2xs select-none backdrop-blur-xs leading-none"
-              >
-                <span className="font-extrabold tabular-nums text-[11px]">{formatCount(totalAudience)}</span>
-                <span className="text-gray-300 dark:text-gray-600 font-light mx-0.5">|</span>
-                <span style={{ color: c.mutedText }} className="font-medium text-[10px]">Total Fanbase</span>
-                <ChevronRight className="h-2.5 w-2.5 opacity-60 text-current ml-0.5" />
-              </div>
-            </div>
-          )}
-        </div>
+        <ProfileHeader
+          displayName={profile.displayName || "Creator Name"}
+          username={profile.username || "creator"}
+          photoUrl={profile.photoDataUrl}
+          isVerified={profile.isVerified !== false}
+          tagline={
+            effectiveVisibilitySettings.showContentCategory !== false && formattedCategories
+              ? formattedCategories.replace(/,\s*/g, " • ")
+              : null
+          }
+          socialList={headerSocialList}
+          totalAudience={totalAudience}
+          fanbasePlatformCount={fanbaseSocialCards.length}
+          singlePlatformName={fanbaseSocialCards[0]?.label || "Instagram"}
+          platformBreakdown={fanbaseSocialCards.map((s) => ({
+            platform: s.platform,
+            shortLabel:
+              s.platform === "instagram"
+                ? "IG"
+                : s.platform === "youtube"
+                ? "YT"
+                : s.platform === "facebook"
+                ? "FB"
+                : s.label.slice(0, 3).toUpperCase(),
+            count: s.count,
+          }))}
+          pageHeader={pageHeader}
+          mediaKitHref={
+            containedScroll && cleanHandle && cleanHandle !== "demo_creator" && !isDashboardPreview && !pageHeader
+              ? `/${cleanHandle}/media-kit`
+              : undefined
+          }
+          usesDarkControls={usesDarkControls}
+          onShareClick={handleShareClick}
+          onFanbaseClick={() => handleTabChange("about")}
+        />
 
         {/* Navigation Tabs Bar - Fixed at bottom of top header (Never scrolls) */}
         {isTabsLayout && (
@@ -2486,9 +2350,17 @@ export function LivePreviewCard({
 
         {/* 2. About Tab (Creator Bio Story Bento + Rich Verified Channels Showcase) */}
         {!isListingPage && (!isTabsLayout || activeNavTab === "about" || activeNavTab === "fanbase") && (
-          <div id="about-section" className={`relative z-10 w-full text-left animate-fade-in ${isTabsLayout ? "order-[4] mt-3 sm:mt-3.5 space-y-2.5 sm:space-y-3" : "order-[1] mt-5 sm:mt-6 space-y-3"}`}>
+          <div id="about-section" className={`relative z-10 w-full text-left animate-fade-in ${isTabsLayout ? "order-[4] mt-3 sm:mt-3.5" : "order-[1] mt-5 sm:mt-6 space-y-3"}`}>
+            <TabSectionHeader
+              title="About"
+              subtitle="Get to know me and follow me everywhere."
+              primaryTextColor={c.primaryText}
+              secondaryTextColor={c.secondaryText}
+              headingFontFamily={typ.headingFontFamily}
+            />
 
-            {/* A. Creator Story Card */}
+            <div className="space-y-2.5 sm:space-y-3">
+              {/* A. Creator Story Card */}
             {isTabsLayout && profile.bio && profile.bio.trim() && (
               <div
                 style={{
@@ -2496,26 +2368,8 @@ export function LivePreviewCard({
                   borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)",
                   boxShadow: "none",
                 }}
-                className="rounded-[5px] border p-3.5 sm:p-4 text-left transition-all space-y-2.5"
+                className="rounded-[5px] border p-3.5 sm:p-4 text-left transition-all space-y-2"
               >
-                {/* Header */}
-                <div className="flex items-center justify-between gap-2 border-b border-black/[0.06] dark:border-white/[0.08] pb-2.5">
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <User className="h-4 w-4 text-[#7A2253] dark:text-pink-400 shrink-0" />
-                    <h2
-                      style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                      className="text-base sm:text-lg font-bold tracking-tight truncate"
-                    >
-                      About {profile.displayName || "The Creator"}
-                    </h2>
-                  </div>
-                  {formattedCategories && (
-                    <span className="shrink-0 rounded-[5px] bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-white/10 px-2.5 py-0.5 text-[10.5px] sm:text-[11px] font-semibold truncate max-w-[180px]">
-                      {formattedCategories}
-                    </span>
-                  )}
-                </div>
-
                 {/* Bio Editorial Text */}
                 <ExpandableText
                   text={profile.bio}
@@ -2546,7 +2400,7 @@ export function LivePreviewCard({
                       style={{ fontFamily: typ.headingFontFamily }}
                       className="text-xs sm:text-[13px] font-bold text-[#7A2253] dark:text-pink-400 tracking-tight"
                     >
-                      Total Fanbase
+                      Combined followers
                     </span>
                     <div className="mt-1 flex items-center gap-2">
                       <span
@@ -2703,6 +2557,7 @@ export function LivePreviewCard({
                 </div>
               </div>
             )}
+            </div>
           </div>
         )}
 
@@ -2712,202 +2567,191 @@ export function LivePreviewCard({
             const validLinks = (customLinksList || []).filter(
               (l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url)))
             );
-            if (validLinks.length === 0) return null;
 
-            const directLinks = validLinks.filter((l) => l.kind !== "collection" && Boolean(l.url));
-            const linkGroups = validLinks.filter((l) => l.kind === "collection");
-            const visibleDirectLinks = isLinksExpanded ? directLinks : directLinks.slice(0, 3);
-
-            return (
-              <div id="links-section" className={`relative z-10 order-[5] w-full text-left animate-fade-in ${isTabsLayout ? "mt-2.5 sm:mt-3" : "mt-5 sm:mt-6 space-y-2"}`}>
-                {/* Header: My Links + Subtitle */}
-                <div className="pb-1.5 sm:pb-2">
-                  <div className="flex items-center justify-between px-0.5">
-                    <div className="flex items-center gap-2">
-                      <LinkIcon className="h-4.5 w-4.5 text-[#7A2253] dark:text-pink-400 shrink-0" />
-                      <h2
-                        style={{
-                          color: c.primaryText,
-                          fontFamily: typ.headingFontFamily,
-                          fontWeight: 800,
-                        }}
-                        className="text-lg sm:text-xl font-extrabold tracking-tight"
-                      >
-                        My Links
-                      </h2>
+            // Empty state for owner preview; hide for public
+            if (validLinks.length === 0) {
+              if (isDashboardPreview) {
+                return (
+                  <div id="links-section" className={`relative z-10 order-[5] w-full text-left animate-fade-in ${isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7"}`}>
+                    <TabSectionHeader
+                      title="Links"
+                      subtitle="Everything I recommend, in one place."
+                      primaryTextColor={c.primaryText}
+                      secondaryTextColor={c.secondaryText}
+                      headingFontFamily={typ.headingFontFamily}
+                    />
+                    <div className="rounded-xl border border-dashed border-slate-300 dark:border-white/15 p-8 text-center my-2">
+                      <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-2 text-slate-400">
+                        <LinkIcon className="h-5 w-5" />
+                      </div>
+                      <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">No links yet</p>
+                      <p className="text-xs text-slate-400 mt-0.5">Add your recommended links in the dashboard</p>
                     </div>
                   </div>
-                  <p
-                    style={{ color: c.secondaryText }}
-                    className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-normal px-0.5 mt-0.5"
-                  >
-                    Check out my important links.
-                  </p>
-                </div>
+                );
+              }
+              return null;
+            }
 
-                <div className="space-y-2 sm:space-y-2.5 w-full">
-                  {/* 1. Direct Links (Top 3 Initially) */}
-                  {visibleDirectLinks.map((link) => (
-                    <a
-                      key={link.id}
-                      href={link.url || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
+            // Find pinned link (max 1 per creator).
+            // A pinned link may be a top-level link, or inside a collection (must move to top level).
+            let pinnedLink: (CustomLink | CustomLinkItem) | null = null;
+
+            // 1. Check top-level links
+            for (const link of validLinks) {
+              if (link.isPinned && link.kind !== "collection") {
+                pinnedLink = link;
+                break;
+              }
+            }
+
+            // 2. If not found in top-level, check inside collections
+            if (!pinnedLink) {
+              for (const group of validLinks) {
+                if (group.kind === "collection" && group.items) {
+                  const found = group.items.find((item) => item.isPinned && item.isEnabled !== false && item.title && item.url);
+                  if (found) {
+                    pinnedLink = found;
+                    break;
+                  }
+                }
+              }
+            }
+
+            // Clean up the remaining links:
+            // Remove pinned link from direct links or from group items.
+            // Hide collection if it was left with 0 items.
+            const remainingItems = validLinks
+              .map((link) => {
+                if (link.kind === "collection") {
+                  const filteredItems = (link.items || []).filter(
+                    (it) => it.isEnabled !== false && it.title && it.url && String(it.id) !== String(pinnedLink?.id)
+                  );
+                  return {
+                    ...link,
+                    items: filteredItems,
+                  };
+                }
+                return link;
+              })
+              .filter((link) => {
+                if (pinnedLink && String(link.id) === String(pinnedLink.id)) {
+                  return false;
+                }
+                if (link.kind === "collection" && (!link.items || link.items.length === 0)) {
+                  return false;
+                }
+                return true;
+              });
+
+            return (
+              <div id="links-section" className={`relative z-10 order-[5] w-full text-left animate-fade-in ${isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7"}`}>
+                <TabSectionHeader
+                  title="Links"
+                  subtitle="Everything I recommend, in one place."
+                  primaryTextColor={c.primaryText}
+                  secondaryTextColor={c.secondaryText}
+                  headingFontFamily={typ.headingFontFamily}
+                />
+
+                <div className="space-y-2 w-full">
+                  {/* 3. Pinned Link */}
+                  {pinnedLink && (
+                    <LinkRow
+                      link={pinnedLink}
+                      isPinned={true}
                       onClick={(e) => {
                         if (isInformationalMode) {
                           e.preventDefault();
-                          showToast(`Opens ${link.title} ✨`);
+                          showToast(`Opens ${pinnedLink.title} ✨`);
                         }
                       }}
-                      className="group w-full rounded-[5px] border border-slate-200/80 dark:border-white/10 bg-white dark:bg-zinc-900 px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 shadow-none hover:border-black/20 dark:hover:border-white/20 transition-all text-left cursor-pointer"
-                    >
-                      <span className="text-xs sm:text-[13px] font-bold text-slate-900 dark:text-white min-w-0 break-words line-clamp-2 leading-snug flex-1">
-                        {link.title}
-                      </span>
-                      <ArrowUpRight className="h-4 w-4 text-[#7A2253] dark:text-pink-400 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                    </a>
-                  ))}
-
-                  {/* Direct Links Show More Button if > 3 */}
-                  {directLinks.length > 3 && (
-                    <div className="pt-0.5 text-center">
-                      <button
-                        type="button"
-                        onClick={() => setIsLinksExpanded(!isLinksExpanded)}
-                        className="w-full py-2 px-3 rounded-[5px] bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/10 dark:text-white border border-slate-200/80 dark:border-white/10 text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-none"
-                      >
-                        <span>{isLinksExpanded ? "Show Less Links" : `View All Direct Links (${directLinks.length})`}</span>
-                        {isLinksExpanded ? <ChevronUp className="h-3.5 w-3.5 shrink-0" /> : <ChevronDown className="h-3.5 w-3.5 shrink-0" />}
-                      </button>
-                    </div>
+                    />
                   )}
 
-                  {/* 2. Link Groups in Collapsible Sections */}
-                  {linkGroups.map((group) => {
-                    const collectionItems = group.items?.filter((item) => item.isEnabled !== false && item.title && item.url) || [];
-                    if (collectionItems.length === 0) return null;
-                    const isOpen = Boolean(openCollectionsMap[group.id]);
-
+                  {/* 2 & 4. Direct Links & Groups */}
+                  {(() => {
+                    let groupIndex = 0;
+                    return remainingItems.map((item) => {
+                      if (item.kind === "collection") {
+                        const curGroupIndex = groupIndex++;
+                        const isExpandedByParam = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("expandGroup") === "1" && curGroupIndex === 0;
+                        return (
+                          <LinkGroupRow
+                            key={item.id}
+                            group={item}
+                            index={curGroupIndex}
+                            initiallyOpen={isExpandedByParam}
+                            onLinkClick={(innerLink) => {
+                              if (isInformationalMode) {
+                                showToast(`Opens ${innerLink.title} ✨`);
+                              }
+                            }}
+                          />
+                        );
+                      }
                     return (
-                      <div
-                        key={group.id}
-                        className="rounded-[5px] border border-slate-200/80 dark:border-white/10 bg-white dark:bg-zinc-900 transition-all overflow-hidden shadow-none"
-                      >
-                        {/* Collapsible Folder Header */}
-                        <button
-                          type="button"
-                          onClick={() => toggleCollection(group.id)}
-                          className="w-full flex items-center justify-between p-3 text-left cursor-pointer select-none group/colheader hover:bg-slate-50/80 dark:hover:bg-white/[0.02] transition-colors"
-                          aria-expanded={isOpen}
-                        >
-                          <div className="min-w-0 pr-2">
-                            <h3 className="text-xs sm:text-[13.5px] font-bold text-slate-900 dark:text-white truncate">
-                              {group.title}
-                            </h3>
-                            {group.subtitle ? (
-                              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-normal mt-0.5 line-clamp-1">
-                                {group.subtitle}
-                              </p>
-                            ) : null}
-                          </div>
-                          <div className="flex items-center gap-1.5 shrink-0">
-                            <span className="rounded-[5px] bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-300 text-[10px] font-bold px-2 py-0.5 leading-none">
-                              {collectionItems.length} {collectionItems.length === 1 ? "Link" : "Links"}
-                            </span>
-                            {isOpen ? (
-                              <ChevronUp className="h-3.5 w-3.5 text-slate-400 group-hover/colheader:text-slate-600 transition-transform duration-200" />
-                            ) : (
-                              <ChevronDown className="h-3.5 w-3.5 text-slate-400 group-hover/colheader:text-slate-600 transition-transform duration-200" />
-                            )}
-                          </div>
-                        </button>
-
-                        {/* Expanded Items */}
-                        {isOpen && (
-                          <div className="px-3 pb-3 space-y-1.5 pt-0.5 border-t border-slate-100 dark:border-white/5 animate-in fade-in duration-200">
-                            {collectionItems.map((item) => (
-                              <a
-                                key={item.id}
-                                href={item.url || "#"}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={(e) => {
-                                  if (isInformationalMode) {
-                                    e.preventDefault();
-                                    showToast(`Opens ${item.title} ✨`);
-                                  }
-                                }}
-                                className="group w-full rounded-[5px] border border-slate-100 dark:border-white/10 bg-slate-50/70 dark:bg-white/[0.03] px-3 py-2 sm:px-3.5 sm:py-2.5 flex items-center justify-between gap-3 hover:border-black/15 dark:hover:border-white/20 transition-all shadow-none cursor-pointer text-left"
-                              >
-                                <span className="text-xs sm:text-[13px] font-semibold text-slate-800 dark:text-slate-200 min-w-0 break-words line-clamp-2 leading-snug flex-1">
-                                  {item.title}
-                                </span>
-                                <ArrowUpRight className="h-3.5 w-3.5 text-[#7A2253] dark:text-pink-400 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                              </a>
-                            ))}
-                          </div>
-                        )}
-                      </div>
+                      <LinkRow
+                        key={item.id}
+                        link={item}
+                        onClick={(e) => {
+                          if (isInformationalMode) {
+                            e.preventDefault();
+                            showToast(`Opens ${item.title} ✨`);
+                          }
+                        }}
+                      />
                     );
-                  })}
+                  });
+                })()}
                 </div>
               </div>
             );
           })()
         )}
 
+
         {/* 4. Series Section */}
         {(seriesOnlyMode || (!isListingPage && (!isTabsLayout || activeNavTab === "watch" || activeNavTab === "series"))) && effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || seriesOnlyMode) && (
-          <div id="series-section" className={`relative z-10 order-[10] w-full text-left animate-fade-in ${seriesOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7 space-y-2.5"}`}>
+          <div id="series-section" className={`relative z-10 order-[10] w-full text-left pb-12 ${seriesOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7 space-y-2.5"}`}>
             {!seriesOnlyMode && (
-              <div className="pb-1.5">
-                <div className="flex flex-wrap sm:flex-nowrap items-start sm:items-center justify-between gap-2 px-0.5">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <Film className="h-4.5 w-4.5 text-[#7A2253] dark:text-pink-400 shrink-0" />
-                      <h2
-                        style={{
-                          color: c.primaryText,
-                          fontFamily: typ.headingFontFamily,
-                          fontWeight: 800,
-                        }}
-                        className="text-lg sm:text-xl font-extrabold tracking-tight truncate"
-                      >
-                        Series
-                      </h2>
-                      <span
-                        style={{ color: c.mutedText }}
-                        className="text-[11px] sm:text-xs font-semibold tabular-nums ml-0.5"
-                      >
-                        ({series.length})
-                      </span>
+              <TabSectionHeader
+                title="Series"
+                subtitle="Watch my videos episode by episode, in the right order."
+                primaryTextColor={c.primaryText}
+                secondaryTextColor={c.secondaryText}
+                headingFontFamily={typ.headingFontFamily}
+                action={
+                  showPlatformChips ? (
+                    <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                      {[
+                        { key: "all", label: "All" },
+                        { key: "youtube", label: "YouTube" },
+                        { key: "instagram", label: "Instagram" },
+                        { key: "facebook", label: "Facebook" },
+                      ]
+                        .filter((chip) => chip.key === "all" || (seriesPlatformCounts[chip.key] || 0) > 0)
+                        .map((chip) => {
+                          const isActive = seriesFilter === chip.key;
+                          return (
+                            <button
+                              key={chip.key}
+                              type="button"
+                              onClick={() => setSeriesFilter(chip.key)}
+                              className={`px-2.5 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer ${
+                                isActive
+                                  ? "bg-[#7A2253] text-white shadow-xs"
+                                  : "bg-black/5 dark:bg-white/10 text-slate-700 dark:text-slate-300 hover:bg-black/10 dark:hover:bg-white/20"
+                              }`}
+                            >
+                              {chip.label}
+                            </button>
+                          );
+                        })}
                     </div>
-                    <p
-                      style={{ color: c.secondaryText }}
-                      className="text-[11px] sm:text-xs font-normal mt-0.5 line-clamp-1 sm:line-clamp-none"
-                    >
-                      Binge-worthy multi-part series, masterclasses &amp; playlists in structured order.
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-2 shrink-0 self-start sm:self-center">
-                    <div className="relative">
-                      <select
-                        value={seriesFilter}
-                        onChange={(e) => setSeriesFilter(e.target.value)}
-                        aria-label="Filter series by platform"
-                        className="appearance-none bg-white dark:bg-[#18181B] border border-black/15 dark:border-white/15 rounded-[5px] text-[11px] sm:text-xs font-medium text-slate-700 dark:text-slate-200 py-1 pl-2.5 pr-6 cursor-pointer focus:outline-hidden hover:border-black/30 dark:hover:border-white/30 transition-colors shadow-none"
-                      >
-                        <option value="all">All Series</option>
-                        <option value="youtube">YouTube</option>
-                        <option value="instagram">Instagram</option>
-                        <option value="facebook">Facebook</option>
-                      </select>
-                      <ChevronDown className="h-3 w-3 text-slate-400 absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                    </div>
-                  </div>
-                </div>
-              </div>
+                  ) : undefined
+                }
+              />
             )}
 
             {series.length === 0 ? (
@@ -2916,23 +2760,23 @@ export function LivePreviewCard({
                   backgroundColor: c.elevatedBackground,
                   borderColor: c.border,
                 }}
-                className="rounded-[5px] border p-3.5 sm:p-4 text-center space-y-0.5"
+                className="rounded-2xl border p-4 text-center space-y-1"
               >
                 <p
                   style={{ color: c.primaryText }}
-                  className="text-xs sm:text-sm font-semibold"
+                  className="text-sm font-semibold"
                 >
                   No series added yet
                 </p>
                 <p
                   style={{ color: c.mutedText }}
-                  className="text-[11px] sm:text-xs"
+                  className="text-xs"
                 >
                   Stay tuned! Episodes and playlists will appear here soon.
                 </p>
               </div>
             ) : (
-              <div className="space-y-2.5 sm:space-y-3">
+              <div className="space-y-3">
                 {displayedSeries
                   .filter((s) => {
                     if (seriesFilter === "all") return true;
@@ -2953,8 +2797,6 @@ export function LivePreviewCard({
                   .map((s, idx) => {
                     const allEps = getSeriesEpisodes(s);
                     const epCount = allEps.length;
-                    const epCountStr = `${epCount} ${epCount === 1 ? "Episode" : "Episodes"}`;
-
                     const firstEpUrl = allEps[0]?.externalUrl || "";
                     const detectedPlatform = (() => {
                       const p = (s.platform || "").toLowerCase();
@@ -2968,162 +2810,62 @@ export function LivePreviewCard({
                       return "YouTube";
                     })();
 
-                    const isYoutube = detectedPlatform === "YouTube";
-                    const isInstagram = detectedPlatform === "Instagram";
-                    const isFacebook = detectedPlatform === "Facebook";
-                    const isCreator = detectedPlatform === "Creator";
-                    const isMulti = detectedPlatform === "Multi-Platform";
-
-                    const seriesGenres = s.genre
-                      ? s.genre.split(/[,•|/]/).map((g: string) => g.trim().replace(/^Genre:\s*/i, "")).filter(Boolean)
-                      : [];
-                    const genrePills = seriesGenres.length > 0
-                      ? seriesGenres.slice(0, 2)
-                      : s.genre
-                        ? [s.genre.replace(/^Genre:\s*/i, "").trim()]
-                        : [];
-
-                    const seriesPills: string[] = [
-                      ...genrePills,
-                      ...(s.language && s.language.trim() ? [s.language.trim()] : []),
-                    ].filter(Boolean);
-
-                    const seriesUrl = `/${cleanHandle || "creator"}/series/${s.id}`;
+                    if (idx === 0) {
+                      return (
+                        <FeaturedSeriesCard
+                          key={s.id}
+                          series={s}
+                          creatorHandle={cleanHandle || "creator"}
+                          creatorAvatar={safeProfile.photoDataUrl}
+                          creatorName={safeProfile.displayName}
+                          episodesCount={epCount}
+                          detectedPlatform={detectedPlatform}
+                          openMode={seriesOpenMode}
+                          onOpen={(selected) => {
+                            if (onSeriesPreviewOpen) {
+                              onSeriesPreviewOpen(selected);
+                            } else if (isInformationalMode) {
+                              showToast(`Opens ${selected.title} dedicated series page ✨`);
+                            } else if (seriesOpenMode === "internal") {
+                              setDrawerSeries(selected);
+                              setIsDrawerOpen(true);
+                            } else {
+                              router.push(`/${cleanHandle || "creator"}/series/${selected.id}`);
+                            }
+                          }}
+                        />
+                      );
+                    }
 
                     return (
-                      <div
+                      <SeriesPosterCard
                         key={s.id}
-                        onPointerEnter={() => {
-                          if (seriesUrl && seriesOpenMode === "page") {
-                            router.prefetch(seriesUrl);
-                          }
-                        }}
-                        onClick={() => {
+                        series={s}
+                        creatorHandle={cleanHandle || "creator"}
+                        creatorAvatar={safeProfile.photoDataUrl}
+                        creatorName={safeProfile.displayName}
+                        episodesCount={epCount}
+                        detectedPlatform={detectedPlatform}
+                        openMode={seriesOpenMode}
+                        onOpen={(selected) => {
                           if (onSeriesPreviewOpen) {
-                            onSeriesPreviewOpen(s);
+                            onSeriesPreviewOpen(selected);
                           } else if (isInformationalMode) {
-                            showToast(`Opens ${s.title} dedicated series page ✨`);
+                            showToast(`Opens ${selected.title} dedicated series page ✨`);
                           } else if (seriesOpenMode === "internal") {
-                            setDrawerSeries(s);
+                            setDrawerSeries(selected);
                             setIsDrawerOpen(true);
                           } else {
-                            router.push(seriesUrl);
+                            router.push(`/${cleanHandle || "creator"}/series/${selected.id}`);
                           }
                         }}
-                        style={{
-                          backgroundColor: usesDarkControls ? "#18181B" : "#FFFFFF",
-                          borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)",
-                          boxShadow: "none",
-                        }}
-                        className="group flex items-center gap-2.5 sm:gap-3.5 p-2 sm:p-2.5 rounded-[5px] border transition-all duration-200 hover:border-black/20 dark:hover:border-white/20 cursor-pointer text-left shadow-none"
-                      >
-                        {/* Left: Thumbnail Image + Badges */}
-                        <div className="relative shrink-0 w-[100px] min-[360px]:w-[115px] sm:w-[150px] aspect-[16/10] rounded-[5px] overflow-hidden bg-black/5 dark:bg-white/5">
-                          {/* Top-Left Badge: Featured on 1st, or Platform Series on others */}
-                          {idx === 0 ? (
-                            <span className="absolute top-1.5 left-1.5 z-10 inline-flex items-center gap-1 rounded-[5px] bg-[#7A2253] text-white px-1.5 sm:px-2 py-0.5 text-[8.5px] sm:text-[9px] font-black shadow-none tracking-wide">
-                              <Crown className="h-2.5 w-2.5 fill-white text-white shrink-0" />
-                              <span className="shrink-0">Featured</span>
-                            </span>
-                          ) : (
-                            <span className="absolute top-1.5 left-1.5 z-10 inline-flex items-center gap-1 rounded-[5px] bg-black/80 backdrop-blur-xs text-white px-1.5 sm:px-2 py-0.5 text-[8.5px] sm:text-[9px] font-bold shadow-none">
-                              {isYoutube && <YoutubeIcon className="h-2.5 w-2.5 text-red-500 fill-red-500 shrink-0" />}
-                              {isInstagram && <InstagramIcon className="h-2.5 w-2.5 text-pink-400 shrink-0" />}
-                              {isFacebook && <FacebookIcon className="h-2.5 w-2.5 text-blue-400 fill-blue-400 shrink-0" />}
-                              {isCreator && <Rocket className="h-2.5 w-2.5 text-slate-200 shrink-0" />}
-                              {isMulti && <Layers className="h-2.5 w-2.5 text-slate-200 shrink-0" />}
-                              {!isYoutube && !isInstagram && !isFacebook && !isCreator && !isMulti && <Film className="h-2.5 w-2.5 text-white shrink-0" />}
-                              <span className="shrink-0">
-                                {isCreator
-                                  ? "Creator Series"
-                                  : isYoutube
-                                    ? "YouTube Series"
-                                    : isInstagram
-                                      ? "Instagram Series"
-                                      : isFacebook
-                                        ? "Facebook Series"
-                                        : `${detectedPlatform} Series`}
-                              </span>
-                            </span>
-                          )}
-
-                          {/* Bottom-Left Badge: Episodes Count */}
-                          <span className="absolute bottom-1.5 left-1.5 z-10 inline-flex items-center gap-1 rounded-[5px] bg-black/80 backdrop-blur-xs text-white px-1.5 sm:px-2 py-0.5 text-[8.5px] sm:text-[9px] font-bold shadow-none">
-                            <Play className="h-2 w-2 fill-white text-white shrink-0" />
-                            <span className="shrink-0">{epCountStr}</span>
-                          </span>
-
-                          {/* Image */}
-                          {s.posterDataUrl ? (
-                            <img
-                              src={s.posterDataUrl}
-                              alt={s.title}
-                              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                            />
-                          ) : (
-                            <PlatformThumbnailBox
-                              posterUrl={s.posterDataUrl}
-                              videoUrl={firstEpUrl}
-                              platform={s.platform || detectedPlatform}
-                              title={s.title}
-                              badgeText={detectedPlatform}
-                              className="w-full h-full"
-                              size="sm"
-                              showTitleOverlay={false}
-                            />
-                          )}
-                        </div>
-
-                        {/* Middle: Title, Description, Colored Tags */}
-                        <div className="flex-1 min-w-0 space-y-1">
-                          <h3
-                            style={{
-                              color: c.primaryText,
-                              fontFamily: typ.headingFontFamily,
-                            }}
-                            className="text-[15px] sm:text-base font-semibold leading-snug line-clamp-2 break-words group-hover:text-[#7A2253] dark:group-hover:text-pink-400 transition-colors"
-                          >
-                            {s.title}
-                          </h3>
-
-                          {s.description && (
-                            <p
-                              style={{ color: c.secondaryText }}
-                              className="text-[13px] leading-[1.5] line-clamp-3 break-words"
-                            >
-                              {s.description}
-                            </p>
-                          )}
-
-                          {/* Distinct Colored Tags: Pink, Blue, Slate */}
-                          {seriesPills.length > 0 && (
-                            <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 pt-1 min-w-0">
-                              {seriesPills.map((pill, pIdx) => {
-                                const pillStyleClass = "bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-white/10";
-                                return (
-                                  <span
-                                    key={pIdx}
-                                    className={`inline-flex items-center rounded-[5px] px-1.5 sm:px-2 py-0.5 text-[10px] font-medium shrink-0 leading-tight ${pillStyleClass}`}
-                                  >
-                                    {pill}
-                                  </span>
-                                );
-                              })}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Far Right: Arrow Button */}
-                        <div className="shrink-0 flex items-center justify-center h-7 w-7 sm:h-8 sm:w-8 rounded-[5px] bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-200 group-hover:bg-slate-200 dark:group-hover:bg-white/20 transition-colors self-center">
-                          <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
-                        </div>
-                      </div>
+                      />
                     );
                   })}
               </div>
             )}
 
-            {!seriesOnlyMode && allSeriesHref && series.length > 0 && (
+            {!seriesOnlyMode && allSeriesHref && series.length > displayedSeries.length && (
               <div className="pt-2 text-center">
                 <button
                   type="button"
@@ -3139,9 +2881,9 @@ export function LivePreviewCard({
                     }
                     router.push(allSeriesHref);
                   }}
-                  className="w-full py-2.5 px-3 sm:px-4 rounded-[5px] bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/10 dark:text-white border border-slate-200/80 dark:border-white/10 text-xs sm:text-[13px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center"
+                  className="tap-scale w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/10 dark:text-white border border-slate-200/80 dark:border-white/10 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center"
                 >
-                  <span className="whitespace-normal sm:whitespace-nowrap">View all series &amp; shows</span>
+                  <span>See all series</span>
                   <ArrowRight className="h-3.5 w-3.5 shrink-0" />
                 </button>
               </div>
@@ -3153,70 +2895,55 @@ export function LivePreviewCard({
         {((productsOnlyMode || (!isListingPage && (!isTabsLayout || activeNavTab === "shop"))) && ((products && products.length > 0) || productsOnlyMode)) && (
           <section id="shop-section" aria-label="Shop" className={`relative z-10 order-[15] w-full text-left animate-fade-in ${productsOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7 space-y-2.5"}`}>
             {!productsOnlyMode && (
-              <div className="pb-1">
-                <div className="flex items-center justify-between px-0.5">
-                  <div className="flex items-center gap-2">
-                    <ShoppingBag className="h-4.5 w-4.5 text-[#7A2253] dark:text-pink-400 shrink-0" />
-                    <h2
-                      style={{
-                        color: c.primaryText,
-                        fontFamily: typ.headingFontFamily,
-                        fontWeight: 800,
-                      }}
-                      className="text-lg sm:text-xl font-extrabold tracking-tight"
-                    >
-                      My Products
-                    </h2>
-                  </div>
+              <TabSectionHeader
+                title="Shop"
+                subtitle="Products I use and recommend."
+                primaryTextColor={c.primaryText}
+                secondaryTextColor={c.secondaryText}
+                headingFontFamily={typ.headingFontFamily}
+                action={
+                  products && products.length > 8 ? (
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setIsShopSortOpen(!isShopSortOpen)}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-[5px] border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/10 transition-all cursor-pointer shadow-none"
+                      >
+                        <span>
+                          {shopSortOrder === "price_asc" ? "Price: Low to High" : shopSortOrder === "price_desc" ? "Price: High to Low" : "Latest"}
+                        </span>
+                        <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                      </button>
 
-                  {/* Latest Dropdown */}
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setIsShopSortOpen(!isShopSortOpen)}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-[5px] border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/10 transition-all cursor-pointer shadow-none"
-                    >
-                      <span>
-                        {shopSortOrder === "price_asc" ? "Price: Low to High" : shopSortOrder === "price_desc" ? "Price: High to Low" : "Latest"}
-                      </span>
-                      <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-                    </button>
-
-                    {isShopSortOpen && (
-                      <div className="absolute right-0 top-full mt-1.5 z-30 min-w-[150px] rounded-[5px] border border-slate-100 dark:border-white/10 bg-white dark:bg-zinc-900 p-1 shadow-lg animate-in fade-in zoom-in-95">
-                        <button
-                          type="button"
-                          onClick={() => { setShopSortOrder("latest"); setIsShopSortOpen(false); }}
-                          className={`w-full text-left px-3 py-1.5 rounded-[5px] text-xs font-semibold ${shopSortOrder === "latest" ? "bg-slate-100 text-slate-900 font-bold dark:bg-white/10 dark:text-white" : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5"}`}
-                        >
-                          Latest
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { setShopSortOrder("price_asc"); setIsShopSortOpen(false); }}
-                          className={`w-full text-left px-3 py-1.5 rounded-[5px] text-xs font-semibold ${shopSortOrder === "price_asc" ? "bg-slate-100 text-slate-900 font-bold dark:bg-white/10 dark:text-white" : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5"}`}
-                        >
-                          Price: Low to High
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { setShopSortOrder("price_desc"); setIsShopSortOpen(false); }}
-                          className={`w-full text-left px-3 py-1.5 rounded-[5px] text-xs font-semibold ${shopSortOrder === "price_desc" ? "bg-slate-100 text-slate-900 font-bold dark:bg-white/10 dark:text-white" : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5"}`}
-                        >
-                          Price: High to Low
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <p
-                  style={{ color: c.secondaryText }}
-                  className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 font-normal px-0.5 mt-1"
-                >
-                  Check out my products.
-                </p>
-              </div>
+                      {isShopSortOpen && (
+                        <div className="absolute right-0 top-full mt-1.5 z-30 min-w-[150px] rounded-[5px] border border-slate-100 dark:border-white/10 bg-white dark:bg-zinc-900 p-1 shadow-lg animate-in fade-in zoom-in-95">
+                          <button
+                            type="button"
+                            onClick={() => { setShopSortOrder("latest"); setIsShopSortOpen(false); }}
+                            className={`w-full text-left px-3 py-1.5 rounded-[5px] text-xs font-semibold ${shopSortOrder === "latest" ? "bg-slate-100 text-slate-900 font-bold dark:bg-white/10 dark:text-white" : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5"}`}
+                          >
+                            Latest
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => { setShopSortOrder("price_asc"); setIsShopSortOpen(false); }}
+                            className={`w-full text-left px-3 py-1.5 rounded-[5px] text-xs font-semibold ${shopSortOrder === "price_asc" ? "bg-slate-100 text-slate-900 font-bold dark:bg-white/10 dark:text-white" : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5"}`}
+                          >
+                            Price: Low to High
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => { setShopSortOrder("price_desc"); setIsShopSortOpen(false); }}
+                            className={`w-full text-left px-3 py-1.5 rounded-[5px] text-xs font-semibold ${shopSortOrder === "price_desc" ? "bg-slate-100 text-slate-900 font-bold dark:bg-white/10 dark:text-white" : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5"}`}
+                          >
+                            Price: High to Low
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ) : undefined
+                }
+              />
             )}
 
             {products.length === 0 ? (
@@ -3235,7 +2962,7 @@ export function LivePreviewCard({
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-2.5 sm:gap-3 pt-1.5">
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
                 {(isProductsExpanded || productsOnlyMode ? sortedProducts : sortedProducts.slice(0, 4)).map((product: CreatorProduct) => (
                   <article
                     key={product.id}
@@ -3313,9 +3040,9 @@ export function LivePreviewCard({
               </div>
             )}
 
-            {/* Affiliate Disclaimer: At bottom on dedicated product listing page */}
-            {products && products.length > 0 && productsOnlyMode && (
-              <p className="text-center text-[10px] sm:text-[10.5px] pt-2 pb-1 opacity-70" style={{ color: c.mutedText }}>
+            {/* Affiliate Disclaimer: inside content at bottom */}
+            {products && products.length > 0 && (
+              <p className="text-center text-[10px] sm:text-[10.5px] pt-3 pb-1 opacity-70" style={{ color: c.mutedText }}>
                 Some links may be affiliate links.
               </p>
             )}
@@ -3323,7 +3050,7 @@ export function LivePreviewCard({
         )}
 
         {/* 5. Creator Team */}
-        {!isListingPage && (!isTabsLayout ? true : (activeNavTab === "work" || activeNavTab === "reviews")) && activeTeamMembers.length > 0 && (
+        {!isListingPage && (!isTabsLayout ? true : (activeNavTab === "collab" || activeNavTab === "work" || activeNavTab === "reviews")) && activeTeamMembers.length > 0 && (
           <div id="team-section" className={`relative z-10 order-[25] w-full text-left animate-fade-in ${isTabsLayout ? "mt-3 sm:mt-3.5 space-y-2" : "mt-6 sm:mt-7 space-y-2.5"}`}>
             <div>
               <div className="flex items-center justify-between gap-3 px-0.5">
@@ -3428,256 +3155,199 @@ export function LivePreviewCard({
           </div>
         )}
 
-        {/* 5. Work with Me Section (Only shown if WhatsApp or Email is available) */}
-        {!isListingPage && (!isTabsLayout || activeNavTab === "work") && (() => {
+        {/* 5. Collab / Work with Me Section */}
+        {!isListingPage && (!isTabsLayout || activeNavTab === "collab" || activeNavTab === "work") && (() => {
           if (effectiveVisibilitySettings.showCollabGigs === false) return null;
 
-          const whatsappNum = mediaKitSettings?.whatsappNumber?.trim() || (profile as any).whatsappNumber?.trim() || "";
-          const hasWhatsApp = Boolean(whatsappNum);
-
-          const contactEmail = mediaKitSettings?.sponsorEmail?.trim() || profile.email?.trim() || "";
-          const hasEmail = Boolean(contactEmail);
-          const activePackages = mediaKitPackages.filter((p) => p.isActive);
-
-          if (!hasWhatsApp && !hasEmail && activePackages.length === 0) return null;
+          const activePackages = (mediaKitPackages || []).filter((p) => p.isActive);
+          const visibleReviews = showAllReviews ? approvedReviews : approvedReviews.slice(0, 3);
+          const hasMoreReviews = approvedReviews.length > 3;
 
           return (
-            <div id="work-with-me-section" className={`relative z-10 order-[20] w-full text-left animate-fade-in ${isTabsLayout ? "mt-3 sm:mt-3.5 space-y-3.5" : "mt-6 sm:mt-7 space-y-4"}`}>
-              {/* Work Header with Briefcase Icon and Title */}
-              <div className="pb-1">
-                <div className="flex items-center justify-between px-0.5">
-                  <div className="flex items-center gap-2">
-                    <Briefcase className="h-4.5 w-4.5 text-[#7A2253] dark:text-pink-400 shrink-0" />
-                    <h2
-                      style={{
-                        color: c.primaryText,
-                        fontFamily: typ.headingFontFamily,
-                        fontWeight: 800,
-                      }}
-                      className="text-lg sm:text-xl font-extrabold tracking-tight"
-                    >
-                      Work with Me
-                    </h2>
-                  </div>
-                </div>
-                <p
-                  style={{ color: c.secondaryText }}
-                  className="text-[11px] sm:text-xs font-normal mt-0.5 px-0.5"
-                >
-                  Collaboration packages and services to work with me.
-                </p>
-              </div>
+            <div id="collab-section" className={`relative z-10 order-[20] w-full text-left animate-fade-in ${isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7 space-y-4"}`}>
+              <TabSectionHeader
+                title="Work with me"
+                subtitle="Collab packages for brands. Pick one or send a custom request."
+                primaryTextColor={c.primaryText}
+                secondaryTextColor={c.secondaryText}
+                headingFontFamily={typ.headingFontFamily}
+              />
 
-              {/* Collaboration Packages Listing */}
+              {/* 2. PACKAGES (compact cards, vertical gap 12px) */}
               {activePackages.length > 0 && (
-                <div className="space-y-3 sm:space-y-3.5 pt-1">
-                  {activePackages.map((pkg) => {
-                    const rawPrice = pkg.price?.trim() || "";
-                    const displayPrice = rawPrice.startsWith("₹") ? rawPrice : `₹${rawPrice}`;
-                    const isMostPopular = Boolean(pkg.isPopular || pkg.badge === "Most Popular");
-                    const turnaround = pkg.turnaroundDays ? `${pkg.turnaroundDays} Days` : null;
-                    const platformName = pkg.platform || "Instagram Reel";
-                    const isInstagram = platformName.toLowerCase().includes("instagram") || platformName.toLowerCase().includes("reel") || platformName.toLowerCase().includes("story");
-                    const isYoutube = platformName.toLowerCase().includes("youtube");
-                    const defaultUnit = platformName.toLowerCase().includes("video") ? "per video" : platformName.toLowerCase().includes("story") ? "per bundle" : platformName.toLowerCase().includes("visit") ? "per visit" : "per reel";
-                    const priceUnit = pkg.priceUnit || defaultUnit;
-
-                    return (
-                      <div
-                        key={pkg.id}
-                        style={{
-                          backgroundColor: usesDarkControls ? "#1F1F23" : "#FFFFFF",
-                          borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)",
-                          boxShadow: "none",
-                        }}
-                        className="rounded-[5px] border p-4 sm:p-5 flex flex-col sm:flex-row sm:items-stretch justify-between gap-4 transition-all hover:border-black/20 dark:hover:border-white/20 group"
-                      >
-                        {/* Left Details */}
-                        <div className="min-w-0 flex-1 flex flex-col justify-between space-y-2.5">
-                          <div>
-                            {/* Most Popular Badge */}
-                            {isMostPopular && (
-                              <span className="inline-block bg-[#7A2253] text-white border border-[#7A2253] text-[10.5px] font-bold px-2.5 py-0.5 rounded-[5px] mb-1.5">
-                                Most Popular
-                              </span>
-                            )}
-
-                            {/* Title */}
-                            <h3
-                              style={{ color: c.primaryText || "#111827" }}
-                              className="text-base sm:text-[17px] font-bold tracking-tight leading-snug text-gray-900 dark:text-white"
-                            >
-                              {pkg.title}
-                            </h3>
-
-                            {/* Description */}
-                            {pkg.description && (
-                              <p
-                                style={{ color: c.secondaryText || "#6B7280" }}
-                                className="text-xs sm:text-[13px] font-normal leading-relaxed text-gray-500 dark:text-gray-400 mt-1"
-                              >
-                                {pkg.description}
-                              </p>
-                            )}
-                          </div>
-
-                          <div>
-                            {/* Meta Chips (Delivery & Platform) */}
-                            <div className="flex flex-wrap items-center gap-2 pt-1">
-                              {turnaround && (
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[5px] bg-white dark:bg-white/[0.05] border border-slate-200/80 dark:border-white/10 text-xs font-medium text-slate-700 dark:text-slate-300 shadow-2xs">
-                                  <Clock className="h-3.5 w-3.5 text-slate-500 shrink-0" />
-                                  <span>{turnaround}</span>
-                                </span>
-                              )}
-                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[5px] bg-white dark:bg-white/[0.05] border border-slate-200/80 dark:border-white/10 text-xs font-medium text-slate-700 dark:text-slate-300 shadow-2xs">
-                                {isInstagram ? (
-                                  <InstagramIcon className="h-3.5 w-3.5 text-pink-500 shrink-0" />
-                                ) : isYoutube ? (
-                                  <YoutubeIcon className="h-3.5 w-3.5 text-red-500 shrink-0" />
-                                ) : (
-                                  <Briefcase className="h-3.5 w-3.5 text-slate-500 shrink-0" />
-                                )}
-                                <span>{platformName}</span>
-                              </span>
-                            </div>
-
-                            {/* Feature / Deliverables Tags */}
-                            {pkg.deliverables && pkg.deliverables.length > 0 && (
-                              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-2">
-                                {pkg.deliverables.map((deliv, idx) => (
-                                  <span
-                                    key={idx}
-                                    className="inline-flex items-center px-2.5 py-1 rounded-[5px] bg-slate-50 dark:bg-white/[0.04] text-[11px] font-medium text-slate-600 dark:text-slate-400 border border-slate-100 dark:border-white/[0.06]"
-                                  >
-                                    {deliv}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Right Pricing & Action Box */}
-                        <div className="shrink-0 w-full sm:w-[155px] md:w-[165px] rounded-[5px] p-3.5 sm:p-4 bg-slate-50 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/10 flex flex-col items-center justify-between text-center self-stretch">
-                          <div>
-                            <div className="text-xl sm:text-2xl font-black text-[#7A2253] dark:text-pink-400 tabular-nums tracking-tight">
-                              {displayPrice}
-                            </div>
-                            <div className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">
-                              {priceUnit}
-                            </div>
-                          </div>
-
-                          <button
-                            type="button"
-                            onClick={() => handleGetPackage(pkg)}
-                            className="tap-scale flex items-center justify-center gap-1.5 w-full bg-[#7A2253] hover:bg-[#631B43] text-white text-xs font-bold py-2.5 px-3 rounded-[5px] mt-3 shadow-2xs transition-all cursor-pointer"
-                          >
-                            <span>Get This Package</span>
-                            <ArrowRight className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
+                <div className="space-y-3">
+                  {activePackages.map((pkg) => (
+                    <PackageCard
+                      key={pkg.id}
+                      pkg={pkg}
+                      onEnquire={(selected) => {
+                        setSelectedEnquiryPackage(selected);
+                        setIsEnquirySheetOpen(true);
+                      }}
+                      brandPrimary={c.accentText || "#7A2253"}
+                      isDark={usesDarkControls}
+                    />
+                  ))}
                 </div>
               )}
-            </div>
-          );
-        })()}
 
-        {/* 6. Reviews (Compact, only when reviews exist, or when reviewsOnlyMode is true) */}
-        {(reviewsOnlyMode || (!isListingPage && (!isTabsLayout || activeNavTab === "work" || activeNavTab === "reviews"))) && effectiveVisibilitySettings.showReviews !== false && (approvedReviews.length > 0 || reviewsOnlyMode) && (
-          <div id="reviews-section" className={`relative z-10 order-[30] w-full text-left animate-fade-in ${reviewsOnlyMode ? "mt-1.5 sm:mt-2 space-y-2" : isTabsLayout ? "mt-3 sm:mt-3.5 space-y-2" : "mt-6 sm:mt-7 space-y-2.5"}`}>
-            {!reviewsOnlyMode && (
-              <div>
-                <div className="flex items-center justify-between px-0.5">
-                  <div className="flex items-center gap-2">
-                    <Star className="h-4.5 w-4.5 text-[#7A2253] dark:text-pink-400 shrink-0" />
-                    <h2
+              {/* 6. REVIEWS -> "What brands say" */}
+              {effectiveVisibilitySettings.showReviews !== false && approvedReviews.length > 0 && (
+                <div id="collab-reviews-section" className="space-y-2.5 pt-2">
+                  <div className="px-0.5">
+                    <h3
                       style={{
                         color: c.primaryText,
                         fontFamily: typ.headingFontFamily,
                         fontWeight: 700,
                       }}
-                      className="text-base sm:text-lg font-bold tracking-tight"
+                      className="text-base sm:text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
                     >
-                      Client Reviews
-                    </h2>
+                      What brands say
+                    </h3>
                   </div>
-                  {approvedReviews.length > 0 && (
-                    <span
-                      style={{ color: c.mutedText }}
-                      className="text-[11px] sm:text-xs font-semibold"
-                    >
-                      {approvedReviews.length} {approvedReviews.length === 1 ? "Review" : "Reviews"}
-                    </span>
-                  )}
-                </div>
-                <p
-                  style={{ color: c.secondaryText }}
-                  className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5 pb-2"
-                >
-                  Verified feedback and testimonials from leading brands &amp; collaboration partners.
-                </p>
-                <div style={{ backgroundColor: c.divider }} className="-mx-3.5 sm:-mx-5 h-px opacity-60" aria-hidden="true" />
-              </div>
-            )}
 
-            {approvedReviews.length === 0 ? (
-              <div
-                style={{
-                  backgroundColor: c.elevatedBackground,
-                  borderColor: c.border,
-                }}
-                className="rounded-[5px] border p-3.5 sm:p-4 text-center space-y-0.5"
-              >
-                <p
-                  style={{ color: c.primaryText }}
-                  className="text-xs sm:text-sm font-semibold"
-                >
-                  No reviews yet
-                </p>
-                <p
-                  style={{ color: c.mutedText }}
-                  className="text-[11px] sm:text-xs"
-                >
-                  Verified client and brand reviews will appear here.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {(typeof reviewsPreviewLimit === "number" ? approvedReviews.slice(0, reviewsPreviewLimit) : approvedReviews).map((rev) => {
-                  const ratingNum = Number(rev.rating) || 5;
-                  return (
-                    <div
-                      key={rev.id}
-                      style={{
-                        backgroundColor: usesDarkControls ? "#1F1F23" : "#FFFFFF",
-                        borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)",
-                        boxShadow: "none",
-                      }}
-                      className="rounded-[5px] border p-3 sm:p-3.5 space-y-2 text-left transition-all hover:border-black/20 dark:hover:border-white/20"
-                    >
-                      {/* Top Row: Client Avatar + Name & Verified Badge + Stars */}
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <div className="h-7 w-7 rounded-[5px] bg-[#7A2253]/10 text-[#7A2253] dark:text-rose-400 font-black text-xs flex items-center justify-center shrink-0">
-                            {rev.clientName ? rev.clientName.charAt(0) : "B"}
-                          </div>
-                          <div className="min-w-0">
-                            <p style={{ color: c.primaryText }} className="text-xs font-bold truncate flex items-center gap-1">
-                              <span>{rev.clientName}</span>
-                              <CheckCircle2 className="h-3 w-3 text-emerald-500 shrink-0" />
-                            </p>
-                            {rev.projectTitle && (
-                              <p style={{ color: c.mutedText }} className="text-[10px] font-medium truncate">
-                                {rev.projectTitle}
-                              </p>
+                  <div className="space-y-2">
+                    {visibleReviews.map((rev) => {
+                      const ratingNum = Number(rev.rating) || 5;
+                      return (
+                        <div
+                          key={rev.id}
+                          style={{
+                            backgroundColor: usesDarkControls ? "#1F1F23" : "#FFFFFF",
+                            borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.1)" : "#E2E8F0",
+                            boxShadow: "none",
+                          }}
+                          className="rounded-xl border p-3.5 sm:p-4 space-y-2 text-left transition-all hover:border-black/20 dark:hover:border-white/20"
+                        >
+                          {/* Top Row: Brand Initial/Logo, Name, Campaign, optional verified & stars */}
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className="h-8 w-8 rounded-lg bg-[#7A2253]/10 text-[#7A2253] dark:text-rose-400 font-bold text-xs flex items-center justify-center shrink-0">
+                                {rev.clientName ? rev.clientName.charAt(0).toUpperCase() : "B"}
+                              </div>
+                              <div className="min-w-0">
+                                <p style={{ color: c.primaryText }} className="text-xs sm:text-[13px] font-bold truncate flex items-center gap-1.5">
+                                  <span>{rev.clientName}</span>
+                                  {rev.isVerified && (
+                                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                                  )}
+                                </p>
+                                {rev.projectTitle && (
+                                  <p style={{ color: c.mutedText }} className="text-[11px] font-medium truncate">
+                                    {rev.projectTitle}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                            {rev.isVerified && (
+                              <div className="flex items-center gap-0.5 text-amber-400 shrink-0">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                  <Star
+                                    key={i}
+                                    className={`h-3 w-3 ${i < ratingNum ? "fill-amber-400 text-amber-400" : "fill-slate-200 text-slate-200"}`}
+                                  />
+                                ))}
+                              </div>
                             )}
                           </div>
+
+                          {/* Quote */}
+                          {rev.comment && (
+                            <p
+                              style={{ color: c.secondaryText }}
+                              className="text-xs sm:text-[13px] leading-relaxed font-normal italic pt-0.5 text-zinc-600 dark:text-zinc-300"
+                            >
+                              &ldquo;{rev.comment.trim()}&rdquo;
+                            </p>
+                          )}
                         </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Show all {n} toggle */}
+                  {hasMoreReviews && (
+                    <div className="pt-1 text-center">
+                      <button
+                        type="button"
+                        onClick={() => setShowAllReviews(!showAllReviews)}
+                        style={{ color: c.accentText || "#7A2253" }}
+                        className="text-xs font-semibold hover:underline cursor-pointer"
+                      >
+                        {showAllReviews ? "Show less" : `Show all ${approvedReviews.length}`}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 7. CUSTOM REQUEST */}
+              <div className="pt-2 pb-1 text-center text-xs text-zinc-500 dark:text-zinc-400">
+                <span>Don&apos;t see what you need? </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedEnquiryPackage(null);
+                    setIsEnquirySheetOpen(true);
+                  }}
+                  style={{ color: c.accentText || "#7A2253" }}
+                  className="font-semibold underline underline-offset-2 hover:opacity-80 transition-opacity cursor-pointer ml-0.5"
+                >
+                  Send a custom request &rarr;
+                </button>
+              </div>
+
+              {/* 5. ENQUIRY SHEET */}
+              <CollabEnquirySheet
+                isOpen={isEnquirySheetOpen}
+                onClose={() => setIsEnquirySheetOpen(false)}
+                creatorId={profile.id || profile.username || "creator"}
+                creatorDisplayName={profile.displayName || profile.username}
+                creatorEmail={profile.email}
+                creatorWhatsapp={(profile as any).whatsappNumber}
+                packages={activePackages}
+                preselectedPackage={selectedEnquiryPackage}
+                settings={mediaKitSettings}
+                brandPrimary={c.accentText || "#7A2253"}
+              />
+            </div>
+          );
+        })()}
+
+        {/* 6. Standalone Reviews Only Mode (when accessing dedicated reviews tab directly) */}
+        {reviewsOnlyMode && (
+          <div id="reviews-only-section" className="relative z-10 order-[30] w-full text-left animate-fade-in mt-1.5 sm:mt-2 space-y-2">
+            <div className="space-y-2">
+              {(typeof reviewsPreviewLimit === "number" ? approvedReviews.slice(0, reviewsPreviewLimit) : approvedReviews).map((rev) => {
+                const ratingNum = Number(rev.rating) || 5;
+                return (
+                  <div
+                    key={rev.id}
+                    style={{
+                      backgroundColor: usesDarkControls ? "#1F1F23" : "#FFFFFF",
+                      borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)",
+                    }}
+                    className="rounded-xl border p-3 sm:p-3.5 space-y-2 text-left"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="h-7 w-7 rounded-lg bg-[#7A2253]/10 text-[#7A2253] dark:text-rose-400 font-bold text-xs flex items-center justify-center shrink-0">
+                          {rev.clientName ? rev.clientName.charAt(0).toUpperCase() : "B"}
+                        </div>
+                        <div className="min-w-0">
+                          <p style={{ color: c.primaryText }} className="text-xs font-bold truncate flex items-center gap-1">
+                            <span>{rev.clientName}</span>
+                            {rev.isVerified && <CheckCircle2 className="h-3 w-3 text-emerald-500 shrink-0" />}
+                          </p>
+                          {rev.projectTitle && (
+                            <p style={{ color: c.mutedText }} className="text-[10px] font-medium truncate">
+                              {rev.projectTitle}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      {rev.isVerified && (
                         <div className="flex items-center gap-0.5 text-amber-400 shrink-0">
                           {Array.from({ length: 5 }).map((_, i) => (
                             <Star
@@ -3686,42 +3356,17 @@ export function LivePreviewCard({
                             />
                           ))}
                         </div>
-                      </div>
-
-                      {/* Comment */}
-                      {rev.comment && (
-                        <p
-                          style={{ color: c.secondaryText }}
-                          className="text-xs leading-relaxed font-normal italic pt-0.5"
-                        >
-                          &ldquo;{rev.comment.trim()}&rdquo;
-                        </p>
                       )}
                     </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {!reviewsOnlyMode && allReviewsHref && approvedReviews.length > 0 && (
-              <div className="pt-1 text-center">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (isInformationalMode) {
-                      showToast("Opens all creator reviews on live profile ✨");
-                      return;
-                    }
-                    router.push(allReviewsHref);
-                  }}
-                  style={{ color: c.accentText }}
-                  className="group inline-flex items-center justify-center gap-1.5 py-1 px-2 text-xs sm:text-[13px] font-bold transition-all hover:opacity-80 cursor-pointer"
-                >
-                  <span>View all reviews</span>
-                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 ease-out group-hover:translate-x-1" />
-                </button>
-              </div>
-            )}
+                    {rev.comment && (
+                      <p style={{ color: c.secondaryText }} className="text-xs leading-relaxed italic pt-0.5">
+                        &ldquo;{rev.comment.trim()}&rdquo;
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 
