@@ -15,6 +15,7 @@ import {
   Rocket,
 } from "lucide-react";
 import { CreatorProfile } from "@/types";
+import { formatMoney, planPrice } from "@/config/plans";
 
 interface TrialExpiredEmotionalModalProps {
   isOpen: boolean;
@@ -328,7 +329,7 @@ export function TrialExpiredEmotionalModal({
           <div className="inline-flex items-center gap-1.5">
             <CreditCard className="h-4 w-4 text-slate-700" />
             <span>
-              Just <strong className="text-rose-600 font-bold">₹99/month</strong>
+              Just <strong className="text-rose-600 font-bold">{formatMoney(planPrice("starter", "monthly"))}/month</strong>
             </span>
             <svg
               className="w-3.5 h-3.5 text-pink-400 stroke-current inline-block"

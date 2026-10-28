@@ -34,7 +34,8 @@ export type ImageFolder =
   | "collaborations"
   | "reviews"
   | "uploads"
-  | "products";
+  | "products"
+  | "links";
 
 /**
  * Saves a base64 Data URL to a disk file in public/uploads/<folder>/,
@@ -189,3 +190,46 @@ export async function saveImageBufferToStorage(
     return null;
   }
 }
+
+/**
+ * Downloads an image from an external URL (such as Instagram or YouTube CDN),
+ * and saves it into local / R2 storage so it doesn't expire with 403.
+ */
+export async function downloadAndStoreImage(
+  url: string,
+  folder: ImageFolder = "avatars",
+  prefix: string = "avatar"
+): Promise<string | null> {
+  if (!url || typeof url !== "string") return null;
+  const trimmed = url.trim();
+  if (!trimmed.startsWith("http://") && !trimmed.startsWith("https://")) {
+    return trimmed;
+  }
+
+  try {
+    const res = await fetch(trimmed, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      },
+    });
+    if (!res.ok) {
+      console.warn(`[imageStorage] Failed to fetch external image (${res.status}): ${trimmed}`);
+      return trimmed;
+    }
+
+    const contentType = res.headers.get("content-type") || "image/jpeg";
+    const arrayBuf = await res.arrayBuffer();
+    const buffer = Buffer.from(arrayBuf);
+
+    let ext = "jpg";
+    if (contentType.includes("png")) ext = "png";
+    else if (contentType.includes("webp")) ext = "webp";
+
+    const saved = await saveImageBufferToStorage(buffer, folder, prefix, ext, contentType);
+    return saved || trimmed;
+  } catch (err) {
+    console.error("[imageStorage] Error downloading external image:", err);
+    return trimmed;
+  }
+}
+

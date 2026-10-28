@@ -1,6 +1,7 @@
 "use client";
 
 import { storage } from "@/utils/storage";
+import { clearMeCache } from "@/lib/meClient";
 
 let loggingOut = false;
 
@@ -17,6 +18,7 @@ export function forceLogout(): void {
   if (loggingOut) return;
   loggingOut = true;
 
+  clearMeCache();
   try {
     storage.clearAll();
   } catch {}

@@ -1,8 +1,9 @@
 import { subscriptionRepository, authRepository, profileRepository } from "@/repositories/localRepository";
 import { BillingCycle, PlanKey, PlanMeta, Subscription } from "@/types";
+import { PAID_PLANS, PLANS, planFeatureLines, planPrice } from "@/config/plans";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
-export const FIRST_MONTH_OFFER_AMOUNT_INR = 99;
+export const FIRST_MONTH_OFFER_AMOUNT_INR = planPrice("starter", "monthly");
 
 function addDays(date: Date, days: number) {
   return new Date(date.getTime() + days * DAY_MS);
@@ -39,7 +40,7 @@ export function createSubscriptionLifecycle(
 
     return {
       planKey: "early_access",
-      planName: plan.name || "Free Trial",
+      planName: plan.name,
       billingCycle,
       status: "trial",
       activatedAt,
@@ -102,128 +103,34 @@ export function createSubscriptionLifecycle(
   };
 }
 
-export const INFLIXO_PLANS: PlanMeta[] = [
-  {
-    key: "early_access",
-    name: "Free Trial",
-    badge: "7 DAYS PUBLIC",
-    isPopular: false,
-    description: "Try your public creator profile for 7 days with 1 shop product and 3 series. After trial, profile becomes private until you upgrade.",
-    monthlyPrice: 0,
-    yearlyPrice: 0,
-    yearlySavings: 0,
-    freeTrialDays: 7,
+/** Plan metadata derived from config/plans.ts (the single source of truth). */
+export const INFLIXO_PLANS: PlanMeta[] = (["trial", ...PAID_PLANS] as const).map((key) => {
+  const plan = PLANS[key];
+  const isTrial = key === "trial";
+  const monthly = plan.price.monthly?.INR ?? 0;
+  const yearly = plan.price.yearly?.INR ?? 0;
+  const lines = planFeatureLines(key);
+  return {
+    key: isTrial ? "early_access" : key,
+    name: plan.name,
+    badge: isTrial ? `${plan.trialDays} DAYS PUBLIC` : undefined,
+    isPopular: Boolean(plan.popular),
+    description: plan.subtitle,
+    monthlyPrice: monthly,
+    yearlyPrice: yearly,
+    yearlySavings: isTrial ? 0 : monthly * 12 - yearly,
+    freeTrialDays: plan.trialDays ?? 0,
     publicProfile: true,
     instagram: true,
     youtube: true,
     facebook: true,
-    ottSeriesLimit: "Up to 3 Series & 15 Episodes",
-    shopProductLimit: "1 Product in Shop",
-    autoDataRefresh: "Limited trial refresh",
+    ottSeriesLimit: lines[0],
+    shopProductLimit: lines[1],
+    autoDataRefresh: "Every 24 Hours",
     removeBranding: false,
-    support: "Standard",
-  },
-  {
-    key: "starter",
-    name: "Starter",
-    badge: "PUBLIC PROFILE",
-    isPopular: false,
-    description: "Keep your public Inflixo profile live after the free trial with 1 product in shop and starter limits.",
-    monthlyPrice: 99,
-    yearlyPrice: 999,
-    yearlySavings: 189,
-    freeTrialDays: 0,
-    publicProfile: true,
-    instagram: true,
-    youtube: true,
-    facebook: true,
-    ottSeriesLimit: "3 Series & 15 Episodes",
-    shopProductLimit: "1 Product in Shop",
-    autoDataRefresh: "Basic refresh",
-    removeBranding: false,
-    support: "Standard",
-  },
-  {
-    key: "pro",
-    name: "Pro",
-    badge: "PRO TIER",
-    isPopular: false,
-    description: "For serious creators who need 20 products in shop (matches 20 series), rate cards, and full media kit.",
-    monthlyPrice: 199,
-    yearlyPrice: 1499,
-    yearlySavings: 889,
-    freeTrialDays: 0,
-    publicProfile: true,
-    instagram: true,
-    youtube: true,
-    facebook: true,
-    ottSeriesLimit: "20 Series, 20 Episodes Each",
-    shopProductLimit: "20 Products in Shop (matches 20 series)",
-    autoDataRefresh: "Weekly refresh",
-    removeBranding: false,
-    support: "Priority",
-  },
-  {
-    key: "creator_pro",
-    name: "Pro",
-    badge: "PRO TIER",
-    isPopular: false,
-    description: "For serious creators who need 20 products in shop (matches 20 series), rate cards, and full media kit.",
-    monthlyPrice: 199,
-    yearlyPrice: 1499,
-    yearlySavings: 889,
-    freeTrialDays: 0,
-    publicProfile: true,
-    instagram: true,
-    youtube: true,
-    facebook: true,
-    ottSeriesLimit: "20 Series, 20 Episodes Each",
-    shopProductLimit: "20 Products in Shop (matches 20 series)",
-    autoDataRefresh: "Weekly refresh",
-    removeBranding: false,
-    support: "Priority",
-  },
-  {
-    key: "vip",
-    name: "VIP",
-    badge: "👑 VIP BRAND COLLABS",
-    isPopular: true,
-    description: "For premium creators who want unlimited products in shop, unlimited series, custom media kit and collab tools.",
-    monthlyPrice: 399,
-    yearlyPrice: 2499,
-    yearlySavings: 2289,
-    freeTrialDays: 0,
-    publicProfile: true,
-    instagram: true,
-    youtube: true,
-    facebook: true,
-    ottSeriesLimit: "Unlimited Series, Episodes, Links & Reviews, 10 Collab Packages",
-    shopProductLimit: "Unlimited Products in Shop",
-    autoDataRefresh: "Daily refresh",
-    removeBranding: true,
-    support: "VIP Dedicated Manager",
-  },
-  {
-    key: "creator_VIP",
-    name: "VIP",
-    badge: "👑 VIP BRAND COLLABS",
-    isPopular: true,
-    description: "For premium creators who want unlimited products in shop, unlimited series, custom media kit and collab tools.",
-    monthlyPrice: 399,
-    yearlyPrice: 2499,
-    yearlySavings: 2289,
-    freeTrialDays: 0,
-    publicProfile: true,
-    instagram: true,
-    youtube: true,
-    facebook: true,
-    ottSeriesLimit: "Unlimited Series, Episodes, Links & Reviews, 10 Collab Packages",
-    shopProductLimit: "Unlimited Products in Shop",
-    autoDataRefresh: "Daily refresh",
-    removeBranding: true,
-    support: "VIP Dedicated Manager",
-  },
-];
+    support: plan.prioritySupport ? "Priority" : "Standard",
+  };
+});
 
 export const SubscriptionService = {
   get(): Subscription {

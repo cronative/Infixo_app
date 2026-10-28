@@ -16,13 +16,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-[#7A2253] hover:bg-[#631841] text-white shadow-md shadow-[#7A2253]/25 transition-all active:scale-[0.99] disabled:translate-y-0 disabled:opacity-50 disabled:bg-[#fdf2f8] disabled:text-[#71717A] disabled:cursor-not-allowed disabled:shadow-none",
+    "bg-[#7A2253] hover:bg-[#631841] text-white shadow-md shadow-[#7A2253]/25 transition-all active:scale-[0.99] disabled:translate-y-0 disabled:opacity-40 disabled:bg-[#7A2253] disabled:text-white disabled:cursor-not-allowed disabled:shadow-none",
   secondary:
-    "bg-white text-[#18181B] border border-[#E4E4E7] shadow-xs hover:bg-[#fdf2f8] hover:border-[#7A2253] hover:text-[#7A2253] hover:shadow-sm",
+    "bg-white text-[#18181B] border border-[#E4E4E7] shadow-xs hover:bg-[#fdf2f8] hover:border-[#7A2253] hover:text-[#7A2253] hover:shadow-sm disabled:opacity-40 disabled:bg-[#7A2253] disabled:text-white disabled:cursor-not-allowed disabled:shadow-none",
   outline:
-    "bg-transparent text-[#7A2253] border border-[#E4E4E7] hover:bg-[#fdf2f8] hover:border-[#7A2253]",
-  ghost: "bg-transparent text-[#52525B] hover:text-[#7A2253] hover:bg-[#fdf2f8]",
-  danger: "bg-rose-50 text-[#ef4444] border border-rose-200 hover:-translate-y-0.5 hover:bg-rose-100",
+    "bg-transparent text-[#7A2253] border border-[#E4E4E7] hover:bg-[#fdf2f8] hover:border-[#7A2253] disabled:opacity-40 disabled:cursor-not-allowed",
+  ghost: "bg-transparent text-[#52525B] hover:text-[#7A2253] hover:bg-[#fdf2f8] disabled:opacity-40 disabled:cursor-not-allowed",
+  danger: "bg-rose-50 text-[#ef4444] border border-rose-200 hover:-translate-y-0.5 hover:bg-rose-100 disabled:opacity-40 disabled:cursor-not-allowed",
 };
 
 const sizeClasses: Record<Size, string> = {

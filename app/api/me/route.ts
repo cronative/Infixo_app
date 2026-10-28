@@ -10,6 +10,8 @@
 import { db } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/session";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { resolveThemeKey } from "@/lib/themeKeys";
+import { getPlan } from "@/config/plans";
 
 export async function GET(req: Request) {
   try {
@@ -119,7 +121,7 @@ export async function GET(req: Request) {
       city: c.city || "",
       state: c.state || "",
       country: c.country || "",
-      themeKey: (!c.theme_key || c.theme_key === "modern-purple") ? "minimal-white" : c.theme_key,
+      themeKey: resolveThemeKey(c.theme_key),
       themeChangesCount: c.theme_changes_count || 0,
       isVerified: Boolean(c.is_verified),
       visibilitySettings,
@@ -140,7 +142,7 @@ export async function GET(req: Request) {
     };
 
     const planKey = c.plan_key || "early_access";
-    const planName = c.plan_name || (planKey === "early_access" ? "Free Trial" : "Starter");
+    const planName = getPlan(planKey).name;
     const billingCycle = c.billing_cycle || "monthly";
     const paymentMode = c.payment_mode || (planKey === "early_access" ? "free_trial" : "recurring");
 

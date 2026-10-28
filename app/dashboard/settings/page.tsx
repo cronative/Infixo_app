@@ -17,6 +17,8 @@ import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { storage } from "@/utils/storage";
 import { DEFAULT_VISIBILITY_SETTINGS } from "@/types";
+import { PageContainer } from "@/components/dashboard/PageContainer";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export default function DashboardSettingsPage() {
   const router = useRouter();
@@ -136,16 +138,11 @@ export default function DashboardSettingsPage() {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-5 w-full max-w-4xl pb-12 text-left">
-      {/* ── 1. Page Header ── */}
-      <div>
-        <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
-          Settings
-        </h1>
-        <p className="text-xs sm:text-[13px] text-[#64748b] font-medium mt-0.5">
-          Manage your account and profile visibility.
-        </p>
-      </div>
+    <PageContainer>
+      <PageHeader
+        title="Settings"
+        subtitle="Manage your account and profile visibility."
+      />
 
       {/* ── 2. Card 1: Account ── */}
       <section className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-2xs">
@@ -392,7 +389,7 @@ export default function DashboardSettingsPage() {
           </div>
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 }
 

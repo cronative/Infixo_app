@@ -20,6 +20,7 @@ import React, {
 } from "react";
 import { CreatorProfile, SocialAccounts, Subscription, CustomLink, EMPTY_SOCIAL_ACCOUNTS } from "@/types";
 import { forceLogout } from "@/lib/authClient";
+import { fetchMe } from "@/lib/meClient";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -90,7 +91,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
   const fetchSession = useCallback(async () => {
     try {
-      const httpResponse = await fetch("/api/me", { credentials: "include" });
+      const httpResponse = await fetchMe();
       if (httpResponse.status === 401) {
         if (wasLoggedIn.current) {
           forceLogout();
@@ -99,7 +100,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         setState((s) => ({ ...s, isLoading: false, isLoggedIn: false }));
         return;
       }
-      const apiResponse = await httpResponse.json();
+      const apiResponse = httpResponse.body || {};
       const data = apiResponse.data || {};
       if (!httpResponse.ok || apiResponse.status !== 1 || !data.authenticated) {
         if (wasLoggedIn.current) {

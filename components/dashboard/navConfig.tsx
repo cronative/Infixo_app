@@ -44,9 +44,9 @@ export const NAV_GROUPS: NavGroup[] = [
     id: "content-links",
     title: "CONTENT & LINKS",
     items: [
-      { href: "/dashboard/series", label: "My Series", subtitle: "Organize your videos & episodes", icon: Clapperboard },
-      { href: "/dashboard/products", label: "My Shop", subtitle: "Products you recommend", icon: ShoppingBag },
-      { href: "/dashboard/links", label: "My Links", subtitle: "Share important links", icon: Link2 },
+      { href: "/dashboard/series", label: "Series", subtitle: "Organize your videos & episodes", icon: Clapperboard },
+      { href: "/dashboard/products", label: "Shop", subtitle: "Products you recommend", icon: ShoppingBag },
+      { href: "/dashboard/links", label: "Links", subtitle: "Share important links", icon: Link2 },
     ],
   },
   {
@@ -63,15 +63,15 @@ export const NAV_GROUPS: NavGroup[] = [
     title: "BRAND & COLLABORATIONS",
     items: [
       { href: "/dashboard/mediakit", label: "Media Kit & Rates", subtitle: "Show your services & pricing", icon: Briefcase },
-      { href: "/dashboard/team", label: "My Team", subtitle: "Manage collaborators", icon: Users },
-      { href: "/dashboard/setup", label: "My Gear & Tools", subtitle: "Show your creator setup", icon: Laptop },
+      { href: "/dashboard/team", label: "Team", subtitle: "Manage collaborators", icon: Users },
+      { href: "/dashboard/setup", label: "Gear & Tools", subtitle: "Show your creator setup", icon: Laptop },
     ],
   },
   {
     id: "profile-appearance",
     title: "PROFILE & APPEARANCE",
     items: [
-      { href: "/dashboard/profile", label: "My Profile", subtitle: "Edit your creator details", icon: User },
+      { href: "/dashboard/profile", label: "Profile", subtitle: "Edit your creator details", icon: User },
       { href: "/dashboard/themes", label: "Themes", subtitle: "Customize your profile look", icon: Palette },
       { href: "/dashboard/preview", label: "Live Preview", subtitle: "See how your public profile looks", icon: Eye },
       { href: "/dashboard/creator-card", label: "Creator Card", subtitle: "Share your digital creator card", icon: IdCard },
@@ -81,7 +81,7 @@ export const NAV_GROUPS: NavGroup[] = [
     id: "account",
     title: "ACCOUNT",
     items: [
-      { href: "/dashboard/subscription", label: "My Plan", subtitle: "View limits & upgrade", icon: CreditCard },
+      { href: "/dashboard/subscription", label: "Plan", subtitle: "View limits & upgrade", icon: CreditCard },
       { href: "/dashboard/settings", label: "Settings", subtitle: "Account & privacy controls", icon: Settings },
     ],
   },
@@ -96,8 +96,8 @@ export const ACCOUNT_NAV: NavItem[] = NAV_GROUPS[3].items;
 
 export const BOTTOM_NAV: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: Home },
-  { href: "/dashboard/series", label: "My Series", icon: Clapperboard },
-  { href: "/dashboard/links", label: "My Links", icon: Link2 },
+  { href: "/dashboard/series", label: "Series", icon: Clapperboard },
+  { href: "/dashboard/links", label: "Links", icon: Link2 },
   { href: "/dashboard/mediakit", label: "Media Kit", icon: Briefcase },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];

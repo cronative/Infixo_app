@@ -44,6 +44,10 @@ import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { creatorSetupRepository } from "@/repositories/localRepository";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { resizeImageToDataUrl } from "@/lib/imageResize";
+import { PageContainer } from "@/components/dashboard/PageContainer";
+import { PageHeader } from "@/components/dashboard/PageHeader";
+import { OverLimitBadge } from "@/components/ui/OverLimitBadge";
+import { getPlanQuota } from "@/services/subscriptionLimits";
 
 const CATEGORIES: CreatorSetupCategory[] = [
   "Camera / Phone",
@@ -223,7 +227,7 @@ const DEFAULT_SETUP_ITEMS: CreatorSetupItem[] = [
 ];
 
 export default function DashboardSetupPage() {
-  const { profile } = useCreator();
+  const { profile, subscription } = useCreator();
   const { showToast } = useToast();
 
   const [items, setItems] = useState<CreatorSetupItem[]>([]);
@@ -473,32 +477,26 @@ export default function DashboardSetupPage() {
   }, [items, searchQuery, selectedCategoryFilter]);
 
   return (
-    <div className="w-full space-y-5 pb-12 text-left">
-      {/* Top Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#e2e8f0] pb-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
-              Creator Setup &amp; Gear
-            </h1>
-            <span className="rounded-[5px] bg-[#f1f5f9] border border-[#e2e8f0] px-2.5 py-0.5 text-xs font-semibold text-[#475569]">
+    <PageContainer>
+      <PageHeader
+        title="Gear & Tools"
+        subtitle="Showcase your cameras, mics, editing software, AI tools, and desk gear on your public profile."
+        actions={
+          <>
+            <span className="inline-flex items-center rounded-[5px] bg-[#f1f5f9] border border-[#e2e8f0] px-2.5 h-9 text-xs font-semibold text-[#475569]">
               {items.length} {items.length === 1 ? "item" : "items"}
             </span>
-          </div>
-          <p className="mt-1 text-xs sm:text-sm font-medium text-[#64748b]">
-            Showcase your cameras, mics, editing software, AI tools, and desk gear on your public profile.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => handleOpenModal()}
-          className="inline-flex h-9 items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#601b41] px-4 text-xs sm:text-sm font-semibold text-white shadow-xs transition-all hover:-translate-y-0.5 cursor-pointer shrink-0 self-start sm:self-auto"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Add Gear / Tool</span>
-        </button>
-      </div>
+            <button
+              type="button"
+              onClick={() => handleOpenModal()}
+              className="inline-flex h-9 items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#601b41] px-4 text-xs font-semibold text-white shadow-xs transition-all hover:-translate-y-0.5 cursor-pointer shrink-0"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Add Gear / Tool</span>
+            </button>
+          </>
+        }
+      />
 
       {/* Filter Tabs & Search Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -654,8 +652,9 @@ export default function DashboardSetupPage() {
                           {item.brand}
                         </p>
                       )}
-                      <h3 className="truncate font-display text-sm sm:text-[15px] font-bold text-[#0f172a] leading-tight" title={item.name}>
-                        {item.name}
+                      <h3 className="flex items-center gap-1.5 min-w-0 font-display text-sm sm:text-[15px] font-bold text-[#0f172a] leading-tight" title={item.name}>
+                        <span className="truncate">{item.name}</span>
+                        {items.indexOf(item) >= getPlanQuota(subscription?.planKey).maxGearItems && <OverLimitBadge />}
                       </h3>
                       {item.modelOrPlan && (
                         <p className="truncate text-[11px] text-[#94a3b8] font-normal leading-tight" title={item.modelOrPlan}>
@@ -1031,6 +1030,6 @@ export default function DashboardSetupPage() {
         loading={isSubmitting}
         isDestructive={true}
       />
-    </div>
+    </PageContainer>
   );
 }

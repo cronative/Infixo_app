@@ -1,13 +1,20 @@
-import { seriesRepository, authRepository, profileRepository } from "@/repositories/localRepository";
+import { seriesRepository } from "@/repositories/localRepository";
 import { Episode, EpisodePlatform, Season, Series } from "@/types";
 import { generateId } from "@/utils/format";
 
-function getTargetEmail(): string {
-  const profile = profileRepository.get();
-  return (
-    authRepository.getPendingEmail() ||
-    (profile?.username ? `${profile.username}@inflixo.com` : "creator@inflixo.com")
-  );
+export interface SeriesApiResponse {
+  series: Series[];
+  plan?: string;
+  planKey?: string;
+  limits?: {
+    series: number;
+    episodesPerSeries: number;
+    maxTotalEpisodes?: number;
+  };
+  used?: {
+    series: number;
+    episodes: number;
+  };
 }
 
 export const SeriesService = {
@@ -15,305 +22,209 @@ export const SeriesService = {
     return seriesRepository.getAll();
   },
 
-  async fetchFromDb(): Promise<Series[]> {
-    const email = authRepository.getPendingEmail() || profileRepository.get()?.email;
-    const query = email ? `?email=${encodeURIComponent(email)}` : "";
+  async fetchFromDb(): Promise<SeriesApiResponse> {
+    const res = await fetch("/api/series", {
+      headers: { Accept: "application/json" },
+    });
 
-    try {
-      const httpResponse = await fetch(`/api/series${query}`);
-      const apiResponse = await httpResponse.json();
-      const series = apiResponse.data?.series || apiResponse.series;
-      if ((apiResponse.status === 1 || apiResponse.success) && Array.isArray(series)) {
-        seriesRepository.saveAll(series);
-        return series;
-      }
-    } catch (e) {
-      console.warn("Failed to fetch series from MySQL DB:", e);
+    if (!res.ok) {
+      const errorJson = await res.json().catch(() => ({}));
+      const message =
+        errorJson?.message || errorJson?.error?.message || "Failed to load series";
+      throw new Error(message);
     }
-    return seriesRepository.getAll();
+
+    const apiResponse = await res.json();
+    const payload = apiResponse.data || apiResponse;
+    const seriesList: Series[] = Array.isArray(payload.series) ? payload.series : [];
+
+    seriesRepository.saveAll(seriesList);
+
+    return {
+      series: seriesList,
+      plan: payload.plan || "Starter",
+      planKey: payload.planKey || "starter",
+      limits: payload.limits || { series: 3, episodesPerSeries: 5 },
+      used: payload.used || {
+        series: seriesList.length,
+        episodes: seriesList.reduce(
+          (acc, s) => acc + (s.seasons?.reduce((a, b) => a + (b.episodes?.length || 0), 0) || 0),
+          0
+        ),
+      },
+    };
   },
 
   getAll(): Series[] {
-    const email = getTargetEmail();
-    const local = seriesRepository.getAll();
-
-    if (email) {
-      fetch(`/api/series?email=${encodeURIComponent(email)}`)
-        .then((httpResponse) => httpResponse.json())
-        .then((apiResponse) => {
-          const series = apiResponse.data?.series || apiResponse.series;
-          if ((apiResponse.status === 1 || apiResponse.success) && Array.isArray(series)) {
-            seriesRepository.saveAll(series);
-          }
-        })
-        .catch((e) => console.warn("Failed to fetch series from MySQL DB:", e));
-    }
-
-    return local;
+    return seriesRepository.getAll();
   },
 
   getById(id: string): Series | undefined {
     return seriesRepository.getAll().find((s) => s.id === id);
   },
 
-  async uploadPoster(posterDataUrl: string): Promise<string | null> {
-    if (!posterDataUrl || posterDataUrl.startsWith("/uploads/")) return posterDataUrl;
-    try {
-      const httpResponse = await fetch("/api/upload", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ posterDataUrl, folder: "posters" }),
-      });
-      const apiResponse = await httpResponse.json();
-      if (apiResponse.status === 1 && apiResponse.data?.url) {
-        return apiResponse.data.url;
-      }
-    } catch (e: any) {
-      console.error("Failed to upload series poster image file:", e);
-    }
-    return posterDataUrl;
-  },
-
   async create(input: {
     title: string;
-    posterDataUrl: string | null;
-    description: string;
-    genre: string;
-    language: string;
+    posterDataUrl?: string | null;
+    description?: string;
+    genre?: string;
+    language?: string;
     platform?: EpisodePlatform;
-    episodes?: Omit<Episode, "id">[];
-  }): Promise<Series> {
-    const email = getTargetEmail();
-    const newSeriesId = generateId("series");
+    episodes?: Array<{ url: string; title?: string }>;
+  }): Promise<{ seriesId: string }> {
+    const res = await fetch("/api/series", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: input.title.trim(),
+        posterDataUrl: input.posterDataUrl || null,
+        description: input.description || "",
+        genre: input.genre || "",
+        language: input.language || "Hindi",
+        platform: input.platform || "YouTube",
+        episodes: input.episodes || [],
+      }),
+    });
 
-    let posterUrl = input.posterDataUrl;
-    if (posterUrl && posterUrl.startsWith("data:image/")) {
-      posterUrl = await this.uploadPoster(posterUrl);
-    }
-    const seasonsList: Season[] = [
-      {
-        id: generateId("season"),
-        title: "Season 1",
-        seasonNumber: 1,
-        episodes: input.episodes ? input.episodes.map((ep) => ({ ...ep, id: generateId("ep") })) : [],
-      },
-    ];
-
-    const newSeries: Series = {
-      id: newSeriesId,
-      title: input.title,
-      posterDataUrl: posterUrl,
-      description: input.description,
-      genre: input.genre,
-      language: input.language,
-      platform: input.platform || "YouTube",
-      seasons: seasonsList,
-      createdAt: new Date().toISOString(),
-    };
-
-    const all = seriesRepository.getAll();
-    seriesRepository.saveAll([...all, newSeries]);
-
-    // Save to Live MySQL Database via API
-    console.log("🚀 [SeriesService.create] Creating series with email:", email, "and title:", input.title, "posterUrl:", posterUrl, "platform:", input.platform);
-    try {
-      const res = await fetch("/api/series", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          seriesId: newSeriesId,
-          title: input.title,
-          posterDataUrl: posterUrl,
-          description: input.description,
-          genre: input.genre,
-          language: input.language,
-          platform: input.platform || "YouTube",
-          episodes: input.episodes || [],
-        }),
-      });
-      const data = await res.json();
-      console.log("✅ [SeriesService.create] Response from /api/series:", data);
-    } catch (e: any) {
-      console.error("❌ [SeriesService.create] Failed to save Series to MySQL DB:", e);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.status === 0) {
+      const msg = data?.message || data?.error?.message || "Couldn't create series. Please try again.";
+      throw new Error(msg);
     }
 
-    return newSeries;
+    const seriesId = data.data?.seriesId || data.seriesId;
+    return { seriesId };
   },
 
-  async update(id: string, patch: Partial<Series>): Promise<void> {
-    const all = seriesRepository.getAll();
-    seriesRepository.saveAll(all.map((s) => (s.id === id ? { ...s, ...patch } : s)));
+  async update(
+    id: string,
+    patch: {
+      title?: string;
+      description?: string;
+      posterDataUrl?: string | null;
+      genre?: string;
+      language?: string;
+      platform?: EpisodePlatform;
+      episodes?: Array<{ number: number; url: string; title?: string }>;
+    }
+  ): Promise<void> {
+    const res = await fetch(`/api/series/${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(patch),
+    });
 
-    try {
-      await fetch("/api/series", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          seriesId: id,
-          title: patch.title,
-          description: patch.description,
-          genre: patch.genre,
-          language: patch.language,
-          platform: patch.platform,
-        }),
-      });
-    } catch (e: any) {
-      console.error("Failed to update Series in MySQL DB:", e);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.status === 0) {
+      const msg = data?.message || data?.error?.message || "Couldn't save. Please try again.";
+      throw new Error(msg);
     }
   },
 
   async remove(id: string): Promise<void> {
-    const all = seriesRepository.getAll();
-    seriesRepository.saveAll(all.filter((s) => s.id !== id));
+    const res = await fetch(`/api/series/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    });
 
-    // Delete from MySQL API
-    try {
-      await fetch(`/api/series?id=${encodeURIComponent(id)}`, { method: "DELETE" });
-    } catch (e: any) {
-      console.error("Failed to delete Series from MySQL DB:", e);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.status === 0) {
+      const msg = data?.message || data?.error?.message || "Couldn't delete series. Please try again.";
+      throw new Error(msg);
     }
   },
 
-  addSeason(seriesId: string, input: { title: string; seasonNumber: number }): Season {
-    const newSeason: Season = {
-      id: generateId("season"),
-      title: input.title,
-      seasonNumber: input.seasonNumber,
-      episodes: [],
-    };
-    const all = seriesRepository.getAll();
-    seriesRepository.saveAll(
-      all.map((s) => (s.id === seriesId ? { ...s, seasons: [...s.seasons, newSeason] } : s))
-    );
-    return newSeason;
+  async reorderSeries(ids: string[]): Promise<void> {
+    const res = await fetch("/api/series/order", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ids }),
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.status === 0) {
+      const msg = data?.message || data?.error?.message || "Couldn't reorder series.";
+      throw new Error(msg);
+    }
   },
 
-  async addEpisode(
+  async bulkAddEpisodes(
     seriesId: string,
-    seasonId: string | null | undefined,
-    input: Omit<Episode, "id">
-  ): Promise<Episode> {
-    const email = getTargetEmail();
-    const newEpId = generateId("ep");
-    const newEpisode: Episode = { ...input, id: newEpId };
-    const all = seriesRepository.getAll();
-    
-    seriesRepository.saveAll(
-      all.map((s) => {
-        if (s.id !== seriesId) return s;
+    episodes: Array<{ url: string; title?: string }>
+  ): Promise<Episode[]> {
+    const res = await fetch(`/api/series/${encodeURIComponent(seriesId)}/episodes`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ episodes }),
+    });
 
-        let seasons = s.seasons && s.seasons.length > 0 ? [...s.seasons] : [];
-        if (seasons.length === 0) {
-          seasons = [{ id: generateId("season"), title: "Season 1", seasonNumber: 1, episodes: [] }];
-        }
-
-        const targetSeasonId = seasonId && seasons.some((sn) => sn.id === seasonId) ? seasonId : seasons[0].id;
-
-        return {
-          ...s,
-          seasons: seasons.map((season) =>
-            season.id === targetSeasonId
-              ? { ...season, episodes: [...season.episodes, newEpisode] }
-              : season
-          ),
-        };
-      })
-    );
-
-    // Save episode to MySQL DB (isEpisodeOnly prevents series title overwrite)
-    try {
-      await fetch("/api/series", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          seriesId,
-          isEpisodeOnly: true,
-          episodes: [{ ...input, id: newEpId }],
-        }),
-      });
-    } catch (e: any) {
-      console.error("Failed to add Episode to MySQL DB:", e);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.status === 0) {
+      const msg = data?.message || data?.error?.message || "Couldn't add episodes. Please try again.";
+      throw new Error(msg);
     }
 
-    return newEpisode;
-  },
-
-  async removeEpisode(seriesId: string, seasonId: string, episodeId: string): Promise<void> {
-    const all = seriesRepository.getAll();
-    seriesRepository.saveAll(
-      all.map((s) =>
-        s.id === seriesId
-          ? {
-              ...s,
-              seasons: s.seasons.map((season) =>
-                season.id === seasonId
-                  ? { ...season, episodes: season.episodes.filter((e) => e.id !== episodeId) }
-                  : season
-              ),
-            }
-          : s
-      )
-    );
-
-    // Delete episode from MySQL DB
-    try {
-      await fetch(`/api/series?episodeId=${encodeURIComponent(episodeId)}`, {
-        method: "DELETE",
-      });
-    } catch (e: any) {
-      console.error("Failed to delete Episode from MySQL DB:", e);
-    }
+    const inserted = data.data?.episodes || data.episodes || [];
+    return inserted.map((ep: any) => ({
+      id: ep.id,
+      episodeNumber: ep.episodeNumber,
+      title: ep.title,
+      externalUrl: ep.externalUrl || ep.url,
+      platform: ep.platform || "YouTube",
+      thumbnailDataUrl: null,
+      description: "",
+    }));
   },
 
   async updateEpisode(
-    seriesId: string,
-    seasonId: string,
     episodeId: string,
-    patch: Partial<Episode>
+    patch: { title?: string; url?: string; externalUrl?: string }
   ): Promise<void> {
-    const all = seriesRepository.getAll();
-    seriesRepository.saveAll(
-      all.map((s) =>
-        s.id === seriesId
-          ? {
-              ...s,
-              seasons: s.seasons.map((season) =>
-                season.id === seasonId
-                  ? {
-                      ...season,
-                      episodes: season.episodes.map((e) =>
-                        e.id === episodeId ? { ...e, ...patch } : e
-                      ),
-                    }
-                  : season
-              ),
-            }
-          : s
-      )
-    );
+    const res = await fetch(`/api/episodes/${encodeURIComponent(episodeId)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: patch.title,
+        url: patch.url || patch.externalUrl,
+      }),
+    });
 
-    // Update episode in MySQL DB
-    try {
-      await fetch("/api/series", {
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.status === 0) {
+      const msg = data?.message || data?.error?.message || "Couldn't save. Please try again.";
+      throw new Error(msg);
+    }
+  },
+
+  async removeEpisode(episodeId: string): Promise<void> {
+    const res = await fetch(`/api/episodes/${encodeURIComponent(episodeId)}`, {
+      method: "DELETE",
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.status === 0) {
+      const msg = data?.message || data?.error?.message || "Couldn't delete episode.";
+      throw new Error(msg);
+    }
+  },
+
+  async reorderEpisodes(seriesId: string, ids: string[]): Promise<void> {
+    const res = await fetch(
+      `/api/series/${encodeURIComponent(seriesId)}/episodes/order`,
+      {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          episodeId,
-          seriesId,
-          episodeNumber: patch.episodeNumber,
-          title: patch.title,
-          externalUrl: patch.externalUrl,
-          platform: patch.platform,
-        }),
-      });
-    } catch (e: any) {
-      console.error("Failed to update Episode in MySQL DB:", e);
+        body: JSON.stringify({ ids }),
+      }
+    );
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.status === 0) {
+      const msg = data?.message || data?.error?.message || "Couldn't reorder episodes.";
+      throw new Error(msg);
     }
   },
 
   totalEpisodeCount(series: Series): number {
-    return series.seasons.reduce((acc, s) => acc + s.episodes.length, 0);
+    return series.seasons?.reduce((acc, s) => acc + (s.episodes?.length || 0), 0) || 0;
   },
 };

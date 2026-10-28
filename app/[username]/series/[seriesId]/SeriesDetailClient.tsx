@@ -23,6 +23,8 @@ import { useToast } from "@/contexts/ToastContext";
 import { buildSeriesUrl } from "@/utils/format";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { ShareSeriesModal } from "@/components/shared/ShareSeriesModal";
+import { SeriesSharePopover } from "@/components/series/SeriesSharePopover";
+import { extractVideoThumbnail, slugifySeriesTitle } from "@/lib/videoUrl";
 import { PublicCreatorInfo } from "@/lib/publicSeriesService";
 import { ThemeService } from "@/services/ThemeService";
 import { CreatorPublicShell, PublicCard } from "@/components/public/CreatorPublicShell";
@@ -35,6 +37,7 @@ import {
   PUBLIC_TYPE,
 } from "@/components/public/publicTheme";
 import { PlatformThumbnailBox, extractYouTubeVideoId } from "@/components/shared/PlatformThumbnailBox";
+import { resolveThemeKey } from "@/lib/themeKeys";
 
 function getPlatformInfo(platformStr?: string, urlStr?: string) {
   const p = (platformStr || "").toLowerCase();
@@ -158,6 +161,7 @@ export function SeriesDetailClient({
   const [loading, setLoading] = useState(!initialSeries);
   const [notFound, setNotFound] = useState(!initialSeries && !loading);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isSharePopoverOpen, setIsSharePopoverOpen] = useState(false);
   const [coverImageError, setCoverImageError] = useState(false);
   const [activeSeasonIndex, setActiveSeasonIndex] = useState<number>(0);
   const [isScrolledPastHeader, setIsScrolledPastHeader] = useState(false);
@@ -219,7 +223,7 @@ export function SeriesDetailClient({
               photoDataUrl: EXPERT_DEMO_PROFILE.photoDataUrl,
               bio: EXPERT_DEMO_PROFILE.bio,
               category: EXPERT_DEMO_PROFILE.category,
-              themeKey: EXPERT_DEMO_THEME || "minimal-white",
+              themeKey: EXPERT_DEMO_THEME,
               totalFanbase: 1345000,
             });
             setLoading(false);
@@ -245,7 +249,7 @@ export function SeriesDetailClient({
             photoDataUrl: profile.photoDataUrl,
             bio: profile.bio,
             category: profile.category,
-            themeKey: profile.themeKey || "minimal-white",
+            themeKey: resolveThemeKey(profile.themeKey),
             totalFanbase: profile.totalFanbase || 0,
           });
           setNotFound(false);
@@ -267,7 +271,7 @@ export function SeriesDetailClient({
   const profileUrl = `/${username}`;
 
   // Theme integration
-  const themeKey = (creator?.themeKey || "minimal-white") as ThemeKey;
+  const themeKey = resolveThemeKey(creator?.themeKey);
   const pt = getPublicTheme(themeKey);
   const c = pt.colors;
   const usesDarkControls = pt.isDark;
@@ -317,6 +321,28 @@ export function SeriesDetailClient({
     if (!detectedPlatform) return null;
     return getPlatformInfo(detectedPlatform, allEpisodes[0]?.externalUrl);
   }, [detectedPlatform, allEpisodes]);
+
+  // Must stay above the early returns below (Rules of Hooks).
+  const allSamePlatform = useMemo(() => {
+    if (currentEpisodes.length === 0) return null;
+    const detectFromUrl = (url?: string | null): string | null => {
+      if (!url) return null;
+      if (/youtube\.com|youtu\.be/i.test(url)) return "YouTube";
+      if (/instagram\.com/i.test(url)) return "Instagram";
+      if (/facebook\.com|fb\.watch/i.test(url)) return "Facebook";
+      return null;
+    };
+    const getEpPlat = (ep: Episode): string => {
+      const detected = detectFromUrl(ep.externalUrl);
+      if (detected) return detected;
+      if (detectedPlatform && detectedPlatform !== "Multi-Platform") return detectedPlatform;
+      return "YouTube";
+    };
+
+    const first = getEpPlat(currentEpisodes[0]);
+    const allMatch = currentEpisodes.every((ep) => getEpPlat(ep).toLowerCase() === first.toLowerCase());
+    return allMatch ? first : null;
+  }, [currentEpisodes, detectedPlatform]);
 
   // Valid cover image: only when genuinely available and not errored
   const hasValidCover = Boolean(
@@ -456,6 +482,8 @@ export function SeriesDetailClient({
     return <Film className={`${cls} text-slate-400 shrink-0`} />;
   };
 
+
+
   const episodePlatform = (url?: string | null): string | null => {
     if (!url) return null;
     if (/youtube\.com|youtu\.be/i.test(url)) return "YouTube";
@@ -463,20 +491,6 @@ export function SeriesDetailClient({
     if (/facebook\.com|fb\.watch/i.test(url)) return "Facebook";
     return null;
   };
-
-  const allSamePlatform = useMemo(() => {
-    if (currentEpisodes.length === 0) return null;
-    const getEpPlat = (ep: Episode): string => {
-      const detected = episodePlatform(ep.externalUrl);
-      if (detected) return detected;
-      if (detectedPlatform && detectedPlatform !== "Multi-Platform") return detectedPlatform;
-      return "YouTube";
-    };
-
-    const first = getEpPlat(currentEpisodes[0]);
-    const allMatch = currentEpisodes.every((ep) => getEpPlat(ep).toLowerCase() === first.toLowerCase());
-    return allMatch ? first : null;
-  }, [currentEpisodes, detectedPlatform]);
 
   const episodeCountText = `${allEpisodes.length} ${allEpisodes.length === 1 ? "episode" : "episodes"}`;
   const validPlatform =
@@ -550,7 +564,7 @@ export function SeriesDetailClient({
                 <ArrowLeft className="h-5 w-5" />
               </button>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 relative">
                 <button
                   type="button"
                   onClick={handleCopyLink}
@@ -559,14 +573,22 @@ export function SeriesDetailClient({
                 >
                   <Copy className="h-4 w-4" />
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setIsShareModalOpen(true)}
-                  className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all cursor-pointer shadow-md"
-                  title="Share series"
-                >
-                  <Share2 className="h-4 w-4" />
-                </button>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setIsSharePopoverOpen(!isSharePopoverOpen)}
+                    className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all cursor-pointer shadow-md"
+                    title="Share series"
+                  >
+                    <Share2 className="h-4 w-4" />
+                  </button>
+                  <SeriesSharePopover
+                    url={buildSeriesUrl(username, slugifySeriesTitle(series?.title || seriesId))}
+                    title={series?.title || "Series"}
+                    isOpen={isSharePopoverOpen}
+                    onClose={() => setIsSharePopoverOpen(false)}
+                  />
+                </div>
               </div>
             </div>
 
@@ -624,6 +646,22 @@ export function SeriesDetailClient({
                 </span>
               ))}
             </div>
+
+            {/* Primary CTA: "▶ Start Episode 1" */}
+            {allEpisodes.length > 0 && allEpisodes[0]?.externalUrl && (
+              <div className="pt-1 pb-1">
+                <a
+                  href={allEpisodes[0].externalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => trackEpisodeClick(allEpisodes[0])}
+                  className="inline-flex h-11 items-center justify-center gap-2.5 rounded-[5px] bg-[#7A2253] px-6 text-sm font-bold text-white shadow-lg shadow-[#7A2253]/25 hover:bg-[#601a41] transition-all cursor-pointer w-full sm:w-auto"
+                >
+                  <Play className="h-4 w-4 fill-white" />
+                  <span>▶ Start Episode 1</span>
+                </a>
+              </div>
+            )}
 
             {/* Category Tags as small neutral chips below meta line */}
             {genresList.length > 0 && (
@@ -725,10 +763,11 @@ export function SeriesDetailClient({
                         className="group/ep flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl border border-slate-200/70 dark:border-white/10 bg-white dark:bg-zinc-900 hover:bg-[#7A2253]/[0.03] dark:hover:bg-white/[0.04] hover:border-[#7A2253]/30 dark:hover:border-white/20 transition-all text-left focus-visible:ring-2 focus-visible:ring-[#7A2253] focus-visible:outline-hidden cursor-pointer"
                       >
                         {/* Left: Number Box (36×36) + (Optional Mixed Platform Icon) + Title */}
-                        <div className="flex items-center gap-3 min-w-0 flex-1">
-                          <span className="shrink-0 flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-white text-xs font-bold tabular-nums border border-slate-200/60 dark:border-white/10">
+                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                          <span className="shrink-0 flex h-9 w-9 items-center justify-center rounded-[5px] bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-white text-xs font-bold tabular-nums border border-slate-200/60 dark:border-white/10">
                             {partNumStr}
                           </span>
+
                           <div className="flex items-center gap-2 min-w-0 flex-1">
                             {!allSamePlatform && (
                               <span className="shrink-0">

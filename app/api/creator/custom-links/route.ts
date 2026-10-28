@@ -1,89 +1,13 @@
 import { db } from "@/lib/db";
-import { requireCreator } from "@/lib/creatorAuth";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { listLinks } from "@/lib/linksDb";
 import { sanitizeUrl } from "@/lib/urlSanitizer";
-import { getPlanQuota } from "@/services/subscriptionLimits";
+import { getCreatorPlanKey } from "@/lib/planServer";
+import { getPlanLimit } from "@/config/plans";
 
-let customLinksTableEnsured = false;
-
-async function ensureCustomLinksTable() {
-  if (customLinksTableEnsured) return;
-  try {
-    await db.query(`
-      CREATE TABLE IF NOT EXISTS creator_custom_links (
-        id VARCHAR(100) PRIMARY KEY,
-        creator_id VARCHAR(100) NOT NULL,
-        email VARCHAR(255) DEFAULT NULL,
-        parent_id VARCHAR(100) DEFAULT NULL,
-        link_type VARCHAR(30) DEFAULT 'link',
-        title VARCHAR(255) NOT NULL,
-        url VARCHAR(1000) DEFAULT NULL,
-        icon VARCHAR(50) DEFAULT 'link',
-        is_enabled TINYINT(1) DEFAULT 1,
-        sort_order INT DEFAULT 0,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        INDEX idx_creator_id (creator_id),
-        INDEX idx_email (email),
-        INDEX idx_parent_id (parent_id)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-    `);
-    await db.query("ALTER TABLE creator_custom_links ADD COLUMN parent_id VARCHAR(100) DEFAULT NULL").catch(() => {});
-    await db.query("ALTER TABLE creator_custom_links ADD COLUMN link_type VARCHAR(30) DEFAULT 'link'").catch(() => {});
-    await db.query("ALTER TABLE creator_custom_links MODIFY COLUMN url VARCHAR(1000) DEFAULT NULL").catch(() => {});
-    await db.query("ALTER TABLE creator_custom_links ADD INDEX idx_parent_id (parent_id)").catch(() => {});
-    customLinksTableEnsured = true;
-  } catch (e) {
-    console.warn("ensureCustomLinksTable error:", e);
-  }
-}
-
-function normalizeCustomLinks(rows: any[]) {
-  const parents: any[] = [];
-  const childrenByParent = new Map<string, any[]>();
-
-  for (const r of rows || []) {
-    const row = {
-      id: r.id,
-      title: r.title,
-      url: sanitizeUrl(r.url, { allowEmpty: true }) || "",
-      icon: r.icon || "link",
-      isEnabled: Boolean(r.isEnabled),
-      kind: r.linkType === "collection" ? "collection" : "link",
-      parentId: r.parentId || null,
-    };
-
-    if (row.parentId) {
-      const childList = childrenByParent.get(row.parentId) || [];
-      childList.push({
-        id: row.id,
-        title: row.title,
-        url: sanitizeUrl(row.url, { allowEmpty: true }) || "",
-        icon: row.icon,
-        isEnabled: row.isEnabled,
-      });
-      childrenByParent.set(row.parentId, childList);
-    } else {
-      parents.push(row);
-    }
-  }
-
-  return parents.map((link) => {
-    if (link.kind !== "collection") {
-      const { parentId, ...rest } = link;
-      return rest;
-    }
-    const { parentId, ...rest } = link;
-    return {
-      ...rest,
-      url: rest.url || "",
-      items: childrenByParent.get(link.id) || [],
-    };
-  });
-}
-
-// GET /api/creator/custom-links?email=...&username=...
+// GET /api/creator/custom-links?username=... (public profile). Writes live in /api/links.
+// Uses the same `position` order as the dashboard (listLinks).
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
@@ -96,135 +20,48 @@ export async function GET(req: Request) {
       return apiSuccess({ links: [] }, "No lookup param provided");
     }
 
-    await ensureCustomLinksTable();
+    const [creators]: any = await db.query(
+      "SELECT id FROM creators WHERE id = ? OR email = ? OR username = ? LIMIT 1",
+      [lookupVal, lookupVal, lookupVal]
+    );
+    const targetCreatorId = creators?.[0]?.id;
+    if (!targetCreatorId) return apiSuccess({ links: [] }, "Creator not found");
 
-    // Resolve creator ID & email from creators table
-    let targetCreatorId = creatorId || lookupVal;
-    let targetEmail = email || lookupVal;
-
-    try {
-      const [creators]: any = await db.query(
-        "SELECT id, email FROM creators WHERE id = ? OR email = ? OR username = ? LIMIT 1",
-        [lookupVal, lookupVal, lookupVal]
-      );
-      if (creators && creators.length > 0) {
-        targetCreatorId = creators[0].id;
-        targetEmail = creators[0].email;
-      }
-    } catch {}
     const accessError = await authorizeCreatorRead(req, targetCreatorId, Boolean(username));
     if (accessError) return accessError;
 
-    const [rows]: any = await db.query(
-      `SELECT id, parent_id AS parentId, link_type AS linkType, title, url, icon, is_enabled AS isEnabled, sort_order AS sortOrder
-       FROM creator_custom_links 
-       WHERE creator_id = ? OR email = ?
-       ORDER BY COALESCE(parent_id, id) ASC, parent_id IS NOT NULL ASC, sort_order ASC, created_at ASC`,
-      [targetCreatorId, targetEmail]
+    // Public profile: links beyond the plan limit are hidden (a group counts as 1; kept in the dashboard).
+    const linkLimit = getPlanLimit(await getCreatorPlanKey(targetCreatorId), "links");
+    const links = (await listLinks(targetCreatorId)).slice(0, linkLimit).map((link) =>
+      link.kind === "group"
+        ? {
+            id: link.id,
+            title: link.title,
+            url: "",
+            kind: "collection" as const,
+            isEnabled: true,
+            items: link.children.map((child) => ({
+              id: child.id,
+              title: child.title,
+              url: sanitizeUrl(child.url, { allowEmpty: true }) || "",
+              iconUrl: child.iconUrl || undefined,
+              isEnabled: true,
+            })),
+          }
+        : {
+            id: link.id,
+            title: link.title,
+            url: sanitizeUrl(link.url, { allowEmpty: true }) || "",
+            kind: "link" as const,
+            isEnabled: true,
+            isPinned: link.pinned,
+            iconUrl: link.iconUrl || undefined,
+          }
     );
 
-    const links = normalizeCustomLinks(rows || []);
-
-    return apiSuccess({
-      links,
-    }, "Custom links retrieved successfully");
+    return apiSuccess({ links }, "Custom links retrieved successfully");
   } catch (err: any) {
     console.error("GET Custom Links Error:", err);
-    return apiError(err.message || "Failed to retrieve custom links", 500);
-  }
-}
-
-// POST /api/creator/custom-links (Save custom links array to MySQL database table creator_custom_links)
-export async function POST(req: Request) {
-  try {
-    const auth = await requireCreator(req);
-    if (auth.error) return auth.error;
-    const body = await req.json();
-    const { links } = body;
-    const email = auth.creator.email;
-
-    if (!Array.isArray(links)) {
-      return apiError("Links array required", 400);
-    }
-
-    await ensureCustomLinksTable();
-
-    const creatorId = auth.creator.id;
-    const actualEmail = auth.creator.email;
-
-    // Enforce server-side custom links quota based on active subscription
-    const [subRows]: any = await db.query(
-      "SELECT plan_key FROM subscriptions WHERE creator_id = ? AND status = 'active' ORDER BY updated_at DESC LIMIT 1",
-      [creatorId]
-    );
-    const activePlanKey = subRows[0]?.plan_key || "early_access";
-    const quota = getPlanQuota(activePlanKey);
-
-    if (links.length > quota.maxCustomLinks) {
-      return apiError(
-        `Custom links limit reached (${quota.maxCustomLinks} max) for ${quota.name} plan. Upgrade your plan to add more links.`,
-        403,
-        { isLimitReached: true, type: "links" }
-      );
-    }
-
-    // Delete existing links for this creator in creator_custom_links table and insert updated list
-    await db.query("DELETE FROM creator_custom_links WHERE creator_id = ? OR email = ? OR email = ?", [creatorId, actualEmail, email]);
-
-    let savedCount = 0;
-    for (let idx = 0; idx < links.length; idx++) {
-      const item = links[idx];
-      // Save link row if title or URL provided
-      if (item.title || item.url || (item.kind === "collection" && Array.isArray(item.items))) {
-        const linkId = item.id || `link_${Date.now()}_${idx}`;
-        await db.query(
-          `INSERT INTO creator_custom_links (id, creator_id, email, parent_id, link_type, title, url, icon, is_enabled, sort_order)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [
-            linkId,
-            creatorId,
-            email,
-            null,
-            item.kind === "collection" ? "collection" : "link",
-            (item.title || "").trim(),
-            sanitizeUrl(item.url, { allowEmpty: true }) || "",
-            item.icon || "link",
-            item.isEnabled !== false ? 1 : 0,
-            idx,
-          ]
-        );
-        savedCount++;
-
-        if (item.kind === "collection" && Array.isArray(item.items)) {
-          for (let childIdx = 0; childIdx < item.items.length; childIdx++) {
-            const child = item.items[childIdx];
-            if (!child.title && !child.url) continue;
-            await db.query(
-              `INSERT INTO creator_custom_links (id, creator_id, email, parent_id, link_type, title, url, icon, is_enabled, sort_order)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-              [
-                child.id || `${linkId}_item_${Date.now()}_${childIdx}`,
-                creatorId,
-                email,
-                linkId,
-                "collection_item",
-                (child.title || "").trim(),
-                sanitizeUrl(child.url, { allowEmpty: true }) || "",
-                child.icon || "link",
-                child.isEnabled !== false ? 1 : 0,
-                childIdx,
-              ]
-            );
-          }
-        }
-      }
-    }
-
-    return apiSuccess({
-      savedCount,
-    }, `Saved ${savedCount} custom link(s) to MySQL table creator_custom_links`);
-  } catch (err: any) {
-    console.error("POST Custom Links Error:", err);
-    return apiError(err.message || "Failed to save custom links", 500);
+    return apiError("Failed to retrieve custom links", 500);
   }
 }

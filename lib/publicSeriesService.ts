@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import type { RowDataPacket } from "mysql2";
 import { Series, VisibilitySettings } from "@/types";
+import { DEFAULT_THEME_KEY, resolveThemeKey } from "@/lib/themeKeys";
 
 export interface PublicCreatorInfo {
   displayName: string;
@@ -112,7 +113,7 @@ export async function getPublicSeriesData(
             photoDataUrl: EXPERT_DEMO_PROFILE.photoDataUrl,
             bio: EXPERT_DEMO_PROFILE.bio,
             category: EXPERT_DEMO_PROFILE.category,
-            themeKey: "minimal-white",
+            themeKey: DEFAULT_THEME_KEY,
             totalFanbase: 1345000,
           },
         };
@@ -124,22 +125,9 @@ export async function getPublicSeriesData(
 
   // Query MySQL DB
   try {
-    const [seriesRows] = await db.query<PublicSeriesRow[]>(
-      "SELECT * FROM series WHERE id = ?",
-      [cleanSeriesId]
-    );
+    const { slugifySeriesTitle } = await import("@/lib/videoUrl");
 
-    if (!seriesRows || seriesRows.length === 0) {
-      return { series: null, creator: null };
-    }
-
-    const s = seriesRows[0];
-
-    const [epRows] = await db.query<PublicEpisodeRow[]>(
-      "SELECT * FROM episodes WHERE series_id = ? ORDER BY episode_number ASC",
-      [s.id]
-    );
-
+    // First find creator
     const [creatorRows] = await db.query<any[]>(
       `SELECT c.*, cs.visibility_settings AS settings_visibility,
               cs.public_profile_layout AS settings_layout,
@@ -155,6 +143,43 @@ export async function getPublicSeriesData(
     );
 
     const creator = creatorRows[0] || null;
+
+    let s: any = null;
+
+    if (creator) {
+      // Find all series for this creator
+      const [allCreatorSeries] = await db.query<PublicSeriesRow[]>(
+        "SELECT * FROM series WHERE creator_id = ? ORDER BY display_order ASC, created_at DESC",
+        [creator.id]
+      );
+
+      // Match by exact id OR by slugified title
+      s = allCreatorSeries.find(
+        (item) =>
+          item.id === cleanSeriesId ||
+          slugifySeriesTitle(item.title) === cleanSeriesId.toLowerCase()
+      );
+    }
+
+    // Fallback: search by id directly if not found by creator series
+    if (!s) {
+      const [seriesRows] = await db.query<PublicSeriesRow[]>(
+        "SELECT * FROM series WHERE id = ?",
+        [cleanSeriesId]
+      );
+      if (seriesRows && seriesRows.length > 0) {
+        s = seriesRows[0];
+      }
+    }
+
+    if (!s) {
+      return { series: null, creator: null };
+    }
+
+    const [epRows] = await db.query<PublicEpisodeRow[]>(
+      "SELECT * FROM episodes WHERE series_id = ? ORDER BY episode_number ASC",
+      [s.id]
+    );
 
     // Verify creator exists and owns this series
     if (!creator || String(creator.id) !== String(s.creator_id)) {
@@ -208,7 +233,7 @@ export async function getPublicSeriesData(
           photoDataUrl: creator.photo_url || null,
           bio: creator.bio || null,
           category: creator.category || null,
-          themeKey: creator.theme_key || "minimal-white",
+          themeKey: resolveThemeKey(creator.theme_key),
           totalFanbase,
           publicProfileLayout: creator.settings_layout || creator.public_profile_layout || "default",
         }

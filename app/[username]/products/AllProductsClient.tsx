@@ -17,6 +17,7 @@ import {
   ThemeKey,
   CreatorProduct,
 } from "@/types";
+import { DEFAULT_THEME_KEY, resolveThemeKey } from "@/lib/themeKeys";
 
 const EMPTY_PROFILE: CreatorProfile = {
   photoDataUrl: null,
@@ -100,7 +101,7 @@ export default function AllProductsClient() {
   const [profile, setProfile] = useState<CreatorProfile>(EMPTY_PROFILE);
   const [socials, setSocials] = useState<SocialAccounts>(EMPTY_SOCIAL_ACCOUNTS);
   const [products, setProducts] = useState<CreatorProduct[]>([]);
-  const [theme, setTheme] = useState<ThemeKey>("minimal-white");
+  const [theme, setTheme] = useState<ThemeKey>(DEFAULT_THEME_KEY);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
@@ -175,7 +176,7 @@ export default function AllProductsClient() {
           updatedAt: profData.updatedAt || new Date().toISOString(),
         };
 
-        const resolvedTheme = (profData.themeKey || profData.theme_key || "minimal-white") as ThemeKey;
+        const resolvedTheme = resolveThemeKey(profData.themeKey || profData.theme_key);
 
         const socialsData = socialsRes.data?.socials || socialsRes.socials || [];
         const mappedSocials = Array.isArray(socialsData)

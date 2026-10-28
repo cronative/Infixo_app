@@ -8,6 +8,7 @@ import {
   subscriptionRepository,
 } from "@/repositories/localRepository";
 import { OnboardingStep } from "@/types";
+import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
 
 export const OnboardingService = {
   getStep(): OnboardingStep {
@@ -43,7 +44,7 @@ export const OnboardingService = {
       updatedAt: new Date().toISOString(),
     });
     SocialService.reset();
-    ThemeService.setSelectedTheme("minimal-white");
+    ThemeService.setSelectedTheme(DEFAULT_THEME_KEY);
     seriesRepository.saveAll([]);
     subscriptionRepository.save({
       ...createSubscriptionLifecycle("early_access", "yearly"),

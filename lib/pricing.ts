@@ -1,25 +1,9 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { formatMoney, planPrice, type BillingPeriod, type PaidPlanKey, type PricingCurrency } from "@/config/plans";
 
-export type PricingCurrency = "INR" | "USD";
-export type PaidPlanKey = "starter" | "pro" | "vip";
-export type BillingPeriod = "monthly" | "yearly";
-
-const PLAN_PRICES: Record<PaidPlanKey, Record<BillingPeriod, Record<PricingCurrency, number>>> = {
-  starter: {
-    monthly: { INR: 99, USD: 2.99 },
-    yearly: { INR: 999, USD: 29 },
-  },
-  pro: {
-    monthly: { INR: 199, USD: 4.99 },
-    yearly: { INR: 1499, USD: 39 },
-  },
-  vip: {
-    monthly: { INR: 399, USD: 9.99 },
-    yearly: { INR: 2499, USD: 69 },
-  },
-};
+export type { BillingPeriod, PaidPlanKey, PricingCurrency } from "@/config/plans";
 
 function detectPricingCurrency(): PricingCurrency {
   if (typeof window === "undefined") return "INR";
@@ -52,17 +36,11 @@ export function usePricingCurrency(): PricingCurrency {
   );
 }
 
+/** Prices come from config/plans.ts. */
 export function getPlanPrice(plan: PaidPlanKey, period: BillingPeriod, currency: PricingCurrency) {
-  return PLAN_PRICES[plan][period][currency];
+  return planPrice(plan, period, currency);
 }
 
 export function formatPlanPrice(plan: PaidPlanKey, period: BillingPeriod, currency: PricingCurrency) {
-  const value = getPlanPrice(plan, period, currency);
-  if (currency === "INR") {
-    return `₹${value.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
-  }
-  return `$${value.toLocaleString("en-US", {
-    minimumFractionDigits: Number.isInteger(value) ? 0 : 2,
-    maximumFractionDigits: 2,
-  })}`;
+  return formatMoney(getPlanPrice(plan, period, currency), currency);
 }

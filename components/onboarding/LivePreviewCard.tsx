@@ -2,7 +2,6 @@
 
 import type { CreatorProduct } from "@/types";
 import { ProductImage, formatProductPrice } from "@/components/products/ProductImage";
-import { ProductImageLightbox } from "@/components/products/ProductImageLightbox";
 
 import { useState, useEffect, useRef, Fragment, useMemo } from "react";
 import Link from "next/link";
@@ -131,6 +130,9 @@ import { STORAGE_KEYS, storage } from "@/utils/storage";
 import { LinkRow } from "@/components/links/LinkRow";
 import { LinkGroupRow } from "@/components/links/LinkGroupRow";
 import { getInitials } from "@/lib/avatar";
+import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
+import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
+import { ThemeService, getThemeCssVariables } from "@/services/ThemeService";
 
 
 function formatIndianPackagePrice(pkg: MediaKitPackage): string {
@@ -191,579 +193,29 @@ export interface ThemeStyleConfig {
   isShimmerFanbase?: boolean;
 }
 
-export const DEFAULT_THEME_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-white border border-slate-200/90 text-slate-900 shadow-xl",
-  profBadgeBg: "bg-slate-100",
-  profBadgeText: "text-slate-800",
-  profBadgeBorder: "border-slate-200",
-  fanbaseBg: "bg-slate-100",
-  fanbaseText: "text-slate-800",
-  socialItemBg: "bg-slate-50/90 backdrop-blur-xs",
-  socialItemBorder: "border-slate-200/80",
-  socialNameColor: "text-slate-900",
-  socialUnitColor: "text-slate-500",
-  nameColor: "text-slate-900",
-  bioColor: "text-slate-600",
-  handleColor: "text-slate-500",
-};
-
-const MINIMAL_WHITE_STYLE: ThemeStyleConfig = DEFAULT_THEME_STYLE;
-
-const SAGE_STUDIO_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-[#F7F1E4] border border-[#254334]/20 text-[#1E2A20] shadow-xl",
-  profBadgeBg: "bg-[#FFFDF6]/85",
-  profBadgeText: "text-[#254334]",
-  profBadgeBorder: "border-[#254334]/20",
-  fanbaseBg: "bg-[#FFFDF6]",
-  fanbaseText: "text-[#1E2A20]",
-  socialItemBg: "bg-[#FFFDF6] hover:bg-[#ECEFDB]",
-  socialItemBorder: "border-[#254334]/18 hover:border-[#254334]/30",
-  socialNameColor: "text-[#1E2A20]",
-  socialUnitColor: "text-[#75806D]",
-  nameColor: "text-[#1E2A20]",
-  bioColor: "text-[#4D5A47]",
-  handleColor: "text-[#B96A45]",
-};
-
-const BLUSH_PAPER_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-[#FFF7F6] border border-[#4A2434]/15 text-[#2A1720] shadow-xl",
-  profBadgeBg: "bg-white/88",
-  profBadgeText: "text-[#4A2434]",
-  profBadgeBorder: "border-[#4A2434]/15",
-  fanbaseBg: "bg-white",
-  fanbaseText: "text-[#2A1720]",
-  socialItemBg: "bg-white hover:bg-[#FBECE8]",
-  socialItemBorder: "border-[#4A2434]/14 hover:border-[#4A2434]/28",
-  socialNameColor: "text-[#2A1720]",
-  socialUnitColor: "text-[#9A7E86]",
-  nameColor: "text-[#2A1720]",
-  bioColor: "text-[#6B4C57]",
-  handleColor: "text-[#C75D53]",
-};
-
-const STUDIO_FROST_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#F8FAFC] via-white to-[#EEF4FF] border border-[#D8E2F0] text-[#7A2253] shadow-xl",
-  profBadgeBg: "bg-white/92 backdrop-blur-md",
-  profBadgeText: "text-[#7A2253]",
-  profBadgeBorder: "border-[#D8E2F0]",
-  fanbaseBg: "bg-white/92 backdrop-blur-md",
-  fanbaseText: "text-[#7A2253]",
-  socialItemBg: "bg-white/88 hover:bg-[#F1F5F9] backdrop-blur-md",
-  socialItemBorder: "border-[#D8E2F0] hover:border-[#7A2253]/24",
-  socialNameColor: "text-[#7A2253]",
-  socialUnitColor: "text-[#64748B]",
-  nameColor: "text-[#7A2253]",
-  bioColor: "text-[#475569]",
-  handleColor: "text-[#64748B]",
-};
-
-const TAJ_MAHAL_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-[#FFFDF7]/56 border border-white/45 text-[#221A12] shadow-xl backdrop-blur-lg",
-  profBadgeBg: "bg-white/72 backdrop-blur-md",
-  profBadgeText: "text-[#7A2253]",
-  profBadgeBorder: "border-[#DCCDB2]/70",
-  fanbaseBg: "bg-white/80 backdrop-blur-md",
-  fanbaseText: "text-[#221A12]",
-  socialItemBg: "bg-white/78 hover:bg-[#F7F0E4]/88 backdrop-blur-md",
-  socialItemBorder: "border-[#DCCDB2]/70 hover:border-[#7A2253]/28",
-  socialNameColor: "text-[#221A12]",
-  socialUnitColor: "text-[#766A58]",
-  nameColor: "text-[#221A12]",
-  bioColor: "text-[#5F5446]",
-  handleColor: "text-[#8C6A3E]",
-};
-
-const MARINE_DRIVE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-[#071827]/64 border border-white/18 text-[#F8FAFC] shadow-2xl backdrop-blur-xl",
-  profBadgeBg: "bg-white/12 backdrop-blur-md",
-  profBadgeText: "text-[#F8FAFC]",
-  profBadgeBorder: "border-white/18",
-  fanbaseBg: "bg-white/12 backdrop-blur-md",
-  fanbaseText: "text-[#F8FAFC]",
-  socialItemBg: "bg-white/10 hover:bg-white/16 backdrop-blur-md",
-  socialItemBorder: "border-white/16 hover:border-[#7DD3FC]/40",
-  socialNameColor: "text-[#F8FAFC]",
-  socialUnitColor: "text-[#B8D7E8]",
-  nameColor: "text-[#F8FAFC]",
-  bioColor: "text-[#C7D7E5]",
-  handleColor: "text-[#7DD3FC]",
-};
-
-const BURJ_KHALIFA_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-[#090B12]/68 border border-[#F5C76B]/22 text-[#FFF8E7] shadow-2xl backdrop-blur-xl",
-  profBadgeBg: "bg-white/10 backdrop-blur-md",
-  profBadgeText: "text-[#FFF8E7]",
-  profBadgeBorder: "border-[#F5C76B]/22",
-  fanbaseBg: "bg-white/10 backdrop-blur-md",
-  fanbaseText: "text-[#FFF8E7]",
-  socialItemBg: "bg-white/10 hover:bg-white/16 backdrop-blur-md",
-  socialItemBorder: "border-[#F5C76B]/18 hover:border-[#F5C76B]/42",
-  socialNameColor: "text-[#FFF8E7]",
-  socialUnitColor: "text-[#D9C69C]",
-  nameColor: "text-[#FFF8E7]",
-  bioColor: "text-[#D7DCE7]",
-  handleColor: "text-[#F5C76B]",
-};
-
-const SOMNATH_TEMPLE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-[#FFF8EC]/60 border border-white/42 text-[#261A0F] shadow-xl backdrop-blur-lg",
-  profBadgeBg: "bg-white/74 backdrop-blur-md",
-  profBadgeText: "text-[#7A2253]",
-  profBadgeBorder: "border-[#E6C58B]/55",
-  fanbaseBg: "bg-white/80 backdrop-blur-md",
-  fanbaseText: "text-[#261A0F]",
-  socialItemBg: "bg-white/78 hover:bg-[#FFF0D4]/90 backdrop-blur-md",
-  socialItemBorder: "border-[#E6C58B]/55 hover:border-[#7A2253]/28",
-  socialNameColor: "text-[#261A0F]",
-  socialUnitColor: "text-[#7B664E]",
-  nameColor: "text-[#261A0F]",
-  bioColor: "text-[#64523E]",
-  handleColor: "text-[#A35A18]",
-};
-
-const DWARKA_TEMPLE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-[#F7FBF8]/58 border border-white/42 text-[#14251D] shadow-xl backdrop-blur-lg",
-  profBadgeBg: "bg-white/74 backdrop-blur-md",
-  profBadgeText: "text-[#7A2253]",
-  profBadgeBorder: "border-[#B7D0C0]/60",
-  fanbaseBg: "bg-white/80 backdrop-blur-md",
-  fanbaseText: "text-[#14251D]",
-  socialItemBg: "bg-white/78 hover:bg-[#EAF4ED]/90 backdrop-blur-md",
-  socialItemBorder: "border-[#B7D0C0]/60 hover:border-[#7A2253]/28",
-  socialNameColor: "text-[#14251D]",
-  socialUnitColor: "text-[#597163]",
-  nameColor: "text-[#14251D]",
-  bioColor: "text-[#465C50]",
-  handleColor: "text-[#0E766A]",
-};
-
-const GOA_BEACH_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-[#FFF8EF]/58 border border-white/44 text-[#241A12] shadow-xl backdrop-blur-lg",
-  profBadgeBg: "bg-white/74 backdrop-blur-md",
-  profBadgeText: "text-[#7A2253]",
-  profBadgeBorder: "border-[#F0C98D]/60",
-  fanbaseBg: "bg-white/80 backdrop-blur-md",
-  fanbaseText: "text-[#241A12]",
-  socialItemBg: "bg-white/78 hover:bg-[#FFF0D8]/90 backdrop-blur-md",
-  socialItemBorder: "border-[#F0C98D]/60 hover:border-[#7A2253]/28",
-  socialNameColor: "text-[#241A12]",
-  socialUnitColor: "text-[#7A5F49]",
-  nameColor: "text-[#241A12]",
-  bioColor: "text-[#5F4B3A]",
-  handleColor: "text-[#0F766E]",
-};
-
-const CREATOR_STUDIO_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-[#F8FAFC] border border-[#D8E2F0] text-[#7A2253] shadow-xl",
-  profBadgeBg: "bg-white",
-  profBadgeText: "text-[#7A2253]",
-  profBadgeBorder: "border-[#D8E2F0]",
-  fanbaseBg: "bg-white",
-  fanbaseText: "text-[#7A2253]",
-  socialItemBg: "bg-white hover:bg-[#F1F5F9]",
-  socialItemBorder: "border-[#D8E2F0] hover:border-[#7A2253]/25",
-  socialNameColor: "text-[#7A2253]",
-  socialUnitColor: "text-[#64748B]",
-  nameColor: "text-[#7A2253]",
-  bioColor: "text-[#475569]",
-  handleColor: "text-[#64748B]",
-};
-
-const NEON_REELS_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-[#070A18]/82 border border-[#FF3B8D]/24 text-[#F8FAFC] shadow-2xl backdrop-blur-xl",
-  profBadgeBg: "bg-white/10 backdrop-blur-md",
-  profBadgeText: "text-[#F8FAFC]",
-  profBadgeBorder: "border-[#FF3B8D]/24",
-  fanbaseBg: "bg-white/10 backdrop-blur-md",
-  fanbaseText: "text-[#F8FAFC]",
-  socialItemBg: "bg-white/10 hover:bg-white/16 backdrop-blur-md",
-  socialItemBorder: "border-[#FF3B8D]/20 hover:border-[#38BDF8]/45",
-  socialNameColor: "text-[#F8FAFC]",
-  socialUnitColor: "text-[#C4B5FD]",
-  nameColor: "text-[#F8FAFC]",
-  bioColor: "text-[#CBD5E1]",
-  handleColor: "text-[#38BDF8]",
-};
-
-const PODCAST_LOUNGE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-[#17110D]/82 border border-[#D9A441]/24 text-[#FFF7ED] shadow-2xl backdrop-blur-xl",
-  profBadgeBg: "bg-white/10 backdrop-blur-md",
-  profBadgeText: "text-[#FFF7ED]",
-  profBadgeBorder: "border-[#D9A441]/24",
-  fanbaseBg: "bg-white/10 backdrop-blur-md",
-  fanbaseText: "text-[#FFF7ED]",
-  socialItemBg: "bg-white/10 hover:bg-white/16 backdrop-blur-md",
-  socialItemBorder: "border-[#D9A441]/20 hover:border-[#D9A441]/45",
-  socialNameColor: "text-[#FFF7ED]",
-  socialUnitColor: "text-[#D6C2A4]",
-  nameColor: "text-[#FFF7ED]",
-  bioColor: "text-[#D6C2A4]",
-  handleColor: "text-[#D9A441]",
-};
-
-const FOOD_VLOG_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-[#FFF9F0] border border-[#F2D8B6] text-[#2D1E12] shadow-xl",
-  profBadgeBg: "bg-white",
-  profBadgeText: "text-[#2D1E12]",
-  profBadgeBorder: "border-[#F2D8B6]",
-  fanbaseBg: "bg-white",
-  fanbaseText: "text-[#2D1E12]",
-  socialItemBg: "bg-white hover:bg-[#FFF0D9]",
-  socialItemBorder: "border-[#F2D8B6] hover:border-[#C45A25]/35",
-  socialNameColor: "text-[#2D1E12]",
-  socialUnitColor: "text-[#7A5A3A]",
-  nameColor: "text-[#2D1E12]",
-  bioColor: "text-[#684A2F]",
-  handleColor: "text-[#C45A25]",
-};
-
-const GAMER_STREAM_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-[#070B13]/86 border border-[#34D399]/22 text-[#ECFDF5] shadow-2xl backdrop-blur-xl",
-  profBadgeBg: "bg-white/10 backdrop-blur-md",
-  profBadgeText: "text-[#ECFDF5]",
-  profBadgeBorder: "border-[#34D399]/24",
-  fanbaseBg: "bg-white/10 backdrop-blur-md",
-  fanbaseText: "text-[#ECFDF5]",
-  socialItemBg: "bg-white/10 hover:bg-white/16 backdrop-blur-md",
-  socialItemBorder: "border-[#34D399]/20 hover:border-[#22D3EE]/45",
-  socialNameColor: "text-[#ECFDF5]",
-  socialUnitColor: "text-[#A7F3D0]",
-  nameColor: "text-[#ECFDF5]",
-  bioColor: "text-[#BAE6FD]",
-  handleColor: "text-[#22D3EE]",
-};
-
-const SIGNATURE_PURPLE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#FAF5FF] via-[#FDFBFE] to-[#F8F2F7] border border-[#7A2253]/18 text-slate-900 shadow-lg",
-  profBadgeBg: "bg-white/80 backdrop-blur-md",
-  profBadgeText: "text-[#7A2253]",
-  profBadgeBorder: "border-[#7A2253]/18",
-  fanbaseBg: "bg-white/80 backdrop-blur-md",
-  fanbaseText: "text-[#17131A]",
-  socialItemBg: "bg-white/80 hover:bg-surface-soft backdrop-blur-md",
-  socialItemBorder: "border-[#7A2253]/18 hover:border-brand-primary/30",
-  socialNameColor: "text-[#17131A]",
-  socialUnitColor: "text-[#6F6872]",
-  nameColor: "text-[#17131A]",
-  bioColor: "text-[#6F6872]",
-  handleColor: "text-[#7A2253]",
-};
-
-const MIDNIGHT_DARK_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-[#0D1424] text-[#F8FAFC] border border-white/[0.14] shadow-2xl",
-  profBadgeBg: "bg-[#111B2D]",
-  profBadgeText: "text-[#F8FAFC]",
-  profBadgeBorder: "border-white/[0.14]",
-  fanbaseBg: "bg-[#111B2D]",
-  fanbaseText: "text-[#F8FAFC]",
-  socialItemBg: "bg-[#111B2D] hover:bg-brand-hover",
-  socialItemBorder: "border-white/[0.14]",
-  socialNameColor: "text-[#F8FAFC]",
-  socialUnitColor: "text-[#7F8A9D]",
-  nameColor: "text-[#F8FAFC]",
-  bioColor: "text-[#A7B0C0]",
-  handleColor: "text-[#A7B0C0]",
-};
-
-import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
-import { ThemeService, getThemeCssVariables } from "@/services/ThemeService";
-
-const COSMIC_PURPLE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#1C122C] to-[#150E24] text-[#FAF5FF] border border-purple-400/20 shadow-xl",
-  profBadgeBg: "bg-[#1C122C]",
-  profBadgeText: "text-[#C4B5FD]",
-  profBadgeBorder: "border-purple-400/25",
-  fanbaseBg: "bg-[#25173B]/85 backdrop-blur-md",
-  fanbaseText: "text-[#FAF5FF]",
-  socialItemBg: "bg-[#25173B]/80 hover:bg-brand-hover backdrop-blur-md",
-  socialItemBorder: "border-purple-400/20 hover:border-brand-primary/40",
-  socialNameColor: "text-[#FAF5FF]",
-  socialUnitColor: "text-[#C4B5FD]",
-  nameColor: "text-[#FAF5FF]",
-  bioColor: "text-[#C4B5FD]",
-  handleColor: "text-[#C084FC]",
-};
-
-const AURORA_NIGHT_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#0A1628] to-[#060E1C] text-[#F0FDF4] border border-teal-400/20 shadow-xl",
-  profBadgeBg: "bg-[#0A1628]",
-  profBadgeText: "text-[#94A3B8]",
-  profBadgeBorder: "border-teal-400/25",
-  fanbaseBg: "bg-[#0F1E33]/85 backdrop-blur-md",
-  fanbaseText: "text-[#F0FDF4]",
-  socialItemBg: "bg-[#0F1E33]/80 hover:bg-brand-hover backdrop-blur-md",
-  socialItemBorder: "border-teal-400/20 hover:border-teal-400/40",
-  socialNameColor: "text-[#F0FDF4]",
-  socialUnitColor: "text-[#94A3B8]",
-  nameColor: "text-[#F0FDF4]",
-  bioColor: "text-[#94A3B8]",
-  handleColor: "text-[#2DD4BF]",
-};
-
-const ROSE_GLOW_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#2A1420] to-[#1E0E17] text-[#FFF1F2] border border-rose-300/20 shadow-xl",
-  profBadgeBg: "bg-[#2A1420]",
-  profBadgeText: "text-[#FDA4AF]",
-  profBadgeBorder: "border-rose-300/25",
-  fanbaseBg: "bg-[#361928]/85 backdrop-blur-md",
-  fanbaseText: "text-[#FFF1F2]",
-  socialItemBg: "bg-[#361928]/80 hover:bg-brand-hover backdrop-blur-md",
-  socialItemBorder: "border-rose-300/20 hover:border-brand-border/40",
-  socialNameColor: "text-[#FFF1F2]",
-  socialUnitColor: "text-[#FDA4AF]",
-  nameColor: "text-[#FFF1F2]",
-  bioColor: "text-[#FDA4AF]",
-  handleColor: "text-[#FB7185]",
-};
-
-const OCEAN_MOTION_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#0B213F] to-[#07172C] text-[#F0F9FF] border border-blue-400/20 shadow-xl",
-  profBadgeBg: "bg-[#0B213F]",
-  profBadgeText: "text-[#93C5FD]",
-  profBadgeBorder: "border-blue-400/25",
-  fanbaseBg: "bg-[#102B4E]/85 backdrop-blur-md",
-  fanbaseText: "text-[#F0F9FF]",
-  socialItemBg: "bg-[#102B4E]/80 hover:bg-brand-hover backdrop-blur-md",
-  socialItemBorder: "border-blue-400/20 hover:border-brand-primary/40",
-  socialNameColor: "text-[#F0F9FF]",
-  socialUnitColor: "text-[#93C5FD]",
-  nameColor: "text-[#F0F9FF]",
-  bioColor: "text-[#93C5FD]",
-  handleColor: "text-[#38BDF8]",
-};
-
-const SUNSET_STUDIO_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#291321] to-[#1D0E18] text-[#FFFBEB] border border-amber-400/20 shadow-xl",
-  profBadgeBg: "bg-[#291321]",
-  profBadgeText: "text-[#FDE68A]",
-  profBadgeBorder: "border-amber-400/25",
-  fanbaseBg: "bg-[#381827]/85 backdrop-blur-md",
-  fanbaseText: "text-[#FFFBEB]",
-  socialItemBg: "bg-[#381827]/80 hover:bg-brand-hover backdrop-blur-md",
-  socialItemBorder: "border-amber-400/20 hover:border-brand-primary/40",
-  socialNameColor: "text-[#FFFBEB]",
-  socialUnitColor: "text-[#FDE68A]",
-  nameColor: "text-[#FFFBEB]",
-  bioColor: "text-[#FDE68A]",
-  handleColor: "text-[#F59E0B]",
-};
-
-const MINIMAL_SPARK_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-white to-[#FAF8FA] text-[#17131A] border border-[#7A2253]/16 shadow-2xs",
-  profBadgeBg: "bg-white/90",
-  profBadgeText: "text-[#7A2253]",
-  profBadgeBorder: "border-[#7A2253]/20",
-  fanbaseBg: "bg-white/90 backdrop-blur-md",
-  fanbaseText: "text-[#17131A]",
-  socialItemBg: "bg-white/80 hover:bg-surface-soft backdrop-blur-md",
-  socialItemBorder: "border-[#7A2253]/16 hover:border-brand-primary/30",
-  socialNameColor: "text-[#17131A]",
-  socialUnitColor: "text-[#6F6872]",
-  nameColor: "text-[#17131A]",
-  bioColor: "text-[#6F6872]",
-  handleColor: "text-[#7A2253]",
-};
-
-const NEON_GRID_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#090D1E] to-[#060917] text-[#F8FAFC] border border-cyan-400/25 shadow-2xl",
-  profBadgeBg: "bg-[#090D1E]",
-  profBadgeText: "text-[#06B6D4]",
-  profBadgeBorder: "border-cyan-400/30",
-  fanbaseBg: "bg-[#0E162C]/85 backdrop-blur-md",
-  fanbaseText: "text-[#F8FAFC]",
-  socialItemBg: "bg-[#0E162C]/80 hover:bg-brand-hover backdrop-blur-md",
-  socialItemBorder: "border-cyan-400/22 hover:border-brand-primary/45",
-  socialNameColor: "text-[#F8FAFC]",
-  socialUnitColor: "text-[#94A3B8]",
-  nameColor: "text-[#F8FAFC]",
-  bioColor: "text-[#94A3B8]",
-  handleColor: "text-[#06B6D4]",
-};
-
-const LIQUID_AURORA_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#0A1D2D] to-[#06121D] text-[#F0FDF4] border border-teal-400/25 shadow-2xl",
-  profBadgeBg: "bg-[#0A1D2D]",
-  profBadgeText: "text-[#2DD4BF]",
-  profBadgeBorder: "border-teal-400/30",
-  fanbaseBg: "bg-[#0F2638]/85 backdrop-blur-md",
-  fanbaseText: "text-[#F0FDF4]",
-  socialItemBg: "bg-[#0F2638]/80 hover:bg-brand-hover backdrop-blur-md",
-  socialItemBorder: "border-teal-400/22 hover:border-teal-400/45",
-  socialNameColor: "text-[#F0FDF4]",
-  socialUnitColor: "text-[#99F6E4]",
-  nameColor: "text-[#F0FDF4]",
-  bioColor: "text-[#99F6E4]",
-  handleColor: "text-[#2DD4BF]",
-};
-
-const FLOATING_STUDIO_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#FCFAF7] to-[#F5F0E8] text-[#2D2824] border border-[#E5E0D8] shadow-xl",
-  profBadgeBg: "bg-white/90",
-  profBadgeText: "text-[#E05D44]",
-  profBadgeBorder: "border-[#E5E0D8]",
-  fanbaseBg: "bg-white/90 backdrop-blur-md",
-  fanbaseText: "text-[#2D2824]",
-  socialItemBg: "bg-white/80 hover:bg-surface-soft backdrop-blur-md",
-  socialItemBorder: "border-[#E5E0D8] hover:border-brand-primary/35",
-  socialNameColor: "text-[#2D2824]",
-  socialUnitColor: "text-[#6B635B]",
-  nameColor: "text-[#2D2824]",
-  bioColor: "text-[#6B635B]",
-  handleColor: "text-[#E05D44]",
-};
-
-const SPOTLIGHT_STAGE_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#16181E] to-[#0E1013] text-[#FAF8F5] border border-amber-400/25 shadow-2xl",
-  profBadgeBg: "bg-[#16181E]",
-  profBadgeText: "text-[#E5A93C]",
-  profBadgeBorder: "border-amber-400/30",
-  fanbaseBg: "bg-[#1C1F26]/90 backdrop-blur-md",
-  fanbaseText: "text-[#FAF8F5]",
-  socialItemBg: "bg-[#1C1F26]/80 hover:bg-brand-hover backdrop-blur-md",
-  socialItemBorder: "border-amber-400/20 hover:border-brand-primary/45",
-  socialNameColor: "text-[#FAF8F5]",
-  socialUnitColor: "text-[#C7CAD1]",
-  nameColor: "text-[#FAF8F5]",
-  bioColor: "text-[#C7CAD1]",
-  handleColor: "text-[#E5A93C]",
-};
-
-const CREATIVE_PAPER_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#FAF6F0] to-[#EDE5DB] text-[#29221D] border border-[#E3D9CC] shadow-xl",
-  profBadgeBg: "bg-white/90",
-  profBadgeText: "text-[#7A2253]",
-  profBadgeBorder: "border-[#E3D9CC]",
-  fanbaseBg: "bg-white/90 backdrop-blur-md",
-  fanbaseText: "text-[#29221D]",
-  socialItemBg: "bg-white/80 hover:bg-surface-soft backdrop-blur-md",
-  socialItemBorder: "border-[#E3D9CC] hover:border-brand-primary/35",
-  socialNameColor: "text-[#29221D]",
-  socialUnitColor: "text-[#6A5E57]",
-  nameColor: "text-[#29221D]",
-  bioColor: "text-[#6A5E57]",
-  handleColor: "text-[#7A2253]",
-};
-
-const LOVE_LETTER_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#FFF6F8] via-white to-[#FDECEF] border border-[#F4C9D2] text-[#33151D] shadow-xl",
-  profBadgeBg: "bg-white/90 backdrop-blur-md",
-  profBadgeText: "text-[#33151D]",
-  profBadgeBorder: "border-[#F4C9D2]",
-  fanbaseBg: "bg-white/90 backdrop-blur-md",
-  fanbaseText: "text-[#33151D]",
-  socialItemBg: "bg-white/84 hover:bg-[#FFF0F3] backdrop-blur-md",
-  socialItemBorder: "border-[#F4C9D2] hover:border-[#B4234A]/35",
-  socialNameColor: "text-[#33151D]",
-  socialUnitColor: "text-[#8A5360]",
-  nameColor: "text-[#33151D]",
-  bioColor: "text-[#6F3F4B]",
-  handleColor: "text-[#B4234A]",
-};
-
-const CHRISTMAS_SNOW_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#F8FFFB] via-white to-[#EFF8F2] border border-[#CDE4D3] text-[#173322] shadow-xl",
-  profBadgeBg: "bg-white/90 backdrop-blur-md",
-  profBadgeText: "text-[#173322]",
-  profBadgeBorder: "border-[#CDE4D3]",
-  fanbaseBg: "bg-white/90 backdrop-blur-md",
-  fanbaseText: "text-[#173322]",
-  socialItemBg: "bg-white/84 hover:bg-[#EFF8F2] backdrop-blur-md",
-  socialItemBorder: "border-[#CDE4D3] hover:border-[#0F6B3D]/35",
-  socialNameColor: "text-[#173322]",
-  socialUnitColor: "text-[#5C7465]",
-  nameColor: "text-[#173322]",
-  bioColor: "text-[#496153]",
-  handleColor: "text-[#B4232A]",
-};
-
-const MOUNTAIN_MIST_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#F3FAF8] via-white to-[#E8F2EF] border border-[#C7DBD5] text-[#102A2B] shadow-xl",
-  profBadgeBg: "bg-white/90 backdrop-blur-md",
-  profBadgeText: "text-[#102A2B]",
-  profBadgeBorder: "border-[#C7DBD5]",
-  fanbaseBg: "bg-white/90 backdrop-blur-md",
-  fanbaseText: "text-[#102A2B]",
-  socialItemBg: "bg-white/84 hover:bg-[#E8F2EF] backdrop-blur-md",
-  socialItemBorder: "border-[#C7DBD5] hover:border-[#236B64]/35",
-  socialNameColor: "text-[#102A2B]",
-  socialUnitColor: "text-[#58706D]",
-  nameColor: "text-[#102A2B]",
-  bioColor: "text-[#435C59]",
-  handleColor: "text-[#236B64]",
-};
-
-const STREET_FOOD_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-gradient-to-b from-[#FFF8EA] via-white to-[#FFECCB] border border-[#F5C777] text-[#35200C] shadow-xl",
-  profBadgeBg: "bg-white/90 backdrop-blur-md",
-  profBadgeText: "text-[#35200C]",
-  profBadgeBorder: "border-[#F5C777]",
-  fanbaseBg: "bg-white/90 backdrop-blur-md",
-  fanbaseText: "text-[#35200C]",
-  socialItemBg: "bg-white/84 hover:bg-[#FFF0CF] backdrop-blur-md",
-  socialItemBorder: "border-[#F5C777] hover:border-[#D85B19]/35",
-  socialNameColor: "text-[#35200C]",
-  socialUnitColor: "text-[#7A5429]",
-  nameColor: "text-[#35200C]",
-  bioColor: "text-[#65431F]",
-  handleColor: "text-[#D85B19]",
-};
-
-const CAFE_MOCHA_STYLE: ThemeStyleConfig = {
-  cardBg: "bg-[#201611]/86 border border-[#C89B6B]/24 text-[#FFF7ED] shadow-2xl backdrop-blur-xl",
-  profBadgeBg: "bg-white/10 backdrop-blur-md",
-  profBadgeText: "text-[#FFF7ED]",
-  profBadgeBorder: "border-[#C89B6B]/24",
-  fanbaseBg: "bg-white/10 backdrop-blur-md",
-  fanbaseText: "text-[#FFF7ED]",
-  socialItemBg: "bg-white/10 hover:bg-white/16 backdrop-blur-md",
-  socialItemBorder: "border-[#C89B6B]/20 hover:border-[#EBCB9A]/45",
-  socialNameColor: "text-[#FFF7ED]",
-  socialUnitColor: "text-[#D7BFA6]",
-  nameColor: "text-[#FFF7ED]",
-  bioColor: "text-[#D7BFA6]",
-  handleColor: "text-[#EBCB9A]",
+/** Every value is a theme token (see themes/config.ts); no colours live here. */
+const TOKEN_STYLE: ThemeStyleConfig = {
+  cardBg: "bg-(--card-bg) border border-(--card-border) text-(--text)",
+  profBadgeBg: "bg-(--surface)",
+  profBadgeText: "text-(--accent-text)",
+  profBadgeBorder: "border-(--surface-border)",
+  fanbaseBg: "bg-(--surface)",
+  fanbaseText: "text-(--text)",
+  socialItemBg: "bg-(--surface) hover:bg-(--accent-soft)",
+  socialItemBorder: "border-(--surface-border) hover:border-(--accent)",
+  socialNameColor: "text-(--text)",
+  socialUnitColor: "text-(--text-muted)",
+  nameColor: "text-(--text)",
+  bioColor: "text-(--text-muted)",
+  handleColor: "text-(--accent-text)",
 };
 
 export const THEME_STYLES: Record<string, ThemeStyleConfig> = {
-  "minimal-white": MINIMAL_WHITE_STYLE,
-  "sage-studio": SAGE_STUDIO_STYLE,
-  "blush-paper": BLUSH_PAPER_STYLE,
-  "studio-frost": STUDIO_FROST_STYLE,
-  "taj-mahal": TAJ_MAHAL_STYLE,
-  "marine-drive": MARINE_DRIVE_STYLE,
-  "burj-khalifa": BURJ_KHALIFA_STYLE,
-  "somnath-temple": SOMNATH_TEMPLE_STYLE,
-  "dwarka-temple": DWARKA_TEMPLE_STYLE,
-  "goa-beach": GOA_BEACH_STYLE,
-  "creator-studio": CREATOR_STUDIO_STYLE,
-  "neon-reels": NEON_REELS_STYLE,
-  "podcast-lounge": PODCAST_LOUNGE_STYLE,
-  "food-vlog": FOOD_VLOG_STYLE,
-  "gamer-stream": GAMER_STREAM_STYLE,
-  "love-letter": LOVE_LETTER_STYLE,
-  "christmas-snow": CHRISTMAS_SNOW_STYLE,
-  "mountain-mist": MOUNTAIN_MIST_STYLE,
-  "street-food": STREET_FOOD_STYLE,
-  "cafe-mocha": CAFE_MOCHA_STYLE,
-  "aurora-gradient": NEON_REELS_STYLE,
-  "sunrise-pop": STREET_FOOD_STYLE,
-  "candy-flow": LOVE_LETTER_STYLE,
-  "mint-wave": MOUNTAIN_MIST_STYLE,
-  "royal-glow": CAFE_MOCHA_STYLE,
-  "signature-purple": SIGNATURE_PURPLE_STYLE,
-  midnight: MIDNIGHT_DARK_STYLE,
-  "neon-grid": NEON_GRID_STYLE,
-  "liquid-aurora": LIQUID_AURORA_STYLE,
-  "floating-studio": FLOATING_STUDIO_STYLE,
-  "spotlight-stage": SPOTLIGHT_STAGE_STYLE,
-  "creative-paper": CREATIVE_PAPER_STYLE,
-  "cosmic-purple": COSMIC_PURPLE_STYLE,
-  "aurora-night": AURORA_NIGHT_STYLE,
-  "rose-glow": ROSE_GLOW_STYLE,
-  "ocean-motion": OCEAN_MOTION_STYLE,
-  "sunset-studio": SUNSET_STUDIO_STYLE,
-  "minimal-spark": MINIMAL_SPARK_STYLE,
+  "inflixo-maroon": TOKEN_STYLE,
 };
+
+/** Unknown or removed theme ids render with the default (token) theme. */
+export const DEFAULT_THEME_STYLE: ThemeStyleConfig = TOKEN_STYLE;
 
 function getHandle(url: string): string {
   if (!url) return "";
@@ -836,28 +288,30 @@ function getLinkPlatformIcon(url?: string, title?: string, c?: { primaryText?: s
 
   const u = (url || "").toLowerCase();
   const t = (title || "").toLowerCase();
-  if (u.includes("youtube.com") || u.includes("youtu.be")) return <YoutubeIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-red-500 shrink-0" />;
-  if (u.includes("whatsapp.com") || u.includes("wa.me") || t.includes("whatsapp")) return <WhatsappIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-emerald-500 shrink-0" />;
-  if (u.includes("spotify.com") || t.includes("spotify") || t.includes("podcast")) return <SpotifyIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-emerald-500 shrink-0" />;
-  if (t.includes("ticket") || t.includes("book") || t.includes("tour") || u.includes("bookmyshow") || u.includes("insider.in")) return <Ticket className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-amber-500 shrink-0" />;
-  if (/\b(merch|merchandise|store|shop|apparel|tees)\b/i.test(t)) return <ShoppingBag className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-indigo-500 shrink-0" />;
-  if (u.includes("instagram.com") || t.includes("instagram")) return <InstagramIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-pink-500 shrink-0" />;
-  if (t.includes("youtube") || t.includes("membership") || t.includes("subscribe")) return <YoutubeIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-red-500 shrink-0" />;
+  if (u.includes("youtube.com") || u.includes("youtu.be")) return <YoutubeIcon className={`h-4 w-4 sm:h-4.5 sm:w-4.5 ${BRAND_TEXT.youtube} shrink-0`} />;
+  if (u.includes("whatsapp.com") || u.includes("wa.me") || t.includes("whatsapp")) return <WhatsappIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-(--accent-text) shrink-0" />;
+  if (u.includes("spotify.com") || t.includes("spotify") || t.includes("podcast")) return <SpotifyIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-(--accent-text) shrink-0" />;
+  if (t.includes("ticket") || t.includes("book") || t.includes("tour") || u.includes("bookmyshow") || u.includes("insider.in")) return <Ticket className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-(--accent-text) shrink-0" />;
+  if (/\b(merch|merchandise|store|shop|apparel|tees)\b/i.test(t)) return <ShoppingBag className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-(--accent-text) shrink-0" />;
+  if (u.includes("instagram.com") || t.includes("instagram")) return <InstagramIcon className={`h-4 w-4 sm:h-4.5 sm:w-4.5 ${BRAND_TEXT.instagram} shrink-0`} />;
+  if (t.includes("youtube") || t.includes("membership") || t.includes("subscribe")) return <YoutubeIcon className={`h-4 w-4 sm:h-4.5 sm:w-4.5 ${BRAND_TEXT.youtube} shrink-0`} />;
   if (u.includes("twitter.com") || u.includes("x.com") || t.includes("twitter") || t.includes("tcf x")) return <XTwitterIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" style={{ color: c?.primaryText }} />;
-  if (u.includes("linkedin.com") || t.includes("linkedin")) return <LinkedinIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-sky-600 shrink-0" />;
+  if (u.includes("linkedin.com") || t.includes("linkedin")) return <LinkedinIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-(--accent-text) shrink-0" />;
   if (u.includes("threads.net") || t.includes("threads")) return <ThreadsIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 shrink-0" style={{ color: c?.primaryText }} />;
-  if (u.includes("facebook.com") || t.includes("facebook")) return <FacebookIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-blue-600 shrink-0" />;
-  if (u.includes("snapchat.com") || t.includes("snapchat")) return <SnapchatIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-amber-400 shrink-0" />;
-  if (u.includes("twitch.tv") || t.includes("twitch")) return <TwitchIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-purple-500 shrink-0" />;
-  if (u.includes("pinterest.com") || t.includes("pinterest")) return <PinterestIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-red-600 shrink-0" />;
-  if (u.includes("tiktok.com") || t.includes("tiktok")) return <TikTokIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-black dark:text-white shrink-0" />;
-  if (u.includes("t.me") || u.includes("telegram")) return <Send className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-sky-500 shrink-0" />;
-  if (u.includes("discord")) return <MessageCircle className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-indigo-400 shrink-0" />;
-  if (u.startsWith("mailto:")) return <Mail className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-amber-500 shrink-0" />;
-  return <Globe className="h-4 w-4 sm:h-4.5 sm:w-4.5 shrink-0" style={{ color: c?.accentText || "#3b82f6" }} />;
+  if (u.includes("facebook.com") || t.includes("facebook")) return <FacebookIcon className={`h-4 w-4 sm:h-4.5 sm:w-4.5 ${BRAND_TEXT.facebook} shrink-0`} />;
+  if (u.includes("snapchat.com") || t.includes("snapchat")) return <SnapchatIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-(--accent-text) shrink-0" />;
+  if (u.includes("twitch.tv") || t.includes("twitch")) return <TwitchIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-(--accent-text) shrink-0" />;
+  if (u.includes("pinterest.com") || t.includes("pinterest")) return <PinterestIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-(--accent-text) shrink-0" />;
+  if (u.includes("tiktok.com") || t.includes("tiktok")) return <TikTokIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-(--text) shrink-0" />;
+  if (u.includes("t.me") || u.includes("telegram")) return <Send className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-(--accent-text) shrink-0" />;
+  if (u.includes("discord")) return <MessageCircle className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-(--accent-text) shrink-0" />;
+  if (u.startsWith("mailto:")) return <Mail className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-(--accent-text) shrink-0" />;
+  return <Globe className="h-4 w-4 sm:h-4.5 sm:w-4.5 shrink-0" style={{ color: c?.accentText || "var(--accent)" }} />;
 }
 
 import { formatCategoryDots } from "@/utils/format";
+import { BRAND_BG, BRAND_TEXT } from "@/lib/brandColors";
+import { getThemeDefinition, themeTokenStyle } from "@/themes/config";
 export { formatCategoryDots };
 
 export interface LivePreviewCardProps {
@@ -902,6 +356,8 @@ export interface LivePreviewCardProps {
   isFinishStep?: boolean;
   layoutMode?: "tabs" | "stacked";
   initialTab?: CreatorNavTabId;
+  /** Marketing landing page demo: shows fan-count breakdown, "My Setup & Shop" in the Shop tab and verified-collab badges. */
+  landingDemo?: boolean;
 }
 
 export type CreatorNavTabId =
@@ -1121,7 +577,7 @@ export function LivePreviewCard({
   otherSocials: passedOtherSocials,
   sections: passedSections,
   totalAudience: passedTotalAudience,
-  themeKey = "minimal-white",
+  themeKey = DEFAULT_THEME_KEY,
   compact = false,
   variant,
   cardPadding,
@@ -1146,6 +602,7 @@ export function LivePreviewCard({
   isFinishStep: isFinishStepProp,
   layoutMode = "tabs",
   initialTab,
+  landingDemo = false,
 }: LivePreviewCardProps) {
   const router = useRouter();
   const profile: CreatorProfile = incomingProfile || EMPTY_PROFILE_FALLBACK;
@@ -1273,7 +730,6 @@ export function LivePreviewCard({
   const [otherSocialsList, setOtherSocialsList] = useState<OtherSocialAccount[]>(passedOtherSocials || []);
   const [sectionsList, setSectionsList] = useState<CreatorProfileSection[]>(passedSections || DEFAULT_PROFILE_SECTIONS);
   const [isCollabInquiryOpen, setIsCollabInquiryOpen] = useState(false);
-  const [selectedProductForZoom, setSelectedProductForZoom] = useState<CreatorProduct | null>(null);
   const [isDashboardPreview, setIsDashboardPreview] = useState<boolean>(false);
   const [isInformationalMode, setIsInformationalMode] = useState<boolean>(Boolean(isInformationalProp));
   const [isOnboardingMode, setIsOnboardingMode] = useState<boolean>(Boolean(isOnboardingProp));
@@ -1413,6 +869,7 @@ export function LivePreviewCard({
   const [isSetupExpanded, setIsSetupExpanded] = useState(false);
   const [isLinksExpanded, setIsLinksExpanded] = useState(false);
   const profileScrollRef = useRef<HTMLDivElement | null>(null);
+  const [navScrolled, setNavScrolled] = useState(false);
   const [showMoveToTop, setShowMoveToTop] = useState(false);
   const [showStickyProfileHeader, setShowStickyProfileHeader] = useState(false);
 
@@ -1521,7 +978,6 @@ export function LivePreviewCard({
   };
 
   const isDark = isDarkTheme(themeKey);
-  const isSignaturePurple = themeKey === "signature-purple";
   const themeMeta = ThemeService.getThemeMeta(themeKey);
   const style = THEME_STYLES[themeKey] || DEFAULT_THEME_STYLE;
   const usesDarkControls = isDark || themeMeta.mode === "dark";
@@ -1614,7 +1070,7 @@ export function LivePreviewCard({
       label: "Instagram",
       name: safeSocials.instagram?.name,
       icon: <InstagramIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-xs",
+      badgeBg: "bg-gradient-to-tr from-(--accent) via-(--accent) to-(--accent) shadow-xs",
       handle: instaHandle,
       count: safeSocials.instagram?.followers || 0,
       unit: "Followers",
@@ -1627,7 +1083,7 @@ export function LivePreviewCard({
       label: "YouTube",
       name: safeSocials.youtube?.channelTitle,
       icon: <YoutubeIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-red-600 shadow-xs",
+      badgeBg: "bg-(--accent) shadow-xs",
       handle: ytHandle,
       count: safeSocials.youtube?.subscribers || 0,
       unit: "Subscribers",
@@ -1640,7 +1096,7 @@ export function LivePreviewCard({
       label: "Facebook",
       name: safeSocials.facebook?.name,
       icon: <FacebookIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-blue-600 shadow-xs",
+      badgeBg: "bg-(--accent) shadow-xs",
       handle: fbHandle,
       count: safeSocials.facebook?.followers || 0,
       unit: "Followers",
@@ -1653,7 +1109,7 @@ export function LivePreviewCard({
       label: "X (Twitter)",
       name: safeSocials.twitter?.name,
       icon: <XTwitterIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-slate-900 shadow-xs",
+      badgeBg: "bg-(--text) shadow-xs",
       handle: twHandle,
       count: safeSocials.twitter?.followers || 0,
       unit: "Followers",
@@ -1666,7 +1122,7 @@ export function LivePreviewCard({
       label: "LinkedIn",
       name: safeSocials.linkedin?.name,
       icon: <LinkedinIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-sky-700 shadow-xs",
+      badgeBg: "bg-(--accent) shadow-xs",
       handle: liHandle,
       count: safeSocials.linkedin?.followers || 0,
       unit: "Connections",
@@ -1679,7 +1135,7 @@ export function LivePreviewCard({
       label: "Threads",
       name: safeSocials.threads?.name,
       icon: <ThreadsIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-slate-900 shadow-xs",
+      badgeBg: "bg-(--text) shadow-xs",
       handle: thHandle,
       count: safeSocials.threads?.followers || 0,
       unit: "Followers",
@@ -1692,7 +1148,7 @@ export function LivePreviewCard({
       label: "Snapchat",
       name: safeSocials.snapchat?.name,
       icon: <SnapchatIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-yellow-500 shadow-xs",
+      badgeBg: "bg-(--accent) shadow-xs",
       handle: scHandle,
       count: safeSocials.snapchat?.followers || 0,
       unit: "Subscribers",
@@ -1705,7 +1161,7 @@ export function LivePreviewCard({
       label: "Pinterest",
       name: safeSocials.pinterest?.name,
       icon: <PinterestIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-red-700 shadow-xs",
+      badgeBg: "bg-(--accent) shadow-xs",
       handle: pinHandle,
       count: safeSocials.pinterest?.followers || 0,
       unit: "Followers",
@@ -1718,7 +1174,7 @@ export function LivePreviewCard({
       label: "Twitch",
       name: safeSocials.twitch?.name,
       icon: <TwitchIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-purple-700 shadow-xs",
+      badgeBg: "bg-(--accent) shadow-xs",
       handle: twiHandle,
       count: safeSocials.twitch?.followers || 0,
       unit: "Followers",
@@ -1731,7 +1187,7 @@ export function LivePreviewCard({
       label: "Spotify",
       name: safeSocials.spotify?.name,
       icon: <SpotifyIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-emerald-600 shadow-xs",
+      badgeBg: "bg-(--accent) shadow-xs",
       handle: spHandle,
       count: safeSocials.spotify?.followers || 0,
       unit: "Listeners",
@@ -1813,6 +1269,7 @@ export function LivePreviewCard({
     const el = event.currentTarget;
     setShowMoveToTop(el.scrollTop > 200);
     setShowStickyProfileHeader(el.scrollTop > 80);
+    setNavScrolled(el.scrollTop > 0);
   };
 
   const handleMoveToTop = () => {
@@ -1848,9 +1305,9 @@ export function LivePreviewCard({
   const c = themeMeta.colors;
   const typ = themeMeta.typography;
   const eff = themeMeta.effects;
-  const isDefaultCleanLayout = themeKey === "minimal-white" || themeKey === "sage-studio" || themeKey === "blush-paper" || themeKey === "studio-frost" || themeKey === "taj-mahal" || themeKey === "somnath-temple" || themeKey === "dwarka-temple" || themeKey === "goa-beach" || themeKey === "creator-studio" || themeKey === "food-vlog" || themeKey === "love-letter" || themeKey === "christmas-snow" || themeKey === "mountain-mist" || themeKey === "street-food" || themeKey === "aurora-gradient" || themeKey === "sunrise-pop" || themeKey === "candy-flow" || themeKey === "mint-wave" || themeKey === "royal-glow";
+  const isDefaultCleanLayout = themeKey === DEFAULT_THEME_KEY;
 
-  const surfaceShadow = themeMeta.profileSurface?.shadow || eff.shadow || "0 24px 70px rgba(0,0,0,0.14)";
+  const surfaceShadow = themeMeta.profileSurface?.shadow || eff.shadow || "var(--card-shadow)";
   const surfaceBorder = themeMeta.profileSurface?.border || c.border;
   const surfaceBg = themeMeta.profileSurface?.background || c.profileBackground;
 
@@ -2083,7 +1540,9 @@ export function LivePreviewCard({
 
   const cardContent = (
     <div
+      data-card-glass={getThemeDefinition(themeMeta.key).tokens["--card-blur"] !== "0px"}
       style={{
+        ...themeTokenStyle(themeMeta.key),
         ...themeCssVars,
         backgroundColor: surfaceBg,
         borderColor: surfaceBorder,
@@ -2094,7 +1553,7 @@ export function LivePreviewCard({
         boxShadow: isPublicSurface ? "none" : undefined,
       }}
       className={`relative w-full max-w-full overflow-hidden flex-1 min-h-0 h-full max-h-full flex flex-col ${isPublicSurface
-        ? "px-4 pt-[20px] sm:px-5 sm:pt-[20px] rounded-[5px] border backdrop-blur-xl"
+ ? "px-4 pt-[20px] sm:px-5 sm:pt-[20px] rounded-[5px] border profile-card-glass"
         : `${cardPadding ? cardPadding : "px-4 sm:px-5 pt-[20px]"} rounded-[5px] border shadow-none`
         } transition-all`}
     >
@@ -2120,6 +1579,7 @@ export function LivePreviewCard({
         className="shrink-0 w-full z-20"
       >
         <ProfileHeader
+          navScrolled={navScrolled}
           displayName={profile.displayName || "Creator Name"}
           username={profile.username || "creator"}
           photoUrl={profile.photoDataUrl}
@@ -2143,8 +1603,11 @@ export function LivePreviewCard({
                 : s.platform === "facebook"
                 ? "FB"
                 : s.label.slice(0, 3).toUpperCase(),
+            label: s.label,
             count: s.count,
           }))}
+          fansLabel={landingDemo ? "total fans" : undefined}
+          showPlatformBreakdown={landingDemo}
           pageHeader={pageHeader}
           mediaKitHref={
             containedScroll && cleanHandle && cleanHandle !== "demo_creator" && !isDashboardPreview && !pageHeader
@@ -2158,12 +1621,12 @@ export function LivePreviewCard({
 
         {/* Navigation Tabs Bar - Fixed at bottom of top header (Never scrolls) */}
         {isTabsLayout && (
-          <div className="relative z-20 mt-2 sm:mt-2.5 -mx-4 sm:-mx-5 text-left select-none border-y border-black/[0.08] dark:border-white/10 bg-white dark:bg-[#18181B]">
+          <div className="relative z-20 mt-2 sm:mt-2.5 -mx-4 sm:-mx-5 text-left select-none border-y border-solid border-(--divider) bg-transparent">
             <div
               ref={navScrollRef}
               role="tablist"
               aria-label="Creator content sections"
-              className="flex items-stretch min-w-full overflow-x-auto scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain scroll-smooth bg-white dark:bg-[#18181B]"
+              className="flex items-stretch min-w-full overflow-x-auto scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain scroll-smooth bg-transparent"
             >
               {navTabs.map((tab) => {
                 const isActive = activeNavTab === tab.id;
@@ -2173,26 +1636,25 @@ export function LivePreviewCard({
                     key={tab.id}
                     type="button"
                     role="tab"
+                    data-profile-tab=""
                     id={`tab-${tab.id}`}
                     aria-controls={`section-${tab.id}`}
                     aria-selected={isActive}
                     onClick={() => handleTabChange(tab.id)}
-                    style={{
-                      color: isActive
-                        ? (usesDarkControls ? "#FFFFFF" : "#7A2253")
-                        : (usesDarkControls ? "rgba(255, 255, 255, 0.65)" : "#64748B"),
-                      borderBottomColor: isActive
-                        ? (usesDarkControls ? "#FFFFFF" : "#7A2253")
-                        : "transparent",
-                    }}
-                    className={`group/tab relative flex-1 min-w-0 shrink-0 flex items-center justify-center gap-1 sm:gap-1.5 px-1.5 min-[360px]:px-2 sm:px-3 py-2.5 sm:py-3 min-h-[42px] sm:min-h-[46px] rounded-none text-[11px] min-[360px]:text-[11.5px] sm:text-xs md:text-[12.5px] font-bold border-b-[3.5px] sm:border-b-4 border-r border-black/[0.05] dark:border-white/[0.06] last:border-r-0 transition-colors duration-150 cursor-pointer whitespace-nowrap select-none bg-white dark:bg-[#18181B] -mb-px ${isActive
+                    style={{ color: isActive ? "var(--tab-active)" : "var(--tab-inactive)" }}
+                    className={`group/tab relative flex-1 min-w-0 shrink-0 flex items-center justify-center gap-1 sm:gap-1.5 px-1.5 min-[360px]:px-2 sm:px-3 py-2.5 sm:py-3 min-h-[42px] sm:min-h-[46px] rounded-none text-[11px] min-[360px]:text-[11.5px] sm:text-xs md:text-[12.5px] font-bold border-r border-solid border-(--divider) last:border-r-0 transition-colors duration-150 cursor-pointer whitespace-nowrap select-none bg-transparent ${isActive
                         ? ""
-                        : "hover:bg-slate-50/80 dark:hover:bg-white/[0.04] hover:text-black dark:hover:text-white"
+                        : "hover:bg-(--surface)/80 hover:text-(--text)"
                       }`}
                   >
+                    {/* Active indicator: straight 2px bar across the whole tab, square ends. */}
+                    {isActive && (
+                      <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] rounded-none bg-(--tab-indicator)" />
+                    )}
                     <IconComponent
+                      style={{ color: isActive ? "var(--icon-active)" : "var(--icon)" }}
                       className={`h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0 transition-opacity ${isActive
-                          ? "opacity-100"
+ ? "opacity-100"
                           : "opacity-60 group-hover/tab:opacity-90"
                         }`}
                     />
@@ -2201,11 +1663,11 @@ export function LivePreviewCard({
                       <span
                         style={{
                           backgroundColor: isActive
-                            ? (usesDarkControls ? "rgba(255, 255, 255, 0.16)" : "rgba(122, 34, 83, 0.1)")
-                            : (usesDarkControls ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)"),
+                            ? "var(--accent-soft)"
+                            : "var(--surface)",
                           color: isActive
-                            ? (usesDarkControls ? "#FFFFFF" : "#7A2253")
-                            : (usesDarkControls ? "rgba(255, 255, 255, 0.7)" : "#64748B"),
+                            ? "var(--tab-active)"
+                            : "var(--tab-inactive)",
                         }}
                         className="text-[9px] sm:text-[9.5px] font-black px-1.5 py-0.5 rounded-[3px] tabular-nums shrink-0"
                       >
@@ -2221,7 +1683,7 @@ export function LivePreviewCard({
 
         {/* Fixed Listing Header on Dedicated Listing Pages (Series / Shop / Reviews) */}
         {isListingPage && (
-          <div className="relative z-20 -mx-4 sm:-mx-5 select-none bg-white dark:bg-[#18181B]">
+          <div className="relative z-20 -mx-4 sm:-mx-5 select-none bg-(--card-bg) ">
             {/* Divider between Total Fanbase and Title */}
             <div style={{ backgroundColor: c.divider }} className="h-px opacity-60" aria-hidden="true" />
 
@@ -2231,7 +1693,7 @@ export function LivePreviewCard({
                 <div className="flex items-center justify-between gap-2 px-0.5">
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <Clapperboard className="h-4.5 w-4.5 text-[#7A2253] dark:text-pink-400 shrink-0" />
+                      <Clapperboard className="h-4.5 w-4.5 text-(--accent-text) shrink-0" />
                       <h2
                         style={{
                           color: c.primaryText,
@@ -2255,13 +1717,13 @@ export function LivePreviewCard({
                     <select
                       value={seriesSortOrder}
                       onChange={(e) => setSeriesSortOrder(e.target.value)}
-                      className="appearance-none bg-white dark:bg-[#18181B] border border-black/15 dark:border-white/15 rounded-[5px] text-[11px] sm:text-xs font-medium text-slate-700 dark:text-slate-200 py-1 pl-2.5 pr-6 cursor-pointer focus:outline-hidden hover:border-black/30 dark:hover:border-white/30 transition-colors shadow-none"
+                      className="appearance-none bg-(--card-bg) border border-(--surface-border)/15 rounded-[5px] text-[11px] sm:text-xs font-medium text-(--text)  py-1 pl-2.5 pr-6 cursor-pointer focus:outline-hidden hover:border-(--surface-border)/30  transition-colors shadow-none"
                     >
                       <option value="latest">Latest First</option>
                       <option value="oldest">Oldest First</option>
                       <option value="episodes">Most Episodes</option>
                     </select>
-                    <ChevronDown className="h-3 w-3 text-slate-400 absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <ChevronDown className="h-3 w-3 text-(--icon) absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                   </div>
                 </div>
               </div>
@@ -2364,8 +1826,8 @@ export function LivePreviewCard({
             {isTabsLayout && profile.bio && profile.bio.trim() && (
               <div
                 style={{
-                  backgroundColor: usesDarkControls ? "#18181B" : "#FFFFFF",
-                  borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)",
+                  backgroundColor: "var(--surface)",
+                  borderColor: "var(--surface-border)",
                   boxShadow: "none",
                 }}
                 className="rounded-[5px] border p-3.5 sm:p-4 text-left transition-all space-y-2"
@@ -2385,10 +1847,8 @@ export function LivePreviewCard({
             {effectiveVisibilitySettings.showFanbase !== false && (totalAudience > 0 || fanbaseSocialCards.length > 0) && (
               <div
                 style={{
-                  background: usesDarkControls
-                    ? "linear-gradient(135deg, rgba(122, 34, 83, 0.14) 0%, rgba(30, 20, 28, 0.6) 100%)"
-                    : "linear-gradient(135deg, rgba(254, 242, 247, 0.75) 0%, rgba(255, 255, 255, 0.95) 100%)",
-                  borderColor: usesDarkControls ? "rgba(244, 63, 94, 0.22)" : "rgba(244, 63, 94, 0.16)",
+                  background: "linear-gradient(135deg, var(--accent-soft) 0%, var(--card-bg) 100%)",
+                  borderColor: "var(--accent-soft)",
                   boxShadow: "none",
                 }}
                 className="rounded-[5px] border p-4 sm:p-5 text-left transition-all"
@@ -2398,7 +1858,7 @@ export function LivePreviewCard({
                   <div className="flex-1 min-w-0">
                     <span
                       style={{ fontFamily: typ.headingFontFamily }}
-                      className="text-xs sm:text-[13px] font-bold text-[#7A2253] dark:text-pink-400 tracking-tight"
+                      className="text-xs sm:text-[13px] font-bold text-(--accent-text) tracking-tight"
                     >
                       Combined followers
                     </span>
@@ -2416,24 +1876,24 @@ export function LivePreviewCard({
                   </div>
 
                   {/* Vertical Divider for sm+ screens */}
-                  <div className="hidden sm:block h-14 w-px bg-slate-200 dark:bg-white/10" />
+                  <div className="hidden sm:block h-14 w-px bg-(--surface-border) " />
 
                   {/* Right Column: Community Graphic & 3 Bullet Points */}
                   <div className="flex items-center gap-3.5 shrink-0">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-[5px] bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-slate-200 shrink-0">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-[5px] bg-(--surface) text-(--text) shrink-0">
                       <Users className="h-6 w-6 stroke-[1.75]" />
                     </div>
-                    <div className="space-y-1 text-xs sm:text-[12px] font-medium text-slate-700 dark:text-slate-200">
+                    <div className="space-y-1 text-xs sm:text-[12px] font-medium text-(--text) ">
                       <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-[#7A2253] dark:text-white shrink-0 fill-slate-100 dark:fill-white/10" />
+                        <CheckCircle2 className="h-3.5 w-3.5 text-(--accent-text) shrink-0 fill-(--text-muted) " />
                         <span>{fanbaseSocialCards.length > 0 ? `${fanbaseSocialCards.length} Platforms Connected` : "3 Platforms Connected"}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-[#7A2253] dark:text-white shrink-0 fill-slate-100 dark:fill-white/10" />
+                        <CheckCircle2 className="h-3.5 w-3.5 text-(--accent-text) shrink-0 fill-(--text-muted) " />
                         <span>Real Audience</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-[#7A2253] dark:text-white shrink-0 fill-slate-100 dark:fill-white/10" />
+                        <CheckCircle2 className="h-3.5 w-3.5 text-(--accent-text) shrink-0 fill-(--text-muted) " />
                         <span>Growing Community</span>
                       </div>
                     </div>
@@ -2446,8 +1906,8 @@ export function LivePreviewCard({
             {effectiveVisibilitySettings.showFanbase !== false && fanbaseSocialCards.length > 0 && (
               <div
                 style={{
-                  backgroundColor: usesDarkControls ? "#18181B" : "#FFFFFF",
-                  borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)",
+                  backgroundColor: "var(--surface)",
+                  borderColor: "var(--surface-border)",
                   boxShadow: "none",
                 }}
                 className="rounded-[5px] border p-3.5 sm:p-4 text-left transition-all space-y-3"
@@ -2455,7 +1915,7 @@ export function LivePreviewCard({
                 {/* Header */}
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <LinkIcon className="h-4 w-4 text-[#7A2253] dark:text-pink-400" />
+                    <LinkIcon className="h-4 w-4 text-(--accent-text) " />
                     <h2
                       style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
                       className="text-[13.5px] sm:text-sm font-bold"
@@ -2481,12 +1941,12 @@ export function LivePreviewCard({
                     const isFacebook = item.platform === "facebook";
 
                     const badgeBg = isYoutube
-                      ? "bg-[#FF0000]"
+                      ? BRAND_BG.youtube
                       : isInstagram
-                        ? "bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888]"
+                        ? BRAND_BG.instagram
                         : isFacebook
-                          ? "bg-[#1877F2]"
-                          : "bg-black/[0.05] dark:bg-white/[0.08]";
+                          ? BRAND_BG.facebook
+                          : "bg-black/[0.05] ";
 
                     return (
                       <a
@@ -2501,10 +1961,10 @@ export function LivePreviewCard({
                           }
                         }}
                         style={{
-                          backgroundColor: usesDarkControls ? "#1F1F23" : "#FFFFFF",
-                          borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)",
+                          backgroundColor: "var(--surface)",
+                          borderColor: "var(--surface-border)",
                         }}
-                        className="group/ch flex items-center justify-between gap-2.5 p-2.5 sm:p-3 rounded-[5px] border transition-all hover:border-black/20 dark:hover:border-white/20 hover:shadow-xs cursor-pointer text-left"
+                        className="group/ch flex items-center justify-between gap-2.5 p-2.5 sm:p-3 rounded-[5px] border transition-all hover:border-(--surface-border)/20 hover:shadow-xs cursor-pointer text-left"
                         title={`Open ${item.label} (${displayHandle})`}
                       >
                         {/* Left: Platform Icon + Handle + Platform Label */}
@@ -2521,16 +1981,16 @@ export function LivePreviewCard({
                             {item.platform === "twitch" && <TwitchIcon className="h-4 w-4 text-white" />}
                             {item.platform === "pinterest" && <PinterestIcon className="h-4 w-4 text-white" />}
                             {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch", "pinterest"].includes(item.platform) && (
-                              <Globe className="h-4 w-4 text-slate-700 dark:text-white" />
+                              <Globe className="h-4 w-4 text-(--text) " />
                             )}
                           </span>
 
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-1">
-                              <span className="text-xs sm:text-[13px] font-bold truncate group-hover/ch:text-[#7A2253] dark:group-hover/ch:text-pink-400 transition-colors" style={{ color: c.primaryText }}>
+                              <span className="text-xs sm:text-[13px] font-bold truncate group-hover/ch:text-(--accent-text) transition-colors" style={{ color: c.primaryText }}>
                                 {displayHandle}
                               </span>
-                              <CheckCircle2 className="h-3.5 w-3.5 fill-blue-500 text-white shrink-0" />
+                              <CheckCircle2 className="h-3.5 w-3.5 fill-(--accent) text-(--on-accent) shrink-0" />
                             </div>
                             <p style={{ color: c.mutedText }} className="text-[10.5px] sm:text-[11px] font-medium capitalize truncate">
                               {item.label}
@@ -2549,7 +2009,7 @@ export function LivePreviewCard({
                             </div>
                           </div>
 
-                          <ExternalLink className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500 shrink-0 opacity-70 group-hover/ch:opacity-100 transition-opacity" />
+                          <ExternalLink className="h-3.5 w-3.5 text-(--text-muted) shrink-0 opacity-70 group-hover/ch:opacity-100 transition-opacity" />
                         </div>
                       </a>
                     );
@@ -2575,17 +2035,17 @@ export function LivePreviewCard({
                   <div id="links-section" className={`relative z-10 order-[5] w-full text-left animate-fade-in ${isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7"}`}>
                     <TabSectionHeader
                       title="Links"
-                      subtitle="Everything I recommend, in one place."
+                      subtitle="Everything your fans should find — tickets, accounts, websites."
                       primaryTextColor={c.primaryText}
                       secondaryTextColor={c.secondaryText}
                       headingFontFamily={typ.headingFontFamily}
                     />
-                    <div className="rounded-xl border border-dashed border-slate-300 dark:border-white/15 p-8 text-center my-2">
-                      <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-2 text-slate-400">
+                    <div className="rounded-xl border border-dashed border-(--surface-border) p-8 text-center my-2">
+                      <div className="w-10 h-10 rounded-full bg-(--surface) flex items-center justify-center mx-auto mb-2 text-(--text-muted)">
                         <LinkIcon className="h-5 w-5" />
                       </div>
-                      <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">No links yet</p>
-                      <p className="text-xs text-slate-400 mt-0.5">Add your recommended links in the dashboard</p>
+                      <p className="text-sm font-semibold text-(--text) ">No links yet</p>
+                      <p className="text-xs text-(--text-muted) mt-0.5">Add your recommended links in the dashboard</p>
                     </div>
                   </div>
                 );
@@ -2648,7 +2108,7 @@ export function LivePreviewCard({
               <div id="links-section" className={`relative z-10 order-[5] w-full text-left animate-fade-in ${isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7"}`}>
                 <TabSectionHeader
                   title="Links"
-                  subtitle="Everything I recommend, in one place."
+                  subtitle="Everything your fans should find — tickets, accounts, websites."
                   primaryTextColor={c.primaryText}
                   secondaryTextColor={c.secondaryText}
                   headingFontFamily={typ.headingFontFamily}
@@ -2717,7 +2177,7 @@ export function LivePreviewCard({
             {!seriesOnlyMode && (
               <TabSectionHeader
                 title="Series"
-                subtitle="Watch my videos episode by episode, in the right order."
+                subtitle={landingDemo ? "Start from Episode 1. Watch it like a show." : "Watch my videos episode by episode, in the right order."}
                 primaryTextColor={c.primaryText}
                 secondaryTextColor={c.secondaryText}
                 headingFontFamily={typ.headingFontFamily}
@@ -2739,9 +2199,9 @@ export function LivePreviewCard({
                               type="button"
                               onClick={() => setSeriesFilter(chip.key)}
                               className={`px-2.5 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer ${
-                                isActive
-                                  ? "bg-[#7A2253] text-white shadow-xs"
-                                  : "bg-black/5 dark:bg-white/10 text-slate-700 dark:text-slate-300 hover:bg-black/10 dark:hover:bg-white/20"
+ isActive
+ ? "bg-(--accent) text-(--on-accent) shadow-xs"
+                                  : "bg-black/5  text-(--text)  hover:bg-black/10 "
                               }`}
                             >
                               {chip.label}
@@ -2881,7 +2341,7 @@ export function LivePreviewCard({
                     }
                     router.push(allSeriesHref);
                   }}
-                  className="tap-scale w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/10 dark:text-white border border-slate-200/80 dark:border-white/10 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center"
+                  className="tap-scale w-full py-2.5 px-4 rounded-xl bg-(--surface) hover:bg-(--surface-border) text-(--text) border border-(--surface-border)/80 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center"
                 >
                   <span>See all series</span>
                   <ArrowRight className="h-3.5 w-3.5 shrink-0" />
@@ -2894,7 +2354,15 @@ export function LivePreviewCard({
         {/* Shop / Products Section */}
         {((productsOnlyMode || (!isListingPage && (!isTabsLayout || activeNavTab === "shop"))) && ((products && products.length > 0) || productsOnlyMode)) && (
           <section id="shop-section" aria-label="Shop" className={`relative z-10 order-[15] w-full text-left animate-fade-in ${productsOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7 space-y-2.5"}`}>
-            {!productsOnlyMode && (
+            {landingDemo && (
+              <h3
+                style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
+                className="px-0.5 pb-2 text-[13.5px] sm:text-sm font-bold"
+              >
+                Digital products
+              </h3>
+            )}
+            {!productsOnlyMode && !landingDemo && (
               <TabSectionHeader
                 title="Shop"
                 subtitle="Products I use and recommend."
@@ -2907,34 +2375,34 @@ export function LivePreviewCard({
                       <button
                         type="button"
                         onClick={() => setIsShopSortOpen(!isShopSortOpen)}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-[5px] border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/10 transition-all cursor-pointer shadow-none"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-[5px] border border-(--surface-border) bg-(--card-bg) text-xs font-semibold text-(--text)  hover:bg-(--surface)  transition-all cursor-pointer shadow-none"
                       >
                         <span>
                           {shopSortOrder === "price_asc" ? "Price: Low to High" : shopSortOrder === "price_desc" ? "Price: High to Low" : "Latest"}
                         </span>
-                        <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                        <ChevronDown className="h-3.5 w-3.5 text-(--icon)" />
                       </button>
 
                       {isShopSortOpen && (
-                        <div className="absolute right-0 top-full mt-1.5 z-30 min-w-[150px] rounded-[5px] border border-slate-100 dark:border-white/10 bg-white dark:bg-zinc-900 p-1 shadow-lg animate-in fade-in zoom-in-95">
+                        <div className="absolute right-0 top-full mt-1.5 z-30 min-w-[150px] rounded-[5px] border border-(--surface-border) bg-(--card-bg) p-1 shadow-lg animate-in fade-in zoom-in-95">
                           <button
                             type="button"
                             onClick={() => { setShopSortOrder("latest"); setIsShopSortOpen(false); }}
-                            className={`w-full text-left px-3 py-1.5 rounded-[5px] text-xs font-semibold ${shopSortOrder === "latest" ? "bg-slate-100 text-slate-900 font-bold dark:bg-white/10 dark:text-white" : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5"}`}
+                            className={`w-full text-left px-3 py-1.5 rounded-[5px] text-xs font-semibold ${shopSortOrder === "latest" ? "bg-(--surface) text-(--text) font-bold  " : "text-(--text)  hover:bg-(--surface) "}`}
                           >
                             Latest
                           </button>
                           <button
                             type="button"
                             onClick={() => { setShopSortOrder("price_asc"); setIsShopSortOpen(false); }}
-                            className={`w-full text-left px-3 py-1.5 rounded-[5px] text-xs font-semibold ${shopSortOrder === "price_asc" ? "bg-slate-100 text-slate-900 font-bold dark:bg-white/10 dark:text-white" : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5"}`}
+                            className={`w-full text-left px-3 py-1.5 rounded-[5px] text-xs font-semibold ${shopSortOrder === "price_asc" ? "bg-(--surface) text-(--text) font-bold  " : "text-(--text)  hover:bg-(--surface) "}`}
                           >
                             Price: Low to High
                           </button>
                           <button
                             type="button"
                             onClick={() => { setShopSortOrder("price_desc"); setIsShopSortOpen(false); }}
-                            className={`w-full text-left px-3 py-1.5 rounded-[5px] text-xs font-semibold ${shopSortOrder === "price_desc" ? "bg-slate-100 text-slate-900 font-bold dark:bg-white/10 dark:text-white" : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5"}`}
+                            className={`w-full text-left px-3 py-1.5 rounded-[5px] text-xs font-semibold ${shopSortOrder === "price_desc" ? "bg-(--surface) text-(--text) font-bold  " : "text-(--text)  hover:bg-(--surface) "}`}
                           >
                             Price: High to Low
                           </button>
@@ -2964,65 +2432,54 @@ export function LivePreviewCard({
             ) : (
               <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
                 {(isProductsExpanded || productsOnlyMode ? sortedProducts : sortedProducts.slice(0, 4)).map((product: CreatorProduct) => (
-                  <article
+                  <a
                     key={product.id}
-                    className="group flex flex-col justify-between rounded-[5px] border border-slate-200/80 dark:border-white/10 bg-white dark:bg-zinc-900 p-2.5 shadow-none hover:border-black/20 dark:hover:border-white/20 transition-all duration-200"
+                    href={product.productUrl}
+                    target="_blank"
+                    rel={product.isAffiliate !== false ? "sponsored noopener" : "noopener"}
+                    onClick={(e) => {
+                      if (isInformationalMode) {
+                        e.preventDefault();
+                        showToast(`Opens ${product.name} external product page ✨`);
+                      }
+                    }}
+                    className="tap-scale group flex flex-col rounded-[5px] border border-(--surface-border)/80 bg-(--card-bg) p-2.5 shadow-none hover:border-(--surface-border)/20  transition-all duration-200 cursor-pointer"
                   >
-                    <div className="w-full flex-1 flex flex-col">
-                      {/* Image Container with square aspect ratio */}
-                      <button
-                        type="button"
-                        onClick={() => setSelectedProductForZoom(product)}
-                        className="relative aspect-square w-full rounded-[5px] overflow-hidden bg-slate-100 dark:bg-white/5 cursor-zoom-in block shrink-0"
-                        title={`Click to zoom ${product.name}`}
-                        aria-label={`View full image for ${product.name}`}
-                      >
-                        <ProductImage
-                          src={product.imageUrl}
-                          name={product.name}
-                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                      </button>
+                    <ProductImage
+                      src={product.imageUrl}
+                      name={product.name}
+                      className="aspect-square w-full rounded-[5px] bg-(--surface) "
+                    />
 
-                      {/* Title: exactly 2 lines min-height so every card title aligns */}
-                      <h3
-                        className="mt-2 text-xs sm:text-[13px] font-bold text-slate-900 dark:text-white line-clamp-2 leading-snug tracking-tight min-h-[34px] break-words"
-                        title={product.name}
-                      >
-                        {product.name}
-                      </h3>
+                    {/* Title: exactly 2 lines min-height so every card title aligns */}
+                    <h3
+                      className="mt-2 text-xs sm:text-[13px] font-bold text-(--text) line-clamp-2 leading-snug tracking-tight min-h-[34px] break-words"
+                      title={product.name}
+                    >
+                      {product.name}
+                    </h3>
 
-                      {/* Price: cleanly aligned */}
-                      <div className="mt-1 flex items-center justify-between">
-                        {product.pricePaise !== null ? (
-                          <p className="text-xs sm:text-[13px] font-extrabold text-[#7A2253] dark:text-pink-400 tabular-nums">
-                            {formatProductPrice(product.pricePaise)}
-                          </p>
-                        ) : (
-                          <span />
-                        )}
-                      </div>
+                    {product.pricePaise !== null && (
+                      <p className="mt-1 text-xs sm:text-[13px] font-extrabold text-(--accent-text) tabular-nums">
+                        {formatProductPrice(product.pricePaise)}
+                      </p>
+                    )}
+
+                    {product.note && (
+                      <p className="mt-0.5 text-[11px] sm:text-xs text-(--text-muted) line-clamp-1" title={product.note}>
+                        {product.note}
+                      </p>
+                    )}
+
+                    <div className="mt-auto flex items-center justify-between gap-1 pt-2">
+                      {product.isAffiliate !== false ? (
+                        <span className="rounded-[4px] bg-(--surface) px-1.5 py-0.5 text-[10px] font-semibold text-(--text-muted) ">
+                          Affiliate
+                        </span>
+                      ) : <span />}
+                      <ArrowUpRight className="h-3.5 w-3.5 shrink-0 text-(--icon) group-hover:text-(--icon-active) transition-colors" aria-hidden="true" />
                     </div>
-
-                    {/* Solid Plum CTA Button */}
-                    <div className="pt-2 w-full mt-auto">
-                      <a
-                        href={product.productUrl}
-                        target="_blank"
-                        rel="noopener noreferrer sponsored"
-                        onClick={(e) => {
-                          if (isInformationalMode) {
-                            e.preventDefault();
-                            showToast(`Opens ${product.name} external product page ✨`);
-                          }
-                        }}
-                        className="tap-scale w-full py-1.5 sm:py-2 px-2.5 rounded-[5px] bg-[#7A2253] hover:bg-[#681c46] text-white text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1 shadow-none transition-all cursor-pointer"
-                      >
-                        <span>View Product</span>
-                        <ArrowUpRight className="h-3 w-3 shrink-0" />
-                      </a>
-                    </div>
-                  </article>
+                  </a>
                 ))}
               </div>
             )}
@@ -3032,10 +2489,10 @@ export function LivePreviewCard({
                 <button
                   type="button"
                   onClick={() => setIsProductsExpanded(!isProductsExpanded)}
-                  className="w-full py-2.5 px-4 rounded-[5px] bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/10 dark:text-white border border-slate-200/80 dark:border-white/10 text-xs sm:text-[13px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center shadow-none"
+                  className="w-full py-2.5 px-4 rounded-[5px] bg-(--surface) hover:bg-(--surface-border) text-(--text) border border-(--surface-border)/80 text-xs sm:text-[13px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center shadow-none"
                 >
                   <span>{isProductsExpanded ? "Show Less Products" : `View All Products (${sortedProducts.length})`}</span>
-                  {isProductsExpanded ? <ChevronUp className="h-3.5 w-3.5 shrink-0" /> : <ChevronDown className="h-3.5 w-3.5 shrink-0" />}
+                  {isProductsExpanded ? <ChevronUp className="h-3.5 w-3.5 shrink-0 text-(--icon)" /> : <ChevronDown className="h-3.5 w-3.5 shrink-0 text-(--icon)" />}
                 </button>
               </div>
             )}
@@ -3055,7 +2512,7 @@ export function LivePreviewCard({
             <div>
               <div className="flex items-center justify-between gap-3 px-0.5">
                 <div className="flex items-center gap-2">
-                  <Users className="h-4.5 w-4.5 text-[#7A2253] dark:text-pink-400 shrink-0" />
+                  <Users className="h-4.5 w-4.5 text-(--accent-text) shrink-0" />
                   <h2
                     style={{
                       color: c.primaryText,
@@ -3086,9 +2543,9 @@ export function LivePreviewCard({
             <div className="space-y-2">
               {activeTeamMembers.map((member) => {
                 const memberLinks = [
-                  { url: member.instagramUrl, icon: <InstagramIcon className="h-3.5 w-3.5 text-pink-500" />, label: "Instagram" },
-                  { url: member.youtubeUrl, icon: <YoutubeIcon className="h-3.5 w-3.5 text-red-500" />, label: "YouTube" },
-                  { url: member.facebookUrl, icon: <FacebookIcon className="h-3.5 w-3.5 text-blue-500" />, label: "Facebook" },
+                  { url: member.instagramUrl, icon: <InstagramIcon className={`h-3.5 w-3.5 ${BRAND_TEXT.instagram}`} />, label: "Instagram" },
+                  { url: member.youtubeUrl, icon: <YoutubeIcon className={`h-3.5 w-3.5 ${BRAND_TEXT.youtube}`} />, label: "YouTube" },
+                  { url: member.facebookUrl, icon: <FacebookIcon className={`h-3.5 w-3.5 ${BRAND_TEXT.facebook}`} />, label: "Facebook" },
                 ].filter((item) => item.url);
 
                 return (
@@ -3106,8 +2563,8 @@ export function LivePreviewCard({
                         src={member.avatarUrl || null}
                         name={member.name || "Team"}
                         className="h-10 w-10 shrink-0 rounded-[5px] object-cover"
-                        fallbackBgClass="bg-[#7A2253]"
-                        textClassName="text-xs font-black tracking-tight text-white"
+                        fallbackBgClass="bg-(--accent)"
+                        textClassName="text-xs font-black tracking-tight text-(--on-accent)"
                         style={{ backgroundColor: c.accent }}
                       />
 
@@ -3184,7 +2641,7 @@ export function LivePreviewCard({
                         setSelectedEnquiryPackage(selected);
                         setIsEnquirySheetOpen(true);
                       }}
-                      brandPrimary={c.accentText || "#7A2253"}
+                      brandPrimary="var(--accent)"
                       isDark={usesDarkControls}
                     />
                   ))}
@@ -3201,7 +2658,7 @@ export function LivePreviewCard({
                         fontFamily: typ.headingFontFamily,
                         fontWeight: 700,
                       }}
-                      className="text-base sm:text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
+                      className="text-base sm:text-lg font-bold tracking-tight text-(--text) "
                     >
                       What brands say
                     </h3>
@@ -3214,23 +2671,28 @@ export function LivePreviewCard({
                         <div
                           key={rev.id}
                           style={{
-                            backgroundColor: usesDarkControls ? "#1F1F23" : "#FFFFFF",
-                            borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.1)" : "#E2E8F0",
+                            backgroundColor: "var(--surface)",
+                            borderColor: "var(--surface-border)",
                             boxShadow: "none",
                           }}
-                          className="rounded-xl border p-3.5 sm:p-4 space-y-2 text-left transition-all hover:border-black/20 dark:hover:border-white/20"
+                          className="rounded-xl border p-3.5 sm:p-4 space-y-2 text-left transition-all hover:border-(--surface-border)/20 "
                         >
                           {/* Top Row: Brand Initial/Logo, Name, Campaign, optional verified & stars */}
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2.5 min-w-0">
-                              <div className="h-8 w-8 rounded-lg bg-[#7A2253]/10 text-[#7A2253] dark:text-rose-400 font-bold text-xs flex items-center justify-center shrink-0">
+                              <div className="h-8 w-8 rounded-lg bg-(--accent)/10 text-(--accent-text) font-bold text-xs flex items-center justify-center shrink-0">
                                 {rev.clientName ? rev.clientName.charAt(0).toUpperCase() : "B"}
                               </div>
                               <div className="min-w-0">
                                 <p style={{ color: c.primaryText }} className="text-xs sm:text-[13px] font-bold truncate flex items-center gap-1.5">
                                   <span>{rev.clientName}</span>
-                                  {rev.isVerified && (
-                                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                                  {landingDemo && rev.isVerified && (
+                                    <span className="inline-flex items-center gap-0.5 rounded-full bg-(--accent-soft) px-1.5 py-0.5 text-[9.5px] font-bold text-(--accent-text) whitespace-nowrap">
+                                      ✓ Verified collab
+                                    </span>
+                                  )}
+                                  {!landingDemo && rev.isVerified && (
+                                    <CheckCircle2 className="h-3.5 w-3.5 text-(--accent-text) shrink-0" />
                                   )}
                                 </p>
                                 {rev.projectTitle && (
@@ -3241,11 +2703,11 @@ export function LivePreviewCard({
                               </div>
                             </div>
                             {rev.isVerified && (
-                              <div className="flex items-center gap-0.5 text-amber-400 shrink-0">
+                              <div className="flex items-center gap-0.5 text-(--accent-text) shrink-0">
                                 {Array.from({ length: 5 }).map((_, i) => (
                                   <Star
                                     key={i}
-                                    className={`h-3 w-3 ${i < ratingNum ? "fill-amber-400 text-amber-400" : "fill-slate-200 text-slate-200"}`}
+                                    className={`h-3 w-3 ${i < ratingNum ? "fill-(--accent) text-(--accent-text)" : "fill-(--text-muted) text-(--text-muted)"}`}
                                   />
                                 ))}
                               </div>
@@ -3256,7 +2718,7 @@ export function LivePreviewCard({
                           {rev.comment && (
                             <p
                               style={{ color: c.secondaryText }}
-                              className="text-xs sm:text-[13px] leading-relaxed font-normal italic pt-0.5 text-zinc-600 dark:text-zinc-300"
+                              className="text-xs sm:text-[13px] leading-relaxed font-normal italic pt-0.5 text-(--text-muted) "
                             >
                               &ldquo;{rev.comment.trim()}&rdquo;
                             </p>
@@ -3272,7 +2734,7 @@ export function LivePreviewCard({
                       <button
                         type="button"
                         onClick={() => setShowAllReviews(!showAllReviews)}
-                        style={{ color: c.accentText || "#7A2253" }}
+                        style={{ color: c.accentText || "var(--accent)" }}
                         className="text-xs font-semibold hover:underline cursor-pointer"
                       >
                         {showAllReviews ? "Show less" : `Show all ${approvedReviews.length}`}
@@ -3283,7 +2745,7 @@ export function LivePreviewCard({
               )}
 
               {/* 7. CUSTOM REQUEST */}
-              <div className="pt-2 pb-1 text-center text-xs text-zinc-500 dark:text-zinc-400">
+              <div className="pt-2 pb-1 text-center text-xs text-(--text-muted) ">
                 <span>Don&apos;t see what you need? </span>
                 <button
                   type="button"
@@ -3291,7 +2753,7 @@ export function LivePreviewCard({
                     setSelectedEnquiryPackage(null);
                     setIsEnquirySheetOpen(true);
                   }}
-                  style={{ color: c.accentText || "#7A2253" }}
+                  style={{ color: c.accentText || "var(--accent)" }}
                   className="font-semibold underline underline-offset-2 hover:opacity-80 transition-opacity cursor-pointer ml-0.5"
                 >
                   Send a custom request &rarr;
@@ -3309,7 +2771,7 @@ export function LivePreviewCard({
                 packages={activePackages}
                 preselectedPackage={selectedEnquiryPackage}
                 settings={mediaKitSettings}
-                brandPrimary={c.accentText || "#7A2253"}
+                brandPrimary="var(--accent)"
               />
             </div>
           );
@@ -3325,20 +2787,20 @@ export function LivePreviewCard({
                   <div
                     key={rev.id}
                     style={{
-                      backgroundColor: usesDarkControls ? "#1F1F23" : "#FFFFFF",
-                      borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)",
+                      backgroundColor: "var(--surface)",
+                      borderColor: "var(--surface-border)",
                     }}
                     className="rounded-xl border p-3 sm:p-3.5 space-y-2 text-left"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2 min-w-0">
-                        <div className="h-7 w-7 rounded-lg bg-[#7A2253]/10 text-[#7A2253] dark:text-rose-400 font-bold text-xs flex items-center justify-center shrink-0">
+                        <div className="h-7 w-7 rounded-lg bg-(--accent)/10 text-(--accent-text) font-bold text-xs flex items-center justify-center shrink-0">
                           {rev.clientName ? rev.clientName.charAt(0).toUpperCase() : "B"}
                         </div>
                         <div className="min-w-0">
                           <p style={{ color: c.primaryText }} className="text-xs font-bold truncate flex items-center gap-1">
                             <span>{rev.clientName}</span>
-                            {rev.isVerified && <CheckCircle2 className="h-3 w-3 text-emerald-500 shrink-0" />}
+                            {rev.isVerified && <CheckCircle2 className="h-3 w-3 text-(--accent-text) shrink-0" />}
                           </p>
                           {rev.projectTitle && (
                             <p style={{ color: c.mutedText }} className="text-[10px] font-medium truncate">
@@ -3348,11 +2810,11 @@ export function LivePreviewCard({
                         </div>
                       </div>
                       {rev.isVerified && (
-                        <div className="flex items-center gap-0.5 text-amber-400 shrink-0">
+                        <div className="flex items-center gap-0.5 text-(--accent-text) shrink-0">
                           {Array.from({ length: 5 }).map((_, i) => (
                             <Star
                               key={i}
-                              className={`h-3 w-3 ${i < ratingNum ? "fill-amber-400 text-amber-400" : "fill-slate-200 text-slate-200"}`}
+                              className={`h-3 w-3 ${i < ratingNum ? "fill-(--accent) text-(--accent-text)" : "fill-(--text-muted) text-(--text-muted)"}`}
                             />
                           ))}
                         </div>
@@ -3370,8 +2832,8 @@ export function LivePreviewCard({
           </div>
         )}
 
-        {/* 7. Setup & Gear Section (Moved to About tab) */}
-        {!isListingPage && (!isTabsLayout || activeNavTab === "about" || activeNavTab === "setup") && (
+        {/* 7. Setup & Gear Section (About tab; on the landing demo it lives in the Shop tab as "My Setup & Shop") */}
+        {!isListingPage && (landingDemo ? (!isTabsLayout || activeNavTab === "shop") : (!isTabsLayout || activeNavTab === "about" || activeNavTab === "setup")) && (
           (() => {
             const activeSetupItems = (setupList || []).filter((it) => it.isActive !== false);
             if (activeSetupItems.length === 0) return null;
@@ -3382,7 +2844,7 @@ export function LivePreviewCard({
                 <div>
                   <div className="flex items-center justify-between px-0.5">
                     <div className="flex items-center gap-2">
-                      <Laptop className="h-4.5 w-4.5 text-[#7A2253] dark:text-pink-400 shrink-0" />
+                      <Laptop className="h-4.5 w-4.5 text-(--accent-text) shrink-0" />
                       <h2
                         style={{
                           color: c.primaryText,
@@ -3391,15 +2853,15 @@ export function LivePreviewCard({
                         }}
                         className="text-lg sm:text-xl font-extrabold tracking-tight"
                       >
-                        My Setup
+                        {landingDemo ? "My Setup & Shop" : "My Setup"}
                       </h2>
                     </div>
                   </div>
                   <p
                     style={{ color: c.secondaryText }}
-                    className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 font-normal px-0.5 mt-1"
+                    className="text-xs sm:text-[13px] text-(--text-muted) font-normal px-0.5 mt-1"
                   >
-                    Tools and equipment I use to create content.
+                    {landingDemo ? "The gear I use, and things I've made for you." : "Tools and equipment I use to create content."}
                   </p>
                 </div>
 
@@ -3408,18 +2870,18 @@ export function LivePreviewCard({
                     <div
                       key={item.id}
                       style={{
-                        backgroundColor: usesDarkControls ? "#1F1F23" : "#FFFFFF",
-                        borderColor: usesDarkControls ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)",
+                        backgroundColor: "var(--surface)",
+                        borderColor: "var(--surface-border)",
                         boxShadow: "none",
                       }}
-                      className="rounded-[5px] border p-2.5 sm:p-3 flex items-start justify-between gap-3 transition-all hover:border-black/20 dark:hover:border-white/20 shadow-none text-left"
+                      className="rounded-[5px] border p-2.5 sm:p-3 flex items-start justify-between gap-3 transition-all hover:border-(--surface-border)/20 shadow-none text-left"
                     >
                       <div className="min-w-0 flex-1">
                         {/* Category & Brand */}
                         <div className="flex items-center gap-1.5 mb-1 flex-wrap">
                           <span
                             style={{
-                              backgroundColor: usesDarkControls ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.04)",
+                              backgroundColor: "var(--surface)",
                               color: c.secondaryText,
                             }}
                             className="rounded-[5px] px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wider"
@@ -3439,7 +2901,7 @@ export function LivePreviewCard({
                         {/* Product Name */}
                         <h4
                           style={{ color: c.primaryText }}
-                          className="text-xs sm:text-[13.5px] font-bold text-slate-900 dark:text-white line-clamp-2 break-words leading-snug"
+                          className="text-xs sm:text-[13.5px] font-bold text-(--text) line-clamp-2 break-words leading-snug"
                           title={item.name}
                         >
                           {item.name}
@@ -3449,7 +2911,7 @@ export function LivePreviewCard({
                         {(item.usedFor || item.modelOrPlan) && (
                           <p
                             style={{ color: c.secondaryText }}
-                            className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 break-words leading-relaxed"
+                            className="text-[11px] sm:text-xs text-(--text-muted) mt-1 line-clamp-2 break-words leading-relaxed"
                           >
                             {item.usedFor || item.modelOrPlan}
                           </p>
@@ -3464,7 +2926,7 @@ export function LivePreviewCard({
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-[5px] bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/10 dark:text-white border border-slate-200/80 dark:border-white/10 text-xs font-bold transition-all cursor-pointer shadow-none whitespace-nowrap"
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-[5px] bg-(--surface) hover:bg-(--surface-border) text-(--text) border border-(--surface-border)/80 text-xs font-bold transition-all cursor-pointer shadow-none whitespace-nowrap"
                           >
                             <span>View Product</span>
                             <ArrowUpRight className="h-3 w-3 shrink-0" />
@@ -3480,10 +2942,10 @@ export function LivePreviewCard({
                     <button
                       type="button"
                       onClick={() => setIsSetupExpanded(!isSetupExpanded)}
-                      className="w-full py-2.5 px-4 rounded-[5px] bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/10 dark:text-white border border-slate-200/80 dark:border-white/10 text-xs sm:text-[13px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center shadow-none"
+                      className="w-full py-2.5 px-4 rounded-[5px] bg-(--surface) hover:bg-(--surface-border) text-(--text) border border-(--surface-border)/80 text-xs sm:text-[13px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center shadow-none"
                     >
                       <span>{isSetupExpanded ? "Show Less Items" : `View All Items (${activeSetupItems.length})`}</span>
-                      {isSetupExpanded ? <ChevronUp className="h-3.5 w-3.5 shrink-0" /> : <ChevronDown className="h-3.5 w-3.5 shrink-0" />}
+                      {isSetupExpanded ? <ChevronUp className="h-3.5 w-3.5 shrink-0 text-(--icon)" /> : <ChevronDown className="h-3.5 w-3.5 shrink-0 text-(--icon)" />}
                     </button>
                   </div>
                 )}
@@ -3495,22 +2957,13 @@ export function LivePreviewCard({
         <div className="order-[70] h-3 shrink-0" aria-hidden="true" />
       </div>
 
-      {/* Static Footer inside Center Card (20px padding) */}
+      {/* Static Footer inside Center Card: separator runs edge to edge (bleeds over the card's 16/20px side padding). */}
       <div
-        className={`relative z-30 shrink-0 select-none py-[20px] ${
-          isPublicSurface ? "-mx-3 sm:-mx-4" : "-mx-3.5 sm:-mx-4.5"
-        } border-t border-black/[0.06] dark:border-white/[0.08]`}
-        style={{
-          backgroundColor: surfaceBg,
-        }}
+        className="relative z-30 shrink-0 select-none py-[14px] -mx-4 sm:-mx-5 border-t border-(--divider) bg-transparent"
+        style={{ boxShadow: "0 -2px 6px rgba(0,0,0,.04)" }}
       >
         <div className="flex items-center justify-center">
-          <MadeWithInflixo
-            color={c.secondaryText}
-            backgroundColor={c.accentSoft}
-            borderColor={c.accentBorder}
-            disabled={isInformationalMode}
-          />
+          <MadeWithInflixo variant="card-footer" disabled={isInformationalMode} />
         </div>
       </div>
 
@@ -3520,7 +2973,7 @@ export function LivePreviewCard({
           onClick={handleMoveToTop}
           style={{
             backgroundColor: c.accent,
-            color: "#FFFFFF",
+            color: "var(--on-accent)",
             boxShadow: eff.shadow,
           }}
           className="tap-scale fixed bottom-6 right-5 sm:bottom-20 sm:right-6 z-40 inline-flex h-11 w-11 sm:h-11 sm:w-11 items-center justify-center rounded-[5px] shadow-lg transition-all hover:scale-110 cursor-pointer"
@@ -3580,15 +3033,6 @@ export function LivePreviewCard({
         onSave={handleSaveVisibilitySettings}
       />
 
-      {/* Product Image Fullscreen Zoom Lightbox Modal */}
-      <ProductImageLightbox
-        product={selectedProductForZoom}
-        isOpen={Boolean(selectedProductForZoom)}
-        onClose={() => setSelectedProductForZoom(null)}
-        isInformationalMode={isInformationalMode}
-        onExternalClick={(name) => showToast(`Opens ${name} external product page ✨`)}
-      />
-
       {/* Share Profile & QR Code Modal */}
       <ShareProfileModal
         isOpen={isShareModalOpen}
@@ -3617,42 +3061,42 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
     return {
       name: "YouTube",
       icon: <YoutubeIcon className="h-3 w-3 text-white" />,
-      badgeClass: "bg-[#FF0000] text-white shadow-2xs",
-      chipClass: "bg-red-50 text-red-700 border-red-200/80",
-      textColor: "text-[#FF0000]",
+      badgeClass: `${BRAND_BG.youtube} text-white shadow-2xs`,
+      chipClass: "bg-(--accent-soft) text-(--accent-text) border-(--surface-border)/80",
+      textColor: BRAND_TEXT.youtube,
     };
   }
   if (p.includes("instagram") || u.includes("instagram.com")) {
     return {
       name: "Instagram",
       icon: <InstagramIcon className="h-3 w-3 text-white" />,
-      badgeClass: "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white shadow-2xs",
-      chipClass: "bg-rose-50 text-rose-700 border-rose-200/80",
-      textColor: "text-rose-600",
+      badgeClass: "bg-(--accent) text-(--on-accent) shadow-2xs",
+      chipClass: "bg-(--accent-soft) text-(--accent-text) border-(--surface-border)/80",
+      textColor: "text-(--accent-text)",
     };
   }
   if (p.includes("facebook") || u.includes("facebook.com")) {
     return {
       name: "Facebook",
       icon: <FacebookIcon className="h-3 w-3 text-white" />,
-      badgeClass: "bg-[#1877F2] text-white shadow-2xs",
-      chipClass: "bg-blue-50 text-blue-700 border-blue-200/80",
-      textColor: "text-[#1877F2]",
+      badgeClass: `${BRAND_BG.facebook} text-white shadow-2xs`,
+      chipClass: "bg-(--accent-soft) text-(--accent-text) border-(--surface-border)/80",
+      textColor: BRAND_TEXT.facebook,
     };
   }
   return {
     name: platformStr || "Web",
     icon: <Film className="h-3 w-3 text-white" />,
-    badgeClass: "bg-[#7A2253] text-white shadow-2xs",
-    chipClass: "bg-indigo-50 text-indigo-700 border-indigo-200/80",
-    textColor: "text-[#7A2253]",
+    badgeClass: "bg-(--accent) text-(--on-accent) shadow-2xs",
+    chipClass: "bg-(--accent-soft) text-(--accent-text) border-(--surface-border)/80",
+    textColor: "text-(--accent-text)",
   };
 }
 
 export function PreviewSeriesItem({
   series,
   style,
-  themeKey = "minimal-white",
+  themeKey = DEFAULT_THEME_KEY,
   username,
   expanded = false,
   onToggle,
@@ -3718,24 +3162,24 @@ export function PreviewSeriesItem({
       <div className="flex items-center gap-3 min-w-0">
         <span
           className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] ${detectedPlatform === "YouTube"
-            ? "bg-red-600 shadow-xs text-white"
+            ? "bg-(--accent) shadow-xs text-(--on-accent)"
             : detectedPlatform === "Instagram"
-              ? "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-xs text-white"
+              ? "bg-gradient-to-tr from-(--accent) via-(--accent) to-(--accent) shadow-xs text-(--on-accent)"
               : detectedPlatform === "Facebook"
-                ? "bg-blue-600 shadow-xs text-white"
+                ? "bg-(--accent) shadow-xs text-(--on-accent)"
                 : detectedPlatform === "X"
-                  ? "bg-slate-900 shadow-xs text-white"
+                  ? "bg-(--text) shadow-xs text-(--on-accent)"
                   : detectedPlatform === "LinkedIn"
-                    ? "bg-sky-700 shadow-xs text-white"
+                    ? "bg-(--accent) shadow-xs text-(--on-accent)"
                     : detectedPlatform === "Threads"
-                      ? "bg-slate-900 shadow-xs text-white"
+                      ? "bg-(--text) shadow-xs text-(--on-accent)"
                       : detectedPlatform === "Snapchat"
-                        ? "bg-amber-400 shadow-xs text-slate-950"
+                        ? "bg-(--accent) shadow-xs text-(--text)"
                         : detectedPlatform === "Spotify"
-                          ? "bg-emerald-600 shadow-xs text-white"
+                          ? "bg-(--accent) shadow-xs text-(--on-accent)"
                           : detectedPlatform === "Twitch"
-                            ? "bg-purple-600 shadow-xs text-white"
-                            : "bg-[#7A225314] text-[#7A2253]"
+                            ? "bg-(--accent) shadow-xs text-(--on-accent)"
+                            : "bg-(--accent-soft) text-(--accent-text)"
             }`}
         >
           {detectedPlatform === "YouTube" ? (
@@ -3751,7 +3195,7 @@ export function PreviewSeriesItem({
           ) : detectedPlatform === "Threads" ? (
             <ThreadsIcon className="h-3.5 w-3.5 text-white" />
           ) : detectedPlatform === "Snapchat" ? (
-            <SnapchatIcon className="h-4 w-4 text-slate-950" />
+            <SnapchatIcon className="h-4 w-4 text-(--text)" />
           ) : detectedPlatform === "Spotify" ? (
             <SpotifyIcon className="h-4 w-4 text-white" />
           ) : detectedPlatform === "Twitch" ? (

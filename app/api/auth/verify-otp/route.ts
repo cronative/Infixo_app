@@ -6,6 +6,8 @@ import { logDeviceLogin } from "@/lib/loginLogger";
 import { debugLog, debugError } from "@/lib/debugLogger";
 import { createSessionToken, setSessionCookie } from "@/lib/session";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { resolveThemeKey } from "@/lib/themeKeys";
+import { getPlan } from "@/config/plans";
 
 export async function POST(req: Request) {
   try {
@@ -51,7 +53,7 @@ export async function POST(req: Request) {
       );
 
       if (expiredRows && expiredRows.length > 0) {
-        return apiError("OTP code has expired (valid for 5 mins). Please click Resend Code.", 400);
+        return apiError("OTP code has expired (valid for 10 mins). Please click Resend Code.", 400);
       }
 
       const remaining = failCheck.remaining;
@@ -162,6 +164,7 @@ export async function POST(req: Request) {
     const sessionToken = createSessionToken(email, creatorIdForSession);
     const data = {
       isExistingProfile,
+      hasProfile: isExistingProfile,
       onboardingStep: currentStep,
       creator: creator
         ? {
@@ -172,12 +175,12 @@ export async function POST(req: Request) {
             photoUrl: creator.photo_url,
             category: creator.category,
             bio: creator.bio,
-            themeKey: (!creator.theme_key || creator.theme_key === "modern-purple") ? "minimal-white" : creator.theme_key,
+            themeKey: resolveThemeKey(creator.theme_key),
             onboardingStep: currentStep,
             isVerified: Boolean(creator.is_verified),
             subscription: {
               planKey: creator.plan_key || "early_access",
-              planName: creator.plan_name || "Free Trial",
+              planName: getPlan(creator.plan_key).name,
               billingCycle: creator.billing_cycle || "yearly",
               status: creator.sub_status || "active",
             },

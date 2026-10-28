@@ -19,7 +19,7 @@ export function SeriesPoster({
   title = "Series",
   className = "h-32 w-full rounded-2xl",
   textClassName = "text-xs font-bold text-white",
-  fallbackBgClass = "bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 border border-purple-800/40",
+  fallbackBgClass = "bg-gradient-to-br from-(--cover-from) to-(--cover-to) border border-(--accent)/40",
   iconSize = 20,
   style,
 }: SeriesPosterProps) {
@@ -33,7 +33,7 @@ export function SeriesPoster({
         style={style}
       >
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
-        <Film className="h-5 w-5 text-purple-400 mb-1 z-10 opacity-90" style={{ width: iconSize, height: iconSize }} />
+        <Film className="h-5 w-5 text-(--accent-text) mb-1 z-10 opacity-90" style={{ width: iconSize, height: iconSize }} />
         <span className={`z-10 tracking-wider truncate max-w-full ${textClassName}`}>
           {initials}
         </span>

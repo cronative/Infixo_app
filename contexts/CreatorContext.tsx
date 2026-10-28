@@ -1,6 +1,8 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
+import { createContext, useContext, useEffect, useRef, useState, ReactNode, useCallback } from "react";
+import { usePathname } from "next/navigation";
+import { fetchMe } from "@/lib/meClient";
 import {
   CreatorProfile,
   SocialAccounts,
@@ -16,6 +18,7 @@ import { SeriesService } from "@/services/SeriesService";
 import { SubscriptionService } from "@/services/SubscriptionService";
 
 import { getFreeTrialStatus } from "@/lib/trialStatus";
+import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
 
 interface CreatorContextValue {
   profile: CreatorProfile;
@@ -39,6 +42,10 @@ interface CreatorContextValue {
 
 const CreatorContext = createContext<CreatorContextValue | null>(null);
 
+// Pages that don't use creator socials/series. Those load on the first visit to any other page.
+const ROUTES_WITHOUT_EXTRAS = ["/dashboard/products", "/dashboard/links"];
+const routeNeedsExtras = (path: string) => !ROUTES_WITHOUT_EXTRAS.some((route) => path === route || path.startsWith(`${route}/`));
+
 const EMPTY_PROFILE: CreatorProfile = {
   photoDataUrl: null,
   displayName: "",
@@ -51,11 +58,33 @@ const EMPTY_PROFILE: CreatorProfile = {
 export function CreatorProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<CreatorProfile>(EMPTY_PROFILE);
   const [socials, setSocials] = useState<SocialAccounts>(EMPTY_SOCIAL_ACCOUNTS);
-  const [theme, setThemeState] = useState<ThemeKey>("minimal-white");
+  const [theme, setThemeState] = useState<ThemeKey>(DEFAULT_THEME_KEY);
   const [series, setSeries] = useState<Series[]>([]);
   const [subscription, setSubscription] = useState<Subscription>(SubscriptionService.get());
   const [hydrated, setHydrated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const pathname = usePathname() || "";
+  const pathnameRef = useRef(pathname);
+  useEffect(() => {
+    pathnameRef.current = pathname;
+  }, [pathname]);
+  const identity = useRef<{ email?: string; username?: string } | null>(null);
+  const extrasLoaded = useRef(false);
+
+  const loadExtras = useCallback(async () => {
+    if (!identity.current) return;
+    extrasLoaded.current = true;
+    const [dbSocials, dbSeries] = await Promise.all([
+      SocialService.fetchFromDb(identity.current).catch(() => null),
+      SeriesService.fetchFromDb().catch(() => null),
+    ]);
+    if (dbSocials) {
+      setSocials(dbSocials);
+    }
+    if (dbSeries && Array.isArray(dbSeries)) {
+      setSeries(dbSeries);
+    }
+  }, []);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -68,9 +97,9 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
 
     // 2. Authoritative Server DB Sync via /api/me (cookie-backed session)
     try {
-      const meRes = await fetch("/api/me", { cache: "no-store" }).catch(() => null);
+      const meRes = await fetchMe().catch(() => null);
       if (meRes && meRes.ok) {
-        const meJson = await meRes.json().catch(() => null);
+        const meJson = meRes.body;
         if (meJson?.status === 1 && meJson?.data?.authenticated) {
           const { profile: dbProfile, subscription: dbSub, email: sessionEmail } = meJson.data;
 
@@ -78,7 +107,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
             setProfile(dbProfile);
             if (dbProfile.themeKey) {
               setThemeState(dbProfile.themeKey);
-              ThemeService.setSelectedTheme(dbProfile.themeKey);
+              ThemeService.cacheSelectedTheme(dbProfile.themeKey);
             }
           }
 
@@ -86,19 +115,10 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
             setSubscription(dbSub);
           }
 
-          const activeEmail = sessionEmail || dbProfile?.email;
-          const activeUsername = dbProfile?.username;
-
-          const [dbSocials, dbSeries] = await Promise.all([
-            SocialService.fetchFromDb({ email: activeEmail, username: activeUsername }).catch(() => null),
-            SeriesService.fetchFromDb().catch(() => null),
-          ]);
-
-          if (dbSocials) {
-            setSocials(dbSocials);
-          }
-          if (dbSeries && Array.isArray(dbSeries)) {
-            setSeries(dbSeries);
+          identity.current = { email: sessionEmail || dbProfile?.email, username: dbProfile?.username };
+          extrasLoaded.current = false;
+          if (routeNeedsExtras(pathnameRef.current)) {
+            await loadExtras();
           }
 
           setLoading(false);
@@ -135,12 +155,19 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [loadExtras]);
 
   useEffect(() => {
     refresh();
     setHydrated(true);
   }, [refresh]);
+
+  // Arriving from a lightweight page: load socials/series once.
+  useEffect(() => {
+    if (!loading && !extrasLoaded.current && routeNeedsExtras(pathname)) {
+      void loadExtras();
+    }
+  }, [loading, pathname, loadExtras]);
 
   const updateProfile = useCallback((patch: Partial<CreatorProfile>) => {
     const updated = ProfileService.saveLocal(patch);

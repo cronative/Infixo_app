@@ -43,7 +43,7 @@ export const EXPERT_DEMO_SOCIALS: SocialAccounts = {
   updatedAt: new Date().toISOString(),
 };
 
-export const EXPERT_DEMO_THEME: ThemeKey = "minimal-white";
+export const EXPERT_DEMO_THEME: ThemeKey = "inflixo-maroon";
 
 export const EXPERT_DEMO_SERIES: Series[] = [
   {

@@ -4,6 +4,7 @@ import {
   THEME_PAGE_BACKGROUNDS,
   getThemeCssVariables,
 } from "@/services/ThemeService";
+import { DEFAULT_THEME_KEY, resolveThemeKey } from "@/lib/themeKeys";
 
 /**
  * Shared design tokens for every public creator page
@@ -14,33 +15,9 @@ import {
  * typography, radius and control sizes that must match across pages.
  */
 
-const DARK_THEME_KEYS = new Set([
-  "midnight",
-  "cosmic-purple",
-  "aurora-night",
-  "rose-glow",
-  "ocean-motion",
-  "sunset-studio",
-  "marine-drive",
-  "burj-khalifa",
-  "neon-reels",
-  "podcast-lounge",
-  "gamer-stream",
-  "cafe-mocha",
-  "aurora-gradient",
-  "royal-glow",
-  "neon-grid",
-  "liquid-aurora",
-  "spotlight-stage",
-]);
-
-export function isDarkTheme(themeKey: string = "minimal-white"): boolean {
-  if (DARK_THEME_KEYS.has(themeKey)) return true;
-  try {
-    const meta = ThemeService.getThemeMeta(themeKey as any);
-    if (meta?.mode === "dark") return true;
-  } catch {}
-  return false;
+/** Dark styling comes only from the (resolved) theme's own mode, so a removed theme id can never apply. */
+export function isDarkTheme(themeKey: string = DEFAULT_THEME_KEY): boolean {
+  return ThemeService.getThemeMeta(resolveThemeKey(themeKey)).mode === "dark";
 }
 
 /* ------------------------------------------------------------------ */
@@ -104,14 +81,16 @@ export const PUBLIC_CTA_BUTTON =
 /* ------------------------------------------------------------------ */
 /* Theme-derived styles                                                */
 /* ------------------------------------------------------------------ */
-export function getPublicTheme(themeKey: string = "minimal-white") {
+export function getPublicTheme(requestedKey: string = DEFAULT_THEME_KEY) {
+  // Unknown/removed ids fall back to the default theme before any style is derived.
+  const themeKey = resolveThemeKey(requestedKey);
   const meta = ThemeService.getThemeMeta(themeKey);
   const c = meta.colors;
   const eff = meta.effects;
   const typ = meta.typography;
   const isDark = isDarkTheme(themeKey) || meta.mode === "dark";
   const pageBgClass =
-    meta.outerBgClass || THEME_PAGE_BACKGROUNDS[themeKey] || THEME_PAGE_BACKGROUNDS["minimal-white"];
+    meta.outerBgClass || THEME_PAGE_BACKGROUNDS[themeKey] || THEME_PAGE_BACKGROUNDS[DEFAULT_THEME_KEY];
   const hasPhotoBackdrop = Boolean(meta.outerBgClass?.includes("theme-bg-"));
 
   const cardShadow = "none";

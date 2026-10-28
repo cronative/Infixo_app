@@ -28,7 +28,7 @@ export function MediaKitSnapshotCard({
   settings,
   socials,
   totalAudience = 0,
-  brandPrimary = "#7A2253",
+  brandPrimary = "var(--accent)",
   isDark = false,
 }: MediaKitSnapshotCardProps) {
   // Stat 1: Combined followers
@@ -130,13 +130,13 @@ export function MediaKitSnapshotCard({
   const updatedDateLabel = formatUpdatedDate(settings?.updatedAt);
 
   return (
-    <div className="rounded-xl border border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-[#1E1E24] p-4 sm:p-5 shadow-xs text-left">
+    <div className="rounded-xl border border-(--surface-border)/90 bg-(--card-bg) p-4 sm:p-5 shadow-xs text-left">
       {/* Header: "Audience" + "Updated {Mon YYYY}" */}
       <div className="flex items-center justify-between pb-3">
-        <h3 className="font-bold text-base sm:text-[17px] text-zinc-900 dark:text-zinc-100 tracking-tight">
+        <h3 className="font-bold text-base sm:text-[17px] text-(--text) tracking-tight">
           Audience
         </h3>
-        <span className="text-xs text-zinc-400 dark:text-zinc-500 font-medium">
+        <span className="text-xs text-(--text-muted) font-medium">
           Updated {updatedDateLabel}
         </span>
       </div>
@@ -147,11 +147,11 @@ export function MediaKitSnapshotCard({
           {statTiles.map((tile, i) => (
             <div
               key={i}
-              className="rounded-lg bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-100 dark:border-zinc-700/60 p-2.5 sm:p-3 flex flex-col justify-center"
+              className="rounded-lg bg-(--surface) border border-(--surface-border) p-2.5 sm:p-3 flex flex-col justify-center"
             >
               <div
-                className={`font-bold text-zinc-900 dark:text-zinc-100 leading-tight ${
-                  tile.isCity
+                className={`font-bold text-(--text) leading-tight ${
+ tile.isCity
                     ? "text-xs sm:text-[13px] line-clamp-1"
                     : "text-base sm:text-lg tracking-tight"
                 }`}
@@ -159,7 +159,7 @@ export function MediaKitSnapshotCard({
               >
                 {tile.value}
               </div>
-              <div className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium mt-0.5 line-clamp-1">
+              <div className="text-[11px] text-(--text-muted) font-medium mt-0.5 line-clamp-1">
                 {tile.label}
               </div>
             </div>
@@ -169,19 +169,19 @@ export function MediaKitSnapshotCard({
 
       {/* Per-platform breakdown line */}
       {platformBreakdown && (
-        <div className="mt-3 text-xs font-medium text-zinc-500 dark:text-zinc-400 pt-0.5 flex items-center gap-1.5 flex-wrap">
-          <span className="text-zinc-400 dark:text-zinc-500 font-normal">Platforms:</span>
-          <span className="text-zinc-700 dark:text-zinc-300 font-semibold">{platformBreakdown}</span>
+        <div className="mt-3 text-xs font-medium text-(--text-muted) pt-0.5 flex items-center gap-1.5 flex-wrap">
+          <span className="text-(--text-muted) font-normal">Platforms:</span>
+          <span className="text-(--text) font-semibold">{platformBreakdown}</span>
         </div>
       )}
 
       {/* Optional extras: Languages and Categories as small neutral chips */}
       {(languages.length > 0 || categories.length > 0) && (
-        <div className="mt-3.5 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex flex-wrap items-center gap-2">
+        <div className="mt-3.5 pt-3 border-t border-(--surface-border) flex flex-wrap items-center gap-2">
           {languages.map((lang, idx) => (
             <span
               key={`lang_${idx}`}
-              className="inline-flex items-center text-[11px] font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 px-2.5 py-0.5 rounded-md"
+              className="inline-flex items-center text-[11px] font-medium bg-(--surface) text-(--text) px-2.5 py-0.5 rounded-md"
             >
               {lang}
             </span>
@@ -189,7 +189,7 @@ export function MediaKitSnapshotCard({
           {categories.map((cat, idx) => (
             <span
               key={`cat_${idx}`}
-              className="inline-flex items-center text-[11px] font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 px-2.5 py-0.5 rounded-md"
+              className="inline-flex items-center text-[11px] font-medium bg-(--surface) text-(--text) px-2.5 py-0.5 rounded-md"
             >
               {cat}
             </span>
@@ -202,7 +202,7 @@ export function MediaKitSnapshotCard({
         <div className="mt-4 pt-2">
           <button
             type="button"
-            className="w-full h-9 rounded-lg border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-semibold hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer"
+            className="w-full h-9 rounded-lg border border-(--surface-border) text-(--text) text-xs font-semibold hover:bg-(--surface)  transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <Download className="h-3.5 w-3.5" />
             <span>Download media kit (PDF)</span>

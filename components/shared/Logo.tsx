@@ -140,19 +140,7 @@ export function Logo({
         return;
       }
 
-      const stepRoutes: Record<string, string> = {
-        profile: "/onboarding/profile",
-        socials: "/onboarding/socials",
-
-        theme: "/onboarding/themes",
-        themes: "/onboarding/themes",
-
-        series: "/onboarding/subscription",
-        subscription: "/onboarding/subscription",
-      };
-
-      const targetRoute =
-        stepRoutes[step] || "/onboarding/profile";
+      const targetRoute = "/onboarding";
 
       router.push(targetRoute);
     } else if (href === "/" && typeof window !== "undefined" && window.location.pathname === "/") {
@@ -285,28 +273,16 @@ export function Logo({
         >
           <Image
             src={
-              showTagline
-                ? light
-                  ? "/images/inflixo-wordmark-tagline-white.png"
-                  : "/images/inflixo-wordmark-tagline.png"
-                : light
+              light
                 ? "/images/inflixo-wordmark-title-white.png"
                 : "/images/inflixo-wordmark-title.png"
             }
             alt="Inflixo - For Creators. By Creators."
             width={628}
-            height={showTagline ? 238 : 186}
+            height={186}
             className={`
               ${
-                showTagline
-                  ? size === "sm"
-                    ? "h-[26px] w-auto max-w-[80px]"
-                    : size === "md"
-                    ? "h-[34px] w-auto max-w-[102px]"
-                    : size === "lg"
-                    ? "h-[42px] w-auto max-w-[125px]"
-                    : "h-[76px] w-auto max-w-[220px]"
-                  : size === "sm"
+                size === "sm"
                   ? "h-[18px] w-auto max-w-[65px]"
                   : size === "md"
                   ? "h-[22px] w-auto max-w-[80px]"
@@ -319,6 +295,25 @@ export function Logo({
             `}
             priority
           />
+          {showTagline && (
+            <span
+              className={`
+                font-bold tracking-[0.05em] leading-none select-none whitespace-nowrap mt-0.5
+                ${light ? "text-white/90" : "text-[#7A2253]"}
+                ${
+                  size === "sm"
+                    ? "text-[8px]"
+                    : size === "md"
+                    ? "text-[10px]"
+                    : size === "lg"
+                    ? "text-[12px]"
+                    : "text-[14px]"
+                }
+              `}
+            >
+              For Creators. By Creators.
+            </span>
+          )}
         </div>
       )}
     </Link>

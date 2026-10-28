@@ -1,60 +1,59 @@
 "use client";
 
-import { useState } from "react";
-import { Check, Tag } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Check, Tag, Search, X } from "lucide-react";
+
+export const POPULAR_GENRES = [
+  "Vlogs",
+  "Travel",
+  "Food & Cooking",
+  "Comedy",
+  "Tech & Gadgets",
+  "Fitness",
+  "Gaming",
+  "Entertainment",
+  "Lifestyle",
+  "Drama",
+  "Romance",
+  "Education",
+];
 
 export const ALL_SERIES_GENRES = [
-  // Creator Vlogs & Lifestyle (Prominent)
   "Vlogs",
   "Daily Vlogs",
   "Travel",
   "Travel Vlogs",
   "Food",
-  "Food & Street Food",
-  "Cooking & Recipes",
+  "Food & Cooking",
+  "Street Food",
   "Moto Vlogging",
   "Family Vlogs",
   "Road Trips",
   "Lifestyle",
+  "Comedy",
   "Comedy & Sketches",
   "Tech & Gadgets",
+  "Fitness",
   "Fitness & Health",
   "Gaming",
   "Podcast & Talk Shows",
   "Entertainment",
   "Documentary",
-
-  // Storytelling, Drama & Cinema
-  "Action",
-  "Adventure",
-  "Comedy",
   "Drama",
   "Romance",
-  "Romantic Comedy",
-  "Romantic Drama",
+  "Action",
+  "Adventure",
   "Horror",
   "Thriller",
   "Suspense",
   "Mystery",
   "Crime",
   "Sci-Fi",
-  "Fantasy",
-  "Supernatural",
-  "Psychological",
-  "Emotional",
-  "Family",
-  "Friendship",
-  "Slice of Life",
-  "Education & Tutorials",
+  "Animation",
+  "Education",
   "Finance & Business",
   "Music & Dance",
-  "Animation",
-  "Biography",
-  "History",
-  "Mythology & Spiritual",
   "Sports",
-  "Reality",
-  "Behind the Scenes",
   "Other",
 ];
 
@@ -64,17 +63,17 @@ interface GenreMultiSelectProps {
   max?: number;
 }
 
-const COLLAPSED_COUNT = 18;
+export function GenreMultiSelect({ value, onChange, max = 3 }: GenreMultiSelectProps) {
+  const [search, setSearch] = useState("");
 
-export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectProps) {
-  const [showAll, setShowAll] = useState(false);
-  // Parse existing selected genres
-  const selectedGenres = value
-    ? value
-      .split(",")
-      .map((g) => g.trim())
-      .filter(Boolean)
-    : [];
+  const selectedGenres = useMemo(() => {
+    return value
+      ? value
+          .split(",")
+          .map((g) => g.trim())
+          .filter(Boolean)
+      : [];
+  }, [value]);
 
   function toggleGenre(genre: string) {
     if (selectedGenres.includes(genre)) {
@@ -82,33 +81,66 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
       onChange(updated.join(", "));
     } else {
       if (selectedGenres.length >= max) {
-        return; // limit to max (5)
+        return;
       }
       const updated = [...selectedGenres, genre];
       onChange(updated.join(", "));
     }
   }
 
-  // Collapsed: the most common genres plus anything already selected (so selections never hide).
-  const visibleGenres = showAll
-    ? ALL_SERIES_GENRES
-    : ALL_SERIES_GENRES.filter((g, i) => i < COLLAPSED_COUNT || selectedGenres.includes(g));
-  const hiddenCount = ALL_SERIES_GENRES.length - visibleGenres.length;
+  const filteredGenres = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) {
+      // Show 12 popular ones plus any currently selected that aren't in popular
+      const base = [...POPULAR_GENRES];
+      for (const sel of selectedGenres) {
+        if (!base.includes(sel)) base.push(sel);
+      }
+      return base;
+    }
+    return ALL_SERIES_GENRES.filter((g) => g.toLowerCase().includes(q));
+  }, [search, selectedGenres]);
 
   return (
-    <div className="w-full">
-      <div className="flex items-center justify-between mb-1.5">
+    <div className="w-full space-y-2">
+      <div className="flex items-center justify-between">
         <p className="flex items-center gap-1.5 text-[13px] font-medium text-[#0f172a]">
           <Tag className="h-3.5 w-3.5 text-[#94a3b8]" />
-          Genres
+          Genres (Max {max})
         </p>
-        <span className={`text-xs ${selectedGenres.length >= max ? "font-semibold text-[#B7791F]" : "text-[#64748b]"}`}>
+        <span
+          className={`text-xs ${
+            selectedGenres.length >= max ? "font-semibold text-[#B7791F]" : "text-[#64748b]"
+          }`}
+        >
           {selectedGenres.length} / {max} selected
         </span>
       </div>
 
-      <div className="flex flex-wrap gap-1.5">
-        {visibleGenres.map((g) => {
+      {/* Search Input */}
+      <div className="relative">
+        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#94a3b8]" />
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search 30+ genres…"
+          className="w-full rounded-[5px] border border-[#e2e8f0] bg-white pl-8 pr-7 py-1.5 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20"
+        />
+        {search && (
+          <button
+            type="button"
+            onClick={() => setSearch("")}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        )}
+      </div>
+
+      {/* Genre Chips */}
+      <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto pt-0.5">
+        {filteredGenres.map((g) => {
           const isSelected = selectedGenres.includes(g);
           const isMaxReached = !isSelected && selectedGenres.length >= max;
 
@@ -119,26 +151,21 @@ export function GenreMultiSelect({ value, onChange, max = 5 }: GenreMultiSelectP
               disabled={isMaxReached}
               aria-pressed={isSelected}
               onClick={() => toggleGenre(g)}
-              className={`tap-scale inline-flex h-8 items-center gap-1 rounded-[5px] border px-3 text-[13px] transition-colors cursor-pointer shrink-0 ${isSelected
-                ? "border-[#7A2253] bg-[#7A2253]/[0.06] font-medium text-[#7A2253]"
-                : isMaxReached
+              className={`inline-flex h-7 items-center gap-1 rounded-[5px] border px-2.5 text-xs transition-colors cursor-pointer shrink-0 ${
+                isSelected
+                  ? "border-[#7A2253] bg-[#7A2253]/[0.08] font-semibold text-[#7A2253]"
+                  : isMaxReached
                   ? "opacity-40 cursor-not-allowed border-[#e2e8f0] bg-white text-[#64748b]"
                   : "border-[#e2e8f0] bg-white text-[#475569] hover:border-[#cbd5e1] hover:bg-[#f8fafc] hover:text-[#0f172a]"
-                }`}
+              }`}
             >
               {isSelected && <Check className="h-3 w-3 stroke-[3] shrink-0" />}
               <span>{g}</span>
             </button>
           );
         })}
-        {(hiddenCount > 0 || showAll) && (
-          <button
-            type="button"
-            onClick={() => setShowAll((v) => !v)}
-            className="inline-flex h-8 items-center rounded-[5px] px-3 text-[13px] font-medium text-[#7A2253] hover:bg-[#7A2253]/[0.06] cursor-pointer"
-          >
-            {showAll ? "Show fewer" : `+${hiddenCount} more`}
-          </button>
+        {filteredGenres.length === 0 && (
+          <p className="text-xs text-[#94a3b8] py-1 px-1">No matching genres found.</p>
         )}
       </div>
     </div>

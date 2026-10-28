@@ -1,6 +1,7 @@
 import { Subscription } from "@/types";
+import { PLANS } from "@/config/plans";
 
-const TRIAL_DAYS = 7;
+const TRIAL_DAYS = PLANS.trial.trialDays ?? 7;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 export function getFreeTrialStatus(subscription?: Subscription | null, nowMs = Date.now()) {

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Creator Login — Inflixo",
+  title: "Sign in — Inflixo",
   description: "Sign in to your Inflixo creator dashboard to manage your video series, fan links, collaboration packages, and audience analytics.",
   alternates: {
     canonical: "https://inflixo.com/login",

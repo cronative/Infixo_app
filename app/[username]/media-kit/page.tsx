@@ -55,6 +55,7 @@ import {
   PUBLIC_ICON_BUTTON,
   PUBLIC_TYPE,
 } from "@/components/public/publicTheme";
+import { DEFAULT_THEME_KEY, resolveThemeKey } from "@/lib/themeKeys";
 
 function formatPackagePrice(price: string): string {
   if (!price) return "₹0";
@@ -142,7 +143,7 @@ export default function PublicMediaKitPage() {
   const { showToast } = useToast();
 
   const [profile, setProfile] = useState<CreatorProfile | null>(null);
-  const [theme, setTheme] = useState<ThemeKey>("minimal-white");
+  const [theme, setTheme] = useState<ThemeKey>(DEFAULT_THEME_KEY);
   const [socials, setSocials] = useState<SocialAccounts>(EMPTY_SOCIAL_ACCOUNTS);
   const [series, setSeries] = useState<Series[]>([]);
   const [packages, setPackages] = useState<MediaKitPackage[]>([]);
@@ -210,7 +211,7 @@ export default function PublicMediaKitPage() {
 
         if (isProfOk && profile && profile.username) {
           setProfile(profile);
-          setTheme((profile.themeKey || "minimal-white") as ThemeKey);
+          setTheme(resolveThemeKey(profile.themeKey));
           setNotFound(false);
 
           const socials = socRes.data?.socials || socRes.socials;
@@ -293,7 +294,7 @@ export default function PublicMediaKitPage() {
             const cleanLocalUser = (local?.username || "").replace(/^@/, "").toLowerCase();
             if (local && (cleanLocalUser === usernameParam || !local.username)) {
               setProfile({ ...local, username: local.username || usernameParam });
-              setTheme((local.themeKey || "minimal-white") as ThemeKey);
+              setTheme(resolveThemeKey(local.themeKey));
               setSeries(seriesRepository.getAll());
               const localTeam = teamRepository.get();
               setTeam(localTeam ? { team: localTeam.team || localTeam, members: localTeam.members || [] } : { members: [] });

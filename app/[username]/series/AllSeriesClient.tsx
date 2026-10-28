@@ -22,6 +22,7 @@ import {
   EXPERT_DEMO_SERIES,
   EXPERT_DEMO_THEME,
 } from "@/data/expertDemoCreator";
+import { resolveThemeKey } from "@/lib/themeKeys";
 
 const EMPTY_PROFILE: CreatorProfile = {
   photoDataUrl: null,
@@ -120,7 +121,7 @@ export default function AllSeriesClient() {
   const [profile, setProfile] = useState<CreatorProfile>(cachedData?.profile || EMPTY_PROFILE);
   const [socials, setSocials] = useState<SocialAccounts>(cachedData?.socials || EMPTY_SOCIAL_ACCOUNTS);
   const [series, setSeries] = useState<Series[]>(cachedData?.series || []);
-  const [theme, setTheme] = useState<ThemeKey>(cachedData?.theme || "minimal-white");
+  const [theme, setTheme] = useState<ThemeKey>(resolveThemeKey(cachedData?.theme));
   const [loaded, setLoaded] = useState(Boolean(cachedData));
   const [notFound, setNotFound] = useState(false);
   const fetchingRef = useRef(false);
@@ -140,7 +141,7 @@ export default function AllSeriesClient() {
         setProfile(existingCache.profile);
         setSocials(existingCache.socials);
         setSeries(existingCache.series);
-        setTheme(existingCache.theme);
+        setTheme(resolveThemeKey(existingCache.theme));
         setLoaded(true);
         setNotFound(false);
         return;
@@ -189,7 +190,7 @@ export default function AllSeriesClient() {
           return;
         }
 
-        const freshTheme = (freshProfile.themeKey || "minimal-white") as ThemeKey;
+        const freshTheme = resolveThemeKey(freshProfile.themeKey);
         const rawSocials = socialsRes.data?.socials || socialsRes.socials;
         const freshSocials = Array.isArray(rawSocials) ? buildSocialAccounts(rawSocials) : EMPTY_SOCIAL_ACCOUNTS;
         const rawSeries = seriesRes.data?.series || seriesRes.series;

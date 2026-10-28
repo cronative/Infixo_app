@@ -12,6 +12,8 @@ import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { PhotoUpload } from "@/components/ui/PhotoUpload";
 import { collaborationsRepository } from "@/repositories/localRepository";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { PageContainer } from "@/components/dashboard/PageContainer";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export default function DashboardCollaborationsPage() {
   const { profile } = useCreator();
@@ -182,29 +184,23 @@ export default function DashboardCollaborationsPage() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-4.5 w-full pb-8 text-left">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
-            Selected Collaborations
-          </h1>
-          <p className="text-xs sm:text-[13px] text-[#475569] font-medium mt-0.5">
-            Showcase the brands, sponsor campaigns, and commercial partnerships you have worked with.
-          </p>
-        </div>
-
-        {collaborations.length > 0 && (
-          <button
-            type="button"
-            onClick={() => handleOpenModal()}
-            className="tap-scale inline-flex h-9 items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] cursor-pointer"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            <span>Add Collaboration</span>
-          </button>
-        )}
-      </div>
+    <PageContainer>
+      <PageHeader
+        title="Selected Collaborations"
+        subtitle="Showcase the brands, sponsor campaigns, and commercial partnerships you have worked with."
+        actions={
+          collaborations.length > 0 ? (
+            <button
+              type="button"
+              onClick={() => handleOpenModal()}
+              className="inline-flex h-9 items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#681c46] px-4 text-xs font-bold text-white transition-colors cursor-pointer shadow-2xs"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              <span>Add Collaboration</span>
+            </button>
+          ) : null
+        }
+      />
 
       {/* Main Content Area */}
       {loading ? (
@@ -542,6 +538,6 @@ export default function DashboardCollaborationsPage() {
         isDestructive={true}
         loading={isSubmitting}
       />
-    </div>
+    </PageContainer>
   );
 }

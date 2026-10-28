@@ -1,4 +1,5 @@
 import Razorpay from "razorpay";
+import { PAID_PLANS, PLANS, planPrice } from "@/config/plans";
 
 export interface PlanConfig {
   key: string;
@@ -8,50 +9,21 @@ export interface PlanConfig {
   description: string;
 }
 
-export const RAZORPAY_RECURRING_PLANS: Record<string, PlanConfig> = {
-  starter_monthly: {
-    key: "starter_monthly",
-    name: "Inflixo Starter Monthly",
-    period: "monthly",
-    amountInPaise: 9900, // ₹99
-    description: "Inflixo Starter plan billed monthly with recurring auto-renewal",
-  },
-  starter_yearly: {
-    key: "starter_yearly",
-    name: "Inflixo Starter Yearly",
-    period: "yearly",
-    amountInPaise: 99900, // ₹999
-    description: "Inflixo Starter plan billed yearly with recurring auto-renewal",
-  },
-  pro_monthly: {
-    key: "pro_monthly",
-    name: "Inflixo Pro Monthly",
-    period: "monthly",
-    amountInPaise: 19900, // ₹199
-    description: "Inflixo Pro plan billed monthly with recurring auto-renewal",
-  },
-  pro_yearly: {
-    key: "pro_yearly",
-    name: "Inflixo Pro Yearly",
-    period: "yearly",
-    amountInPaise: 149900, // ₹1499
-    description: "Inflixo Pro plan billed yearly with recurring auto-renewal",
-  },
-  vip_monthly: {
-    key: "vip_monthly",
-    name: "Inflixo VIP Monthly",
-    period: "monthly",
-    amountInPaise: 39900, // ₹399
-    description: "Inflixo VIP plan billed monthly with recurring auto-renewal",
-  },
-  vip_yearly: {
-    key: "vip_yearly",
-    name: "Inflixo VIP Yearly",
-    period: "yearly",
-    amountInPaise: 249900, // ₹2499
-    description: "Inflixo VIP plan billed yearly with recurring auto-renewal",
-  },
-};
+/** Razorpay recurring plans; amounts come from config/plans.ts (INR). */
+export const RAZORPAY_RECURRING_PLANS: Record<string, PlanConfig> = Object.fromEntries(
+  PAID_PLANS.flatMap((plan) =>
+    (["monthly", "yearly"] as const).map((period) => [
+      `${plan}_${period}`,
+      {
+        key: `${plan}_${period}`,
+        name: `Inflixo ${PLANS[plan].name} ${period === "monthly" ? "Monthly" : "Yearly"}`,
+        period,
+        amountInPaise: planPrice(plan, period, "INR") * 100,
+        description: `Inflixo ${PLANS[plan].name} plan billed ${period} with recurring auto-renewal`,
+      },
+    ]),
+  ),
+);
 
 // In-memory cache of created Razorpay Plan IDs to prevent duplicate plan creations
 const planIdCache = new Map<string, string>();

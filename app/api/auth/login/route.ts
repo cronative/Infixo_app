@@ -34,8 +34,8 @@ export async function POST(req: Request) {
       );
     }
 
-    // 0c. Email-Level Rate Limit (Max 3 OTP requests per 3 minutes per email)
-    const emailRateCheck = await checkPersistentRateLimit(`login:email:${email}`, 3, 3 * 60);
+    // 0c. Email-Level Rate Limit (Max 3 OTP requests per 15 minutes per email)
+    const emailRateCheck = await checkPersistentRateLimit(`login:email:${email}`, 3, 15 * 60);
     if (!emailRateCheck.success) {
       return apiError(
         `Too many code requests for this email. Please wait ${emailRateCheck.retryAfterSec} seconds before trying again.`,
@@ -61,9 +61,9 @@ export async function POST(req: Request) {
       // 1. Invalidate any previous unused OTP entries for this email
       await db.query("UPDATE otps SET is_used = TRUE WHERE email = ? AND is_used = FALSE", [email]);
 
-      // 2. Insert new fresh OTP with 5-minute expiration
+      // 2. Insert new fresh OTP with 10-minute expiration
       await db.query(
-        "INSERT INTO otps (email, otp_code, expires_at, is_used) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 5 MINUTE), FALSE)",
+        "INSERT INTO otps (email, otp_code, expires_at, is_used) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 10 MINUTE), FALSE)",
         [email, otpCode]
       );
 
@@ -93,7 +93,7 @@ export async function POST(req: Request) {
         email,
         username: creator?.username || "",
       },
-      `OTP sent to ${email} (valid for 5 minutes)`
+      `OTP sent to ${email} (valid for 10 minutes)`
     );
   } catch (error: any) {
     console.error("Auth Login Error:", error);

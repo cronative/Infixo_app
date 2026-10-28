@@ -40,7 +40,6 @@ export const AmbientParticles = memo(function AmbientParticles({
   themeKey,
   contained = false,
 }: AmbientParticlesProps) {
-  const isMinimalSpark = themeKey === "minimal-spark";
   const containerClass = contained ? "absolute inset-0" : "fixed inset-0";
 
   return (
@@ -50,7 +49,7 @@ export const AmbientParticles = memo(function AmbientParticles({
     >
       {DETERMINISTIC_PARTICLES.map((p) => {
         const color = particleColors[p.colorIdx % particleColors.length];
-        const baseOpacity = isMinimalSpark ? p.opacity * 0.5 : p.opacity;
+        const baseOpacity = p.opacity;
 
         return (
           <span

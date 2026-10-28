@@ -12,6 +12,7 @@ import { DashboardMobileHeader } from "@/components/dashboard/DashboardMobileHea
 import { DashboardSideDrawer } from "@/components/dashboard/DashboardSideDrawer";
 import { DashboardBottomNav } from "@/components/dashboard/DashboardBottomNav";
 import { ChevronRight, Copy, ExternalLink, Zap } from "lucide-react";
+import { LogoutButton } from "@/components/dashboard/LogoutButton";
 import { NAV_GROUPS, getNavTitle, isNavActive } from "@/components/dashboard/navConfig";
 import { useToast } from "@/contexts/ToastContext";
 import { copyToClipboard } from "@/lib/copyToClipboard";
@@ -50,7 +51,6 @@ function DesktopTopHeader() {
     showToast(success ? "Profile link copied! ✨" : "Could not copy link", success ? "success" : "error");
   };
 
-  if (isHome) return null;
 
   return (
     <header className="hidden h-13 shrink-0 items-center justify-between border-b border-[#e2e8f0] bg-white px-6 lg:flex lg:px-8">
@@ -68,22 +68,27 @@ function DesktopTopHeader() {
       )}
 
       <div className="flex items-center gap-1.5">
-        <button
-          type="button"
-          onClick={handleCopy}
-          className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 text-xs font-medium text-[#475569] transition-colors hover:bg-[#fdf2f8] hover:text-[#7A2253]"
-        >
-          <Copy className="h-3.5 w-3.5" />
-          <span>Copy link</span>
-        </button>
-        <button
-          type="button"
-          onClick={handleViewProfile}
-          className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#fbcfe8] hover:bg-[#fdf2f8] hover:text-[#7A2253]"
-        >
-          <span>View profile</span>
-          <ExternalLink className="h-3.5 w-3.5 text-[#64748b] group-hover:text-[#7A2253]" />
-        </button>
+        {!isHome && (
+          <>
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 text-xs font-medium text-[#475569] transition-colors hover:bg-[#fdf2f8] hover:text-[#7A2253]"
+            >
+              <Copy className="h-3.5 w-3.5" />
+              <span>Copy link</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleViewProfile}
+              className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#fbcfe8] hover:bg-[#fdf2f8] hover:text-[#7A2253]"
+            >
+              <span>View profile</span>
+              <ExternalLink className="h-3.5 w-3.5 text-[#64748b] group-hover:text-[#7A2253]" />
+            </button>
+          </>
+        )}
+        <LogoutButton />
       </div>
     </header>
   );
@@ -127,11 +132,12 @@ function Shell({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!loading) {
       if (!profile.username || !profile.displayName) {
-        debugLog("DASHBOARD", "Profile incomplete on dashboard -> Redirecting to /onboarding/profile");
-        router.replace("/onboarding/profile");
+        debugLog("DASHBOARD", "Profile incomplete on dashboard -> Redirecting to /onboarding");
+        router.replace("/onboarding");
         return;
       }
-      OnboardingService.setStep("finish");
+      // Already finished: don't re-POST the step to /api/creator/profile on every dashboard load.
+      if (OnboardingService.getStep() !== "finish") OnboardingService.setStep("finish");
     }
   }, [loading, profile.username, profile.displayName, router]);
 
@@ -164,7 +170,7 @@ function Shell({ children }: { children: ReactNode }) {
         <DashboardMobileHeader onOpenDrawer={() => setDrawerOpen(true)} />
 
         {/* Scrollable Content Viewport */}
-        <main className={`flex-1 overflow-y-auto overscroll-contain pb-[calc(env(safe-area-inset-bottom)+5rem)] ${isHome ? "p-3 sm:p-4" : "px-3.5 pt-3.5 sm:px-6 sm:py-4.5 lg:px-8 lg:py-5"}`}>
+        <main className="flex-1 overflow-y-auto overscroll-contain pb-[calc(env(safe-area-inset-bottom)+5rem)] lg:pb-0">
           <div className="w-full">
             {children}
           </div>

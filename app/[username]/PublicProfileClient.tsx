@@ -19,6 +19,7 @@ import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { CreatorPublicShell } from "@/components/public/CreatorPublicShell";
 import { getPlanQuota } from "@/services/subscriptionLimits";
+import { DEFAULT_THEME_KEY, resolveThemeKey } from "@/lib/themeKeys";
 
 const EMPTY_PROFILE: CreatorProfile = {
   photoDataUrl: null,
@@ -90,8 +91,8 @@ export default function PublicProfileClient() {
 
   const [profile, setProfile] = useState<CreatorProfile>(EMPTY_PROFILE);
   const [socials, setSocials] = useState<SocialAccounts>(EMPTY_SOCIAL_ACCOUNTS);
-  const [theme, setTheme] = useState<ThemeKey>("minimal-white");
-  const queryTheme = searchParams?.get("theme") as ThemeKey | null;
+  const [theme, setTheme] = useState<ThemeKey>(DEFAULT_THEME_KEY);
+  const queryTheme = (searchParams?.get("theme") || null) as ThemeKey | null;
   const effectiveTheme: ThemeKey =
     queryTheme && THEME_LIST.some((t) => t.key === queryTheme)
       ? queryTheme
@@ -169,35 +170,24 @@ export default function PublicProfileClient() {
 
       // Fetch Creator Profile from MySQL Database (with local repository fallback for immediate preview)
       try {
-        const [
-          profRes,
-          socRes,
-          serRes,
-          linkRes,
-          mediakitRes,
-          revRes,
-          teamRes,
-          brandRes,
-          collabRes,
-          setupRes,
-          otherSocRes,
-          secRes,
-          productsRes,
-        ] = await Promise.all([
-          fetch(`/api/creator/profile?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
-          fetch(`/api/creator/socials?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
-          fetch(`/api/series?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
-          fetch(`/api/creator/custom-links?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
-          fetch(`/api/creator/mediakit?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
-          fetch(`/api/creator/reviews?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
-          fetch(`/api/creator/team?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
-          fetch(`/api/creator/brands?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
-          fetch(`/api/creator/collaborations?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
-          fetch(`/api/creator/setup?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
-          fetch(`/api/creator/other-socials?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
-          fetch(`/api/creator/sections?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
-          fetch(`/api/public/products?username=${encodeURIComponent(usernameParam)}`, { cache: "no-store" }).then((r) => r.json()).catch(() => ({ status: 0 })),
-        ]);
+        // One request for every section (cached 60s server-side for anonymous visitors).
+        const all: Record<string, any> = await fetch(`/api/public/profile/${encodeURIComponent(usernameParam)}`)
+          .then((r) => (r.ok ? r.json() : {}))
+          .catch(() => ({}));
+        const section = (key: string) => all?.[key] || { status: 0 };
+        const profRes = section("profile");
+        const socRes = section("socials");
+        const serRes = section("series");
+        const linkRes = section("links");
+        const mediakitRes = section("mediakit");
+        const revRes = section("reviews");
+        const teamRes = section("team");
+        const brandRes = section("brands");
+        const collabRes = section("collaborations");
+        const setupRes = section("setup");
+        const otherSocRes = section("otherSocials");
+        const secRes = section("sections");
+        const productsRes = section("products");
 
         const isProfOk = profRes.status === 1 || profRes.success === true;
         const profile = profRes.data?.profile || profRes.profile;
@@ -244,7 +234,7 @@ export default function PublicProfileClient() {
 
           setProfile(profile);
           if (profile.themeKey) {
-            setTheme(profile.themeKey as ThemeKey);
+            setTheme(resolveThemeKey(profile.themeKey));
           }
           setNotFound(false);
           setProfilePrivate(false);
@@ -410,8 +400,7 @@ export default function PublicProfileClient() {
             const cleanLocalUser = (local?.username || "").replace(/^@/, "").toLowerCase();
             if (local && (cleanLocalUser === usernameParam || !local.username)) {
               setProfile({ ...local, username: local.username || usernameParam });
-              const localTheme = themeRepository.get() || local.themeKey || "minimal-white";
-              setTheme(localTheme as ThemeKey);
+              setTheme(resolveThemeKey(themeRepository.get() || local.themeKey));
               setSocials(socialRepository.get() || EMPTY_SOCIAL_ACCOUNTS);
               setSeries(seriesRepository.getAll() || []);
               setCustomLinks(customLinksRepository.get() || []);

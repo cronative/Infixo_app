@@ -20,6 +20,9 @@ export default function OnboardingRootLayout({ children }: { children: ReactNode
   const [sessionVerified, setSessionVerified] = useState(false);
 
   useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.title = "Set up your profile — Inflixo";
+    }
     if (!AuthService.isLoggedIn()) {
       router.replace("/login");
       return;

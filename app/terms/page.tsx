@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { ArrowLeft, FileText, ExternalLink, ShieldCheck } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
+import { PLANS } from "@/config/plans";
+
+const TRIAL_DAYS = PLANS.trial.trialDays;
 import { CookiePreferencesButton } from "@/components/shared/CookiePreferencesButton";
 
 export const metadata = {
@@ -114,9 +117,9 @@ export default function TermsOfServicePage() {
             </h2>
             <div className="space-y-3 text-sm text-[#54514D]">
               <div>
-                <p className="font-bold text-[#181716]">A. 7-Day Free Trial Policy:</p>
+                <p className="font-bold text-[#181716]">A. {TRIAL_DAYS}-Day Free Trial Policy:</p>
                 <p className="pt-0.5">
-                  Inflixo offers a <strong>7-day Free Trial</strong> to new creators at <strong>₹0</strong> with no credit card required. During the trial period, your public creator profile (`inflixo.com/yourname`) is fully public. <strong>After the 7-day trial ends, your profile automatically becomes private (fans and visitors cannot view it)</strong> until you choose a paid subscription plan. There are no automatic billing charges upon trial expiration.
+                  Inflixo offers a <strong>{TRIAL_DAYS}-day Free Trial</strong> to new creators at <strong>₹0</strong> with no credit card required. During the trial period, your public creator profile (`inflixo.com/yourname`) is fully public. <strong>After the {TRIAL_DAYS}-day trial ends, your profile automatically becomes private (fans and visitors cannot view it)</strong> until you choose a paid subscription plan. There are no automatic billing charges upon trial expiration.
                 </p>
               </div>
 

@@ -5,6 +5,7 @@ import { requireCreator } from '@/lib/creatorAuth';
 import { apiError, apiSuccess } from '@/lib/apiResponse';
 import { parseSeriesCsv, existingEpisodeConflicts, validateEpisodePlatform, MAX_CSV_BYTES } from '@/lib/seriesCsv';
 import { getPlanQuota } from '@/services/subscriptionLimits';
+import { formatLimit } from '@/config/plans';
 
 export async function POST(req: Request) {
   try {
@@ -64,9 +65,9 @@ export async function POST(req: Request) {
       const targetEpisodes = existing.filter(ep => ep.series_id === seriesId);
       const conflicts = existingEpisodeConflicts(parsed.episodes, targetEpisodes.map(ep => ({ episodeNumber: ep.episode_number, externalUrl: ep.external_url })));
       if (conflicts.length) { await connection.rollback(); return apiError('No videos imported. Resolve existing parts or links first.', 409, { errors: conflicts }); }
-      if ((!seriesId && allSeries.length >= quota.maxSeries) || targetEpisodes.length + parsed.episodes.length > quota.maxEpisodesPerSeries || existing.length + parsed.episodes.length > quota.maxTotalEpisodes) {
+      if ((!seriesId && allSeries.length >= quota.maxSeries) || targetEpisodes.length + parsed.episodes.length > quota.maxEpisodesPerSeries) {
         await connection.rollback();
-        return apiError(`Import exceeds your ${quota.name} plan limits (${quota.maxSeries} series, ${quota.maxEpisodesPerSeries} parts per series, ${quota.maxTotalEpisodes} total parts). Reduce the file or upgrade your plan.`, 403);
+        return apiError(`Import exceeds your ${quota.name} plan limits (${formatLimit(quota.maxSeries)} series, ${formatLimit(quota.maxEpisodesPerSeries)} episodes per series). Reduce the file or upgrade your plan.`, 403, { code: 'LIMIT_REACHED', isLimitReached: true, type: 'episode' });
       }
       if (!seriesId) await connection.query('INSERT INTO series (id, creator_id, title, platform) VALUES (?, ?, ?, ?)', [targetId, auth.creator.id, title, seriesPlatform]);
       await connection.query('INSERT INTO episodes (id, series_id, episode_number, title, external_url, platform) VALUES ?', [parsed.episodes.map(ep => [`ep_${randomUUID()}`, targetId, ep.episodeNumber, ep.title, ep.externalUrl, ep.platform])]);

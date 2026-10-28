@@ -15,6 +15,8 @@ import {
   SHOW_SERIES_BADGES,
   SHOW_START_WATCHING,
 } from "@/components/series/seriesConfig";
+import { BRAND_TEXT } from "@/lib/brandColors";
+import { SeriesCoverLogo } from "@/components/series/SeriesCoverLogo";
 
 export interface FeaturedSeriesCardProps {
   series: Series;
@@ -30,13 +32,13 @@ export interface FeaturedSeriesCardProps {
 function getPlatformIcon(platform: string) {
   const p = platform.toLowerCase();
   if (p.includes("youtube")) {
-    return <YoutubeIcon className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-red-500 fill-red-500 shrink-0" />;
+    return <YoutubeIcon className={`h-2.5 w-2.5 sm:h-3 sm:w-3 ${BRAND_TEXT.youtube} shrink-0`} />;
   }
   if (p.includes("instagram")) {
-    return <InstagramIcon className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-pink-400 shrink-0" />;
+    return <InstagramIcon className={`h-2.5 w-2.5 sm:h-3 sm:w-3 ${BRAND_TEXT.instagram} shrink-0`} />;
   }
   if (p.includes("facebook")) {
-    return <FacebookIcon className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-blue-400 fill-blue-400 shrink-0" />;
+    return <FacebookIcon className={`h-2.5 w-2.5 sm:h-3 sm:w-3 ${BRAND_TEXT.facebook} shrink-0`} />;
   }
   return null;
 }
@@ -56,6 +58,7 @@ export function FeaturedSeriesCard({
   openMode = "page",
 }: FeaturedSeriesCardProps) {
   const [imgError, setImgError] = useState(false);
+  const [nowMs] = useState(() => Date.now());
   const seriesUrl = `/${creatorHandle}/series/${series.id}`;
 
   // Check if an episode was released in the last 7 days
@@ -64,7 +67,7 @@ export function FeaturedSeriesCard({
     const createdMs = new Date(series.createdAt).getTime();
     if (Number.isNaN(createdMs)) return false;
     const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
-    return Date.now() - createdMs <= sevenDaysMs;
+    return nowMs - createdMs <= sevenDaysMs;
   })();
 
   const isCompleted = (series as any).status === "completed" || (series as any).isCompleted === true;
@@ -108,13 +111,13 @@ export function FeaturedSeriesCard({
       <Link
         href={seriesUrl}
         onClick={handleClick}
-        className="group relative block w-full aspect-[5/2] rounded-2xl overflow-hidden bg-[#250919] shadow-md hover:shadow-xl transition-all duration-300 focus-visible:ring-2 focus-visible:ring-[#7A2253] focus-visible:outline-hidden select-none"
+        className="group relative block w-full aspect-[5/2] rounded-2xl overflow-hidden bg-(--accent) shadow-md hover:shadow-xl transition-all duration-300 focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden select-none"
       >
         {/* Background Poster Image or Fallback */}
         {hasPoster ? (
           <Image
             src={series.posterDataUrl!}
-            alt={series.title}
+            alt=""
             fill
             sizes="(max-width: 600px) 100vw, 540px"
             quality={80}
@@ -126,22 +129,8 @@ export function FeaturedSeriesCard({
             className="object-cover group-hover:scale-[1.02] transition-transform duration-500 ease-out select-none"
           />
         ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-3 text-center bg-gradient-to-br from-[#7A2253] via-[#4A1533] to-[#250919] select-none">
-            {creatorAvatar ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={creatorAvatar}
-                alt={creatorName || "Creator"}
-                className="h-8 w-8 sm:h-10 sm:w-10 rounded-full border-2 border-white/40 object-cover mb-1 shadow-sm"
-              />
-            ) : (
-              <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full border-2 border-white/40 bg-white/20 text-white font-bold text-xs flex items-center justify-center mb-1">
-                {initials(creatorName || "Creator")}
-              </div>
-            )}
-            <span className="text-xs sm:text-sm font-bold text-white/90 line-clamp-1 max-w-sm">
-              {series.title}
-            </span>
+          <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-(--cover-from) to-(--cover-to)">
+            <SeriesCoverLogo />
           </div>
         )}
 
@@ -156,7 +145,7 @@ export function FeaturedSeriesCard({
           {/* Status Badge Row (solid backgrounds for contrast on bright skies) */}
           {SHOW_SERIES_BADGES && (
             <div className="flex flex-wrap items-center gap-1.5 mb-0.5 sm:mb-1">
-              <span className="inline-flex items-center gap-1 rounded-[4px] bg-[#7A2253] text-white px-1.5 sm:px-2 py-0.5 text-[9.5px] sm:text-[10.5px] font-bold tracking-wide shadow-xs">
+              <span className="inline-flex items-center gap-1 rounded-[4px] bg-(--accent) text-(--on-accent) px-1.5 sm:px-2 py-0.5 text-[9.5px] sm:text-[10.5px] font-bold tracking-wide shadow-xs">
                 <Crown className="h-2.5 w-2.5 sm:h-3 sm:w-3 fill-white text-white shrink-0" />
                 <span>Featured</span>
               </span>
@@ -166,7 +155,7 @@ export function FeaturedSeriesCard({
               </span>
 
               {hasNewEpisode && (
-                <span className="inline-flex items-center rounded-[4px] bg-emerald-600 text-white px-1.5 sm:px-2 py-0.5 text-[9.5px] sm:text-[10.5px] font-bold shadow-xs">
+                <span className="inline-flex items-center rounded-[4px] bg-(--accent) text-(--on-accent) px-1.5 sm:px-2 py-0.5 text-[9.5px] sm:text-[10.5px] font-bold shadow-xs">
                   New episode
                 </span>
               )}
@@ -176,7 +165,7 @@ export function FeaturedSeriesCard({
           {/* Series Title: white, bold, max 1 line with subtle text-shadow */}
           <h3
             style={{ textShadow: "0 1px 3px rgba(0,0,0,0.6)" }}
-            className="text-base sm:text-xl font-bold tracking-tight text-white truncate leading-snug drop-shadow-sm group-hover:text-rose-100 transition-colors"
+            className="text-base sm:text-xl font-bold tracking-tight text-white truncate leading-snug drop-shadow-sm group-hover:text-(--accent-soft) transition-colors"
           >
             {series.title}
           </h3>
@@ -199,7 +188,7 @@ export function FeaturedSeriesCard({
 
             {/* Pill CTA: "▶ Watch" (<400px) or "▶ Start watching" (>=400px) */}
             {SHOW_START_WATCHING && (
-              <span className="pointer-events-auto tap-scale inline-flex items-center justify-center gap-1.5 h-7 sm:h-8 px-2.5 sm:px-3.5 rounded-full bg-[#7A2253] hover:bg-[#661B45] text-white text-[11px] sm:text-xs font-bold shadow-md transition-all shrink-0 cursor-pointer whitespace-nowrap">
+              <span className="pointer-events-auto tap-scale inline-flex items-center justify-center gap-1.5 h-7 sm:h-8 px-2.5 sm:px-3.5 rounded-full bg-(--accent) hover:bg-(--accent-hover) text-(--on-accent) text-[11px] sm:text-xs font-bold shadow-md transition-all shrink-0 cursor-pointer whitespace-nowrap">
                 <Play className="h-2.5 w-2.5 sm:h-3 sm:w-3 fill-white text-white shrink-0" />
                 <span className="watch-text-short">Watch</span>
                 <span className="watch-text-long">Start watching</span>

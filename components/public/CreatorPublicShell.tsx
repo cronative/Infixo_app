@@ -5,6 +5,8 @@ import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
 import { FocusOverlay } from "@/components/theme/FocusOverlay";
 import { getPublicTheme, PUBLIC_MAIN_CLASS, PUBLIC_RADIUS } from "@/components/public/publicTheme";
 import { MadeWithInflixo } from "@/components/shared/MadeWithInflixo";
+import { getThemeDefinition, themeTokenStyle } from "@/themes/config";
+import { ThemeBackgroundAnim } from "@/components/theme/ThemeBackgroundAnim";
 
 interface CreatorPublicShellProps {
   themeKey: string;
@@ -40,17 +42,21 @@ export function CreatorPublicShell({
   return (
     <div
       {...wrapperProps}
-      style={{ backgroundColor: meta.colors.pageBackground, ...((wrapperProps as any)?.style || {}) }}
+      style={{ ...themeTokenStyle(meta.key), background: "var(--page-bg)", ...((wrapperProps as any)?.style || {}) }}
       className="relative h-screen h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between antialiased transition-colors duration-500"
     >
       {/* 1. Full-screen theme background (photo themes get a soft blurred backdrop) */}
       <div
         className={`fixed inset-0 pointer-events-none transition-colors duration-500 z-0 ${t.pageBgClass} ${t.hasPhotoBackdrop ? "theme-photo-backdrop" : ""}`}
-        style={{ backgroundColor: meta.colors.pageBackground }}
+        style={{ background: "var(--page-bg)" }}
         aria-hidden="true"
       >
+        {/* Optional tint over image backgrounds */}
+        <div className="absolute inset-0" style={{ background: "var(--page-overlay)" }} />
+        {/* Theme background animation (--page-anim); the card above stays solid */}
+        <ThemeBackgroundAnim name={getThemeDefinition(meta.key).tokens["--page-anim"]} />
         {!t.hasPhotoBackdrop && (
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[650px] bg-gradient-radial from-white/[0.06] to-transparent blur-3xl pointer-events-none" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[650px] bg-gradient-radial from-(--card-bg)/[0.06] to-transparent blur-3xl pointer-events-none" />
         )}
       </div>
 
@@ -89,19 +95,22 @@ interface PublicCardProps {
 /** The centered main card surface, identical on every public page. */
 export function PublicCard({ themeKey, children, className = "", style, showFooter = true }: PublicCardProps) {
   const t = getPublicTheme(themeKey);
-  const { colors: c } = t;
   return (
     <div
+      data-card-glass={getThemeDefinition(t.meta.key).tokens["--card-blur"] !== "0px"}
       style={{ ...t.surfaceStyle, boxShadow: "none", ...style }}
-      className={`relative flex-1 min-h-0 h-full max-h-full flex flex-col border backdrop-blur-xl transition-all overflow-hidden ${PUBLIC_RADIUS.card} ${className}`}
+      className={`relative flex-1 min-h-0 h-full max-h-full flex flex-col border profile-card-glass transition-all overflow-hidden ${PUBLIC_RADIUS.card} ${className}`}
     >
       <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {children}
       </div>
 
       {showFooter && (
-        <div className="relative z-30 shrink-0 select-none py-[20px] border-t border-black/[0.06] dark:border-white/[0.08] flex items-center justify-center">
-          <MadeWithInflixo color={c.secondaryText} />
+        <div
+          className="relative z-30 shrink-0 select-none py-[14px] border-t border-(--divider) bg-transparent flex items-center justify-center"
+          style={{ boxShadow: "0 -2px 6px rgba(0,0,0,.04)" }}
+        >
+          <MadeWithInflixo variant="card-footer" />
         </div>
       )}
     </div>

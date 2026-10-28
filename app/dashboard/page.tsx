@@ -1,69 +1,50 @@
 "use client";
 
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import {
-  ArrowUpRight,
-  BarChart3,
   Briefcase,
   Check,
-  CheckCircle2,
-  ChevronRight,
-  Circle,
+  Clapperboard,
   Copy,
   ExternalLink,
+  Eye,
   Film,
-  Globe,
-  Layers,
+  Laptop,
   Link2,
-  MessageCircle,
-  Palette,
-  Play,
-  Plus,
-  QrCode,
   RefreshCw,
   Share2,
-  ShieldCheck,
   ShoppingBag,
-  Sparkles,
   Star,
   Users,
+  X,
+  MessageCircle,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import {
-  InstagramIcon,
-  YoutubeIcon,
-  FacebookIcon,
   XTwitterIcon,
   LinkedinIcon,
-  ThreadsIcon,
-  SpotifyIcon,
 } from "@/components/shared/BrandIcons";
 import { QRCode } from "@/components/creator-card/QRCode";
 import { Modal, ModalBody } from "@/components/ui/Modal";
 import { copyToClipboard } from "@/lib/copyToClipboard";
-import { formatSimplifiedSyncDate } from "@/lib/socialSyncDate";
 import { buildProfileUrl, formatCount } from "@/utils/format";
 import { SocialService } from "@/services/SocialService";
-import { customLinksRepository } from "@/repositories/localRepository";
-import type { DashboardSummary } from "@/lib/dashboardSummary";
-import type { SocialAccounts, CustomLink } from "@/types";
+import { getSeriesEpisodes } from "@/lib/seriesMetrics";
+import { customLinksRepository, reviewsRepository, creatorSetupRepository } from "@/repositories/localRepository";
+import { MediaKitService } from "@/services/MediaKitService";
+import { ProductService } from "@/services/ProductService";
+import { PageContainer } from "@/components/dashboard/PageContainer";
+import type { SocialAccounts, CustomLink, CreatorReview, CreatorSetupItem, MediaKitPackage, CreatorProduct } from "@/types";
 
-function MetricSkeleton({ small = false }: { small?: boolean }) {
-  return <span aria-hidden="true" className={`block animate-pulse rounded bg-slate-100 ${small ? "h-3 w-16" : "h-6 w-20"}`} />;
-}
-
-function extractUsername(url?: string | null): string {
-  if (!url) return "";
-  const cleaned = url.trim();
-  if (cleaned.includes("/")) {
-    const parts = cleaned.split("/").filter(Boolean);
-    const last = parts[parts.length - 1];
-    return last.replace(/^@/, "");
-  }
-  return cleaned.replace(/^@/, "");
+interface SuggestionItem {
+  id: string;
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  text: string;
+  actionLabel: string;
+  actionHref: string;
 }
 
 export default function DashboardOverviewPage() {
@@ -73,86 +54,107 @@ export default function DashboardOverviewPage() {
     totalAudience,
     loading: profileLoading,
     series,
-    theme,
-    handleViewProfile,
     isTrialExpired,
     openTrialExpiredModal,
   } = useCreator();
   const { showToast } = useToast();
-  const [summary, setSummary] = useState<DashboardSummary | null>(null);
+
   const [loading, setLoading] = useState(true);
-  const [reload, setReload] = useState(0);
+  const [copied, setCopied] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [dismissedSuggestions, setDismissedSuggestions] = useState<string[]>([]);
+  const [profileViewsThisWeek, setProfileViewsThisWeek] = useState<number>(0);
+
+  // Real data state from pages' sources
   const [customLinks, setCustomLinks] = useState<CustomLink[]>([]);
-  const shareRef = useRef<HTMLDivElement>(null);
-  const shareButtonRef = useRef<HTMLButtonElement>(null);
+  const [products, setProducts] = useState<CreatorProduct[]>([]);
+  const [reviews, setReviews] = useState<CreatorReview[]>([]);
+  const [packages, setPackages] = useState<MediaKitPackage[]>([]);
+  const [setupItems, setSetupItems] = useState<CreatorSetupItem[]>([]);
 
   const displayName = profile.displayName || "Creator";
   const handle = (profile.username || "").replace(/^@/, "");
   const profileUrl = buildProfileUrl(handle);
-  const waiting = loading || profileLoading;
 
-  // Load custom links on mount
+  // Restore dismissed suggestions from localStorage
   useEffect(() => {
     try {
-      const stored = customLinksRepository.get();
-      setCustomLinks(stored || []);
-    } catch {
-      setCustomLinks([]);
-    }
-  }, [reload]);
+      const stored = localStorage.getItem("inflixo_dismissed_suggestions");
+      if (stored) {
+        setDismissedSuggestions(JSON.parse(stored));
+      }
+    } catch {}
+  }, []);
 
-  // Load dashboard summary API
+  // Fetch real count data on mount from exact pages' storage / repositories
   useEffect(() => {
-    const controller = new AbortController();
+    try {
+      // 1. Links
+      const storedLinks = customLinksRepository.get();
+      setCustomLinks(Array.isArray(storedLinks) ? storedLinks : []);
+
+      // 2. Reviews
+      const storedReviews = reviewsRepository.getAll();
+      setReviews(Array.isArray(storedReviews) ? storedReviews : []);
+
+      // 3. Collab packages
+      const storedPkgs = MediaKitService.getPackages();
+      setPackages(Array.isArray(storedPkgs) ? storedPkgs : []);
+
+      // 4. Setup gear items
+      const storedSetup = creatorSetupRepository.getAll();
+      setSetupItems(Array.isArray(storedSetup) ? storedSetup : []);
+
+      // 5. Products / Shop items
+      ProductService.list()
+        .then((items) => setProducts(Array.isArray(items) ? items : []))
+        .catch(() => setProducts([]));
+    } catch (e) {
+      console.warn("Failed to read local repositories:", e);
+    }
+  }, []);
+
+  // Fetch 7-day profile views for Quick Stats row
+  useEffect(() => {
+    let ignore = false;
+    const query = profile.id
+      ? `creatorId=${encodeURIComponent(profile.id)}`
+      : profile.email
+      ? `email=${encodeURIComponent(profile.email)}`
+      : "";
+
+    if (!query) {
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
-    fetch("/api/dashboard/summary", { cache: "no-store", signal: controller.signal })
-      .then(async (response) => {
-        const body = await response.json();
-        if (!response.ok || body.status !== 1 || !body.data) throw new Error("Summary unavailable");
-        return body.data as DashboardSummary;
+    fetch(`/api/creator/analytics?${query}&period=7d`)
+      .then(async (res) => {
+        const body = await res.json();
+        if (!res.ok || body.status !== 1 || !body.data) throw new Error("Unavailable");
+        return body.data;
       })
       .then((data) => {
-        if (!controller.signal.aborted) setSummary(data);
+        if (ignore) return;
+        const views = Number(data?.metrics?.profileViews || 0);
+        setProfileViewsThisWeek(views);
       })
       .catch(() => {
-        if (!controller.signal.aborted) setSummary(null);
+        if (!ignore) setProfileViewsThisWeek(0);
       })
       .finally(() => {
-        if (!controller.signal.aborted) setLoading(false);
+        if (!ignore) setLoading(false);
       });
-    return () => controller.abort();
-  }, [profile.id, reload]);
 
-  // Handle outside click for share popover
-  useEffect(() => {
-    if (!shareOpen) return;
-    const closeOutside = (event: PointerEvent) => {
-      if (shareRef.current && !shareRef.current.contains(event.target as Node)) setShareOpen(false);
-    };
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setShareOpen(false);
-        shareButtonRef.current?.focus();
-      }
-    };
-    document.addEventListener("pointerdown", closeOutside);
-    document.addEventListener("keydown", closeOnEscape);
     return () => {
-      document.removeEventListener("pointerdown", closeOutside);
-      document.removeEventListener("keydown", closeOnEscape);
+      ignore = true;
     };
-  }, [shareOpen]);
+  }, [profile.id, profile.email]);
 
-  useEffect(() => {
-    if (!copied) return;
-    const timer = setTimeout(() => setCopied(false), 2000);
-    return () => clearTimeout(timer);
-  }, [copied]);
-
-  async function copyProfile() {
+  // Copy Profile URL Handler
+  async function handleCopyLink() {
     if (isTrialExpired) {
       showToast("Public profile is currently hidden (Free trial ended)", "error");
       openTrialExpiredModal();
@@ -160,844 +162,456 @@ export default function DashboardOverviewPage() {
     }
     const success = await copyToClipboard(profileUrl);
     setCopied(success);
-    setShareOpen(false);
     showToast(success ? "Bio link copied to clipboard! ✨" : "Could not copy link", success ? "success" : "error");
+    setTimeout(() => setCopied(false), 2000);
   }
 
-  // Merged socials combining useCreator() and summary (instant paint + server sync)
-  const effectiveSocials: SocialAccounts = useMemo(() => ({
-    ...socials,
-    ...(summary?.socials?.accounts || {}),
-  }), [socials, summary]);
+  // Dismiss a suggestion and persist
+  const handleDismissSuggestion = (id: string) => {
+    const updated = [...dismissedSuggestions, id];
+    setDismissedSuggestions(updated);
+    try {
+      localStorage.setItem("inflixo_dismissed_suggestions", JSON.stringify(updated));
+    } catch {}
+  };
 
-  const effectiveTotalAudience = useMemo(() => {
-    if (totalAudience > 0) return totalAudience;
-    if (summary?.socials?.total && summary.socials.total > 0) return summary.socials.total;
-    return SocialService.calculateTotalAudience(effectiveSocials);
-  }, [totalAudience, summary, effectiveSocials]);
+  // Effective audience and socials
+  const effectiveSocials: SocialAccounts = socials;
+  const effectiveTotalAudience = totalAudience > 0 ? totalAudience : SocialService.calculateTotalAudience(effectiveSocials);
 
-  // Extract platforms cleanly from effectiveSocials
-  const platforms = useMemo(() => {
-    const list: Array<{
-      key: string;
-      label: string;
-      username: string;
-      count: number;
-      unit: string;
-      syncedAt?: string;
-      icon: React.ComponentType<{ className?: string }>;
-      badgeBg: string;
-    }> = [];
+  // Social sync date calculation
+  const latestSyncDate = useMemo(() => {
+    const dates = [
+      effectiveSocials.instagram?.lastSyncedAt,
+      effectiveSocials.youtube?.lastSyncedAt,
+      effectiveSocials.facebook?.lastSyncedAt,
+    ].filter(Boolean) as string[];
+    if (dates.length === 0) return null;
+    dates.sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+    return dates[0];
+  }, [effectiveSocials]);
 
-    const igHandle = effectiveSocials.instagram?.username || extractUsername(effectiveSocials.instagram?.url);
-    const igFollowers = Number(effectiveSocials.instagram?.followers ?? 0);
-    if (igHandle || igFollowers > 0 || effectiveSocials.instagram?.url) {
+  const [nowMs] = useState(() => Date.now());
+  const syncDaysAgo = useMemo(() => {
+    if (!latestSyncDate) return 999;
+    const diffMs = nowMs - new Date(latestSyncDate).getTime();
+    return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  }, [latestSyncDate, nowMs]);
+
+  // Content Counts
+  const seriesCount = series.length;
+  const episodesCount = series.reduce((total, s) => total + getSeriesEpisodes(s).length, 0);
+  const linksCount = customLinks.length;
+  const shopCount = products.length;
+  const reviewsCount = reviews.length;
+  const packagesCount = packages.length;
+  const gearCount = setupItems.length;
+
+  // 1. Content Tiles Config
+  const contentTiles = [
+    {
+      id: "series",
+      label: "Series",
+      count: seriesCount,
+      subline: `${episodesCount} episode${episodesCount === 1 ? "" : "s"}`,
+      href: "/dashboard/series",
+      icon: Film,
+    },
+    {
+      id: "links",
+      label: "Links",
+      count: linksCount,
+      subline: `${linksCount} link${linksCount === 1 ? "" : "s"}`,
+      href: "/dashboard/links",
+      icon: Link2,
+    },
+    {
+      id: "shop",
+      label: "Shop items",
+      count: shopCount,
+      subline: `${shopCount} item${shopCount === 1 ? "" : "s"}`,
+      href: "/dashboard/products",
+      icon: ShoppingBag,
+    },
+    {
+      id: "reviews",
+      label: "Brand reviews",
+      count: reviewsCount,
+      subline: `${reviewsCount} review${reviewsCount === 1 ? "" : "s"}`,
+      href: "/dashboard/reviews",
+      icon: Star,
+    },
+    {
+      id: "mediakit",
+      label: "Collab packages",
+      count: packagesCount,
+      subline: `${packagesCount} collab package${packagesCount === 1 ? "" : "s"}`,
+      href: "/dashboard/mediakit",
+      icon: Briefcase,
+    },
+    {
+      id: "gear",
+      label: "My Setup",
+      count: gearCount,
+      subline: `${gearCount} gear item${gearCount === 1 ? "" : "s"}`,
+      href: "/dashboard/setup",
+      icon: Laptop,
+    },
+  ];
+
+  // 2. Dynamic Suggestions Evaluation (Max 3, by strict priority order - Views > 0 rule removed)
+  const candidateSuggestions: SuggestionItem[] = useMemo(() => {
+    const list: SuggestionItem[] = [];
+
+    // Priority 1: No links
+    if (linksCount === 0) {
       list.push({
-        key: "instagram",
-        label: "Instagram",
-        username: igHandle || "instagram",
-        count: igFollowers,
-        unit: "followers",
-        syncedAt: effectiveSocials.instagram?.lastSyncedAt || effectiveSocials.updatedAt,
-        icon: InstagramIcon,
-        badgeBg: "bg-pink-50 text-pink-600",
+        id: "no-links",
+        icon: Link2,
+        text: "Add your tour, tickets or other accounts",
+        actionLabel: "Add link",
+        actionHref: "/dashboard/links",
       });
     }
 
-    const ytHandle = effectiveSocials.youtube?.username || effectiveSocials.youtube?.channelTitle || extractUsername(effectiveSocials.youtube?.url);
-    const ytSubs = Number(effectiveSocials.youtube?.subscribers ?? effectiveSocials.youtube?.followers ?? 0);
-    if (ytHandle || ytSubs > 0 || effectiveSocials.youtube?.url) {
+    // Priority 2: Series with < 3 episodes
+    const seriesWithFewEpisodes = series.find((s) => getSeriesEpisodes(s).length < 3);
+    if (seriesWithFewEpisodes) {
       list.push({
-        key: "youtube",
-        label: "YouTube",
-        username: ytHandle || "youtube",
-        count: ytSubs,
-        unit: "subscribers",
-        syncedAt: effectiveSocials.youtube?.lastSyncedAt || effectiveSocials.updatedAt,
-        icon: YoutubeIcon,
-        badgeBg: "bg-red-50 text-red-600",
+        id: `few-episodes-${seriesWithFewEpisodes.id}`,
+        icon: Clapperboard,
+        text: `Add more episodes to '${seriesWithFewEpisodes.title || "Series"}'`,
+        actionLabel: "Add episode",
+        actionHref: "/dashboard/series",
       });
     }
 
-    const fbHandle = effectiveSocials.facebook?.username || effectiveSocials.facebook?.name || extractUsername(effectiveSocials.facebook?.url);
-    const fbFollowers = Number(effectiveSocials.facebook?.followers ?? 0);
-    if (fbHandle || fbFollowers > 0 || effectiveSocials.facebook?.url) {
+    // Priority 3: 0 brand reviews
+    if (reviewsCount === 0) {
       list.push({
-        key: "facebook",
-        label: "Facebook",
-        username: fbHandle || "facebook",
-        count: fbFollowers,
-        unit: "followers",
-        syncedAt: effectiveSocials.facebook?.lastSyncedAt || effectiveSocials.updatedAt,
-        icon: FacebookIcon,
-        badgeBg: "bg-blue-50 text-blue-600",
+        id: "no-reviews",
+        icon: Star,
+        text: "Add a brand review to build trust with new brands",
+        actionLabel: "Add review",
+        actionHref: "/dashboard/reviews",
       });
     }
 
-    const twHandle = effectiveSocials.twitter?.username || extractUsername(effectiveSocials.twitter?.url);
-    const twFollowers = Number(effectiveSocials.twitter?.followers ?? 0);
-    if (twHandle || twFollowers > 0 || effectiveSocials.twitter?.url) {
+    // Priority 4: 0 gear items
+    if (gearCount === 0) {
       list.push({
-        key: "twitter",
-        label: "X (Twitter)",
-        username: twHandle || "x",
-        count: twFollowers,
-        unit: "followers",
-        syncedAt: effectiveSocials.twitter?.lastSyncedAt,
-        icon: XTwitterIcon,
-        badgeBg: "bg-slate-100 text-slate-800",
+        id: "no-gear",
+        icon: Laptop,
+        text: "List your camera & mic — fans keep asking",
+        actionLabel: "Add gear",
+        actionHref: "/dashboard/setup",
       });
     }
 
-    const liHandle = effectiveSocials.linkedin?.username || extractUsername(effectiveSocials.linkedin?.url);
-    const liFollowers = Number(effectiveSocials.linkedin?.followers ?? 0);
-    if (liHandle || liFollowers > 0 || effectiveSocials.linkedin?.url) {
+    // Priority 5: Channels synced > 3 days ago
+    if (syncDaysAgo > 3) {
       list.push({
-        key: "linkedin",
-        label: "LinkedIn",
-        username: liHandle || "linkedin",
-        count: liFollowers,
-        unit: "connections",
-        syncedAt: effectiveSocials.linkedin?.lastSyncedAt,
-        icon: LinkedinIcon,
-        badgeBg: "bg-blue-50 text-[#0077b5]",
-      });
-    }
-
-    const thHandle = effectiveSocials.threads?.username || extractUsername(effectiveSocials.threads?.url);
-    const thFollowers = Number(effectiveSocials.threads?.followers ?? 0);
-    if (thHandle || thFollowers > 0 || effectiveSocials.threads?.url) {
-      list.push({
-        key: "threads",
-        label: "Threads",
-        username: thHandle || "threads",
-        count: thFollowers,
-        unit: "followers",
-        syncedAt: effectiveSocials.threads?.lastSyncedAt,
-        icon: ThreadsIcon,
-        badgeBg: "bg-slate-100 text-slate-900",
-      });
-    }
-
-    const spHandle = effectiveSocials.spotify?.username || extractUsername(effectiveSocials.spotify?.url);
-    const spFollowers = Number(effectiveSocials.spotify?.followers ?? 0);
-    if (spHandle || spFollowers > 0 || effectiveSocials.spotify?.url) {
-      list.push({
-        key: "spotify",
-        label: "Spotify",
-        username: spHandle || "spotify",
-        count: spFollowers,
-        unit: "listeners",
-        syncedAt: effectiveSocials.spotify?.lastSyncedAt,
-        icon: SpotifyIcon,
-        badgeBg: "bg-emerald-50 text-emerald-600",
+        id: "sync-channels",
+        icon: RefreshCw,
+        text: "Refresh your fan count",
+        actionLabel: "Sync",
+        actionHref: "/dashboard/socials",
       });
     }
 
     return list;
-  }, [effectiveSocials]);
+  }, [linksCount, series, reviewsCount, gearCount, syncDaysAgo]);
 
-  // Derived Series stats
-  const activeSeriesCount = summary?.series?.count ?? series.length ?? 0;
-  const activeEpisodesCount = useMemo(() => {
-    if (summary?.series?.episodes != null) return summary.series.episodes;
-    return series.reduce((total, s) => {
-      const eps = s.seasons?.reduce((seasonTotal, season) => seasonTotal + (season.episodes?.length || 0), 0) || 0;
-      return total + eps;
-    }, 0);
-  }, [summary, series]);
+  const visibleSuggestions = useMemo(() => {
+    return candidateSuggestions
+      .filter((s) => !dismissedSuggestions.includes(s.id))
+      .slice(0, 3);
+  }, [candidateSuggestions, dismissedSuggestions]);
 
-  // Analytics stats
-  const totalViews = summary?.analytics?.views ?? 0;
-  const totalClicks = summary?.analytics?.clicks ?? 0;
-  const ctr = totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(1) : "0.0";
-
-  // Bio links count
-  const activeLinksCount = summary?.links ?? customLinks.length ?? 0;
-  const collabPackagesCount = summary?.mediakit ?? 0;
-
-  // Profile readiness checklist
-  const hasProfile = Boolean(profile.username && profile.displayName);
-  const hasSocials = platforms.length > 0;
-  const hasSeries = activeSeriesCount > 0;
-  const hasLinks = activeLinksCount > 0;
-
-  const readinessScore = useMemo(() => {
-    let score = 0;
-    if (hasProfile) score += 25;
-    if (hasSocials) score += 25;
-    if (hasSeries) score += 25;
-    if (hasLinks) score += 25;
-    return score;
-  }, [hasProfile, hasSocials, hasSeries, hasLinks]);
+  // Tooltip content for Total Fans breakdown
+  const audienceTooltip = `Instagram: ${formatCount(effectiveSocials.instagram?.followers || 0)} • YouTube: ${formatCount(effectiveSocials.youtube?.subscribers || 0)} • Facebook: ${formatCount(effectiveSocials.facebook?.followers || 0)} (synced ${syncDaysAgo > 30 ? "recently" : `${syncDaysAgo}d ago`})`;
 
   return (
-    <div className="w-full space-y-4">
-      {/* 1. COMMAND HEADER: Hero Identity & Bio Link Strip */}
-      <section className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-4 shadow-2xs sm:p-5">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          {/* Creator Profile Overview */}
-          <div className="flex min-w-0 items-center gap-3.5">
-            <div className="relative shrink-0">
-              <CreatorAvatar
-                src={profile.photoDataUrl}
-                name={displayName}
-                className="h-12 w-12 rounded-xl border border-slate-200/80 object-cover shadow-2xs sm:h-13 sm:w-13"
-              />
-              <span
-                className={`absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-white ${
-                  isTrialExpired ? "bg-rose-500" : "bg-emerald-500"
-                }`}
-                title={isTrialExpired ? "Profile hidden (Trial ended)" : "Profile active"}
-              />
-            </div>
-
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <h1 className="truncate text-base font-bold tracking-tight text-slate-900 sm:text-lg">
-                  {displayName}
-                </h1>
-                {profile.isVerified && (
-                  <ShieldCheck className="h-4 w-4 shrink-0 text-[#7A2253]" />
-                )}
-                <span className="inline-flex items-center rounded-md bg-[#7A2253]/10 px-2 py-0.5 text-xs font-semibold text-[#7A2253]">
-                  @{handle || "handle"}
-                </span>
-                {profile.category && (
-                  <span className="hidden rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 sm:inline-block">
-                    {profile.category}
-                  </span>
-                )}
-              </div>
-
-              <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                {isTrialExpired ? (
-                  <span className="inline-flex items-center gap-1 font-semibold text-rose-600">
-                    <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
-                    Profile Hidden (Trial Ended)
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 font-medium text-emerald-600">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Public Profile Active
-                  </span>
-                )}
-                <span className="text-slate-300">·</span>
-                <span>Theme: <strong className="font-semibold text-slate-700 capitalize">{theme.replace(/-/g, " ")}</strong></span>
-              </div>
-            </div>
+    <PageContainer className="select-none text-left">
+      {/* 1. LINK BAR (one slim row) */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-3.5 bg-white border border-[#E4E4E7] rounded-[5px] shadow-2xs">
+        {/* Left: 40px avatar + Name + green Live dot */}
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="relative shrink-0">
+            <CreatorAvatar
+              src={profile.photoDataUrl}
+              name={displayName}
+              className="h-10 w-10 rounded-full border border-[#E4E4E7] object-cover"
+            />
+            <span
+              className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white"
+              title="Profile is live"
+            />
           </div>
 
-          {/* Right Action Bar & Bio Link Pill */}
-          <div className="flex flex-wrap items-center gap-2 lg:justify-end">
-            {/* Interactive Bio Link Box */}
-            <div className="flex h-9 items-center rounded-xl border border-slate-200 bg-slate-50/80 px-2.5 text-xs text-slate-700 transition-colors hover:border-slate-300">
-              <Globe className="mr-1.5 h-3.5 w-3.5 text-[#7A2253]" />
-              <span className="font-medium text-slate-500 sm:inline">inflixo.com/</span>
-              <span className="font-bold text-slate-800">{handle}</span>
-              <button
-                type="button"
-                onClick={copyProfile}
-                className="ml-2 inline-flex h-6 items-center gap-1 rounded-md px-1.5 text-[11px] font-semibold text-slate-600 hover:bg-white hover:text-[#7A2253] cursor-pointer transition-colors shadow-2xs"
-                title="Copy link"
-              >
-                {copied ? <Check className="h-3 w-3 text-emerald-600" /> : <Copy className="h-3 w-3" />}
-                <span>{copied ? "Copied" : "Copy"}</span>
-              </button>
-            </div>
-
-            {/* View Live Button */}
-            <button
-              type="button"
-              onClick={handleViewProfile}
-              className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white px-3 text-xs font-semibold text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50 active:scale-98 shadow-2xs"
-            >
-              <span>View Live</span>
-              <ExternalLink className="h-3.5 w-3.5 text-slate-400" />
-            </button>
-
-            {/* Share Menu */}
-            <div ref={shareRef} className="relative">
-              <button
-                ref={shareButtonRef}
-                type="button"
-                onClick={() => setShareOpen((v) => !v)}
-                className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-xl bg-[#7A2253] px-3.5 text-xs font-semibold text-white shadow-xs transition-all hover:opacity-95 active:scale-98"
-              >
-                <Share2 className="h-3.5 w-3.5" />
-                <span>Share</span>
-              </button>
-
-              {shareOpen && (
-                <div className="absolute right-0 z-30 mt-1.5 w-48 rounded-xl border border-slate-200 bg-white p-1 shadow-lg text-xs animate-in fade-in zoom-in-95">
-                  <button
-                    type="button"
-                    onClick={copyProfile}
-                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-slate-700 hover:bg-slate-50 cursor-pointer"
-                  >
-                    {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5 text-slate-400" />}
-                    <span>Copy profile link</span>
-                  </button>
-                  <a
-                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`Check out my official link in bio: ${profileUrl}`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => setShareOpen(false)}
-                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-slate-700 hover:bg-slate-50 cursor-pointer"
-                  >
-                    <MessageCircle className="h-3.5 w-3.5 text-emerald-500" />
-                    <span>Share on WhatsApp</span>
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => { setShareOpen(false); setQrOpen(true); }}
-                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-slate-700 hover:bg-slate-50 cursor-pointer"
-                  >
-                    <QrCode className="h-3.5 w-3.5 text-slate-400" />
-                    <span>Show QR Code</span>
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Reload button */}
-            <button
-              type="button"
-              onClick={() => setReload((v) => v + 1)}
-              disabled={waiting}
-              aria-label="Refresh data"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition-all hover:bg-slate-50 hover:text-slate-800 disabled:opacity-50 cursor-pointer shadow-2xs"
-              title="Refresh stats"
-            >
-              <RefreshCw className={`h-3.5 w-3.5 ${waiting ? "animate-spin" : ""}`} />
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. CORE METRICS STRIP: High-Density 4-KPI Grid */}
-      <section aria-label="Key Performance Indicators" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {/* KPI 1: Total Reach */}
-        <Link
-          href="/dashboard/socials"
-          className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-3.5 shadow-2xs transition-all hover:border-[#7A2253]/40 hover:shadow-xs"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Total Reach</span>
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#7A2253]/10 text-[#7A2253]">
-              <Users className="h-3.5 w-3.5" />
-            </div>
-          </div>
-          <div className="mt-2 text-2xl font-extrabold tracking-tight text-slate-900 tabular-nums">
-            {waiting && effectiveTotalAudience === 0 ? <MetricSkeleton /> : formatCount(effectiveTotalAudience)}
-          </div>
-          <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500">
-            <div className="flex items-center gap-1">
-              {platforms.length > 0 ? (
-                <>
-                  <div className="flex -space-x-1">
-                    {platforms.slice(0, 3).map((p) => {
-                      const Icon = p.icon;
-                      return (
-                        <div key={p.key} className="flex h-4 w-4 items-center justify-center rounded-full bg-slate-100 ring-1 ring-white">
-                          <Icon className="h-2.5 w-2.5" />
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <span className="ml-1 font-medium">{platforms.length} linked</span>
-                </>
-              ) : (
-                <span>No socials linked</span>
-              )}
-            </div>
-            <span className="inline-flex items-center font-semibold text-[#7A2253] group-hover:translate-x-0.5 transition-transform">
-              Edit <ChevronRight className="h-3 w-3" />
-            </span>
-          </div>
-        </Link>
-
-        {/* KPI 2: 30D Profile Views */}
-        <Link
-          href="/dashboard/analytics"
-          className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-3.5 shadow-2xs transition-all hover:border-blue-400/40 hover:shadow-xs"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">30D Profile Views</span>
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-              <BarChart3 className="h-3.5 w-3.5" />
-            </div>
-          </div>
-          <div className="mt-2 text-2xl font-extrabold tracking-tight text-slate-900 tabular-nums">
-            {waiting ? <MetricSkeleton /> : formatCount(totalViews)}
-          </div>
-          <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500">
-            <span>{totalClicks} clicks · {ctr}% CTR</span>
-            <span className="inline-flex items-center font-semibold text-blue-600 group-hover:translate-x-0.5 transition-transform">
-              Stats <ChevronRight className="h-3 w-3" />
-            </span>
-          </div>
-        </Link>
-
-        {/* KPI 3: OTT Video Series */}
-        <Link
-          href="/dashboard/series"
-          className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-3.5 shadow-2xs transition-all hover:border-purple-400/40 hover:shadow-xs"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Video Series</span>
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
-              <Film className="h-3.5 w-3.5" />
-            </div>
-          </div>
-          <div className="mt-2 text-2xl font-extrabold tracking-tight text-slate-900 tabular-nums">
-            {waiting ? <MetricSkeleton /> : activeSeriesCount}
-          </div>
-          <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500">
-            <span>{activeEpisodesCount} episodes live</span>
-            <span className="inline-flex items-center font-semibold text-purple-600 group-hover:translate-x-0.5 transition-transform">
-              Series <ChevronRight className="h-3 w-3" />
-            </span>
-          </div>
-        </Link>
-
-        {/* KPI 4: Bio Links & Collabs */}
-        <Link
-          href="/dashboard/links"
-          className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-3.5 shadow-2xs transition-all hover:border-emerald-400/40 hover:shadow-xs"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Bio Links</span>
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
-              <Link2 className="h-3.5 w-3.5" />
-            </div>
-          </div>
-          <div className="mt-2 text-2xl font-extrabold tracking-tight text-slate-900 tabular-nums">
-            {waiting ? <MetricSkeleton /> : activeLinksCount}
-          </div>
-          <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500">
-            <span>{collabPackagesCount} collab packages</span>
-            <span className="inline-flex items-center font-semibold text-emerald-600 group-hover:translate-x-0.5 transition-transform">
-              Links <ChevronRight className="h-3 w-3" />
-            </span>
-          </div>
-        </Link>
-      </section>
-
-      {/* 3. MAIN WORKSTATION: Two-Column Layout (8 cols left / 4 cols right) */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 items-start">
-        {/* LEFT COLUMN: Audience Reach, Video Series & Bio Links (8 cols) */}
-        <div className="space-y-4 lg:col-span-8">
-          {/* Section A: Verified Social Audience Table */}
-          <section className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-2xs sm:p-5">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div>
-                <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900 sm:text-sm">
-                  Verified Social Channels
-                </h2>
-                <p className="text-[11px] text-slate-500">
-                  Audience numbers displayed on your public Inflixo page
-                </p>
-              </div>
-              <Link
-                href="/dashboard/socials"
-                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
-              >
-                <span>Edit Channels</span>
-                <ArrowUpRight className="h-3 w-3 opacity-60" />
-              </Link>
-            </div>
-
-            {waiting ? (
-              <div className="space-y-3 py-4">
-                <MetricSkeleton small />
-                <MetricSkeleton small />
-              </div>
-            ) : platforms.length === 0 ? (
-              <div className="py-7 text-center space-y-2.5">
-                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-[#7A2253]/10 text-[#7A2253]">
-                  <Users className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-800">No social channels connected</p>
-                  <p className="text-[11px] text-slate-500">Link your Instagram, YouTube or X to showcase verified reach.</p>
-                </div>
-                <Link
-                  href="/dashboard/socials"
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#7A2253] px-3.5 py-1.5 text-xs font-semibold text-white hover:opacity-95 shadow-xs transition-all"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                  <span>Connect Social Accounts</span>
-                </Link>
-              </div>
-            ) : (
-              <div className="divide-y divide-slate-100">
-                {platforms.map((platform) => {
-                  const Icon = platform.icon;
-                  return (
-                    <div key={platform.key} className="flex items-center justify-between py-3 first:pt-3 last:pb-0">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className={`flex h-8 w-8 items-center justify-center rounded-xl shrink-0 ${platform.badgeBg}`}>
-                          <Icon className="h-4 w-4" />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-xs font-bold text-slate-900 truncate">
-                            @{platform.username}
-                          </p>
-                          <p className="text-[10px] text-slate-400 capitalize">
-                            {platform.label} · Synced {formatSimplifiedSyncDate(platform.syncedAt)}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="text-right shrink-0">
-                        <span className="text-xs font-extrabold text-slate-900 tabular-nums sm:text-sm">
-                          {formatCount(platform.count)}
-                        </span>
-                        <span className="ml-1 text-[11px] font-normal text-slate-500">
-                          {platform.unit}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </section>
-
-          {/* Section B: OTT Video Series (Inflixo Core Feature) */}
-          <section className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-2xs sm:p-5">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900 sm:text-sm">
-                    OTT Video Series
-                  </h2>
-                  <span className="rounded bg-purple-50 px-1.5 py-0.2 text-[10px] font-bold text-purple-700">
-                    Bingeable
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-500">
-                  Organize your videos into seasons and episodes without algorithm clutter
-                </p>
-              </div>
-              <Link
-                href="/dashboard/series"
-                className="inline-flex items-center gap-1 rounded-lg bg-[#7A2253] px-2.5 py-1 text-xs font-semibold text-white hover:opacity-95 shadow-xs transition-all"
-              >
-                <Plus className="h-3 w-3" />
-                <span>New Series</span>
-              </Link>
-            </div>
-
-            {series.length === 0 ? (
-              <div className="py-7 text-center space-y-2.5">
-                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600">
-                  <Film className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-800">No Video Series created yet</p>
-                  <p className="text-[11px] text-slate-500">
-                    Turn your YouTube &amp; Instagram videos into an OTT Netflix-style series on your bio.
-                  </p>
-                </div>
-                <Link
-                  href="/dashboard/series"
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
-                >
-                  <Plus className="h-3.5 w-3.5 text-[#7A2253]" />
-                  <span>Create Your First Series</span>
-                </Link>
-              </div>
-            ) : (
-              <div className="pt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {series.slice(0, 4).map((s) => {
-                  const episodes = s.seasons?.reduce((acc, season) => acc + (season.episodes?.length || 0), 0) || 0;
-                  return (
-                    <Link
-                      key={s.id}
-                      href="/dashboard/series"
-                      className="group flex items-center gap-3 rounded-xl border border-slate-200/80 bg-slate-50/60 p-2.5 transition-all hover:border-[#7A2253]/40 hover:bg-white hover:shadow-2xs"
-                    >
-                      {s.posterDataUrl ? (
-                        <img
-                          src={s.posterDataUrl}
-                          alt={s.title}
-                          className="h-12 w-10 rounded-lg object-cover border border-slate-200 shrink-0"
-                        />
-                      ) : (
-                        <div className="flex h-12 w-10 items-center justify-center rounded-lg bg-purple-100/60 text-purple-600 shrink-0 border border-purple-200">
-                          <Play className="h-4 w-4 fill-purple-600" />
-                        </div>
-                      )}
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs font-bold text-slate-900 truncate group-hover:text-[#7A2253]">
-                          {s.title}
-                        </p>
-                        <p className="text-[10.5px] text-slate-500 truncate">
-                          {s.genre || "General"} · {episodes} episodes
-                        </p>
-                      </div>
-                      <ChevronRight className="h-3.5 w-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-          </section>
-
-          {/* Section C: Custom Bio Links Hub */}
-          <section className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-2xs sm:p-5">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div>
-                <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900 sm:text-sm">
-                  Custom Bio Links
-                </h2>
-                <p className="text-[11px] text-slate-500">
-                  Priority buttons, shop links, and WhatsApp direct chat
-                </p>
-              </div>
-              <Link
-                href="/dashboard/links"
-                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
-              >
-                <span>Manage Links</span>
-                <ArrowUpRight className="h-3 w-3 opacity-60" />
-              </Link>
-            </div>
-
-            {customLinks.length === 0 ? (
-              <div className="py-6 text-center space-y-2">
-                <p className="text-xs text-slate-500">No custom outbound links added yet.</p>
-                <Link
-                  href="/dashboard/links"
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-slate-300 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
-                >
-                  <Plus className="h-3.5 w-3.5 text-[#7A2253]" />
-                  <span>Add Priority Bio Link</span>
-                </Link>
-              </div>
-            ) : (
-              <div className="pt-2 divide-y divide-slate-100">
-                {customLinks.slice(0, 3).map((link) => (
-                  <div key={link.id} className="flex items-center justify-between py-2.5 first:pt-2">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 shrink-0">
-                        <Link2 className="h-3.5 w-3.5" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-bold text-slate-800 truncate">{link.title}</p>
-                        <p className="text-[10px] text-slate-400 truncate max-w-xs">{link.url}</p>
-                      </div>
-                    </div>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                      Active
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-        </div>
-
-        {/* RIGHT COLUMN: Profile Preview, Readiness & Studio Tools (4 cols) */}
-        <div className="space-y-4 lg:col-span-4">
-          {/* Card 1: Live Bio Link Preview Card */}
-          <div className="rounded-2xl border border-slate-200/80 bg-gradient-to-b from-slate-50/80 to-white p-4 shadow-2xs space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                Live Bio Card
-              </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <h2 className="text-[15px] font-bold text-[#18181B] truncate" title={displayName}>
+                {displayName}
+              </h2>
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Live on Web
+                Live
               </span>
             </div>
-
-            <div className="rounded-xl border border-slate-200 bg-white p-3 space-y-2 shadow-2xs">
-              <div className="flex items-center gap-2.5">
-                <CreatorAvatar
-                  src={profile.photoDataUrl}
-                  name={displayName}
-                  className="h-9 w-9 rounded-lg border border-slate-200 object-cover shrink-0"
-                />
-                <div className="min-w-0">
-                  <p className="text-xs font-bold text-slate-900 truncate">{displayName}</p>
-                  <p className="text-[11px] text-[#7A2253] font-medium truncate">@{handle}</p>
-                </div>
-              </div>
-              {profile.bio && (
-                <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
-                  {profile.bio}
-                </p>
-              )}
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 pt-1">
-              <button
-                type="button"
-                onClick={copyProfile}
-                className="inline-flex h-8 items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer transition-all shadow-2xs"
-              >
-                <Copy className="h-3 w-3" />
-                <span>{copied ? "Copied!" : "Copy"}</span>
-              </button>
-              <button
-                type="button"
-                onClick={handleViewProfile}
-                className="inline-flex h-8 items-center justify-center gap-1 rounded-xl bg-[#7A2253] text-xs font-semibold text-white hover:opacity-95 cursor-pointer transition-all shadow-xs"
-              >
-                <span>Preview</span>
-                <ExternalLink className="h-3 w-3" />
-              </button>
-            </div>
           </div>
+        </div>
 
-          {/* Card 2: Profile Readiness Progress Bar */}
-          <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-2xs space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900">
-                Profile Readiness
-              </h3>
-              <span className="text-xs font-extrabold text-[#7A2253] tabular-nums">
-                {readinessScore}%
-              </span>
-            </div>
+        {/* Right: pill "inflixo.com/username" with Copy icon, "View", "Share" */}
+        <div className="flex items-center gap-2 shrink-0 flex-wrap sm:flex-nowrap">
+          <button
+            type="button"
+            onClick={handleCopyLink}
+            className="inline-flex h-8 items-center gap-1.5 px-2.5 rounded-[5px] bg-[#F4F4F5] hover:bg-[#E4E4E7] text-[#52525B] hover:text-[#18181B] text-[12px] font-medium transition-colors cursor-pointer group"
+            title="Click to copy bio link"
+          >
+            <span className="truncate max-w-[140px] sm:max-w-[200px]">
+              inflixo.com/{handle || "creator"}
+            </span>
+            {copied ? (
+              <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+            ) : (
+              <Copy className="h-3.5 w-3.5 text-[#71717A] group-hover:text-[#18181B] shrink-0" />
+            )}
+          </button>
 
-            <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
-              <div
-                className="h-full bg-[#7A2253] transition-all duration-500 rounded-full"
-                style={{ width: `${readinessScore}%` }}
-              />
-            </div>
+          <Link
+            href={`/${handle}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex h-8 items-center justify-center gap-1 px-3 rounded-[5px] border border-[#E4E4E7] bg-white text-[#18181B] hover:bg-[#F4F4F5] text-[12px] font-semibold transition-colors"
+          >
+            <span>View</span>
+            <ExternalLink className="h-3 w-3 text-[#71717A]" />
+          </Link>
 
-            <ul className="space-y-2 text-xs">
-              <li className="flex items-center justify-between text-slate-600">
-                <div className="flex items-center gap-2">
-                  {hasProfile ? <CheckCircle2 className="h-4 w-4 text-emerald-600" /> : <Circle className="h-4 w-4 text-slate-300" />}
-                  <span>Username &amp; Profile details</span>
-                </div>
-                {hasProfile && <span className="text-[10px] font-semibold text-emerald-600">Done</span>}
-              </li>
-
-              <li className="flex items-center justify-between text-slate-600">
-                <div className="flex items-center gap-2">
-                  {hasSocials ? <CheckCircle2 className="h-4 w-4 text-emerald-600" /> : <Circle className="h-4 w-4 text-slate-300" />}
-                  <span>Connect Social Networks</span>
-                </div>
-                {!hasSocials && (
-                  <Link href="/dashboard/socials" className="text-[10px] font-semibold text-[#7A2253] hover:underline">
-                    Connect →
-                  </Link>
-                )}
-              </li>
-
-              <li className="flex items-center justify-between text-slate-600">
-                <div className="flex items-center gap-2">
-                  {hasSeries ? <CheckCircle2 className="h-4 w-4 text-emerald-600" /> : <Circle className="h-4 w-4 text-slate-300" />}
-                  <span>Create OTT Video Series</span>
-                </div>
-                {!hasSeries && (
-                  <Link href="/dashboard/series" className="text-[10px] font-semibold text-[#7A2253] hover:underline">
-                    Create →
-                  </Link>
-                )}
-              </li>
-
-              <li className="flex items-center justify-between text-slate-600">
-                <div className="flex items-center gap-2">
-                  {hasLinks ? <CheckCircle2 className="h-4 w-4 text-emerald-600" /> : <Circle className="h-4 w-4 text-slate-300" />}
-                  <span>Add Priority Bio Links</span>
-                </div>
-                {!hasLinks && (
-                  <Link href="/dashboard/links" className="text-[10px] font-semibold text-[#7A2253] hover:underline">
-                    Add link →
-                  </Link>
-                )}
-              </li>
-            </ul>
-          </div>
-
-          {/* Card 3: Studio Quick Tools */}
-          <section className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-2xs">
-            <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-500 pb-2.5 border-b border-slate-100">
-              Studio Quick Tools
-            </h3>
-            <nav className="divide-y divide-slate-100 text-xs">
-              <Link
-                href="/dashboard/themes"
-                className="flex items-center justify-between py-2.5 text-slate-700 hover:text-[#7A2253] transition-colors"
-              >
-                <div className="flex items-center gap-2.5">
-                  <Palette className="h-4 w-4 text-amber-500" />
-                  <span className="font-medium">Customize Theme &amp; Colors</span>
-                </div>
-                <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
-              </Link>
-
-              <Link
-                href="/dashboard/mediakit"
-                className="flex items-center justify-between py-2.5 text-slate-700 hover:text-[#7A2253] transition-colors"
-              >
-                <div className="flex items-center gap-2.5">
-                  <Briefcase className="h-4 w-4 text-blue-600" />
-                  <span className="font-medium">Media Kit &amp; Rate Card</span>
-                </div>
-                <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
-              </Link>
-
-              <Link
-                href="/dashboard/products"
-                className="flex items-center justify-between py-2.5 text-slate-700 hover:text-[#7A2253] transition-colors"
-              >
-                <div className="flex items-center gap-2.5">
-                  <ShoppingBag className="h-4 w-4 text-pink-600" />
-                  <span className="font-medium">Shop &amp; Recommendations</span>
-                </div>
-                <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
-              </Link>
-
-              <Link
-                href="/dashboard/reviews"
-                className="flex items-center justify-between py-2.5 text-slate-700 hover:text-[#7A2253] transition-colors"
-              >
-                <div className="flex items-center gap-2.5">
-                  <Star className="h-4 w-4 text-amber-500" />
-                  <span className="font-medium">Client Testimonials</span>
-                </div>
-                <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
-              </Link>
-            </nav>
-          </section>
+          <button
+            type="button"
+            onClick={() => setShareOpen(true)}
+            className="inline-flex h-8 items-center justify-center gap-1.5 px-3.5 rounded-[5px] bg-[#7A2253] text-white hover:opacity-95 text-[12px] font-semibold transition-opacity cursor-pointer shadow-2xs"
+          >
+            <Share2 className="h-3.5 w-3.5" />
+            <span>Share</span>
+          </button>
         </div>
       </div>
 
-      {/* QR Code Sharing Modal */}
-      <Modal
-        isOpen={qrOpen}
-        onClose={() => setQrOpen(false)}
-        size="sm"
-        title="Share your public profile"
-        description={`Scan to visit inflixo.com/${handle}`}
-      >
-        <ModalBody>
-          <div className="flex flex-col items-center gap-4 py-3">
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
-              <QRCode value={profileUrl} size={180} />
+      {/* 2. QUICK STATS (Directly under Link Bar: one slim row, small text, no cards/charts) */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 px-1 text-[13px] text-[#71717A]">
+        {/* Stat 1: Total fans with tooltip */}
+        <span
+          className="inline-flex items-center gap-1.5 cursor-help transition-colors hover:text-[#18181B]"
+          title={audienceTooltip}
+        >
+          <Users className="h-3.5 w-3.5 text-[#A1A1AA]" />
+          <span className="font-semibold text-[#18181B]">
+            {formatCount(effectiveTotalAudience)}
+          </span>
+          <span>total fans</span>
+        </span>
+
+        {/* Stat 2: Profile views this week (show ONLY if views > 0) */}
+        {profileViewsThisWeek > 0 && (
+          <>
+            <span className="text-[#D4D4D8] select-none">•</span>
+            <span className="inline-flex items-center gap-1.5">
+              <Eye className="h-3.5 w-3.5 text-[#A1A1AA]" />
+              <span className="font-semibold text-[#18181B]">
+                {formatCount(profileViewsThisWeek)}
+              </span>
+              <span>profile views this week</span>
+            </span>
+          </>
+        )}
+
+        <span className="text-[#D4D4D8] select-none">•</span>
+
+        {/* Small text link: See analytics → */}
+        <Link
+          href="/dashboard/analytics"
+          className="font-medium text-[#7A2253] hover:underline inline-flex items-center gap-1 transition-colors"
+        >
+          <span>See analytics</span>
+          <span>→</span>
+        </Link>
+      </div>
+
+      {/* 3. YOUR CONTENT (count tiles — one row, 6 small tiles, 3 per row on tablet, 2 on mobile) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        {loading || profileLoading ? (
+          Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="flex flex-col justify-between p-3.5 bg-white border border-[#E4E4E7] rounded-[5px] animate-pulse space-y-3"
+            >
+              <div className="h-4.5 w-4.5 rounded bg-[#F4F4F5]" />
+              <div className="space-y-1.5">
+                <div className="h-6 w-10 rounded bg-[#F4F4F5]" />
+                <div className="h-3 w-16 rounded bg-[#F4F4F5]" />
+                <div className="h-2.5 w-12 rounded bg-[#F4F4F5]" />
+              </div>
             </div>
-            <p className="text-xs text-slate-500 font-mono">inflixo.com/{handle}</p>
+          ))
+        ) : (
+          contentTiles.map((tile) => {
+            const Icon = tile.icon;
+            return (
+              <Link
+                key={tile.id}
+                href={tile.href}
+                className="flex flex-col justify-between p-3.5 bg-white border border-[#E4E4E7] hover:border-[#CBD5E1] rounded-[5px] transition-all hover:shadow-xs group cursor-pointer"
+              >
+                <div className="flex items-center justify-between">
+                  <Icon
+                    className="h-4.5 w-4.5 text-[#71717A] group-hover:text-[#7A2253] transition-colors"
+                    strokeWidth={1.75}
+                  />
+                </div>
+                <div className="mt-3">
+                  <div className="text-2xl font-bold text-[#18181B] tracking-tight leading-none">
+                    {tile.count}
+                  </div>
+                  <div className="text-[13px] font-semibold text-[#18181B] mt-1 truncate">
+                    {tile.label}
+                  </div>
+                  {tile.count === 0 ? (
+                    <div className="text-[11px] font-semibold text-[#7A2253] hover:underline flex items-center gap-0.5 mt-0.5">
+                      Add first →
+                    </div>
+                  ) : (
+                    <div className="text-[11px] text-[#71717A] mt-0.5 truncate">
+                      {tile.subline}
+                    </div>
+                  )}
+                </div>
+              </Link>
+            );
+          })
+        )}
+      </div>
+
+      {/* 4. SUGGESTIONS (one card, max 3 items, dynamic) */}
+      {visibleSuggestions.length > 0 && (
+        <div className="bg-white border border-[#E4E4E7] rounded-[5px] p-4 sm:p-5 space-y-3 shadow-2xs">
+          <h3 className="text-[15px] font-bold text-[#18181B]">Next steps</h3>
+          <div className="space-y-2">
+            {visibleSuggestions.map((sug) => {
+              const Icon = sug.icon;
+              return (
+                <div
+                  key={sug.id}
+                  className="flex items-center justify-between gap-3 p-3 rounded-[5px] bg-[#FBFBFC] border border-[#F4F4F5] hover:border-[#E4E4E7] transition-colors"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#7A2253]/[0.08] text-[#7A2253] shrink-0">
+                      <Icon className="h-4 w-4" strokeWidth={1.75} />
+                    </div>
+                    <p className="text-[13px] font-medium text-[#18181B] truncate">{sug.text}</p>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Link
+                      href={sug.actionHref}
+                      className="inline-flex h-7 items-center justify-center px-3 rounded-[5px] bg-[#7A2253] hover:bg-[#681c45] text-white text-[12px] font-semibold transition-colors shadow-2xs"
+                    >
+                      {sug.actionLabel}
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => handleDismissSuggestion(sug.id)}
+                      className="flex h-7 w-7 items-center justify-center rounded-[5px] text-[#A1A1AA] hover:text-[#18181B] hover:bg-[#F4F4F5] transition-colors cursor-pointer"
+                      aria-label="Dismiss suggestion"
+                      title="Dismiss"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Share Modal */}
+      <Modal isOpen={shareOpen} onClose={() => setShareOpen(false)} title="Share your Inflixo link">
+        <ModalBody className="space-y-4">
+          <div className="flex items-center gap-2 p-2 rounded-[5px] bg-[#F4F4F5] border border-[#E4E4E7]">
+            <input
+              type="text"
+              readOnly
+              value={profileUrl}
+              className="flex-1 bg-transparent text-[13px] text-[#18181B] font-mono outline-none px-1"
+            />
             <button
               type="button"
-              onClick={copyProfile}
-              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-xl bg-[#7A2253] px-4 text-xs font-semibold text-white shadow-xs hover:opacity-95 cursor-pointer"
+              onClick={handleCopyLink}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-[5px] bg-[#7A2253] text-white text-xs font-semibold hover:opacity-95 transition-opacity"
             >
               {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-              <span>{copied ? "Copied!" : "Copy profile link"}</span>
+              <span>{copied ? "Copied" : "Copy"}</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 pt-2">
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(`Check out my official creator series and links on Inflixo: ${profileUrl}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 p-2.5 rounded-[5px] border border-[#E4E4E7] hover:bg-[#F4F4F5] text-xs font-semibold text-[#18181B] transition-colors"
+            >
+              <MessageCircle className="h-4 w-4 text-emerald-600" />
+              <span>WhatsApp</span>
+            </a>
+            <a
+              href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(profileUrl)}&text=${encodeURIComponent(`Watch my latest series and check out my bio on @inflixo`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 p-2.5 rounded-[5px] border border-[#E4E4E7] hover:bg-[#F4F4F5] text-xs font-semibold text-[#18181B] transition-colors"
+            >
+              <XTwitterIcon className="h-4 w-4 text-[#18181B]" />
+              <span>X (Twitter)</span>
+            </a>
+            <a
+              href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(profileUrl)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 p-2.5 rounded-[5px] border border-[#E4E4E7] hover:bg-[#F4F4F5] text-xs font-semibold text-[#18181B] transition-colors"
+            >
+              <LinkedinIcon className="h-4 w-4 text-[#0A66C2]" />
+              <span>LinkedIn</span>
+            </a>
+            <button
+              type="button"
+              onClick={() => {
+                setShareOpen(false);
+                setQrOpen(true);
+              }}
+              className="flex items-center justify-center gap-2 p-2.5 rounded-[5px] border border-[#E4E4E7] hover:bg-[#F4F4F5] text-xs font-semibold text-[#18181B] transition-colors cursor-pointer"
+            >
+              <ExternalLink className="h-4 w-4 text-[#7A2253]" />
+              <span>View QR Code</span>
             </button>
           </div>
         </ModalBody>
       </Modal>
-    </div>
+
+      {/* QR Code Modal */}
+      <Modal isOpen={qrOpen} onClose={() => setQrOpen(false)} title="Creator QR Code">
+        <ModalBody className="flex flex-col items-center justify-center py-4 space-y-4">
+          <div className="p-4 bg-white rounded-[5px] border border-[#E4E4E7] shadow-sm">
+            <QRCode value={profileUrl} size={180} />
+          </div>
+          <p className="text-xs text-[#71717A] text-center max-w-[260px]">
+            Scan this QR code with any mobile camera to open @{handle}&apos;s Inflixo profile.
+          </p>
+        </ModalBody>
+      </Modal>
+    </PageContainer>
   );
 }

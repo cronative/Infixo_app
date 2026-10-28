@@ -69,8 +69,8 @@ export function PublicPageHeader({
         onClick={goBack}
         style={onImage ? undefined : t.controlStyle}
         className={`${PUBLIC_ICON_BUTTON} ${
-          onImage
-            ? "bg-black/45 hover:bg-black/60 backdrop-blur-md border-white/20 text-white shadow-xs"
+ onImage
+ ? "bg-black/45 hover:bg-black/60 backdrop-blur-md border-(--card-bg)/20 text-white shadow-xs"
             : ""
         }`}
         title={backLabel}
@@ -87,19 +87,19 @@ export function PublicPageHeader({
               <img
                 src={creatorPhoto}
                 alt={creatorName || "Creator"}
-                className="h-6 w-6 sm:h-7 sm:w-7 rounded-full aspect-square object-cover border border-white/70 shadow-xs shrink-0"
+                className="h-6 w-6 sm:h-7 sm:w-7 rounded-full aspect-square object-cover border border-(--card-bg)/70 shadow-xs shrink-0"
               />
             )}
             <div className="min-w-0 text-center truncate">
               <span
-                style={{ color: onImage ? "#FFFFFF" : t.colors.primaryText }}
+                style={{ color: onImage ? "var(--on-page-text)" : t.colors.primaryText }}
                 className={`text-xs sm:text-sm font-bold tracking-tight truncate block leading-tight ${onImage ? "drop-shadow-xs" : ""}`}
               >
                 {creatorName || pageLabel}
               </span>
               {pageLabel && (
                 <span
-                  style={{ color: onImage ? "rgba(255,255,255,0.85)" : t.colors.secondaryText }}
+                  style={{ color: onImage ? "var(--on-page-text)" : t.colors.secondaryText }}
                   className={`text-[10px] sm:text-[11px] font-medium opacity-80 truncate block leading-tight ${onImage ? "drop-shadow-xs" : ""}`}
                 >
                   {pageLabel}
@@ -110,7 +110,7 @@ export function PublicPageHeader({
         ) : (
           <div className="text-center truncate">
             <span
-              style={{ color: onImage ? "#FFFFFF" : t.colors.primaryText }}
+              style={{ color: onImage ? "var(--on-page-text)" : t.colors.primaryText }}
               className={`text-xs sm:text-sm font-bold tracking-tight truncate block ${onImage ? "drop-shadow-xs" : ""}`}
             >
               {pageLabel || creatorName}
@@ -140,7 +140,7 @@ export function PublicIconButton({ themeKey, onClick, label, children, onImage =
       type="button"
       onClick={onClick}
       style={onImage ? undefined : t.controlStyle}
-      className={`${PUBLIC_ICON_BUTTON} ${onImage ? "bg-black/40 hover:bg-black/60 backdrop-blur-md border-white/25 text-white" : ""}`}
+      className={`${PUBLIC_ICON_BUTTON} ${onImage ? "bg-black/40 hover:bg-black/60 backdrop-blur-md border-(--card-bg)/25 text-white" : ""}`}
       title={label}
       aria-label={label}
     >

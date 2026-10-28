@@ -162,19 +162,12 @@ export function SeriesCsvImportModal({
   // Quotas & Conflicts
   const quota = getPlanQuota(planKey);
   const conflicts = existingEpisodeConflicts(parseResult.episodes, existingEpisodes);
-  const platformErrors = useMemo(() => {
-    return validateEpisodePlatform(parseResult.episodes, effectivePlatform);
-  }, [parseResult.episodes, effectivePlatform]);
+  const platformErrors = validateEpisodePlatform(parseResult.episodes, effectivePlatform);
 
-  const totalEpisodesInAccount = series.reduce(
-    (count, item) => count + item.seasons.reduce((sum, season) => sum + season.episodes.length, 0),
-    0
-  );
 
   const limitExceeded =
     (!target && series.length >= quota.maxSeries) ||
-    existingEpisodes.length + parseResult.episodes.length > quota.maxEpisodesPerSeries ||
-    totalEpisodesInAccount + parseResult.episodes.length > quota.maxTotalEpisodes;
+    existingEpisodes.length + parseResult.episodes.length > quota.maxEpisodesPerSeries;
 
   const allIssues = [
     ...parseResult.errors,

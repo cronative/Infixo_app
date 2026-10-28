@@ -337,9 +337,11 @@ async function handleCronSync(req: Request) {
 
           // Update creator avatar if missing
           if (!creator.photo_url && stats.avatarUrl) {
+            const { downloadAndStoreImage } = await import("@/lib/imageStorage");
+            const permanentAvatar = await downloadAndStoreImage(stats.avatarUrl, "avatars", "avatar");
             await db.query(
               `UPDATE creators SET photo_url = ? WHERE id = ?`,
-              [stats.avatarUrl, creator.id]
+              [permanentAvatar || stats.avatarUrl, creator.id]
             );
           }
         } else {

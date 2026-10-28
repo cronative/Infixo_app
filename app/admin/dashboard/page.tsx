@@ -47,6 +47,8 @@ import { SeriesPoster } from "@/components/shared/SeriesPoster";
 import { useToast } from "@/contexts/ToastContext";
 import { ProfileService } from "@/services/ProfileService";
 import { authRepository, profileRepository, onboardingRepository } from "@/repositories/localRepository";
+import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
+import { PLANS, formatMoney, planFeatureLines, planPrice } from "@/config/plans";
 
 const AVATAR_PALETTES = [
   "bg-blue-50 text-[#7A2253] border-blue-200/80",
@@ -184,7 +186,7 @@ const EMAIL_TEMPLATES = [
     subject: "Unlock unlimited series, brand rate cards & custom media kit on Inflixo ⭐",
     body: `<h2 style="color: #7A2253; margin-top: 0; font-size: 18px;">Take your creator portfolio to the next level 🚀</h2>
 <p>Hi Creator,</p>
-<p>Your 7-day trial lets you experience the power of ordered series playlists. Upgrade to <strong>Pro or VIP</strong> to keep your public profile live 24/7, publish unlimited episodes, and share verified rate cards with brands.</p>
+<p>Your ${PLANS.trial.trialDays}-day trial lets you experience the power of ordered series playlists. Upgrade to <strong>Pro or VIP</strong> to keep your public profile live 24/7, publish unlimited episodes, and share verified rate cards with brands.</p>
 <div style="margin: 24px 0;">
   <a href="https://inflixo.com/dashboard/subscription" style="background: #7A2253; color: #FFFFFF; padding: 12px 24px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 13px; display: inline-block;">View Plans & Upgrade</a>
 </div>`,
@@ -284,7 +286,7 @@ export default function AdminDashboardPage() {
             photoDataUrl: localProfile.photoDataUrl,
             category: localProfile.category || "Technology & AI",
             bio: localProfile.bio || "",
-            themeKey: "minimal-white",
+            themeKey: DEFAULT_THEME_KEY,
             isVerified: true,
             accountStatus: "active",
             createdAt: new Date().toISOString(),
@@ -803,7 +805,7 @@ export default function AdminDashboardPage() {
                     <span className="h-2.5 w-2.5 rounded-full bg-[#7A2253]" />
                     <div className="min-w-0">
                       <p className="font-extrabold text-slate-800">{stats.vipSubscribers} VIP</p>
-                      <p className="text-[10px] text-slate-500 font-medium">₹1,499/mo</p>
+                      <p className="text-[10px] text-slate-500 font-medium">{formatMoney(planPrice("vip", "monthly"))}/mo</p>
                     </div>
                   </div>
 
@@ -811,7 +813,7 @@ export default function AdminDashboardPage() {
                     <span className="h-2.5 w-2.5 rounded-full bg-blue-500" />
                     <div className="min-w-0">
                       <p className="font-extrabold text-slate-800">{stats.proSubscribers} Pro</p>
-                      <p className="text-[10px] text-slate-500 font-medium">₹599/mo</p>
+                      <p className="text-[10px] text-slate-500 font-medium">{formatMoney(planPrice("pro", "monthly"))}/mo</p>
                     </div>
                   </div>
 
@@ -819,7 +821,7 @@ export default function AdminDashboardPage() {
                     <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
                     <div className="min-w-0">
                       <p className="font-extrabold text-slate-800">{stats.starterSubscribers} Starter</p>
-                      <p className="text-[10px] text-slate-500 font-medium">₹199/mo</p>
+                      <p className="text-[10px] text-slate-500 font-medium">{formatMoney(planPrice("starter", "monthly"))}/mo</p>
                     </div>
                   </div>
 
@@ -1697,9 +1699,9 @@ export default function AdminDashboardPage() {
               >
                 <div>
                   <p className="font-bold text-xs text-[#7A2253] flex items-center gap-1">⭐ VIP Plan</p>
-                  <p className="text-[10px] text-slate-500">Unlimited series, custom media kit, daily stats</p>
+                  <p className="text-[10px] text-slate-500">{planFeatureLines("vip").slice(0, 2).join(" · ")}</p>
                 </div>
-                <span className="text-xs font-bold text-slate-700">₹1,499/mo</span>
+                <span className="text-xs font-bold text-slate-700">{formatMoney(planPrice("vip", "monthly"))}/mo</span>
               </button>
 
               <button
@@ -1709,9 +1711,9 @@ export default function AdminDashboardPage() {
               >
                 <div>
                   <p className="font-bold text-xs text-blue-700">Pro Plan</p>
-                  <p className="text-[10px] text-slate-500">20 series, 20 custom links, 3 collab packages</p>
+                  <p className="text-[10px] text-slate-500">{planFeatureLines("pro").slice(0, 2).join(" · ")}</p>
                 </div>
-                <span className="text-xs font-bold text-slate-700">₹599/mo</span>
+                <span className="text-xs font-bold text-slate-700">{formatMoney(planPrice("pro", "monthly"))}/mo</span>
               </button>
 
               <button
@@ -1721,9 +1723,9 @@ export default function AdminDashboardPage() {
               >
                 <div>
                   <p className="font-bold text-xs text-emerald-700">Starter Plan</p>
-                  <p className="text-[10px] text-slate-500">Keep public profile live after 7-day trial</p>
+                  <p className="text-[10px] text-slate-500">{planFeatureLines("starter").slice(0, 2).join(" · ")}</p>
                 </div>
-                <span className="text-xs font-bold text-slate-700">₹199/mo</span>
+                <span className="text-xs font-bold text-slate-700">{formatMoney(planPrice("starter", "monthly"))}/mo</span>
               </button>
 
               <button

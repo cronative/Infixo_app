@@ -19,6 +19,8 @@ import { ProfileService } from "@/services/ProfileService";
 import { CategorySelect } from "@/components/ui/CategorySelect";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { resizeImageToDataUrl } from "@/lib/imageResize";
+import { PageContainer } from "@/components/dashboard/PageContainer";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 const BIO_SUGGESTIONS = [
   "🎬 Creating cinematic vlogs & travel stories for curious minds.",
@@ -105,44 +107,36 @@ export default function DashboardProfilePage() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-4.5 w-full pb-8 text-left">
-      {/* 3. Page Header: Full-width divider + actions */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#e2e8f0] pb-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
-              Profile
-            </h1>
-            <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#f1f5f9] px-2 py-0.5 text-xs font-medium text-[#475569]">
-              <UserRound className="h-3 w-3" />
+    <PageContainer>
+      <PageHeader
+        title="Profile"
+        subtitle="Keep your creator identity clear, searchable, and ready to share."
+        actions={
+          <>
+            <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#f1f5f9] px-2.5 h-9 text-xs font-medium text-[#475569]">
+              <UserRound className="h-3.5 w-3.5" />
               <span>@{handleStr}</span>
             </span>
-          </div>
-          <p className="mt-1 text-xs sm:text-sm font-medium text-slate-500">
-            Keep your creator identity clear, searchable, and ready to share.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-          <Link
-            href={`/${handleStr}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-[5px] border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#7A2253] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
-          >
-            <span>Live Profile</span>
-            <ExternalLink className="h-3.5 w-3.5" />
-          </Link>
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={submitting}
-            className="inline-flex items-center justify-center gap-1.5 rounded-[5px] bg-[#7A2253] px-4 py-2 text-xs font-bold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer disabled:opacity-60"
-          >
-            {submitting ? "Saving..." : "Save Changes"}
-          </button>
-        </div>
-      </div>
+            <Link
+              href={`/${handleStr}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-[5px] border border-slate-200 bg-white px-3.5 h-9 text-xs font-bold text-[#7A2253] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
+            >
+              <span>Live Profile</span>
+              <ExternalLink className="h-3.5 w-3.5" />
+            </Link>
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={submitting}
+              className="inline-flex items-center justify-center gap-1.5 rounded-[5px] bg-[#7A2253] px-4 h-9 text-xs font-bold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer disabled:opacity-60"
+            >
+              {submitting ? "Saving..." : "Save Changes"}
+            </button>
+          </>
+        }
+      />
 
       {/* SECTION 1 — PROFILE IDENTITY CARD */}
       <section className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-xs space-y-4">
@@ -373,6 +367,6 @@ export default function DashboardProfilePage() {
           )}
         </button>
       </div>
-    </div>
+    </PageContainer>
   );
 }

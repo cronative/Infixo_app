@@ -331,43 +331,6 @@ export const AmbientAnimation = memo(function AmbientAnimation({
     );
   }
 
-  // 5. Neon Grid Animation Layer
-  if (type === "neon-grid") {
-    return (
-      <div className={`pointer-events-none ${containerPosition} overflow-hidden z-0`} aria-hidden="true">
-        {/* Soft overhead cyan ambient glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-[#06B6D4]/10 blur-[100px] rounded-full pointer-events-none" />
-        {/* Moving perspective grid on bottom viewport */}
-        <div className="absolute -bottom-24 inset-x-0 h-[65vh] overflow-hidden pointer-events-none opacity-45">
-          <div className="ambient-neon-grid absolute inset-x-[-50%] top-0 bottom-[-50%] origin-bottom" />
-          <div className="absolute inset-0 bg-gradient-to-t from-transparent via-[#050814]/70 to-[#050814] pointer-events-none" />
-        </div>
-      </div>
-    );
-  }
-
-  // 6. Liquid Aurora Animation Layer
-  if (type === "liquid-aurora") {
-    return (
-      <div className={`pointer-events-none ${containerPosition} overflow-hidden z-0`} aria-hidden="true">
-        {/* Aurora Glowing Wave 1 */}
-        <div className="aurora-ribbon-1 absolute -top-32 -left-20 w-[600px] h-[500px] sm:w-[800px] sm:h-[600px] bg-gradient-to-tr from-teal-500/25 via-cyan-400/20 to-indigo-500/15 rounded-full blur-[90px]" />
-        {/* Aurora Glowing Wave 2 */}
-        <div className="aurora-ribbon-2 absolute top-1/3 -right-24 w-[550px] h-[550px] sm:w-[750px] sm:h-[700px] bg-gradient-to-bl from-indigo-500/20 via-teal-400/18 to-emerald-400/15 rounded-full blur-[100px]" />
-      </div>
-    );
-  }
-
-  // 7. Spotlight Stage Animation Layer
-  if (type === "spotlight-stage") {
-    return (
-      <div className={`pointer-events-none ${containerPosition} overflow-hidden z-0`} aria-hidden="true">
-        {/* Sweeping Soft Spotlight behind the Creator Header */}
-        <div className="ambient-spotlight absolute top-0 left-1/2 w-[550px] h-[550px] sm:w-[750px] sm:h-[650px] rounded-full bg-gradient-radial from-amber-400/20 via-rose-400/10 to-transparent blur-[85px]" />
-      </div>
-    );
-  }
-
   // 8. Floating Studio Abstract Shapes
   if (type === "floating-shapes") {
     return (

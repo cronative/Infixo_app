@@ -17,6 +17,7 @@ import {
   SocialAccounts,
   ThemeKey,
 } from "@/types";
+import { DEFAULT_THEME_KEY, resolveThemeKey } from "@/lib/themeKeys";
 
 const EMPTY_PROFILE: CreatorProfile = {
   photoDataUrl: null,
@@ -93,7 +94,7 @@ export default function AllReviewsClient() {
   const [profile, setProfile] = useState<CreatorProfile>(EMPTY_PROFILE);
   const [socials, setSocials] = useState<SocialAccounts>(EMPTY_SOCIAL_ACCOUNTS);
   const [reviews, setReviews] = useState<CreatorReview[]>([]);
-  const [theme, setTheme] = useState<ThemeKey>("minimal-white");
+  const [theme, setTheme] = useState<ThemeKey>(DEFAULT_THEME_KEY);
   const [loaded, setLoaded] = useState(false);
   const [notFound, setNotFound] = useState(false);
 
@@ -146,7 +147,7 @@ export default function AllReviewsClient() {
         }
 
         setProfile(freshProfile);
-        setTheme((freshProfile.themeKey || "minimal-white") as ThemeKey);
+        setTheme(resolveThemeKey(freshProfile.themeKey));
         const rawSocials = socialsRes.data?.socials || socialsRes.socials;
         setSocials(Array.isArray(rawSocials) ? buildSocialAccounts(rawSocials) : EMPTY_SOCIAL_ACCOUNTS);
         const rawReviews = reviewsRes.data?.reviews || reviewsRes.reviews;

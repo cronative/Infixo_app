@@ -11,7 +11,7 @@ export async function ensureCreatorSettingsTable() {
         id INT AUTO_INCREMENT PRIMARY KEY,
         creator_id VARCHAR(64) NOT NULL UNIQUE COMMENT 'FK to creators table ID',
         visibility_settings TEXT DEFAULT NULL COMMENT 'JSON settings for page controls',
-        theme_key VARCHAR(50) DEFAULT 'minimal-white',
+        theme_key VARCHAR(50) DEFAULT 'inflixo-maroon',
         public_profile_layout VARCHAR(32) NOT NULL DEFAULT 'default',
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

@@ -4,6 +4,8 @@ import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
 import { getSessionFromRequest } from "@/lib/session";
 import { getPlanQuota } from "@/services/subscriptionLimits";
+import { getCreatorPlanKey } from "@/lib/planServer";
+import { getPlanLimit } from "@/config/plans";
 
 let mediaKitTablesEnsured = false;
 
@@ -219,6 +221,11 @@ export async function GET(req: Request) {
       };
     });
 
+    // Public profile: collab packages beyond the plan limit are hidden (kept in the dashboard).
+    if (resolvedUsernameParam) {
+      packages.splice(getPlanLimit(await getCreatorPlanKey(resolvedCreatorId), "collabPackages"));
+    }
+
     return apiSuccess({
       creatorId: resolvedCreatorId,
       settings,
@@ -312,11 +319,17 @@ export async function POST(req: Request) {
     const activePlanKey = subRows[0]?.plan_key || "early_access";
     const quota = getPlanQuota(activePlanKey);
 
-    if (incomingPackages.length > quota.maxGigs) {
+    // Over-limit packages from an earlier plan are kept (never deleted); only growing past the limit is blocked.
+    const [existingGigRows]: any = await db.query(
+      "SELECT COUNT(*) AS count FROM mediakit_gigs WHERE creator_id = ? OR email = ?",
+      [resolvedCreatorId, resolvedEmail]
+    );
+    const existingGigCount = Number(existingGigRows[0]?.count || 0);
+    if (incomingPackages.length > quota.maxGigs && incomingPackages.length > existingGigCount) {
       return apiError(
         `Collab package limit reached (${quota.maxGigs} max) for ${quota.name} plan. Upgrade your plan to add more packages.`,
         403,
-        { isLimitReached: true, type: "gig" }
+        { code: "LIMIT_REACHED", isLimitReached: true, type: "gig", limit: quota.maxGigs }
       );
     }
 

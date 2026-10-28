@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { PageContainer } from "@/components/dashboard/PageContainer";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 type AnalyticsTarget = {
   event_type: string;
@@ -203,16 +205,12 @@ export default function DashboardAnalyticsPage() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-5 w-full pb-8 text-left">
+    <PageContainer className="text-left">
       {/* ── Top Header Row ── */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+      <PageHeader
+        title={
           <div className="flex items-center gap-2">
-            <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
-              Analytics
-            </h1>
-
-            {/* Past 7 Days / 30 Days Dropdown-style Badge */}
+            <span>Analytics</span>
             <button
               type="button"
               onClick={() => setPeriod(period === "7d" ? "30d" : "7d")}
@@ -223,42 +221,39 @@ export default function DashboardAnalyticsPage() {
               <ChevronDown className="h-3 w-3 text-[#7A2253]" />
             </button>
           </div>
+        }
+        subtitle="Public profile opens, unique visitors, and series link click engagement."
+        actions={
+          <>
+            <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-0.5 shadow-2xs flex items-center h-9">
+              {(["7d", "30d"] as const).map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setPeriod(value)}
+                  className={`rounded-[4px] px-3 py-1 text-xs font-bold transition-all cursor-pointer ${
+                    period === value
+                      ? "bg-[#7A2253] text-white shadow-xs"
+                      : "text-[#64748b] hover:text-[#0f172a]"
+                  }`}
+                >
+                  {value === "7d" ? "7 days" : "30 days"}
+                </button>
+              ))}
+            </div>
 
-          <p className="mt-1 text-xs sm:text-sm font-medium text-[#64748b]">
-            Public profile opens, unique visitors, and series link click engagement.
-          </p>
-        </div>
-
-        {/* Right Actions: Segmented Toggle & Live Profile Button */}
-        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-          <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-0.5 shadow-2xs flex items-center">
-            {(["7d", "30d"] as const).map((value) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setPeriod(value)}
-                className={`rounded-[5px] px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
-                  period === value
-                    ? "bg-[#FFF5F7] text-[#7A2253]"
-                    : "text-[#64748b] hover:text-[#0f172a]"
-                }`}
-              >
-                {value === "7d" ? "7 days" : "30 days"}
-              </button>
-            ))}
-          </div>
-
-          <Link
-            href={`/${handleStr}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 py-1.5 text-xs font-bold text-[#7A2253] shadow-2xs transition-colors hover:bg-[#f8fafc]"
-          >
-            <span>Live Profile</span>
-            <ExternalLink className="h-3.5 w-3.5 text-[#7A2253]" />
-          </Link>
-        </div>
-      </div>
+            <Link
+              href={`/${handleStr}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-9 items-center gap-1.5 rounded-[5px] bg-[#7A2253] px-3.5 text-xs font-semibold text-white shadow-xs hover:bg-[#681c46] transition-colors"
+            >
+              <span>Live Profile</span>
+              <ExternalLink className="h-3.5 w-3.5" />
+            </Link>
+          </>
+        }
+      />
 
       {/* ── 4 Metrics Cards ── */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -344,7 +339,7 @@ export default function DashboardAnalyticsPage() {
           </div>
         )}
       </section>
-    </div>
+    </PageContainer>
   );
 }
 

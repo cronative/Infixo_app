@@ -9,6 +9,7 @@ import {
 } from "@/repositories/localRepository";
 import { AuthSession, EMPTY_SOCIAL_ACCOUNTS } from "@/types";
 import { storage } from "@/utils/storage";
+import { clearMeCache } from "@/lib/meClient";
 import { debugLog } from "@/lib/debugLogger";
 
 export const AuthService = {
@@ -37,9 +38,10 @@ export const AuthService = {
     return authRepository.getPendingEmail();
   },
 
-  async verifyOtp(otp: string): Promise<{ session: AuthSession; isExistingProfile: boolean; onboardingStep: string }> {
+  async verifyOtp(otp: string): Promise<{ session: AuthSession; isExistingProfile: boolean; hasProfile: boolean; onboardingStep: string }> {
     const email = authRepository.getPendingEmail();
 
+    clearMeCache();
     const httpResponse = await fetch("/api/auth/verify-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -155,7 +157,7 @@ export const AuthService = {
     // Brand new user: NO profile, socials, series, theme, or subscription in localStorage
 
 
-    return { session, isExistingProfile, onboardingStep };
+    return { session, isExistingProfile, hasProfile: isExistingProfile, onboardingStep };
   },
 
   loginWithProvider(provider: "google" | "apple"): AuthSession {
@@ -179,6 +181,7 @@ export const AuthService = {
   },
 
   logout(): void {
+    clearMeCache();
     storage.clearAll();
     // Best-effort: also clear the httpOnly session cookie server-side so a
     // stale cookie can't silently re-authenticate the user after logout.

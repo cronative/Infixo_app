@@ -29,6 +29,10 @@ import { copyToClipboard } from "@/lib/copyToClipboard";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { PageContainer } from "@/components/dashboard/PageContainer";
+import { PageHeader } from "@/components/dashboard/PageHeader";
+import { OverLimitBadge } from "@/components/ui/OverLimitBadge";
+import { getPlanQuota } from "@/services/subscriptionLimits";
 
 function formatDate(dateStr: string): string {
   try {
@@ -45,7 +49,7 @@ function formatDate(dateStr: string): string {
 }
 
 export default function DashboardReviewsPage() {
-  const { profile } = useCreator();
+  const { profile, subscription } = useCreator();
   const { showToast } = useToast();
 
   const [reviews, setReviews] = useState<CreatorReview[]>([]);
@@ -282,44 +286,41 @@ export default function DashboardReviewsPage() {
   }, [reviews, activeTab]);
 
   return (
-    <div className="space-y-4 sm:space-y-4.5 w-full pb-8 text-left">
-      {/* 1. PAGE HEADER with Full-Width Divider */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#e2e8f0] pb-4">
-        <div>
+    <PageContainer className="text-left">
+      {/* 1. PAGE HEADER */}
+      <PageHeader
+        title={
           <div className="flex items-center gap-2">
-            <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
-              Reviews
-            </h1>
+            <span>Reviews</span>
             <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#f1f5f9] px-2 py-0.5 text-xs font-medium text-[#475569]">
               <Star className="h-3 w-3" />
               <span>{reviews.length} {reviews.length === 1 ? "Review" : "Reviews"}</span>
             </span>
           </div>
-          <p className="mt-1 text-xs sm:text-sm font-medium text-slate-500">
-            Collect reviews from brands you&apos;ve worked with and choose which ones appear on your profile.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-          <Link
-            href={`/${cleanHandle}/reviews`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-[5px] border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#7A2253] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
-          >
-            <span>Live Reviews</span>
-            <ExternalLink className="h-3.5 w-3.5" />
-          </Link>
-          <button
-            type="button"
-            onClick={() => setIsModalOpen(true)}
-            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] cursor-pointer"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            <span>Request Review</span>
-          </button>
-        </div>
-      </div>
+        }
+        subtitle="Collect reviews from brands you've worked with and choose which ones appear on your profile."
+        actions={
+          <>
+            <Link
+              href={`/${cleanHandle}/reviews`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-9 items-center gap-1.5 rounded-[5px] border border-slate-200 bg-white px-3 text-xs font-bold text-[#7A2253] shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
+            >
+              <span>Live Reviews</span>
+              <ExternalLink className="h-3.5 w-3.5" />
+            </Link>
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(true)}
+              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-[5px] bg-[#7A2253] px-3.5 text-xs font-semibold text-white shadow-xs hover:bg-[#681c46] transition-colors cursor-pointer"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              <span>Request Review</span>
+            </button>
+          </>
+        }
+      />
 
       {/* 2. ZERO STATE: When 0 reviews, show unified empty state directly */}
       {reviews.length === 0 ? (
@@ -476,6 +477,8 @@ export default function DashboardReviewsPage() {
                       {/* Client + Project + Status */}
                       <div className="flex items-center gap-2 flex-wrap text-xs text-[#64748b]">
                         <span className="font-bold text-[#7A2253]">{rev.clientName}</span>
+                        {rev.status === "approved" &&
+                          reviews.filter((r) => r.status === "approved").indexOf(rev) >= getPlanQuota(subscription?.planKey).maxReviews && <OverLimitBadge />}
                         {rev.projectTitle && (
                           <>
                             <span>·</span>
@@ -815,6 +818,6 @@ export default function DashboardReviewsPage() {
         confirmText={reviewToDelete?.status === "pending_invite" ? "Cancel Request" : "Delete Review"}
         cancelText="Keep"
       />
-    </div>
+    </PageContainer>
   );
 }

@@ -28,6 +28,8 @@ import {
   useExportableImage,
 } from "@/components/creator-card/cardAppearance";
 import { cardFileName, downloadBlob, renderCardPng } from "@/components/creator-card/cardExport";
+import { PageContainer } from "@/components/dashboard/PageContainer";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 const MAX_PREVIEW_WIDTH = 380;
 
@@ -208,51 +210,37 @@ ${profileUrl}
   const disabled = !assetsReady || busy !== null;
 
   return (
-    <div className="w-full space-y-4 pb-12 text-left">
-      {/* ── Top Breadcrumbs & Action Bar ── */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-2 text-xs font-medium text-[#64748b]">
-          <span className="hover:text-[#0f172a] transition-colors cursor-pointer">Brand deals</span>
-          <span className="text-[#94a3b8]">&gt;</span>
-          <span className="font-semibold text-[#0f172a]">Creator Card</span>
-        </div>
+    <PageContainer>
+      <PageHeader
+        title="Creator Card"
+        subtitle="Design your custom card with emotional taglines, curated layouts, and high-impact themes to share on Stories & Status."
+        actions={
+          <>
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 h-9 text-xs font-semibold text-[#0f172a] shadow-2xs hover:bg-[#f8fafc] transition-colors cursor-pointer"
+            >
+              {linkCopied ? (
+                <Check className="h-3.5 w-3.5 text-[#10B981]" />
+              ) : (
+                <Copy className="h-3.5 w-3.5 text-[#64748b]" />
+              )}
+              <span>{linkCopied ? "Copied!" : "Copy link"}</span>
+            </button>
 
-        <div className="flex items-center gap-2 self-end sm:self-auto">
-          <button
-            type="button"
-            onClick={handleCopyLink}
-            className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#0f172a] shadow-2xs hover:bg-[#f8fafc] transition-colors cursor-pointer"
-          >
-            {linkCopied ? (
-              <Check className="h-3.5 w-3.5 text-[#10B981]" />
-            ) : (
-              <Copy className="h-3.5 w-3.5 text-[#64748b]" />
-            )}
-            <span>{linkCopied ? "Copied!" : "Copy link"}</span>
-          </button>
-
-          <a
-            href={profileUrl || "#"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#0f172a] shadow-2xs hover:bg-[#f8fafc] transition-colors cursor-pointer"
-          >
-            <span>View profile</span>
-            <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
-          </a>
-        </div>
-      </div>
-
-      {/* ── Page Title & Subtitle ── */}
-      <div className="pt-1">
-        <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a] flex items-center gap-1.5">
-          <span>Creator Card</span>
-          <span className="text-base text-[#E11D48]">✨</span>
-        </h1>
-        <p className="mt-1 text-xs text-[#64748b] leading-relaxed">
-          Design your custom card with emotional taglines, curated layouts, and high-impact themes to share on Stories &amp; Status.
-        </p>
-      </div>
+            <a
+              href={profileUrl || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 h-9 text-xs font-semibold text-[#0f172a] shadow-2xs hover:bg-[#f8fafc] transition-colors cursor-pointer"
+            >
+              <span>View profile</span>
+              <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
+            </a>
+          </>
+        }
+      />
 
       {/* Trial Expired Alert Banner */}
       {isTrialExpired && (
@@ -625,6 +613,6 @@ ${profileUrl}
           </div>
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 }

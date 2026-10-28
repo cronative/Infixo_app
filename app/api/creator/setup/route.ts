@@ -6,6 +6,8 @@ import { requireCreator } from "@/lib/creatorAuth";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
 import { sanitizeUrl } from "@/lib/urlSanitizer";
+import { getCreatorPlanKey, limitReachedError } from "@/lib/planServer";
+import { getPlanLimit } from "@/config/plans";
 
 interface CreatorIdRow extends RowDataPacket {
   id: string;
@@ -108,6 +110,11 @@ export async function GET(req: Request) {
       isActive: Boolean(item.isActive),
     }));
 
+    // Public profile: gear items beyond the plan limit are hidden (kept in the dashboard).
+    if (searchParams.get("username")) {
+      items.splice(getPlanLimit(await getCreatorPlanKey(targetId), "gearItems"));
+    }
+
     return apiSuccess({ items }, "Setup items retrieved successfully");
   } catch (err: unknown) {
     console.error("GET creator setup error:", err);
@@ -150,6 +157,13 @@ export async function POST(req: Request) {
     const finalImageUrl = await saveBase64ImageToStorage(setupItem.imageUrl, "team", "setup")
       || (typeof setupItem.imageUrl === "string" && !setupItem.imageUrl.startsWith("data:") ? setupItem.imageUrl : null);
     const itemId = setupItem.id || `setup_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+
+    const [existingRows]: any = await db.query("SELECT id FROM creator_setup_items WHERE creator_id = ?", [targetId]);
+    const isNew = !existingRows.some((row: { id: string }) => row.id === itemId);
+    if (isNew) {
+      const planKey = await getCreatorPlanKey(targetId);
+      if (existingRows.length >= getPlanLimit(planKey, "gearItems")) return limitReachedError("gearItems", planKey);
+    }
 
     await db.query(
       `INSERT INTO creator_setup_items

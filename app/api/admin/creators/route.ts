@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { isAuthorizedAdmin } from "@/lib/adminAuth";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { planPrice } from "@/config/plans";
 
 async function ensureMediaKitTables() {
   try {
@@ -125,8 +126,11 @@ export async function GET(req: Request) {
       ).length;
       stats.freeTrialSubscribers = stats.totalCreators - (stats.vipSubscribers + stats.proSubscribers + stats.starterSubscribers);
 
-      // Estimated MRR: Starter = ₹199/mo, Pro = ₹599/mo, VIP = ₹1499/mo
-      stats.estimatedMRR = (stats.starterSubscribers * 199) + (stats.proSubscribers * 599) + (stats.vipSubscribers * 1499);
+      // Estimated MRR at monthly list prices (config/plans.ts)
+      stats.estimatedMRR =
+        stats.starterSubscribers * planPrice("starter", "monthly") +
+        stats.proSubscribers * planPrice("pro", "monthly") +
+        stats.vipSubscribers * planPrice("vip", "monthly");
 
       stats.totalActiveGigs = creators.reduce((acc, c) => acc + Number(c.gigsCount || 0), 0);
       stats.totalSeries = creators.reduce((acc, c) => acc + Number(c.seriesCount || 0), 0);

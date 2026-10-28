@@ -13,6 +13,8 @@ interface ConfirmModalProps {
   cancelText?: string;
   loading?: boolean;
   isDestructive?: boolean;
+  /** Focus Cancel when the dialog opens (safer default for destructive actions). */
+  focusCancel?: boolean;
 }
 
 export function ConfirmModal({
@@ -25,6 +27,7 @@ export function ConfirmModal({
   cancelText = "Cancel",
   loading = false,
   isDestructive = false,
+  focusCancel = false,
 }: ConfirmModalProps) {
   return (
     <Modal
@@ -58,6 +61,7 @@ export function ConfirmModal({
           type="button"
           onClick={onClose}
           disabled={loading}
+          autoFocus={focusCancel}
           className="h-9 px-4 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer disabled:opacity-50"
         >
           {cancelText}

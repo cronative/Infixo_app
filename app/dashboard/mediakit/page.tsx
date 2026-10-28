@@ -43,13 +43,16 @@ import { useToast } from "@/contexts/ToastContext";
 import { MediaKitService } from "@/services/MediaKitService";
 import { MediaKitPackage, MediaKitSettings } from "@/types";
 import { authRepository } from "@/repositories/localRepository";
+import { PageContainer } from "@/components/dashboard/PageContainer";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 import { copyToClipboard } from "@/lib/copyToClipboard";
-import { canCreateGig } from "@/services/subscriptionLimits";
+import { canCreateGig, getPlanQuota } from "@/services/subscriptionLimits";
 import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { formatCount } from "@/utils/format";
+import { OverLimitBadge } from "@/components/ui/OverLimitBadge";
 
 const COLLABORATION_TYPES = [
   "Instagram Reel",
@@ -818,51 +821,50 @@ export default function DashboardMediaKitPage() {
   ];
 
   return (
-    <div className="space-y-6 w-full pb-8 text-left">
+    <PageContainer className="text-left">
       {/* 1. PAGE HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a] flex items-center gap-2">
+      <PageHeader
+        title={
+          <div className="flex items-center gap-2">
             <span>Media Kit</span>
             <span className="inline-flex items-center justify-center h-6 w-6 rounded-[5px] bg-[#FFF0F5] text-xs">
               👜
             </span>
-          </h1>
-          <p className="mt-1 text-xs sm:text-[13px] text-[#64748b]">
-            Create and manage your brand collaboration packages and rates.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2 self-start sm:self-auto">
-          <a
-            href={mediaKitPath}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex h-9 items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#475569] hover:bg-[#f8fafc] hover:text-[#0f172a] transition-colors cursor-pointer"
-            title="Preview public media kit"
-          >
-            <Eye className="h-3.5 w-3.5 text-[#64748b]" />
-            <span className="hidden sm:inline">Preview</span>
-          </a>
-          <button
-            type="button"
-            onClick={handleShareMediaKit}
-            className="inline-flex h-9 items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#475569] hover:bg-[#f8fafc] hover:text-[#0f172a] transition-colors cursor-pointer"
-            title="Share public media kit"
-          >
-            <Share2 className="h-3.5 w-3.5 text-[#64748b]" />
-            <span className="hidden sm:inline">Share</span>
-          </button>
-          <button
-            type="button"
-            onClick={handleOpenAddModal}
-            className="inline-flex h-9 items-center gap-1.5 rounded-[5px] bg-[#7A2253] px-3.5 text-xs font-semibold text-white shadow-xs hover:opacity-95 transition-opacity cursor-pointer"
-          >
-            <Plus className="h-4 w-4" />
-            <span>New Package</span>
-          </button>
-        </div>
-      </div>
+          </div>
+        }
+        subtitle="Create and manage your brand collaboration packages and rates."
+        actions={
+          <>
+            <a
+              href={mediaKitPath}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-9 items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#475569] hover:bg-[#f8fafc] hover:text-[#0f172a] transition-colors cursor-pointer"
+              title="Preview public media kit"
+            >
+              <Eye className="h-3.5 w-3.5 text-[#64748b]" />
+              <span className="hidden sm:inline">Preview</span>
+            </a>
+            <button
+              type="button"
+              onClick={handleShareMediaKit}
+              className="inline-flex h-9 items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#475569] hover:bg-[#f8fafc] hover:text-[#0f172a] transition-colors cursor-pointer"
+              title="Share public media kit"
+            >
+              <Share2 className="h-3.5 w-3.5 text-[#64748b]" />
+              <span className="hidden sm:inline">Share</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleOpenAddModal}
+              className="inline-flex h-9 items-center gap-1.5 rounded-[5px] bg-[#7A2253] px-3.5 text-xs font-semibold text-white shadow-xs hover:opacity-95 transition-opacity cursor-pointer"
+            >
+              <Plus className="h-4 w-4" />
+              <span>New Package</span>
+            </button>
+          </>
+        }
+      />
 
       {/* 2. STAT CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
@@ -1020,8 +1022,9 @@ export default function DashboardMediaKitPage() {
                         {/* 1. Package Name & Type (NO IMAGE) */}
                         <td className="py-4 px-4 align-top">
                           <div className="space-y-1">
-                            <p className="font-bold text-sm text-[#0f172a] leading-snug">
+                            <p className="flex flex-wrap items-center gap-1.5 font-bold text-sm text-[#0f172a] leading-snug">
                               {pkg.title}
+                              {packages.indexOf(pkg) >= getPlanQuota(subscription?.planKey).maxGigs && <OverLimitBadge />}
                             </p>
                             <p className="text-xs text-[#64748b]">
                               {pkg.platform}
@@ -1334,7 +1337,9 @@ export default function DashboardMediaKitPage() {
                       {req.status || "new"}
                     </span>
                     <span className="text-[11px] text-[#94a3b8]">
-                      {new Date(req.created_at || req.createdAt || Date.now()).toLocaleDateString("en-IN", { month: "short", day: "numeric" })}
+                      {(req.created_at || req.createdAt)
+                        ? new Date(req.created_at || req.createdAt).toLocaleDateString("en-IN", { month: "short", day: "numeric" })
+                        : ""}
                     </span>
                   </div>
                 </div>
@@ -1949,6 +1954,6 @@ export default function DashboardMediaKitPage() {
         confirmText="Delete Service"
         cancelText="Cancel"
       />
-    </div>
+    </PageContainer>
   );
 }

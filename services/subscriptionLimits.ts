@@ -1,216 +1,104 @@
 import { Series } from "@/types";
+import { getPlan, normalizePlanKey, PLANS, type PlanKey } from "@/config/plans";
 
+/**
+ * Plan limits in the shape the app has always used, derived from config/plans.ts
+ * (the single source of truth). Infinity = unlimited.
+ */
 export interface PlanQuota {
+  key: PlanKey;
   name: string;
   maxSeries: number;
   maxEpisodesPerSeries: number;
-  maxTotalEpisodes: number;
   maxGigs: number;
   maxReviews: number;
   maxCustomLinks: number;
   maxProducts: number;
-  hasRateCard: boolean;
-  hasMediaKit: boolean;
-  publicProfileDays?: number;
+  maxGearItems: number;
+  maxTeamSeats: number;
   description: string;
 }
 
-export const EARLY_ACCESS_LIMITS = {
-  maxSeries: 3,
-  maxEpisodesPerSeries: 5,
-  maxTotalEpisodes: 15,
-  maxGigs: 1,
-  maxProducts: 1,
-};
-
-export const PLAN_QUOTAS: Record<string, PlanQuota> = {
-  early_access: {
-    name: "Free Trial",
-    maxSeries: 3,
-    maxEpisodesPerSeries: 5,
-    maxTotalEpisodes: 15,
-    maxGigs: 1,
-    maxReviews: 1,
-    maxCustomLinks: 5,
-    maxProducts: 1,
-    hasRateCard: false,
-    hasMediaKit: false,
-    publicProfileDays: 7,
-    description: "7-day public profile trial with Inflixo branding, social stats, 3 series, 5 links, 1 product in shop, 1 review and 1 collab package.",
-  },
-  starter: {
-    name: "Starter",
-    maxSeries: 3,
-    maxEpisodesPerSeries: 5,
-    maxTotalEpisodes: 15,
-    maxGigs: 1,
-    maxReviews: 1,
-    maxCustomLinks: 5,
-    maxProducts: 1,
-    hasRateCard: false,
-    hasMediaKit: false,
-    description: "Keep your public profile live after trial with 1 product in shop and starter limits.",
-  },
-  pro: {
-    name: "Pro",
-    maxSeries: 20,
-    maxEpisodesPerSeries: 20,
-    maxTotalEpisodes: 400,
-    maxGigs: 3,
-    maxReviews: 10,
-    maxCustomLinks: 20,
-    maxProducts: 20,
-    hasRateCard: true,
-    hasMediaKit: true,
-    description: "20 series, 20 products in shop, 20 episodes per series, 20 links, 3 collab packages, 10 reviews, rate card and default media kit.",
-  },
-  creator_pro: {
-    name: "Pro",
-    maxSeries: 20,
-    maxEpisodesPerSeries: 20,
-    maxTotalEpisodes: 400,
-    maxGigs: 3,
-    maxReviews: 10,
-    maxCustomLinks: 20,
-    maxProducts: 20,
-    hasRateCard: true,
-    hasMediaKit: true,
-    description: "20 series, 20 products in shop, 20 episodes per series, 20 links, 3 collab packages, 10 reviews, rate card and default media kit.",
-  },
-  vip: {
-    name: "VIP",
-    maxSeries: Infinity,
-    maxEpisodesPerSeries: Infinity,
-    maxTotalEpisodes: Infinity,
-    maxGigs: 10,
-    maxReviews: Infinity,
-    maxCustomLinks: Infinity,
-    maxProducts: Infinity,
-    hasRateCard: true,
-    hasMediaKit: true,
-    description: "Unlimited products in shop, series, episodes, links and reviews, 10 collab packages, custom media kit and premium features.",
-  },
-  creator_VIP: {
-    name: "VIP",
-    maxSeries: Infinity,
-    maxEpisodesPerSeries: Infinity,
-    maxTotalEpisodes: Infinity,
-    maxGigs: 10,
-    maxReviews: Infinity,
-    maxCustomLinks: Infinity,
-    maxProducts: Infinity,
-    hasRateCard: true,
-    hasMediaKit: true,
-    description: "Unlimited products in shop, series, episodes, links and reviews, 10 collab packages, custom media kit and premium features.",
-  },
-};
-
-export function getPlanQuota(planKey: string = "early_access"): PlanQuota {
-  const normalizedKey =
-    planKey === "pro" || planKey === "creator_pro"
-      ? "pro"
-      : planKey === "vip" || planKey === "creator_VIP"
-      ? "vip"
-      : planKey;
-  return PLAN_QUOTAS[normalizedKey] || PLAN_QUOTAS[planKey] || PLAN_QUOTAS.early_access;
-}
-
-export function getSeriesUsage(seriesList: Series[], planKey: string = "early_access") {
-  const current = seriesList ? seriesList.length : 0;
-  const quota = getPlanQuota(planKey);
-  const max = quota.maxSeries;
-  const isLimitReached = current >= max;
+function toQuota(key: PlanKey): PlanQuota {
+  const plan = PLANS[key];
+  const l = plan.limits;
   return {
-    current,
-    max,
-    isLimitReached,
-    percentage: max === Infinity ? 0 : Math.min(100, Math.round((current / max) * 100)),
+    key,
+    name: plan.name,
+    maxSeries: l.series,
+    maxEpisodesPerSeries: l.episodesPerSeries,
+    maxGigs: l.collabPackages,
+    maxReviews: l.reviews,
+    maxCustomLinks: l.links,
+    maxProducts: l.products,
+    maxGearItems: l.gearItems,
+    maxTeamSeats: l.teamSeats,
+    description: plan.subtitle,
   };
 }
 
-export function getTotalEpisodesCount(seriesList: Series[]): number {
-  if (!seriesList) return 0;
-  return seriesList.reduce(
-    (acc, s) => acc + (s.seasons ? s.seasons.reduce((a, b) => a + (b.episodes ? b.episodes.length : 0), 0) : 0),
-    0
-  );
+/** Accepts stored keys incl. legacy "early_access" / "creator_pro" / "creator_VIP". */
+export function getPlanQuota(planKey: string = "trial"): PlanQuota {
+  return toQuota(normalizePlanKey(planKey));
 }
 
-export function getTotalEpisodesUsage(seriesList: Series[], planKey: string = "early_access") {
-  const current = getTotalEpisodesCount(seriesList);
-  const quota = getPlanQuota(planKey);
-  const max = quota.maxTotalEpisodes;
-  const isLimitReached = current >= max;
-  return {
-    current,
-    max,
-    theoreticalMax: max,
-    isLimitReached,
-    percentage: max === Infinity ? 0 : Math.min(100, Math.round((current / max) * 100)),
-  };
+/** Display name for a stored plan key: Trial, Starter, Pro, VIP. */
+export function getPlanName(planKey?: string | null) {
+  return getPlan(planKey).name;
 }
 
-export function getEpisodeUsage(seriesItem: Series, planKey: string = "early_access") {
-  const totalEpisodes = seriesItem && seriesItem.seasons
+const usage = (current: number, max: number) => ({
+  current,
+  max,
+  isLimitReached: current >= max,
+  percentage: max === Infinity ? 0 : Math.min(100, Math.round((current / max) * 100)),
+});
+
+export function getSeriesUsage(seriesList: Series[], planKey: string = "trial") {
+  return usage(seriesList ? seriesList.length : 0, getPlanQuota(planKey).maxSeries);
+}
+
+export function countSeriesEpisodes(seriesItem: Series | null | undefined): number {
+  return seriesItem?.seasons
     ? seriesItem.seasons.reduce((acc, season) => acc + (season.episodes ? season.episodes.length : 0), 0)
     : 0;
-  const quota = getPlanQuota(planKey);
-  const max = quota.maxEpisodesPerSeries;
-  const isLimitReached = totalEpisodes >= max;
-  return {
-    current: totalEpisodes,
-    max,
-    isLimitReached,
-    percentage: max === Infinity ? 0 : Math.min(100, Math.round((totalEpisodes / max) * 100)),
-  };
 }
 
-export function getGigUsage(currentGigsCount: number, planKey: string = "early_access") {
-  const quota = getPlanQuota(planKey);
-  const max = quota.maxGigs;
-  const isLimitReached = currentGigsCount >= max;
-  return {
-    current: currentGigsCount,
-    max,
-    isLimitReached,
-    percentage: max === Infinity ? 0 : Math.min(100, Math.round((currentGigsCount / max) * 100)),
-  };
+/** Episodes are limited per series. */
+export function getEpisodeUsage(seriesItem: Series, planKey: string = "trial") {
+  return usage(countSeriesEpisodes(seriesItem), getPlanQuota(planKey).maxEpisodesPerSeries);
 }
 
-export function getProductUsage(currentProductsCount: number, planKey: string = "early_access") {
-  const quota = getPlanQuota(planKey);
-  const max = quota.maxProducts;
-  const isLimitReached = currentProductsCount >= max;
-  return {
-    current: currentProductsCount,
-    max,
-    isLimitReached,
-    percentage: max === Infinity ? 0 : Math.min(100, Math.round((currentProductsCount / max) * 100)),
-  };
+/** The series with the most episodes, for "5 of 5 in Goa Tour" style usage. */
+export function getFullestSeriesEpisodeUsage(seriesList: Series[], planKey: string = "trial") {
+  const fullest = (seriesList || []).reduce<Series | null>(
+    (best, s) => (!best || countSeriesEpisodes(s) > countSeriesEpisodes(best) ? s : best),
+    null,
+  );
+  return { ...usage(countSeriesEpisodes(fullest), getPlanQuota(planKey).maxEpisodesPerSeries), series: fullest };
 }
 
-export function canCreateSeries(seriesList: Series[], planKey: string = "early_access"): boolean {
-  const usage = getSeriesUsage(seriesList, planKey);
-  return !usage.isLimitReached;
+export function getGigUsage(currentGigsCount: number, planKey: string = "trial") {
+  return usage(currentGigsCount, getPlanQuota(planKey).maxGigs);
 }
 
-export function canCreateEpisode(targetSeriesOrList?: Series | Series[], planKey: string = "early_access"): boolean {
-  if (!targetSeriesOrList) return true;
-  if (Array.isArray(targetSeriesOrList)) {
-    const usage = getTotalEpisodesUsage(targetSeriesOrList, planKey);
-    return !usage.isLimitReached;
-  } else {
-    const usage = getEpisodeUsage(targetSeriesOrList, planKey);
-    return !usage.isLimitReached;
-  }
+export function getProductUsage(currentProductsCount: number, planKey: string = "trial") {
+  return usage(currentProductsCount, getPlanQuota(planKey).maxProducts);
 }
 
-export function canCreateGig(currentGigsCount: number, planKey: string = "early_access"): boolean {
-  const usage = getGigUsage(currentGigsCount, planKey);
-  return !usage.isLimitReached;
+export function canCreateSeries(seriesList: Series[], planKey: string = "trial"): boolean {
+  return !getSeriesUsage(seriesList, planKey).isLimitReached;
 }
 
-export function canAddProduct(currentProductsCount: number, planKey: string = "early_access"): boolean {
-  const usage = getProductUsage(currentProductsCount, planKey);
-  return !usage.isLimitReached;
+export function canCreateEpisode(targetSeries?: Series, planKey: string = "trial"): boolean {
+  if (!targetSeries) return true;
+  return !getEpisodeUsage(targetSeries, planKey).isLimitReached;
+}
+
+export function canCreateGig(currentGigsCount: number, planKey: string = "trial"): boolean {
+  return !getGigUsage(currentGigsCount, planKey).isLimitReached;
+}
+
+export function canAddProduct(currentProductsCount: number, planKey: string = "trial"): boolean {
+  return !getProductUsage(currentProductsCount, planKey).isLimitReached;
 }

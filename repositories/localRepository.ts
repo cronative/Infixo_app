@@ -19,6 +19,7 @@ import {
   CreatorReview,
   CreatorSetupItem,
 } from "@/types";
+import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
 
 export const authRepository = {
   get(): AuthSession | null {
@@ -75,7 +76,7 @@ export const customLinksRepository = {
 
 export const themeRepository = {
   get(): ThemeKey {
-    return storage.get<ThemeKey>(STORAGE_KEYS.theme, "minimal-white");
+    return storage.get<ThemeKey>(STORAGE_KEYS.theme, DEFAULT_THEME_KEY);
   },
   save(theme: ThemeKey) {
     storage.set(STORAGE_KEYS.theme, theme);

@@ -1,3 +1,5 @@
+import { InflixoWordmark } from "@/components/brand/InflixoLogo";
+
 interface MadeWithInflixoProps {
   color?: string;
   backgroundColor?: string;
@@ -5,13 +7,34 @@ interface MadeWithInflixoProps {
   className?: string;
   disabled?: boolean;
   compact?: boolean;
+  /** Footer at the bottom of the public profile card. */
+  variant?: "default" | "card-footer";
 }
 
 export function MadeWithInflixo({
   color,
   className = "",
   disabled = false,
+  variant = "default",
 }: MadeWithInflixoProps) {
+  if (variant === "card-footer") {
+    return (
+      <a
+        href="https://inflixo.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={(event) => {
+          if (disabled) event.preventDefault();
+        }}
+        className={`inline-flex items-center justify-center gap-1.5 text-[13px] font-medium text-(--text-muted) ${className}`}
+        aria-label="Powered by Inflixo"
+      >
+        <span className="tracking-normal">Powered by</span>
+        <InflixoWordmark className="h-4" />
+      </a>
+    );
+  }
+
   return (
     <a
       href="https://inflixo.com"
@@ -20,7 +43,7 @@ export function MadeWithInflixo({
       onClick={(event) => {
         if (disabled) event.preventDefault();
       }}
-      style={{ color: color || "#94a3b8" }}
+      style={{ color: color || "var(--text-muted)" }}
       className={`group inline-flex items-center justify-center gap-2 text-xs font-medium transition-colors hover:opacity-100 opacity-75 ${className}`}
       aria-label="Powered by Inflixo"
     >

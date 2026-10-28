@@ -17,6 +17,7 @@ import {
 import Link from "next/link";
 import { Modal, ModalBody } from "@/components/ui/Modal";
 import { formatPlanPrice, usePricingCurrency } from "@/lib/pricing";
+import { PLANS, normalizePlanKey, planFeatureLines, yearlySavingsPercent, type PaidPlanKey } from "@/config/plans";
 import { useCreator } from "@/contexts/CreatorContext";
 import { getPlanQuota } from "@/services/subscriptionLimits";
 
@@ -42,18 +43,9 @@ export function LimitReachedModal({
   const { subscription } = useCreator();
   const pricingCurrency = usePricingCurrency();
 
-  const currentPlanKey = propPlanKey || subscription?.planKey || "starter";
-  const normalizedKey =
-    currentPlanKey === "creator_pro" || currentPlanKey === "pro"
-      ? "pro"
-      : currentPlanKey === "creator_VIP" || currentPlanKey === "vip"
-      ? "vip"
-      : currentPlanKey === "starter"
-      ? "starter"
-      : "early_access";
-
+  const normalizedKey = normalizePlanKey(propPlanKey || subscription?.planKey);
   const quota = getPlanQuota(normalizedKey);
-  const planName = quota.name === "Free Trial" ? "Starter" : quota.name;
+  const planName = quota.name;
 
   const isSeries = type === "series";
   const isEpisode = type === "episode";
@@ -63,8 +55,8 @@ export function LimitReachedModal({
   const isReview = type === "review";
 
   // Target plan to upgrade to
-  const targetUpgradePlan = normalizedKey === "pro" ? "vip" : "pro";
-  const targetPlanTitle = targetUpgradePlan === "vip" ? "Inflixo VIP Plan" : "Inflixo Pro Plan";
+  const targetUpgradePlan: PaidPlanKey = normalizedKey === "pro" ? "vip" : "pro";
+  const targetPlanTitle = `Inflixo ${PLANS[targetUpgradePlan].name} Plan`;
 
   // Resource-specific dynamic metadata
   let resourceSingular = "collaboration package";
@@ -132,23 +124,12 @@ export function LimitReachedModal({
   const effectiveMax = propMaxLimit !== undefined ? propMaxLimit : maxLimit;
   const usedCount = currentCount !== undefined ? currentCount : effectiveMax;
 
-  // Features list for target upgrade plan
-  const features =
-    targetUpgradePlan === "vip"
-      ? [
-          { text: "Up to 10 collab packages", highlight: isGig },
-          { text: "Unlimited products in shop & series (unlimited episodes)", highlight: isProduct || isSeries || isEpisode },
-          { text: "Unlimited custom links & reviews", highlight: isLink || isReview },
-          { text: "Custom media kit & premium themes", highlight: false },
-          { text: "VIP dedicated support & verification badge", highlight: false },
-        ]
-      : [
-          { text: "Up to 3 collab packages", highlight: isGig },
-          { text: "20 products in shop & 20 series (20 episodes)", highlight: isProduct || isSeries || isEpisode },
-          { text: "Custom links & 10 reviews", highlight: isLink || isReview },
-          { text: "Rate card + advanced media kit", highlight: false },
-          { text: "Priority support", highlight: false },
-        ];
+  // Features of the plan to upgrade to, straight from config/plans.ts; the line for this resource is bold.
+  const highlightWord = isGig ? "collab" : isProduct ? "product" : isSeries || isEpisode ? "series" : isLink ? "link" : isReview ? "review" : "";
+  const features = planFeatureLines(targetUpgradePlan).map((text) => ({
+    text,
+    highlight: Boolean(highlightWord) && text.toLowerCase().includes(highlightWord),
+  }));
 
   return (
     <Modal
@@ -246,7 +227,7 @@ export function LimitReachedModal({
                     or {formatPlanPrice(targetUpgradePlan, "yearly", pricingCurrency)} / year
                   </span>
                   <span className="rounded-full bg-[#FCE7F3] px-2 py-0.5 text-[10px] font-bold text-[#7A2253]">
-                    Save 37%
+                    Save {yearlySavingsPercent(targetUpgradePlan, pricingCurrency)}%
                   </span>
                 </div>
               </div>
@@ -273,7 +254,7 @@ export function LimitReachedModal({
               className="w-full bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs py-2.5 px-4 rounded-[5px] transition-all cursor-pointer shadow-xs inline-flex items-center justify-center gap-1.5 group"
             >
               <Sparkles className="h-3.5 w-3.5" />
-              <span>Upgrade to {targetUpgradePlan === "vip" ? "VIP" : "Pro"}</span>
+              <span>Upgrade to {PLANS[targetUpgradePlan].name}</span>
               <ChevronRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>

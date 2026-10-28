@@ -139,234 +139,214 @@
   color: #ffffff !important;
 }
 
-.theme-bg-taj-mahal {
-  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Front_far_view_of_taj_mahal.jpg?width=1600");
-  --theme-photo-tint: rgba(255, 251, 244, 0.30);
-  background-color: #e6d7bc;
-  background-image:
-    linear-gradient(180deg, rgba(255, 253, 247, 0.72) 0%, rgba(246, 239, 226, 0.82) 44%, rgba(230, 215, 188, 0.90) 100%),
-    radial-gradient(circle at 50% 8%, rgba(255, 255, 255, 0.55), transparent 38%),
-    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Front_far_view_of_taj_mahal.jpg?width=1600");
-  background-position: center top, center top, center top;
-  background-repeat: no-repeat;
-  background-size: cover, cover, cover;
-  background-attachment: fixed;
+/* Inflixo wordmark recoloured by the active theme: the dashboard's PNG used as a mask (628×186). */
+.inflixo-logo {
+  width: auto;
+  aspect-ratio: 628 / 186;
+  background-color: var(--wordmark);
+  -webkit-mask: url(/images/inflixo-wordmark-title.png) center / contain no-repeat;
+  mask: url(/images/inflixo-wordmark-title.png) center / contain no-repeat;
 }
 
-@media (max-width: 768px) {
-  .theme-bg-taj-mahal {
-    background-attachment: scroll;
-    background-position: center top, center top, center top;
+/* ==========================================================================
+   THEME BACKGROUND ANIMATIONS (--page-anim) — components/theme/ThemeBackgroundAnim.tsx
+   Only transform & opacity animate; blur/glow are static. Movement uses container units
+   (cqw/cqh) so it fits the page, the Themes preview and the small listing thumbnail alike.
+   ========================================================================== */
+.tba {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  container-type: size;
+}
+.tba > span {
+  position: absolute;
+  display: block;
+  will-change: transform, opacity;
+}
+/* Paused in background tabs / when a thumbnail isn't hovered. */
+.tba.anim-paused,
+.tba.anim-paused * {
+  animation-play-state: paused !important;
+}
+/* Reduced motion: same elements, frozen at their staggered start positions. */
+@media (prefers-reduced-motion: reduce) {
+  .tba,
+  .tba * {
+    animation-play-state: paused !important;
+  }
+}
+/* At most 12 animated elements on small screens. */
+@media (max-width: 640px) {
+  .tba .tba-x {
+    display: none;
   }
 }
 
-.theme-bg-marine-drive {
-  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Mumbai_Skyline_Marine_Drive_Night.jpg?width=1600");
-  --theme-photo-tint: rgba(6, 9, 16, 0.38);
-  background-color: #061320;
-  background-image:
-    linear-gradient(180deg, rgba(2, 8, 18, 0.40) 0%, rgba(6, 19, 32, 0.58) 45%, rgba(2, 8, 18, 0.86) 100%),
-    radial-gradient(circle at 50% 5%, rgba(125, 211, 252, 0.28), transparent 36%),
-    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Mumbai_Skyline_Marine_Drive_Night.jpg?width=1600");
-  background-position: center top, center top, center top;
-  background-repeat: no-repeat;
-  background-size: cover, cover, cover;
-  background-attachment: fixed;
+/* diyas */
+.tba-diya {
+  bottom: 0;
+  border-radius: 9999px;
+  background: #FDBA74;
+  box-shadow: 0 0 10px 4px rgba(253, 186, 116, 0.65), 0 0 22px 8px rgba(251, 146, 60, 0.25);
+}
+@keyframes tba-rise {
+  from { transform: translateY(10cqh); }
+  to { transform: translateY(-110cqh); }
+}
+@keyframes tba-flicker {
+  from { opacity: 0.45; }
+  to { opacity: 1; }
 }
 
-@media (max-width: 768px) {
-  .theme-bg-marine-drive {
-    background-attachment: scroll;
-    background-position: center top, center top, center top;
-  }
+/* gulal & aurora blobs */
+.tba-blob {
+  width: 55cqw;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  filter: blur(48px);
+  opacity: 0.55;
+}
+.tba-blob-aurora {
+  filter: blur(70px);
+  opacity: 0.5;
+}
+.tba-mini .tba-blob {
+  filter: blur(16px);
+}
+@keyframes tba-drift {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(12cqw, -10cqh) scale(1.25); }
+  100% { transform: translate(-10cqw, 8cqh) scale(0.9); }
 }
 
-.theme-bg-burj-khalifa {
-  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Night_view_of_Dubai_from_the_Burj_Khalifa,_April_2012_(31004629).jpg?width=1600");
-  --theme-photo-tint: rgba(6, 9, 16, 0.38);
-  background-color: #05070d;
-  background-image:
-    linear-gradient(180deg, rgba(2, 3, 10, 0.32) 0%, rgba(5, 7, 13, 0.58) 48%, rgba(2, 3, 10, 0.90) 100%),
-    radial-gradient(circle at 52% 8%, rgba(245, 199, 107, 0.28), transparent 34%),
-    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Night_view_of_Dubai_from_the_Burj_Khalifa,_April_2012_(31004629).jpg?width=1600");
-  background-position: center top, center top, center top;
-  background-repeat: no-repeat;
-  background-size: cover, cover, cover;
-  background-attachment: fixed;
+/* rain */
+.tba-drop {
+  top: -20cqh;
+  width: 1.5px;
+  height: 14cqh;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.55));
+}
+@keyframes tba-fall {
+  from { transform: translate(0, 0) rotate(12deg); }
+  to { transform: translate(-30cqh, 140cqh) rotate(12deg); }
 }
 
-@media (max-width: 768px) {
-  .theme-bg-burj-khalifa {
-    background-attachment: scroll;
-    background-position: center top, center top, center top;
-  }
+/* kites */
+.tba-kite {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  transform: rotate(45deg);
+}
+.tba-kite::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 1px;
+  height: 24px;
+  background: currentColor;
+  opacity: 0.7;
+  transform-origin: top;
+  transform: rotate(-45deg);
+}
+@keyframes tba-kite {
+  0% { transform: translate(0, 0) rotate(45deg); }
+  50% { transform: translate(6cqw, -12cqh) rotate(52deg); }
+  100% { transform: translate(-5cqw, -24cqh) rotate(38deg); }
 }
 
-.theme-bg-somnath-temple {
-  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Somnath_Temple_Gujarat.jpg?width=1600");
-  --theme-photo-tint: rgba(255, 251, 244, 0.30);
-  background-color: #d8b77a;
-  background-image:
-    linear-gradient(180deg, rgba(255, 248, 236, 0.52) 0%, rgba(243, 216, 168, 0.68) 46%, rgba(104, 66, 30, 0.74) 100%),
-    radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.44), transparent 34%),
-    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Somnath_Temple_Gujarat.jpg?width=1600");
-  background-position: center top, center top, center top;
-  background-repeat: no-repeat;
-  background-size: cover, cover, cover;
-  background-attachment: fixed;
+/* stars */
+.tba-star {
+  width: 2px;
+  height: 2px;
+  border-radius: 9999px;
+  background: #FFFFFF;
+}
+@keyframes tba-twinkle {
+  from { opacity: 0.15; }
+  to { opacity: 1; }
+}
+.tba-shoot {
+  top: 12%;
+  left: 75%;
+  width: 90px;
+  height: 1.5px;
+  background: linear-gradient(90deg, #FFFFFF, rgba(255, 255, 255, 0));
+  opacity: 0;
+}
+@keyframes tba-shoot {
+  0%, 88% { opacity: 0; transform: translate(0, 0) rotate(-20deg); }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-45cqw, 18cqh) rotate(-20deg); }
 }
 
-@media (max-width: 768px) {
-  .theme-bg-somnath-temple {
-    background-attachment: scroll;
-    background-position: center top, center top, center top;
-  }
+/* waves */
+.tba-wave {
+  left: 0;
+  width: 200%;
+}
+@keyframes tba-wave {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 
-.theme-bg-dwarka-temple {
-  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Dwarkadhish_Temple,_Dwarka,_Gujarat.JPG?width=1600");
-  --theme-photo-tint: rgba(255, 251, 244, 0.30);
-  background-color: #bfd5c9;
-  background-image:
-    linear-gradient(180deg, rgba(247, 251, 248, 0.50) 0%, rgba(232, 240, 230, 0.68) 45%, rgba(49, 84, 68, 0.72) 100%),
-    radial-gradient(circle at 50% 9%, rgba(255, 255, 255, 0.42), transparent 34%),
-    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Dwarkadhish_Temple,_Dwarka,_Gujarat.JPG?width=1600");
-  background-position: center top, center top, center top;
-  background-repeat: no-repeat;
-  background-size: cover, cover, cover;
-  background-attachment: fixed;
+/* confetti */
+.tba-confetti {
+  top: -5cqh;
+  width: 6px;
+  height: 10px;
+  border-radius: 1px;
+}
+@keyframes tba-confetti {
+  0% { transform: translate(0, -10cqh) rotate(0deg); }
+  50% { transform: translate(3cqw, 50cqh) rotate(360deg); }
+  100% { transform: translate(-2cqw, 115cqh) rotate(720deg); }
 }
 
-@media (max-width: 768px) {
-  .theme-bg-dwarka-temple {
-    background-attachment: scroll;
-    background-position: center top, center top, center top;
-  }
+/* fireflies */
+.tba-fly {
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: #FDE68A;
+  box-shadow: 0 0 8px 3px rgba(253, 230, 138, 0.7);
+}
+@keyframes tba-wander {
+  0% { transform: translate(0, 0); }
+  33% { transform: translate(4cqw, -6cqh); }
+  66% { transform: translate(-5cqw, -2cqh); }
+  100% { transform: translate(3cqw, 5cqh); }
+}
+@keyframes tba-pulse {
+  from { opacity: 0.2; }
+  to { opacity: 1; }
 }
 
-.theme-bg-goa-beach {
-  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Goa_Beach_-_Baga_Beach.jpg?width=1600");
-  --theme-photo-tint: rgba(255, 251, 244, 0.30);
-  background-color: #e8c88e;
-  background-image:
-    linear-gradient(180deg, rgba(255, 248, 239, 0.48) 0%, rgba(247, 217, 166, 0.62) 44%, rgba(57, 83, 76, 0.70) 100%),
-    radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.38), transparent 34%),
-    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Goa_Beach_-_Baga_Beach.jpg?width=1600");
-  background-position: center top, center top, center top;
-  background-repeat: no-repeat;
-  background-size: cover, cover, cover;
-  background-attachment: fixed;
+/* rangoli */
+.tba-rangoli {
+  width: 70cqw;
+  max-width: 560px;
+  aspect-ratio: 1;
+  color: var(--accent);
+  opacity: 0.25;
+}
+@keyframes tba-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-@media (max-width: 768px) {
-  .theme-bg-goa-beach {
-    background-attachment: scroll;
-    background-position: center top, center top, center top;
-  }
+/* Profile card glass: blur comes from the theme's --card-blur (0px on solid cards). */
+.profile-card-glass {
+  -webkit-backdrop-filter: blur(var(--card-blur, 0px)) saturate(1.2);
+  backdrop-filter: blur(var(--card-blur, 0px)) saturate(1.2);
 }
-
-.theme-bg-love-letter {
-  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Love_Locks_(15125921667).jpg?width=1600");
-  --theme-photo-tint: rgba(255, 251, 244, 0.30);
-  background-color: #f8dde4;
-  background-image:
-    linear-gradient(180deg, rgba(255, 246, 248, 0.58) 0%, rgba(253, 236, 239, 0.70) 46%, rgba(88, 20, 42, 0.62) 100%),
-    radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.42), transparent 34%),
-    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Love_Locks_(15125921667).jpg?width=1600");
-  background-position: center top, center top, center center;
-  background-repeat: no-repeat;
-  background-size: cover, cover, cover;
-  background-attachment: fixed;
-}
-
-@media (max-width: 768px) {
-  .theme-bg-love-letter {
-    background-attachment: scroll;
-    background-position: center top, center top, center center;
-  }
-}
-
-.theme-bg-christmas-snow {
-  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Snowy_tree_with_Christmas_lights.jpg?width=1600");
-  --theme-photo-tint: rgba(255, 251, 244, 0.30);
-  background-color: #e7f3ea;
-  background-image:
-    linear-gradient(180deg, rgba(248, 255, 251, 0.54) 0%, rgba(239, 248, 242, 0.64) 42%, rgba(20, 58, 36, 0.74) 100%),
-    radial-gradient(circle at 50% 8%, rgba(255, 255, 255, 0.46), transparent 34%),
-    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Snowy_tree_with_Christmas_lights.jpg?width=1600");
-  background-position: center top, center top, center center;
-  background-repeat: no-repeat;
-  background-size: cover, cover, cover;
-  background-attachment: fixed;
-}
-
-@media (max-width: 768px) {
-  .theme-bg-christmas-snow {
-    background-attachment: scroll;
-    background-position: center top, center top, center center;
-  }
-}
-
-.theme-bg-mountain-mist {
-  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Misty_Mountains_(29990500236).jpg?width=1600");
-  --theme-photo-tint: rgba(255, 251, 244, 0.30);
-  background-color: #d7e6e1;
-  background-image:
-    linear-gradient(180deg, rgba(243, 250, 248, 0.50) 0%, rgba(232, 242, 239, 0.64) 42%, rgba(17, 45, 46, 0.74) 100%),
-    radial-gradient(circle at 50% 8%, rgba(255, 255, 255, 0.38), transparent 34%),
-    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Misty_Mountains_(29990500236).jpg?width=1600");
-  background-position: center top, center top, center center;
-  background-repeat: no-repeat;
-  background-size: cover, cover, cover;
-  background-attachment: fixed;
-}
-
-@media (max-width: 768px) {
-  .theme-bg-mountain-mist {
-    background-attachment: scroll;
-    background-position: center top, center top, center center;
-  }
-}
-
-.theme-bg-street-food {
-  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Indian_street_food-2.jpg?width=1600");
-  --theme-photo-tint: rgba(255, 251, 244, 0.30);
-  background-color: #f5c777;
-  background-image:
-    linear-gradient(180deg, rgba(255, 248, 234, 0.42) 0%, rgba(255, 236, 203, 0.56) 44%, rgba(77, 37, 8, 0.70) 100%),
-    radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.32), transparent 34%),
-    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Indian_street_food-2.jpg?width=1600");
-  background-position: center top, center top, center center;
-  background-repeat: no-repeat;
-  background-size: cover, cover, cover;
-  background-attachment: fixed;
-}
-
-@media (max-width: 768px) {
-  .theme-bg-street-food {
-    background-attachment: scroll;
-    background-position: center top, center top, center center;
-  }
-}
-
-.theme-bg-cafe-mocha {
-  --theme-photo: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/India-coffee-house-kolkata.jpg?width=1600");
-  --theme-photo-tint: rgba(6, 9, 16, 0.38);
-  background-color: #201611;
-  background-image:
-    linear-gradient(180deg, rgba(32, 22, 17, 0.30) 0%, rgba(32, 22, 17, 0.58) 45%, rgba(12, 7, 4, 0.90) 100%),
-    radial-gradient(circle at 50% 8%, rgba(235, 203, 154, 0.22), transparent 34%),
-    url("https://commons.wikimedia.org/wiki/Special:Redirect/file/India-coffee-house-kolkata.jpg?width=1600");
-  background-position: center top, center top, center center;
-  background-repeat: no-repeat;
-  background-size: cover, cover, cover;
-  background-attachment: fixed;
-}
-
-@media (max-width: 768px) {
-  .theme-bg-cafe-mocha {
-    background-attachment: scroll;
-    background-position: center top, center top, center center;
+/* No backdrop-filter support: glass cards fall back to a more opaque dark card. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  [data-card-glass="true"].profile-card-glass {
+    background-color: rgba(16, 16, 20, 0.82) !important;
   }
 }
 
@@ -480,6 +460,11 @@ button.rounded-full:has(.rounded-full),
 button[aria-label*="photo" i].rounded-full,
 button[aria-label*="avatar" i].rounded-full {
   border-radius: 9999px !important;
+}
+
+/* Explicit exception: public profile tab bar tabs are square (straight separators & indicator) */
+button[data-profile-tab] {
+  border-radius: 0 !important;
 }
 
 h1,
@@ -865,85 +850,6 @@ body {
   will-change: transform, opacity;
 }
 
-/* Neon Grid Animation */
-@keyframes neonGridMove {
-  0% {
-    transform: perspective(600px) rotateX(65deg) translateY(0);
-  }
-
-  100% {
-    transform: perspective(600px) rotateX(65deg) translateY(48px);
-  }
-}
-
-.ambient-neon-grid {
-  background-image:
-    linear-gradient(to right, rgba(6, 182, 212, 0.18) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(6, 182, 212, 0.18) 1px, transparent 1px);
-  background-size: 48px 48px;
-  animation: neonGridMove 8s linear infinite;
-  will-change: transform;
-}
-
-/* Liquid Aurora Waves */
-@keyframes auroraWave1 {
-
-  0%,
-  100% {
-    transform: translate3d(-10%, -10%, 0) scale(1) rotate(0deg);
-    opacity: 0.35;
-  }
-
-  50% {
-    transform: translate3d(15%, 10%, 0) scale(1.2) rotate(12deg);
-    opacity: 0.6;
-  }
-}
-
-@keyframes auroraWave2 {
-
-  0%,
-  100% {
-    transform: translate3d(10%, 15%, 0) scale(1.1) rotate(0deg);
-    opacity: 0.3;
-  }
-
-  50% {
-    transform: translate3d(-15%, -10%, 0) scale(0.9) rotate(-10deg);
-    opacity: 0.55;
-  }
-}
-
-.aurora-ribbon-1 {
-  animation: auroraWave1 18s ease-in-out infinite;
-  will-change: transform, opacity;
-}
-
-.aurora-ribbon-2 {
-  animation: auroraWave2 22s ease-in-out infinite;
-  will-change: transform, opacity;
-}
-
-/* Spotlight Stage Glow */
-@keyframes spotlightGlow {
-
-  0%,
-  100% {
-    transform: translate(-50%, 0) scale(1);
-    opacity: 0.45;
-  }
-
-  50% {
-    transform: translate(-48%, 5%) scale(1.12);
-    opacity: 0.7;
-  }
-}
-
-.ambient-spotlight {
-  animation: spotlightGlow 12s ease-in-out infinite;
-  will-change: transform, opacity;
-}
-
 /* Paper Confetti Drift */
 @keyframes paperConfettiDrift {
   0% {
@@ -1204,10 +1110,6 @@ body {
 @media (prefers-reduced-motion: reduce) {
 
   .floating-particle,
-  .ambient-neon-grid,
-  .aurora-ribbon-1,
-  .aurora-ribbon-2,
-  .ambient-spotlight,
   .paper-confetti-item,
   .floating-shape-item,
   .sparkle-item,

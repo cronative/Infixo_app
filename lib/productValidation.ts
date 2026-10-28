@@ -1,7 +1,11 @@
 export const MAX_PRODUCT_IMAGE_BYTES = 5 * 1024 * 1024;
 export const MAX_PRODUCT_BODY_BYTES = 7 * 1024 * 1024;
 
-export class ProductValidationError extends Error {}
+const MAX_PRICE_RUPEES = 10_000_000;
+
+export class ProductValidationError extends Error {
+  constructor(message: string, public code = "VALIDATION_ERROR", public status = 422) { super(message); }
+}
 
 export function validateProductId(value: unknown): string {
   if (typeof value !== "string" || !/^prod_[a-f0-9-]{36}$/.test(value)) {
@@ -10,42 +14,60 @@ export function validateProductId(value: unknown): string {
   return value;
 }
 
+/** Whole rupees (0 to 10,000,000) → paise. Decimals, strings and out-of-range values are rejected. */
 export function parseProductPrice(value: unknown): number | null {
   if (value === null || value === undefined || value === "") return null;
-  if (typeof value !== "string" && typeof value !== "number") throw new ProductValidationError("Enter a valid price.");
-  const input = String(value).trim();
-  if (!input) return null;
-  if (!/^\d{1,8}(\.\d{1,2})?$/.test(input)) throw new ProductValidationError("Price must be a positive amount with up to two decimal places.");
-  const [rupees, fraction = ""] = input.split(".");
-  const paise = Number(rupees) * 100 + Number(fraction.padEnd(2, "0"));
-  if (paise <= 0 || paise > 2147483647) throw new ProductValidationError("Price must be between ₹0.01 and ₹21,474,836.47.");
-  return paise;
+  if (typeof value !== "number" || !Number.isInteger(value) || value < 0 || value > MAX_PRICE_RUPEES) {
+    throw new ProductValidationError("Price must be a whole number of rupees between 0 and 1,00,00,000.", "INVALID_PRICE", 400);
+  }
+  return value * 100;
 }
 
 export function validateProductFields(value: unknown) {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new ProductValidationError("Invalid product details.");
   const body = value as Record<string, unknown>;
-  if (typeof body.name !== "string" || !body.name.trim() || body.name.trim().length > 180) {
-    throw new ProductValidationError("Product name must be between 1 and 180 characters.");
+  const rawName = typeof body.name === "string" ? body.name.trim() : "";
+  if (!rawName) {
+    throw new ProductValidationError("Product name is required.");
   }
-  if (typeof body.productUrl !== "string" || !body.productUrl.trim() || body.productUrl.trim().length > 2048) {
-    throw new ProductValidationError("Enter a valid http or https product link.");
+  if (rawName.length > 80) {
+    throw new ProductValidationError("Product name must be 80 characters or fewer.");
   }
-  let cleanUrl = body.productUrl.trim();
+
+  const rawUrl = typeof body.url === "string" ? body.url.trim() : (typeof body.productUrl === "string" ? body.productUrl.trim() : "");
+  if (!rawUrl) {
+    throw new ProductValidationError("Product link is required.");
+  }
+  let cleanUrl = rawUrl;
   if (!/^https?:\/\//i.test(cleanUrl)) {
     cleanUrl = "https://" + cleanUrl;
   }
-  let url: URL;
+  let parsedUrl: URL;
   try {
-    url = new URL(cleanUrl);
+    parsedUrl = new URL(cleanUrl);
   } catch {
-    throw new ProductValidationError("Enter a valid http or https product link.");
+    throw new ProductValidationError("Enter a valid https product link.");
   }
-  if (!["http:", "https:"].includes(url.protocol) || !url.hostname || url.username || url.password) {
-    throw new ProductValidationError("Enter a valid http or https product link without embedded credentials.");
+  if (parsedUrl.protocol !== "https:") {
+    throw new ProductValidationError("Product link must use https://");
   }
-  // Preserve the original affiliate query string rather than rewriting its encoding.
-  return { name: body.name.trim(), productUrl: cleanUrl, pricePaise: parseProductPrice(body.price), image: body.image };
+
+  const rawNote = typeof body.note === "string" ? body.note.trim() : "";
+  if (rawNote.length > 120) {
+    throw new ProductValidationError("Recommendation note must be 120 characters or fewer.");
+  }
+
+  const isAffiliate = body.isAffiliate !== undefined ? Boolean(body.isAffiliate) : true;
+  const rawImage = typeof body.image === "string" ? body.image.trim() : (typeof body.imageUrl === "string" ? body.imageUrl.trim() : "");
+
+  return {
+    name: rawName,
+    url: cleanUrl,
+    pricePaise: parseProductPrice(body.price),
+    note: rawNote || null,
+    isAffiliate,
+    image: rawImage,
+  };
 }
 
 export async function readProductBody(req: Request): Promise<unknown> {

@@ -1,6 +1,7 @@
 "use client";
 
 import { getPublicTheme } from "@/components/public/publicTheme";
+import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
 
 interface PublicMadeWithInflixoProps {
   themeKey?: string;
@@ -12,15 +13,14 @@ interface PublicMadeWithInflixoProps {
  * Minimal and classy: ⚡ Powered by Inflixo in muted grey text.
  */
 export function PublicMadeWithInflixoFooter({
-  themeKey = "minimal-white",
+  themeKey = DEFAULT_THEME_KEY,
   className = "",
 }: PublicMadeWithInflixoProps) {
   const theme = getPublicTheme(themeKey);
   const { colors: c, isDark } = theme;
 
-  const textColor = isDark
-    ? "rgba(255, 255, 255, 0.45)"
-    : (c.mutedText || "#94a3b8");
+  // Sits on the page background, so it uses the on-page token (theme vars are set on the shell root).
+  const textColor = "var(--on-page-text, currentColor)";
 
   return (
     <footer className={`w-full py-2.5 mt-auto mb-1 flex items-center justify-center text-center select-none ${className}`}>
@@ -29,7 +29,7 @@ export function PublicMadeWithInflixoFooter({
         target="_blank"
         rel="noopener noreferrer"
         style={{ color: textColor }}
-        className="group inline-flex items-center gap-2 text-xs font-medium transition-colors hover:text-slate-900 dark:hover:text-white"
+        className="group inline-flex items-center gap-2 text-xs font-medium transition-colors hover:text-(--text) "
         aria-label="Powered by Inflixo"
       >
         <img

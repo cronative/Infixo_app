@@ -135,6 +135,26 @@ async function migrateDatabase(target) {
     await addColumnIfMissing("creators", "custom_domain_verified", "TINYINT(1) NOT NULL DEFAULT 0");
     await addColumnIfMissing("creators", "custom_domain_configured_at", "DATETIME NULL");
 
+    await addColumnIfMissing("creator_custom_links", "icon_url", "VARCHAR(1000) DEFAULT NULL");
+    await addColumnIfMissing("creator_custom_links", "is_pinned", "TINYINT(1) NOT NULL DEFAULT 0");
+
+    await addColumnIfMissing("creator_products", "note", "VARCHAR(120) DEFAULT NULL");
+    await addColumnIfMissing("creator_products", "is_affiliate", "TINYINT(1) NOT NULL DEFAULT 1");
+    await addColumnIfMissing("creator_products", "deleted_at", "TIMESTAMP NULL DEFAULT NULL");
+    const [productIndexes] = await connection.query("SHOW INDEX FROM creator_products WHERE Key_name = 'idx_creator_products_active'");
+    if (!productIndexes.length) {
+      await connection.query("ALTER TABLE creator_products ADD INDEX idx_creator_products_active (creator_id, deleted_at)");
+    }
+
+    // 006: Inflixo Maroon is the only theme (db/migrations/006_single_theme_inflixo_maroon.sql).
+    await connection.query("UPDATE creators SET theme_key = 'inflixo-maroon' WHERE theme_key IS NULL OR theme_key <> 'inflixo-maroon'");
+    await connection.query("ALTER TABLE creators ALTER COLUMN theme_key SET DEFAULT 'inflixo-maroon'");
+    const [settingsTables] = await connection.query("SHOW TABLES LIKE 'creator_settings'");
+    if (settingsTables.length) {
+      await connection.query("UPDATE creator_settings SET theme_key = 'inflixo-maroon' WHERE theme_key IS NULL OR theme_key <> 'inflixo-maroon'");
+      await connection.query("ALTER TABLE creator_settings ALTER COLUMN theme_key SET DEFAULT 'inflixo-maroon'");
+    }
+
     await connection.query(`UPDATE subscriptions
       SET trial_ends_at = NULL
       WHERE plan_key IN ('starter', 'pro', 'vip', 'creator_pro', 'creator_VIP')

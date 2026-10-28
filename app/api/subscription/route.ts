@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { requireCreator } from "@/lib/creatorAuth";
 import { toMysqlDate } from "@/lib/billing";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { getPlan } from "@/config/plans";
 
 function toIso(value: unknown) {
   if (!value) return null;
@@ -37,7 +38,7 @@ export async function GET(req: Request) {
     return apiSuccess({
       subscription: {
         planKey,
-        planName: s.plan_name || (planKey === "early_access" ? "Free Trial" : "Starter"),
+        planName: getPlan(planKey).name,
         billingCycle: s.billing_cycle || "yearly",
         status,
         activatedAt: toIso(s.activated_at) || toIso(s.created_at),

@@ -21,6 +21,8 @@ export interface ModalProps {
   ariaLabel?: string;
   className?: string;
   headerClassName?: string;
+  /** Let title and description wrap to two lines instead of truncating. */
+  wrapHeader?: boolean;
 }
 
 const SIZE_CLASSES: Record<ModalSize, string> = {
@@ -45,6 +47,7 @@ export function Modal({
   ariaLabel,
   className = "",
   headerClassName = "",
+  wrapHeader = false,
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -109,12 +112,12 @@ export function Modal({
               )}
               <div className="min-w-0">
                 {title && (
-                  <h3 className="text-base sm:text-lg font-bold text-[#0f172a] truncate">
+                  <h3 className={`text-base sm:text-lg font-bold text-[#0f172a] ${wrapHeader ? "line-clamp-2 leading-snug" : "truncate"}`}>
                     {title}
                   </h3>
                 )}
                 {description && (
-                  <p className="text-xs text-[#64748b] truncate mt-0.5">
+                  <p className={`text-xs text-[#64748b] mt-0.5 ${wrapHeader ? "line-clamp-2" : "truncate"}`}>
                     {description}
                   </p>
                 )}

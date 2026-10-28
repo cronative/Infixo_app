@@ -34,6 +34,8 @@ import { Modal, ModalBody } from "@/components/ui/Modal";
 import { formatSimplifiedSyncDate } from "@/lib/socialSyncDate";
 import { formatCount } from "@/utils/format";
 import { SocialService } from "@/services/SocialService";
+import { PageContainer } from "@/components/dashboard/PageContainer";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 function extractUsername(url: string): string {
   if (!url) return "";
@@ -258,32 +260,20 @@ export default function DashboardSocialsPage() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-5 w-full pb-8 text-left">
-      {/* 1. BREADCRUMB */}
-      <div className="flex items-center gap-1.5 text-xs text-[#64748b] font-medium">
-        <span>Studio</span>
-        <span className="text-slate-400">&gt;</span>
-        <span className="text-[#0f172a] font-semibold">Social Accounts</span>
-      </div>
-
-      {/* 2. PAGE HEADER */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+    <PageContainer className="text-left">
+      {/* PAGE HEADER */}
+      <PageHeader
+        title={
           <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
-              Social Accounts
-            </h1>
+            <span>Social Accounts</span>
             <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#ecfdf5] border border-[#d1fae5] px-2.5 py-0.5 text-xs font-semibold text-[#047857]">
               <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
               <span>Live Fanbase Sync</span>
             </span>
           </div>
-          <p className="mt-1 text-xs sm:text-sm font-medium text-[#64748b]">
-            Connect YouTube, Instagram, and Facebook to verify your audience and calculate your Total Fanbase.
-          </p>
-        </div>
-
-        <div className="shrink-0">
+        }
+        subtitle="Connect YouTube, Instagram, and Facebook to verify your audience and calculate your Total Fanbase."
+        actions={
           <button
             type="button"
             onClick={() => {
@@ -299,8 +289,8 @@ export default function DashboardSocialsPage() {
             <span>+</span>
             <span>Connect Account</span>
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* 3. TOP STATS BANNER */}
       <div className="rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7]/80 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs text-left">
@@ -835,7 +825,7 @@ export default function DashboardSocialsPage() {
         confirmText="Disconnect Account"
         cancelText="Cancel"
       />
-    </div>
+    </PageContainer>
   );
 }
 

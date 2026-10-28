@@ -2,6 +2,7 @@ import { profileRepository, authRepository, themeRepository } from "@/repositori
 import { CreatorProfile } from "@/types";
 import { ThemeService } from "@/services/ThemeService";
 import { debugLog, debugError } from "@/lib/debugLogger";
+import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
 
 
 const EMPTY_PROFILE: CreatorProfile = {
@@ -69,7 +70,7 @@ export const ProfileService = {
 
           if (profile.themeKey) {
             const existingLocalTheme = themeRepository.get();
-            if (!existingLocalTheme || existingLocalTheme === "minimal-white") {
+            if (!existingLocalTheme || existingLocalTheme === DEFAULT_THEME_KEY) {
               ThemeService.setSelectedTheme(profile.themeKey);
             }
           }

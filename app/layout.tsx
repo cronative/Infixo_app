@@ -7,6 +7,7 @@ import { SessionProvider } from "@/contexts/SessionContext";
 import { GA_MEASUREMENT_ID } from "@/lib/analytics";
 import { PwaInstallPrompt } from "@/components/shared/PwaInstallPrompt";
 import { CookieConsentBanner } from "@/components/shared/CookieConsentBanner";
+import { themeTokensCss } from "@/themes/config";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -16,16 +17,16 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Inflixo — The Video-First Link in Bio & Creator Hub",
+  title: "Inflixo: Your Videos in Order, Your Creator World in One Link",
   description:
-    "Organize your YouTube & Instagram videos into bingeable series, sell digital products & affiliate gear, and showcase your verified fanbase in one bio link.",
+    "Turn your YouTube, Instagram & Facebook videos into bingeable series. Show your total fanbase, tour & ticket links, brand reviews and creator setup in one link in bio. Made in India for creators.",
   keywords: [
     "Inflixo",
     "link in bio",
     "Linktree alternative",
     "Linktree alternative India",
     "video series link in bio",
-    "organize reels into series",
+    "organise reels into series",
     "YouTube playlist link in bio",
     "creator store India",
     "sell presets in bio",
@@ -60,8 +61,8 @@ export const metadata: Metadata = {
     apple: "/logo-square.png",
   },
   openGraph: {
-    title: "Inflixo — The Video-First Link in Bio & Creator Hub",
-    description: "Organize your YouTube & Instagram videos into bingeable series, sell digital products & affiliate gear, and showcase your verified fanbase in one bio link.",
+    title: "Inflixo: Your Videos in Order, Your Creator World in One Link",
+    description: "Turn your YouTube, Instagram & Facebook videos into bingeable series. Show your total fanbase, tour & ticket links, brand reviews and creator setup in one link in bio. Made in India for creators.",
     url: "https://inflixo.com",
     siteName: "Inflixo",
     type: "website",
@@ -76,8 +77,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Inflixo — The Video-First Link in Bio & Creator Hub",
-    description: "Organize your YouTube & Instagram videos into bingeable series, sell digital products & affiliate gear, and showcase your verified fanbase in one bio link.",
+    title: "Inflixo: Your Videos in Order, Your Creator World in One Link",
+    description: "Turn your YouTube, Instagram & Facebook videos into bingeable series. Show your total fanbase, tour & ticket links, brand reviews and creator setup in one link in bio. Made in India for creators.",
     images: ["https://inflixo.com/og-image.png"],
   },
 };
@@ -100,7 +101,7 @@ const jsonLd = {
       "name": "Inflixo",
       "url": "https://inflixo.com",
       "logo": "https://inflixo.com/logo-square.png",
-      "description": "Video-first link in bio platform built for Indian creators to organize video series, run digital & affiliate shops, and showcase brand media kits.",
+      "description": "Video-first link in bio platform built for Indian creators to organise video series, show their total fanbase, and share tour links, brand reviews and creator setup.",
       "sameAs": [
         "https://twitter.com/inflixo",
         "https://instagram.com/inflixo",
@@ -123,11 +124,11 @@ const jsonLd = {
       "url": "https://inflixo.com",
       "offers": {
         "@type": "AggregateOffer",
-        "lowPrice": "0",
-        "highPrice": "799",
+        "lowPrice": "199",
+        "highPrice": "399",
         "priceCurrency": "INR"
       },
-      "description": "Create a stunning video-first portfolio. Group reels & videos into playlists, add your affiliate recommendations, and land brand deals with your media kit."
+      "description": "Turn your YouTube, Instagram & Facebook videos into bingeable series. Show your total fanbase, tour & ticket links, brand reviews and creator setup in one link in bio."
     },
     {
       "@type": "FAQPage",
@@ -138,15 +139,15 @@ const jsonLd = {
           "name": "Does Inflixo host or re-upload my videos?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "No. Your videos stay on YouTube, Instagram, or Facebook. Inflixo only organizes your video links into a clean playlist format, and views count directly on your original channel."
+            "text": "No. You paste links to your existing YouTube, Instagram or Facebook videos. Inflixo organises them; your videos stay on your channels."
           }
         },
         {
           "@type": "Question",
-          "name": "Can I sell digital products or add affiliate links?",
+          "name": "What is \"My Setup\"?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes! Inflixo has a built-in Creator Store. You can sell digital downloads (presets, guides, templates, courses) or add affiliate links for your camera gear and setup with 0% platform commission."
+            "text": "It's a list of the camera, mic, lights, apps and software you use, so fans stop asking in DMs. You can add affiliate links or digital products like presets and guides."
           }
         },
         {
@@ -154,15 +155,15 @@ const jsonLd = {
           "name": "Do my fans need an app or account to watch?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "No. Anyone can open your Inflixo link directly in any mobile or desktop browser without signing up."
+            "text": "No. Anyone can open your Inflixo link in any mobile or desktop browser, with no signup or app."
           }
         },
         {
           "@type": "Question",
-          "name": "How does 0% platform commission work?",
+          "name": "How is my total fanbase calculated?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Inflixo takes 0% cut on all digital product sales and sponsorships. 100% of customer payments go directly to your connected bank account or UPI via Razorpay."
+            "text": "Inflixo reads the publicly visible follower or subscriber counts on the Instagram, YouTube and Facebook profiles you add, and shows them together as one number."
           }
         }
       ]
@@ -181,6 +182,8 @@ export default function RootLayout({
       className={`min-h-full antialiased ${plusJakartaSans.variable}`}
     >
       <head>
+        {/* Default theme tokens for shared profile widgets outside a profile root; lower priority than the dashboard vars. */}
+        <style dangerouslySetInnerHTML={{ __html: themeTokensCss() }} />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/favicon.png" type="image/png" />
         <link rel="shortcut icon" href="/favicon.png" type="image/png" />

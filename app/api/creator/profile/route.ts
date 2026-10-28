@@ -7,6 +7,10 @@ import { requireSession, ownsResource, getSessionFromRequest } from "@/lib/sessi
 import { isCreatorPublic } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
 import { isReservedUsername } from "@/lib/constants";
+import { DEFAULT_THEME_KEY, isThemeKey, resolveThemeKey } from "@/lib/themeKeys";
+import { getCreatorPlanKey } from "@/lib/planServer";
+import { canUseThemeGroup, getPlan } from "@/config/plans";
+import { getThemeDefinition } from "@/themes/config";
 
 // GET /api/creator/profile?email=... or ?username=...
 export async function GET(req: Request) {
@@ -74,7 +78,7 @@ export async function GET(req: Request) {
             category: null,
             profession: null,
             bio: "",
-            themeKey: "minimal-white",
+            themeKey: DEFAULT_THEME_KEY,
             onboardingStep: "profile",
           },
         }, "New user profile initialized");
@@ -124,7 +128,7 @@ export async function GET(req: Request) {
         city: creator.city || "",
         state: creator.state || "",
         country: creator.country || "",
-        themeKey: (!creator.theme_key || creator.theme_key === "modern-purple") ? "minimal-white" : creator.theme_key,
+        themeKey: resolveThemeKey(creator.theme_key),
         themeChangesCount: Number(creator.theme_changes_count || 0),
         isVerified: Boolean(creator.is_verified),
         publicProfileLayout,
@@ -133,7 +137,7 @@ export async function GET(req: Request) {
       },
       subscription: {
         planKey: creator.plan_key || "early_access",
-        planName: creator.plan_name || "Free Trial",
+        planName: getPlan(creator.plan_key).name,
         billingCycle: creator.billing_cycle || "yearly",
         status: creator.sub_status || "trial",
         activatedAt: creator.sub_activated_at || creator.sub_created_at || creator.created_at,
@@ -161,6 +165,11 @@ export async function POST(req: Request) {
     const { displayName, username, category, customCategory, profession, bio, photoDataUrl, city, state, country, themeKey, incrementThemeCount, visibilitySettings } = body;
     const email = session.email;
 
+    // Applying a theme: only existing theme ids are accepted (an omitted themeKey keeps the default).
+    if (themeKey !== undefined && themeKey !== null && themeKey !== "" && !isThemeKey(themeKey)) {
+      return apiError("Unknown theme.", 400, { code: "INVALID_THEME" });
+    }
+
     const cleanUsername = username ? username.trim().replace(/[^a-z0-9_]/gi, "").toLowerCase() : "";
 
     if (cleanUsername && isReservedUsername(cleanUsername)) {
@@ -168,9 +177,18 @@ export async function POST(req: Request) {
     }
 
     // Check if creator exists
-    const [rows]: any = await db.query("SELECT id, username FROM creators WHERE email = ?", [email]);
+    const [rows]: any = await db.query("SELECT id, username, theme_key FROM creators WHERE email = ?", [email]);
     let creatorId = rows[0]?.id;
     const existingUsername = rows[0]?.username;
+
+    // Theme access per plan (config/plans.ts). Only switching to a new theme is checked, so a theme kept
+    // from an earlier plan never blocks ordinary profile saves.
+    if (creatorId && isThemeKey(themeKey) && themeKey !== rows[0]?.theme_key) {
+      const planKey = await getCreatorPlanKey(creatorId);
+      if (!canUseThemeGroup(planKey, getThemeDefinition(themeKey).listing.group)) {
+        return apiError(`This theme is available on Pro and VIP.`, 403, { code: "LIMIT_REACHED", isLimitReached: true, type: "themes" });
+      }
+    }
 
     const safeCategory = category ? String(category).substring(0, 490) : null;
     const safeCustomCategory = customCategory ? String(customCategory).substring(0, 490) : "";
@@ -207,7 +225,7 @@ export async function POST(req: Request) {
       // If user typed a username, update it; otherwise preserve existing handle without default fallback
       const finalUsername = cleanUsername || existingUsername || "";
 
-      const safeThemeKey = (!themeKey || themeKey === "modern-purple") ? "minimal-white" : themeKey;
+      const safeThemeKey = resolveThemeKey(themeKey);
 
       // Update existing creator in MySQL
       await db.query(
@@ -242,7 +260,7 @@ export async function POST(req: Request) {
 
       // Insert new creator into MySQL with user provided fields
       creatorId = `cr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-      const safeThemeKey = (!themeKey || themeKey === "modern-purple") ? "minimal-white" : themeKey;
+      const safeThemeKey = resolveThemeKey(themeKey);
 
       await db.query(
         `INSERT INTO creators (id, email, display_name, username, category, profession, bio, photo_url, city, state, country, theme_key, theme_changes_count, visibility_settings)
@@ -325,7 +343,7 @@ export async function POST(req: Request) {
         city: updated.city || "",
         state: updated.state || "",
         country: updated.country || "",
-        themeKey: updated.theme_key,
+        themeKey: resolveThemeKey(updated.theme_key),
         themeChangesCount: Number(updated.theme_changes_count || 0),
         isVerified: Boolean(updated.is_verified),
         publicProfileLayout,

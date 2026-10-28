@@ -8,6 +8,8 @@ import { CollaborationRequest, CollaborationStatus } from "@/types";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { PageContainer } from "@/components/dashboard/PageContainer";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 const STATUS_CONFIG: Record<CollaborationStatus, { label: string; bg: string; text: string; border: string }> = {
   NEW: { label: "New", bg: "bg-[#EAF7F0]", text: "text-[#17845B]", border: "border-[#17845B]/20" },
@@ -156,23 +158,18 @@ export default function DashboardRequestsPage() {
   });
 
   return (
-    <div className="space-y-4 sm:space-y-4.5 w-full pb-8 text-left">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a] flex items-center gap-2">
-            <span>Collaboration Inquiries</span>
-            {unreadCount > 0 && (
-              <span className="rounded-full bg-[#17845B] text-white text-[10px] font-bold px-2 py-0.5">
-                {unreadCount} New
-              </span>
-            )}
-          </h1>
-          <p className="text-xs sm:text-[13px] text-[#475569] font-medium mt-0.5">
-            Incoming brand enquiries, partnership briefs, and messages received via your &quot;Work With Me&quot; profile form.
-          </p>
-        </div>
-      </div>
+    <PageContainer>
+      <PageHeader
+        title="Collaboration Inquiries"
+        subtitle='Incoming brand enquiries, partnership briefs, and messages received via your "Work With Me" profile form.'
+        actions={
+          unreadCount > 0 ? (
+            <span className="inline-flex items-center rounded-full bg-[#17845B] text-white text-xs font-bold px-3 h-8 shadow-2xs">
+              {unreadCount} New
+            </span>
+          ) : null
+        }
+      />
 
       {/* Tabs Filter */}
       <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white border border-[#e2e8f0] shadow-xs overflow-x-auto">
@@ -405,6 +402,6 @@ export default function DashboardRequestsPage() {
         isDestructive={true}
         loading={isUpdating}
       />
-    </div>
+    </PageContainer>
   );
 }

@@ -7,6 +7,8 @@ import { requireSession, ownsResource } from "@/lib/session";
 import crypto from "crypto";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { getCreatorPlanKey, limitReachedError } from "@/lib/planServer";
+import { getPlanLimit } from "@/config/plans";
 
 interface CreatorIdRow extends RowDataPacket {
   id: string;
@@ -128,6 +130,9 @@ export async function GET(req: Request) {
       updatedAt: r.updated_at,
     }));
 
+    // Public profile: reviews beyond the plan limit are hidden (kept in the dashboard).
+    if (isPublicRequest) reviews.splice(getPlanLimit(await getCreatorPlanKey(creatorId), "reviews"));
+
     return apiSuccess({ reviews }, "Reviews retrieved successfully");
   } catch (error: unknown) {
     console.error("GET /api/creator/reviews error:", error);
@@ -172,6 +177,16 @@ export async function POST(req: Request) {
 
     if (!resolvedCreatorId) {
       return apiError("Creator email or ID is required", 400);
+    }
+
+    // Brand reviews (incl. pending invites) count against the plan limit.
+    const planKey = await getCreatorPlanKey(resolvedCreatorId);
+    const [reviewCountRows] = await db.query<(RowDataPacket & { count: number })[]>(
+      "SELECT COUNT(*) AS count FROM creator_reviews WHERE creator_id = ?",
+      [resolvedCreatorId]
+    );
+    if (Number(reviewCountRows[0]?.count || 0) >= getPlanLimit(planKey, "reviews")) {
+      return limitReachedError("reviews", planKey);
     }
 
     const reviewId = `rev_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;

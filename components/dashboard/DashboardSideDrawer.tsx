@@ -2,24 +2,167 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   X,
   Sparkles,
-  ExternalLink,
   LogOut,
-  ShieldCheck,
-  Crown,
-  Zap,
-  AlertTriangle,
-  ChevronRight,
+  Home,
+  User,
+  Link2,
+  AtSign,
+  Clapperboard,
+  Palette,
+  CreditCard,
+  Settings,
+  Briefcase,
+  Star,
+  BarChart3,
+  Laptop,
+  IdCard,
+  Users,
+  Eye,
+  ShoppingBag,
 } from "lucide-react";
-import { Logo } from "@/components/shared/Logo";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { useCreator } from "@/contexts/CreatorContext";
 import { AuthService } from "@/services/AuthService";
-import { NAV_GROUPS, isNavActive } from "@/components/dashboard/navConfig";
-import { getPlanDisplayInfo } from "@/lib/trialStatus";
+import { isNavActive } from "@/components/dashboard/navConfig";
+import { getInitials } from "@/lib/avatar";
+
+interface NavItemConfig {
+  href: string;
+  label: string;
+  subtitle: string;
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+}
+
+const SIDEBAR_GROUPS: { id: string; title: string; items: NavItemConfig[] }[] = [
+  {
+    id: "overview",
+    title: "",
+    items: [
+      {
+        href: "/dashboard",
+        label: "Dashboard",
+        subtitle: "Your creator studio at a glance",
+        icon: Home,
+      },
+    ],
+  },
+  {
+    id: "content",
+    title: "CONTENT",
+    items: [
+      {
+        href: "/dashboard/series",
+        label: "Series",
+        subtitle: "Organize your videos & episodes",
+        icon: Clapperboard,
+      },
+      {
+        href: "/dashboard/products",
+        label: "Shop",
+        subtitle: "Products you recommend",
+        icon: ShoppingBag,
+      },
+      {
+        href: "/dashboard/links",
+        label: "Links",
+        subtitle: "Share important links",
+        icon: Link2,
+      },
+    ],
+  },
+  {
+    id: "audience-brands",
+    title: "AUDIENCE & BRANDS",
+    items: [
+      {
+        href: "/dashboard/socials",
+        label: "Social Accounts",
+        subtitle: "Connect & sync your social media",
+        icon: AtSign,
+      },
+      {
+        href: "/dashboard/reviews",
+        label: "Reviews",
+        subtitle: "Showcase brand feedback",
+        icon: Star,
+      },
+      {
+        href: "/dashboard/analytics",
+        label: "Analytics",
+        subtitle: "See profile visits & link clicks",
+        icon: BarChart3,
+      },
+      {
+        href: "/dashboard/mediakit",
+        label: "Media Kit & Rates",
+        subtitle: "Show your services & pricing",
+        icon: Briefcase,
+      },
+      {
+        href: "/dashboard/team",
+        label: "Team",
+        subtitle: "Manage collaborators",
+        icon: Users,
+      },
+      {
+        href: "/dashboard/setup",
+        label: "Gear & Tools",
+        subtitle: "Show your creator setup",
+        icon: Laptop,
+      },
+    ],
+  },
+  {
+    id: "profile",
+    title: "PROFILE",
+    items: [
+      {
+        href: "/dashboard/profile",
+        label: "Profile",
+        subtitle: "Edit your creator details",
+        icon: User,
+      },
+      {
+        href: "/dashboard/themes",
+        label: "Themes",
+        subtitle: "Customize your profile look",
+        icon: Palette,
+      },
+      {
+        href: "/dashboard/preview",
+        label: "Live Preview",
+        subtitle: "See how your public profile looks",
+        icon: Eye,
+      },
+      {
+        href: "/dashboard/creator-card",
+        label: "Creator Card",
+        subtitle: "Share your digital creator card",
+        icon: IdCard,
+      },
+    ],
+  },
+];
+
+const BOTTOM_NAV_ITEMS: NavItemConfig[] = [
+  {
+    href: "/dashboard/subscription",
+    label: "Plan",
+    subtitle: "View limits & upgrade",
+    icon: CreditCard,
+  },
+  {
+    href: "/dashboard/settings",
+    label: "Settings",
+    subtitle: "Account & privacy controls",
+    icon: Settings,
+  },
+];
 
 interface DashboardSideDrawerProps {
   isOpen: boolean;
@@ -29,10 +172,9 @@ interface DashboardSideDrawerProps {
 export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { profile, handleViewProfile, isTrialExpired, subscription } = useCreator();
-  const planInfo = getPlanDisplayInfo(subscription);
+  const { profile, subscription } = useCreator();
 
-  // Close drawer ONLY when user actually navigates to a new pathname
+  // Close drawer when pathname changes
   const prevPathRef = useRef(pathname);
   useEffect(() => {
     if (prevPathRef.current !== pathname) {
@@ -41,7 +183,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
     }
   }, [pathname, onClose]);
 
-  // Lock background scroll when drawer is open
+  // Lock background scroll when open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -55,127 +197,129 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
 
   const handleStr = profile.username || "username";
   const displayName = profile.displayName || profile.email?.split("@")[0] || "Creator";
+  const isProOrVip = subscription?.planKey === "pro" || subscription?.planKey === "vip";
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex lg:hidden">
-      {/* Backdrop */}
+      {/* Backdrop tap to close */}
       <div
         className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Drawer Canvas */}
-      <aside className="relative flex h-full w-[280px] max-w-[85vw] flex-col bg-white shadow-2xl z-10">
-        {/* Header: Logo & Close Button */}
-        <div className="flex items-center justify-between px-4 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)]">
-          <Logo size="sm" />
+      {/* Drawer Canvas: Compact 240px style */}
+      <aside className="relative flex h-full w-[260px] max-w-[85vw] flex-col bg-white shadow-2xl z-10 p-3 select-none">
+        {/* Header: Logo wordmark (h-28px) & Close Button */}
+        <div className="flex items-center justify-between px-2 pb-2.5 pt-[calc(env(safe-area-inset-top)+0.5rem)]">
+          <Link
+            href="/dashboard"
+            onClick={onClose}
+            className="inline-flex items-center transition-transform hover:opacity-90"
+            title="Inflixo Dashboard"
+          >
+            <Image
+              src="/images/inflixo-wordmark-title.png"
+              alt="Inflixo"
+              width={628}
+              height={186}
+              className="h-7 w-auto object-contain select-none"
+              priority
+            />
+          </Link>
           <button
             onClick={onClose}
-            className="flex h-10 w-10 items-center justify-center rounded-[5px] text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
+            className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#71717A] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer"
             aria-label="Close menu"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4.5 w-4.5" />
           </button>
         </div>
 
-        {/* Creator Info Card */}
-        <div className="mx-3 mb-2 rounded-[5px] bg-[#f8fafc] p-3">
-          <div className="flex items-center gap-3">
-            <CreatorAvatar
-              src={profile.photoDataUrl}
-              name={displayName}
-              className="h-10 w-10 shrink-0 rounded-full border border-[#e2e8f0]"
+        {/* Profile Card -> Compact row (height 48px, clicks to /dashboard/profile) */}
+        <Link
+          href="/dashboard/profile"
+          onClick={onClose}
+          title={`My Profile (@${handleStr})`}
+          className="flex h-12 items-center gap-2.5 rounded-[5px] px-2 hover:bg-[#F4F4F5] transition-colors group cursor-pointer mb-2"
+        >
+          <div className="relative shrink-0">
+            {profile.photoDataUrl ? (
+              <CreatorAvatar
+                src={profile.photoDataUrl}
+                name={displayName}
+                className="h-8 w-8 rounded-full border border-[#E4E4E7] object-cover"
+              />
+            ) : (
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#7A2253] text-white font-bold text-xs shrink-0 select-none">
+                {getInitials(displayName)}
+              </div>
+            )}
+            <span
+              className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-[#10b981] ring-2 ring-white"
+              title="Profile is live"
             />
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1">
-                <p className="truncate text-sm font-semibold text-[#0f172a]">
-                  {displayName}
-                </p>
-                {profile.isVerified && (
-                  <ShieldCheck className="h-3.5 w-3.5 shrink-0 fill-[#7A2253] text-white" />
-                )}
-              </div>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <p className="truncate text-xs text-[#64748b]">
-                  @{handleStr}
-                </p>
-                {isTrialExpired ? (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded-[5px] border border-rose-200">
-                    <span className="h-1 w-1 rounded-full bg-rose-500" />
-                    Private
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#047857]">
-                    <span className="h-1 w-1 rounded-full bg-[#10b981]" />
-                    Live
-                  </span>
-                )}
-              </div>
-            </div>
           </div>
-        </div>
 
-        {/* Navigation List: 6 Groups */}
-        <nav className="flex-1 space-y-4 px-3 py-2 overflow-y-auto no-scrollbar" aria-label="Dashboard">
-          {NAV_GROUPS.map((group) => (
-            <div key={group.id} className="space-y-1">
-              <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#64748b]">
-                {group.title}
-              </p>
+          <div className="min-w-0 flex-1 text-left leading-tight">
+            <p className="truncate text-[14px] font-semibold text-[#18181B]" title={displayName}>
+              {displayName}
+            </p>
+            <p className="truncate text-[12px] text-[#71717A] mt-0.5">
+              @{handleStr}
+            </p>
+          </div>
+        </Link>
+
+        {/* Navigation List: Single line 36px, no subtitles, no chevrons */}
+        <nav
+          className="flex-1 overflow-y-auto no-scrollbar space-y-3 pr-0.5"
+          aria-label="Mobile navigation"
+        >
+          {SIDEBAR_GROUPS.map((group) => (
+            <div key={group.id} className="space-y-0.5">
+              {group.title && (
+                <p className="px-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#A1A1AA] mt-3.5 mb-1">
+                  {group.title}
+                </p>
+              )}
+
               <div className="space-y-0.5">
                 {group.items.map((item) => {
                   const active = isNavActive(pathname, item.href);
                   const Icon = item.icon;
+
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
                       onClick={onClose}
+                      title={item.subtitle || item.label}
                       aria-current={active ? "page" : undefined}
-                      className={`group relative flex items-center justify-between rounded-[5px] px-3 py-2 text-left transition-all ${
+                      className={`group relative flex h-[36px] items-center rounded-[5px] overflow-hidden px-3 gap-2.5 text-left transition-colors ${
                         active
-                          ? "bg-[#FFF5F7] text-[#7A2253]"
-                          : "hover:bg-[#f8fafc] text-[#0f172a]"
+                          ? "bg-[#7A2253]/[0.08] text-[#7A2253] font-semibold"
+                          : "text-[#52525B] hover:bg-[#F4F4F5] hover:text-[#18181B]"
                       }`}
                     >
-                      <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <Icon
-                          className={`h-4.5 w-4.5 shrink-0 transition-colors ${
-                            active ? "text-[#7A2253]" : "text-[#64748b] group-hover:text-[#0f172a]"
-                          }`}
-                        />
-                        <div className="min-w-0 flex-1">
-                          <p
-                            className={`truncate text-xs font-semibold leading-tight ${
-                              active
-                                ? "text-[#7A2253] font-bold"
-                                : "text-[#0f172a] group-hover:text-[#7A2253]"
-                            }`}
-                          >
-                            {item.label}
-                          </p>
-                          {item.subtitle && (
-                            <p
-                              className={`truncate text-[11px] leading-tight mt-0.5 ${
-                                active ? "text-[#7A2253]/70" : "text-[#64748b]"
-                              }`}
-                            >
-                              {item.subtitle}
-                            </p>
-                          )}
-                        </div>
-                      </div>
+                      {active && (
+                        <span className="absolute left-0 top-0 bottom-0 h-full w-[3px] bg-[#7A2253]" />
+                      )}
 
-                      <ChevronRight
-                        className={`h-4 w-4 shrink-0 transition-colors ${
+                      <Icon
+                        strokeWidth={1.75}
+                        className={`h-[18px] w-[18px] shrink-0 transition-colors ${
                           active
                             ? "text-[#7A2253]"
-                            : "text-[#cbd5e1] group-hover:text-[#64748b]"
+                            : "text-[#71717A] group-hover:text-[#18181B]"
                         }`}
                       />
+
+                      <span className="truncate text-[14px] font-medium leading-normal">
+                        {item.label}
+                      </span>
                     </Link>
                   );
                 })}
@@ -184,59 +328,68 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
           ))}
         </nav>
 
-        {/* Bottom Utility Area */}
-        <div className="px-3 pt-2 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] border-t border-[#e2e8f0] space-y-1">
-          <div className="flex min-h-[44px] items-center justify-between rounded-[5px] px-3 text-sm font-medium text-[#0f172a]">
+        {/* Bottom Area: Sticky */}
+        <div className="shrink-0 pt-2 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] border-t border-[#E4E4E7] space-y-1 mt-1">
+          {BOTTOM_NAV_ITEMS.map((item) => {
+            const active = isNavActive(pathname, item.href);
+            const Icon = item.icon;
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onClose}
+                title={item.subtitle || item.label}
+                aria-current={active ? "page" : undefined}
+                className={`group relative flex h-[36px] items-center rounded-[5px] overflow-hidden px-3 gap-2.5 text-left transition-colors ${
+                  active
+                    ? "bg-[#7A2253]/[0.08] text-[#7A2253] font-semibold"
+                    : "text-[#52525B] hover:bg-[#F4F4F5] hover:text-[#18181B]"
+                }`}
+              >
+                {active && (
+                  <span className="absolute left-0 top-0 bottom-0 h-full w-[3px] bg-[#7A2253]" />
+                )}
+
+                <Icon
+                  strokeWidth={1.75}
+                  className={`h-[18px] w-[18px] shrink-0 transition-colors ${
+                    active
+                      ? "text-[#7A2253]"
+                      : "text-[#71717A] group-hover:text-[#18181B]"
+                  }`}
+                />
+
+                <span className="truncate text-[14px] font-medium leading-normal">
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
+
+          {!isProOrVip && (
             <Link
               href="/dashboard/subscription"
               onClick={onClose}
-              title={`Subscription Plan: ${planInfo.label}`}
-              className={`flex items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs transition-colors ${
-                planInfo.tier === "vip"
-                  ? "bg-amber-50 text-amber-900 border border-amber-200/90 font-semibold"
-                  : planInfo.tier === "pro"
-                  ? "bg-[#7A2253] text-white shadow-xs font-bold"
-                  : planInfo.tier === "starter"
-                  ? "bg-[#fdf2f8] text-[#7A2253] border border-[#fbcfe8] font-semibold"
-                  : planInfo.tier === "expired"
-                  ? "bg-rose-50 text-rose-700 border border-rose-200 font-semibold"
-                  : "text-[#475569] border border-transparent font-medium hover:bg-[#fdf2f8] hover:text-[#7A2253]"
-              }`}
+              title="Upgrade to Pro"
+              className="flex h-[40px] items-center rounded-[5px] bg-[#7A2253]/[0.08] hover:bg-[#7A2253]/[0.12] text-[#7A2253] transition-colors px-3 gap-2.5"
             >
-              {planInfo.tier === "vip" ? (
-                <Crown className="h-4 w-4 shrink-0 text-amber-500 fill-amber-500/20" />
-              ) : planInfo.tier === "pro" ? (
-                <Zap className="h-4 w-4 shrink-0 text-white fill-white" />
-              ) : planInfo.tier === "starter" ? (
-                <Sparkles className="h-4 w-4 shrink-0 text-[#7A2253]" />
-              ) : planInfo.tier === "expired" ? (
-                <AlertTriangle className="h-4 w-4 shrink-0 text-rose-600" />
-              ) : (
-                <Sparkles className="h-4 w-4 shrink-0 text-[#94a3b8]" />
-              )}
-              <span className="font-semibold">{planInfo.label}</span>
+              <Sparkles className="h-[18px] w-[18px] shrink-0 text-[#7A2253]" strokeWidth={1.75} />
+              <span className="truncate text-[14px] font-semibold leading-none">
+                Upgrade to Pro
+              </span>
             </Link>
-            <button
-              type="button"
-              onClick={(e) => {
-                onClose();
-                handleViewProfile(e);
-              }}
-              className="text-xs font-semibold text-[#7A2253] hover:underline inline-flex items-center gap-1 cursor-pointer"
-            >
-              <span>View Profile</span>
-              <ExternalLink className="h-3 w-3" />
-            </button>
-          </div>
+          )}
 
           <button
             onClick={() => {
+              onClose();
               AuthService.logout();
               router.push("/login");
             }}
-            className="flex w-full items-center gap-3 rounded-[5px] px-3 text-sm font-medium text-[#475569] hover:bg-rose-50 hover:text-rose-600 active:bg-rose-50 transition-colors min-h-[44px] cursor-pointer"
+            className="flex h-[36px] w-full items-center rounded-[5px] px-3 gap-2.5 text-left text-[14px] font-medium text-[#71717A] hover:bg-rose-50 hover:text-rose-600 transition-colors cursor-pointer"
           >
-            <LogOut className="h-4 w-4 shrink-0" />
+            <LogOut className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} />
             <span>Logout</span>
           </button>
         </div>

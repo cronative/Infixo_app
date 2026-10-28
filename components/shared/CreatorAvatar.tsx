@@ -17,9 +17,9 @@ export function CreatorAvatar({
   src,
   name = "Creator",
   className = "h-20 w-20 rounded-full",
-  textClassName = "text-xl font-extrabold text-white",
+  textClassName = "text-xl font-extrabold text-(--on-accent)",
   textStyle,
-  fallbackBgClass = "bg-[#7A2253]",
+  fallbackBgClass = "bg-(--accent)",
   style,
 }: CreatorAvatarProps) {
   const [hasError, setHasError] = useState(false);
@@ -28,7 +28,7 @@ export function CreatorAvatar({
   if (!src || hasError) {
     return (
       <div
-        className={`flex items-center justify-center font-display select-none shadow-xs shrink-0 border border-white/20 ${fallbackBgClass} ${className}`}
+        className={`flex items-center justify-center font-display select-none shadow-xs shrink-0 border border-(--card-bg)/20 ${fallbackBgClass} ${className}`}
         style={style}
       >
         <span className={textClassName} style={textStyle}>{initials}</span>
@@ -38,7 +38,7 @@ export function CreatorAvatar({
 
   return (
     <div
-      className={`relative flex items-center justify-center overflow-hidden font-display select-none shadow-xs shrink-0 border border-white/20 ${fallbackBgClass} ${className}`}
+      className={`relative flex items-center justify-center overflow-hidden font-display select-none shadow-xs shrink-0 border border-(--card-bg)/20 ${fallbackBgClass} ${className}`}
       style={style}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}

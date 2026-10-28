@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { ThemeMeta } from "@/types";
+import { getThemeDefinition } from "@/themes/config";
 
 export type CardLayoutType = "classic" | "minimal" | "badge" | "cyber" | "editorial";
 
@@ -213,7 +214,17 @@ const asLayer = (value: string) =>
  * hot-linked without CORS, so they can't be exported, and text/QR never sit on
  * a busy image. The QR code has its own fixed white tile regardless of theme.
  */
-export function deriveCardAppearance(theme: ThemeMeta): CardAppearance {
+export function deriveCardAppearance(themeMeta: ThemeMeta): CardAppearance {
+  // Theme colours are var(--token) references; the card renders/exports outside the profile root,
+  // so swap in the token values from themes/config.
+  const tokens = getThemeDefinition(themeMeta.key).tokens as unknown as Record<string, string>;
+  const resolve = (value: string | undefined) => (value || "").replace(/var\((--[\w-]+)\)/g, (m, name) => tokens[name] ?? m);
+  const theme: ThemeMeta = {
+    ...themeMeta,
+    colors: Object.fromEntries(Object.entries(themeMeta.colors).map(([k, v]) => [k, resolve(v)])) as unknown as ThemeMeta["colors"],
+    typography: Object.fromEntries(Object.entries(themeMeta.typography).map(([k, v]) => [k, resolve(v)])) as ThemeMeta["typography"],
+    effects: Object.fromEntries(Object.entries(themeMeta.effects).map(([k, v]) => [k, resolve(v)])) as ThemeMeta["effects"],
+  };
   const c = theme.colors;
   const isDark = theme.mode === "dark";
   const page = c.pageBackground;

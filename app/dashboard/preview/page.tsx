@@ -20,6 +20,11 @@ import { ProductService } from "@/services/ProductService";
 import { getPlanQuota } from "@/services/subscriptionLimits";
 import type { CreatorProduct } from "@/types";
 import { buildProfileUrl } from "@/utils/format";
+import { PageContainer } from "@/components/dashboard/PageContainer";
+import { PageHeader } from "@/components/dashboard/PageHeader";
+import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
+import { getThemeDefinition, themeTokenStyle } from "@/themes/config";
+import { ThemeBackgroundAnim } from "@/components/theme/ThemeBackgroundAnim";
 
 export default function DashboardPreviewPage() {
   const { profile, socials, series, totalAudience, theme, updateProfile, subscription, handleViewProfile, isTrialExpired } = useCreator();
@@ -51,7 +56,7 @@ export default function DashboardPreviewPage() {
     return THEME_LIST.find((t) => t.key === theme) || THEME_LIST[0];
   }, [theme]);
 
-  const pageBgStyle = activeThemeMeta.outerBgClass || THEME_PAGE_BACKGROUNDS[theme] || THEME_PAGE_BACKGROUNDS["minimal-white"];
+  const pageBgStyle = activeThemeMeta.outerBgClass || THEME_PAGE_BACKGROUNDS[theme] || THEME_PAGE_BACKGROUNDS[DEFAULT_THEME_KEY];
 
   const rawUsername = profile?.username || "creator";
   const canonicalUrl = buildProfileUrl(rawUsername);
@@ -94,51 +99,42 @@ export default function DashboardPreviewPage() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-4.5 w-full pb-8 text-left">
-      {/* 1. PAGE HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
-        <div>
-          <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a]">
-              Profile Preview
-            </h1>
+    <PageContainer>
+      <PageHeader
+        title="Live Preview"
+        subtitle="See exactly how your public creator profile appears to visitors."
+        actions={
+          <>
             {isTrialExpired ? (
-              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-700 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200">
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-700 bg-rose-50 px-2.5 h-9 rounded-[5px] border border-rose-200">
                 <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" />
                 Profile is private (Trial ended)
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#17845B] bg-[#EAF7F0] px-2.5 py-0.5 rounded-full border border-[#17845B]/20">
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#17845B] bg-[#EAF7F0] px-2.5 h-9 rounded-[5px] border border-[#17845B]/20">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#17845B]" />
                 Public profile is live
               </span>
             )}
-          </div>
-          <p className="text-xs sm:text-[13px] text-[#475569] font-medium mt-0.5">
-            See exactly how your public creator profile appears to visitors.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-          <button
-            type="button"
-            onClick={() => setIsVisibilityModalOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] h-9 px-3.5 text-xs font-semibold text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
-          >
-            <Settings className="h-3.5 w-3.5 text-[#7A2253]" />
-            <span>Display Settings</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={handleViewProfile}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-[#7A2253] hover:bg-brand-hover h-9 px-3.5 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
-          >
-            <span>Open Public Profile</span>
-            <ExternalLink className="h-3.5 w-3.5" />
-          </button>
-        </div>
-      </div>
+            <button
+              type="button"
+              onClick={() => setIsVisibilityModalOpen(true)}
+              className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] h-9 px-3.5 text-xs font-semibold text-[#7A2253] transition-all cursor-pointer shadow-2xs"
+            >
+              <Settings className="h-3.5 w-3.5 text-[#7A2253]" />
+              <span>Display Settings</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleViewProfile}
+              className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#681c46] h-9 px-4 text-xs font-bold text-white transition-all cursor-pointer shadow-2xs"
+            >
+              <span>Open Public Profile</span>
+              <ExternalLink className="h-3.5 w-3.5" />
+            </button>
+          </>
+        }
+      />
 
       {/* 2. COMPACT PREVIEW TOOLBAR */}
       <div className="flex items-center justify-between gap-3 rounded-xl border border-[#e2e8f0] bg-white px-3.5 py-2 shadow-xs">
@@ -167,9 +163,12 @@ export default function DashboardPreviewPage() {
       {/* 3. FULL SCREEN / FULL WIDTH PREVIEW CANVAS */}
       <div className="rounded-xl border border-[#e2e8f0] overflow-hidden shadow-xs">
         <div
-          style={{ backgroundColor: activeThemeMeta.colors.pageBackground }}
-          className={`relative w-full px-5 py-3 sm:py-6 md:py-8 transition-colors duration-300 ${pageBgStyle}`}
+          style={{ ...themeTokenStyle(activeThemeMeta.key), background: "var(--page-bg)" }}
+          className={`relative overflow-hidden w-full px-5 py-3 sm:py-6 md:py-8 transition-colors duration-300 ${pageBgStyle}`}
         >
+          {/* Theme background animation (--page-anim), behind the card */}
+          <ThemeBackgroundAnim name={getThemeDefinition(activeThemeMeta.key).tokens["--page-anim"]} />
+
           {/* Ambient Background Animation in Live Preview */}
           <AmbientAnimation
             type={activeThemeMeta.animation?.type || activeThemeMeta.animationType}
@@ -211,6 +210,6 @@ export default function DashboardPreviewPage() {
         settings={visibilitySettings}
         onSave={handleSaveVisibility}
       />
-    </div>
+    </PageContainer>
   );
 }

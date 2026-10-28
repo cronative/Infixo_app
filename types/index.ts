@@ -309,6 +309,8 @@ export interface CustomLink {
   items?: CustomLinkItem[];
   thumbnail?: string;
   isPinned?: boolean;
+  /** Favicon saved in our storage (unknown domains only). */
+  iconUrl?: string;
 }
 
 export interface CustomLinkItem {
@@ -319,6 +321,7 @@ export interface CustomLinkItem {
   isEnabled?: boolean;
   thumbnail?: string;
   isPinned?: boolean;
+  iconUrl?: string;
 }
 
 export const DEFAULT_CUSTOM_LINKS: CustomLink[] = [];
@@ -332,55 +335,21 @@ export type ThemeGroup = "light" | "dark" | "animated";
 export type ThemeAnimationType =
   | "none"
   | "floating-particles"
-  | "neon-grid"
-  | "liquid-aurora"
   | "floating-shapes"
-  | "spotlight-stage"
   | "paper-confetti"
   | "sparkles"
   | "round-orbs"
   | "galaxy"
   | "firecrackers";
 
+/** Registered themes (themes/config.ts). Unknown/removed ids resolve to the default via lib/themeKeys.ts. */
 export type ThemeKey =
-  | "minimal-white"
-  | "sage-studio"
-  | "blush-paper"
-  | "studio-frost"
-  | "taj-mahal"
-  | "marine-drive"
-  | "burj-khalifa"
-  | "somnath-temple"
-  | "dwarka-temple"
-  | "goa-beach"
-  | "creator-studio"
-  | "neon-reels"
-  | "podcast-lounge"
-  | "food-vlog"
-  | "gamer-stream"
-  | "love-letter"
-  | "christmas-snow"
-  | "mountain-mist"
-  | "street-food"
-  | "cafe-mocha"
-  | "aurora-gradient"
-  | "sunrise-pop"
-  | "candy-flow"
-  | "mint-wave"
-  | "royal-glow"
-  | "signature-purple"
-  | "midnight"
-  | "neon-grid"
-  | "liquid-aurora"
-  | "floating-studio"
-  | "spotlight-stage"
-  | "creative-paper"
-  | "cosmic-purple"
-  | "aurora-night"
-  | "rose-glow"
-  | "ocean-motion"
-  | "sunset-studio"
-  | "minimal-spark";
+  | "inflixo-maroon" | "kapas" | "kajal"
+  | "kurinji" | "neel" | "samundar" | "neem" | "haldi" | "kesar" | "gulmohar"
+  | "taj-mahal" | "india-gate" | "gateway-of-india" | "marine-drive" | "goa-beach" | "ladakh"
+  | "kerala-backwaters" | "hawa-mahal" | "varanasi-ghats" | "rann-of-kutch" | "cricket-stadium"
+  | "gully-cricket" | "somnath" | "dwarka" | "burj-khalifa"
+  | "diwali" | "holi" | "baarish" | "patang" | "taare" | "lehrein" | "dhanak" | "jashn" | "jugnu" | "rangoli";
 
 export interface ThemeTypography {
   fontFamily?: string;
@@ -661,6 +630,11 @@ export interface ToastMessage {
   id: string;
   type: "success" | "error" | "info";
   message: string;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
+  duration?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -903,4 +877,17 @@ export interface CreatorProduct {
   imageUrl: string;
   pricePaise: number | null;
   productUrl: string;
+  note?: string | null;
+  isAffiliate?: boolean;
+}
+
+/** Product as exchanged with /api/products (price in whole rupees). */
+export interface ShopProduct {
+  id: string;
+  url: string;
+  name: string;
+  image: string;
+  price: number | null;
+  note: string;
+  isAffiliate: boolean;
 }

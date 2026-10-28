@@ -33,6 +33,8 @@ import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { teamRepository } from "@/repositories/localRepository";
 import { getInitials } from "@/lib/avatar";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { PageContainer } from "@/components/dashboard/PageContainer";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 import { resizeImageToDataUrl } from "@/lib/imageResize";
 
 export default function DashboardTeamPage() {
@@ -338,38 +340,32 @@ export default function DashboardTeamPage() {
   };
 
   return (
-    <div className="space-y-4 w-full pb-8 text-left">
-      {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="font-display text-2xl font-bold tracking-tight text-[#0f172a]">
-            Team &amp; Collaborators
-          </h1>
-          <p className="text-xs sm:text-[13px] text-[#64748b] mt-0.5">
-            Showcase the core creative crew behind your videos, content, and productions.
-          </p>
-        </div>
+    <PageContainer>
+      <PageHeader
+        title="Team & Collaborators"
+        subtitle="Showcase the core creative crew behind your videos, content, and productions."
+        actions={
+          <>
+            <button
+              type="button"
+              onClick={handleOpenTeamModal}
+              className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-slate-50 h-9 px-3.5 text-xs font-semibold text-[#7A2253] transition-colors cursor-pointer shadow-2xs"
+            >
+              <Pencil className="h-3.5 w-3.5 text-[#7A2253]" />
+              <span>Edit Team</span>
+            </button>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={handleOpenTeamModal}
-            className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-slate-50 h-8 px-3.5 text-xs font-semibold text-[#7A2253] transition-colors cursor-pointer shadow-2xs"
-          >
-            <Pencil className="h-3.5 w-3.5 text-[#7A2253]" />
-            <span>Edit Team</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleOpenMemberModal()}
-            className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#681c46] text-white h-8 px-3.5 text-xs font-bold transition-colors cursor-pointer shadow-2xs"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            <span>Add Member</span>
-          </button>
-        </div>
-      </div>
+            <button
+              type="button"
+              onClick={() => handleOpenMemberModal()}
+              className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#681c46] text-white h-9 px-4 text-xs font-bold transition-colors cursor-pointer shadow-2xs"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              <span>Add Member</span>
+            </button>
+          </>
+        }
+      />
 
       {/* Main Content Area */}
       {loading ? (
@@ -874,6 +870,6 @@ export default function DashboardTeamPage() {
         isDestructive={true}
         loading={isSubmitting}
       />
-    </div>
+    </PageContainer>
   );
 }
