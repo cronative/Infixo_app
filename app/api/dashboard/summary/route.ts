@@ -6,9 +6,9 @@ import { GET as getProducts } from "@/app/api/creator/products/route";
 import { GET as getLinks } from "@/app/api/creator/custom-links/route";
 import { GET as getMediaKit } from "@/app/api/creator/mediakit/route";
 import { GET as getReviews } from "@/app/api/creator/reviews/route";
-import { GET as getAnalytics } from "@/app/api/creator/analytics/route";
 import { GET as getSetup } from "@/app/api/creator/setup/route";
 import { GET as getTeam } from "@/app/api/creator/team/route";
+import { getAnalyticsSummary } from "@/lib/analyticsSummary";
 import { mapSocialAccounts, calculateTotalAudience, type SocialAccountRecord } from "@/lib/socialAccounts";
 import { getSeriesEpisodes } from "@/lib/seriesMetrics";
 import type { DashboardSummary } from "@/lib/dashboardSummary";
@@ -51,7 +51,12 @@ export async function GET(req: Request) {
       readSection(getLinks, request("/api/creator/custom-links"), (data: { links: unknown[] }) => data.links.length),
       readSection(getMediaKit, request("/api/creator/mediakit"), (data: { packages: unknown[] }) => data.packages.length),
       readSection(getReviews, request("/api/creator/reviews"), (data: { reviews: unknown[] }) => data.reviews.length),
-      readSection(getAnalytics, request("/api/creator/analytics"), (data: { metrics: { profileViews: number; socialClicks: number; linkClicks: number } }) => ({ views: data.metrics.profileViews, clicks: data.metrics.socialClicks + data.metrics.linkClicks })),
+      getAnalyticsSummary(id, "30d")
+        .then(({ totals: t }) => ({ views: t.profileViews, clicks: t.episodeClicks + t.linkClicks + t.productClicks + t.setupClicks }))
+        .catch((error) => {
+          console.error("Dashboard section unavailable /api/analytics", error);
+          return null;
+        }),
       readSection(getSetup, request("/api/creator/setup"), (data: { items: unknown[] }) => data.items.length),
       readSection(getTeam, request("/api/creator/team"), (data: { members: unknown[] }) => data.members.length),
     ]);

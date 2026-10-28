@@ -88,6 +88,7 @@ export function CollaborationInquiryModal({
           timeline,
           deliverables,
           message: message.trim() || undefined,
+          package_id: packages.find((p) => p.title === deliverables)?.id || undefined,
         }),
       });
 

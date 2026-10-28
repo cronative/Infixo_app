@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { ensureRequestsTable } from "@/lib/requestsDb";
-import { ensureAnalyticsTable } from "@/lib/analyticsDb";
+import { ensureAnalyticsTable, recordServerEvent } from "@/lib/analyticsDb";
 import { isCreatorPublic } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
 import { sendCollabRequestReceivedEmail } from "@/lib/email";
@@ -84,14 +84,7 @@ export async function POST(req: Request) {
       ]
     );
 
-    // Track analytics event
-    try {
-      await db.query(
-        `INSERT INTO analytics_events (creator_id, event_type, event_target, ip_address, user_agent)
-         VALUES (?, 'collaboration_submit', ?, ?, ?)`,
-        [targetCreatorId, senderName.trim(), clientIp, req.headers.get("user-agent") || null]
-      );
-    } catch {}
+    await recordServerEvent(req, targetCreatorId, "collab_request_submit", body.packageId || body.package_id || null);
 
     // Asynchronously notify creator via email (fire-and-forget so user submission is instant)
     if (targetCreator.email) {

@@ -131,6 +131,7 @@ import { LinkRow } from "@/components/links/LinkRow";
 import { LinkGroupRow } from "@/components/links/LinkGroupRow";
 import { getInitials } from "@/lib/avatar";
 import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
+import { trackPublicEvent } from "@/lib/publicTrack";
 import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
 import { ThemeService, getThemeCssVariables } from "@/services/ThemeService";
 
@@ -1388,6 +1389,22 @@ export function LivePreviewCard({
 
   const isTabsLayout = layoutMode !== "stacked" && !isListingPage && navTabs.length >= 1;
 
+  // collab_package_view: once per page view per package, when the Collab section shows its card.
+  const collabSectionVisible =
+    !isListingPage &&
+    (!isTabsLayout || activeNavTab === "collab" || activeNavTab === "work") &&
+    effectiveVisibilitySettings.showCollabGigs !== false;
+  const activePackageIds = navActivePackages.map((p) => String(p.id)).join("|");
+  const viewedPackagesRef = useRef(new Set<string>());
+  useEffect(() => {
+    if (!collabSectionVisible || isInformationalMode || !activePackageIds) return;
+    for (const id of activePackageIds.split("|")) {
+      if (viewedPackagesRef.current.has(id)) continue;
+      viewedPackagesRef.current.add(id);
+      trackPublicEvent("collab_package_view", id);
+    }
+  }, [collabSectionVisible, isInformationalMode, activePackageIds]);
+
   const navScrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(() => navTabs.length > 3);
@@ -2124,7 +2141,9 @@ export function LivePreviewCard({
                         if (isInformationalMode) {
                           e.preventDefault();
                           showToast(`Opens ${pinnedLink.title} ✨`);
+                          return;
                         }
+                        trackPublicEvent("link_click", String(pinnedLink.id));
                       }}
                     />
                   )}
@@ -2145,7 +2164,11 @@ export function LivePreviewCard({
                             onLinkClick={(innerLink) => {
                               if (isInformationalMode) {
                                 showToast(`Opens ${innerLink.title} ✨`);
+                                return;
                               }
+                              // Group children count as "groupId:childIndex".
+                              const childIndex = (item.items || []).indexOf(innerLink);
+                              trackPublicEvent("link_click", `${item.id}:${childIndex}`);
                             }}
                           />
                         );
@@ -2158,7 +2181,9 @@ export function LivePreviewCard({
                           if (isInformationalMode) {
                             e.preventDefault();
                             showToast(`Opens ${item.title} ✨`);
+                            return;
                           }
+                          trackPublicEvent("link_click", String(item.id));
                         }}
                       />
                     );
@@ -2441,7 +2466,9 @@ export function LivePreviewCard({
                       if (isInformationalMode) {
                         e.preventDefault();
                         showToast(`Opens ${product.name} external product page ✨`);
+                        return;
                       }
+                      trackPublicEvent("product_click", String(product.id));
                     }}
                     className="tap-scale group flex flex-col rounded-[5px] border border-(--surface-border)/80 bg-(--card-bg) p-2.5 shadow-none hover:border-(--surface-border)/20  transition-all duration-200 cursor-pointer"
                   >
@@ -2925,7 +2952,10 @@ export function LivePreviewCard({
                             href={item.linkUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            onClick={(e) => { if (isInformationalMode) e.preventDefault(); }}
+                            onClick={(e) => {
+                              if (isInformationalMode) e.preventDefault();
+                              else trackPublicEvent("setup_click", String(item.id));
+                            }}
                             className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-[5px] bg-(--surface) hover:bg-(--surface-border) text-(--text) border border-(--surface-border)/80 text-xs font-bold transition-all cursor-pointer shadow-none whitespace-nowrap"
                           >
                             <span>View Product</span>

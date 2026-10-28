@@ -56,6 +56,7 @@ import {
   PUBLIC_TYPE,
 } from "@/components/public/publicTheme";
 import { DEFAULT_THEME_KEY, resolveThemeKey } from "@/lib/themeKeys";
+import { setPublicTrackContext, trackPublicEvent } from "@/lib/publicTrack";
 
 function formatPackagePrice(price: string): string {
   if (!price) return "₹0";
@@ -155,6 +156,8 @@ export default function PublicMediaKitPage() {
   const [loaded, setLoaded] = useState(false);
   const [notFound, setNotFound] = useState(false);
 
+  useEffect(() => () => setPublicTrackContext(null), []);
+
   useEffect(() => {
     async function loadMediaKitData() {
       const rawUser = decodeURIComponent(params.username ?? "").trim();
@@ -211,6 +214,8 @@ export default function PublicMediaKitPage() {
 
         if (isProfOk && profile && profile.username) {
           setProfile(profile);
+          setPublicTrackContext({ creatorId: profile.id, username: usernameParam, source: "public_mediakit" });
+          trackPublicEvent("media_kit_view");
           setTheme(resolveThemeKey(profile.themeKey));
           setNotFound(false);
 

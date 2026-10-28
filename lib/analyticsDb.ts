@@ -45,3 +45,45 @@ export async function ensureAnalyticsTable() {
     console.warn("ensureAnalyticsTable error:", message);
   }
 }
+
+/** Every event type the analytics page reads. Old names are renamed/dropped by scripts/migrate.mjs. */
+export const PUBLIC_EVENT_TYPES = [
+  "profile_view",
+  "series_open",
+  "episode_click",
+  "link_click",
+  "product_click",
+  "setup_click",
+  "media_kit_view",
+  "collab_package_view",
+] as const;
+
+export const SERVER_EVENT_TYPES = ["collab_request_submit"] as const;
+
+const BOT_UA = /bot|crawl|spider|slurp|preview|facebookexternalhit|headless|lighthouse|pingdom|curl|wget|python-requests|axios|node-fetch/i;
+
+export function isBotUserAgent(userAgent: string | null | undefined) {
+  return !userAgent || BOT_UA.test(userAgent);
+}
+
+/** Records an event the server itself observes (e.g. a collab request was saved). Never throws. */
+export async function recordServerEvent(
+  req: Request,
+  creatorId: string,
+  eventType: (typeof SERVER_EVENT_TYPES)[number],
+  eventTarget: string | null,
+) {
+  try {
+    const userAgent = req.headers.get("user-agent") || null;
+    if (isBotUserAgent(userAgent)) return;
+    await ensureAnalyticsTable();
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null;
+    await db.query(
+      `INSERT INTO analytics_events (creator_id, event_type, event_target, source, ip_address, user_agent)
+       VALUES (?, ?, ?, 'public_profile', ?, ?)`,
+      [creatorId, eventType, eventTarget ? eventTarget.slice(0, 255) : null, ip, userAgent],
+    );
+  } catch (err) {
+    console.warn("recordServerEvent failed:", err instanceof Error ? err.message : err);
+  }
+}

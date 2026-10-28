@@ -43,7 +43,7 @@ interface CreatorContextValue {
 const CreatorContext = createContext<CreatorContextValue | null>(null);
 
 // Pages that don't use creator socials/series. Those load on the first visit to any other page.
-const ROUTES_WITHOUT_EXTRAS = ["/dashboard/products", "/dashboard/links"];
+const ROUTES_WITHOUT_EXTRAS = ["/dashboard/products", "/dashboard/links", "/dashboard/analytics"];
 const routeNeedsExtras = (path: string) => !ROUTES_WITHOUT_EXTRAS.some((route) => path === route || path.startsWith(`${route}/`));
 
 const EMPTY_PROFILE: CreatorProfile = {

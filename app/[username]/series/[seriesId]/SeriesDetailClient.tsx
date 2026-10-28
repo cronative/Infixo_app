@@ -27,6 +27,7 @@ import { SeriesSharePopover } from "@/components/series/SeriesSharePopover";
 import { extractVideoThumbnail, slugifySeriesTitle } from "@/lib/videoUrl";
 import { PublicCreatorInfo } from "@/lib/publicSeriesService";
 import { ThemeService } from "@/services/ThemeService";
+import { setPublicTrackContext, trackPublicEvent } from "@/lib/publicTrack";
 import { CreatorPublicShell, PublicCard } from "@/components/public/CreatorPublicShell";
 import { PublicPageHeader, PublicIconButton } from "@/components/public/PublicPageHeader";
 import { PublicSectionHeader } from "@/components/public/PublicSectionHeader";
@@ -71,23 +72,6 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
     name: platformStr || "Watch",
     icon: <Film className="h-3.5 w-3.5 text-[#7A2253]" />,
   };
-}
-
-function getPublicVisitorId() {
-  if (typeof window === "undefined") return "";
-  const existing = localStorage.getItem("inflixo_vid");
-  if (existing) return existing;
-  const next = `v_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
-  localStorage.setItem("inflixo_vid", next);
-  return next;
-}
-
-function createEpisodeClickEventId(seriesId: string, episodeId: string) {
-  const randomPart =
-    typeof crypto !== "undefined" && "randomUUID" in crypto
-      ? crypto.randomUUID()
-      : `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-  return `episode:${seriesId}:${episodeId}:${randomPart}`;
 }
 
 function InlineExpandableDescription({
@@ -268,6 +252,19 @@ export function SeriesDetailClient({
   }, [initialUsername, seriesId, series]);
 
   const username = creator?.username || initialUsername;
+
+  // series_open once per page view; owner/preview/bot visits are skipped inside publicTrack.
+  const loadedSeriesId = series?.id;
+  const trackedSeriesRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!loadedSeriesId || !username) return;
+    setPublicTrackContext({ username: username.replace(/^@/, "").toLowerCase(), source: "public_series" });
+    if (trackedSeriesRef.current !== loadedSeriesId) {
+      trackedSeriesRef.current = loadedSeriesId;
+      trackPublicEvent("series_open", loadedSeriesId);
+    }
+    return () => setPublicTrackContext(null);
+  }, [loadedSeriesId, username]);
   const profileUrl = `/${username}`;
 
   // Theme integration
@@ -364,34 +361,8 @@ export function SeriesDetailClient({
   }
 
   const trackEpisodeClick = (ep: Episode) => {
-    try {
-      const visitorId = getPublicVisitorId();
-      const episodeId = ep.id || `${ep.episodeNumber || ep.title || "episode"}`;
-      const currentSeriesId = series?.id || seriesId;
-      fetch("/api/analytics/track", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          eventType: "episode_click",
-          username,
-          eventId: createEpisodeClickEventId(currentSeriesId, episodeId),
-          visitorId,
-          source: "public_series",
-          eventTarget: `${currentSeriesId}:${episodeId}`,
-          seriesId: series?.id,
-          episodeId,
-          url: ep.externalUrl,
-          metadata: {
-            seriesId: currentSeriesId,
-            seriesTitle: series?.title,
-            episodeId,
-            episodeTitle: ep.title,
-            episodeNumber: ep.episodeNumber,
-            url: ep.externalUrl,
-          },
-        }),
-      }).catch(() => { });
-    } catch { }
+    const episodeId = ep.id || `${ep.episodeNumber || ep.title || "episode"}`;
+    trackPublicEvent("episode_click", `${series?.id || seriesId}:${episodeId}`);
   };
 
   // ── LOADING SKELETON (THEME-AWARE) ──

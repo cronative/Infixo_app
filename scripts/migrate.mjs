@@ -146,13 +146,22 @@ async function migrateDatabase(target) {
       await connection.query("ALTER TABLE creator_products ADD INDEX idx_creator_products_active (creator_id, deleted_at)");
     }
 
-    // 006: Inflixo Maroon is the only theme (db/migrations/006_single_theme_inflixo_maroon.sql).
-    await connection.query("UPDATE creators SET theme_key = 'inflixo-maroon' WHERE theme_key IS NULL OR theme_key <> 'inflixo-maroon'");
+    // 006: default theme. Only fills empty keys; chosen themes are kept (unknown keys fall back at runtime).
+    await connection.query("UPDATE creators SET theme_key = 'inflixo-maroon' WHERE theme_key IS NULL OR theme_key = ''");
     await connection.query("ALTER TABLE creators ALTER COLUMN theme_key SET DEFAULT 'inflixo-maroon'");
     const [settingsTables] = await connection.query("SHOW TABLES LIKE 'creator_settings'");
     if (settingsTables.length) {
-      await connection.query("UPDATE creator_settings SET theme_key = 'inflixo-maroon' WHERE theme_key IS NULL OR theme_key <> 'inflixo-maroon'");
+      await connection.query("UPDATE creator_settings SET theme_key = 'inflixo-maroon' WHERE theme_key IS NULL OR theme_key = ''");
       await connection.query("ALTER TABLE creator_settings ALTER COLUMN theme_key SET DEFAULT 'inflixo-maroon'");
+    }
+
+    // 007: analytics event types (db/migrations/007_analytics_event_types.sql).
+    await connection.query("UPDATE analytics_events SET event_type = 'series_open' WHERE event_type = 'series_view'");
+    await connection.query("UPDATE analytics_events SET event_type = 'collab_request_submit', event_target = NULL WHERE event_type = 'collaboration_submit'");
+    await connection.query("DELETE FROM analytics_events WHERE event_type IN ('social_click', 'work_with_me_click', 'collaboration_click', 'service_view', 'service_click', 'brand_click', 'team_social_click')");
+    const [analyticsIndexes] = await connection.query("SHOW INDEX FROM analytics_events WHERE Key_name = 'idx_creator_analytics'");
+    if (!analyticsIndexes.length) {
+      await connection.query("ALTER TABLE analytics_events ADD INDEX idx_creator_analytics (creator_id, event_type, created_at)");
     }
 
     await connection.query(`UPDATE subscriptions

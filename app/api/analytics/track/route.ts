@@ -1,6 +1,7 @@
 import type { RowDataPacket } from "mysql2";
 import { db } from "@/lib/db";
-import { ensureAnalyticsTable } from "@/lib/analyticsDb";
+import { ensureAnalyticsTable, isBotUserAgent, PUBLIC_EVENT_TYPES } from "@/lib/analyticsDb";
+import { getSessionFromRequest } from "@/lib/session";
 import { isCreatorPublic } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
 
@@ -8,17 +9,7 @@ interface CreatorIdRow extends RowDataPacket {
   id: string;
 }
 
-const ALLOWED_PUBLIC_EVENTS = new Set([
-  "profile_view",
-  "episode_click",
-  "series_view",
-  "social_click",
-  "link_click",
-  "product_click",
-  "media_kit_view",
-  "work_with_me_click",
-  "collaboration_click",
-]);
+const ALLOWED_PUBLIC_EVENTS = new Set<string>(PUBLIC_EVENT_TYPES);
 
 const ALLOWED_PUBLIC_SOURCES = new Set([
   "public_profile",
@@ -31,7 +22,11 @@ const ALLOWED_PUBLIC_SOURCES = new Set([
 // POST /api/analytics/track (Public Event Tracker)
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const userAgent = req.headers.get("user-agent") || null;
+    if (isBotUserAgent(userAgent)) return apiSuccess({}, "Ignored");
+
+    // sendBeacon posts text/plain-or-blob bodies; parse the raw text either way.
+    const body = JSON.parse((await req.text()) || "{}");
     // Accept both camelCase and snake_case field names
     const creatorId = body.creatorId || body.creator_id;
     const username = body.username || body.creator_username;
@@ -74,16 +69,19 @@ export async function POST(req: Request) {
     if (!(await isCreatorPublic(targetCreatorId))) {
       return apiError("Creator profile is private", 404);
     }
+    // The signed-in owner browsing their own profile is never counted.
+    if (getSessionFromRequest(req)?.creatorId === targetCreatorId) {
+      return apiSuccess({}, "Ignored");
+    }
 
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null;
-    const userAgent = req.headers.get("user-agent") || null;
     const metaJson = metadata ? JSON.stringify(metadata) : null;
 
     await db.query(
       `INSERT IGNORE INTO analytics_events
         (event_id, creator_id, event_type, event_target, visitor_id, source, ip_address, user_agent, metadata)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [eventId, targetCreatorId, eventType, eventTarget || null, visitorId || null, source, ip, userAgent, metaJson]
+      [eventId, targetCreatorId, eventType, eventTarget ? String(eventTarget).slice(0, 255) : null, visitorId || null, source, ip, userAgent, metaJson]
     );
 
     return apiSuccess({}, "Event tracked successfully");

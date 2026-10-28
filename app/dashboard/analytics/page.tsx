@@ -1,373 +1,232 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
 import {
-  BarChart3,
-  Calendar,
   ChevronDown,
-  ExternalLink,
   Eye,
+  FileText,
   Link2,
   MousePointerClick,
-  RefreshCw,
+  Package,
+  Send,
+  ShoppingBag,
   Tv,
-  Users,
+  Wrench,
 } from "lucide-react";
-import { useCreator } from "@/contexts/CreatorContext";
-import { EmptyState } from "@/components/ui/EmptyState";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import type { AnalyticsPeriod, AnalyticsSummary, AnalyticsTotals } from "@/lib/analyticsSummary";
 
-type AnalyticsTarget = {
-  event_type: string;
-  event_target: string | null;
-  clicks: number;
-  series_title?: string | null;
-  episode_title?: string | null;
-  episode_number?: number | null;
-  display_title?: string | null;
-  display_subtitle?: string | null;
-};
+const TILES: { key: keyof AnalyticsTotals; label: string; icon: React.ReactNode }[] = [
+  { key: "profileViews", label: "Profile opens", icon: <Eye className="h-4 w-4" /> },
+  { key: "seriesOpens", label: "Series opens", icon: <Tv className="h-4 w-4" /> },
+  { key: "episodeClicks", label: "Episode clicks", icon: <MousePointerClick className="h-4 w-4" /> },
+  { key: "linkClicks", label: "Link clicks", icon: <Link2 className="h-4 w-4" /> },
+  { key: "productClicks", label: "Product clicks", icon: <ShoppingBag className="h-4 w-4" /> },
+  { key: "setupClicks", label: "Setup clicks", icon: <Wrench className="h-4 w-4" /> },
+  { key: "mediaKitViews", label: "Media kit views", icon: <FileText className="h-4 w-4" /> },
+  { key: "collabPackageViews", label: "Package views", icon: <Package className="h-4 w-4" /> },
+  { key: "collabRequests", label: "Collab requests", icon: <Send className="h-4 w-4" /> },
+];
 
-type AnalyticsState = {
-  loading: boolean;
-  profileViews: number;
-  uniqueVisitors: number;
-  episodeClicks: number;
-  socialClicks: number;
-  linkClicks: number;
-  topTargets: AnalyticsTarget[];
-};
-
-const EMPTY_ANALYTICS: AnalyticsState = {
-  loading: false,
-  profileViews: 0,
-  uniqueVisitors: 0,
-  episodeClicks: 0,
-  socialClicks: 0,
-  linkClicks: 0,
-  topTargets: [],
-};
+const fmt = (n: number) => n.toLocaleString("en-IN");
 
 export default function DashboardAnalyticsPage() {
-  const { profile, series: creatorSeries } = useCreator();
-  const [analytics, setAnalytics] = useState<AnalyticsState>(EMPTY_ANALYTICS);
-  const [period, setPeriod] = useState<"7d" | "30d">("7d");
-
-  const query = useMemo(() => {
-    if (profile.email) return `email=${encodeURIComponent(profile.email)}`;
-    if (profile.username) return `username=${encodeURIComponent(profile.username)}`;
-    if (profile.id) return `creatorId=${encodeURIComponent(profile.id)}`;
-    return "";
-  }, [profile.email, profile.id, profile.username]);
+  const [period, setPeriod] = useState<AnalyticsPeriod>("7d");
+  const [data, setData] = useState<AnalyticsSummary | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [openSeries, setOpenSeries] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    if (!query) return;
-
     let ignore = false;
-
-    async function loadAnalytics() {
-      setAnalytics((current) => ({ ...current, loading: true }));
-
-      try {
-        const httpResponse = await fetch(`/api/creator/analytics?${query}&period=${period}`);
-        const apiResponse = await httpResponse.json();
-
-        if (ignore) return;
-        const metrics = apiResponse.data?.metrics || apiResponse.metrics;
-        const topTargets = apiResponse.data?.topTargets || apiResponse.topTargets;
-        if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
-          setAnalytics({
-            loading: false,
-            profileViews: Number(metrics?.profileViews || 0),
-            uniqueVisitors: Number(metrics?.uniqueVisitors || 0),
-            episodeClicks: Number(metrics?.episodeClicks || 0),
-            socialClicks: Number(metrics?.socialClicks || 0),
-            linkClicks: Number(metrics?.linkClicks || 0),
-            topTargets: Array.isArray(topTargets) ? topTargets : [],
-          });
-        } else {
-          setAnalytics({ ...EMPTY_ANALYTICS, loading: false });
-        }
-      } catch {
-        if (!ignore) setAnalytics({ ...EMPTY_ANALYTICS, loading: false });
-      }
-    }
-
-    void loadAnalytics();
-
+    setLoading(true);
+    setError(false);
+    fetch(`/api/analytics?period=${period}`)
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
+      .then((summary: AnalyticsSummary) => {
+        if (!ignore) setData(summary);
+      })
+      .catch(() => {
+        if (!ignore) setError(true);
+      })
+      .finally(() => {
+        if (!ignore) setLoading(false);
+      });
     return () => {
       ignore = true;
     };
-  }, [period, query]);
+  }, [period]);
 
-  const handleStr = profile.username || "username";
+  // Dashboard quick-stat links land on #section once the lists have rendered.
+  useEffect(() => {
+    if (!data || typeof window === "undefined" || !window.location.hash) return;
+    document.getElementById(window.location.hash.slice(1))?.scrollIntoView({ block: "start" });
+  }, [data]);
 
-  const resolveTargetInfo = (item: AnalyticsTarget) => {
-    // If backend provided clean title (and not equal to raw ID), use it!
-    if (item.display_title && item.display_title !== item.event_target) {
-      return {
-        title: item.display_title,
-        subtitle:
-          item.display_subtitle ||
-          (item.event_type === "episode_click" ? "Series episode link" : "Profile target"),
-        isSeries: item.event_type === "episode_click" || Boolean(item.series_title),
-      };
-    }
-
-    const raw = String(item.event_target || "").trim();
-    if (
-      item.event_type === "episode_click" ||
-      raw.includes("series_") ||
-      raw.includes("ep_")
-    ) {
-      let sId = "";
-      let epId = "";
-      if (raw.includes(":")) {
-        const parts = raw.split(":");
-        sId = parts[0] || "";
-        epId = parts[1] || "";
-      } else if (raw.startsWith("series_")) {
-        sId = raw;
-      } else if (raw.startsWith("ep_")) {
-        epId = raw;
-      }
-
-      const matchedSeries = creatorSeries?.find((s) => s.id === sId);
-      const allEpisodes =
-        matchedSeries?.seasons?.flatMap((sea) => sea.episodes || []) ||
-        ((matchedSeries as any)?.episodes as any[] | undefined) ||
-        [];
-      let matchedEpisode = allEpisodes.find((e: any) => e.id === epId);
-
-      if (!matchedEpisode && epId && creatorSeries) {
-        for (const s of creatorSeries) {
-          const sEps =
-            s.seasons?.flatMap((sea) => sea.episodes || []) ||
-            ((s as any)?.episodes as any[] | undefined) ||
-            [];
-          const ep = sEps.find((e: any) => e.id === epId);
-          if (ep) {
-            matchedEpisode = ep;
-            break;
-          }
-        }
-      }
-
-      if (matchedSeries && matchedEpisode) {
-        return {
-          title: matchedSeries.title,
-          subtitle: `Episode ${matchedEpisode.episodeNumber || 1}: ${matchedEpisode.title}`,
-          isSeries: true,
-        };
-      }
-      if (matchedSeries) {
-        return {
-          title: matchedSeries.title,
-          subtitle: "Series link",
-          isSeries: true,
-        };
-      }
-      if (matchedEpisode) {
-        return {
-          title: matchedEpisode.title,
-          subtitle: `Episode ${matchedEpisode.episodeNumber || 1}`,
-          isSeries: true,
-        };
-      }
-      return {
-        title: item.series_title || "Series Episode",
-        subtitle: "Series episode link",
-        isSeries: true,
-      };
-    }
-
-    if (item.event_type === "social_click") {
-      let name = "Social profile link";
-      if (raw.includes("instagram.com")) name = "Instagram";
-      else if (raw.includes("youtube.com")) name = "YouTube";
-      else if (raw.includes("twitter.com") || raw.includes("x.com")) name = "X (Twitter)";
-      return {
-        title: name,
-        subtitle: raw || "Social link",
-        isSeries: false,
-      };
-    }
-
-    return {
-      title: item.display_title || item.event_target || "Profile link",
-      subtitle:
-        item.display_subtitle ||
-        (item.event_type === "link_click" ? "Custom bio link" : "Profile target"),
-      isSeries: false,
-    };
-  };
+  const items = data?.items;
 
   return (
     <PageContainer className="text-left">
-      {/* ── Top Header Row ── */}
       <PageHeader
-        title={
-          <div className="flex items-center gap-2">
-            <span>Analytics</span>
-            <button
-              type="button"
-              onClick={() => setPeriod(period === "7d" ? "30d" : "7d")}
-              className="inline-flex items-center gap-1.5 rounded-full bg-[#FFF5F7] border border-[#FCE7F3] px-2.5 py-0.5 text-xs font-semibold text-[#7A2253] hover:bg-[#FCE7F3]/60 transition-colors cursor-pointer"
-            >
-              <Calendar className="h-3 w-3 text-[#7A2253]" />
-              <span>{period === "7d" ? "Past 7 Days" : "Past 30 Days"}</span>
-              <ChevronDown className="h-3 w-3 text-[#7A2253]" />
-            </button>
-          </div>
-        }
-        subtitle="Public profile opens, unique visitors, and series link click engagement."
+        title="Analytics"
+        subtitle="What visitors open and click on your public profile."
         actions={
-          <>
-            <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-0.5 shadow-2xs flex items-center h-9">
-              {(["7d", "30d"] as const).map((value) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => setPeriod(value)}
-                  className={`rounded-[4px] px-3 py-1 text-xs font-bold transition-all cursor-pointer ${
-                    period === value
-                      ? "bg-[#7A2253] text-white shadow-xs"
-                      : "text-[#64748b] hover:text-[#0f172a]"
-                  }`}
-                >
-                  {value === "7d" ? "7 days" : "30 days"}
-                </button>
-              ))}
-            </div>
-
-            <Link
-              href={`/${handleStr}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex h-9 items-center gap-1.5 rounded-[5px] bg-[#7A2253] px-3.5 text-xs font-semibold text-white shadow-xs hover:bg-[#681c46] transition-colors"
-            >
-              <span>Live Profile</span>
-              <ExternalLink className="h-3.5 w-3.5" />
-            </Link>
-          </>
+          <div className="flex h-9 items-center rounded-[5px] border border-[#e2e8f0] bg-white p-0.5 shadow-2xs">
+            {(["7d", "30d"] as const).map((value) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setPeriod(value)}
+                aria-pressed={period === value}
+                className={`rounded-[4px] px-3 py-1 text-xs font-bold transition-all cursor-pointer ${
+                  period === value ? "bg-[#7A2253] text-white shadow-xs" : "text-[#64748b] hover:text-[#0f172a]"
+                }`}
+              >
+                {value === "7d" ? "7 days" : "30 days"}
+              </button>
+            ))}
+          </div>
         }
       />
 
-      {/* ── 4 Metrics Cards ── */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <MetricCard
-          icon={<Eye className="h-5 w-5" />}
-          label="Profile opens"
-          value={analytics.profileViews}
-          helper="Public profile link opened"
-          loading={analytics.loading}
-        />
-        <MetricCard
-          icon={<Users className="h-5 w-5" />}
-          label="Unique visitors"
-          value={analytics.uniqueVisitors}
-          helper="Approx browser visitors"
-          loading={analytics.loading}
-        />
-        <MetricCard
-          icon={<MousePointerClick className="h-5 w-5" />}
-          label="Series episode clicks"
-          value={analytics.episodeClicks}
-          helper="Episode links clicked"
-          loading={analytics.loading}
-        />
-        <MetricCard
-          icon={<ExternalLink className="h-5 w-5" />}
-          label="Social & link clicks"
-          value={analytics.socialClicks + analytics.linkClicks}
-          helper="Social handles & bio links"
-          loading={analytics.loading}
-        />
+      {error && (
+        <p className="mb-4 rounded-[5px] border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+          Couldn&apos;t load analytics. Please refresh the page.
+        </p>
+      )}
+
+      <section id="totals" className="grid grid-cols-2 lg:grid-cols-3 gap-3 scroll-mt-20">
+        {TILES.map((tile) => (
+          <div key={tile.key} className="flex items-center gap-3 rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 shadow-2xs">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7] text-[#7A2253]">
+              {tile.icon}
+            </span>
+            <div className="min-w-0">
+              <p className="text-xl font-bold leading-none tabular-nums text-[#0f172a]">
+                {loading || !data ? "…" : fmt(data.totals[tile.key])}
+              </p>
+              <p className="mt-1 truncate text-xs text-[#64748b]">{tile.label}</p>
+            </div>
+          </div>
+        ))}
       </section>
 
-      {/* ── Top Clicked Links & Series Parts ── */}
-      <section className="rounded-[5px] border border-[#e2e8f0] bg-white shadow-2xs overflow-hidden">
-        <div className="flex items-center justify-between gap-3 border-b border-[#e2e8f0] bg-[#f8fafc]/80 px-4 py-3">
-          <div>
-            <h2 className="text-sm font-bold text-[#0f172a]">Top clicked links &amp; series parts</h2>
-            <p className="text-xs text-[#64748b] mt-0.5">Real-time fan engagement across your public profile.</p>
-          </div>
-          {analytics.loading && <RefreshCw className="h-3.5 w-3.5 animate-spin text-[#64748b]" />}
-        </div>
-
-        {analytics.topTargets.length === 0 ? (
-          <EmptyState
-            icon={<BarChart3 className="h-7 w-7" />}
-            title="No click events yet"
-            description="Share your public profile and series links. Fan clicks on your episodes and bio links will appear here."
-            className="border-none bg-transparent py-8"
-          />
-        ) : (
-          <div className="divide-y divide-[#e2e8f0]">
-            {analytics.topTargets.slice(0, 10).map((item, index) => {
-              const info = resolveTargetInfo(item);
-
-              return (
-                <div
-                  key={`${item.event_target}-${index}`}
-                  className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-[#f8fafc]/50 transition-colors"
+      <div className="mt-6 space-y-4">
+        <Section id="series" title="Series" loading={loading} empty={!items?.series.some((s) => s.opens + s.episodeClicks > 0)}>
+          {items?.series.map((s) => {
+            const open = Boolean(openSeries[s.id]);
+            return (
+              <li key={s.id}>
+                <button
+                  type="button"
+                  onClick={() => setOpenSeries((prev) => ({ ...prev, [s.id]: !open }))}
+                  aria-expanded={open}
+                  className="flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left hover:bg-[#f8fafc] cursor-pointer"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF5F7] border border-[#FCE7F3] text-[#7A2253] shadow-2xs">
-                      {info.isSeries ? (
-                        <Tv className="h-4 w-4" />
-                      ) : (
-                        <Link2 className="h-4 w-4" />
-                      )}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="truncate text-xs sm:text-sm font-bold text-[#0f172a]">
-                        {info.title}
-                      </p>
-                      <p className="truncate text-xs text-[#64748b] mt-0.5">{info.subtitle}</p>
-                    </div>
-                  </div>
-
-                  <span className="shrink-0 rounded-full bg-[#FFF5F7] border border-[#FCE7F3] px-3 py-1 text-xs font-bold text-[#7A2253] shadow-2xs">
-                    {Number(item.clicks || 0).toLocaleString("en-IN")} clicks
+                  <span className="flex min-w-0 items-center gap-2">
+                    <ChevronDown className={`h-3.5 w-3.5 shrink-0 text-[#94a3b8] transition-transform ${open ? "" : "-rotate-90"}`} />
+                    <span className="truncate text-sm font-medium text-[#0f172a]">{s.title}</span>
                   </span>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
+                  <span className="flex shrink-0 gap-1.5">
+                    <CountChip value={s.opens} unit="opens" />
+                    <CountChip value={s.episodeClicks} unit="clicks" />
+                  </span>
+                </button>
+                {open && (
+                  <ul className="border-t border-[#f1f5f9] bg-[#f8fafc]/60">
+                    {s.episodes.length === 0 ? (
+                      <li className="px-10 py-2 text-xs text-[#94a3b8]">No episodes</li>
+                    ) : (
+                      s.episodes.map((ep) => (
+                        <li key={ep.id} className="flex items-center justify-between gap-3 py-2 pl-10 pr-4">
+                          <span className="truncate text-xs text-[#475569]">{ep.title}</span>
+                          <CountChip value={ep.clicks} unit="clicks" />
+                        </li>
+                      ))
+                    )}
+                  </ul>
+                )}
+              </li>
+            );
+          })}
+        </Section>
+
+        <Section id="links" title="Links" loading={loading} empty={!items?.links.some((l) => l.clicks > 0)}>
+          {items?.links.map((l) => <Row key={l.id} name={l.title} chips={<CountChip value={l.clicks} unit="clicks" />} />)}
+        </Section>
+
+        <Section id="products" title="Products" loading={loading} empty={!items?.products.some((p) => p.clicks > 0)}>
+          {items?.products.map((p) => <Row key={p.id} name={p.name} chips={<CountChip value={p.clicks} unit="clicks" />} />)}
+        </Section>
+
+        <Section id="setup" title="My Setup" loading={loading} empty={!items?.setup.some((g) => g.clicks > 0)}>
+          {items?.setup.map((g) => <Row key={g.id} name={g.name} chips={<CountChip value={g.clicks} unit="clicks" />} />)}
+        </Section>
+
+        <Section id="packages" title="Collab Packages" loading={loading} empty={!items?.packages.some((p) => p.views + p.requests > 0)}>
+          {items?.packages.map((p) => (
+            <Row
+              key={p.id}
+              name={p.title}
+              chips={
+                <>
+                  <CountChip value={p.views} unit="views" />
+                  <CountChip value={p.requests} unit="requests" />
+                </>
+              }
+            />
+          ))}
+        </Section>
+      </div>
     </PageContainer>
   );
 }
 
-function MetricCard({
-  icon,
-  label,
-  value,
-  helper,
+function Section({
+  id,
+  title,
   loading,
+  empty,
+  children,
 }: {
-  icon: React.ReactNode;
-  label: string;
-  value: number;
-  helper: string;
+  id: string;
+  title: string;
   loading: boolean;
+  empty: boolean;
+  children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 shadow-2xs flex items-start gap-3.5 hover:border-[#cbd5e1] transition-colors">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF5F7] border border-[#FCE7F3] text-[#7A2253] shadow-2xs">
-        {icon}
-      </div>
-      <div className="min-w-0 flex-1">
-        <h3 className="text-xs sm:text-sm font-bold text-[#0f172a] truncate">{label}</h3>
-        <p className="mt-1 text-2xl sm:text-[26px] font-bold leading-none tracking-tight text-[#7A2253] tabular-nums">
-          {loading ? "..." : value.toLocaleString("en-IN")}
-        </p>
-        <p className="mt-1.5 text-xs text-[#64748b] truncate">{helper}</p>
-      </div>
-    </div>
+    <section id={id} className="scroll-mt-20 overflow-hidden rounded-[5px] border border-[#e2e8f0] bg-white shadow-2xs">
+      <h2 className="border-b border-[#e2e8f0] bg-[#f8fafc]/80 px-4 py-2.5 text-sm font-bold text-[#0f172a]">{title}</h2>
+      {loading ? (
+        <p className="px-4 py-3 text-sm text-[#94a3b8]">Loading…</p>
+      ) : empty ? (
+        <p className="px-4 py-3 text-sm text-[#94a3b8]">No clicks yet</p>
+      ) : (
+        <ul className="divide-y divide-[#f1f5f9]">{children}</ul>
+      )}
+    </section>
+  );
+}
+
+function Row({ name, chips }: { name: string; chips: React.ReactNode }) {
+  return (
+    <li className="flex items-center justify-between gap-3 px-4 py-2.5">
+      <span className="truncate text-sm font-medium text-[#0f172a]">{name}</span>
+      <span className="flex shrink-0 gap-1.5">{chips}</span>
+    </li>
+  );
+}
+
+function CountChip({ value, unit }: { value: number; unit: string }) {
+  return (
+    <span
+      className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold tabular-nums ${
+        value > 0 ? "border-[#FCE7F3] bg-[#FFF5F7] text-[#7A2253]" : "border-[#e2e8f0] bg-[#f8fafc] text-[#94a3b8]"
+      }`}
+    >
+      {fmt(value)} {unit}
+    </span>
   );
 }

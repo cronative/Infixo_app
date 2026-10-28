@@ -18,6 +18,7 @@ import {
   CreatorProduct,
 } from "@/types";
 import { DEFAULT_THEME_KEY, resolveThemeKey } from "@/lib/themeKeys";
+import { setPublicTrackContext } from "@/lib/publicTrack";
 
 const EMPTY_PROFILE: CreatorProfile = {
   photoDataUrl: null,
@@ -105,6 +106,8 @@ export default function AllProductsClient() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
+
+  useEffect(() => () => setPublicTrackContext(null), []);
 
   useEffect(() => {
     let isCancelled = false;
@@ -197,6 +200,7 @@ export default function AllProductsClient() {
         setProfile(safeProf);
         setSocials(mappedSocials);
         setProducts(prodsList);
+        setPublicTrackContext({ creatorId: safeProf.id, username: cleanHandle.toLowerCase(), source: "public_products" });
         setTheme(resolvedTheme);
         setLoading(false);
       } catch (err) {

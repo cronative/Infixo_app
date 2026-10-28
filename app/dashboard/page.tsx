@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { Fragment, useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import {
   Briefcase,
@@ -64,7 +64,7 @@ export default function DashboardOverviewPage() {
   const [shareOpen, setShareOpen] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
   const [dismissedSuggestions, setDismissedSuggestions] = useState<string[]>([]);
-  const [profileViewsThisWeek, setProfileViewsThisWeek] = useState<number>(0);
+  const [weekStats, setWeekStats] = useState<{ profileViews: number; seriesOpens: number; clicks: number } | null>(null);
 
   // Real data state from pages' sources
   const [customLinks, setCustomLinks] = useState<CustomLink[]>([]);
@@ -115,34 +115,27 @@ export default function DashboardOverviewPage() {
     }
   }, []);
 
-  // Fetch 7-day profile views for Quick Stats row
+  // 7-day counts for the Quick Stats row (same API as /dashboard/analytics)
   useEffect(() => {
     let ignore = false;
-    const query = profile.id
-      ? `creatorId=${encodeURIComponent(profile.id)}`
-      : profile.email
-      ? `email=${encodeURIComponent(profile.email)}`
-      : "";
-
-    if (!query) {
+    if (!profile.id && !profile.email) {
       setLoading(false);
       return;
     }
 
     setLoading(true);
-    fetch(`/api/creator/analytics?${query}&period=7d`)
-      .then(async (res) => {
-        const body = await res.json();
-        if (!res.ok || body.status !== 1 || !body.data) throw new Error("Unavailable");
-        return body.data;
-      })
-      .then((data) => {
+    fetch("/api/analytics?period=7d")
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error("Unavailable"))))
+      .then(({ totals: t }) => {
         if (ignore) return;
-        const views = Number(data?.metrics?.profileViews || 0);
-        setProfileViewsThisWeek(views);
+        setWeekStats({
+          profileViews: Number(t.profileViews) || 0,
+          seriesOpens: Number(t.seriesOpens) || 0,
+          clicks: (Number(t.episodeClicks) || 0) + (Number(t.linkClicks) || 0) + (Number(t.productClicks) || 0) + (Number(t.setupClicks) || 0),
+        });
       })
       .catch(() => {
-        if (!ignore) setProfileViewsThisWeek(0);
+        if (!ignore) setWeekStats(null);
       })
       .finally(() => {
         if (!ignore) setLoading(false);
@@ -415,16 +408,26 @@ export default function DashboardOverviewPage() {
           <span>total fans</span>
         </span>
 
-        {/* Stat 2: Profile views this week (show ONLY if views > 0) */}
-        {profileViewsThisWeek > 0 && (
+        {/* Stat 2: Profile opens · Series opens · Clicks (7 days) */}
+        {weekStats && (
           <>
             <span className="text-[#D4D4D8] select-none">•</span>
-            <span className="inline-flex items-center gap-1.5">
+            <span className="inline-flex flex-wrap items-center gap-1.5">
               <Eye className="h-3.5 w-3.5 text-[#A1A1AA]" />
-              <span className="font-semibold text-[#18181B]">
-                {formatCount(profileViewsThisWeek)}
-              </span>
-              <span>profile views this week</span>
+              {[
+                { label: "Profile opens", value: weekStats.profileViews, hash: "totals" },
+                { label: "Series opens", value: weekStats.seriesOpens, hash: "series" },
+                { label: "Clicks", value: weekStats.clicks, hash: "links" },
+              ].map((stat, i) => (
+                <Fragment key={stat.hash}>
+                  {i > 0 && <span className="text-[#D4D4D8] select-none">·</span>}
+                  <Link href={`/dashboard/analytics#${stat.hash}`} className="inline-flex items-center gap-1 hover:text-[#18181B] transition-colors">
+                    <span className="font-semibold text-[#18181B]">{formatCount(stat.value)}</span>
+                    <span>{stat.label}</span>
+                  </Link>
+                </Fragment>
+              ))}
+              <span className="text-[#A1A1AA]">(7 days)</span>
             </span>
           </>
         )}

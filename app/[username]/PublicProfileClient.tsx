@@ -20,6 +20,7 @@ import { copyToClipboard } from "@/lib/copyToClipboard";
 import { CreatorPublicShell } from "@/components/public/CreatorPublicShell";
 import { getPlanQuota } from "@/services/subscriptionLimits";
 import { DEFAULT_THEME_KEY, resolveThemeKey } from "@/lib/themeKeys";
+import { setPublicTrackContext, trackProfileView } from "@/lib/publicTrack";
 
 const EMPTY_PROFILE: CreatorProfile = {
   photoDataUrl: null,
@@ -59,20 +60,6 @@ function isFreeTrialExpired(subscription?: {
     if (nowMs - actMs > sevenDaysMs) return true;
   }
   return false;
-}
-
-function getPublicVisitorId() {
-  if (typeof window === "undefined") return "";
-  const existing = localStorage.getItem("inflixo_vid");
-  if (existing) return existing;
-  const next = `v_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
-  localStorage.setItem("inflixo_vid", next);
-  return next;
-}
-
-function getPageViewEventId(creatorId: string, username: string, visitorId: string) {
-  const navigationStart = typeof performance !== "undefined" ? Math.floor(performance.timeOrigin) : Date.now();
-  return `profile:${creatorId}:${username}:${visitorId}:${navigationStart}`;
 }
 
 export default function PublicProfileClient() {
@@ -129,6 +116,9 @@ export default function PublicProfileClient() {
       }
     } catch {}
   }, [params.username]);
+
+  // Clicks are tracked only while this public page is mounted (see lib/publicTrack.ts).
+  useEffect(() => () => setPublicTrackContext(null), []);
 
   useEffect(() => {
     async function loadData() {
@@ -336,27 +326,8 @@ export default function PublicProfileClient() {
             setSections(sections);
           }
 
-          // Track Profile View Event
-          try {
-            const visitorKey = getPublicVisitorId();
-            const eventId = getPageViewEventId(profile.id, usernameParam, visitorKey);
-
-            fetch("/api/analytics/track", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                creator_id: profile.id,
-                creator_username: usernameParam,
-                event_type: "profile_view",
-                visitor_id: visitorKey,
-                event_id: eventId,
-                source: "public_profile",
-                metadata: {
-                  referrer: typeof document !== "undefined" ? document.referrer : "",
-                },
-              }),
-            }).catch(() => { });
-          } catch { }
+          setPublicTrackContext({ creatorId: profile.id, username: usernameParam, source: "public_profile" });
+          trackProfileView();
         } else {
           // If profile is private, do not fallback to local profile
           if (isPrivateRes) {

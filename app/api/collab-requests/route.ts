@@ -4,6 +4,7 @@ import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import { insertCollabRequest } from "@/lib/collabRequestsDb";
 import { sendCollabRequestReceivedEmail } from "@/lib/email";
 import { collabEnquirySchema } from "@/lib/collabSchema";
+import { recordServerEvent } from "@/lib/analyticsDb";
 
 export async function POST(req: Request) {
   try {
@@ -52,6 +53,7 @@ export async function POST(req: Request) {
       );
 
       const creator = creatorRows?.[0];
+      if (creator?.id) await recordServerEvent(req, creator.id, "collab_request_submit", data.packageId || null);
       const targetEmail = creator?.email || (data.creatorId.includes("@") ? data.creatorId : null);
 
       if (targetEmail) {
