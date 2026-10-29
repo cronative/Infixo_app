@@ -494,22 +494,28 @@ export function ProfileHeader({
             </p>
           )}
 
-          {/* Era Badge inline (Square crown icon + Peach pill + Info icon) */}
+          {/* Era + Total Fans Unified Pill (matches creator badge design with vertical divider and fanbase count) */}
           {currentEra && (
-            <div className="pt-0.5">
+            <div className="pt-1">
               <button
                 type="button"
                 onClick={() => {
                   setEraSheetOpen(true);
                   if (onFanbaseClick) onFanbaseClick();
                 }}
-                className="tap-scale inline-flex items-center gap-1.5 cursor-pointer group text-left select-none"
-                title="View Creator Era details"
-                aria-label="View Creator Era details"
+                className={`tap-scale inline-flex items-center gap-2 sm:gap-2.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-[8px] sm:rounded-[10px] transition-all text-left cursor-pointer group shadow-2xs max-w-full ${
+                  currentEra.stage === "Gold"
+                    ? "bg-[#FEF3C7]/80 border border-[#FDE68A]"
+                    : currentEra.stage === "Silver"
+                    ? "bg-[#F1F5F9] border border-[#CBD5E1]"
+                    : "bg-[#FFF7ED] border border-[#FFEDD5]"
+                }`}
+                title="View Creator Era details & fanbase breakdown"
+                aria-label="View Creator Era details and fanbase breakdown"
               >
-                {/* Square icon with crown */}
+                {/* Left: Square icon with Crown */}
                 <div
-                  className="w-4.5 h-4.5 rounded-[4px] flex items-center justify-center shrink-0 shadow-2xs text-white"
+                  className="w-6.5 h-6.5 sm:w-7 sm:h-7 rounded-[5px] sm:rounded-[6px] flex items-center justify-center shrink-0 shadow-2xs text-white"
                   style={{
                     background:
                       currentEra.stage === "Gold"
@@ -519,32 +525,45 @@ export function ProfileHeader({
                         : "linear-gradient(135deg, #EA580C 0%, #C2410C 100%)",
                   }}
                 >
-                  <Crown className="h-2.5 w-2.5 fill-white text-white drop-shadow-xs" />
+                  <Crown className="h-3.5 w-3.5 fill-white text-white drop-shadow-xs" />
                 </div>
 
-                {/* Pill with era badge title */}
+                {/* Badge title (e.g. Shining Bronze Creator) */}
                 <span
-                  className="px-2 py-0.5 rounded-[4px] text-[11px] sm:text-xs font-bold leading-normal truncate"
-                  style={{
-                    background:
-                      currentEra.stage === "Gold"
-                        ? "#FEF3C7"
-                        : currentEra.stage === "Silver"
-                        ? "#F1F5F9"
-                        : "#FFF7ED",
-                    color:
-                      currentEra.stage === "Gold"
-                        ? "#92400E"
-                        : currentEra.stage === "Silver"
-                        ? "#334155"
-                        : "#9A3412",
-                  }}
+                  className={`text-[12px] sm:text-[13px] font-bold tracking-tight truncate leading-tight ${
+                    currentEra.stage === "Gold"
+                      ? "text-[#92400E]"
+                      : currentEra.stage === "Silver"
+                      ? "text-[#334155]"
+                      : "text-[#C2410C]"
+                  }`}
                 >
                   {currentEra.badge}
                 </span>
 
-                {/* Info icon */}
-                <Info className="h-3.5 w-3.5 text-[#71717A] group-hover:text-[#18181B] transition-colors shrink-0" />
+                {/* Vertical Divider */}
+                <div
+                  className={`h-4.5 sm:h-5 w-px shrink-0 ${
+                    currentEra.stage === "Gold"
+                      ? "bg-[#FDE68A]"
+                      : currentEra.stage === "Silver"
+                      ? "bg-[#CBD5E1]"
+                      : "bg-[#FED7AA]"
+                  }`}
+                />
+
+                {/* Right: Users icon + Total Fans count */}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <Users className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-[#64748B]" />
+                  <div className="flex flex-col justify-center leading-none">
+                    <span className="text-[12px] sm:text-[13px] font-bold text-[#18181B] tabular-nums leading-tight">
+                      {formatFans(effectiveFanbase)}
+                    </span>
+                    <span className="text-[9px] sm:text-[9.5px] font-normal text-[#71717A] leading-tight">
+                      Total Fans
+                    </span>
+                  </div>
+                </div>
               </button>
             </div>
           )}
@@ -552,72 +571,40 @@ export function ProfileHeader({
       </div>
 
       {/* ============================================================== */}
-      {/* ROW 3: TOTAL FANS & SOCIAL ICONS (Single Responsive Row)       */}
-      {/* Total Fans count on the left, social account icons on the right*/}
+      {/* ROW 3: SOCIAL ICONS (Clean row directly below)                */}
       {/* ============================================================== */}
-      {(effectiveFanbase > 0 || allActiveSocials.length > 0) && (
-        <div className="w-full mt-2 sm:mt-2.5">
-          <div className="flex items-center gap-1.5 sm:gap-2 w-full">
-            {/* Left: Total Fans Box */}
-            <button
-              type="button"
-              onClick={() => {
-                setEraSheetOpen(true);
-                if (onFanbaseClick) onFanbaseClick();
-              }}
-              className="tap-scale flex-1 min-w-0 flex items-stretch rounded-[5px] border border-[#ECECF0] hover:border-[#CBD5E1] bg-white overflow-hidden transition-all text-left cursor-pointer group h-[38px] sm:h-[42px]"
-              title="View fanbase breakdown"
-              aria-label="View fanbase breakdown"
-            >
-              {/* Full-height Square Left Icon Box */}
-              <div className="flex w-8 sm:w-9 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#71717A] group-hover:bg-[#F4F4F5] transition-colors">
-                <Users className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
+      {allActiveSocials.length > 0 && (
+        <div className="flex items-center gap-1.5 sm:gap-2 pt-2.5 sm:pt-3 w-full">
+          {allActiveSocials.map((item) => {
+            const bgClass = getPlatformBgClass(item.platform);
+            const hasUrl = Boolean(item.url && item.url !== "#");
+
+            const iconContent = (
+              <span className="flex items-center justify-center">
+                {getPlatformIcon(item.platform)}
+              </span>
+            );
+
+            const btnClass = `tap-scale flex h-[34px] w-[34px] sm:h-[38px] sm:w-[38px] items-center justify-center rounded-[5px] ${bgClass} shadow-2xs hover:scale-105 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden`;
+
+            return hasUrl ? (
+              <a
+                key={item.platform}
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={`Visit ${item.label || item.platform}`}
+                aria-label={`Visit ${item.label || item.platform}`}
+                className={btnClass}
+              >
+                {iconContent}
+              </a>
+            ) : (
+              <div key={item.platform} className={btnClass}>
+                {iconContent}
               </div>
-              {/* Right Content: Baju me Count, Niche Label */}
-              <div className="flex-1 min-w-0 px-2.5 py-0.5 sm:px-3 sm:py-1 flex flex-col justify-center">
-                <div className="text-[12px] sm:text-[13px] font-bold text-[#18181B] leading-tight tabular-nums truncate">
-                  {formatFans(effectiveFanbase)}
-                </div>
-                <div className="text-[9px] sm:text-[10px] text-[#71717A] leading-none font-normal truncate mt-0.5">
-                  Total Fans
-                </div>
-              </div>
-            </button>
-
-            {/* Right (Baaju me): Social Icons only (no follower counts) */}
-            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-              {allActiveSocials.map((item) => {
-                const bgClass = getPlatformBgClass(item.platform);
-                const hasUrl = Boolean(item.url && item.url !== "#");
-
-                const iconContent = (
-                  <span className="flex items-center justify-center">
-                    {getPlatformIcon(item.platform)}
-                  </span>
-                );
-
-                const btnClass = `tap-scale flex h-[38px] w-[38px] sm:h-[42px] sm:w-[42px] items-center justify-center rounded-[5px] ${bgClass} shadow-2xs hover:scale-105 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden`;
-
-                return hasUrl ? (
-                  <a
-                    key={item.platform}
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={`Visit ${item.label || item.platform}`}
-                    aria-label={`Visit ${item.label || item.platform}`}
-                    className={btnClass}
-                  >
-                    {iconContent}
-                  </a>
-                ) : (
-                  <div key={item.platform} className={btnClass}>
-                    {iconContent}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+            );
+          })}
         </div>
       )}
 
