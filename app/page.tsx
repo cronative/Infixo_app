@@ -185,7 +185,7 @@ const FOUNDING_BENEFITS = [
   },
 ];
 
-export interface CreatorTestimonial {
+interface CreatorTestimonial {
   name: string;
   handle: string;
   niche: string;
@@ -196,7 +196,7 @@ export interface CreatorTestimonial {
 }
 
 /** Testimonials list. If empty, the entire testimonials section is hidden. */
-export const CREATOR_TESTIMONIALS: CreatorTestimonial[] = [];
+const CREATOR_TESTIMONIALS: CreatorTestimonial[] = [];
 
 const PILLARS = [
   {
@@ -1304,6 +1304,7 @@ export default function LandingHomePage() {
               <ul className="space-y-2 text-[14px] text-[#52525B]">
                 <li><Link href="/privacy" className="hover:text-[#7A2253] transition-colors">Privacy Policy</Link></li>
                 <li><Link href="/terms" className="hover:text-[#7A2253] transition-colors">Terms of Service</Link></li>
+                <li><Link href="/creator-terms" className="hover:text-[#7A2253] transition-colors">Creator Terms &amp; Conditions</Link></li>
                 <li><Link href="/cookies" className="hover:text-[#7A2253] transition-colors">Cookie Policy</Link></li>
               </ul>
             </div>

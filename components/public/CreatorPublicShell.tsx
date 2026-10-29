@@ -90,10 +90,20 @@ interface PublicCardProps {
   className?: string;
   style?: CSSProperties;
   showFooter?: boolean;
+  creatorUsername?: string;
+  creatorDisplayName?: string;
 }
 
 /** The centered main card surface, identical on every public page. */
-export function PublicCard({ themeKey, children, className = "", style, showFooter = true }: PublicCardProps) {
+export function PublicCard({
+  themeKey,
+  children,
+  className = "",
+  style,
+  showFooter = true,
+  creatorUsername,
+  creatorDisplayName,
+}: PublicCardProps) {
   const t = getPublicTheme(themeKey);
   return (
     <div
@@ -107,10 +117,14 @@ export function PublicCard({ themeKey, children, className = "", style, showFoot
 
       {showFooter && (
         <div
-          className="relative z-30 shrink-0 select-none py-[14px] border-t border-(--divider) bg-transparent flex items-center justify-center"
+          className="relative z-30 shrink-0 select-none py-2.5 sm:py-3 border-t border-(--divider) bg-transparent flex items-center justify-center"
           style={{ boxShadow: "0 -2px 6px rgba(0,0,0,.04)" }}
         >
-          <MadeWithInflixo variant="card-footer" />
+          <MadeWithInflixo
+            variant="card-footer"
+            creatorUsername={creatorUsername}
+            creatorDisplayName={creatorDisplayName}
+          />
         </div>
       )}
     </div>

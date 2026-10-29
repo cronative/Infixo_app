@@ -3010,11 +3010,16 @@ export function LivePreviewCard({
 
       {/* Static Footer inside Center Card: separator runs edge to edge (bleeds over the card's 16/20px side padding). */}
       <div
-        className="relative z-30 shrink-0 select-none py-[14px] -mx-4 sm:-mx-5 border-t border-(--divider) bg-transparent"
+        className="relative z-30 shrink-0 select-none py-2.5 sm:py-3 -mx-4 sm:-mx-5 border-t border-(--divider) bg-transparent"
         style={{ boxShadow: "0 -2px 6px rgba(0,0,0,.04)" }}
       >
         <div className="flex items-center justify-center">
-          <MadeWithInflixo variant="card-footer" disabled={isInformationalMode} />
+          <MadeWithInflixo
+            variant="card-footer"
+            disabled={isInformationalMode}
+            creatorUsername={profile.username}
+            creatorDisplayName={profile.displayName}
+          />
         </div>
       </div>
 

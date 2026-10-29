@@ -254,6 +254,33 @@ async function migrateDatabase(target) {
         AND status = 'active'
         AND trial_ends_at IS NOT NULL`);
 
+    // 011: creator legal acceptances (db/migrations/011_creator_legal_acceptances.sql).
+    await connection.query(`CREATE TABLE IF NOT EXISTS creator_legal_acceptances (
+      id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+      creator_id VARCHAR(64) NOT NULL,
+      document_key VARCHAR(32) NOT NULL,
+      document_version VARCHAR(32) NOT NULL,
+      source VARCHAR(32) NOT NULL DEFAULT 'registration',
+      accepted_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE KEY unique_creator_document_version (creator_id, document_key, document_version),
+      INDEX idx_creator_legal (creator_id, document_key)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`);
+
+    // 012: profile reports (db/migrations/012_profile_reports.sql).
+    await connection.query(`CREATE TABLE IF NOT EXISTS profile_reports (
+      id BIGINT AUTO_INCREMENT PRIMARY KEY,
+      creator_username VARCHAR(100) NOT NULL,
+      creator_id VARCHAR(64) NULL,
+      reason VARCHAR(100) NOT NULL,
+      details TEXT NULL,
+      reporter_email VARCHAR(255) NULL,
+      ip_address VARCHAR(45) NULL,
+      status ENUM('pending', 'reviewed', 'dismissed') NOT NULL DEFAULT 'pending',
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      INDEX idx_reports_creator (creator_username, status),
+      INDEX idx_reports_created (created_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`);
+
     console.log(`✅ ${target.name} migrated successfully.`);
   } finally {
     await connection.end();

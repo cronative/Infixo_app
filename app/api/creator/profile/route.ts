@@ -11,6 +11,7 @@ import { DEFAULT_THEME_KEY, isThemeKey, resolveThemeKey } from "@/lib/themeKeys"
 import { getCreatorPlanKey } from "@/lib/planServer";
 import { canUseThemeGroup, getPlan } from "@/config/plans";
 import { getThemeDefinition } from "@/themes/config";
+import { isLegalAcceptanceGiven, recordRegistrationLegalAcceptance } from "@/lib/legalAcceptanceDb";
 
 // GET /api/creator/profile?email=... or ?username=...
 export async function GET(req: Request) {
@@ -260,9 +261,23 @@ export async function POST(req: Request) {
         }, "No creator created: Profile details not provided yet");
       }
 
+      // Registration requires accepting the Terms of Service, Creator Terms and Privacy Policy.
+      // Checked here on the server, not only by the onboarding checkbox.
+      if (!isLegalAcceptanceGiven(body)) {
+        return apiError(
+          "Please accept the Terms of Service, Creator Terms & Conditions and Privacy Policy to continue.",
+          400,
+          { code: "LEGAL_ACCEPTANCE_REQUIRED" }
+        );
+      }
+
       // Insert new creator into MySQL with user provided fields
       creatorId = `cr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
       const safeThemeKey = resolveThemeKey(themeKey);
+
+      // Record acceptance (server-side document versions + timestamp) before creating the creator,
+      // so a creator never exists without an acceptance record.
+      await recordRegistrationLegalAcceptance(creatorId);
 
       await db.query(
         `INSERT INTO creators (id, email, display_name, username, category, profession, bio, photo_url, city, state, country, theme_key, theme_changes_count, visibility_settings)
@@ -385,7 +400,7 @@ export async function DELETE(req: Request) {
           "creator_reviews", "creator_profile_sections", "creator_brands", "creator_collaborations",
           "creator_other_socials", "creator_setup_items", "team_members", "creator_teams",
           "collaboration_requests", "mediakit_gigs", "mediakit_settings", "analytics_events",
-          "payment_checkout_intents",
+          "payment_checkout_intents", "creator_legal_acceptances",
         ];
         const [tableRows]: any = await connection.query(
           "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()"

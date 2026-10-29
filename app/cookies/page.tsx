@@ -1,5 +1,7 @@
 "use client";
 
+import { LegalFooter } from "@/components/legal/LegalFooter";
+
 import Link from "next/link";
 import { ArrowLeft, Cookie, Shield, Sliders, CheckCircle2, Lock } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
@@ -163,27 +165,7 @@ export default function CookiePolicyPage() {
         </div>
       </main>
 
-      {/* Public Footer */}
-      <footer className="border-t border-[#E7E3DC] bg-white py-8">
-        <div className="mx-auto max-w-[1200px] px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-[#54514D]">
-          <Logo size="sm" />
-          <div className="flex flex-wrap items-center gap-6">
-            <Link href="/" className="hover:text-brand-primary transition-colors">Home</Link>
-            <Link href="/#pricing" className="hover:text-brand-primary transition-colors">Pricing</Link>
-            <Link href="/privacy" className="hover:text-brand-primary transition-colors">Privacy Policy</Link>
-            <Link href="/cookies" className="text-[#7A2253] font-bold">Cookie Policy</Link>
-            <button
-              type="button"
-              onClick={() => openCookiePreferences()}
-              className="hover:text-brand-primary transition-colors cursor-pointer"
-            >
-              Cookie Preferences
-            </button>
-            <Link href="/terms" className="hover:text-brand-primary transition-colors">Terms of Service</Link>
-          </div>
-          <p className="text-[#797570]">&copy; 2026 Inflixo. All rights reserved.</p>
-        </div>
-      </footer>
+      <LegalFooter current="/cookies" />
     </div>
   );
 }

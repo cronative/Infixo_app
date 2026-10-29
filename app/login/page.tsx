@@ -122,6 +122,13 @@ export default function LoginPage() {
               className="text-[#52525B] underline hover:text-[#7A2253]"
             >
               Terms
+            </Link>
+            ,{" "}
+            <Link
+              href="/creator-terms"
+              className="text-[#52525B] underline hover:text-[#7A2253]"
+            >
+              Creator Terms
             </Link>{" "}
             and{" "}
             <Link

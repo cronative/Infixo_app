@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   Link2,
   CheckCircle2,
@@ -59,6 +60,8 @@ export default function OnboardingPage() {
   const [checkingUsername, setCheckingUsername] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
   const [usernameMessage, setUsernameMessage] = useState("");
+  // Legal acceptance (required to register; unchecked by default, never persisted to the draft)
+  const [acceptedLegal, setAcceptedLegal] = useState(false);
 
   // Step 2: Platforms
   const [instagram, setInstagram] = useState("");
@@ -187,6 +190,10 @@ export default function OnboardingPage() {
     if (!username || usernameAvailable === false || !displayName.trim()) {
       return;
     }
+    if (!acceptedLegal) {
+      setApiError("Please accept the Terms of Service, Creator Terms & Conditions and Privacy Policy to continue.");
+      return;
+    }
 
     setSubmitting(true);
     setApiError("");
@@ -212,6 +219,7 @@ export default function OnboardingPage() {
           displayName: displayName.trim(),
           category: category || "Other",
           onboardingStep: "socials",
+          acceptedLegalTerms: acceptedLegal,
         }),
       });
 
@@ -335,6 +343,7 @@ export default function OnboardingPage() {
   }
 
   const isStep1Valid =
+    acceptedLegal &&
     Boolean(username && username.length >= 3 && usernameAvailable === true && displayName.trim());
 
   return (
@@ -456,6 +465,37 @@ export default function OnboardingPage() {
                     );
                   })}
                 </div>
+              </div>
+
+              {/* Legal acceptance (required) */}
+              <div className="flex items-start gap-2.5 rounded-[5px] border border-[#E4E4E7] bg-white p-3">
+                <input
+                  id="accept-legal"
+                  type="checkbox"
+                  required
+                  checked={acceptedLegal}
+                  disabled={submitting}
+                  onChange={(e) => {
+                    setAcceptedLegal(e.target.checked);
+                    if (e.target.checked) setApiError("");
+                  }}
+                  className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded-[3px] accent-[#7A2253]"
+                />
+                <label htmlFor="accept-legal" className="text-xs leading-relaxed text-[#52525B] sm:text-[13px]">
+                  I agree to the{" "}
+                  <Link href="/terms" target="_blank" rel="noopener noreferrer" className="font-semibold text-[#7A2253] underline underline-offset-2">
+                    Terms of Service
+                  </Link>
+                  ,{" "}
+                  <Link href="/creator-terms" target="_blank" rel="noopener noreferrer" className="font-semibold text-[#7A2253] underline underline-offset-2">
+                    Creator Terms &amp; Conditions
+                  </Link>
+                  , and{" "}
+                  <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="font-semibold text-[#7A2253] underline underline-offset-2">
+                    Privacy Policy
+                  </Link>
+                  .
+                </label>
               </div>
 
               {/* Submit Button */}

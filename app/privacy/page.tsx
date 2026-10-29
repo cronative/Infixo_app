@@ -1,11 +1,12 @@
+import { LegalFooter } from "@/components/legal/LegalFooter";
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck, Lock, Eye, FileText, CheckCircle2, ExternalLink, HelpCircle } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
-import { CookiePreferencesButton } from "@/components/shared/CookiePreferencesButton";
 
 export const metadata = {
   title: "Privacy Policy — Inflixo",
   description: "Learn how Inflixo protects creator data, social connection privacy, YouTube API compliance, and account security.",
+  alternates: { canonical: "/privacy" },
 };
 
 export default function PrivacyPolicyPage() {
@@ -264,21 +265,7 @@ export default function PrivacyPolicyPage() {
         </div>
       </main>
 
-      {/* Public Footer */}
-      <footer className="border-t border-[#E7E3DC] bg-white py-8">
-        <div className="mx-auto max-w-[1200px] px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-[#54514D]">
-          <Logo size="sm" />
-          <div className="flex flex-wrap items-center gap-6">
-            <Link href="/" className="hover:text-brand-primary transition-colors">Home</Link>
-            <Link href="/#pricing" className="hover:text-brand-primary transition-colors">Pricing</Link>
-            <Link href="/privacy" className="text-[#7A2253] font-bold">Privacy Policy</Link>
-            <Link href="/cookies" className="hover:text-brand-primary transition-colors">Cookie Policy</Link>
-            <CookiePreferencesButton className="hover:text-brand-primary transition-colors cursor-pointer font-semibold" />
-            <Link href="/terms" className="hover:text-brand-primary transition-colors">Terms of Service</Link>
-          </div>
-          <p className="text-[#797570]">&copy; 2026 Inflixo. All rights reserved.</p>
-        </div>
-      </footer>
+      <LegalFooter current="/privacy" />
     </div>
   );
 }
