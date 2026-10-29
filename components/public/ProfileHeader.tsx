@@ -385,15 +385,15 @@ export function ProfileHeader({
   }, [socialList, primaryPlatforms]);
 
   return (
-    <header className="w-full shrink-0 select-none pb-1">
+    <header className="w-full shrink-0 select-none pb-0">
       {/* ============================================================== */}
-      {/* ROW 1: APP-STYLE NAV BAR (56px, full card width)               */}
+      {/* ROW 1: APP-STYLE NAV BAR (Compact 44px/48px, full card width)  */}
       {/* Bleeds over the card's 20px top / 16-20px side padding. It sits */}
       {/* above the card's scroll area, so it stays pinned while content  */}
       {/* scrolls underneath (z above content).                          */}
       {/* ============================================================== */}
       <div
-        className="relative z-30 -mx-4 sm:-mx-5 -mt-[20px] mb-3 flex h-14 items-center justify-between gap-2 px-5 rounded-none border-b border-(--divider) bg-transparent transition-shadow duration-200"
+        className="relative z-30 -mx-4 sm:-mx-5 -mt-[20px] mb-2 sm:mb-2.5 flex h-11 sm:h-12 items-center justify-between gap-2 px-4 sm:px-5 rounded-none border-b border-(--divider) bg-transparent transition-shadow duration-200"
         style={{ boxShadow: navScrolled ? "var(--nav-shadow-scrolled)" : "var(--nav-shadow)" }}
       >
         {/* Left: Back button (on subpages) OR Small Inflixo Logo (no tagline) */}
@@ -414,7 +414,7 @@ export function ProfileHeader({
               title="Inflixo"
               aria-label="Inflixo home"
             >
-              <InflixoWordmark className="h-7" />
+              <InflixoWordmark className="h-6 sm:h-7" />
             </Link>
           )}
         </div>
@@ -438,7 +438,7 @@ export function ProfileHeader({
             onClick={onShareClick}
             title="Share profile"
             aria-label="Share profile"
-            className="tap-scale flex h-9 w-9 items-center justify-center rounded-[5px] bg-transparent hover:bg-(--accent-soft) text-(--icon) transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden"
+            className="tap-scale flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-[5px] bg-transparent hover:bg-(--accent-soft) text-(--icon) transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden"
           >
             <Share2 className="h-4 w-4 shrink-0" />
           </button>
@@ -446,10 +446,9 @@ export function ProfileHeader({
       </div>
 
       {/* ============================================================== */}
-      {/* ============================================================== */}
       {/* ROW 2: CENTER-ALIGNED PROFILE ROW (Avatar + Right Column)       */}
       {/* ============================================================== */}
-      <div className="flex items-center justify-center gap-3.5 sm:gap-4.5 w-full mt-2 sm:mt-2.5 mx-auto">
+      <div className="flex items-center justify-center gap-3 sm:gap-4 w-full mt-1 sm:mt-1.5 mx-auto">
         {/* LEFT: Creator Avatar (80px on mobile, 88px on >=640px) */}
         <div className="relative shrink-0">
           <div className="p-[2px] sm:p-[2.5px] rounded-full shadow-xs" style={{ background: "var(--avatar-ring)" }}>
@@ -507,22 +506,22 @@ export function ProfileHeader({
             </p>
           )}
 
-          {/* Era Badge inline (mockup: Square crown icon + Peach pill + Info icon) */}
+          {/* Era Badge inline (Square crown icon + Peach pill + Info icon) */}
           {currentEra && (
-            <div className="pt-1">
+            <div className="pt-0.5">
               <button
                 type="button"
                 onClick={() => {
                   setEraSheetOpen(true);
                   if (onFanbaseClick) onFanbaseClick();
                 }}
-                className="tap-scale inline-flex items-center gap-2 cursor-pointer group text-left select-none"
+                className="tap-scale inline-flex items-center gap-1.5 cursor-pointer group text-left select-none"
                 title="View Creator Era details"
                 aria-label="View Creator Era details"
               >
                 {/* Square icon with crown */}
                 <div
-                  className="w-5 h-5 rounded-[4px] flex items-center justify-center shrink-0 shadow-2xs text-white"
+                  className="w-4.5 h-4.5 rounded-[4px] flex items-center justify-center shrink-0 shadow-2xs text-white"
                   style={{
                     background:
                       currentEra.stage === "Gold"
@@ -532,12 +531,12 @@ export function ProfileHeader({
                         : "linear-gradient(135deg, #EA580C 0%, #C2410C 100%)",
                   }}
                 >
-                  <Crown className="h-3 w-3 fill-white text-white drop-shadow-xs" />
+                  <Crown className="h-2.5 w-2.5 fill-white text-white drop-shadow-xs" />
                 </div>
 
                 {/* Pill with era badge title */}
                 <span
-                  className="px-2.5 py-0.5 rounded-[5px] text-xs font-bold leading-normal truncate"
+                  className="px-2 py-0.5 rounded-[4px] text-[11px] sm:text-xs font-bold leading-normal truncate"
                   style={{
                     background:
                       currentEra.stage === "Gold"
@@ -557,7 +556,7 @@ export function ProfileHeader({
                 </span>
 
                 {/* Info icon */}
-                <Info className="h-4 w-4 text-[#71717A] group-hover:text-[#18181B] transition-colors shrink-0" />
+                <Info className="h-3.5 w-3.5 text-[#71717A] group-hover:text-[#18181B] transition-colors shrink-0" />
               </button>
             </div>
           )}
@@ -569,8 +568,8 @@ export function ProfileHeader({
       {/* 2 columns on mobile, 4 columns on tablet/desktop               */}
       {/* ============================================================== */}
       {(effectiveFanbase > 0 || primaryPlatforms.length > 0) && (
-        <div className="w-full mt-3 sm:mt-4 pt-0.5">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2.5 w-full">
+        <div className="w-full mt-2 sm:mt-2.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 w-full">
             {/* Box 1: Total Fans */}
             <button
               type="button"

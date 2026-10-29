@@ -1726,7 +1726,7 @@ export function LivePreviewCard({
 
         {/* Navigation Tabs Bar - Fixed at bottom of top header (Never scrolls) */}
         {isTabsLayout && (
-          <div className="relative z-20 mt-2 sm:mt-2.5 -mx-4 sm:-mx-5 text-left select-none border-y border-solid border-(--divider) bg-transparent">
+          <div className="relative z-20 mt-1.5 sm:mt-2 -mx-4 sm:-mx-5 text-left select-none border-y border-solid border-(--divider) bg-transparent">
             <div
               ref={navScrollRef}
               role="tablist"
@@ -1747,7 +1747,7 @@ export function LivePreviewCard({
                     aria-selected={isActive}
                     onClick={() => handleTabChange(tab.id)}
                     style={{ color: isActive ? "var(--tab-active)" : "var(--tab-inactive)" }}
-                    className={`group/tab relative flex-1 min-w-0 shrink-0 flex items-center justify-center gap-1 sm:gap-1.5 px-1.5 min-[360px]:px-2 sm:px-3 py-2.5 sm:py-3 min-h-[42px] sm:min-h-[46px] rounded-none text-[11px] min-[360px]:text-[11.5px] sm:text-xs md:text-[12.5px] font-bold border-r border-solid border-(--divider) last:border-r-0 transition-colors duration-150 cursor-pointer whitespace-nowrap select-none bg-transparent ${isActive
+                    className={`group/tab relative flex-1 min-w-0 shrink-0 flex items-center justify-center gap-1 sm:gap-1.5 px-1.5 min-[360px]:px-2 sm:px-3 py-1.5 sm:py-2 min-h-[38px] sm:min-h-[40px] rounded-none text-[11px] min-[360px]:text-[11.5px] sm:text-xs md:text-[12.5px] font-bold border-r border-solid border-(--divider) last:border-r-0 transition-colors duration-150 cursor-pointer whitespace-nowrap select-none bg-transparent ${isActive
                         ? ""
                         : "hover:bg-(--surface)/80 hover:text-(--text)"
                       }`}
@@ -1912,12 +1912,12 @@ export function LivePreviewCard({
       <div
         ref={profileScrollRef}
         onScroll={handleContainedScroll}
-        className="relative z-10 flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden overscroll-contain scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pt-2.5 pb-6"
+        className="relative z-10 flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden overscroll-contain scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pt-1.5 sm:pt-2 pb-6"
       >
 
         {/* 2. About Tab (Creator Bio Story Bento + Rich Verified Channels Showcase) */}
         {!isListingPage && (!isTabsLayout || activeNavTab === "about" || activeNavTab === "fanbase") && (
-          <div id="about-section" className={`relative z-10 w-full text-left animate-fade-in ${isTabsLayout ? "order-[4] mt-3 sm:mt-3.5" : "order-[1] mt-5 sm:mt-6 space-y-3"}`}>
+          <div id="about-section" className={`relative z-10 w-full text-left animate-fade-in ${isTabsLayout ? "order-[4] mt-1.5 sm:mt-2" : "order-[1] mt-5 sm:mt-6 space-y-3"}`}>
             <TabSectionHeader
               title="About"
               subtitle="Get to know me and follow me everywhere."
@@ -2156,7 +2156,7 @@ export function LivePreviewCard({
             if (validLinks.length === 0) {
               if (isDashboardPreview || linksOnlyMode) {
                 return (
-                  <div id="links-section" className={`relative z-10 order-[5] w-full text-left animate-fade-in ${linksOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7"}`}>
+                  <div id="links-section" className={`relative z-10 order-[5] w-full text-left animate-fade-in ${linksOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-1.5 sm:mt-2" : "mt-6 sm:mt-7"}`}>
                     {!linksOnlyMode && (
                       <TabSectionHeader
                         title="Links"
@@ -2231,7 +2231,7 @@ export function LivePreviewCard({
               });
 
             return (
-              <div id="links-section" className={`relative z-10 order-[5] w-full text-left animate-fade-in ${linksOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7"}`}>
+              <div id="links-section" className={`relative z-10 order-[5] w-full text-left animate-fade-in ${linksOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-1.5 sm:mt-2" : "mt-6 sm:mt-7"}`}>
                 {!linksOnlyMode && (
                   <TabSectionHeader
                     title="Links"
@@ -2309,7 +2309,7 @@ export function LivePreviewCard({
 
         {/* 4. Series Section */}
         {(seriesOnlyMode || (!isListingPage && (!isTabsLayout || activeNavTab === "watch" || activeNavTab === "series"))) && effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || seriesOnlyMode) && (
-          <div id="series-section" className={`relative z-10 order-[10] w-full text-left pb-12 ${seriesOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7 space-y-2.5"}`}>
+          <div id="series-section" className={`relative z-10 order-[10] w-full text-left pb-12 ${seriesOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-1.5 sm:mt-2" : "mt-6 sm:mt-7 space-y-2.5"}`}>
             {!seriesOnlyMode && (
               <TabSectionHeader
                 title="Series"
@@ -2489,7 +2489,7 @@ export function LivePreviewCard({
 
         {/* Shop / Products Section */}
         {((productsOnlyMode || (!isListingPage && (!isTabsLayout || activeNavTab === "shop"))) && ((products && products.length > 0) || productsOnlyMode)) && (
-          <section id="shop-section" aria-label="Shop" className={`relative z-10 order-[15] w-full text-left animate-fade-in ${productsOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7 space-y-2.5"}`}>
+          <section id="shop-section" aria-label="Shop" className={`relative z-10 order-[15] w-full text-left animate-fade-in ${productsOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-1.5 sm:mt-2" : "mt-6 sm:mt-7 space-y-2.5"}`}>
             {landingDemo && (
               <h3
                 style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
@@ -2613,7 +2613,7 @@ export function LivePreviewCard({
 
         {/* 5. Creator Team */}
         {!isListingPage && (!isTabsLayout ? true : (activeNavTab === "collab" || activeNavTab === "work" || activeNavTab === "reviews")) && activeTeamMembers.length > 0 && (
-          <div id="team-section" className={`relative z-10 order-[25] w-full text-left animate-fade-in ${isTabsLayout ? "mt-3 sm:mt-3.5 space-y-2" : "mt-6 sm:mt-7 space-y-2.5"}`}>
+          <div id="team-section" className={`relative z-10 order-[25] w-full text-left animate-fade-in ${isTabsLayout ? "mt-1.5 sm:mt-2 space-y-2" : "mt-6 sm:mt-7 space-y-2.5"}`}>
             <div>
               <div className="flex items-center justify-between gap-3 px-0.5">
                 <div className="flex items-center gap-2">
@@ -2726,7 +2726,7 @@ export function LivePreviewCard({
           const hasMoreReviews = approvedReviews.length > 3;
 
           return (
-            <div id="collab-section" className={`relative z-10 order-[20] w-full text-left animate-fade-in ${isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7 space-y-4"}`}>
+            <div id="collab-section" className={`relative z-10 order-[20] w-full text-left animate-fade-in ${isTabsLayout ? "mt-1.5 sm:mt-2" : "mt-6 sm:mt-7 space-y-4"}`}>
               <TabSectionHeader
                 title="Work with me"
                 subtitle="Collab packages for brands. Pick one or send a custom request."
@@ -2945,7 +2945,7 @@ export function LivePreviewCard({
             const visibleSetupItems = isSetupExpanded ? activeSetupItems : activeSetupItems.slice(0, 3);
 
             return (
-              <div id="setup-section" className={`relative z-10 ${isTabsLayout ? "order-[4] mt-3 sm:mt-3.5 space-y-2" : "order-[45] mt-6 sm:mt-7 space-y-2.5"} w-full text-left animate-fade-in`}>
+              <div id="setup-section" className={`relative z-10 ${isTabsLayout ? "order-[4] mt-1.5 sm:mt-2 space-y-2" : "order-[45] mt-6 sm:mt-7 space-y-2.5"} w-full text-left animate-fade-in`}>
                 <div>
                   <div className="flex items-center justify-between px-0.5">
                     <div className="flex items-center gap-2">

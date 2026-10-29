@@ -38,7 +38,7 @@ export function TabSectionHeader({
 
       <p
         style={{ color: secondaryTextColor }}
-        className="mt-1 mb-3 text-sm text-(--text-muted) font-normal leading-normal whitespace-normal break-words"
+        className="mt-0.5 mb-2 text-xs sm:text-sm text-(--text-muted) font-normal leading-normal whitespace-normal break-words"
       >
         {subtitle}
       </p>
